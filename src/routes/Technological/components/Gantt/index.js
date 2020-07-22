@@ -534,14 +534,22 @@ class Gantt extends Component {
           gantt_card_height={this.props.gantt_card_height || 600} //引用组件的地方传递进来的甘特图高度
           is_need_calculate_left_dx={this.props.is_need_calculate_left_dx}
           insertTaskToListGroup={this.insertTaskToListGroup}
+
+          task_detail_props={{
+            task_detail_modal_visible: drawerVisible,
+            setTaskDetailModalVisible: this.setDrawerVisibleClose, //关闭任务弹窗回调
+            handleTaskDetailChange: this.handleChangeCard,
+            handleDeleteCard: this.handleDeleteCard,
+            handleChildTaskChange: this.handleChildTaskChange,
+          }}
         />
-        <TaskDetailModal
+        {/* <TaskDetailModal
           task_detail_modal_visible={drawerVisible}
           setTaskDetailModalVisible={this.setDrawerVisibleClose} //关闭任务弹窗回调
           handleTaskDetailChange={this.handleChangeCard}
           handleDeleteCard={this.handleDeleteCard}
           handleChildTaskChange={this.handleChildTaskChange}
-        />
+        /> */}
 
         {addTaskModalVisible && (
           <AddTaskModal

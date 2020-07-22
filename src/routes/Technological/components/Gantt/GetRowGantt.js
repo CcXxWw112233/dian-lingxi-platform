@@ -462,8 +462,14 @@ export default class GetRowGantt extends Component {
         dispatch({
           type: 'publicTaskDetailModal/updateDatas',
           payload: {
-            drawerVisible: true,
+            // drawerVisible: true,
             card_id: id,
+          }
+        })
+        dispatch({
+          type: 'gantt/updateDatas',
+          payload: {
+            selected_card_visible: true,
           }
         })
         // dispatch({

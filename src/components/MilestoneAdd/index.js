@@ -204,6 +204,7 @@ export default class MilestoneAdd extends React.Component {
                 <Dropdown
                     trigger={['click']}
                     overlayClassName={indexStyles.milestoneAddWrapper}
+                    getPopupContainer={triggerNode => triggerNode.parentNode}
                     overlay={
                         <div>
                             <Menu style={{ padding: '8px 0px', boxShadow: '0px 2px 8px 0px rgba(0,0,0,0.15)', maxWidth: 200, }}
@@ -235,7 +236,7 @@ export default class MilestoneAdd extends React.Component {
                                                     disabled={timeName}>
 
                                                     <div className={indexStyles.menuItemDiv}>
-                                                        <div key={id}>
+                                                        <div title={name} key={id}>
                                                             <div style={{ overflow: 'hidden', verticalAlign: ' middle', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 90, marginRight: 8 }}>{name}</div>
                                                         </div>
                                                         <div>

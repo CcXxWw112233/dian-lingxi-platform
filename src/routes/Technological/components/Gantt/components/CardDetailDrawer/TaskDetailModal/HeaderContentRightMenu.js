@@ -2,16 +2,16 @@ import React, { Component } from 'react'
 import { Tooltip, message, Modal } from 'antd'
 import { connect } from 'dva'
 import headerStyles from './HeaderContent.less'
-import VisitControl from '../../routes/Technological/components/VisitControl/index'
-import ShareAndInvite from '../../routes/Technological/components/ShareAndInvite/index'
-import { setContentPrivilege, toggleContentPrivilege, removeContentPrivilege } from '../../services/technological/project'
-import { createMeeting, createShareLink, modifOrStopShareLink } from '../../services/technological/workbench'
+import VisitControl from '@/routes/Technological/components/VisitControl/index'
+import ShareAndInvite from '@/routes/Technological/components/ShareAndInvite/index'
+import { setContentPrivilege, toggleContentPrivilege, removeContentPrivilege } from '@/services/technological/project'
+import { createMeeting, createShareLink, modifOrStopShareLink } from '@/services/technological/workbench'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { currentNounPlanFilterName } from "@/utils/businessFunction";
 import {
   MESSAGE_DURATION_TIME, TASKS,
 } from "@/globalset/js/constant";
-import { arrayNonRepeatfy } from '../../utils/util'
+import { arrayNonRepeatfy } from '@/utils/util'
 @connect(mapStateToProps)
 export default class HeaderContentRightMenu extends Component {
 
@@ -400,8 +400,9 @@ export default class HeaderContentRightMenu extends Component {
                   card_id: '',
                 }
               })
+              that.props.closeDrawer && that.props.closeDrawer()
               // 删除卡片也需要调用圈子关闭联动
-              setTimeout(() => global.constants.lx_utils && global.constants.lx_utils.setCommentData(card_id || null) , 200)
+              setTimeout(() => global.constants.lx_utils && global.constants.lx_utils.setCommentData(card_id || null), 200)
               that.props.handleDeleteCard && that.props.handleDeleteCard({ card_id: card_id })
             }
           }
@@ -421,23 +422,13 @@ export default class HeaderContentRightMenu extends Component {
     return (
 
       <div className={headerStyles.detail_action_list}>
-
-        {/* 访问控制 */}
-        <span className={`${headerStyles.action} ${headerStyles.visit_wrap}`}>
-          {
-            board_id && (
-<VisitControl
-              board_id={board_id}
-              isPropVisitControl={is_privilege === '0' ? false : true}
-              handleVisitControlChange={this.handleVisitControlChange}
-              principalList={data}
-              otherPrivilege={privileges}
-              handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
-              handleAddNewMember={this.handleVisitControlAddNewMember}
-            />
-)
-          }
-
+        {/* 删除 */}
+        <span className={`${headerStyles.action}`}>
+          <Tooltip title="删除">
+            <span className={headerStyles.dele_icon} onClick={this.handleDelCard}>
+              <span className={`${globalStyles.authTheme} ${headerStyles.dele}`}>&#xe7c3;</span>
+            </span>
+          </Tooltip>
         </span>
         {/* 分享协作 */}
         <span className={`${headerStyles.action} `}>
@@ -448,29 +439,37 @@ export default class HeaderContentRightMenu extends Component {
               <span className={headerStyles.right__shareIndicator_text}>正在分享</span>
             </span>
           ) : (
-<span className={`${headerStyles.right_menu} ${headerStyles.share_icon}`} >
-              <Tooltip title="分享协作" placement="top">
-                <span onClick={this.handleChangeOnlyReadingShareModalVisible} className={`${globalStyles.authTheme} ${headerStyles.right__share}`} style={{ fontSize: '20px' }}>&#xe7e7;</span>
-              </Tooltip>
-            </span>
-)}
+              <span className={`${headerStyles.right_menu} ${headerStyles.share_icon}`} >
+                <Tooltip title="分享协作" placement="top">
+                  <span onClick={this.handleChangeOnlyReadingShareModalVisible} className={`${globalStyles.authTheme} ${headerStyles.right__share}`} style={{ fontSize: '20px' }}>&#xe7e7;</span>
+                </Tooltip>
+              </span>
+            )}
 
           <ShareAndInvite
-           
+
             onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible}
             data={onlyReadingShareData}
             handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare}
           />
         </span>
-        {/* 删除 */}
-        <span className={`${headerStyles.action}`}>
-          <Tooltip title="删除">
-            <span className={headerStyles.dele_icon} onClick={this.handleDelCard}>
-              <span className={`${globalStyles.authTheme} ${headerStyles.dele}`}>&#xe7c3;</span>
-            </span>
-          </Tooltip>
-        </span>
+        {/* 访问控制 */}
+        <span className={`${headerStyles.action} ${headerStyles.visit_wrap}`}>
+          {
+            board_id && (
+              <VisitControl
+                board_id={board_id}
+                isPropVisitControl={is_privilege === '0' ? false : true}
+                handleVisitControlChange={this.handleVisitControlChange}
+                principalList={data}
+                otherPrivilege={privileges}
+                handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
+                handleAddNewMember={this.handleVisitControlAddNewMember}
+              />
+            )
+          }
 
+        </span>
 
       </div>
 
