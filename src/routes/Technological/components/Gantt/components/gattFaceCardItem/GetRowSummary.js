@@ -5,7 +5,7 @@ import { connect } from 'dva'
 import CardDropDetail from './CardDropDetail.js'
 import { Popover } from 'antd'
 import globalStyles from '@/globalset/css/globalClassName.less'
-import { task_item_height_fold } from '../../constants'
+import { task_item_height_fold, task_item_height, ceil_height_fold } from '../../constants'
 import { selectBoardToSeeInfo } from '../../../../../../utils/businessFunction'
 
 @connect(mapStateToProps)
@@ -99,9 +99,9 @@ export default class GetRowSummary extends Component {
             for (let val of list_data) {
                 if (
                     (val.left + (val.time_span - 1) * ceilWidth) == item //位置对应上
-                    && val.is_realize != '1' //未完成
-                    && val.end_time < now //过期
-                    && val.is_has_end_time //存在实际的截止时间
+                    // && val.is_realize != '1' //未完成
+                    // && val.end_time < now //过期
+                    // && val.is_has_end_time //存在实际的截止时间
                 ) {
                     list.push(val)
                 }
@@ -121,6 +121,7 @@ export default class GetRowSummary extends Component {
         const { itemValue: { top } } = this.props
 
         const left_map = this.hanldListGroupMap()
+        console.log('sssssssss', left_map)
 
         if (!this.setBgSpecific().is_due) {
             return <React.Fragment></React.Fragment>
@@ -129,24 +130,23 @@ export default class GetRowSummary extends Component {
         return (
             left_map.map((item, key) => {
                 const { list = [], left } = item
-                const realize_arr = list.filter(item => item.is_realize != '1')
+                // const realize_arr = list.filter(item => item.is_realize != '1')
                 return (
-                    <Popover placement="bottom" content={<CardDropDetail list={realize_arr} />} key={key} >
+                    <Popover placement="bottom" content={<CardDropDetail list={list} />} key={key} >
                         <div
                             key={left}
-                            className={globalStyles.authTheme}
                             style={{
-                                width: 14,
-                                height: 14,
-                                borderRadius: 14,
-                                // background: '#FF7875',
+                                width: 6,
+                                height: 6,
+                                borderRadius: 6,
+                                backgroundColor: '#ffffff',
                                 color: '#FF7875',
                                 position: 'absolute',
                                 cursor: 'pointer',
-                                left: left + (ceilWidth - 14) / 2,
-                                top: top - 20,
+                                left: left + ceilWidth / 2,
+                                top: top + (ceil_height_fold - 6) / 2,
                                 zIndex: 1
-                            }}>&#xe848;</div>
+                            }}></div>
                     </Popover>
                 )
             })
@@ -173,7 +173,7 @@ export default class GetRowSummary extends Component {
                     data-targetclassname="specific_example"
                     style={{
                         left: left, top: top,
-                        width: (width || 6) - 6, height: task_item_height_fold,
+                        width: (width || 6) + 6, height: task_item_height_fold,
                         // // background: this.setBgSpecific().time_bg_color,
                         // padding: 0,
                         // zIndex: 0,
