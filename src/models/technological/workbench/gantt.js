@@ -575,6 +575,7 @@ export default {
       const group_view_type = yield select(getModelSelectDatasState('gantt', 'group_view_type'))
       const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id'))
       const show_board_fold = yield select(getModelSelectDatasState('gantt', 'show_board_fold'))
+      const gantt_view_mode = yield select(getModelSelectDatasState('gantt', 'gantt_view_mode'))
 
       for (let val of data) {
         const list_group_item = {
@@ -615,7 +616,7 @@ export default {
             list_group_item.list_data.push(list_data_item)
           }
         }
-        if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold })) { //全项目视图下，收缩，取特定某一条做基准，再进行时间汇总
+        if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold, gantt_view_mode })) { //全项目视图下，收缩，取特定某一条做基准，再进行时间汇总
           const start_time_arr = list_group_item.list_data.map(item => item.start_time) //取视窗任务的最开始时间
           const due_time_arr = list_group_item.list_data.map(item => item.end_time) //取视窗任务的最后截止时间
           const { lane_start_time, lane_end_time } = list_group_item
@@ -634,8 +635,26 @@ export default {
           } else if (due_time > end_date.timestamp && start_time < start_date.timestamp) { //超过左右区间
             time_span = (Math.floor((end_date.timestamp - start_date.timestamp) / (24 * 3600 * 1000))) + 1
           }
+          let lane_overdue_count = 0
+          let lane_todo_count = 0
+          for (let val of list_group_item.lane_data.cards) {
+            const _new_due_time = transformTimestamp(val.due_time)
+            if (val.is_realize != '1') { //未完成
+              lane_todo_count += 1
+              if (new Date().getTime() > _new_due_time) {//超时未完成
+                lane_overdue_count += 1
+              }
+
+            }
+
+          }
+          list_group_item.lane_overdue_count = lane_overdue_count
+          list_group_item.lane_todo_count = lane_todo_count
+
           list_group_item.board_fold_data = {
             ...val,
+            lane_overdue_count,
+            lane_todo_count,
             end_time: due_time,
             start_time,
             time_span,
@@ -647,7 +666,7 @@ export default {
       yield put({
         type: 'updateDatas',
         payload: {
-          ceiHeight: ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? ceil_height_fold : ceil_height
+          ceiHeight: ganttIsFold({ gantt_board_id, group_view_type, show_board_fold, gantt_view_mode }) ? ceil_height_fold : ceil_height
         }
       })
       yield put({
@@ -787,8 +806,11 @@ export default {
           group_rows[i] = group_rows[i] + 30
         }
         // 设置项目汇总的top和left,width
-        if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold })) { // 全项目视图下，为收缩状态
+        if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold, gantt_view_mode })) { // 全项目视图下，为收缩状态
           group_rows[i] = group_rows_fold
+          if (list_group[i].list_id == '0' && gantt_view_mode == 'year' && group_view_type != '4') {
+            group_rows[i] = group_rows_fold + 30
+          }
           list_group[i].board_fold_data.width = list_group[i].board_fold_data.time_span * ceilWidth
           list_group[i].board_fold_data.top = after_group_height + (ceil_height_fold * group_rows_fold - task_item_height_fold) / 2 //上下居中 (96-24)/2
           for (let k = 0; k < date_arr_one_level.length; k++) {

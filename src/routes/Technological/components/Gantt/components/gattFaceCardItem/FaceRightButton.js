@@ -163,13 +163,13 @@ export default class FaceRightButton extends Component {
         const { gantt_board_id, group_view_type, show_board_fold, gantt_view_mode } = this.props
         return (
             <div className={styles.sections}>
-                {
+                {/* {
                     gantt_board_id == '0' && group_view_type == '1' && (
                         <div className={styles.card_button} onClick={this.setShowBoardFold} >
                             {show_board_fold ? '计划明细' : '进度汇总'}
                         </div>
                     )
-                }
+                } */}
                 {
                     !this.filterIsInViewArea() && (
                         <div className={styles.card_button} onClick={this.checkToday}>
