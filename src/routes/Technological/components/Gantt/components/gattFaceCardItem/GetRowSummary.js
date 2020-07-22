@@ -18,7 +18,7 @@ export default class GetRowSummary extends Component {
         const { itemValue: { lane_status, lane_overdue_count, lane_schedule_count }, list_data = [] } = this.props
         const percent = `${((lane_schedule_count - lane_overdue_count) / lane_schedule_count) * 100}%`
         if (lane_status == '1') { //完成
-            time_bg_color = '#BFBFBF'
+            time_bg_color = '#E9ECF2'
             percent_class = styles.board_fold_complete
         } else if (lane_status == '2') { //正在进行的项目（任务按期完成）
             time_bg_color = '#91D5FF'
@@ -71,7 +71,8 @@ export default class GetRowSummary extends Component {
 
     gotoBoard = (e) => {
         e.stopPropagation()
-        const { list_id, dispatch, itemValue: { lane_name } } = this.props
+        const { list_id, dispatch, itemValue: { lane_name }, gantt_board_id } = this.props
+        if (gantt_board_id != '0') return
         dispatch({
             type: 'gantt/updateDatas',
             payload: {
@@ -154,7 +155,10 @@ export default class GetRowSummary extends Component {
 
     render() {
         const { itemValue = {}, ceilWidth } = this.props
-        const { left, top, width, time_span } = itemValue
+        const { left, top, width, time_span, lane_schedule_count, lane_overdue_count } = itemValue
+        const { percent_class, time_bg_color } = this.setBgSpecific()
+        const percent = Number(lane_overdue_count) / Number(lane_schedule_count)
+        const percent_else = 1 - percent
         return (
             <div style={{ display: 'flex' }} data-targetclassname="specific_example" onMouseMove={(e) => e.stopPropagation()}>
                 <div
@@ -165,20 +169,34 @@ export default class GetRowSummary extends Component {
                 <div
                     onMouseMove={(e) => e.stopPropagation()}
                     onClick={this.gotoBoard}
-                    className={`${indexStyles.specific_example}`}
+                    className={`${indexStyles.specific_example} ${styles.summary_item}`}
                     data-targetclassname="specific_example"
                     style={{
                         left: left, top: top,
                         width: (width || 6) - 6, height: task_item_height_fold,
-                        background: this.setBgSpecific().time_bg_color,
-                        padding: 0,
-                        zIndex: 0,
+                        // // background: this.setBgSpecific().time_bg_color,
+                        // padding: 0,
+                        // zIndex: 0,
                     }}>
                     {/* 进度填充 */}
                     <div
                         data-targetclassname="specific_example"
-                        className={this.setBgSpecific().percent_class}
-                        style={{ width: '100%', height: task_item_height_fold, }} >
+                        className={`${percent_class} ${percent == 1 ? styles.summary_item_left_full : styles.summary_item_left}`}
+                        style={{
+                            width: `${percent * 100}%`,
+                            height: task_item_height_fold,
+                            border: `1px solid ${time_bg_color}`,
+                            display: percent == 0 ? 'none' : 'block'
+                        }} >
+                    </div>
+                    <div
+                        data-targetclassname="specific_example"
+                        className={`${styles.summary_item_right} ${percent == 0 && styles.summary_item_right_full}`}
+                        style={{
+                            width: `${percent_else * 100}%`,
+                            height: task_item_height_fold,
+                            display: percent == 1 ? 'none' : 'block'
+                        }} >
                     </div>
                 </div>
                 <div
@@ -200,10 +218,12 @@ function mapStateToProps({ gantt: {
     datas: {
         group_list_area_section_height,
         ceilWidth,
+        gantt_board_id,
     }
 } }) {
     return {
         group_list_area_section_height,
         ceilWidth,
+        gantt_board_id,
     }
 }

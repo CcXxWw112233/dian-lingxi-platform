@@ -92,14 +92,48 @@
     color: #40A9FF
 }
 
+
+.summary_item {
+    display      : flex;
+    padding      : 0px !important;
+    z-index      : 0 !important;
+    border-radius: 20px !important;
+
+    .summary_item_left {
+        border-radius: 20px 0 0 20px !important;
+        border-right : none !important;
+    }
+
+    .summary_item_right {
+        background-color: #E9ECF2 !important;
+        border-radius   : 0 20px 20px 0 !important;
+        box-sizing      : border-box;
+        border          : 1px solid rgba(167, 176, 192, .7);
+        border-left     : none;
+    }
+
+    .summary_item_left_full {
+        border-radius: 20px !important;
+    }
+
+    .summary_item_right_full {
+        border-radius: 20px !important;
+        border       : 1px solid rgba(167, 176, 192, .7) !important;
+    }
+
+}
+
 .board_fold_complete {
-    background: url('../../asset/board_fold_complete.png') 0 0 repeat-x;
+    // background: url('../../asset/board_fold_complete.png') 0 0 repeat-x;
+    background-color: #E9ECF2;
 }
 
 .board_fold_due {
-    background: url('../../asset/board_fold_due.png') 0 0 repeat-x;
+    // background: url('../../asset/board_fold_due.png') 0 0 repeat-x;
+    background-color: #FFCCC7;
 }
 
 .board_fold_ding {
-    background: url('../../asset/board_fold_doing.png') 0 0 repeat-x;
+    // background: url('../../asset/board_fold_doing.png') 0 0 repeat-x;
+    background-color: #91D5FF;
 }
