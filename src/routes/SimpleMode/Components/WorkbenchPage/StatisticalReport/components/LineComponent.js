@@ -46,7 +46,7 @@ class LineComponent extends Component {
         data: number,
         type: 'line'
       }],
-      dataZoom: [{
+      dataZoom: time.length > 6 ? [{
         type: 'slider',
         show: true, //flase直接隐藏图形
         xAxisIndex: [0],
@@ -54,7 +54,7 @@ class LineComponent extends Component {
         bottom: -2,
         start: 0,//滚动条的起始位置
         end: 45 //滚动条的截止位置（按比例分割你的柱状图x轴长度）
-      }],
+      }] : null,
     }
     return option
   }

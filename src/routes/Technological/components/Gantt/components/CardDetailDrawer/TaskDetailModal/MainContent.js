@@ -44,10 +44,13 @@ export default class MainContent extends Component {
     }
     global.constants.lx_utils && global.constants.lx_utils.setCommentData({ ...data })
     if (is_simple_model == '1') {
+      const width = document.body.scrollWidth;
+      let workbenchBoxContentWapperModalStyle = { width: (width - 400) + 'px' }
       this.props.dispatch({
         type: 'simplemode/updateDatas',
         payload: {
-          chatImVisiable: true
+          chatImVisiable: true,
+          workbenchBoxContentWapperModalStyle
         }
       })
     }

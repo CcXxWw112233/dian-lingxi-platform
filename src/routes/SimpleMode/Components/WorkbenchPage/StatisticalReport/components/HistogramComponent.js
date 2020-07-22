@@ -8,7 +8,7 @@ import 'echarts/lib/chart/bar';
 import 'echarts/lib/component/tooltip';
 import 'echarts/lib/component/title';
 import 'echarts/lib/component/legend';
-
+import { newline } from '../handleOperatorStatiscalReport'
 import { getReportCardWorktime } from '../../../../../../services/technological/statisticalReport';
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData';
 
@@ -103,6 +103,33 @@ class HistogramComponent extends Component {
           //   alignWithLabel: true,
           //   interval: 0
           // },
+          axisLabel: {
+            interval: 0,
+            roate: 20,
+            formatter: function(value) {
+                //return value.split("").join("\n");
+                //debugger
+                let ret = "";//拼接加\n返回的类目项
+                let maxLength = 1;//每项显示文字个数
+                let valLength = value.length;//X轴类目项的文字个数
+                let rowN = Math.ceil(valLength / maxLength); //类目项需要换行的行数
+                if (rowN > 1)//如果类目项的文字大于3,
+                {
+                    for (let i = 0; i < rowN; i++) {
+                        let temp = "";//每次截取的字符串
+                        let start = i * maxLength;//开始截取的位置
+                        let end = start + maxLength;//结束截取的位置
+                        //这里也可以加一个是否是最后一行的判断，但是不加也没有影响，那就不加吧
+                        temp = value.substring(start, end) + '\n';
+                        ret += temp; //凭借最终的字符串
+                    }
+                    return ret;
+                }
+                else {
+                    return value;
+                }
+            }
+          }
         }
       ],
       yAxis: [
