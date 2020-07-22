@@ -516,7 +516,7 @@ export default class GetRowGanttItem extends Component {
       <>
         {date_inner.map((value2, key2) => {
           const { month, last_date, year, timestamp, timestampEnd, description } = value2
-          const { flag: has_lcb, current_date_board_miletones = [], is_over_duetime, is_all_realized, every_day_miletones } = this.isHasMiletoneListYear({
+          const { flag: has_lcb, current_date_board_miletones = [], is_over_duetime, is_all_realized, every_day_miletones = [] } = this.isHasMiletoneListYear({
             year, month, last_date, timestamp, timestampEnd
           })
           if (current_date_board_miletones.length) console.log('current_date_board_miletones', current_date_board_miletones, every_day_miletones)
