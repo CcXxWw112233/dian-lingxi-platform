@@ -5,6 +5,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import { Icon, message, Tooltip } from 'antd';
 import { setBoardIdStorage, isPaymentOrgUser, } from "@/utils/businessFunction"
 import { changeBoxFeatureName } from "../../../../../utils/temporary";
+import { arrayNonRepeatfy } from "../../../../../utils/util";
 class FeatureBox extends Component {
   constructor(props) {
     super(props);
@@ -265,6 +266,11 @@ class FeatureBox extends Component {
           <svg t="1584754283352" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="10484" width="64" height="64"><path d="M362.24 185.6m76.8 0l455.68 0q76.8 0 76.8 76.8l0 234.112q0 76.8-76.8 76.8l-455.68 0q-76.8 0-76.8-76.8l0-234.112q0-76.8 76.8-76.8Z" fill="#D8D8D8" opacity=".65" p-id="10485"></path><path d="M833.024 407.168a20.8 20.8 0 0 1 0 41.536H500.736a20.8 20.8 0 0 1 0-41.6h332.288z m0-96.96a20.8 20.8 0 0 1 0 41.6H500.736a20.8 20.8 0 0 1 0-41.6h332.288z" fill="#FFFFFF" p-id="10486"></path><path d="M57.6 483.328m76.8 0l455.68 0q76.8 0 76.8 76.8l0 234.112q0 76.8-76.8 76.8l-455.68 0q-76.8 0-76.8-76.8l0-234.112q0-76.8 76.8-76.8Z" fill="#FFFFFF" p-id="10487"></path><path d="M528.384 704.896a20.8 20.8 0 0 1 0 41.536H196.096a20.8 20.8 0 0 1 0-41.6h332.288z m0-96.96a20.8 20.8 0 0 1 0 41.6H196.096a20.8 20.8 0 0 1 0-41.6h332.288z" fill="#D8D8D8" p-id="10488"></path><path d="M271.552 254.848l62.272 49.856-62.272 49.856v-24.96H190.464v105.92c-4.224 9.856-12.288 14.784-24.192 14.784s-20.48-4.928-25.6-14.72v-118.4c0-20.224 15.936-36.672 35.904-37.376l94.848-0.064v-24.96z" fill="#D8D8D8" p-id="10489"></path><path d="M271.552 254.848l62.272 49.856-62.272 49.856v-24.96H190.464v0.512l-38.464-39.808a37.248 37.248 0 0 1 24.576-10.496l94.848-0.064v-24.96z" fill="#FFFFFF" p-id="10490"></path><path d="M760 803.84l-62.272-49.856 62.272-49.856 0.064 24.96h80.96V623.104c4.224-9.792 12.352-14.72 24.192-14.72 11.904 0 20.48 4.928 25.664 14.72v118.4c0 20.224-16 36.672-35.968 37.376l-94.848 0.064v24.896z" fill="#FFFFFF" p-id="10491"></path><path d="M877.632 770.048l-40.832-40.96h4.224V623.104c4.224-9.792 12.352-14.72 24.192-14.72 11.904 0 20.48 4.928 25.664 14.72v118.4a37.248 37.248 0 0 1-8.768 24.064l-4.48 4.48z" fill="#CACACA" opacity=".65" p-id="10492"></path></svg>
         )
         break
+      case 'report':
+        contain = (
+          <svg t="1595321187623" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="23036" width="64" height="64"><path d="M182.410156 841.589844V116.4921875H116.4921875v791.015625h791.015625v-65.9179685z" fill="#FFFFFF" p-id="23037"></path><path d="M264.80761719 561.43847656h65.91796849v197.75390625h-65.91796849v-197.75390625z m164.79492162-98.87695312h65.91289872v296.63085937h-65.91796926v-296.63085937zM594.39746119 512h65.9179685v247.19238281h-65.9179685V512z m164.79492162-148.31542969h65.9179685v395.5078125h-65.9179685v-395.5078125z m-292.32590901-12.21510661l164.79492162 65.91796849 179.39828748-125.57373047-37.80649061-54.01216908L623.04642417 342.9457636 458.25150254 277.0227238 278.86842667 402.6015248l37.80142007 54.00202801 150.19155652-105.13408911z" fill="#FFFFFF" p-id="23038"></path></svg>
+        )
+        break
       default:
         break
     }
@@ -337,8 +343,7 @@ class FeatureBox extends Component {
     } else {
       isPaymentUser = isPaymentOrgUser();
     }
-
-
+    
     return (
 
       <div className={indexStyles.mainContentWapper}>
