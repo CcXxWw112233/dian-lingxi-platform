@@ -112,10 +112,12 @@ class BarDiagramentComponent extends Component {
           // formatter: '{value} (个)'
         },
         name: "(个)", //坐标名字
-        nameLocation: "start",//坐标位置，支持start,end，middle
+        nameLocation: "end",//坐标位置，支持start,end，middle
         nameTextStyle: {//字体样式
-          fontSize: 12,//字体大小  
-        }
+          fontSize: 12,//字体大小
+          padding: 5  
+        },
+        nameGap: 5
       },
       yAxis: {
         // type: 'category',

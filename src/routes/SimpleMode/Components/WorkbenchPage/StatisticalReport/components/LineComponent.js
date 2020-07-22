@@ -36,10 +36,11 @@ class LineComponent extends Component {
       yAxis: {
         type: 'value',
         name: "(个)", //坐标名字
-        nameLocation: "start",//坐标位置，支持start,end，middle
+        nameLocation: "end",//坐标位置，支持start,end，middle
         nameTextStyle: {//字体样式
           fontSize: 12,//字体大小  
-        }
+        },
+        nameGap: 5
       },
       series: [{
         data: number,

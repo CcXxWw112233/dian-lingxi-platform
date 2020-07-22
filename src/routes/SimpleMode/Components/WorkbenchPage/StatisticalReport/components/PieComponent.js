@@ -32,7 +32,7 @@ class PieComponent extends Component {
       },
       legend: {
         orient: 'vertical',
-        left: 16,
+        right: 16,
         data: status,
         type: 'scroll',
       },
