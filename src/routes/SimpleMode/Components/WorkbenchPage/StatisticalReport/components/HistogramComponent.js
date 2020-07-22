@@ -42,14 +42,14 @@ class HistogramComponent extends Component {
         //     }
         //   },
         // },
-        data: data
+        data: data,
       }
       return new_item
     })    
     // 指定图表的配置项和数据
     let option = {
       tooltip: {
-        trigger: 'axis',
+        trigger: 'item',
         axisPointer: {            // 坐标轴指示器，坐标轴触发有效
           type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
         },
@@ -65,9 +65,6 @@ class HistogramComponent extends Component {
         //     }
         //     return res;
         // },
-        // position: function(point, params, dom, rect, size){
-        //   return [point[1],0];
-        // }
       },
       legend: {
         data: legend,
@@ -154,8 +151,15 @@ class HistogramComponent extends Component {
     })
   }
 
+  resizeTTY = () => {
+    echarts.registerTheme('walden',echartTheme)
+    let myChart = echarts.init(document.getElementById('histogramComponent'),'walden');
+    myChart.resize()
+  }
+
   componentDidMount() {
     this.getReportCardWorktime()
+    window.addEventListener('resize', this.resizeTTY)
   }
 
   componentWillReceiveProps(nextProps) {
@@ -164,11 +168,16 @@ class HistogramComponent extends Component {
     if (board_id != next_board_id) {
       this.getReportCardWorktime()
     }
+    window.addEventListener('resize', this.resizeTTY)
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.resizeTTY)
   }
   
   render() {
     return (
-      <div id="histogramComponent" style={{ width: 400, height: 380 }}></div>
+      <div id="histogramComponent" style={{ width: this.props.width - 100, height: 580 }}></div>
     );
   }
 }

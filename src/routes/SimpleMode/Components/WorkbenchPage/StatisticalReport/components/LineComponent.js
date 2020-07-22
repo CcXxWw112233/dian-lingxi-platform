@@ -79,8 +79,15 @@ class LineComponent extends Component {
     })
   }
 
+  resizeTTY = () => {
+    echarts.registerTheme('walden',echartTheme)
+    let myChart = echarts.init(document.getElementById('lineComponent'),'walden');
+    myChart.resize()
+  }
+
   componentDidMount() {
     this.getReportBoardGrowth()
+    window.addEventListener('resize', this.resizeTTY)
   }
 
   componentWillReceiveProps(nextProps) {
@@ -89,11 +96,16 @@ class LineComponent extends Component {
     if (board_id != next_board_id) {
       this.getReportBoardGrowth()
     }
+    window.addEventListener('resize', this.resizeTTY)
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.resizeTTY)
   }
 
   render() {
     return (
-      <div id="lineComponent" style={{ width: 400, height: 380 }}></div>
+      <div id="lineComponent" style={{ width: this.props.width - 100, height: 580 }}></div>
     );
   }
 }

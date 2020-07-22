@@ -90,9 +90,16 @@ class PieComponent extends Component {
     })
   }
 
+  resizeTTY = () => {
+    echarts.registerTheme('walden',echartTheme)
+    let myChart = echarts.init(document.getElementById('pieContent'),'walden');
+    myChart.resize()
+  }
+
 
   componentDidMount() {
     this.getReportBoardStatus()
+    window.addEventListener('resize', this.resizeTTY)
   }
 
   componentWillReceiveProps(nextProps) {
@@ -101,11 +108,16 @@ class PieComponent extends Component {
     if (board_id != next_board_id) {
       this.getReportBoardStatus()
     }
+    window.addEventListener('resize', this.resizeTTY)
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.resizeTTY)
   }
 
   render() {
     return (
-      <div id="pieContent" style={{ width: 400, height: 380 }}></div>
+      <div id="pieContent" style={{ width: this.props.width - 100, height: 580 }}></div>
     );
   }
 }
