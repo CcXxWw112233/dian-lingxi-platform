@@ -54,7 +54,7 @@ export default {
   state: {
     datas: {
       ...gantt_effect.state,
-      gantt_view_mode: 'year', //week / month /year '周视图，月视图，年视图'，原来月视图定义成 ‘天视图’， 年视图则是定义成 ‘月视图’
+      gantt_view_mode: 'month', //week / month /year '周视图，月视图，年视图'，原来月视图定义成 ‘天视图’， 年视图则是定义成 ‘月视图’
       gold_date_arr: [], //所需要的日期数据
       date_arr_one_level: [], //所有日期数据扁平成一级数组
       start_date: {}, //日期最开始的那一天
@@ -62,7 +62,7 @@ export default {
       create_start_time: '', //创建任务开始时间
       create_end_time: '', //创建任务截至时间
       list_group: [], //分组列表
-      ceilWidth: ceil_width_year, //单元格的宽度
+      ceilWidth: ceil_width, //单元格的宽度
       ceiHeight: ceil_height, //单元格高度 40 + 12的外边距
       date_total: 0, //总天数
       group_rows: [one_group_row_total, one_group_row_total, one_group_row_total], //每一个分组默认行数 [7, 7, 7]

@@ -10,7 +10,7 @@ import { timestampToTimeNormal } from '../../../../../../../utils/util'
 
 const CardDropDetail = ({ list, dispatch, list_id }) => {
 
-    const getCardDetail = ({ id }) => {
+    const getCardDetail = ({ id, board_id }) => {
         dispatch({
             type: 'publicTaskDetailModal/updateDatas',
             payload: {
@@ -24,17 +24,23 @@ const CardDropDetail = ({ list, dispatch, list_id }) => {
                 current_list_group_id: list_id
             }
         })
+        dispatch({
+            type: 'workbenchPublicDatas/updateDatas',
+            payload: {
+                board_id
+            }
+        })
     }
     return (
         <div className={`${styles.drop_card} ${globalStyles.global_vertical_scrollbar}`}>
             {/* <div className={styles.triangle}></div> */}
             {
                 list.map(value => {
-                    const { is_privilege, id, type, name, is_realize, executors = [], start_time, due_time, time_span, width, is_has_start_time, is_has_end_time } = value
+                    const { is_privilege, id, type, name, is_realize, executors = [], start_time, due_time, board_id, width, is_has_start_time, is_has_end_time } = value
                     const new_due_time = due_time && (due_time.toString().length > 10 ? Number(due_time) : Number(due_time) * 1000)
                     const is_due = new Date().getTime() > new_due_time
                     return (
-                        <div key={id} className={styles.specific_example_content_out} onClick={() => getCardDetail({ id })}>
+                        <div key={id} className={styles.specific_example_content_out} onClick={() => getCardDetail({ id, board_id })}>
                             <div className={`${styles.specific_example_content}`}>
                                 <div className={`${styles.card_item_name} ${globalStyles.global_ellipsis}`}>
                                     {name}

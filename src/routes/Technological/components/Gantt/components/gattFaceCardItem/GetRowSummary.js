@@ -169,7 +169,7 @@ export default class GetRowSummary extends Component {
         const { itemValue = {}, ceilWidth } = this.props
         const { left, top, width, time_span, lane_schedule_count, lane_todo_count } = itemValue
         const { percent_class, time_bg_color } = this.setBgSpecific()
-        const percent = Number(lane_todo_count) / Number(lane_schedule_count)
+        const percent = Number(lane_schedule_count - lane_todo_count) / Number(lane_schedule_count)
         const percent_else = 1 - percent
         return (
             <div style={{ display: 'flex' }} data-targetclassname="specific_example" onMouseMove={(e) => e.stopPropagation()}>
