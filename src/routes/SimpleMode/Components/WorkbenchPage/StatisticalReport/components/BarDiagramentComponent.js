@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import indexStyles from '../index.less'
 import { connect } from 'dva'
 
 // 引入 ECharts 主模块
@@ -14,6 +15,10 @@ import { isApiResponseOk } from '../../../../../../utils/handleResponseData';
 import echartTheme from '../echartTheme.json'
 @connect(mapStateToProps)
 class BarDiagramentComponent extends Component {
+
+  state = {
+    noData: false
+  }
 
   getChartOptions = (props) => {
     const { legend = [], users = [], series = [] } = props
@@ -143,11 +148,29 @@ class BarDiagramentComponent extends Component {
     })
     getReportCardNumber().then(res => {
       if (isApiResponseOk(res)) {
-        let option = this.getChartOptions(res.data)
-        // option = newline(option, 5, 'yAxis')
-        // 使用刚指定的配置项和数据显示图表。
+        let flag = false
+        let data = res.data
+        if (data && data instanceof Object) {
+          if (Object.keys(data).length) {
+            flag = true
+          }
+        } else if (data instanceof Array) {
+          if (data.length) {
+            flag = true
+          }
+        }
+        if (flag) {
+          let option = this.getChartOptions(res.data)
+          // option = newline(option, 3, 'xAxis')
+          // 使用刚指定的配置项和数据显示图表。
+          myChart.hideLoading()
+          myChart.setOption(option);
+        } else {
+          this.setState({
+            noData: true
+          })
+        }
         myChart.hideLoading()
-        myChart.setOption(option);
       }
     })
   }
@@ -178,7 +201,15 @@ class BarDiagramentComponent extends Component {
 
   render() {
     return (
-      <div id="barDiagramContent" style={{ width: this.props.width - 100, height: 580 }}></div>
+      <div style={{position: 'relative'}}>
+        <div id="barDiagramContent" style={{ width: this.props.width - 100, height: 580 }}></div>
+        {
+          this.state.noData && (
+            <div className={indexStyles.chart_noData}>暂无数据</div>
+          )
+        }
+      </div>
+      
     );
   }
 }

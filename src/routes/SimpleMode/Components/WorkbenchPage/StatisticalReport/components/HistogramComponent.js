@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import indexStyles from '../index.less'
 import { connect } from 'dva'
 // 引入 ECharts 主模块
 import echarts from 'echarts'
@@ -16,6 +17,10 @@ import echartTheme from '../echartTheme.json'
 
 @connect(mapStateToProps)
 class HistogramComponent extends Component {
+
+  state = {
+    noData: false
+  }
 
   // 获取图表配置项
   getChartOptions = (props) => {
@@ -169,11 +174,29 @@ class HistogramComponent extends Component {
     })
     getReportCardWorktime().then(res => {
       if (isApiResponseOk(res)) {
-        let option = this.getChartOptions(res.data)
-        // option = newline(option, 3, 'xAxis')
-        // 使用刚指定的配置项和数据显示图表。
+        let flag = false
+        let data = res.data
+        if (data && data instanceof Object) {
+          if (Object.keys(data).length) {
+            flag = true
+          }
+        } else if (data instanceof Array) {
+          if (data.length) {
+            flag = true
+          }
+        }
+        if (flag) {
+          let option = this.getChartOptions(res.data)
+          // option = newline(option, 3, 'xAxis')
+          // 使用刚指定的配置项和数据显示图表。
+          myChart.hideLoading()
+          myChart.setOption(option);
+        } else {
+          this.setState({
+            noData: true
+          })
+        }
         myChart.hideLoading()
-        myChart.setOption(option);
       }
     })
   }
@@ -204,7 +227,14 @@ class HistogramComponent extends Component {
   
   render() {
     return (
-      <div id="histogramComponent" style={{ width: this.props.width - 100, height: 580 }}></div>
+      <div style={{position: 'relative'}}>
+        <div id="histogramComponent" style={{ width: this.props.width - 100, height: 580 }}></div>
+        {
+          this.state.noData && (
+            <div className={indexStyles.chart_noData}>暂无数据</div>
+          )
+        }
+      </div>
     );
   }
 }
