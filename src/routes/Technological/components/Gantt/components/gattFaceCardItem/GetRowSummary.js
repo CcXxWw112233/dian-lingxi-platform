@@ -144,7 +144,7 @@ export default class GetRowSummary extends Component {
                 const { list = [], left } = item
                 // const realize_arr = list.filter(item => item.is_realize != '1')
                 return (
-                    <Popover trigger={['click']} placement="bottom" content={<SummaryCards list_id={list_id} dispatch={this.props.dispatch} list={list} />} key={key} >
+                    <Popover getPopupContainer={(triggerNode) => triggerNode} trigger={['click']} placement="bottom" content={<SummaryCards list_id={list_id} dispatch={this.props.dispatch} list={list} />} key={key} >
                         <div
                             key={left}
                             style={{

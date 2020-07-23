@@ -144,7 +144,11 @@ export default class TreeNode extends Component {
     //设置滚动条位置
     setScrollPosition = ({ delay = 300, position = 200 }) => {
         const target = document.getElementById('gantt_card_out_middle')
+        const gantt_date_area = document.getElementById('gantt_date_area')
         setTimeout(function () {
+            if (gantt_date_area) {
+                gantt_date_area.style.left = `-${position}px`
+            }
             if (target.scrollTo) {
                 target.scrollTo(position, target.scrollTop)
             } else {
