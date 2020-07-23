@@ -961,7 +961,7 @@ export default class GetRowStrip extends PureComponent {
                         ) : ''
                     } */}
                     { //用于拖拽生成任务（已废弃）
-                        dasheRectShow
+                        dasheRectShow && false
                         && !this.task_is_dragging
                         && (
                             <div className={styles.dasheRect} style={{
