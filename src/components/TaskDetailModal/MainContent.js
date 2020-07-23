@@ -260,7 +260,8 @@ export default class MainContent extends Component {
     }
     this.setState({
       is_edit_title: true,
-      local_title_value: card_name
+      local_title_value: card_name,
+      inputValue: card_name
     })
   }
   // 设置标题文本内容修改 E
@@ -1212,11 +1213,12 @@ export default class MainContent extends Component {
                       onChange={this.titleTextAreaChange}
                       onBlur={this.titleTextAreaChangeBlur}
                       // onClick={this.setTitleEdit}
+                      onPressEnter={this.titleTextAreaChangeBlur}
                       setIsEdit={this.titleTextAreaChangeBlur}
                       autoFocus={true}
-                      goldName={inputValue || card_name}
+                      goldName={inputValue}
                       maxLength={101}
-                      nodeName={'textarea'}
+                      nodeName={'input'}
                       style={{ display: 'block', fontSize: 20, color: '#262626', resize: 'none', height: '44px', background: 'rgba(255,255,255,1)', boxShadow: '0px 0px 8px 0px rgba(0,0,0,0.15)', borderRadius: '4px', border: 'none' }}
                     />
                   )
