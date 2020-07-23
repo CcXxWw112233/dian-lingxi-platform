@@ -115,13 +115,20 @@ class LineComponent extends Component {
     window.addEventListener('resize', this.resizeTTY)
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    const { chatImVisiable: prev_chatImVisiable } = prevProps
+    const { chatImVisiable } = this.props
+    if (chatImVisiable != prev_chatImVisiable) {
+      this.resizeTTY()
+    }    
+  }
+
   componentWillReceiveProps(nextProps) {
     const { board_id } = this.props.simplemodeCurrentProject
     const { board_id: next_board_id } = nextProps.simplemodeCurrentProject
     if (board_id != next_board_id) {
       this.getReportBoardGrowth()
     }
-    window.addEventListener('resize', this.resizeTTY)
   }
 
   componentWillUnmount() {
@@ -147,10 +154,12 @@ export default LineComponent;
 
 function mapStateToProps ({
   simplemode: {
-      simplemodeCurrentProject = {}
+      simplemodeCurrentProject = {},
+      chatImVisiable
   }
 }) {
   return {
-    simplemodeCurrentProject
+    simplemodeCurrentProject,
+    chatImVisiable
   }
 }
