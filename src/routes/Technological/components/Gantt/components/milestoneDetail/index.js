@@ -25,7 +25,7 @@ export default class GanttDetail extends React.Component {
   getMilestoneDetail = (props) => {
     const { dispatch, milestone_id } = props
     const { milestone_id_local } = this.state
-    if(!milestone_id || milestone_id_local == milestone_id) {
+    if (!milestone_id || milestone_id_local == milestone_id) {
       return
     }
     dispatch({
@@ -33,6 +33,14 @@ export default class GanttDetail extends React.Component {
       payload: {
         id: milestone_id
       }
+    }).then((res = {}) => {
+      const { board_id } = res
+      dispatch({
+        type: 'projectDetail/projectDetailInfo',
+        payload: {
+          id: board_id
+        }
+      })
     })
     this.setState({
       milestone_id_local: milestone_id
@@ -58,11 +66,11 @@ export default class GanttDetail extends React.Component {
   commentSubmitPost = (data) => {
     // console.log(data, 'ssssss')
     let { text } = data
-    const { dispatch, milestone_id, isShowAllDynamic} = this.props
-    if(text) {
+    const { dispatch, milestone_id, isShowAllDynamic } = this.props
+    if (text) {
       text = text.replace(/\r|\n/gim, '')
     }
-    if(!text) {
+    if (!text) {
       return
     }
     dispatch({
@@ -77,7 +85,7 @@ export default class GanttDetail extends React.Component {
   }
   deleteComment = (data) => {
     const { id } = data
-    const { dispatch, milestone_id, isShowAllDynamic} = this.props
+    const { dispatch, milestone_id, isShowAllDynamic } = this.props
     dispatch({
       type: 'publicModalComment/deletePublicModalDetailComment',
       payload: {
@@ -97,14 +105,14 @@ export default class GanttDetail extends React.Component {
       origin_type: '4', //	string评论来源类型 1=任务 2=流程 3=文件 4=里程碑
       // flag: '1', //0或不传：评论和动态，1只显示评论，2只动态
     }
-    return(
+    return (
       <div>
         <PublicDetailModal
           modalVisible={miletone_detail_modal_visible}
           onCancel={this.onCancel}
           commentUseParams={commentUseParams}
           mainContent={<MainContent users={users} handleMiletonesChange={handleMiletonesChange} deleteRelationContent={deleteRelationContent} />}
-          headerContent={<HeaderContent onCancel={this.onCancel} deleteMiletone={deleteMiletone} users={users}/>}
+          headerContent={<HeaderContent onCancel={this.onCancel} deleteMiletone={deleteMiletone} users={users} />}
         />
       </div>
     )
@@ -112,11 +120,11 @@ export default class GanttDetail extends React.Component {
 }
 GanttDetail.defaultProps = {
   set_miletone_detail_modal_visible: false, // 里程碑详情是否显示
-  set_miletone_detail_modal_visible: function() { }, //设置里程碑详情弹窗是否显示
+  set_miletone_detail_modal_visible: function () { }, //设置里程碑详情弹窗是否显示
   milestone_id: '', //里程碑id
   users: [], //用户列表
-  handleMiletonesChange: function() {},
-  deleteRelationContent: function() {}, //删除关联内容
+  handleMiletonesChange: function () { },
+  deleteRelationContent: function () { }, //删除关联内容
 }
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({ milestoneDetail: { milestone_id }, publicModalComment: { isShowAllDynamic } }) {
