@@ -1115,11 +1115,15 @@ export default class CardItem extends Component {
                                 borderColor: `${this.setTriangleTreeColor(label_data, 'start')} transparent transparent transparent`
                             }}></div>
                             <div className={indexStyles.left_triangle_mask}></div>
+                            <div className={indexStyles.left_triangle_mask2} style={{ backgroundColor: this.setTriangleTreeColor(label_data, 'start') }}></div>
+
                             <div className={indexStyles.right_triangle}
                                 style={{
                                     borderColor: `${this.setTriangleTreeColor(label_data, 'end')} transparent transparent transparent`
                                 }}></div>
                             <div className={indexStyles.right_triangle_mask}></div>
+                            <div className={indexStyles.right_triangle_mask2} style={{ backgroundColor: this.setTriangleTreeColor(label_data, 'end') }}></div>
+
                         </>
                     )
                 }
