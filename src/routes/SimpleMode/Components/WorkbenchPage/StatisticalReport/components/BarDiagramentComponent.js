@@ -107,11 +107,21 @@ class BarDiagramentComponent extends Component {
         // }
       },
       grid: {
-        left: '3%',
+        left: '5%',
         right: '4%',
         bottom: '3%',
         containLabel: true
       },
+      dataZoom: [{
+        type: 'slider',
+        show: true,
+        textStyle: null,
+        yAxisIndex: [0],
+        left: -2,
+        bottom: 30,
+        start: 0,
+        end: 50 //初始化滚动条
+      }],
       xAxis: {
         type: 'value',
         axisLabel: {
@@ -126,7 +136,7 @@ class BarDiagramentComponent extends Component {
         nameGap: 5
       },
       yAxis: {
-        // type: 'category',
+        type: 'category',
         data: users,
         // axisLabel: true
 
@@ -210,7 +220,7 @@ class BarDiagramentComponent extends Component {
   render() {
     return (
       <div style={{position: 'relative'}}>
-        <div id="barDiagramContent" style={{ width: this.props.width - 100, height: 580 }}></div>
+        <div id="barDiagramContent" style={{ width: '100%', height: 580, padding: '0px 2px' }}></div>
         {
           this.state.noData && (
             <div className={indexStyles.chart_noData}>暂无数据</div>

@@ -10,7 +10,7 @@ import LineComponent from './components/LineComponent'
 export default class index extends Component {
   render() {
     const { workbenchBoxContent_height, workbenchBoxContentWapperModalStyle = {} } = this.props
-    let chart_item_width = workbenchBoxContentWapperModalStyle.width == '100%' ? document.getElementById('statisticalReportContainer') ? document.getElementById('statisticalReportContainer').clientWidth / 2 - 100 : document.body.clientWidth / 2 - 100 : parseInt(workbenchBoxContentWapperModalStyle.width) / 2 - 100
+    let chart_item_width = workbenchBoxContentWapperModalStyle.width == '100%' ? document.getElementById('statisticalReportContainer') ? document.getElementById('statisticalReportContainer').clientWidth / 2 - 60 : document.body.clientWidth / 2 - 60 : parseInt(workbenchBoxContentWapperModalStyle.width) / 2 - 60
     return (
       <div id={'statisticalReportContainer'} className={`${globalStyles.global_vertical_scrollbar} ${indexStyles.statisticalReportContainer}`} style={{height: workbenchBoxContent_height, width: workbenchBoxContentWapperModalStyle.width}}>
         <div className={indexStyles.chart_title}>我的报表</div>

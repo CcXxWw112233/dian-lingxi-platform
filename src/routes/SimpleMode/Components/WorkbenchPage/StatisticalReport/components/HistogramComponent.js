@@ -33,7 +33,7 @@ class HistogramComponent extends Component {
         return n
       })
       let new_item = {
-        ...item, 
+        ...item,
         type: 'bar',
         stack: '项目',
         // label: {
@@ -51,7 +51,8 @@ class HistogramComponent extends Component {
         barMaxWidth: newSeries.length <= 5 ? 30 : null
       }
       return new_item
-    })    
+    })
+    users.push('')
     // 指定图表的配置项和数据
     let option = {
       tooltip: {
@@ -98,7 +99,7 @@ class HistogramComponent extends Component {
       grid: {
         left: '3%',
         right: '4%',
-        bottom: '3%',
+        bottom: '5%',
         containLabel: true
       },
       xAxis: [
@@ -110,34 +111,51 @@ class HistogramComponent extends Component {
           //   interval: 0
           // },
           axisLabel: {
-            interval: 0,
-            roate: 20,
-            formatter: function(value) {
-                //return value.split("").join("\n");
-                //debugger
-                let ret = "";//拼接加\n返回的类目项
-                let maxLength = 1;//每项显示文字个数
-                let valLength = value.length;//X轴类目项的文字个数
-                let rowN = Math.ceil(valLength / maxLength); //类目项需要换行的行数
-                if (rowN > 1)//如果类目项的文字大于3,
-                {
-                    for (let i = 0; i < rowN; i++) {
-                        let temp = "";//每次截取的字符串
-                        let start = i * maxLength;//开始截取的位置
-                        let end = start + maxLength;//结束截取的位置
-                        //这里也可以加一个是否是最后一行的判断，但是不加也没有影响，那就不加吧
-                        temp = value.substring(start, end) + '\n';
-                        ret += temp; //凭借最终的字符串
-                    }
-                    return ret;
-                }
-                else {
-                    return value;
-                }
-            }
+              interval: 0,
+            rotate: 45,
+            //   // formatter: function (value, index) {
+            //   //   if (index % 2 != 0) {
+            //   //     return '\n\n' + value;
+            //   //   }
+            //   //   else {
+            //   //     return value;
+            //   //   }
+            //   // }
+            // formatter: function (value) {
+            //   //return value.split("").join("\n");
+            //   //debugger
+            //   let ret = "";//拼接加\n返回的类目项
+            //   let maxLength = 1;//每项显示文字个数
+            //   let valLength = value.length;//X轴类目项的文字个数
+            //   let rowN = Math.ceil(valLength / maxLength); //类目项需要换行的行数
+            //   if (rowN > 1)//如果类目项的文字大于3,
+            //   {
+            //     for (let i = 0; i < rowN; i++) {
+            //       let temp = "";//每次截取的字符串
+            //       let start = i * maxLength;//开始截取的位置
+            //       let end = start + maxLength;//结束截取的位置
+            //       //这里也可以加一个是否是最后一行的判断，但是不加也没有影响，那就不加吧
+            //       temp = value.substring(start, end) + '\n';
+            //       ret += temp; //凭借最终的字符串
+            //     }
+            //     return ret;
+            //   }
+            //   else {
+            //     return value;
+            //   }
+            // }
           }
         }
       ],
+      dataZoom: [{
+        type: 'slider',
+        show: true,
+        xAxisIndex: [0],
+        left: '9%',
+        bottom: -5,
+        start: 0,
+        end: 50 //初始化滚动条
+      }],
       yAxis: [
         {
           type: 'value',
@@ -147,9 +165,9 @@ class HistogramComponent extends Component {
           name: "(时)", //坐标名字
 
           nameLocation: "end",//坐标位置，支持start,end，middle
-  
+
           nameTextStyle: {//字体样式
-  
+
             fontSize: 12,//字体大小
           },
           nameGap: 5
@@ -163,8 +181,8 @@ class HistogramComponent extends Component {
 
   // 获取工时统计结果
   getReportCardWorktime = () => {
-    echarts.registerTheme('walden',echartTheme)
-    let myChart = echarts.init(document.getElementById('histogramComponent'),'walden');
+    echarts.registerTheme('walden', echartTheme)
+    let myChart = echarts.init(document.getElementById('histogramComponent'), 'walden');
     myChart.clear()
     myChart.showLoading({
       text: 'loading',
@@ -203,8 +221,8 @@ class HistogramComponent extends Component {
   }
 
   resizeTTY = () => {
-    echarts.registerTheme('walden',echartTheme)
-    let myChart = echarts.init(document.getElementById('histogramComponent'),'walden');
+    echarts.registerTheme('walden', echartTheme)
+    let myChart = echarts.init(document.getElementById('histogramComponent'), 'walden');
     myChart.resize()
   }
 
@@ -218,7 +236,7 @@ class HistogramComponent extends Component {
     const { chatImVisiable } = this.props
     if (chatImVisiable != prev_chatImVisiable) {
       this.resizeTTY()
-    }    
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -232,11 +250,11 @@ class HistogramComponent extends Component {
   componentWillUnmount() {
     window.removeEventListener('resize', this.resizeTTY)
   }
-  
+
   render() {
     return (
-      <div style={{position: 'relative'}}>
-        <div id="histogramComponent" style={{ width: this.props.width - 100, height: 580 }}></div>
+      <div style={{ position: 'relative' }}>
+        <div id="histogramComponent" style={{ width: '100%', height: 580, padding: '0 2px' }}></div>
         {
           this.state.noData && (
             <div className={indexStyles.chart_noData}>暂无数据</div>
@@ -249,10 +267,10 @@ class HistogramComponent extends Component {
 
 export default HistogramComponent;
 
-function mapStateToProps ({
+function mapStateToProps({
   simplemode: {
-      simplemodeCurrentProject = {},
-      chatImVisiable
+    simplemodeCurrentProject = {},
+    chatImVisiable
   }
 }) {
   return {

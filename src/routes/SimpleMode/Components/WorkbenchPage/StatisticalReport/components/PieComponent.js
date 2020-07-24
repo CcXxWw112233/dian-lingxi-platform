@@ -149,7 +149,7 @@ class PieComponent extends Component {
   render() {
     return (
       <div style={{position: 'relative'}}>
-        <div id="pieContent" style={{ width: this.props.width - 100, height: 580 }}></div>
+        <div id="pieContent" style={{ width: '100%', height: 580, padding: '0px 2px' }}></div>
         {
           this.state.noData && (
             <div className={indexStyles.chart_noData}>暂无数据</div>
