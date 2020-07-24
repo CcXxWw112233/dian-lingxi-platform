@@ -633,29 +633,30 @@ export default {
           } else if (due_time > end_date.timestamp && start_time < start_date.timestamp) { //超过左右区间
             time_span = (Math.floor((end_date.timestamp - start_date.timestamp) / (24 * 3600 * 1000))) + 1
           }
-          let lane_schedule_count = 0
-          let lane_overdue_count = 0
-          let lane_todo_count = 0
-          for (let val of list_group_item.lane_data.cards) {
-            lane_schedule_count += 1
-            const _new_due_time = transformTimestamp(val.due_time)
-            if (val.is_realize != '1') { //未完成
-              lane_todo_count += 1
-              if (new Date().getTime() > _new_due_time) {//超时未完成
-                lane_overdue_count += 1
-              }
+          // let lane_schedule_count = 0
+          // let lane_overdue_count = 0
+          // let lane_todo_count = 0
+          // for (let val of list_group_item.lane_data.cards) {
+          //   lane_schedule_count += 1
+          //   const _new_due_time = transformTimestamp(val.due_time)
+          //   if (val.is_realize != '1') { //未完成
+          //     lane_todo_count += 1
+          //     if (new Date().getTime() > _new_due_time) {//超时未完成
+          //       lane_overdue_count += 1
+          //     }
 
-            }
+          //   }
 
-          }
-          list_group_item.lane_overdue_count = lane_overdue_count
-          list_group_item.lane_todo_count = lane_todo_count
+          // }
+          // list_group_item.lane_overdue_count = lane_overdue_count
+          // list_group_item.lane_todo_count = lane_todo_count
+          // list_group_item.lane_schedule_count = lane_schedule_count
 
           list_group_item.board_fold_data = {
             ...val,
-            lane_overdue_count,
-            lane_todo_count,
-            lane_schedule_count,
+            // lane_overdue_count,
+            // lane_todo_count,
+            // lane_schedule_count,
             end_time: due_time,
             start_time,
             time_span,

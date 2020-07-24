@@ -236,7 +236,7 @@ class Gantt extends Component {
   }
   // 修改没有排期的任务
   handleNoHasScheduleCard = ({ card_id, drawContent = {}, operate_properties_code }) => {
-    const { dispatch } = this.props
+    const { group_view_type, dispatch, gantt_board_id, show_board_fold, gantt_view_mode } = this.props
     if (operate_properties_code == 'MILESTONE') { //修改的是里程碑
       dispatch({
         type: 'gantt/getGttMilestoneList',
@@ -269,6 +269,14 @@ class Gantt extends Component {
       )
       list_group_new[group_index].lane_data.card_no_times.splice(group_index_card_no_times_index, 1) //[group_index_card_no_times_index] = { ...list_group_new[group_index].lane_data.card_no_times[group_index_cards_index], ...new_drawContent }
       this.setTaskDetailModalVisibile('schedule')
+      if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold, gantt_view_mode })) { //统计的时候不知道怎么更新只好调接口
+        dispatch({
+          type: 'gantt/getGanttData',
+          payload: {
+          }
+        })
+        return
+      }
     } else {
       list_group_new[group_index].lane_data.card_no_times[group_index_card_no_times_index] = { ...list_group_new[group_index].lane_data.card_no_times[group_index_card_no_times_index], ...new_drawContent }
       list_group_new[group_index].lane_data.card_no_times[group_index_card_no_times_index]['name'] = list_group_new[group_index].lane_data.card_no_times[group_index_card_no_times_index]['card_name']
@@ -283,7 +291,7 @@ class Gantt extends Component {
 
   // 修改有排期的任务
   handleHasScheduleCard = ({ card_id, drawContent, operate_properties_code, ...other_params }) => {
-    const { group_view_type, dispatch } = this.props
+    const { group_view_type, dispatch, gantt_board_id, show_board_fold, gantt_view_mode } = this.props
     const new_drawContent = this.cardPropertiesPromote({ drawContent, operate_properties_code })
     if (ganttIsOutlineView({ group_view_type })) {
       this.changeOutLineTreeNodeProto(card_id, { ...new_drawContent, name: drawContent.card_name })
@@ -302,6 +310,16 @@ class Gantt extends Component {
     if (operate_properties_code == 'MILESTONE') { //修改的是里程碑
       dispatch({
         type: 'gantt/getGttMilestoneList',
+        payload: {
+        }
+      })
+      return
+    }
+    if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold, gantt_view_mode }) &&
+      (['is_realize', 'start_time', 'due_time'].includes(other_params.name))
+    ) { //统计的时候不知道怎么更新只好调接口
+      dispatch({
+        type: 'gantt/getGanttData',
         payload: {
         }
       })
@@ -589,7 +607,8 @@ function mapStateToProps({
       outline_tree,
       outline_tree_round,
       panel_outline_create_card_params = {},
-      gantt_board_list_id
+      gantt_board_list_id,
+      gantt_view_mode
     }
   },
   technological: {
@@ -615,7 +634,8 @@ function mapStateToProps({
     outline_tree,
     panel_outline_create_card_params,
     outline_tree_round,
-    gantt_board_list_id
+    gantt_board_list_id,
+    gantt_view_mode
   }
 }
 

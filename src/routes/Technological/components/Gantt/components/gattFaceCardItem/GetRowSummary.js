@@ -46,7 +46,7 @@ export default class GetRowSummary extends Component {
         // } else {
 
         // }
-        
+
         return {
             time_bg_color,
             percent_class,
@@ -184,6 +184,9 @@ export default class GetRowSummary extends Component {
         const { percent_class, time_bg_color } = this.setBgSpecific()
         const percent = Number(lane_schedule_count - lane_todo_count) / Number(lane_schedule_count)
         const percent_else = 1 - percent
+        if (!lane_schedule_count) {
+            return <></>
+        }
         return (
             <div style={{ display: 'flex' }} data-targetclassname="specific_example" onMouseMove={(e) => e.stopPropagation()}>
                 <div
