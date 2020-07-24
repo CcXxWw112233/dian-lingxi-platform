@@ -26,12 +26,10 @@ export default class GetRowSummary extends Component {
             if (lane_overdue_count == 0) { //正在进行的项目（任务按期完成）
                 time_bg_color = '#91D5FF'
                 percent_class = styles.board_fold_ding
-            } else if (lane_status == '3') { //正在进行的项目(存在逾期任务)
+            } else { //正在进行的项目(存在逾期任务)
                 time_bg_color = '#FFCCC7'
                 percent_class = styles.board_fold_due
                 is_due = true
-            } else {
-
             }
         }
         return {
