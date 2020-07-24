@@ -18,23 +18,36 @@ export default class GetRowSummary extends Component {
         let time_bg_color = ''
         let percent_class = ''
         let is_due = false
-        const { itemValue: { lane_status, lane_overdue_count, lane_schedule_count }, list_data = [] } = this.props
-        const percent = `${((lane_schedule_count - lane_overdue_count) / lane_schedule_count) * 100}%`
-        if (lane_status == '1') { //完成
+        const { itemValue: { lane_status, lane_overdue_count, lane_todo_count }, list_data = [] } = this.props
+        if (lane_todo_count == 0 || !lane_todo_count) { //全部完成
             time_bg_color = '#E9ECF2'
             percent_class = styles.board_fold_complete
-        } else if (lane_status == '2') { //正在进行的项目（任务按期完成）
-            time_bg_color = '#91D5FF'
-            percent_class = styles.board_fold_ding
-        } else if (lane_status == '3') { //正在进行的项目(存在逾期任务)
-            time_bg_color = '#FFCCC7'
-            percent_class = styles.board_fold_due
-            is_due = true
         } else {
-
+            if (lane_overdue_count == 0) { //正在进行的项目（任务按期完成）
+                time_bg_color = '#91D5FF'
+                percent_class = styles.board_fold_ding
+            } else { //正在进行的项目(存在逾期任务)
+                time_bg_color = '#FFCCC7'
+                percent_class = styles.board_fold_due
+                is_due = true
+            }
         }
+        // const percent = `${((lane_schedule_count - lane_overdue_count) / lane_schedule_count) * 100}%`
+        // if (lane_status == '1') { //完成
+        //     time_bg_color = '#E9ECF2'
+        //     percent_class = styles.board_fold_complete
+        // } else if (lane_status == '2') { //正在进行的项目（任务按期完成）
+        //     time_bg_color = '#91D5FF'
+        //     percent_class = styles.board_fold_ding
+        // } else if (lane_status == '3') { //正在进行的项目(存在逾期任务)
+        //     time_bg_color = '#FFCCC7'
+        //     percent_class = styles.board_fold_due
+        //     is_due = true
+        // } else {
+
+        // }
+
         return {
-            percent,
             time_bg_color,
             percent_class,
             is_due
@@ -144,7 +157,7 @@ export default class GetRowSummary extends Component {
                 const { list = [], left } = item
                 // const realize_arr = list.filter(item => item.is_realize != '1')
                 return (
-                    <Popover trigger={['click']} placement="bottom" content={<SummaryCards list_id={list_id} dispatch={this.props.dispatch} list={list} />} key={key} >
+                    <Popover getPopupContainer={(triggerNode) => triggerNode} trigger={['click']} placement="bottom" content={<SummaryCards list_id={list_id} dispatch={this.props.dispatch} list={list} />} key={key} >
                         <div
                             key={left}
                             style={{
@@ -171,6 +184,9 @@ export default class GetRowSummary extends Component {
         const { percent_class, time_bg_color } = this.setBgSpecific()
         const percent = Number(lane_schedule_count - lane_todo_count) / Number(lane_schedule_count)
         const percent_else = 1 - percent
+        if (!lane_schedule_count) {
+            return <></>
+        }
         return (
             <div style={{ display: 'flex' }} data-targetclassname="specific_example" onMouseMove={(e) => e.stopPropagation()}>
                 <div

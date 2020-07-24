@@ -674,9 +674,9 @@ export default class BoardTemplate extends Component {
 
 
     openImportBoardModal = (tplId) => {
-        const { outline_tree = [] } = this.props
+        const { outline_tree = [], group_view_type } = this.props
         const { template_list } = this.state;
-        if (!outline_tree.length) {
+        if (group_view_type == '4' && !outline_tree.length) {
             this.onImportBoardTemplate()
             return
         }

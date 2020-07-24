@@ -620,13 +620,11 @@ export default {
           const start_time_arr = list_group_item.list_data.map(item => item.start_time) //取视窗任务的最开始时间
           const due_time_arr = list_group_item.list_data.map(item => item.end_time) //取视窗任务的最后截止时间
           const { lane_start_time, lane_end_time } = list_group_item
+          const time_arr = [].concat(start_time_arr, due_time_arr, [getDigit(lane_end_time), getDigit(lane_start_time)]).filter(item => item)
+          const due_time = Math.max.apply(null, time_arr) //与后台返回值计算取最大作为结束
+          const start_time = Math.min.apply(null, time_arr) //与后台返回值计算取最小作为开始
+          // console.log('time_arrtime_arr', list_group_item.list_name, { time_arr, due_time, start_time })
 
-          const due_time = Math.max.call(null, getDigit(lane_end_time), Math.max.apply(null, due_time_arr)) //与后台返回值计算取最大作为结束
-          const start_time = Math.min.call(null, getDigit(lane_start_time), Math.min.apply(null, start_time_arr)) || Math.min.apply(null, start_time_arr) || due_time //与后台返回值计算取最小作为开始
-          // console.log('sssss',
-          //   getDigit(lane_start_time),
-          //   Math.min.apply(null, start_time_arr),
-          //   Math.min.call(null, getDigit(lane_start_time), Math.min.apply(null, start_time_arr)))
           let time_span = (!due_time || !start_time) ? 1 : (Math.floor((due_time - start_time) / (24 * 3600 * 1000))) + 1 //正常区间内
           if (due_time > end_date.timestamp && start_time > start_date.timestamp) { //右区间
             time_span = (Math.floor((end_date.timestamp - start_time) / (24 * 3600 * 1000))) + 1
@@ -635,26 +633,30 @@ export default {
           } else if (due_time > end_date.timestamp && start_time < start_date.timestamp) { //超过左右区间
             time_span = (Math.floor((end_date.timestamp - start_date.timestamp) / (24 * 3600 * 1000))) + 1
           }
-          let lane_overdue_count = 0
-          let lane_todo_count = 0
-          for (let val of list_group_item.lane_data.cards) {
-            const _new_due_time = transformTimestamp(val.due_time)
-            if (val.is_realize != '1') { //未完成
-              lane_todo_count += 1
-              if (new Date().getTime() > _new_due_time) {//超时未完成
-                lane_overdue_count += 1
-              }
+          // let lane_schedule_count = 0
+          // let lane_overdue_count = 0
+          // let lane_todo_count = 0
+          // for (let val of list_group_item.lane_data.cards) {
+          //   lane_schedule_count += 1
+          //   const _new_due_time = transformTimestamp(val.due_time)
+          //   if (val.is_realize != '1') { //未完成
+          //     lane_todo_count += 1
+          //     if (new Date().getTime() > _new_due_time) {//超时未完成
+          //       lane_overdue_count += 1
+          //     }
 
-            }
+          //   }
 
-          }
-          list_group_item.lane_overdue_count = lane_overdue_count
-          list_group_item.lane_todo_count = lane_todo_count
+          // }
+          // list_group_item.lane_overdue_count = lane_overdue_count
+          // list_group_item.lane_todo_count = lane_todo_count
+          // list_group_item.lane_schedule_count = lane_schedule_count
 
           list_group_item.board_fold_data = {
             ...val,
-            lane_overdue_count,
-            lane_todo_count,
+            // lane_overdue_count,
+            // lane_todo_count,
+            // lane_schedule_count,
             end_time: due_time,
             start_time,
             time_span,
