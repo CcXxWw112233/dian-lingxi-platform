@@ -32,6 +32,21 @@ export default class GetRowSummary extends Component {
                 is_due = true
             }
         }
+        // const percent = `${((lane_schedule_count - lane_overdue_count) / lane_schedule_count) * 100}%`
+        // if (lane_status == '1') { //完成
+        //     time_bg_color = '#E9ECF2'
+        //     percent_class = styles.board_fold_complete
+        // } else if (lane_status == '2') { //正在进行的项目（任务按期完成）
+        //     time_bg_color = '#91D5FF'
+        //     percent_class = styles.board_fold_ding
+        // } else if (lane_status == '3') { //正在进行的项目(存在逾期任务)
+        //     time_bg_color = '#FFCCC7'
+        //     percent_class = styles.board_fold_due
+        //     is_due = true
+        // } else {
+
+        // }
+        
         return {
             time_bg_color,
             percent_class,
