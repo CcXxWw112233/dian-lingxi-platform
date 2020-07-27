@@ -435,7 +435,7 @@ export default class DragDropContentComponent extends Component {
     const users = data.filter((item) => item.user_id == userId);
 
     if (users.length > 0) {
-      return <span style={{fontWeight: 900}}>{users[0].name}</span>
+      return <span style={{ fontWeight: 900 }}>{users[0].name}</span>
     }
     return;
   }
@@ -453,6 +453,9 @@ export default class DragDropContentComponent extends Component {
           drawContent: { ...drawContent }
         }
       })
+      const { folder_path = {} } = data[0]
+      const { id: folder_id } = folder_path
+      if (typeof this.props.handleRelyUploading == 'function' && folder_id) this.props.handleRelyUploading({ folder_id })
     }
   }
   // 上传文件 事件 E
@@ -1001,10 +1004,10 @@ export default class DragDropContentComponent extends Component {
                     return (
                       <div className={`${mainContentStyles.file_item_wrapper}`} key={fileInfo.id}>
                         <div className={`${mainContentStyles.file_item} ${mainContentStyles.pub_hover}`} onClick={() => this.openFileDetailModal(fileInfo)} >
-                          <div className={mainContentStyles.file_title}><span className={`${globalStyles.authTheme}`} style={{ fontSize: '24px', color: '#40A9FF' }}>&#xe659;</span><span style={{maxWidth: '300px',overflow: 'hidden', textOverflow: 'ellipsis',whiteSpace: 'nowrap'}} title={fileInfo.name}>{fileInfo.name}</span></div>
+                          <div className={mainContentStyles.file_title}><span className={`${globalStyles.authTheme}`} style={{ fontSize: '24px', color: '#40A9FF' }}>&#xe659;</span><span style={{ maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={fileInfo.name}>{fileInfo.name}</span></div>
                           <div className={mainContentStyles.file_info}>{this.showMemberName(fileInfo.create_by)} 上传于 {fileInfo.create_time && timestampFormat(fileInfo.create_time, "MM-dd hh:mm")}</div>
                           <div className={mainContentStyles.breadNav} style={{ position: 'relative' }}>
-                            <Breadcrumb style={{minHeight: '38px', lineHeight: '38px',marginLeft: '-10px'}} className={mainContentStyles.Breadcrumb} separator=">">
+                            <Breadcrumb style={{ minHeight: '38px', lineHeight: '38px', marginLeft: '-10px' }} className={mainContentStyles.Breadcrumb} separator=">">
                               {breadcrumbList.map((value, key) => {
                                 return (
                                   <Breadcrumb.Item key={key}>

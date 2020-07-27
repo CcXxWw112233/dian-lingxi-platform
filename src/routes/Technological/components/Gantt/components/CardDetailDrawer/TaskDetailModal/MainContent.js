@@ -798,7 +798,7 @@ export default class MainContent extends Component {
   // 会议的状态值, 比较当前时间和开始时间结束时间的对比 E
 
   // 属性选择的下拉回调 S
-  handleMenuReallySelect = (e,value) => {
+  handleMenuReallySelect = (e, value) => {
     e && e.stopPropagation()
     const { dispatch, card_id } = this.props
     const { propertiesList = [] } = this.state
@@ -891,7 +891,7 @@ export default class MainContent extends Component {
         <div className={mainContentStyles.attrWrapper}>
           {
             new_propertiesList && new_propertiesList.map((item, index) => (
-              <Button onClick={(e) => {this.handleMenuReallySelect(e,item)}} className={mainContentStyles.attr_btn} key={`${item.id}`}>
+              <Button onClick={(e) => { this.handleMenuReallySelect(e, item) }} className={mainContentStyles.attr_btn} key={`${item.id}`}>
                 <span className={`${globalStyles.authTheme} ${mainContentStyles.attr_icon}`}>{this.getCurrentFieldIcon(item)}</span>
                 <span className={mainContentStyles.attr_name}>{item.name}</span>
               </Button>
@@ -971,7 +971,7 @@ export default class MainContent extends Component {
                   )
               )
             ) : (
-                <span style={{ flex: '1',display: 'block' }}>
+                <span style={{ flex: '1', display: 'block' }}>
                   {
                     !data.length ? (
                       <div style={{ flex: '1', position: 'relative' }}>
@@ -1213,7 +1213,7 @@ export default class MainContent extends Component {
               </div>
               {
                 !is_edit_title ? (
-                  <div onClick={(e) => { this.setTitleEdit(e,card_name) }} className={`${mainContentStyles.card_name} ${mainContentStyles.pub_hover}`}>
+                  <div onClick={(e) => { this.setTitleEdit(e, card_name) }} className={`${mainContentStyles.card_name} ${mainContentStyles.pub_hover}`}>
                     <span style={{ wordBreak: 'break-all' }}>{card_name}</span>
                   </div>
                 ) : (
@@ -1366,7 +1366,7 @@ export default class MainContent extends Component {
                       (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
                         ''
                       ) : (
-                          <span style={{ position: 'relative',marginLeft: '74px' }}>
+                          <span style={{ position: 'relative', marginLeft: '74px' }}>
                             <InformRemind commonExecutors={executors.data} style={{ display: 'inline-block', minWidth: '72px', height: '38px', borderRadius: '4px', textAlign: 'center' }} rela_id={card_id} rela_type={type == '0' ? '1' : '2'} />
                           </span>
                         )
@@ -1380,7 +1380,7 @@ export default class MainContent extends Component {
           {/* 各种字段的不同状态 E */}
           {/* 不同字段的渲染 S */}
           <div style={{ position: 'relative' }}>
-            <DragDropContentComponent getMilestone={this.getMilestone} selectedKeys={selectedKeys} updateParentPropertiesList={this.updateParentPropertiesList} handleTaskDetailChange={handleTaskDetailChange} handleChildTaskChange={handleChildTaskChange} boardFolderTreeData={boardFolderTreeData} milestoneList={milestoneList} whetherUpdateParentTaskTime={this.whetherUpdateParentTaskTime} updateRelyOnRationList={this.updateRelyOnRationList} />
+            <DragDropContentComponent handleRelyUploading={this.props.handleRelyUploading} getMilestone={this.getMilestone} selectedKeys={selectedKeys} updateParentPropertiesList={this.updateParentPropertiesList} handleTaskDetailChange={handleTaskDetailChange} handleChildTaskChange={handleChildTaskChange} boardFolderTreeData={boardFolderTreeData} milestoneList={milestoneList} whetherUpdateParentTaskTime={this.whetherUpdateParentTaskTime} updateRelyOnRationList={this.updateRelyOnRationList} />
           </div>
           {/* 不同字段的渲染 E */}
 

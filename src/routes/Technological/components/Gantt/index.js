@@ -518,6 +518,16 @@ class Gantt extends Component {
       }, 1000)
     }
   }
+  // 在相关中上传文件（子任务，父任务）
+  handleRelyUploading = ({ folder_id }) => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'gantt/updateDatas',
+      payload: {
+        uploading_folder_id: folder_id
+      }
+    })
+  }
   render() {
     const { addTaskModalVisible, } = this.state
     const { outline_tree_round } = this.props
@@ -559,6 +569,7 @@ class Gantt extends Component {
             handleTaskDetailChange: this.handleChangeCard,
             handleDeleteCard: this.handleDeleteCard,
             handleChildTaskChange: this.handleChildTaskChange,
+            handleRelyUploading: this.handleRelyUploading
           }}
         />
         {/* <TaskDetailModal

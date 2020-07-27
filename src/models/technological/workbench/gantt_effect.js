@@ -14,6 +14,7 @@ export default {
         drag_outline_node: { id: '', parent_id: '', parent_ids: [] }, //大纲拖拽排序所需要的信息
         outline_node_draging: false, //大纲是否拖拽排序中
         selected_card_visible: false, //查看任务抽屉
+        uploading_folder_id: '', //任务详情上传文件的文件id, 下方抽屉在上传后判断文件夹id进行更新
     },
     effects: {
         * addCardRely({ payload = {} }, { select, call, put }) {
