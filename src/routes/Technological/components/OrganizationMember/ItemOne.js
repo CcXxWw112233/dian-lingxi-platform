@@ -46,13 +46,13 @@ export default class ItemOne extends React.Component {
       currentBeOperateMemberId: member_id,
     })
     switch (key) {
-      case 'discontinue':
+      case 'discontinue': // 停用
         this.discontinueConfirm(member_id)
         break
-      case 'remove':
+      case 'remove': // 移出分组
         this.removeConfirm()
         break
-      case 'setGroup':
+      case 'setGroup': // 设置分组
         if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_EDIT)){
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
@@ -61,11 +61,16 @@ export default class ItemOne extends React.Component {
           TreeGroupModalVisiblie: true,
         })
         break
-      case 'joinORG':
+      case 'joinORG': // 加入组织
         this.joinOrganization({member_id})
         break
-      case 'removeUser':
+      case 'removeUser': // 移出用户
         this.removeUserConfirm({member_id})
+        break
+      case 'removeOrgMember': // 移出组织成员
+        this.props.updateDatas({
+          TreeRemoveOrgMemberModalVisiblie: true,
+        })
         break
       default:
         //设置角色
@@ -274,6 +279,15 @@ export default class ItemOne extends React.Component {
               </div>
             </Menu.Item>
            ) : ('')}
+           {
+            is_visitor !== '1' && checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_EDIT) ? (
+              <Menu.Item key={'removeOrgMember'} style={{textAlign: 'center', padding: 0, margin: 0}}>
+                <div className={CreateTaskStyle.elseProjectMemu} style={{color: '#F5222D'}}>
+                  移出组织
+                </div>
+              </Menu.Item>
+            ) : ('')
+          }
 
           {is_default == '2' && is_visitor == '1' && checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD) ? (
             <Menu.Item key={'joinORG'} style={{textAlign: 'center', padding: 0, margin: 0}}>

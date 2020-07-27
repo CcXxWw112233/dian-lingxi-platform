@@ -6,6 +6,7 @@ import TreeGroupModal from './TreeGroupModal'
 import {checkIsHasPermission} from "../../../../utils/businessFunction";
 import {ORG_UPMS_ORGANIZATION_GROUP} from "../../../../globalset/js/constant";
 import { connect } from "dva/index";
+import TreeRemoveOrgMemberModal from './TreeRemoveOrgMemberModal'
 const documentWidth = document.querySelector('body').offsetWidth
 @connect(mapStateToProps)
 export default class CreateGroup extends React.Component {
@@ -85,6 +86,8 @@ export default class CreateGroup extends React.Component {
         ) }
 
         <TreeGroupModal {...this.props}/>
+
+        <TreeRemoveOrgMemberModal />
 
       </div>
     )
