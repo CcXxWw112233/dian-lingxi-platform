@@ -290,138 +290,143 @@ export default class AppendSubTask extends Component {
               </span>
             ) : (
                 <>
-                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
-                    {/* 文本框部分 */}
-                    <span style={{ flex: '1', marginRight: '16px' }}>
-                      <input
-                        autosize={true}
-                        onBlur={this.setchildTaskNameBlur}
-                        onChange={this.setchildTaskNameChange}
-                        autoFocus={true}
-                        // goldName={card_name}
-                        maxLength={100}
-                        nodeName={'input'}
-                        style={{ width: '100%', display: 'block', fontSize: 14, color: '#262626', resize: 'none', height: '38px', background: 'rgba(255,255,255,1)', boxShadow: '0px 0px 8px 0px rgba(0,0,0,0.15)', borderRadius: '4px', border: 'none', outline: 'none', paddingLeft: '12px' }}
-                      />
-                    </span>
-                    {/* 开始时间 */}
-                    <span>
-                      {
-                        start_time ? (
-                          <div className={appendSubTaskStyles.due_time}>
-                            <div>
-                              <span>{timestampToTimeNormal3(start_time, true)}</span>
-                              <span onClick={this.handleDelStartTime} className={`${start_time && appendSubTaskStyles.timeDeleBtn}`}></span>
-                            </div>
-                            <DatePicker
-                              disabledDate={this.disabledStartTime.bind(this)}
-                              onChange={this.startDatePickerChange.bind(this)}
-                              placeholder={start_time ? timestampToTimeNormal(start_time, '/', true) : '开始时间'}
-                              format="YYYY/MM/DD HH:mm"
-                              showTime={{ format: 'HH:mm' }}
-                              style={{ opacity: 0, width: 'auto', background: '#000000', position: 'absolute', right: 0, top: '12px', zIndex: 2 }} />
-                          </div>
-                        ) : (
-                            <div className={`${appendSubTaskStyles.add_due_time}`}>
+                  <div style={{background: 'rgba(0,0,0,0.04)', padding: '4px', borderRadius: '4px 4px 0px 0px', marginLeft: '10px', marginBottom: '4px'}}>
+                    <div style={{display: 'flex', alignItems: 'center'}}>
+                      {/* 文本框部分 */}
+                      <span style={{ flex: '1', marginRight: '16px' }}>
+                        <input
+                          autosize={true}
+                          onBlur={this.setchildTaskNameBlur}
+                          onChange={this.setchildTaskNameChange}
+                          autoFocus={true}
+                          // goldName={card_name}
+                          maxLength={100}
+                          nodeName={'input'}
+                          style={{ width: '100%', display: 'block', fontSize: 14, color: '#262626', resize: 'none', height: '38px', background: 'rgba(255,255,255,1)', boxShadow: '0px 0px 8px 0px rgba(0,0,0,0.15)', borderRadius: '4px', border: 'none', outline: 'none', paddingLeft: '12px' }}
+                        />
+                      </span>
+                      {/* 执行人部分 */}
+                      <span style={{ position: 'relative' }} className={appendSubTaskStyles.user_pr}>
+                        <Dropdown overlayClassName={appendSubTaskStyles.overlay_sub_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
+                          overlay={
+                            <MenuSearchPartner
+                              handleSelectedAllBtn={this.handleSelectedAllBtn}
+                              isInvitation={true}
+                              listData={dataInfo} keyCode={'user_id'} searchName={'name'} currentSelect={sub_executors.length ? sub_executors : executor} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
+                              board_id={board_id} />
+                          }>
+                          {
+                            sub_executors && sub_executors.length ? (
                               <div>
-                                <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
-                                  开始时间</span>
+                                <AvatarList
+                                  size="mini"
+                                  maxLength={3}
+                                  excessItemsStyle={{
+                                    color: '#f56a00',
+                                    backgroundColor: '#fde3cf'
+                                  }}
+                                >
+                                  {sub_executors && sub_executors.length ? sub_executors.map(({ name, avatar }, index) => (
+                                    <AvatarList.Item
+                                      key={index}
+                                      tips={name}
+                                      src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
+                                    />
+                                  )) : (
+                                      <Tooltip title="执行人">
+                                        <span className={`${globalStyles.authTheme} ${appendSubTaskStyles.sub_executor}`}>&#xe7b2;</span>
+                                      </Tooltip>
+                                    )}
+                                </AvatarList>
                               </div>
-                              <DatePicker
-                                disabledDate={this.disabledStartTime.bind(this)}
-                                onChange={this.startDatePickerChange.bind(this)}
-                                placeholder={start_time ? timestampToTimeNormal(start_time, '/', true) : '开始时间'}
-                                format="YYYY/MM/DD HH:mm"
-                                showTime={{ format: 'HH:mm' }}
-                                style={{ opacity: 0, width: 'auto', background: '#000000', position: 'absolute', right: 0, top: '12px', zIndex: 2 }} />
-                            </div>
-                          )
-                      }
-                    </span>
-                    &nbsp;
-                    <span style={{ color: '#bfbfbf' }}> ~ </span>
-                    &nbsp;
-                    {/* 截止时间 */}
-                    <span>
-                      {
-                        due_time ? (
-                          <div className={appendSubTaskStyles.due_time}>
-                            <div>
-                              <span>{timestampToTimeNormal3(due_time, true)}</span>
-                              <span onClick={this.handleDelDueTime} className={`${due_time && appendSubTaskStyles.timeDeleBtn}`}></span>
-                            </div>
-                            <DatePicker
-                              disabledDate={this.disabledDueTime.bind(this)}
-                              onChange={this.endDatePickerChange.bind(this)}
-                              placeholder={due_time ? timestampToTimeNormal(due_time, '/', true) : '截止时间'}
-                              format="YYYY/MM/DD HH:mm"
-                              showTime={{ format: 'HH:mm' }}
-                              style={{ opacity: 0, width: 'auto', background: '#000000', position: 'absolute', right: 0, top: '12px', zIndex: 2 }} />
-                          </div>
-                        ) : (
-                            <div className={`${appendSubTaskStyles.add_due_time}`}>
-                              <div>
-                                <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
-                                  截止时间</span>
+                            ) : (
+                                <Tooltip title="执行人">
+                                  <span className={`${globalStyles.authTheme} ${appendSubTaskStyles.sub_executor}`}>&#xe7b2;</span>
+                                </Tooltip>
+                              )
+                          }
+                        </Dropdown>
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <div style={{ display: 'flex', flex: 1 }}>
+                        {/* 开始时间 */}
+                        <span>
+                          {
+                            start_time ? (
+                              <div className={appendSubTaskStyles.due_time}>
+                                <div>
+                                  <span>{timestampToTimeNormal3(start_time, true)}</span>
+                                  <span onClick={this.handleDelStartTime} className={`${start_time && appendSubTaskStyles.timeDeleBtn}`}></span>
+                                </div>
+                                <DatePicker
+                                  disabledDate={this.disabledStartTime.bind(this)}
+                                  onChange={this.startDatePickerChange.bind(this)}
+                                  placeholder={start_time ? timestampToTimeNormal(start_time, '/', true) : '开始时间'}
+                                  format="YYYY/MM/DD HH:mm"
+                                  showTime={{ format: 'HH:mm' }}
+                                  style={{ opacity: 0, width: 'auto', background: '#000000', position: 'absolute', right: 0, top: '12px', zIndex: 2 }} />
                               </div>
-                              <DatePicker
-                                disabledDate={this.disabledDueTime.bind(this)}
-                                onChange={this.endDatePickerChange.bind(this)}
-                                placeholder={due_time ? timestampToTimeNormal(due_time, '/', true) : '截止时间'}
-                                format="YYYY/MM/DD HH:mm"
-                                showTime={{ format: 'HH:mm' }}
-                                style={{ opacity: 0, width: 'auto', background: '#000000', position: 'absolute', right: 0, top: '12px', zIndex: 2 }} />
-                            </div>
-                          )
-                      }
-                    </span>
-                    {/* 执行人部分 */}
-                    <span style={{ position: 'relative' }} className={appendSubTaskStyles.user_pr}>
-                      <Dropdown overlayClassName={appendSubTaskStyles.overlay_sub_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
-                        overlay={
-                          <MenuSearchPartner
-                            handleSelectedAllBtn={this.handleSelectedAllBtn}
-                            isInvitation={true}
-                            listData={dataInfo} keyCode={'user_id'} searchName={'name'} currentSelect={sub_executors.length ? sub_executors : executor} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
-                            board_id={board_id} />
-                        }>
-                        {
-                          sub_executors && sub_executors.length ? (
-                            <div>
-                              <AvatarList
-                                size="mini"
-                                maxLength={3}
-                                excessItemsStyle={{
-                                  color: '#f56a00',
-                                  backgroundColor: '#fde3cf'
-                                }}
-                              >
-                                {sub_executors && sub_executors.length ? sub_executors.map(({ name, avatar }, index) => (
-                                  <AvatarList.Item
-                                    key={index}
-                                    tips={name}
-                                    src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
-                                  />
-                                )) : (
-                                    <Tooltip title="执行人">
-                                      <span className={`${globalStyles.authTheme} ${appendSubTaskStyles.sub_executor}`}>&#xe7b2;</span>
-                                    </Tooltip>
-                                  )}
-                              </AvatarList>
-                            </div>
-                          ) : (
-                              <Tooltip title="执行人">
-                                <span className={`${globalStyles.authTheme} ${appendSubTaskStyles.sub_executor}`}>&#xe7b2;</span>
-                              </Tooltip>
-                            )
-                        }
-                      </Dropdown>
-                    </span>
-
-                  </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <span onClick={(e) => { this.handleCancel(e) }} className={appendSubTaskStyles.cancel}>取消</span>
-                    <Button onClick={(e) => { this.handleSave(e) }} disabled={saveDisabled} type="primary" style={{ marginLeft: '16px', width: '60px', height: '34px' }}>确定</Button>
+                            ) : (
+                                <div className={`${appendSubTaskStyles.add_due_time}`}>
+                                  <div>
+                                    <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
+                                      开始时间</span>
+                                  </div>
+                                  <DatePicker
+                                    disabledDate={this.disabledStartTime.bind(this)}
+                                    onChange={this.startDatePickerChange.bind(this)}
+                                    placeholder={start_time ? timestampToTimeNormal(start_time, '/', true) : '开始时间'}
+                                    format="YYYY/MM/DD HH:mm"
+                                    showTime={{ format: 'HH:mm' }}
+                                    style={{ opacity: 0, width: 'auto', background: '#000000', position: 'absolute', right: 0, top: '12px', zIndex: 2 }} />
+                                </div>
+                              )
+                          }
+                        </span>
+                        &nbsp;
+                        <span style={{ color: '#bfbfbf' }}> ~ </span>
+                        &nbsp;
+                        {/* 截止时间 */}
+                        <span>
+                          {
+                            due_time ? (
+                              <div className={appendSubTaskStyles.due_time}>
+                                <div>
+                                  <span>{timestampToTimeNormal3(due_time, true)}</span>
+                                  <span onClick={this.handleDelDueTime} className={`${due_time && appendSubTaskStyles.timeDeleBtn}`}></span>
+                                </div>
+                                <DatePicker
+                                  disabledDate={this.disabledDueTime.bind(this)}
+                                  onChange={this.endDatePickerChange.bind(this)}
+                                  placeholder={due_time ? timestampToTimeNormal(due_time, '/', true) : '截止时间'}
+                                  format="YYYY/MM/DD HH:mm"
+                                  showTime={{ format: 'HH:mm' }}
+                                  style={{ opacity: 0, width: 'auto', background: '#000000', position: 'absolute', right: 0, top: '12px', zIndex: 2 }} />
+                              </div>
+                            ) : (
+                                <div className={`${appendSubTaskStyles.add_due_time}`}>
+                                  <div>
+                                    <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
+                                      截止时间</span>
+                                  </div>
+                                  <DatePicker
+                                    disabledDate={this.disabledDueTime.bind(this)}
+                                    onChange={this.endDatePickerChange.bind(this)}
+                                    placeholder={due_time ? timestampToTimeNormal(due_time, '/', true) : '截止时间'}
+                                    format="YYYY/MM/DD HH:mm"
+                                    showTime={{ format: 'HH:mm' }}
+                                    style={{ opacity: 0, width: 'auto', background: '#000000', position: 'absolute', right: 0, top: '12px', zIndex: 2 }} />
+                                </div>
+                              )
+                          }
+                        </span>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <span onClick={(e) => { this.handleCancel(e) }} className={appendSubTaskStyles.cancel}>取消</span>
+                        <Button onClick={(e) => { this.handleSave(e) }} disabled={saveDisabled} type="primary" style={{ marginLeft: '16px', width: '60px', height: '34px' }}>确定</Button>
+                      </div>
+                    </div>
                   </div>
                 </>
               )
