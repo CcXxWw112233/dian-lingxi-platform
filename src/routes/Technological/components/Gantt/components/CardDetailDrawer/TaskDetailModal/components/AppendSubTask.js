@@ -86,6 +86,7 @@ export default class AppendSubTask extends Component {
     e && e.stopPropagation();
     const { drawContent, dispatch } = this.props
     const { board_id, card_id, list_id } = drawContent
+    // const { data: executors = [] } = this.getCurrentDrawerContentPropsModelDatasExecutors()
     const { inputValue, sub_executors, due_time, start_time } = this.state
     const { data = [] } = drawContent['properties'].filter(item => item.code == 'SUBTASK')[0]
     let temp_subExecutors = [...sub_executors]
@@ -124,7 +125,6 @@ export default class AppendSubTask extends Component {
       // drawContent['child_data'] && drawContent['child_data'].unshift({...obj, card_id: res.data.card_id})
       tempData.unshift({ ...obj, card_id: card_info.card_id })
       drawContent['properties'] = this.filterCurrentUpdateDatasField('SUBTASK', tempData)
-      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id })
       this.props.handleChildTaskChange && this.props.handleChildTaskChange({ parent_card_id: card_id, data: card_info, action: 'add', rely_card_datas: dependencys })
       this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(new_data)
       this.initState()
@@ -141,28 +141,28 @@ export default class AppendSubTask extends Component {
   // 子 执行人的下拉回调
   chirldrenTaskChargeChange = (dataInfo) => {
     let sub_executors = []
-    const { data, drawContent = {}, dispatch } = this.props
-    const { card_id } = drawContent
-    const { data: executors = [] } = this.getCurrentDrawerContentPropsModelDatasExecutors()
+    const { data = [], drawContent = {}, dispatch } = this.props
+    // const { card_id } = drawContent
+    // const { data: executors = [] } = this.getCurrentDrawerContentPropsModelDatasExecutors()
     const { selectedKeys = [] } = dataInfo
     let new_data = [...data]
-    let new_executors = [...executors]
+    // let new_executors = [...executors]
     new_data.map(item => {
       if (selectedKeys.indexOf(item.user_id) != -1) {
         sub_executors.push(item)
-        new_executors.push(item)
+        // new_executors.push(item)
       }
     })
-    let new_drawContent = { ...drawContent }
+    // let new_drawContent = { ...drawContent }
     // new_drawContent['executors'] = this.arrayNonRepeatfy(new_executors)
-    new_drawContent['properties'] = this.filterCurrentUpdateDatasField('EXECUTOR', arrayNonRepeatfy(new_executors, 'user_id'))
-    dispatch({
-      type: 'publicTaskDetailModal/updateDatas',
-      payload: {
-        drawContent: new_drawContent
-      }
-    })
-    this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: drawContent, card_id, name: 'executors', value: new_executors, overlay_sub_pricipal: 'EXECUTOR' })
+    // new_drawContent['properties'] = this.filterCurrentUpdateDatasField('EXECUTOR', arrayNonRepeatfy(new_executors, 'user_id'))
+    // dispatch({
+    //   type: 'publicTaskDetailModal/updateDatas',
+    //   payload: {
+    //     drawContent: new_drawContent
+    //   }
+    // })
+    // this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: drawContent, card_id, name: 'executors', value: new_executors, overlay_sub_pricipal: 'EXECUTOR' })
     this.setState({
       sub_executors: arrayNonRepeatfy(sub_executors, 'user_id')
     })
