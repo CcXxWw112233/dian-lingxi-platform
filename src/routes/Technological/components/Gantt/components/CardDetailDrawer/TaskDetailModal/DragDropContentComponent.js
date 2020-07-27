@@ -435,7 +435,7 @@ export default class DragDropContentComponent extends Component {
     const users = data.filter((item) => item.user_id == userId);
 
     if (users.length > 0) {
-      return <span style={{fontWeight: 900}}>{users[0].name}</span>
+      return <span style={{ fontWeight: 900 }}>{users[0].name}</span>
     }
     return;
   }
@@ -714,6 +714,18 @@ export default class DragDropContentComponent extends Component {
   }
   // 对应字段的删除 E
 
+  // 渲染任务说明内容更多点点点列表
+  decFileOperater = () => {
+    return (
+      <div>
+        <Menu>
+          <Menu.Item key="download">下载到本地</Menu.Item>
+          <Menu.Item key="delete">删除该附件</Menu.Item>
+        </Menu>
+      </div>
+    )
+  }
+
   // 对应字段的内容渲染
   filterDiffPropertiesField = (currentItem) => {
     const { visible = false, showDelColor, currentDelId } = this.state
@@ -805,9 +817,11 @@ export default class DragDropContentComponent extends Component {
                         <span>暂无</span>
                       </div>
                     ) : (
-                        <div className={`${mainContentStyles.pub_hover}`} >
-                          <div className={mainContentStyles.descriptionContent} dangerouslySetInnerHTML={{ __html: currentItem.data }}></div>
-                        </div>
+                        <>
+                          <div className={`${mainContentStyles.pub_hover}`} >
+                            <div className={mainContentStyles.descriptionContent} dangerouslySetInnerHTML={{ __html: currentItem.data }}></div>
+                          </div>
+                        </>
                       )
                   )
                 ) : (
@@ -823,6 +837,34 @@ export default class DragDropContentComponent extends Component {
                           }
                         </div>
                       </RichTextEditor>
+                      <div className={mainContentStyles.des_filelist_wrapper}>
+                        <div className={mainContentStyles.des_filelist_item}>
+                          <div>
+                            <span className={`${mainContentStyles.dec_file_icon} ${globalStyles.authTheme}`}>&#xe651;</span>
+                          </div>
+                          <div style={{flex: '1'}}>
+                            <div className={mainContentStyles.dec_file_name}>勘测任务书编制样本.doc</div>
+                            <div className={mainContentStyles.dec_file_creater}>董凯颖  上传于  07-27 14:47</div>
+                          </div>
+                          <Dropdown getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.decFileOperater()}>
+                            <span className={`${mainContentStyles.dec_more_icon} ${globalStyles.authTheme}`}>&#xe7fd;</span>
+                          </Dropdown>
+                        </div>
+                      </div>
+                      <div className={mainContentStyles.des_filelist_wrapper}>
+                        <div className={mainContentStyles.des_filelist_item}>
+                          <div>
+                            <span className={`${mainContentStyles.dec_file_icon} ${globalStyles.authTheme}`}>&#xe651;</span>
+                          </div>
+                          <div style={{flex: '1'}}>
+                            <div className={mainContentStyles.dec_file_name}>勘测任务书编制样本.doc</div>
+                            <div className={mainContentStyles.dec_file_creater}>董凯颖  上传于  07-27 14:47</div>
+                          </div>
+                          <Dropdown getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.decFileOperater()}>
+                            <span className={`${mainContentStyles.dec_more_icon} ${globalStyles.authTheme}`}>&#xe7fd;</span>
+                          </Dropdown>
+                        </div>
+                      </div>
                     </>
                   )
               }
@@ -1001,10 +1043,10 @@ export default class DragDropContentComponent extends Component {
                     return (
                       <div className={`${mainContentStyles.file_item_wrapper}`} key={fileInfo.id}>
                         <div className={`${mainContentStyles.file_item} ${mainContentStyles.pub_hover}`} onClick={() => this.openFileDetailModal(fileInfo)} >
-                          <div className={mainContentStyles.file_title}><span className={`${globalStyles.authTheme}`} style={{ fontSize: '24px', color: '#40A9FF' }}>&#xe659;</span><span style={{maxWidth: '300px',overflow: 'hidden', textOverflow: 'ellipsis',whiteSpace: 'nowrap'}} title={fileInfo.name}>{fileInfo.name}</span></div>
+                          <div className={mainContentStyles.file_title}><span className={`${globalStyles.authTheme}`} style={{ fontSize: '24px', color: '#40A9FF' }}>&#xe659;</span><span style={{ maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={fileInfo.name}>{fileInfo.name}</span></div>
                           <div className={mainContentStyles.file_info}>{this.showMemberName(fileInfo.create_by)} 上传于 {fileInfo.create_time && timestampFormat(fileInfo.create_time, "MM-dd hh:mm")}</div>
                           <div className={mainContentStyles.breadNav} style={{ position: 'relative' }}>
-                            <Breadcrumb style={{minHeight: '38px', lineHeight: '38px',marginLeft: '-10px'}} className={mainContentStyles.Breadcrumb} separator=">">
+                            <Breadcrumb style={{ minHeight: '38px', lineHeight: '38px', marginLeft: '-10px' }} className={mainContentStyles.Breadcrumb} separator=">">
                               {breadcrumbList.map((value, key) => {
                                 return (
                                   <Breadcrumb.Item key={key}>

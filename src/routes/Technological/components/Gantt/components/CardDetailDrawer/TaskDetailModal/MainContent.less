@@ -639,6 +639,48 @@
         border-radius: 50%;
         margin-right: 8px;
       }
+      .des_filelist_wrapper {
+        // width:320px;
+        margin-top: 12px;
+        height:60px;
+        background:rgba(0,0,0,0.04);
+        border-radius:4px;
+        padding: 12px;
+        box-sizing: border-box;
+        .des_filelist_item {
+          display: flex;
+          align-items: center;
+          .dec_file_icon {
+            color: #6294FF;
+            font-size: 24px;
+            vertical-align: middle;
+            margin-right: 8px;
+          }
+          .dec_file_name {
+            height: 12px;
+            font-size: 14px;
+            font-family: PingFangSC-Medium,PingFang SC;
+            font-weight: 500;
+            color: rgba(0,0,0,0.65);
+            line-height: 12px;
+            margin-bottom: 10px;
+          }
+          .dec_file_creater {
+            height:12px;
+            font-size:12px;
+            font-family:PingFangSC-Regular,PingFang SC;
+            font-weight:400;
+            color:rgba(0,0,0,0.45);
+            line-height:12px;
+          }
+          .dec_more_icon {
+            font-size: 16px;
+            &:hover {
+              color: #1890FF;
+            }
+          }
+        }
+      }
     }
   }
 
