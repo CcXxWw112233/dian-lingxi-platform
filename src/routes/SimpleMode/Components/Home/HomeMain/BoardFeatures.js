@@ -10,6 +10,7 @@ import { jsonArrayCompareSort, transformTimestamp, isObjectValueEqual, timeSort 
 import { compareOppositeTimer, removeEmptyArrayEle } from '../../../../../components/ProcessDetailModal/components/handleOperateModal'
 import { currentNounPlanFilterName } from '../../../../../utils/businessFunction'
 import { PROJECTS } from '../../../../../globalset/js/constant'
+import { Dropdown, Menu } from 'antd'
 
 @connect(mapStateToProps)
 export default class BoardFeatures extends Component {
@@ -18,7 +19,8 @@ export default class BoardFeatures extends Component {
 		super(props)
 		let new_flow_todo_list = this.updateFlowsOppositeTime(props.board_flow_todo_list)
 		this.state = {
-			board_todo_list: [].concat(...props.board_card_todo_list, ...new_flow_todo_list)
+			board_todo_list: [].concat(...props.board_card_todo_list, ...new_flow_todo_list),
+			selected_todo_list_time: null, // 选择的代办列表时间
 		}
 	}
 
@@ -172,6 +174,38 @@ export default class BoardFeatures extends Component {
 			}
 		})
 	}
+
+	// 选择的代办时间
+	handleMenuReallySelect = (e) => {
+		const { domEvent, key } = e
+		domEvent && domEvent.stopPropagation()
+		this.setState({
+			selected_todo_list_time: key
+		})
+		switch (key) {
+			case 'all_time': // 所有时间
+				break;
+			case 'recently_week': // 最近七周
+				break
+			case 'recently_month': // 最近一月
+				break
+			default:
+				break;
+		}
+	}
+
+	// 渲染不同的时间段
+	timeQuantum = () => {
+		const { selected_todo_list_time } = this.state
+		return (
+			<Menu onClick={this.handleMenuReallySelect} selectedKeys={[selected_todo_list_time]}>
+				<Menu.Item key={'all_time'}>所有时间</Menu.Item>
+				<Menu.Item key={'recently_week'}>最近7周</Menu.Item>
+				<Menu.Item key={'recently_month'}>近一月</Menu.Item>
+			</Menu>
+		)
+	}
+
 	// 渲染不同类型的代办列表
 	renderDiffRelaTypeFeaturesItem = (value) => {
 		const { id, rela_type } = value
@@ -244,13 +278,24 @@ export default class BoardFeatures extends Component {
 
 	render() {
 		const { drawerVisible, projectList = [], projectInitLoaded, board_card_todo_list = [], process_detail_modal_visible } = this.props
-		const { whetherShowProcessDetailModal } = this.state
+		const { whetherShowProcessDetailModal, selected_todo_list_time } = this.state
+		const selected_filed_time = (!selected_todo_list_time || selected_todo_list_time == 'all_time') ? '所有时间' : selected_todo_list_time == 'recently_week' ? '最近7周' : selected_todo_list_time == 'recently_month' ? '最近一月' : '所有时间'
 		return (
-			<div>
+			<div id={'featurebox_featuresContent'}>
 				{
 					projectInitLoaded ? (
 						projectList.length ? (
-							this.renderTodoList()
+							<>
+								<div>
+									<Dropdown overlayClassName={styles.overlay_featurebox_dropdown} getPopupContainer={() => document.getElementById('featurebox_featuresContent')} overlay={this.timeQuantum()} trigger={['click']}>
+										<div style={{color: '#FFF', lineHeight: '20px', marginLeft: '16px', marginBottom: '12px'}}>
+											{selected_filed_time}&nbsp;&nbsp;
+											<span className={globalStyles.authTheme}>&#xe687;</span>
+										</div>
+									</Dropdown>
+								</div>
+								{this.renderTodoList()}
+							</>
 						) : (
 								this.renderWelcome()
 							)

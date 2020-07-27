@@ -161,7 +161,7 @@ export default class TreeRemoveOrgMemberModal extends Component {
             </div>
           )
         }
-        <div className={globalClassName.global_vertical_scrollbar} style={{overflowY: 'auto', height: '416px'}}>
+        <div className={globalClassName.global_vertical_scrollbar} style={{overflowY: 'auto', height: '390px'}}>
           <Table
             columns={columns}
             dataSource={data}
