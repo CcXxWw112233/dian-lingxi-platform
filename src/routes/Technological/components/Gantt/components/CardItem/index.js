@@ -9,7 +9,7 @@ import { updateTaskVTwo, changeTaskType } from '../../../../../../services/techn
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
 import { message, Dropdown, Popover, Tooltip } from 'antd'
 import CardDropDetail from '../../components/gattFaceCardItem/CardDropDetail'
-import { filterDueTimeSpan, cardIsHasUnRead, cardItemIsHasUnRead, setDateWithPositionInYearView, setDateWidthPositionWeekView } from '../../ganttBusiness'
+import { filterDueTimeSpan, cardIsHasUnRead, cardItemIsHasUnRead, setDateWithPositionInYearView, setDateWidthPositionWeekView, onChangeCardHandleCardDetail } from '../../ganttBusiness'
 import { transformTimestamp, isSamDay } from '../../../../../../utils/util'
 import HoverEars from './HoverEars'
 import DragCard from './DragCard'
@@ -662,18 +662,25 @@ export default class CardItem extends Component {
     // 拖拽完成后，修改成功，在弹出右方详情页的情况下，作比较更新
     onChangeTimeHandleCardDetail = () => {
         const { card_detail_id, selected_card_visible, itemValue = {}, dispatch } = this.props
-        const { card_id, parent_card_id } = itemValue
-        if (selected_card_visible) {
-            //当当前打开的任务是该任务或者是该任务父任务，则做查询更新
-            if (card_detail_id == card_id || parent_card_id == card_id) {
-                dispatch({
-                    type: 'publicTaskDetailModal/getCardWithAttributesDetail',
-                    payload: {
-                        id: card_detail_id,
-                    }
-                })
-            }
-        }
+        const { id, parent_card_id } = itemValue
+        onChangeCardHandleCardDetail({
+            card_detail_id, //来自任务详情的id
+            selected_card_visible, //任务详情弹窗是否弹开
+            dispatch,
+            operate_id: id, //当前操作的id
+            operate_parent_card_id: parent_card_id, //当前操作的任务的父任务id
+        })
+        // if (selected_card_visible) {
+        //     //当当前打开的任务是该任务或者是该任务父任务，则做查询更新
+        //     if (card_detail_id == id || parent_card_id == card_detail_id) {
+        //         dispatch({
+        //             type: 'publicTaskDetailModal/getCardWithAttributesDetail',
+        //             payload: {
+        //                 id: card_detail_id,
+        //             }
+        //         })
+        //     }
+        // }
     }
 
     // 改变任务分组

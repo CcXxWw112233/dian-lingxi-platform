@@ -408,7 +408,7 @@ export const setDateWithPositionInYearView = ({ _position, date_arr_one_level, c
     return date
 }
 
-
+// 获取到鼠标点的日期数据（周视图）
 export const setDateWidthPositionWeekView = ({ position, date_arr_one_level = [], ceilWidth }) => {
     const week_length = date_arr_one_level.length //总周数
     const day_total = week_length * 7 //总天数
@@ -432,5 +432,26 @@ export const setDateWidthPositionWeekView = ({ position, date_arr_one_level = []
     return {
         timestamp,
         timestampEnd
+    }
+}
+
+// 拖拽完成后，修改成功，在弹出右方详情页的情况下，作比较更新
+export const onChangeCardHandleCardDetail = ({
+    card_detail_id, //来自任务详情的id
+    selected_card_visible, //任务详情弹窗是否弹开
+    dispatch,
+    operate_id, //当前操作的id
+    operate_parent_card_id, //当前操作的任务的父任务id
+}) => {
+    if (selected_card_visible) {
+        //当当前打开的任务是该任务或者是该任务父任务，则做查询更新
+        if (card_detail_id == operate_id || card_detail_id == operate_parent_card_id) {
+            dispatch({
+                type: 'publicTaskDetailModal/getCardWithAttributesDetail',
+                payload: {
+                    id: card_detail_id,
+                }
+            })
+        }
     }
 }
