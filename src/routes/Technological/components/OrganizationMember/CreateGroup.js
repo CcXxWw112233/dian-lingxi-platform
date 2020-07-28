@@ -87,7 +87,7 @@ export default class CreateGroup extends React.Component {
 
         <TreeGroupModal {...this.props}/>
 
-        <TreeRemoveOrgMemberModal />
+        <TreeRemoveOrgMemberModal groupList={groupList}/>
 
       </div>
     )

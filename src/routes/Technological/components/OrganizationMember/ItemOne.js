@@ -41,7 +41,7 @@ export default class ItemOne extends React.Component {
   handleMenuClick(e) {
     const { key } = e
     const { itemValue, parentItemValue } = this.props
-    const { member_id } = itemValue
+    const { member_id, user_id } = itemValue
     this.props.updateDatas({
       currentBeOperateMemberId: member_id,
     })
@@ -70,6 +70,7 @@ export default class ItemOne extends React.Component {
       case 'removeOrgMember': // 移出组织成员
         this.props.updateDatas({
           TreeRemoveOrgMemberModalVisiblie: true,
+          removeMemberUserId: user_id
         })
         break
       default:
