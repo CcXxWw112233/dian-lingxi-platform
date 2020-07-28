@@ -65,11 +65,15 @@ export default class ItemOne extends React.Component {
         this.joinOrganization({member_id})
         break
       case 'removeUser': // 移出用户
-        this.removeUserConfirm({member_id})
+        // this.removeUserConfirm({member_id})
+        this.props.updateDatas({
+          TreeRemoveOrgMemberModalVisible: true,
+          removeMemberUserId: user_id
+        })
         break
       case 'removeOrgMember': // 移出组织成员
         this.props.updateDatas({
-          TreeRemoveOrgMemberModalVisiblie: true,
+          TreeRemoveOrgMemberModalVisible: true,
           removeMemberUserId: user_id
         })
         break

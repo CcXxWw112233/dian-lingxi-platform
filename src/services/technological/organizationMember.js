@@ -355,3 +355,15 @@ export async function getTransferSelectedDetailList(params) {
     }
   });
 }
+
+// 移除成员并设置交接人
+export async function removeMemberWithSettingTransferUser(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/board/transfer/board_user`,
+    method: 'POST',
+    data: {
+      ...data,
+      _organization_id: localStorage.getItem('OrganizationId')
+    }
+  });
+}
