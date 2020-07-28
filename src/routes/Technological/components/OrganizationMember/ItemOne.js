@@ -10,6 +10,8 @@ import {
 } from "../../../../globalset/js/constant";
 import {checkIsHasPermission, currentNounPlanFilterName} from "../../../../utils/businessFunction";
 import { connect } from "dva/index";
+import { getTransferSelectedList, getTransferSelectedDetailList, removeMemberWithSettingTransferUser, discontinueMember } from '../../../../services/technological/organizationMember'
+import { isApiResponseOk } from '../../../../utils/handleResponseData'
 const Panel = Collapse.Panel
 
 @connect(mapStateToProps)
@@ -66,16 +68,18 @@ export default class ItemOne extends React.Component {
         break
       case 'removeUser': // 移出用户
         // this.removeUserConfirm({member_id})
-        this.props.updateDatas({
-          TreeRemoveOrgMemberModalVisible: true,
-          removeMemberUserId: user_id
-        })
+        this.getTransferSelectedList({remove_id: user_id, member_id})
+        // this.props.updateDatas({
+        //   TreeRemoveOrgMemberModalVisible: true,
+        //   removeMemberUserId: user_id
+        // })
         break
       case 'removeOrgMember': // 移出组织成员
-        this.props.updateDatas({
-          TreeRemoveOrgMemberModalVisible: true,
-          removeMemberUserId: user_id
-        })
+        this.getTransferSelectedList({remove_id: user_id, member_id})
+        // this.props.updateDatas({
+        //   TreeRemoveOrgMemberModalVisible: true,
+        //   removeMemberUserId: user_id,
+        // })
         break
       default:
         //设置角色
@@ -96,6 +100,26 @@ export default class ItemOne extends React.Component {
   //加入组织
   joinOrganization({member_id}) {
     this.props.joinOrganization({id: member_id})
+  }
+
+  // 获取移出成员后的交接列表
+  getTransferSelectedList = ({remove_id, member_id}) => {
+    getTransferSelectedList({ user_id: remove_id }).then(res => {
+      if (isApiResponseOk(res)) {
+        if (res.data && res.data.length) {
+          this.props.dispatch({
+            type: 'organizationMember/updateDatas',
+            payload: {
+              transferSelectedList: res.data,
+              TreeRemoveOrgMemberModalVisible: true,
+              removeMemberUserId: remove_id
+            }
+          })
+        } else {
+          this.removeUserConfirm({member_id: member_id})
+        }
+      }
+    })
   }
 
   //移除访客用户

@@ -205,15 +205,15 @@ export default class TreeRemoveOrgMemberModal extends Component {
   }
 
   // 获取移除成员初始列表
-  getTransferSelectedList = (removeId) => {
-    getTransferSelectedList({ user_id: removeId }).then(res => {
-      if (isApiResponseOk(res)) {
-        this.setState({
-          transferSelectedList: res.data
-        })
-      }
-    })
-  }
+  // getTransferSelectedList = (removeId) => {
+  //   getTransferSelectedList({ user_id: removeId }).then(res => {
+  //     if (isApiResponseOk(res)) {
+  //       this.setState({
+  //         transferSelectedList: res.data
+  //       })
+  //     }
+  //   })
+  // }
 
   // 获取移除成员交接详情列表
   getTransferSelectedDetailList = ({ boardId }) => {
@@ -261,10 +261,13 @@ export default class TreeRemoveOrgMemberModal extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { TreeRemoveOrgMemberModalVisible, removeMemberUserId, groupList = [] } = nextProps
+    const { TreeRemoveOrgMemberModalVisible, removeMemberUserId, groupList = [], transferSelectedList = [] } = nextProps
     const { TreeRemoveOrgMemberModalVisible: old_TreeRemoveOrgMemberModalVisiblie } = this.props
     if (TreeRemoveOrgMemberModalVisible && old_TreeRemoveOrgMemberModalVisiblie != TreeRemoveOrgMemberModalVisible) {
-      this.getTransferSelectedList(removeMemberUserId)
+      // this.getTransferSelectedList(removeMemberUserId)
+      this.setState({
+        transferSelectedList: transferSelectedList
+      })
     }
   }
 
@@ -382,56 +385,32 @@ export default class TreeRemoveOrgMemberModal extends Component {
   }
 
   render() {
-    const { TreeRemoveOrgMemberModalVisible } = this.props
+    const { TreeRemoveOrgMemberModalVisible, currentBeOperateMemberId, removeUserConfirm } = this.props
     const { transferSelectedList = [] } = this.state
     // 查询每一个列表中都有交接人(只需要确认外部的, 因为如果有内部列表, 那么就会默认赋值给外部的交接人)
     const disabled = (transferSelectedList && transferSelectedList.length) && transferSelectedList.every(n => n.transfer_user_id)
+    console.log(removeUserConfirm);
     return (
       <div>
-        {
-          transferSelectedList && transferSelectedList.length ? (
-            <Modal
-              title={`移除成员确认`}
-              visible={TreeRemoveOrgMemberModalVisible} //moveToDirectoryVisiblie
-              width={640}
-              // zIndex={1020}
-              destroyOnClose={true}
-              maskClosable={false}
-              okText="确认"
-              cancelText="取消"
-              onCancel={this.onCancel}
-              okButtonProps={{ disabled: !disabled }}
-              onOk={this.onOk}
-              getContainer={() => document.getElementById('organizationMemberContainer') || document.body}
-            >
-              {this.renderContent()}
-            </Modal>
-          ) : (
-              <>
-                {/* {TreeRemoveOrgMemberModalVisible && confirm()} */}
-              </>
-            )
-        }
+        <Modal
+          title={`移除成员确认`}
+          visible={TreeRemoveOrgMemberModalVisible} //moveToDirectoryVisiblie
+          width={640}
+          // zIndex={1020}
+          destroyOnClose={true}
+          maskClosable={false}
+          okText="确认"
+          cancelText="取消"
+          onCancel={this.onCancel}
+          okButtonProps={{ disabled: !disabled }}
+          onOk={this.onOk}
+          getContainer={() => document.getElementById('organizationMemberContainer') || document.body}
+        >
+          {this.renderContent()}
+        </Modal>
       </div>
     )
   }
-}
-
-function confirm() {
-  const modal = Modal.confirm();
-  modal.update({
-    title: '移除成员',
-    content: '确认移除该成员吗？',
-    okText: '确认',
-    cancelText: '取消',
-    getContainer: () => document.getElementById('organizationMemberContainer'),
-    onOk: () => {
-
-    },
-    onCancel: () => {
-      modal.destroy();
-    }
-  });
 }
 
 function mapStateToProps({
@@ -444,7 +423,8 @@ function mapStateToProps({
     datas: {
       TreeRemoveOrgMemberModalVisible,
       removeMemberUserId,
-      currentBeOperateMemberId
+      currentBeOperateMemberId,
+      transferSelectedList = []
     }
   }
 }) {
@@ -452,6 +432,7 @@ function mapStateToProps({
     userOrgPermissions,
     TreeRemoveOrgMemberModalVisible,
     removeMemberUserId,
-    currentBeOperateMemberId
+    currentBeOperateMemberId,
+    transferSelectedList
   }
 }
