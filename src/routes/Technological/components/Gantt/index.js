@@ -482,40 +482,52 @@ class Gantt extends Component {
   handleChildTaskChange = ({ action, parent_card_id, card_id, data, rely_card_datas }) => {
     const { group_view_type, dispatch } = this.props
     if (!ganttIsOutlineView({ group_view_type })) {
-      return
-    }
-    if (action == 'delete') {
-      this.deleteOutLineTreeNode(card_id)
-    } else if (action == 'add') {
-      const params = {
-        parent_id: parent_card_id,
-        name: data.card_name
+      //修改相关任务,子任务的修改会影响父任务
+      if (Object.prototype.toString.call(rely_card_datas) == '[object Array]') {
+        setTimeout(() => {
+          dispatch({
+            type: 'gantt/updateListGroup',
+            payload: {
+              datas: rely_card_datas
+            }
+          });
+        }, 1000)
       }
-      const res = {
-        id: data.card_id,
-        ...data
-      }
-      this.insertOutLineTreeNode({ res, params })
-    } else if (action == 'update') {
-      if (data.card_name) {
-        data.name = data.card_name
-      }
-      setTimeout(() => {
-        this.changeOutLineTreeNodeProto(card_id, data)
-      }, 500)
+      // return
     } else {
+      if (action == 'delete') {
+        this.deleteOutLineTreeNode(card_id)
+      } else if (action == 'add') {
+        const params = {
+          parent_id: parent_card_id,
+          name: data.card_name
+        }
+        const res = {
+          id: data.card_id,
+          ...data
+        }
+        this.insertOutLineTreeNode({ res, params })
+      } else if (action == 'update') {
+        if (data.card_name) {
+          data.name = data.card_name
+        }
+        setTimeout(() => {
+          this.changeOutLineTreeNodeProto(card_id, data)
+        }, 500)
+      } else {
 
-    }
-    //修改相关任务
-    if (Object.prototype.toString.call(rely_card_datas) == '[object Array]') {
-      setTimeout(() => {
-        dispatch({
-          type: 'gantt/updateOutLineTree',
-          payload: {
-            datas: rely_card_datas
-          }
-        });
-      }, 1000)
+      }
+      //修改相关任务
+      if (Object.prototype.toString.call(rely_card_datas) == '[object Array]') {
+        setTimeout(() => {
+          dispatch({
+            type: 'gantt/updateOutLineTree',
+            payload: {
+              datas: rely_card_datas
+            }
+          });
+        }, 1000)
+      }
     }
   }
   // 在相关中上传文件（子任务，父任务）
