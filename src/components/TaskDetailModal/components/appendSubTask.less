@@ -84,10 +84,11 @@
   height:20px;
   border-radius:4px;
   text-align: center;
-  line-height: 20px;
+  line-height: 16px;
   margin-top: 10px;
+  margin-left: -20px;
   cursor: pointer;
-  display: none;
+  display: block;
   > span {
     font-size: 18px;
   }
@@ -98,22 +99,27 @@
 }
 
 .active_icon {
-  margin-left: -32px;
+  // margin-left: -32px;
+  margin-bottom: 12px;
 }
 
-.active_icon:hover .del_icon {
-  display: block;
-}
+// .active_icon:hover .del_icon {
+//   display: block;
+// }
 
-.active_icon:hover .subTaskItemWrapper_active {
-  padding-left: 26px !important;
-}
+// .active_icon:hover .subTaskItemWrapper_active {
+//   padding-left: 26px !important;
+// }
 
 .subTaskItemWrapper {
-  display: flex;
+  // display: flex;
   // align-items: center;
-  padding-left: 46px;
+  // padding-left: 46px;
   flex: 1;
+  width: 100%;
+  background:rgba(0,0,0,0.04);
+  padding: 4px;
+  border-radius: 4px 4px 0px 0px;
   /* 公共点击完成卡片的样式 S */
   .nomalCheckBox {
     height       : 16px;
@@ -156,6 +162,12 @@
       background   : rgba(0, 0, 0, 0.04);
       cursor       : pointer;
       border-radius: 4px;
+    }
+  }
+  .sub_upload {
+    color: rgba(0,0,0,0.65);
+    &:hover {
+      color: #1890FF;
     }
   }
 }
@@ -205,5 +217,29 @@
   top       : -4px;
   right     : -4px;
   transition: all 0.3s;
+}
+
+.sub_filelist_wrapper {
+  padding-left: 16px;
+  .sub_filelist_item {
+    display: flex;
+    justify-content: space-between;
+    .sub_file_icon {
+      color: #6294FF;
+      font-size: 24px;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+    .sub_file_name {
+      flex: 1;
+      vertical-align: middle;
+    }
+    .sub_more_icon {
+      font-size: 16px;
+      &:hover {
+        color: #1890FF;
+      }
+    }
+  }
 }
 
