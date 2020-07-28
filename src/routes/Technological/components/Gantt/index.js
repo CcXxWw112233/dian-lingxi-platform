@@ -363,7 +363,7 @@ class Gantt extends Component {
 
   // 删除某一条任务
   handleDeleteCard = ({ card_id }) => {
-    const { group_view_type } = this.props
+    const { gantt_board_id, group_view_type, show_board_fold, gantt_view_mode } = this.props
     if (ganttIsOutlineView({ group_view_type })) {
       this.deleteOutLineTreeNode(card_id)
       return
@@ -376,6 +376,14 @@ class Gantt extends Component {
       belong_group_name = 'card_no_times'
     } else {
       belong_group_name = 'cards'
+      if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold, gantt_view_mode })) { //统计的时候不知道怎么更新只好调接口
+        dispatch({
+          type: 'gantt/getGanttData',
+          payload: {
+          }
+        })
+        return
+      }
     }
     const group_index = list_group_new.findIndex(item => item.lane_id == current_list_group_id)
     const group_index_cards_index = list_group_new[group_index].lane_data[belong_group_name].findIndex(item => item.id == card_id)
