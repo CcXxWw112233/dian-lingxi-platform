@@ -1055,6 +1055,12 @@ export default class MainContent extends Component {
         filePreviewCurrentName: ''
       }
     })
+    this.props.dispatch({
+      type: 'publicTaskDetailModal/getCardWithAttributesDetail',
+      payload: {
+        id: this.props.card_id
+      }
+    })
   }
 
   /* 附件版本更新数据  */

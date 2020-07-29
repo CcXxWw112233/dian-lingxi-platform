@@ -463,10 +463,13 @@
           display    : flex;
           align-items: center;
           cursor     : pointer;
-          margin-left: -32px;
+          margin-left: -22px;
 
           .file_action {
-            width: 16px;
+            // width: 16px;
+            font-size: 24px;
+            color: #1890ff;
+            margin-right: 8px;
 
             i {
               display: none;
@@ -483,7 +486,7 @@
             line-height    : 38px;
             height         : 38px;
             // padding-left: 28px;
-            margin-left: 16px;
+            margin-left: 20px;
             padding: 8px 12px;
 
             .file_title {
@@ -498,10 +501,12 @@
 
             .file_info {
               text-align: right;
+              margin-right: 12px;
             }
             .breadNav {
               display: none;
               margin-left: 16px;
+              margin-right: 12px;
               // display: block;
               .Breadcrumb {
                 max-width: 330px;
@@ -563,12 +568,23 @@
         margin-top: -1px;
       }
       .add_sub_btn, .add_sub_upload {
-        color: #1890ff;
-        margin-right: 120px;
-        position: absolute;
+        // color: #1890ff;
+        // margin-right: 120px;
+        // position: relative;
+        padding: 0px 2px;
+        display: inline-block;
+        &:hover {
+          background: rgba(0, 0, 0, 0.04);
+          cursor: pointer;
+          border-radius: 4px;
+        }
       }
       .add_sub_upload {
-        right: 0;
+        color: rgba(0, 0, 0, 0.45);
+        min-width: 110px;
+        text-align: center;
+        box-sizing: border-box;
+        margin-right: 46px;
       }
     }
   }
@@ -578,6 +594,43 @@
 
   /* 各种不同字段部分 E */
 
+}
+
+.pay_filelist_wrapper {
+  padding-left: 16px;
+  .pay_filelist_item {
+    display: flex;
+    // justify-content: space-between;
+    margin-bottom: 10px;
+    .pay_file_icon {
+      color: #6294FF;
+      font-size: 24px;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+    .pay_file_name {
+      vertical-align: middle;
+      font-size:14px;
+      font-family:PingFangSC-Medium,PingFang SC;
+      font-weight:500;
+      color:rgba(0,0,0,0.65);
+      line-height:12px;
+      margin-bottom: 10px;
+    }
+    .pay_file_creater {
+      font-size:12px;
+      font-family:PingFangSC-Regular,PingFang SC;
+      font-weight:400;
+      color:rgba(0,0,0,0.45);
+      line-height:12px;
+    }
+    .pay_more_icon {
+      font-size: 16px;
+      &:hover {
+        color: #1890FF;
+      }
+    }
+  }
 }
 
 .dynamic_comment {

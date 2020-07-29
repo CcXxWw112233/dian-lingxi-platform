@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
-import { Icon, Dropdown, Tooltip, Popconfirm, DatePicker, message, Menu, Modal } from 'antd'
+import { Icon, Dropdown, Tooltip, Popconfirm, DatePicker, message, Menu, Modal, Breadcrumb } from 'antd'
 import appendSubTaskStyles from './appendSubTask.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import AvatarList from '../AvatarList'
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
-import { timestampToTimeNormal3, compareTwoTimestamp, timeToTimestamp, timestampToTimeNormal, timestampToTime } from '@/utils/util'
+import { timestampFormat, timestampToTimeNormal3, compareTwoTimestamp, timeToTimestamp, timestampToTimeNormal, timestampToTime } from '@/utils/util'
 import { isApiResponseOk } from '@/utils/handleResponseData'
 import {
   MESSAGE_DURATION_TIME
@@ -555,9 +555,17 @@ export default class AppendSubTaskItem extends Component {
               message.error(value.message)
               resolve()
             } else {
-              
+              let new_drawContent = { ...drawContent }
               sub_attachment_data[childDataIndex].deliverables = sub_attachment_data[childDataIndex].deliverables.filter(n => n.id != attachment_id)
-              that.setChildTaskIndrawContent({name: 'deliverables', value: [...sub_attachment_data[childDataIndex].deliverables]})
+              new_drawContent['properties'] = that.filterCurrentUpdateDatasField('SUBTASK', sub_attachment_data)
+              that.props.dispatch({
+                type: 'publicTaskDetailModal/updateDatas',
+                payload: {
+                  drawContent: new_drawContent
+                }
+              })
+
+              // that.setChildTaskIndrawContent({ name: 'deliverables', value: [...sub_attachment_data[childDataIndex].deliverables] })
               resolve()
             }
           })
@@ -595,7 +603,8 @@ export default class AppendSubTaskItem extends Component {
   }
 
   /**附件预览 */
-  openFileDetailModal = (fileInfo) => {
+  openFileDetailModal = (e, fileInfo) => {
+    e && e.stopPropagation()
     const file_name = fileInfo.name
     const file_resource_id = fileInfo.file_resource_id
     const file_id = fileInfo.file_id;
@@ -619,15 +628,36 @@ export default class AppendSubTaskItem extends Component {
 
   }
 
-   // 上传文件 事件 S
-   onUploadFileListChange = (data) => {
+  // 上传文件 事件 S
+  onUploadFileListChange = (data) => {
     let { drawContent = {}, dispatch, childDataIndex } = this.props;
-    const { data: attachment_data } = drawContent['properties'].filter(item => item.code == 'SUBTASK')[0]
+    const { data: sub_attachment_data } = drawContent['properties'].filter(item => item.code == 'SUBTASK')[0]
     if (data && data.length > 0) {
-      attachment_data[childDataIndex].deliverables.push(...data)
-      this.setChildTaskIndrawContent({name: 'deliverables', value: [...attachment_data[childDataIndex].deliverables]})
+      sub_attachment_data[childDataIndex].deliverables.push(...data)
+      // this.setChildTaskIndrawContent({ name: 'deliverables', value: [...attachment_data[childDataIndex].deliverables] })
+      let new_drawContent = { ...drawContent }
+      new_drawContent['properties'] = this.filterCurrentUpdateDatasField('SUBTASK', sub_attachment_data)
+      this.props.dispatch({
+        type: 'publicTaskDetailModal/updateDatas',
+        payload: {
+          drawContent: new_drawContent
+        }
+      })
     }
   }
+
+  // 获取上传文件时, 当前操作人 S
+  showMemberName = (userId) => {
+    const { projectDetailInfoData = {} } = this.props
+    const { data = [] } = projectDetailInfoData;
+    const users = data.filter((item) => item.user_id == userId);
+
+    if (users.length > 0) {
+      return <span>{users[0].name}</span>
+    }
+    return;
+  }
+  // 获取上传文件时, 当前操作人 E
 
   //文件名类型
   judgeFileType(fileName) {
@@ -713,12 +743,35 @@ export default class AppendSubTaskItem extends Component {
     return themeCode
   }
 
+    // 递归获取附件路径 S
+    getFolderPathName = (fileList, fileItem) => {
+      let new_fileList = [...fileList]
+      let arr = []
+      const target_path = fileItem.folder_path
+      // 递归添加路径
+      const digui = (name, data) => {
+        if (data[name]) {
+          arr.push({ file_name: data.folder_name, file_id: data.id, type: '1' })
+          digui(name, data[name])
+        } else if (data['parent_id'] == '0') {
+          arr.push({ file_name: '根目录', type: '0' })
+        } else if (data['parent_id'] == '2') {// 表示临时目录
+          arr.push({ file_name: data.folder_name, file_id: data.id, type: '2' })
+        }
+      }
+      digui('parent_folder', target_path)
+      const newbreadcrumbList = arr.reverse()
+      // newbreadcrumbList.push({ file_name: fileItem.name, file_id: fileItem.file_id, type: '1' })
+      return newbreadcrumbList
+    }
+    // 递归获取附件路径 E
+
   render() {
     const { childTaskItemValue, childDataIndex, dispatch, data = {}, drawContent = {}, boardFolderTreeData, projectDetailInfoData } = this.props
     const { org_id, board_id } = drawContent
     const { card_id, is_realize = '0', deliverables = [] } = childTaskItemValue
     const { local_card_name, local_executor = [], local_start_time, local_due_time, is_edit_sub_name } = this.state
-    
+
     return (
       <div style={{ display: 'flex', position: 'relative' }} className={appendSubTaskStyles.active_icon}>
         {/* <Popconfirm getPopupContainer={triggerNode => triggerNode.parentNode} onConfirm={() => { this.deleteConfirm({ card_id, childDataIndex }) }} title={'删除该子任务？'}>
@@ -733,7 +786,7 @@ export default class AppendSubTaskItem extends Component {
               <Icon type="check" style={{ color: '#FFFFFF', fontSize: 10, fontWeight: 'bold', position: 'absolute', top: '0', right: '0', left: '0', bottom: '0', margin: '1px auto' }} />
             </div>
             {/* 名字 */}
-            <div style={{ flex: '1', cursor: 'pointer', borderBottom: '1px solid #C1C4CB', marginLeft: '10px', display: 'flex', justifyContent: 'space-between' }}>
+            <div style={{ flex: '1', cursor: 'pointer', borderBottom: '1px solid #C1C4CB', display: 'flex', justifyContent: 'space-between' }}>
               {
                 !is_edit_sub_name ? (
                   <>
@@ -745,7 +798,7 @@ export default class AppendSubTaskItem extends Component {
                       <UploadAttachment
                         onFileListChange={this.onUploadFileListChange}
                         executors={local_executor}
-                        boardFolderTreeData={boardFolderTreeData} 
+                        boardFolderTreeData={boardFolderTreeData}
                         projectDetailInfoData={projectDetailInfoData}
                         org_id={org_id} board_id={board_id} card_id={card_id}
                       >
@@ -898,19 +951,38 @@ export default class AppendSubTaskItem extends Component {
             </div>
           </div>
           {/* 交付物 */}
-          <div className={appendSubTaskStyles.sub_filelist_wrapper}>
+          <div className={appendSubTaskStyles.filelist_wrapper}>
             {
               !!(deliverables && deliverables.length) && deliverables.map(fileInfo => {
                 const { name: file_name, file_id } = fileInfo
+                const breadcrumbList = this.getFolderPathName([], fileInfo)
                 return (
-                  <div key={file_id} className={appendSubTaskStyles.sub_filelist_item} onClick={() => this.openFileDetailModal(fileInfo)}>
-                    <span style={{ display: 'inline-block' }}>
-                      <span className={`${appendSubTaskStyles.sub_file_icon} ${globalStyles.authTheme}`} dangerouslySetInnerHTML={{ __html: this.judgeFileType(file_name) }}></span>
-                      <span title={file_name} className={appendSubTaskStyles.sub_file_name}>{file_name}</span>
-                    </span>
-                    <Dropdown trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.getAttachmentActionMenus(fileInfo)}>
-                      <span onClick={(e) => e && e.stopPropagation()} className={`${appendSubTaskStyles.sub_more_icon} ${globalStyles.authTheme}`}>&#xe66f;</span>
-                    </Dropdown>
+                  <div className={`${appendSubTaskStyles.file_item_wrapper}`} key={fileInfo.id}>
+                    <div className={`${appendSubTaskStyles.file_item} ${appendSubTaskStyles.pub_hover}`} onClick={() => this.openFileDetailModal(fileInfo)} >
+                      <div>
+                        <span className={`${appendSubTaskStyles.file_action} ${globalStyles.authTheme}`} dangerouslySetInnerHTML={{ __html: this.judgeFileType(file_name) }}></span>
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <div onClick={(e) => this.openFileDetailModal(e, fileInfo)} title={file_name} className={appendSubTaskStyles.pay_file_name}>{file_name}</div>
+                      </div>
+                      <div className={appendSubTaskStyles.file_info}>{this.showMemberName(fileInfo.create_by)} 上传于 {fileInfo.create_time && timestampFormat(fileInfo.create_time, "MM-dd hh:mm")}</div>
+                      <div className={appendSubTaskStyles.breadNav} style={{ position: 'relative' }}>
+                        <Breadcrumb className={appendSubTaskStyles.Breadcrumb} separator=">">
+                          {breadcrumbList.map((value, key) => {
+                            return (
+                              // <Tooltip getPopupContainer={triggerNode => triggerNode.parentNode} title={(value && value.file_name) && value.file_name} placement="top">
+                              <Breadcrumb.Item key={key}>
+                                <span title={(value && value.file_name) && value.file_name} className={key == breadcrumbList.length - 1 && appendSubTaskStyles.breadItem}>{(value && value.file_name) && value.file_name}</span>
+                              </Breadcrumb.Item>
+                              // </Tooltip>
+                            )
+                          })}
+                        </Breadcrumb>
+                      </div>
+                      <Dropdown trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.getAttachmentActionMenus(fileInfo)}>
+                        <span onClick={(e) => e && e.stopPropagation()} className={`${appendSubTaskStyles.pay_more_icon} ${globalStyles.authTheme}`}>&#xe66f;</span>
+                      </Dropdown>
+                    </div>
                   </div>
                 )
               })

@@ -273,7 +273,7 @@ export default class AppendSubTask extends Component {
     }]
 
     return (
-      <div>
+      <div style={{width: '100%'}}>
         <div style={{ marginBottom: '12px' }}>
           {
             !is_add_sub_task ? (
@@ -281,21 +281,67 @@ export default class AppendSubTask extends Component {
                 {children}
               </div>
             ) : (
-                <>
-                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
-                    {/* 文本框部分 */}
-                    <span style={{ flex: '1', marginRight: '16px' }}>
-                      <input
-                        autosize={true}
-                        onBlur={this.setchildTaskNameBlur}
-                        onChange={this.setchildTaskNameChange}
-                        autoFocus={true}
-                        // goldName={card_name}
-                        maxLength={100}
-                        nodeName={'input'}
-                        style={{ width: '100%', display: 'block', fontSize: 14, color: '#262626', resize: 'none', height: '38px', background: 'rgba(255,255,255,1)', boxShadow: '0px 0px 8px 0px rgba(0,0,0,0.15)', borderRadius: '4px', border: 'none', outline: 'none', paddingLeft: '12px' }}
-                      />
-                    </span>
+              <>
+              <div style={{background: 'rgba(0,0,0,0.04)', padding: '9px 12px', borderRadius: '4px', marginBottom: '4px'}}>
+                <div style={{display: 'flex', alignItems: 'center'}}>
+                  {/* 文本框部分 */}
+                  <span style={{ flex: '1', marginRight: '16px' }}>
+                    <input
+                      autosize={true}
+                      onBlur={this.setchildTaskNameBlur}
+                      onChange={this.setchildTaskNameChange}
+                      autoFocus={true}
+                      // goldName={card_name}
+                      maxLength={100}
+                      nodeName={'input'}
+                      style={{ width: '100%', display: 'block', fontSize: 14, color: '#262626', resize: 'none', height: '38px', background: 'rgba(255,255,255,1)', boxShadow: '0px 0px 8px 0px rgba(0,0,0,0.15)', borderRadius: '4px', border: 'none', outline: 'none', paddingLeft: '12px' }}
+                    />
+                  </span>
+                  {/* 执行人部分 */}
+                  <span style={{ position: 'relative' }} className={appendSubTaskStyles.user_pr}>
+                    <Dropdown overlayClassName={appendSubTaskStyles.overlay_sub_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
+                      overlay={
+                        <MenuSearchPartner
+                          handleSelectedAllBtn={this.handleSelectedAllBtn}
+                          isInvitation={true}
+                          listData={dataInfo} keyCode={'user_id'} searchName={'name'} currentSelect={sub_executors.length ? sub_executors : executor} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
+                          board_id={board_id} />
+                      }>
+                      {
+                        sub_executors && sub_executors.length ? (
+                          <div>
+                            <AvatarList
+                              size="mini"
+                              maxLength={3}
+                              excessItemsStyle={{
+                                color: '#f56a00',
+                                backgroundColor: '#fde3cf'
+                              }}
+                            >
+                              {sub_executors && sub_executors.length ? sub_executors.map(({ name, avatar }, index) => (
+                                <AvatarList.Item
+                                  key={index}
+                                  tips={name}
+                                  src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
+                                />
+                              )) : (
+                                  <Tooltip title="执行人">
+                                    <span className={`${globalStyles.authTheme} ${appendSubTaskStyles.sub_executor}`}>&#xe7b2;</span>
+                                  </Tooltip>
+                                )}
+                            </AvatarList>
+                          </div>
+                        ) : (
+                            <Tooltip title="执行人">
+                              <span className={`${globalStyles.authTheme} ${appendSubTaskStyles.sub_executor}`}>&#xe7b2;</span>
+                            </Tooltip>
+                          )
+                      }
+                    </Dropdown>
+                  </span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', flex: 1 }}>
                     {/* 开始时间 */}
                     <span>
                       {
@@ -367,55 +413,14 @@ export default class AppendSubTask extends Component {
                           )
                       }
                     </span>
-                    {/* 执行人部分 */}
-                    <span style={{ position: 'relative' }} className={appendSubTaskStyles.user_pr}>
-                      <Dropdown overlayClassName={appendSubTaskStyles.overlay_sub_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
-                        overlay={
-                          <MenuSearchPartner
-                            handleSelectedAllBtn={this.handleSelectedAllBtn}
-                            isInvitation={true}
-                            listData={dataInfo} keyCode={'user_id'} searchName={'name'} currentSelect={sub_executors.length ? sub_executors : executor} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
-                            board_id={board_id} />
-                        }>
-                        {
-                          sub_executors && sub_executors.length ? (
-                            <div>
-                              <AvatarList
-                                size="mini"
-                                maxLength={3}
-                                excessItemsStyle={{
-                                  color: '#f56a00',
-                                  backgroundColor: '#fde3cf'
-                                }}
-                              >
-                                {sub_executors && sub_executors.length ? sub_executors.map(({ name, avatar }, index) => (
-                                  <AvatarList.Item
-                                    key={index}
-                                    tips={name}
-                                    src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
-                                  />
-                                )) : (
-                                    <Tooltip title="执行人">
-                                      <span className={`${globalStyles.authTheme} ${appendSubTaskStyles.sub_executor}`}>&#xe7b2;</span>
-                                    </Tooltip>
-                                  )}
-                              </AvatarList>
-                            </div>
-                          ) : (
-                              <Tooltip title="执行人">
-                                <span className={`${globalStyles.authTheme} ${appendSubTaskStyles.sub_executor}`}>&#xe7b2;</span>
-                              </Tooltip>
-                            )
-                        }
-                      </Dropdown>
-                    </span>
-
                   </div>
                   <div style={{ textAlign: 'right' }}>
                     <span onClick={(e) => { this.handleCancel(e) }} className={appendSubTaskStyles.cancel}>取消</span>
                     <Button onClick={(e) => { this.handleSave(e) }} disabled={saveDisabled} type="primary" style={{ marginLeft: '16px', width: '60px', height: '34px' }}>确定</Button>
                   </div>
-                </>
+                </div>
+              </div>
+            </>
               )
           }
         </div>
