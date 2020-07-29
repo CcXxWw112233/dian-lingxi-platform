@@ -1032,12 +1032,29 @@ export default class DragDropContentComponent extends Component {
             </div>
             <div className={`${mainContentStyles.field_right}`}>
               {/* 添加子任务组件 */}
-              <AppendSubTask data={data} handleTaskDetailChange={handleTaskDetailChange} handleChildTaskChange={handleChildTaskChange} whetherUpdateParentTaskTime={whetherUpdateParentTaskTime} updateRelyOnRationList={updateRelyOnRationList}>
-                <div className={`${mainContentStyles.pub_hover}`}>
+              <AppendSubTask data={data} handleTaskDetailChange={handleTaskDetailChange} handleChildTaskChange={handleChildTaskChange} whetherUpdateParentTaskTime={whetherUpdateParentTaskTime} updateRelyOnRationList={updateRelyOnRationList} boardFolderTreeData={boardFolderTreeData} projectDetailInfoData={projectDetailInfoData}>
+                {/* <div className={`${mainContentStyles.pub_hover}`}> */}
                   <span className={mainContentStyles.add_sub_btn}>
                     <span className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe8fe;</span> 新建子任务
                     </span>
-                </div>
+                    {/* <span onClick={(e) => e && e.stopPropagation()} className={mainContentStyles.add_sub_upload}>
+                      <span style={{ fontSize: '16px' }} className={globalStyles.authTheme}>&#xe7fa;</span>
+                      <span>上传交付物</span>
+                    </span> */}
+                    {
+                        card_id && (
+                          <div style={{display: 'inline-block'}} onClick={(e) => e && e.stopPropagation()}>
+                            <UploadAttachment executors={executors.data} boardFolderTreeData={boardFolderTreeData} projectDetailInfoData={projectDetailInfoData} org_id={org_id} board_id={board_id} card_id={card_id}
+                            onFileListChange={this.onUploadFileListChange}>
+                              <span className={mainContentStyles.add_sub_upload}>
+                                <span style={{ fontSize: '16px' }} className={globalStyles.authTheme}>&#xe7fa;</span>
+                                <span>上传交付物</span>
+                              </span>
+                          </UploadAttachment>
+                          </div>
+                        )
+                    }
+                {/* </div> */}
               </ AppendSubTask>
             </div>
           </div>
