@@ -270,7 +270,7 @@ export default class AppendSubTask extends Component {
 
 
   render() {
-    const { children, drawContent = {}, data: dataInfo, dispatch, handleTaskDetailChange, handleChildTaskChange, whetherUpdateParentTaskTime, updateRelyOnRationList } = this.props
+    const { children, drawContent = {}, data: dataInfo, dispatch, handleTaskDetailChange, handleChildTaskChange, whetherUpdateParentTaskTime, updateRelyOnRationList, boardFolderTreeData, projectDetailInfoData } = this.props
     const { card_id, board_id } = drawContent
     const { data: child_data = [] } = drawContent['properties'].filter(item => item.code == 'SUBTASK')[0]
     const { is_add_sub_task, sub_executors = [], saveDisabled, due_time, start_time } = this.state
@@ -436,10 +436,20 @@ export default class AppendSubTask extends Component {
         {/* 显示子任务列表 */}
         <div>
           {child_data.map((value, key) => {
-            const { card_id, card_name, start_time, due_time, executors = [] } = value
+            const { card_id, card_name, start_time, due_time, executors = [], deliverables  = [] } = value
             const { user_id } = executors[0] || {}
             return (
-              <AppendSubTaskItem whetherUpdateParentTaskTime={whetherUpdateParentTaskTime} handleChildTaskChange={handleChildTaskChange} handleTaskDetailChange={handleTaskDetailChange} board_id={board_id} data={dataInfo} childTaskItemValue={value} key={`${card_id}-${card_name}-${user_id}-${due_time}-${start_time}`} childDataIndex={key} updateRelyOnRationList={updateRelyOnRationList} />
+              <AppendSubTaskItem
+                boardFolderTreeData={boardFolderTreeData} projectDetailInfoData={projectDetailInfoData} 
+                whetherUpdateParentTaskTime={whetherUpdateParentTaskTime} 
+                handleChildTaskChange={handleChildTaskChange} 
+                handleTaskDetailChange={handleTaskDetailChange} 
+                data={dataInfo} 
+                childTaskItemValue={value} 
+                key={`${card_id}-${card_name}-${user_id}-${due_time}-${start_time}-${deliverables}`} 
+                childDataIndex={key} 
+                updateRelyOnRationList={updateRelyOnRationList}
+              />
             )
           })}
         </div>

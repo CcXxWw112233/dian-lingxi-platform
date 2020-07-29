@@ -1,17 +1,20 @@
 import React, { Component } from 'react'
-import { Icon, Dropdown, Tooltip, Popconfirm, DatePicker, message, Menu } from 'antd'
+import { Icon, Dropdown, Tooltip, Popconfirm, DatePicker, message, Menu, Breadcrumb, Modal } from 'antd'
 import appendSubTaskStyles from './appendSubTask.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import AvatarList from '../AvatarList'
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
-import { timestampToTimeNormal3, compareTwoTimestamp, timeToTimestamp, timestampToTimeNormal, timestampToTime } from '@/utils/util'
+import { timestampFormat, timestampToTimeNormal3, compareTwoTimestamp, timeToTimestamp, timestampToTimeNormal, timestampToTime } from '@/utils/util'
 import { isApiResponseOk } from '@/utils/handleResponseData'
 import {
   MESSAGE_DURATION_TIME
 } from "@/globalset/js/constant";
 import { connect } from 'dva'
 import { arrayNonRepeatfy } from '@/utils/util'
+import { deleteTaskFile } from '@/services/technological/task'
+import { getSubfixName } from "@/utils/businessFunction";
+import UploadAttachment from '../../../../../../../../components/UploadAttachment'
 
 @connect(({ publicTaskDetailModal: { drawContent = {} } }) => ({
   drawContent
@@ -506,30 +509,274 @@ export default class AppendSubTaskItem extends Component {
     })
   }
 
-  // 渲染子任务交付物点点点内容
-  subFileOperater = () => {
-    return (
-      <Menu>
-        <Menu.Item key="download">下载到本地</Menu.Item>
-        <Menu.Item key="delete">删除交付物</Menu.Item>
-      </Menu>
-    )
+  /**附件下载、删除等操作 */
+  attachmentItemOpera({ type, data = {}, card_id }, e) {
+    e && e.stopPropagation()
+    //debugger
+    const { dispatch } = this.props
+    const attachment_id = data.id || (data.response && data.response.data && data.response.data.attachment_id)
+    const file_resource_id = data.file_resource_id || (data.response && data.response.data.file_resource_id)
+    if (!attachment_id) {
+      message.warn('上传中，请稍后...')
+      return
+    }
+    if (type == 'remove') {
+      this.deleteAttachmentFile({ attachment_id, card_id })
+    } else if (type == 'download') {
+      dispatch({
+        type: 'projectDetailFile/fileDownload',
+        payload: {
+          ids: file_resource_id,
+          card_id,
+          fileIds: data.file_id
+        }
+      })
+    }
+  }
+  /**附件删除 */
+  deleteAttachmentFile(data) {
+    const { attachment_id, card_id } = data;
+    const that = this
+    const { drawContent = {}, dispatch, childDataIndex } = this.props
+    const { data: sub_attachment_data } = drawContent['properties'].filter(item => item.code == 'SUBTASK')[0]
+    const modal = Modal.confirm()
+    modal.update({
+      title: `确认要删除这个附件吗？`,
+      zIndex: 1007,
+      content: <div style={{ color: 'rgba(0,0,0, .8)', fontSize: 14 }}>
+        <span >删除后不可恢复</span>
+      </div>,
+      okText: '确认',
+      cancelText: '取消',
+      onOk() {
+        return new Promise((resolve) => {
+          deleteTaskFile(data).then((value) => {
+
+            if (value.code !== '0') {
+              message.error(value.message)
+              resolve()
+            } else {
+              let new_drawContent = { ...drawContent }
+              sub_attachment_data[childDataIndex].deliverables = sub_attachment_data[childDataIndex].deliverables.filter(n => n.id != attachment_id)
+              new_drawContent['properties'] = that.filterCurrentUpdateDatasField('SUBTASK', sub_attachment_data)
+              that.props.dispatch({
+                type: 'publicTaskDetailModal/updateDatas',
+                payload: {
+                  drawContent: new_drawContent
+                }
+              })
+
+              // that.setChildTaskIndrawContent({ name: 'deliverables', value: [...sub_attachment_data[childDataIndex].deliverables] })
+              resolve()
+            }
+          })
+          // .catch((e) => {
+          //   // console.log(e);
+
+          //   message.warn('删除出了点问题，请重新删除。')
+          //   resolve()
+          // })
+        })
+
+      },
+      onCancel: () => {
+        modal.destroy();
+      }
+    });
   }
 
+  // 渲染子任务交付物点点点内容
+  getAttachmentActionMenus = (fileInfo, card_id) => {
+    return (
+      <Menu>
+        <Menu.Item>
+          <a onClick={this.attachmentItemOpera.bind(this, { type: 'download', data: fileInfo, card_id })}>
+            下载到本地
+              </a>
+        </Menu.Item>
+        <Menu.Item>
+          <a onClick={this.attachmentItemOpera.bind(this, { type: 'remove', data: fileInfo, card_id })}>
+            删除该附件
+              </a>
+        </Menu.Item>
+      </Menu>
+    );
+  }
+
+  /**附件预览 */
+  openFileDetailModal = (e, fileInfo) => {
+    e && e.stopPropagation()
+    const file_name = fileInfo.name
+    const file_resource_id = fileInfo.file_resource_id
+    const file_id = fileInfo.file_id;
+    const board_id = fileInfo.board_id
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetail/projectDetailInfo',
+      payload: {
+        id: board_id
+      }
+    })
+    dispatch({
+      type: 'publicFileDetailModal/updateDatas',
+      payload: {
+        filePreviewCurrentFileId: file_id,
+        fileType: getSubfixName(file_name),
+        isInOpenFile: true,
+        filePreviewCurrentName: file_name
+      }
+    })
+
+  }
+
+  // 上传文件 事件 S
+  onUploadFileListChange = (data) => {
+    let { drawContent = {}, dispatch, childDataIndex } = this.props;
+    const { data: sub_attachment_data } = drawContent['properties'].filter(item => item.code == 'SUBTASK')[0]
+    if (data && data.length > 0) {
+      sub_attachment_data[childDataIndex].deliverables.push(...data)
+      // this.setChildTaskIndrawContent({ name: 'deliverables', value: [...attachment_data[childDataIndex].deliverables] })
+      let new_drawContent = { ...drawContent }
+      new_drawContent['properties'] = this.filterCurrentUpdateDatasField('SUBTASK', sub_attachment_data)
+      this.props.dispatch({
+        type: 'publicTaskDetailModal/updateDatas',
+        payload: {
+          drawContent: new_drawContent
+        }
+      })
+    }
+  }
+
+  // 获取上传文件时, 当前操作人 S
+  showMemberName = (userId) => {
+    const { projectDetailInfoData = {} } = this.props
+    const { data = [] } = projectDetailInfoData;
+    const users = data.filter((item) => item.user_id == userId);
+
+    if (users.length > 0) {
+      return <span>{users[0].name}</span>
+    }
+    return;
+  }
+  // 获取上传文件时, 当前操作人 E
+
+  //文件名类型
+  judgeFileType(fileName) {
+    let themeCode = ''
+    const type = getSubfixName(fileName)
+    switch (type) {
+      case '.xls':
+        themeCode = '&#xe65c;'
+        break
+      case '.png':
+        themeCode = '&#xe69a;'
+        break
+      case '.xlsx':
+        themeCode = '&#xe65c;'
+        break
+      case '.ppt':
+        themeCode = '&#xe655;'
+        break
+      case '.pptx':
+        themeCode = '&#xe650;'
+        break
+      case '.gif':
+        themeCode = '&#xe657;'
+        break
+      case '.jpeg':
+        themeCode = '&#xe659;'
+        break
+      case '.pdf':
+        themeCode = '&#xe651;'
+        break
+      case '.docx':
+        themeCode = '&#xe64a;'
+        break
+      case '.txt':
+        themeCode = '&#xe654;'
+        break
+      case '.doc':
+        themeCode = '&#xe64d;'
+        break
+      case '.jpg':
+        themeCode = '&#xe653;'
+        break
+      case '.mp4':
+        themeCode = '&#xe6e1;'
+        break
+      case '.mp3':
+        themeCode = '&#xe6e2;'
+        break
+      case '.skp':
+        themeCode = '&#xe6e8;'
+        break
+      case '.gz':
+        themeCode = '&#xe6e7;'
+        break
+      case '.7z':
+        themeCode = '&#xe6e6;'
+        break
+      case '.zip':
+        themeCode = '&#xe6e5;'
+        break
+      case '.rar':
+        themeCode = '&#xe6e4;'
+        break
+      case '.3dm':
+        themeCode = '&#xe6e0;'
+        break
+      case '.ma':
+        themeCode = '&#xe65f;'
+        break
+      case '.psd':
+        themeCode = '&#xe65d;'
+        break
+      case '.obj':
+        themeCode = '&#xe65b;'
+        break
+      case '.bmp':
+        themeCode = '&#xe6ee;'
+        break
+      default:
+        themeCode = '&#xe660;'
+        break
+    }
+    return themeCode
+  }
+
+  // 递归获取附件路径 S
+  getFolderPathName = (fileList, fileItem) => {
+    let new_fileList = [...fileList]
+    let arr = []
+    const target_path = fileItem.folder_path
+    // 递归添加路径
+    const digui = (name, data) => {
+      if (data[name]) {
+        arr.push({ file_name: data.folder_name, file_id: data.id, type: '1' })
+        digui(name, data[name])
+      } else if (data['parent_id'] == '0') {
+        arr.push({ file_name: '根目录', type: '0' })
+      } else if (data['parent_id'] == '2') {// 表示临时目录
+        arr.push({ file_name: data.folder_name, file_id: data.id, type: '2' })
+      }
+    }
+    digui('parent_folder', target_path)
+    const newbreadcrumbList = arr.reverse()
+    // newbreadcrumbList.push({ file_name: fileItem.name, file_id: fileItem.file_id, type: '1' })
+    return newbreadcrumbList
+  }
+  // 递归获取附件路径 E
+
   render() {
-    const { childTaskItemValue, childDataIndex, dispatch, data = {}, drawContent = {}, board_id } = this.props
-    const { card_id, is_realize = '0' } = childTaskItemValue
+    const { childTaskItemValue, childDataIndex, dispatch, data = {}, drawContent = {}, boardFolderTreeData, projectDetailInfoData } = this.props
+    const { org_id, board_id } = drawContent
+    const { card_id, is_realize = '0', deliverables = [] } = childTaskItemValue
     const { local_card_name, local_executor = [], local_start_time, local_due_time, is_edit_sub_name } = this.state
 
 
     return (
       <div style={{ display: 'flex', position: 'relative' }} className={appendSubTaskStyles.active_icon}>
         <div className={`${appendSubTaskStyles.subTaskItemWrapper} ${appendSubTaskStyles.subTaskItemWrapper_active}`} key={childDataIndex}>
-          {/* <Popconfirm getPopupContainer={triggerNode => triggerNode.parentNode} onConfirm={() => { this.deleteConfirm({ card_id, childDataIndex }) }} title={'删除该子任务？'} placement={'topRight'}>
-            <div className={`${appendSubTaskStyles.del_icon}`}>
-              <span className={`${globalStyles.authTheme}`}>&#xe7c3;</span>
-            </div>
-          </Popconfirm> */}
           <div style={{ display: 'flex' }}>
             {/*完成*/}
             <div style={{ flexShrink: 0 }} className={is_realize === '1' ? appendSubTaskStyles.nomalCheckBoxActive : appendSubTaskStyles.nomalCheckBox} onClick={this.itemOneClick}>
@@ -543,10 +790,16 @@ export default class AppendSubTaskItem extends Component {
                     <div onClick={this.handleSubTaskName} className={appendSubTaskStyles.card_name}>
                       <span title={local_card_name} style={{ wordBreak: 'break-all' }}>{local_card_name}</span>
                     </div>
-                    <div style={{display: 'flex', width: '48px', justifyContent: 'space-between'}}>
-                      {/* <Tooltip style={{minWidth: '88px'}} getPopupContainer={triggerNode => triggerNode.parentNode} title={'上传交付物'} placement="top"> */}
+                    <div style={{ display: 'flex', width: '48px', justifyContent: 'space-between' }}>
+                      <UploadAttachment
+                        onFileListChange={this.onUploadFileListChange}
+                        executors={local_executor}
+                        boardFolderTreeData={boardFolderTreeData}
+                        projectDetailInfoData={projectDetailInfoData}
+                        org_id={org_id} board_id={board_id} card_id={card_id}
+                      >
                         <div title={'上传交付物'} className={`${appendSubTaskStyles.sub_upload} ${globalStyles.authTheme}`}>&#xe606;</div>
-                      {/* </Tooltip> */}
+                      </UploadAttachment>
                       <Popconfirm getPopupContainer={triggerNode => triggerNode.parentNode} onConfirm={() => { this.deleteConfirm({ card_id, childDataIndex }) }} title={'删除该子任务？'} placement={'topRight'}>
                         <div title={'删除子任务'} className={`${appendSubTaskStyles.del_icon}`}>
                           <span className={`${globalStyles.authTheme}`}>&#xe7c3;</span>
@@ -693,25 +946,40 @@ export default class AppendSubTaskItem extends Component {
             </div>
           </div>
           {/* 交付物 */}
-          <div className={appendSubTaskStyles.sub_filelist_wrapper}>
-            <div className={appendSubTaskStyles.sub_filelist_item}>
-              <span style={{display: 'inline-block'}}>
-                <span className={`${appendSubTaskStyles.sub_file_icon} ${globalStyles.authTheme}`}>&#xe651;</span>
-                <span className={appendSubTaskStyles.sub_file_name}>勘测任务书编制样本.doc</span>
-              </span>
-              <Dropdown trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.subFileOperater()}>
-                <span className={`${appendSubTaskStyles.sub_more_icon} ${globalStyles.authTheme}`}>&#xe66f;</span>
-              </Dropdown>
-            </div>
-            <div className={appendSubTaskStyles.sub_filelist_item}>
-              <span style={{display: 'inline-block'}}>
-                <span className={`${appendSubTaskStyles.sub_file_icon} ${globalStyles.authTheme}`}>&#xe651;</span>
-                <span className={appendSubTaskStyles.sub_file_name}>勘测任务书编制样本.doc</span>
-              </span>
-              <Dropdown trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.subFileOperater()}>
-                <span className={`${appendSubTaskStyles.sub_more_icon} ${globalStyles.authTheme}`}>&#xe66f;</span>
-              </Dropdown>
-            </div>
+          <div className={appendSubTaskStyles.filelist_wrapper}>
+            {
+              !!(deliverables && deliverables.length) && deliverables.map(fileInfo => {
+                const { name: file_name, file_id } = fileInfo
+                const breadcrumbList = this.getFolderPathName([], fileInfo)
+                return (
+                  <div className={`${appendSubTaskStyles.file_item_wrapper}`} key={fileInfo.id}>
+                    <div className={`${appendSubTaskStyles.file_item} ${appendSubTaskStyles.pub_hover}`} onClick={(e) => this.openFileDetailModal(e,fileInfo)} >
+                      <div>
+                        <span className={`${appendSubTaskStyles.file_action} ${globalStyles.authTheme}`} dangerouslySetInnerHTML={{ __html: this.judgeFileType(file_name) }}></span>
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <div onClick={(e) => this.openFileDetailModal(e, fileInfo)} title={file_name} className={appendSubTaskStyles.file_name}>{file_name}</div>
+                        <div className={appendSubTaskStyles.file_info}>{this.showMemberName(fileInfo.create_by)} 上传于 {fileInfo.create_time && timestampFormat(fileInfo.create_time, "MM-dd hh:mm")}</div>
+                        <div className={appendSubTaskStyles.breadNav} style={{ position: 'relative' }}>
+                          <Breadcrumb className={appendSubTaskStyles.Breadcrumb} separator=">">
+                            {breadcrumbList.map((value, key) => {
+                              return (
+                                <Breadcrumb.Item key={key}>
+                                  <span title={(value && value.file_name) && value.file_name} className={key == breadcrumbList.length - 1 && appendSubTaskStyles.breadItem}>{(value && value.file_name) && value.file_name}</span>
+                                </Breadcrumb.Item>
+                              )
+                            })}
+                          </Breadcrumb>
+                        </div>
+                      </div>
+                      <Dropdown trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.getAttachmentActionMenus(fileInfo)}>
+                        <span onClick={(e) => e && e.stopPropagation()} className={`${appendSubTaskStyles.pay_more_icon} ${globalStyles.authTheme}`}>&#xe66f;</span>
+                      </Dropdown>
+                    </div>
+                  </div>
+                )
+              })
+            }
           </div>
         </div>
       </div>

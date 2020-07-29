@@ -958,7 +958,7 @@ export default class AppendSubTaskItem extends Component {
                 const breadcrumbList = this.getFolderPathName([], fileInfo)
                 return (
                   <div className={`${appendSubTaskStyles.file_item_wrapper}`} key={fileInfo.id}>
-                    <div className={`${appendSubTaskStyles.file_item} ${appendSubTaskStyles.pub_hover}`} onClick={() => this.openFileDetailModal(fileInfo)} >
+                    <div className={`${appendSubTaskStyles.file_item} ${appendSubTaskStyles.pub_hover}`} onClick={(e) => this.openFileDetailModal(e,fileInfo)} >
                       <div>
                         <span className={`${appendSubTaskStyles.file_action} ${globalStyles.authTheme}`} dangerouslySetInnerHTML={{ __html: this.judgeFileType(file_name) }}></span>
                       </div>
