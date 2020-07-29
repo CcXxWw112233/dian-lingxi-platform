@@ -20,7 +20,6 @@ export default class BoardFeatures extends Component {
 		let new_flow_todo_list = this.updateFlowsOppositeTime(props.board_flow_todo_list)
 		this.state = {
 			board_todo_list: [].concat(...props.board_card_todo_list, ...new_flow_todo_list),
-			selected_todo_list_time: null, // 选择的代办列表时间
 		}
 	}
 
@@ -95,21 +94,19 @@ export default class BoardFeatures extends Component {
 	}
 
 	// 关闭弹窗时查询列表
-	setProcessDetailModalVisibile = () => {
+	setProcessDetailModalVisibile = (data) => {
 		const { dispatch, simplemodeCurrentProject = {} } = this.props
 		const { board_id } = simplemodeCurrentProject
 		let params = {
+			...data,
 			_organization_id: localStorage.getItem('OrganizationId'),
 		}
 		if (board_id && board_id != '0') {
-			params.board_ids = board_id
+			params.board_id = board_id
 		}
 		dispatch({
 			type: 'simplemode/getBoardsProcessTodoList',
-			payload: {
-				_organization_id: params._organization_id,
-				board_id: params.board_ids
-			}
+			payload: params
 		})
 		this.setState({
 			whetherShowModalVisible: false
@@ -179,15 +176,28 @@ export default class BoardFeatures extends Component {
 	handleMenuReallySelect = (e) => {
 		const { domEvent, key } = e
 		domEvent && domEvent.stopPropagation()
-		this.setState({
-			selected_todo_list_time: key
+		const { simplemodeCurrentProject } = this.props
+		this.props.dispatch({
+			type: 'simplemode/updateDatas',
+			payload: {
+				simplemodeCurrentProject: {
+					...simplemodeCurrentProject,
+					selected_todo_list_time: key
+				}
+			}
 		})
 		switch (key) {
 			case 'all_time': // 所有时间
+				this.setTaskDetailModalVisible()
+				this.setProcessDetailModalVisibile()
 				break;
 			case 'recently_week': // 最近七周
+				this.setTaskDetailModalVisible({limit_time: 7})
+				this.setProcessDetailModalVisibile({limit_time: 7})
 				break
 			case 'recently_month': // 最近一月
+				this.setTaskDetailModalVisible({limit_time: 31})
+				this.setProcessDetailModalVisibile({limit_time: 31})
 				break
 			default:
 				break;
@@ -196,12 +206,12 @@ export default class BoardFeatures extends Component {
 
 	// 渲染不同的时间段
 	timeQuantum = () => {
-		const { selected_todo_list_time } = this.state
+		const { simplemodeCurrentProject: { selected_todo_list_time } } = this.props
 		return (
 			<Menu onClick={this.handleMenuReallySelect} selectedKeys={[selected_todo_list_time]}>
 				<Menu.Item key={'all_time'}>所有时间</Menu.Item>
-				<Menu.Item key={'recently_week'}>最近7周</Menu.Item>
-				<Menu.Item key={'recently_month'}>近一月</Menu.Item>
+				<Menu.Item key={'recently_week'}>最近一周</Menu.Item>
+				<Menu.Item key={'recently_month'}>最近一月</Menu.Item>
 			</Menu>
 		)
 	}
@@ -252,10 +262,11 @@ export default class BoardFeatures extends Component {
 	}
 
 	// 业务逻辑太复杂时间太紧张，关闭弹窗后再直接拉取接口查询待办事项
-	setTaskDetailModalVisible = () => {
+	setTaskDetailModalVisible = (data) => {
 		const { dispatch, simplemodeCurrentProject = {} } = this.props
 		const { board_id } = simplemodeCurrentProject
 		let params = {
+			...data,
 			_organization_id: localStorage.getItem('OrganizationId'),
 		}
 		if (board_id && board_id != '0') {
@@ -278,8 +289,9 @@ export default class BoardFeatures extends Component {
 
 	render() {
 		const { drawerVisible, projectList = [], projectInitLoaded, board_card_todo_list = [], process_detail_modal_visible } = this.props
-		const { whetherShowProcessDetailModal, selected_todo_list_time } = this.state
-		const selected_filed_time = (!selected_todo_list_time || selected_todo_list_time == 'all_time') ? '所有时间' : selected_todo_list_time == 'recently_week' ? '最近7周' : selected_todo_list_time == 'recently_month' ? '最近一月' : '所有时间'
+		const { simplemodeCurrentProject: { selected_todo_list_time } } = this.props
+		const { whetherShowProcessDetailModal } = this.state
+		const selected_filed_time = (!selected_todo_list_time || selected_todo_list_time == 'all_time') ? '所有时间' : selected_todo_list_time == 'recently_week' ? '最近一周' : selected_todo_list_time == 'recently_month' ? '最近一月' : '所有时间'
 		return (
 			<div id={'featurebox_featuresContent'}>
 				{
