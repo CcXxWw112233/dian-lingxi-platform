@@ -939,77 +939,77 @@ export default class DragDropContentComponent extends Component {
         break
       case 'ATTACHMENT': // 上传附件
         messageValue = (
+          <></>
           // <div className={mainContentStyles.moveWrapper}>
           // <>
-          <div key={id} className={`${mainContentStyles.field_content} ${showDelColor && currentItem.id == currentDelId && mainContentStyles.showDelColor}`}>
-            <div className={mainContentStyles.field_left}>
-              {
-                !flag && (
-                  <span onClick={() => { this.handleDelCurrentField(currentItem.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
-                )
-              }
-              <div className={mainContentStyles.field_hover}>
-                <span className={`${globalStyles.authTheme}`}>&#xe6b9;</span>
-                <span>上传</span>
-              </div>
-            </div>
-            <div className={`${mainContentStyles.field_right}`}>
-              {/* 上传附件组件 */}
-              {
-                (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_ATTACHMENT_UPLOAD).visit_control_edit() ? (
-                  <div className={`${mainContentStyles.pub_hover}`}>
-                    <span>暂无</span>
-                  </div>
-                ) : (
-                    <div className={`${mainContentStyles.pub_hover}`}>
-                      {
-                        card_id && (
-                          <UploadAttachment executors={executors.data} boardFolderTreeData={boardFolderTreeData} projectDetailInfoData={projectDetailInfoData} org_id={org_id} board_id={board_id} card_id={card_id}
-                            onFileListChange={this.onUploadFileListChange}>
-                            <div className={mainContentStyles.upload_file_btn}>
-                              <span className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe7fa;</span> 上传附件
-                          </div>
-                          </UploadAttachment>
-                        )}
-                    </div>
-                  )
-              }
-              <div className={mainContentStyles.filelist_wrapper}>
-                {
-                  currentItem.data && currentItem.data.map((fileInfo) => {
-                    const breadcrumbList = this.getFolderPathName(currentItem.data, fileInfo)
-                    return (
-                      <div className={`${mainContentStyles.file_item_wrapper}`} key={fileInfo.id}>
+          // <div key={id} className={`${mainContentStyles.field_content} ${showDelColor && currentItem.id == currentDelId && mainContentStyles.showDelColor}`}>
+          //   <div className={mainContentStyles.field_left}>
+          //     {
+          //       !flag && (
+          //         <span onClick={() => { this.handleDelCurrentField(currentItem.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
+          //       )
+          //     }
+          //     <div className={mainContentStyles.field_hover}>
+          //       <span className={`${globalStyles.authTheme}`}>&#xe6b9;</span>
+          //       <span>上传</span>
+          //     </div>
+          //   </div>
+          //   <div className={`${mainContentStyles.field_right}`}>
+          //     {
+          //       (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_ATTACHMENT_UPLOAD).visit_control_edit() ? (
+          //         <div className={`${mainContentStyles.pub_hover}`}>
+          //           <span>暂无</span>
+          //         </div>
+          //       ) : (
+          //           <div className={`${mainContentStyles.pub_hover}`}>
+          //             {
+          //               card_id && (
+          //                 <UploadAttachment executors={executors.data} boardFolderTreeData={boardFolderTreeData} projectDetailInfoData={projectDetailInfoData} org_id={org_id} board_id={board_id} card_id={card_id}
+          //                   onFileListChange={this.onUploadFileListChange}>
+          //                   <div className={mainContentStyles.upload_file_btn}>
+          //                     <span className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe7fa;</span> 上传附件
+          //                 </div>
+          //                 </UploadAttachment>
+          //               )}
+          //           </div>
+          //         )
+          //     }
+          //     <div className={mainContentStyles.filelist_wrapper}>
+          //       {
+          //         currentItem.data && currentItem.data.map((fileInfo) => {
+          //           const breadcrumbList = this.getFolderPathName(currentItem.data, fileInfo)
+          //           return (
+          //             <div className={`${mainContentStyles.file_item_wrapper}`} key={fileInfo.id}>
 
-                        <Dropdown overlay={this.getAttachmentActionMenus(fileInfo, card_id)}>
-                          <div className={mainContentStyles.file_action}>
-                            <i className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe7fd;</i>
-                          </div>
-                        </Dropdown>
-                        <div className={`${mainContentStyles.file_item} ${mainContentStyles.pub_hover}`} onClick={() => this.openFileDetailModal(fileInfo)} >
-                          <div className={mainContentStyles.file_title}><span className={`${globalStyles.authTheme}`} style={{ fontSize: '24px', color: '#40A9FF' }}>&#xe659;</span><span>{fileInfo.name}</span></div>
-                          <div className={mainContentStyles.file_info}>{this.showMemberName(fileInfo.create_by)} 上传于 {fileInfo.create_time && timestampFormat(fileInfo.create_time, "MM-dd hh:mm")}</div>
-                          <div className={mainContentStyles.breadNav} style={{ position: 'relative' }}>
-                            <Breadcrumb className={mainContentStyles.Breadcrumb} separator=">">
-                              {breadcrumbList.map((value, key) => {
-                                return (
-                                  <Tooltip getPopupContainer={triggerNode => triggerNode.parentNode} title={(value && value.file_name) && value.file_name} placement="top">
-                                    <Breadcrumb.Item key={key}>
-                                      <span className={key == breadcrumbList.length - 1 && mainContentStyles.breadItem}>{(value && value.file_name) && value.file_name}</span>
-                                    </Breadcrumb.Item>
-                                  </Tooltip>
-                                )
-                              })}
-                            </Breadcrumb>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })
-                }
-              </div>
-            </div>
-          </div>
+          //               <Dropdown overlay={this.getAttachmentActionMenus(fileInfo, card_id)}>
+          //                 <div className={mainContentStyles.file_action}>
+          //                   <i className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe7fd;</i>
+          //                 </div>
+          //               </Dropdown>
+          //               <div className={`${mainContentStyles.file_item} ${mainContentStyles.pub_hover}`} onClick={() => this.openFileDetailModal(fileInfo)} >
+          //                 <div className={mainContentStyles.file_title}><span className={`${globalStyles.authTheme}`} style={{ fontSize: '24px', color: '#40A9FF' }}>&#xe659;</span><span>{fileInfo.name}</span></div>
+          //                 <div className={mainContentStyles.file_info}>{this.showMemberName(fileInfo.create_by)} 上传于 {fileInfo.create_time && timestampFormat(fileInfo.create_time, "MM-dd hh:mm")}</div>
+          //                 <div className={mainContentStyles.breadNav} style={{ position: 'relative' }}>
+          //                   <Breadcrumb className={mainContentStyles.Breadcrumb} separator=">">
+          //                     {breadcrumbList.map((value, key) => {
+          //                       return (
+          //                         <Tooltip getPopupContainer={triggerNode => triggerNode.parentNode} title={(value && value.file_name) && value.file_name} placement="top">
+          //                           <Breadcrumb.Item key={key}>
+          //                             <span className={key == breadcrumbList.length - 1 && mainContentStyles.breadItem}>{(value && value.file_name) && value.file_name}</span>
+          //                           </Breadcrumb.Item>
+          //                         </Tooltip>
+          //                       )
+          //                     })}
+          //                   </Breadcrumb>
+          //                 </div>
+          //               </div>
+          //             </div>
+          //           );
+          //         })
+          //       }
+          //     </div>
+          //   </div>
+          // </div>
           //  </>
           // </div>
         )
@@ -1025,9 +1025,9 @@ export default class DragDropContentComponent extends Component {
                   <span onClick={() => { this.handleDelCurrentField(currentItem.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
                 )
               }
-              <div className={mainContentStyles.field_hover}>
+              <div className={mainContentStyles.field_hover} style={{maxWidth: 'inherit'}}>
                 <span className={`${globalStyles.authTheme}`}>&#xe7f5;</span>
-                <span>子任务</span>
+                <span>子任务 & 交付物</span>
               </div>
             </div>
             <div className={`${mainContentStyles.field_right}`}>
