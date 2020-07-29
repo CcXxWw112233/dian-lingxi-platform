@@ -56,12 +56,15 @@ export default class Index extends Component {
                     width={400}
                     className={styles.draw_detail}
                 >
-                    <MainContent
-                        users={users}
-                        handleRelyUploading={handleRelyUploading}
-                        handleTaskDetailChange={handleTaskDetailChange}
-                        handleChildTaskChange={handleChildTaskChange}
-                    />
+                    <>
+                        <div style={{ height: 58 }}></div>
+                        <MainContent
+                            users={users}
+                            handleRelyUploading={handleRelyUploading}
+                            handleTaskDetailChange={handleTaskDetailChange}
+                            handleChildTaskChange={handleChildTaskChange}
+                        />
+                    </>
                 </Drawer>
             </div>
         )
