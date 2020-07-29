@@ -290,7 +290,7 @@ export default class AppendSubTask extends Component {
               </span>
             ) : (
                 <>
-                  <div style={{background: 'rgba(0,0,0,0.04)', padding: '4px', borderRadius: '4px 4px 0px 0px', marginLeft: '10px', marginBottom: '4px'}}>
+                  <div style={{background: 'rgba(0,0,0,0.04)', padding: '9px 12px', borderRadius: '4px', marginLeft: '10px', marginBottom: '4px'}}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
                       {/* 文本框部分 */}
                       <span style={{ flex: '1', marginRight: '16px' }}>

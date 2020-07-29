@@ -443,14 +443,14 @@ export default class DragDropContentComponent extends Component {
 
   // 上传文件 事件 S
   onUploadFileListChange = (data) => {
-    let { drawContent = {}, dispatch } = this.props;
-    const { data: attachment_data } = drawContent['properties'].filter(item => item.code == 'ATTACHMENT')[0]
+    const { drawContent = {}, dispatch } = this.props;
+    let new_drawContent = { ...drawContent }
     if (data && data.length > 0) {
-      drawContent['properties'] = this.filterCurrentUpdateDatasField('ATTACHMENT', [...attachment_data, ...data])
-      dispatch({
+      new_drawContent['deliverables'].push(...data)
+      this.props.dispatch({
         type: 'publicTaskDetailModal/updateDatas',
         payload: {
-          drawContent: { ...drawContent }
+          drawContent: new_drawContent
         }
       })
     }
@@ -488,7 +488,6 @@ export default class DragDropContentComponent extends Component {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    //debugger
     const { dispatch } = this.props
     const attachment_id = data.id || (data.response && data.response.data && data.response.data.attachment_id)
     const file_resource_id = data.file_resource_id || (data.response && data.response.data.file_resource_id)
@@ -504,7 +503,7 @@ export default class DragDropContentComponent extends Component {
         payload: {
           ids: file_resource_id,
           card_id,
-          fileIds: attachment_id
+          fileIds: data.file_id
         }
       })
     }
@@ -535,22 +534,13 @@ export default class DragDropContentComponent extends Component {
               message.error(value.message)
               resolve()
             } else {
-              let atta_arr = attachment_data;
-              for (let i = 0; i < atta_arr.length; i++) {
-                if (attachment_id == atta_arr[i]['id'] || (atta_arr[i].response && atta_arr[i].response.data && atta_arr[i].response.data.attachment_id == attachment_id)) {
-                  atta_arr.splice(i, 1)
-                }
-              }
-              that.setState({
-                attachment_fileList: atta_arr
-              })
-              const drawContentNew = { ...drawContent }
+              let new_drawContent = { ...drawContent }
               // drawContentNew['attachment_data'] = atta_arr
-              drawContentNew['properties'] = that.filterCurrentUpdateDatasField('ATTACHMENT', atta_arr)
+              new_drawContent['deliverables'] = new_drawContent['deliverables'].filter(n => n.id != attachment_id)
               dispatch({
-                type: 'projectDetailTask/updateDatas',
+                type: 'publicTaskDetailModal/updateDatas',
                 payload: {
-                  drawContent: drawContentNew
+                  drawContent: new_drawContent
                 }
               })
               resolve()
@@ -584,6 +574,89 @@ export default class DragDropContentComponent extends Component {
         </Menu.Item>
       </Menu>
     );
+  }
+  //文件名类型
+  judgeFileType(fileName) {
+    let themeCode = ''
+    const type = getSubfixName(fileName)
+    switch (type) {
+      case '.xls':
+        themeCode = '&#xe65c;'
+        break
+      case '.png':
+        themeCode = '&#xe69a;'
+        break
+      case '.xlsx':
+        themeCode = '&#xe65c;'
+        break
+      case '.ppt':
+        themeCode = '&#xe655;'
+        break
+      case '.pptx':
+        themeCode = '&#xe650;'
+        break
+      case '.gif':
+        themeCode = '&#xe657;'
+        break
+      case '.jpeg':
+        themeCode = '&#xe659;'
+        break
+      case '.pdf':
+        themeCode = '&#xe651;'
+        break
+      case '.docx':
+        themeCode = '&#xe64a;'
+        break
+      case '.txt':
+        themeCode = '&#xe654;'
+        break
+      case '.doc':
+        themeCode = '&#xe64d;'
+        break
+      case '.jpg':
+        themeCode = '&#xe653;'
+        break
+      case '.mp4':
+        themeCode = '&#xe6e1;'
+        break
+      case '.mp3':
+        themeCode = '&#xe6e2;'
+        break
+      case '.skp':
+        themeCode = '&#xe6e8;'
+        break
+      case '.gz':
+        themeCode = '&#xe6e7;'
+        break
+      case '.7z':
+        themeCode = '&#xe6e6;'
+        break
+      case '.zip':
+        themeCode = '&#xe6e5;'
+        break
+      case '.rar':
+        themeCode = '&#xe6e4;'
+        break
+      case '.3dm':
+        themeCode = '&#xe6e0;'
+        break
+      case '.ma':
+        themeCode = '&#xe65f;'
+        break
+      case '.psd':
+        themeCode = '&#xe65d;'
+        break
+      case '.obj':
+        themeCode = '&#xe65b;'
+        break
+      case '.bmp':
+        themeCode = '&#xe6ee;'
+        break
+      default:
+        themeCode = '&#xe660;'
+        break
+    }
+    return themeCode
   }
   // 递归获取附件路径 S
   getFolderPathName = (fileList, fileItem) => {
@@ -730,7 +803,7 @@ export default class DragDropContentComponent extends Component {
   filterDiffPropertiesField = (currentItem) => {
     const { visible = false, showDelColor, currentDelId } = this.state
     const { drawContent = {}, projectDetailInfoData = {}, projectDetailInfoData: { data = [] }, boardTagList = [], handleTaskDetailChange, boardFolderTreeData = [], milestoneList = [], handleChildTaskChange, whetherUpdateParentTaskTime, updateRelyOnRationList } = this.props
-    const { org_id, card_id, board_id, board_name, due_time, start_time } = drawContent
+    const { org_id, card_id, board_id, board_name, due_time, start_time, deliverables = [] } = drawContent
     const { code, id } = currentItem
     const flag = (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()
     let executors = this.getCurrentDrawerContentPropsModelDatasExecutors()
@@ -837,7 +910,7 @@ export default class DragDropContentComponent extends Component {
                           }
                         </div>
                       </RichTextEditor>
-                      <div className={mainContentStyles.des_filelist_wrapper}>
+                      {/* <div className={mainContentStyles.des_filelist_wrapper}>
                         <div className={mainContentStyles.des_filelist_item}>
                           <div>
                             <span className={`${mainContentStyles.dec_file_icon} ${globalStyles.authTheme}`}>&#xe651;</span>
@@ -850,21 +923,7 @@ export default class DragDropContentComponent extends Component {
                             <span className={`${mainContentStyles.dec_more_icon} ${globalStyles.authTheme}`}>&#xe7fd;</span>
                           </Dropdown>
                         </div>
-                      </div>
-                      <div className={mainContentStyles.des_filelist_wrapper}>
-                        <div className={mainContentStyles.des_filelist_item}>
-                          <div>
-                            <span className={`${mainContentStyles.dec_file_icon} ${globalStyles.authTheme}`}>&#xe651;</span>
-                          </div>
-                          <div style={{flex: '1'}}>
-                            <div className={mainContentStyles.dec_file_name}>勘测任务书编制样本.doc</div>
-                            <div className={mainContentStyles.dec_file_creater}>董凯颖  上传于  07-27 14:47</div>
-                          </div>
-                          <Dropdown getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.decFileOperater()}>
-                            <span className={`${mainContentStyles.dec_more_icon} ${globalStyles.authTheme}`}>&#xe7fd;</span>
-                          </Dropdown>
-                        </div>
-                      </div>
+                      </div> */}
                     </>
                   )
               }
@@ -997,16 +1056,10 @@ export default class DragDropContentComponent extends Component {
       case 'ATTACHMENT': // 上传附件
         messageValue = (
           // <div className={mainContentStyles.moveWrapper}>
-          // <>
-          <div key={id} className={`${mainContentStyles.field_content} ${showDelColor && currentItem.id == currentDelId && mainContentStyles.showDelColor}`}>
+          <>
+            {/* <div key={id} className={`${mainContentStyles.field_content} ${showDelColor && currentItem.id == currentDelId && mainContentStyles.showDelColor}`}>
             <div className={mainContentStyles.field_left}>
-              {/* {
-                !flag && (
-                  <span onClick={() => { this.handleDelCurrentField(currentItem.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
-                )
-              } */}
               <div className={mainContentStyles.field_hover}>
-                {/* <span className={`${globalStyles.authTheme}`}>&#xe6b9;</span> */}
                 <span>上传</span>
               </div>
               {
@@ -1016,7 +1069,6 @@ export default class DragDropContentComponent extends Component {
               }
             </div>
             <div className={`${mainContentStyles.field_right}`}>
-              {/* 上传附件组件 */}
               {
                 (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_ATTACHMENT_UPLOAD).visit_control_edit() ? (
                   <div className={`${mainContentStyles.pub_hover}`}>
@@ -1073,8 +1125,8 @@ export default class DragDropContentComponent extends Component {
                 }
               </div>
             </div>
-          </div>
-          //  </>
+          </div> */}
+          </>
           // </div>
         )
         break
@@ -1096,13 +1148,70 @@ export default class DragDropContentComponent extends Component {
             </div>
             <div className={`${mainContentStyles.field_right}`}>
               {/* 添加子任务组件 */}
-              <AppendSubTask data={data} handleTaskDetailChange={handleTaskDetailChange} handleChildTaskChange={handleChildTaskChange} whetherUpdateParentTaskTime={whetherUpdateParentTaskTime} updateRelyOnRationList={updateRelyOnRationList}>
-                <div className={`${mainContentStyles.pub_hover}`}>
-                  <span className={mainContentStyles.add_sub_btn}>
-                    <span className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe8fe;</span> 新建子任务
-                    </span>
+              {
+                !!!(deliverables && deliverables.length) && (
+                  <AppendSubTask data={data} handleTaskDetailChange={handleTaskDetailChange} handleChildTaskChange={handleChildTaskChange} whetherUpdateParentTaskTime={whetherUpdateParentTaskTime} updateRelyOnRationList={updateRelyOnRationList} boardFolderTreeData={boardFolderTreeData} projectDetailInfoData={projectDetailInfoData}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <div className={mainContentStyles.add_sub_btn}>
+                        <span className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe8fe;</span> 新建子任务
+                        </div>
+                      <div>
+                        {
+                          card_id && !(gold_data && gold_data.length) && (
+                            <div onClick={(e) => e && e.stopPropagation()}>
+                              <UploadAttachment executors={executors.data} boardFolderTreeData={boardFolderTreeData} projectDetailInfoData={projectDetailInfoData} org_id={org_id} board_id={board_id} card_id={card_id}
+                                onFileListChange={this.onUploadFileListChange}>
+                                <span className={mainContentStyles.add_sub_upload}>
+                                  <span style={{ fontSize: '16px' }} className={globalStyles.authTheme}>&#xe7fa;</span>
+                                  <span>上传交付物</span>
+                                </span>
+                              </UploadAttachment>
+                            </div>
+                          )
+                        }
+                      </div>
+                    </div>
+                  </ AppendSubTask>
+                )
+              }
+              <div>
+                {/* 交付物 */}
+                <div className={mainContentStyles.filelist_wrapper}>
+                  {
+                    !!(deliverables && deliverables.length) && deliverables.map(fileInfo => {
+                      const { name: file_name, file_id } = fileInfo
+                      const breadcrumbList = this.getFolderPathName([], fileInfo)
+                      return (
+                        <div className={`${mainContentStyles.file_item_wrapper}`} key={fileInfo.id}>
+                          <div className={`${mainContentStyles.file_item} ${mainContentStyles.pub_hover}`} onClick={() => this.openFileDetailModal(fileInfo)} >
+                            <div>
+                              <span className={`${mainContentStyles.file_action} ${globalStyles.authTheme}`} dangerouslySetInnerHTML={{ __html: this.judgeFileType(file_name) }}></span>
+                            </div>
+                            <div style={{ flex: 1 }}>
+                              <div onClick={(e) => this.openFileDetailModal(e, fileInfo)} title={file_name} className={mainContentStyles.file_name}>{file_name}</div>
+                              <div className={mainContentStyles.file_info}>{this.showMemberName(fileInfo.create_by)} 上传于 {fileInfo.create_time && timestampFormat(fileInfo.create_time, "MM-dd hh:mm")}</div>
+                              <div className={mainContentStyles.breadNav} style={{ position: 'relative' }}>
+                                <Breadcrumb className={mainContentStyles.Breadcrumb} separator=">">
+                                  {breadcrumbList.map((value, key) => {
+                                    return (
+                                      <Breadcrumb.Item key={key}>
+                                        <span title={(value && value.file_name) && value.file_name} className={key == breadcrumbList.length - 1 && mainContentStyles.breadItem}>{(value && value.file_name) && value.file_name}</span>
+                                      </Breadcrumb.Item>
+                                    )
+                                  })}
+                                </Breadcrumb>
+                              </div>
+                            </div>
+                            <Dropdown trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.getAttachmentActionMenus(fileInfo)}>
+                              <span onClick={(e) => e && e.stopPropagation()} className={`${mainContentStyles.pay_more_icon} ${globalStyles.authTheme}`}>&#xe66f;</span>
+                            </Dropdown>
+                          </div>
+                        </div>
+                      )
+                    })
+                  }
                 </div>
-              </ AppendSubTask>
+              </div>
             </div>
           </div>
           // </>
