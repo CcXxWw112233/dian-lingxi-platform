@@ -20,7 +20,7 @@ import { deleteTaskFile } from '../../services/technological/task'
 import {
   checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl,
 } from "@/utils/businessFunction";
-import { getCurrentDrawerContentPropsModelFieldData, filterCurrentUpdateDatasField, getCurrentPropertiesData } from './handleOperateModal';
+import { getCurrentDrawerContentPropsModelFieldData, filterCurrentUpdateDatasField, getCurrentPropertiesData, judgeFileType, showMemberName, getFolderPathName } from './handleOperateModal';
 
 @connect(mapStateToProps)
 export default class DragDropContentComponent extends Component {
@@ -405,19 +405,6 @@ export default class DragDropContentComponent extends Component {
   }
   // 删除标签 icon 回调 E
 
-  // 获取上传文件时, 当前操作人 S
-  showMemberName = (userId) => {
-    const { projectDetailInfoData = {} } = this.props
-    const { data = [] } = projectDetailInfoData;
-    const users = data.filter((item) => item.user_id == userId);
-
-    if (users.length > 0) {
-      return <span>{users[0].name}</span>
-    }
-    return;
-  }
-  // 获取上传文件时, 当前操作人 E
-
   // 上传文件 事件 S
   onUploadFileListChange = (data) => {
     const { drawContent = {}, dispatch } = this.props;
@@ -552,112 +539,6 @@ export default class DragDropContentComponent extends Component {
       </Menu>
     );
   }
-
-  //文件名类型
-  judgeFileType(fileName) {
-    let themeCode = ''
-    const type = getSubfixName(fileName)
-    switch (type) {
-      case '.xls':
-        themeCode = '&#xe65c;'
-        break
-      case '.png':
-        themeCode = '&#xe69a;'
-        break
-      case '.xlsx':
-        themeCode = '&#xe65c;'
-        break
-      case '.ppt':
-        themeCode = '&#xe655;'
-        break
-      case '.pptx':
-        themeCode = '&#xe650;'
-        break
-      case '.gif':
-        themeCode = '&#xe657;'
-        break
-      case '.jpeg':
-        themeCode = '&#xe659;'
-        break
-      case '.pdf':
-        themeCode = '&#xe651;'
-        break
-      case '.docx':
-        themeCode = '&#xe64a;'
-        break
-      case '.txt':
-        themeCode = '&#xe654;'
-        break
-      case '.doc':
-        themeCode = '&#xe64d;'
-        break
-      case '.jpg':
-        themeCode = '&#xe653;'
-        break
-      case '.mp4':
-        themeCode = '&#xe6e1;'
-        break
-      case '.mp3':
-        themeCode = '&#xe6e2;'
-        break
-      case '.skp':
-        themeCode = '&#xe6e8;'
-        break
-      case '.gz':
-        themeCode = '&#xe6e7;'
-        break
-      case '.7z':
-        themeCode = '&#xe6e6;'
-        break
-      case '.zip':
-        themeCode = '&#xe6e5;'
-        break
-      case '.rar':
-        themeCode = '&#xe6e4;'
-        break
-      case '.3dm':
-        themeCode = '&#xe6e0;'
-        break
-      case '.ma':
-        themeCode = '&#xe65f;'
-        break
-      case '.psd':
-        themeCode = '&#xe65d;'
-        break
-      case '.obj':
-        themeCode = '&#xe65b;'
-        break
-      case '.bmp':
-        themeCode = '&#xe6ee;'
-        break
-      default:
-        themeCode = '&#xe660;'
-        break
-    }
-    return themeCode
-  }
-  // 递归获取附件路径 S
-  getFolderPathName = (fileList, fileItem) => {
-    let new_fileList = [...fileList]
-    let arr = []
-    const target_path = fileItem.folder_path
-    // 递归添加路径
-    const digui = (name, data) => {
-      if (data[name]) {
-        arr.push({ file_name: data.folder_name, file_id: data.id, type: '1' })
-        digui(name, data[name])
-      } else if (data['parent_id'] == '0') {
-        arr.push({ file_name: '根目录', type: '0' })
-      } else if (data['parent_id'] == '2') {// 表示临时目录
-        arr.push({ file_name: data.folder_name, file_id: data.id, type: '2' })
-      }
-    }
-    digui('parent_folder', target_path)
-    const newbreadcrumbList = arr.reverse()
-    // newbreadcrumbList.push({ file_name: fileItem.name, file_id: fileItem.file_id, type: '1' })
-    return newbreadcrumbList
-  }
-  // 递归获取附件路径 E
 
   // 对应字段的删除 S
   handleDelCurrentField = (shouldDeleteId) => {
@@ -1121,17 +1002,17 @@ export default class DragDropContentComponent extends Component {
                   {
                     !!(deliverables && deliverables.length) && deliverables.map(fileInfo => {
                       const { name: file_name, file_id } = fileInfo
-                      const breadcrumbList = this.getFolderPathName([], fileInfo)
+                      const breadcrumbList = getFolderPathName(fileInfo)
                       return (
                         <div className={`${mainContentStyles.file_item_wrapper}`} key={fileInfo.id}>
                           <div className={`${mainContentStyles.file_item} ${mainContentStyles.pub_hover}`} onClick={() => this.openFileDetailModal(fileInfo)} >
                             <div>
-                              <span className={`${mainContentStyles.file_action} ${globalStyles.authTheme}`} dangerouslySetInnerHTML={{ __html: this.judgeFileType(file_name) }}></span>
+                              <span className={`${mainContentStyles.file_action} ${globalStyles.authTheme}`} dangerouslySetInnerHTML={{ __html: judgeFileType(file_name) }}></span>
                             </div>
                             <div style={{ flex: 1 }}>
                               <div onClick={(e) => this.openFileDetailModal(e, fileInfo)} title={file_name} className={mainContentStyles.pay_file_name}>{file_name}</div>
                             </div>
-                            <div className={mainContentStyles.file_info}>{this.showMemberName(fileInfo.create_by)} 上传于 {fileInfo.create_time && timestampFormat(fileInfo.create_time, "MM-dd hh:mm")}</div>
+                            <div className={mainContentStyles.file_info}>{showMemberName(fileInfo.create_by, data)} 上传于 {fileInfo.create_time && timestampFormat(fileInfo.create_time, "MM-dd hh:mm")}</div>
                             <div className={mainContentStyles.breadNav} style={{ position: 'relative' }}>
                               <Breadcrumb className={mainContentStyles.Breadcrumb} separator=">">
                                 {breadcrumbList.map((value, key) => {
