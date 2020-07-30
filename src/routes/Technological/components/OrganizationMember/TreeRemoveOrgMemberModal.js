@@ -62,12 +62,85 @@ export default class TreeRemoveOrgMemberModal extends Component {
     return arr
   }
 
+  // 外部选择更新内部
+  updateSelectedDetailContentDatasWithOutside = (data = []) => {
+    let arr = [...data]
+    arr = arr.map(item => {
+      if (item.transfer_user_id) {
+        if (item.content_transfer && item.content_transfer.length) {
+          let new_item = { ...item }
+          let brr = [...item.content_transfer]
+          brr = brr.map(i => {
+            let new_i = { ...i }
+            new_i = { ...i, transfer_user_id: item.transfer_user_id }
+            return new_i
+          })
+          new_item = { ...item, content_transfer: brr, is_multiple: false }
+          return new_item
+        } else {
+          return item
+        }
+      } else {
+        return item
+      }
+    })
+    return arr
+  }
+
+  /**
+   * 判断详情交接中是否选择了同一个人
+   * 1. 如果是同一个人, 那么需要更新父任务中的交接人
+   * 2. 如果不是同一个人, 那么更细父任务中的交接人为 ‘多人交接’
+   * 3. 如果没有选择全, 那么父如果没有选择人 那么保持不变
+   * @param {*} value 
+   * @param {*} item 
+   * @returns {Boolean} true 表示是同一个人, false 表示不是
+   */
+  whetherIsTheSameTransferUsers = () => {
+    let flag = true
+    const { transferSelectedList = [] } = this.state
+    let new_transferSelectedList = [...transferSelectedList]
+    new_transferSelectedList = new_transferSelectedList.map(item => {
+      let new_item = { ...item }
+      if (item.content_transfer && item.content_transfer.length) { // 表示存在详细交接列表
+        let brr = [...item.content_transfer]
+        if (brr.every(i => i.transfer_user_id)) { //  是否每一个都存在交接人
+          let compare_transfer_user_id = brr[0].transfer_user_id
+          if (brr.every(i => i.transfer_user_id == compare_transfer_user_id)) {
+            flag = true
+            new_item = {...item, is_multiple: false, transfer_user_id: compare_transfer_user_id}
+            return new_item
+          } else {
+            flag = false
+            new_item = {...item, is_multiple: true, transfer_user_id: ''}
+            return new_item
+          }
+        } else { // 表示有漏选的情况, 那么就为 true
+          flag = true
+          new_item = {...item, is_multiple: false}
+          return new_item
+        }
+        
+      } else { // 表示不存在详情列表, 那么也显示true单个人
+        flag = true
+        new_item = {...item, is_multiple: false}
+        return new_item
+      }
+    })
+    this.setState({
+      transferSelectedList: new_transferSelectedList
+    })    
+  }
+
   // 详细交接点击change事件
   handleOnSelectValue = (value, item) => {
     const { content_id } = item
-    const { transferSelectedList = [] } = this.state
+    const { transferSelectedList = [], hand_over_visible } = this.state
     let arr = this.updateTreeSelectedTransferUser(content_id, value, transferSelectedList)
-    arr = this.updateDefaultTransferUsers(arr)
+    if (!hand_over_visible) {
+      arr = this.updateSelectedDetailContentDatasWithOutside(arr)
+    }
+    // arr = this.updateDefaultTransferUsers(arr)
     this.setState({
       transferSelectedList: arr
     })
@@ -149,10 +222,10 @@ export default class TreeRemoveOrgMemberModal extends Component {
         key: 'opetator',
         ellipsis: true,
         render: (text, item) => {
-          const { content_type, users = [], content_id, transfer_user_id } = item
+          const { content_type, users = [], content_id, transfer_user_id, is_multiple } = item
           return <div>
             <span style={{ marginRight: '28px' }}>
-              <Select placeholder={'请选择'} value={transfer_user_id} onChange={(e) => { this.handleOnSelectValue(e, item) }}>
+              <Select placeholder={'请选择'} value={is_multiple ? '多人交接' : transfer_user_id} onChange={(e) => { this.handleOnSelectValue(e, item) }}>
                 {
                   users.map(value => {
                     return <Option key={value.user_id}>{value.name}</Option>
@@ -245,7 +318,8 @@ export default class TreeRemoveOrgMemberModal extends Component {
             }
           })
         }
-        new_transferSelectedList = this.updateDefaultTransferUsers(new_transferSelectedList)
+        // new_transferSelectedList = this.updateDefaultTransferUsers(new_transferSelectedList)
+        new_transferSelectedList = this.updateSelectedDetailContentDatasWithOutside(new_transferSelectedList)
         this.setState({
           transferSelectedList: new_transferSelectedList,
           hand_over_visible: true,
@@ -338,6 +412,7 @@ export default class TreeRemoveOrgMemberModal extends Component {
     this.setState({
       hand_over_visible: false
     })
+    this.whetherIsTheSameTransferUsers()
   }
 
   // 默认table内容
@@ -390,8 +465,22 @@ export default class TreeRemoveOrgMemberModal extends Component {
     const { TreeRemoveOrgMemberModalVisible, currentBeOperateMemberId, removeUserConfirm } = this.props
     const { transferSelectedList = [] } = this.state
     // 查询每一个列表中都有交接人(只需要确认外部的, 因为如果有内部列表, 那么就会默认赋值给外部的交接人)
-    const disabled = (transferSelectedList && transferSelectedList.length) && transferSelectedList.every(n => n.transfer_user_id)
-    console.log(removeUserConfirm);
+    const disabled = (transferSelectedList && transferSelectedList.length) && transferSelectedList.every(n => {
+      if (n.content_transfer && n.content_transfer.length) {
+        let d = [...n.content_transfer]
+        if (d.every(s => s.transfer_user_id)) {
+          return true
+        } else {
+          return false
+        }
+      } else {
+        if (n.transfer_user_id) {
+          return true
+        } else {
+          return false
+        }
+      }
+    })
     return (
       <div>
         <Modal
