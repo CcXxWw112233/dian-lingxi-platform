@@ -63,23 +63,6 @@ export default class DragDropContentComponent extends Component {
     }
   }
 
-  // 过滤那些需要更新的字段
-  filterCurrentUpdateDatasField = (code, value) => {
-    const { drawContent: { properties = [] } } = this.props
-    let new_properties = [...properties]
-    new_properties = new_properties.map(item => {
-      if (item.code == code) {
-        let new_item = item
-        new_item = { ...item, data: value }
-        return new_item
-      } else {
-        let new_item = item
-        return new_item
-      }
-    })
-    return new_properties
-  }
-
   // 里程碑选择回调 S
   onMilestoneSelectedChange = (data) => {
     const { dispatch, drawContent } = this.props;
@@ -358,7 +341,7 @@ export default class DragDropContentComponent extends Component {
     }
     let new_drawContent = { ...drawContent }
     // new_drawContent['label_data'] = newLabelData
-    new_drawContent['properties'] = this.filterCurrentUpdateDatasField('LABEL', newLabelData)
+    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: new_drawContent['properties'], code: 'LABEL', value: newLabelData})
     if (type == 'add') {
       Promise.resolve(
         dispatch({
@@ -406,7 +389,7 @@ export default class DragDropContentComponent extends Component {
       }
     })
     // new_drawContent['label_data'] = new_labelData
-    new_drawContent['properties'] = this.filterCurrentUpdateDatasField('LABEL', new_labelData)
+    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: new_drawContent['properties'], code: 'LABEL', value: new_labelData})
     Promise.resolve(
       dispatch({
         type: 'publicTaskDetailModal/removeTaskTag',

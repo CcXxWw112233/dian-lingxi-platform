@@ -395,7 +395,7 @@ export default class MainContent extends Component {
       const newExecutors = arrayNonRepeatfy([].concat(gold_data, arr), 'user_id')
       let new_drawContent = { ...drawContent }
       // new_drawContent['executors'] = newExecutors
-      new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties:drawContent['properties'], code: 'EXECUTOR', value: newExecutors})
+      new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: new_drawContent['properties'], code: 'EXECUTOR', value: newExecutors})
       this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'executors', value: newExecutors, operate_properties_code: 'EXECUTOR' })
     }
     dispatch({
@@ -426,7 +426,7 @@ export default class MainContent extends Component {
     }
     let new_drawContent = { ...drawContent }
     // new_drawContent['executors'] = newExecutors
-    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'EXECUTOR', value: newExecutors})
+    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: new_drawContent['properties'], code: 'EXECUTOR', value: newExecutors})
     if (type == 'add') {
       addTaskExecutor({ card_id, executor: key }).then(res => {
         if (isApiResponseOk(res)) {
@@ -462,7 +462,7 @@ export default class MainContent extends Component {
         new_executors.splice(index, 1)
       }
     })
-    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'EXECUTOR', value: new_executors})
+    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: new_drawContent['properties'], code: 'EXECUTOR', value: new_executors})
     removeTaskExecutor({ card_id, executor: shouldDeleteItem }).then(res => {
       if (isApiResponseOk(res)) {
         message.success(`已成功删除执行人`, MESSAGE_DURATION_TIME)

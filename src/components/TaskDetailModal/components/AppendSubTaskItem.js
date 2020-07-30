@@ -87,8 +87,7 @@ export default class AppendSubTaskItem extends Component {
         })
       ).then(res => {
         if (isApiResponseOk(res)) {
-          // new_drawContent['properties'] = this.filterCurrentUpdateDatasField('EXECUTOR', arrayNonRepeatfy(new_executors, 'user_id'))
-          new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties:drawContent['properties'], code: 'EXECUTOR', value: arrayNonRepeatfy(new_executors, 'user_id')})
+          new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: new_drawContent['properties'], code: 'EXECUTOR', value: arrayNonRepeatfy(new_executors, 'user_id')})
           dispatch({
             type: 'publicTaskDetailModal/updateDatas',
             payload: {
@@ -216,7 +215,7 @@ export default class AppendSubTaskItem extends Component {
     let new_data = [...data]
     // new_drawContent['child_data'][childDataIndex][name] = value
     new_data[childDataIndex][name] = value
-    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties:drawContent['properties'], code: 'SUBTASK', value: new_data})
+    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: new_drawContent['properties'], code: 'SUBTASK', value: new_data})
     dispatch({
       type: 'projectDetailTask/updateDatas',
       payload: {
@@ -249,7 +248,7 @@ export default class AppendSubTaskItem extends Component {
       }
     })
     // new_drawContent['child_data'] = newChildData
-    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties:drawContent['properties'], code: 'SUBTASK', value: newChildData})
+    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: new_drawContent['properties'], code: 'SUBTASK', value: newChildData})
     Promise.resolve(
       dispatch({
         type: 'publicTaskDetailModal/deleteTaskVTwo',
@@ -535,7 +534,7 @@ export default class AppendSubTaskItem extends Component {
             } else {
               let new_drawContent = { ...drawContent }
               sub_attachment_data[childDataIndex].deliverables = sub_attachment_data[childDataIndex].deliverables.filter(n => n.id != attachment_id)
-              new_drawContent['properties'] = that.filterCurrentUpdateDatasField('SUBTASK', sub_attachment_data)
+              new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: new_drawContent['properties'], code: 'SUBTASK', value: sub_attachment_data})
               that.props.dispatch({
                 type: 'publicTaskDetailModal/updateDatas',
                 payload: {
@@ -615,7 +614,7 @@ export default class AppendSubTaskItem extends Component {
       sub_attachment_data[childDataIndex].deliverables.push(...data)
       // this.setChildTaskIndrawContent({ name: 'deliverables', value: [...attachment_data[childDataIndex].deliverables] })
       let new_drawContent = { ...drawContent }
-      new_drawContent['properties'] = this.filterCurrentUpdateDatasField('SUBTASK', sub_attachment_data)
+      new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: new_drawContent['properties'], code: 'SUBTASK', value: sub_attachment_data})
       this.props.dispatch({
         type: 'publicTaskDetailModal/updateDatas',
         payload: {

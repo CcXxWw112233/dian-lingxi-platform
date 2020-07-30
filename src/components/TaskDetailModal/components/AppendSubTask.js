@@ -104,11 +104,9 @@ export default class AppendSubTask extends Component {
       tempData.unshift({ ...obj, card_id: card_info.card_id })
       if (sub_executors && sub_executors.length) {
         executors.push(...sub_executors)
-        // drawContent['properties'] = this.filterCurrentUpdateDatasField('EXECUTOR', arrayNonRepeatfy(executors,'user_id'))
         drawContent['properties'] = filterCurrentUpdateDatasField({ properties:drawContent['properties'], code: 'EXECUTOR', value: arrayNonRepeatfy(executors,'user_id')})
         this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id, operate_properties_code: 'EXECUTOR' })
       }
-      // drawContent['properties'] = this.filterCurrentUpdateDatasField('SUBTASK', tempData)
       drawContent['properties'] = filterCurrentUpdateDatasField({ properties:drawContent['properties'], code: 'SUBTASK', value: tempData})
       this.props.handleChildTaskChange && this.props.handleChildTaskChange({ parent_card_id: card_id, data: card_info, action: 'add', rely_card_datas: dependencys })
       this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(new_data)
