@@ -68,28 +68,28 @@ export default class CreateGroup extends React.Component {
   render() {
     const { datas: { groupList = [] }} = this.props.model
     return (
-      <div className={CreateTaskStyle.outerMost}
+      <>
+       <div className={CreateTaskStyle.outerMost}
            style={{
              left: this.state.needX,
             }}
            onMouseDown={this.fnDown.bind(this)}
            ref={'outerMost'}
-      >
-        {groupList.map((value, key) => {
-            return (
-              <CreateGroupItem key={key} itemValue={value} itemKey={key}
-                        {...this.props}></CreateGroupItem>
-            )
-          })}
-        {checkIsHasPermission(ORG_UPMS_ORGANIZATION_GROUP) && (
-          <CreateItem {...this.props} ></CreateItem>
-        ) }
-
+        >
+          {groupList.map((value, key) => {
+              return (
+                <CreateGroupItem key={key} itemValue={value} itemKey={key}
+                          {...this.props}></CreateGroupItem>
+              )
+            })}
+          {checkIsHasPermission(ORG_UPMS_ORGANIZATION_GROUP) && (
+            <CreateItem {...this.props} ></CreateItem>
+          ) }
+        </div>
         <TreeGroupModal {...this.props}/>
 
         <TreeRemoveOrgMemberModal groupList={groupList}/>
-
-      </div>
+      </>
     )
   }
 }
