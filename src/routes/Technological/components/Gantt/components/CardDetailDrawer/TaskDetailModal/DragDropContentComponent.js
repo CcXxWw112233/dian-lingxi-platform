@@ -453,6 +453,9 @@ export default class DragDropContentComponent extends Component {
           drawContent: new_drawContent
         }
       })
+      const { folder_path = {} } = data[0]
+      const { id: folder_id } = folder_path
+      if (typeof this.props.handleRelyUploading == 'function' && folder_id) this.props.handleRelyUploading({ folder_id })
     }
   }
   // 上传文件 事件 E

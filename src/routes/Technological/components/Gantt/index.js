@@ -231,6 +231,8 @@ class Gantt extends Component {
       gold_key = 'executors'
     } else if ('LABEL' == operate_properties_code) {
       gold_key = 'label_data'
+    } else if ('MILESTONE' == operate_properties_code) {
+      gold_key = 'milestone'
     }
     return { ...drawContent, [gold_key]: gold_data }
   }
@@ -293,6 +295,10 @@ class Gantt extends Component {
   handleHasScheduleCard = ({ card_id, drawContent, operate_properties_code, ...other_params }) => {
     const { group_view_type, dispatch, gantt_board_id, show_board_fold, gantt_view_mode } = this.props
     const new_drawContent = this.cardPropertiesPromote({ drawContent, operate_properties_code })
+    if (operate_properties_code == 'MILESTONE') { //修改的是里程碑
+      this.handleChangeMilestone({ milestone: new_drawContent.milestone, card_id })
+      return
+    }
     if (ganttIsOutlineView({ group_view_type })) {
       this.changeOutLineTreeNodeProto(card_id, { ...new_drawContent, name: drawContent.card_name })
       setTimeout(() => {
@@ -305,14 +311,6 @@ class Gantt extends Component {
           });
         }
       }, 1000)
-      return
-    }
-    if (operate_properties_code == 'MILESTONE') { //修改的是里程碑
-      dispatch({
-        type: 'gantt/getGttMilestoneList',
-        payload: {
-        }
-      })
       return
     }
     if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold, gantt_view_mode }) &&
@@ -361,9 +359,44 @@ class Gantt extends Component {
     }
   }
 
+  // 修改任务详情中里程碑的回调
+  handleChangeMilestone = ({ milestone = {}, card_id }) => {
+    const { dispatch, group_view_type, outline_tree } = this.props
+    let outline_tree_ = JSON.parse(JSON.stringify(outline_tree))
+    if (!ganttIsOutlineView({ group_view_type })) {
+      dispatch({
+        type: 'gantt/getGttMilestoneList',
+        payload: {
+        }
+      })
+      return
+    }
+    const { id: milestone_id } = milestone
+    if (!milestone_id) return
+    //大纲视图下，任务详情改变里程碑，要将任务位置改变
+    const current_node = OutlineTree.getTreeNodeValue(outline_tree_, card_id)
+    const from_parent_id = current_node.parent_id
+    const parent_from_node = OutlineTree.getTreeNodeValue(outline_tree_, from_parent_id)
+    const parent_to_node = OutlineTree.getTreeNodeValue(outline_tree_, milestone_id)
+    if (parent_from_node) { //删除该条
+      parent_from_node.children = parent_from_node.children.filter(item => item.id != card_id)
+    } else {
+      outline_tree_ = outline_tree_.filter(item => item.id != card_id)
+    }
+    if (parent_to_node) { //将该条移动到指定里程碑之下
+      parent_to_node.children.push(current_node)
+    }
+    dispatch({
+      type: 'gantt/handleOutLineTreeData',
+      payload: {
+        data: outline_tree_
+      }
+    });
+  }
+
   // 删除某一条任务
   handleDeleteCard = ({ card_id }) => {
-    const { group_view_type } = this.props
+    const { gantt_board_id, group_view_type, show_board_fold, gantt_view_mode } = this.props
     if (ganttIsOutlineView({ group_view_type })) {
       this.deleteOutLineTreeNode(card_id)
       return
@@ -376,6 +409,14 @@ class Gantt extends Component {
       belong_group_name = 'card_no_times'
     } else {
       belong_group_name = 'cards'
+      if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold, gantt_view_mode })) { //统计的时候不知道怎么更新只好调接口
+        dispatch({
+          type: 'gantt/getGanttData',
+          payload: {
+          }
+        })
+        return
+      }
     }
     const group_index = list_group_new.findIndex(item => item.lane_id == current_list_group_id)
     const group_index_cards_index = list_group_new[group_index].lane_data[belong_group_name].findIndex(item => item.id == card_id)
@@ -482,41 +523,63 @@ class Gantt extends Component {
   handleChildTaskChange = ({ action, parent_card_id, card_id, data, rely_card_datas }) => {
     const { group_view_type, dispatch } = this.props
     if (!ganttIsOutlineView({ group_view_type })) {
-      return
-    }
-    if (action == 'delete') {
-      this.deleteOutLineTreeNode(card_id)
-    } else if (action == 'add') {
-      const params = {
-        parent_id: parent_card_id,
-        name: data.card_name
+      //修改相关任务,子任务的修改会影响父任务
+      if (Object.prototype.toString.call(rely_card_datas) == '[object Array]') {
+        setTimeout(() => {
+          dispatch({
+            type: 'gantt/updateListGroup',
+            payload: {
+              datas: rely_card_datas
+            }
+          });
+        }, 1000)
       }
-      const res = {
-        id: data.card_id,
-        ...data
-      }
-      this.insertOutLineTreeNode({ res, params })
-    } else if (action == 'update') {
-      if (data.card_name) {
-        data.name = data.card_name
-      }
-      setTimeout(() => {
-        this.changeOutLineTreeNodeProto(card_id, data)
-      }, 500)
+      // return
     } else {
+      if (action == 'delete') {
+        this.deleteOutLineTreeNode(card_id)
+      } else if (action == 'add') {
+        const params = {
+          parent_id: parent_card_id,
+          name: data.card_name
+        }
+        const res = {
+          id: data.card_id,
+          ...data
+        }
+        this.insertOutLineTreeNode({ res, params })
+      } else if (action == 'update') {
+        if (data.card_name) {
+          data.name = data.card_name
+        }
+        setTimeout(() => {
+          this.changeOutLineTreeNodeProto(card_id, data)
+        }, 500)
+      } else {
 
+      }
+      //修改相关任务
+      if (Object.prototype.toString.call(rely_card_datas) == '[object Array]') {
+        setTimeout(() => {
+          dispatch({
+            type: 'gantt/updateOutLineTree',
+            payload: {
+              datas: rely_card_datas
+            }
+          });
+        }, 1000)
+      }
     }
-    //修改相关任务
-    if (Object.prototype.toString.call(rely_card_datas) == '[object Array]') {
-      setTimeout(() => {
-        dispatch({
-          type: 'gantt/updateOutLineTree',
-          payload: {
-            datas: rely_card_datas
-          }
-        });
-      }, 1000)
-    }
+  }
+  // 在相关中上传文件（子任务，父任务）
+  handleRelyUploading = ({ folder_id }) => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'gantt/updateDatas',
+      payload: {
+        uploading_folder_id: folder_id
+      }
+    })
   }
   render() {
     const { addTaskModalVisible, } = this.state
@@ -559,6 +622,7 @@ class Gantt extends Component {
             handleTaskDetailChange: this.handleChangeCard,
             handleDeleteCard: this.handleDeleteCard,
             handleChildTaskChange: this.handleChildTaskChange,
+            handleRelyUploading: this.handleRelyUploading
           }}
         />
         {/* <TaskDetailModal

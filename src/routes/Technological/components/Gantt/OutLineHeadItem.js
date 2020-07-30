@@ -30,6 +30,7 @@ import { task_item_margin_top } from './constants';
 import { currentNounPlanFilterName } from '../../../../utils/businessFunction';
 import { PROJECTS } from '../../../../globalset/js/constant';
 import { closeFeature } from '../../../../utils/temporary';
+import { onChangeCardHandleCardDetail } from './ganttBusiness';
 const { SubMenu } = Menu;
 // const { TreeNode } = OutlineTree;
 const { confirm } = Modal;
@@ -174,6 +175,19 @@ export default class OutLineHeadItem extends Component {
         }
 
     }
+
+    onChangeCardHandleCardDetail = (nodeValue) => {
+        const { card_detail_id, selected_card_visible, itemValue = {}, dispatch } = this.props
+        const { id, parent_card_id } = nodeValue
+        onChangeCardHandleCardDetail({
+            card_detail_id, //来自任务详情的id
+            selected_card_visible, //任务详情弹窗是否弹开
+            dispatch,
+            operate_id: id, //当前操作的id
+            operate_parent_card_id: parent_card_id, //当前操作的任务的父任务id
+        })
+    }
+
     onDataProcess = ({ action, param, calback }) => {
         //console.log("大纲:onDataProcess", action, param);
         const { dispatch, gantt_board_id, } = this.props;
@@ -363,7 +377,7 @@ export default class OutLineHeadItem extends Component {
                             if (isApiResponseOk(res)) {
                                 let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, param.id);
                                 if (nodeValue) {
-
+                                    this.onChangeCardHandleCardDetail(nodeValue)
                                     nodeValue.name = param.name;
                                     nodeValue.time_span = param.time_span;
                                     if (param.time_span == 0) {
@@ -917,10 +931,11 @@ export default class OutLineHeadItem extends Component {
 function mapStateToProps({
     gantt: { datas: { gantt_board_id, group_view_type, outline_tree, outline_hover_obj, outline_tree_round, date_arr_one_level = [],
         ceilWidth,
-        gantt_view_mode, } },
+        gantt_view_mode, selected_card_visible } },
     technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org, userBoardPermissions = [] } },
-    projectDetail: { datas: { projectDetailInfoData = {} } }
+    projectDetail: { datas: { projectDetailInfoData = {} } },
+    publicTaskDetailModal: { card_id: card_detail_id },
 }) {
-    return { date_arr_one_level, gantt_view_mode, ceilWidth, currentUserOrganizes, is_show_org_name, is_all_org, gantt_board_id, group_view_type, projectDetailInfoData, userBoardPermissions, outline_tree, outline_hover_obj, outline_tree_round }
+    return { card_detail_id, selected_card_visible, date_arr_one_level, gantt_view_mode, ceilWidth, currentUserOrganizes, is_show_org_name, is_all_org, gantt_board_id, group_view_type, projectDetailInfoData, userBoardPermissions, outline_tree, outline_hover_obj, outline_tree_round }
 }
 

@@ -43,7 +43,7 @@ export default class Index extends Component {
         let new_file_data = JSON.parse(JSON.stringify(file_data || []))
         new_file_data = new_file_data.map(item => {
             if (item.id == id) {
-                let new_item = {...item}
+                let new_item = { ...item }
                 new_item[key] = value
                 return new_item
             } else {
@@ -195,7 +195,7 @@ export default class Index extends Component {
             },
             beforeUpload(e) {
                 that.setShowDrag(false)
-      
+
                 if (e.size == 0) {
                     message.error(`不能上传空文件`)
                     return false
@@ -230,9 +230,18 @@ export default class Index extends Component {
         return props
     }
 
+    // 当前文件夹有其它地方上传，需要更新
+    currentFolderHasFileUploaded = (nextProps) => {
+        const { uploading_folder_id } = nextProps
+        const { current_folder_id } = this.state
+        if (current_folder_id == uploading_folder_id && uploading_folder_id) {
+            return true
+        }
+        return false
+    }
     // 监听到最新未读消息推送过来
     componentWillReceiveProps(nextProps) {
-        const { im_all_latest_unread_messages = [], wil_handle_types = [] } = this.props
+        const { im_all_latest_unread_messages = [], wil_handle_types = [], dispatch } = this.props
         const that = this
         const { current_folder_id } = this.state
         const im_all_latest_unread_messages_new = nextProps.im_all_latest_unread_messages
@@ -244,6 +253,17 @@ export default class Index extends Component {
                 that.getFolderFileList({ id: current_folder_id })
             }, 500)
             // debugger
+        }
+        if (this.currentFolderHasFileUploaded(nextProps)) {
+            setTimeout(() => {
+                that.getFolderFileList({ id: current_folder_id })
+            }, 500)
+            dispatch({
+                type: 'gantt/updateDatas',
+                payload: {
+                    uploading_folder_id: ''
+                }
+            })
         }
     }
     render() {
@@ -310,11 +330,16 @@ function mapStateToProps({
     imCooperation: {
         im_all_latest_unread_messages = [], wil_handle_types = []
     },
+    gantt: {
+        datas: {
+            uploading_folder_id
+        }
+    },
     publicFileDetailModal: {
         filePreviewCurrentFileId,
         fileType,
         isInOpenFile
     }
 }) {
-    return { im_all_latest_unread_messages, wil_handle_types, filePreviewCurrentFileId, fileType, isInOpenFile }
+    return { im_all_latest_unread_messages, wil_handle_types, filePreviewCurrentFileId, fileType, isInOpenFile, uploading_folder_id }
 }

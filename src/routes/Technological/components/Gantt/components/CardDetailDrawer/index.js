@@ -33,8 +33,7 @@ export default class Index extends Component {
     }
     render() {
         const { selected_card_visible } = this.props
-        const { users, handleTaskDetailChange, updateParentTaskList, setTaskDetailModalVisible, handleDeleteCard, card_id, handleChildTaskChange } = this.props
-
+        const { users, handleRelyUploading, handleTaskDetailChange, updateParentTaskList, setTaskDetailModalVisible, handleDeleteCard, card_id, handleChildTaskChange } = this.props
         return (
             <div className={`${styles.draw_detail} ${!selected_card_visible && styles.hide_over}`}>
                 <Drawer
@@ -57,11 +56,15 @@ export default class Index extends Component {
                     width={400}
                     className={styles.draw_detail}
                 >
-                    <MainContent
-                        users={users}
-                        handleTaskDetailChange={handleTaskDetailChange}
-                        handleChildTaskChange={handleChildTaskChange}
-                    />
+                    <>
+                        <div style={{ height: 58 }}></div>
+                        <MainContent
+                            users={users}
+                            handleRelyUploading={handleRelyUploading}
+                            handleTaskDetailChange={handleTaskDetailChange}
+                            handleChildTaskChange={handleChildTaskChange}
+                        />
+                    </>
                 </Drawer>
             </div>
         )
