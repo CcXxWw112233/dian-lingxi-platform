@@ -633,7 +633,7 @@ export default class AppendSubTaskItem extends Component {
     let { drawContent = {}, dispatch, childDataIndex } = this.props;
     const { data: sub_attachment_data } = drawContent['properties'].filter(item => item.code == 'SUBTASK')[0]
     if (data && data.length > 0) {
-      sub_attachment_data[childDataIndex].deliverables = [...sub_attachment_data[childDataIndex].deliverables]
+      sub_attachment_data[childDataIndex].deliverables = sub_attachment_data[childDataIndex].deliverables ? [...sub_attachment_data[childDataIndex].deliverables] : []
       sub_attachment_data[childDataIndex].deliverables.push(...data)
       // this.setChildTaskIndrawContent({ name: 'deliverables', value: [...attachment_data[childDataIndex].deliverables] })
       let new_drawContent = { ...drawContent }
