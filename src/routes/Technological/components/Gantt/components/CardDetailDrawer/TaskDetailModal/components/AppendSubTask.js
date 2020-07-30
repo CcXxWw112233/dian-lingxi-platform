@@ -86,7 +86,7 @@ export default class AppendSubTask extends Component {
     e && e.stopPropagation();
     const { drawContent, dispatch } = this.props
     const { board_id, card_id, list_id } = drawContent
-    // const { data: executors = [] } = this.getCurrentDrawerContentPropsModelDatasExecutors()
+    const { data: executors = [] } = this.getCurrentDrawerContentPropsModelDatasExecutors()
     const { inputValue, sub_executors, due_time, start_time } = this.state
     const { data = [] } = drawContent['properties'].filter(item => item.code == 'SUBTASK')[0]
     let temp_subExecutors = [...sub_executors]
@@ -124,6 +124,11 @@ export default class AppendSubTask extends Component {
       new_data = new_data.filter(item => item.id == card_id) || []
       // drawContent['child_data'] && drawContent['child_data'].unshift({...obj, card_id: res.data.card_id})
       tempData.unshift({ ...obj, card_id: card_info.card_id })
+      if (sub_executors && sub_executors.length) {
+        executors.push(...sub_executors)
+        drawContent['properties'] = this.filterCurrentUpdateDatasField('EXECUTOR', arrayNonRepeatfy(executors,'user_id'))
+        this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id, operate_properties_code: 'EXECUTOR' })
+      }
       drawContent['properties'] = this.filterCurrentUpdateDatasField('SUBTASK', tempData)
       this.props.handleChildTaskChange && this.props.handleChildTaskChange({ parent_card_id: card_id, data: card_info, action: 'add', rely_card_datas: dependencys })
       this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(new_data)
@@ -290,7 +295,7 @@ export default class AppendSubTask extends Component {
               </span>
             ) : (
                 <>
-                  <div style={{background: 'rgba(0,0,0,0.04)', padding: '9px 12px', borderRadius: '4px', marginLeft: '10px', marginBottom: '4px'}}>
+                  <div style={{padding: '9px 12px', borderRadius: '4px', marginLeft: '10px', marginBottom: '4px'}}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
                       {/* 文本框部分 */}
                       <span style={{ flex: '1', marginRight: '16px' }}>
