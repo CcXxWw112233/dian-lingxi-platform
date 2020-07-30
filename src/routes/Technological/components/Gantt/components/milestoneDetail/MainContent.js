@@ -53,12 +53,20 @@ export default class MainContent extends React.Component {
   updateMilestone = (params) => {
     const { dispatch, milestone_detail = {} } = this.props
     const { id } = milestone_detail
-    dispatch({
-      type: 'milestoneDetail/updateMilestone',
-      payload: {
-        ...params,
-        id
-      }
+    return new Promise((resolve, reject) => {
+      dispatch({
+        type: 'milestoneDetail/updateMilestone',
+        payload: {
+          ...params,
+          id
+        }
+      }).then(res => {
+        if (res) {
+          resolve(res)
+        } else {
+          reject()
+        }
+      })
     })
   }
 
@@ -66,8 +74,9 @@ export default class MainContent extends React.Component {
   titleChangeBlur(e) {
     const value = e.target.value
     if (value.trimLR() == '') return
-    this.updateMilestone({ name: value })
-    this.handleMiletonesChange({ name: value })
+    this.updateMilestone({ name: value }).then(res => {
+      this.handleMiletonesChange({ name: value })
+    })
   }
   setTitleIsEdit = (titleIsEdit) => {
     this.setState({
@@ -154,9 +163,10 @@ export default class MainContent extends React.Component {
 
     // 和关联任务的时间限制---
 
-    this.updateMilestone({ deadline: due_timeStamp })
-    // 父组件的操作
-    this.handleMiletonesChange({ deadline: due_timeStamp })
+    this.updateMilestone({ deadline: due_timeStamp }).then(res => {
+      // 父组件的操作
+      this.handleMiletonesChange({ deadline: due_timeStamp })
+    })
   }
   disabledDueTime = (deadline) => {
     const now_time = new Date().getTime()
