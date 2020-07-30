@@ -135,6 +135,7 @@ export default class RelyOnRelationship extends Component {
           {
             !(preposeList && preposeList.length) ? ('') : preposeList.map(item => {
               const { id, due_time, start_time, name, type, is_realize, relation } = item
+              if (!(item && Object.keys(item).length)) return ('')
               return (
                 <div key={id} className={indexStyles.re_task_dependency_item}>
                   {/* 关联的任务内容 */}
@@ -173,6 +174,7 @@ export default class RelyOnRelationship extends Component {
           {
             !(postpositionList && postpositionList.length) ? ('') : postpositionList.map(item => {
               const { id, due_time, start_time, name, type, is_realize, relation } = item
+              if (!(item && Object.keys(item).length)) return ('')
               return (
                 <div className={indexStyles.re_task_dependency_item}>
                   {/* 选择框 */}

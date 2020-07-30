@@ -21,7 +21,8 @@ export default class FolderItem extends Component {
 		const { itemValue = {} } = this.props
 		const { name } = itemValue
 		this.state = {
-			input_folder_value: '',
+			input_folder_value: name,// '',
+			last_input_input_folder_value: name, //上次成功设置的名称
 			local_name: name,
 			visitControlModalVisible: false,
 			currentVisitControlModalVisibleItem: '', // 表示当前点击的凭证
@@ -122,7 +123,7 @@ export default class FolderItem extends Component {
 				if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id))) {
 					setTimeout(() => {
 						message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-					},50)
+					}, 50)
 					return
 				}
 				this.setIsShowChange(true)
@@ -214,6 +215,7 @@ export default class FolderItem extends Component {
 				filePreviewCurrentName: name || file_name
 			}
 		})
+		this.props.updatePrivateVariablesWithOpenFile && this.props.updatePrivateVariablesWithOpenFile()
 		// this.props.setPreviewFileModalVisibile && this.props.setPreviewFileModalVisibile();
 		// dispatch({
 		//     type: 'workbenchFileDetail/getCardCommentListAll',
@@ -307,10 +309,10 @@ export default class FolderItem extends Component {
 	}
 	inputOnchange = (e) => {
 		const { value } = e.target
-		if (value.trimLR() == '') {
-			message.warn('文件夹名称不能为空')
-			return false
-		}
+		// if (value.trimLR() == '') {
+		// 	message.warn('文件夹名称不能为空')
+		// 	return false
+		// }
 		this.setState({
 			input_folder_value: value
 		})
@@ -318,14 +320,21 @@ export default class FolderItem extends Component {
 	setIsShowChange = (flag) => {
 		this.setState({
 			is_show_change: flag,
-			input_folder_value: '',
+			// input_folder_value: '',
 		})
+		const { itemValue: { name } } = this.props
+		const { last_input_input_folder_value } = this.state
+		if (flag) {
+			this.setState({
+				input_folder_value: last_input_input_folder_value || name,
+			})
+		}
 	}
 	requestUpdateFolder = async () => {
-		const { input_folder_value } = this.state
+		const { input_folder_value, last_input_input_folder_value } = this.state
 		const { itemValue = {}, board_id } = this.props
 		const { id } = itemValue
-		if (input_folder_value == '') {
+		if (input_folder_value == '' || input_folder_value == last_input_input_folder_value) {
 			return false
 		}
 		const params = {
@@ -336,6 +345,7 @@ export default class FolderItem extends Component {
 		const res = await updateFolder(params)
 		if (isApiResponseOk(res)) {
 			this.setState({
+				last_input_input_folder_value: input_folder_value,
 				local_name: input_folder_value
 			})
 		} else {
@@ -621,8 +631,9 @@ export default class FolderItem extends Component {
 					visible={visitControlModalVisible && id == currentVisitControlModalVisibleItem}
 					maskClosable={false}
 					onCancel={this.handleVisitControlModalCancel}
+					getContainer={document.getElementById('process_file_detail_container') ? () => document.getElementById('process_file_detail_container') : '' }
 				>
-					<div style={{ paddingTop: '40px', marginLeft: '-7px', marginRight: '-5px' }}>
+					<div style={{ paddingTop: '54px', marginLeft: '-7px', marginRight: '-5px' }}>
 						<VisitControl
 							onlyShowPopoverContent={true}
 							isPropVisitControl={is_privilege == '0' ? false : true}
@@ -656,7 +667,9 @@ export default class FolderItem extends Component {
 								value={input_folder_value}
 								onChange={this.inputOnchange}
 								onPressEnter={this.inputOnPressEnter}
-								onBlur={this.inputOnBlur} />
+								onBlur={this.inputOnPressEnter}
+							// onBlur={this.inputOnBlur}
+							/>
 						</div>
 					) : (
 							<div className={styles.folder_item} onClick={() => this.itemClick(itemValue)} >
@@ -671,8 +684,8 @@ export default class FolderItem extends Component {
 										</Tooltip>
 									)
 								}
-								<Dropdown overlay={this.renderOperateItemDropMenu()}>
-									<div className={`${globalStyles.authTheme} ${styles.operator}`}>&#xe7fd;</div>
+								<Dropdown getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.renderOperateItemDropMenu()} trigger={['click']}>
+									<div className={`${globalStyles.authTheme} ${styles.operator}`} onClick={e => e.stopPropagation()}>&#xe7fd;</div>
 								</Dropdown>
 								{/* 未读 */}
 								{

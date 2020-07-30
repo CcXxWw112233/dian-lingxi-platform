@@ -693,12 +693,12 @@ export default class SimpleNavigation extends Component {
                         const { name, id, identity_type, logo } = value
                         return (
                             <Menu.Item key={id} className={indexStyles.org_name} >
-                                <Tooltip placement="top" title={name}>
-                                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                                {/* <Tooltip placement="top" title={name}> */}
+                                    <div title={name} style={{ display: 'flex', alignItems: 'center' }}>
                                         <img src={logo || linxiLogo} className={indexStyles.org_img} />
                                         <span style={{ maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{name}</span>
                                     </div>
-                                </Tooltip>
+                                {/* </Tooltip> */}
                                 {identity_type == '0' ? (<span className={indexStyles.middle_bott} style={{ display: 'inline-block', backgroundColor: '#e5e5e5', padding: '0 4px', borderRadius: 40, marginLeft: 6, position: 'absolute', right: 34, top: 12 }}>访客</span>) : ('')}
                             </Menu.Item>
                         )

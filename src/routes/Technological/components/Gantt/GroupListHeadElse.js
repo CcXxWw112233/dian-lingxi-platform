@@ -42,7 +42,7 @@ export default class GroupListHeadElse extends Component {
   };
   getElseHeight = () => {
     let rows = 7
-    const { gantt_card_height, dataAreaRealHeight, ceiHeight } = this.props
+    const { gantt_card_height, dataAreaRealHeight, ceiHeight, outline_tree_round, group_view_type } = this.props
     const difference_height = gantt_card_height - dataAreaRealHeight
     const mult = Math.ceil(difference_height / ceiHeight)
     if (dataAreaRealHeight < 0) {
@@ -52,6 +52,14 @@ export default class GroupListHeadElse extends Component {
         rows = 7
       } else {
         rows = mult
+      }
+    }
+    if (ganttIsOutlineView({ group_view_type })) {
+      const outline_tree_round_length = outline_tree_round.length
+      if (outline_tree_round_length > rows) {
+        return 8 * ceiHeight
+      } else {
+        return (rows + 5) * ceiHeight
       }
     }
     return (rows + 5) * ceiHeight + 30
@@ -134,7 +142,7 @@ export default class GroupListHeadElse extends Component {
     ) {
       return this.getElseHeight()
     } else {
-      return 30
+      return 0//30
     }
 
   }
@@ -145,14 +153,14 @@ export default class GroupListHeadElse extends Component {
 
     return (
       <div style={{ height: this.filterHeight() }} className={`${indexStyles.listHeadItem}`}>
-        {
+        {/* {
           group_view_type == '1' && !add_new_board_group && gantt_board_id != '0' && (
             <div onClick={this.addNew} className={globalStyles.link_mouse} style={{ marginTop: 20 }}>
               <i className={globalStyles.authTheme}>&#xe8fe;</i>
               新增分组
             </div>
           )
-        }
+        } */}
         {
           add_new_board_group && (
             <Input
@@ -178,6 +186,6 @@ export default class GroupListHeadElse extends Component {
 }
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ gantt: { datas: { gold_date_arr = [], ceiHeight, gantt_board_id, group_view_type, list_group } } }) {
-  return { gold_date_arr, ceiHeight, group_view_type, gantt_board_id, list_group }
+function mapStateToProps({ gantt: { datas: { gold_date_arr = [], ceiHeight, gantt_board_id, group_view_type, list_group, outline_tree_round } } }) {
+  return { gold_date_arr, ceiHeight, group_view_type, gantt_board_id, list_group, outline_tree_round }
 }

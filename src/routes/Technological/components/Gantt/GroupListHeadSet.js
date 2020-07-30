@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import ContentFilter from './components/contentFilter'
-import { Dropdown, Tooltip, message } from 'antd'
+import { Dropdown, Tooltip, message, Tag } from 'antd'
 import indexStyles from './index.less'
 import { connect } from 'dva'
 import globalStyles from '@/globalset/css/globalClassName.less'
@@ -163,9 +163,26 @@ export default class GroupListHeadSet extends Component {
         }
         return flag
     }
+    deleteSingleUser = () => {
+        const { dispatch } = this.props
+        dispatch({
+            type: 'gantt/updateDatas',
+            payload: {
+                group_view_type: '2',
+                single_select_user: { id: '', name: '' },
+                list_group: []
+            }
+        })
+        dispatch({
+            type: 'gantt/getGanttData',
+            payload: {
+
+            }
+        })
+    }
     render() {
         const { dropdownVisible, addProjectModalVisible } = this.state
-        const { target_scrollLeft, target_scrollTop, group_view_type = '1', gantt_board_id = '0', group_view_filter_boards, group_view_filter_users } = this.props
+        const { single_select_user, target_scrollLeft, target_scrollTop, group_view_type = '1', gantt_board_id = '0', group_view_filter_boards, group_view_filter_users } = this.props
         const selected = `${indexStyles.button_nomal_background} ${indexStyles.type_select}`;
         // console.log("gantt_board_id", gantt_board_id);
         return (
@@ -184,7 +201,7 @@ export default class GroupListHeadSet extends Component {
                                     onClick={() => { if (gantt_board_id != '0') this.setGroupViewType('4') }}
                                     className={`${indexStyles.set_content_left_left} ${globalStyles.authTheme} ${ganttIsOutlineView({ group_view_type }) && selected} ${gantt_board_id == '0' ? indexStyles.disabled : ''}`}
                                     style={{ display: gantt_board_id == '0' ? 'none' : 'block' }} >
-                                    &#xe7f9;
+                                    &#xe680;
                                 </div>
                             </Tooltip>
 
@@ -198,9 +215,13 @@ export default class GroupListHeadSet extends Component {
                                 >
                                     {
                                         gantt_board_id == '0' ? (
-                                            <span>&#xe6ae;</span>
+                                            !single_select_user.id ? (
+                                                <span>&#xe68a;</span>
+                                            ) : (
+                                                    <span>&#xe694;</span>
+                                                )
                                         ) : (
-                                                <span>&#xe604;</span>
+                                                <span>&#xe681;</span>
                                             )
                                     }
                                 </div>
@@ -210,11 +231,28 @@ export default class GroupListHeadSet extends Component {
                                     onClick={() => this.setGroupViewType('2')}
                                     className={`${indexStyles.set_content_left_right} ${globalStyles.authTheme}  ${group_view_type == '2' && selected}`}
                                     style={{ display: gantt_board_id == '0' ? 'block' : 'none' }} >
-                                    &#xe7b2;
+                                    &#xe693;
                                 </div>
                             </Tooltip>
                         </div>
                     </div>
+                    {
+                        single_select_user.id && (
+                            <div>
+                                <Tag
+                                    title={single_select_user.name}
+                                    closable
+                                    visible={true}
+                                    color='blue'
+                                    onClose={this.deleteSingleUser}
+                                >
+                                    <span style={{ maxWidth: 100, display: 'inline-block', verticalAlign: 'top' }} className={`${globalStyles.global_ellipsis}`}>
+                                        {single_select_user.name}
+                                    </span>
+                                </Tag>
+                            </div>
+                        )
+                    }
                     <div className={indexStyles.set_content_right}>
                         {/* <div className={indexStyles.set_content_dec}>
                             {group_view_type == '1' && (
@@ -253,8 +291,8 @@ export default class GroupListHeadSet extends Component {
 }
 function mapStateToProps({
     technological: { datas: { userOrgPermissions } },
-    gantt: { datas: { target_scrollLeft = [], target_scrollTop = [], group_view_type, gantt_board_id, group_view_filter_boards, group_view_filter_users } },
+    gantt: { datas: { single_select_user, target_scrollLeft = [], target_scrollTop = [], group_view_type, gantt_board_id, group_view_filter_boards, group_view_filter_users } },
     simplemode: { simplemodeCurrentProject }
 }) {
-    return { userOrgPermissions, target_scrollLeft, target_scrollTop, group_view_type, gantt_board_id, group_view_filter_boards, group_view_filter_users, simplemodeCurrentProject }
+    return { single_select_user, userOrgPermissions, target_scrollLeft, target_scrollTop, group_view_type, gantt_board_id, group_view_filter_boards, group_view_filter_users, simplemodeCurrentProject }
 }

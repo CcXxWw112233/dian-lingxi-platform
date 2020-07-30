@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'dva'
-import { Icon, message, Dropdown, Menu, DatePicker, Modal } from 'antd'
+import { Icon, message, Dropdown, Menu, DatePicker, Modal, Tooltip } from 'antd'
 import mainContentStyles from './MainContent.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import NameChangeInput from '@/components/NameChangeInput'
@@ -30,9 +30,10 @@ export default class MainContent extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      propertiesList: [], // 添加的属性字段
-      is_change_parent_time: false, // 是否可以修改父任务时间
-      local_card_name: '', // 当前任务的名称
+      propertiesList: [],
+      is_change_parent_time: false,
+      is_edit_title: false,
+      inputValue: ''
     }
   }
 
@@ -65,6 +66,12 @@ export default class MainContent extends Component {
         }
       })
     }
+  }
+
+  handleDynamicComment = (e) => {
+    e && e.stopPropagation()
+    const { drawContent: { card_name, board_id, card_id } } = this.props
+    this.linkImWithCard({ name: card_name, type: 'card', board_id: board_id, id: card_id })
   }
 
   //获取项目里文件夹列表
@@ -153,8 +160,7 @@ export default class MainContent extends Component {
         this.filterCurrentExistenceField(res.data)
         // 是否可以修改父任务时间
         this.whetherUpdateParentTaskTime()
-        // 联动圈子打开
-        this.linkImWithCard({ name: res.data.card_name, type: 'card', board_id: res.data.board_id, id: res.data.card_id })
+        // this.linkImWithCard({ name: res.data.card_name, type: 'card', board_id: res.data.board_id, id: res.data.card_id })
       } else {
         setTimeout(() => {
           dispatch({
@@ -259,17 +265,16 @@ export default class MainContent extends Component {
   }
   // 设置卡片是否完成 E
 
-  // 点击设置标题事件 S
-  handleChangeTaskTitle = (e) => {
-    e && e.stopPropagation()
+  // 设置标题textarea区域修改 S
+  setTitleEdit = (e, card_name) => {
+    e && e.stopPropagation();
     if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()) {
       return false
     }
-    const { drawContent: { card_name } } = this.props
-    // 点击的时候设置一个本地名称
     this.setState({
       is_edit_title: true,
-      local_card_name: card_name
+      local_title_value: card_name,
+      inputValue: card_name
     })
   }
   // 点击设置标题事件 E
@@ -286,25 +291,24 @@ export default class MainContent extends Component {
   }
   // 设置标题文本内容change事件 E
 
+  titleTextAreaChange = (e) => {
+    let val = e.target.value
+    let reStr = val.trim()
+    this.setState({
+      inputValue: reStr
+    })
+  }
+
   // 设置标题文本失去焦点回调 S
   titleTextAreaChangeBlur = (e) => {
     e && e.stopPropagation()
     let val = e.target.value
+    const { local_title_value } = this.state
     const { dispatch, drawContent = {} } = this.props
     const { card_id, board_id, card_name } = drawContent
     const { local_card_name } = this.state
     let reStr = val.trim()
-    // 如果名称为空, 那么不修改名称 还是为原来名称
-    if (reStr == "" || reStr == " " || !reStr) {
-      drawContent['card_name'] = local_card_name
-      this.updateDrawContentWithUpdateParentListDatas({ drawContent, card_id })
-      this.setState({
-        is_edit_title: false
-      })
-      return
-    }
-    // 如果本地名称和修改的名称相等也不需要调用接口
-    if (local_card_name == card_name) {
+    if (reStr == "" || reStr == " " || !reStr || val == local_title_value) {
       this.setState({
         is_edit_title: false
       })
@@ -332,6 +336,12 @@ export default class MainContent extends Component {
       this.setState({
         is_edit_title: false
       })
+      // dispatch({
+      //   type: 'publicTaskDetailModal/updateDatas',
+      //   payload: {
+      //     drawContent,
+      //   }
+      // })
       this.updateDrawContentWithUpdateParentListDatas({ drawContent, card_id })
       // 需要调用父级的列表
       this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id, name: 'card_name', value: val })
@@ -638,7 +648,7 @@ export default class MainContent extends Component {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         return
       }
-      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'due_time', value: '0' })
+      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'due_time', value: '0', rely_card_datas: res.data })
     })
 
   }
@@ -1054,8 +1064,13 @@ export default class MainContent extends Component {
         filePreviewCurrentFileId: '',
         fileType: '',
         isInOpenFile: false,
-        isInAttachmentFile: false,
         filePreviewCurrentName: ''
+      }
+    })
+    this.props.dispatch({
+      type: 'publicTaskDetailModal/getCardWithAttributesDetail',
+      payload: {
+        id: this.props.card_id
       }
     })
   }
@@ -1116,13 +1131,13 @@ export default class MainContent extends Component {
 
   // 更新对应的依赖项
   updateRelyOnRationList = (change_data) => {
-    const { drawContent = {}, drawContent: { dependences = {} }, dispatch } = this.props
-    if (!dependences) return
-    if (!(dependences['last'] && dependences['last'].length) && !(dependences['next'] && dependences['next'].length)) return
+    const { drawContent = {}, drawContent: { dependencies = {} }, dispatch } = this.props
+    if (!dependencies) return
+    if (!(dependencies['last'] && dependencies['last'].length) && !(dependencies['next'] && dependencies['next'].length)) return
     let obj = {}
     let new_drawContent = {...drawContent}
-    let preposeList = dependences['last'] // 前置
-    let postpositionList = dependences['next'] // 后置
+    let preposeList = dependencies['last'] // 前置
+    let postpositionList = dependencies['next'] // 后置
     
     preposeList = preposeList.map(item => {
       let new_item = {}
@@ -1137,11 +1152,11 @@ export default class MainContent extends Component {
       return new_item
     })
     obj = {
-      ...dependences,
+      ...dependencies,
       last: preposeList,
       next: postpositionList
     }
-    new_drawContent['dependences'] = obj
+    new_drawContent['dependencies'] = obj
     dispatch({
       type: 'publicTaskDetailModal/updateDatas',
       payload: {
@@ -1159,11 +1174,11 @@ export default class MainContent extends Component {
       is_realize = '0',
       start_time,
       due_time,
-      dependences = [],
-      properties = []
+      dependencies = []
     } = drawContent
+    const { properties = [] } = drawContent
     const { data = [] } = getCurrentDrawerContentPropsModelFieldData({properties, code: 'EXECUTOR'})
-    const { boardFolderTreeData = [], milestoneList = [], selectedKeys = [], is_edit_title } = this.state
+    const { boardFolderTreeData = [], milestoneList = [], selectedKeys = [], is_edit_title, inputValue } = this.state
     // 状态
     const filedEdit = (
       <Menu onClick={this.handleFiledIsComplete} getPopupContainer={triggerNode => triggerNode.parentNode} selectedKeys={is_realize == '0' ? ['incomplete'] : ['complete']}>
@@ -1186,7 +1201,7 @@ export default class MainContent extends Component {
 
     return (
       <div className={mainContentStyles.main_wrap}>
-        <RelyOnRelationship relationshipList={dependences} updateRelyOnRationList={this.updateRelyOnRationList}/>
+        <RelyOnRelationship relationshipList={dependencies} updateRelyOnRationList={this.updateRelyOnRationList}/>
         <div className={mainContentStyles.main_content}>
           {/* 标题 S */}
           <div>
@@ -1206,7 +1221,7 @@ export default class MainContent extends Component {
               </div>
               {
                 !is_edit_title ? (
-                  <div onClick={this.handleChangeTaskTitle} className={`${mainContentStyles.card_name} ${mainContentStyles.pub_hover}`}>
+                  <div onClick={(e) => { this.setTitleEdit(e, card_name) }} className={`${mainContentStyles.card_name} ${mainContentStyles.pub_hover}`}>
                     <span style={{ wordBreak: 'break-all' }}>{card_name}</span>
                   </div>
                 ) : (
@@ -1215,11 +1230,12 @@ export default class MainContent extends Component {
                       onChange={this.titleTextAreaChange}
                       onBlur={this.titleTextAreaChangeBlur}
                       // onClick={this.setTitleEdit}
+                      onPressEnter={this.titleTextAreaChangeBlur}
                       setIsEdit={this.titleTextAreaChangeBlur}
                       autoFocus={true}
-                      goldName={card_name}
+                      goldName={inputValue}
                       maxLength={101}
-                      nodeName={'textarea'}
+                      nodeName={'input'}
                       style={{ display: 'block', fontSize: 20, color: '#262626', resize: 'none', height: '44px', background: 'rgba(255,255,255,1)', boxShadow: '0px 0px 8px 0px rgba(0,0,0,0.15)', borderRadius: '4px', border: 'none' }}
                     />
                   )
@@ -1405,6 +1421,11 @@ export default class MainContent extends Component {
           </div>
           {/* 添加字段 E */}
         </div>
+        <div onClick={this.handleDynamicComment} id="dynamic_comment" className={mainContentStyles.dynamic_comment}>
+          <Tooltip overlayStyle={{ minWidth: '72px' }} placement="top" title="动态消息" getPopupContainer={() => document.getElementById('dynamic_comment')}>
+            <span className={globalStyles.authTheme}>&#xe8e8;</span>
+          </Tooltip>
+        </div>
         {/*查看任务附件*/}
         <div>
           {
@@ -1415,7 +1436,7 @@ export default class MainContent extends Component {
                 file_detail_modal_visible={this.props.isInOpenFile}
                 filePreviewCurrentName={this.props.filePreviewCurrentName}
                 setPreviewFileModalVisibile={this.setPreviewFileModalVisibile}
-                whetherUpdateFolderListData={this.whetherUpdateFolderListData}
+                // whetherUpdateFolderListData={this.whetherUpdateFolderListData}
               />
             )
           }

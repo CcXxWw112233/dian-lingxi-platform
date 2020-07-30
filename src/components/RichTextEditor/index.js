@@ -56,7 +56,7 @@ export default class RichTextEditor extends React.Component {
             controls: [
                 'text-color', 'bold', 'italic', 'underline', 'strike-through',
                 'text-align', 'list_ul',
-                'list_ol', 'blockquote', 'code', 'split', 'media'
+                'list_ol', 'blockquote', 'split', 'media'
             ]
         };
     }

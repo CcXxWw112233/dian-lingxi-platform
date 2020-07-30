@@ -351,15 +351,16 @@ export const isPaymentOrgUser = (_org_id) => {
 }
 
 // (极简模式下)，点击或选择某个项目时，做项目联动，圈子联动和相关规划统一处理
-export const selectBoardToSeeInfo = ({ board_id, board_name, dispatch, autoOpenIm = true, org_id, is_new_board, group_view_type = '4' }) => {
+export const selectBoardToSeeInfo = ({ board_id, selected_board_term, board_name, dispatch, autoOpenIm = true, org_id, is_new_board, group_view_type = '4' }) => {
   setBoardIdStorage(board_id, org_id)
   dispatch({ //设置极简模式的已选项目
     type: 'simplemode/updateDatas',
     payload: {
-      simplemodeCurrentProject: board_id == '0' ? '' : {
+      simplemodeCurrentProject: board_id == '0' ? selected_board_term == '1' ? {selected_board_term:'1'} : selected_board_term == '2' ? {selected_board_term: '2'} : '' : {
         board_id,
         board_name,
-        org_id: org_id || getOrgIdByBoardId(board_id)
+        org_id: org_id || getOrgIdByBoardId(board_id),
+        selected_board_term: selected_board_term == '1' ? selected_board_term : selected_board_term == '2' ? selected_board_term : '0'
       }
     }
   })

@@ -178,6 +178,7 @@ export default {
 
       let coperate = data[0] //协作
       let news = data[1] //消息
+      if (!coperate) return
       //获取消息协作类型
       const coperateName = coperate.e
       const coperateType = coperateName.substring(0, coperateName.indexOf('/'))

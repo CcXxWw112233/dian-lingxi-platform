@@ -5,6 +5,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import { connect } from 'dva'
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
 import { timestampToTimeNormal, compareACoupleOfObjects, isObjectValueEqual } from '../../../../../utils/util';
+import OpinionContent from '../OpinionContent'
 
 @connect(mapStateToProps)
 export default class BeginningStepThree_one extends Component {
@@ -99,6 +100,23 @@ export default class BeginningStepThree_one extends Component {
     if ((value == '' || value.trimLR() == '') || Number(value) > Number(max_score) || isNaN(value)) {
       this.updateState({ value: '', key: 'value' }, i)
       return
+    }
+    if (value.indexOf('.') != -1 && value.indexOf('.') != 0) { // 表示存在小数点
+      let str = value.split('.')
+      if (str && str.length > 2) { // 表示禁止输入多个小数点
+        value = value.substring(0, value.indexOf('.') + 3)
+      } else if (isNaN(str[0])) { // 如果数字的前半段就是非数字 那么就取整
+        value = parseInt(value)
+      } else if ((str[1] && str[1].length) && isNaN(str[1])) { // 表示后半段中如果存在非数字那么取整
+        value = parseInt(value)
+      } else if ((str[1] && str[1].length) && str[1].length > 2) { // 表示如果小数点后半段位数大于2那么保留两位小数
+        value = String(value).substring(0, String(value).indexOf('.') + 3)
+      }
+    } else {
+      if (isNaN(value)) {
+        this.updateState({ value: '', key: 'value' }, i)
+        return
+      }
     }
     this.updateState({ value: value, key: 'value' }, i)
   }
@@ -250,9 +268,16 @@ export default class BeginningStepThree_one extends Component {
                     ) : (
                         <>
                           <span style={{ color: '#1890FF', margin: '0 8px' }}>{last_total.value}</span>
-                          <Popover getPopupContainer={triggerNode => triggerNode.parentNode} placement="rightTop" content={enable_weight == '1' ? this.renderRatingDetailWeightContent(score_items) : this.renderRatingDetailDefaultContent(score_items)} title={<div>评分详情</div>}>
-                            <span style={{ color: '#1890FF', fontSize: '16px', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe7b4;</span>
-                          </Popover>
+                          {
+                            !(score_items && score_items.length) ? (
+                              <span style={{width:'78px',background:'rgb(255, 169, 64)',color:'#fff',display:'inline-block',textAlign:'center',borderRadius:'4px',fontSize:'12px'}}>超时自动评分</span>
+                            ) : (
+                              <Popover getPopupContainer={triggerNode => triggerNode.parentNode} placement="rightTop" content={enable_weight == '1' ? this.renderRatingDetailWeightContent(score_items) : this.renderRatingDetailDefaultContent(score_items)} title={<div>评分详情</div>}>
+                                <span style={{ color: '#1890FF', fontSize: '16px', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe7b4;</span>
+                              </Popover>
+                            )
+                          }
+                          
                         </>
                       )
                   }
@@ -309,7 +334,7 @@ export default class BeginningStepThree_one extends Component {
   }
 
   render() {
-    const { itemValue, processEditDatas = [], itemKey, projectDetailInfoData: { data = [], board_id, org_id }, transPrincipalList = [] } = this.props
+    const { itemValue, processEditDatas = [], itemKey, projectDetailInfoData: { data = [], board_id, org_id }, transPrincipalList = [], showApproveButton } = this.props
     const { score_node_set = {}, enable_weight, status } = itemValue
     const { score_display } = score_node_set
     const { score_items = [], clientWidth } = this.state
@@ -322,7 +347,7 @@ export default class BeginningStepThree_one extends Component {
       <div>
         {/* 评分项 */}
         <div style={{ borderTop: '1px solid rgba(0,0,0,0.09)', marginTop: '16px', padding: '16px 14px' }}>
-          <div id={`ratingItems_${itemKey}`} className={indexStyles.ratingItems} style={{ paddingBottom: last_total && Object.keys(last_total).length != '0' || score_display == '0' ? '50px' : '16px' }}>
+          <div id={`ratingItems_${itemKey}`} className={indexStyles.ratingItems} style={{ paddingBottom: (last_total && Object.keys(last_total).length != '0') || (score_display == '0' && status == '1' ) ? '50px' : '16px' }}>
             {
               score_items && score_items.map((item, index) => {
                 const { title, description, max_score, weight_ratio, is_click_rating_grade, value } = item
@@ -400,6 +425,16 @@ export default class BeginningStepThree_one extends Component {
               )
             }
           </div>
+          {/* 渲染评语 */}
+          {
+            showApproveButton && (
+              <div>
+                <OpinionContent 
+                  value={this.props.value} placeholder="填写评分意见（选填）" opinionTextAreaChange={this.props.opinionTextAreaChange}
+                />
+              </div>
+            )
+          }
           {/* 评分人意见以及分数详情 */}
           <div>
             {

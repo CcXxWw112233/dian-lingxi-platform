@@ -3,19 +3,38 @@ import { connect } from 'dva'
 import { Input, message } from 'antd'
 import indexStyles from '../index.less'
 import { validateTel, validateEmail, validatePassword, validateFixedTel, validateIdCard, validateChineseName, validatePostalCode, validateWebsite, validateQQ, validatePositiveInt, validateNegative, validateTwoDecimal, } from '../../../../../utils/verify'
+import { updateUserStorage } from '../../handleOperateModal'
+import { isObjectValueEqual } from '../../../../../utils/util'
 
 @connect(mapStateToProps)
 export default class BeginningStepOne_one extends Component {
 
-  state = {
-    verificationIsTrue: true, //是否校验成功
+  constructor(props) {
+    super(props)
+    this.state = {
+      verificationIsTrue: true, //是否校验成功
+    }
   }
+
+  componentWillReceiveProps(nextProps) {
+    if (isObjectValueEqual(nextProps,this.props)) return
+    const { itemValue = {} } = nextProps
+    const { value, verification_rule } = itemValue
+    if (!value) return
+    this.setState({
+      verificationIsTrue: this.validate(verification_rule, value)
+    })
+  }
+  
 
   updateEdit = (data, key) => {
     const { itemKey, parentKey, processEditDatas = [] } = this.props
     const { forms = [] } = processEditDatas[parentKey]
     forms[itemKey][key] = data.value
     this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('forms', forms)
+    if (data.update_storage) {
+      updateUserStorage({forms: forms})
+    }
   }
 
   defaultValueChange(e, verification_rule) {
@@ -53,7 +72,7 @@ export default class BeginningStepOne_one extends Component {
     const { itemValue } = this.props
     const { val_min_length, val_max_length } = itemValue
     if (e.target.value.trimLR() == '') {
-      this.updateEdit({ value: '' }, 'value')
+      this.updateEdit({ value: '', update_storage: true }, 'value')
       return
     }
     // if (verification_rule == '') {
@@ -74,7 +93,7 @@ export default class BeginningStepOne_one extends Component {
       verificationIsTrue: this.validate(verification_rule, e.target.value)
     })
 
-    this.updateEdit({ value: e.target.value }, 'value')
+    this.updateEdit({ value: e.target.value, update_storage: true }, 'value')
   }
 
   validate(verification_rule, value) {

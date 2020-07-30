@@ -1,4 +1,5 @@
 import { addCardRely, deleteCardRely, updateCardRely, getCardRelys } from "../../../services/technological/task"
+import { saveGanttOutlineSort } from "../../../services/technological/gantt"
 import { isApiResponseOk } from "../../../utils/handleResponseData"
 import { getModelSelectDatasState } from "../../utils"
 import { message } from "antd"
@@ -10,21 +11,25 @@ export default {
         rely_map: [],
         proccess_templates: [],
         triggle_request_board_template: false, //大纲视图保存为项目模板后，触发为true，右边模板列表接收到变化会触发查询
+        drag_outline_node: { id: '', parent_id: '', parent_ids: [] }, //大纲拖拽排序所需要的信息
+        outline_node_draging: false, //大纲是否拖拽排序中
+        selected_card_visible: false, //查看任务抽屉
+        uploading_folder_id: '', //任务详情上传文件的文件id, 下方抽屉在上传后判断文件夹id进行更新
     },
     effects: {
         * addCardRely({ payload = {} }, { select, call, put }) {
-            const { from_card_id, to_card_id, relation } = payload
-            let res = yield call(addCardRely, { from_card_id, to_card_id, relation })
+            const { from_id, to_id, relation } = payload
+            let res = yield call(addCardRely, { from_id, to_id, relation })
             const rely_map = yield select(getModelSelectDatasState('gantt', 'rely_map'))
             let _rely_map = JSON.parse(JSON.stringify(rely_map))
             if (isApiResponseOk(res)) {
                 message.success('已成功添加依赖')
 
-                const index = _rely_map.findIndex(item => item.id == from_card_id)
+                const index = _rely_map.findIndex(item => item.id == from_id)
                 if (index != -1) { //该任务存在和其它的依赖关系则添加新的一条进next [], 反之构建一个新的item
-                    _rely_map[index].next.push({ id: to_card_id, relation })
+                    _rely_map[index].next.push({ id: to_id, relation })
                 } else {
-                    _rely_map.push({ id: from_card_id, next: [{ id: to_card_id, relation }] })
+                    _rely_map.push({ id: from_id, next: [{ id: to_id, relation }] })
 
                 }
                 yield put({
@@ -45,7 +50,7 @@ export default {
         },
         * deleteCardRely({ payload }, { select, call, put }) {
             const { move_id, line_id } = payload
-            const res = yield call(deleteCardRely, { from_card_id: move_id, to_card_id: line_id })
+            const res = yield call(deleteCardRely, { from_id: move_id, to_id: line_id })
             const rely_map = yield select(getModelSelectDatasState('gantt', 'rely_map'))
 
             if (isApiResponseOk(res)) {
@@ -178,6 +183,83 @@ export default {
             } else {
 
             }
+        },
+        // 保存大纲视图的相对位置
+        * saveGanttOutlineSort({ payload = {} }, { select, call, put }) {
+            const { outline_tree = [] } = payload
+            const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id'))
+            const outline_tree_ = yield select(getModelSelectDatasState('gantt', 'outline_tree'))
+            const data = outline_tree || outline_tree_
+            let content_ids = []
+            const mapGetContentId = (arr) => {
+                for (let val of arr) {
+                    const { children = [], id } = val
+                    if (id) {
+                        content_ids.push(id)
+                    }
+                    if (children.length) {
+                        mapGetContentId(children)
+                    }
+                }
+            }
+            mapGetContentId(data)
+            const res = yield call(saveGanttOutlineSort, { content_ids, board_id: gantt_board_id })
+
+        },
+        // 获取大纲某个节点
+        * getOutlineNode({ payload = {} }, { select, call, put }) {
+            const { outline_tree = [], id } = payload
+            const outline_tree_ = yield select(getModelSelectDatasState('gantt', 'outline_tree'))
+            const data = outline_tree.length ? outline_tree : outline_tree_
+            const getNode = (outline_tree, id) => {
+                let nodeValue = null;
+                if (outline_tree) {
+                    nodeValue = outline_tree.find((item) => item.id == id);
+                    if (nodeValue) {
+                        return nodeValue;
+                    } else {
+                        for (let i = 0; i < outline_tree.length; i++) {
+                            let node = outline_tree[i];
+                            if (node.children && node.children.length > 0) {
+                                nodeValue = getNode(node.children, id);
+                                if (nodeValue) {
+                                    return nodeValue;
+                                }
+                            } else {
+                                continue
+                                // return null;
+                            }
+                        }
+                    }
+                }
+                return nodeValue
+            }
+            const getTreeNodeValue = (outline_tree, id) => {
+                if (outline_tree) {
+                    for (let i = 0; i < outline_tree.length; i++) {
+                        let node = outline_tree[i];
+                        if (node.id == id) {
+                            return node;
+                        } else {
+                            if (node.children && node.children.length > 0) {
+                                let childNode = getNode(node.children, id);
+                                if (childNode) {
+                                    return childNode;
+                                }
+                            } else {
+                                continue
+                                // return null;
+                            }
+                        }
+                    }
+                } else {
+                    return null;
+                }
+
+            }
+            const node = getTreeNodeValue(data, id)
+            // console.log('sssssssss_find', { node, outline_tree, id })
+            return node
         }
     }
 

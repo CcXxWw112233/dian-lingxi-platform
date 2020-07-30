@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
-import { PROJECT_TEAM_BOARD_MEMBER, PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, PROJECT_TEAM_BOARD_EDIT, MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN } from '../../../../../globalset/js/constant'
+import { PROJECT_TEAM_BOARD_MEMBER, PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, PROJECT_TEAM_BOARD_EDIT, MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECTS } from '../../../../../globalset/js/constant'
 import VisitControl from '../../../../Technological/components/VisitControl'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import styles from './index.less'
-import { setBoardIdStorage, checkIsHasPermissionInBoard, getOrgIdByBoardId, selectBoardToSeeInfo, getOrgNameWithOrgIdFilter } from '../../../../../utils/businessFunction'
+import { setBoardIdStorage, checkIsHasPermissionInBoard, getOrgIdByBoardId, selectBoardToSeeInfo, getOrgNameWithOrgIdFilter, currentNounPlanFilterName } from '../../../../../utils/businessFunction'
 import { Dropdown, Menu, message } from 'antd'
 import { connect } from 'dva'
 import { toggleContentPrivilege, removeContentPrivilege, setContentPrivilege, addMenbersInProject, cancelCollection, collectionProject } from '../../../../../services/technological/project'
@@ -39,7 +39,7 @@ export default class BoardItem extends Component {
     }
 
     onSelectBoard = (board_id, org_id) => {
-        const { projectList, dispatch } = this.props
+        const { projectList, dispatch, simplemodeCurrentProject: { selected_board_term } } = this.props
         const selectBoard = projectList.filter(item => item.board_id === board_id);
         const selectOrgId = getOrgIdByBoardId(board_id)
         if (!selectBoard && selectBoard.length == 0) {
@@ -88,7 +88,7 @@ export default class BoardItem extends Component {
                 board_id: board_id
             }
         })
-        selectBoardToSeeInfo({ board_id: selectBoard[0] && selectBoard[0].board_id, board_name: selectBoard[0] && selectBoard[0].board_name, dispatch })
+        selectBoardToSeeInfo({ board_id: selectBoard[0] && selectBoard[0].board_id, board_name: selectBoard[0] && selectBoard[0].board_name, dispatch, selected_board_term })
 
     }
 
@@ -199,7 +199,7 @@ export default class BoardItem extends Component {
     }
 
     // 访问控制添加成员
-    handleSetContentPrivilege = (users_arr, type, errorText = '访问控制添加人员失败，请稍后再试', ) => {
+    handleSetContentPrivilege = (users_arr, type, errorText = '访问控制添加人员失败，请稍后再试',) => {
         const { itemValue = {} } = this.props
         const { privileges = [], board_id } = itemValue
         const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
@@ -476,7 +476,7 @@ export default class BoardItem extends Component {
                 }
 
                 {
-                    <Menu.Item key={'board_info'}>项目信息</Menu.Item>
+                    <Menu.Item key={'board_info'}>{`${currentNounPlanFilterName(PROJECTS)}信息`}</Menu.Item>
                 }
 
 
@@ -493,7 +493,7 @@ export default class BoardItem extends Component {
                     onClick={() => this.onSelectBoard(board_id, org_id)}
                     className={`${!isAllOrg ? styles.board_area_middle_item : styles.board_area_middle_item2} ${simplemodeCurrentProject.board_id == board_id && styles.board_area_middle_item_choose}`} key={board_id}>
                     <div className={`${styles.board_area_middle_item_lf}`}></div>
-                    <div className={`${styles.board_area_middle_item_middle} ${globalStyles.global_ellipsis}`} >
+                    <div id={`board_area_middle_item_middle_${board_id}`} className={`${styles.board_area_middle_item_middle} ${globalStyles.global_ellipsis}`} >
                         <p title={board_name} className={`${styles.board_area_middle_item_board_name}`}>{board_name}</p>
                         {
                             isAllOrg && (
@@ -516,7 +516,7 @@ export default class BoardItem extends Component {
                                     )
                             }
                         </div>
-                        <Dropdown onVisibleChange={this.dropdwonVisibleChange} overlay={menu_oprate_visible ? this.renderMenuOperateListName({ board_id, is_star }) : (<span></span>)}>
+                        <Dropdown getPopupContainer={() => document.getElementById(`board_area_middle_item_middle_${board_id}`)} onVisibleChange={this.dropdwonVisibleChange} overlay={menu_oprate_visible ? this.renderMenuOperateListName({ board_id, is_star }) : (<span></span>)} trigger={['click']}>
                             <div className={`${styles.board_area_middle_item_rt_operate} ${globalStyles.authTheme}`} onClick={(e) => e.stopPropagation()}>&#xe66f;</div>
                         </Dropdown>
                     </div>

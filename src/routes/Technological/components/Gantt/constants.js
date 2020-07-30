@@ -1,13 +1,18 @@
 export const date_area_height = 64
-export const task_item_height = 40 //进度条高度
+export const task_item_height = 26 //进度条高度
 export const task_item_height_fold = 24 //进度条高度（折叠后）
-export const task_item_margin_top = 20 //任务条margin-top
-export const ceil_height = 60 // task_item_height + task_item_margin_top 单元格高度
+export const task_item_margin_top = 12 //任务条margin-top
+export const ceil_height = task_item_height + task_item_margin_top // task_item_height + task_item_margin_top 单元格高度
 export const ceil_height_fold = 24 //折叠的单元格高度
 export const group_rows_fold = 4  //进度汇总折叠后行数
-export const ceil_width = 44 // 默认单元格宽度 （月视图）
-export const ceil_width_year = 6 //年试图下的单元格宽度
-export const ganttIsFold = ({ group_view_type, gantt_board_id, show_board_fold }) => { //gantt是否折叠
+export const ceil_width = 34 // 默认单元格宽度 （月视图）
+export const ceil_width_year = 3 //年试图下的单元格宽度
+export const ceil_width_week = 12 //周视图单元格宽度
+export const one_group_row_total = 2 //默认分组行数
+export const ganttIsFold = ({ group_view_type, gantt_board_id, show_board_fold, gantt_view_mode }) => { //gantt是否折叠
+    if (gantt_view_mode == 'year' && group_view_type != '4') { //年视图的分组视图下
+        return true
+    }
     if (group_view_type == '1' && gantt_board_id == '0' && show_board_fold) {
         return true
     } else {

@@ -18,19 +18,22 @@ export default class SelectBoardModal extends Component {
         const { name } = this.state
         saveBoardTemplate({ board_id: gantt_board_id, name }).then(res => {
             if (isApiResponseOk(res)) {
-                dispatch({
-                    type: 'gantt/updateDatas',
-                    payload: {
-                        triggle_request_board_template: true
-                    }
-                })
+                message.success('保存成功')
                 setTimeout(() => {
                     dispatch({
                         type: 'gantt/updateDatas',
                         payload: {
-                            triggle_request_board_template: false
+                            triggle_request_board_template: true
                         }
                     })
+                    setTimeout(() => {
+                        dispatch({
+                            type: 'gantt/updateDatas',
+                            payload: {
+                                triggle_request_board_template: false
+                            }
+                        })
+                    }, 1000)
                 }, 1000)
                 this.closeModal()
             } else {

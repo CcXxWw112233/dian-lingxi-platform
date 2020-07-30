@@ -50,18 +50,18 @@ class HoverEars extends Component {
                 transformOrigin: `0 0`,
                 move_to: 'start'
             })
-            this.rela_x = x - 10
-            this.rela_y = y + 20
+            this.rela_x = x //- 10
+            this.rela_y = y //+ 20
 
         } else if (target_ref == 'right_circle_ref') {
             this.setState({
-                x1: width,
-                y1: 20,
-                transformOrigin: `${width} ${20}`,
+                x1: width + 46,
+                y1: 8,
+                transformOrigin: `${width + 46} ${8}`,
                 move_to: 'end'
             })
-            this.rela_x = x + 10
-            this.rela_y = y - 20
+            this.rela_x = x //+ 10
+            this.rela_y = y // - 20
 
         } else {
 
@@ -74,15 +74,16 @@ class HoverEars extends Component {
         const { x, y } = this.getXY(e)
         let x2 = x - this.rela_x //- 10 // - 10是为了让鼠标不落在箭头上
         let y2 = y - this.rela_y //- 10
+        const diff = 14
         if (x2 < 0) {
-            x2 = x2 + 14
+            x2 = x2 + diff //+ 18
         } else {
-            x2 = x2 - 14
+            x2 = x2 - diff//- 18
         }
         if (y2 < 0) {
-            y2 = y2 + 14
+            y2 = y2 + diff// + 18
         } else {
-            y2 = y2 - 14
+            y2 = y2 - diff //- 18
         }
         const { angle, length } = this.calHypotenuse({ x2, y2 })
         this.setState({
@@ -167,8 +168,8 @@ class HoverEars extends Component {
         dispatch({
             type: 'gantt/addCardRely',
             payload: {
-                from_card_id: move_id,
-                to_card_id: line_id,
+                from_id: move_id,
+                to_id: line_id,
                 relation: `${move_to}_${line_to}`
             }
         })
@@ -224,7 +225,7 @@ class HoverEars extends Component {
         const { x1, y1, length, angle, transformOrigin, x2, y2 } = this.state
         return (
             <div className={indexStyles.ears_out} style={{ display: rely_down ? 'block' : '' }}>
-                <div
+                {/* <div
                     data-rely_left={id}
                     className={`${indexStyles.ears} ${indexStyles.left_ear}`}
                     style={{ backgroundColor: `${this.setTriangleTreeColor(label_data, 'start') || '#D7D7D7'}` }}>
@@ -237,7 +238,7 @@ class HoverEars extends Component {
                     style={{ backgroundColor: `${this.setTriangleTreeColor(label_data, 'start') || '#D7D7D7'}` }}>
                     <div />
                     <div />
-                </div>
+                </div> */}
 
                 {/* <div
                     // data-ref={'left_circle_ref'}
@@ -245,25 +246,32 @@ class HoverEars extends Component {
                     // {...this.eventObj}
                     className={`${indexStyles.ears_circle} ${indexStyles.left_ear_circle}`}
                 /> */}
-                <div
-                    // data-ref={'right_circle_ref'}
-                    // ref={this.right_circle_ref}
-                    // {...this.eventObj}
-                    className={`${indexStyles.ears_circle} ${indexStyles.right_ear_circle}`}
-                />
-                <div />
+
                 {/* <div
                     data-ref={'left_circle_ref'}
                     ref={this.left_circle_ref}
                     {...this.eventObj}
                     className={`${indexStyles.ears_circle_mask} ${indexStyles.left_ear_circle_mask}`}
                 /> */}
-                <div
-                    data-ref={'right_circle_ref'}
-                    ref={this.right_circle_ref}
-                    {...this.eventObj}
-                    className={`${indexStyles.ears_circle_mask} ${indexStyles.right_ear_circle_mask}`}
-                />
+
+                <div className={indexStyles.right_circle_wrapper}>
+                    <div className={indexStyles.link_right_circle}></div>
+                    <div
+                        data-ref={'right_circle_ref'}
+                        ref={this.right_circle_ref}
+                        {...this.eventObj}
+                        className={`${indexStyles.ears_circle_mask} ${indexStyles.right_ear_circle_mask}`}
+                    />
+                    <div
+                        // data-ref={'right_circle_ref'}
+                        // ref={this.right_circle_ref}
+                        // {...this.eventObj}
+                        className={`${indexStyles.ears_circle} ${indexStyles.right_ear_circle}`}
+                    />
+                    <div />
+                </div>
+
+
                 <div
                     style={{
                         top: y1,

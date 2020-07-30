@@ -427,6 +427,45 @@ export default {
                         
                     }
                     break
+                case 'change:board:role': // 修改项目角色
+                    current_user = (coperateData.data && coperateData.data.length) && coperateData.data.find(item=> item.user_id == user_id) || {} // 判断当前这个人在不在成员列表中
+                    if (!(current_user && Object.keys(current_user).length)) return false
+                    // 如果在: 根据该成员的角色来判断项目列表中是否是当前user负责
+                    const role_id = current_user.role_id || ''
+                    if (role_id == '3') { // 表示是项目负责人
+                        new_projectList = new_projectList.map(item => {
+                            if (item.board_id == coperateData.board_id) { // 找到这个
+                                let new_item = {...item}
+                                new_item = {...item, is_principal: '1'}
+                                return new_item
+                            } else {
+                                return item
+                            }
+                        })
+                        dispathes({
+                            type: 'workbench/updateDatas',
+                            payload: {
+                                projectList: new_projectList
+                            }
+                        })
+                    } else {
+                        new_projectList = new_projectList.map(item => {
+                            if (item.board_id == coperateData.board_id) { // 找到这个
+                                let new_item = {...item}
+                                new_item = {...item, is_principal: '0'}
+                                return new_item
+                            } else {
+                                return item
+                            }
+                        })
+                        dispathes({
+                            type: 'workbench/updateDatas',
+                            payload: {
+                                projectList: new_projectList
+                            }
+                        })
+                    }
+                    break
                 case 'change:cards': // 添加任务
                     // 1. 判断是否是该执行人的代办
                     if (!(current_user && Object.keys(current_user).length)) return

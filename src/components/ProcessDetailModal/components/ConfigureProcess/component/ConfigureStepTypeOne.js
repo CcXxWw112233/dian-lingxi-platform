@@ -9,6 +9,9 @@ import ConfigureStepOne_five from './ConfigureStepOne_five'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import MoreOptionsComponent from '../../MoreOptionsComponent'
 import { connect } from 'dva'
+import ConfigureStepOne_six from './ConfigureStepOne_six'
+import { getOnlineExcelWithProcess } from '../../../../../services/technological/workFlow'
+import { isApiResponseOk } from '../../../../../utils/handleResponseData'
 
 @connect(mapStateToProps)
 export default class ConfigureStepTypeOne extends Component {
@@ -62,6 +65,21 @@ export default class ConfigureStepTypeOne extends Component {
         processEditDatas: new_processEditDatas,
       }
     })
+    if (data.code && data.type && data.type == 'delete') {
+      new_processEditDatas[itemKey].options_data ? delete new_processEditDatas[itemKey].options_data : ''
+      if (data.code == 'COMPLETION_DEADLINE') { // 表示删除完成期限
+        new_processEditDatas[itemKey].deadline_time_type == '' ? delete new_processEditDatas[itemKey].deadline_time_type : ''
+        new_processEditDatas[itemKey].deadline_value == '' ? delete new_processEditDatas[itemKey].deadline_value : ''
+      } else if (data.code == 'DUPLICATED') {
+        new_processEditDatas[itemKey].recipients == '' ? delete new_processEditDatas[itemKey].recipients : ''
+      }
+      dispatch({
+        type: 'publicProcessDetailModal/updateDatas',
+        payload: {
+          processEditDatas: new_processEditDatas,
+        }
+      })
+    }
   }
 
   // 任何人 | 指定人
@@ -83,7 +101,7 @@ export default class ConfigureStepTypeOne extends Component {
           if (selectedKeys[i] === membersData[j]['user_id']) {
             assignee_value.push(membersData[j].user_id)
           }
-        }                                                                                                                                                                                        
+        }
       }
       this.setState({
         designatedPersonnelList: assignee_value
@@ -136,6 +154,21 @@ export default class ConfigureStepTypeOne extends Component {
       designatedPersonnelList: newAssigneesArray
     })
     this.updateConfigureProcess({ value: newAssigneesStr }, 'assignees')
+  }
+
+  // 获取在线表格
+  getOnlineExcelWithProcess = (data) => {
+    // if (data && data.find(i=>i.field_type == '6')) return
+    getOnlineExcelWithProcess({}).then(res => {
+      if (isApiResponseOk(res)) {
+        data.push({
+          online_excel_id: res.data,
+          field_type: '6'
+        })
+        this.updateConfigureProcess({ value: data }, 'forms')
+        this.props.updateSheetList && this.props.updateSheetList({id: res.data, sheetData: []})
+      }
+    })
   }
 
   //表单填写项
@@ -209,9 +242,14 @@ export default class ConfigureStepTypeOne extends Component {
           ],
           "is_click_currentTextForm": true
         }
+        break
+      case '6':
+        this.getOnlineExcelWithProcess(newFormsData)
+        break
       default:
         break
     }
+    if (!(obj && Object.keys(obj).length)) return
     newFormsData.push(obj)
     this.updateConfigureProcess({ value: newFormsData }, 'forms')
   }
@@ -220,7 +258,7 @@ export default class ConfigureStepTypeOne extends Component {
   filterForm = (value, key) => {
     if (!value) return <></>
     const { field_type } = value
-    const { itemKey, itemValue } = this.props
+    const { itemKey, itemValue, updateSheetList} = this.props
     let container = (<div></div>)
     switch (field_type) {
       case '1':
@@ -241,6 +279,11 @@ export default class ConfigureStepTypeOne extends Component {
       case '5':
         container = (
           <ConfigureStepOne_five updateConfigureProcess={this.updateConfigureProcess} itemKey={key} itemValue={value} parentKey={itemKey} parentValue={itemValue} />
+        )
+        break
+      case '6':
+        container = (
+          <ConfigureStepOne_six setSheet={this.props.setSheet} updateSheetList={updateSheetList} updateConfigureProcess={this.updateConfigureProcess} itemKey={key} itemValue={value} parentKey={itemKey} parentValue={itemValue} />
         )
         break
       default:
@@ -279,6 +322,7 @@ export default class ConfigureStepTypeOne extends Component {
           <Menu.Item key="2">选择</Menu.Item>
           <Menu.Item key="3">日期</Menu.Item>
           <Menu.Item key="5">附件</Menu.Item>
+          <Menu.Item key="6">在线表格</Menu.Item>
         </Menu>
       </div>
     )
@@ -299,7 +343,7 @@ export default class ConfigureStepTypeOne extends Component {
                 overlay={
                   <MenuSearchPartner
                     isInvitation={true}
-                  // show_select_all={true}
+                    // show_select_all={true}
                     // select_all_type={'0'}
                     listData={currentOrgAllMembers} keyCode={'user_id'} searchName={'name'} currentSelect={designatedPersonnelList}
                     // board_id={board_id}
@@ -380,11 +424,11 @@ export default class ConfigureStepTypeOne extends Component {
               return (<div key={`${key}-${value}`}>{this.filterForm(value, key)}</div>)
             })}
           </div>
-          <div style={{position: 'relative'}}>
+          <div style={{ position: 'relative' }}>
             <Dropdown overlayClassName={indexStyles.overlay_addTabsItem} overlay={this.renderFieldType()} getPopupContainer={
               // () => document.getElementById('addTabsItem')
               triggerNode => triggerNode.parentNode
-              } trigger={['click']}>
+            } trigger={['click']}>
               <Button id="addTabsItem" className={indexStyles.add_tabsItem}><span style={{ color: 'rgba(24,144,255,1)' }} className={globalStyles.authTheme}>&#xe782;</span>&nbsp;&nbsp;&nbsp;添加表项</Button>
             </Dropdown>
           </div>
@@ -392,7 +436,7 @@ export default class ConfigureStepTypeOne extends Component {
         {/* 填写人 */}
         <div className={indexStyles.fill_person} style={{ flexDirection: 'column' }} onClick={(e) => { e && e.stopPropagation() }}>
           <div>
-            <span className={`${globalStyles.authTheme} ${indexStyles.label_person}`}><span style={{fontSize: '16px'}}>&#xe7b2;</span> 填写人&nbsp;:</span>
+            <span className={`${globalStyles.authTheme} ${indexStyles.label_person}`}><span style={{ fontSize: '16px' }}>&#xe7b2;</span> 填写人&nbsp;:</span>
             <Radio.Group style={{ lineHeight: '48px' }} value={assignee_type} onChange={this.assigneeTypeChange}>
               <Radio value="1">流程发起人</Radio>
               <Radio value="2">指定人员</Radio>

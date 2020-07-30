@@ -4,6 +4,7 @@ import { message, Menu, Dropdown, Modal, Button } from 'antd';
 import styles from './index.less';
 import globalStyles from '@/globalset/css/globalClassName.less';
 import OutlineTree from './components/OutlineTree';
+import TreeNode from './components/OutlineTree/TreeNode'
 import {
     addTaskInWorkbench,
     updateTask,
@@ -25,8 +26,13 @@ import ShowAddMenberModal from '../../../../routes/Technological/components/Proj
 import SafeConfirmModal from './components/SafeConfirmModal';
 import { updateFlowInstanceNameOrDescription } from '../../../../services/technological/workFlow';
 import SaveBoardTemplate from './components/Modal/SaveBoardTemplate'
+import { task_item_margin_top } from './constants';
+import { currentNounPlanFilterName } from '../../../../utils/businessFunction';
+import { PROJECTS } from '../../../../globalset/js/constant';
+import { closeFeature } from '../../../../utils/temporary';
+import { onChangeCardHandleCardDetail } from './ganttBusiness';
 const { SubMenu } = Menu;
-const { TreeNode } = OutlineTree;
+// const { TreeNode } = OutlineTree;
 const { confirm } = Modal;
 
 @connect(mapStateToProps)
@@ -153,7 +159,7 @@ export default class OutLineHeadItem extends Component {
                 outline_hover_obj: outline_hover_obj//nodeValue
             }
         });
-        this.updateOutLineTreeData(outline_tree);
+        // this.updateOutLineTreeData(outline_tree);
 
     }
 
@@ -169,6 +175,19 @@ export default class OutLineHeadItem extends Component {
         }
 
     }
+
+    onChangeCardHandleCardDetail = (nodeValue) => {
+        const { card_detail_id, selected_card_visible, itemValue = {}, dispatch } = this.props
+        const { id, parent_card_id } = nodeValue
+        onChangeCardHandleCardDetail({
+            card_detail_id, //来自任务详情的id
+            selected_card_visible, //任务详情弹窗是否弹开
+            dispatch,
+            operate_id: id, //当前操作的id
+            operate_parent_card_id: parent_card_id, //当前操作的任务的父任务id
+        })
+    }
+
     onDataProcess = ({ action, param, calback }) => {
         //console.log("大纲:onDataProcess", action, param);
         const { dispatch, gantt_board_id, } = this.props;
@@ -183,8 +202,6 @@ export default class OutLineHeadItem extends Component {
                     createMilestone({ ...updateParams }, { isNotLoading: false })
                         .then(res => {
                             if (isApiResponseOk(res)) {
-
-
                                 let addNodeValue = {
                                     id: res.data,
                                     tree_type: '1',
@@ -193,19 +210,28 @@ export default class OutLineHeadItem extends Component {
                                     children: [],
                                     executors: []
                                 };
-
-                                outline_tree.push(addNodeValue);
+                                const index = outline_tree.findIndex(item => item.add_id == 'add_milestone')
+                                if (index != -1) {
+                                    outline_tree.splice(index, 0, addNodeValue);
+                                } else {
+                                    outline_tree.push(addNodeValue);
+                                }
+                                outline_tree = outline_tree.filter(item => item.add_id != 'add_milestone')
                                 //this.setCreateAfterInputFous(null,outline_tree);
                                 this.updateOutLineTreeData(outline_tree);
-
+                                // 保存位置
+                                dispatch({
+                                    type: 'gantt/saveGanttOutlineSort',
+                                    payload: {
+                                        outline_tree
+                                    }
+                                })
                             } else {
-
                                 message.error(res.message)
                             }
                         }).catch(err => {
                             message.error('更新失败')
                         })
-
                 }
                 break;
             case 'edit_milestone':
@@ -302,6 +328,13 @@ export default class OutLineHeadItem extends Component {
                                 addInputNodeValue.name = '';
                                 addInputNodeValue.editing = true;
                                 this.updateOutLineTreeData(outline_tree);
+                                // 保存位置
+                                dispatch({
+                                    type: 'gantt/saveGanttOutlineSort',
+                                    payload: {
+                                        outline_tree
+                                    }
+                                })
                                 if (typeof calback == 'function') {
                                     calback()
                                 }
@@ -344,7 +377,7 @@ export default class OutLineHeadItem extends Component {
                             if (isApiResponseOk(res)) {
                                 let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, param.id);
                                 if (nodeValue) {
-
+                                    this.onChangeCardHandleCardDetail(nodeValue)
                                     nodeValue.name = param.name;
                                     nodeValue.time_span = param.time_span;
                                     if (param.time_span == 0) {
@@ -585,25 +618,44 @@ export default class OutLineHeadItem extends Component {
             outline_tree.map((item, index) => {
                 if (item.children && item.children.length > 0) {
                     return (
-                        <TreeNode key={index} nodeValue={item} level={level} onHover={this.onHover}>
+                        <TreeNode {...this.props} key={index} nodeValue={item} level={level} onHover={this.onHover} setScrollPosition={this.props.setScrollPosition} setGoldDateArr={this.props.setGoldDateArr}>
                             {this.renderGanttOutLineTree(item.children, level + 1, item)}
                         </TreeNode>
                     );
                 } else {
                     if (item.tree_type == 0) {
-                        return (
-                            <TreeNode
-                                level={level}
-                                nodeValue={item}
-                                type={'2'}
-                                onHover={this.onHover}
-                                placeholder={parentNode && parentNode.tree_type == '2' ? '新建子任务' : '新建任务'}
-                                icon={<span className={`${styles.addTaskNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}
-                                label={<span className={styles.addTask}>{parentNode && parentNode.tree_type == '2' ? '新建子任务' : '新建任务'}</span>} key={`addTask_${item.index}`}>
-                            </TreeNode>
-                        );
+                        if (item.add_id.indexOf('add_milestone') != -1) {
+                            return (
+                                this.renderAddMilestone(item)
+                                // <TreeNode
+                                //     setScrollPosition={this.props.setScrollPosition}
+                                //     setGoldDateArr={this.props.setGoldDateArr}
+                                //     type={'1'}
+                                //     level={level}
+                                //     placeholder={'新建里程碑'}
+                                //     onHover={this.onHover}
+                                //     nodeValue={item}//{{ add_id: 'add_milestone', 'tree_type': '0' }}
+                                //     icon={<span className={`${styles.addMilestoneNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}
+                                //     label={<span className={styles.addMilestone}>新建里程碑</span>} key="addMilestone">
+                                // </TreeNode>
+                            )
+                        } else {
+                            return (
+                                <TreeNode
+                                    setScrollPosition={this.props.setScrollPosition}
+                                    setGoldDateArr={this.props.setGoldDateArr}
+                                    level={level}
+                                    nodeValue={item}
+                                    type={'2'}
+                                    onHover={this.onHover}
+                                    placeholder={parentNode && parentNode.tree_type == '2' ? '新建子任务' : '新建任务'}
+                                    icon={<span className={`${styles.addTaskNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}
+                                    label={<span className={styles.addTask}>{parentNode && parentNode.tree_type == '2' ? '新建子任务' : '新建任务'}</span>} key={`addTask_${item.index}`}>
+                                </TreeNode>
+                            );
+                        }
                     } else {
-                        return (<TreeNode key={index} nodeValue={item} level={level} onHover={this.onHover}></TreeNode>);
+                        return (<TreeNode  {...this.props} setScrollPosition={this.props.setScrollPosition} setGoldDateArr={this.props.setGoldDateArr} key={index} nodeValue={item} level={level} onHover={this.onHover}></TreeNode>);
                     }
 
                 }
@@ -766,12 +818,26 @@ export default class OutLineHeadItem extends Component {
     }
 
     // 设置保存模板弹窗------end
+    renderAddMilestone = (item, normal) => {
+        return (
+            <TreeNode
+                setScrollPosition={this.props.setScrollPosition}
+                setGoldDateArr={this.props.setGoldDateArr}
+                type={'1'}
+                placeholder={'新建里程碑'}
+                onHover={this.onHover}
+                nodeValue={normal ? { add_id: 'add_milestone_out', 'tree_type': '0' } : item}//{{ add_id: 'add_milestone', 'tree_type': '0' }}
+                icon={<span className={`${styles.addMilestoneNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}
+                label={<span className={styles.addMilestone}>新建里程碑</span>} key="addMilestone">
+            </TreeNode>
+        )
+    }
     render() {
         const { board_info_visible, show_add_menber_visible, safeConfirmModalVisible } = this.state;
         const { outline_tree, outline_hover_obj, gantt_board_id, projectDetailInfoData, outline_tree_round, changeOutLineTreeNodeProto, deleteOutLineTreeNode } = this.props;
         //console.log("刷新了数据", outline_tree);
         return (
-            <div className={styles.outline_wrapper}>
+            <div className={styles.outline_wrapper} style={{ marginTop: task_item_margin_top }}>
 
                 <OutlineTree
                     // defaultExpandedKeys={['0-0-0']}
@@ -787,14 +853,7 @@ export default class OutLineHeadItem extends Component {
                     deleteOutLineTreeNode={deleteOutLineTreeNode}
                 >
                     {this.renderGanttOutLineTree(outline_tree, 0)}
-                    <TreeNode
-                        type={'1'}
-                        placeholder={'新建里程碑'}
-                        onHover={this.onHover}
-                        nodeValue={{ add_id: 'add_milestone', 'tree_type': '0' }}
-                        icon={<span className={`${styles.addMilestoneNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}
-                        label={<span className={styles.addMilestone}>新建里程碑</span>} key="addMilestone">
-                    </TreeNode>
+                    {this.renderAddMilestone({}, true)}
 
                 </OutlineTree>
 
@@ -814,10 +873,14 @@ export default class OutLineHeadItem extends Component {
                     }
 
                     <div>
-                        <div style={{ color: '#1890FF' }} onClick={() => this.saveBoardTemplateVisible(true)}>
-                            <span className={`${globalStyles.authTheme}`} style={{ fontSize: 16, marginRight: 4 }}>&#xe6b5;</span>
-                            <span style={{ marginRight: 16 }}>保存为项目模版</span>
-                        </div>
+                        {
+                            !closeFeature({ board_id: gantt_board_id }) && (
+                                <div style={{ color: '#1890FF' }} onClick={() => this.saveBoardTemplateVisible(true)}>
+                                    <span className={`${globalStyles.authTheme}`} style={{ fontSize: 16, marginRight: 4 }}>&#xe6b5;</span>
+                                    <span style={{ marginRight: 16 }}>保存为{`${currentNounPlanFilterName(PROJECTS)}`}模版</span>
+                                </div>
+                            )
+                        }
                         {/* {
                             checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER, gantt_board_id) &&
                             <span className={`${styles.actionIcon} ${globalStyles.authTheme}`} onClick={this.invitationJoin}>&#xe7ae;</span>
@@ -866,10 +929,13 @@ export default class OutLineHeadItem extends Component {
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({
-    gantt: { datas: { gantt_board_id, group_view_type, outline_tree, outline_hover_obj, outline_tree_round } },
+    gantt: { datas: { gantt_board_id, group_view_type, outline_tree, outline_hover_obj, outline_tree_round, date_arr_one_level = [],
+        ceilWidth,
+        gantt_view_mode, selected_card_visible } },
     technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org, userBoardPermissions = [] } },
-    projectDetail: { datas: { projectDetailInfoData = {} } }
+    projectDetail: { datas: { projectDetailInfoData = {} } },
+    publicTaskDetailModal: { card_id: card_detail_id },
 }) {
-    return { currentUserOrganizes, is_show_org_name, is_all_org, gantt_board_id, group_view_type, projectDetailInfoData, userBoardPermissions, outline_tree, outline_hover_obj, outline_tree_round }
+    return { card_detail_id, selected_card_visible, date_arr_one_level, gantt_view_mode, ceilWidth, currentUserOrganizes, is_show_org_name, is_all_org, gantt_board_id, group_view_type, projectDetailInfoData, userBoardPermissions, outline_tree, outline_hover_obj, outline_tree_round }
 }
 

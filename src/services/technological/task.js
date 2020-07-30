@@ -591,7 +591,7 @@ export async function milestoneInit(params) {
 //新增任务依赖
 export async function addCardRely(data) {
   return request({
-    url: `${REQUEST_DOMAIN_BOARD}/card/dependency`,
+    url: `${REQUEST_DOMAIN_BOARD}/content/dependency`,
     method: 'POST',
     data
   })
@@ -599,7 +599,7 @@ export async function addCardRely(data) {
 //删除任务依赖
 export async function deleteCardRely(data) {
   return request({
-    url: `${REQUEST_DOMAIN_BOARD}/card/dependency`,
+    url: `${REQUEST_DOMAIN_BOARD}/content/dependency`,
     method: 'DELETE',
     data
   })
@@ -607,7 +607,7 @@ export async function deleteCardRely(data) {
 //修改任务依赖
 export async function updateCardRely(data) {
   return request({
-    url: `${REQUEST_DOMAIN_BOARD}/card/dependency`,
+    url: `${REQUEST_DOMAIN_BOARD}/content/dependency`,
     method: 'PUT',
     data
   })
@@ -615,7 +615,7 @@ export async function updateCardRely(data) {
 //查询任务依赖列表
 export async function getCardRelys(data) {
   return request({
-    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt_chart/card/dependency`,
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt_chart/content/dependency`,
     method: 'POST',
     data
   })

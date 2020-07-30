@@ -289,3 +289,55 @@ export async function workflowUpdateTime(data) {
     data
   });
 }
+
+//获取当前组织的所有成员信息
+export async function getCurrentOrgAllMembers(params = {}) {
+  return request({
+    url: `${REQUEST_DOMAIN}/member/list`,
+    method: 'GET',
+    params: {
+      ...params,
+      _organization_id: params._organization_id || localStorage.getItem('OrganizationId')
+    }
+  })
+}
+
+// 创建在线表格
+export async function getOnlineExcelWithProcess(data = {}) {
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/file/online/excel`,
+    method: 'POST',
+    data: {
+      ...data,
+      type: '2', // 2表示流程节点
+      _organization_id: data._organization_id || localStorage.getItem('OrganizationId')
+    }
+  })
+}
+// 删除表格
+export async function deleteOnlineExcelWithProcess(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/file/online/excel/${params.id}`,
+    method: 'DELETE',
+    params
+  })
+}
+
+// 保存表格
+export async function saveOnlineExcelWithProcess(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/file/online/excel/sheet/list`,
+    method: 'POST',
+    data
+  })
+}
+
+// 获取表格单元格数据
+export async function getOnlineExcelDataWithProcess(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/file/online/excel/${params.id}`,
+    method: 'GET',
+    // params
+  })
+}
+

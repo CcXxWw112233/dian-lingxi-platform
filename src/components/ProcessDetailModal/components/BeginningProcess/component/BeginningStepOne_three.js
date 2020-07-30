@@ -4,6 +4,7 @@ import indexStyles from '../index.less'
 import moment from 'moment'
 import { timeToTimestamp, compareACoupleOfObjects, isObjectValueEqual } from '../../../../../utils/util'
 import { connect } from 'dva'
+import { updateUserStorage } from '../../handleOperateModal'
 
 const { MonthPicker, RangePicker } = DatePicker
 
@@ -16,6 +17,13 @@ export default class BeginningStepOne_three extends Component {
       startOpen: false,
       localItem: props.itemValue ? props.itemValue : {}
     }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (isObjectValueEqual(this.props.itemValue,nextProps.itemValue)) return
+    this.setState({
+      localItem: nextProps.itemValue ? nextProps.itemValue : {}
+    })
   }
 
   updateState = (data,key) => {
@@ -31,18 +39,21 @@ export default class BeginningStepOne_three extends Component {
     const { forms = [] } = processEditDatas[parentKey]
     forms[itemKey][key] = data.value
     this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('forms', forms)
+    if (data.update_storage) {
+      updateUserStorage({forms: forms})
+    }
   }
 
     // 预约开始时间
     startDatePickerChange = (timeString) => {
       // 这里是如果清空了时间 会变为0
       if (!timeToTimestamp(timeString)) {
-        this.updateEdit({value: ''}, 'value')
+        this.updateEdit({value: '',update_storage:true}, 'value')
         this.updateState({value: ''}, 'value')
         return
       }
       this.updateState({value: timeToTimestamp(timeString)}, 'value')
-      this.updateEdit({value: timeToTimestamp(timeString)}, 'value')
+      this.updateEdit({value: timeToTimestamp(timeString),update_storage:true}, 'value')
     }
 
     handleStartOpenChange = (open) => {
@@ -55,12 +66,12 @@ export default class BeginningStepOne_three extends Component {
     handleStartDatePickerChange = (timeString) => {
       // 这里是如果清空了时间 会变为0
       if (!timeToTimestamp(timeString)) {
-        this.updateEdit({value: ''}, 'value')
+        this.updateEdit({value: '',update_storage:true}, 'value')
         this.updateState({value: ''}, 'value')
         return
       }
       this.updateState({value: timeToTimestamp(timeString)}, 'value')
-      this.updateEdit({value: timeToTimestamp(timeString)}, 'value')
+      this.updateEdit({value: timeToTimestamp(timeString),update_storage:true}, 'value')
       this.setState({
         start_time: timeToTimestamp(timeString)
       }, () => {
@@ -70,21 +81,21 @@ export default class BeginningStepOne_three extends Component {
 
     rangePickerChange = (date, dateString) => {
       if(dateString[0] == '' && dateString[1] == '') {
-        this.updateEdit({value: ''}, 'value')
+        this.updateEdit({value: '',update_storage:true}, 'value')
         this.updateState({value: ''}, 'value')
         return
       }
-      this.updateEdit({ value: `${timeToTimestamp(dateString[0])},${timeToTimestamp(dateString[1])}` }, 'value')
+      this.updateEdit({ value: `${timeToTimestamp(dateString[0])},${timeToTimestamp(dateString[1])}`,update_storage:true }, 'value')
       this.updateState({ value: `${timeToTimestamp(dateString[0])},${timeToTimestamp(dateString[1])}` }, 'value')
     }
 
     rangePickerChange2 = (date, dateString) => {
       if(dateString[0] == '' && dateString[1] == '') {
-        this.updateEdit({value: ''}, 'value')
+        this.updateEdit({value: '',update_storage:true}, 'value')
         this.updateState({value: ''}, 'value')
         return
       }
-      this.updateEdit({ value: `${timeToTimestamp(dateString[0])},${timeToTimestamp(dateString[1])}` }, 'value')
+      this.updateEdit({ value: `${timeToTimestamp(dateString[0])},${timeToTimestamp(dateString[1])}` ,update_storage:true}, 'value')
       this.updateState({ value: `${timeToTimestamp(dateString[0])},${timeToTimestamp(dateString[1])}` }, 'value')
     }
 

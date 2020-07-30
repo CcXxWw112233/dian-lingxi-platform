@@ -135,7 +135,7 @@ export default class ExamineAndApproveContent extends Component {
 
   // 渲染指定人员
   renderDesignatedPersonnel = () => {
-    const { data = [], board_id, itemValue: { approve_type } } = this.props
+    const { data = [], board_id, itemValue: { approve_type }, itemKey } = this.props
     // const { designatedPersonnelList = [] } = this.state
     let designatedPersonnelList = this.filterAssignees()
     let org_id = getOrgIdByBoardId(board_id) || '0'
@@ -144,8 +144,9 @@ export default class ExamineAndApproveContent extends Component {
         {
           !designatedPersonnelList.length ? (
             <div style={{ position: 'relative' }}>
-              <Dropdown autoAdjustOverflow={false} trigger={['click']} overlayClassName={indexStyles.overlay_pricipal}
+              <Dropdown trigger={['click']} overlayClassName={indexStyles.overlay_pricipal}
                 // getPopupContainer={triggerNode => triggerNode.parentNode}
+                getPopupContainer={() => document.getElementById(`approveMiniTopContainer_${itemKey}`)}
                 overlayStyle={{ maxWidth: '200px' }}
                 overlay={
                   <MenuSearchPartner
@@ -175,11 +176,11 @@ export default class ExamineAndApproveContent extends Component {
                     <div style={{ display: 'flex', alignItems: 'center' }} key={user_id}>
                       <div className={`${indexStyles.user_item}`} style={{ position: 'relative', textAlign: 'center', marginBottom: '8px' }} key={user_id}>
                         {avatar ? (
-                          <Tooltip getPopupContainer={() => document.getElementById('approveMiniTopContainer')} overlayStyle={{ minWidth: '62px', zIndex: 1 }} placement="top" title={name || user_name || '佚名'}>
+                          <Tooltip getPopupContainer={() => document.getElementById(`approveMiniTopContainer_${itemKey}`)} overlayStyle={{ minWidth: '62px', zIndex: 1 }} placement="top" title={name || user_name || '佚名'}>
                             <img className={indexStyles.img_hover} style={{ width: '32px', height: '32px', borderRadius: 20, margin: '0 2px' }} src={avatar} />
                           </Tooltip>
                         ) : (
-                            <Tooltip getPopupContainer={() => document.getElementById('approveMiniTopContainer')} overlayStyle={{ minWidth: '62px', zIndex: 1 }} placement="top" title={name || user_name || '佚名'}>
+                            <Tooltip getPopupContainer={() => document.getElementById(`approveMiniTopContainer_${itemKey}`)} overlayStyle={{ minWidth: '62px', zIndex: 1 }} placement="top" title={name || user_name || '佚名'}>
                               <div className={indexStyles.default_user_hover} style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', margin: '0 2px' }}>
                                 <Icon type={'user'} style={{ fontSize: 14, color: '#8c8c8c' }} />
                               </div>
@@ -194,8 +195,9 @@ export default class ExamineAndApproveContent extends Component {
                     </div>
                   )
                 })}
-                <Dropdown autoAdjustOverflow={false} trigger={['click']} overlayClassName={indexStyles.overlay_pricipal}
+                <Dropdown trigger={['click']} overlayClassName={indexStyles.overlay_pricipal}
                   // getPopupContainer={triggerNode => triggerNode.parentNode}
+                  getPopupContainer={() => document.getElementById(`approveMiniTopContainer_${itemKey}`)}
                   overlayStyle={{ maxWidth: '200px' }}
                   overlay={
                     <MenuSearchPartner
@@ -225,13 +227,13 @@ export default class ExamineAndApproveContent extends Component {
   }
 
   render() {
-    const { itemValue } = this.props
+    const { itemValue,itemKey } = this.props
     const { assignees } = itemValue
     const { designatedPersonnelList } = this.state
     let disabledAssignees = (designatedPersonnelList && designatedPersonnelList.length) ? isArrayEqual(assignees.split(','), designatedPersonnelList) : true
     return (
       <div className={indexStyles.mini_content}>
-        <div id="approveMiniTopContainer" className={`${indexStyles.mini_top} ${globalStyles.global_vertical_scrollbar}`}>
+        <div id={`approveMiniTopContainer_${itemKey}`} className={`${indexStyles.mini_top} ${globalStyles.global_vertical_scrollbar}`}>
           <div>
             {this.renderDesignatedPersonnel()}
           </div>

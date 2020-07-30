@@ -10,6 +10,8 @@ import {
 } from "../../../../globalset/js/constant";
 import {checkIsHasPermission, currentNounPlanFilterName} from "../../../../utils/businessFunction";
 import { connect } from "dva/index";
+import { getTransferSelectedList, getTransferSelectedDetailList, removeMemberWithSettingTransferUser, discontinueMember } from '../../../../services/technological/organizationMember'
+import { isApiResponseOk } from '../../../../utils/handleResponseData'
 const Panel = Collapse.Panel
 
 @connect(mapStateToProps)
@@ -41,18 +43,18 @@ export default class ItemOne extends React.Component {
   handleMenuClick(e) {
     const { key } = e
     const { itemValue, parentItemValue } = this.props
-    const { member_id } = itemValue
+    const { member_id, user_id } = itemValue
     this.props.updateDatas({
       currentBeOperateMemberId: member_id,
     })
     switch (key) {
-      case 'discontinue':
+      case 'discontinue': // 停用
         this.discontinueConfirm(member_id)
         break
-      case 'remove':
+      case 'remove': // 移出分组
         this.removeConfirm()
         break
-      case 'setGroup':
+      case 'setGroup': // 设置分组
         if(!checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_EDIT)){
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
@@ -61,11 +63,23 @@ export default class ItemOne extends React.Component {
           TreeGroupModalVisiblie: true,
         })
         break
-      case 'joinORG':
+      case 'joinORG': // 加入组织
         this.joinOrganization({member_id})
         break
-      case 'removeUser':
-        this.removeUserConfirm({member_id})
+      case 'removeUser': // 移出用户
+        // this.removeUserConfirm({member_id})
+        this.getTransferSelectedList({remove_id: user_id, member_id})
+        // this.props.updateDatas({
+        //   TreeRemoveOrgMemberModalVisible: true,
+        //   removeMemberUserId: user_id
+        // })
+        break
+      case 'removeOrgMember': // 移出组织成员
+        this.getTransferSelectedList({remove_id: user_id, member_id})
+        // this.props.updateDatas({
+        //   TreeRemoveOrgMemberModalVisible: true,
+        //   removeMemberUserId: user_id,
+        // })
         break
       default:
         //设置角色
@@ -86,6 +100,26 @@ export default class ItemOne extends React.Component {
   //加入组织
   joinOrganization({member_id}) {
     this.props.joinOrganization({id: member_id})
+  }
+
+  // 获取移出成员后的交接列表
+  getTransferSelectedList = ({remove_id, member_id}) => {
+    getTransferSelectedList({ user_id: remove_id }).then(res => {
+      if (isApiResponseOk(res)) {
+        if (res.data && res.data.length) {
+          this.props.dispatch({
+            type: 'organizationMember/updateDatas',
+            payload: {
+              transferSelectedList: res.data,
+              TreeRemoveOrgMemberModalVisible: true,
+              removeMemberUserId: remove_id
+            }
+          })
+        } else {
+          this.discontinueConfirm(member_id)
+        }
+      }
+    })
   }
 
   //移除访客用户
@@ -274,6 +308,15 @@ export default class ItemOne extends React.Component {
               </div>
             </Menu.Item>
            ) : ('')}
+           {
+            is_visitor !== '1' && checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_EDIT) ? (
+              <Menu.Item key={'removeOrgMember'} style={{textAlign: 'center', padding: 0, margin: 0}}>
+                <div className={CreateTaskStyle.elseProjectMemu} style={{color: '#F5222D'}}>
+                  移出组织
+                </div>
+              </Menu.Item>
+            ) : ('')
+          }
 
           {is_default == '2' && is_visitor == '1' && checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD) ? (
             <Menu.Item key={'joinORG'} style={{textAlign: 'center', padding: 0, margin: 0}}>

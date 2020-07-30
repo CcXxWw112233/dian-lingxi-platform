@@ -4,6 +4,8 @@ import styles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { connect } from 'dva'
 import { fileModuleIsHasUnRead } from '../../ganttBusiness'
+import { currentNounPlanFilterName } from '../../../../../../utils/businessFunction'
+import { PROJECTS } from '../../../../../../globalset/js/constant'
 
 @connect(mapStateToProps)
 export default class ShowFileSlider extends Component {
@@ -48,7 +50,7 @@ export default class ShowFileSlider extends Component {
                 onClick={this.setShowBoardFile}>
                 <span style={{ display: 'inline-block' }} className={`${globalStyles.authTheme}  ${is_show_board_file_area == '1' && styles.spin_show}
             ${is_show_board_file_area == '2' && styles.spin_hide}`}>&#xe7ed;</span>
-                项目文件
+                {`${currentNounPlanFilterName(PROJECTS)}文件`}
                 {/* 未读消息数 */}
                 {
                     fileModuleIsHasUnRead({ im_all_latest_unread_messages, wil_handle_types }) > 0 && (

@@ -9,6 +9,8 @@ import ConfigureStepTypeThree from './component/ConfigureStepTypeThree'
 import { processEditDatasItemOneConstant, processEditDatasItemTwoConstant, processEditDatasItemThreeConstant } from '../../constant'
 import { connect } from 'dva'
 import { isObjectValueEqual } from '../../../../utils/util'
+import { saveOnlineExcelWithProcess, deleteOnlineExcelWithProcess } from '../../../../services/technological/workFlow'
+import { isApiResponseOk } from '../../../../utils/handleResponseData'
 @connect(mapStateToProps)
 export default class ConfigureProcess extends Component {
 
@@ -19,7 +21,9 @@ export default class ConfigureProcess extends Component {
     this.state = {
       localName: '', // 当前节点步骤的名称
       currentEditNodeItem: processPageFlagStep == '2' ? currentEditNodeItem : {},
-      isDisabled: true // 是否禁用取消按钮 false 表示不禁用 true 表示禁用 ==> 有变化才进行取消 没有变化不取消
+      isDisabled: true, // 是否禁用取消按钮 false 表示不禁用 true 表示禁用 ==> 有变化才进行取消 没有变化不取消
+      sheetListData: {
+      },
     }
   }
 
@@ -40,7 +44,7 @@ export default class ConfigureProcess extends Component {
   handleServiceData = (props) => {
     const { itemValue, templateInfo: { nodes = [] }, itemKey, processPageFlagStep, processEditDatas = [] } = props
     let currentEditNodeItem = (processEditDatas && processEditDatas.length) && processEditDatas.filter(item => item.is_edit == '0')[0] || {}
-    if (processPageFlagStep == '2' && (nodes.length  == processEditDatas.length)) { // 表示是进去编辑的时候 并且节点长度相等的时候, 如果不相等 那么就不比较 表示进行了删除或者添加 
+    if (processPageFlagStep == '2' && (nodes.length == processEditDatas.length)) { // 表示是进去编辑的时候 并且节点长度相等的时候, 如果不相等 那么就不比较 表示进行了删除或者添加 
       let newStateItemValue = JSON.parse(JSON.stringify(currentEditNodeItem || {}))
       let newModelItemValue = JSON.parse(JSON.stringify(nodes[itemKey] || {}))
       newStateItemValue['forms'] = newStateItemValue['forms'] && newStateItemValue['forms'].map(item => {
@@ -68,8 +72,8 @@ export default class ConfigureProcess extends Component {
       newModelItemValue.is_edit ? delete newModelItemValue.is_edit : ''
       newModelItemValue.is_click_node_name == false || newModelItemValue.is_click_node_name ? delete newModelItemValue.is_click_node_name : ''
       newStateItemValue.options_data ? delete newStateItemValue.options_data : ''
-      newModelItemValue.options_data ? delete newModelItemValue.options_data : ''      
-      if (newStateItemValue.node_type == '3' && newModelItemValue.node_type == '3') { 
+      newModelItemValue.options_data ? delete newModelItemValue.options_data : ''
+      if (newStateItemValue.node_type == '3' && newModelItemValue.node_type == '3') {
         if (isObjectValueEqual(newStateItemValue['score_node_set'], newModelItemValue['score_node_set'])) {
           if (isObjectValueEqual(newStateItemValue, newModelItemValue)) {
             this.setState({
@@ -103,7 +107,7 @@ export default class ConfigureProcess extends Component {
           this.setState({
             isDisabled: true
           })
-        } 
+        }
         else {
           this.setState({
             isDisabled: false
@@ -165,11 +169,59 @@ export default class ConfigureProcess extends Component {
     e && e.stopPropagation()
   }
 
+  // ----------------------------------- 表格相关操作 -------------------------------------
+
+  // 保存表格数据
+  saveSheetData = (id)=> {
+    let { sheetListData = [] } = this.state;
+    // if(!id) return ;
+    let keys = Object.keys(sheetListData);
+    // return console.log(sheetListData)
+    if(keys.length){
+      let promise = keys.map(item => {
+        if (!item) return void 0;
+        let data = sheetListData[item] || [];
+        // return saveOnlineExcelWithProcess({ excel_id: item, sheet_data: data })
+        return new Promise((resolve) => {
+          saveOnlineExcelWithProcess({ excel_id: item, sheet_data: data }).then(res => {
+            if(isApiResponseOk(res)){
+              resolve(res.data);
+            }
+          })
+        })
+      })
+      promise = promise.filter(n => n);
+      Promise.all(promise).then(resp => {
+        // console.info(resp);
+      })
+    }
+  }
+  
+  // 更新表格列表数据
+  updateSheetList = ({id, sheetData}) => {
+    let obj = {...this.state.sheetListData};
+    obj[id] = sheetData;
+      this.setState({
+        sheetListData: obj
+      },
+      // () =>{
+      //   this.saveSheetData()
+      // }
+      )
+  }
+
+  // ----------------------------------- 表格相关操作 -------------------------------------
 
   // 确认的点击事件
   handleConfirmButton = (e) => {
     e && e.stopPropagation()
+    const { itemKey, processEditDatas = [], dispatch } = this.props
     this.updateCorrespondingPrcodessStepWithNodeContent('is_edit', '1')
+    // 如果找到表格 那么就保存获取表格数据
+    // let curr_excel = processEditDatas[itemKey]['forms'] && processEditDatas[itemKey]['forms'].find(i => i.field_type == '6')
+    // if (!(curr_excel && Object.keys(curr_excel).length)) return
+    // let excel_id = curr_excel.online_excel_id
+    this.saveSheetData();
   }
 
   // 删除的点击事件
@@ -200,6 +252,7 @@ export default class ConfigureProcess extends Component {
       newProcessEditDatas = JSON.parse(JSON.stringify(processEditDatas || []))
       newProcessEditDatas.splice(itemKey, 1)
     }
+    if (newProcessEditDatas[0].node_type == '2' || newProcessEditDatas[0].node_type == '3') return
     dispatch({
       type: 'publicProcessDetailModal/updateDatas',
       payload: {
@@ -234,7 +287,7 @@ export default class ConfigureProcess extends Component {
         }
       }
     }
-    
+
     dispatch({
       type: 'publicProcessDetailModal/updateDatas',
       payload: {
@@ -243,6 +296,24 @@ export default class ConfigureProcess extends Component {
       }
     })
   }
+
+  /**
+   * 判断是否删除表格
+   * 思路：- 在编辑的时候 1.点击确认的时候, 如果forms中找不到对应的表格, 那么就需要删除
+   * PS： 现在只能做到如果 templeteInfo 中有表格 但是 processEditDatas 中没有 的删除
+   * 其他时候不知道什么时候删除表格 因为可以删除表格表项之后点击取消
+   * - 在配置的时候 2. 只有删除按钮, 那么点击删除icon就是删除表格, 以及删除节点的删除 就是删除表格
+   */
+  // whetherIsDeleteOnlineExcel = () => {
+  //   const { templateInfo = {}, templateInfo: { nodes = [] }, itemKey, processEditDatas = [], dispatch } = this.props
+  //   let newNodes = [...nodes]
+  //   let curr_excel = newNodes[itemKey]['forms'].find(i => i.field_type == '6')
+  //   if (!(curr_excel && Object.keys(curr_excel).length)) return
+  //   let excel_id = curr_excel.online_excel_id
+  //   deleteOnlineExcelWithProcess({id: excel_id}).then(res => {
+
+  //   })
+  // }
 
   // 确认修改的编辑内容点击事件
   handleConfirmEditContent = (e) => {
@@ -263,6 +334,11 @@ export default class ConfigureProcess extends Component {
       }
     })
     this.updateCorrespondingPrcodessStepWithNodeContent('is_edit', '1')
+    // this.whetherIsDeleteOnlineExcel()
+    // 如果找到表格 那么就保存获取表格数据
+    if (node_type == '1') {
+      this.saveSheetData()
+    } 
   }
 
   // 当先选择的节点类型
@@ -305,7 +381,7 @@ export default class ConfigureProcess extends Component {
 
     const node_second_ = newProcessEditDatas[1]
     if (itemKey == 0 && node_second_) {
-      if (node_second_['node_type'] == '2') {
+      if (node_second_['node_type'] == '2' || node_second_['node_type'] == '3') {
         flag = false
       }
     }
@@ -320,8 +396,8 @@ export default class ConfigureProcess extends Component {
     let confirmButtonText = ''
     let confirmButtonDisabled
     const { itemValue } = this.props
-    const { node_type, name, forms = [], assignee_type, assignees, 
-      cc_type, recipients, approve_value, approve_type,  score_node_set = {},
+    const { node_type, name, forms = [], assignee_type, assignees,
+      cc_type, recipients, approve_value, approve_type, score_node_set = {},
       deadline_type, deadline_value
     } = itemValue
     let result_value = score_node_set && Object.keys(score_node_set).length ? score_node_set.result_value : ''
@@ -576,7 +652,7 @@ export default class ConfigureProcess extends Component {
     let container = <div></div>
     switch (node_type) {
       case '1': // 表示资料收集
-        container = <ConfigureStepTypeOne itemValue={itemValue} itemKey={itemKey} />
+        container = <ConfigureStepTypeOne updateSheetList={this.updateSheetList} itemValue={itemValue} itemKey={itemKey} />
         break;
       case '2': // 表示审批
         container = <ConfigureStepTypeTwo itemValue={itemValue} itemKey={itemKey} />
@@ -593,8 +669,9 @@ export default class ConfigureProcess extends Component {
 
   renderContent = () => {
     const { itemKey, itemValue, processEditDatasRecords = [], processCurrentEditStep, processEditDatas = [], processPageFlagStep } = this.props
-    const { name, node_type, description, is_click_node_name } = itemValue
+    const { name, node_type, description, is_click_node_name, forms = [] } = itemValue
     let deleteBtn = this.whetherIsDeleteNodes()
+    let isExcel = forms.find(i => i.field_type == '6')
     let editConfirmBtn = this.state.isDisabled ? true : this.renderDiffButtonTooltipsText().confirmButtonDisabled ? true : false
     let gold_index = (processEditDatas && processEditDatas.length) && processEditDatas.findIndex(item => item.is_edit == '0')
     // let editConfirmBtn = this.renderDiffButtonTooltipsText().confirmButtonDisabled ? this.state.isDisabled ? true : false : this.state.isDisabled ? true : false
@@ -622,7 +699,7 @@ export default class ConfigureProcess extends Component {
       check_line = indexStyles.normal_check
     }
     let gold_item = (processEditDatas && processEditDatas.length) && processEditDatas.find(item => item.is_edit == '0') || {}
-    let lineFlag = itemKey == processEditDatas.length -1 ? gold_item && Object.keys(gold_item).length ? true : false : false
+    let lineFlag = itemKey == processEditDatas.length - 1 ? gold_item && Object.keys(gold_item).length ? true : false : false
     return (
       <div key={itemKey} style={{ display: 'flex', marginBottom: '48px' }} onClick={(e) => { this.handleCancelNodeName(e) }}>
         <div className={lineFlag ? indexStyles.doingLine : indexStyles.hasnotCompetedLine}></div>
@@ -669,13 +746,13 @@ export default class ConfigureProcess extends Component {
                     )
                   }
                   {
-                    itemKey != '0' && 
+                    itemKey != '0' &&
                     (
                       <>
-                      <Radio value="3">评分</Radio>
-                      <Tooltip getPopupContainer={triggerNode => triggerNode.parentNode} title="指定评分人进行评分，最终分值会导向某一结果" placement="top">
-                        <span style={{color: '#D9D9D9', cursor: 'pointer'}} className={globalStyles.authTheme}>&#xe845;</span>
-                      </Tooltip>
+                        <Radio value="3">评分</Radio>
+                        <Tooltip getPopupContainer={triggerNode => triggerNode.parentNode} title="指定评分人进行评分，最终分值会导向某一结果" placement="top">
+                          <span style={{ color: '#D9D9D9', cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe845;</span>
+                        </Tooltip>
                       </>
                     )
                   }
@@ -689,7 +766,7 @@ export default class ConfigureProcess extends Component {
             {
               processPageFlagStep == '1' ? (
                 <div className={indexStyles.step_btn}>
-                  <Button onClick={this.handleDeleteButton} style={{color: itemKey == '0' && !deleteBtn ? '' : '#FF7875', border: itemKey == '0' && !deleteBtn ? '' : '1px solid rgba(255,120,117,1)'}} disabled={itemKey == '0' && !deleteBtn ? true : false}>删除</Button>
+                  <Button onClick={this.handleDeleteButton} style={{ color: itemKey == '0' && !deleteBtn ? '' : '#FF7875', border: itemKey == '0' && !deleteBtn ? '' : '1px solid rgba(255,120,117,1)' }} disabled={itemKey == '0' && !deleteBtn ? true : false}>删除</Button>
                   <Tooltip placement="top" title={this.renderDiffButtonTooltipsText().confirmButtonText}><Button key={itemValue} disabled={this.renderDiffButtonTooltipsText().confirmButtonDisabled} onClick={this.handleConfirmButton} type="primary">确认</Button></Tooltip>
                 </div>
               ) : ('')
@@ -697,8 +774,8 @@ export default class ConfigureProcess extends Component {
             {
               processPageFlagStep == '2' ? (
                 <div className={indexStyles.step_btn}>
-                  <Button onClick={this.handleCancleEditContent} style={{color: '#1890FF', border: '1px solid rgba(24,144,255,1)'}}>取消</Button>
-                  <Tooltip placement="top" title={this.renderDiffButtonTooltipsText().confirmButtonText}><Button key={itemValue} disabled={editConfirmBtn} onClick={this.handleConfirmEditContent} type="primary">确认</Button></Tooltip>
+                  <Button onClick={this.handleCancleEditContent} style={{ color: '#1890FF', border: '1px solid rgba(24,144,255,1)' }}>取消</Button>
+                  <Tooltip placement="top" title={this.renderDiffButtonTooltipsText().confirmButtonText}><Button key={itemValue} disabled={editConfirmBtn ? isExcel ? false : true : false} onClick={this.handleConfirmEditContent} type="primary">确认</Button></Tooltip>
                 </div>
               ) : ('')
             }

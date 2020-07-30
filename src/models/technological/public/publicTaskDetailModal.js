@@ -355,7 +355,7 @@ export default {
         message.success(`更新成功`, MESSAGE_DURATION_TIME)
         
       } else {
-        message.error(res.message, MESSAGE_DURATION_TIME)
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
       return res || {}
     },

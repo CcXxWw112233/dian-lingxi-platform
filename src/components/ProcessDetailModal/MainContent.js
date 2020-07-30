@@ -10,7 +10,7 @@ import BeginningProcess from './components/BeginningProcess'
 import ConfigureGuide from './ConfigureGuide'
 import { processEditDatasItemOneConstant } from './constant'
 import { Tooltip, Button, message, Popover, DatePicker, Checkbox } from 'antd'
-import { timeToTimestamp, timestampToTimeNormal } from '../../utils/util'
+import { timeToTimestamp, timestampToTimeNormal, isObjectValueEqual, isArrayEqual } from '../../utils/util'
 import moment from 'moment'
 import { MESSAGE_DURATION_TIME, FLOWS, NOT_HAS_PERMISION_COMFIRN, PROJECT_FLOWS_FLOW_CREATE } from '../../globalset/js/constant'
 import { saveProcessTemplate, getTemplateInfo, createProcess } from '../../services/technological/workFlow'
@@ -19,6 +19,7 @@ import { currentNounPlanFilterName } from "@/utils/businessFunction";
 import { checkIsHasPermissionInBoard, setBoardIdStorage, getGlobalData } from '../../utils/businessFunction'
 import { cursorMoveEnd } from './components/handleOperateModal'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import ProcessFile from './ProcessFile'
 const { LingxiIm, Im } = global.constants
 @connect(mapStateToProps)
 export default class MainContent extends Component {
@@ -45,14 +46,14 @@ export default class MainContent extends Component {
       return false
     }
     global.constants.lx_utils && global.constants.lx_utils.setCommentData({ ...data })
-    // if (is_simple_model == '1') {
-    //   this.props.dispatch({
-    //     type: 'simplemode/updateDatas',
-    //     payload: {
-    //       chatImVisiable: true
-    //     }
-    //   })
-    // }
+    if (is_simple_model == '1') {
+      this.props.dispatch({
+        type: 'simplemode/updateDatas',
+        payload: {
+          chatImVisiable: true
+        }
+      })
+    }
   }
 
   // 圈子动态消息
@@ -97,6 +98,99 @@ export default class MainContent extends Component {
     }
   }
 
+  // 是否将缓存内容更新至model true 表示可以更新
+  whetherIsUpdateDatasFromStorageToModel = (props) => {
+    let flag = true
+    const { processInfo = {} } = props
+    const { status } = processInfo
+    const pro_info = localStorage.getItem('userProcessWithNodesStatusStorage') ? JSON.parse(localStorage.getItem('userProcessWithNodesStatusStorage')) : {}
+    if (!(pro_info && Object.keys(pro_info).length)) {
+      flag = false
+      return flag
+    } else {
+      let curr_need_storage_node = (processInfo['nodes'] && processInfo['nodes'].length) && processInfo['nodes'].find(i=>(status == '1' || status == '2') && i.status == '1' && i.node_type == '1') || {}
+      if (curr_need_storage_node.id == pro_info['nodes'][0].id) { // 如果缓存和当前正在进行的不相等 那么表示已经进行到别的节点了
+        flag = true
+      } else {
+        flag = false
+      }
+      return flag
+    }
+    return flag
+  }
+
+  // 设置一个用户流程进行中缓存节点
+  setUserProcessWithNodesStorage = (props) => {
+    const { processInfo = {} } = props
+    if (!Object.keys(processInfo).length) return
+    const { id: user_id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
+    const { id, status } = processInfo
+    if (this.whetherIsUpdateDatasFromStorageToModel(props)) { // 表示更新model中的数据
+      const pro_info = localStorage.getItem('userProcessWithNodesStatusStorage') ? JSON.parse(localStorage.getItem('userProcessWithNodesStatusStorage')) : {}
+      const { nodes = [], user_id: USER_ID } = pro_info
+      if (user_id == USER_ID) { // 当前用户匹配上 才更新
+        let nodesData = [...processInfo['nodes']]
+        nodesData = nodesData.map(item => {
+          if (item.id == nodes[0].id) {
+            let new_item = {...item, forms: nodes[0]['forms']}
+            return new_item
+          } else {
+            if (item.status == '2') {
+              let new_item = {...item, is_confirm: '1'}
+              return new_item
+            } else {
+              return item
+            }
+          }
+        })
+        this.props.dispatch({
+          type:'publicProcessDetailModal/updateDatas',
+          payload: {
+            processInfo: {...processInfo, nodes: nodesData},
+            processEditDatas: nodesData
+          }
+        })
+      }
+      return
+    } else { // 设置缓存
+      let curr_need_storage_node = (processInfo['nodes'] && processInfo['nodes'].length) && processInfo['nodes'].find(i=>(status == '1' || status == '2') && i.status == '1' && i.node_type == '1') || {}
+      // 这里只缓存资料收集节点 如果没有找到那么就不缓存 并且要将之前的内容清空
+      if (!(curr_need_storage_node && Object.keys(curr_need_storage_node).length)) {
+        let info = localStorage.getItem('userProcessWithNodesStatusStorage') ? JSON.parse(localStorage.getItem('userProcessWithNodesStatusStorage')) : {}
+        if (info && Object.keys(info).length) {
+          localStorage.removeItem('userProcessWithNodesStatusStorage')
+        }
+        return
+      }
+      curr_need_storage_node.his_comments ? delete curr_need_storage_node.his_comments : ''
+      curr_need_storage_node.complete_time ? delete curr_need_storage_node.complete_time : ''
+      let obj = {
+        id,
+        status,
+        nodes: [curr_need_storage_node],
+        user_id
+      }
+      localStorage.setItem('userProcessWithNodesStatusStorage',JSON.stringify(obj))
+    }
+  }
+  // 更新缓存节点
+  updateUserProcessWithNodesStorage = (props) => {
+    // 这里是处理当缓存的节点与正在进行中的节点不一样的时候
+    const { processInfo = {}, processInfo: { id, status } } = props
+    const { id: user_id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
+    let next_props_forms_data = (processInfo['nodes'] && processInfo['nodes'].length) && processInfo['nodes'].find(i=>(status == '1' || status == '2') && i.status == '1' && i.node_type == '1') || {}
+    next_props_forms_data.his_comments ? delete next_props_forms_data.his_comments : ''
+    next_props_forms_data.complete_time ? delete next_props_forms_data.complete_time : ''
+    if (!this.whetherIsUpdateDatasFromStorageToModel(props)) {
+      let obj = {
+        id,
+        status,
+        nodes: [next_props_forms_data],
+        user_id
+      }
+      localStorage.setItem('userProcessWithNodesStatusStorage',JSON.stringify(obj))
+    }
+  }
   componentDidMount() {
     window.addEventListener('resize', this.resizeTTY)
     window.addEventListener('scroll', this.onScroll)
@@ -113,6 +207,7 @@ export default class MainContent extends Component {
     }
     this.initCanvas(this.props)
     this.whetherUpdateOrgnazationMemberList(this.props)
+    this.setUserProcessWithNodesStorage(this.props)
   }
   componentWillUnmount() {
     window.removeEventListener("resize", this.resizeTTY);
@@ -150,7 +245,7 @@ export default class MainContent extends Component {
   }
   // 用来更新canvas中的步骤
   componentWillReceiveProps(nextProps) {
-    const { processInfo: { curr_node_sort } } = nextProps
+    const { processInfo: { curr_node_sort }, processPageFlagStep } = nextProps
     const { processInfo: { curr_node_sort: old_curr_node_sort } } = this.props
     if (old_curr_node_sort && curr_node_sort) {
       if (curr_node_sort != old_curr_node_sort) {
@@ -158,6 +253,10 @@ export default class MainContent extends Component {
           this.initCanvas(nextProps)
         }, 50)
       }
+    }
+    // 更新缓存内容
+    if (processPageFlagStep == '4') {
+      this.updateUserProcessWithNodesStorage(nextProps)
     }
   }
 
@@ -285,7 +384,7 @@ export default class MainContent extends Component {
       ele.style.display = 'block'
       ele.style.position = 'absolute'
       ele.style.top = scrollTop + 'px'
-      ele.style.zIndex = 1
+      ele.style.zIndex = 5
     } else {
       ele.style.display = 'none'
     }
@@ -850,12 +949,14 @@ export default class MainContent extends Component {
                 {not_show_create_node_guide != '1' && <ConfigureGuide />}
               </div>
             ) : (
-                <Tooltip getPopupContainer={() => document.getElementById('addProcessStep')} placement="topLeft" title="完成节点步骤才能添加">
-                  <div><div className={`${indexStyles.add_normal}`}>
+              <div id={'add_normal'}>
+                {/* <Tooltip getPopupContainer={() => document.getElementById('add_normal')} placement="topLeft" title="完成节点步骤才能添加"> */}
+                  <div title="完成节点步骤才能添加" className={`${indexStyles.add_normal}`}>
                     <span className={`${globalStyles.authTheme}`}>&#xe8fe;</span>
                     {not_show_create_node_guide != '1' && <ConfigureGuide />}
-                  </div></div>
-                </Tooltip>
+                  </div>
+                {/* </Tooltip> */}
+                </div>
               )
           ) : (
               <div className={`${indexStyles.add_node}`} onClick={(e) => { this.handleAddEditStep(e) }}>
@@ -1055,10 +1156,10 @@ export default class MainContent extends Component {
 
   render() {
     const { clientHeight } = this.state
-    const { currentFlowInstanceDescription, currentFlowInstanceName, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processEditDatas = [], processPageFlagStep, processInfo: { status, create_time }, templateInfo: { enable_change } } = this.props
+    const { currentFlowInstanceDescription, currentFlowInstanceName, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processEditDatas = [], processPageFlagStep, processInfo: { status, create_time }, templateInfo: { enable_change }, is_show_board_file_area } = this.props
     let saveTempleteDisabled = currentFlowInstanceName == '' || (processEditDatas && processEditDatas.length) && processEditDatas.find(item => item.is_edit == '0') || (processEditDatas && processEditDatas.length) && !(processEditDatas[processEditDatas.length - 1].node_type) ? true : false
     return (
-      <div id="container_configureProcessOut" className={`${indexStyles.configureProcessOut} ${globalStyles.global_vertical_scrollbar}`} style={{ height: clientHeight - 100 - 54, overflowY: 'auto', position: 'relative' }} onScroll={this.onScroll} >
+      <div id="container_configureProcessOut" className={`${indexStyles.configureProcessOut} ${globalStyles.global_vertical_scrollbar}`} style={{ height: clientHeight - 100 - 54, overflowY: 'auto', position: 'relative', paddingBottom: is_show_board_file_area == '1' ? '272px' : '48px' }} onScroll={this.onScroll} >
         <div id="container_configureTop" className={indexStyles.configure_top}>
           <div style={{ display: 'flex', position: 'relative' }}>
             <div><canvas id="time_graph_canvas" width={210} height={210} style={{ float: 'left' }}></canvas></div>
@@ -1130,7 +1231,7 @@ export default class MainContent extends Component {
                 {
                   !isEditCurrentFlowInstanceDescription ? (
                     <div className={processPageFlagStep == '4' ? indexStyles.normal_flow_description : indexStyles.flow_description} onClick={processPageFlagStep == '4' ? '' : (e) => { this.handleChangeFlowInstanceDescription(e, '1') }}>
-                      <span>
+                      <span style={{whiteSpace: 'pre-wrap'}}>
                         {currentFlowInstanceDescription != '' ? currentFlowInstanceDescription : '添加描述'}
                         {
                           processPageFlagStep == '4' && (
@@ -1151,7 +1252,7 @@ export default class MainContent extends Component {
                         onClick={(e) => e.stopPropagation()}
                         goldName={currentFlowInstanceDescription}
                         placeholder={'添加描述'}
-                        maxLength={101}
+                        maxLength={500}
                         nodeName={'textarea'}
                         style={{ display: 'block', fontSize: 14, color: '#262626', resize: 'none', minHeight: '92px', maxHeight: '92px', height: '92px', background: 'rgba(255,255,255,1)', boxShadow: '0px 0px 8px 0px rgba(0,0,0,0.15)', borderRadius: '4px', border: 'none' }}
                       />
@@ -1239,6 +1340,11 @@ export default class MainContent extends Component {
             </div>
           )
         }
+        {
+          processPageFlagStep == '4' && (
+            <ProcessFile />
+          )
+        }
       </div>
     )
   }
@@ -1248,6 +1354,7 @@ function mapStateToProps({ publicProcessDetailModal: { process_detail_modal_visi
   datas: {
     userBoardPermissions = []
   }
-} }) {
-  return { process_detail_modal_visible, currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processEditDatas, processInfo, processDoingList, processNotBeginningList, node_type, processCurrentEditStep, templateInfo, currentFlowTabsStatus, not_show_create_node_guide, projectDetailInfoData, userBoardPermissions }
+},gantt: { datas: { is_show_board_file_area } } 
+}) {
+  return { process_detail_modal_visible, currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processEditDatas, processInfo, processDoingList, processNotBeginningList, node_type, processCurrentEditStep, templateInfo, currentFlowTabsStatus, not_show_create_node_guide, projectDetailInfoData, userBoardPermissions, is_show_board_file_area }
 }

@@ -10,6 +10,7 @@ import { checkIsHasPermissionInVisitControl, checkIsHasPermissionInBoard } from 
 import { PROJECT_FLOW_FLOW_ACCESS, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '../../../../../globalset/js/constant'
 import { genPrincipalListFromAssignees, findCurrentApproveNodesPosition, findCurrentOverruleNodesPosition, findCurrentRatingScoreNodesPosition } from '../../handleOperateModal'
 import DifferenceDeadlineType from '../../DifferenceDeadlineType';
+import OpinionContent from '../OpinionContent';
 
 const TextArea = Input.TextArea
 @connect(mapStateToProps)
@@ -132,17 +133,18 @@ export default class BeginningStepTwo extends Component {
     // this.updateCorrespondingPrcodessStepWithNodeContent('is_edit', '0')
     const { processInfo: { id: flow_instance_id, board_id }, itemValue, request_flows_params = {} } = this.props
     const { id: flow_node_instance_id } = itemValue
-    const { successfulMessage } = this.state
+    const { successfulMessage, rejectMessage } = this.state
     let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
     this.props.dispatch({
       type: 'publicProcessDetailModal/fillFormComplete',
       payload: {
         flow_instance_id,
         flow_node_instance_id,
-        message: successfulMessage ? successfulMessage : '通过。',
+        message: rejectMessage ? rejectMessage : '通过。',
         calback: () => {
           this.setState({
             successfulMessage: '',
+            rejectMessage: '',
             isPassNodesIng: false
           })
           this.props.dispatch({
@@ -184,7 +186,11 @@ export default class BeginningStepTwo extends Component {
 
   handleCancelRejectProcess = (e) => {
     e && e.stopPropagation()
-    this.updateCorrespondingPrcodessStepWithNodeContent('rejectMessage', '')
+    // this.updateCorrespondingPrcodessStepWithNodeContent('rejectMessage', '')
+    e && e.stopPropagation()
+    this.setState({
+      rejectMessage: '',
+    })
   }
 
   handleRejectProcess = (e) => {
@@ -380,7 +386,7 @@ export default class BeginningStepTwo extends Component {
                           )
                       )
                   }
-                  <div>{comment ? comment : '未填写意见'}</div>
+                  <div style={{whiteSpace: 'pre-wrap'}}>{comment ? comment : '未填写意见'}</div>
                 </div>
               </div>
               <div className={indexStyles.app_right}>{timestampToTimeNormal(time, '/', true) || ''}</div>
@@ -520,7 +526,7 @@ export default class BeginningStepTwo extends Component {
                       )
                   )
               }
-              <div>{comment ? comment : '未填写意见'}</div>
+              <div style={{whiteSpace:'pre-wrap'}}>{comment ? comment : '未填写意见'}</div>
             </div>
           </div>
           <div className={indexStyles.app_right}>{timestampToTimeNormal(time, '/', true) || ''}</div>
@@ -588,6 +594,19 @@ export default class BeginningStepTwo extends Component {
             </div>
           )
         }
+        {
+          showApproveButton && (
+            <div style={{ minHeight: '64px', padding: '20px 14px 5px', color: 'rgba(0,0,0,0.45)', borderTop: '1px solid #e8e8e8', marginTop: '15px' }}>
+              <OpinionContent 
+                value={this.state.successfulMessage}
+                placeholder="填写审批意见 "
+                opinionTextAreaChange={this.handleChangeTextAreaValue}
+                opinionTextAreaBlur={this.handleRejectTextAreaValue}
+                handleCancelRejectProcess={this.handleCancelRejectProcess}
+              />
+            </div>
+          )
+        }
         {/* 审批类型 */}
         <div style={{ minHeight: '64px', padding: '20px 14px', color: 'rgba(0,0,0,0.45)', borderTop: '1px solid #e8e8e8', marginTop: '15px' }}>
           <span className={globalStyles.authTheme}>&#xe616; 审批方式 : &nbsp;&nbsp;&nbsp;{diffType()}</span>
@@ -624,7 +643,9 @@ export default class BeginningStepTwo extends Component {
         {
           showApproveButton && (
             <div className={indexStyles.button_wrapper} style={{ paddingTop: '24px', borderTop: '1px solid #e8e8e8', textAlign: 'center', position: 'relative' }}>
-              <Popconfirm
+              <Button onClick={this.handleRejectProcess} disabled={rejectMessage ? (isRejectNodesIng || isPassNodesIng ? true : false) : true} style={{ color: rejectMessage ? '#fff' : 'rgba(0,0,0,.25)', background: rejectMessage ? '#FF7875' : '#f5f5f5', marginRight: '8px', borderColor: rejectMessage ? '' : '#d9d9d99' }}>驳回</Button>
+              <Button onClick={this.handlePassProcess} disabled={whetherIsComplete ? false : true} type="primary">通过</Button>
+              {/* <Popconfirm
                 className={indexStyles.confirm_wrapper} icon={<></>}
                 getPopupContainer={triggerNode => triggerNode.parentNode}
                 placement="top" title={this.renderPopRjectContent()}
@@ -648,7 +669,7 @@ export default class BeginningStepTwo extends Component {
                 onConfirm={this.handlePassProcess}
               >
                 <Button type="primary">通过</Button>
-              </Popconfirm>
+              </Popconfirm> */}
             </div>
           )
         }

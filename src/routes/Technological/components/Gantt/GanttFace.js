@@ -18,7 +18,9 @@ import { isPaymentOrgUser } from '../../../../utils/businessFunction';
 import BoardTemplate from './components/boardTemplate'
 import GroupListHeadElse from './GroupListHeadElse'
 import GetRowGanttItemElse from './GetRowGanttItemElse'
-
+import { weekDataArray } from './calDate';
+import { closeFeature } from '../../../../utils/temporary';
+import CardDetailDrawer from './components/CardDetailDrawer'
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
 export default class GanttFace extends Component {
@@ -31,6 +33,7 @@ export default class GanttFace extends Component {
       local_gantt_board_id: '0', //当前项目id（项目tab栏）缓存在组件内，用于判断是否改变然后重新获取数据
       init_get_outline_tree: false, //大纲视图下初始化是否获取了大纲树
       scroll_area: 'gantt_body', // gantt_head/gantt_body 头部或右边 滚动事件触发的区域
+      set_scroll_top_timer: null
     }
     this.setGanTTCardHeight = this.setGanTTCardHeight.bind(this)
   }
@@ -124,11 +127,13 @@ export default class GanttFace extends Component {
     const that = this
     const target = this.refs.gantt_card_out_middle
     setTimeout(function () {
-      if (target.scrollTo) {
-        target.scrollTo(position, 0)
-      } else {
-        target.scrollLeft = position
-      }
+      // if (target.scrollTo) {
+      //   target.scrollTo(position, 0)
+      // } else {
+      //   target.scrollLeft = position
+      // }
+
+      target.scrollLeft = position
     }, delay)
   }
 
@@ -152,7 +157,7 @@ export default class GanttFace extends Component {
     if (gantt_group_head) {
       gantt_group_head.scrollTop = scrollTop
     }
-    // this.handleScrollVertical({ scrollTop })
+    this.handleScrollVertical({ scrollTop })
     const gantt_date_area = document.getElementById('gantt_date_area')
     if (gantt_date_area) {
       gantt_date_area.style.left = `-${scrollLeft}px`
@@ -162,54 +167,58 @@ export default class GanttFace extends Component {
   // 处理上下滚动
   handleScrollVertical = ({ scrollTop }) => {
     const { group_view_type, gantt_board_id, target_scrollTop, dispatch } = this.props
-    // if (target_scrollTop != scrollTop) {
-    // dispatch({
-    //   type: getEffectOrReducerByName('updateDatas'),
-    //   payload: {
-    //     target_scrollTop: scrollTop
-    //   }
-    // })
+    if (target_scrollTop == scrollTop) return
     if (group_view_type == '1' && gantt_board_id == '0') {
-      dispatch({
-        type: getEffectOrReducerByName('updateDatas'),
-        payload: {
-          target_scrollTop_board_storage: scrollTop,
-          target_scrollTop: scrollTop
-        }
+      const { set_scroll_top_timer } = this.state
+      if (set_scroll_top_timer) {
+        clearTimeout(set_scroll_top_timer)
+      }
+      this.setState({
+        set_scroll_top_timer: setTimeout(() => {
+          dispatch({
+            type: getEffectOrReducerByName('updateDatas'),
+            payload: {
+              target_scrollTop_board_storage: scrollTop,
+              target_scrollTop: scrollTop
+            }
+          })
+        }, 500)
       })
     }
-    // }
   }
   // 处理水平滚动
   handelScrollHorizontal = ({ scrollLeft, scrollWidth, clientWidth, }) => {
     const { searchTimer } = this.state
-    const { gold_date_arr, dispatch, ceilWidth, target_scrollLeft } = this.props
+    const { gold_date_arr, dispatch, ceilWidth, target_scrollLeft, gantt_view_mode } = this.props
     const delX = target_scrollLeft - scrollLeft //判断向左还是向右
+    const scroll_bound_leng = gantt_view_mode == 'month' ? 2 : 16 //判断滚动条触底边界
+    const rescroll_leng_to_left = gantt_view_mode == 'month' ? 36 : 60 //滚动条回复位置
+    const rescroll_leng_to_right = gantt_view_mode == 'month' ? 60 : 90//滚动条回复位置
     if (target_scrollLeft == scrollLeft) {
       return
     }
     if (searchTimer) {
       clearTimeout(searchTimer)
     }
-    if (scrollLeft < 2 * ceilWidth && delX > 0) { //3为分组头部占用三个单元格的长度
+    if (scrollLeft < scroll_bound_leng * ceilWidth && delX > 0) { //3为分组头部占用三个单元格的长度
       const { timestamp } = gold_date_arr[0]['date_inner'][0] //取第一天
       this.setState({
         searchTimer: setTimeout(() => {
-          this.setScrollPosition({ delay: 1, position: 36 * ceilWidth }) //大概移动四天的位置
+          this.setScrollPosition({ delay: 1, position: rescroll_leng_to_left * ceilWidth }) //大概移动四天的位置
           setTimeout(() => {
             this.setGoldDateArr({ timestamp, not_set_loading: true }) //取左边界日期来做日期更新的基准
           }, 200)
         }, 50)
       })
 
-    } else if ((scrollWidth - scrollLeft - clientWidth < 2 * ceilWidth) && delX < 0) {
+    } else if ((scrollWidth - scrollLeft - clientWidth < scroll_bound_leng * ceilWidth) && delX < 0) {
       const gold_date_arr_length = gold_date_arr.length
       const date_inner = gold_date_arr[gold_date_arr_length - 1]['date_inner']
       const date_inner_length = date_inner.length
       const { timestamp } = date_inner[date_inner_length - 1] // 取最后一天
       this.setState({
         searchTimer: setTimeout(() => {
-          this.setScrollPosition({ delay: 1, position: scrollWidth - clientWidth - 60 * ceilWidth }) //移动到最新视觉
+          this.setScrollPosition({ delay: 1, position: scrollWidth - clientWidth - rescroll_leng_to_right * ceilWidth }) //移动到最新视觉
           setTimeout(() => {
             this.setGoldDateArr({ timestamp, to_right: 'to_right', not_set_loading: true }) //取有边界日期来做更新日期的基准
           }, 200)
@@ -241,18 +250,28 @@ export default class GanttFace extends Component {
     // } else {
     //   date_arr = [].concat(getMonthDate(timestamp), gold_date_arr)
     // }
-    const date_arr_one_level = []
+    let date_arr_one_level = []
     let date_total = 0
-    for (let val of date_arr) {
-      const { date_inner = [] } = val
-      for (let val2 of date_inner) {
-        date_total += 1
-        date_arr_one_level.push(val2)
+    if (gantt_view_mode == 'year' || gantt_view_mode == 'month') {
+      for (let val of date_arr) {
+        const { date_inner = [] } = val
+        for (let val2 of date_inner) {
+          date_total += gantt_view_mode == 'month' ? 1 : val2.last_date
+          date_arr_one_level.push(val2)
+        }
       }
+    } else {
+      date_arr_one_level = weekDataArray(timestamp)
+      date_total = date_arr_one_level.length * 7 //总共有这么多周
     }
-    if (gantt_view_mode == 'year') {
-      date_total = date_arr_one_level.slice().map(item => item.last_date).reduce((total, num) => total + num) //该月之前所有日期长度之和
-    }
+    // if (gantt_view_mode == 'year') {
+    //   date_total = date_arr_one_level.slice().map(item => item.last_date).reduce((total, num) => total + num) //该月之前所有日期长度之和
+    // } else if (gantt_view_mode == 'week') {
+    //   date_arr_one_level = weekDataArray(timestamp)
+    //   date_total = date_arr_one_level.length * 7 //总共有这么多周
+    // } else {
+
+    // }
     dispatch({
       type: getEffectOrReducerByName('updateDatas'),
       payload: {
@@ -410,6 +429,8 @@ export default class GanttFace extends Component {
               {/*  //撑住DateList相同高度的底部 */}
               <GroupListHead
                 setScrollArea={this.setScrollArea}
+                setScrollPosition={this.setScrollPosition}
+                setGoldDateArr={this.setGoldDateArr}
                 scroll_area={this.state.scroll_area}
                 changeOutLineTreeNodeProto={this.props.changeOutLineTreeNodeProto}
                 deleteOutLineTreeNode={this.props.deleteOutLineTreeNode}
@@ -448,11 +469,14 @@ export default class GanttFace extends Component {
                     setGoldDateArr={this.setGoldDateArr}
                     setScrollPosition={this.setScrollPosition}
                   />
-                  {
-                    gantt_board_id && gantt_board_id != '0' && (
-                      <BoardTemplate insertTaskToListGroup={this.props.insertTaskToListGroup} gantt_card_height={gantt_card_height} />
-                    )
-                  }
+                  <div style={{ display: !closeFeature({ board_id: gantt_board_id }) ? 'block' : 'none' }}>
+                    {
+                      gantt_board_id && gantt_board_id != '0' && (
+                        <BoardTemplate insertTaskToListGroup={this.props.insertTaskToListGroup} gantt_card_height={gantt_card_height} />
+                      )
+                    }
+                  </div>
+                  <CardDetailDrawer {...this.props.task_detail_props} />
                 </div>
                 <GetRowGanttItemElse gantt_card_height={gantt_card_height} dataAreaRealHeight={dataAreaRealHeight} />
 

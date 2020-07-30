@@ -28,7 +28,7 @@ class DropdownMultipleSelectWithSearch extends Component {
     }
     const selectedList = !use_default_member ? [userInfo_simple] : currentSelectedProjectMember
     this.state = {
-      selectedList,//currentSelectedProjectMember ? currentSelectedProjectMember : (findUserInList ? [findUserInList] : []),
+      selectedList: selectedList.filter(item => item.id != '0'),//currentSelectedProjectMember ? currentSelectedProjectMember : (findUserInList ? [findUserInList] : []),
       searchValue: "",
       dropdownOptionVisible: false
     }

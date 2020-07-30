@@ -282,7 +282,7 @@ export default class UploadNormal extends Component {
         const { uploadProps = {}, source_type = '1' } = this.props
         const { data: { board_id, folder_id, upload_type, file_version_id } } = uploadProps
         const params = {
-            // board_id,
+            board_id,
             // folder_id,
             file_hash: md5_str,
             file_name,
@@ -296,6 +296,7 @@ export default class UploadNormal extends Component {
                 if (res.code == '0') {
                     resolve(res)
                 } else {
+                    message.error(res.message)
                     resolve({ data: {} })
                 }
             }).catch(err => {

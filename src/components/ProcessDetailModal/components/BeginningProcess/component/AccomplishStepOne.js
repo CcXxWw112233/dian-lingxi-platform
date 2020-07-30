@@ -14,6 +14,7 @@ import { currentNounPlanFilterName } from '../../../../../utils/businessFunction
 import { FLOWS } from '../../../../../globalset/js/constant'
 import { isObjectValueEqual } from '../../../../../utils/util';
 import { findCurrentApproveNodesPosition, findCurrentRatingScoreNodesPosition } from '../../handleOperateModal'
+import AccomplishStepOne_six from './AccomplishStepOne_six'
 
 @connect(mapStateToProps)
 export default class AccomplishStepOne extends Component {
@@ -61,10 +62,10 @@ export default class AccomplishStepOne extends Component {
   whetherShowRebackButton = () => {
     const { itemValue } = this.props
     const { assignee_type, assignees } = itemValue
-    const { transPrincipalList = [] } = this.props
+    const { transPrincipalList = [] } = this.state
     const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
     let flag = false
-    let newAssignees = [...assignees]
+    let newAssignees = [...transPrincipalList]
       newAssignees.find(item => {
         if (item.id == id) {
           flag = true
@@ -172,6 +173,9 @@ export default class AccomplishStepOne extends Component {
       case '5':
         container = <AccomplishStepOne_five parentKey={itemKey} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value} />
         break;
+      case '6':
+        container = <AccomplishStepOne_six parentKey={itemKey} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value}/>
+        break
       default:
         break;
     }

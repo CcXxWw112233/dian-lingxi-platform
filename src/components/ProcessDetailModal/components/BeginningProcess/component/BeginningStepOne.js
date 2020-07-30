@@ -15,6 +15,10 @@ import { checkIsHasPermissionInVisitControl, checkIsHasPermissionInBoard, curren
 import { PROJECT_FLOW_FLOW_ACCESS, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME, FLOWS } from '../../../../../globalset/js/constant'
 import { genPrincipalListFromAssignees, findCurrentFileInfo } from '../../handleOperateModal'
 import DifferenceDeadlineType from '../../DifferenceDeadlineType'
+import BeginningStepOne_six from './BeginningStepOne_six'
+import { saveOnlineExcelWithProcess } from '../../../../../services/technological/workFlow'
+import { isApiResponseOk } from '../../../../../utils/handleResponseData'
+import { resolve } from 'promise-polyfill'
 
 @connect(mapStateToProps)
 export default class BeginningStepOne extends Component {
@@ -25,7 +29,8 @@ export default class BeginningStepOne extends Component {
       transPrincipalList: props.itemValue.assignees ? [...props.itemValue.assignees] : [], // 表示当前的执行人
       transCopyPersonnelList: props.itemValue.recipients ? [...props.itemValue.recipients] : [], // 表示当前选择的抄送人
       is_show_spread_arrow: props.itemValue.status == '1' || props.itemValue.runtime_type == '1' ? true : false, // 是否展开箭头 详情 true表示展开
-      form_values: []
+      form_values: [],
+      sheetListData: {}, // 存放表格列表数据
     }
   }
 
@@ -54,16 +59,12 @@ export default class BeginningStepOne extends Component {
     const { transPrincipalList = [] } = this.state
     const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
     let flag = false
-    if (assignee_type == '2') { // 表示只有在指定人员的情况下才会有判断情况
-      let newAssignees = [...transPrincipalList]
+    let newAssignees = [...transPrincipalList]
       newAssignees.find(item => {
         if (item.id == id) {
           flag = true
         }
       })
-    } else if (assignee_type == '1') {
-      flag = true
-    }
     return flag
   }
 
@@ -295,14 +296,6 @@ export default class BeginningStepOne extends Component {
     const { forms = [] } = processEditDatas[itemKey]
     let newFormsData = [...forms]
     let form_values = []
-    let filesStr = []
-    // let filterFilesData = (fileList) => {
-    //   let newFileList = [...fileList]
-    //   newFileList.map(item => {
-    //     filesStr.push(item.flow_file_id)
-    //   })
-    //   return filesStr.join(',')
-    // }
     newFormsData.map(item => {
       let field_type = item.field_type
       let files = (item.files && item.files.length) && item.files
@@ -313,6 +306,42 @@ export default class BeginningStepOne extends Component {
       form_values.push(obj)
     })
     return form_values
+  }
+
+  // 保存表格数据
+  saveSheetData = (id)=> {
+    let { sheetListData = [] } = this.state;
+    // if(!id) return ;
+    let keys = Object.keys(sheetListData);
+    if(keys.length){
+      let promise = keys.map(item => {
+        if (!item) return void 0;
+        let data = sheetListData[item] || [];
+        return new Promise((resolve) => {
+          saveOnlineExcelWithProcess({ excel_id: item, sheet_data: data }).then(res => {
+            if(isApiResponseOk(res)){
+              resolve(res.data);
+            }
+          })
+        })
+      })
+      promise = promise.filter(n => n);
+      Promise.all(promise).then(resp => {
+        // console.info(resp);
+      })
+    }
+  }
+  
+  // 更新表格列表数据
+  updateSheetList = ({id, sheetData}) => {
+    if (!id) return
+    let obj = {...this.state.sheetListData};
+    obj[id] = sheetData;
+      this.setState({
+        sheetListData: obj
+      }, () => {
+        this.saveSheetData()
+      })
   }
 
   // 编辑点击事件
@@ -331,14 +360,14 @@ export default class BeginningStepOne extends Component {
     }
 
     // this.updateCorrespondingPrcodessStepWithNodeContent('is_edit', '0')
-    const { processInfo: { id: flow_instance_id, board_id }, itemValue, dispatch, request_flows_params = {} } = this.props
-    const { id: flow_node_instance_id } = itemValue
+    const { processInfo: { id: flow_instance_id, board_id }, itemValue, dispatch, request_flows_params = {}, processEditDatas = [], itemKey } = this.props
+    const { id: flow_node_instance_id, forms = [] } = itemValue
     let form_values = this.getAllNodesFormsData()
     let that = this
     let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
     dispatch({
       type: 'publicProcessDetailModal/fillFormComplete',
-      payload: {
+      payload: { 
         flow_instance_id,
         flow_node_instance_id,
         content_values: form_values,
@@ -409,6 +438,9 @@ export default class BeginningStepOne extends Component {
       case '5':
         container = <BeginningStepOne_five updateState={this.updateState} parentKey={itemKey} FormCanEdit={this.FormCanEdit()} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value} />
         break;
+      case '6':
+        container = <BeginningStepOne_six updateSheetList={this.updateSheetList} updateState={this.updateState} parentKey={itemKey} FormCanEdit={this.FormCanEdit()} updateCorrespondingPrcodessStepWithNodeContent={this.updateCorrespondingPrcodessStepWithNodeContent} itemKey={key} itemValue={value}/>
+        break
       default:
         break;
     }

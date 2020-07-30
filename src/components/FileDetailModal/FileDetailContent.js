@@ -101,7 +101,7 @@ class FileDetailContent extends Component {
       if (file_type == '.pdf' && flag) {
         await this.getFilePDFInfo({ id, calback })
       }
-      !this.props.isOpenAttachmentFile && this.linkImWithFile({ name: res.data.base_info.file_name, type: 'file', board_id: res.data.base_info.board_id, id: res.data.base_info.id, currentPreviewFileVersionId: res.data.base_info.version_id })
+      // !this.props.isOpenAttachmentFile && this.linkImWithFile({ name: res.data.base_info.file_name, type: 'file', board_id: res.data.base_info.board_id, id: res.data.base_info.id, currentPreviewFileVersionId: res.data.base_info.version_id })
     } else {
       message.warn(res.message, MESSAGE_DURATION_TIME)
       setTimeout(() => {
@@ -170,7 +170,7 @@ class FileDetailContent extends Component {
     fileInfoByUrl({ id }).then(res => {// 获取详情的接口
       if (isApiResponseOk(res)) {
         this.initStateDatas({ data: res.data })
-        !this.props.isOpenAttachmentFile && this.linkImWithFile({ name: res.data.base_info.file_name, type: 'file', board_id: res.data.base_info.board_id, id: res.data.base_info.id, currentPreviewFileVersionId: res.data.base_info.version_id })
+        // !this.props.isOpenAttachmentFile && this.linkImWithFile({ name: res.data.base_info.file_name, type: 'file', board_id: res.data.base_info.board_id, id: res.data.base_info.id, currentPreviewFileVersionId: res.data.base_info.version_id })
       } else {
         message.warn(res.message)
         let currentPreviewFileVersionId = this.getCurrentFilePreviewVersionId()
@@ -223,6 +223,7 @@ class FileDetailContent extends Component {
               <NonsupportPreviewFileContent />
             ) : (
               <MainContent
+              linkImWithFile={this.linkImWithFile}
               clientWidth={clientWidth}
               clientHeight={clientHeight}
               {...this.state}
@@ -270,9 +271,6 @@ FileDetailContent.defaultProps = {
 }
 
 function mapStateToProps({
-  simplemode: {
-    chatImVisiable = false
-  },
   projectDetailFile: {
     datas: {
       breadcrumbList = []
@@ -285,7 +283,7 @@ function mapStateToProps({
   }
 }) {
   return {
-    chatImVisiable, breadcrumbList,
+    breadcrumbList,
     userBoardPermissions
   }
 }

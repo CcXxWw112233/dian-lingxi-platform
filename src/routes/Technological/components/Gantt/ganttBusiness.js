@@ -66,13 +66,16 @@ export const afterChangeBoardUpdateGantt = ({ dispatch, board_id }) => {
 }
 export const handleChangeBoardViewScrollTop = ({ group_view_type, gantt_board_id, target_scrollTop_board_storage }) => {
     const target = document.getElementById('gantt_card_out_middle')
-    if (!target) {
+    const target2 = document.getElementById('gantt_group_head')
+    if (!target || !target2) {
         return
     }
     if (gantt_board_id == '0' && group_view_type == '1') { //在查看项目的情况下
         target.scrollTop = target_scrollTop_board_storage
+        target2.scrollTop = target_scrollTop_board_storage
     } else {
         target.scrollTop = 0
+        target2.scrollTop = 0
     }
 }
 // 在删除项目后做的操作
@@ -288,10 +291,14 @@ export const diffGanttTimeSpan = ({ time_span, start_time, due_time }) => {
     const due_date = new Date(due_time)
     const s_h = start_date.getHours()
     const s_m = start_date.getMinutes()
+    const s_s = start_date.getSeconds()
+
     const e_h = due_date.getHours()
     const e_m = due_date.getMinutes()
+    const e_s = due_date.getSeconds()
+
     // 截止的时分比开始的时分要小
-    if ((e_h < s_h) || (e_h == s_h && e_m < s_m)) {
+    if ((e_h < s_h) || (e_h == s_h && e_m < s_m) || (e_h == s_h && e_m == s_m && e_s < s_s)) {
         return time_span + 1
     }
     return time_span
@@ -300,14 +307,14 @@ export const diffGanttTimeSpan = ({ time_span, start_time, due_time }) => {
 export const setGantTimeSpan = ({ time_span, start_time, due_time, start_date, end_date }) => {
     let new_time_span = 0
     if (!!!due_time && !!!start_time) {
-        return Number(time_span) || 1 //0//
+        return Number(time_span) || 0//1 //0//
     } else {
         if (!!due_time && !!start_time) {
             new_time_span = (Math.floor((due_time - start_time) / (24 * 3600 * 1000))) + 1
             new_time_span = diffGanttTimeSpan({ time_span: new_time_span, start_time, due_time })
             return new_time_span
         } else {
-            return Number(time_span) || 1 //1//
+            return Number(time_span) || 0//1 //1//
         }
         // if (due_time > end_date.timestamp && start_time > start_date.timestamp) { //右区间
         //     new_time_span = (Math.floor((end_date.timestamp - start_time) / (24 * 3600 * 1000))) + 1
@@ -399,4 +406,52 @@ export const setDateWithPositionInYearView = ({ _position, date_arr_one_level, c
     }
     // console.log('ssssssssssaaaa', date_string)
     return date
+}
+
+// 获取到鼠标点的日期数据（周视图）
+export const setDateWidthPositionWeekView = ({ position, date_arr_one_level = [], ceilWidth }) => {
+    const week_length = date_arr_one_level.length //总周数
+    const day_total = week_length * 7 //总天数
+    const area_width = day_total * ceilWidth //区域总宽度
+    const belong_week = parseInt(position / (7 * ceilWidth)) //所属在第几周
+    const belong_day = Math.floor((position - belong_week * 7 * ceilWidth) / ceilWidth) //在所属周的周几
+
+    const week_data = date_arr_one_level[belong_week]
+    const week_data_timestamp = week_data.timestamp
+    const timestamp = week_data_timestamp + belong_day * 24 * 60 * 60 * 1000
+    const timestampEnd = week_data_timestamp + belong_day * 24 * 60 * 60 * 1000 + 23 * 60 * 60 * 1000 + 59 * 60 * 1000 + 59 * 1000
+
+    // console.log('ssssssssss', {
+    //     area_width,
+    //     day_total,
+    //     belong_week,
+    //     belong_day,
+    //     timestamp,
+    //     timestampEnd
+    // })
+    return {
+        timestamp,
+        timestampEnd
+    }
+}
+
+// 拖拽完成后，修改成功，在弹出右方详情页的情况下，作比较更新
+export const onChangeCardHandleCardDetail = ({
+    card_detail_id, //来自任务详情的id
+    selected_card_visible, //任务详情弹窗是否弹开
+    dispatch,
+    operate_id, //当前操作的id
+    operate_parent_card_id, //当前操作的任务的父任务id
+}) => {
+    if (selected_card_visible) {
+        //当当前打开的任务是该任务或者是该任务父任务，则做查询更新
+        if (card_detail_id == operate_id || card_detail_id == operate_parent_card_id) {
+            dispatch({
+                type: 'publicTaskDetailModal/getCardWithAttributesDetail',
+                payload: {
+                    id: card_detail_id,
+                }
+            })
+        }
+    }
 }

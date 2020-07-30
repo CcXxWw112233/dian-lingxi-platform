@@ -13,7 +13,7 @@ import QueueAnim from 'rc-queue-anim'
 import GetRowTaskItem from './components/CardItem/index'
 import WorkFlow from './components/CardItem/WorkFlow'
 
-import { filterDueTimeSpan, setDateWithPositionInYearView } from './ganttBusiness'
+import { filterDueTimeSpan, setDateWithPositionInYearView, setDateWidthPositionWeekView } from './ganttBusiness'
 import { checkIsHasPermissionInBoard } from '../../../../utils/businessFunction';
 import { NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_CREATE } from '../../../../globalset/js/constant';
 import GetRowSummary from './components/gattFaceCardItem/GetRowSummary.js'
@@ -71,11 +71,12 @@ export default class GetRowGantt extends Component {
     this.setState({
       task_is_dragging: bool
     })
+    this.stopDragging()
     const target = this.refs.gantt_operate_area_panel
     if (!target) return
     if (!target.style) return
     if (bool) {
-      target.style.cursor = this.state.card_rely_draging ? 'pointer' : 'move';
+      target.style.cursor = 'pointer'//this.state.card_rely_draging ? 'pointer' : 'move';
     } else {
       target.style.cursor = 'crosshair';
     }
@@ -138,7 +139,7 @@ export default class GetRowGantt extends Component {
 
   //鼠标拖拽移动
   dashedMousedown = (e) => {
-    const { gantt_board_id, group_view_type, show_board_fold } = this.props
+    const { gantt_board_id, group_view_type, show_board_fold, gantt_view_mode } = this.props
     if (ganttIsOutlineView({ group_view_type })) {
       return
     }
@@ -151,7 +152,7 @@ export default class GetRowGantt extends Component {
     if (this.state.drag_creating || this.state.isMouseDown) { //在拖拽中，还有防止重复点击
       return
     }
-    if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold })) {
+    if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold, gantt_view_mode })) {
       return
     }
     const { currentRect = {} } = this.state
@@ -239,7 +240,7 @@ export default class GetRowGantt extends Component {
       })
       return false
     }
-    if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold })) {
+    if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold, gantt_view_mode })) {
       return
     }
     if (ganttIsOutlineView({ group_view_type })) {
@@ -263,7 +264,7 @@ export default class GetRowGantt extends Component {
     let py = e.pageY - target_0.offsetTop + target_1.scrollTop - dateAreaHeight
 
     const molX = px % ceilWidth
-    const molY = py % (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? ceiHeight * group_rows_fold : ceiHeight) //2为折叠的总行
+    const molY = py % (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold, gantt_view_mode }) ? ceiHeight * group_rows_fold : ceiHeight) //2为折叠的总行
     const mulX = Math.floor(px / ceilWidth)
     const mulY = Math.floor(py / ceiHeight)
     const delX = Number((molX / ceilWidth).toFixed(1))
@@ -298,8 +299,8 @@ export default class GetRowGantt extends Component {
   }
   // 在该区间内不能操作
   areaCanNotOperate = (e) => {
-    const { group_list_area_section_height = [], list_group = [], gantt_board_id, group_view_type, show_board_fold } = this.props
-    if (!ganttIsFold({ gantt_board_id, group_view_type, show_board_fold })) { //非折叠情况下不考虑
+    const { group_list_area_section_height = [], list_group = [], gantt_board_id, group_view_type, show_board_fold, gantt_view_mode } = this.props
+    if (!ganttIsFold({ gantt_board_id, group_view_type, show_board_fold, gantt_view_mode })) { //非折叠情况下不考虑
       return false
     }
     const target_0 = document.getElementById('gantt_card_out')
@@ -383,8 +384,12 @@ export default class GetRowGantt extends Component {
       //   timestampEnd: new Date(`${date_string} 23:59:59`).getTime()
       // }
       // console.log('asdasdasd', date_string)
-    } else {
-
+    } else if (gantt_view_mode == 'week') {
+      date = setDateWidthPositionWeekView({
+        position: start_end == '1' ? x : x + width - 2,
+        date_arr_one_level,
+        ceilWidth
+      })
     }
 
     const { timestamp, timestampEnd } = date
@@ -457,8 +462,14 @@ export default class GetRowGantt extends Component {
         dispatch({
           type: 'publicTaskDetailModal/updateDatas',
           payload: {
-            drawerVisible: true,
+            // drawerVisible: true,
             card_id: id,
+          }
+        })
+        dispatch({
+          type: 'gantt/updateDatas',
+          payload: {
+            selected_card_visible: true,
           }
         })
         // dispatch({
@@ -647,12 +658,12 @@ export default class GetRowGantt extends Component {
             left: currentRect.x + 1, top: currentRect.y,
             minWidth: gantt_view_mode == 'year' ? 6 : 0,
             width: currentRect.width,
-            height: ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? task_item_height_fold : task_item_height,//currentRect.height,
+            height: ganttIsFold({ gantt_board_id, group_view_type, show_board_fold, gantt_view_mode }) ? task_item_height_fold : task_item_height,//currentRect.height,
             boxSizing: 'border-box',
-            marginTop: !ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? task_item_margin_top : (ceil_height_fold * group_rows_fold - task_item_height_fold) / 2, //task_item_margin_top,//
+            marginTop: !ganttIsFold({ gantt_board_id, group_view_type, show_board_fold, gantt_view_mode }) ? task_item_margin_top : (ceil_height_fold * group_rows_fold - task_item_height_fold) / 2, //task_item_margin_top,//
             color: 'rgba(0,0,0,0.45)',
             textAlign: 'right',
-            lineHeight: ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? `${task_item_height_fold}px` : `${ceiHeight - task_item_margin_top}px`,
+            lineHeight: ganttIsFold({ gantt_board_id, group_view_type, show_board_fold, gantt_view_mode }) ? `${task_item_height_fold}px` : `${ceiHeight - task_item_margin_top}px`,
             paddingRight: Math.ceil(currentRect.width / ceilWidth) > 1 ? 8 : 0,
             zIndex: this.state.drag_creating ? 2 : 0
           }} >
@@ -669,7 +680,7 @@ export default class GetRowGantt extends Component {
                   top: 0,
                   zIndex: 3,
                   position: 'absolute', width: currentRect.width,
-                  height: ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? task_item_height_fold : task_item_height,//currentRect.height,
+                  height: ganttIsFold({ gantt_board_id, group_view_type, show_board_fold, gantt_view_mode }) ? task_item_height_fold : task_item_height,//currentRect.height,
                 }}></div>
               </Tooltip>
             )
@@ -693,7 +704,8 @@ export default class GetRowGantt extends Component {
       gantt_board_id,
       group_view_type,
       show_board_fold,
-      outline_tree_round
+      outline_tree_round,
+      gantt_view_mode
     } = this.props
     // console.log('task_is_dragging', this.state.task_is_dragging)
     return (
@@ -712,7 +724,7 @@ export default class GetRowGantt extends Component {
           {
             !ganttIsOutlineView({ group_view_type }) && list_group.map((value, key) => {
               const { list_data = [], list_id, board_fold_data } = value
-              if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold })) {
+              if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold, gantt_view_mode })) {
                 return (this.renderFoldTaskSummary({ list_id, list_data, board_fold_data, group_index: key }))
               } else {
                 return (
@@ -724,9 +736,9 @@ export default class GetRowGantt extends Component {
           {/* 渲染大纲视图下的任务 */}
           {
             ganttIsOutlineView({ group_view_type }) && outline_tree_round.map((value, key) => {
-              const { end_time, left, top, id, start_time, tree_type, parent_expand, is_expand } = value
+              const { end_time, left, top, id, start_time, tree_type, parent_expand, is_expand, parent_card_id } = value
               const juge_expand = (tree_type == '0' || tree_type == '3') ? parent_expand : (parent_expand && is_expand)
-              if (!parent_expand || !left) {
+              if (!parent_expand || !left || (gantt_view_mode == 'year' && !!parent_card_id)) {
                 return <></>
               }
               if (tree_type == '2') {

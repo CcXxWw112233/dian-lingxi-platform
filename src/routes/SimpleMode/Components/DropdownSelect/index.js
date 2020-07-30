@@ -4,9 +4,10 @@ import { connect } from 'dva/index';
 import styles from './index.less';
 import { addMenbersInProject } from '../../../../services/technological/project';
 import globalStyles from '@/globalset/css/globalClassName.less'
-import { getOrgIdByBoardId } from '../../../../utils/businessFunction';
+import { getOrgIdByBoardId, currentNounPlanFilterName } from '../../../../utils/businessFunction';
 import ShowAddMenberModal from '../../../../routes/Technological/components/Project/ShowAddMenberModal'
 import { isApiResponseOk } from '../../../../utils/handleResponseData';
+import { PROJECTS } from '../../../../globalset/js/constant';
 
 class DropdownSelect extends Component {
     constructor(props) {
@@ -106,8 +107,8 @@ class DropdownSelect extends Component {
     renderMenuItem = (itemList) => {
         return itemList.map((item, index) => (
             <Menu.Item key={item.id}
-                disabled={item.disabled||false}
-                className={item.disabled===true?styles.menuItemDisabled:styles.menuItemNormal}>
+                disabled={item.disabled || false}
+                className={item.disabled === true ? styles.menuItemDisabled : styles.menuItemNormal}>
                 <div style={{ display: 'flex' }}>
                     <div style={{ flex: 1 }} className={globalStyles.global_ellipsis} >
                         {item.name}
@@ -182,13 +183,13 @@ class DropdownSelect extends Component {
                                     <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '20px' }}>&#xe67d;</i>
                                     &nbsp;
                                     &nbsp;
-                            </span>
+                                </span>
                             )}
                         <span style={{ fontWeight: '500', fontSize: '16px' }}>
                             {(simplemodeCurrentProject && simplemodeCurrentProject.board_id) ?
                                 simplemodeCurrentProject.board_name
                                 :
-                                '所有项目'
+                                `我参与的${currentNounPlanFilterName(PROJECTS)}`
                             }
                             <Icon type="down" style={{ fontSize: '12px' }} />
                         </span>

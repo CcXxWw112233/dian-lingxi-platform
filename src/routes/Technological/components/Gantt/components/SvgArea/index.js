@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'dva'
 import styles from './index.less'
-import { Popconfirm } from 'antd'
-import { ganttIsOutlineView } from '../../constants'
+import { Popconfirm, Modal } from 'antd'
+import { ganttIsOutlineView, task_item_height, task_item_margin_top } from '../../constants'
 const rely_map = [
     {
         "id": "1265111963571195904",
@@ -21,13 +21,14 @@ const rely_map = [
         ]
     },
 ]
-const width_diff = 8 //宽度误差微调
-const left_diff = 12 //位置误差微调
-const top_diff = 40 //位置误差微调
-const top_diff_60 = 60 //位置误差微调
-const top_diff_30 = 30 //位置误差微调
-const top_diff_20 = 20 //位置误差微调
-const top_diff_10 = 10 //位置误差微调
+// 60 40 20
+const width_diff = 4//8 //宽度误差微调
+const left_diff = 6//12 //位置误差微调
+const top_diff_60 = task_item_height + task_item_margin_top //位置误差微调
+const top_diff_30 = top_diff_60 / 2 + 2//位置误差微调 ,+2由于任务间距太小，恢复可去掉
+const top_diff_20 = task_item_margin_top //位置误差微调
+const top_diff_10 = task_item_margin_top / 2 - 2 //位置误差微调, -2由于任务间距太小，恢复可去掉
+const top_diff = task_item_height / 2 + task_item_margin_top /// 2 //位置误差微调
 
 @connect(mapStateToProps)
 export default class index extends Component {
@@ -37,6 +38,7 @@ export default class index extends Component {
             rely_map: [],
             cards_one_level: [], //所有任务平铺成一维数组
         }
+        this.could_structure_path_type = ['2', '3'] //可以构建依赖关系的类型
     }
 
     componentDidMount() {
@@ -73,6 +75,12 @@ export default class index extends Component {
         this.setState({
             cards_one_level: arr
         }, () => {
+            if (!arr.length) {
+                this.setState({
+                    rely_map: []
+                })
+                return
+            }
             this.recusionSetMap(rely_map, arr)
             this.setState({
                 rely_map
@@ -85,7 +93,7 @@ export default class index extends Component {
         const { list_group = [], outline_tree_round = [] } = props
         let arr = []
         if (group_view_type == '4') { //大纲
-            arr = outline_tree_round.filter(item => item.tree_type == '2') //大纲树中的任务
+            arr = outline_tree_round.filter(item => this.could_structure_path_type.includes(item.tree_type)) //大纲树中的任务
         } else {
             for (let val of list_group) {
                 arr = [].concat(arr, val.list_data)
@@ -476,13 +484,19 @@ export default class index extends Component {
     // 删除依赖
     deleteRely = ({ move_id, line_id }) => {
         const { dispatch } = this.props
-        dispatch({
-            type: 'gantt/deleteCardRely',
-            payload: {
-                move_id,
-                line_id
+        Modal.confirm({
+            title: '确认删除该依赖？',
+            onOk: () => {
+                dispatch({
+                    type: 'gantt/deleteCardRely',
+                    payload: {
+                        move_id,
+                        line_id
+                    }
+                })
             }
         })
+
     }
     pathMouseEvent = {
         // 拖拽
@@ -525,6 +539,17 @@ export default class index extends Component {
             return '100%'
         }
     }
+
+    checkInvalid = (obj) => {
+        let flag = true
+        for (let [, value] of Object.entries(obj)) {
+            if (!value || value == NaN) {
+                flag = false
+                break
+            }
+        }
+        return flag
+    }
     renderPaths = () => {
         const { rely_map = [] } = this.state
         return (
@@ -535,7 +560,7 @@ export default class index extends Component {
                         return (
                             next.map(line_item => {
                                 const { left: line_left, right: line_right, top: line_top, relation, id: line_id } = line_item
-                                const { Move_Line, Arrow } = this.calPath({
+                                const params = {
                                     move_left,
                                     move_right,
                                     move_top,
@@ -543,7 +568,10 @@ export default class index extends Component {
                                     line_right,
                                     line_top,
                                     relation
-                                })
+                                }
+                                // console.log('ssssssssssss', params)
+                                if (!this.checkInvalid(params)) return ''
+                                const { Move_Line, Arrow } = this.calPath({ ...params })
                                 return (
                                     <g data-targetclassname="specific_example"
                                         className={`${styles.path_g}`}
@@ -554,7 +582,7 @@ export default class index extends Component {
                                             data-targetclassname="specific_example"
                                             fill="#1890FF"
                                             d={Arrow}
-                                            onDoubleClick={() => this.deleteRely({ move_id, line_id })}
+                                            onClick={() => this.deleteRely({ move_id, line_id })}
                                             className={`${styles.path} ${styles.path_arrow}`}
                                             {...this.pathMouseEvent}
                                         />
@@ -564,7 +592,7 @@ export default class index extends Component {
                                             data-targetclassname="specific_example"
                                             d={Move_Line}
                                             stroke-width='1'
-                                            onDoubleClick={() => this.deleteRely({ move_id, line_id })}
+                                            onClick={() => this.deleteRely({ move_id, line_id })}
                                             className={`${styles.path} ${styles.path_line}`}
                                             {...this.pathMouseEvent}
                                         />
@@ -579,7 +607,7 @@ export default class index extends Component {
         )
     }
     render() {
-        const { date_total, ceilWidth, group_view_type } = this.props
+        const { date_total, ceilWidth, group_view_type, gantt_view_mode } = this.props
         const { rely_map = [] } = this.state
         // console.log('rely_map', rely_map)
         return (
@@ -590,7 +618,7 @@ export default class index extends Component {
                         position: 'absolute',
                         width: date_total * ceilWidth,
                         height: this.setSVGHeight(),
-                        display: ganttIsOutlineView({ group_view_type }) ? 'block' : 'none',
+                        display: (ganttIsOutlineView({ group_view_type }) && gantt_view_mode != 'year') ? 'block' : 'none',
                         zIndex: 1,
                         // zIndex: ganttIsOutlineView({ group_view_type }) ? 1 : -1,
                     }}>

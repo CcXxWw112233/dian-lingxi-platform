@@ -168,7 +168,10 @@ export default class index extends React.Component {
         let investmentMapsList = this.getCorrespondingBoardListByOrgId(mapOrganizationList, projectList)
         const iframe_rendering = user_set.current_org === '0' && selectOrganizationVisible === false && investmentMapsList && investmentMapsList.length
         return (
-            <div className={`${indexStyles.mapsContainer} ${globalStyles.global_vertical_scrollbar}`} style={{ height: contentHeight + 'px', padding: `${iframe_rendering ? 48 : 4}px`, overflowY: 'auto' }}>
+            <div className={`${indexStyles.mapsContainer} ${globalStyles.global_vertical_scrollbar}`} style={{
+                height: contentHeight + 'px', padding: `${iframe_rendering ? 48 : 4}px`,
+                //  overflowY: 'auto' 
+            }}>
                 {
                     iframe_rendering ? (
                         <>{investmentMapsList.map(item => {

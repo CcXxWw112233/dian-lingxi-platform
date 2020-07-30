@@ -9,9 +9,11 @@ import { updateTaskVTwo, changeTaskType } from '../../../../../../services/techn
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
 import { message, Dropdown, Popover, Tooltip } from 'antd'
 import CardDropDetail from '../../components/gattFaceCardItem/CardDropDetail'
-import { filterDueTimeSpan, cardIsHasUnRead, cardItemIsHasUnRead, setDateWithPositionInYearView } from '../../ganttBusiness'
+import { filterDueTimeSpan, cardIsHasUnRead, cardItemIsHasUnRead, setDateWithPositionInYearView, setDateWidthPositionWeekView, onChangeCardHandleCardDetail } from '../../ganttBusiness'
 import { transformTimestamp, isSamDay } from '../../../../../../utils/util'
 import HoverEars from './HoverEars'
+import DragCard from './DragCard'
+
 // 参考自http://www.jq22.com/webqd1348
 
 // const dateAreaHeight = date_area_height //日期区域高度，作为修正
@@ -37,6 +39,7 @@ export default class CardItem extends Component {
                 min_position: 0,
                 max_position: 0
             },
+            drag_lock: false, //拖拽的锁，必须要先点击一下出现状态条才能够拖拽
         }
 
         this.x = 0
@@ -144,7 +147,7 @@ export default class CardItem extends Component {
         }, 50)
         const { drag_type, local_top } = this.state
         if ('position' == drag_type) { //在中间
-            target.style.cursor = 'move';
+            // target.style.cursor = 'move';
         }
         this.x = e.clientX || e.changedTouches[0].clientX;
         this.y = e.clientY || e.changedTouches[0].clientY
@@ -186,8 +189,10 @@ export default class CardItem extends Component {
     }
 
     onTouchStart = (e) => {
+        const class_names = e.target.getAttribute('class') || 'nothing'
+        const drag_right = class_names.indexOf('drag_right') != -1 //点击在向右的箭头上
         this.setState({
-            drag_type: 'position'
+            drag_type: drag_right ? 'right' : 'position'
         }, () => {
 
         })
@@ -294,7 +299,8 @@ export default class CardItem extends Component {
         const target_1 = document.getElementById('gantt_card_out_middle')
         const offsetLeft = this.getX(oDiv);
         const rela_left = clientX - offsetLeft - 2 + target_1.scrollLeft //鼠标在该任务内的相对位置
-        if (clientWidth - rela_left <= 6) { //滑动到右边
+        const rela_pos = clientWidth - rela_left
+        if (rela_pos >= -21 && rela_pos <= -3) { //滑动到右边 //clientWidth - rela_left <= 6
             this.setTargetDragTypeCursor('right')
         }
         // else if (rela_left <= 6) { //滑动到左边
@@ -394,6 +400,9 @@ export default class CardItem extends Component {
         } else if (gantt_view_mode == 'year') {
             start_date = setDateWithPositionInYearView({ _position: local_left, date_arr_one_level, ceilWidth, width: local_width, x: local_left, flag: 1 })
             end_date = setDateWithPositionInYearView({ _position: end_time_position, date_arr_one_level, ceilWidth, width: local_width, x: local_left, flag: 2 })
+        } else if (gantt_view_mode == 'week') {
+            start_date = setDateWidthPositionWeekView({ position: local_left, date_arr_one_level, ceilWidth })
+            end_date = setDateWidthPositionWeekView({ position: end_time_position, date_arr_one_level, ceilWidth })
         } else {
 
         }
@@ -423,7 +432,7 @@ export default class CardItem extends Component {
             .then(res => {
                 if (isApiResponseOk(res)) {
                     if (ganttIsOutlineView({ group_view_type })) {
-                        this.props.changeOutLineTreeNodeProto(id, updateData)
+                        // this.props.changeOutLineTreeNodeProto(id, updateData)
                         // setTimeout(() => {
                         //     this.excuteHandleEffectHandleParentCard([
                         //         // 'getParentCard',
@@ -444,6 +453,7 @@ export default class CardItem extends Component {
                             updateData
                         })
                     }
+                    this.onChangeTimeHandleCardDetail()
                 } else {
                     this.setState({
                         local_width: local_width_origin,
@@ -510,6 +520,8 @@ export default class CardItem extends Component {
             start_date = date_arr_one_level[start_time_index] || {}
         } else if (gantt_view_mode == 'year') {
             start_date = setDateWithPositionInYearView({ _position: local_left, date_arr_one_level, ceilWidth, width: local_width, x: local_left })
+        } else if (gantt_view_mode == 'week') {
+            start_date = setDateWidthPositionWeekView({ position: local_left, date_arr_one_level, ceilWidth })
         } else {
 
         }
@@ -562,6 +574,7 @@ export default class CardItem extends Component {
                             updateData
                         })
                     }
+                    this.onChangeTimeHandleCardDetail()
                 } else {
                     this.setState({
                         local_left: left,
@@ -596,6 +609,8 @@ export default class CardItem extends Component {
             start_date = date_arr_one_level[start_time_index] || {}
         } else if (gantt_view_mode == 'year') {
             start_date = setDateWithPositionInYearView({ _position: local_left, date_arr_one_level, ceilWidth, width: local_width, x: local_left })
+        } else if (gantt_view_mode == 'week') {
+            start_date = setDateWidthPositionWeekView({ position: local_left, date_arr_one_level, ceilWidth })
         } else {
 
         }
@@ -625,6 +640,7 @@ export default class CardItem extends Component {
                         new_list_id: params_list_id,
                         updateData
                     })
+                    this.onChangeTimeHandleCardDetail()
                 } else {
                     this.setState({
                         local_left: left,
@@ -642,6 +658,30 @@ export default class CardItem extends Component {
             })
     }
     // 拖拽完成后的事件处理------end---------
+
+    // 拖拽完成后，修改成功，在弹出右方详情页的情况下，作比较更新
+    onChangeTimeHandleCardDetail = () => {
+        const { card_detail_id, selected_card_visible, itemValue = {}, dispatch } = this.props
+        const { id, parent_card_id } = itemValue
+        onChangeCardHandleCardDetail({
+            card_detail_id, //来自任务详情的id
+            selected_card_visible, //任务详情弹窗是否弹开
+            dispatch,
+            operate_id: id, //当前操作的id
+            operate_parent_card_id: parent_card_id, //当前操作的任务的父任务id
+        })
+        // if (selected_card_visible) {
+        //     //当当前打开的任务是该任务或者是该任务父任务，则做查询更新
+        //     if (card_detail_id == id || parent_card_id == card_detail_id) {
+        //         dispatch({
+        //             type: 'publicTaskDetailModal/getCardWithAttributesDetail',
+        //             payload: {
+        //                 id: card_detail_id,
+        //             }
+        //         })
+        //     }
+        // }
+    }
 
     // 改变任务分组
     changeCardBelongGroup = ({ new_list_id, card_id, updateData = {} }) => {
@@ -850,12 +890,12 @@ export default class CardItem extends Component {
 
     // 获取大纲视图父任务的截止和开始位置的三角形边框颜色
     setTriangleTreeColor = (label_data = [], index) => {
-        let label_color = '#ffffff'
+        let label_color = '#cbddf7'
         const length = label_data.length
         if (index == 'start') {
-            label_color = label_data[0] ? `rgb(${label_data[0].label_color})` : '#ffffff'
+            label_color = label_data[0] ? `rgb(${label_data[0].label_color})` : '#cbddf7'
         } else if (index == 'end') {
-            label_color = label_data[length - 1] ? `rgb(${label_data[length - 1].label_color})` : '#ffffff'
+            label_color = label_data[length - 1] ? `rgb(${label_data[length - 1].label_color})` : '#cbddf7'
         } else {
 
         }
@@ -874,6 +914,7 @@ export default class CardItem extends Component {
     }
     handleObj = () => {
         const { itemValue = {}, card_rely_draging } = this.props
+        const { drag_lock } = this.state
         const {
             top,
             id,
@@ -881,35 +922,72 @@ export default class CardItem extends Component {
             parent_card_id,
         } = itemValue
         return {
+            onClick: () => {
+                if (!drag_lock) {
+                    this.props.setTaskIsDragging && this.props.setTaskIsDragging(true) //当拖动时，有可能会捕获到创建任务的动作，阻断
+                    setTimeout(() => {
+                        this.setState({
+                            drag_lock: true
+                        })
+                    }, 200)
+                    return
+                }
+                return
+            },
             // 拖拽
             onMouseDown: (e) => {
+                if (!drag_lock) {
+                    this.props.setTaskIsDragging && this.props.setTaskIsDragging(true) //当拖动时，有可能会捕获到创建任务的动作，阻断
+                    // setTimeout(() => {
+                    //     this.setState({
+                    //         drag_lock: true
+                    //     })
+                    // }, 200)
+                    return
+                }
                 if (!this.couldChangeCard()) return
                 this.onMouseDown(e)
             },
             onMouseMove: (e) => {
-                if (card_rely_draging) return
+                if (card_rely_draging || !drag_lock) return
                 if (!this.couldChangeCard()) return
                 this.onMouseMove(e)
             },
             onMouseUp: () => {
-                if (card_rely_draging) return
+                if (card_rely_draging || !drag_lock) return
                 this.setSpecilTaskExample({ id: parent_card_id || id, top, board_id })
             }, //查看子任务是查看父任务
 
             onTouchStart: (e) => {
+                if (!drag_lock) {
+                    this.props.setTaskIsDragging && this.props.setTaskIsDragging(true) //当拖动时，有可能会捕获到创建任务的动作，阻断
+                    // setTimeout(() => {
+                    //     this.setState({
+                    //         drag_lock: true
+                    //     })
+                    // }, 200)
+                    return
+                }
                 if (!this.couldChangeCard()) return
                 this.onTouchStart(e)
             },
             onTouchMove: (e) => {
-                if (!this.couldChangeCard()) return
+                if (!this.couldChangeCard() || !drag_lock) return
                 this.onTouchMove(e)
             },
             onTouchEnd: (e) => {
+                if (!drag_lock) return
                 this.onTouchEnd(e)
             }, //查看子任务是查看父任务
             onMouseEnter: () => {
                 this.onMouseEnter()
             },
+            onBlur: () => {
+                this.props.setTaskIsDragging && this.props.setTaskIsDragging(false) //当拖动时，有可能会捕获到创建任务的动作，阻断
+                this.setState({
+                    drag_lock: false
+                })
+            }
         }
     }
 
@@ -938,7 +1016,7 @@ export default class CardItem extends Component {
             child_card_status = {},
         } = itemValue
         const { has_child, min_start_time: child_min_start_time, max_due_time: child_max_due_time } = child_card_status //子任务状态，实现大纲的父任务三角
-        const { local_left, local_top, local_width, rely_down } = this.state
+        const { local_left, local_top, local_width, rely_down, drag_lock } = this.state
         const { is_overdue, due_description } = filterDueTimeSpan({ start_time, due_time, is_has_end_time, is_has_start_time })
         return (
             <div
@@ -946,9 +1024,10 @@ export default class CardItem extends Component {
                 data-targetclassname="specific_example"
                 id={id} //大纲视图需要获取该id作为父级id来实现子任务拖拽影响父任务位置
                 ref={this.out_ref}
+                tabindex="0"
                 style={{
                     touchAction: 'none',
-                    zIndex: rely_down || this.is_down ? 2 : 1,
+                    zIndex: (rely_down || this.is_down || drag_lock) ? 2 : 1,
                     left: local_left + (gantt_view_mode == 'year' ? 0 : card_left_diff),
                     top: local_top,
                     width: (local_width || 6) - (gantt_view_mode == 'year' ? 0 : card_width_diff),
@@ -965,21 +1044,25 @@ export default class CardItem extends Component {
                     onMouseMove={(e) => e.preventDefault()}
                     style={{
                         opacity: 1,
-                        padding: (gantt_view_mode == 'year' && time_span < 4) ? '0' : '0 8px',
+                        padding: (gantt_view_mode != 'month' && time_span < 6) ? '0' : '0 8px',
                     }}
                 >
-                    <div data-targetclassname="specific_example"
+                    {/* <div data-targetclassname="specific_example"
                         className={`${indexStyles.card_item_status}`}
                         //  onMouseDown={(e) => e.stopPropagation()} 
                         onMouseMove={(e) => e.preventDefault()}
                     >
                         <CheckItem is_realize={is_realize} card_type={type} styles={{ color: is_realize == '1' ? 'rgba(0,0,0,.25)' : '' }} />
-                    </div>
+                    </div> */}
                     <div data-targetclassname="specific_example"
                         className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`}
                         // onMouseDown={(e) => e.stopPropagation()}
                         onMouseMove={(e) => e.preventDefault()}
-                        style={{ display: 'flex', color: is_realize == '1' ? 'rgba(0,0,0,.25)' : '' }}
+                        style={{
+                            display: 'flex', color: is_realize == '1' ? 'rgba(0,0,0,.25)' : '',
+                            height: task_item_height - 4,
+                            lineHeight: `${task_item_height - 4}px`
+                        }}
                     >
                         {name}
                         {
@@ -1007,7 +1090,7 @@ export default class CardItem extends Component {
                             opacity: is_realize == '1' ? 0.5 : 1
                         }}
                     >
-                        <AvatarList users={executors} size={'small'} targetclassname={'specific_example'} />
+                        <AvatarList users={executors} size={21} targetclassname={'specific_example'} />
                     </div>
                 </div>
                 {/* 存在未读 */}
@@ -1032,30 +1115,42 @@ export default class CardItem extends Component {
                 {//大纲视图有子任务时间的父任务(父任务开始截止位置有 区间标识)
                     ganttIsOutlineView({ group_view_type }) && !parent_card_id &&
                     has_child == '1' && (child_max_due_time || child_min_start_time) &&
-                    (gantt_view_mode == 'year' ? time_span > 4 : true) &&
+                    (gantt_view_mode != 'month' ? time_span > 6 : true) &&
                     (
                         <>
                             <div className={indexStyles.left_triangle} style={{
                                 borderColor: `${this.setTriangleTreeColor(label_data, 'start')} transparent transparent transparent`
                             }}></div>
                             <div className={indexStyles.left_triangle_mask}></div>
+                            <div className={indexStyles.left_triangle_mask2} style={{ backgroundColor: this.setTriangleTreeColor(label_data, 'start') }}></div>
+
                             <div className={indexStyles.right_triangle}
                                 style={{
                                     borderColor: `${this.setTriangleTreeColor(label_data, 'end')} transparent transparent transparent`
                                 }}></div>
                             <div className={indexStyles.right_triangle_mask}></div>
+                            <div className={indexStyles.right_triangle_mask2} style={{ backgroundColor: this.setTriangleTreeColor(label_data, 'end') }}></div>
+
                         </>
                     )
                 }
                 {/* //hover出现的耳朵效果 */}
                 {
-                    ganttIsOutlineView({ group_view_type }) && !parent_card_id && (
+                    drag_lock && ganttIsOutlineView({ group_view_type }) && !parent_card_id && gantt_view_mode != 'year' && (
                         <HoverEars
                             getX={this.getX}
                             itemValue={itemValue}
                             dispatch={this.props.dispatch}
                             setRelyLineDrawing={this.setRelyDown}
                             rely_down={rely_down} />
+                    )
+                }
+                {
+                    drag_lock && (
+                        <DragCard
+                            id={id}
+                            width={(local_width || 6) - (gantt_view_mode == 'year' ? 0 : card_width_diff)}
+                        />
                     )
                 }
             </div>
@@ -1074,12 +1169,14 @@ function mapStateToProps({ gantt: {
         group_list_area_section_height = [],
         group_view_type,
         gantt_view_mode,
-        outline_tree_round = []
+        outline_tree_round = [],
+        selected_card_visible
     }
 },
     imCooperation: {
         im_all_latest_unread_messages = []
-    }
+    },
+    publicTaskDetailModal: { card_id: card_detail_id },
 }) {
     return {
         list_group,
@@ -1093,6 +1190,8 @@ function mapStateToProps({ gantt: {
         im_all_latest_unread_messages,
         group_view_type,
         gantt_view_mode,
-        outline_tree_round
+        outline_tree_round,
+        card_detail_id,
+        selected_card_visible
     }
 }

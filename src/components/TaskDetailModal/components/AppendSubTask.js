@@ -46,6 +46,8 @@ export default class AppendSubTask extends Component {
   // 添加子任务
   addSubTask(e) {
     e && e.stopPropagation();
+    const { drawContent: { deliverables = [] } } = this.props
+    if (deliverables && deliverables.length) return
     this.setState({
       is_add_sub_task: true
     })
@@ -62,6 +64,7 @@ export default class AppendSubTask extends Component {
     e && e.stopPropagation();
     const { drawContent, dispatch } = this.props
     const { board_id, card_id, list_id } = drawContent
+    const { data: executors = [] } = this.getCurrentDrawerContentPropsModelDatasExecutors()
     const { inputValue, sub_executors, due_time, start_time } = this.state
     const { data = [] } = drawContent['properties'].filter(item => item.code == 'SUBTASK')[0]
     let temp_subExecutors = [...sub_executors]
@@ -99,8 +102,14 @@ export default class AppendSubTask extends Component {
       new_data = new_data.filter(item => item.id == card_id) || []
       // drawContent['child_data'] && drawContent['child_data'].unshift({...obj, card_id: res.data.card_id})
       tempData.unshift({ ...obj, card_id: card_info.card_id })
+      if (sub_executors && sub_executors.length) {
+        executors.push(...sub_executors)
+        // drawContent['properties'] = this.filterCurrentUpdateDatasField('EXECUTOR', arrayNonRepeatfy(executors,'user_id'))
+        drawContent['properties'] = filterCurrentUpdateDatasField({ properties:drawContent['properties'], code: 'EXECUTOR', value: arrayNonRepeatfy(executors,'user_id')})
+        this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id, operate_properties_code: 'EXECUTOR' })
+      }
+      // drawContent['properties'] = this.filterCurrentUpdateDatasField('SUBTASK', tempData)
       drawContent['properties'] = filterCurrentUpdateDatasField({ properties:drawContent['properties'], code: 'SUBTASK', value: tempData})
-      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id })
       this.props.handleChildTaskChange && this.props.handleChildTaskChange({ parent_card_id: card_id, data: card_info, action: 'add', rely_card_datas: dependencys })
       this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(new_data)
       this.initState()
@@ -119,21 +128,21 @@ export default class AppendSubTask extends Component {
     new_data.map(item => {
       if (selectedKeys.indexOf(item.user_id) != -1) {
         sub_executors.push(item)
-        new_executors.push(item)
+        // new_executors.push(item)
       }
     })
-    let new_drawContent = { ...drawContent }
+    // let new_drawContent = { ...drawContent }
     // new_drawContent['executors'] = this.arrayNonRepeatfy(new_executors)
-    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties:drawContent['properties'], code: 'EXECUTOR', value: arrayNonRepeatfy(new_executors, 'user_id')})
-    dispatch({
-      type: 'publicTaskDetailModal/updateDatas',
-      payload: {
-        drawContent: new_drawContent
-      }
-    })
-    this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: drawContent, card_id, name: 'executors', value: new_executors, overlay_sub_pricipal: 'EXECUTOR' })
+    // new_drawContent['properties'] = this.filterCurrentUpdateDatasField('EXECUTOR', arrayNonRepeatfy(new_executors, 'user_id'))
+    // dispatch({
+    //   type: 'publicTaskDetailModal/updateDatas',
+    //   payload: {
+    //     drawContent: new_drawContent
+    //   }
+    // })
+    // this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: drawContent, card_id, name: 'executors', value: new_executors, overlay_sub_pricipal: 'EXECUTOR' })
     this.setState({
-      sub_executors
+      sub_executors: arrayNonRepeatfy(sub_executors, 'user_id')
     })
   }
 
@@ -239,8 +248,8 @@ export default class AppendSubTask extends Component {
 
 
   render() {
-    const { children, drawContent = {}, data: dataInfo, dispatch, handleTaskDetailChange, handleChildTaskChange, whetherUpdateParentTaskTime, updateRelyOnRationList } = this.props
-    const { card_id, board_id } = drawContent
+    const { children, drawContent = {}, data: dataInfo, dispatch, handleTaskDetailChange, handleChildTaskChange, whetherUpdateParentTaskTime, updateRelyOnRationList, boardFolderTreeData, projectDetailInfoData } = this.props
+    const { board_id } = drawContent
     const { data: child_data = [] } = drawContent['properties'].filter(item => item.code == 'SUBTASK')[0]
     const { is_add_sub_task, sub_executors = [], saveDisabled, due_time, start_time } = this.state
     let executor = [{//任务执行人信息
@@ -250,29 +259,75 @@ export default class AppendSubTask extends Component {
     }]
 
     return (
-      <div>
+      <div style={{width: '100%'}}>
         <div style={{ marginBottom: '12px' }}>
           {
             !is_add_sub_task ? (
-              <span onClick={(e) => { this.addSubTask(e) }}>
+              <div onClick={(e) => { this.addSubTask(e) }}>
                 {children}
-              </span>
+              </div>
             ) : (
-                <>
-                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
-                    {/* 文本框部分 */}
-                    <span style={{ flex: '1', marginRight: '16px' }}>
-                      <input
-                        autosize={true}
-                        onBlur={this.setchildTaskNameBlur}
-                        onChange={this.setchildTaskNameChange}
-                        autoFocus={true}
-                        // goldName={card_name}
-                        maxLength={100}
-                        nodeName={'input'}
-                        style={{ width: '100%', display: 'block', fontSize: 14, color: '#262626', resize: 'none', height: '38px', background: 'rgba(255,255,255,1)', boxShadow: '0px 0px 8px 0px rgba(0,0,0,0.15)', borderRadius: '4px', border: 'none', outline: 'none', paddingLeft: '12px' }}
-                      />
-                    </span>
+              <>
+              <div style={{padding: '9px 12px', borderRadius: '4px', marginBottom: '4px'}}>
+                <div style={{display: 'flex', alignItems: 'center'}}>
+                  {/* 文本框部分 */}
+                  <span style={{ flex: '1', marginRight: '16px' }}>
+                    <input
+                      autosize={true}
+                      onBlur={this.setchildTaskNameBlur}
+                      onChange={this.setchildTaskNameChange}
+                      autoFocus={true}
+                      // goldName={card_name}
+                      maxLength={100}
+                      nodeName={'input'}
+                      style={{ width: '100%', display: 'block', fontSize: 14, color: '#262626', resize: 'none', height: '38px', background: 'rgba(255,255,255,1)', boxShadow: '0px 0px 8px 0px rgba(0,0,0,0.15)', borderRadius: '4px', border: 'none', outline: 'none', paddingLeft: '12px' }}
+                    />
+                  </span>
+                  {/* 执行人部分 */}
+                  <span style={{ position: 'relative' }} className={appendSubTaskStyles.user_pr}>
+                    <Dropdown overlayClassName={appendSubTaskStyles.overlay_sub_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
+                      overlay={
+                        <MenuSearchPartner
+                          handleSelectedAllBtn={this.handleSelectedAllBtn}
+                          isInvitation={true}
+                          listData={dataInfo} keyCode={'user_id'} searchName={'name'} currentSelect={sub_executors.length ? sub_executors : executor} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
+                          board_id={board_id} />
+                      }>
+                      {
+                        sub_executors && sub_executors.length ? (
+                          <div>
+                            <AvatarList
+                              size="mini"
+                              maxLength={3}
+                              excessItemsStyle={{
+                                color: '#f56a00',
+                                backgroundColor: '#fde3cf'
+                              }}
+                            >
+                              {sub_executors && sub_executors.length ? sub_executors.map(({ name, avatar }, index) => (
+                                <AvatarList.Item
+                                  key={index}
+                                  tips={name}
+                                  src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
+                                />
+                              )) : (
+                                  <Tooltip title="执行人">
+                                    <span className={`${globalStyles.authTheme} ${appendSubTaskStyles.sub_executor}`}>&#xe7b2;</span>
+                                  </Tooltip>
+                                )}
+                            </AvatarList>
+                          </div>
+                        ) : (
+                            <Tooltip title="执行人">
+                              <span className={`${globalStyles.authTheme} ${appendSubTaskStyles.sub_executor}`}>&#xe7b2;</span>
+                            </Tooltip>
+                          )
+                      }
+                    </Dropdown>
+                  </span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', flex: 1 }}>
                     {/* 开始时间 */}
                     <span>
                       {
@@ -344,55 +399,14 @@ export default class AppendSubTask extends Component {
                           )
                       }
                     </span>
-                    {/* 执行人部分 */}
-                    <span style={{ position: 'relative' }} className={appendSubTaskStyles.user_pr}>
-                      <Dropdown overlayClassName={appendSubTaskStyles.overlay_sub_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
-                        overlay={
-                          <MenuSearchPartner
-                            handleSelectedAllBtn={this.handleSelectedAllBtn}
-                            isInvitation={true}
-                            listData={dataInfo} keyCode={'user_id'} searchName={'name'} currentSelect={sub_executors.length ? sub_executors : executor} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
-                            board_id={board_id} />
-                        }>
-                        {
-                          sub_executors && sub_executors.length ? (
-                            <div>
-                              <AvatarList
-                                size="mini"
-                                maxLength={3}
-                                excessItemsStyle={{
-                                  color: '#f56a00',
-                                  backgroundColor: '#fde3cf'
-                                }}
-                              >
-                                {sub_executors && sub_executors.length ? sub_executors.map(({ name, avatar }, index) => (
-                                  <AvatarList.Item
-                                    key={index}
-                                    tips={name}
-                                    src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
-                                  />
-                                )) : (
-                                    <Tooltip title="执行人">
-                                      <span className={`${globalStyles.authTheme} ${appendSubTaskStyles.sub_executor}`}>&#xe7b2;</span>
-                                    </Tooltip>
-                                  )}
-                              </AvatarList>
-                            </div>
-                          ) : (
-                              <Tooltip title="执行人">
-                                <span className={`${globalStyles.authTheme} ${appendSubTaskStyles.sub_executor}`}>&#xe7b2;</span>
-                              </Tooltip>
-                            )
-                        }
-                      </Dropdown>
-                    </span>
-
                   </div>
                   <div style={{ textAlign: 'right' }}>
                     <span onClick={(e) => { this.handleCancel(e) }} className={appendSubTaskStyles.cancel}>取消</span>
                     <Button onClick={(e) => { this.handleSave(e) }} disabled={saveDisabled} type="primary" style={{ marginLeft: '16px', width: '60px', height: '34px' }}>确定</Button>
                   </div>
-                </>
+                </div>
+              </div>
+            </>
               )
           }
         </div>
@@ -400,10 +414,19 @@ export default class AppendSubTask extends Component {
         {/* 显示子任务列表 */}
         <div>
           {child_data.map((value, key) => {
-            const { card_id, card_name, start_time, due_time, executors = [] } = value
+            const { card_id, card_name, start_time, due_time, executors = [], deliverables = [] } = value
             const { user_id } = executors[0] || {}
             return (
-              <AppendSubTaskItem whetherUpdateParentTaskTime={whetherUpdateParentTaskTime} handleChildTaskChange={handleChildTaskChange} handleTaskDetailChange={handleTaskDetailChange} board_id={board_id} data={dataInfo} childTaskItemValue={value} key={`${card_id}-${card_name}-${user_id}-${due_time}-${start_time}`} childDataIndex={key} updateRelyOnRationList={updateRelyOnRationList} />
+              <AppendSubTaskItem
+                boardFolderTreeData={boardFolderTreeData} projectDetailInfoData={projectDetailInfoData} 
+                whetherUpdateParentTaskTime={whetherUpdateParentTaskTime} 
+                handleChildTaskChange={handleChildTaskChange} 
+                handleTaskDetailChange={handleTaskDetailChange} 
+                data={dataInfo} 
+                childTaskItemValue={value} 
+                key={`${card_id}-${card_name}-${user_id}-${due_time}-${start_time}-${deliverables}`} 
+                childDataIndex={key} 
+                updateRelyOnRationList={updateRelyOnRationList} />
             )
           })}
         </div>

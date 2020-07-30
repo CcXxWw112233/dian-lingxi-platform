@@ -11,6 +11,12 @@ export default class BoardsFilesArea extends Component {
     state = {
         previewFileModalVisibile: false
     }
+    // 更新父组件中私有变量开启文件弹窗
+    updatePrivateVariablesWithOpenFile = () => {
+        this.setState({
+            previewFileModalVisibile: true
+        })
+    }
     //弹窗
     setPreviewFileModalVisibile = () => {
         this.setState({
@@ -71,9 +77,9 @@ export default class BoardsFilesArea extends Component {
                 <div>
                     {
                         boards_flies.map((item, key) => {
-                            const { id, board_name, org_id } = item
+                            const { id, board_name, org_id, folder_id } = item
                             return (
-                                <div key={`${id}_${board_name}`}>
+                                <div key={`${id}_${board_name}_${folder_id}`}>
                                     {
                                         isPaymentOrgUser(org_id) &&
                                         this.filterSeeingBoard(id) &&
@@ -82,6 +88,8 @@ export default class BoardsFilesArea extends Component {
                                             item={key}
                                             board_id={id}
                                             board_name={board_name}
+                                            previewFileModalVisibile={this.state.previewFileModalVisibile}
+                                            updatePrivateVariablesWithOpenFile={this.updatePrivateVariablesWithOpenFile}
                                             setPreviewFileModalVisibile={this.setPreviewFileModalVisibile} />
                                     }
                                 </div>

@@ -427,15 +427,26 @@ const removeEmptyArrayEle = (arr) => {
   return arr;
 };
 
-// 将数组添加对应的字段
-const updateNeededFeildList = (arr) => {
-  let new_arr = JSON.parse(JSON.stringify(arr || []))
-  if (!(new_arr && new_arr.length)) return []
-  new_arr = new_arr.map(item => {
-    let new_item = {...item, user_id: item.id}
-    return new_item
-  })
-  return new_arr
+// 设置用户流程缓存 (更新对应字段内容)
+const updateUserStorage = async({forms = []}) => {
+  const pro_info = localStorage.getItem('userProcessWithNodesStatusStorage') ? JSON.parse(localStorage.getItem('userProcessWithNodesStatusStorage')) : {}
+  if (!(pro_info && Object.keys(pro_info).length)) return
+  const { user_id, nodes = []  } = pro_info
+  nodes[0]['forms'] = forms
+  await localStorage.removeItem('userProcessWithNodesStatusStorage')
+  await localStorage.setItem('userProcessWithNodesStatusStorage',JSON.stringify(pro_info))
+}
+
+// 判断是否存在 在线表格字段
+const whetherIsExistOnlineExcel = ({forms = []}) => {
+  let flag = false
+  if (!forms.length) return false
+  let newFormsData = [...forms]
+  let curr = newFormsData.find(i => i.field_type == '6')
+  if (curr && Object.keys(curr).length) {
+    flag = true
+  }
+  return flag
 }
 
 export {
@@ -458,6 +469,7 @@ export {
   renderRestrictionsTime,
   compareOppositeTimer,
   removeEmptyArrayEle,
-  updateNeededFeildList
+  updateUserStorage,
+  whetherIsExistOnlineExcel
 }
 

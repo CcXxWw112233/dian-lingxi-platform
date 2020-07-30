@@ -12,7 +12,7 @@ import MilestoneDetail from '../milestoneDetail'
 import { checkIsHasPermission, checkIsHasPermissionInBoard } from '../../../../../../utils/businessFunction';
 import { NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_EDIT, PROJECT_TEAM_CARD_CREATE } from '../../../../../../globalset/js/constant';
 import { isSamDay, getDigit, timestampToTime } from '../../../../../../utils/util';
-import { setDateWithPositionInYearView } from '../../ganttBusiness';
+import { setDateWithPositionInYearView, setDateWidthPositionWeekView } from '../../ganttBusiness';
 const dateAreaHeight = date_area_height //日期区域高度，作为修正
 const coperatedLeftDiv = 297 //滚动条左边还有一个div的宽度，作为修正
 const getEffectOrReducerByName = name => `gantt/${name}`
@@ -147,6 +147,8 @@ export default class GetRowStrip extends PureComponent {
                 width: width || ceilWidth,
                 x
             })
+        } else if (gantt_view_mode == 'week') {
+            date = setDateWidthPositionWeekView({ position: x, date_arr_one_level, ceilWidth })
         } else {
 
         }
@@ -168,7 +170,8 @@ export default class GetRowStrip extends PureComponent {
                 className={styles.will_set_item}
                 style={{
                     display: (!is_item_has_time && this.onHoverState()) ? 'flex' : 'none',
-                    marginLeft: currentRect.x - correct_value2
+                    marginLeft: currentRect.x - correct_value2,
+                    height: task_item_height
                 }}>
                 <Tooltip
                     visible={gantt_view_mode == 'year'}
@@ -270,7 +273,8 @@ export default class GetRowStrip extends PureComponent {
         let { id, } = itemValue
         workflowUpdateTime({ plan_start_time: timestamp, id }, { isNotLoading: false }).then(res => {
             if (isApiResponseOk(res)) {
-                this.changeOutLineTreeNodeProto(id, { start_time: timestamp })
+                const status = isSamDay(new Date().getTime(), timestamp) ? '1' : '0' //如果是今天则设置为未开始
+                this.changeOutLineTreeNodeProto(id, { start_time: timestamp, status })
             } else {
                 message.error(res.message)
             }
@@ -373,14 +377,12 @@ export default class GetRowStrip extends PureComponent {
     }
     milestoneSetClick = () => {
         const date = this.calHoverDate()
-        const { timestamp } = date
-        const { itemValue = {}, gantt_board_id } = this.props
-        let { id, time_span = 1 } = itemValue
-        if (isNaN(time_span) || time_span == 0) time_span = 1
-        const due_time = timestamp + time_span * 24 * 60 * 60 * 1000 - 1000
-        updateMilestone({ id, deadline: due_time }, { isNotLoading: false }).then(res => {
+        const { timestamp, timestampEnd } = date
+        const { itemValue = {} } = this.props
+        let { id } = itemValue
+        updateMilestone({ id, deadline: timestampEnd }, { isNotLoading: false }).then(res => {
             if (isApiResponseOk(res)) {
-                this.changeOutLineTreeNodeProto(id, { start_time: timestamp, due_time })
+                this.changeOutLineTreeNodeProto(id, { start_time: timestamp, due_time: timestampEnd })
             } else {
                 message.error(res.message)
             }
@@ -875,7 +877,7 @@ export default class GetRowStrip extends PureComponent {
                     direction = 'right'
                 }
             } else { //目标时间不包含在列表内
-                console.log('leftleftleft', left)
+                // console.log('leftleftleft', left)
                 // if (left) { //在区间左侧
                 //     direction = 'left'
                 // } else { //在区间右侧
@@ -927,7 +929,7 @@ export default class GetRowStrip extends PureComponent {
 
         const { is_item_has_time, currentRectDashed = {}, dasheRectShow, drag_holiday_count } = this.state
         // 定位
-        const { isInViewArea, direction, add_width } = this.filterIsInViewArea()
+        // const { isInViewArea, direction, add_width } = this.filterIsInViewArea()
 
         return (
             <div>
@@ -939,7 +941,7 @@ export default class GetRowStrip extends PureComponent {
                     // onMouseOver={this.stripMouseOver}
                     // onMouseLeave={this.stripMouseLeave}
                     style={{ ...this.renderStyles() }}>
-                    { //日期在视图外往左或者往右
+                    {/* { //日期在视图外往左或者往右
                         is_item_has_time && !isInViewArea ? (
                             <div
                                 onClick={this.navigateToVisualArea}
@@ -957,9 +959,9 @@ export default class GetRowStrip extends PureComponent {
                                 }
                             </div>
                         ) : ''
-                    }
+                    } */}
                     { //用于拖拽生成任务（已废弃）
-                        dasheRectShow
+                        dasheRectShow && false
                         && !this.task_is_dragging
                         && (
                             <div className={styles.dasheRect} style={{

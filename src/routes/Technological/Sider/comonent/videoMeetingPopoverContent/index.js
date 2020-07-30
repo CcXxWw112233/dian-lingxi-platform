@@ -29,7 +29,7 @@ import { organizationInviteWebJoin, commInviteWebJoin } from '@/services/technol
 import { MESSAGE_DURATION_TIME } from '../../../../../globalset/js/constant';
 import moment from 'moment';
 import { checkIsHasPermissionInBoard } from '../../../../../utils/businessFunction';
-import { arrayNonRepeatfy } from '../../../../../utils/util';
+import { arrayNonRepeatfy, isObjectValueEqual } from '../../../../../utils/util';
 const Option = Select.Option;
 const { TextArea } = Input;
 const { getMentions, toString, toContentState } = Mention;
@@ -183,6 +183,9 @@ class VideoMeetingPopoverContent extends React.Component {
 	}
 
 	componentWillReceiveProps(nextProps) {
+		const { projectList = [] } = this.props
+		const { projectList: newProjectList = [] } = nextProps
+		if (isObjectValueEqual(projectList,newProjectList)) return
 		this.getCurrentProject(nextProps)
 	}
 
@@ -495,7 +498,7 @@ class VideoMeetingPopoverContent extends React.Component {
 		}
 		// 如果是点击的今天，那么提醒什么的都要隐藏
 		// 如果点击的是今天之前或者之后，那么就要显示
-		if (currentDate == nextOrPrevDate) { // 表示是今天
+		if (currentDate == nextOrPrevDate) { // 表示如果日期相等
 			// 这里还需要判断选择的时钟和分钟是否是现在
 			if (new Date(timestampToTimeNormal(start_timeStamp, '/', true)).getHours() == new Date(nowDate).getHours() &&
 				new Date(timestampToTimeNormal(start_timeStamp, '/', true)).getMinutes() == new Date(nowDate).getMinutes()
@@ -513,13 +516,8 @@ class VideoMeetingPopoverContent extends React.Component {
 					meeting_start_time: start_timeStamp,
 					isShowNowTime: false,
 					isExeecedTime: false
-				}, () => {
-					this.setState({
-						isNotUpdateShowTime: true
-					})
 				})
 			}
-
 		} else if (nextOrPrevDate < currentDate) { // 表示是今天之前
 			this.setState({
 				start_time: timestampToTime(start_timeStamp),
@@ -527,7 +525,7 @@ class VideoMeetingPopoverContent extends React.Component {
 				isShowNowTime: false,
 				isExeecedTime: true
 			})
-		} else {
+		} else { // 表示大于今天
 			if (this.timer) {
 				clearTimeout(this.timer)
 			}
@@ -536,7 +534,6 @@ class VideoMeetingPopoverContent extends React.Component {
 				meeting_start_time: start_timeStamp,
 				isShowNowTime: false,
 				isExeecedTime: false,
-				isNotUpdateShowTime: true
 			})
 		}
 
@@ -586,14 +583,14 @@ class VideoMeetingPopoverContent extends React.Component {
 		}
 		this.setState({
 			toNoticeList: newNoticeUserList,
-			userIds: selectedKeys
+			userIds: selectedKeys.filter(i => i.length != '11') || [] // 这里需要过滤掉手机号
 		});
 	}
 
 	// 移除执行人的回调 S
 	handleRemoveExecutors = (e, shouldDeleteItem) => {
 		e && e.stopPropagation()
-		const { toNoticeList = [], othersPeople = [] } = this.state
+		const { toNoticeList = [], othersPeople = [], user_phone = [], userIds = [] } = this.state
 		let new_toNoticeList = [...toNoticeList]
 		let new_othersPeople = [...othersPeople]
 		new_toNoticeList.map((item, index) => {
@@ -601,19 +598,23 @@ class VideoMeetingPopoverContent extends React.Component {
 				new_toNoticeList.splice(index, 1)
 			}
 		})
+		let new_userIds = userIds.filter(i => i != shouldDeleteItem) || []
+		// 表示邀请手机号进来的成员 事件处理
 		if (new_othersPeople && new_othersPeople.length) {
 			new_othersPeople.map((item, index) => {
 				if (item.user_id == shouldDeleteItem) {
 					new_othersPeople.splice(index, 1)
 				}
 			})
+			let new_user_phone = user_phone.filter(i => i != shouldDeleteItem) || []
 			this.setState({
-				othersPeople: new_othersPeople
+				othersPeople: new_othersPeople,
+				user_phone: new_user_phone
 			})
 		}
-
 		this.setState({
-			toNoticeList: new_toNoticeList
+			toNoticeList: new_toNoticeList,
+			userIds: new_userIds
 		})
 	}
 
@@ -635,7 +636,7 @@ class VideoMeetingPopoverContent extends React.Component {
 		new_othersPeople.push(obj)
 		user_phone.push(obj.mobile)
 		this.setState({
-			othersPeople: arrayNonRepeatfy(new_othersPeople, 'user_id'),
+			othersPeople: arrayNonRepeatfy(new_othersPeople,'user_id'),
 			user_phone: this.arrayNonRepeatPhone(user_phone),
 		})
 	}
@@ -916,10 +917,13 @@ class VideoMeetingPopoverContent extends React.Component {
 		const { meeting_start_time } = this.state
 		let old_hours = new Date().getHours()
 		let old_minutes = new Date().getMinutes()
-		let nextOrPrevDate = new Date(timestampToTimeNormal(meeting_start_time, '/', true)).getHours()
+		let old_date = new Date().getDate()
+		let new_hours = new Date(timestampToTimeNormal(meeting_start_time, '/', true)).getHours()
+		let new_date = new Date(timestampToTimeNormal(meeting_start_time, '/', true)).getDate()
+		let flag = new_date == old_date ? new_hours > old_hours ? () => '' : () => this.range(0, old_minutes) : () => ''
 		return {
-			disabledHours: () => this.range(0, 24).splice(0, old_hours),
-			disabledMinutes: nextOrPrevDate > old_hours ? () => '' : () => this.range(0, old_minutes),
+			disabledHours: new_date == old_date ? () => this.range(0, 24).splice(0, old_hours) : () => '',
+			disabledMinutes: flag,
 		};
 	}
 

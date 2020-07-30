@@ -8,6 +8,9 @@ import ProcessDetailModal from '@/components/ProcessDetailModal'
 import BoardFeaturesProcessItem from './BoardFeaturesProcessItem'
 import { jsonArrayCompareSort, transformTimestamp, isObjectValueEqual, timeSort } from '../../../../../utils/util'
 import { compareOppositeTimer, removeEmptyArrayEle } from '../../../../../components/ProcessDetailModal/components/handleOperateModal'
+import { currentNounPlanFilterName } from '../../../../../utils/businessFunction'
+import { PROJECTS } from '../../../../../globalset/js/constant'
+import { Dropdown, Menu } from 'antd'
 
 @connect(mapStateToProps)
 export default class BoardFeatures extends Component {
@@ -16,7 +19,7 @@ export default class BoardFeatures extends Component {
 		super(props)
 		let new_flow_todo_list = this.updateFlowsOppositeTime(props.board_flow_todo_list)
 		this.state = {
-			board_todo_list: [].concat(...props.board_card_todo_list, ...new_flow_todo_list)
+			board_todo_list: [].concat(...props.board_card_todo_list, ...new_flow_todo_list),
 		}
 	}
 
@@ -91,21 +94,19 @@ export default class BoardFeatures extends Component {
 	}
 
 	// 关闭弹窗时查询列表
-	setProcessDetailModalVisibile = () => {
+	setProcessDetailModalVisibile = (data) => {
 		const { dispatch, simplemodeCurrentProject = {} } = this.props
 		const { board_id } = simplemodeCurrentProject
 		let params = {
+			...data,
 			_organization_id: localStorage.getItem('OrganizationId'),
 		}
 		if (board_id && board_id != '0') {
-			params.board_ids = board_id
+			params.board_id = board_id
 		}
 		dispatch({
 			type: 'simplemode/getBoardsProcessTodoList',
-			payload: {
-				_organization_id: params._organization_id,
-				board_id: params.board_ids
-			}
+			payload: params
 		})
 		this.setState({
 			whetherShowModalVisible: false
@@ -170,6 +171,51 @@ export default class BoardFeatures extends Component {
 			}
 		})
 	}
+
+	// 选择的代办时间
+	handleMenuReallySelect = (e) => {
+		const { domEvent, key } = e
+		domEvent && domEvent.stopPropagation()
+		const { simplemodeCurrentProject } = this.props
+		this.props.dispatch({
+			type: 'simplemode/updateDatas',
+			payload: {
+				simplemodeCurrentProject: {
+					...simplemodeCurrentProject,
+					selected_todo_list_time: key
+				}
+			}
+		})
+		switch (key) {
+			case 'all_time': // 所有时间
+				this.setTaskDetailModalVisible()
+				this.setProcessDetailModalVisibile()
+				break;
+			case 'recently_week': // 最近七周
+				this.setTaskDetailModalVisible({limit_time: 7})
+				this.setProcessDetailModalVisibile({limit_time: 7})
+				break
+			case 'recently_month': // 最近一月
+				this.setTaskDetailModalVisible({limit_time: 31})
+				this.setProcessDetailModalVisibile({limit_time: 31})
+				break
+			default:
+				break;
+		}
+	}
+
+	// 渲染不同的时间段
+	timeQuantum = () => {
+		const { simplemodeCurrentProject: { selected_todo_list_time } } = this.props
+		return (
+			<Menu onClick={this.handleMenuReallySelect} selectedKeys={[selected_todo_list_time]}>
+				<Menu.Item key={'all_time'}>所有时间</Menu.Item>
+				<Menu.Item key={'recently_week'}>最近一周</Menu.Item>
+				<Menu.Item key={'recently_month'}>最近一月</Menu.Item>
+			</Menu>
+		)
+	}
+
 	// 渲染不同类型的代办列表
 	renderDiffRelaTypeFeaturesItem = (value) => {
 		const { id, rela_type } = value
@@ -185,11 +231,23 @@ export default class BoardFeatures extends Component {
 		}
 	}
 	renderTodoList = () => {
-		const { board_card_todo_list = [] } = this.props
+		const { board_card_todo_list = [], simplemodeCurrentProject: { selected_board_term }, projectList = [] } = this.props
 		const { board_todo_list = [] } = this.state
+		let tempBoardToDoList = [...board_todo_list]
+		let tempProjectList = [...projectList]
+		if (selected_board_term == '1') { // 表示我参与的
+			const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
+			let temp = tempProjectList.filter(item=>item.user_id==id)
+			tempBoardToDoList = tempBoardToDoList.filter(item => temp.find(i=>i.board_id==item.board_id)) || []
+		} else if (selected_board_term == '2') { // 表示我负责的项目
+			let temp = tempProjectList.filter(item=>item.is_principal=='1')
+			tempBoardToDoList = tempBoardToDoList.filter(item => temp.find(i=>i.board_id==item.board_id)) || []
+		} else {
+			tempBoardToDoList = [...board_todo_list]
+		}
 		return (
-			board_todo_list.length ? (
-				board_todo_list.map(value => {
+			tempBoardToDoList.length ? (
+				tempBoardToDoList.map(value => {
 					const { id } = value
 					// return <BoardFeaturesProcessItem key={id} itemValue={value} />
 					return <>{this.renderDiffRelaTypeFeaturesItem(value)}</>
@@ -204,10 +262,11 @@ export default class BoardFeatures extends Component {
 	}
 
 	// 业务逻辑太复杂时间太紧张，关闭弹窗后再直接拉取接口查询待办事项
-	setTaskDetailModalVisible = () => {
+	setTaskDetailModalVisible = (data) => {
 		const { dispatch, simplemodeCurrentProject = {} } = this.props
 		const { board_id } = simplemodeCurrentProject
 		let params = {
+			...data,
 			_organization_id: localStorage.getItem('OrganizationId'),
 		}
 		if (board_id && board_id != '0') {
@@ -223,20 +282,32 @@ export default class BoardFeatures extends Component {
 		return (
 			<div className={`${globalStyles.authTheme} ${styles.nodataArea2}`}>
 				<div className={`${globalStyles.authTheme} ${styles.alarm}`}>&#xe704;</div>
-				<div className={`${styles.title}`}>欢迎来到聆悉，我们有以上项目功能，赶快新建一个项目体验吧～</div>
+				<div className={`${styles.title}`}>欢迎来到聆悉，我们有以上{`${currentNounPlanFilterName(PROJECTS)}`}功能，赶快新建一个{`${currentNounPlanFilterName(PROJECTS)}`}体验吧～</div>
 			</div>
 		)
 	}
 
 	render() {
 		const { drawerVisible, projectList = [], projectInitLoaded, board_card_todo_list = [], process_detail_modal_visible } = this.props
+		const { simplemodeCurrentProject: { selected_todo_list_time } } = this.props
 		const { whetherShowProcessDetailModal } = this.state
+		const selected_filed_time = (!selected_todo_list_time || selected_todo_list_time == 'all_time') ? '所有时间' : selected_todo_list_time == 'recently_week' ? '最近一周' : selected_todo_list_time == 'recently_month' ? '最近一月' : '所有时间'
 		return (
-			<div>
+			<div id={'featurebox_featuresContent'}>
 				{
 					projectInitLoaded ? (
 						projectList.length ? (
-							this.renderTodoList()
+							<>
+								<div>
+									<Dropdown overlayClassName={styles.overlay_featurebox_dropdown} getPopupContainer={() => document.getElementById('featurebox_featuresContent')} overlay={this.timeQuantum()} trigger={['click']}>
+										<div style={{color: '#FFF', lineHeight: '20px', marginLeft: '16px', marginBottom: '12px'}}>
+											{selected_filed_time}&nbsp;&nbsp;
+											<span className={globalStyles.authTheme}>&#xe687;</span>
+										</div>
+									</Dropdown>
+								</div>
+								{this.renderTodoList()}
+							</>
 						) : (
 								this.renderWelcome()
 							)
@@ -250,7 +321,7 @@ export default class BoardFeatures extends Component {
 					handleDeleteCard={this.handleDeleteCard}
 				/>
 				{
-					process_detail_modal_visible && whetherShowProcessDetailModal &&  (
+					process_detail_modal_visible && whetherShowProcessDetailModal && (
 						<ProcessDetailModal
 							process_detail_modal_visible={process_detail_modal_visible}
 							setProcessDetailModalVisibile={this.setProcessDetailModalVisibile}

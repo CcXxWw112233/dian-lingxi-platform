@@ -185,6 +185,7 @@ export default class UploadAttachment extends Component {
 
       })
       .catch((error, e) => {
+        console.log(error);
         message.destroy()
         if (_.has(error, "response.status")) {
           switch (error.response.status) {

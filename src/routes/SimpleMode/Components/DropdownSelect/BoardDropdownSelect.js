@@ -56,7 +56,7 @@ class BoardDropdownSelect extends Component {
     // 迷你的下拉选项
     // console.log(data, 'bbbbb');
     if (data.key === 'add') {
-      console.log("onSelectBoard");
+      // console.log("onSelectBoard");
       this.setState({
         addProjectModalVisible: true
       });
@@ -210,7 +210,7 @@ class BoardDropdownSelect extends Component {
 
   getMenuItemList(projectList) {
     const { currentUserOrganizes, currentSelectedWorkbenchBox = {} } = this.props;
-    let menuItemList = [{ id: '0', name: '所有项目' }];
+    let menuItemList = [{ id: '0', name: `我参与的${currentNounPlanFilterName(PROJECTS)}` }];
     projectList.map((board, index) => {
       const { board_id: id, board_name: name, org_id } = board;
       //根据当前模块是付费非付费模块 去设置项目列表中的项目是否可以选择
@@ -233,7 +233,7 @@ class BoardDropdownSelect extends Component {
     const { projectList, simplemodeCurrentProject, iconVisible = true } = this.props;
     const { addProjectModalVisible = false } = this.state;
     const menuItemList = this.getMenuItemList(projectList);
-    const fuctionMenuItemList = this.isHasCreatBoardPermission() ? [{ 'name': '新建项目', 'icon': 'plus-circle', 'selectHandleFun': this.createNewBoard, 'id': 'add' }] : [];
+    const fuctionMenuItemList = this.isHasCreatBoardPermission() ? [{ 'name': `新建${currentNounPlanFilterName(PROJECTS)}`, 'icon': 'plus-circle', 'selectHandleFun': this.createNewBoard, 'id': 'add' }] : [];
     let selectedKeys = ['0'];
     if (simplemodeCurrentProject && simplemodeCurrentProject.board_id) {
       selectedKeys = [simplemodeCurrentProject.board_id]

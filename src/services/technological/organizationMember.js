@@ -332,3 +332,38 @@ export async function setShowSimpleModel(data) {
     }
   })
 }
+
+// 获取移除成员交接列表
+export async function getTransferSelectedList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/board/transfer/selected/list`,
+    method: 'GET',
+    params: {
+      ...params,
+      _organization_id: localStorage.getItem('OrganizationId')
+    }
+  });
+}
+
+// 获取移除成员详细交接列表
+export async function getTransferSelectedDetailList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/board/transfer/selected/detail`,
+    method: 'GET',
+    params: {
+      ...params,
+    }
+  });
+}
+
+// 移除成员并设置交接人
+export async function removeMemberWithSettingTransferUser(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/board/transfer/board_user`,
+    method: 'POST',
+    data: {
+      ...data,
+      _organization_id: localStorage.getItem('OrganizationId')
+    }
+  });
+}

@@ -129,7 +129,7 @@ export default class DuplicateAndReportPerson extends Component {
 
   // 渲染指定人员
   renderDesignatedPersonnel = () => {
-    const { data = [], board_id } = this.props
+    const { data = [], board_id, itemKey } = this.props
     // const { designatedPersonnelList = [] } = this.state
     let designatedPersonnelList = this.filterRecipients()
     let org_id = getOrgIdByBoardId(board_id) || '0'
@@ -140,6 +140,7 @@ export default class DuplicateAndReportPerson extends Component {
             <div style={{ position: 'relative' }}>
               <Dropdown autoAdjustOverflow={false} trigger={['click']} overlayClassName={indexStyles.overlay_pricipal}
                 // getPopupContainer={triggerNode => triggerNode.parentNode}
+                getPopupContainer={() => document.getElementById(`reportPersonContainer_${itemKey}`)}
                 overlayStyle={{ maxWidth: '200px' }}
                 overlay={
                   <MenuSearchPartner
@@ -169,11 +170,11 @@ export default class DuplicateAndReportPerson extends Component {
                     <div style={{ display: 'flex', alignItems: 'center' }} key={user_id}>
                       <div className={`${indexStyles.user_item}`} style={{ position: 'relative', textAlign: 'center', marginBottom: '8px' }} key={user_id}>
                         {avatar ? (
-                          <Tooltip overlayStyle={{ minWidth: '62px' }} getPopupContainer={() => document.getElementById('reportPersonContainer')} placement="top" title={name || user_name || '佚名'}>
+                          <Tooltip overlayStyle={{ minWidth: '62px' }} getPopupContainer={() => document.getElementById(`reportPersonContainer_${itemKey}`)} placement="top" title={name || user_name || '佚名'}>
                             <img className={indexStyles.img_hover} style={{ width: '32px', height: '32px', borderRadius: 20, margin: '0 2px' }} src={avatar} />
                           </Tooltip>
                         ) : (
-                            <Tooltip overlayStyle={{ minWidth: '62px' }} getPopupContainer={() => document.getElementById('reportPersonContainer')} placement="top" title={name || user_name || '佚名'}>
+                            <Tooltip overlayStyle={{ minWidth: '62px' }} getPopupContainer={() => document.getElementById(`reportPersonContainer_${itemKey}`)} placement="top" title={name || user_name || '佚名'}>
                               <div className={indexStyles.default_user_hover} style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', margin: '0 2px' }}>
                                 <Icon type={'user'} style={{ fontSize: 14, color: '#8c8c8c' }} />
                               </div>
@@ -187,6 +188,7 @@ export default class DuplicateAndReportPerson extends Component {
                 })}
                 <Dropdown autoAdjustOverflow={false} trigger={['click']} overlayClassName={indexStyles.overlay_pricipal}
                   // getPopupContainer={triggerNode => triggerNode.parentNode}
+                  getPopupContainer={() => document.getElementById(`reportPersonContainer_${itemKey}`)}
                   overlayStyle={{ maxWidth: '200px' }}
                   overlay={
                     <MenuSearchPartner
@@ -232,13 +234,13 @@ export default class DuplicateAndReportPerson extends Component {
   }
 
   render() {
-    const { itemValue } = this.props
+    const { itemValue, itemKey } = this.props
     const { cc_type, recipients } = itemValue
     const { designatedPersonnelList } = this.state
     let disabledRecipients = (designatedPersonnelList && designatedPersonnelList.length) ? isArrayEqual(recipients.split(','), designatedPersonnelList) : true
     return (
       <div className={indexStyles.mini_content}>
-        <div id="reportPersonContainer" className={`${indexStyles.mini_top} ${globalStyles.global_vertical_scrollbar}`}>
+        <div id={`reportPersonContainer_${itemKey}`} className={`${indexStyles.mini_top} ${globalStyles.global_vertical_scrollbar}`}>
           <div>
             {cc_type == '1' ? this.renderDesignatedPersonnel() : this.renderHandReportPersonnel()}
           </div>

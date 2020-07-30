@@ -37,7 +37,7 @@ export default class BoardTemplate extends Component {
             checkedKeys: [], //已选择的key
             checkedKeysObj: [], ////已选择的keyobj
             selectedTpl: {},
-            template_origin: '0', //0 || 2 平台或自有
+            template_origin: '2', //0 || 2 平台或自有
         }
         this.drag_init_inner_html = ''
     }
@@ -305,7 +305,7 @@ export default class BoardTemplate extends Component {
         )
     }
     // 渲染树
-    renderTemplateTree = (data, parent_type, parrent_id, parrent_name, parent_content_length = 0, ) => {
+    renderTemplateTree = (data, parent_type, parrent_id, parrent_name, parent_content_length = 0,) => {
         const is_child_task = parent_type == '2'
         return (
             data.map(item => {
@@ -524,7 +524,7 @@ export default class BoardTemplate extends Component {
     }
     // 创建任务
     createCard = async ({ list_id, start_time, end_time }) => {
-        const { dispatch, gantt_board_id } = this.props
+        const { dispatch, gantt_board_id, group_view_type, gantt_board_list_id } = this.props
         if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE, gantt_board_id)) {
             message.warn(NOT_HAS_PERMISION_COMFIRN)
             return
@@ -537,6 +537,12 @@ export default class BoardTemplate extends Component {
             due_time,
             start_time,
             list_id: list_id != '0' ? list_id : ''
+        }
+        if (group_view_type == '5') { //分组下=》成员视图下
+            params.list_id = gantt_board_list_id
+            if (list_id && list_id != '0') {
+                params.users = list_id
+            }
         }
         // console.log('sssssparams', params)
         const res = await createCardByTemplate({ ...params })
@@ -610,7 +616,6 @@ export default class BoardTemplate extends Component {
         let milestone_ids = checkedKeys.filter(item => checkedKeysObj.findIndex(item2 => item == item2.id && item2.parent_id == '0') != -1)
         let card_ids = checkedKeys.filter(item => checkedKeysObj.findIndex(item2 => item == item2.id && item2.parent_id != '0') != -1)
         let card_ids_objs = checkedKeysObj.filter(item => card_ids.findIndex(item2 => item2 == item.id) != -1)
-
         let arr = [] //装载
         for (let val of template_data) {
             const child_content_1 = val.child_content
@@ -636,13 +641,14 @@ export default class BoardTemplate extends Component {
         //最终所需要数据
         milestone_ids = new_checkedKeys.filter(item => abs.findIndex(item2 => item == item2.id && item2.parent_id == '0') != -1)
         card_ids = new_checkedKeys.filter(item => abs.findIndex(item2 => item == item2.id && item2.parent_id != '0') != -1)
-
+        // console.log('new_checkedKeys', checkedKeys, new_checkedKeys)
         const { gantt_board_id, dispatch } = this.props
         const params = {
             board_id: gantt_board_id,
             template_id: template_data[0].template_id,
-            milestone_ids,
-            card_ids
+            select_ids: new_checkedKeys
+            // milestone_ids,
+            // card_ids
         }
         importBoardTemplate(params).then(res => {
             if (isApiResponseOk(res)) {
@@ -668,7 +674,12 @@ export default class BoardTemplate extends Component {
 
 
     openImportBoardModal = (tplId) => {
+        const { outline_tree = [], group_view_type } = this.props
         const { template_list } = this.state;
+        if (group_view_type == '4' && !outline_tree.length) {
+            this.onImportBoardTemplate()
+            return
+        }
         const selectedTpl = template_list.find((item) => item.id == tplId);
         this.setState({
             safeConfirmModalVisible: true,
@@ -724,8 +735,8 @@ export default class BoardTemplate extends Component {
                                     style={{ height: date_area_height }}
                                     className={styles.top}>
                                     <div className={`${styles.top_select}`}>
-                                        <div className={`${styles.top_select_left} ${template_origin == '0' && styles.selected}`} onClick={() => this.selectTemplateType('0')}>行业模版</div>
-                                        <div className={`${styles.top_select_right} ${template_origin == '2' && styles.selected}`} onClick={() => this.selectTemplateType('2')}>自有模版</div>
+                                        <div className={`${styles.top_select_left} ${template_origin == '2' && styles.selected}`} onClick={() => this.selectTemplateType('2')}>自有模版</div>
+                                        <div className={`${styles.top_select_right} ${template_origin == '0' && styles.selected}`} onClick={() => this.selectTemplateType('0')}>行业模版</div>
                                     </div>
 
                                     {/* <span className={styles.title}>项目模板</span> */}
@@ -801,15 +812,25 @@ export default class BoardTemplate extends Component {
                                 :
                                 <div style={{ height: '100%' }}>
                                     {
-                                        this.state.template_list && this.state.template_list.map((item) => {
-                                            const { id, name } = item
-                                            return (
-                                                <div class={styles.boardTplItem} onClick={() => this.selectBoardTemplate(id)}>
-                                                    <span className={`${styles.left} ${globalStyles.global_ellipsis}`}>{name}</span>
-                                                    <span> <i className={globalStyles.authTheme}>&#xe7eb;</i></span>
+                                        this.state.template_list && this.state.template_list.length ? (
+                                            this.state.template_list.map((item) => {
+                                                const { id, name } = item
+                                                return (
+                                                    <div class={styles.boardTplItem} onClick={() => this.selectBoardTemplate(id)}>
+                                                        <span className={`${styles.left} ${globalStyles.global_ellipsis}`}>{name}</span>
+                                                        <span> <i className={globalStyles.authTheme}>&#xe7eb;</i></span>
+                                                    </div>
+                                                );
+                                            })
+                                        ) : (
+                                                <div style={{ textAlign: "center", color: 'rgba(0,0,0,0.3)', marginTop: 50 }}>
+                                                    <div className={`${globalStyles.authTheme}`}
+                                                        style={{ fontSize: 50, textAlign: "center" }}>
+                                                        &#xe703;
+                                                    </div>
+                                                    <div>暂无数据</div>
                                                 </div>
-                                            );
-                                        })
+                                            )
                                     }
                                 </div>
                         }
@@ -858,7 +879,8 @@ function mapStateToProps({
             outline_tree,
             group_view_type,
             gantt_view_mode,
-            triggle_request_board_template
+            triggle_request_board_template,
+            gantt_board_list_id
         }
     },
     technological: { datas: { userBoardPermissions = [] } },
@@ -872,6 +894,7 @@ function mapStateToProps({
         outline_tree,
         group_view_type,
         gantt_view_mode,
-        triggle_request_board_template
+        triggle_request_board_template,
+        gantt_board_list_id
     }
 }

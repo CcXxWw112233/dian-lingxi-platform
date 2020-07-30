@@ -401,12 +401,12 @@ class CreateProject extends React.Component {
                 } */}
                 <div className={indexStyles.setelse_item} onClick={this.setInviteOthersVisible}>
                   <div className={`${globalStyles.authTheme} ${indexStyles.addUSer}`}>&#xe685;</div>
-                  <div className={indexStyles.setelse_item_name}>邀请他人加入项目</div>
+                  <div className={indexStyles.setelse_item_name}>邀请他人加入</div>
                   <div className={`${globalStyles.authTheme} ${indexStyles.spin} ${!invit_others_visible && indexStyles.spin_down}`}>&#xe66b;</div>
                 </div>
               </div>
               <div className={indexStyles.setelse_right}>
-                <Button type="primary" disabled={stepOneContinueDisabled || (OrganizationId == '0' && (!_organization_id || !checkIsHasPermission(ORG_TEAM_BOARD_CREATE, _organization_id)))} onClick={this.createBoard} style={{ width: 96, height: 40, }}>创建项目</Button>
+                <Button type="primary" disabled={stepOneContinueDisabled || (OrganizationId == '0' && (!_organization_id || !checkIsHasPermission(ORG_TEAM_BOARD_CREATE, _organization_id)))} onClick={this.createBoard} style={{ width: 96, height: 40, }}>创建{`${currentNounPlanFilterName(PROJECTS)}`}</Button>
               </div>
             </div>
             {/* 复制流程模板 */}

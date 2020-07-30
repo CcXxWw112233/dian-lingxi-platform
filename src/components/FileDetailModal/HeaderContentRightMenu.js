@@ -540,14 +540,23 @@ export default class HeaderContentRightMenu extends Component {
     const { dispatch } = this.props
     // 设置访问控制开关
     if (obj && obj.type && obj.type == 'privilege') {
+      // console.log(obj, privileges,'sssssssssssssssss_我的天')
       let new_privileges = [...privileges]
-      for (let item in obj) {
-        if (item == 'privileges') {
-          obj[item].map(val => {
-            let temp_arr = arrayNonRepeatfy([].concat(...privileges, val))
-            if (temp_arr && !temp_arr.length) return false
-            return new_privileges = [...temp_arr]
-          })
+      const { privileges: temp_privileges = [] } = obj
+      // if (!(temp_privileges && temp_privileges.length)) return
+      if (new_privileges.find(i => i.id == (temp_privileges[0] && temp_privileges[0].id))) { // 如果能找到表示替换 否则添加
+        new_privileges = new_privileges.map(item => {
+          if (item.id == (temp_privileges[0] && temp_privileges[0].id)) { // 表示在列表中找到该成员
+            let new_item = {...item}
+            new_item = {...item, ...temp_privileges[0]}
+            return new_item
+          } else {
+            return item
+          }
+        })
+      } else {
+        if (temp_privileges && temp_privileges.length) {
+          new_privileges.push(...temp_privileges)
         }
       }
       let newCurrentPreviewFileData = { ...currentPreviewFileData, is_privilege: obj.is_privilege, privileges: new_privileges }

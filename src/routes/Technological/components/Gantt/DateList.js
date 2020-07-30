@@ -142,6 +142,10 @@ export default class DateList extends Component {
       this.setState({
         create_lcb_time_arr: [timestamp, timestampEnd]
       })
+    } else if (gantt_view_mode == 'week') {
+      this.setState({
+        create_lcb_time_arr: [timestamp, timestampEnd]
+      })
     } else {
 
     }
@@ -329,6 +333,7 @@ export default class DateList extends Component {
           // const is_all_realized = this.isHasMiletoneList().handleMonthMode(Number(timestampEnd)).is_all_realized
           const { flag: has_lcb, current_date_miletones = [], is_over_duetime, is_all_realized } = this.isHasMiletoneList().handleMonthMode(Number(timestampEnd))
           // /gantt_board_id == '0' ||
+          const isToday = isSamDay(timestamp, new Date().getTime())
           return (
             group_view_type != '1' ? (
               <Tooltip key={`${month}/${date_no}`} title={`${this.getDateNoHolidaylunar(timestamp).lunar} ${this.getDateNoHolidaylunar(timestamp).holiday || ' '}`}>
@@ -344,13 +349,13 @@ export default class DateList extends Component {
                           </div>
                         )
                       }
-                      {date_no}
+                      {isToday ? <span style={{ color: '#1890FF', fontSize: 12 }}>今天</span> : date_no}
                     </div>
                   </div>
                 </div>
               </Tooltip>
             ) : (
-                <Dropdown overlay={this.renderLCBList(current_date_miletones, { timestampEnd })} key={`${month}/${date_no}`}>
+                <Dropdown overlay={this.renderLCBList(current_date_miletones, { timestampEnd })} key={`${month}/${date_no}`} trigger={['click']}>
                   <Tooltip title={`${this.getDateNoHolidaylunar(timestamp).lunar} ${this.getDateNoHolidaylunar(timestamp).holiday || ' '}`}>
                     <div>
                       <div className={`${indexStyles.dateDetailItem}`} key={key2}>
@@ -369,11 +374,52 @@ export default class DateList extends Component {
                               </div>
                             )
                           }
-                          {date_no}
+                          {isToday ? <span style={{ color: '#1890FF', fontSize: 12 }}>今天</span> : date_no}
                         </div>
                       </div>
                     </div>
                   </Tooltip>
+                </Dropdown>
+              )
+          )
+        })}
+      </div>
+    )
+  }
+
+  // 渲染周视图日期数据
+  renderWeekViewDate = (date_inner = []) => {
+    const { ceilWidth, group_view_type } = this.props
+    return (
+      <div className={indexStyles.dateDetail} >
+        {date_inner.map((value2, key2) => {
+          const { month, last_date, year, timestamp, timestampEnd, date_no } = value2
+          const { flag: has_lcb, current_date_miletones, is_over_duetime, is_all_realized } = this.isHasMiletoneList().handleYearMode({
+            year, month, last_date, timestamp, timestampEnd
+          })
+          return (
+            group_view_type != '1' ? (
+              <div key={`${month}/${timestamp}`}>
+                <div className={`${indexStyles.dateDetailItem}`} key={key2} style={{ width: ceilWidth * 7, fontSize: 12 }}>
+                  <div className={`${indexStyles.dateDetailItem_date_no} `} style={{ fontSize: 12, }}>
+                    {date_no}
+                  </div>
+                </div>
+              </div>
+            ) : (
+                <Dropdown overlay={this.renderLCBList(current_date_miletones, { timestamp, timestampEnd })} key={`${month}/${timestamp}`} trigger={['click']}>
+                  <div key={`${month}/${timestamp}`}>
+                    <div className={`${indexStyles.dateDetailItem}`} key={key2} style={{ width: ceilWidth * 7, fontSize: 12 }}>
+                      <div className={`${indexStyles.dateDetailItem_date_no} 
+                                    ${indexStyles.nomal_date_no}
+                                    ${has_lcb && indexStyles.has_moletones_date_no}`}
+                        style={{ background: this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized, fontSize: 12 }) }}
+                      >
+                        {date_no}
+                      </div>
+
+                    </div>
+                  </div>
                 </Dropdown>
               )
           )
@@ -402,7 +448,7 @@ export default class DateList extends Component {
                 </div>
               </div>
             ) : (
-                <Dropdown overlay={this.renderLCBList(current_date_miletones, { timestamp, timestampEnd })} key={`${month}/${timestamp}`} >
+                <Dropdown overlay={this.renderLCBList(current_date_miletones, { timestamp, timestampEnd })} key={`${month}/${timestamp}`} trigger={['click']}>
                   <div key={`${month}/${timestamp}`}>
                     <div className={`${indexStyles.dateDetailItem}`} key={key2} style={{ width: ceilWidth * last_date }}>
                       <div className={`${indexStyles.dateDetailItem_date_no} 
@@ -490,6 +536,11 @@ export default class DateList extends Component {
                     this.renderMonthViewDate(date_inner)
                   )
                 }
+                {
+                  gantt_view_mode == 'week' && (
+                    this.renderWeekViewDate(date_inner)
+                  )
+                }
               </div>
             )
           })}
@@ -552,7 +603,7 @@ class DropMilestone extends React.Component {
       is_all_realized
     } = this.props
     return (
-      <Dropdown onVisibleChange={this.dropdwonVisibleChange} overlay={menu_oprate_visible ? renderLCBList(current_date_miletones, { timestampEnd }) : (<span />)} key={itemKey}>
+      <Dropdown onVisibleChange={this.dropdwonVisibleChange} overlay={menu_oprate_visible ? renderLCBList(current_date_miletones, { timestampEnd }) : (<span />)} key={itemKey} trigger={['click']}>
         <Tooltip title={`${getDateNoHolidaylunar(timestamp).lunar} ${getDateNoHolidaylunar(timestamp).holiday || ' '}`}>
           <div>
             <div className={`${indexStyles.dateDetailItem}`} key={key2}>

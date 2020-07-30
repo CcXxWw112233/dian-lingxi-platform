@@ -3,7 +3,7 @@ import { Menu, Button, Input, message, Modal } from 'antd';
 import styles from './nodeOperate.less'
 import globalStyles from '@/globalset/css/globalClassName.less';
 import { connect } from 'dva';
-import { addTaskGroup, changeTaskType, deleteTask, requestDeleteMiletone, deleteTaskVTwo, boardAppRelaMiletones } from '../../../../../../services/technological/task';
+import { addTaskGroup, changeTaskType, deleteTask, requestDeleteMiletone, deleteTaskVTwo, boardAppRelaMiletones, updateTaskVTwo } from '../../../../../../services/technological/task';
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData';
 import OutlineTree from '.';
 import { visual_add_item } from '../../constants';
@@ -22,14 +22,24 @@ export default class NodeOperate extends Component {
     }
 
     setTemplistVisible = (bool) => { //流程模板列表显示
+        const { templist_visible } = this.state
         this.setState({
-            templist_visible: bool
+            templist_visible: bool //!templist_visible
+        }, () => {
+            if (bool) {
+                this.setGroupSubShow(false)
+            }
         })
     }
 
     setGroupSubShow = (bool) => { //设置选择分组二级菜单是否显示
+        const { group_sub_visible } = this.state
         this.setState({
-            group_sub_visible: bool
+            group_sub_visible: bool// !group_sub_visible
+        }, () => {
+            if (bool) {
+                this.setTemplistVisible(false)
+            }
         })
     }
     setCreateGroupVisible = (bool) => { //设置新建分组显示
@@ -68,6 +78,7 @@ export default class NodeOperate extends Component {
 
     // 分组列表
     renderGroupList = () => {
+        const { nodeValue: { list_id: selected_list_id } } = this.props
         const groups = this.getCardGroups()
         return (
             <>
@@ -80,10 +91,14 @@ export default class NodeOperate extends Component {
                         const { list_id, list_name } = item
                         return (
                             <div
+                                title={list_name}
                                 onClick={() => this.menuItemClick(`group_id_${list_id}`)}
-                                className={`${styles.submenu_area_item}`}
+                                className={`${styles.submenu_area_item} `}
                                 key={list_id}>
-                                {list_name}
+                                <div className={`${styles.name} ${globalStyles.global_ellipsis}`}>{list_name}</div>
+                                <div
+                                    style={{ display: selected_list_id == list_id ? 'block' : 'none' }}
+                                    className={`${globalStyles.authTheme} ${styles.check}`}>&#xe7fc;</div>
                             </div>
                         )
                     })
@@ -136,20 +151,34 @@ export default class NodeOperate extends Component {
         })
     }
     relationGroup = (list_id) => {
-        const { gantt_board_id, nodeValue: { id }, } = this.props
+        const { gantt_board_id, nodeValue: { id, list_id: selected_list_id }, } = this.props
         const params = {
             list_id,
             board_id: gantt_board_id,
             card_id: id
         }
-        changeTaskType({ ...params }, { isNotLoading: false })
+        const is_cancle = list_id == selected_list_id
+        if (is_cancle) params.list_id = '0'
+        updateTaskVTwo({ ...params }, { isNotLoading: false })
             .then(res => {
-                if (isApiResponseOk) {
-                    message.success('关联分组成功')
+                if (isApiResponseOk(res)) {
+                    message.success(!is_cancle ? '关联分组成功' : '已取消关联')
+                    this.setRelationGroupId({ list_id: params.list_id })
                 } else {
                     message.error(res.message)
                 }
             })
+    }
+    setRelationGroupId = ({ list_id }) => {
+        let { nodeValue: { id }, outline_tree = [], dispatch } = this.props
+        let node = OutlineTree.getTreeNodeValue(outline_tree, id);
+        node.list_id = list_id
+        dispatch({
+            type: 'gantt/handleOutLineTreeData',
+            payload: {
+                data: outline_tree
+            }
+        });
     }
     // ----------分组逻辑--------end+
     // 选择项点击
@@ -174,6 +203,14 @@ export default class NodeOperate extends Component {
                 break
             case 'insert_flow':
                 this.insertItem({ type: 'flow', data })
+                break
+            case 'insert_milestone':
+                this.insertItem({ type: 'milestone', data })
+                break
+            case 'rename':
+                if (typeof this.props.editName == 'function') {
+                    this.props.editName()
+                }
                 break
             default:
                 if (/^group_id_+/.test(key)) {//选择任务分组
@@ -253,16 +290,18 @@ export default class NodeOperate extends Component {
             )
         } else if (type == 'flow') { //插入流程
             const { id: flow_template_id } = data
-            const { id: flow_id, name: flow_name } = await this.insertFlow({ flow_template_id })
+            const { id: flow_id, name: flow_name, status } = await this.insertFlow({ flow_template_id })
 
             if (!flow_id) {
                 return
             }
             new_children.splice(index + 1, 0,
-                { ...visual_add_item, add_id: '', tree_type: '3', id: flow_id, name: flow_name }
+                { ...visual_add_item, add_id: '', tree_type: '3', id: flow_id, name: flow_name, status }
             )
-        } else {
-
+        } else if (type == 'milestone') {
+            new_children.splice(index + 1, 0,
+                { ...visual_add_item, editing: true, }
+            )
         }
         if (node) {
             node.children = new_children;
@@ -275,6 +314,15 @@ export default class NodeOperate extends Component {
                 data: outline_tree
             }
         });
+        if (type == 'flow') {
+            // 保存位置
+            dispatch({
+                type: 'gantt/saveGanttOutlineSort',
+                payload: {
+                    outline_tree
+                }
+            })
+        }
     }
     // 插入流程节点
     insertFlow = async ({ flow_template_id }) => {
@@ -284,7 +332,8 @@ export default class NodeOperate extends Component {
         if (isApiResponseOk(res)) {
             const { id, name } = res.data
             if (!parent_milestone_id) { //如果不是挂载在里程碑下面
-                return { id, name }
+                return { ...res.data }
+                // return { id, name }
             } else {
                 const res2 = await boardAppRelaMiletones({
                     id: parent_milestone_id,
@@ -292,7 +341,8 @@ export default class NodeOperate extends Component {
                     origin_type: '2',
                 })
                 if (isApiResponseOk(res2)) {
-                    return { id, name }
+                    return { ...res.data }
+                    // return { id, name }
                 } else {
                     message.error(res.message)
                     return {}
@@ -366,6 +416,9 @@ export default class NodeOperate extends Component {
                         </div>
                     )
                 }
+                <div className={styles.menu_item} onClick={() => this.menuItemClick('rename')}>
+                    重命名
+                </div>
                 { //一级任务是顶级则没有
                     tree_type == '1' && (
                         <div className={styles.menu_item} onClick={() => this.menuItemClick('add_card')}>
@@ -375,12 +428,29 @@ export default class NodeOperate extends Component {
                 }
 
                 { //一级任务是顶级则没有
-                    (tree_type == '2' || tree_type == '3') && (
-                        <div className={styles.menu_item} onClick={() => this.menuItemClick('insert_card')}>
-                            插入任务
+                    (tree_type == '1') && (
+                        <div className={styles.menu_item} onClick={() => this.menuItemClick('insert_milestone')}>
+                            插入里程碑
                         </div>
                     )
                 }
+
+                { //一级任务是顶级则没有
+                    (tree_type == '2' || tree_type == '3') && (
+                        <div className={styles.menu_item} onClick={() => this.menuItemClick('insert_card')}>
+                            新建同级任务
+                        </div>
+                    )
+                }
+
+                {
+                    (parent_type == '1' || !parent_type) && tree_type == '2' && ( //一级任务才有创建子任务功能
+                        <div className={styles.menu_item} onClick={() => this.menuItemClick('add_child_card')} >
+                            新建子级任务
+                        </div>
+                    )
+                }
+
                 { //一级任务是顶级则没有
                     ((tree_type == '2' && !parent_card_id) || tree_type == '3') && (
                         <InsertFlows
@@ -392,13 +462,7 @@ export default class NodeOperate extends Component {
                         // </div>
                     )
                 }
-                {
-                    (parent_type == '1' || !parent_type) && tree_type == '2' && ( //一级任务才有创建子任务功能
-                        <div className={styles.menu_item} onClick={() => this.menuItemClick('add_child_card')} >
-                            新建子任务
-                        </div>
-                    )
-                }
+
                 <div className={styles.menu_item} style={{ color: '#F5222D' }} onClick={() => this.menuItemClick('delete')} >
                     删除
                 </div>
@@ -437,8 +501,9 @@ class InsertFlows extends Component {
                         const { id, name } = item
                         return (
                             <div
+                                title={name}
                                 onClick={() => this.selectTemp({ id, name })}
-                                className={`${styles.submenu_area_item}`}
+                                className={`${styles.submenu_area_item} ${globalStyles.global_ellipsis}`}
                                 key={id}>
                                 {name}
                             </div>

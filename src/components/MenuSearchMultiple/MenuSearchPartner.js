@@ -244,13 +244,16 @@ export default class MenuSearchPartner extends React.Component {
 		if (select_all_type == '0') {
 			const { resultArr = [], selectedKeys } = this.state
 			let arr = resultArr.map(item => item.id || item.user_id)
-			if (selectedKeys.length == resultArr.length) { //长度相等时代表取消
+			// 暂时先这样过滤会议中添加的手机号 因为添加的手机号是单独的 不能作为计算 所以要过滤
+			let new_selectedKeys = [...selectedKeys]
+			new_selectedKeys = new_selectedKeys.filter(i => i.length != '11') || []
+			if (new_selectedKeys.length == resultArr.length) { //长度相等时代表取消
 				arr = []
 			}
 			this.setState({
 				selectedKeys: arr
 			}, () => {
-				this.props.chirldrenTaskChargeChange && this.props.chirldrenTaskChargeChange({ selectedKeys: arr, type: selectedKeys.length == resultArr.length ? 'remove' : 'add' })
+				this.props.chirldrenTaskChargeChange && this.props.chirldrenTaskChargeChange({ selectedKeys: arr, type: new_selectedKeys.length == resultArr.length ? 'remove' : 'add' })
 			})
 			// debugger
 			return
@@ -308,6 +311,9 @@ export default class MenuSearchPartner extends React.Component {
 
 	render() {
 		const { keyWord, resultArr, selectedKeys = [], showUserDefinedIconVisible, } = this.state
+		let new_selectedKeys = [...selectedKeys]
+		// 需要过滤手机号
+		new_selectedKeys = new_selectedKeys.filter(i => i.length != '11') || []
 		const {
 			Inputlaceholder = '搜索',
 			isInvitation,
@@ -363,11 +369,11 @@ export default class MenuSearchPartner extends React.Component {
 												<span style={{ fontSize: '14px', color: '#1890FF', lineHeight: '28px', display: 'block' }} className={`${globalStyles.authTheme}`}>&#xe7af;</span>
 											</div>
 											<span>
-												{selectedKeys.length == resultArr.length ? '取消全选' : '项目全体成员'}
+												{new_selectedKeys.length == resultArr.length ? '取消全选' : '项目全体成员'}
 											</span>
 										</div>
 										<div
-											style={{ display: selectedKeys.length == resultArr.length ? 'block' : 'none' }}
+											style={{ display: new_selectedKeys.length == resultArr.length ? 'block' : 'none' }}
 										>
 											<Icon type="check" />
 										</div>

@@ -10,11 +10,12 @@ import SimpleNavigation from "./Components/SimpleNavigation/index"
 import SimpleDrawer from './Components/SimpleDrawer/index'
 // import LingxiIm, { Im } from 'lingxi-im'
 import TaskDetailModal from '@/components/TaskDetailModal'
-import { setBoardIdStorage, getSubfixName } from "../../../../utils/businessFunction";
+import { setBoardIdStorage, getSubfixName, currentNounPlanFilterName } from "../../../../utils/businessFunction";
 import Organization from '@/routes/organizationManager'
 import FileDetailModal from '@/components/FileDetailModal'
 import ProcessDetailModal from '@/components/ProcessDetailModal'
 import Guide from '../Guide/index'
+import { PROJECTS } from "../../../../globalset/js/constant";
 const { LingxiIm } = global.constants
 
 class SimpleHeader extends Component {
@@ -181,7 +182,6 @@ class SimpleHeader extends Component {
                             drawerVisible: false,
                             drawContent: {},
                             card_id: '',
-                            is_edit_title: false, // 是否编辑标题 默认为 false 不显示
                             boardTagList: []
                         }
                     })
@@ -196,6 +196,31 @@ class SimpleHeader extends Component {
                             filePreviewCurrentName: ''
                         }
                     })
+                }
+                if (id == this.props.processInfo.id) {
+                    dispatch({
+                        type: 'publicProcessDetailModal/updateDatas',
+                        payload: {
+                          process_detail_modal_visible: false,
+                          currentFlowInstanceName: '', // 当前流程实例的名称
+                          currentFlowInstanceDescription: '', // 当前的实例描述内容
+                          isEditCurrentFlowInstanceName: true, // 是否正在编辑当前实例的名称
+                          isEditCurrentFlowInstanceDescription: false, // 是否正在编辑当前实例的描述
+                          processPageFlagStep: '1', // "1", "2", "3", "4" 分别对应 新建， 编辑， 启动
+                          processEditDatas:[],
+                          node_type: '1', // 当前的节点类型
+                          processCurrentEditStep: 0, // 当前的编辑步骤 第几步
+                          processCurrentCompleteStep: 0, // 当前处于的操作步骤
+                          templateInfo: {}, // 模板信息
+                          processInfo: {}, // 流程实例信息
+                          currentProcessInstanceId: '', // 当前查看的流程实例名称
+                          currentTempleteIdentifyId: '', // 当前查看的模板ID
+                          not_show_create_node_guide: '1', // 添加节点步骤的引导
+                          not_show_create_form_guide: '1', // 配置表项的引导
+                          not_show_create_rating_guide: '0', // 配置评分节点的引导
+                          currentOrgAllMembers: [], // 组织成员
+                        }
+                      })
                 }
             })
             this.setState({
@@ -586,7 +611,7 @@ class SimpleHeader extends Component {
                         <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '26px' }} >&#xe845;</i>
                     </div>
                 </Tooltip>
-                <Tooltip title="项目圈">
+                <Tooltip title={`${currentNounPlanFilterName(PROJECTS)}圈`}>
                     <div style={{ zIndex: !chatImVisiable && 1009 }} className={indexStyles.miniImMessage} onClick={this.openOrCloseImChatModal}>
                         {
                             im_alarm_no_reads_total > 0 && (

@@ -82,7 +82,7 @@ export default class BoardFeaturesProcessItem extends Component {
         const { name, total_node_name, total_node_num, completed_node_num, runtime_type, deadline_type, last_complete_time } = itemValue
         const belong_name = this.renderBelong()
         return (
-            <div className={`${styles.feature_item2}`} onClick={this.itemClick}>
+            <div className={`${!!belong_name ? styles.feature_item2 : styles.feature_item}`} onClick={this.itemClick}>
                 <div className={`${styles.feature_item_lf}`}>
                     <span className={`${globalStyles.authTheme}`}>&#xe68c;</span>
                     <span>{currentNounPlanFilterName(FLOWS)}</span>

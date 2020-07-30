@@ -168,7 +168,7 @@ export default class FillInPersonContent extends Component {
           !designatedPersonnelList.length ? (
             <div style={{ position: 'relative' }}>
               <Dropdown autoAdjustOverflow={false} trigger={['click']} overlayClassName={indexStyles.overlay_pricipal}
-                // getPopupContainer={triggerNode => triggerNode.parentNode}
+                getPopupContainer={() => document.getElementById('fillInPersonMiniTopContainer')}
                 overlayStyle={{ maxWidth: '200px' }}
                 overlay={
                   <MenuSearchPartner
@@ -215,7 +215,7 @@ export default class FillInPersonContent extends Component {
                   )
                 })}
                 <Dropdown autoAdjustOverflow={false} trigger={['click']} overlayClassName={indexStyles.overlay_pricipal}
-                  // getPopupContainer={triggerNode => triggerNode.parentNode}
+                  getPopupContainer={() => document.getElementById('fillInPersonMiniTopContainer')}
                   overlayStyle={{ maxWidth: '200px' }}
                   overlay={
                     <MenuSearchPartner
@@ -253,7 +253,7 @@ export default class FillInPersonContent extends Component {
     let disabledAssigneeType = assignee_type != this.state.assignee_type && (designatedPersonnelList && designatedPersonnelList.length) ? false : true
     return (
       <div className={indexStyles.mini_content}>
-        <div className={`${indexStyles.mini_top} ${globalStyles.global_vertical_scrollbar}`}>
+        <div id="fillInPersonMiniTopContainer" className={`${indexStyles.mini_top} ${globalStyles.global_vertical_scrollbar}`}>
           <Radio.Group style={{ display: 'flex', flexDirection: 'column' }} value={this.state.assignee_type} onChange={this.assigneeTypeChange}>
             <Radio style={{ marginBottom: '12px' }} value="1">{`${currentNounPlanFilterName(FLOWS)}发起人`}</Radio>
             <Radio style={{ marginBottom: '12px' }} value="2">指定人员</Radio>

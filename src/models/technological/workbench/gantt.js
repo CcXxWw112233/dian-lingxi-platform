@@ -18,7 +18,7 @@ import {
 } from './selects'
 import { createMilestone } from "../../../services/technological/prjectDetail";
 import { getGlobalData } from '../../../utils/businessFunction';
-import { task_item_height, ceil_height, ceil_height_fold, ganttIsFold, group_rows_fold, task_item_height_fold, test_card_item, mock_gantt_data, ganttIsOutlineView, mock_outline_tree, ceil_width, ceil_width_year } from '../../../routes/Technological/components/Gantt/constants';
+import { task_item_height, ceil_height, ceil_height_fold, ganttIsFold, group_rows_fold, task_item_height_fold, test_card_item, mock_gantt_data, ganttIsOutlineView, mock_outline_tree, ceil_width, ceil_width_year, one_group_row_total } from '../../../routes/Technological/components/Gantt/constants';
 import { getModelSelectDatasState } from '../../utils'
 import { getProjectGoupList } from '../../../services/technological/task';
 import { handleChangeBoardViewScrollTop, setGantTimeSpan, diffGanttTimeSpan } from '../../../routes/Technological/components/Gantt/ganttBusiness';
@@ -54,7 +54,7 @@ export default {
   state: {
     datas: {
       ...gantt_effect.state,
-      gantt_view_mode: 'month', //week / month /year
+      gantt_view_mode: 'month', //week / month /year '周视图，月视图，年视图'，原来月视图定义成 ‘天视图’， 年视图则是定义成 ‘月视图’
       gold_date_arr: [], //所需要的日期数据
       date_arr_one_level: [], //所有日期数据扁平成一级数组
       start_date: {}, //日期最开始的那一天
@@ -65,7 +65,8 @@ export default {
       ceilWidth: ceil_width, //单元格的宽度
       ceiHeight: ceil_height, //单元格高度 40 + 12的外边距
       date_total: 0, //总天数
-      group_rows: [2, 2, 2], //每一个分组默认行数 [7, 7, 7]
+      group_rows: [one_group_row_total, one_group_row_total, one_group_row_total], //每一个分组默认行数 [7, 7, 7]
+      group_rows_lock: [0, 0, 0], //group_rows的锁，当 key对应的值为正整数时， 优先
       group_list_area: [], //分组高度区域 [组一行数 * ceiHeight，组二行数 * ceiHeight]
       group_list_area_section_height: [], //分组高度区域总高度 [组一行数 * ceiHeight，(组一行数 + 组二行数) * ceiHeight， ...]
       isDragging: false, //甘特图是否在拖拽中
@@ -84,6 +85,7 @@ export default {
       group_view_type: '1', //分组视图1项目， 2成员, 4大纲, 5项目分组再分组成成员
       group_view_filter_boards: [], //内容过滤项目id 列表
       group_view_filter_users: [], //内容过滤职员id 列表
+      single_select_user: { id: '', name: '' },//成员视图下，点击成员
       group_view_boards_tree: [], //内容过滤项目分组树
       group_view_users_tree: [], //内容过滤成员分组树
       holiday_list: [], //日历列表（包含节假日农历）
@@ -129,11 +131,11 @@ export default {
       const group_view_filter_users = yield select(getModelSelectDatasState('gantt', 'group_view_filter_users'))
       const group_view_boards_tree = yield select(getModelSelectDatasState('gantt', 'group_view_boards_tree'))
       const group_view_users_tree = yield select(getModelSelectDatasState('gantt', 'group_view_users_tree'))
-
+      const single_select_user = yield select(getModelSelectDatasState('gantt', 'single_select_user'))
       //内容过滤处理
       const setContentFilterParams = () => {
         let query_board_ids = []
-        let query_user_ids = []
+        let query_user_ids = [single_select_user.id].filter(item => item)
 
         //  项目id处理
         for (let val of group_view_filter_boards) {
@@ -284,7 +286,8 @@ export default {
             type: 'updateDatas',
             payload: {
               outline_tree: [],
-              outline_tree_round: []
+              outline_tree_round: [],
+              group_rows_lock: []
             }
           })
         } else {
@@ -303,7 +306,6 @@ export default {
     // 转化处理大纲视图数据
     * handleOutLineTreeData({ payload }, { select, call, put }) {
       const { data = [] } = payload
-      console.log("handleOutLineTreeData", data);
       const start_date = yield select(workbench_start_date)
       const end_date = yield select(workbench_end_date)
       const ceilWidth = yield select(workbench_ceilWidth)
@@ -311,9 +313,9 @@ export default {
       const gantt_view_mode = yield select(getModelSelectDatasState('gantt', 'gantt_view_mode'))
 
       let new_outline_tree = [...data]
-      const tree_arr_1 = data.filter(item => item.tree_type == '1')//.sort(jsonArrayCompareSort('due_time', transformTimestamp)) //里程碑截止时间由近及远
-      const tree_arr_2 = data.filter(item => item.tree_type != '1')//.sort(jsonArrayCompareSort('start_time', transformTimestamp))
-      new_outline_tree = [].concat(tree_arr_1, tree_arr_2)//先把里程碑排进去，再排没有归属的任务
+      // const tree_arr_1 = data.filter(item => item.tree_type == '1')//.sort(jsonArrayCompareSort('due_time', transformTimestamp)) //里程碑截止时间由近及远
+      // const tree_arr_2 = data.filter(item => item.tree_type != '1')//.sort(jsonArrayCompareSort('start_time', transformTimestamp))
+      // new_outline_tree = [].concat(tree_arr_1, tree_arr_2)//先把里程碑排进去，再排没有归属的任务
 
       const filnaly_outline_tree = new_outline_tree.map(item => {
         let new_item = { ...item, parent_expand: true }
@@ -338,8 +340,26 @@ export default {
         let time_span = item['time_span']
         new_item.due_time = due_time
         new_item.start_time = start_time
-        time_span = setGantTimeSpan({ time_span, start_time, due_time, start_date, end_date })
+        if (tree_type == '1') { //里程碑的周期（时间跨度）,根据一级任务计算
+          const child_time_arr_start = children.map(item => transformTimestamp(item.start_time) || 0).filter(item => item)
+          const child_time_arr_due = children.map(item => transformTimestamp(item.due_time) || 0).filter(item => item)
+          const child_time_arr = [].concat(child_time_arr_due, child_time_arr_start) ////全部时间的集合， [0]防止math.max 。minw
+          time_span = setGantTimeSpan({
+            time_span: '0',
+            start_time: transformTimestamp(Math.min.apply(null, child_time_arr)) == Infinity ? '' : transformTimestamp(Math.min.apply(null, child_time_arr)),
+            due_time: transformTimestamp(due_time) || (transformTimestamp(Math.max.apply(null, child_time_arr)) == -Infinity ? '' : transformTimestamp(Math.max.apply(null, child_time_arr))),
+            start_date,
+            end_date
+          })
+          // console.log('filnaly_outline_tree_1', Math.min.apply(null, child_time_arr), Math.max.apply(null, child_time_arr), time_span)
+        } else { //其它类型就根据开始截至时间计算
+          time_span = setGantTimeSpan({ time_span, start_time, due_time, start_date, end_date })
+        }
         new_item.time_span = time_span
+        new_item.parent_ids = []
+        new_item.parent_id = ''
+        new_item.parent_milestone_id = ''
+        new_item.parent_card_id = ''
 
         new_item_children = new_item_children.map(item2 => {
           let new_item2 = { ...item2, parent_expand: is_expand, parent_type: tree_type, parent_id: item.id }
@@ -363,6 +383,7 @@ export default {
           new_item2.start_time = start_time2
           time_span2 = setGantTimeSpan({ time_span: time_span2, start_time: start_time2, due_time: due_time2, start_date, end_date })
           new_item2.time_span = time_span2
+          new_item2.parent_ids = [item.id]
 
           if (is_expand) {
             child_expand_length += 1
@@ -396,6 +417,8 @@ export default {
               new_item3.start_time = start_time3
               time_span3 = setGantTimeSpan({ time_span: time_span3, start_time: start_time3, due_time: due_time3, start_date, end_date })
               new_item3.time_span = time_span3
+              new_item3.parent_ids = [item.id, item2.id]
+
               if (tree_type2 == '2') {
                 new_item3.parent_card_id = item2.id
               }
@@ -439,7 +462,7 @@ export default {
         recusion(val)
       }
       arr = arr.filter(item => item.parent_expand)
-      arr.push({ ...visual_add_item }) //默认有个新建里程碑，占位
+      arr.push({ ...visual_add_item, add_id: 'add_milestone_out' }) //默认有个新建里程碑，占位
       arr = arr.map((item, key) => {
         let new_item = {}
         const { tree_type, children = [], child_card_status = {} } = item //  里程碑/任务/子任务/虚拟占位 1/2/3/4
@@ -512,6 +535,13 @@ export default {
                 time_belong_area = true
                 break
               }
+            } else if (gantt_view_mode == 'week') {
+              if (new_item[cal_left_field] <= date_arr_one_level[k]['timestampEnd'] && new_item[cal_left_field] >= date_arr_one_level[k]['timestamp']) {
+                const date_day = new Date(new_item['start_time']).getDay() //周几
+                new_item.left = ((k + (date_day == 0 ? 1 : 0)) * 7 + date_day - 1) * ceilWidth
+                new_item.width = (time_span || 1) * ceilWidth
+                break
+              }
             } else {
 
             }
@@ -530,8 +560,8 @@ export default {
           outline_tree_round: arr
         }
       })
-      // console.log('filnaly_outline_tree', filnaly_outline_tree)
-      // console.log('filnaly_outline_tree2', arr)
+      console.log('filnaly_outline_tree', filnaly_outline_tree)
+      console.log('filnaly_outline_tree2', { arr, filnaly_outline_tree })
       // console.log('filnaly_outline_tree1', filnaly_outline_tree[0].expand_length)
       // console.log('filnaly_outline_tree2', filnaly_outline_tree[1].expand_length)
 
@@ -545,6 +575,7 @@ export default {
       const group_view_type = yield select(getModelSelectDatasState('gantt', 'group_view_type'))
       const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id'))
       const show_board_fold = yield select(getModelSelectDatasState('gantt', 'show_board_fold'))
+      const gantt_view_mode = yield select(getModelSelectDatasState('gantt', 'gantt_view_mode'))
 
       for (let val of data) {
         const list_group_item = {
@@ -585,17 +616,15 @@ export default {
             list_group_item.list_data.push(list_data_item)
           }
         }
-        if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold })) { //全项目视图下，收缩，取特定某一条做基准，再进行时间汇总
+        if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold, gantt_view_mode })) { //全项目视图下，收缩，取特定某一条做基准，再进行时间汇总
           const start_time_arr = list_group_item.list_data.map(item => item.start_time) //取视窗任务的最开始时间
           const due_time_arr = list_group_item.list_data.map(item => item.end_time) //取视窗任务的最后截止时间
           const { lane_start_time, lane_end_time } = list_group_item
+          const time_arr = [].concat(start_time_arr, due_time_arr, [getDigit(lane_end_time), getDigit(lane_start_time)]).filter(item => item)
+          const due_time = Math.max.apply(null, time_arr) //与后台返回值计算取最大作为结束
+          const start_time = Math.min.apply(null, time_arr) //与后台返回值计算取最小作为开始
+          // console.log('time_arrtime_arr', list_group_item.list_name, { time_arr, due_time, start_time })
 
-          const due_time = Math.max.call(null, getDigit(lane_end_time), Math.max.apply(null, due_time_arr)) //与后台返回值计算取最大作为结束
-          const start_time = Math.min.call(null, getDigit(lane_start_time), Math.min.apply(null, start_time_arr)) || Math.min.apply(null, start_time_arr) || due_time //与后台返回值计算取最小作为开始
-          // console.log('sssss',
-          //   getDigit(lane_start_time),
-          //   Math.min.apply(null, start_time_arr),
-          //   Math.min.call(null, getDigit(lane_start_time), Math.min.apply(null, start_time_arr)))
           let time_span = (!due_time || !start_time) ? 1 : (Math.floor((due_time - start_time) / (24 * 3600 * 1000))) + 1 //正常区间内
           if (due_time > end_date.timestamp && start_time > start_date.timestamp) { //右区间
             time_span = (Math.floor((end_date.timestamp - start_time) / (24 * 3600 * 1000))) + 1
@@ -604,8 +633,30 @@ export default {
           } else if (due_time > end_date.timestamp && start_time < start_date.timestamp) { //超过左右区间
             time_span = (Math.floor((end_date.timestamp - start_date.timestamp) / (24 * 3600 * 1000))) + 1
           }
+          // let lane_schedule_count = 0
+          // let lane_overdue_count = 0
+          // let lane_todo_count = 0
+          // for (let val of list_group_item.lane_data.cards) {
+          //   lane_schedule_count += 1
+          //   const _new_due_time = transformTimestamp(val.due_time)
+          //   if (val.is_realize != '1') { //未完成
+          //     lane_todo_count += 1
+          //     if (new Date().getTime() > _new_due_time) {//超时未完成
+          //       lane_overdue_count += 1
+          //     }
+
+          //   }
+
+          // }
+          // list_group_item.lane_overdue_count = lane_overdue_count
+          // list_group_item.lane_todo_count = lane_todo_count
+          // list_group_item.lane_schedule_count = lane_schedule_count
+
           list_group_item.board_fold_data = {
             ...val,
+            // lane_overdue_count,
+            // lane_todo_count,
+            // lane_schedule_count,
             end_time: due_time,
             start_time,
             time_span,
@@ -617,22 +668,22 @@ export default {
       yield put({
         type: 'updateDatas',
         payload: {
-          list_group,
-          ceiHeight: ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) ? ceil_height_fold : ceil_height
+          ceiHeight: ganttIsFold({ gantt_board_id, group_view_type, show_board_fold, gantt_view_mode }) ? ceil_height_fold : ceil_height
         }
       })
       yield put({
         type: 'setListGroup',
         payload: {
+          list_group,
           not_set_scroll_top
         }
       })
     },
     * setListGroup({ payload }, { select, call, put }) {
-      const { not_set_scroll_top } = payload
+      let { not_set_scroll_top, list_group = [] } = payload
       //根据所获得的分组数据转换所需要的数据
       // const { datas: { list_group = [], group_rows = [], ceiHeight, ceilWidth, date_arr_one_level = [] } } = this.props.model
-      let list_group = yield select(workbench_list_group)
+      // let list_group = yield select(workbench_list_group)
       list_group = JSON.parse(JSON.stringify(list_group))
       const group_rows = yield select(workbench_group_rows)
       const ceiHeight = yield select(workbench_ceiHeight)
@@ -642,6 +693,7 @@ export default {
       const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id'))
       const show_board_fold = yield select(getModelSelectDatasState('gantt', 'show_board_fold'))
       const gantt_view_mode = yield select(getModelSelectDatasState('gantt', 'gantt_view_mode'))
+      const group_rows_lock = yield select(getModelSelectDatasState('gantt', 'group_rows_lock'))
 
       const group_list_area = [] //分组高度区域
 
@@ -655,7 +707,7 @@ export default {
           })
         }
 
-        const length = 5 //list_data.length < 5 ? 5 : (list_data.length + 1)
+        const length = one_group_row_total //list_data.length < 5 ? 5 : (list_data.length + 1)
         const group_height = length * ceiHeight
         group_list_area[i] = group_height
         group_rows[i] = length
@@ -693,8 +745,12 @@ export default {
                   item.left = (date_length + date_no - 1) * ceilWidth
                   break
                 }
-              } else {
-
+              } else if (gantt_view_mode == 'week') {
+                if (item['start_time'] < date_arr_one_level[k]['timestampEnd'] && item['start_time'] >= date_arr_one_level[k]['timestamp']) {
+                  const date_day = new Date(item['start_time']).getDay() //周几
+                  item.left = ((k + (date_day == 0 ? 1 : 0)) * 7 + date_day - 1) * ceilWidth
+                  break
+                }
               }
 
             }
@@ -745,15 +801,18 @@ export default {
           list_group[i]['list_data'][j] = item
         }
         const list_height_arr = list_group[i]['list_data'].map(item => item.top)
-        const list_group_item_height = Math.max.apply(null, list_height_arr) + 2 * ceiHeight - after_group_height
+        const list_group_item_height = Math.max.apply(null, list_height_arr) + one_group_row_total * ceiHeight - after_group_height
 
-        group_rows[i] = (list_group_item_height / ceiHeight) < 2 ? 2 : list_group_item_height / ceiHeight // 原来是3，现在是2
+        group_rows[i] = Math.max(group_rows_lock[i] || 0, list_group_item_height / ceiHeight, one_group_row_total) //(list_group_item_height / ceiHeight) < one_group_row_total ? one_group_row_total : list_group_item_height / ceiHeight // 原来是3，现在是2
         if (list_group[i].list_id == '0' && group_view_type == '1' && gantt_board_id != '0') { //默认分组要设置得很高
           group_rows[i] = group_rows[i] + 30
         }
         // 设置项目汇总的top和left,width
-        if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold })) { // 全项目视图下，为收缩状态
+        if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold, gantt_view_mode })) { // 全项目视图下，为收缩状态
           group_rows[i] = group_rows_fold
+          if (list_group[i].list_id == '0' && gantt_view_mode == 'year' && group_view_type != '4') {
+            group_rows[i] = group_rows_fold + 30
+          }
           list_group[i].board_fold_data.width = list_group[i].board_fold_data.time_span * ceilWidth
           list_group[i].board_fold_data.top = after_group_height + (ceil_height_fold * group_rows_fold - task_item_height_fold) / 2 //上下居中 (96-24)/2
           for (let k = 0; k < date_arr_one_level.length; k++) {
@@ -774,8 +833,12 @@ export default {
                 list_group[i].board_fold_data.left = (date_length + date_no - 1) * ceilWidth
                 break
               }
-            } else {
-
+            } else if (gantt_view_mode == 'week') {
+              if (list_group[i].board_fold_data['start_time'] < date_arr_one_level[k]['timestampEnd'] && list_group[i].board_fold_data['start_time'] >= date_arr_one_level[k]['timestamp']) {
+                const date_day = new Date(list_group[i].board_fold_data['start_time']).getDay() //周几
+                list_group[i].board_fold_data.left = ((k + (date_day == 0 ? 1 : 0)) * 7 + date_day - 1) * ceilWidth
+                break
+              }
             }
           }
         }
@@ -802,13 +865,47 @@ export default {
         }
       })
       // 设置滚动条的高度位置
-      if (!not_set_scroll_top) {
-        const group_view_type = yield select(getModelSelectDatasState('gantt', 'group_view_type'))
-        const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id'))
-        const target_scrollTop_board_storage = yield select(getModelSelectDatasState('gantt', 'target_scrollTop_board_storage'))
-        handleChangeBoardViewScrollTop({ group_view_type, gantt_board_id, target_scrollTop_board_storage })
-      }
+      // if (!not_set_scroll_top) {
+      //   const group_view_type = yield select(getModelSelectDatasState('gantt', 'group_view_type'))
+      //   const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id'))
+      //   const target_scrollTop_board_storage = yield select(getModelSelectDatasState('gantt', 'target_scrollTop_board_storage'))
+      //   handleChangeBoardViewScrollTop({ group_view_type, gantt_board_id, target_scrollTop_board_storage })
+      // }
     },
+    * handleGroupHeight({ payload }, { select, call, put }) { //
+      let { group_rows, group_rows_lock } = payload
+      const ceiHeight = yield select(workbench_ceiHeight)
+      if (!group_rows) {
+        group_rows = yield select(getModelSelectDatasState('gantt', 'group_rows'))
+      }
+      if (!group_rows_lock) {
+        group_rows_lock = yield select(getModelSelectDatasState('gantt', 'group_rows_lock'))
+      }
+      let group_rows_ = group_rows.map((value, key) => {
+        return Math.max(value, group_rows_lock[key])
+      })
+      let group_list_area = group_rows_.map(value => {
+        return value * ceiHeight
+      })
+      let group_list_area_section_height = group_list_area.map((item, index) => {
+        const list_arr = group_list_area.slice(0, index + 1)
+        let height = 0
+        for (let val of list_arr) {
+          height += val
+        }
+        return height
+      })
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          group_list_area,
+          group_rows: group_rows_,
+          group_list_area_section_height,
+          group_rows_lock,
+        }
+      })
+    },
+
     * createMilestone({ payload }, { select, call, put }) { //
       const res = yield call(createMilestone, payload)
       if (isApiResponseOk(res)) {
@@ -1020,6 +1117,15 @@ export default {
 
   reducers: {
     updateDatas(state, action) {
+      const { payload = {} } = action
+      const { group_view_type } = payload
+      if (group_view_type) { //视图切换时，做滚动条位置
+        const { datas = {} } = state
+        const { gantt_board_id: old_gantt_board_id, target_scrollTop_board_storage } = datas
+        const { gantt_board_id: new_gantt_board_id } = payload
+        const params = { group_view_type, gantt_board_id: new_gantt_board_id || old_gantt_board_id, target_scrollTop_board_storage }
+        handleChangeBoardViewScrollTop(params)
+      }
       return {
         ...state,
         datas: { ...state.datas, ...action.payload },

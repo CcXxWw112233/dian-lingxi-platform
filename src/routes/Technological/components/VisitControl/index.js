@@ -498,7 +498,8 @@ class VisitControl extends Component {
             </span>
             <Dropdown
               autoAdjustOverflow={false}
-              getPopupContainer={() => document.getElementById('content__othersPersonList_wrapper')}
+              // getPopupContainer={() => document.getElementById('content__othersPersonList_wrapper')}
+              getPopupContainer={triggerNode => triggerNode.parentNode}
               trigger={['click']}
               overlay={this.renderOtherPersonOperatorMenu(privilege)}
             >
@@ -569,7 +570,7 @@ class VisitControl extends Component {
     const { notShowPrincipal } = this.props
     return (
       <div className={styles.content__wrapper}>
-        <div className={styles.content__list_wrapper}>
+        <div className={styles.content__list_wrapper} style={{margin: document.getElementById('container_publicFileDetailModal') ? '-12px -16px 0' : document.getElementById('process_file_detail_container') ? '-12px -5px 0' : '-12px -16px 0'}}>
           {this.isCurrentHasNoMember() ? (
             <>{this.renderPopoverContentNoContent()}</>
           ) : (
@@ -594,6 +595,7 @@ class VisitControl extends Component {
       children,
       board_id,
       onlyShowPopoverContent,
+      getPopupContainer
     } = this.props;
 
     const {
@@ -633,7 +635,7 @@ class VisitControl extends Component {
             trigger="click"
             visible={visible}
             onVisibleChange={this.onPopoverVisibleChange}
-            getPopupContainer={triggerNode => triggerNode.parentNode}
+            getPopupContainer={getPopupContainer ? () => getPopupContainer : triggerNode => triggerNode.parentNode}
           >
             {children ? (
               <span

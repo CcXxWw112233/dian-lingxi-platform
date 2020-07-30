@@ -21,6 +21,7 @@ import { currentNounPlanFilterName, setBoardIdStorage } from "@/utils/businessFu
 import AddGroupSection from './components/AddGroupsection'
 import ArchiveSelect from './components/ArchiveSelect'
 import { arrayNonRepeatfy } from '../../../../utils/util';
+import { roofTopBoardCardGroup, cancleToofTopBoardCardGroup } from '../../../../services/technological/gantt';
 
 @connect(mapStateToProps)
 export default class GroupListHeadItem extends Component {
@@ -61,7 +62,28 @@ export default class GroupListHeadItem extends Component {
       local_list_name: list_name
     })
   }
+
+  componentWillReceiveProps(nextProps) {
+    this.listenGroupRowsLock(nextProps)
+  }
+
+  listenGroupRowsLock = (props) => {
+    const { itemValue = {}, itemKey, dispatch, group_rows_lock, group_rows, list_group } = props
+    const { list_no_time_data = [] } = itemValue
+    if (!group_rows_lock[itemKey] || !list_no_time_data.length) {
+      this.setState({
+        isShowBottDetail: '0'
+      })
+    }
+
+  }
+
   setIsShowBottDetail = () => {
+    const { gantt_view_mode } = this.props
+    if (gantt_view_mode == 'year') {
+      message.info('请在日视图或周视图下查看')
+      return
+    }
     const { isShowBottDetail } = this.state
     let new_isShowBottDetail = '1'
     if (isShowBottDetail == '0') {
@@ -75,6 +97,25 @@ export default class GroupListHeadItem extends Component {
     }
     this.setState({
       isShowBottDetail: new_isShowBottDetail
+    }, () => {
+      // 展开分组
+      const { itemValue = {}, itemKey, dispatch, group_rows_lock, group_rows, list_group } = this.props
+      const { list_no_time_data = [] } = itemValue
+      const group_rows_lock_ = [...group_rows_lock]
+      new_isShowBottDetail == '1' ? group_rows_lock_[itemKey] = Math.min(list_no_time_data.length + 3, 7) : group_rows_lock_[itemKey] = 0
+      dispatch({
+        type: 'gantt/updateDatas',
+        payload: {
+          group_rows_lock: group_rows_lock_
+        }
+      })
+      dispatch({
+        type: 'gantt/handleListGroup',
+        payload: {
+          data: list_group,
+          not_set_scroll_top: true
+        }
+      })
     })
   }
   setLableColor = (label_data) => {
@@ -112,10 +153,23 @@ export default class GroupListHeadItem extends Component {
     dispatch({
       type: 'publicTaskDetailModal/updateDatas',
       payload: {
-        drawerVisible: true,
+        // drawerVisible: true,
         card_id: id,
       }
     })
+    dispatch({
+      type: 'gantt/updateDatas',
+      payload: {
+        selected_card_visible: true,
+      }
+    })
+    // dispatch({
+    //   type: 'publicTaskDetailModal/updateDatas',
+    //   payload: {
+    //     drawerVisible: true,
+    //     card_id: id,
+    //   }
+    // })
     // dispatch({
     //   type: 'workbenchTaskDetail/getCardDetail',
     //   payload: {
@@ -194,12 +248,34 @@ export default class GroupListHeadItem extends Component {
   }
   //分组名点击
   listNameClick = () => {
-    const { itemValue, gantt_board_id, dispatch, group_view_type } = this.props
+    const { itemValue, gantt_board_id, dispatch, group_view_type, single_select_user } = this.props
+    const { list_id, list_name } = itemValue
     const { local_list_name } = this.state
-    if (group_view_type != '1') { //必须要在项目视图 或项目分组才能看
+    if (group_view_type == '2') {
+      dispatch({
+        type: 'gantt/updateDatas',
+        payload: {
+          group_view_type: '1',
+          single_select_user: { id: list_id, name: list_name },
+          list_group: []
+        }
+      })
+      dispatch({
+        type: 'gantt/getGanttData',
+        payload: {
+
+        }
+      })
       return
     }
-    const { list_id } = itemValue
+    if (group_view_type != '1') { //必须要在项目视图 或项目分组才能看
+      return
+    } else {
+      if (single_select_user.id) {//点击成员视图切换到项目视图，同时带有只查看某用户的信息
+        // message.warn('已锁定查看成员项目，请先')
+        return
+      }
+    }
     if (gantt_board_id == '0') {
       dispatch({
         type: 'gantt/updateDatas',
@@ -844,7 +920,7 @@ export default class GroupListHeadItem extends Component {
   }
 
   // 访问控制添加成员
-  handleSetContentPrivilege = (users_arr, type, errorText = '访问控制添加人员失败，请稍后再试', ) => {
+  handleSetContentPrivilege = (users_arr, type, errorText = '访问控制添加人员失败，请稍后再试',) => {
     const { itemValue = {}, gantt_board_id } = this.props
     const { list_id, privileges, board_id } = itemValue
     const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
@@ -970,7 +1046,7 @@ export default class GroupListHeadItem extends Component {
 
   // 置顶
   roofTop = (type) => {
-    const { dispatch, itemValue: { list_id, org_id } } = this.props
+    const { dispatch, itemValue: { list_id, org_id }, gantt_board_id } = this.props
     const { list_group = [] } = this.props
     const list_group_new = [...list_group]
     const group_index = list_group_new.findIndex(item => item.lane_id == list_id)
@@ -979,63 +1055,94 @@ export default class GroupListHeadItem extends Component {
     const _arr_new = JSON.parse(JSON.stringify(projectList))
     const _index = _arr_new.findIndex(item => item.board_id == list_id)
 
+    const cancleRoof = () => {
+      // 排序甘特图分组
+      list_group_new[group_index].is_star = '0'
+      if (gantt_board_id == '0') { //项目置顶
+        _arr_new[_index].is_star = '0'
+        list_group_new.push(list_group_new[group_index]) //将该项往最后插入
+      } else { //分组置顶
+        list_group_new.splice(list_group_new.length - 1, 0, list_group_new[group_index]) //将该项往倒数第二插入
+      }
+      list_group_new.splice(group_index, 1) //删除掉该项
+      dispatch({
+        type: 'gantt/handleListGroup',
+        payload: {
+          data: list_group_new
+        }
+      })
+    }
+    const roof = () => {
+      // 排序甘特图分组
+      list_group_new[group_index].is_star = '1'
+      list_group_new.unshift(list_group_new[group_index]) //将该项往第一插入
+      list_group_new.splice(group_index + 1, 1) //删除掉该项
+      dispatch({
+        type: 'gantt/handleListGroup',
+        payload: {
+          data: list_group_new
+        }
+      })
+    }
     if (type == '0') { //取消置顶
-      cancelCollection({ org_id, board_id: list_id }).then(res => {
-        if (isApiResponseOk(res)) {
-          // 排序甘特图分组
-          list_group_new[group_index].is_star = '0'
-          _arr_new[_index].is_star = '0'
-          list_group_new.push(list_group_new[group_index]) //将该项往最后插入
-          list_group_new.splice(group_index, 1) //删除掉该项
-          dispatch({
-            type: 'gantt/handleListGroup',
-            payload: {
-              data: list_group_new
-            }
-          })
-          // 排序项目列表
-          dispatch({
-            type: 'workbench/sortProjectList',
-            payload: {
-              data: _arr_new
-            }
-          })
-        } else {
-          message.error(res.message)
-        }
-      })
+      if (gantt_board_id != '0') { //分组置顶
+        cancleToofTopBoardCardGroup({ list_id }).then(res => {
+          if (isApiResponseOk(res)) {
+            cancleRoof()
+          } else {
+            message.error(res.message)
+          }
+        })
+      } else { //项目置顶
+        cancelCollection({ org_id, board_id: list_id }).then(res => {
+          if (isApiResponseOk(res)) {
+            cancleRoof()
+            // 排序项目列表
+            dispatch({
+              type: 'workbench/sortProjectList',
+              payload: {
+                data: _arr_new
+              }
+            })
+          } else {
+            message.error(res.message)
+          }
+        })
+      }
     } else {
-      collectionProject({ org_id, board_id: list_id }).then(res => {
-        if (isApiResponseOk(res)) {
-          // 排序甘特图分组
-          list_group_new[group_index].is_star = '1'
-          list_group_new.unshift(list_group_new[group_index]) //将该项往第一插入
-          list_group_new.splice(group_index + 1, 1) //删除掉该项
-          dispatch({
-            type: 'gantt/handleListGroup',
-            payload: {
-              data: list_group_new
-            }
-          })
-          // 排序项目列表
-          _arr_new[_index].is_star = '1'
-          _arr_new.unshift(_arr_new[_index]) //将该项往第一插入
-          _arr_new.splice(_index + 1, 1) //删除掉该项
-          dispatch({
-            type: 'workbench/updateDatas',
-            payload: {
-              projectList: _arr_new
-            }
-          })
-        } else {
-          message.error(res.message)
-        }
-      })
+      if (gantt_board_id != '0') { //分组置顶
+        roofTopBoardCardGroup({ list_id }).then(res => {
+          if (isApiResponseOk(res)) {
+            roof()
+          } else {
+            message.error(res.message)
+          }
+        })
+      } else {
+        collectionProject({ org_id, board_id: list_id }).then(res => {
+          if (isApiResponseOk(res)) {
+            roof()
+            // 排序项目列表
+            _arr_new[_index].is_star = '1'
+            _arr_new.unshift(_arr_new[_index]) //将该项往第一插入
+            _arr_new.splice(_index + 1, 1) //删除掉该项
+            dispatch({
+              type: 'workbench/updateDatas',
+              payload: {
+                projectList: _arr_new
+              }
+            })
+          } else {
+            message.error(res.message)
+          }
+        })
+      }
+
     }
   }
   render() {
 
-    const { currentUserOrganizes = [], gantt_board_id = [], ceiHeight, is_show_org_name, is_all_org, rows = 5, show_board_fold, group_view_type, get_gantt_data_loading } = this.props
+    const { currentUserOrganizes = [], gantt_board_id = [], ceiHeight, is_show_org_name, is_all_org, rows = 5, gantt_view_mode, show_board_fold, group_view_type, get_gantt_data_loading } = this.props
     const { itemValue = {}, itemKey } = this.props
     const { is_star, list_name, org_id, list_no_time_data = [], list_id, lane_icon, board_id, is_privilege = '0', privileges, create_by = {}, lane_overdue_count } = itemValue
     const { isShowBottDetail, show_edit_input, local_list_name, edit_input_value, show_add_menber_visible, board_info_visible, menu_oprate_visible, arhcived_modal_visible } = this.state
@@ -1065,10 +1172,10 @@ export default class GroupListHeadItem extends Component {
               {
                 group_view_type == '1' && (
                   gantt_board_id == '0' ? (
-                    <div className={`${globalStyles.authTheme}`} style={{ fontSize: 15, color: '#1890FF', lineHeight: '24px', marginRight: 4 }}>&#xe67d;</div>
+                    <div className={`${globalStyles.authTheme}`} style={{ fontSize: 15, color: '#1890FF', lineHeight: '24px', marginRight: 4 }}>&#xe68a;</div>
                   ) : (
                       list_id != '0' &&
-                      <div className={`${globalStyles.authTheme}`} style={{ fontSize: 15, color: '#1890FF', lineHeight: '24px', marginRight: 4 }}>&#xe899;</div>
+                      <div className={`${globalStyles.authTheme}`} style={{ fontSize: 16, color: '#1890FF', lineHeight: '24px', marginRight: 4 }}>&#xe688;</div>
                     )
                 )
               }
@@ -1101,15 +1208,15 @@ export default class GroupListHeadItem extends Component {
               }
               {/* 逾期任务 */}
               {
-                ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) && Number(lane_overdue_count) > 0 && (
+                ganttIsFold({ gantt_board_id, group_view_type, show_board_fold, gantt_view_mode }) && Number(lane_overdue_count) > 0 && (
                   <div className={indexStyles.due_time_card_total} title={`存在${lane_overdue_count}条逾期任务`} >{lane_overdue_count}</div>
                 )
               }
               {/* 置顶 */}
               {
-                (gantt_board_id == '0' && group_view_type == '1' && !show_edit_input) && (
+                (group_view_type == '1' && list_id != '0' && !show_edit_input) && (
                   is_star == '0' ? (
-                    <div className={globalStyle.authTheme} title={'置顶该项目'} onClick={() => this.roofTop('1')} style={{ marginLeft: 10, fontSize: 16, color: '#FFA940' }}>&#xe7e3;</div>
+                    <div className={globalStyle.authTheme} title={'置顶'} onClick={() => this.roofTop('1')} style={{ marginLeft: 10, fontSize: 16, color: '#FFA940' }}>&#xe7e3;</div>
                   ) : (
                       <div className={globalStyle.authTheme} title={'取消置顶'} onClick={() => this.roofTop('0')} style={{ marginLeft: 10, fontSize: 16, color: '#FFA940' }}>&#xe86e;</div>
                     )
@@ -1120,15 +1227,26 @@ export default class GroupListHeadItem extends Component {
               {
                 // 只有在项目视图下，且如果在分组id == 0（未分组的情况下不能显示）
                 group_view_type == '1' && list_id != '0' && (
-                  <Dropdown onVisibleChange={this.dropdwonVisibleChange} overlay={(group_view_type == '1' && menu_oprate_visible) ? this.renderMenuOperateListName() : <span></span>}>
+                  <Dropdown onVisibleChange={this.dropdwonVisibleChange} overlay={(group_view_type == '1' && menu_oprate_visible) ? this.renderMenuOperateListName() : <span></span>} trigger={['click']}>
                     <span className={`${globalStyles.authTheme} ${indexStyles.operator}`}>&#xe7fd;</span>
                   </Dropdown>
                 )
               }
             </div>
           </div>
+
+          {/* 分组视图下未分组的，由于未分组长度太高，放到前面 */}
+          {
+            (gantt_board_id != '0' && group_view_type == '1' && list_id == '0') && (
+              <div className={indexStyles.list_head_footer} onClick={this.setIsShowBottDetail} style={{ marginTop: 16, display: list_no_time_data.length ? 'flex' : 'none' }}>
+                <div className={`${globalStyles.authTheme} ${indexStyles.list_head_footer_tip} ${isShowBottDetail == '2' && indexStyles.spin_hide2} ${isShowBottDetail == '1' && indexStyles.spin_show2}`}>&#xe61f;</div>
+                <div className={indexStyles.list_head_footer_dec}>{list_no_time_data.length}个未排期事项</div>
+              </div>
+            )
+          }
+
           {/* 没有排期任务列表 */}
-          <div className={`${indexStyles.list_head_body}`} onWheel={(e) => e.stopPropagation()}>
+          <div className={`${indexStyles.list_head_body}`} onWheel={(e) => e.stopPropagation()} style={{ visibility: list_no_time_data.length ? 'visible' : 'hidden' }}>
             <div className={`${indexStyles.list_head_body_inner} ${isShowBottDetail == '0' && indexStyles.list_head_body_inner_init} ${isShowBottDetail == '2' && indexStyles.animate_hide} ${isShowBottDetail == '1' && indexStyles.animate_show}`} >
               {this.renderTaskItem()}
             </div>
@@ -1152,10 +1270,12 @@ export default class GroupListHeadItem extends Component {
                 </div>
               </div>
             ) : (
-                <div className={indexStyles.list_head_footer} onClick={this.setIsShowBottDetail} style={{ display: list_no_time_data.length ? 'flex' : 'none' }}>
-                  <div className={`${globalStyles.authTheme} ${indexStyles.list_head_footer_tip} ${isShowBottDetail == '2' && indexStyles.spin_hide} ${isShowBottDetail == '1' && indexStyles.spin_show}`}>&#xe61f;</div>
-                  <div className={indexStyles.list_head_footer_dec}>{list_no_time_data.length}个未排期事项</div>
-                </div>
+                // 分组视图下，具有实际意义的分组（非未分组下）
+                (list_id && list_id != '0') && (
+                  <div className={indexStyles.list_head_footer} onClick={this.setIsShowBottDetail} style={{ display: list_no_time_data.length ? 'flex' : 'none' }}>
+                    <div className={`${globalStyles.authTheme} ${indexStyles.list_head_footer_tip} ${isShowBottDetail == '2' && indexStyles.spin_hide} ${isShowBottDetail == '1' && indexStyles.spin_show}`}>&#xe61f;</div>
+                    <div className={indexStyles.list_head_footer_dec}>{list_no_time_data.length}个未排期事项</div>
+                  </div>)
               )
           }
         </div>
@@ -1189,7 +1309,7 @@ export default class GroupListHeadItem extends Component {
 }
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({
-  gantt: { datas: { boards_flies, group_rows = [], ceiHeight, gantt_board_id, group_view_type, get_gantt_data_loading, list_group, show_board_fold } },
+  gantt: { datas: { gantt_view_mode, single_select_user, group_rows_lock, boards_flies, group_rows = [], ceiHeight, gantt_board_id, group_view_type, get_gantt_data_loading, list_group, show_board_fold } },
   technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org, userBoardPermissions } },
   projectDetail: { datas: { projectDetailInfoData = {} } },
   workbench: {
@@ -1197,5 +1317,5 @@ function mapStateToProps({
       projectList,
     } },
 }) {
-  return { projectList, boards_flies, list_group, ceiHeight, group_rows, currentUserOrganizes, is_show_org_name, is_all_org, gantt_board_id, group_view_type, get_gantt_data_loading, show_board_fold, projectDetailInfoData, userBoardPermissions }
+  return { gantt_view_mode, single_select_user, group_rows_lock, projectList, boards_flies, list_group, ceiHeight, group_rows, currentUserOrganizes, is_show_org_name, is_all_org, gantt_board_id, group_view_type, get_gantt_data_loading, show_board_fold, projectDetailInfoData, userBoardPermissions }
 }

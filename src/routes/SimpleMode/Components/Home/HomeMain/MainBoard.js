@@ -1,29 +1,46 @@
 import React, { Component } from 'react'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import styles from './index.less'
-import { Checkbox, } from 'antd'
+import { Checkbox, Menu, Dropdown, } from 'antd'
 import { connect } from 'dva'
-import { selectBoardToSeeInfo, getOrgIdByBoardId, setBoardIdStorage, getOrgNameWithOrgIdFilter, checkIsHasPermissionInBoard } from '../../../../../utils/businessFunction'
+import { selectBoardToSeeInfo, getOrgIdByBoardId, setBoardIdStorage, getOrgNameWithOrgIdFilter, checkIsHasPermissionInBoard, currentNounPlanFilterName } from '../../../../../utils/businessFunction'
 import CreateProject from '@/routes/Technological/components/Project/components/CreateProject/index';
 
 import BoardItem from './BoardItem'
 import { afterClearGanttData } from '../../../../Technological/components/Gantt/ganttBusiness'
+import { isObjectValueEqual, isArrayEqual } from '../../../../../utils/util'
+import { PROJECTS } from '../../../../../globalset/js/constant'
 
 @connect(mapStateToProps)
 export default class MainBoard extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            local_selected_board: {}
+            local_selected_board: {},
+            projectList: props.projectList
         }
     }
     componentDidMount() {
-        const { dispatch } = this.props
+        const { dispatch, projectList = [] } = this.props
         this.initGetTodoList()
         dispatch({
             type: 'workbench/getProjectList',
             payload: {}
         });
+    }
+    componentWillReceiveProps(nextProps) {
+        if (!(isObjectValueEqual(nextProps.projectList, this.props.projectList))) { // 表示不是在我负责的项目下
+            if (nextProps.simplemodeCurrentProject.selected_board_term == '2') {
+                this.getTheProjectListIsBelongToUserSelf(nextProps)
+            } else {
+                this.setState({
+                    projectList: nextProps.projectList
+                })
+            }
+        }
+        if (nextProps.simplemodeCurrentProject.selected_board_term != this.props.simplemodeCurrentProject.selected_board_term) { // 这里是单独判断切换我参与的和我负责的
+            this.getTheProjectListIsBelongToUserSelf(nextProps)
+        }
     }
     // 初始化获取待办事项
     initGetTodoList = () => {
@@ -95,31 +112,41 @@ export default class MainBoard extends Component {
             local_selected_board: data
         })
     }
+    // 获取参与项目还是发起项目
+    getTheProjectListIsBelongToUserSelf = (props) => {
+        const { projectList = [], simplemodeCurrentProject = {} } = props
+        const { selected_board_term } = simplemodeCurrentProject
+        // const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
+        let filterProjectList = [...projectList]
+        // 这是过滤我发起的项目
+        // filterProjectList = (selected_board_term == '0' || !selected_board_term) ? projectList : selected_board_term == '1' ? filterProjectList.filter(i=>i.user_id==id) : []
+        // 过滤我负责的项目
+        filterProjectList = (selected_board_term == '0' || !selected_board_term) ? projectList : selected_board_term == '2' ? filterProjectList.filter(i => i.is_principal == '1') : []
+        this.setState({
+            projectList: filterProjectList
+        })
+    }
+
     checkBoxChange = (e) => {
         const checked = e.target.checked
         const { local_selected_board = {} } = this.state
-        const { projectList = [], dispatch } = this.props
-
-        if (checked) {
-            dispatch({
-                type: 'simplemode/updateDatas',
-                payload: {
-                    simplemodeCurrentProject: {}
-                }
-            });
-            dispatch({
-                type: 'accountSet/updateUserSet',
-                payload: {
-                    current_board: '0'
-                }
-            });
+        const { dispatch, simplemodeCurrentProject = {} } = this.props
+        const { projectList = [] } = this.state
+        const { selected_board_term } = simplemodeCurrentProject
+        if (checked) { // 表示全选            
+            // dispatch({
+            //     type: 'accountSet/updateUserSet',
+            //     payload: {
+            //         current_board: '0'
+            //     }
+            // });
             dispatch({
                 type: 'technological/updateDatas',
                 payload: {
                     currentSelectedProjectOrgIdByBoardId: ''
                 }
             })
-            selectBoardToSeeInfo({ board_id: '0', dispatch })
+            selectBoardToSeeInfo({ board_id: '0', selected_board_term, dispatch })
             dispatch({
                 type: 'simplemode/getBoardsTaskTodoList',
                 payload: {
@@ -144,12 +171,12 @@ export default class MainBoard extends Component {
                         simplemodeCurrentProject: { local_selected_board }
                     }
                 });
-                dispatch({
-                    type: 'accountSet/updateUserSet',
-                    payload: {
-                        current_board: local_selected_board.board_id
-                    }
-                });
+                // dispatch({
+                //     type: 'accountSet/updateUserSet',
+                //     payload: {
+                //         current_board: local_selected_board.board_id
+                //     }
+                // });
                 dispatch({
                     type: 'technological/updateDatas',
                     payload: {
@@ -170,8 +197,9 @@ export default class MainBoard extends Component {
                         board_id: local_selected_board.board_id
                     }
                 })
-                selectBoardToSeeInfo({ board_id: local_selected_board && local_selected_board.board_id, board_name: local_selected_board && local_selected_board.board_name, dispatch })
+                selectBoardToSeeInfo({ board_id: local_selected_board && local_selected_board.board_id, board_name: local_selected_board && local_selected_board.board_name, dispatch, selected_board_term })
             } else {
+                if (!(projectList && projectList.length)) return
                 setBoardIdStorage(projectList[0].board_id);
                 dispatch({
                     type: 'simplemode/updateDatas',
@@ -180,12 +208,12 @@ export default class MainBoard extends Component {
                     }
                 });
 
-                dispatch({
-                    type: 'accountSet/updateUserSet',
-                    payload: {
-                        current_board: projectList[0].board_id
-                    }
-                });
+                // dispatch({
+                //     type: 'accountSet/updateUserSet',
+                //     payload: {
+                //         current_board: projectList[0].board_id
+                //     }
+                // });
 
                 dispatch({
                     type: 'technological/updateDatas',
@@ -207,18 +235,66 @@ export default class MainBoard extends Component {
                         board_id: projectList[0].board_id
                     }
                 })
-                selectBoardToSeeInfo({ board_id: projectList[0] && projectList[0].board_id, board_name: projectList[0] && projectList[0].board_name, dispatch })
+                selectBoardToSeeInfo({ board_id: projectList[0] && projectList[0].board_id, board_name: projectList[0] && projectList[0].board_name, dispatch, selected_board_term })
             }
 
         }
     }
+    // 下拉选项
+    handleBoardSelectedTerm = (e) => {
+        const { key } = e
+        const { dispatch, simplemodeCurrentProject = {} } = this.props
+        // dispatch({
+        //     type: 'accountSet/updateUserSet',
+        //     payload: {
+        //         current_board: '0'
+        //     }
+        // });
+        dispatch({
+            type: 'technological/updateDatas',
+            payload: {
+                currentSelectedProjectOrgIdByBoardId: ''
+            }
+        })
+        selectBoardToSeeInfo({ board_id: '0', selected_board_term: key, dispatch })
+        dispatch({
+            type: 'simplemode/getBoardsTaskTodoList',
+            payload: {
+                _organization_id: localStorage.getItem('OrganizationId'),
+                // board_ids: '0'
+            }
+        })
+        dispatch({
+            type: 'simplemode/getBoardsProcessTodoList',
+            payload: {
+                _organization_id: localStorage.getItem('OrganizationId'),
+                // board_ids: '0'
+            }
+        })
+    }
+    // 下拉选项
+    renderBoardSelectedTerm = () => {
+        const { simplemodeCurrentProject: { selected_board_term } } = this.props
+        return (
+            <div>
+                <Menu defaultSelectedKeys="0" selectedKeys={selected_board_term ? selected_board_term : '0'} onClick={this.handleBoardSelectedTerm}>
+                    {/* <Menu.Item key="1">我发起的项目</Menu.Item> */}
+                    <Menu.Item key="0">我参与的{`${currentNounPlanFilterName(PROJECTS)}`}</Menu.Item>
+                    <Menu.Item key="2">我负责的{`${currentNounPlanFilterName(PROJECTS)}`}</Menu.Item>
+                </Menu>
+            </div>
+        )
+    }
     // 渲染主区域
     renderBoardArea = () => {
         const { simplemodeCurrentProject = {}, local_selected_board = {} } = this.props
+        const { selected_board_term } = simplemodeCurrentProject
         return (
             <div className={styles.board_area}>
                 <div className={styles.board_area_top}>
-                    <div className={styles.board_area_top_lf}>我的项目</div>
+                    <Dropdown getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.renderBoardSelectedTerm()} trigger={['click']}>
+                        <div className={styles.board_area_top_lf}>{(selected_board_term == '0' || !selected_board_term) ? `我参与的${currentNounPlanFilterName(PROJECTS)}` : selected_board_term == '2' ? `我负责的${currentNounPlanFilterName(PROJECTS)}` : ''} <span className={globalStyles.authTheme}>&#xe7ee;</span></div>
+                    </Dropdown>
                     <div className={styles.board_area_top_rt}>
                         <Checkbox
                             checked={(simplemodeCurrentProject.board_id == '0' || !simplemodeCurrentProject.board_id) && !local_selected_board.board_id}
@@ -232,7 +308,7 @@ export default class MainBoard extends Component {
                 <div className={styles.board_area_bott}>
                     <div className={`${styles.create_btn}`} onClick={this.setAddProjectModalVisible}>
                         <i className={`${globalStyles.authTheme}`} style={{ fontSize: 16 }}>&#xe846;</i>
-                        <span>新建项目</span>
+                        <span>新建{`${currentNounPlanFilterName(PROJECTS)}`}</span>
                     </div>
                 </div>
             </div>
@@ -244,10 +320,10 @@ export default class MainBoard extends Component {
                 <div className={`${styles.create_top} ${globalStyles.authTheme}`}>
                     &#xe703;
                         </div>
-                <div className={styles.create_middle}>暂无项目，赶快新建一个吧</div>
+                <div className={styles.create_middle}>暂无{`${currentNounPlanFilterName(PROJECTS)}`}，赶快新建一个吧</div>
                 <div className={styles.create_btn} onClick={this.setAddProjectModalVisible}>
                     <i className={`${globalStyles.authTheme}`} style={{ fontSize: 16 }}>&#xe846;</i>
-                    <span>新建项目</span>
+                    <span> {`新建${currentNounPlanFilterName(PROJECTS)}`}</span>
                 </div>
             </div>
         )
@@ -255,7 +331,8 @@ export default class MainBoard extends Component {
 
     // 项目列表操作项
     renderBoardList = () => {
-        const { projectList = [], simplemodeCurrentProject = {} } = this.props
+        // const { projectList = [], simplemodeCurrentProject = {} } = this.props
+        const { projectList = [] } = this.state
         return (
             projectList.map(value => {
                 const { board_id } = value
