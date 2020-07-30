@@ -1425,7 +1425,7 @@ export default class MainContent extends Component {
                 file_detail_modal_visible={this.props.isInOpenFile}
                 filePreviewCurrentName={this.props.filePreviewCurrentName}
                 setPreviewFileModalVisibile={this.setPreviewFileModalVisibile}
-                whetherUpdateFolderListData={this.whetherUpdateFolderListData}
+                // whetherUpdateFolderListData={this.whetherUpdateFolderListData}
               />
             )
           }

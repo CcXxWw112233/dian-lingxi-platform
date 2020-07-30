@@ -275,6 +275,7 @@ export default class FolderList extends Component {
                                     itemValue={item}
                                     board_id={board_id}
                                     setBreadPaths={this.setBreadPaths}
+                                    updatePrivateVariablesWithOpenFile={this.props.updatePrivateVariablesWithOpenFile}
                                     setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile} />
                             </div>
                         )

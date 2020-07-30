@@ -215,6 +215,7 @@ export default class FolderItem extends Component {
 				filePreviewCurrentName: name || file_name
 			}
 		})
+		this.props.updatePrivateVariablesWithOpenFile && this.props.updatePrivateVariablesWithOpenFile()
 		// this.props.setPreviewFileModalVisibile && this.props.setPreviewFileModalVisibile();
 		// dispatch({
 		//     type: 'workbenchFileDetail/getCardCommentListAll',

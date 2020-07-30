@@ -206,6 +206,13 @@ export default class MainContent extends Component {
     }
   }
 
+  // 更新一个私有变量开启文件弹窗
+  updatePrivateVariablesWithOpenFile = () => {
+    this.setState({
+      whetherIsOpenFileVisible: !this.state.whetherIsOpenFileVisible
+    })
+  }
+
   // 更新drawContent中的数据以及调用父级列表更新数据
   updateDrawContentWithUpdateParentListDatas = ({ drawContent, card_id, name, value, operate_properties_code, rely_card_datas }) => {
     const { dispatch } = this.props
@@ -1065,31 +1072,66 @@ export default class MainContent extends Component {
         filePreviewCurrentName: ''
       }
     })
+    this.updatePrivateVariablesWithOpenFile && this.updatePrivateVariablesWithOpenFile()
   }
 
   /* 附件版本更新数据  */
   whetherUpdateFolderListData = ({ folder_id, file_id, file_name, create_time }) => {
     if (file_name) {
       const { drawContent = {}, dispatch } = this.props
-      const gold_data = (drawContent['properties'].find(item => item.code == 'ATTACHMENT') || {}).data
-      let newData = [...gold_data]
-      newData = newData && newData.map(item => {
-        if (item.file_id == this.props.filePreviewCurrentFileId) {
-          let new_item = item
-          new_item = { ...item, file_id: file_id, name: file_name, create_time: create_time }
-          return new_item
-        } else {
-          let new_item = item
-          return new_item
-        }
-      })
-      drawContent['properties'] = this.filterCurrentUpdateDatasField('ATTACHMENT', newData)
-      dispatch({
-        type: 'publicTaskDetailModal/updateDatas',
-        payload: {
-          drawContent
-        }
-      })
+      const { deliverables = [] } = drawContent
+      const gold_data = (drawContent['properties'].find(item => item.code == 'SUBTASK') || {}).data
+      if (gold_data && gold_data.length) { // 表示子任务存在
+        let newData = [...gold_data]
+        newData = newData.map(item => {
+          let new_item = {...item}
+          if (item.deliverables && item.deliverables.length) {
+            let temp_arr = [...item.deliverables]
+            temp_arr = temp_arr.map(val => {
+              if (val.file_id == this.props.filePreviewCurrentFileId) {
+                let new_val = {...val}
+                new_val = { ...val, file_id: file_id, name: file_name, create_time: create_time}
+                return new_val
+              } else {
+                return val
+              }
+            })
+            new_item = {...item, deliverables: temp_arr}
+            return new_item
+          } else {
+            return item
+          }
+        })
+        drawContent['properties'] = this.filterCurrentUpdateDatasField('SUBTASK', newData)
+        dispatch({
+          type: 'publicTaskDetailModal/updateDatas',
+          payload: {
+            drawContent
+          }
+        })
+        if (typeof this.props.handleRelyUploading == 'function' && folder_id) this.props.handleRelyUploading({ folder_id })
+      } else if (deliverables && deliverables.length) { // 表示是父任务的文件列表中存在
+        let new_deliverables = [...deliverables]
+        new_deliverables = new_deliverables && new_deliverables.map(item => {
+          if (item.file_id == this.props.filePreviewCurrentFileId) {
+            let new_item = item
+            new_item = { ...item, file_id: file_id, name: file_name, create_time: create_time }
+            return new_item
+          } else {
+            let new_item = item
+            return new_item
+          }
+        })
+        drawContent['deliverables'] = new_deliverables
+        dispatch({
+          type: 'publicTaskDetailModal/updateDatas',
+          payload: {
+            drawContent
+          }
+        })
+        if (typeof this.props.handleRelyUploading == 'function' && folder_id) this.props.handleRelyUploading({ folder_id })
+      }
+
     }
 
   }
@@ -1380,7 +1422,7 @@ export default class MainContent extends Component {
           {/* 各种字段的不同状态 E */}
           {/* 不同字段的渲染 S */}
           <div style={{ position: 'relative' }}>
-            <DragDropContentComponent handleRelyUploading={this.props.handleRelyUploading} getMilestone={this.getMilestone} selectedKeys={selectedKeys} updateParentPropertiesList={this.updateParentPropertiesList} handleTaskDetailChange={handleTaskDetailChange} handleChildTaskChange={handleChildTaskChange} boardFolderTreeData={boardFolderTreeData} milestoneList={milestoneList} whetherUpdateParentTaskTime={this.whetherUpdateParentTaskTime} updateRelyOnRationList={this.updateRelyOnRationList} />
+            <DragDropContentComponent updatePrivateVariablesWithOpenFile={this.updatePrivateVariablesWithOpenFile} handleRelyUploading={this.props.handleRelyUploading} getMilestone={this.getMilestone} selectedKeys={selectedKeys} updateParentPropertiesList={this.updateParentPropertiesList} handleTaskDetailChange={handleTaskDetailChange} handleChildTaskChange={handleChildTaskChange} boardFolderTreeData={boardFolderTreeData} milestoneList={milestoneList} whetherUpdateParentTaskTime={this.whetherUpdateParentTaskTime} updateRelyOnRationList={this.updateRelyOnRationList} />
           </div>
           {/* 不同字段的渲染 E */}
 
@@ -1430,7 +1472,7 @@ export default class MainContent extends Component {
         {/*查看任务附件*/}
         <div>
           {
-            this.props.isInOpenFile && (
+            this.props.isInOpenFile && this.state.whetherIsOpenFileVisible && (
               <FileListRightBarFileDetailModal
                 filePreviewCurrentFileId={this.props.filePreviewCurrentFileId}
                 fileType={this.props.fileType}

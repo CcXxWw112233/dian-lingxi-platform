@@ -286,6 +286,7 @@ export default class Index extends Component {
                     setBreadPaths={this.setBreadPaths}
                     getFolderFileList={this.getFolderFileList}
                     updateParentFileStateData={this.updateParentFileStateData}
+                    updatePrivateVariablesWithOpenFile={this.props.updatePrivateVariablesWithOpenFile}
                     setPreviewFileModalVisibile={this.props.setPreviewFileModalVisibile} />
                 {/* {show_drag && ( */}
                 <div className={styles.drag_out}
@@ -307,7 +308,7 @@ export default class Index extends Component {
                 </div>
                 {/* )} */}
                 {
-                    this.props.isInOpenFile && board_id && (
+                    this.props.isInOpenFile && board_id && this.props.whetherIsOpenFileVisible && (
                         <FileDetailModal
                             // {...this.props}
                             // {...this.props.fileDetailModalDatas}

@@ -455,6 +455,7 @@ export default class AppendSubTask extends Component {
                 childDataIndex={key} 
                 updateRelyOnRationList={updateRelyOnRationList}
                 handleRelyUploading={handleRelyUploading}
+                updatePrivateVariablesWithOpenFile={this.props.updatePrivateVariablesWithOpenFile}
               />
             )
           })}

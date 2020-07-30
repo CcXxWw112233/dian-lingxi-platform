@@ -11,6 +11,12 @@ export default class BoardsFilesArea extends Component {
     state = {
         previewFileModalVisibile: false
     }
+    // 更新父组件中私有变量开启文件弹窗
+    updatePrivateVariablesWithOpenFile = () => {
+        this.setState({
+            previewFileModalVisibile: true
+        })
+    }
     //弹窗
     setPreviewFileModalVisibile = () => {
         this.setState({
@@ -82,6 +88,8 @@ export default class BoardsFilesArea extends Component {
                                             item={key}
                                             board_id={id}
                                             board_name={board_name}
+                                            previewFileModalVisibile={this.state.previewFileModalVisibile}
+                                            updatePrivateVariablesWithOpenFile={this.updatePrivateVariablesWithOpenFile}
                                             setPreviewFileModalVisibile={this.setPreviewFileModalVisibile} />
                                     }
                                 </div>

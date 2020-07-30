@@ -482,6 +482,7 @@ export default class DragDropContentComponent extends Component {
         filePreviewCurrentName: file_name
       }
     })
+    this.props.updatePrivateVariablesWithOpenFile && this.props.updatePrivateVariablesWithOpenFile()
 
   }
   /**附件下载、删除等操作 */
@@ -1153,7 +1154,9 @@ export default class DragDropContentComponent extends Component {
               {/* 添加子任务组件 */}
               {
                 !!!(deliverables && deliverables.length) && (
-                  <AppendSubTask data={data} handleTaskDetailChange={handleTaskDetailChange} handleChildTaskChange={handleChildTaskChange} whetherUpdateParentTaskTime={whetherUpdateParentTaskTime} updateRelyOnRationList={updateRelyOnRationList} boardFolderTreeData={boardFolderTreeData} projectDetailInfoData={projectDetailInfoData} handleRelyUploading={this.props.handleRelyUploading}>
+                  <AppendSubTask data={data} handleTaskDetailChange={handleTaskDetailChange} handleChildTaskChange={handleChildTaskChange} whetherUpdateParentTaskTime={whetherUpdateParentTaskTime} updateRelyOnRationList={updateRelyOnRationList} boardFolderTreeData={boardFolderTreeData} projectDetailInfoData={projectDetailInfoData} handleRelyUploading={this.props.handleRelyUploading}
+                  updatePrivateVariablesWithOpenFile={this.props.updatePrivateVariablesWithOpenFile}
+                  >
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <div className={mainContentStyles.add_sub_btn}>
                         <span className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe8fe;</span> 新建子任务
@@ -1186,12 +1189,12 @@ export default class DragDropContentComponent extends Component {
                       const breadcrumbList = this.getFolderPathName([], fileInfo)
                       return (
                         <div className={`${mainContentStyles.file_item_wrapper}`} key={fileInfo.id}>
-                          <div className={`${mainContentStyles.file_item} ${mainContentStyles.pub_hover}`} onClick={() => this.openFileDetailModal(fileInfo)} >
+                          <div className={`${mainContentStyles.file_item} ${mainContentStyles.pub_hover}`} onClick={(e) => this.openFileDetailModal(e,fileInfo)} >
                             <div>
                               <span className={`${mainContentStyles.file_action} ${globalStyles.authTheme}`} dangerouslySetInnerHTML={{ __html: this.judgeFileType(file_name) }}></span>
                             </div>
                             <div style={{ flex: 1 }}>
-                              <div onClick={(e) => this.openFileDetailModal(e, fileInfo)} title={file_name} className={mainContentStyles.file_name}>{file_name}</div>
+                              <div title={file_name} className={mainContentStyles.file_name}>{file_name}</div>
                               <div className={mainContentStyles.file_info}>{this.showMemberName(fileInfo.create_by)} 上传于 {fileInfo.create_time && timestampFormat(fileInfo.create_time, "MM-dd hh:mm")}</div>
                               <div className={mainContentStyles.breadNav} style={{ position: 'relative' }}>
                                 <Breadcrumb className={mainContentStyles.Breadcrumb} separator=">">

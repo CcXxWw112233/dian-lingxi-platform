@@ -625,7 +625,7 @@ export default class AppendSubTaskItem extends Component {
         filePreviewCurrentName: file_name
       }
     })
-
+    this.props.updatePrivateVariablesWithOpenFile && this.props.updatePrivateVariablesWithOpenFile()
   }
 
   // 上传文件 事件 S
