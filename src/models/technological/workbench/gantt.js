@@ -528,7 +528,7 @@ export default {
                 // 该月之前每个月的天数+这一条的日期 = 所在的位置索引（需要再乘以单位长度才是真实位置）
                 const all_date_length = date_arr_one_level.slice().map(item => item.last_date).reduce((total, num) => total + num) //该月之前所有日期长度之和
                 const date_length = date_arr_one_level.slice(0, k < 1 ? 1 : k).map(item => item.last_date).reduce((total, num) => total + num) //该月之前所有日期长度之和
-                const date_no = new Date(item['start_time']).getDate() //所属该月几号
+                const date_no = new Date(item[cal_left_field]).getDate() //所属该月几号
                 const max_width = (all_date_length - date_length - date_no) * ceilWidth //剩余最大可放长度
                 new_item.left = (date_length + date_no - 1) * ceilWidth
                 new_item.width = Math.min.apply(Math, [max_width, (time_span || 1) * ceilWidth]) //取最小可放的
@@ -537,7 +537,7 @@ export default {
               }
             } else if (gantt_view_mode == 'week') {
               if (new_item[cal_left_field] <= date_arr_one_level[k]['timestampEnd'] && new_item[cal_left_field] >= date_arr_one_level[k]['timestamp']) {
-                const date_day = new Date(new_item['start_time']).getDay() //周几
+                const date_day = new Date(new_item[cal_left_field]).getDay() //周几
                 new_item.left = ((k + (date_day == 0 ? 1 : 0)) * 7 + date_day - 1) * ceilWidth
                 new_item.width = (time_span || 1) * ceilWidth
                 break

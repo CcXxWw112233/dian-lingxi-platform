@@ -451,6 +451,7 @@ export default class GanttFace extends Component {
                 style={{
                   height: gantt_card_height - 20 - date_area_height,
                 }}
+                onTouchStart={() => this.setScrollArea('gantt_body')}
                 className={indexStyles.panel_out}
                 id={'gantt_card_out_middle'}
                 ref={'gantt_card_out_middle'}

@@ -425,7 +425,11 @@ export default class GetRowStrip extends PureComponent {
         })
     }
     // 甘特图信息变化后，实时触发甘特图渲染在甘特图上变化
-    handleMiletonsChangeMountInGantt = () => {
+    handleMiletonsChangeMountInGantt = (id, data, data2) => {
+        let data_ = { ...data }
+        if (data_.deadline) data_.due_time = data_.deadline
+        this.changeOutLineTreeNodeProto(id, data_, 'milestone')
+        // debugger
         // const { dispatch } = this.props
         // dispatch({
         //     type: 'gantt/getGttMilestoneList',
@@ -440,13 +444,13 @@ export default class GetRowStrip extends PureComponent {
         this.setState({
             miletone_detail_modal_visible: !miletone_detail_modal_visible
         })
-        if (miletone_detail_modal_visible) { //关闭的时候更新
-            let { milestone_detail = {}, itemValue: { id } } = this.props
-            milestone_detail.due_time = milestone_detail.deadline
-            setTimeout(() => {
-                this.changeOutLineTreeNodeProto(id, milestone_detail, 'milestone')
-            }, 300)
-        }
+        // if (miletone_detail_modal_visible) { //关闭的时候更新
+        //     let { milestone_detail = {}, itemValue: { id } } = this.props
+        //     milestone_detail.due_time = milestone_detail.deadline
+        //     setTimeout(() => {
+        //         this.changeOutLineTreeNodeProto(id, milestone_detail, 'milestone')
+        //     }, 300)
+        // }
     }
     // 过滤项目成员
     setCurrentSelectedProjectMembersList = () => {

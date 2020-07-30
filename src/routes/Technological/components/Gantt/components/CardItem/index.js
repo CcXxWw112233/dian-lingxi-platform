@@ -922,7 +922,8 @@ export default class CardItem extends Component {
             parent_card_id,
         } = itemValue
         return {
-            onClick: () => {
+            onClick: (e) => {
+                if('specific_example' != e.target.dataset.targetclassname) return //必须在任务条上点击
                 if (!drag_lock) {
                     this.props.setTaskIsDragging && this.props.setTaskIsDragging(true) //当拖动时，有可能会捕获到创建任务的动作，阻断
                     setTimeout(() => {
@@ -1108,7 +1109,7 @@ export default class CardItem extends Component {
                         <Popover
                             getPopupContainer={() => document.getElementById('gantt_card_out_middle')}
                             placement="bottom" content={<CardDropDetail list={[{ ...itemValue }]} />} key={id}>
-                            <div style={{ position: 'absolute', width: '100%', height: '100%' }} data-rely_top={id}></div>
+                            <div data-targetclassname="specific_example" style={{ position: 'absolute', width: '100%', height: '100%' }} data-rely_top={id}></div>
                         </Popover>
                     )
                 }
