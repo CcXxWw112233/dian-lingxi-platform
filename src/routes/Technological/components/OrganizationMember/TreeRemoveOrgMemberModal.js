@@ -287,6 +287,7 @@ export default class TreeRemoveOrgMemberModal extends Component {
         TreeRemoveOrgMemberModalVisible: false
       }
     })
+    this.initState()
   }
 
   onOk = () => {
