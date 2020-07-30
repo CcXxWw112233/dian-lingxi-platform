@@ -633,6 +633,7 @@ export default class AppendSubTaskItem extends Component {
     let { drawContent = {}, dispatch, childDataIndex } = this.props;
     const { data: sub_attachment_data } = drawContent['properties'].filter(item => item.code == 'SUBTASK')[0]
     if (data && data.length > 0) {
+      sub_attachment_data[childDataIndex].deliverables = [...sub_attachment_data[childDataIndex].deliverables]
       sub_attachment_data[childDataIndex].deliverables.push(...data)
       // this.setChildTaskIndrawContent({ name: 'deliverables', value: [...attachment_data[childDataIndex].deliverables] })
       let new_drawContent = { ...drawContent }
@@ -643,6 +644,9 @@ export default class AppendSubTaskItem extends Component {
           drawContent: new_drawContent
         }
       })
+      const { folder_path = {} } = data[0]
+      const { id: folder_id } = folder_path
+      if (typeof this.props.handleRelyUploading == 'function' && folder_id) this.props.handleRelyUploading({ folder_id })
     }
   }
 
