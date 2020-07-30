@@ -507,6 +507,7 @@ export default class DateList extends Component {
       gantt_board_id,
       gantt_view_mode,
       about_user_boards,
+      get_gantt_data_loading_other
     } = this.props
 
     const { create_lcb_time_arr = [] } = this.state
@@ -517,6 +518,7 @@ export default class DateList extends Component {
       <div>
         <div className={indexStyles.dateArea}
           id={'gantt_date_area'}
+          style={{ visibility: get_gantt_data_loading_other ? 'hidden' : 'visible' }}
         // style={{ left: -target_scrollLeft, }}
         >
           {this.renderFixedDateTop()}
@@ -640,7 +642,7 @@ function mapStateToProps(
       gold_date_arr = [], about_user_boards = [],
       target_scrollTop = [],
       milestoneMap = [], holiday_list = [],
-      gantt_board_id, group_view_type, gantt_view_mode, ceilWidth
+      gantt_board_id, group_view_type, gantt_view_mode, ceilWidth, get_gantt_data_loading_other
     } },
     technological: { datas: { userBoardPermissions } }
   }) {
@@ -650,7 +652,7 @@ function mapStateToProps(
     target_scrollTop, milestoneMap,
     holiday_list, gantt_board_id,
     group_view_type, about_user_boards,
-    userBoardPermissions, gantt_view_mode, ceilWidth
+    userBoardPermissions, gantt_view_mode, ceilWidth, get_gantt_data_loading_other
   }
 }
 

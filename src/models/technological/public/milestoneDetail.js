@@ -44,9 +44,11 @@ export default modelExtend(technological, {
             id
           }
         })
+        return res
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
+      return ''
     },
     * taskCancelRelaMiletones({ payload }, { select, call, put }) {
       const { id } = payload //此时的rela_id 为任务id
