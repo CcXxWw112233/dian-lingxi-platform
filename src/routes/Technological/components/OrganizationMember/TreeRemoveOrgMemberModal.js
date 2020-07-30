@@ -8,7 +8,6 @@ import { isApiResponseOk } from '../../../../utils/handleResponseData'
 import { currentNounPlanFilterName } from '../../../../utils/businessFunction'
 import { PROJECTS, TASKS, FLOWS, MESSAGE_DURATION_TIME } from '../../../../globalset/js/constant'
 import { removeEmptyArrayEle, arrayNonRepeatfy } from '../../../../utils/util'
-import { set } from 'core-js/fn/dict'
 
 const Option = Select.Option;
 
@@ -320,6 +319,8 @@ export default class TreeRemoveOrgMemberModal extends Component {
           }
         })
 
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     })
   }

@@ -70,6 +70,8 @@ export default class AppendSubTask extends Component {
   // 添加子任务
   addSubTask(e) {
     e && e.stopPropagation();
+    const { drawContent: { deliverables = [] } } = this.props
+    if (deliverables && deliverables.length) return
     this.setState({
       is_add_sub_task: true
     })

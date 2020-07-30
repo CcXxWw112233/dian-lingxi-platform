@@ -116,7 +116,7 @@ export default class ItemOne extends React.Component {
             }
           })
         } else {
-          this.removeUserConfirm({member_id: member_id})
+          this.discontinueConfirm(member_id)
         }
       }
     })
