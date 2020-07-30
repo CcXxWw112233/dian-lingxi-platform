@@ -820,8 +820,8 @@ export default class AppendSubTaskItem extends Component {
                       <div>
                         <span className={`${appendSubTaskStyles.file_action} ${globalStyles.authTheme}`} dangerouslySetInnerHTML={{ __html: judgeFileType(file_name) }}></span>
                       </div>
-                      <div style={{ flex: 1 }}>
-                        <div onClick={(e) => this.openFileDetailModal(e, fileInfo)} title={file_name} className={appendSubTaskStyles.pay_file_name}>{file_name}</div>
+                      <div style={{ flex: 1, marginRight: '10px' }}>
+                        <div onClick={(e) => this.openFileDetailModal(e, fileInfo)} title={file_name} className={appendSubTaskStyles.file_name}>{file_name}</div>
                       </div>
                       <div className={appendSubTaskStyles.file_info}>{showMemberName(fileInfo.create_by, data)} 上传于 {fileInfo.create_time && timestampFormat(fileInfo.create_time, "MM-dd hh:mm")}</div>
                       <div className={appendSubTaskStyles.breadNav} style={{ position: 'relative' }}>

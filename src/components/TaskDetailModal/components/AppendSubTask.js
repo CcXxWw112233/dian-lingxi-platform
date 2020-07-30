@@ -63,8 +63,8 @@ export default class AppendSubTask extends Component {
   handleSave(e) {
     e && e.stopPropagation();
     const { drawContent, dispatch } = this.props
-    const { board_id, card_id, list_id } = drawContent
-    const { data: executors = [] } = this.getCurrentDrawerContentPropsModelDatasExecutors()
+    const { board_id, card_id, list_id, properties = [] } = drawContent
+    const { data: executors = [] } = getCurrentDrawerContentPropsModelFieldData({properties, code: 'EXECUTOR'})
     const { inputValue, sub_executors, due_time, start_time } = this.state
     const { data = [] } = drawContent['properties'].filter(item => item.code == 'SUBTASK')[0]
     let temp_subExecutors = [...sub_executors]
