@@ -61,7 +61,7 @@ export default class AppendSubTaskItem extends Component {
   chirldrenTaskChargeChange = (dataInfo) => {
     // let sub_executors = []
     const { data = [], drawContent = {}, dispatch, childTaskItemValue } = this.props
-    // const { executors = [] } = drawContent
+    const { properties = [] } = drawContent
     const { data: executors = [] } = getCurrentDrawerContentPropsModelFieldData({properties, code: 'EXECUTOR'})
     const { card_id, executors: sub_executors = [] } = childTaskItemValue
     const { selectedKeys = [], type, key } = dataInfo
