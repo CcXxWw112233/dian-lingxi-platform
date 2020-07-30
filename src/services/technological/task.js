@@ -141,7 +141,11 @@ export async function updateTaskVTwo(data, isNotLoading) {
   delete data.card_id
   delete data.board_id
   const { BaseInfo = {} } = createHeaderContentDataByCardId(card_id)
-  BaseInfo.boardId = board_id
+  if (board_id) {
+    BaseInfo.boardId = board_id
+  } else {
+    delete BaseInfo.boardId
+  }
   return request({
     url: `${REQUEST_DOMAIN_BOARD}${REQUEST_INTERGFACE_VERSIONN}/card/${card_id}`,
     method: 'PUT',
