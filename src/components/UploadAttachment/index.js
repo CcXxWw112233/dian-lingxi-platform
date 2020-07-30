@@ -159,7 +159,7 @@ export default class UploadAttachment extends Component {
         notify_user_ids: notify_user_ids.join(','),
 
       },
-      timeout: 60000
+      timeout: 0
     })
       .then(res => {
         const apiResult = res.data;
