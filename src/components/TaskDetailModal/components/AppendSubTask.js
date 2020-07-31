@@ -420,7 +420,8 @@ export default class AppendSubTask extends Component {
                 whetherUpdateParentTaskTime={whetherUpdateParentTaskTime} 
                 handleChildTaskChange={handleChildTaskChange} 
                 handleTaskDetailChange={handleTaskDetailChange} 
-                data={dataInfo} 
+                data={dataInfo}
+                board_id={board_id} 
                 childTaskItemValue={value} 
                 key={`${card_id}-${card_name}-${user_id}-${due_time}-${start_time}-${deliverables}`} 
                 childDataIndex={key} 
