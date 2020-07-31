@@ -309,7 +309,7 @@ export default class ItemOne extends React.Component {
             </Menu.Item>
            ) : ('')}
            {
-            is_visitor !== '1' && checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_EDIT) ? (
+            is_visitor !== '1' && checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_REMOVE) ? (
               <Menu.Item key={'removeOrgMember'} style={{textAlign: 'center', padding: 0, margin: 0}}>
                 <div className={CreateTaskStyle.elseProjectMemu} style={{color: '#F5222D'}}>
                   移出组织
