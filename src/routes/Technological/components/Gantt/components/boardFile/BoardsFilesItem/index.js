@@ -308,7 +308,7 @@ export default class Index extends Component {
                 </div>
                 {/* )} */}
                 {
-                    this.props.isInOpenFile && board_id && this.props.whetherIsOpenFileVisible && (
+                    this.props.isInOpenFile && board_id && this.props.previewFileModalVisibile && (
                         <FileDetailModal
                             // {...this.props}
                             // {...this.props.fileDetailModalDatas}
