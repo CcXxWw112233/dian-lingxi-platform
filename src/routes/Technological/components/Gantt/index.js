@@ -225,15 +225,24 @@ class Gantt extends Component {
       return drawContent
     }
     const { properties = [] } = drawContent
-    const gold_data = (properties.find(item => item.code === operate_properties_code) || {}).data
+    const gold_data = (properties.find(item => item.code === operate_properties_code) || {}).data || []
     let gold_key = 'nothing'
-    if ('EXECUTOR' == operate_properties_code) {
-      gold_key = 'executors'
-    } else if ('LABEL' == operate_properties_code) {
-      gold_key = 'label_data'
-    } else if ('MILESTONE' == operate_properties_code) {
-      gold_key = 'milestone'
+    const obj = {
+      EXECUTOR: 'executors',
+      LABEL: 'label_data',
+      MILESTONE: 'milestone',
+      SUBTASK: 'children',
     }
+    gold_key = obj[operate_properties_code]
+    // if ('EXECUTOR' == operate_properties_code) {
+    //   gold_key = 'executors'
+    // } else if ('LABEL' == operate_properties_code) {
+    //   gold_key = 'label_data'
+    // } else if ('MILESTONE' == operate_properties_code) {
+    //   gold_key = 'milestone'
+    // }else if('SUBTASK' == operate_properties_code) {
+
+    // }
     return { ...drawContent, [gold_key]: gold_data }
   }
   // 修改没有排期的任务
@@ -323,7 +332,6 @@ class Gantt extends Component {
       })
       return
     }
-
     const { list_group = [], current_list_group_id } = this.props
     const list_group_new = [...list_group]
     const group_index = list_group_new.findIndex(item => item.lane_id == current_list_group_id)
@@ -372,7 +380,6 @@ class Gantt extends Component {
       return
     }
     const { id: milestone_id } = milestone
-    if (!milestone_id) return
     //大纲视图下，任务详情改变里程碑，要将任务位置改变
     const current_node = OutlineTree.getTreeNodeValue(outline_tree_, card_id)
     const from_parent_id = current_node.parent_id
@@ -383,8 +390,12 @@ class Gantt extends Component {
     } else {
       outline_tree_ = outline_tree_.filter(item => item.id != card_id)
     }
-    if (parent_to_node) { //将该条移动到指定里程碑之下
-      parent_to_node.children.push(current_node)
+    if (!milestone_id) {
+      outline_tree_.push({ ...current_node, parent_id: '', parent_milestone_id: '' })
+    } else {
+      if (parent_to_node) { //将该条移动到指定里程碑之下
+        parent_to_node.children.push(current_node)
+      }
     }
     dispatch({
       type: 'gantt/handleOutLineTreeData',
