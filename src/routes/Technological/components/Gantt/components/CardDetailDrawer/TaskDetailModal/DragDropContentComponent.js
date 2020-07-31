@@ -686,8 +686,26 @@ export default class DragDropContentComponent extends Component {
   }
   // 递归获取附件路径 E
 
+  // 删除字段的回调
+  deleteCodeCalback = (code, new_value = {}) => {
+    const { handleTaskDetailChange } = this.props
+    const { card_id } = new_value
+    switch (code) {
+      case 'MILESTONE':
+        handleTaskDetailChange({ card_id, drawContent: { ...new_value }, operate_properties_code: 'MILESTONE' })
+        break;
+      case 'LABEL':
+        handleTaskDetailChange({ card_id, drawContent: { ...new_value }, operate_properties_code: 'LABEL' })
+        break;
+      case 'SUBTASK':
+        handleTaskDetailChange({ card_id, drawContent: { ...new_value }, operate_properties_code: 'SUBTASK' })
+        break;
+      default:
+        break;
+    }
+  }
   // 对应字段的删除 S
-  handleDelCurrentField = (shouldDeleteId) => {
+  handleDelCurrentField = (shouldDeleteId, code) => {
     if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
@@ -749,9 +767,10 @@ export default class DragDropContentComponent extends Component {
                   drawContent: new_drawContent
                 }
               })
-              if (!(gold_label && gold_label.length)) {
-                that.props.handleTaskDetailChange && that.props.handleTaskDetailChange({ card_id, drawContent: new_drawContent, operate_properties_code: 'LABEL' })
-              }
+              that.deleteCodeCalback(code, new_drawContent)
+              // if (!(gold_label && gold_label.length)) {
+              //   that.props.handleTaskDetailChange && that.props.handleTaskDetailChange({ card_id, drawContent: new_drawContent, operate_properties_code: 'LABEL' })
+              // }
             }
           })
         },
@@ -783,9 +802,9 @@ export default class DragDropContentComponent extends Component {
               drawContent: new_drawContent
             }
           })
-          if (!(gold_label && gold_label.length)) {
-            that.props.handleTaskDetailChange && that.props.handleTaskDetailChange({ card_id, drawContent: new_drawContent, operate_properties_code: 'LABEL' })
-          }
+          // if (!(gold_label && gold_label.length)) {
+          //   that.props.handleTaskDetailChange && that.props.handleTaskDetailChange({ card_id, drawContent: new_drawContent, operate_properties_code: 'LABEL' })
+          // }
         }
       })
     }
@@ -831,7 +850,7 @@ export default class DragDropContentComponent extends Component {
               </div>
               {
                 !flag && (
-                  <span onClick={() => { this.handleDelCurrentField(currentItem.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
+                  <span onClick={() => { this.handleDelCurrentField(currentItem.id, 'MILESTONE') }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
                 )
               }
             </div>
@@ -954,7 +973,7 @@ export default class DragDropContentComponent extends Component {
               </div>
               {
                 !flag && (
-                  <span onClick={() => { this.handleDelCurrentField(currentItem.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
+                  <span onClick={() => { this.handleDelCurrentField(currentItem.id, 'LABEL') }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
                 )
               }
             </div>
@@ -1147,7 +1166,7 @@ export default class DragDropContentComponent extends Component {
               </div>
               {
                 !flag && (
-                  <span onClick={() => { this.handleDelCurrentField(currentItem.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
+                  <span onClick={() => { this.handleDelCurrentField(currentItem.id, 'SUBTASK') }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
                 )
               }
             </div>
@@ -1156,7 +1175,7 @@ export default class DragDropContentComponent extends Component {
               {
                 (
                   <AppendSubTask data={data} handleTaskDetailChange={handleTaskDetailChange} handleChildTaskChange={handleChildTaskChange} whetherUpdateParentTaskTime={whetherUpdateParentTaskTime} updateRelyOnRationList={updateRelyOnRationList} boardFolderTreeData={boardFolderTreeData} projectDetailInfoData={projectDetailInfoData} handleRelyUploading={this.props.handleRelyUploading}
-                  updatePrivateVariablesWithOpenFile={this.props.updatePrivateVariablesWithOpenFile}
+                    updatePrivateVariablesWithOpenFile={this.props.updatePrivateVariablesWithOpenFile}
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       {
@@ -1194,7 +1213,7 @@ export default class DragDropContentComponent extends Component {
                       const breadcrumbList = this.getFolderPathName([], fileInfo)
                       return (
                         <div className={`${mainContentStyles.file_item_wrapper}`} key={fileInfo.id}>
-                          <div className={`${mainContentStyles.file_item} ${mainContentStyles.pub_hover}`} onClick={(e) => this.openFileDetailModal(e,fileInfo)} >
+                          <div className={`${mainContentStyles.file_item} ${mainContentStyles.pub_hover}`} onClick={(e) => this.openFileDetailModal(e, fileInfo)} >
                             <div>
                               <span className={`${mainContentStyles.file_action} ${globalStyles.authTheme}`} dangerouslySetInnerHTML={{ __html: this.judgeFileType(file_name) }}></span>
                             </div>
