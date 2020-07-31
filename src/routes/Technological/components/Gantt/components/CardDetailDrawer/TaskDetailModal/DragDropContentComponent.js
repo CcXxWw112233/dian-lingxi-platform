@@ -461,7 +461,8 @@ export default class DragDropContentComponent extends Component {
   // 上传文件 事件 E
 
   /**附件预览 */
-  openFileDetailModal = (fileInfo) => {
+  openFileDetailModal = (e,fileInfo) => {
+    e && e.stopPropagation()
     const file_name = fileInfo.name
     const file_resource_id = fileInfo.file_resource_id
     const file_id = fileInfo.file_id;

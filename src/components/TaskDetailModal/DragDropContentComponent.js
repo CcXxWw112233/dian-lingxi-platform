@@ -422,7 +422,8 @@ export default class DragDropContentComponent extends Component {
   // 上传文件 事件 E
 
   /**附件预览 */
-  openFileDetailModal = (fileInfo) => {
+  openFileDetailModal = (e, fileInfo) => {
+    e && e.stopPropagation()
     const file_name = fileInfo.name
     const file_resource_id = fileInfo.file_resource_id
     const file_id = fileInfo.file_id;
@@ -1005,12 +1006,12 @@ export default class DragDropContentComponent extends Component {
                       const breadcrumbList = getFolderPathName(fileInfo)
                       return (
                         <div className={`${mainContentStyles.file_item_wrapper}`} key={fileInfo.id}>
-                          <div className={`${mainContentStyles.file_item} ${mainContentStyles.pub_hover}`} onClick={() => this.openFileDetailModal(fileInfo)} >
+                          <div className={`${mainContentStyles.file_item} ${mainContentStyles.pub_hover}`} onClick={(e) => this.openFileDetailModal(e, fileInfo)} >
                             <div>
                               <span className={`${mainContentStyles.file_action} ${globalStyles.authTheme}`} dangerouslySetInnerHTML={{ __html: judgeFileType(file_name) }}></span>
                             </div>
                             <div style={{ flex: 1 }}>
-                              <div onClick={(e) => this.openFileDetailModal(e, fileInfo)} title={file_name} className={mainContentStyles.pay_file_name}>{file_name}</div>
+                              <div title={file_name} className={mainContentStyles.pay_file_name}>{file_name}</div>
                             </div>
                             <div className={mainContentStyles.file_info}>{showMemberName(fileInfo.create_by, data)} 上传于 {fileInfo.create_time && timestampFormat(fileInfo.create_time, "MM-dd hh:mm")}</div>
                             <div className={mainContentStyles.breadNav} style={{ position: 'relative' }}>
