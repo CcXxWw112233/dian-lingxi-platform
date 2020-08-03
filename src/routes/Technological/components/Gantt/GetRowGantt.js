@@ -235,9 +235,9 @@ export default class GetRowGantt extends Component {
       (e.target.dataset.targetclassname == 'specific_example') //不能滑动到某一个任务实例上
       || (!drag_creating && e.target.dataset.targetclassname == 'specific_example_milestone') //非拖拽的过程中,滑倒里程碑旗子上没问题
     ) {
-      this.setState({
-        dasheRectShow: false
-      })
+      // this.setState({
+      //   dasheRectShow: false
+      // })
       return false
     }
     if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold, gantt_view_mode })) {
@@ -634,7 +634,7 @@ export default class GetRowGantt extends Component {
 
   // 渲染虚线框
   renderDashedRect = () => {
-    const { currentRect = {}, dasheRectShow, drag_holiday_count } = this.state
+    const { currentRect = {}, dasheRectShow, drag_holiday_count, drag_creating, card_rely_draging, task_is_dragging } = this.state
     const { create_start_time, create_end_time, gantt_view_mode } = this.props
     const {
       ceilWidth,
@@ -646,10 +646,11 @@ export default class GetRowGantt extends Component {
     const title = (isSamDay(create_start_time, create_end_time) || !create_start_time || !create_end_time) ? timestampToTime(create_end_time, true) : (
       timestampToTime(create_start_time, true) + '-' + timestampToTime(create_end_time, true)
     )
+    // console.log('sss_show', dasheRectShow, !card_rely_draging, !task_is_dragging, drag_creating)
     const contain = (
       dasheRectShow
-      && !this.state.card_rely_draging
-      && !this.state.task_is_dragging
+      && !card_rely_draging
+      && !task_is_dragging
       && !ganttIsOutlineView({ group_view_type })
       && (
         <div
