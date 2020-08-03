@@ -659,6 +659,8 @@ export default class AppendSubTaskItem extends Component {
                         boardFolderTreeData={boardFolderTreeData}
                         projectDetailInfoData={projectDetailInfoData}
                         org_id={org_id} board_id={board_id} card_id={card_id}
+                        title={'上传交付物列表设置'}
+                        listDescribe={'交付物列表'}
                       >
                         <div title={'上传交付物'} className={`${appendSubTaskStyles.sub_upload} ${globalStyles.authTheme}`}>&#xe606;</div>
                       </UploadAttachment>

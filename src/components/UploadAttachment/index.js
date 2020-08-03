@@ -126,7 +126,7 @@ export default class UploadAttachment extends Component {
     this.setState({
       uploading: true,
     });
-    const { org_id, board_id, card_id } = this.props;
+    const { org_id, board_id, card_id, isNotShowNoticeList, url } = this.props;
     const { fileSavePath = null, fileList = [], toNoticeList, isOnlyNoticePersonsVisit } = this.state;
 
     const formData = new FormData();
@@ -139,8 +139,19 @@ export default class UploadAttachment extends Component {
     for (var i = 0; i < toNoticeList.length; i++) {
       notify_user_ids.push(toNoticeList[i].user_id);
     }
+    let params = isNotShowNoticeList ? {
+      board_id: board_id,
+      card_id: card_id,
+      folder_id: fileSavePath,
+    } : {
+      board_id: board_id,
+      card_id: card_id,
+      folder_id: fileSavePath,
+      is_limit_access: isOnlyNoticePersonsVisit ? 1 : 0,
+      notify_user_ids: notify_user_ids.join(','),
+    }
     axios({
-      url: `/api/projects/v2/card/attachment/upload`,
+      url: url ? url : `/api/projects/v2/card/attachment/upload`,
       method: 'post',
       //processData: false,
       data: formData,
@@ -152,12 +163,7 @@ export default class UploadAttachment extends Component {
 
       },
       params: {
-        board_id: board_id,
-        card_id: card_id,
-        folder_id: fileSavePath,
-        is_limit_access: isOnlyNoticePersonsVisit ? 1 : 0,
-        notify_user_ids: notify_user_ids.join(','),
-
+        ...params
       },
       timeout: 0
     })
@@ -198,6 +204,12 @@ export default class UploadAttachment extends Component {
               this.closeUploadAttachmentModal();
               break;
             default:
+              message.error('上传失败');
+              this.setState({
+                uploading: false,
+              });
+              // this.setUploadFileVisible(false);
+              this.closeUploadAttachmentModal();
               break
           }
         } else if (error.message.indexOf('timeout of') != -1) {
@@ -209,6 +221,7 @@ export default class UploadAttachment extends Component {
           this.closeUploadAttachmentModal();
           return false
         } else {
+          console.log('进来了');
           message.error('上传失败');
           this.setState({
             uploading: false,
@@ -379,7 +392,7 @@ export default class UploadAttachment extends Component {
   getDefaultNoticeUser = (data) => {
     if (!data) return
     const { executors = [] } = this.props
-    const {id} = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
+    const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
     let new_toNoticeList = []
     let tempIds = []
     let new_executors = [...executors]
@@ -413,7 +426,7 @@ export default class UploadAttachment extends Component {
 
   render() {
     // 父组件传递的值
-    const { visible, children, board_id, card_id, projectDetailInfoData = {}, org_id, boardFolderTreeData } = this.props;
+    const { visible, children, board_id, card_id, projectDetailInfoData = {}, org_id, boardFolderTreeData, title, listDescribe, isNotShowNoticeList } = this.props;
     const { uploadFileVisible, uploadFilePreviewList = [], toNoticeList = [], fileSavePath, uploading } = this.state;
 
     const { data: projectMemberData } = projectDetailInfoData;
@@ -426,7 +439,7 @@ export default class UploadAttachment extends Component {
 
         <Modal
           destroyOnClose={true}
-          title={<div style={{ textAlign: 'center', fontSize: '16px', fontWeight: 600, color: 'rgba(0,0,0,0.85)' }}>上传附件设置</div>}
+          title={<div style={{ textAlign: 'center', fontSize: '16px', fontWeight: 600, color: 'rgba(0,0,0,0.85)' }}>{title ? title : '上传附件设置'}</div>}
           getContainer={() => document.getElementById('technologicalLayoutWrapper') || document.body}
           visible={uploadFileVisible || visible}
           onOk={this.handleOk}
@@ -439,7 +452,7 @@ export default class UploadAttachment extends Component {
           okText={uploading ? '上传中……' : '确定'}
         >
           <div>
-            <span style={{ fontSize: '16px', color: 'rgba(0,0,0,0.45)' }} className={`${globalStyles.authTheme}`}>&#xe6b3;</span>附件列表：
+            <span style={{ fontSize: '16px', color: 'rgba(0,0,0,0.45)' }} className={`${globalStyles.authTheme}`}>&#xe6b3;</span>{listDescribe ? listDescribe : '附件列表'}：
                 </div>
           <div className={styles.fileListWrapper}>
             {
@@ -453,84 +466,90 @@ export default class UploadAttachment extends Component {
                         <div className={styles.fileItem}>结构方案1.pdf</div> */}
 
           </div>
-          <div style={{ marginTop: '14px' }}>
-            <span style={{ fontSize: '16px', color: 'rgba(0,0,0,0.45)' }} className={`${globalStyles.authTheme}`}>&#xe7b2;</span>提醒谁查看:
+          {
+            !isNotShowNoticeList && (
+              <>
+                <div style={{ marginTop: '14px' }}>
+                  <span style={{ fontSize: '16px', color: 'rgba(0,0,0,0.45)' }} className={`${globalStyles.authTheme}`}>&#xe7b2;</span>提醒谁查看:
                     </div>
-          <div className={styles.noticeUsersWrapper}>
-            {/* 通知人添加与显示区域 */}
-            <span style={{ flex: '1' }}>
-              {
-                !toNoticeList.length ? (
-                  <div style={{ flex: '1', position: 'relative' }}>
-                    <Dropdown visible={this.state.visible} trigger={['click']} overlayClassName={styles.overlay_pricipal} onVisibleChange={this.onVisibleChange} getPopupContainer={triggerNode => triggerNode.parentNode}
-                      overlayStyle={{ maxWidth: '200px' }}
-                      overlay={
-                        <MenuSearchPartner
-                          listData={projectMemberData} keyCode={'user_id'} searchName={'name'} currentSelect={toNoticeList}
-                          board_id={board_id}
-                          invitationType='1'
-                          invitationId={board_id}
-                          invitationOrg={org_id}
-                          chirldrenTaskChargeChange={this.chirldrenTaskChargeChange} />
-                      }
-                    >
-                      {/* 添加通知人按钮 */}
+                <div className={styles.noticeUsersWrapper}>
+                  {/* 通知人添加与显示区域 */}
+                  <span style={{ flex: '1' }}>
+                    {
+                      !toNoticeList.length ? (
+                        <div style={{ flex: '1', position: 'relative' }}>
+                          <Dropdown visible={this.state.visible} trigger={['click']} overlayClassName={styles.overlay_pricipal} onVisibleChange={this.onVisibleChange} getPopupContainer={triggerNode => triggerNode.parentNode}
+                            overlayStyle={{ maxWidth: '200px' }}
+                            overlay={
+                              <MenuSearchPartner
+                                listData={projectMemberData} keyCode={'user_id'} searchName={'name'} currentSelect={toNoticeList}
+                                board_id={board_id}
+                                invitationType='1'
+                                invitationId={board_id}
+                                invitationOrg={org_id}
+                                chirldrenTaskChargeChange={this.chirldrenTaskChargeChange} />
+                            }
+                          >
+                            {/* 添加通知人按钮 */}
 
-                      <div className={styles.addNoticePerson}>
-                        <Icon type="plus-circle" style={{ fontSize: '40px', color: '#40A9FF' }} />
-                      </div>
-                    </Dropdown>
-                  </div>
-                ) : (
-                    <div style={{ flex: '1', position: 'relative' }}>
-                      <Dropdown visible={this.state.visible} trigger={['click']} overlayClassName={styles.overlay_pricipal} onVisibleChange={this.onVisibleChange} getPopupContainer={triggerNode => triggerNode.parentNode}
-                        overlay={
-                          <MenuSearchPartner
-                            invitationType='1'
-                            invitationId={board_id}
-                            invitationOrg={org_id}
-                            listData={projectMemberData} keyCode={'user_id'} searchName={'name'} currentSelect={toNoticeList} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
-                            board_id={board_id} />
-                        }
-                      >
-                        <div style={{ display: 'flex', flexWrap: 'wrap' }} >
-                          {/* 添加通知人按钮 */}
-                          <div className={styles.addNoticePerson}>
-                            <Icon type="plus-circle" style={{ fontSize: '40px', color: '#40A9FF' }} />
-                          </div>
-
-
-                          {toNoticeList.map((value) => {
-                            const { avatar, name, user_name, user_id } = value
-                            return (
-                              <div style={{ display: 'flex', flexWrap: 'wrap' }} key={user_id}>
-
-                                <div className={`${styles.user_item}`} style={{ display: 'flex', alignItems: 'center', position: 'relative', margin: '2px 0', textAlign: 'center' }} key={user_id}>
-                                  {avatar ? (
-                                    <img style={{ width: '40px', height: '40px', borderRadius: 20, margin: '0 2px' }} src={avatar} />
-                                  ) : (
-                                      <div style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', margin: '0 2px' }}>
-                                        <Icon type={'user'} style={{ fontSize: 12, color: '#8c8c8c' }} />
-                                      </div>
-                                    )}
-                                  <div style={{ marginRight: 8, fontSize: '14px' }}>{name || user_name || '佚名'}</div>
-                                  <span onClick={(e) => { this.handleRemoveExecutors(e, user_id) }} className={`${styles.userItemDeleBtn}`}></span>
+                            <div className={styles.addNoticePerson}>
+                              <Icon type="plus-circle" style={{ fontSize: '40px', color: '#40A9FF' }} />
+                            </div>
+                          </Dropdown>
+                        </div>
+                      ) : (
+                          <div style={{ flex: '1', position: 'relative' }}>
+                            <Dropdown visible={this.state.visible} trigger={['click']} overlayClassName={styles.overlay_pricipal} onVisibleChange={this.onVisibleChange} getPopupContainer={triggerNode => triggerNode.parentNode}
+                              overlay={
+                                <MenuSearchPartner
+                                  invitationType='1'
+                                  invitationId={board_id}
+                                  invitationOrg={org_id}
+                                  listData={projectMemberData} keyCode={'user_id'} searchName={'name'} currentSelect={toNoticeList} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
+                                  board_id={board_id} />
+                              }
+                            >
+                              <div style={{ display: 'flex', flexWrap: 'wrap' }} >
+                                {/* 添加通知人按钮 */}
+                                <div className={styles.addNoticePerson}>
+                                  <Icon type="plus-circle" style={{ fontSize: '40px', color: '#40A9FF' }} />
                                 </div>
 
-                              </div>
-                            )
-                          })}
-                        </div>
-                      </Dropdown>
-                    </div>
-                  )
-              }
-            </span>
 
-          </div>
-          <div style={{ marginTop: '16px' }}>
-            <Checkbox checked={this.state.isOnlyNoticePersonsVisit} onChange={this.onChangeOnlyNoticePersonsVisit}>仅被提醒的人可访问该文件</Checkbox>
-          </div>
+                                {toNoticeList.map((value) => {
+                                  const { avatar, name, user_name, user_id } = value
+                                  return (
+                                    <div style={{ display: 'flex', flexWrap: 'wrap' }} key={user_id}>
+
+                                      <div className={`${styles.user_item}`} style={{ display: 'flex', alignItems: 'center', position: 'relative', margin: '2px 0', textAlign: 'center' }} key={user_id}>
+                                        {avatar ? (
+                                          <img style={{ width: '40px', height: '40px', borderRadius: 20, margin: '0 2px' }} src={avatar} />
+                                        ) : (
+                                            <div style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', margin: '0 2px' }}>
+                                              <Icon type={'user'} style={{ fontSize: 12, color: '#8c8c8c' }} />
+                                            </div>
+                                          )}
+                                        <div style={{ marginRight: 8, fontSize: '14px' }}>{name || user_name || '佚名'}</div>
+                                        <span onClick={(e) => { this.handleRemoveExecutors(e, user_id) }} className={`${styles.userItemDeleBtn}`}></span>
+                                      </div>
+
+                                    </div>
+                                  )
+                                })}
+                              </div>
+                            </Dropdown>
+                          </div>
+                        )
+                    }
+                  </span>
+
+                </div>
+                <div style={{ marginTop: '16px' }}>
+                  <Checkbox checked={this.state.isOnlyNoticePersonsVisit} onChange={this.onChangeOnlyNoticePersonsVisit}>仅被提醒的人可访问该文件</Checkbox>
+                </div>
+              </>
+            )
+          }
           {/* <div style={{ marginTop: '32px' }}>
             附件存放路径
                     </div> */}
@@ -563,14 +582,14 @@ export default class UploadAttachment extends Component {
   }
 }
 // 只关联public弹窗内的数据
-function mapStateToProps({  
+function mapStateToProps({
   technological: {
     datas: {
       userBoardPermissions
     }
-  } 
+  }
 }) {
-  return {userBoardPermissions}
+  return { userBoardPermissions }
 }
 
 

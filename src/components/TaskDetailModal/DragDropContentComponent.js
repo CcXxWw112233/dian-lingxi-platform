@@ -21,6 +21,8 @@ import {
   checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl,
 } from "@/utils/businessFunction";
 import { getCurrentDrawerContentPropsModelFieldData, filterCurrentUpdateDatasField, getCurrentPropertiesData, judgeFileType, showMemberName, getFolderPathName } from './handleOperateModal';
+import { currentNounPlanFilterName } from '../../utils/businessFunction';
+import { TASKS } from '../../globalset/js/constant';
 
 @connect(mapStateToProps)
 export default class DragDropContentComponent extends Component {
@@ -36,7 +38,7 @@ export default class DragDropContentComponent extends Component {
   // 检测不同类型的权限控制类型的是否显示
   checkDiffCategoriesAuthoritiesIsVisible = (code) => {
     const { drawContent = {}, drawContent: { properties = [] } } = this.props
-    const { data = [] } = getCurrentDrawerContentPropsModelFieldData({properties, code: 'EXECUTOR'})
+    const { data = [] } = getCurrentDrawerContentPropsModelFieldData({ properties, code: 'EXECUTOR' })
 
     const { privileges = [], board_id, is_privilege } = drawContent
     return {
@@ -94,7 +96,7 @@ export default class DragDropContentComponent extends Component {
       });
 
       // drawContent['milestone_data'] = info;
-      drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'MILESTONE', value: info})
+      drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'MILESTONE', value: info })
       dispatch({
         type: 'publicTaskDetailModal/updateDatas',
         payload: {
@@ -118,7 +120,7 @@ export default class DragDropContentComponent extends Component {
         }
       });
       // drawContent['milestone_data'] = [];
-      drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'MILESTONE', value: []})
+      drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'MILESTONE', value: [] })
       dispatch({
         type: 'publicTaskDetailModal/updateDatas',
         payload: {
@@ -129,7 +131,7 @@ export default class DragDropContentComponent extends Component {
 
     if (actionType === 'update') {
       // const { data } = drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
-      const gold_data = getCurrentPropertiesData(drawContent['properties'],'MILESTONE')
+      const gold_data = getCurrentPropertiesData(drawContent['properties'], 'MILESTONE')
       const removeParams = {
         rela_id: card_id,
         id: gold_data.id,
@@ -153,7 +155,7 @@ export default class DragDropContentComponent extends Component {
         }
       });
       // drawContent['milestone_data'] = info;
-      drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'MILESTONE', value: info})
+      drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'MILESTONE', value: info })
       dispatch({
         type: 'publicTaskDetailModal/updateDatas',
         payload: {
@@ -179,7 +181,7 @@ export default class DragDropContentComponent extends Component {
       description: brafitEditHtml,
     }
 
-    drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'REMARK', value: brafitEditHtml})
+    drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'REMARK', value: brafitEditHtml })
     Promise.resolve(
       dispatch({
         type: 'publicTaskDetailModal/updateTaskVTwo',
@@ -234,7 +236,7 @@ export default class DragDropContentComponent extends Component {
     ).then(res => {
       if (isApiResponseOk(res)) {
         temp.push(res.data)
-        new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'LABEL', value: temp})
+        new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'LABEL', value: temp })
         this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'label_data', value: temp, operate_properties_code: 'LABEL' })
         dispatch({
           type: 'publicTaskDetailModal/addTaskTag',
@@ -270,7 +272,7 @@ export default class DragDropContentComponent extends Component {
     })
     let new_drawContent = { ...drawContent }
     // new_drawContent['label_data'] = new_labelData
-    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'LABEL', value: new_labelData})
+    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'LABEL', value: new_labelData })
     Promise.resolve(
       dispatch({
         type: 'publicTaskDetailModal/updateBoardTag',
@@ -303,7 +305,7 @@ export default class DragDropContentComponent extends Component {
     })
     let new_drawContent = { ...drawContent }
     // new_drawContent['label_data'] = new_labelData
-    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'LABEL', value: new_labelData})
+    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'LABEL', value: new_labelData })
     Promise.resolve(
       dispatch({
         type: 'publicTaskDetailModal/deleteBoardTag',
@@ -341,7 +343,7 @@ export default class DragDropContentComponent extends Component {
     }
     let new_drawContent = { ...drawContent }
     // new_drawContent['label_data'] = newLabelData
-    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: new_drawContent['properties'], code: 'LABEL', value: newLabelData})
+    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: new_drawContent['properties'], code: 'LABEL', value: newLabelData })
     if (type == 'add') {
       Promise.resolve(
         dispatch({
@@ -389,7 +391,7 @@ export default class DragDropContentComponent extends Component {
       }
     })
     // new_drawContent['label_data'] = new_labelData
-    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: new_drawContent['properties'], code: 'LABEL', value: new_labelData})
+    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: new_drawContent['properties'], code: 'LABEL', value: new_labelData })
     Promise.resolve(
       dispatch({
         type: 'publicTaskDetailModal/removeTaskTag',
@@ -411,6 +413,20 @@ export default class DragDropContentComponent extends Component {
     let new_drawContent = { ...drawContent }
     if (data && data.length > 0) {
       new_drawContent['deliverables'].push(...data)
+      this.props.dispatch({
+        type: 'publicTaskDetailModal/updateDatas',
+        payload: {
+          drawContent: new_drawContent
+        }
+      })
+    }
+  }
+
+  onUploadDescFileListChange = (data) => {
+    const { drawContent = {}, dispatch } = this.props;
+    let new_drawContent = { ...drawContent }
+    if (data && data.length > 0) {
+      new_drawContent['dec_files'].push(...data)
       this.props.dispatch({
         type: 'publicTaskDetailModal/updateDatas',
         payload: {
@@ -651,11 +667,11 @@ export default class DragDropContentComponent extends Component {
   filterDiffPropertiesField = (currentItem) => {
     const { visible = false, showDelColor, currentDelId } = this.state
     const { drawContent = {}, projectDetailInfoData = {}, projectDetailInfoData: { data = [] }, boardTagList = [], handleTaskDetailChange, boardFolderTreeData = [], milestoneList = [], handleChildTaskChange, whetherUpdateParentTaskTime, updateRelyOnRationList } = this.props
-    const { org_id, card_id, board_id, board_name, due_time, start_time, properties = [], deliverables = [] } = drawContent
+    const { org_id, card_id, board_id, board_name, due_time, start_time, properties = [], deliverables = [], dec_files = [] } = drawContent
     const { code, id } = currentItem
     const flag = (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()
-    const executors = getCurrentDrawerContentPropsModelFieldData({properties, code: 'EXECUTOR'})
-    const gold_data = getCurrentPropertiesData(drawContent['properties'],'SUBTASK')
+    const executors = getCurrentDrawerContentPropsModelFieldData({ properties, code: 'EXECUTOR' })
+    const gold_data = getCurrentPropertiesData(drawContent['properties'], 'SUBTASK')
     let messageValue = (<div></div>)
     switch (code) {
       case 'MILESTONE': // 里程碑
@@ -719,37 +735,95 @@ export default class DragDropContentComponent extends Component {
                 <span>备注</span>
               </div>
             </div>
-            <div className={`${mainContentStyles.field_right}`}>
-              {
-                (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
-                  (
-                    currentItem.data && currentItem.data != '<p></p>' ? (
-                      <div className={`${mainContentStyles.pub_hover}`}>
-                        <span>暂无</span>
-                      </div>
-                    ) : (
-                        <div className={`${mainContentStyles.pub_hover}`} >
-                          <div className={mainContentStyles.descriptionContent} dangerouslySetInnerHTML={{ __html: currentItem.data }}></div>
+            <>
+              <div className={`${mainContentStyles.field_right}`} style={{ display: 'flex' }}>
+                {
+                  (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
+                    (
+                      currentItem.data && currentItem.data != '<p></p>' ? (
+                        <div className={`${mainContentStyles.pub_hover}`}>
+                          <span>暂无</span>
+                        </div>
+                      ) : (
+                          <div className={`${mainContentStyles.pub_hover}`} >
+                            <div className={mainContentStyles.descriptionContent} dangerouslySetInnerHTML={{ __html: currentItem.data }}></div>
+                          </div>
+                        )
+                    )
+                  ) : (
+                      // 富文本组件
+                      <>
+                        <div style={{ flex: 1, marginRight: '10px' }}>
+                          <RichTextEditor saveBrafitEdit={this.saveBrafitEdit} value={currentItem.data && currentItem.data}>
+                            <div className={`${mainContentStyles.pub_hover}`} >
+                              {
+                                currentItem.data && currentItem.data != '<p></p>' ?
+                                  <div className={mainContentStyles.descriptionContent} dangerouslySetInnerHTML={{ __html: currentItem.data }}></div>
+                                  :
+                                  '添加备注'
+                              }
+                            </div>
+                          </RichTextEditor>
+                        </div>
+                        <div onClick={(e) => e && e.stopPropagation()}>
+                          <UploadAttachment executors={executors.data} boardFolderTreeData={boardFolderTreeData} projectDetailInfoData={projectDetailInfoData} org_id={org_id} board_id={board_id} card_id={card_id}
+                            title={`${currentNounPlanFilterName(TASKS)}说明资料设置`}
+                            listDescribe={'说明资料列表'}
+                            isNotShowNoticeList={true}
+                            url={'/api/projects/card/desc/attachment/upload'}
+                            onFileListChange={this.onUploadDescFileListChange}
+                          >
+                            <span className={mainContentStyles.add_sub_upload}>
+                              <span style={{ fontSize: '16px' }} className={globalStyles.authTheme}>&#xe7fa;</span>
+                              <span>上传说明资料</span>
+                            </span>
+                          </UploadAttachment>
+                        </div>
+                      </>
+                    )
+                }
+              </div>
+              <div>
+                {/* 交付物 */}
+                <div className={mainContentStyles.filelist_wrapper}>
+                  {
+                    !!(dec_files && dec_files.length) && dec_files.map(fileInfo => {
+                      const { name: file_name, file_id } = fileInfo
+                      const breadcrumbList = getFolderPathName(fileInfo)
+                      return (
+                        <div className={`${mainContentStyles.file_item_wrapper}`} key={fileInfo.id}>
+                          <div className={`${mainContentStyles.file_item} ${mainContentStyles.pub_hover}`} onClick={(e) => this.openFileDetailModal(e, fileInfo)} >
+                            <div>
+                              <span className={`${mainContentStyles.file_action} ${globalStyles.authTheme}`} dangerouslySetInnerHTML={{ __html: judgeFileType(file_name) }}></span>
+                            </div>
+                            <div style={{ flex: 1 }}>
+                              <div title={file_name} className={mainContentStyles.pay_file_name}>{file_name}</div>
+                            </div>
+                            <div className={mainContentStyles.file_info}>{showMemberName(fileInfo.create_by, data)} 上传于 {fileInfo.create_time && timestampFormat(fileInfo.create_time, "MM-dd hh:mm")}</div>
+                            <div className={mainContentStyles.breadNav} style={{ position: 'relative' }}>
+                              <Breadcrumb className={mainContentStyles.Breadcrumb} separator=">">
+                                {breadcrumbList.map((value, key) => {
+                                  return (
+                                    // <Tooltip getPopupContainer={triggerNode => triggerNode.parentNode} title={(value && value.file_name) && value.file_name} placement="top">
+                                    <Breadcrumb.Item key={key}>
+                                      <span title={(value && value.file_name) && value.file_name} className={key == breadcrumbList.length - 1 && mainContentStyles.breadItem}>{(value && value.file_name) && value.file_name}</span>
+                                    </Breadcrumb.Item>
+                                    // </Tooltip>
+                                  )
+                                })}
+                              </Breadcrumb>
+                            </div>
+                            <Dropdown trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.getAttachmentActionMenus(fileInfo)}>
+                              <span onClick={(e) => e && e.stopPropagation()} className={`${mainContentStyles.pay_more_icon} ${globalStyles.authTheme}`}>&#xe66f;</span>
+                            </Dropdown>
+                          </div>
                         </div>
                       )
-                  )
-                ) : (
-                    // 富文本组件
-                    <>
-                      <RichTextEditor saveBrafitEdit={this.saveBrafitEdit} value={currentItem.data && currentItem.data}>
-                        <div className={`${mainContentStyles.pub_hover}`} >
-                          {
-                            currentItem.data && currentItem.data != '<p></p>' ?
-                              <div className={mainContentStyles.descriptionContent} dangerouslySetInnerHTML={{ __html: currentItem.data }}></div>
-                              :
-                              '添加备注'
-                          }
-                        </div>
-                      </RichTextEditor>
-                    </>
-                  )
-              }
-            </div>
+                    })
+                  }
+                </div>
+              </div>
+            </>
             {/* </div> */}
           </div>
         )
@@ -969,7 +1043,7 @@ export default class DragDropContentComponent extends Component {
                 {
                   (
                     <AppendSubTask data={data} handleTaskDetailChange={handleTaskDetailChange} handleChildTaskChange={handleChildTaskChange} whetherUpdateParentTaskTime={whetherUpdateParentTaskTime} updateRelyOnRationList={updateRelyOnRationList} boardFolderTreeData={boardFolderTreeData} projectDetailInfoData={projectDetailInfoData}>
-                      <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                         {
                           !!!(deliverables && deliverables.length) && (
                             <div className={mainContentStyles.add_sub_btn}>
@@ -982,6 +1056,8 @@ export default class DragDropContentComponent extends Component {
                             card_id && !(gold_data && gold_data.length) && (
                               <div onClick={(e) => e && e.stopPropagation()}>
                                 <UploadAttachment executors={executors.data} boardFolderTreeData={boardFolderTreeData} projectDetailInfoData={projectDetailInfoData} org_id={org_id} board_id={board_id} card_id={card_id}
+                                  title={'上传交付物列表设置'}
+                                  listDescribe={'交付物列表'}
                                   onFileListChange={this.onUploadFileListChange}>
                                   <span className={mainContentStyles.add_sub_upload}>
                                     <span style={{ fontSize: '16px' }} className={globalStyles.authTheme}>&#xe7fa;</span>
