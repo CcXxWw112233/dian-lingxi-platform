@@ -665,7 +665,7 @@ export default class GetRowGantt extends Component {
             textAlign: 'right',
             lineHeight: ganttIsFold({ gantt_board_id, group_view_type, show_board_fold, gantt_view_mode }) ? `${task_item_height_fold}px` : `${ceiHeight - task_item_margin_top}px`,
             paddingRight: Math.ceil(currentRect.width / ceilWidth) > 1 ? 8 : 0,
-            zIndex: this.state.drag_creating ? 2 : 1
+            zIndex: this.state.drag_creating ? 2 : 0
           }} >
           {Math.ceil(currentRect.width / ceilWidth) > 1 ? Math.ceil(currentRect.width / ceilWidth) : ''}
           {
