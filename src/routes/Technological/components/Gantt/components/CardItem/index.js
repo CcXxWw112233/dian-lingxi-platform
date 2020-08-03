@@ -413,7 +413,7 @@ export default class CardItem extends Component {
                 clearTimer()
                 notification.close(id)
             }}>
-                撤销{notification_duration}
+                撤销
             </Button>
         );
         const openNoti = (notification_duration) => {
@@ -422,9 +422,13 @@ export default class CardItem extends Component {
                 bottom: 50,
                 duration: 5,
                 message: title,
-                description: message,
-                btn: renderBtn(notification_duration),
-                key: id
+                description: `${message}。${notification_duration}秒后关闭`,
+                btn: code == '0' ? renderBtn(notification_duration) : '',
+                key: id,
+                onClose: () => {
+                    clearTimer()
+                    notification.close(id)
+                }
             })
         }
 
@@ -451,7 +455,7 @@ export default class CardItem extends Component {
                 })
             }, 1000)
         }
-
+        clearTimer()
         setTimer()
     }
     // 代表列表主动执行
@@ -651,6 +655,7 @@ export default class CardItem extends Component {
         updateTaskVTwo({ card_id: id, due_time: end_time_timestamp, start_time: start_time_timestamp, board_id: board_id || gantt_board_id }, { isNotLoading: false })
             .then(res => {
                 if (isApiResponseOk(res)) {
+                    this.addNotificationTodos({ ...res })
                     if (ganttIsOutlineView({ group_view_type })) {
                         // this.props.changeOutLineTreeNodeProto(id, updateData)
                         // setTimeout(() => {
@@ -675,6 +680,7 @@ export default class CardItem extends Component {
                     }
                     this.onChangeTimeHandleCardDetail()
                 } else {
+                    this.notificationEffect({ ...res })
                     this.setState({
                         local_left: left,
                         local_top: top
@@ -734,6 +740,7 @@ export default class CardItem extends Component {
         changeTaskType({ ...params }, { isNotLoading: false })
             .then(res => {
                 if (isApiResponseOk(res)) {
+                    this.addNotificationTodos({ ...res })
                     this.changeCardBelongGroup({
                         card_id: id,
                         new_list_id: params_list_id,
@@ -741,6 +748,7 @@ export default class CardItem extends Component {
                     })
                     this.onChangeTimeHandleCardDetail()
                 } else {
+                    this.notificationEffect({ ...res })
                     this.setState({
                         local_left: left,
                         local_top: top
