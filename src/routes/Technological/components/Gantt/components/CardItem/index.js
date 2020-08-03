@@ -7,7 +7,7 @@ import CheckItem from '@/components/CheckItem'
 import { task_item_height, task_item_margin_top, date_area_height, ganttIsOutlineView, ceil_width } from '../../constants'
 import { updateTaskVTwo, changeTaskType } from '../../../../../../services/technological/task'
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
-import { message, Dropdown, Popover, Tooltip } from 'antd'
+import { message, Dropdown, Popover, Tooltip, notification, Button } from 'antd'
 import CardDropDetail from '../../components/gattFaceCardItem/CardDropDetail'
 import { filterDueTimeSpan, cardIsHasUnRead, cardItemIsHasUnRead, setDateWithPositionInYearView, setDateWidthPositionWeekView, onChangeCardHandleCardDetail } from '../../ganttBusiness'
 import { transformTimestamp, isSamDay } from '../../../../../../utils/util'
@@ -40,7 +40,9 @@ export default class CardItem extends Component {
                 max_position: 0
             },
             drag_lock: false, //拖拽的锁，必须要先点击一下出现状态条才能够拖拽
+            notification_duration: 5, //弹出提示的时间
         }
+        this.notification_timer = null  //notification_duration定时器
 
         this.x = 0
         this.y = 0
@@ -373,6 +375,72 @@ export default class CardItem extends Component {
     }
 
     // 拖拽完成后的事件处理-----start--------
+    // 拖拽后有其他影响提示
+    NotificationEffect = ({ code, message }) => {
+        const { itemValue: { id } } = this.props
+        const type_obj = {
+            '0': {
+                action: 'success',
+                title: '已变更'
+            },
+            '1': {
+                action: 'error',
+                title: '变更失败'
+            },
+            '2': {
+                action: 'warning',
+                title: '确认编排范围'
+            },
+        }
+        const operator = type_obj[code] || {}
+        const { action = 'config', title = '提示' } = operator
+
+        const renderBtn = (notification_duration) => (
+            <Button type="primary" size="small" onClick={() => {
+                clearTimer()
+                notification.close(id)
+            }}>
+                撤销{notification_duration}
+            </Button>
+        );
+        const openNoti = (notification_duration) => {
+            notification.error({
+                placement: 'bottomRight',
+                bottom: 50,
+                duration: 5,
+                message: title,
+                description: message,
+                btn: renderBtn(notification_duration),
+                key: id
+            })
+        }
+
+        const clearTimer = () => {
+            clearInterval(this.notification_timer)
+            this.notification_timer = null
+        }
+        const setTimer = () => {
+            let { notification_duration } = this.state
+            this.notification_timer = setInterval(() => {
+                this.setState({
+                    notification_duration: notification_duration--
+                }, () => {
+                    let { notification_duration } = this.state
+                    if (notification_duration == 0) {
+                        this.setState({
+                            notification_duration: 5
+                        })
+                        clearTimer()
+                        this.notification_timer = null
+                        return
+                    }
+                    openNoti(notification_duration)
+                })
+            }, 1000)
+        }
+
+        setTimer()
+    }
     overDragCompleteHandle = () => {
         const { drag_type, local_top } = this.state
         if ('right' == drag_type) {
@@ -430,6 +498,7 @@ export default class CardItem extends Component {
         }
         updateTaskVTwo({ card_id: id, due_time: end_time_timestamp, board_id: board_id || gantt_board_id }, { isNotLoading: false })
             .then(res => {
+                this.NotificationEffect({ ...res })
                 if (isApiResponseOk(res)) {
                     if (ganttIsOutlineView({ group_view_type })) {
                         // this.props.changeOutLineTreeNodeProto(id, updateData)
