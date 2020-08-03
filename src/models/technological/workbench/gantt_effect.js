@@ -15,6 +15,7 @@ export default {
         outline_node_draging: false, //大纲是否拖拽排序中
         selected_card_visible: false, //查看任务抽屉
         uploading_folder_id: '', //任务详情上传文件的文件id, 下方抽屉在上传后判断文件夹id进行更新
+        notification_todos: {}, //[id:{code:'', message: ''}]，当更新任务时间后，由于任务列表的key是根据id_start_time duetime等多个属性设置，会重新didmount导致之前操作丢失，用来存放待办
     },
     effects: {
         * addCardRely({ payload = {} }, { select, call, put }) {
