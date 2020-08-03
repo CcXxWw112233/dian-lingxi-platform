@@ -923,7 +923,7 @@ export default class CardItem extends Component {
         } = itemValue
         return {
             onClick: (e) => {
-                if('specific_example' != e.target.dataset.targetclassname) return //必须在任务条上点击
+                if ('specific_example' != e.target.dataset.targetclassname) return //必须在任务条上点击
                 if (!drag_lock) {
                     this.props.setTaskIsDragging && this.props.setTaskIsDragging(true) //当拖动时，有可能会捕获到创建任务的动作，阻断
                     setTimeout(() => {
@@ -1137,7 +1137,7 @@ export default class CardItem extends Component {
                 }
                 {/* //hover出现的耳朵效果 */}
                 {
-                    drag_lock && ganttIsOutlineView({ group_view_type }) && !parent_card_id && gantt_view_mode != 'year' && (
+                    drag_lock && !parent_card_id && gantt_view_mode != 'year' && (
                         <HoverEars
                             getX={this.getX}
                             itemValue={itemValue}

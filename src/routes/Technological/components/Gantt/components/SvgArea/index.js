@@ -543,7 +543,7 @@ export default class index extends Component {
     checkInvalid = (obj) => {
         let flag = true
         for (let [, value] of Object.entries(obj)) {
-            if (!value || value == NaN) {
+            if (value === undefined || value === NaN) {
                 flag = false
                 break
             }
@@ -618,7 +618,7 @@ export default class index extends Component {
                         position: 'absolute',
                         width: date_total * ceilWidth,
                         height: this.setSVGHeight(),
-                        display: (ganttIsOutlineView({ group_view_type }) && gantt_view_mode != 'year') ? 'block' : 'none',
+                        display: (gantt_view_mode != 'year') ? 'block' : 'none',
                         zIndex: 1,
                         // zIndex: ganttIsOutlineView({ group_view_type }) ? 1 : -1,
                     }}>
