@@ -5,7 +5,7 @@ import AvatarList from '@/components/avatarList'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import CheckItem from '@/components/CheckItem'
 import { task_item_height, task_item_margin_top, date_area_height, ganttIsOutlineView, ceil_width } from '../../constants'
-import { updateTaskVTwo, changeTaskType } from '../../../../../../services/technological/task'
+import { updateTaskVTwo, changeTaskType, revokeCardDo } from '../../../../../../services/technological/task'
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
 import { message, Dropdown, Popover, Tooltip, notification, Button } from 'antd'
 import CardDropDetail from '../../components/gattFaceCardItem/CardDropDetail'
@@ -377,10 +377,31 @@ export default class CardItem extends Component {
 
     // 拖拽完成后的事件处理-----start--------
     // 拖拽后有其他影响提示
-    addNotificationTodos = ({ code, message }) => { //如果改变时间了，则该组件会销毁重新渲染，需要添加进redux代办，在重新渲染时执行
+    // 处理代办弹窗所需要的参数
+    handleNotifiParams = ({ code, data = [], message }) => {
+        const { itemValue: { id } } = this.props
+        const { scope_dependency = [], undo_id, scope_number, scope_user, undo_expire } = data
+        const length = scope_dependency.filter(item => item.id != id).length
+        let operate_code = code
+        let comfirm_message = `${message}。`
+        if (code == '0') { //成功的时候存在依赖影响
+            if (length) {  //当存在影响其它任务的时候 需要warn
+                operate_code = '1'
+                comfirm_message = `当前操作偏离原计划${undo_expire}天，将影响${scope_user}个人，${scope_number}条任务。`
+            }
+        } else {
+            operate_code = '2'
+        }
+        return {
+            code: operate_code,
+            message: comfirm_message,
+            undo_id
+        }
+    }
+    addNotificationTodos = ({ code, message, undo_id }) => { //如果改变时间了，则该组件会销毁重新渲染，需要添加进redux代办，在重新渲染时执行
         const { itemValue: { id }, notification_todos = {}, dispatch } = this.props
         const notification_todos_ = { ...notification_todos }
-        notification_todos_[id] = { code, message }
+        notification_todos_[id] = { code, message, undo_id }
         dispatch({
             type: 'gantt/updateDatas',
             payload: {
@@ -389,29 +410,36 @@ export default class CardItem extends Component {
         })
     }
     // 拖拽后弹出提示窗
-    notificationEffect = ({ code, message }) => {
-        const { itemValue: { id } } = this.props
+    notificationEffect = ({ code, message, undo_id }) => {
+        const { itemValue: { id, board_id } } = this.props
         const type_obj = {
             '0': {
                 action: 'success',
                 title: '已变更'
             },
             '1': {
-                action: 'error',
-                title: '变更失败'
-            },
-            '2': {
                 action: 'warning',
                 title: '确认编排范围'
             },
+            '2': {
+                action: 'error',
+                title: '变更失败'
+            },
+
         }
         const operator = type_obj[code] || {}
         const { action = 'config', title = '提示' } = operator
 
+        const reBack = () => {
+            revokeCardDo({ undo_id, board_id }).then(res => {
+                this.updateGanttData(res.data)
+            })
+        }
         const renderBtn = (notification_duration) => (
             <Button type="primary" size="small" onClick={() => {
                 clearTimer()
                 notification.close(id)
+                reBack()
             }}>
                 撤销
             </Button>
@@ -422,8 +450,8 @@ export default class CardItem extends Component {
                 bottom: 50,
                 duration: 5,
                 message: title,
-                description: `${message}。${notification_duration}秒后关闭`,
-                btn: code == '0' ? renderBtn(notification_duration) : '',
+                description: `${message}${notification_duration}秒后关闭`,
+                btn: code == '1' ? renderBtn(notification_duration) : '',
                 key: id,
                 onClose: () => {
                     clearTimer()
@@ -463,8 +491,8 @@ export default class CardItem extends Component {
         const { notification_todos = {}, itemValue: { id }, dispatch } = this.props
         if (notification_todos.hasOwnProperty(id)) { //执行代办，清除id
             const notification_todos_ = { ...notification_todos }
-            const { message, code } = notification_todos_[id]
-            this.notificationEffect({ message, code })
+            const { message, code, undo_id } = notification_todos_[id]
+            this.notificationEffect({ message, code, undo_id })
             delete notification_todos_[id]
             dispatch({
                 type: 'gantt/updateDatas',
@@ -473,6 +501,17 @@ export default class CardItem extends Component {
                 }
             })
         }
+    }
+    // 批量更新甘特图数据
+    updateGanttData = (datas = []) => {
+        const { group_view_type, dispatch } = this.props
+        const type = ganttIsOutlineView({ group_view_type }) ? 'updateOutLineTree' : 'updateListGroup'
+        dispatch({
+            type: `gantt/${type}`,
+            payload: {
+                datas
+            }
+        })
     }
     overDragCompleteHandle = () => {
         const { drag_type, local_top } = this.state
@@ -532,32 +571,27 @@ export default class CardItem extends Component {
         updateTaskVTwo({ card_id: id, due_time: end_time_timestamp, board_id: board_id || gantt_board_id }, { isNotLoading: false })
             .then(res => {
                 if (isApiResponseOk(res)) {
-                    this.addNotificationTodos({ ...res })
-                    if (ganttIsOutlineView({ group_view_type })) {
-                        // this.props.changeOutLineTreeNodeProto(id, updateData)
-                        // setTimeout(() => {
-                        //     this.excuteHandleEffectHandleParentCard([
-                        //         // 'getParentCard',
-                        //         // 'handleParentCard',
-                        //         { action: 'updateParentCard', payload: { data: res.data, success: '1' } }
-                        //         // { action: 'updateParentCard', payload: { start_time: res.data.start_time, due_time: res.data.due_time, success: '1' } }
-                        //     ])
-                        // }, 200)
-                        dispatch({
-                            type: 'gantt/updateOutLineTree',
-                            payload: {
-                                datas: [{ id, ...updateData }, ...res.data.filter(item => item.id != id)]
-                            }
-                        })
-                    } else {
-                        this.handleHasScheduleCard({
-                            card_id: id,
-                            updateData
-                        })
-                    }
+                    // 添加弹窗提示代办
+                    this.addNotificationTodos(this.handleNotifiParams(res))
+                    // 更新甘特图数据
+                    this.updateGanttData([{ id, ...updateData }, ...res.data.scope_dependency.filter(item => item.id != id)])
+                    // if (ganttIsOutlineView({ group_view_type })) {
+                    //     dispatch({
+                    //         type: 'gantt/updateOutLineTree',
+                    //         payload: {
+                    //             datas: [{ id, ...updateData }, ...res.data.scope_dependency.filter(item => item.id != id)]
+                    //         }
+                    //     })
+                    // } else {
+                    //     this.handleHasScheduleCard({
+                    //         card_id: id,
+                    //         updateData
+                    //     })
+                    // }
+                    // 当任务弹窗弹出来时，右边要做实时控制
                     this.onChangeTimeHandleCardDetail()
                 } else {
-                    this.notificationEffect({ ...res })
+                    this.notificationEffect(this.handleNotifiParams(res))
                     this.setState({
                         local_width: local_width_origin,
                         local_width_flag: local_width_origin
@@ -655,43 +689,29 @@ export default class CardItem extends Component {
         updateTaskVTwo({ card_id: id, due_time: end_time_timestamp, start_time: start_time_timestamp, board_id: board_id || gantt_board_id }, { isNotLoading: false })
             .then(res => {
                 if (isApiResponseOk(res)) {
-                    this.addNotificationTodos({ ...res })
-                    if (ganttIsOutlineView({ group_view_type })) {
-                        // this.props.changeOutLineTreeNodeProto(id, updateData)
-                        // setTimeout(() => {
-                        //     this.excuteHandleEffectHandleParentCard([
-                        //         // 'getParentCard',
-                        //         // 'handleParentCard',
-                        //         { action: 'updateParentCard', payload: { data: res.data, success: '1' } },
-                        //         // { action: 'updateParentCard', payload: { start_time: res.data.start_time, due_time: res.data.due_time, success: '1' } }
-                        //     ])
-                        // }, 200)
-                        dispatch({
-                            type: 'gantt/updateOutLineTree',
-                            payload: {
-                                datas: [{ id, ...updateData }, ...res.data.filter(item => item.id != id)]
-                            }
-                        });
-                    } else {
-                        this.handleHasScheduleCard({
-                            card_id: id,
-                            updateData
-                        })
-                    }
+                    this.addNotificationTodos(this.handleNotifiParams(res))
+                    // if (ganttIsOutlineView({ group_view_type })) {
+                    //     dispatch({
+                    //         type: 'gantt/updateOutLineTree',
+                    //         payload: {
+                    //             datas: [{ id, ...updateData }, ...res.data.scope_dependency.filter(item => item.id != id)]
+                    //         }
+                    //     });
+                    // } else {
+                    //     this.handleHasScheduleCard({
+                    //         card_id: id,
+                    //         updateData
+                    //     })
+                    // }
+                    this.updateGanttData([{ id, ...updateData }, ...res.data.scope_dependency.filter(item => item.id != id)])
                     this.onChangeTimeHandleCardDetail()
                 } else {
-                    this.notificationEffect({ ...res })
+                    this.notificationEffect(this.handleNotifiParams(res))
                     this.setState({
                         local_left: left,
                         local_top: top
                     }, () => {
                         this.excuteHandleEffectHandleParentCard(['recoveryParentCard'])
-                        // const payload = res.data || { ...updateData }
-                        // this.excuteHandleEffectHandleParentCard([
-                        //     // 'handleParentCard',
-                        //     // 'updateParentCard'
-                        //     { action: 'updateParentCard', payload }
-                        // ])
                     })
                     message.warn(res.message)
                 }
@@ -740,7 +760,7 @@ export default class CardItem extends Component {
         changeTaskType({ ...params }, { isNotLoading: false })
             .then(res => {
                 if (isApiResponseOk(res)) {
-                    this.addNotificationTodos({ ...res })
+                    this.addNotificationTodos(this.handleNotifiParams(res))
                     this.changeCardBelongGroup({
                         card_id: id,
                         new_list_id: params_list_id,
@@ -748,7 +768,7 @@ export default class CardItem extends Component {
                     })
                     this.onChangeTimeHandleCardDetail()
                 } else {
-                    this.notificationEffect({ ...res })
+                    this.notificationEffect(this.handleNotifiParams(res))
                     this.setState({
                         local_left: left,
                         local_top: top
