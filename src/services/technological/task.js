@@ -631,5 +631,5 @@ export async function getCardChildCards(params) {
     url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt_chart/content/child_card`,
     method: 'GET',
     params
-  }, { isNotLoading: false })
+  }, { isNotLoading: true })
 }

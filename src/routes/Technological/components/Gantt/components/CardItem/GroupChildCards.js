@@ -14,12 +14,16 @@ export default class GroupChildCards extends Component {
         super(props)
         this.state = {
             cards: [],
-            spining: false
+            spining: false,
+            init_get: true
         }
     }
 
     componentDidMount() {
         this.getCards()
+        this.setState({
+            init_get: false
+        })
     }
     componentWillReceiveProps(nextProps) {
         const { visible: old_visible } = this.props
@@ -30,9 +34,12 @@ export default class GroupChildCards extends Component {
     }
     getCards = () => {
         const { parent_value: { id } } = this.props
-        this.setState({
-            spining: true
-        })
+        const { init_get } = this.state
+        if (init_get) {
+            this.setState({
+                spining: true
+            })
+        }
         getCardChildCards({ card_id: id }).then(res => {
             const cards = this.hanldleCardsPostion(res.data.cards)
             this.setState({
