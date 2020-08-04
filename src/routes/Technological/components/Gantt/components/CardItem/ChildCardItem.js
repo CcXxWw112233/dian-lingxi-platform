@@ -1143,7 +1143,7 @@ export default class CardItem extends Component {
                     marginTop: task_item_margin_top,
                     background: this.setLableColor(label_data, is_realize), // 'linear-gradient(to right,rgba(250,84,28, 1) 25%,rgba(90,90,90, 1) 25%,rgba(160,217,17, 1) 25%,rgba(250,140,22, 1) 25%)',//'linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)',
                 }}
-                {...this.handleObj()}
+            // {...this.handleObj()}
             >
                 <div
                     data-targetclassname="specific_example"
@@ -1202,7 +1202,7 @@ export default class CardItem extends Component {
                     </div>
                 </div>
                 {/* 存在未读 */}
-                {
+                {/* {
                     cardItemIsHasUnRead({ relaDataId: id, im_all_latest_unread_messages }) && (
                         <div
                             className={indexStyles.has_unread_news}
@@ -1210,7 +1210,7 @@ export default class CardItem extends Component {
                             style={{}}
                         ></div>
                     )
-                }
+                } */}
                 {/* {
                     !this.is_down && (
                         <Popover
@@ -1221,42 +1221,42 @@ export default class CardItem extends Component {
                     )
                 } */}
                 {/* 显示子任务 */}
-                {
+                {/* {
                     !ganttIsOutlineView({ group_view_type }) && !parent_card_id && (
                         <Dropdown
                             trigger={['click']}
                             getPopupContainer={() => document.getElementById(id)}
                             placement="bottomLeft"
-                            visible={drag_lock}
-                            overlay={<GroupChildCards visible={drag_lock} parent_value={itemValue} />} >
+                            visible
+                            overlay={<GroupChildCards parent_value={itemValue} />} >
                             <div data-targetclassname="specific_example" style={{ position: 'absolute', width: '100%', height: '100%' }} data-rely_top={id}></div>
                         </Dropdown>
                     )
-                }
+                } */}
                 {//大纲视图有子任务时间的父任务(父任务开始截止位置有 区间标识)
-                    ganttIsOutlineView({ group_view_type }) && !parent_card_id &&
-                    has_child == '1' && (child_max_due_time || child_min_start_time) &&
-                    (gantt_view_mode != 'month' ? time_span > 6 : true) &&
-                    (
-                        <>
-                            <div className={indexStyles.left_triangle} style={{
-                                borderColor: `${this.setTriangleTreeColor(label_data, 'start')} transparent transparent transparent`
-                            }}></div>
-                            <div className={indexStyles.left_triangle_mask}></div>
-                            <div className={indexStyles.left_triangle_mask2} style={{ backgroundColor: this.setTriangleTreeColor(label_data, 'start') }}></div>
+                    // ganttIsOutlineView({ group_view_type }) && !parent_card_id &&
+                    // has_child == '1' && (child_max_due_time || child_min_start_time) &&
+                    // (gantt_view_mode != 'month' ? time_span > 6 : true) &&
+                    // (
+                    //     <>
+                    //         <div className={indexStyles.left_triangle} style={{
+                    //             borderColor: `${this.setTriangleTreeColor(label_data, 'start')} transparent transparent transparent`
+                    //         }}></div>
+                    //         <div className={indexStyles.left_triangle_mask}></div>
+                    //         <div className={indexStyles.left_triangle_mask2} style={{ backgroundColor: this.setTriangleTreeColor(label_data, 'start') }}></div>
 
-                            <div className={indexStyles.right_triangle}
-                                style={{
-                                    borderColor: `${this.setTriangleTreeColor(label_data, 'end')} transparent transparent transparent`
-                                }}></div>
-                            <div className={indexStyles.right_triangle_mask}></div>
-                            <div className={indexStyles.right_triangle_mask2} style={{ backgroundColor: this.setTriangleTreeColor(label_data, 'end') }}></div>
+                    //         <div className={indexStyles.right_triangle}
+                    //             style={{
+                    //                 borderColor: `${this.setTriangleTreeColor(label_data, 'end')} transparent transparent transparent`
+                    //             }}></div>
+                    //         <div className={indexStyles.right_triangle_mask}></div>
+                    //         <div className={indexStyles.right_triangle_mask2} style={{ backgroundColor: this.setTriangleTreeColor(label_data, 'end') }}></div>
 
-                        </>
-                    )
+                    //     </>
+                    // )
                 }
                 {/* //hover出现的耳朵效果 */}
-                {
+                {/* {
                     drag_lock && !parent_card_id && gantt_view_mode != 'year' && (
                         <HoverEars
                             getX={this.getX}
@@ -1273,7 +1273,7 @@ export default class CardItem extends Component {
                             width={(local_width || 6) - (gantt_view_mode == 'year' ? 0 : card_width_diff)}
                         />
                     )
-                }
+                } */}
             </div>
         )
     }

@@ -624,3 +624,12 @@ export async function getCardRelys(data) {
     data
   })
 }
+
+//获取子任务列表
+export async function getCardChildCards(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt_chart/content/child_card`,
+    method: 'GET',
+    params
+  }, { isNotLoading: false })
+}
