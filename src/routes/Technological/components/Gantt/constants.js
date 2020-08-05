@@ -10,6 +10,13 @@ export const ceil_width_year = 3 //年试图下的单元格宽度
 export const ceil_width_week = 12 //周视图单元格宽度
 export const one_group_row_total = 2 //默认分组行数
 export const ganttIsFold = ({ group_view_type, gantt_board_id, show_board_fold, gantt_view_mode }) => { //gantt是否折叠
+
+    if (gantt_board_id == '0' && gantt_view_mode == 'year' && group_view_type == '1') {
+        return true
+    }
+
+    return false
+
     if (gantt_board_id != '0') return false
     if (gantt_view_mode == 'year' && group_view_type != '4') { //年视图的分组视图下
         return true
