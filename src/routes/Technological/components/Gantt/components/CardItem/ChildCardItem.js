@@ -5,7 +5,7 @@ import AvatarList from '@/components/avatarList'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import CheckItem from '@/components/CheckItem'
 import { task_item_height, task_item_margin_top, date_area_height, ganttIsOutlineView, ceil_width } from '../../constants'
-import { updateTaskVTwo, changeTaskType, revokeCardDo } from '../../../../../../services/technological/task'
+import { updateTaskVTwo, changeTaskType } from '../../../../../../services/technological/task'
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
 import { message, Dropdown, Popover, Tooltip, notification, Button } from 'antd'
 import CardDropDetail from '../../components/gattFaceCardItem/CardDropDetail'
@@ -99,7 +99,7 @@ export default class CardItem extends Component {
 
             b = `linear-gradient(to right${bgColor})`
         } else {
-            b = is_realize == '1' ? '#E9ECF2' : '#cbddf7'
+            b = ''
         }
         return b
     }
@@ -377,31 +377,10 @@ export default class CardItem extends Component {
 
     // 拖拽完成后的事件处理-----start--------
     // 拖拽后有其他影响提示
-    // 处理代办弹窗所需要的参数
-    handleNotifiParams = ({ code, data = [], message }) => {
-        const { itemValue: { id } } = this.props
-        const { scope_dependency = [], undo_id, scope_number, scope_user, undo_expire } = data
-        const length = scope_dependency.filter(item => item.id != id).length
-        let operate_code = code
-        let comfirm_message = `${message}。`
-        if (code == '0') { //成功的时候存在依赖影响
-            if (length) {  //当存在影响其它任务的时候 需要warn
-                operate_code = '1'
-                comfirm_message = `当前操作偏离原计划${undo_expire}天，将影响${scope_user}个人，${scope_number}条任务。`
-            }
-        } else {
-            operate_code = '2'
-        }
-        return {
-            code: operate_code,
-            message: comfirm_message,
-            undo_id
-        }
-    }
-    addNotificationTodos = ({ code, message, undo_id }) => { //如果改变时间了，则该组件会销毁重新渲染，需要添加进redux代办，在重新渲染时执行
+    addNotificationTodos = ({ code, message }) => { //如果改变时间了，则该组件会销毁重新渲染，需要添加进redux代办，在重新渲染时执行
         const { itemValue: { id }, notification_todos = {}, dispatch } = this.props
         const notification_todos_ = { ...notification_todos }
-        notification_todos_[id] = { code, message, undo_id }
+        notification_todos_[id] = { code, message }
         dispatch({
             type: 'gantt/updateDatas',
             payload: {
@@ -410,36 +389,29 @@ export default class CardItem extends Component {
         })
     }
     // 拖拽后弹出提示窗
-    notificationEffect = ({ code, message, undo_id }) => {
-        const { itemValue: { id, board_id } } = this.props
+    notificationEffect = ({ code, message }) => {
+        const { itemValue: { id } } = this.props
         const type_obj = {
             '0': {
                 action: 'success',
                 title: '已变更'
             },
             '1': {
-                action: 'warning',
-                title: '确认编排范围'
-            },
-            '2': {
                 action: 'error',
                 title: '变更失败'
             },
-
+            '2': {
+                action: 'warning',
+                title: '确认编排范围'
+            },
         }
         const operator = type_obj[code] || {}
         const { action = 'config', title = '提示' } = operator
 
-        const reBack = () => {
-            revokeCardDo({ undo_id, board_id }).then(res => {
-                this.updateGanttData(res.data)
-            })
-        }
         const renderBtn = (notification_duration) => (
             <Button type="primary" size="small" onClick={() => {
                 clearTimer()
                 notification.close(id)
-                reBack()
             }}>
                 撤销
             </Button>
@@ -450,8 +422,8 @@ export default class CardItem extends Component {
                 bottom: 50,
                 duration: 5,
                 message: title,
-                description: `${message}${notification_duration}秒后关闭`,
-                btn: code == '1' ? renderBtn(notification_duration) : '',
+                description: `${message}。${notification_duration}秒后关闭`,
+                btn: code == '0' ? renderBtn(notification_duration) : '',
                 key: id,
                 onClose: () => {
                     clearTimer()
@@ -491,8 +463,8 @@ export default class CardItem extends Component {
         const { notification_todos = {}, itemValue: { id }, dispatch } = this.props
         if (notification_todos.hasOwnProperty(id)) { //执行代办，清除id
             const notification_todos_ = { ...notification_todos }
-            const { message, code, undo_id } = notification_todos_[id]
-            this.notificationEffect({ message, code, undo_id })
+            const { message, code } = notification_todos_[id]
+            this.notificationEffect({ message, code })
             delete notification_todos_[id]
             dispatch({
                 type: 'gantt/updateDatas',
@@ -501,17 +473,6 @@ export default class CardItem extends Component {
                 }
             })
         }
-    }
-    // 批量更新甘特图数据
-    updateGanttData = (datas = []) => {
-        const { group_view_type, dispatch } = this.props
-        const type = ganttIsOutlineView({ group_view_type }) ? 'updateOutLineTree' : 'updateListGroup'
-        dispatch({
-            type: `gantt/${type}`,
-            payload: {
-                datas
-            }
-        })
     }
     overDragCompleteHandle = () => {
         const { drag_type, local_top } = this.state
@@ -571,27 +532,32 @@ export default class CardItem extends Component {
         updateTaskVTwo({ card_id: id, due_time: end_time_timestamp, board_id: board_id || gantt_board_id }, { isNotLoading: false })
             .then(res => {
                 if (isApiResponseOk(res)) {
-                    // 添加弹窗提示代办
-                    this.addNotificationTodos(this.handleNotifiParams(res))
-                    // 更新甘特图数据
-                    this.updateGanttData([{ id, ...updateData }, ...res.data.scope_dependency.filter(item => item.id != id)])
-                    // if (ganttIsOutlineView({ group_view_type })) {
-                    //     dispatch({
-                    //         type: 'gantt/updateOutLineTree',
-                    //         payload: {
-                    //             datas: [{ id, ...updateData }, ...res.data.scope_dependency.filter(item => item.id != id)]
-                    //         }
-                    //     })
-                    // } else {
-                    //     this.handleHasScheduleCard({
-                    //         card_id: id,
-                    //         updateData
-                    //     })
-                    // }
-                    // 当任务弹窗弹出来时，右边要做实时控制
+                    this.addNotificationTodos({ ...res })
+                    if (ganttIsOutlineView({ group_view_type })) {
+                        // this.props.changeOutLineTreeNodeProto(id, updateData)
+                        // setTimeout(() => {
+                        //     this.excuteHandleEffectHandleParentCard([
+                        //         // 'getParentCard',
+                        //         // 'handleParentCard',
+                        //         { action: 'updateParentCard', payload: { data: res.data, success: '1' } }
+                        //         // { action: 'updateParentCard', payload: { start_time: res.data.start_time, due_time: res.data.due_time, success: '1' } }
+                        //     ])
+                        // }, 200)
+                        dispatch({
+                            type: 'gantt/updateOutLineTree',
+                            payload: {
+                                datas: [{ id, ...updateData }, ...res.data.filter(item => item.id != id)]
+                            }
+                        })
+                    } else {
+                        this.handleHasScheduleCard({
+                            card_id: id,
+                            updateData
+                        })
+                    }
                     this.onChangeTimeHandleCardDetail()
                 } else {
-                    this.notificationEffect(this.handleNotifiParams(res))
+                    this.notificationEffect({ ...res })
                     this.setState({
                         local_width: local_width_origin,
                         local_width_flag: local_width_origin
@@ -689,29 +655,43 @@ export default class CardItem extends Component {
         updateTaskVTwo({ card_id: id, due_time: end_time_timestamp, start_time: start_time_timestamp, board_id: board_id || gantt_board_id }, { isNotLoading: false })
             .then(res => {
                 if (isApiResponseOk(res)) {
-                    this.addNotificationTodos(this.handleNotifiParams(res))
-                    // if (ganttIsOutlineView({ group_view_type })) {
-                    //     dispatch({
-                    //         type: 'gantt/updateOutLineTree',
-                    //         payload: {
-                    //             datas: [{ id, ...updateData }, ...res.data.scope_dependency.filter(item => item.id != id)]
-                    //         }
-                    //     });
-                    // } else {
-                    //     this.handleHasScheduleCard({
-                    //         card_id: id,
-                    //         updateData
-                    //     })
-                    // }
-                    this.updateGanttData([{ id, ...updateData }, ...res.data.scope_dependency.filter(item => item.id != id)])
+                    this.addNotificationTodos({ ...res })
+                    if (ganttIsOutlineView({ group_view_type })) {
+                        // this.props.changeOutLineTreeNodeProto(id, updateData)
+                        // setTimeout(() => {
+                        //     this.excuteHandleEffectHandleParentCard([
+                        //         // 'getParentCard',
+                        //         // 'handleParentCard',
+                        //         { action: 'updateParentCard', payload: { data: res.data, success: '1' } },
+                        //         // { action: 'updateParentCard', payload: { start_time: res.data.start_time, due_time: res.data.due_time, success: '1' } }
+                        //     ])
+                        // }, 200)
+                        dispatch({
+                            type: 'gantt/updateOutLineTree',
+                            payload: {
+                                datas: [{ id, ...updateData }, ...res.data.filter(item => item.id != id)]
+                            }
+                        });
+                    } else {
+                        this.handleHasScheduleCard({
+                            card_id: id,
+                            updateData
+                        })
+                    }
                     this.onChangeTimeHandleCardDetail()
                 } else {
-                    this.notificationEffect(this.handleNotifiParams(res))
+                    this.notificationEffect({ ...res })
                     this.setState({
                         local_left: left,
                         local_top: top
                     }, () => {
                         this.excuteHandleEffectHandleParentCard(['recoveryParentCard'])
+                        // const payload = res.data || { ...updateData }
+                        // this.excuteHandleEffectHandleParentCard([
+                        //     // 'handleParentCard',
+                        //     // 'updateParentCard'
+                        //     { action: 'updateParentCard', payload }
+                        // ])
                     })
                     message.warn(res.message)
                 }
@@ -757,19 +737,18 @@ export default class CardItem extends Component {
         if (params_list_id == '0') {
             delete params.list_id
         }
-        updateTaskVTwo({ ...params }, { isNotLoading: false })
+        changeTaskType({ ...params }, { isNotLoading: false })
             .then(res => {
                 if (isApiResponseOk(res)) {
-                    this.addNotificationTodos(this.handleNotifiParams(res))
+                    this.addNotificationTodos({ ...res })
                     this.changeCardBelongGroup({
                         card_id: id,
                         new_list_id: params_list_id,
-                        updateData,
-                        rely_datas: [{ id, ...updateData }, ...res.data.scope_dependency.filter(item => item.id != id)]
+                        updateData
                     })
                     this.onChangeTimeHandleCardDetail()
                 } else {
-                    this.notificationEffect(this.handleNotifiParams(res))
+                    this.notificationEffect({ ...res })
                     this.setState({
                         local_left: left,
                         local_top: top
@@ -812,7 +791,7 @@ export default class CardItem extends Component {
     }
 
     // 改变任务分组
-    changeCardBelongGroup = ({ new_list_id, card_id, updateData = {}, rely_datas = [] }) => {
+    changeCardBelongGroup = ({ new_list_id, card_id, updateData = {} }) => {
         // 该任务在新旧两个分组之间交替
         const { list_group = [], list_id, dispatch, current_list_group_id } = this.props
         const list_group_new = [...list_group]
@@ -826,19 +805,12 @@ export default class CardItem extends Component {
         list_group_new[group_index].lane_data.cards.splice(group_index_cards_index, 1) //从老分组移除
 
         dispatch({
-            type: 'gantt/updateListGroup',
+            type: 'gantt/handleListGroup',
             payload: {
-                datas: rely_datas,
-                origin_list_group: list_group_new
+                data: list_group_new,
+                not_set_scroll_top: true
             }
         })
-        // dispatch({
-        //     type: 'gantt/handleListGroup',
-        //     payload: {
-        //         data: list_group_new,
-        //         not_set_scroll_top: true
-        //     }
-        // })
     }
     // 修改有排期的任务
     handleHasScheduleCard = ({ card_id, updateData = {} }) => {
@@ -1136,7 +1108,7 @@ export default class CardItem extends Component {
     }
 
     render() {
-        const { itemValue = {}, im_all_latest_unread_messages, gantt_view_mode, group_view_type, gantt_board_id } = this.props
+        const { itemValue = {}, im_all_latest_unread_messages, gantt_view_mode, group_view_type } = this.props
         const {
             left,
             top, width,
@@ -1171,7 +1143,7 @@ export default class CardItem extends Component {
                     marginTop: task_item_margin_top,
                     background: this.setLableColor(label_data, is_realize), // 'linear-gradient(to right,rgba(250,84,28, 1) 25%,rgba(90,90,90, 1) 25%,rgba(160,217,17, 1) 25%,rgba(250,140,22, 1) 25%)',//'linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)',
                 }}
-                {...this.handleObj()}
+            // {...this.handleObj()}
             >
                 <div
                     data-targetclassname="specific_example"
@@ -1179,8 +1151,7 @@ export default class CardItem extends Component {
                     // onMouseDown={(e) => e.stopPropagation()} 
                     onMouseMove={(e) => e.preventDefault()}
                     style={{
-                        // opacity: 1,
-                        backgroundColor: is_realize == '1' ? '#E9ECF2' : '#cbddf7',
+                        opacity: 1,
                         padding: (gantt_view_mode != 'month' && time_span < 6) ? '0' : '0 8px',
                     }}
                 >
@@ -1231,7 +1202,7 @@ export default class CardItem extends Component {
                     </div>
                 </div>
                 {/* 存在未读 */}
-                {
+                {/* {
                     cardItemIsHasUnRead({ relaDataId: id, im_all_latest_unread_messages }) && (
                         <div
                             className={indexStyles.has_unread_news}
@@ -1239,7 +1210,7 @@ export default class CardItem extends Component {
                             style={{}}
                         ></div>
                     )
-                }
+                } */}
                 {/* {
                     !this.is_down && (
                         <Popover
@@ -1251,43 +1222,42 @@ export default class CardItem extends Component {
                 } */}
                 {/* 显示子任务 */}
                 {/* {
-                    !ganttIsOutlineView({ group_view_type }) && !parent_card_id && 
-                    ( */}
-                <Dropdown
-                    trigger={['click']}
-                    getPopupContainer={() => document.getElementById(id)}
-                    placement="bottomLeft"
-                    visible={drag_lock && !ganttIsOutlineView({ group_view_type }) && !parent_card_id}
-                    overlay={<GroupChildCards visible={drag_lock} parent_value={itemValue} />} >
-                    <div data-targetclassname="specific_example" style={{ position: 'absolute', width: '100%', height: '100%' }} data-rely_top={id}></div>
-                </Dropdown>
-                {/* )
+                    !ganttIsOutlineView({ group_view_type }) && !parent_card_id && (
+                        <Dropdown
+                            trigger={['click']}
+                            getPopupContainer={() => document.getElementById(id)}
+                            placement="bottomLeft"
+                            visible
+                            overlay={<GroupChildCards parent_value={itemValue} />} >
+                            <div data-targetclassname="specific_example" style={{ position: 'absolute', width: '100%', height: '100%' }} data-rely_top={id}></div>
+                        </Dropdown>
+                    )
                 } */}
                 {//大纲视图有子任务时间的父任务(父任务开始截止位置有 区间标识)
-                    ganttIsOutlineView({ group_view_type }) && !parent_card_id &&
-                    has_child == '1' && (child_max_due_time || child_min_start_time) &&
-                    (gantt_view_mode != 'month' ? time_span > 6 : true) &&
-                    (
-                        <>
-                            <div className={indexStyles.left_triangle} style={{
-                                borderColor: `${this.setTriangleTreeColor(label_data, 'start')} transparent transparent transparent`
-                            }}></div>
-                            <div className={indexStyles.left_triangle_mask}></div>
-                            <div className={indexStyles.left_triangle_mask2} style={{ backgroundColor: this.setTriangleTreeColor(label_data, 'start') }}></div>
+                    // ganttIsOutlineView({ group_view_type }) && !parent_card_id &&
+                    // has_child == '1' && (child_max_due_time || child_min_start_time) &&
+                    // (gantt_view_mode != 'month' ? time_span > 6 : true) &&
+                    // (
+                    //     <>
+                    //         <div className={indexStyles.left_triangle} style={{
+                    //             borderColor: `${this.setTriangleTreeColor(label_data, 'start')} transparent transparent transparent`
+                    //         }}></div>
+                    //         <div className={indexStyles.left_triangle_mask}></div>
+                    //         <div className={indexStyles.left_triangle_mask2} style={{ backgroundColor: this.setTriangleTreeColor(label_data, 'start') }}></div>
 
-                            <div className={indexStyles.right_triangle}
-                                style={{
-                                    borderColor: `${this.setTriangleTreeColor(label_data, 'end')} transparent transparent transparent`
-                                }}></div>
-                            <div className={indexStyles.right_triangle_mask}></div>
-                            <div className={indexStyles.right_triangle_mask2} style={{ backgroundColor: this.setTriangleTreeColor(label_data, 'end') }}></div>
+                    //         <div className={indexStyles.right_triangle}
+                    //             style={{
+                    //                 borderColor: `${this.setTriangleTreeColor(label_data, 'end')} transparent transparent transparent`
+                    //             }}></div>
+                    //         <div className={indexStyles.right_triangle_mask}></div>
+                    //         <div className={indexStyles.right_triangle_mask2} style={{ backgroundColor: this.setTriangleTreeColor(label_data, 'end') }}></div>
 
-                        </>
-                    )
+                    //     </>
+                    // )
                 }
                 {/* //hover出现的耳朵效果 */}
-                {
-                    drag_lock && !parent_card_id && gantt_view_mode != 'year' && gantt_board_id != '0' && (
+                {/* {
+                    drag_lock && !parent_card_id && gantt_view_mode != 'year' && (
                         <HoverEars
                             getX={this.getX}
                             itemValue={itemValue}
@@ -1303,7 +1273,7 @@ export default class CardItem extends Component {
                             width={(local_width || 6) - (gantt_view_mode == 'year' ? 0 : card_width_diff)}
                         />
                     )
-                }
+                } */}
             </div>
         )
     }
