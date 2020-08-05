@@ -14,6 +14,7 @@ import FnManagement from './FnManagement';
 import ProjectTempleteScheme from './projectTempleteScheme/ProjectTempleteSchemeModal'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import WorkFlowTemplete from './WorkFlowTemplete/index';
+import CustomFields from './CustomFields';
 
 
 const TabPane = Tabs.TabPane
@@ -297,6 +298,7 @@ class Organization extends Component {
         {/* <Menu.Item key="6">{`${currentNounPlanFilterName(PROJECTS)}模板`}</Menu.Item> */}
         <Menu.Item key="6">{`自有模板`}</Menu.Item>
         <Menu.Item key="7">{`工作流模板`}</Menu.Item>
+        <Menu.Item key="8">{`自定义字段`}</Menu.Item>
       </Menu>
     )
   }
@@ -421,6 +423,9 @@ class Organization extends Component {
       case '7':
         mainContent = (<div><WorkFlowTemplete /></div>)
         break
+      case '8':
+        mainContent = (<div><CustomFields /></div>)
+        break
       default:
         break;
     }
@@ -429,6 +434,7 @@ class Organization extends Component {
 
   render() {
     const { showBackBtn = true } = this.props
+    const height = document.getElementById("org_managementContainer") ? document.getElementById("org_managementContainer").offsetHeight : ''
     return (
       <div id={'organizationOut'} className={indexStyles.organizationOut}>
         <div className={indexStyles.main}>
@@ -440,7 +446,7 @@ class Organization extends Component {
             )}
           <div className={indexStyles.orgManagementWrapper}>
             {/* 左边导航 */}
-            <div className={indexStyles.org_managementNav}>
+            <div className={indexStyles.org_managementNav} style={{height: height / 2 - 100 + 'px'}}>
               {this.renderManagementNavList()}
             </div>
             {/* 右边内容 */}
