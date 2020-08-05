@@ -15,6 +15,7 @@ export default class LabelDataComponent extends React.Component {
       { label_color: '183,235,143' },
       { label_color: '255,65,65' },
       { label_color: '255,134,55' },
+      { label_color: '62,130,255' },
       { label_color: '144,95,255' },
       { label_color: '100,161,108' },
     ]
@@ -120,6 +121,7 @@ export default class LabelDataComponent extends React.Component {
         { label_color: '183,235,143' },
         { label_color: '255,65,65' },
         { label_color: '255,134,55' },
+        { label_color: '62,130,255' },
         { label_color: '144,95,255' },
         { label_color: '100,161,108' },
       ],
@@ -313,7 +315,7 @@ export default class LabelDataComponent extends React.Component {
             <div className={indexStyles.input}>
               <input placeholder="标签名称" value={inputValue} onChange={this.handleChgValue} maxLength={30} autoFocus={true} />
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between' }}>
               {
                 labelColorArr.map((item) => {
                   const { label_color } = item
