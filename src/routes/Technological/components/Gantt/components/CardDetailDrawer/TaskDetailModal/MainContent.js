@@ -544,7 +544,7 @@ export default class MainContent extends Component {
           message.warn(`您设置了一个今天之前的日期: ${timestampToTime(timeString, true)}`)
         }, 500)
       }
-      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'start_time', value: start_timeStamp, rely_card_datas: res.data })
+      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'start_time', value: start_timeStamp, rely_card_datas: res.data.scope_dependency })
     })
   }
   // 开始时间 chg事件 E
@@ -589,7 +589,7 @@ export default class MainContent extends Component {
           message.warn(`您设置了一个今天之前的日期: ${timestampToTime(timeString, true)}`, MESSAGE_DURATION_TIME)
         }, 500)
       }
-      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'due_time', value: due_timeStamp, rely_card_datas: res.data })
+      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'due_time', value: due_timeStamp, rely_card_datas: res.data.scope_dependency })
     })
   }
   // 截止时间 chg事件 E
@@ -616,7 +616,7 @@ export default class MainContent extends Component {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         return
       }
-      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'start_time', value: '0', rely_card_datas: res.data })
+      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'start_time', value: '0', rely_card_datas: res.data.scope_dependency })
     })
 
   }
@@ -645,7 +645,7 @@ export default class MainContent extends Component {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         return
       }
-      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'due_time', value: '0', rely_card_datas: res.data })
+      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'due_time', value: '0', rely_card_datas: res.data.scope_dependency })
     })
 
   }
@@ -1084,19 +1084,19 @@ export default class MainContent extends Component {
       if (gold_data && gold_data.length) { // 表示子任务存在
         let newData = [...gold_data]
         newData = newData.map(item => {
-          let new_item = {...item}
+          let new_item = { ...item }
           if (item.deliverables && item.deliverables.length) {
             let temp_arr = [...item.deliverables]
             temp_arr = temp_arr.map(val => {
               if (val.file_id == this.props.filePreviewCurrentFileId) {
-                let new_val = {...val}
-                new_val = { ...val, file_id: file_id, name: file_name, create_time: create_time}
+                let new_val = { ...val }
+                new_val = { ...val, file_id: file_id, name: file_name, create_time: create_time }
                 return new_val
               } else {
                 return val
               }
             })
-            new_item = {...item, deliverables: temp_arr}
+            new_item = { ...item, deliverables: temp_arr }
             return new_item
           } else {
             return item

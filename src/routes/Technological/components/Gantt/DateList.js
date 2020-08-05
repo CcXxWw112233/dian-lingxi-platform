@@ -341,7 +341,9 @@ export default class DateList extends Component {
                   <div className={`${indexStyles.dateDetailItem}`} key={key2}>
                     <div className={`${indexStyles.dateDetailItem_date_no} 
                                     ${((week_day == 0 || week_day == 6)) && indexStyles.weekly_date_no} 
-                                    ${this.getDateNoHolidaylunar(timestamp).festival_status == '1' && indexStyles.holiday_date_no}`}>
+                                    ${this.getDateNoHolidaylunar(timestamp).festival_status == '1' && indexStyles.holiday_date_no}`}
+                      style={{ background: isToday ? '#1890FF' : '' }}
+                    >
                       {
                         this.getDateNoHolidaylunar(timestamp).holiday && (
                           <div style={{ position: 'absolute', zIndex: 2, top: -24, left: -18, width: 60, height: 20, backgroundColor: '#fff' }} >
@@ -349,7 +351,7 @@ export default class DateList extends Component {
                           </div>
                         )
                       }
-                      {isToday ? <span style={{ color: '#1890FF', fontSize: 12 }}>今天</span> : date_no}
+                      {isToday ? <span style={{ color: '#ffffff', fontSize: 10, transform: 'scale(0.8)' }}>今天</span> : date_no}
                     </div>
                   </div>
                 </div>
@@ -364,7 +366,7 @@ export default class DateList extends Component {
                                     ${((week_day == 0 || week_day == 6)) && indexStyles.weekly_date_no} 
                                     ${this.getDateNoHolidaylunar(timestamp).festival_status == '1' && indexStyles.holiday_date_no}
                                     ${has_lcb && indexStyles.has_moletones_date_no}`}
-                          style={{ background: this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized }) }}
+                          style={{ background: isToday ? '#1890FF' : this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized }) }}
                         // style={{ background: is_over_duetime && has_lcb ? '#FF7875' : '' }}
                         >
                           {
@@ -374,7 +376,7 @@ export default class DateList extends Component {
                               </div>
                             )
                           }
-                          {isToday ? <span style={{ color: '#1890FF', fontSize: 12 }}>今天</span> : date_no}
+                          {isToday ? <span style={{ color: '#ffffff', display: 'block', fontSize: 10, transform: 'scale(0.8)' }}>今天</span> : date_no}
                         </div>
                       </div>
                     </div>

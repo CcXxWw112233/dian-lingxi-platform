@@ -99,7 +99,7 @@ export default class CardItem extends Component {
 
             b = `linear-gradient(to right${bgColor})`
         } else {
-            b = ''
+            b = is_realize == '1' ? '#E9ECF2' : '#cbddf7'
         }
         return b
     }
@@ -1180,6 +1180,7 @@ export default class CardItem extends Component {
                     onMouseMove={(e) => e.preventDefault()}
                     style={{
                         // opacity: 1,
+                        backgroundColor: is_realize == '1' ? '#E9ECF2' : '#cbddf7',
                         padding: (gantt_view_mode != 'month' && time_span < 6) ? '0' : '0 8px',
                     }}
                 >
