@@ -13,6 +13,10 @@ export default class LabelDataComponent extends React.Component {
       { label_color: '145,213,255' },
       { label_color: '211,173,247' },
       { label_color: '183,235,143' },
+      { label_color: '255,65,65' },
+      { label_color: '255,134,55' },
+      { label_color: '144,95,255' },
+      { label_color: '100,161,108' },
     ]
   }
 
@@ -108,12 +112,16 @@ export default class LabelDataComponent extends React.Component {
   updateStateDatas = () => {
     this.setState({
       is_add_label: false,
-      labelColorArr: [
+      labelColorArr: [ // 默认的标签颜色列表
         { label_color: '255,163,158' },
         { label_color: '255,213,145' },
         { label_color: '145,213,255' },
         { label_color: '211,173,247' },
         { label_color: '183,235,143' },
+        { label_color: '255,65,65' },
+        { label_color: '255,134,55' },
+        { label_color: '144,95,255' },
+        { label_color: '100,161,108' },
       ],
       inputValue: '',
       is_edit_label: false
@@ -305,7 +313,7 @@ export default class LabelDataComponent extends React.Component {
             <div className={indexStyles.input}>
               <input placeholder="标签名称" value={inputValue} onChange={this.handleChgValue} maxLength={30} autoFocus={true} />
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
               {
                 labelColorArr.map((item) => {
                   const { label_color } = item
