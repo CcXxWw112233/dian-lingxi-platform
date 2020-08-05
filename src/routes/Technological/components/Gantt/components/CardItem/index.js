@@ -1136,7 +1136,7 @@ export default class CardItem extends Component {
     }
 
     render() {
-        const { itemValue = {}, im_all_latest_unread_messages, gantt_view_mode, group_view_type } = this.props
+        const { itemValue = {}, im_all_latest_unread_messages, gantt_view_mode, group_view_type, gantt_board_id } = this.props
         const {
             left,
             top, width,
@@ -1179,7 +1179,7 @@ export default class CardItem extends Component {
                     // onMouseDown={(e) => e.stopPropagation()} 
                     onMouseMove={(e) => e.preventDefault()}
                     style={{
-                        opacity: 1,
+                        // opacity: 1,
                         padding: (gantt_view_mode != 'month' && time_span < 6) ? '0' : '0 8px',
                     }}
                 >
@@ -1249,18 +1249,19 @@ export default class CardItem extends Component {
                     )
                 } */}
                 {/* 显示子任务 */}
-                {
-                    !ganttIsOutlineView({ group_view_type }) && !parent_card_id && (
-                        <Dropdown
-                            trigger={['click']}
-                            getPopupContainer={() => document.getElementById(id)}
-                            placement="bottomLeft"
-                            visible={drag_lock}
-                            overlay={<GroupChildCards visible={drag_lock} parent_value={itemValue} />} >
-                            <div data-targetclassname="specific_example" style={{ position: 'absolute', width: '100%', height: '100%' }} data-rely_top={id}></div>
-                        </Dropdown>
-                    )
-                }
+                {/* {
+                    !ganttIsOutlineView({ group_view_type }) && !parent_card_id && 
+                    ( */}
+                <Dropdown
+                    trigger={['click']}
+                    getPopupContainer={() => document.getElementById(id)}
+                    placement="bottomLeft"
+                    visible={drag_lock && !ganttIsOutlineView({ group_view_type }) && !parent_card_id}
+                    overlay={<GroupChildCards visible={drag_lock} parent_value={itemValue} />} >
+                    <div data-targetclassname="specific_example" style={{ position: 'absolute', width: '100%', height: '100%' }} data-rely_top={id}></div>
+                </Dropdown>
+                {/* )
+                } */}
                 {//大纲视图有子任务时间的父任务(父任务开始截止位置有 区间标识)
                     ganttIsOutlineView({ group_view_type }) && !parent_card_id &&
                     has_child == '1' && (child_max_due_time || child_min_start_time) &&
@@ -1285,7 +1286,7 @@ export default class CardItem extends Component {
                 }
                 {/* //hover出现的耳朵效果 */}
                 {
-                    drag_lock && !parent_card_id && gantt_view_mode != 'year' && (
+                    drag_lock && !parent_card_id && gantt_view_mode != 'year' && gantt_board_id != '0' && (
                         <HoverEars
                             getX={this.getX}
                             itemValue={itemValue}
