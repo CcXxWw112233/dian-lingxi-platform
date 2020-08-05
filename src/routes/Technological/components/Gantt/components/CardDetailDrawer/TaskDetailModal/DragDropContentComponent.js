@@ -584,7 +584,7 @@ export default class DragDropContentComponent extends Component {
   }
 
   /* 附件点点点字段 */
-  getAttachmentActionMenus = (fileInfo, card_id) => {
+  getAttachmentActionMenus = ({fileInfo, code, card_id}) => {
     return (
       <Menu>
         <Menu.Item>
@@ -593,7 +593,7 @@ export default class DragDropContentComponent extends Component {
             </a>
         </Menu.Item>
         <Menu.Item>
-          <a onClick={this.attachmentItemOpera.bind(this, { type: 'remove', data: fileInfo, card_id })}>
+          <a onClick={this.attachmentItemOpera.bind(this, { type: 'remove', data: fileInfo, card_id, code })}>
             删除该附件
             </a>
         </Menu.Item>
