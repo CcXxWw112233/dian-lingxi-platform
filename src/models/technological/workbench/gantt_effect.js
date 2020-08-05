@@ -5,6 +5,7 @@ import { getModelSelectDatasState } from "../../utils"
 import { message } from "antd"
 import OutlineTree from '@/routes/Technological/components/Gantt/components/OutlineTree';
 import { getProcessTemplateList } from "../../../services/technological/workFlow";
+import { ganttIsOutlineView } from "../../../routes/Technological/components/Gantt/constants"
 // F:\work\newdicolla-platform\src\routes\Technological\components\Gantt\components\OutlineTree\index.js
 export default {
     state: {
@@ -15,12 +16,14 @@ export default {
         outline_node_draging: false, //大纲是否拖拽排序中
         selected_card_visible: false, //查看任务抽屉
         uploading_folder_id: '', //任务详情上传文件的文件id, 下方抽屉在上传后判断文件夹id进行更新
+        notification_todos: {}, //[id:{code:'', message: ''}]，当更新任务时间后，由于任务列表的key是根据id_start_time duetime等多个属性设置，会重新didmount导致之前操作丢失，用来存放待办
     },
     effects: {
         * addCardRely({ payload = {} }, { select, call, put }) {
             const { from_id, to_id, relation } = payload
             let res = yield call(addCardRely, { from_id, to_id, relation })
             const rely_map = yield select(getModelSelectDatasState('gantt', 'rely_map'))
+            const group_view_type = yield select(getModelSelectDatasState('gantt', 'group_view_type'))
             let _rely_map = JSON.parse(JSON.stringify(rely_map))
             if (isApiResponseOk(res)) {
                 message.success('已成功添加依赖')
@@ -38,8 +41,9 @@ export default {
                         rely_map: _rely_map
                     }
                 })
+                const updateAction = ganttIsOutlineView({ group_view_type }) ? 'updateOutLineTree' : 'updateListGroup'
                 yield put({
-                    type: 'updateOutLineTree',
+                    type: updateAction,
                     payload: {
                         datas: res.data
                     }
@@ -123,9 +127,9 @@ export default {
             //     { id: '1266250784136368128', start_time: '1590595200', due_time: '1590854400' }
             // ]
 
-            const { datas = [] } = payload
+            const { datas = [], origin_list_group } = payload
             const list_group = yield select(getModelSelectDatasState('gantt', 'list_group'))
-            const list_group_new = [...list_group]
+            const list_group_new = Object.prototype.toString.call(origin_list_group) == '[object Array]' ? origin_list_group : [...list_group]
             for (let val of datas) {
                 for (let val2 of list_group_new) {
                     const card_index = val2.lane_data.cards.findIndex(item => item.id == val.id)

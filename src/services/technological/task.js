@@ -7,7 +7,8 @@ import {
   CONTENT_DATA_TYPE_FILE,
   CONTENT_DATA_TYPE_FOLDER,
   CONTENT_DATA_TYPE_LIST,
-  REQUEST_DOMAIN_WORK_BENCH
+  REQUEST_DOMAIN_WORK_BENCH,
+  REQUEST_DOMAIN_ABOUT_PROJECT
 } from "../../globalset/js/constant";
 import request from "../../utils/requestAxios";
 import { getGlobalData } from "../../utils/businessFunction";
@@ -621,6 +622,24 @@ export async function getCardRelys(data) {
   return request({
     url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt_chart/content/dependency`,
     method: 'POST',
+    data
+  })
+}
+
+//获取子任务列表
+export async function getCardChildCards(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt_chart/content/child_card`,
+    method: 'GET',
+    params
+  }, { isNotLoading: true })
+}
+
+//撤销任务操作
+export async function revokeCardDo(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_ABOUT_PROJECT}/${REQUEST_INTERGFACE_VERSIONN}/card/undo`,
+    method: 'PUT',
     data
   })
 }
