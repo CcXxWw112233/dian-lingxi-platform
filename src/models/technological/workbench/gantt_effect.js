@@ -124,9 +124,9 @@ export default {
             //     { id: '1266250784136368128', start_time: '1590595200', due_time: '1590854400' }
             // ]
 
-            const { datas = [] } = payload
+            const { datas = [], origin_list_group } = payload
             const list_group = yield select(getModelSelectDatasState('gantt', 'list_group'))
-            const list_group_new = [...list_group]
+            const list_group_new = Object.prototype.toString.call(origin_list_group) == '[object Array]' ? origin_list_group : [...list_group]
             for (let val of datas) {
                 for (let val2 of list_group_new) {
                     const card_index = val2.lane_data.cards.findIndex(item => item.id == val.id)

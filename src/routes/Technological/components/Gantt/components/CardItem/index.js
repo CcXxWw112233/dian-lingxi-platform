@@ -757,14 +757,15 @@ export default class CardItem extends Component {
         if (params_list_id == '0') {
             delete params.list_id
         }
-        changeTaskType({ ...params }, { isNotLoading: false })
+        updateTaskVTwo({ ...params }, { isNotLoading: false })
             .then(res => {
                 if (isApiResponseOk(res)) {
                     this.addNotificationTodos(this.handleNotifiParams(res))
                     this.changeCardBelongGroup({
                         card_id: id,
                         new_list_id: params_list_id,
-                        updateData
+                        updateData,
+                        rely_datas: [{ id, ...updateData }, ...res.data.scope_dependency.filter(item => item.id != id)]
                     })
                     this.onChangeTimeHandleCardDetail()
                 } else {
@@ -811,7 +812,7 @@ export default class CardItem extends Component {
     }
 
     // 改变任务分组
-    changeCardBelongGroup = ({ new_list_id, card_id, updateData = {} }) => {
+    changeCardBelongGroup = ({ new_list_id, card_id, updateData = {}, rely_datas = [] }) => {
         // 该任务在新旧两个分组之间交替
         const { list_group = [], list_id, dispatch, current_list_group_id } = this.props
         const list_group_new = [...list_group]
@@ -825,12 +826,19 @@ export default class CardItem extends Component {
         list_group_new[group_index].lane_data.cards.splice(group_index_cards_index, 1) //从老分组移除
 
         dispatch({
-            type: 'gantt/handleListGroup',
+            type: 'gantt/updateListGroup',
             payload: {
-                data: list_group_new,
-                not_set_scroll_top: true
+                datas: rely_datas,
+                origin_list_group: list_group_new
             }
         })
+        // dispatch({
+        //     type: 'gantt/handleListGroup',
+        //     payload: {
+        //         data: list_group_new,
+        //         not_set_scroll_top: true
+        //     }
+        // })
     }
     // 修改有排期的任务
     handleHasScheduleCard = ({ card_id, updateData = {} }) => {
