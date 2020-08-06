@@ -1257,7 +1257,8 @@ export default class CardItem extends Component {
                     trigger={['click']}
                     getPopupContainer={() => document.getElementById(id)}
                     placement="bottomLeft"
-                    visible={drag_lock && !ganttIsOutlineView({ group_view_type }) && !parent_card_id}
+                    // visible
+                    visible={drag_lock && !ganttIsOutlineView({ group_view_type }) && !parent_card_id && !rely_down}
                     overlay={<GroupChildCards visible={drag_lock} parent_value={itemValue} />} >
                     <div data-targetclassname="specific_example" style={{ position: 'absolute', width: '100%', height: '100%' }} data-rely_top={id}></div>
                 </Dropdown>
