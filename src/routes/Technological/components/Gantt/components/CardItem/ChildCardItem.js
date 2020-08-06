@@ -99,7 +99,7 @@ export default class CardItem extends Component {
 
             b = `linear-gradient(to right${bgColor})`
         } else {
-            b = ''
+            b = is_realize == '1' ? '#E9ECF2' : '#cbddf7'
         }
         return b
     }
@@ -1151,7 +1151,7 @@ export default class CardItem extends Component {
                     // onMouseDown={(e) => e.stopPropagation()} 
                     onMouseMove={(e) => e.preventDefault()}
                     style={{
-                        opacity: 1,
+                        backgroundColor: is_realize == '1' ? '#E9ECF2' : '#cbddf7',
                         padding: (gantt_view_mode != 'month' && time_span < 6) ? '0' : '0 8px',
                     }}
                 >
@@ -1195,7 +1195,7 @@ export default class CardItem extends Component {
                         // onMouseDown={(e) => e.stopPropagation()} 
                         onMouseMove={(e) => e.preventDefault()}
                         style={{
-                            opacity: is_realize == '1' ? 0.5 : 1
+                            // opacity: is_realize == '1' ? 0.5 : 1
                         }}
                     >
                         <AvatarList users={executors} size={21} targetclassname={'specific_example'} />
