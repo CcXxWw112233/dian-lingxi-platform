@@ -3,7 +3,6 @@ import { connect } from 'dva'
 import ContainerWithIndexUI from './ContainerWithIndexUI'
 
 const mapStateToProps = (state) => {
-  console.log(state)
   return {
   }
 }

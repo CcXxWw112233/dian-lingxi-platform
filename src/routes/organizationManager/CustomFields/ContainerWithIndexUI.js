@@ -8,7 +8,6 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import CustomFieldCategory from './component/CustomFieldCategory'
 
 function ContainerWithIndexUI(props) {
-  console.log(props);
   const [is_add_custom_field, setAddCustomFields] = useState(false)
   const [is_add_custom_field_list, setAddCustomFieldsList] = useState(false)
   const [inputValue, setInputValue] = useState('')
