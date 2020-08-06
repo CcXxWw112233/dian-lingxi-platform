@@ -19,6 +19,11 @@ export default class InputExport extends Component {
     this.props.handleDeleteInput && this.props.handleDeleteInput(index)
   }
 
+  onChange = (e, index) => {
+    let value = e.target.value
+    this.props.handleChangeInputValue && this.props.handleChangeInputValue({value, index})
+  }
+
   /**
  * 想要实现, 当获取焦点的时候, 判断当前的输入框是否是最后一个, 
  * 如果是,就追加一条
@@ -39,13 +44,16 @@ export default class InputExport extends Component {
 
   render() {
     const { itemKey, itemValue, inputList = [] } = this.props
+    const { value } = itemValue
     const { currentOperateIndex } = this.state
     return (
       <div style={{position: 'relative'}}>
         <Input
+          value={value}
           style={{marginBottom: itemKey == inputList.length -1 ? '0px' : '12px', paddingRight: '24px'}}
           key={itemKey}
           onFocus={ (e) => { this.onFocus(e, itemKey) } }
+          onChange={(e) => {this.onChange(e, itemKey)}}
         />
         {
           (currentOperateIndex == itemKey) && inputList.length > 1 ? (

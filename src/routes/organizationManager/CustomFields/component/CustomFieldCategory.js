@@ -43,6 +43,22 @@ export default class CustomFieldCategory extends Component {
     })
   }
 
+  handleChangeInputValue = (data) => {
+    const { value, index } = data
+    const { inputList = [] } = this.state
+    let new_inputList = [...inputList]
+    new_inputList = new_inputList.map((item, i) => {
+      let new_item = item
+			if (index == i) {
+				new_item = { ...new_item, value: value }
+			}
+			return new_item
+    })
+    this.setState({
+      inputList: new_inputList
+    })
+  }
+
   renderPopoverTitle = () => {
     return (
       <div className={indexStyles.title__wrapper}>添加字段</div>
@@ -81,7 +97,8 @@ export default class CustomFieldCategory extends Component {
                 itemKey={index} 
                 itemValue={item} 
                 handleAddOneTips={this.handleAddOneTips}
-                handleDeleteInput={this.handleDeleteInput} 
+                handleDeleteInput={this.handleDeleteInput}
+                handleChangeInputValue={this.handleChangeInputValue} 
                 />
               })
             }
