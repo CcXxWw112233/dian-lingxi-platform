@@ -485,6 +485,7 @@ export default class CardItem extends Component {
             }, 1000)
         }
         clearTimer()
+        notification.close(id) //先关掉旧的
         setTimer()
     }
     // 代表列表主动执行
