@@ -309,18 +309,31 @@ class Gantt extends Component {
       return
     }
     if (ganttIsOutlineView({ group_view_type })) {
-      this.changeOutLineTreeNodeProto(card_id, { ...new_drawContent, name: drawContent.card_name })
+      // this.changeOutLineTreeNodeProto(card_id, { ...new_drawContent, name: drawContent.card_name })
       setTimeout(() => {
         if (Object.prototype.toString.call(other_params.rely_card_datas) == '[object Array]') {
           dispatch({
             type: 'gantt/updateOutLineTree',
             payload: {
-              datas: other_params.rely_card_datas.filter(item => item.id != card_id)
+              datas: other_params.rely_card_datas//.filter(item => item.id != card_id)
             }
           });
         }
       }, 1000)
       return
+    } else {
+      // 如果将所有相关的任务时间传递进来
+      if (Object.prototype.toString.call(other_params.rely_card_datas) == '[object Array]') {
+        setTimeout(() => {
+          dispatch({
+            type: `gantt/${ganttIsOutlineView({ group_view_type }) ? 'updateOutLineTree' : 'updateListGroup'}`,
+            payload: {
+              datas: other_params.rely_card_datas
+            }
+          });
+        }, 1000)
+        return
+      }
     }
     if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold, gantt_view_mode }) &&
       (['is_realize', 'start_time', 'due_time'].includes(other_params.name))
