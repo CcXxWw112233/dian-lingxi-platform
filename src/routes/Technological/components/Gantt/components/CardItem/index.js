@@ -380,14 +380,14 @@ export default class CardItem extends Component {
     // 处理代办弹窗所需要的参数
     handleNotifiParams = ({ code, data = [], message }) => {
         const { itemValue: { id } } = this.props
-        const { scope_dependency = [], undo_id, scope_number, scope_user, undo_expire } = data
-        const length = scope_dependency.filter(item => item.id != id).length
+        const { scope_content = [], undo_id, scope_number, scope_user, scope_day } = data
+        const length = scope_content.filter(item => item.id != id).length
         let operate_code = code
         let comfirm_message = `${message}。`
         if (code == '0') { //成功的时候存在依赖影响
             if (length) {  //当存在影响其它任务的时候 需要warn
                 operate_code = '1'
-                comfirm_message = `当前操作偏离原计划${undo_expire}天，将影响${scope_user}个人，${scope_number}条任务。`
+                comfirm_message = `当前操作偏离原计划${scope_day}天，将影响${scope_user}个人，${scope_number}条任务。`
             }
         } else {
             operate_code = '2'
@@ -581,12 +581,12 @@ export default class CardItem extends Component {
                     }
 
                     // 更新甘特图数据
-                    this.updateGanttData([{ id, ...updateData }, ...res.data.scope_dependency.filter(item => item.id != id)])
+                    this.updateGanttData([{ id, ...updateData }, ...res.data.scope_content.filter(item => item.id != id)])
                     // if (ganttIsOutlineView({ group_view_type })) {
                     //     dispatch({
                     //         type: 'gantt/updateOutLineTree',
                     //         payload: {
-                    //             datas: [{ id, ...updateData }, ...res.data.scope_dependency.filter(item => item.id != id)]
+                    //             datas: [{ id, ...updateData }, ...res.data.scope_content.filter(item => item.id != id)]
                     //         }
                     //     })
                     // } else {
@@ -706,7 +706,7 @@ export default class CardItem extends Component {
                     //     dispatch({
                     //         type: 'gantt/updateOutLineTree',
                     //         payload: {
-                    //             datas: [{ id, ...updateData }, ...res.data.scope_dependency.filter(item => item.id != id)]
+                    //             datas: [{ id, ...updateData }, ...res.data.scope_content.filter(item => item.id != id)]
                     //         }
                     //     });
                     // } else {
@@ -715,7 +715,7 @@ export default class CardItem extends Component {
                     //         updateData
                     //     })
                     // }
-                    this.updateGanttData([{ id, ...updateData }, ...res.data.scope_dependency.filter(item => item.id != id)])
+                    this.updateGanttData([{ id, ...updateData }, ...res.data.scope_content.filter(item => item.id != id)])
                     this.onChangeTimeHandleCardDetail()
                 } else {
                     // this.notificationEffect(this.handleNotifiParams(res))
@@ -782,7 +782,7 @@ export default class CardItem extends Component {
                         card_id: id,
                         new_list_id: params_list_id,
                         updateData,
-                        rely_datas: [{ id, ...updateData }, ...res.data.scope_dependency.filter(item => item.id != id)]
+                        rely_datas: [{ id, ...updateData }, ...res.data.scope_content.filter(item => item.id != id)]
                     })
                     this.onChangeTimeHandleCardDetail()
                 } else {
