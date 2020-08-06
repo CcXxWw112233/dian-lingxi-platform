@@ -917,7 +917,7 @@ export default class DragDropContentComponent extends Component {
               } */}
               <div className={mainContentStyles.field_hover}>
                 {/* <span className={`${globalStyles.authTheme}`}>&#xe7f6;</span> */}
-                <span>备注</span>
+                <span>{currentNounPlanFilterName(TASKS)}说明</span>
               </div>
               {
                 !flag && (
@@ -930,11 +930,13 @@ export default class DragDropContentComponent extends Component {
                 {
                   (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
                     (
-                      currentItem.data && currentItem.data != '<p></p>' ? (
+                      currentItem.data && currentItem.data == '<p></p>' ? 
+                      (
                         <div className={`${mainContentStyles.pub_hover}`}>
                           <span>暂无</span>
                         </div>
-                      ) : (
+                      ) 
+                      : (
                           <>
                             <div className={`${mainContentStyles.pub_hover}`} >
                               <div className={mainContentStyles.descriptionContent} dangerouslySetInnerHTML={{ __html: currentItem.data }}></div>
@@ -947,16 +949,8 @@ export default class DragDropContentComponent extends Component {
                       <>
                         <div>
                           <RichTextEditor saveBrafitEdit={this.saveBrafitEdit} value={currentItem.data && currentItem.data}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                              <div style={{ padding: '0px 2px' }} className={`${mainContentStyles.pub_hover}`} >
-                                {
-                                  currentItem.data && currentItem.data != '<p></p>' ?
-                                    <div className={mainContentStyles.descriptionContent} dangerouslySetInnerHTML={{ __html: currentItem.data }}></div>
-                                    :
-                                    '添加备注'
-                                }
-                              </div>
-                              <div onClick={(e) => e && e.stopPropagation()}>
+                            <div>
+                              <div style={{paddingLeft: '12px'}} onClick={(e) => e && e.stopPropagation()}>
                                 <UploadAttachment executors={executors.data} boardFolderTreeData={boardFolderTreeData} projectDetailInfoData={projectDetailInfoData} org_id={org_id} board_id={board_id} card_id={card_id}
                                   title={`${currentNounPlanFilterName(TASKS)}说明资料设置`}
                                   listDescribe={'说明资料列表'}
@@ -969,6 +963,14 @@ export default class DragDropContentComponent extends Component {
                                     <span>上传说明资料</span>
                                   </span>
                                 </UploadAttachment>
+                              </div>
+                              <div style={{ padding: '0px 2px', paddingLeft: '12px' }} className={`${mainContentStyles.pub_hover}`} >
+                                {
+                                  currentItem.data && currentItem.data != '<p></p>' ?
+                                    <div className={mainContentStyles.descriptionContent} dangerouslySetInnerHTML={{ __html: currentItem.data }}></div>
+                                    :
+                                    '添加备注'
+                                }
                               </div>
                             </div>
                           </RichTextEditor>
@@ -1241,7 +1243,7 @@ export default class DragDropContentComponent extends Component {
                   <AppendSubTask data={data} handleTaskDetailChange={handleTaskDetailChange} handleChildTaskChange={handleChildTaskChange} whetherUpdateParentTaskTime={whetherUpdateParentTaskTime} updateRelyOnRationList={updateRelyOnRationList} boardFolderTreeData={boardFolderTreeData} projectDetailInfoData={projectDetailInfoData} handleRelyUploading={this.props.handleRelyUploading}
                     updatePrivateVariablesWithOpenFile={this.props.updatePrivateVariablesWithOpenFile}
                   >
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', paddingLeft: '12px' }}>
                       {
                         !!!(deliverables && deliverables.length) && (
                           <div className={mainContentStyles.add_sub_btn}>

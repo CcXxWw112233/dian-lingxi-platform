@@ -734,9 +734,9 @@ export default class DragDropContentComponent extends Component {
                   <span onClick={() => { this.handleDelCurrentField(currentItem.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
                 )
               }
-              <div className={mainContentStyles.field_hover}>
+              <div className={mainContentStyles.field_hover} style={{maxWidth: 'inherit'}}>
                 <span className={`${globalStyles.authTheme}`}>&#xe7f6;</span>
-                <span>备注</span>
+                <span>{currentNounPlanFilterName(TASKS)}说明</span>
               </div>
             </div>
             <>
@@ -745,8 +745,8 @@ export default class DragDropContentComponent extends Component {
                   {
                     (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
                       (
-                        currentItem.data && currentItem.data != '<p></p>' ? (
-                          <div className={`${mainContentStyles.pub_hover}`}>
+                        currentItem.data && currentItem.data == '<p></p>' ? (
+                          <div className={`${mainContentStyles.pub_hover}`} style={{width: '100%'}}>
                             <span>暂无</span>
                           </div>
                         ) : (
