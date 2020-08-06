@@ -55,6 +55,106 @@
       margin-right: 12px;
     }
   }
+  .collapse_content {
+    .collapse_header_ {
+      display: flex;
+      justify-content: space-between;
+      // padding: 0 44px;
+      padding: 12px 44px 12px 80px;
+      .collapse_header_left {
+        flex: 1;
+        margin-right: 16px;
+        flex-wrap: wrap;
+      }
+      .collapse_header_right {
+        display: none;
+        em {
+          font-style: normal;
+        }
+        >span:nth-child(1) {
+          margin-right: 6px;
+          font-size: 16px;
+          display: inline-flex;
+          width: 20px;
+          height: 20px;
+          align-items: center;
+          font-size: 16px;
+          justify-content: center;
+          &:hover {
+            background-color: #E6F7FF;
+            color: #40A9FF;
+          }
+        }
+        >span:nth-child(2) {
+          font-size: 16px;
+          display: inline-flex;
+          width: 20px;
+          height: 20px;
+          align-items: center;
+          font-size: 16px;
+          justify-content: center;
+          &:hover {
+            background-color: #E6F7FF;
+            color: #40A9FF;
+          }
+        }
+      }
+    }
+    .collapse_header_:hover .collapse_header_right {
+      display: block;
+    }
+    :global {
+      .ant-collapse-header {
+        margin: 0 -44px;
+        padding: 0px;
+        &:hover {
+          background-color: rgba(0,0,0,.04);
+        }
+      }
+      .ant-collapse > .ant-collapse-item > .ant-collapse-header .arrow {
+        left: 52px;
+      }
+      .ant-collapse-content {
+        margin: 0 -44px;
+        &:hover {
+          background-color: rgba(0,0,0,.04);
+        }
+      }
+    }
+  }
+  .panel_content {
+    padding-left: 62px;
+    // margin-left: 24px;
+    // border-top: 1px solid #e5e5e5;
+    :global {
+      .ant-collapse-borderless > .ant-collapse-item > .ant-collapse-content > .ant-collapse-content-box {
+        padding-top: 0px;
+        padding-bottom: 0px;
+      }
+    }
+    .panel_item_name {
+      line-height: 22px;
+      letter-spacing: 1px;
+      >span:nth-child(1) {
+        font-size: 16px;
+        margin-right: 8px;
+        color: rgba(0,0,0,0.45);
+      }
+    }
+    .panel_detail {
+      line-height: 22px;
+      >span {
+        margin-right: 24px;
+        color: rgba(0,0,0,0.45);
+        font-weight: 500;
+      }
+      em {
+        font-style: normal;
+        color: #1890FF;
+        cursor: pointer;
+      }
+    }
+  }
 }
 
 /* 添加字段弹窗样式 */
