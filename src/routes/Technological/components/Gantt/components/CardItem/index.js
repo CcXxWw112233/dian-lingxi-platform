@@ -411,6 +411,7 @@ export default class CardItem extends Component {
     }
     // 拖拽后弹出提示窗
     notificationEffect = ({ code, message, undo_id }) => {
+        if (['0', '2'].includes(code)) return
         const { itemValue: { id, board_id } } = this.props
         const type_obj = {
             '0': {
@@ -571,8 +572,13 @@ export default class CardItem extends Component {
         updateTaskVTwo({ card_id: id, due_time: end_time_timestamp, board_id: board_id || gantt_board_id }, { isNotLoading: false })
             .then(res => {
                 if (isApiResponseOk(res)) {
-                    // 添加弹窗提示代办
-                    this.addNotificationTodos(this.handleNotifiParams(res))
+                    if (this.handleNotifiParams(res).code == '0') {
+                        message.success('变更成功')
+                    } else {
+                        // 添加弹窗提示代办
+                        this.addNotificationTodos(this.handleNotifiParams(res))
+                    }
+
                     // 更新甘特图数据
                     this.updateGanttData([{ id, ...updateData }, ...res.data.scope_dependency.filter(item => item.id != id)])
                     // if (ganttIsOutlineView({ group_view_type })) {
@@ -591,7 +597,7 @@ export default class CardItem extends Component {
                     // 当任务弹窗弹出来时，右边要做实时控制
                     this.onChangeTimeHandleCardDetail()
                 } else {
-                    this.notificationEffect(this.handleNotifiParams(res))
+                    // this.notificationEffect(this.handleNotifiParams(res))
                     this.setState({
                         local_width: local_width_origin,
                         local_width_flag: local_width_origin
@@ -689,7 +695,12 @@ export default class CardItem extends Component {
         updateTaskVTwo({ card_id: id, due_time: end_time_timestamp, start_time: start_time_timestamp, board_id: board_id || gantt_board_id }, { isNotLoading: false })
             .then(res => {
                 if (isApiResponseOk(res)) {
-                    this.addNotificationTodos(this.handleNotifiParams(res))
+                    if (this.handleNotifiParams(res).code == '0') {
+                        message.success('变更成功')
+                    } else {
+                        // 添加弹窗提示代办
+                        this.addNotificationTodos(this.handleNotifiParams(res))
+                    }
                     // if (ganttIsOutlineView({ group_view_type })) {
                     //     dispatch({
                     //         type: 'gantt/updateOutLineTree',
@@ -706,7 +717,7 @@ export default class CardItem extends Component {
                     this.updateGanttData([{ id, ...updateData }, ...res.data.scope_dependency.filter(item => item.id != id)])
                     this.onChangeTimeHandleCardDetail()
                 } else {
-                    this.notificationEffect(this.handleNotifiParams(res))
+                    // this.notificationEffect(this.handleNotifiParams(res))
                     this.setState({
                         local_left: left,
                         local_top: top
@@ -760,7 +771,12 @@ export default class CardItem extends Component {
         updateTaskVTwo({ ...params }, { isNotLoading: false })
             .then(res => {
                 if (isApiResponseOk(res)) {
-                    this.addNotificationTodos(this.handleNotifiParams(res))
+                    if (this.handleNotifiParams(res).code == '0') {
+                        message.success('变更成功')
+                    } else {
+                        // 添加弹窗提示代办
+                        this.addNotificationTodos(this.handleNotifiParams(res))
+                    }
                     this.changeCardBelongGroup({
                         card_id: id,
                         new_list_id: params_list_id,
@@ -769,7 +785,7 @@ export default class CardItem extends Component {
                     })
                     this.onChangeTimeHandleCardDetail()
                 } else {
-                    this.notificationEffect(this.handleNotifiParams(res))
+                    // this.notificationEffect(this.handleNotifiParams(res))
                     this.setState({
                         local_left: left,
                         local_top: top
