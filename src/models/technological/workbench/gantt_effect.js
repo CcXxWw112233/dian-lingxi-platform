@@ -136,7 +136,7 @@ export default {
                     const card_item = val2.lane_data.cards.find(item => item.id == val.id)
                     if (card_index != -1) {
                         val2.lane_data.cards[card_index] = { ...card_item, ...val }
-                        break
+                        // break
                     }
                 }
             }
