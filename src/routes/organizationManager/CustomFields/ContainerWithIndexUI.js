@@ -16,19 +16,19 @@ function ContainerWithIndexUI(props) {
   const [is_add_custom_field, setAddCustomFields] = useState(false)
   const [is_add_custom_field_list, setAddCustomFieldsList] = useState(false)
   const [inputValue, setInputValue] = useState('')
-  useEffect(() => {
-    axios({
-      url: './constantDetail.json',
-      method: 'get',
-      headers: {
-        Authorization: Cookies.get('Authorization'),
-        refreshToken: Cookies.get('refreshToken'),
-        ...setUploadHeaderBaseInfo({}),
-      },
-    }).then(res => {
-      console.log(res);
-    })
-  })
+  // useEffect(() => {
+  //   axios({
+  //     url: './constantDetail.json',
+  //     method: 'get',
+  //     headers: {
+  //       Authorization: Cookies.get('Authorization'),
+  //       refreshToken: Cookies.get('refreshToken'),
+  //       ...setUploadHeaderBaseInfo({}),
+  //     },
+  //   }).then(res => {
+  //     console.log(res);
+  //   })
+  // })
   const onChange = (e) => {
     setInputValue(e.target.value)
   }
