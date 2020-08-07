@@ -1,69 +1,34 @@
 
 // 容器组件
-import React, { Component, useState } from 'react'
-import { Input, Button, Modal, Collapse } from 'antd'
+import React, { Component, useState, useEffect } from 'react'
+import { Input, Button, Modal, Collapse, Tooltip, Dropdown, Menu } from 'antd'
 import indexStyles from './index.less'
 import commonStyles from './common.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import CustomFieldCategory from './component/CustomFieldCategory'
+import axios from 'axios'
+import Cookies from 'js-cookie'
+import { setUploadHeaderBaseInfo } from '../../../utils/businessFunction'
 
 const { Panel } = Collapse;
-
-const header = (
-  <div className={indexStyles.collapse_header_}>
-    <div className={indexStyles.collapse_header_left}>
-      这是一个字段分组
-    </div>
-    <div className={indexStyles.collapse_header_right}>
-      <span className={globalStyles.authTheme}>
-        <em>&#xe70b;</em>
-      </span>
-      <span className={globalStyles.authTheme}>
-        <em>&#xe66f;</em>
-      </span>
-    </div>
-  </div>
-)
-
-const panelContent = (
-  <div>
-    <div className={indexStyles.panel_content}>
-      <div className={indexStyles.panel_item_name}>
-        <span className={globalStyles.authTheme}>&#xe6b2;</span>
-        <span>这是一个单选项字段</span>
-      </div>
-      <div className={indexStyles.panel_detail}>
-        <span>类型：单选</span>
-        <span>被引用次数4次 <em>详情</em></span>
-        <span>创建人：严世威</span>
-        <span>状态：启用</span>
-      </div>
-    </div>
-  </div>
-);
-
-const renderCustomCategoryContent = () => {
-  return (
-    <div className={indexStyles.collapse_content}>
-      <Collapse bordered={false} defaultActiveKey={['1']}>
-        <Panel header={header} key="1">
-          {panelContent}
-        </Panel>
-        <Panel header={header} key="2">
-          {panelContent}
-        </Panel>
-        <Panel header={header} key="3">
-          {panelContent}
-        </Panel>
-      </Collapse>
-    </div>
-  )
-}
 
 function ContainerWithIndexUI(props) {
   const [is_add_custom_field, setAddCustomFields] = useState(false)
   const [is_add_custom_field_list, setAddCustomFieldsList] = useState(false)
   const [inputValue, setInputValue] = useState('')
+  useEffect(() => {
+    axios({
+      url: './constantDetail.json',
+      method: 'get',
+      headers: {
+        Authorization: Cookies.get('Authorization'),
+        refreshToken: Cookies.get('refreshToken'),
+        ...setUploadHeaderBaseInfo({}),
+      },
+    }).then(res => {
+      console.log(res);
+    })
+  })
   const onChange = (e) => {
     setInputValue(e.target.value)
   }
@@ -71,6 +36,119 @@ function ContainerWithIndexUI(props) {
     let value = e.target.value
     setAddCustomFieldsList(false)
     setInputValue('')
+  }
+  const onClick = (e) => {
+    e && e.stopPropagation()
+    setAddCustomFields(true)
+  }
+
+  const customFiledsOverlay = () => {
+    return (
+      <Menu>
+        <Menu.Item key='rename'>重命名</Menu.Item>
+        <Menu.Item key='edit_fileds'>编辑字段</Menu.Item>
+        <Menu.Item key='discont_fileds'>停用字段</Menu.Item>
+        <Menu.Item key='delelte_fileds'>删除</Menu.Item>
+      </Menu>
+    )
+  }
+
+  const dropDownContent = () => {
+    return (
+      <Dropdown trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode} overlay={customFiledsOverlay()}>
+        <Tooltip title="字段菜单分类" getPopupContainer={triggerNode => triggerNode.parentNode}>
+          <span className={`${commonStyles.custom_fileds_more} ${globalStyles.authTheme}`}>
+            <em>&#xe66f;</em>
+          </span>
+        </Tooltip>
+      </Dropdown>
+    )
+  }
+
+  const header = (
+    <div className={indexStyles.collapse_header_}>
+      <div className={indexStyles.collapse_header_left}>
+        这是一个字段分组
+      </div>
+      <div className={indexStyles.collapse_header_right} onClick={(e) => e && e.stopPropagation()}>
+        <Tooltip title="添加字段" getPopupContainer={triggerNode => triggerNode.parentNode}>
+          <span onClick={(e) => onClick(e)} className={globalStyles.authTheme}>
+            <em>&#xe70b;</em>
+          </span>
+        </Tooltip>
+        {dropDownContent()}
+      </div>
+    </div>
+  )
+
+  const panelContent = (
+    <>
+      <hr className={`${commonStyles.custom_hr} ${commonStyles.custom_hr_sub}`} />
+      <div className={indexStyles.panel_content_hover}>
+        <div className={indexStyles.panel_content}>
+          <div className={indexStyles.panel_content_left}>
+            <div className={indexStyles.panel_item_name}>
+              <span className={globalStyles.authTheme}>&#xe6b2;</span>
+              <span>这是一个单选项字段</span>
+            </div>
+            <div className={indexStyles.panel_detail}>
+              <span>类型：单选</span>
+              <span>被引用次数：4次 <em>详情</em></span>
+              <span>创建人：严世威</span>
+              <span>状态：启用</span>
+            </div>
+          </div>
+          <div className={indexStyles.panel_content_right}>
+            {dropDownContent()}
+          </div>
+        </div>
+      </div>
+      <hr className={`${commonStyles.custom_hr} ${commonStyles.custom_hr_sub}`} />
+      <div className={indexStyles.panel_content_hover}>
+        <div className={indexStyles.panel_content}>
+          <div className={indexStyles.panel_content_left}>
+            <div className={indexStyles.panel_item_name}>
+              <span className={globalStyles.authTheme}>&#xe6b2;</span>
+              <span>这是一个单选项字段</span>
+            </div>
+            <div className={indexStyles.panel_detail}>
+              <span>类型：单选</span>
+              <span>被引用次数：4次 <em>详情</em></span>
+              <span>创建人：严世威</span>
+              <span>状态：启用</span>
+            </div>
+          </div>
+          <div className={indexStyles.panel_content_right}>
+            <Tooltip title="字段菜单" getPopupContainer={triggerNode => triggerNode.parentNode}>
+              <span className={`${commonStyles.custom_fileds_more} ${globalStyles.authTheme}`}>
+                <em>&#xe66f;</em>
+              </span>
+            </Tooltip>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+
+  const renderCustomCategoryContent = () => {
+    return (
+      <div className={indexStyles.collapse_content}>
+        <Collapse destroyInactivePanel={true} bordered={false} defaultActiveKey={['1']}>
+          <Panel header={header} key="1">
+            <div>
+              {panelContent}
+            </div>
+          </Panel>
+          <Panel header={header} key="2">
+            {panelContent}
+          </Panel>
+          <Panel header={header} key="3">
+            {panelContent}
+          </Panel>
+        </Collapse>
+        {/* {panelContent} */}
+      </div>
+    )
   }
   return (
     <>
@@ -82,9 +160,11 @@ function ContainerWithIndexUI(props) {
               自定义字段
             </div>
           </div>
-          <div className={indexStyles.custom_add_field} onClick={() => setAddCustomFields(true)}>
-            <span className={globalStyles.authTheme}>&#xe782;</span>
-            <span>添加字段</span>
+          <div className={indexStyles.custom_add_field}>
+            <span onClick={(e) => onClick(e, true)}>
+              <span className={globalStyles.authTheme}>&#xe782;</span>
+              <span>添加字段</span>
+            </span>
           </div>
           {
             is_add_custom_field_list ? (
