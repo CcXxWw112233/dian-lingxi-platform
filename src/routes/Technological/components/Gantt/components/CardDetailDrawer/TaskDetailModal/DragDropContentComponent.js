@@ -917,7 +917,7 @@ export default class DragDropContentComponent extends Component {
               } */}
               <div className={mainContentStyles.field_hover}>
                 {/* <span className={`${globalStyles.authTheme}`}>&#xe7f6;</span> */}
-                <span>{currentNounPlanFilterName(TASKS)}说明</span>
+                <span>任务说明</span>
               </div>
               {
                 !flag && (
@@ -952,7 +952,7 @@ export default class DragDropContentComponent extends Component {
                             <div>
                               <div style={{paddingLeft: '12px'}} onClick={(e) => e && e.stopPropagation()}>
                                 <UploadAttachment executors={executors.data} boardFolderTreeData={boardFolderTreeData} projectDetailInfoData={projectDetailInfoData} org_id={org_id} board_id={board_id} card_id={card_id}
-                                  title={`${currentNounPlanFilterName(TASKS)}说明资料设置`}
+                                  title={`任务说明资料设置`}
                                   listDescribe={'说明资料列表'}
                                   isNotShowNoticeList={true}
                                   url={'/api/projects/card/desc/attachment/upload'}
