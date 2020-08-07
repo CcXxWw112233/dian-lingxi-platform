@@ -308,33 +308,7 @@ class Gantt extends Component {
       this.handleChangeMilestone({ milestone: new_drawContent.milestone, card_id })
       return
     }
-    if (ganttIsOutlineView({ group_view_type })) {
-      // this.changeOutLineTreeNodeProto(card_id, { ...new_drawContent, name: drawContent.card_name })
-      setTimeout(() => {
-        if (Object.prototype.toString.call(other_params.rely_card_datas) == '[object Array]') {
-          dispatch({
-            type: 'gantt/updateOutLineTree',
-            payload: {
-              datas: other_params.rely_card_datas//.filter(item => item.id != card_id)
-            }
-          });
-        }
-      }, 1000)
-      return
-    } else {
-      // 如果将所有相关的任务时间传递进来
-      if (Object.prototype.toString.call(other_params.rely_card_datas) == '[object Array]') {
-        setTimeout(() => {
-          dispatch({
-            type: `gantt/${ganttIsOutlineView({ group_view_type }) ? 'updateOutLineTree' : 'updateListGroup'}`,
-            payload: {
-              datas: other_params.rely_card_datas
-            }
-          });
-        }, 1000)
-        return
-      }
-    }
+
     if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold, gantt_view_mode }) &&
       (['is_realize', 'start_time', 'due_time'].includes(other_params.name))
     ) { //统计的时候不知道怎么更新只好调接口
@@ -345,39 +319,72 @@ class Gantt extends Component {
       })
       return
     }
-    const { list_group = [], current_list_group_id } = this.props
-    const list_group_new = [...list_group]
-    const group_index = list_group_new.findIndex(item => item.lane_id == current_list_group_id)
-    const group_index_cards_index = list_group_new[group_index].lane_data.cards.findIndex(item => item.id == card_id)
-    const current_item = { ...list_group_new[group_index].lane_data.cards[group_index_cards_index] }
 
-    const { start_time, due_time } = new_drawContent
-    if (!!!start_time && !!!due_time) {
-      list_group_new[group_index].lane_data.card_no_times.push(
-        { ...list_group_new[group_index].lane_data.cards[group_index_cards_index], ...new_drawContent }
-      )
-      list_group_new[group_index].lane_data.cards.splice(group_index_cards_index, 1) //[group_index_card_no_times_index] = { ...list_group_new[group_index].lane_data.card_no_times[group_index_cards_index], ...new_drawContent }
-      this.setTaskDetailModalVisibile('no_schedule')
-    } else {
-      list_group_new[group_index].lane_data.cards[group_index_cards_index] = { ...list_group_new[group_index].lane_data.cards[group_index_cards_index], ...new_drawContent }
-      list_group_new[group_index].lane_data.cards[group_index_cards_index]['name'] = list_group_new[group_index].lane_data.cards[group_index_cards_index]['card_name']
-    }
-
-    dispatch({
-      type: 'gantt/handleListGroup',
-      payload: {
-        data: list_group_new
-      }
-    })
-
-    // 做判断完成或者未完成后，查询里程碑接口更新,（里程碑状态和任务完成与否有关）
-    if (current_item.is_realize != new_drawContent.is_realize) {
-      dispatch({
-        type: 'gantt/getGttMilestoneList',
-        payload: {
+    if (ganttIsOutlineView({ group_view_type })) {
+      if (Object.prototype.toString.call(other_params.rely_card_datas) == '[object Array]') {
+        // setTimeout(() => {
+        if (Object.prototype.toString.call(other_params.rely_card_datas) == '[object Array]') {
+          dispatch({
+            type: 'gantt/updateOutLineTree',
+            payload: {
+              datas: other_params.rely_card_datas//.filter(item => item.id != card_id)
+            }
+          });
         }
-      })
+        // })
+      } else {
+        this.changeOutLineTreeNodeProto(card_id, { ...new_drawContent, name: drawContent.card_name })
+      }
+      return
+    } else {
+      // 如果将所有相关的任务时间传递进来
+      if (Object.prototype.toString.call(other_params.rely_card_datas) == '[object Array]') {
+        // setTimeout(() => {
+        dispatch({
+          type: `gantt/${ganttIsOutlineView({ group_view_type }) ? 'updateOutLineTree' : 'updateListGroup'}`,
+          payload: {
+            datas: other_params.rely_card_datas
+          }
+        });
+        // }, 1000)
+      } else {
+        const { list_group = [], current_list_group_id } = this.props
+        const list_group_new = [...list_group]
+        const group_index = list_group_new.findIndex(item => item.lane_id == current_list_group_id)
+        const group_index_cards_index = list_group_new[group_index].lane_data.cards.findIndex(item => item.id == card_id)
+        const current_item = { ...list_group_new[group_index].lane_data.cards[group_index_cards_index] }
+
+        const { start_time, due_time } = new_drawContent
+        if (!!!start_time && !!!due_time) {
+          list_group_new[group_index].lane_data.card_no_times.push(
+            { ...list_group_new[group_index].lane_data.cards[group_index_cards_index], ...new_drawContent }
+          )
+          list_group_new[group_index].lane_data.cards.splice(group_index_cards_index, 1) //[group_index_card_no_times_index] = { ...list_group_new[group_index].lane_data.card_no_times[group_index_cards_index], ...new_drawContent }
+          this.setTaskDetailModalVisibile('no_schedule')
+        } else {
+          list_group_new[group_index].lane_data.cards[group_index_cards_index] = { ...list_group_new[group_index].lane_data.cards[group_index_cards_index], ...new_drawContent }
+          list_group_new[group_index].lane_data.cards[group_index_cards_index]['name'] = list_group_new[group_index].lane_data.cards[group_index_cards_index]['card_name']
+        }
+
+        dispatch({
+          type: 'gantt/handleListGroup',
+          payload: {
+            data: list_group_new
+          }
+        })
+
+        // 做判断完成或者未完成后，查询里程碑接口更新,（里程碑状态和任务完成与否有关）
+        if (current_item.is_realize != new_drawContent.is_realize) {
+          dispatch({
+            type: 'gantt/getGttMilestoneList',
+            payload: {
+            }
+          })
+        }
+      }
+      return
     }
+
   }
 
   // 修改任务详情中里程碑的回调
