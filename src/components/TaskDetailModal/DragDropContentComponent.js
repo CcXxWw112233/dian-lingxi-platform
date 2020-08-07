@@ -734,9 +734,9 @@ export default class DragDropContentComponent extends Component {
                   <span onClick={() => { this.handleDelCurrentField(currentItem.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
                 )
               }
-              <div className={mainContentStyles.field_hover}>
+              <div className={mainContentStyles.field_hover} style={{maxWidth: 'inherit'}}>
                 <span className={`${globalStyles.authTheme}`}>&#xe7f6;</span>
-                <span>备注</span>
+                <span>任务说明</span>
               </div>
             </div>
             <>
@@ -745,8 +745,8 @@ export default class DragDropContentComponent extends Component {
                   {
                     (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
                       (
-                        currentItem.data && currentItem.data != '<p></p>' ? (
-                          <div className={`${mainContentStyles.pub_hover}`}>
+                        currentItem.data && currentItem.data == '<p></p>' ? (
+                          <div className={`${mainContentStyles.pub_hover}`} style={{width: '100%'}}>
                             <span>暂无</span>
                           </div>
                         ) : (
@@ -772,7 +772,7 @@ export default class DragDropContentComponent extends Component {
                           </div>
                           <div onClick={(e) => e && e.stopPropagation()}>
                             <UploadAttachment executors={executors.data} boardFolderTreeData={boardFolderTreeData} projectDetailInfoData={projectDetailInfoData} org_id={org_id} board_id={board_id} card_id={card_id}
-                              title={`${currentNounPlanFilterName(TASKS)}说明资料设置`}
+                              title={`任务说明资料设置`}
                               listDescribe={'说明资料列表'}
                               isNotShowNoticeList={true}
                               url={'/api/projects/card/desc/attachment/upload'}

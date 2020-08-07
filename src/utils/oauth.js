@@ -22,6 +22,7 @@ const gotoRefresh = async (data) => {
     Cookies.set('Authorization', tokenArray[0], {expires: 30, path: ''})
     Cookies.set('refreshToken', tokenArray[1], {expires: 30, path: ''})
     Cookies.set('is401', false, {expires: 30, path: ''})
+    window.location.reload()
   } else {
     Cookies.set('is401', true, {expires: 30, path: ''})
     setTimeout(function () {

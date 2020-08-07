@@ -618,7 +618,7 @@ export default class index extends Component {
                         position: 'absolute',
                         width: date_total * ceilWidth,
                         height: this.setSVGHeight(),
-                        display: (gantt_view_mode != 'year') ? 'block' : 'none',
+                        display: (gantt_view_mode != 'year' && !(['2', '5'].includes(group_view_type))) ? 'block' : 'none',
                         zIndex: 1,
                         // zIndex: ganttIsOutlineView({ group_view_type }) ? 1 : -1,
                     }}>

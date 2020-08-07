@@ -111,15 +111,21 @@ export default class GroupChildCards extends Component {
         )
     }
     render() {
-        const { parent_value: { time_span }, ceilWidth } = this.props
+        const { parent_value: { time_span }, ceilWidth, ceiHeight } = this.props
         const { cards = [], spining } = this.state
+        const cards_length = cards.length
         return (
             <Spin spinning={spining}>
                 <div
-                    style={{ width: time_span * ceilWidth, }}
-                    className={`${styles.group_childs_wrapper} ${globalStyles.global_vertical_scrollbar} ${globalStyles.global_card}`}>
+                    style={{
+                        width: time_span * ceilWidth,
+                        display: cards_length ? 'block' : 'none',
+                        height: Math.min(cards_length, 4) * ceiHeight
+                    }}
+                    // ${globalStyles.global_card}
+                    className={`${styles.group_childs_wrapper} ${globalStyles.global_vertical_scrollbar}`}>
                     {
-                        cards.length ? this.renderCards() : this.renderEmpty()
+                        cards_length ? this.renderCards() : this.renderEmpty()
                     }
                 </div>
             </Spin>

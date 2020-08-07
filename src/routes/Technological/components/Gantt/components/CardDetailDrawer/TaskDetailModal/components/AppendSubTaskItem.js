@@ -285,12 +285,12 @@ export default class AppendSubTaskItem extends Component {
         return
       }
       let new_data = []
-      if (!(res.data.scope_dependency instanceof Array)) {
+      if (!(res.data.scope_content instanceof Array)) {
         new_data = []
       } else {
-        new_data = [...res.data.scope_dependency]
+        new_data = [...res.data.scope_content]
       }
-      this.props.handleChildTaskChange && this.props.handleChildTaskChange({ parent_card_id: drawContent.card_id, card_id, action: 'delete', rely_card_datas: res.data.scope_dependency })
+      this.props.handleChildTaskChange && this.props.handleChildTaskChange({ parent_card_id: drawContent.card_id, card_id, action: 'delete', rely_card_datas: res.data.scope_content })
       dispatch({
         type: 'publicTaskDetailModal/updateDatas',
         payload: {
@@ -357,15 +357,15 @@ export default class AppendSubTaskItem extends Component {
         local_start_time: start_timeStamp
       })
       let new_data = []
-      if (!(res.data.scope_dependency instanceof Array)) {
+      if (!(res.data.scope_content instanceof Array)) {
         new_data = []
       } else {
-        new_data = [...res.data.scope_dependency]
+        new_data = [...res.data.scope_content]
       }
       new_data = new_data.filter(item => item.id == parent_card_id) || []
-      this.setChildTaskIndrawContent({ name: 'start_time', value: start_timeStamp }, card_id, res.data.scope_dependency)
+      this.setChildTaskIndrawContent({ name: 'start_time', value: start_timeStamp }, card_id, res.data.scope_content)
       this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(new_data)
-      this.props.updateRelyOnRationList && this.props.updateRelyOnRationList(res.data.scope_dependency)
+      this.props.updateRelyOnRationList && this.props.updateRelyOnRationList(res.data.scope_content)
     })
   }
 
@@ -400,17 +400,17 @@ export default class AppendSubTaskItem extends Component {
       })
       let new_data = []
       let update_data = []
-      if (!(res.data.scope_dependency instanceof Array)) {
+      if (!(res.data.scope_content instanceof Array)) {
         new_data = []
         update_data = [].concat(update_child_item)
       } else {
-        new_data = [...res.data.scope_dependency]
-        update_data = [].concat(update_child_item, ...res.data.scope_dependency)
+        new_data = [...res.data.scope_content]
+        update_data = [].concat(update_child_item, ...res.data.scope_content)
       }
       new_data = new_data.filter(item => item.id == parent_card_id) || []
       this.setChildTaskIndrawContent({ name: 'start_time', value: null }, card_id, update_data)
       this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(new_data)
-      this.props.updateRelyOnRationList && this.props.updateRelyOnRationList(res.data.scope_dependency)
+      this.props.updateRelyOnRationList && this.props.updateRelyOnRationList(res.data.scope_content)
     })
 
   }
@@ -451,15 +451,15 @@ export default class AppendSubTaskItem extends Component {
         local_due_time: due_timeStamp
       })
       let new_data = []
-      if (!(res.data.scope_dependency instanceof Array)) {
+      if (!(res.data.scope_content instanceof Array)) {
         new_data = []
       } else {
-        new_data = [...res.data.scope_dependency]
+        new_data = [...res.data.scope_content]
       }
       new_data = new_data.filter(item => item.id == parent_card_id) || []
-      this.setChildTaskIndrawContent({ name: 'due_time', value: due_timeStamp }, card_id, res.data.scope_dependency)
+      this.setChildTaskIndrawContent({ name: 'due_time', value: due_timeStamp }, card_id, res.data.scope_content)
       this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(new_data)
-      this.props.updateRelyOnRationList && this.props.updateRelyOnRationList(res.data.scope_dependency)
+      this.props.updateRelyOnRationList && this.props.updateRelyOnRationList(res.data.scope_content)
     })
   }
 
@@ -494,17 +494,17 @@ export default class AppendSubTaskItem extends Component {
       })
       let new_data = []
       let update_data = []
-      if (!(res.data.scope_dependency instanceof Array)) {
+      if (!(res.data.scope_content instanceof Array)) {
         new_data = []
         update_data = [].concat(update_child_item)
       } else {
-        new_data = [...res.data.scope_dependency]
-        update_data = [].concat(update_child_item, ...res.data.scope_dependency)
+        new_data = [...res.data.scope_content]
+        update_data = [].concat(update_child_item, ...res.data.scope_content)
       }
       new_data = new_data.filter(item => item.id == parent_card_id) || []
       this.setChildTaskIndrawContent({ name: 'due_time', value: null }, card_id, update_data)
       this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(new_data)
-      this.props.updateRelyOnRationList && this.props.updateRelyOnRationList(res.data.scope_dependency)
+      this.props.updateRelyOnRationList && this.props.updateRelyOnRationList(res.data.scope_content)
     })
   }
 

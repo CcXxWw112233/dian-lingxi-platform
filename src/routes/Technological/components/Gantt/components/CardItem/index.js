@@ -380,14 +380,14 @@ export default class CardItem extends Component {
     // 处理代办弹窗所需要的参数
     handleNotifiParams = ({ code, data = [], message }) => {
         const { itemValue: { id } } = this.props
-        const { scope_dependency = [], undo_id, scope_number, scope_user, undo_expire } = data
-        const length = scope_dependency.filter(item => item.id != id).length
+        const { scope_content = [], undo_id, scope_number, scope_user, scope_day } = data
+        const length = scope_content.filter(item => item.id != id).length
         let operate_code = code
         let comfirm_message = `${message}。`
         if (code == '0') { //成功的时候存在依赖影响
             if (length) {  //当存在影响其它任务的时候 需要warn
                 operate_code = '1'
-                comfirm_message = `当前操作偏离原计划${undo_expire}天，将影响${scope_user}个人，${scope_number}条任务。`
+                comfirm_message = `当前操作偏离原计划${scope_day}天，将影响${scope_user}个人，${scope_number}条任务。`
             }
         } else {
             operate_code = '2'
@@ -411,6 +411,7 @@ export default class CardItem extends Component {
     }
     // 拖拽后弹出提示窗
     notificationEffect = ({ code, message, undo_id }) => {
+        if (['0', '2'].includes(code)) return
         const { itemValue: { id, board_id } } = this.props
         const type_obj = {
             '0': {
@@ -484,6 +485,7 @@ export default class CardItem extends Component {
             }, 1000)
         }
         clearTimer()
+        notification.close(id) //先关掉旧的
         setTimer()
     }
     // 代表列表主动执行
@@ -571,15 +573,20 @@ export default class CardItem extends Component {
         updateTaskVTwo({ card_id: id, due_time: end_time_timestamp, board_id: board_id || gantt_board_id }, { isNotLoading: false })
             .then(res => {
                 if (isApiResponseOk(res)) {
-                    // 添加弹窗提示代办
-                    this.addNotificationTodos(this.handleNotifiParams(res))
+                    if (this.handleNotifiParams(res).code == '0') {
+                        message.success('变更成功')
+                    } else {
+                        // 添加弹窗提示代办
+                        this.addNotificationTodos(this.handleNotifiParams(res))
+                    }
+
                     // 更新甘特图数据
-                    this.updateGanttData([{ id, ...updateData }, ...res.data.scope_dependency.filter(item => item.id != id)])
+                    this.updateGanttData([{ id, ...updateData }, ...res.data.scope_content.filter(item => item.id != id)])
                     // if (ganttIsOutlineView({ group_view_type })) {
                     //     dispatch({
                     //         type: 'gantt/updateOutLineTree',
                     //         payload: {
-                    //             datas: [{ id, ...updateData }, ...res.data.scope_dependency.filter(item => item.id != id)]
+                    //             datas: [{ id, ...updateData }, ...res.data.scope_content.filter(item => item.id != id)]
                     //         }
                     //     })
                     // } else {
@@ -591,7 +598,7 @@ export default class CardItem extends Component {
                     // 当任务弹窗弹出来时，右边要做实时控制
                     this.onChangeTimeHandleCardDetail()
                 } else {
-                    this.notificationEffect(this.handleNotifiParams(res))
+                    // this.notificationEffect(this.handleNotifiParams(res))
                     this.setState({
                         local_width: local_width_origin,
                         local_width_flag: local_width_origin
@@ -689,12 +696,17 @@ export default class CardItem extends Component {
         updateTaskVTwo({ card_id: id, due_time: end_time_timestamp, start_time: start_time_timestamp, board_id: board_id || gantt_board_id }, { isNotLoading: false })
             .then(res => {
                 if (isApiResponseOk(res)) {
-                    this.addNotificationTodos(this.handleNotifiParams(res))
+                    if (this.handleNotifiParams(res).code == '0') {
+                        message.success('变更成功')
+                    } else {
+                        // 添加弹窗提示代办
+                        this.addNotificationTodos(this.handleNotifiParams(res))
+                    }
                     // if (ganttIsOutlineView({ group_view_type })) {
                     //     dispatch({
                     //         type: 'gantt/updateOutLineTree',
                     //         payload: {
-                    //             datas: [{ id, ...updateData }, ...res.data.scope_dependency.filter(item => item.id != id)]
+                    //             datas: [{ id, ...updateData }, ...res.data.scope_content.filter(item => item.id != id)]
                     //         }
                     //     });
                     // } else {
@@ -703,10 +715,10 @@ export default class CardItem extends Component {
                     //         updateData
                     //     })
                     // }
-                    this.updateGanttData([{ id, ...updateData }, ...res.data.scope_dependency.filter(item => item.id != id)])
+                    this.updateGanttData([{ id, ...updateData }, ...res.data.scope_content.filter(item => item.id != id)])
                     this.onChangeTimeHandleCardDetail()
                 } else {
-                    this.notificationEffect(this.handleNotifiParams(res))
+                    // this.notificationEffect(this.handleNotifiParams(res))
                     this.setState({
                         local_left: left,
                         local_top: top
@@ -760,16 +772,21 @@ export default class CardItem extends Component {
         updateTaskVTwo({ ...params }, { isNotLoading: false })
             .then(res => {
                 if (isApiResponseOk(res)) {
-                    this.addNotificationTodos(this.handleNotifiParams(res))
+                    if (this.handleNotifiParams(res).code == '0') {
+                        message.success('变更成功')
+                    } else {
+                        // 添加弹窗提示代办
+                        this.addNotificationTodos(this.handleNotifiParams(res))
+                    }
                     this.changeCardBelongGroup({
                         card_id: id,
                         new_list_id: params_list_id,
                         updateData,
-                        rely_datas: [{ id, ...updateData }, ...res.data.scope_dependency.filter(item => item.id != id)]
+                        rely_datas: [{ id, ...updateData }, ...res.data.scope_content.filter(item => item.id != id)]
                     })
                     this.onChangeTimeHandleCardDetail()
                 } else {
-                    this.notificationEffect(this.handleNotifiParams(res))
+                    // this.notificationEffect(this.handleNotifiParams(res))
                     this.setState({
                         local_left: left,
                         local_top: top
@@ -1257,7 +1274,8 @@ export default class CardItem extends Component {
                     trigger={['click']}
                     getPopupContainer={() => document.getElementById(id)}
                     placement="bottomLeft"
-                    visible={drag_lock && !ganttIsOutlineView({ group_view_type }) && !parent_card_id}
+                    // visible
+                    visible={drag_lock && !ganttIsOutlineView({ group_view_type }) && !parent_card_id && !rely_down}
                     overlay={<GroupChildCards visible={drag_lock} parent_value={itemValue} />} >
                     <div data-targetclassname="specific_example" style={{ position: 'absolute', width: '100%', height: '100%' }} data-rely_top={id}></div>
                 </Dropdown>
@@ -1287,7 +1305,9 @@ export default class CardItem extends Component {
                 }
                 {/* //hover出现的耳朵效果 */}
                 {
-                    drag_lock && !parent_card_id && gantt_view_mode != 'year' && gantt_board_id != '0' && (
+                    drag_lock && !parent_card_id && gantt_view_mode != 'year' && gantt_board_id != '0' &&
+                    !(['2', '5'].includes(group_view_type)) &&
+                    (
                         <HoverEars
                             getX={this.getX}
                             itemValue={itemValue}
