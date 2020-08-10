@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import RextFieldContent from './component/RadioFieldContent';
 import commonStyles from './common.less'
 import CheckboxFieldContent from './component/CheckboxFieldContent';
+import DateFieldContent from './component/DateFieldContent';
 
 export default class CustomCategoriesOperate extends Component {
 
@@ -9,6 +10,7 @@ export default class CustomCategoriesOperate extends Component {
     let mainContent = (<div></div>)
     mainContent = (<RextFieldContent />)
     mainContent = (<CheckboxFieldContent />)
+    mainContent = (<DateFieldContent />)
     // switch (type) {
     //   case 'text':
     //     mainContent = (<TextFieldContent />)
