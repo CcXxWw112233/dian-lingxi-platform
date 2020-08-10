@@ -29,7 +29,7 @@ export default class Index extends Component {
           </TreeNode>
         );
       }
-      return <TreeNode key={item.key} {...item} />;
+      return <TreeNode title={item.title} key={item.key} {...item} />;
     });
 
   renderSelectedTree = () => {
@@ -96,7 +96,7 @@ export default class Index extends Component {
   }
 
   render() {
-    const { children, placement, getPopupContainer} = this.props
+    const { children, placement, getPopupContainer } = this.props
     return (
       <div>
         <Popover
