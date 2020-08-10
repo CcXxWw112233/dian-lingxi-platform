@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import { connect } from 'dva'
 import styles from './index.less'
-import { Popconfirm, Modal } from 'antd'
-import { ganttIsOutlineView, task_item_height, task_item_margin_top } from '../../constants'
+import { Popconfirm, Modal, Popover } from 'antd'
+import { ganttIsOutlineView, task_item_height, task_item_margin_top, date_area_height } from '../../constants'
+import PathOperateContent from './PathOperateContent'
 const rely_map = [
     {
         "id": "1265111963571195904",
@@ -21,6 +22,8 @@ const rely_map = [
         ]
     },
 ]
+const coperatedLeftDiv = 297 //滚动条左边还有一个div的宽度，作为修正
+const dateAreaHeight = date_area_height //日期区域高度，作为修正
 // 60 40 20
 const width_diff = 4//8 //宽度误差微调
 const left_diff = 6//12 //位置误差微调
@@ -37,12 +40,21 @@ export default class index extends Component {
         this.state = {
             rely_map: [],
             cards_one_level: [], //所有任务平铺成一维数组
+            operate_visible: false, //操作项的显示
+            opreate_position: {
+                x: 0,
+                y: 0
+            }
         }
         this.could_structure_path_type = ['2', '3'] //可以构建依赖关系的类型
     }
 
     componentDidMount() {
         // this.getRelyMaps(this.props)
+        window.addEventListener('click', this.listenClick, true)
+    }
+    componentWillUnmount() {
+        window.removeEventListener('click', this.listenClick, true)
     }
     componentWillReceiveProps(nextProps) {
         const { rely_map = [] } = nextProps
@@ -472,6 +484,28 @@ export default class index extends Component {
         const { relation } = data
         return this.pathFunc[relation](data)
     }
+    // 判断点击位置出现操作
+    listenClick = (e) => {
+        const { pageX, pageY, } = e
+        if (e.target.nodeName !== 'path') {
+            this.setState({
+                operate_visible: false
+            })
+            return
+        }
+        const target_0 = document.getElementById('gantt_card_out')
+        const target_1 = document.getElementById('gantt_card_out_middle')
+        const target = e.target
+        // 取得鼠标位置
+        const x = pageX - target_0.offsetLeft + target_1.scrollLeft - coperatedLeftDiv
+        const y = pageY - target_0.offsetTop + target_1.scrollTop - dateAreaHeight
+        this.setState({
+            operate_visible: true,
+            opreate_position: {
+                x, y
+            }
+        })
+    }
 
     // 
     pathClick = (e) => {
@@ -575,14 +609,15 @@ export default class index extends Component {
                                 return (
                                     <g data-targetclassname="specific_example"
                                         className={`${styles.path_g}`}
-                                        onMouseOver={this.onMouseOver}>
+                                    // onMouseOver={this.onMouseOver}
+                                    >
                                         <path name="arrow"
                                             stroke="#1890FF"
                                             stroke-width="1"
                                             data-targetclassname="specific_example"
                                             fill="#1890FF"
                                             d={Arrow}
-                                            onClick={() => this.deleteRely({ move_id, line_id })}
+                                            // onClick={() => this.deleteRely({ move_id, line_id })}
                                             className={`${styles.path} ${styles.path_arrow}`}
                                             {...this.pathMouseEvent}
                                         />
@@ -592,7 +627,7 @@ export default class index extends Component {
                                             data-targetclassname="specific_example"
                                             d={Move_Line}
                                             stroke-width='1'
-                                            onClick={() => this.deleteRely({ move_id, line_id })}
+                                            // onClick={() => this.deleteRely({ move_id, line_id })}
                                             className={`${styles.path} ${styles.path_line}`}
                                             {...this.pathMouseEvent}
                                         />
@@ -608,7 +643,7 @@ export default class index extends Component {
     }
     render() {
         const { date_total, ceilWidth, group_view_type, gantt_view_mode } = this.props
-        const { rely_map = [] } = this.state
+        const { rely_map = [], opreate_position, operate_visible } = this.state
         // console.log('rely_map', rely_map)
         return (
             <div onClick={(e) => e.stopPropagation()}>
@@ -624,6 +659,21 @@ export default class index extends Component {
                     }}>
                     {this.renderPaths()}
                 </svg>
+                <Popover
+                    content={<PathOperateContent />}
+                    placement={'bottom'}
+                    trigger={'click'}
+                    zIndex={3}
+                    visible={operate_visible}
+                >
+                    <div
+                        onMouseDown={(e) => e.stopPropagation()}
+                        onMouseUp={(e) => e.stopPropagation()}
+                        onClick={(e) => e.stopPropagation()}
+                        className={styles.path}
+                        style={{ position: 'absolute', left: opreate_position.x, top: opreate_position.y, height: 2, width: 2 }}>
+                    </div>
+                </Popover>
             </div>
         )
     }
