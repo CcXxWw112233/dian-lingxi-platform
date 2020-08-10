@@ -44,6 +44,10 @@ export default class index extends Component {
             opreate_position: {
                 x: 0,
                 y: 0
+            },
+            operator: {
+                move_id: '',
+                line_id: ''
             }
         }
         this.could_structure_path_type = ['2', '3'] //可以构建依赖关系的类型
@@ -487,7 +491,11 @@ export default class index extends Component {
     // 判断点击位置出现操作
     listenClick = (e) => {
         const { pageX, pageY, } = e
-        if (e.target.nodeName !== 'path') {
+        const { dataset = {} } = e.target
+        if (dataset.svg_operate === 'yes') { //落点在操作区域
+            return
+        }
+        if (e.target.nodeName !== 'path') { //不在svg path上
             this.setState({
                 operate_visible: false
             })
@@ -506,10 +514,19 @@ export default class index extends Component {
             }
         })
     }
-
-    // 
-    pathClick = (e) => {
-        // debugger
+    setOperateVisible = (bool) => {
+        this.setState({
+            operate_visible: bool
+        })
+    }
+    // 设置当前操作的对象id
+    pathClick = ({ move_id, line_id }) => {
+        this.setState({
+            operator: {
+                move_id,
+                line_id
+            }
+        })
     }
     onMouseOver = (e) => {
         const currentTarget = e.currentTarget
@@ -617,6 +634,7 @@ export default class index extends Component {
                                             data-targetclassname="specific_example"
                                             fill="#1890FF"
                                             d={Arrow}
+                                            onClick={() => this.pathClick({ move_id, line_id })}
                                             // onClick={() => this.deleteRely({ move_id, line_id })}
                                             className={`${styles.path} ${styles.path_arrow}`}
                                             {...this.pathMouseEvent}
@@ -627,6 +645,7 @@ export default class index extends Component {
                                             data-targetclassname="specific_example"
                                             d={Move_Line}
                                             stroke-width='1'
+                                            onClick={() => this.pathClick({ move_id, line_id })}
                                             // onClick={() => this.deleteRely({ move_id, line_id })}
                                             className={`${styles.path} ${styles.path_line}`}
                                             {...this.pathMouseEvent}
@@ -660,7 +679,11 @@ export default class index extends Component {
                     {this.renderPaths()}
                 </svg>
                 <Popover
-                    content={<PathOperateContent />}
+                    content={
+                        <PathOperateContent
+                            operator={this.state.operator}
+                            setOperateVisible={this.setOperateVisible} />
+                    }
                     placement={'bottom'}
                     trigger={'click'}
                     zIndex={3}

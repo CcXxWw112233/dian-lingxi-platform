@@ -20,3 +20,40 @@
 .path_line:hover {}
 
 .path_arrow:hover {}
+
+.operate_wrapper {
+    width: 160px;
+
+    .top {
+        display        : flex;
+        justify-content: space-between;
+        font-size      : 18px;
+
+        >div {
+            cursor: pointer;
+        }
+
+        .close {}
+
+        .delete {
+            color: rgb(245, 34, 45);
+        }
+    }
+
+    .color_wrapper {
+        margin-top: 10px;
+        display   : flex;
+
+        .color_selector {
+            width        : 20px;
+            height       : 20px;
+            margin-right : 8px;
+            cursor       : pointer;
+            border-radius: 20px;
+        }
+
+        :last-child {
+            margin-right: 0;
+        }
+    }
+}
