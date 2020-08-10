@@ -3,22 +3,22 @@ import commonStyles from '../common.less'
 import globalsetStyles from '@/globalset/css/globalClassName.less'
 import { Select, Dropdown, Menu, Icon, DatePicker, Input, InputNumber } from 'antd'
 
-export default class NumberFieldContent extends Component {
+export default class TextFieldContent extends Component {
 
   state = {
-    numberInputVisible: false
+    inputVisible: false
   }
 
   onClick = (e) => {
     e && e.stopPropagation()
     this.setState({
-      numberInputVisible: true
+      inputVisible: true
     })
   }
 
   onBlur = (e) => {
     this.setState({
-      numberInputVisible: false
+      inputVisible: false
     })
   }
 
@@ -30,12 +30,12 @@ export default class NumberFieldContent extends Component {
             <span className={`${globalsetStyles.authTheme} ${commonStyles.delete_icon}`}>&#xe7fe;</span>
             <div className={commonStyles.field_name}>
               <span className={`${globalsetStyles.authTheme} ${commonStyles.field_name_icon}`}>&#xe7d3;</span>
-              <span>数字字段</span>
+              <span>文本字段</span>
             </div>
           </div>
           {
-            this.state.numberInputVisible ? (
-              <InputNumber className={commonStyles.common_input} autoFocus={true} style={{ width: '100%', height: '38px' }} onBlur={this.onBlur} />
+            this.state.inputVisible ? (
+              <Input className={commonStyles.common_input} autoFocus={true} style={{ width: '100%', height: '38px' }} onBlur={this.onBlur} />
             ) : (
                 <div className={`${commonStyles.field_value} ${commonStyles.pub_hover}`}>
                   <div onClick={this.onClick} className={commonStyles.common_select}>

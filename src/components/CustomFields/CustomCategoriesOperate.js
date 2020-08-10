@@ -3,6 +3,9 @@ import RextFieldContent from './component/RadioFieldContent';
 import commonStyles from './common.less'
 import CheckboxFieldContent from './component/CheckboxFieldContent';
 import DateFieldContent from './component/DateFieldContent';
+import NumberFieldContent from './component/NumberFieldContent';
+import TextFieldContent from './component/TextFieldContent';
+import MemberFieldContent from './component/MemberFieldContent';
 
 export default class CustomCategoriesOperate extends Component {
 
@@ -11,6 +14,8 @@ export default class CustomCategoriesOperate extends Component {
     mainContent = (<RextFieldContent />)
     mainContent = (<CheckboxFieldContent />)
     mainContent = (<DateFieldContent />)
+    mainContent = (<NumberFieldContent />)
+    // mainContent = (<TextFieldContent />)
     // switch (type) {
     //   case 'text':
     //     mainContent = (<TextFieldContent />)
@@ -26,6 +31,7 @@ export default class CustomCategoriesOperate extends Component {
     return (
       <div className={commonStyles.custom_operate_wrapper}>
         {this.renderContent()}
+        <MemberFieldContent />
       </div>
     )
   }
