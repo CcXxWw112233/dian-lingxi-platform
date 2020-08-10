@@ -14,6 +14,8 @@ import { transformTimestamp, isSamDay } from '../../../../../../utils/util'
 import HoverEars from './HoverEars'
 import DragCard from './DragCard'
 import GroupChildCards from './GroupChildCards.js'
+import { EnequeueNotifyTodos } from '../../../../../../components/NotificationTodos'
+
 // 参考自http://www.jq22.com/webqd1348
 
 // const dateAreaHeight = date_area_height //日期区域高度，作为修正
@@ -53,6 +55,7 @@ export default class CardItem extends Component {
             left: 'w-resize',
             right: 'e-resize'
         }
+        this.notify = null
     }
 
     componentDidMount() {
@@ -581,8 +584,14 @@ export default class CardItem extends Component {
                     if (this.handleNotifiParams(res).code == '0') {
                         message.success('变更成功')
                     } else {
+                        if (!this.notify) {
+                            this.notify = new EnequeueNotifyTodos({ ...res, id, board_id })
+                        } else {
+                            this.notify.addTodos({ ...this.handleNotifiParams(res), board_id, id })
+                        }
+
                         // 添加弹窗提示代办
-                        this.addNotificationTodos(this.handleNotifiParams(res))
+                        // this.addNotificationTodos(this.handleNotifiParams(res))
                     }
 
                     // 更新甘特图数据
@@ -619,6 +628,7 @@ export default class CardItem extends Component {
                     message.warn(res.message)
                 }
             }).catch(err => {
+                console.log('notify_err', err)
                 message.error('更新失败')
             })
     }
