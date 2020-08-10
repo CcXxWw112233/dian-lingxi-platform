@@ -13,3 +13,16 @@ export const categoryIcon = (code) => {
   }
   return icon
 }
+
+// 字段引用详情
+export const fieldsQuoteDetail = (type) => {
+  let icon = (<span></span>)
+  switch (type) {
+    case '1':
+      
+      break;
+  
+    default:
+      break;
+  }
+}

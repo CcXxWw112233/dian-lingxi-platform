@@ -261,3 +261,42 @@
     }
   }
 }
+
+.custom_quote_title {
+  height:24px;
+  font-size:16px;
+  font-family:PingFangSC-Medium,PingFang SC;
+  font-weight:500;
+  color:rgba(0,0,0,0.85);
+  line-height:24px;
+  text-align: center;
+}
+
+.custom_quote_content {
+  max-height: 626px;
+  overflow-y: auto;
+  min-height: 626px;
+  margin: 16px -24px -24px;
+  box-shadow:0px -1px 0px 0px rgba(0,0,0,0.09);
+  display: flex;
+  :global {
+    .ant-menu-item-selected::after {
+      transform: scaleY(1);
+      opacity: 1;
+    }
+  }
+  .custom_quote_c_right {
+    flex: 1;
+    .custom_quote_cr_item {
+      padding: 9px 12px;
+      min-height: 40px;
+      >span:nth-child(1) {
+        font-size: 16px;
+        margin-right: 6px;
+      }
+      &:hover {
+        background-color: rgba(0,0,0,.04);
+      }
+    }
+  }
+}
