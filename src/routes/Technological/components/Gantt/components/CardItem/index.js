@@ -433,7 +433,11 @@ export default class CardItem extends Component {
 
         const reBack = () => {
             revokeCardDo({ undo_id, board_id }).then(res => {
-                this.updateGanttData(res.data)
+                if (isApiResponseOk(res)) {
+                    this.updateGanttData(res.data)
+                } else {
+                    message.warn(res.message)
+                }
             })
         }
         const renderBtn = (notification_duration) => (
@@ -446,12 +450,13 @@ export default class CardItem extends Component {
             </Button>
         );
         const openNoti = (notification_duration) => {
+            const countdown_message = notification_duration ? `${notification_duration}秒后关闭` : ''
             notification[action]({
                 placement: 'bottomRight',
                 bottom: 50,
                 duration: 5,
                 message: title,
-                description: `${message}${notification_duration}秒后关闭`,
+                description: `${message}${countdown_message}`,
                 btn: code == '1' ? renderBtn(notification_duration) : '',
                 key: id,
                 onClose: () => {
@@ -478,7 +483,7 @@ export default class CardItem extends Component {
                         })
                         clearTimer()
                         this.notification_timer = null
-                        return
+                        // return
                     }
                     openNoti(notification_duration)
                 })

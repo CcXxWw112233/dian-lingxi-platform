@@ -206,20 +206,28 @@ export default class GetRowStrip extends PureComponent {
         const due_time = timestamp + time_span * 24 * 60 * 60 * 1000 - 1000
         updateTaskVTwo({ card_id: id, due_time, start_time: timestamp, board_id: gantt_board_id }, { isNotLoading: false }).then(res => {
             if (isApiResponseOk(res)) {
-                this.changeOutLineTreeNodeProto(id, { start_time: timestamp, due_time })
-                if (parent_card_id) { //如果该任务是子任务，更新完成后更新父任务
-                    setTimeout(() => {
-                        // this.changeOutLineTreeNodeProto(parent_card_id, { start_time: res.data.start_time, due_time: res.data.due_time })
-                        if (Object.prototype.toString.call(res.data) == '[object Array]') {
-                            dispatch({
-                                type: 'gantt/updateOutLineTree',
-                                payload: {
-                                    datas: res.data
-                                }
-                            });
+                if (Object.prototype.toString.call(res.data.scope_content) == '[object Array]') {
+                    dispatch({
+                        type: 'gantt/updateOutLineTree',
+                        payload: {
+                            datas: [{ id, start_time: timestamp, due_time }, ...res.data.scope_content]
                         }
-                    }, 200)
+                    });
                 }
+                // this.changeOutLineTreeNodeProto(id, { start_time: timestamp, due_time })
+                // if (parent_card_id) { //如果该任务是子任务，更新完成后更新父任务
+                //     setTimeout(() => {
+                //         // this.changeOutLineTreeNodeProto(parent_card_id, { start_time: res.data.start_time, due_time: res.data.due_time })
+                //         if (Object.prototype.toString.call(res.data) == '[object Array]') {
+                //             dispatch({
+                //                 type: 'gantt/updateOutLineTree',
+                //                 payload: {
+                //                     datas: res.data
+                //                 }
+                //             });
+                //         }
+                //     }, 200)
+                // }
             } else {
                 message.error(res.message)
             }
