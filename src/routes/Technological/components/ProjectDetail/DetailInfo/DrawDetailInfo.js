@@ -16,6 +16,7 @@ import { getGlobalData } from "../../../../../utils/businessFunction";
 import { isApiResponseOk } from '../../../../../utils/handleResponseData';
 import { organizationInviteWebJoin, commInviteWebJoin, } from '../../../../../services/technological/index'
 import { cursorMoveEnd } from '../../../../../components/ProcessDetailModal/components/handleOperateModal';
+import CustomFidlds from '../../../../../components/CustomFields'
 
 const TextArea = Input.TextArea
 
@@ -524,7 +525,7 @@ export default class DrawDetailInfo extends React.Component {
     let value = (description || defaultDescriptionVal).replace(/\r\n/g, "<br />")
     return (
       <div ref="detail_wrapper">
-        <div className={`${DrawDetailInfoStyle.detailInfoOut} ${globalsetStyles.global_vertical_scrollbar}`} onScrollCapture={(e) => { this.onScroll(e, board_id) }} >
+        <div id={'detailInfoOut'} className={`${DrawDetailInfoStyle.detailInfoOut} ${globalsetStyles.global_vertical_scrollbar}`} onScrollCapture={(e) => { this.onScroll(e, board_id) }} >
           <div className={DrawDetailInfoStyle.brief}>
             <span className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.icon} ${DrawDetailInfoStyle.brief_icon}`}>&#xe7f6;</span>
             <span>{`${currentNounPlanFilterName(PROJECTS)}简介`}</span>
@@ -586,6 +587,12 @@ export default class DrawDetailInfo extends React.Component {
               )
             }
           </div>
+          <CustomFidlds placement="bottomLeft" getPopupContainer={document.getElementById('detailInfoOut')}>
+            <div className={DrawDetailInfoStyle.add_custom_fields}>
+              <span className={globalsetStyles.authTheme}>&#xe8fe;</span>
+              <span>添加字段</span>
+            </div>
+          </CustomFidlds>
           {/* <div className={DrawDetailInfoStyle.dynamic}>
               <div className={ DrawDetailInfoStyle.dy_title }>
                 <div 
