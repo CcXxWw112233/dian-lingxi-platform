@@ -36,6 +36,17 @@ export default class PathOperateContent extends Component {
             }
         })
     }
+    setRelyColor = (rgb) => {
+        const { dispatch, operator: { move_id, line_id } } = this.props
+        dispatch({
+            type: 'gantt/updateCardRely',
+            payload: {
+                from_id: move_id,
+                to_id: line_id,
+                color_mark: rgb
+            }
+        })
+    }
     render() {
         return (
             <div className={styles.operate_wrapper} data-svg_operate='yes' data-targetclassname="specific_example">
@@ -46,7 +57,7 @@ export default class PathOperateContent extends Component {
                 <div className={styles.color_wrapper} data-svg_operate='yes' data-targetclassname="specific_example">
                     {
                         this.colors.map(value => {
-                            return <div className={styles.color_selector} style={{ background: `rgb(${value})` }} data-svg_operate='yes' data-targetclassname="specific_example"></div>
+                            return <div className={styles.color_selector} onClick={() => { this.setRelyColor(value) }} style={{ background: `rgb(${value})` }} data-svg_operate='yes' data-targetclassname="specific_example"></div>
                         })
                     }
                 </div>

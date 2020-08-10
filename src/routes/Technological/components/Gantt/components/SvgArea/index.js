@@ -610,7 +610,7 @@ export default class index extends Component {
                         const { left: move_left, right: move_right, top: move_top, next = [], id: move_id } = move_item
                         return (
                             next.map(line_item => {
-                                const { left: line_left, right: line_right, top: line_top, relation, id: line_id } = line_item
+                                const { left: line_left, right: line_right, top: line_top, relation, id: line_id, color_mark = '24,144,255' } = line_item
                                 const params = {
                                     move_left,
                                     move_right,
@@ -629,10 +629,10 @@ export default class index extends Component {
                                     // onMouseOver={this.onMouseOver}
                                     >
                                         <path name="arrow"
-                                            stroke="#1890FF"
+                                            stroke={`rgb(${color_mark})`}
                                             stroke-width="1"
                                             data-targetclassname="specific_example"
-                                            fill="#1890FF"
+                                            fill={`rgb(${color_mark})`}
                                             d={Arrow}
                                             onClick={() => this.pathClick({ move_id, line_id })}
                                             // onClick={() => this.deleteRely({ move_id, line_id })}
@@ -640,7 +640,7 @@ export default class index extends Component {
                                             {...this.pathMouseEvent}
                                         />
                                         <path
-                                            stroke="#1890FF"
+                                            stroke={`rgb(${color_mark})`}
                                             fill="none"
                                             data-targetclassname="specific_example"
                                             d={Move_Line}
