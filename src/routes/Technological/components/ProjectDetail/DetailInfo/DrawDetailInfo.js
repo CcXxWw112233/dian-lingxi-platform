@@ -17,6 +17,7 @@ import { isApiResponseOk } from '../../../../../utils/handleResponseData';
 import { organizationInviteWebJoin, commInviteWebJoin, } from '../../../../../services/technological/index'
 import { cursorMoveEnd } from '../../../../../components/ProcessDetailModal/components/handleOperateModal';
 import CustomFidlds from '../../../../../components/CustomFields'
+import CustomCategoriesOperate from '../../../../../components/CustomFields/CustomCategoriesOperate';
 
 const TextArea = Input.TextArea
 
@@ -524,8 +525,8 @@ export default class DrawDetailInfo extends React.Component {
     )
     let value = (description || defaultDescriptionVal).replace(/\r\n/g, "<br />")
     return (
-      <div ref="detail_wrapper">
-        <div id={'detailInfoOut'} className={`${DrawDetailInfoStyle.detailInfoOut} ${globalsetStyles.global_vertical_scrollbar}`} onScrollCapture={(e) => { this.onScroll(e, board_id) }} >
+      <div ref="detail_wrapper" style={{marginLeft: '-24px'}}>
+        <div id={'detailInfoOut'} style={{paddingLeft: '24px'}} className={`${DrawDetailInfoStyle.detailInfoOut} ${globalsetStyles.global_vertical_scrollbar}`} onScrollCapture={(e) => { this.onScroll(e, board_id) }} >
           <div className={DrawDetailInfoStyle.brief}>
             <span className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.icon} ${DrawDetailInfoStyle.brief_icon}`}>&#xe7f6;</span>
             <span>{`${currentNounPlanFilterName(PROJECTS)}简介`}</span>
@@ -586,6 +587,9 @@ export default class DrawDetailInfo extends React.Component {
                 </Tooltip>
               )
             }
+          </div>
+          <div style={{marginTop: '32px'}}>
+            <CustomCategoriesOperate />
           </div>
           <CustomFidlds placement="bottomLeft" getPopupContainer={document.getElementById('detailInfoOut')}>
             <div className={DrawDetailInfoStyle.add_custom_fields}>

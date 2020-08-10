@@ -1,0 +1,30 @@
+import React, { Component } from 'react'
+import RextFieldContent from './component/RadioFieldContent';
+import commonStyles from './common.less'
+import CheckboxFieldContent from './component/CheckboxFieldContent';
+
+export default class CustomCategoriesOperate extends Component {
+
+  renderContent = (type) => {
+    let mainContent = (<div></div>)
+    mainContent = (<RextFieldContent />)
+    mainContent = (<CheckboxFieldContent />)
+    // switch (type) {
+    //   case 'text':
+    //     mainContent = (<TextFieldContent />)
+    //     break;
+    
+    //   default:
+    //     break;
+    // }
+    return mainContent
+  }
+
+  render() {
+    return (
+      <div className={commonStyles.custom_operate_wrapper}>
+        {this.renderContent()}
+      </div>
+    )
+  }
+}
