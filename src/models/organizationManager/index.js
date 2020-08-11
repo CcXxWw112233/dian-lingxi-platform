@@ -2,7 +2,7 @@ import {
   saveNounList, getNounList, getPayingStatus, getOrderList, getPermissions, savePermission, getRolePermissions, saveRolePermission, createRole,
   updateRole, deleteRole, copyRole, updateOrganization, setDefaultRole, getCurrentNounPlan, getFnManagementList,
   setFnManagementStatus, investmentMapAddAdministrators, investmentMapDeleteAdministrators, investmentMapQueryAdministrators,
-  getTemplateList, createTemplete, updateTemplete, deleteTemplete, getTemplateListContainer, createTempleteContainer, deleteTempleteContainer, updateTempleteContainer, sortTempleteContainer
+  getTemplateList, createTemplete, updateTemplete, deleteTemplete, getTemplateListContainer, createTempleteContainer, deleteTempleteContainer, updateTempleteContainer, sortTempleteContainer, getCustomFieldList, createCustomFieldGroup, createCustomField
 } from '../../services/organization'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
@@ -696,6 +696,58 @@ export default {
       } else {
         message.warn(res.message)
       }
+    },
+
+    // 获取自定义字段分组列表
+    * getCustomFieldList({ payload }, { call, put }) {
+      let res = yield call(getCustomFieldList)
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            customFieldsList: res.data
+          }
+        })
+      }
+    },
+
+    // 创建自定义字段分组
+    * createCustomFieldGroup({ payload }, { call, put }) {
+      let res = yield call(createCustomFieldGroup, { ...payload })
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('创建成功', MESSAGE_DURATION_TIME)
+        }, 200)
+        console.log(res);
+        yield put({
+          type: 'getCustomFieldList',
+          payload: {
+
+          }
+        })
+      } else {
+        message.warn(res.message)
+      }
+    },
+
+    // 创建自定义字段
+    * createCustomField({ payload }, { call, put }) {
+      let res = yield call(createCustomField, { ...payload })
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('创建成功', MESSAGE_DURATION_TIME)
+        }, 200)
+        console.log(res);
+        yield put({
+          type: 'getCustomFieldList',
+          payload: {
+
+          }
+        })
+      } else {
+        message.warn(res.message)
+      }
+      return res || {}
     },
 
   },

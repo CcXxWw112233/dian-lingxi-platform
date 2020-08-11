@@ -1,5 +1,5 @@
 import request from '../../utils/requestAxios'
-import { REQUEST_DOMAIN } from '../../globalset/js/constant'
+import { REQUEST_DOMAIN, REQUEST_DOMAIN_FLOWS } from '../../globalset/js/constant'
 import Cookies from 'js-cookie'
 
 //根据用户id获取用户信息，支持获取多个用户
@@ -320,3 +320,92 @@ export async function sortTempleteContainer(data) {
     data
   })
 }
+
+// ------------------------ 自定义字段接口 S --------------------------
+
+// 获取自定义字段列表
+export async function getCustomFieldList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/board/field/group/list`,
+    method: 'GET',
+    params: {
+      ...params,
+      _organization_id: localStorage.getItem('OrganizationId')
+    }
+  })
+}
+
+/**
+ * 创建自定义字段分组
+ * @param {String} name 分组名称 
+ */
+export async function createCustomFieldGroup(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/board/field/group`,
+    method: 'POST',
+    data: {
+      ...data,
+      _organization_id: localStorage.getItem('OrganizationId')
+    }
+  })
+}
+
+/**
+ * 更新自定义字段分组
+ * @param {String} id 分组ID
+ * @param {String} name 分组名称
+ */
+export async function updateCustomFieldGroup(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/board/field/group`,
+    method: 'PUT',
+    data
+  })
+}
+
+/**
+ * 删除自定义字段分组
+ * @param {String} id 分组ID
+ */
+export async function deleteCustomFieldGroup(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/board/field/group`,
+    method: 'DELETE',
+    params
+  })
+}
+
+// 创建自定义字段
+export async function createCustomField(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/board/field`,
+    method: 'POST',
+    data: {
+      ...data,
+      _organization_id: localStorage.getItem('OrganizationId')
+    }
+  })
+}
+
+// 更新自定义字段
+export async function updateCustomField(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/board/field`,
+    method: 'PUT',
+    data: {
+      ...data,
+      _organization_id: localStorage.getItem('OrganizationId')
+    }
+  })
+}
+
+// 删除自定义字段
+export async function deleteCustomField(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/board/field`,
+    method: 'DELETE',
+    params
+  })
+}
+
+// ------------------------ 自定义字段接口 E --------------------------

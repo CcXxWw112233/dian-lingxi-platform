@@ -10,6 +10,8 @@ import axios from 'axios'
 import Cookies from 'js-cookie'
 import { setUploadHeaderBaseInfo } from '../../../utils/businessFunction'
 import CustomFieldQuoteDetail from './component/CustomFieldQuoteDetail'
+import { createCustomFieldGroup, getCustomFieldList } from '../../../services/organization'
+import { isApiResponseOk } from '../../../utils/handleResponseData'
 
 const { Panel } = Collapse;
 
@@ -20,8 +22,15 @@ export default class ContainerWithIndexUI extends Component {
     this.state = {
       isAddCustomFieldVisible: false, // 是否显示添加字段
       isAddCustomFieldListVisible: false, // 是否显示添加分组字段
-      inputValue: ''
+      inputValue: '', // 创建分组名称
     }
+  }
+
+  componentDidMount() {
+    this.props.dispatch({
+      type: 'organizationManager/getCustomFieldList',
+      payload: {}
+    })
   }
 
   initState = () => {
@@ -40,7 +49,7 @@ export default class ContainerWithIndexUI extends Component {
 
   // 关闭回调
   onCancel = () => {
-   this.initState()
+    this.initState()
   }
 
   // 点击添加字段
@@ -73,9 +82,36 @@ export default class ContainerWithIndexUI extends Component {
   }
 
   onBlur = (e) => {
-    this.setState({
-      isAddCustomFieldListVisible: false
-    })
+    let value = e.target.value
+    if (!value || value.trimLR() == '') {
+      this.setState({
+        isAddCustomFieldListVisible: false
+      })
+    }
+  }
+
+  // 创建自定义字段分组
+  handleCreateCustomFieldGroup = (e) => {
+    e && e.stopPropagation()
+    const { inputValue } = this.state
+    const { dispatch } = this.props
+    if (!inputValue || inputValue.trimLR() == '') {
+      this.setState({
+        isAddCustomFieldListVisible: false
+      })
+      return
+    } else {
+      dispatch({
+        type: 'organizationManager/createCustomFieldGroup',
+        payload: {
+          name: inputValue
+        }
+      })
+      this.setState({
+        isAddCustomFieldListVisible: false,
+        inputValue: ''
+      })
+    }
   }
 
   customFiledsOverlay = () => {
@@ -87,7 +123,7 @@ export default class ContainerWithIndexUI extends Component {
         <Menu.Item key='delelte_fileds'>删除</Menu.Item>
       </Menu>
     )
-  } 
+  }
 
   dropDownContent = () => {
     return (
@@ -101,12 +137,12 @@ export default class ContainerWithIndexUI extends Component {
     )
   }
 
-  headerContent = () => {
+  headerContent = (item) => {
     return (
       <div className={indexStyles.collapse_header_}>
         <div className={indexStyles.collapse_header_left}>
-          这是一个字段分组
-      </div>
+          {item.name}
+        </div>
         <div className={indexStyles.collapse_header_right} onClick={(e) => e && e.stopPropagation()}>
           <Tooltip title="添加字段" getPopupContainer={triggerNode => triggerNode.parentNode}>
             <span onClick={(e) => this.handleAddCustomFields(e)} className={globalStyles.authTheme}>
@@ -171,28 +207,29 @@ export default class ContainerWithIndexUI extends Component {
   }
 
   renderCustomCategoryContent = () => {
+    const { customFieldsList: { groups = [] } } = this.props
     return (
       <div className={indexStyles.collapse_content}>
         <Collapse destroyInactivePanel={true} bordered={false} defaultActiveKey={['1']}>
-          <Panel header={this.headerContent()} key="1">
-            <div>
-              {this.panelContent()}
-            </div>
-          </Panel>
-          <Panel header={this.headerContent()} key="2">
-            {this.panelContent()}
-          </Panel>
-          <Panel header={this.headerContent()} key="3">
-            {this.panelContent()}
-          </Panel>
+          {
+            !!(groups && groups.length) && groups.map(item => {
+              return (
+                <Panel header={this.headerContent(item)} key={item.id}>
+                  <div>
+                    {this.panelContent()}
+                  </div>
+                </Panel>
+              )
+            })
+          }
         </Collapse>
-        {/* {panelContent} */}
       </div>
     )
   }
 
   render() {
     const { isAddCustomFieldVisible, isAddCustomFieldListVisible, inputValue, isCustomFieldQuoteDetailVisible } = this.state
+    const { customFieldsList = {} } = this.props
     return (
       <>
         <div className={indexStyles.custom_fields_wrapper}>
@@ -218,7 +255,7 @@ export default class ContainerWithIndexUI extends Component {
                     onChange={this.onChange}
                     onBlur={this.onBlur}
                   />
-                  <Button type="primary" disabled={!inputValue}>确定</Button>
+                  <Button onClick={this.handleCreateCustomFieldGroup} type="primary" disabled={!inputValue || inputValue.trimLR() == ''}>确定</Button>
                 </div>
               ) : (
                   <div className={indexStyles.custom_add_field_list} onClick={this.setAddCustomFieldsList}>
@@ -247,7 +284,7 @@ export default class ContainerWithIndexUI extends Component {
                 style={{ width: '440px' }}
                 maskStyle={{ backgroundColor: 'rgba(0,0,0,.3)' }}
               >
-                <CustomFieldCategory />
+                <CustomFieldCategory customFieldsList={customFieldsList} />
               </Modal>
             )
           }
