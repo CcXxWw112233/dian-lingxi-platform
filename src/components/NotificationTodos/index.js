@@ -43,9 +43,11 @@ class ExcuteTodo {
         console.log('notify_queue', excuteQueue)
         if (excuteQueue.length) {
             const index = excuteQueue.findIndex(item => item.id === id)
-            const timer = excuteQueue[index].timer
-            clearInterval(timer)
-            excuteQueue.splice(index, 1)
+            if (index !== -1) {
+                const timer = excuteQueue[index].timer
+                clearInterval(timer)
+                excuteQueue.splice(index, 1)
+            }
         }
     }
     // 批量更新甘特图数据
@@ -181,5 +183,21 @@ export class EnequeueNotifyTodos {
             console.log('notify_todos', excuteQueue)
 
         }
+    }
+}
+
+
+// 创建实例弹窗列表代办
+export function rebackCreateNotify({ res, id, board_id, group_view_type, dispatch }) {
+    const { code, message, undo_id } = handleReBackNotiParams({ ...res, id }) //转化所想要的参数 code message undo_id
+    if (code == '0') {
+        message.success('变更成功')
+    } else {
+        console.log('notify_this', this)
+        if (!this.notify) {
+            this.notify = new EnequeueNotifyTodos({ id, board_id, group_view_type, dispatch })
+        }
+        this.notify.addTodos({ code, message, undo_id, id })
+        this.notify = null
     }
 }
