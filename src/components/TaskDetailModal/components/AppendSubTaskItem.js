@@ -16,6 +16,7 @@ import { getCurrentDrawerContentPropsModelFieldData, filterCurrentUpdateDatasFie
 import UploadAttachment from '../../UploadAttachment'
 import { deleteTaskFile } from '../../../services/technological/task'
 import { getSubfixName } from "@/utils/businessFunction";
+import { rebackCreateNotify } from '../../NotificationTodos'
 
 @connect(({ publicTaskDetailModal: { drawContent = {} } }) => ({
   drawContent
@@ -62,7 +63,7 @@ export default class AppendSubTaskItem extends Component {
     // let sub_executors = []
     const { data = [], drawContent = {}, dispatch, childTaskItemValue } = this.props
     const { properties = [] } = drawContent
-    const { data: executors = [] } = getCurrentDrawerContentPropsModelFieldData({properties, code: 'EXECUTOR'})
+    const { data: executors = [] } = getCurrentDrawerContentPropsModelFieldData({ properties, code: 'EXECUTOR' })
     const { card_id, executors: sub_executors = [] } = childTaskItemValue
     const { selectedKeys = [], type, key } = dataInfo
     let new_data = [...data]
@@ -87,14 +88,14 @@ export default class AppendSubTaskItem extends Component {
         })
       ).then(res => {
         if (isApiResponseOk(res)) {
-          new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: new_drawContent['properties'], code: 'EXECUTOR', value: arrayNonRepeatfy(new_executors, 'user_id')})
+          new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: new_drawContent['properties'], code: 'EXECUTOR', value: arrayNonRepeatfy(new_executors, 'user_id') })
           dispatch({
             type: 'publicTaskDetailModal/updateDatas',
             payload: {
               drawContent: new_drawContent
             }
           })
-          this.setChildTaskIndrawContent({ name: 'executors', value: arrayNonRepeatfy(new_sub_executors,'user_id'), operate_properties_code: 'EXECUTOR' }, card_id)
+          this.setChildTaskIndrawContent({ name: 'executors', value: arrayNonRepeatfy(new_sub_executors, 'user_id'), operate_properties_code: 'EXECUTOR' }, card_id)
           // this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: drawContent, card_id, name: 'executors', value: arrayNonRepeatfy(new_executors, 'user_id'), overlay_sub_pricipal: 'EXECUTOR' })
         }
       })
@@ -107,7 +108,7 @@ export default class AppendSubTaskItem extends Component {
           executor: key
         }
       })
-      this.setChildTaskIndrawContent({ name: 'executors', value: arrayNonRepeatfy(new_sub_executors,'user_id') , operate_properties_code: 'EXECUTOR'}, card_id)
+      this.setChildTaskIndrawContent({ name: 'executors', value: arrayNonRepeatfy(new_sub_executors, 'user_id'), operate_properties_code: 'EXECUTOR' }, card_id)
       // this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: drawContent, card_id, name: 'executors', value: new_executors, overlay_sub_pricipal: 'EXECUTOR' })
       // this.props.handleChildTaskChange && this.props.handleChildTaskChange({ parent_card_id: drawContent.card_id, data: { ...childTaskItemValue, executors: new_sub_executors }, card_id, action: 'update' })
 
@@ -207,7 +208,7 @@ export default class AppendSubTaskItem extends Component {
   }
 
   // 子任务更新弹窗数据 rely_card_datas,更新后返回的相关依赖的更新任务列表
-  setChildTaskIndrawContent = ({ name, value, operate_properties_code }, card_id, rely_card_datas) => {
+  setChildTaskIndrawContent = ({ name, value, operate_properties_code }, card_id, rely_card_datas, res) => {
     const { childDataIndex } = this.props
     const { drawContent = {}, dispatch, childTaskItemValue } = this.props
     let new_drawContent = { ...drawContent }
@@ -215,7 +216,7 @@ export default class AppendSubTaskItem extends Component {
     let new_data = [...data]
     // new_drawContent['child_data'][childDataIndex][name] = value
     new_data[childDataIndex][name] = value
-    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: new_drawContent['properties'], code: 'SUBTASK', value: new_data})
+    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: new_drawContent['properties'], code: 'SUBTASK', value: new_data })
     dispatch({
       type: 'projectDetailTask/updateDatas',
       payload: {
@@ -225,6 +226,8 @@ export default class AppendSubTaskItem extends Component {
     if ((name && value) || (name && value == null)) {
       this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id: drawContent.card_id, name: 'card_data', value: new_data, operate_properties_code })
       this.props.handleChildTaskChange && this.props.handleChildTaskChange({ parent_card_id: drawContent.card_id, data: { ...childTaskItemValue, [name]: value }, card_id, action: 'update', rely_card_datas })
+      const { board_id } = this.props
+      typeof res == 'object' && rebackCreateNotify.call(this, { res, id: card_id, board_id, dispatch, parent_id: drawContent.card_id }) //创建撤回弹窗
     }
   }
 
@@ -248,7 +251,7 @@ export default class AppendSubTaskItem extends Component {
       }
     })
     // new_drawContent['child_data'] = newChildData
-    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: new_drawContent['properties'], code: 'SUBTASK', value: newChildData})
+    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: new_drawContent['properties'], code: 'SUBTASK', value: newChildData })
     Promise.resolve(
       dispatch({
         type: 'publicTaskDetailModal/deleteTaskVTwo',
@@ -262,12 +265,12 @@ export default class AppendSubTaskItem extends Component {
         return
       }
       let new_data = []
-      if (!(res.data instanceof Array)) {
+      if (!(res.data.scope_content instanceof Array)) {
         new_data = []
       } else {
-        new_data = [...res.data]
+        new_data = [...res.data.scope_content]
       }
-      this.props.handleChildTaskChange && this.props.handleChildTaskChange({ parent_card_id: drawContent.card_id, card_id, action: 'delete', rely_card_datas: res.data })
+      this.props.handleChildTaskChange && this.props.handleChildTaskChange({ parent_card_id: drawContent.card_id, card_id, action: 'delete', rely_card_datas: res.data.scope_content })
       dispatch({
         type: 'publicTaskDetailModal/updateDatas',
         payload: {
@@ -276,6 +279,9 @@ export default class AppendSubTaskItem extends Component {
       })
       this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(new_data)
       this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id: drawContent.card_id, name: 'card_data', value: newChildData })
+      const { board_id } = this.props
+      typeof res == 'object' && rebackCreateNotify.call(this, { res, id: card_id, board_id, dispatch, parent_id: drawContent.card_id }) //创建撤回弹窗
+
     })
   }
 
@@ -334,15 +340,15 @@ export default class AppendSubTaskItem extends Component {
         local_start_time: start_timeStamp
       })
       let new_data = []
-      if (!(res.data instanceof Array)) {
+      if (!(res.data.scope_content instanceof Array)) {
         new_data = []
       } else {
-        new_data = [...res.data]
+        new_data = [...res.data.scope_content]
       }
       new_data = new_data.filter(item => item.id == parent_card_id) || []
-      this.setChildTaskIndrawContent({ name: 'start_time', value: start_timeStamp }, card_id, res.data)
+      this.setChildTaskIndrawContent({ name: 'start_time', value: start_timeStamp }, card_id, res.data.scope_content, res)
       this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(new_data)
-      this.props.updateRelyOnRationList && this.props.updateRelyOnRationList(res.data)
+      this.props.updateRelyOnRationList && this.props.updateRelyOnRationList(res.data.scope_content)
     })
   }
 
@@ -377,17 +383,17 @@ export default class AppendSubTaskItem extends Component {
       })
       let new_data = []
       let update_data = []
-      if (!(res.data instanceof Array)) {
+      if (!(res.data.scope_content instanceof Array)) {
         new_data = []
         update_data = [].concat(update_child_item)
       } else {
-        new_data = [...res.data]
-        update_data = [].concat(update_child_item, ...res.data)
+        new_data = [...res.data.scope_content]
+        update_data = [].concat(update_child_item, ...res.data.scope_content)
       }
       new_data = new_data.filter(item => item.id == parent_card_id) || []
-      this.setChildTaskIndrawContent({ name: 'start_time', value: null }, card_id, update_data)
+      this.setChildTaskIndrawContent({ name: 'start_time', value: null }, card_id, update_data, res)
       this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(new_data)
-      this.props.updateRelyOnRationList && this.props.updateRelyOnRationList(res.data)
+      this.props.updateRelyOnRationList && this.props.updateRelyOnRationList(res.data.scope_content)
     })
 
   }
@@ -428,15 +434,15 @@ export default class AppendSubTaskItem extends Component {
         local_due_time: due_timeStamp
       })
       let new_data = []
-      if (!(res.data instanceof Array)) {
+      if (!(res.data.scope_content instanceof Array)) {
         new_data = []
       } else {
-        new_data = [...res.data]
+        new_data = [...res.data.scope_content]
       }
       new_data = new_data.filter(item => item.id == parent_card_id) || []
-      this.setChildTaskIndrawContent({ name: 'due_time', value: due_timeStamp }, card_id, res.data)
+      this.setChildTaskIndrawContent({ name: 'due_time', value: due_timeStamp }, card_id, res.data.scope_content, res)
       this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(new_data)
-      this.props.updateRelyOnRationList && this.props.updateRelyOnRationList(res.data)
+      this.props.updateRelyOnRationList && this.props.updateRelyOnRationList(res.data.scope_content)
     })
   }
 
@@ -471,17 +477,17 @@ export default class AppendSubTaskItem extends Component {
       })
       let new_data = []
       let update_data = []
-      if (!(res.data instanceof Array)) {
+      if (!(res.data.scope_content instanceof Array)) {
         new_data = []
         update_data = [].concat(update_child_item)
       } else {
-        new_data = [...res.data]
-        update_data = [].concat(update_child_item, ...res.data)
+        new_data = [...res.data.scope_content]
+        update_data = [].concat(update_child_item, ...res.data.scope_content)
       }
       new_data = new_data.filter(item => item.id == parent_card_id) || []
-      this.setChildTaskIndrawContent({ name: 'due_time', value: null }, card_id, update_data)
+      this.setChildTaskIndrawContent({ name: 'due_time', value: null }, card_id, update_data, res)
       this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(new_data)
-      this.props.updateRelyOnRationList && this.props.updateRelyOnRationList(res.data)
+      this.props.updateRelyOnRationList && this.props.updateRelyOnRationList(res.data.scope_content)
     })
   }
 
@@ -534,7 +540,7 @@ export default class AppendSubTaskItem extends Component {
             } else {
               let new_drawContent = { ...drawContent }
               sub_attachment_data[childDataIndex].deliverables = sub_attachment_data[childDataIndex].deliverables.filter(n => n.id != attachment_id)
-              new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: new_drawContent['properties'], code: 'SUBTASK', value: sub_attachment_data})
+              new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: new_drawContent['properties'], code: 'SUBTASK', value: sub_attachment_data })
               that.props.dispatch({
                 type: 'publicTaskDetailModal/updateDatas',
                 payload: {
@@ -614,7 +620,7 @@ export default class AppendSubTaskItem extends Component {
       sub_attachment_data[childDataIndex].deliverables.push(...data)
       // this.setChildTaskIndrawContent({ name: 'deliverables', value: [...attachment_data[childDataIndex].deliverables] })
       let new_drawContent = { ...drawContent }
-      new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: new_drawContent['properties'], code: 'SUBTASK', value: sub_attachment_data})
+      new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: new_drawContent['properties'], code: 'SUBTASK', value: sub_attachment_data })
       this.props.dispatch({
         type: 'publicTaskDetailModal/updateDatas',
         payload: {
@@ -818,7 +824,7 @@ export default class AppendSubTaskItem extends Component {
                 const breadcrumbList = getFolderPathName(fileInfo)
                 return (
                   <div className={`${appendSubTaskStyles.file_item_wrapper}`} key={fileInfo.id}>
-                    <div className={`${appendSubTaskStyles.file_item} ${appendSubTaskStyles.pub_hover}`} onClick={(e) => this.openFileDetailModal(e,fileInfo)} >
+                    <div className={`${appendSubTaskStyles.file_item} ${appendSubTaskStyles.pub_hover}`} onClick={(e) => this.openFileDetailModal(e, fileInfo)} >
                       <div>
                         <span className={`${appendSubTaskStyles.file_action} ${globalStyles.authTheme}`} dangerouslySetInnerHTML={{ __html: judgeFileType(file_name) }}></span>
                       </div>

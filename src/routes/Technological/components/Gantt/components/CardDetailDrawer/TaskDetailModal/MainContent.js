@@ -20,6 +20,7 @@ import { getMilestoneList } from '@/services/technological/prjectDetail'
 import DragDropContentComponent from './DragDropContentComponent'
 import FileListRightBarFileDetailModal from '@/routes/Technological/components/ProjectDetail/FileModule/FileListRightBarFileDetailModal';
 import { arrayNonRepeatfy } from '@/utils/util'
+import { rebackCreateNotify } from '../../../../../../../components/NotificationTodos'
 const { LingxiIm, Im } = global.constants
 
 @connect(mapStateToProps)
@@ -545,6 +546,9 @@ export default class MainContent extends Component {
         }, 500)
       }
       this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'start_time', value: start_timeStamp, rely_card_datas: res.data.scope_content })
+      const { group_view_type } = this.props
+      rebackCreateNotify.call(this, { res, id: card_id, board_id, group_view_type, dispatch }) //创建撤回弹窗
+
     })
   }
   // 开始时间 chg事件 E
@@ -590,6 +594,8 @@ export default class MainContent extends Component {
         }, 500)
       }
       this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'due_time', value: due_timeStamp, rely_card_datas: res.data.scope_content })
+      const { group_view_type } = this.props
+      rebackCreateNotify.call(this, { res, id: card_id, board_id, group_view_type, dispatch }) //创建撤回弹窗
     })
   }
   // 截止时间 chg事件 E
@@ -617,6 +623,8 @@ export default class MainContent extends Component {
         return
       }
       this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'start_time', value: '0', rely_card_datas: res.data.scope_content })
+      const { group_view_type } = this.props
+      rebackCreateNotify.call(this, { res, id: card_id, board_id, group_view_type, dispatch }) //创建撤回弹窗
     })
 
   }
@@ -646,6 +654,8 @@ export default class MainContent extends Component {
         return
       }
       this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'due_time', value: '0', rely_card_datas: res.data.scope_content })
+      const { group_view_type } = this.props
+      rebackCreateNotify.call(this, { res, id: card_id, board_id, group_view_type, dispatch }) //创建撤回弹窗
     })
 
   }
@@ -1493,6 +1503,7 @@ export default class MainContent extends Component {
 function mapStateToProps({
   publicTaskDetailModal: { drawerVisible, drawContent = {}, card_id, boardTagList = [], attributesList = [] },
   projectDetail: { datas: { projectDetailInfoData = {} } },
+  gantt: { datas: { group_view_type } },
   publicFileDetailModal: {
     isInOpenFile,
     filePreviewCurrentFileId,
@@ -1505,5 +1516,5 @@ function mapStateToProps({
     }
   }
 }) {
-  return { drawerVisible, drawContent, card_id, boardTagList, attributesList, projectDetailInfoData, isInOpenFile, filePreviewCurrentFileId, fileType, filePreviewCurrentName, userBoardPermissions }
+  return { group_view_type, drawerVisible, drawContent, card_id, boardTagList, attributesList, projectDetailInfoData, isInOpenFile, filePreviewCurrentFileId, fileType, filePreviewCurrentName, userBoardPermissions }
 }

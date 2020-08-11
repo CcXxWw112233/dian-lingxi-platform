@@ -30,7 +30,7 @@ const excuteQueue = [] //执行中的队列
 
 class ExcuteTodo {
     constructor(options) {
-        const { code, message, id, board_id, undo_id, group_view_type, dispatch } = options
+        const { code, message, id, board_id, undo_id, group_view_type, dispatch, parent_id } = options
         this.id = id //操作对象的id
         this.board_id = board_id
         this.code = code
@@ -40,6 +40,7 @@ class ExcuteTodo {
         this.notification_duration = 6
         this.group_view_type = group_view_type
         this.dispatch = dispatch
+        this.parent_id = parent_id //当是子任务的时候
         console.log('notify_queue', excuteQueue)
         if (excuteQueue.length) {
             const index = excuteQueue.findIndex(item => item.id === id)
@@ -63,7 +64,7 @@ class ExcuteTodo {
     }
     // 拖拽后弹出提示窗
     createNotify = () => {
-        const { code, message, id, board_id, undo_id } = this
+        const { code, message, id, board_id, undo_id, parent_id } = this
         if (['0', '2'].includes(code)) return
         const type_obj = {
             '0': {
@@ -88,6 +89,12 @@ class ExcuteTodo {
                 if (isApiResponseOk(res)) {
                     message.success('撤回成功')
                     this.updateGanttData(res.data)
+                    this.dispatch({
+                        type: 'publicTaskDetailModal/getCardWithAttributesDetail',
+                        payload: {
+                            id: parent_id || id
+                        }
+                    })
                 } else {
                     message.warn(res.message)
                 }
@@ -174,8 +181,8 @@ export class EnequeueNotifyTodos {
         let item
         let excute
         while (item = this.todoQueue.shift()) { //队列遍历
-            const { code, message, undo_id } = item
-            excute = new ExcuteTodo({ code, message, undo_id, id, board_id, group_view_type, dispatch }) //执行当前一条的弹窗
+            const { code, message, undo_id, parent_id } = item
+            excute = new ExcuteTodo({ code, message, undo_id, id, board_id, group_view_type, dispatch, parent_id }) //执行当前一条的弹窗
             const timer = excute.createNotify() //弹出
             excute = null
 
@@ -188,7 +195,7 @@ export class EnequeueNotifyTodos {
 
 
 // 创建实例弹窗列表代办
-export function rebackCreateNotify({ res, id, board_id, group_view_type, dispatch }) {
+export function rebackCreateNotify({ res, id, board_id, group_view_type, dispatch, parent_id }) {
     const { code, message, undo_id } = handleReBackNotiParams({ ...res, id }) //转化所想要的参数 code message undo_id
     if (code == '0') {
         message.success('变更成功')
@@ -197,7 +204,7 @@ export function rebackCreateNotify({ res, id, board_id, group_view_type, dispatc
         if (!this.notify) {
             this.notify = new EnequeueNotifyTodos({ id, board_id, group_view_type, dispatch })
         }
-        this.notify.addTodos({ code, message, undo_id, id })
+        this.notify.addTodos({ code, message, undo_id, id, parent_id })
         this.notify = null
     }
 }
