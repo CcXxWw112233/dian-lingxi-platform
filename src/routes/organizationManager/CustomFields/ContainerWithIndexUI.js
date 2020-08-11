@@ -119,6 +119,7 @@ export default class ContainerWithIndexUI extends Component {
     }
   }
 
+  // 重命名
   handleRename = (e, item) => {
     console.log(e, item);
     const { domEvent } = e
@@ -127,6 +128,40 @@ export default class ContainerWithIndexUI extends Component {
     this.setState({
       current_operate_rename_item: id
     })
+  }
+
+  confirm = ({item, type}) => {
+    const modal = Modal.confirm()
+    const that = this
+    modal.update({
+      title: '确认要删除这条字段吗？',
+      content: '删除后不可恢复',
+      // zIndex: 1110,
+      okText: '确认',
+      cancelText: '取消',
+      style: {
+        letterSpacing: '1px'
+      },
+      getContainer: document.getElementById('org_managementContainer') ? () => document.getElementById('org_managementContainer') : triggerNode => triggerNode.parentNode,
+      onOk: () => {
+        that.props.dispatch({
+          type: type =='no_group' ? 'organizationManager/deleteCustomField' : 'organizationManager/deleteCustomFieldGroup',
+          payload: {
+            id: item.id
+          }
+        })
+      },
+      onCancel: () => {
+        modal.destroy();
+      }
+    });
+  }
+
+  // 删除字段
+  handleDeleteField = ({e, item, type}) => {
+    const { domEvent } = e
+    domEvent && domEvent.stopPropagation()
+    this.confirm({item, type})
   }
 
   customFiledsOverlay = ({ item, type }) => {
@@ -147,7 +182,7 @@ export default class ContainerWithIndexUI extends Component {
             <Menu.Item key='discont_fileds'>停用字段</Menu.Item>
           )
         }
-        <Menu.Item style={{ color: '#F5222D' }} key='delelte_fileds'>删除</Menu.Item>
+        <Menu.Item onClick={(e) => { this.handleDeleteField({e, item, type}) }} style={{ color: '#F5222D' }} key='delelte_fileds'>删除</Menu.Item>
       </Menu>
     )
   }
@@ -182,7 +217,7 @@ export default class ContainerWithIndexUI extends Component {
     )
   }
 
-  panelContent = (value) => {
+  panelContent = (value, index) => {
     const { field_status, group_id } = value
     return (
       <>
@@ -210,6 +245,11 @@ export default class ContainerWithIndexUI extends Component {
             </div>
           </div>
         </div>
+        {
+          (!!index || index == 0) && (
+            <hr className={`${commonStyles.custom_hr} ${commonStyles.custom_hr_nogroup}`} />
+          )
+        }
       </>
     )
   }
@@ -238,10 +278,10 @@ export default class ContainerWithIndexUI extends Component {
           }
         </Collapse>
         {
-          !!(fields && fields.length) && fields.map(item => {
+          !!(fields && fields.length) && fields.map((item,index) => {
             return (
               <div className={indexStyles.no_collapse_content}>
-                {this.panelContent(item)}
+                {this.panelContent(item, index)}
               </div>
             )
           })
