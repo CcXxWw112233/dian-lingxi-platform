@@ -58,10 +58,16 @@ export default class ContainerWithIndexUI extends Component {
   }
 
   // 点击添加字段
-  handleAddCustomFields = (e) => {
+  handleAddCustomFields = (e, item) => {
     e && e.stopPropagation()
     this.setState({
-      isAddCustomFieldVisible: true
+      isAddCustomFieldVisible: true,
+    })
+    this.props.dispatch({
+      type: 'organizationManager/updateDatas',
+      payload: {
+        currentOperateFieldItem: item
+      }
     })
   }
 
@@ -126,7 +132,7 @@ export default class ContainerWithIndexUI extends Component {
     const { id } = item
     domEvent && domEvent.stopPropagation()
     this.setState({
-      current_operate_rename_item: id
+      // current_operate_rename_item: id
     })
   }
 
@@ -136,13 +142,13 @@ export default class ContainerWithIndexUI extends Component {
     modal.update({
       title: '确认要删除这条字段吗？',
       content: '删除后不可恢复',
-      // zIndex: 1110,
+      zIndex: 1110,
       okText: '确认',
       cancelText: '取消',
       style: {
         letterSpacing: '1px'
       },
-      getContainer: document.getElementById('org_managementContainer') ? () => document.getElementById('org_managementContainer') : triggerNode => triggerNode.parentNode,
+      // getContainer: document.getElementById('org_managementContainer') ? () => document.getElementById('org_managementContainer') : triggerNode => triggerNode.parentNode,
       onOk: () => {
         that.props.dispatch({
           type: type =='no_group' ? 'organizationManager/deleteCustomField' : 'organizationManager/deleteCustomFieldGroup',
@@ -207,7 +213,7 @@ export default class ContainerWithIndexUI extends Component {
         </div>
         <div className={indexStyles.collapse_header_right} onClick={(e) => e && e.stopPropagation()}>
           <Tooltip title="添加字段" getPopupContainer={triggerNode => triggerNode.parentNode}>
-            <span onClick={(e) => this.handleAddCustomFields(e)} className={globalStyles.authTheme}>
+            <span onClick={(e) => this.handleAddCustomFields(e, item)} className={globalStyles.authTheme}>
               <em>&#xe70b;</em>
             </span>
           </Tooltip>

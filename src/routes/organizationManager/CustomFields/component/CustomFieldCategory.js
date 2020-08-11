@@ -7,8 +7,21 @@ import { Button, Input, Select } from 'antd'
 import InputExport from './InputExport'
 
 const Option = Select.Option;
-@connect()
+@connect(({ organizationManager: { datas: { currentOperateFieldItem } } }) => ({
+  currentOperateFieldItem
+}))
 export default class CustomFieldCategory extends Component {
+
+  constructor(props) {
+    super(props)
+    const { currentOperateFieldItem = {}  } = props
+    this.state = {
+      inputValue: '', // 名称值
+      field_type: '', // 选择的字段类型
+      field_value: null, // 选择的字段内容
+      selected_field_group : !!(currentOperateFieldItem && Object.keys(currentOperateFieldItem).length) ? currentOperateFieldItem.id : '0'
+    }
+  }
 
   state = {
     inputValue: '', // 名称值
@@ -23,6 +36,14 @@ export default class CustomFieldCategory extends Component {
       field_type: '', // 选择的字段类型
       field_value: null, // 选择的字段内容
       selected_field_group: '0', // 选择的分组列表
+    })
+  }
+
+  componentWillReceiveProps(nextProps) {
+    console.log(nextProps);
+    const { currentOperateFieldItem = {} } = nextProps
+    this.setState({
+      selected_field_group : !!(currentOperateFieldItem && Object.keys(currentOperateFieldItem).length) ? currentOperateFieldItem.id : '0'
     })
   }
 
@@ -387,7 +408,8 @@ export default class CustomFieldCategory extends Component {
   // 渲染内容
   renderPopoverContentCategory = () => {
     const { inputValue, field_type, selected_field_group } = this.state
-    const { customFieldsList: { groups = [] } } = this.props
+    const { customFieldsList: { groups = [] }, currentOperateFieldItem = {} } = this.props
+    // let defaultValue = !!(currentOperateFieldItem && Object.keys(currentOperateFieldItem).length) ? currentOperateFieldItem.id : selected_field_group
     return (
       <div>
         <div className={commonStyles.field_item}>
