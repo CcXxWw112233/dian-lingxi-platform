@@ -26,3 +26,13 @@ export const fieldsQuoteDetail = (type) => {
       break;
   }
 }
+
+// 根据不同的类型判断是否有值
+
+// 获取创建人
+export const getCreateUser = () => {
+  let create_by = ''
+  const { name } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
+  create_by = name
+  return create_by
+}

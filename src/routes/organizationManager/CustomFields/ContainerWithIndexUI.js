@@ -12,6 +12,7 @@ import { setUploadHeaderBaseInfo } from '../../../utils/businessFunction'
 import CustomFieldQuoteDetail from './component/CustomFieldQuoteDetail'
 import { createCustomFieldGroup, getCustomFieldList } from '../../../services/organization'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
+import { getCreateUser } from './handleOperateModal'
 
 const { Panel } = Collapse;
 
@@ -26,6 +27,14 @@ export default class ContainerWithIndexUI extends Component {
     }
   }
 
+  initState = () => {
+    this.setState({
+      isAddCustomFieldVisible: false,
+      isAddCustomFieldListVisible: false,
+      inputValue: ''
+    })
+  }
+
   componentDidMount() {
     this.props.dispatch({
       type: 'organizationManager/getCustomFieldList',
@@ -33,12 +42,8 @@ export default class ContainerWithIndexUI extends Component {
     })
   }
 
-  initState = () => {
-    this.setState({
-      isAddCustomFieldVisible: false,
-      isAddCustomFieldListVisible: false,
-      inputValue: ''
-    })
+  componentWillUnmount() {
+    this.initState()
   }
 
   updateState = () => {
@@ -114,20 +119,42 @@ export default class ContainerWithIndexUI extends Component {
     }
   }
 
-  customFiledsOverlay = () => {
+  handleRename = (e, item) => {
+    console.log(e, item);
+    const { domEvent } = e
+    const { id } = item
+    domEvent && domEvent.stopPropagation()
+    this.setState({
+      current_operate_rename_item: id
+    })
+  }
+
+  customFiledsOverlay = ({ item, type }) => {
     return (
       <Menu>
-        <Menu.Item key='rename'>重命名</Menu.Item>
-        <Menu.Item key='edit_fileds'>编辑字段</Menu.Item>
-        <Menu.Item key='discont_fileds'>停用字段</Menu.Item>
-        <Menu.Item key='delelte_fileds'>删除</Menu.Item>
+        {
+          type == 'group' && (
+            <Menu.Item onClick={(e) => { this.handleRename(e, item) }} key='rename'>重命名</Menu.Item>
+          )
+        }
+        {
+          type == 'no_group' && (
+            <Menu.Item key='edit_fileds'>编辑字段</Menu.Item>
+          )
+        }
+        {
+          type == 'no_group' && (
+            <Menu.Item key='discont_fileds'>停用字段</Menu.Item>
+          )
+        }
+        <Menu.Item style={{ color: '#F5222D' }} key='delelte_fileds'>删除</Menu.Item>
       </Menu>
     )
   }
 
-  dropDownContent = () => {
+  dropDownContent = ({ item, type }) => {
     return (
-      <Dropdown trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.customFiledsOverlay()}>
+      <Dropdown trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.customFiledsOverlay({ item, type })}>
         <Tooltip title="字段菜单分类" getPopupContainer={triggerNode => triggerNode.parentNode}>
           <span className={`${commonStyles.custom_fileds_more} ${globalStyles.authTheme}`}>
             <em>&#xe66f;</em>
@@ -149,56 +176,37 @@ export default class ContainerWithIndexUI extends Component {
               <em>&#xe70b;</em>
             </span>
           </Tooltip>
-          {this.dropDownContent()}
+          {this.dropDownContent({ item, type: 'group' })}
         </div>
       </div>
     )
   }
 
-  panelContent = () => {
+  panelContent = (value) => {
+    const { field_status, group_id } = value
     return (
       <>
-        <hr className={`${commonStyles.custom_hr} ${commonStyles.custom_hr_sub}`} />
+        {
+          group_id != '0' && (
+            <hr className={`${commonStyles.custom_hr} ${commonStyles.custom_hr_sub}`} />
+          )
+        }
         <div className={indexStyles.panel_content_hover}>
           <div className={indexStyles.panel_content}>
             <div className={indexStyles.panel_content_left}>
               <div className={indexStyles.panel_item_name}>
                 <span className={globalStyles.authTheme}>&#xe6b2;</span>
-                <span>这是一个单选项字段</span>
+                <span>{value.name}</span>
               </div>
               <div className={indexStyles.panel_detail}>
                 <span>类型：单选</span>
                 <span>被引用次数：4次 <em onClick={this.handleCustomQuoteDetail}>详情</em></span>
-                <span>创建人：严世威</span>
-                <span>状态：启用</span>
+                <span>创建人：{getCreateUser()}</span>
+                <span style={{ color: field_status == '1' && '#F5222D' }}>状态：{field_status == '0' ? '启用' : '停用'}</span>
               </div>
             </div>
             <div className={indexStyles.panel_content_right}>
-              {this.dropDownContent()}
-            </div>
-          </div>
-        </div>
-        <hr className={`${commonStyles.custom_hr} ${commonStyles.custom_hr_sub}`} />
-        <div className={indexStyles.panel_content_hover}>
-          <div className={indexStyles.panel_content}>
-            <div className={indexStyles.panel_content_left}>
-              <div className={indexStyles.panel_item_name}>
-                <span className={globalStyles.authTheme}>&#xe6b2;</span>
-                <span>这是一个单选项字段</span>
-              </div>
-              <div className={indexStyles.panel_detail}>
-                <span>类型：单选</span>
-                <span>被引用次数：4次 <em>详情</em></span>
-                <span>创建人：严世威</span>
-                <span>状态：启用</span>
-              </div>
-            </div>
-            <div className={indexStyles.panel_content_right}>
-              <Tooltip title="字段菜单" getPopupContainer={triggerNode => triggerNode.parentNode}>
-                <span className={`${commonStyles.custom_fileds_more} ${globalStyles.authTheme}`}>
-                  <em>&#xe66f;</em>
-                </span>
-              </Tooltip>
+              {this.dropDownContent({ item: value, type: 'no_group' })}
             </div>
           </div>
         </div>
@@ -207,7 +215,7 @@ export default class ContainerWithIndexUI extends Component {
   }
 
   renderCustomCategoryContent = () => {
-    const { customFieldsList: { groups = [] } } = this.props
+    const { customFieldsList: { groups = [], fields = [] } } = this.props
     return (
       <div className={indexStyles.collapse_content}>
         <Collapse destroyInactivePanel={true} bordered={false} defaultActiveKey={['1']}>
@@ -215,14 +223,29 @@ export default class ContainerWithIndexUI extends Component {
             !!(groups && groups.length) && groups.map(item => {
               return (
                 <Panel header={this.headerContent(item)} key={item.id}>
-                  <div>
-                    {this.panelContent()}
-                  </div>
+                  {
+                    item.fields && item.fields.length && item.fields.map(value => {
+                      return (
+                        <div>
+                          {this.panelContent(value)}
+                        </div>
+                      )
+                    })
+                  }
                 </Panel>
               )
             })
           }
         </Collapse>
+        {
+          !!(fields && fields.length) && fields.map(item => {
+            return (
+              <div className={indexStyles.no_collapse_content}>
+                {this.panelContent(item)}
+              </div>
+            )
+          })
+        }
       </div>
     )
   }
@@ -284,11 +307,12 @@ export default class ContainerWithIndexUI extends Component {
                 style={{ width: '440px' }}
                 maskStyle={{ backgroundColor: 'rgba(0,0,0,.3)' }}
               >
-                <CustomFieldCategory customFieldsList={customFieldsList} />
+                <CustomFieldCategory customFieldsList={customFieldsList} onCancel={this.onCancel} />
               </Modal>
             )
           }
         </div>
+        {/* 点击详情内容 */}
         {<CustomFieldQuoteDetail visible={isCustomFieldQuoteDetailVisible} updateState={this.updateState} />}
       </>
     )
