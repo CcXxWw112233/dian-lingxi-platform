@@ -752,7 +752,7 @@ export default class CardItem extends Component {
     }
     // 在项目分组内，上下左右移动
     overDragCompleteHandlePositonAround = (data = {}) => {
-        const { itemValue: { id, end_time, start_time, board_id, left, top }, gantt_board_id, gantt_view_mode } = this.props
+        const { itemValue: { id, end_time, start_time, board_id, left, top }, gantt_board_id, gantt_view_mode, group_view_type, dispatch } = this.props
         const { local_left, local_width, local_width_origin } = this.state
         const { date_arr_one_level, ceilWidth } = this.props
         const updateData = {}
@@ -823,7 +823,7 @@ export default class CardItem extends Component {
                     local_top: top
                 })
                 message.error('更新失败')
-                // console.log('ssss', err)
+                console.log('ssss', err)
             })
     }
     // 拖拽完成后的事件处理------end---------

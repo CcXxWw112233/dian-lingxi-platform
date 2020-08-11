@@ -37,7 +37,7 @@ class ExcuteTodo {
         this.message = message
         this.undo_id = undo_id
         this.notification_timer = null
-        this.notification_duration = 5
+        this.notification_duration = 6
         this.group_view_type = group_view_type
         this.dispatch = dispatch
         console.log('notify_queue', excuteQueue)
@@ -84,6 +84,7 @@ class ExcuteTodo {
         const reBack = () => {
             revokeCardDo({ undo_id, board_id }).then(res => {
                 if (isApiResponseOk(res)) {
+                    message.success('撤回成功')
                     this.updateGanttData(res.data)
                 } else {
                     message.warn(res.message)
@@ -125,7 +126,7 @@ class ExcuteTodo {
                 this.notification_duration--
                 if (this.notification_duration == 0) {
                     openNoti(0)
-                    this.notification_duration = 5
+                    this.notification_duration = 6
                     clearTimer()
                     this.notification_timer = null
                     return
