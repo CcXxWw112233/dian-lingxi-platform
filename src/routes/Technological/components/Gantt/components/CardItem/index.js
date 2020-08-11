@@ -14,7 +14,7 @@ import { transformTimestamp, isSamDay } from '../../../../../../utils/util'
 import HoverEars from './HoverEars'
 import DragCard from './DragCard'
 import GroupChildCards from './GroupChildCards.js'
-import { EnequeueNotifyTodos } from '../../../../../../components/NotificationTodos'
+import { EnequeueNotifyTodos, handleReBackNotiParams } from '../../../../../../components/NotificationTodos'
 
 // 参考自http://www.jq22.com/webqd1348
 
@@ -585,11 +585,10 @@ export default class CardItem extends Component {
                         message.success('变更成功')
                     } else {
                         if (!this.notify) {
-                            this.notify = new EnequeueNotifyTodos({ ...res, id, board_id })
-                        } else {
-                            this.notify.addTodos({ ...this.handleNotifiParams(res), board_id, id })
+                            this.notify = new EnequeueNotifyTodos({ id, board_id, group_view_type, dispatch })
                         }
-
+                        this.notify.addTodos({ ...handleReBackNotiParams({ ...res, id }) })
+                        this.notify = null
                         // 添加弹窗提示代办
                         // this.addNotificationTodos(this.handleNotifiParams(res))
                     }
@@ -714,8 +713,13 @@ export default class CardItem extends Component {
                     if (this.handleNotifiParams(res).code == '0') {
                         message.success('变更成功')
                     } else {
+                        if (!this.notify) {
+                            this.notify = new EnequeueNotifyTodos({ id, board_id, group_view_type, dispatch })
+                        }
+                        this.notify.addTodos({ ...handleReBackNotiParams({ ...res, id }) })
+                        this.notify = null
                         // 添加弹窗提示代办
-                        this.addNotificationTodos(this.handleNotifiParams(res))
+                        // this.addNotificationTodos(this.handleNotifiParams(res))
                     }
                     // if (ganttIsOutlineView({ group_view_type })) {
                     //     dispatch({
@@ -790,8 +794,13 @@ export default class CardItem extends Component {
                     if (this.handleNotifiParams(res).code == '0') {
                         message.success('变更成功')
                     } else {
+                        if (!this.notify) {
+                            this.notify = new EnequeueNotifyTodos({ id, board_id, group_view_type, dispatch })
+                        }
+                        this.notify.addTodos({ ...handleReBackNotiParams({ ...res, id }) })
+                        this.notify = null
                         // 添加弹窗提示代办
-                        this.addNotificationTodos(this.handleNotifiParams(res))
+                        // this.addNotificationTodos(this.handleNotifiParams(res))
                     }
                     this.changeCardBelongGroup({
                         card_id: id,

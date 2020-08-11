@@ -1,11 +1,12 @@
 import { notification, message, Button } from 'antd'
 import { revokeCardDo } from '../../services/technological/task'
 import { isApiResponseOk } from '../../utils/handleResponseData'
+import { ganttIsOutlineView } from '../../routes/Technological/components/Gantt/constants'
 function defer(fn) {
     return Promise.resolve().then(fn)
 }
 
-function handleParams({ code, data = [], message, id }) {
+export function handleReBackNotiParams({ code, data = [], message, id }) {
     const { scope_content = [], undo_id, scope_number, scope_user, scope_day } = data
     const length = scope_content.filter(item => item.id != id).length
     let operate_code = code
@@ -25,16 +26,38 @@ function handleParams({ code, data = [], message, id }) {
     }
 }
 
+const excuteQueue = [] //执行中的队列
+
 class ExcuteTodo {
     constructor(options) {
-        const { code, message, id, board_id, undo_id } = options
+        const { code, message, id, board_id, undo_id, group_view_type, dispatch } = options
         this.id = id //操作对象的id
         this.board_id = board_id
-        this.notification_duration = 5
         this.code = code
         this.message = message
         this.undo_id = undo_id
-
+        this.notification_timer = null
+        this.notification_duration = 5
+        this.group_view_type = group_view_type
+        this.dispatch = dispatch
+        console.log('notify_queue', excuteQueue)
+        if (excuteQueue.length) {
+            const index = excuteQueue.findIndex(item => item.id === id)
+            const timer = excuteQueue[index].timer
+            clearInterval(timer)
+            excuteQueue.splice(index, 1)
+        }
+    }
+    // 批量更新甘特图数据
+    updateGanttData = (datas = []) => {
+        const { group_view_type, dispatch } = this
+        const type = ganttIsOutlineView({ group_view_type }) ? 'updateOutLineTree' : 'updateListGroup'
+        dispatch({
+            type: `gantt/${type}`,
+            payload: {
+                datas
+            }
+        })
     }
     // 拖拽后弹出提示窗
     createNotify = () => {
@@ -101,46 +124,61 @@ class ExcuteTodo {
             this.notification_timer = setInterval(() => {
                 this.notification_duration--
                 if (this.notification_duration == 0) {
-                    this.notification_timer = 5
+                    openNoti(0)
+                    this.notification_duration = 5
                     clearTimer()
                     this.notification_timer = null
-                    // return
+                    return
                 }
                 openNoti(this.notification_duration)
             }, 1000)
+            return this.notification_timer
         }
         clearTimer()
         notification.close(id) //先关掉旧的
-        setTimer()
+        return setTimer()
     }
 }
 // 处理弹窗队列
 export class EnequeueNotifyTodos {
     constructor(options) {
-        const { code, data, message, id, board_id } = options
-        this.data = data
+        const { code, data, message, id, board_id, group_view_type, dispatch } = options
+        // this.data = data
+        // this.code = code
+        // this.message = message
+        // this.undo_id = undo_id //撤回id
+        this.group_view_type = group_view_type
+        this.dispatch = dispatch
         this.id = id //操作对象的id
         this.board_id = board_id
-        const { code: $code, message: $message, undo_id: $undo_id } = handleParams({ code, data, message, id })
-        this.code = $code
-        this.message = $message
-        this.undo_id = $undo_id //撤回id
         this.todoQueue = []
-        this.addTodos({ id, code: $code, message: $message, undo_id: $undo_id, board_id })
+        // this.addTodos({ id, code, message, undo_id, board_id })
+
     }
 
-    addTodos = (todoInstance) => { //如果改变时间了，则该组件会销毁重新渲染，需要添加进redux代办，在重新渲染时执行
-        this.todoQueue.push(todoInstance)
-        console.log('notify', this.todoQueue)
+    addTodos = (todoInstance, todos = []) => { //添加代办列表
+        if (typeof todoInstance == 'object') {
+            this.todoQueue.push(todoInstance)
+        }
+        if (todos.length) {
+            this.todoQueue = [].concat(this.todoQueue, todos)
+        }
+        console.log('notify_todos', this.todoQueue)
         defer(this.flush)
     }
     flush = () => {
+        const { group_view_type, dispatch, id, board_id } = this
         let item
+        let excute
         while (item = this.todoQueue.shift()) { //队列遍历
-            const { code, message, undo_id, id, board_id } = item
-            console.log('notify', item)
-            const excute = new ExcuteTodo({ code, message, undo_id, id, board_id }) //执行当前一条的弹窗
-            excute.createNotify() //弹出
+            const { code, message, undo_id } = item
+            excute = new ExcuteTodo({ code, message, undo_id, id, board_id, group_view_type, dispatch }) //执行当前一条的弹窗
+            const timer = excute.createNotify() //弹出
+            excute = null
+
+            excuteQueue.push({ timer, id })
+            console.log('notify_todos', excuteQueue)
+
         }
     }
 }
