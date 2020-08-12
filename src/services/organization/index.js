@@ -324,13 +324,13 @@ export async function sortTempleteContainer(data) {
 // ------------------------ 自定义字段接口 S --------------------------
 
 // 获取自定义字段列表
-export async function getCustomFieldList(params) {
+export async function getCustomFieldList(params = {}) {
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}/board/field/group/list`,
     method: 'GET',
     params: {
       ...params,
-      _organization_id: localStorage.getItem('OrganizationId')
+      _organization_id: params._organization_id ? params._organization_id : localStorage.getItem('OrganizationId')
     }
   })
 }
@@ -413,6 +413,15 @@ export async function discountCustomField(data) {
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}/board/field/set`,
     method: 'PUT',
+    data
+  })
+}
+
+// 创建关联字段接口
+export async function createRelationCustomField(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/board/field/relation`,
+    method: 'POST',
     data
   })
 }

@@ -2,7 +2,7 @@ import {
   saveNounList, getNounList, getPayingStatus, getOrderList, getPermissions, savePermission, getRolePermissions, saveRolePermission, createRole,
   updateRole, deleteRole, copyRole, updateOrganization, setDefaultRole, getCurrentNounPlan, getFnManagementList,
   setFnManagementStatus, investmentMapAddAdministrators, investmentMapDeleteAdministrators, investmentMapQueryAdministrators,
-  getTemplateList, createTemplete, updateTemplete, deleteTemplete, getTemplateListContainer, createTempleteContainer, deleteTempleteContainer, updateTempleteContainer, sortTempleteContainer, getCustomFieldList, createCustomFieldGroup, updateCustomFieldGroup, deleteCustomFieldGroup, createCustomField, updateCustomField, deleteCustomField, discountCustomField
+  getTemplateList, createTemplete, updateTemplete, deleteTemplete, getTemplateListContainer, createTempleteContainer, deleteTempleteContainer, updateTempleteContainer, sortTempleteContainer, getCustomFieldList, createCustomFieldGroup, updateCustomFieldGroup, deleteCustomFieldGroup, createCustomField, updateCustomField, deleteCustomField, discountCustomField, createRelationCustomField
 } from '../../services/organization'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
@@ -842,6 +842,19 @@ export default {
       }
       return res || {}
     },
+
+    // 创建关联字段 
+    * createRelationCustomField({ payload }, { call, put }) {
+      let res = yield call(createRelationCustomField, { ...payload })
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('添加成功', MESSAGE_DURATION_TIME)
+        }, 200)
+      } else {
+        message.warn(res.message)
+      }
+      return res || {}
+    }
 
   },
 

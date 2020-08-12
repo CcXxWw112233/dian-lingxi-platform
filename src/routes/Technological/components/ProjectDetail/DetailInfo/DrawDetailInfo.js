@@ -393,11 +393,35 @@ export default class DrawDetailInfo extends React.Component {
     })
   }
 
+  // 添加字段
+  handleAddCustomField = (checkedKeys = [], calback) => {
+    const { projectDetailInfoData = {} } = this.props
+    let { board_id } = projectDetailInfoData
+    this.props.dispatch({
+      type: 'organizationManager/createRelationCustomField',
+      payload: {
+        fields: checkedKeys,
+        relation_id: board_id,
+        source_type: '1'
+      }
+    }).then(res => {
+      if (isApiResponseOk(res)) {
+        this.props.dispatch({
+          type: 'projectDetail/projectDetailInfo',
+          payload: {
+            id: board_id
+          }
+        })
+        if (calback && typeof calback == 'function') calback()
+      }
+    })
+  }
+
   render() {
     const { editDetaiDescription, detaiDescriptionValue, defaultDescriptionVal, dynamic_header_sticky, is_show_dot, is_show_more } = this.state
     const { projectInfoDisplay, isInitEntry, projectDetailInfoData = {}, projectRoles = [], p_next_id, projectDynamicsList = [], invitationId, invitationOrg, invitationType } = this.props
 
-    let { board_id, board_name, data = [], description, residue_quantity, realize_quantity, org_id } = projectDetailInfoData //data是参与人列表
+    let { board_id, board_name, data = [], description, residue_quantity, realize_quantity, org_id, fields = [] } = projectDetailInfoData //data是参与人列表
     data = data || []
     const avatarList = data.concat([1])//[1,2,3,4,5,6,7,8,9]//长度再加一
     // 是否存在动态列表
@@ -589,9 +613,9 @@ export default class DrawDetailInfo extends React.Component {
             }
           </div>
           <div style={{marginTop: '32px'}}>
-            <CustomCategoriesOperate />
+            <CustomCategoriesOperate org_id={org_id} fields={fields} />
           </div>
-          <CustomFidlds placement="bottomLeft" getPopupContainer={document.getElementById('detailInfoOut')}>
+          <CustomFidlds handleAddCustomField={this.handleAddCustomField} placement="bottomLeft" getPopupContainer={document.getElementById('detailInfoOut')}>
             <div className={DrawDetailInfoStyle.add_custom_fields}>
               <span className={globalsetStyles.authTheme}>&#xe8fe;</span>
               <span>添加字段</span>

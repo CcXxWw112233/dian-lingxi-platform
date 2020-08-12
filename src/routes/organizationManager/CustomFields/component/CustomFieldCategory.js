@@ -398,14 +398,14 @@ export default class CustomFieldCategory extends Component {
           <>
             <div className={commonStyles.field_item}>
               <label className={commonStyles.label_name}>选择限制：</label>
-              <Select value={field_value.member_selected_type} optionLabelProp={'label'} style={{ width: '100%' }} onChange={this.handleMemberSelectedType}>
+              <Select value={field_value && field_value.member_selected_type} optionLabelProp={'label'} style={{ width: '100%' }} onChange={this.handleMemberSelectedType}>
                 <Option value={'1'} label={'单人'}>单人</Option>
                 <Option value={'2'} label={'多人'}>多人</Option>
               </Select>
             </div>
             <div className={commonStyles.field_item}>
               <label className={commonStyles.label_name}>范围限制：</label>
-              <Select value={field_value.member_selected_range} optionLabelProp={'label'} style={{ width: '100%' }} onChange={this.handleMemberSelectedRange}>
+              <Select value={field_value && field_value.member_selected_range} optionLabelProp={'label'} style={{ width: '100%' }} onChange={this.handleMemberSelectedRange}>
                 <Option value={'1'} label={'当前组织'}>当前组织</Option>
                 <Option value={'2'} label={'项目内'}>项目内</Option>
               </Select>
