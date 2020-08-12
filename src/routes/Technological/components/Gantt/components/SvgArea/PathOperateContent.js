@@ -37,7 +37,8 @@ export default class PathOperateContent extends Component {
         })
     }
     setRelyColor = (rgb) => {
-        const { dispatch, operator: { move_id, line_id } } = this.props
+        const { dispatch, operator: { move_id, line_id }, onSelectColor } = this.props
+        typeof onSelectColor == 'function' && onSelectColor({ move_id, line_id, color_mark: rgb })
         dispatch({
             type: 'gantt/updateCardRely',
             payload: {
@@ -48,6 +49,8 @@ export default class PathOperateContent extends Component {
         })
     }
     render() {
+        const { dispatch, operator: { move_id, line_id, color_mark } } = this.props
+        // console.log('color_mark', color_mark)
         return (
             <div className={styles.operate_wrapper} data-svg_operate='yes' data-targetclassname="specific_example">
                 <div className={styles.top} data-svg_operate='yes' data-targetclassname="specific_example">
@@ -57,7 +60,7 @@ export default class PathOperateContent extends Component {
                 <div className={styles.color_wrapper} data-svg_operate='yes' data-targetclassname="specific_example">
                     {
                         this.colors.map(value => {
-                            return <div className={styles.color_selector} onClick={() => { this.setRelyColor(value) }} style={{ background: `rgb(${value})` }} data-svg_operate='yes' data-targetclassname="specific_example"></div>
+                            return <div className={`${styles.color_selector} ${color_mark == value && styles.selected}`} onClick={() => { this.setRelyColor(value) }} style={{ background: `rgb(${value})` }} data-svg_operate='yes' data-targetclassname="specific_example"></div>
                         })
                     }
                 </div>

@@ -520,11 +520,12 @@ export default class index extends Component {
         })
     }
     // 设置当前操作的对象id
-    pathClick = ({ move_id, line_id }) => {
+    pathClick = ({ move_id, line_id, color_mark }) => {
         this.setState({
             operator: {
                 move_id,
-                line_id
+                line_id,
+                color_mark
             }
         })
     }
@@ -634,7 +635,7 @@ export default class index extends Component {
                                             data-targetclassname="specific_example"
                                             fill={`rgb(${color_mark})`}
                                             d={Arrow}
-                                            onClick={() => this.pathClick({ move_id, line_id })}
+                                            onClick={() => this.pathClick({ move_id, line_id, color_mark })}
                                             // onClick={() => this.deleteRely({ move_id, line_id })}
                                             className={`${styles.path} ${styles.path_arrow}`}
                                             {...this.pathMouseEvent}
@@ -645,7 +646,7 @@ export default class index extends Component {
                                             data-targetclassname="specific_example"
                                             d={Move_Line}
                                             stroke-width='1'
-                                            onClick={() => this.pathClick({ move_id, line_id })}
+                                            onClick={() => this.pathClick({ move_id, line_id, color_mark })}
                                             // onClick={() => this.deleteRely({ move_id, line_id })}
                                             className={`${styles.path} ${styles.path_line}`}
                                             {...this.pathMouseEvent}
@@ -681,6 +682,7 @@ export default class index extends Component {
                 <Popover
                     content={
                         <PathOperateContent
+                            onSelectColor={this.pathClick}
                             operator={this.state.operator}
                             setOperateVisible={this.setOperateVisible} />
                     }
