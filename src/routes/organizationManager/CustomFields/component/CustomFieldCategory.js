@@ -17,7 +17,7 @@ export default class CustomFieldCategory extends Component {
     const { currentOperateFieldItem = {}  } = props
     let value = !!(currentOperateFieldItem && Object.keys(currentOperateFieldItem).length) ? this.getDiffFieldValue(currentOperateFieldItem) : ''
     this.state = {
-      inputValue: currentOperateFieldItem.name ? currentOperateFieldItem.name : '', // 名称值
+      inputValue: currentOperateFieldItem.name && currentOperateFieldItem.type == 'no_group' ? currentOperateFieldItem.name : '', // 名称值
       field_type: currentOperateFieldItem.field_type ? currentOperateFieldItem.field_type : '', // 选择的字段类型
       field_value: value, // 选择的字段内容
       selected_field_group : !!(currentOperateFieldItem && Object.keys(currentOperateFieldItem).length) ? currentOperateFieldItem.type == 'group' ? currentOperateFieldItem.id : currentOperateFieldItem.group_id : '0'
@@ -48,7 +48,7 @@ export default class CustomFieldCategory extends Component {
         field_value = inputList
         break;
       case '3':
-        field_value = item.date_field_code
+        field_value = item.field_set && item.field_set.date_field_code
         break;
       case '4':
       case '5':
@@ -67,11 +67,10 @@ export default class CustomFieldCategory extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log(nextProps);
     const { currentOperateFieldItem = {} } = nextProps
     let value = !!(currentOperateFieldItem && Object.keys(currentOperateFieldItem).length) ? this.getDiffFieldValue(currentOperateFieldItem) : ''
     this.setState({
-      inputValue: currentOperateFieldItem.name ? currentOperateFieldItem.name : '', // 名称值
+      inputValue: currentOperateFieldItem.name && currentOperateFieldItem.type == 'no_group' ? currentOperateFieldItem.name : '', // 名称值
       field_type: currentOperateFieldItem.field_type ? currentOperateFieldItem.field_type : '', // 选择的字段类型
       field_value: value, // 选择的字段内容
       selected_field_group : !!(currentOperateFieldItem && Object.keys(currentOperateFieldItem).length) ? currentOperateFieldItem.type == 'group' ? currentOperateFieldItem.id : currentOperateFieldItem.group_id : '0'

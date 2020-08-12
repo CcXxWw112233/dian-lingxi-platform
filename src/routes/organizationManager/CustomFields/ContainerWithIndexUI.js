@@ -12,7 +12,7 @@ import { setUploadHeaderBaseInfo } from '../../../utils/businessFunction'
 import CustomFieldQuoteDetail from './component/CustomFieldQuoteDetail'
 import { createCustomFieldGroup, getCustomFieldList } from '../../../services/organization'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
-import { getCreateUser } from './handleOperateModal'
+import { getCreateUser, categoryIcon } from './handleOperateModal'
 
 const { Panel } = Collapse;
 
@@ -23,7 +23,11 @@ export default class ContainerWithIndexUI extends Component {
     this.state = {
       isAddCustomFieldVisible: false, // 是否显示添加字段
       isAddCustomFieldListVisible: false, // 是否显示添加分组字段
+      isRenameFieldVisible: false, // 是否重命名
       inputValue: '', // 创建分组名称
+      local_rename: '', // 保存一个本地的名称
+      re_inputValue: '', // 重命名的名称
+      current_rename_item: '', // 当前操作重命名的元素
     }
   }
 
@@ -31,7 +35,11 @@ export default class ContainerWithIndexUI extends Component {
     this.setState({
       isAddCustomFieldVisible: false,
       isAddCustomFieldListVisible: false,
-      inputValue: ''
+      isRenameFieldVisible: false,
+      inputValue: '',
+      local_rename: '', // 保存一个本地的名称
+      re_inputValue: '', // 重命名的名称
+      current_rename_item: ''
     })
   }
 
@@ -101,7 +109,7 @@ export default class ContainerWithIndexUI extends Component {
     let value = e.target.value
     if (!value || value.trimLR() == '') {
       this.setState({
-        isAddCustomFieldListVisible: false
+        isAddCustomFieldListVisible: false,
       })
     }
   }
@@ -132,12 +140,51 @@ export default class ContainerWithIndexUI extends Component {
 
   // 重命名
   handleRename = (e, item) => {
-    console.log(e, item);
     const { domEvent } = e
-    const { id } = item
+    const { id, name } = item
     domEvent && domEvent.stopPropagation()
     this.setState({
-      // current_operate_rename_item: id
+      isRenameFieldVisible: true,
+      local_rename: name,
+      re_inputValue: name,
+      current_rename_item: id
+    })
+  }
+
+  renameChange = (e) => {
+    let value = e.target.value
+    if (!value || value.trimLR() == '') {
+      this.setState({
+        re_inputValue: ''
+      })
+      return
+    }
+    this.setState({
+      re_inputValue: value
+    })
+  }
+
+  renameBlur = (e) => {
+    // let value = e.target.value
+    // if (!value || value.trimLR() == '') {
+    //   this.setState({
+    //     re_inputValue: ''
+    //   })
+    // }
+  }
+
+  onOk = () => {
+    const { current_rename_item, re_inputValue } = this.state
+    this.props.dispatch({
+      type: 'organizationManager/updateCustomFieldGroup',
+      payload: {
+        id: current_rename_item,
+        name: re_inputValue
+      }
+    }).then(res => {
+      if (isApiResponseOk(res)) {
+        this.initState()
+      }
     })
   }
 
@@ -190,7 +237,7 @@ export default class ContainerWithIndexUI extends Component {
   handleDiscountField = (e, item) => {
     const { domEvent } = e
     domEvent && domEvent.stopPropagation()
-    this.discountConfirm({item})
+    this.discountConfirm({ item })
   }
 
   deleteConfirm = ({ item, type }) => {
@@ -258,18 +305,18 @@ export default class ContainerWithIndexUI extends Component {
   dropDownContent = ({ item, type }) => {
     return (
       <Dropdown trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.customFiledsOverlay({ item, type })}>
-        <Tooltip title="字段菜单分类" getPopupContainer={triggerNode => triggerNode.parentNode}>
+        {/* <Tooltip title="字段菜单分类" getPopupContainer={triggerNode => triggerNode.parentNode}> */}
           <span className={`${commonStyles.custom_fileds_more} ${globalStyles.authTheme}`}>
             <em>&#xe66f;</em>
           </span>
-        </Tooltip>
+        {/* </Tooltip> */}
       </Dropdown>
     )
   }
 
   headerContent = (item, flag) => {
     return (
-      <div className={indexStyles.collapse_header_} style={{paddingLeft: flag ? '80px' : '44px'}}>
+      <div className={indexStyles.collapse_header_} style={{ paddingLeft: flag ? '80px' : '44px' }}>
         <div title={item.name} className={indexStyles.collapse_header_left}>
           {item.name}
         </div>
@@ -286,7 +333,7 @@ export default class ContainerWithIndexUI extends Component {
   }
 
   panelContent = (value, index) => {
-    const { field_status, group_id } = value
+    const { field_status, group_id, quote_num, field_type } = value
     return (
       <>
         {
@@ -298,12 +345,12 @@ export default class ContainerWithIndexUI extends Component {
           <div className={indexStyles.panel_content}>
             <div className={indexStyles.panel_content_left}>
               <div className={indexStyles.panel_item_name}>
-                <span className={globalStyles.authTheme}>&#xe6b2;</span>
+                <span className={globalStyles.authTheme}>{categoryIcon(field_type).icon}</span>
                 <span>{value.name}</span>
               </div>
               <div className={indexStyles.panel_detail}>
-                <span>类型：单选</span>
-                <span>被引用次数：4次 <em onClick={this.handleCustomQuoteDetail}>详情</em></span>
+                <span>类型：{categoryIcon(field_type).field_name}</span>
+                <span>被引用次数：{quote_num} 次 <em onClick={this.handleCustomQuoteDetail}>详情</em></span>
                 <span>创建人：{getCreateUser()}</span>
                 <span>状态: <span style={{ color: field_status == '1' && '#F5222D' }}>{field_status == '0' ? '启用' : '停用'}</span></span>
               </div>
@@ -325,7 +372,7 @@ export default class ContainerWithIndexUI extends Component {
   renderCustomCategoryContent = () => {
     const { customFieldsList: { groups = [], fields = [] } } = this.props
     return (
-      <div className={indexStyles.collapse_content}>
+      <div className={`${indexStyles.collapse_content}`}>
         <Collapse destroyInactivePanel={true} bordered={false}>
           {
             !!(groups && groups.length) && groups.map(item => {
@@ -360,7 +407,7 @@ export default class ContainerWithIndexUI extends Component {
   }
 
   render() {
-    const { isAddCustomFieldVisible, isAddCustomFieldListVisible, inputValue, isCustomFieldQuoteDetailVisible } = this.state
+    const { isRenameFieldVisible, isAddCustomFieldVisible, isAddCustomFieldListVisible, inputValue, isCustomFieldQuoteDetailVisible, re_inputValue, local_rename } = this.state
     const { customFieldsList = {} } = this.props
     return (
       <>
@@ -378,7 +425,7 @@ export default class ContainerWithIndexUI extends Component {
                 <span>添加字段</span>
               </span>
             </div>
-            <div style={{marginBottom: '12px'}}>
+            <div style={{ marginBottom: '12px' }}>
               {
                 isAddCustomFieldListVisible ? (
                   <div className={indexStyles.custom_add_field_list_input_field}>
@@ -388,7 +435,7 @@ export default class ContainerWithIndexUI extends Component {
                       onChange={this.onChange}
                       onBlur={this.onBlur}
                     />
-                    <Button onClick={this.handleCreateCustomFieldGroup}>确定</Button>
+                    <Button type="primary" disabled={!inputValue || inputValue.trimLR() == ''} onClick={this.handleCreateCustomFieldGroup}>确定</Button>
                   </div>
                 ) : (
                     <div className={indexStyles.custom_add_field_list} onClick={this.setAddCustomFieldsList}>
@@ -400,7 +447,9 @@ export default class ContainerWithIndexUI extends Component {
             </div>
             <hr className={commonStyles.custom_hr} />
             {/* 分组和默认列表 */}
-            {this.renderCustomCategoryContent()}
+            <div className={`${globalStyles.global_vertical_scrollbar}`} style={{ minHeight: '550px', maxHeight: '550px', overflowY: 'auto', margin: '0px -44px', padding: '0px 44px' }}>
+              {this.renderCustomCategoryContent()}
+            </div>
           </div>
         </div >
         <div id={'customCategoryContainer'} className={indexStyles.customCategoryContainer}>
@@ -423,6 +472,33 @@ export default class ContainerWithIndexUI extends Component {
             )
           }
         </div>
+        {
+          isRenameFieldVisible && (
+            <Modal
+              width={440}
+              visible={isRenameFieldVisible}
+              title={'重命名'}
+              destroyOnClose={true}
+              maskClosable={false}
+              getContainer={() => document.getElementById('customCategoryContainer')}
+              onCancel={() => {
+                this.setState({
+                  isRenameFieldVisible: false
+                })
+              }}
+              okButtonProps={{disabled: (local_rename == re_inputValue) || !re_inputValue}}
+              style={{ width: '440px' }}
+              maskStyle={{ backgroundColor: 'rgba(0,0,0,.3)' }}
+              onOk={this.onOk}
+            >
+              <Input
+                value={re_inputValue} 
+                onChange={this.renameChange}
+                onBlur={this.renameBlur}
+              />
+            </Modal>
+          )
+        }
         {/* 点击详情内容 */}
         {<CustomFieldQuoteDetail visible={isCustomFieldQuoteDetailVisible} updateState={this.updateState} />}
       </>

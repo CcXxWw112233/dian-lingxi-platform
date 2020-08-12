@@ -2,7 +2,7 @@ import {
   saveNounList, getNounList, getPayingStatus, getOrderList, getPermissions, savePermission, getRolePermissions, saveRolePermission, createRole,
   updateRole, deleteRole, copyRole, updateOrganization, setDefaultRole, getCurrentNounPlan, getFnManagementList,
   setFnManagementStatus, investmentMapAddAdministrators, investmentMapDeleteAdministrators, investmentMapQueryAdministrators,
-  getTemplateList, createTemplete, updateTemplete, deleteTemplete, getTemplateListContainer, createTempleteContainer, deleteTempleteContainer, updateTempleteContainer, sortTempleteContainer, getCustomFieldList, createCustomFieldGroup, deleteCustomFieldGroup, createCustomField, updateCustomField, deleteCustomField, discountCustomField
+  getTemplateList, createTemplete, updateTemplete, deleteTemplete, getTemplateListContainer, createTempleteContainer, deleteTempleteContainer, updateTempleteContainer, sortTempleteContainer, getCustomFieldList, createCustomFieldGroup, updateCustomFieldGroup, deleteCustomFieldGroup, createCustomField, updateCustomField, deleteCustomField, discountCustomField
 } from '../../services/organization'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
@@ -718,7 +718,6 @@ export default {
         setTimeout(() => {
           message.success('创建成功', MESSAGE_DURATION_TIME)
         }, 200)
-        console.log(res);
         yield put({
           type: 'getCustomFieldList',
           payload: {
@@ -728,6 +727,25 @@ export default {
       } else {
         message.warn(res.message)
       }
+    },
+
+    // 更新自定义字段分组
+    * updateCustomFieldGroup({ payload }, { call, put }) {
+      let res = yield call(updateCustomFieldGroup, { ...payload })
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('更新成功', MESSAGE_DURATION_TIME)
+        }, 200)
+        yield put({
+          type: 'getCustomFieldList',
+          payload: {
+
+          }
+        })
+      } else {
+        message.warn(res.message)
+      }
+      return res || {}
     },
 
     // 删除自定义字段分组
