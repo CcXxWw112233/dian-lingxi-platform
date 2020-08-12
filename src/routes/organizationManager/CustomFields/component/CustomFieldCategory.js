@@ -7,7 +7,7 @@ import { Button, Input, Select } from 'antd'
 import InputExport from './InputExport'
 
 const Option = Select.Option;
-@connect(({ organizationManager: { datas: { currentOperateFieldItem } } }) => ({
+@connect(({ organizationManager: { datas: { currentOperateFieldItem = {} } } }) => ({
   currentOperateFieldItem
 }))
 export default class CustomFieldCategory extends Component {
@@ -15,19 +15,13 @@ export default class CustomFieldCategory extends Component {
   constructor(props) {
     super(props)
     const { currentOperateFieldItem = {}  } = props
+    let value = !!(currentOperateFieldItem && Object.keys(currentOperateFieldItem).length) ? this.getDiffFieldValue(currentOperateFieldItem) : ''
     this.state = {
-      inputValue: '', // 名称值
-      field_type: '', // 选择的字段类型
-      field_value: null, // 选择的字段内容
-      selected_field_group : !!(currentOperateFieldItem && Object.keys(currentOperateFieldItem).length) ? currentOperateFieldItem.id : '0'
+      inputValue: currentOperateFieldItem.name ? currentOperateFieldItem.name : '', // 名称值
+      field_type: currentOperateFieldItem.field_type ? currentOperateFieldItem.field_type : '', // 选择的字段类型
+      field_value: value, // 选择的字段内容
+      selected_field_group : !!(currentOperateFieldItem && Object.keys(currentOperateFieldItem).length) ? currentOperateFieldItem.type == 'group' ? currentOperateFieldItem.id : currentOperateFieldItem.group_id : '0'
     }
-  }
-
-  state = {
-    inputValue: '', // 名称值
-    field_type: '', // 选择的字段类型
-    field_value: null, // 选择的字段内容
-    selected_field_group: '0', // 选择的分组列表
   }
 
   initState = () => {
@@ -39,16 +33,59 @@ export default class CustomFieldCategory extends Component {
     })
   }
 
+  getDiffFieldValue = (item) => {
+    const { field_type } = item
+    let field_value = ''
+    switch (field_type) {
+      case '1':
+        case '2':
+        let inputList = [...item.items]
+        inputList = inputList.map(item => {
+          let new_item = {...item}
+          new_item = {...item, value: item.item_value}
+          return new_item
+        })
+        field_value = inputList
+        break;
+      case '3':
+        field_value = item.date_field_code
+        break;
+      case '4':
+      case '5':
+      case '6':
+        break;
+      case '8':
+        field_value = {
+          member_selected_type: item.field_set && item.field_set.member_selected_type,
+          member_selected_range: item.field_set && item.field_set.member_selected_range
+        }
+        break;
+      default:
+        break;
+    }
+    return field_value
+  }
+
   componentWillReceiveProps(nextProps) {
     console.log(nextProps);
     const { currentOperateFieldItem = {} } = nextProps
+    let value = !!(currentOperateFieldItem && Object.keys(currentOperateFieldItem).length) ? this.getDiffFieldValue(currentOperateFieldItem) : ''
     this.setState({
-      selected_field_group : !!(currentOperateFieldItem && Object.keys(currentOperateFieldItem).length) ? currentOperateFieldItem.id : '0'
+      inputValue: currentOperateFieldItem.name ? currentOperateFieldItem.name : '', // 名称值
+      field_type: currentOperateFieldItem.field_type ? currentOperateFieldItem.field_type : '', // 选择的字段类型
+      field_value: value, // 选择的字段内容
+      selected_field_group : !!(currentOperateFieldItem && Object.keys(currentOperateFieldItem).length) ? currentOperateFieldItem.type == 'group' ? currentOperateFieldItem.id : currentOperateFieldItem.group_id : '0'
     })
   }
 
   componentWillUnmount() {
     this.initState()
+    this.props.dispatch({
+      type: 'organizationManager/updateDatas',
+      payload: {
+        currentOperateFieldItem: {}
+      }
+    })
   }
 
   // ------------- 名称事件 S --------------------
@@ -172,6 +209,7 @@ export default class CustomFieldCategory extends Component {
   getParams = () => {
     let params = {}
     const { field_type, inputValue, selected_field_group, field_value } = this.state
+    const { currentOperateFieldItem = {} } = this.props
     switch (field_type) {
       case '1':
       case '2':
@@ -202,7 +240,8 @@ export default class CustomFieldCategory extends Component {
       ...params,
       field_type: field_type,
       name: inputValue,
-      group_id: selected_field_group ? selected_field_group : null
+      group_id: selected_field_group ? selected_field_group : null,
+      id: currentOperateFieldItem.type && currentOperateFieldItem.type == 'no_group' ? currentOperateFieldItem.id : null
     }
     return params
   }
@@ -211,8 +250,21 @@ export default class CustomFieldCategory extends Component {
   handleCreateCustomField = (e) => {
     e && e.stopPropagation()
     let params = this.getParams()
+    delete params.id
     this.props.dispatch({
       type: 'organizationManager/createCustomField',
+      payload: {
+        ...params
+      }
+    })
+    this.props.onCancel && this.props.onCancel()
+  }
+
+  // 更新字段
+  handleUpdateCustomField = (e) => {
+    let params = this.getParams()
+    this.props.dispatch({
+      type: 'organizationManager/updateCustomField',
       payload: {
         ...params
       }
@@ -226,10 +278,10 @@ export default class CustomFieldCategory extends Component {
     switch (field_type) {
       case '1': // 表示单选
         // 只要找到一个值不为空就行
-        confirmButtonDisabled = field_value.find(i => i.value != '') ? true : false
+        confirmButtonDisabled = field_value && field_value.find(i => i.value != '') ? true : false
         break;
       case '2':
-        confirmButtonDisabled = field_value.find(i => i.value != '') ? true : false
+        confirmButtonDisabled = field_value && field_value.find(i => i.value != '') ? true : false
         break
       case '3': // 表示日期
         confirmButtonDisabled = !!field_value
@@ -260,13 +312,15 @@ export default class CustomFieldCategory extends Component {
   renderPopoverContentAddMemberBtn = () => {
     const { inputValue, field_type, selected_field_group } = this.state
     let disabled = !!inputValue && (field_type && this.renderDiffButtonTooltipsText()) && !!selected_field_group
+    const { currentOperateFieldItem = {} } = this.props
+    let type = currentOperateFieldItem.type
     return (
       <div className={indexStyles.content__addMemberBtn_wrapper}>
         <Button
           type="primary"
           block
           disabled={!disabled}
-          onClick={this.handleCreateCustomField}
+          onClick={!type || type == 'group' ? this.handleCreateCustomField : type == 'no_group' ? this.handleUpdateCustomField : ''}
         >
           确定
           </Button>
@@ -276,7 +330,7 @@ export default class CustomFieldCategory extends Component {
 
   // 渲染不同类型选项对应不同内容
   renderPopoverContentWithDiffCategoryDetail = (type) => {
-    const { field_value: inputList = [] } = this.state
+    const { field_value } = this.state
     let mainContent = (<div></div>)
     switch (type) {
       case '1': // 表示单选
@@ -284,9 +338,9 @@ export default class CustomFieldCategory extends Component {
           <div className={commonStyles.field_item}>
             <label className={commonStyles.label_name}>选项：</label>
             {
-              inputList && inputList.map((item, index) => {
+              field_value && field_value.map((item, index) => {
                 return <InputExport
-                  inputList={inputList}
+                  inputList={field_value}
                   itemKey={index}
                   itemValue={item}
                   handleAddOneTips={this.handleAddOneTips}
@@ -303,9 +357,9 @@ export default class CustomFieldCategory extends Component {
           <div className={commonStyles.field_item}>
             <label className={commonStyles.label_name}>选项：</label>
             {
-              inputList && inputList.map((item, index) => {
+              field_value && field_value.map((item, index) => {
                 return <InputExport
-                  inputList={inputList}
+                  inputList={field_value}
                   itemKey={index}
                   itemValue={item}
                   handleAddOneTips={this.handleAddOneTips}
@@ -321,7 +375,7 @@ export default class CustomFieldCategory extends Component {
         mainContent = (
           <div className={commonStyles.field_item}>
             <label className={commonStyles.label_name}>精确度：</label>
-            <Select optionLabelProp={'label'} style={{ width: '100%' }} onChange={this.handleDateChange}>
+            <Select value={field_value} optionLabelProp={'label'} style={{ width: '100%' }} onChange={this.handleDateChange}>
               <Option value={'YM'} label={'年/月'}>年/月</Option>
               <Option value={'YMD'} label={'年/月/日'}>年/月/日</Option>
               <Option value={'YMDH'} label={'年/月/日 时'}>年/月/日 时</Option>
@@ -345,14 +399,14 @@ export default class CustomFieldCategory extends Component {
           <>
             <div className={commonStyles.field_item}>
               <label className={commonStyles.label_name}>选择限制：</label>
-              <Select optionLabelProp={'label'} style={{ width: '100%' }} onChange={this.handleMemberSelectedType}>
+              <Select value={field_value.member_selected_type} optionLabelProp={'label'} style={{ width: '100%' }} onChange={this.handleMemberSelectedType}>
                 <Option value={'1'} label={'单人'}>单人</Option>
                 <Option value={'2'} label={'多人'}>多人</Option>
               </Select>
             </div>
             <div className={commonStyles.field_item}>
               <label className={commonStyles.label_name}>范围限制：</label>
-              <Select optionLabelProp={'label'} style={{ width: '100%' }} onChange={this.handleMemberSelectedRange}>
+              <Select value={field_value.member_selected_range} optionLabelProp={'label'} style={{ width: '100%' }} onChange={this.handleMemberSelectedRange}>
                 <Option value={'1'} label={'当前组织'}>当前组织</Option>
                 <Option value={'2'} label={'项目内'}>项目内</Option>
               </Select>

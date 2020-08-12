@@ -2,7 +2,7 @@ import {
   saveNounList, getNounList, getPayingStatus, getOrderList, getPermissions, savePermission, getRolePermissions, saveRolePermission, createRole,
   updateRole, deleteRole, copyRole, updateOrganization, setDefaultRole, getCurrentNounPlan, getFnManagementList,
   setFnManagementStatus, investmentMapAddAdministrators, investmentMapDeleteAdministrators, investmentMapQueryAdministrators,
-  getTemplateList, createTemplete, updateTemplete, deleteTemplete, getTemplateListContainer, createTempleteContainer, deleteTempleteContainer, updateTempleteContainer, sortTempleteContainer, getCustomFieldList, createCustomFieldGroup, deleteCustomFieldGroup, createCustomField, deleteCustomField
+  getTemplateList, createTemplete, updateTemplete, deleteTemplete, getTemplateListContainer, createTempleteContainer, deleteTempleteContainer, updateTempleteContainer, sortTempleteContainer, getCustomFieldList, createCustomFieldGroup, deleteCustomFieldGroup, createCustomField, updateCustomField, deleteCustomField, discountCustomField
 } from '../../services/organization'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
@@ -768,12 +768,50 @@ export default {
       return res || {}
     },
 
+    // 更新自定义字段
+    * updateCustomField({ payload }, { call, put }) {
+      let res = yield call(updateCustomField, { ...payload })
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('更新成功', MESSAGE_DURATION_TIME)
+        }, 200)
+        yield put({
+          type: 'getCustomFieldList',
+          payload: {
+
+          }
+        })
+      } else {
+        message.warn(res.message)
+      }
+      return res || {}
+    },
+
     // 删除自定义字段
     * deleteCustomField({ payload }, { call, put }) {
       let res = yield call(deleteCustomField, { ...payload })
       if (isApiResponseOk(res)) {
         setTimeout(() => {
           message.success('删除成功', MESSAGE_DURATION_TIME)
+        }, 200)
+        yield put({
+          type: 'getCustomFieldList',
+          payload: {
+
+          }
+        })
+      } else {
+        message.warn(res.message)
+      }
+      return res || {}
+    },
+
+    // 停用自定义字段
+    * discountCustomField({ payload }, { call, put }) {
+      let res = yield call(discountCustomField, { ...payload })
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('停用成功', MESSAGE_DURATION_TIME)
         }, 200)
         yield put({
           type: 'getCustomFieldList',

@@ -394,7 +394,7 @@ export async function updateCustomField(data) {
     method: 'PUT',
     data: {
       ...data,
-      _organization_id: localStorage.getItem('OrganizationId')
+      // _organization_id: localStorage.getItem('OrganizationId')
     }
   })
 }
@@ -405,6 +405,15 @@ export async function deleteCustomField(params) {
     url: `${REQUEST_DOMAIN_FLOWS}/board/field`,
     method: 'DELETE',
     params
+  })
+}
+
+// 停用自定义字段
+export async function discountCustomField(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/board/field/set`,
+    method: 'PUT',
+    data
   })
 }
 

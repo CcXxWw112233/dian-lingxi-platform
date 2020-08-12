@@ -3,9 +3,10 @@ import { connect } from 'dva'
 import ContainerWithIndexUI from './ContainerWithIndexUI'
 
 const mapStateToProps = (state) => {
-  const { organizationManager: { datas: { customFieldsList = {} } } } = state
+  const { organizationManager: { datas: { customFieldsList = {}, currentOperateFieldItem = {} } } } = state
   return {
-    customFieldsList
+    customFieldsList,
+    currentOperateFieldItem
   }
 }
 

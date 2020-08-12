@@ -63,12 +63,17 @@ export default class ContainerWithIndexUI extends Component {
     this.setState({
       isAddCustomFieldVisible: true,
     })
-    this.props.dispatch({
-      type: 'organizationManager/updateDatas',
-      payload: {
-        currentOperateFieldItem: item
-      }
-    })
+    if (item) {
+      this.props.dispatch({
+        type: 'organizationManager/updateDatas',
+        payload: {
+          currentOperateFieldItem: {
+            ...item,
+            type: 'group'
+          }
+        }
+      })
+    }
   }
 
   // 点击添加分组字段
@@ -136,7 +141,59 @@ export default class ContainerWithIndexUI extends Component {
     })
   }
 
-  confirm = ({item, type}) => {
+  // 编辑字段
+  handleEditField = (e, item) => {
+    const { domEvent } = e
+    domEvent && domEvent.stopPropagation()
+    this.setState({
+      isAddCustomFieldVisible: true
+    })
+    this.props.dispatch({
+      type: 'organizationManager/updateDatas',
+      payload: {
+        currentOperateFieldItem: {
+          ...item,
+          type: 'no_group'
+        }
+      }
+    })
+  }
+
+  discountConfirm = ({ item }) => {
+    const modal = Modal.confirm()
+    const that = this
+    modal.update({
+      title: '确认要停用这条字段吗？',
+      content: '停用后不影响已引用该字段的事项,且该字段在添加字段时不再出现',
+      zIndex: 1110,
+      okText: '确认',
+      cancelText: '取消',
+      style: {
+        letterSpacing: '1px'
+      },
+      onOk: () => {
+        that.props.dispatch({
+          type: 'organizationManager/discountCustomField',
+          payload: {
+            id: item.id,
+            field_status: '1'
+          }
+        })
+      },
+      onCancel: () => {
+        modal.destroy();
+      }
+    });
+  }
+
+  // 停用字段
+  handleDiscountField = (e, item) => {
+    const { domEvent } = e
+    domEvent && domEvent.stopPropagation()
+    this.discountConfirm({item})
+  }
+
+  deleteConfirm = ({ item, type }) => {
     const modal = Modal.confirm()
     const that = this
     modal.update({
@@ -151,7 +208,7 @@ export default class ContainerWithIndexUI extends Component {
       // getContainer: document.getElementById('org_managementContainer') ? () => document.getElementById('org_managementContainer') : triggerNode => triggerNode.parentNode,
       onOk: () => {
         that.props.dispatch({
-          type: type =='no_group' ? 'organizationManager/deleteCustomField' : 'organizationManager/deleteCustomFieldGroup',
+          type: type == 'no_group' ? 'organizationManager/deleteCustomField' : 'organizationManager/deleteCustomFieldGroup',
           payload: {
             id: item.id
           }
@@ -164,10 +221,10 @@ export default class ContainerWithIndexUI extends Component {
   }
 
   // 删除字段
-  handleDeleteField = ({e, item, type}) => {
+  handleDeleteField = ({ e, item, type }) => {
     const { domEvent } = e
     domEvent && domEvent.stopPropagation()
-    this.confirm({item, type})
+    this.deleteConfirm({ item, type })
   }
 
   customFiledsOverlay = ({ item, type }) => {
@@ -180,15 +237,20 @@ export default class ContainerWithIndexUI extends Component {
         }
         {
           type == 'no_group' && (
-            <Menu.Item key='edit_fileds'>编辑字段</Menu.Item>
+            <Menu.Item onClick={(e) => { this.handleEditField(e, item) }} key='edit_fileds'>编辑字段</Menu.Item>
           )
         }
         {
           type == 'no_group' && (
-            <Menu.Item key='discont_fileds'>停用字段</Menu.Item>
+            <Menu.Item key='discont_fileds' onClick={(e) => { this.handleDiscountField(e, item) }}>
+              <div>
+                <span style={{ marginRight: '5px' }}>停用字段</span>
+                <span title="停用后不影响已引用该字段的事项,且该字段在添加字段时不再出现" style={{ cursor: 'pointer' }} className={globalStyles.authTheme}>&#xe77b;</span>
+              </div>
+            </Menu.Item>
           )
         }
-        <Menu.Item onClick={(e) => { this.handleDeleteField({e, item, type}) }} style={{ color: '#F5222D' }} key='delelte_fileds'>删除</Menu.Item>
+        <Menu.Item onClick={(e) => { this.handleDeleteField({ e, item, type }) }} style={{ color: '#F5222D' }} key='delelte_fileds'>删除</Menu.Item>
       </Menu>
     )
   }
@@ -205,10 +267,10 @@ export default class ContainerWithIndexUI extends Component {
     )
   }
 
-  headerContent = (item) => {
+  headerContent = (item, flag) => {
     return (
-      <div className={indexStyles.collapse_header_}>
-        <div className={indexStyles.collapse_header_left}>
+      <div className={indexStyles.collapse_header_} style={{paddingLeft: flag ? '80px' : '44px'}}>
+        <div title={item.name} className={indexStyles.collapse_header_left}>
           {item.name}
         </div>
         <div className={indexStyles.collapse_header_right} onClick={(e) => e && e.stopPropagation()}>
@@ -243,7 +305,7 @@ export default class ContainerWithIndexUI extends Component {
                 <span>类型：单选</span>
                 <span>被引用次数：4次 <em onClick={this.handleCustomQuoteDetail}>详情</em></span>
                 <span>创建人：{getCreateUser()}</span>
-                <span style={{ color: field_status == '1' && '#F5222D' }}>状态：{field_status == '0' ? '启用' : '停用'}</span>
+                <span>状态: <span style={{ color: field_status == '1' && '#F5222D' }}>{field_status == '0' ? '启用' : '停用'}</span></span>
               </div>
             </div>
             <div className={indexStyles.panel_content_right}>
@@ -264,11 +326,12 @@ export default class ContainerWithIndexUI extends Component {
     const { customFieldsList: { groups = [], fields = [] } } = this.props
     return (
       <div className={indexStyles.collapse_content}>
-        <Collapse destroyInactivePanel={true} bordered={false} defaultActiveKey={['1']}>
+        <Collapse destroyInactivePanel={true} bordered={false}>
           {
             !!(groups && groups.length) && groups.map(item => {
+              let flag = !!(item.fields && item.fields.length)
               return (
-                <Panel header={this.headerContent(item)} key={item.id}>
+                <Panel showArrow={flag} header={this.headerContent(item, flag)} key={item.id}>
                   {
                     item.fields && item.fields.length && item.fields.map(value => {
                       return (
@@ -284,7 +347,7 @@ export default class ContainerWithIndexUI extends Component {
           }
         </Collapse>
         {
-          !!(fields && fields.length) && fields.map((item,index) => {
+          !!(fields && fields.length) && fields.map((item, index) => {
             return (
               <div className={indexStyles.no_collapse_content}>
                 {this.panelContent(item, index)}
@@ -315,24 +378,26 @@ export default class ContainerWithIndexUI extends Component {
                 <span>添加字段</span>
               </span>
             </div>
-            {
-              isAddCustomFieldListVisible ? (
-                <div className={indexStyles.custom_add_field_list_input_field}>
-                  <Input
-                    autoFocus={true}
-                    value={inputValue}
-                    onChange={this.onChange}
-                    onBlur={this.onBlur}
-                  />
-                  <Button onClick={this.handleCreateCustomFieldGroup} type="primary" disabled={!inputValue || inputValue.trimLR() == ''}>确定</Button>
-                </div>
-              ) : (
-                  <div className={indexStyles.custom_add_field_list} onClick={this.setAddCustomFieldsList}>
-                    <span className={globalStyles.authTheme}>&#xe782;</span>
-                    <span>新建字段分组</span>
+            <div style={{marginBottom: '12px'}}>
+              {
+                isAddCustomFieldListVisible ? (
+                  <div className={indexStyles.custom_add_field_list_input_field}>
+                    <Input
+                      autoFocus={true}
+                      value={inputValue}
+                      onChange={this.onChange}
+                      onBlur={this.onBlur}
+                    />
+                    <Button onClick={this.handleCreateCustomFieldGroup}>确定</Button>
                   </div>
-                )
-            }
+                ) : (
+                    <div className={indexStyles.custom_add_field_list} onClick={this.setAddCustomFieldsList}>
+                      <span className={globalStyles.authTheme}>&#xe782;</span>
+                      <span>新建字段分组</span>
+                    </div>
+                  )
+              }
+            </div>
             <hr className={commonStyles.custom_hr} />
             {/* 分组和默认列表 */}
             {this.renderCustomCategoryContent()}
