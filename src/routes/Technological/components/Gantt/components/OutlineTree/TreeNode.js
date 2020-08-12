@@ -470,7 +470,7 @@ export default class TreeNode extends Component {
                             this.isShowSetTimeSpan(nodeValue) &&
                             <Popover
                                 {...(tree_type == '1' ? { visible: false } : {})} //里程碑不能直接设置周期
-                                placement="bottom" content={<ManhourSet onChange={this.onManHourChange} value={time_span} />} title={<div style={{ textAlign: 'center', height: '36px', lineHeight: '36px', fontWeight: '600' }}>花费时间</div>} trigger="click">
+                                placement="bottom" content={<ManhourSet onChange={this.onManHourChange} nodeValue={nodeValue} value={time_span} />} title={<div style={{ textAlign: 'center', height: '36px', lineHeight: '36px', fontWeight: '600' }}>花费时间</div>} trigger="click">
                                 {
                                     time_span ?
                                         <span className={`${styles.editTitle}`}>{time_span}天</span>
