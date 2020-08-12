@@ -13,7 +13,8 @@ import {
     addMilestoneExcutos,
     removeMilestoneExcutos,
     addTaskExecutor,
-    removeTaskExecutor
+    removeTaskExecutor,
+    updateTaskVTwo
 } from '../../../../services/technological/task';
 import { addMenbersInProject } from '../../../../services/technological/project';
 import { getBoardTemplateList, importBoardTemplate } from '@/services/technological/gantt.js';
@@ -31,6 +32,7 @@ import { currentNounPlanFilterName } from '../../../../utils/businessFunction';
 import { PROJECTS } from '../../../../globalset/js/constant';
 import { closeFeature } from '../../../../utils/temporary';
 import { onChangeCardHandleCardDetail } from './ganttBusiness';
+import { rebackCreateNotify } from '../../../../components/NotificationTodos';
 const { SubMenu } = Menu;
 // const { TreeNode } = OutlineTree;
 const { confirm } = Modal;
@@ -190,7 +192,7 @@ export default class OutLineHeadItem extends Component {
 
     onDataProcess = ({ action, param, calback }) => {
         //console.log("大纲:onDataProcess", action, param);
-        const { dispatch, gantt_board_id, } = this.props;
+        const { dispatch, gantt_board_id, group_view_type } = this.props;
         let { outline_tree = [] } = this.props;
         switch (action) {
             case 'add_milestone':
@@ -372,9 +374,11 @@ export default class OutLineHeadItem extends Component {
                         updateParams.start_time = param.start_time;
                         updateParams.due_time = param.due_time;
                     }
-                    updateTask({ ...updateParams }, { isNotLoading: false })
+                    updateTaskVTwo({ ...updateParams }, { isNotLoading: false })
                         .then(res => {
                             if (isApiResponseOk(res)) {
+                                rebackCreateNotify.call(this, { res, id: param.id, board_id: gantt_board_id, group_view_type, dispatch })
+
                                 let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, param.id);
                                 if (nodeValue) {
                                     this.onChangeCardHandleCardDetail(nodeValue)
@@ -391,6 +395,12 @@ export default class OutLineHeadItem extends Component {
                                 } else {
                                     console.error("OutlineTree.getTreeNodeValue:未查询到节点");
                                 }
+                                dispatch({
+                                    type: `gantt/updateOutLineTree`,
+                                    payload: {
+                                        datas: [...res.data.scope_content.filter(item => item.id != param.id)]
+                                    }
+                                })
                             } else {
 
                                 message.error(res.message)
