@@ -622,6 +622,7 @@ export default class index extends Component {
                                     relation
                                 }
                                 // console.log('ssssssssssss', params)
+                                if (move_left == 0 || line_left == 0) return ''
                                 if (!this.checkInvalid(params)) return ''
                                 const { Move_Line, Arrow } = this.calPath({ ...params })
                                 return (
