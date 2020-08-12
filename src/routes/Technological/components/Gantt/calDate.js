@@ -50,7 +50,7 @@ function setWeekData(timestamp) {
       timestamp: timeToTimestamp(MonDayTimeTranslate + ' ' + '0:0:0'),
       timestampEnd: timeToTimestamp(SundayTimeTranslate + ' ' + '23:59:59'),
       monthText: MonthText,
-      date_no: `${month_0}/${date_no_0}-${month_1}/${date_no_1}`,
+      date_no: `${month_0 != month_1 ? month_0 + '/' : ''}${date_no_0}-${date_no_1}`,// `${month_0}/${date_no_0}-${month_1}/${date_no_1}`,
       description: `${year_1}年${month_1}月`
     }
     weekData.push(obj)
@@ -85,7 +85,7 @@ function setWeekData(timestamp) {
       timestamp: timeToTimestamp(MonDayTimeTranslate + ' ' + '0:0:0'),
       timestampEnd: timeToTimestamp(SundayTimeTranslate + ' ' + '23:59:59'),
       monthText: MonthText,
-      date_no: `${month_0}/${date_no_0}-${month_1}/${date_no_1}`,
+      date_no: `${month_0 != month_1 ? month_0 + '/' : ''}${date_no_0}-${date_no_1}`,//`${month_0}/${date_no_0}-${month_1}/${date_no_1}`,
       description: `${year_1}年${month_1}月`
     }
     weekData2.push(obj)
