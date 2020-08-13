@@ -14,7 +14,7 @@ export function handleReBackNotiParams({ code, data = [], message, id }) {
     if (code == '0') { //成功的时候存在依赖影响
         if (length) {  //当存在影响其它任务的时候 需要warn
             operate_code = '1'
-            comfirm_message = `当前操作偏离原计划${scope_day}天，将影响${scope_user}个人，${scope_number}条任务。`
+            comfirm_message = `当前操作偏离原计划${scope_day || '0'}天，将影响${scope_user || '0'}个人，${scope_number || '0'}条任务。`
         }
     } else {
         operate_code = '2'

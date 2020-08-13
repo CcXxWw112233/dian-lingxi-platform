@@ -55,10 +55,12 @@ export default class index extends Component {
 
     componentDidMount() {
         // this.getRelyMaps(this.props)
-        window.addEventListener('click', this.listenClick, true)
+        document.getElementById('gantt_svg_area').addEventListener('click', this.listenClick, true)
+        window.addEventListener('scroll', this.closeOperate, true)
     }
     componentWillUnmount() {
-        window.removeEventListener('click', this.listenClick, true)
+        document.getElementById('gantt_svg_area').removeEventListener('click', this.listenClick, true)
+        window.addEventListener('scroll', this.closeOperate, true)
     }
     componentWillReceiveProps(nextProps) {
         const { rely_map = [] } = nextProps
@@ -495,7 +497,7 @@ export default class index extends Component {
         if (dataset.svg_operate === 'yes') { //落点在操作区域
             return
         }
-        if (e.target.nodeName !== 'path') { //不在svg path上
+        if (e.target.nodeName !== 'path' || dataset.targetrelypath != 'relypath') { //不在svg path上
             this.setState({
                 operate_visible: false
             })
@@ -513,6 +515,11 @@ export default class index extends Component {
                 x, y
             }
         })
+    }
+    closeOperate = () => {
+        if (this.state.operate_visible) {
+            this.setOperateVisible(false)
+        }
     }
     setOperateVisible = (bool) => {
         this.setState({
@@ -634,6 +641,7 @@ export default class index extends Component {
                                             stroke={`rgb(${color_mark})`}
                                             stroke-width="1"
                                             data-targetclassname="specific_example"
+                                            data-targetrelypath="relypath"
                                             fill={`rgb(${color_mark})`}
                                             d={Arrow}
                                             onClick={() => this.pathClick({ move_id, line_id, color_mark })}
@@ -645,6 +653,7 @@ export default class index extends Component {
                                             stroke={`rgb(${color_mark})`}
                                             fill="none"
                                             data-targetclassname="specific_example"
+                                            data-targetrelypath="relypath"
                                             d={Move_Line}
                                             stroke-width='1'
                                             onClick={() => this.pathClick({ move_id, line_id, color_mark })}
