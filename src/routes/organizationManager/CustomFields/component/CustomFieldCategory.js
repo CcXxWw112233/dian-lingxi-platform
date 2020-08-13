@@ -69,12 +69,16 @@ export default class CustomFieldCategory extends Component {
   componentWillReceiveProps(nextProps) {
     const { currentOperateFieldItem = {} } = nextProps
     let value = !!(currentOperateFieldItem && Object.keys(currentOperateFieldItem).length) ? this.getDiffFieldValue(currentOperateFieldItem) : ''
-    this.setState({
-      inputValue: currentOperateFieldItem.name && currentOperateFieldItem.type == 'no_group' ? currentOperateFieldItem.name : '', // 名称值
-      field_type: currentOperateFieldItem.field_type ? currentOperateFieldItem.field_type : '', // 选择的字段类型
-      field_value: value, // 选择的字段内容
-      selected_field_group : !!(currentOperateFieldItem && Object.keys(currentOperateFieldItem).length) ? currentOperateFieldItem.type == 'group' ? currentOperateFieldItem.id : currentOperateFieldItem.group_id : '0'
-    })
+    const { field_type } = this.state
+    console.log(field_type);
+    if (!!(currentOperateFieldItem && Object.keys(currentOperateFieldItem).length)) {
+      this.setState({
+        inputValue: currentOperateFieldItem.name && currentOperateFieldItem.type == 'no_group' ? currentOperateFieldItem.name : '', // 名称值
+        field_type: currentOperateFieldItem.field_type ? currentOperateFieldItem.field_type : field_type, // 选择的字段类型
+        field_value: value, // 选择的字段内容
+        selected_field_group : !!(currentOperateFieldItem && Object.keys(currentOperateFieldItem).length) ? currentOperateFieldItem.type == 'group' ? currentOperateFieldItem.id : currentOperateFieldItem.group_id : '0'
+      })
+    }
   }
 
   componentWillUnmount() {
@@ -113,6 +117,7 @@ export default class CustomFieldCategory extends Component {
 
   // 字段类型选择
   onFieldsChange = (value, e) => {
+    console.log(value);
     if (value == '1' || value == '2') {
       this.setState({
         field_type: value,
@@ -462,6 +467,7 @@ export default class CustomFieldCategory extends Component {
   renderPopoverContentCategory = () => {
     const { inputValue, field_type, selected_field_group } = this.state
     const { customFieldsList: { groups = [] }, currentOperateFieldItem = {} } = this.props
+    console.log(field_type);
     // let defaultValue = !!(currentOperateFieldItem && Object.keys(currentOperateFieldItem).length) ? currentOperateFieldItem.id : selected_field_group
     return (
       <div>
