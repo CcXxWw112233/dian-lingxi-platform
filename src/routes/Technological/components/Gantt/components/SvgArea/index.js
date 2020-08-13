@@ -55,11 +55,13 @@ export default class index extends Component {
 
     componentDidMount() {
         // this.getRelyMaps(this.props)
-        document.getElementById('gantt_svg_area').addEventListener('click', this.listenClick, true)
+        // document.getElementById('gantt_svg_area')
+        window.addEventListener('click', this.listenClick, true)
         window.addEventListener('scroll', this.closeOperate, true)
     }
     componentWillUnmount() {
-        document.getElementById('gantt_svg_area').removeEventListener('click', this.listenClick, true)
+        // document.getElementById('gantt_svg_area')
+        window.removeEventListener('click', this.listenClick, true)
         window.addEventListener('scroll', this.closeOperate, true)
     }
     componentWillReceiveProps(nextProps) {

@@ -26,6 +26,7 @@ export default class PathOperateContent extends Component {
         Modal.confirm({
             title: '确认删除该依赖？',
             onOk: () => {
+                this.onClose()
                 dispatch({
                     type: 'gantt/deleteCardRely',
                     payload: {
