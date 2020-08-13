@@ -135,7 +135,7 @@ export default class GetRowSummary extends Component {
         let has_due = false
         for (let val of list) {
             const new_due_time = transformTimestamp(val.due_time)
-            if (new Date().getTime() > new_due_time && val.is_realize != '1') { //超时未完成才算逾期
+            if (!!new_due_time && new Date().getTime() > new_due_time && val.is_realize != '1') { //超时未完成才算逾期
                 has_due = true
             }
         }
