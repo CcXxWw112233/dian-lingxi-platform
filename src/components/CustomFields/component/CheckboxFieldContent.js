@@ -63,7 +63,7 @@ export default class CheckboxFieldContent extends Component {
     e && e.stopPropagation()
     const { itemValue } = this.state
     const { field_value, id } = itemValue
-    let selectedKeys = field_value.split(',')
+    let selectedKeys = field_value && field_value.split(',')
     selectedKeys = selectedKeys.filter(item => item != deleteId)
     this.props.dispatch({
       type: 'organizationManager/setRelationCustomField',
@@ -79,7 +79,7 @@ export default class CheckboxFieldContent extends Component {
   }
 
   getSelectedValue = (field_value) => {
-    const { itemValue: { items = [] } } = this.state
+    const { itemValue: { field_content: { items = [] } } } = this.state
     const options = [...items]
     const gold_name = (options.find(item => item.id == field_value) || {}).item_value
     return gold_name
@@ -101,8 +101,8 @@ export default class CheckboxFieldContent extends Component {
   }
 
   overlayMenu = (itemValue) => {
-    const { items = [], id, field_value } = itemValue
-    let selectedKeys = field_value.split(',')
+    const { field_content: { items = [] }, id, field_value } = itemValue
+    let selectedKeys = field_value && field_value.split(',')
     return (
       <div>
         <Menu multiple={true} selectedKeys={selectedKeys} onSelect={(e) => { this.onSelect(e, id) }} onDeselect={(e) => { this.onDeselect(e, id) }}>
@@ -125,7 +125,7 @@ export default class CheckboxFieldContent extends Component {
 
   render() {
     const { itemValue, itemKey } = this.state
-    const { field_name, field_id, id, field_type, field_value } = itemValue
+    const { field_id, id, field_value, field_content: { name, field_type } } = itemValue
     let selectedKeys = field_value && field_value.split(",") || []
     return (
       <div key={itemKey} className={commonStyles.custom_field_item_wrapper}>
@@ -134,7 +134,7 @@ export default class CheckboxFieldContent extends Component {
             <span onClick={(e) => { this.handleDeleteRelationField(e, id) }} className={`${globalsetStyles.authTheme} ${commonStyles.delete_icon}`}>&#xe7fe;</span>
             <div className={commonStyles.field_name}>
               <span className={`${globalsetStyles.authTheme} ${commonStyles.field_name_icon}`}>{categoryIcon(field_type).icon}</span>
-              <span title={field_name}>{field_name}</span>
+              <span title={name}>{name}</span>
             </div>
           </div>
           {/* <div className={`${commonStyles.field_value} ${commonStyles.pub_hover}`}> */}
@@ -150,7 +150,7 @@ export default class CheckboxFieldContent extends Component {
                             item && (
                               <div key={item} className={commonStyles.field_s_item}>
                                 <div className={commonStyles.field_s_item_bg}>
-                                  <span>
+                                  <span style={{color: !!(selectedKeys && selectedKeys.length) ? 'rgba(0,0,0,0.65)' : 'rgba(0,0,0,0.45)'}}>
                                     {this.getSelectedValue(item)}
                                     <span onClick={(e) => { this.handleDeleteSelectedValue(e, item) }} className={`${globalsetStyles.authTheme} ${commonStyles.field_s_item_close}`}>&#xe7fe;</span>
                                   </span>

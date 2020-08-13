@@ -10,7 +10,7 @@ import MemberFieldContent from './component/MemberFieldContent';
 export default class CustomCategoriesOperate extends Component {
 
   renderContent = (item,key) => {
-    const { field_type } = item
+    const { field_content: { field_type } } = item
     let mainContent = (<div></div>)
     // mainContent = (<RextFieldContent />)
     // mainContent = (<CheckboxFieldContent />)

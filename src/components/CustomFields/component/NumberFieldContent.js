@@ -25,7 +25,7 @@ export default class NumberFieldContent extends Component {
 
   render() {
     const { itemValue, itemKey } = this.props
-    const { field_name, field_id, id, field_type } = itemValue
+    const { field_id, id, field_value, field_content: { name, field_type } } = itemValue
     return (
       <div className={commonStyles.custom_field_item_wrapper}>
         <div className={commonStyles.custom_field_item}>
@@ -33,7 +33,7 @@ export default class NumberFieldContent extends Component {
             <span className={`${globalsetStyles.authTheme} ${commonStyles.delete_icon}`}>&#xe7fe;</span>
             <div className={commonStyles.field_name}>
               <span className={`${globalsetStyles.authTheme} ${commonStyles.field_name_icon}`}>{categoryIcon(field_type).icon}</span>
-              <span title={field_name}>{field_name}</span>
+              <span title={name}>{name}</span>
             </div>
           </div>
           {

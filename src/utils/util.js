@@ -518,17 +518,7 @@ Date.prototype.Format = function (fmt) { //author: meizz
     if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
   return fmt;
 }
-/*处理时间格式方法 liuyj*/
-export const timestampFormat = (millisecond, format) => {
-  millisecond = millisecond.length === 10 ? Number(millisecond) * 1000 : Number(millisecond)
-  if (millisecond) {
-    var date = new Date();
-    date.setTime(millisecond);
-    return date.Format(format || "yyyy-MM-dd hh:mm:ss");
-  } else {
-    return null
-  }
-}
+
 
 /* 过滤文件格式 (缩略图显示) */
 export const filterFileFormatType = (fileName) => {
@@ -843,3 +833,19 @@ export const removeEmptyArrayEle = (arr) => {
   }
   return arr;
 };
+
+/**
+ * 处理时间格式方法
+ * @param {*} millisecond 时间错
+ * @param {*} format 格式
+ */
+export const timestampFormat = (millisecond, format) => {
+  millisecond = millisecond.length === 10 ? Number(millisecond) * 1000 : Number(millisecond)
+  if (millisecond) {
+    var date = new Date();
+    date.setTime(millisecond);
+    return date.Format(format || "yyyy-MM-dd hh:mm:ss");
+  } else {
+    return null
+  }
+}

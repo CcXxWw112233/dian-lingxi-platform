@@ -59,14 +59,29 @@ export default class RextFieldContent extends Component {
 
   // 获取对应option的value值
   getSelectedValue = (field_value) => {
-    const { itemValue: { items = [] } } = this.state
+    const { itemValue: { field_content: { items = [] } } } = this.state
     const options = [...items]
     const gold_name = options.find(item => item.id == field_value).item_value
     return gold_name
   }
 
+    // 删除关联字段
+    handleDeleteRelationField = (e, id) => {
+      e && e.stopPropagation()
+      this.props.dispatch({
+        type: 'organizationManager/deleteRelationCustomField',
+        payload: {
+          id: id
+        }
+      }).then(res => {
+        if (isApiResponseOk(res)) {
+          this.props.handleUpdateModelDatas && this.props.handleUpdateModelDatas({ type: 'delete', data: id })
+        }
+      })
+    }
+
   overlayMenu = (itemValue) => {
-    const { items = [], id, field_value } = itemValue
+    const { field_content: { items = [] }, id, field_value } = itemValue
     return (
       <div>
         <Menu multiple={true} selectedKeys={[field_value]} onSelect={(e) => { this.onSelect(e,id) }} onDeselect={(e) => { this.onDeselect(e, id) }}>
@@ -89,15 +104,15 @@ export default class RextFieldContent extends Component {
 
   render() {
     const { itemValue, itemKey } = this.state
-    const { field_name, field_id, id, field_type, items = [], field_value } = itemValue
+    const { field_id, id, field_value, field_content: { name, field_type, items = [] } } = itemValue
     return (
       <div key={id} className={commonStyles.custom_field_item_wrapper}>
         <div className={commonStyles.custom_field_item}>
           <div className={commonStyles.c_left}>
-            <span className={`${globalsetStyles.authTheme} ${commonStyles.delete_icon}`}>&#xe7fe;</span>
+            <span onClick={(e) => { this.handleDeleteRelationField(e, id) }} className={`${globalsetStyles.authTheme} ${commonStyles.delete_icon}`}>&#xe7fe;</span>
             <div className={commonStyles.field_name}>
               <span className={`${globalsetStyles.authTheme} ${commonStyles.field_name_icon}`}>{categoryIcon(field_type).icon}</span>
-              <span title={field_name}>{field_name}</span>
+              <span title={name}>{name}</span>
             </div>
           </div>
           {/* <div className={`${commonStyles.field_value} ${commonStyles.pub_hover}`}> */}
@@ -105,7 +120,7 @@ export default class RextFieldContent extends Component {
             <div className={`${commonStyles.field_value} ${commonStyles.pub_hover}`}>
               <div className={commonStyles.common_select}>
                 {
-                  field_value ? <span>{this.getSelectedValue(field_value)}</span> : <span>未选择</span>
+                  field_value ? <span style={{color: field_value ? 'rgba(0,0,0,0.65)' : 'rgba(0,0,0,0.45)'}}>{this.getSelectedValue(field_value)}</span> : <span>未选择</span>
                 }
                 {/* <span>未选择</span> */}
                 <span className={globalsetStyles.authTheme}>&#xe7ee;</span>

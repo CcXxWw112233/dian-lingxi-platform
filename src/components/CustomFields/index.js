@@ -77,7 +77,7 @@ export default class Index extends Component {
     })
     const calback = () => {
       this.setState({
-        visible: [],
+        visible: false,
         checkedKeys: []
       })
     }
