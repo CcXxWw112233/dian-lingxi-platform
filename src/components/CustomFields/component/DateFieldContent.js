@@ -79,6 +79,21 @@ export default class DateFieldContent extends Component {
     })
   }
 
+  // 删除关联字段
+  handleDeleteRelationField = (e, id) => {
+    e && e.stopPropagation()
+    this.props.dispatch({
+      type: 'organizationManager/deleteRelationCustomField',
+      payload: {
+        id: id
+      }
+    }).then(res => {
+      if (isApiResponseOk(res)) {
+        this.props.handleUpdateModelDatas && this.props.handleUpdateModelDatas({ type: 'delete', data: id })
+      }
+    })
+  }
+
   render() {
     const { itemValue, itemKey } = this.state
     const { field_id, field_value, id, field_content: { name, field_type, field_set: { date_field_code } } } = itemValue
@@ -87,7 +102,7 @@ export default class DateFieldContent extends Component {
       <div key={id} className={commonStyles.custom_field_item_wrapper}>
         <div className={commonStyles.custom_field_item}>
           <div className={commonStyles.c_left}>
-            <span className={`${globalsetStyles.authTheme} ${commonStyles.delete_icon}`}>&#xe7fe;</span>
+            <span onClick={(e) => { this.handleDeleteRelationField(e, id) }} className={`${globalsetStyles.authTheme} ${commonStyles.delete_icon}`}>&#xe7fe;</span>
             <div className={commonStyles.field_name}>
               <span className={`${globalsetStyles.authTheme} ${commonStyles.field_name_icon}`}>{categoryIcon(field_type).icon}</span>
               <span title={name}>{name}</span>
