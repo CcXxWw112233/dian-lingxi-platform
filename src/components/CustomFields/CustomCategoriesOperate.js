@@ -19,25 +19,25 @@ export default class CustomCategoriesOperate extends Component {
     // mainContent = (<TextFieldContent />)
     switch (field_type) {
       case '1':
-        mainContent = (<RadioFieldContent itemValue={item} itemKey={key} />)
+        mainContent = (<RadioFieldContent itemValue={item} itemKey={key} handleUpdateModelDatas={this.props.handleUpdateModelDatas} />)
         break;
       case '2':
-        mainContent = (<CheckboxFieldContent itemValue={item} itemKey={key} />)
+        mainContent = (<CheckboxFieldContent itemValue={item} itemKey={key} handleUpdateModelDatas={this.props.handleUpdateModelDatas} />)
         break;
       case '3':
-        mainContent = (<DateFieldContent itemValue={item} itemKey={key} />)
+        mainContent = (<DateFieldContent itemValue={item} itemKey={key} handleUpdateModelDatas={this.props.handleUpdateModelDatas} />)
         break;
       case '4':
-        mainContent = (<NumberFieldContent itemValue={item} itemKey={key} />)
+        mainContent = (<NumberFieldContent itemValue={item} itemKey={key} handleUpdateModelDatas={this.props.handleUpdateModelDatas} />)
         break;
       case '5':
-        mainContent = (<TextFieldContent itemValue={item} itemKey={key} />)
+        mainContent = (<TextFieldContent itemValue={item} itemKey={key} handleUpdateModelDatas={this.props.handleUpdateModelDatas} />)
         break;
       case '6':
         // mainContent = (<DateFieldContent />)
         break;
       case '8':
-        mainContent = (<MemberFieldContent itemValue={item} itemKey={key} />)
+        mainContent = (<MemberFieldContent itemValue={item} itemKey={key} handleUpdateModelDatas={this.props.handleUpdateModelDatas} />)
         break;
       default:
         break;
@@ -57,4 +57,9 @@ export default class CustomCategoriesOperate extends Component {
       </div>
     )
   }
+}
+
+CustomCategoriesOperate.defaultProps = {
+  fields: [], // 字段列表
+  handleUpdateModelDatas: function(){}, // 修改更新model中的数据
 }

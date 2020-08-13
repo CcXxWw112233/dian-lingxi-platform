@@ -417,6 +417,40 @@ export default class DrawDetailInfo extends React.Component {
     })
   }
 
+  // 修改弹窗数据
+  handleUpdateModelDatas = ({ data, type }) => {
+    const { projectDetailInfoData, projectDetailInfoData: { fields = [] } } = this.props
+    let new_fields = [...fields]
+    switch (type) {
+      case 'update':
+        const { id, field_value } = data
+        new_fields = new_fields.map(item => {
+          if (item.id == id) {
+            let new_item = { ...item }
+            new_item = { ...item, field_value: field_value }
+            return new_item
+          } else {
+            return item
+          }
+        })
+        break;
+      case 'delete':
+        new_fields = new_fields.filter(item => item.id != data)
+        break;
+
+      default:
+        break;
+    }
+    let new_projectDetailInfoData = { ...projectDetailInfoData }
+    new_projectDetailInfoData['fields'] = new_fields
+    this.props.dispatch({
+      type: 'projectDetail/updateDatas',
+      payload: {
+        projectDetailInfoData: new_projectDetailInfoData
+      }
+    })
+  }
+
   render() {
     const { editDetaiDescription, detaiDescriptionValue, defaultDescriptionVal, dynamic_header_sticky, is_show_dot, is_show_more } = this.state
     const { projectInfoDisplay, isInitEntry, projectDetailInfoData = {}, projectRoles = [], p_next_id, projectDynamicsList = [], invitationId, invitationOrg, invitationType } = this.props
@@ -549,8 +583,8 @@ export default class DrawDetailInfo extends React.Component {
     )
     let value = (description || defaultDescriptionVal).replace(/\r\n/g, "<br />")
     return (
-      <div ref="detail_wrapper" style={{marginLeft: '-24px'}}>
-        <div id={'detailInfoOut'} style={{paddingLeft: '24px'}} className={`${DrawDetailInfoStyle.detailInfoOut} ${globalsetStyles.global_vertical_scrollbar}`} onScrollCapture={(e) => { this.onScroll(e, board_id) }} >
+      <div ref="detail_wrapper" style={{ marginLeft: '-24px' }}>
+        <div id={'detailInfoOut'} style={{ paddingLeft: '24px' }} className={`${DrawDetailInfoStyle.detailInfoOut} ${globalsetStyles.global_vertical_scrollbar}`} onScrollCapture={(e) => { this.onScroll(e, board_id) }} >
           <div className={DrawDetailInfoStyle.brief}>
             <span className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.icon} ${DrawDetailInfoStyle.brief_icon}`}>&#xe7f6;</span>
             <span>{`${currentNounPlanFilterName(PROJECTS)}简介`}</span>
@@ -612,10 +646,10 @@ export default class DrawDetailInfo extends React.Component {
               )
             }
           </div>
-          <div style={{marginTop: '32px'}}>
-            <CustomCategoriesOperate org_id={org_id} fields={fields} />
+          <div style={{ marginTop: '32px' }}>
+            <CustomCategoriesOperate fields={fields} handleUpdateModelDatas={this.handleUpdateModelDatas} />
           </div>
-          <CustomFidlds handleAddCustomField={this.handleAddCustomField} placement="bottomLeft" getPopupContainer={document.getElementById('detailInfoOut')}>
+          <CustomFidlds org_id={org_id} handleAddCustomField={this.handleAddCustomField} placement="bottomLeft" getPopupContainer={document.getElementById('detailInfoOut')}>
             <div className={DrawDetailInfoStyle.add_custom_fields}>
               <span className={globalsetStyles.authTheme}>&#xe8fe;</span>
               <span>添加字段</span>

@@ -15,13 +15,15 @@ export default class Index extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      visible: false
+      visible: false,
+      checkedKeys: []
     }
   }
 
   initeState = () => {
     this.setState({
       visible: false,
+      checkedKeys: [],
       treeData: [],
       groupsData: []
     })
@@ -31,7 +33,6 @@ export default class Index extends Component {
     const { org_id } = this.props
     getCustomFieldList({ _organization_id: org_id }).then(res => {
       if (isApiResponseOk(res)) {
-        console.log(res);
         let treeData = removeEmptyArrayEle([].concat(res.data.groups, res.data.fields))
         this.setState({
           groupsData: res.data.groups,
@@ -45,6 +46,11 @@ export default class Index extends Component {
     this.setState({
       visible: visible,
     });
+    if (!visible) {
+      this.setState({
+        checkedKeys: []
+      })
+    }
   }
 
   onCheck = (checkedKeys) => {
@@ -54,7 +60,8 @@ export default class Index extends Component {
   }
 
   // 重置
-  handleReSetting = () => {
+  handleReSetting = (e) => {
+    e && e.stopPropagation()
     this.setState({
       checkedKeys: []
     })
@@ -69,7 +76,10 @@ export default class Index extends Component {
       need_checkedKeys = checkedKeys.filter(n => n != item.id)
     })
     const calback = () => {
-      this.initeState()
+      this.setState({
+        visible: [],
+        checkedKeys: []
+      })
     }
     this.props.handleAddCustomField && this.props.handleAddCustomField(need_checkedKeys, calback)
   }
@@ -98,7 +108,7 @@ export default class Index extends Component {
             <Tree
               checkable
               onCheck={this.onCheck}
-              value={checkedKeys}
+              checkedKeys={checkedKeys}
             >
               {this.renderTreeNodes(treeData)}
             </Tree>
@@ -136,6 +146,10 @@ export default class Index extends Component {
 
       </div>
     )
+  }
+
+  componentWillUnmount() {
+    console.log('进来了','sssssssssssssunmount');
   }
 
   render() {

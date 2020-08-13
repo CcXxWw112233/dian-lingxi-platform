@@ -426,4 +426,22 @@ export async function createRelationCustomField(data) {
   })
 }
 
+// 设置自定义字段关联值
+export async function setRelationCustomField(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/board/field/relation`,
+    method: 'PUT',
+    data
+  })
+}
+
+// 删除自定义关联
+export async function deleteRelationCustomField(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/board/field/relation`,
+    method: 'DELETE',
+    params
+  })
+}
+
 // ------------------------ 自定义字段接口 E --------------------------
