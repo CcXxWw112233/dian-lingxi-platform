@@ -227,7 +227,7 @@ export default class AppendSubTaskItem extends Component {
       this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id: drawContent.card_id, name: 'card_data', value: new_data, operate_properties_code })
       this.props.handleChildTaskChange && this.props.handleChildTaskChange({ parent_card_id: drawContent.card_id, data: { ...childTaskItemValue, [name]: value }, card_id, action: 'update', rely_card_datas })
       const { board_id } = this.props
-      typeof res == 'object' && rebackCreateNotify.call(this, { res, id: card_id, board_id, dispatch, parent_id: drawContent.card_id }) //创建撤回弹窗
+      typeof res == 'object' && rebackCreateNotify.call(this, { res, id: card_id, board_id, dispatch, parent_card_id: drawContent.card_id, operate_in_card_detail_panel: true }) //创建撤回弹窗
     }
   }
 
@@ -280,7 +280,7 @@ export default class AppendSubTaskItem extends Component {
       this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(new_data)
       this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id: drawContent.card_id, name: 'card_data', value: newChildData })
       const { board_id } = this.props
-      typeof res == 'object' && rebackCreateNotify.call(this, { res, id: card_id, board_id, dispatch, parent_id: drawContent.card_id }) //创建撤回弹窗
+      typeof res == 'object' && rebackCreateNotify.call(this, { res, id: card_id, board_id, dispatch, parent_card_id: drawContent.card_id, operate_in_card_detail_panel: true }) //创建撤回弹窗
 
     })
   }

@@ -445,13 +445,13 @@ export const onChangeCardHandleCardDetail = ({
 }) => {
     if (selected_card_visible) {
         //当当前打开的任务是该任务或者是该任务父任务，则做查询更新
-        // if (card_detail_id == operate_id || card_detail_id == operate_parent_card_id) {
-        dispatch({
-            type: 'publicTaskDetailModal/getCardWithAttributesDetail',
-            payload: {
-                id: card_detail_id,
-            }
-        })
-        // }
+        if (card_detail_id == operate_id || card_detail_id == operate_parent_card_id) {
+            dispatch({
+                type: 'publicTaskDetailModal/getCardWithAttributesDetail',
+                payload: {
+                    id: card_detail_id,
+                }
+            })
+        }
     }
 }

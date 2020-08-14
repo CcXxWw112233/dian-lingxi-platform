@@ -549,7 +549,7 @@ export default class MainContent extends Component {
         }, 500)
       }
       this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'start_time', value: start_timeStamp, rely_card_datas: res.data })
-      rebackCreateNotify.call(this, { res, id: card_id, board_id, dispatch }) //创建撤回弹窗
+      rebackCreateNotify.call(this, { res, id: card_id, board_id, dispatch, operate_in_card_detail_panel: true }) //创建撤回弹窗
 
     })
   }
@@ -596,7 +596,7 @@ export default class MainContent extends Component {
         }, 500)
       }
       this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'due_time', value: due_timeStamp, rely_card_datas: res.data })
-      rebackCreateNotify.call(this, { res, id: card_id, board_id, dispatch }) //创建撤回弹窗
+      rebackCreateNotify.call(this, { res, id: card_id, board_id, dispatch, operate_in_card_detail_panel: true }) //创建撤回弹窗
 
     })
   }
@@ -625,7 +625,7 @@ export default class MainContent extends Component {
         return
       }
       this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'start_time', value: '0', rely_card_datas: res.data })
-      rebackCreateNotify.call(this, { res, id: card_id, board_id, dispatch }) //创建撤回弹窗
+      rebackCreateNotify.call(this, { res, id: card_id, board_id, dispatch, operate_in_card_detail_panel: true }) //创建撤回弹窗
 
     })
 
@@ -656,7 +656,7 @@ export default class MainContent extends Component {
         return
       }
       this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'due_time', value: '0', rely_card_datas: res.data })
-      rebackCreateNotify.call(this, { res, id: card_id, board_id, dispatch }) //创建撤回弹窗
+      rebackCreateNotify.call(this, { res, id: card_id, board_id, dispatch, operate_in_card_detail_panel: true }) //创建撤回弹窗
 
     })
 

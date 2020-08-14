@@ -535,7 +535,7 @@ export default class CardItem extends Component {
 
     }
     overDragCompleteHandleRight = () => { //右侧增减时间
-        const { itemValue: { id, end_time, start_time, board_id, is_has_start_time, parent_card_id }, group_view_type, gantt_view_mode, gantt_board_id, dispatch } = this.props
+        const { itemValue: { id, end_time, start_time, board_id, is_has_start_time, parent_card_id }, group_view_type, gantt_view_mode, gantt_board_id, dispatch, card_detail_id, selected_card_visible } = this.props
         const { local_left, local_width, local_width_origin } = this.state
         const { date_arr_one_level, ceilWidth } = this.props
         const updateData = {}
@@ -581,7 +581,7 @@ export default class CardItem extends Component {
         updateTaskVTwo({ card_id: id, due_time: end_time_timestamp, board_id: board_id || gantt_board_id }, { isNotLoading: false })
             .then(res => {
                 if (isApiResponseOk(res)) {
-                    rebackCreateNotify.call(this, { res, id, board_id, group_view_type, dispatch })
+                    rebackCreateNotify.call(this, { res, id, board_id, group_view_type, dispatch, parent_card_id, card_detail_id, selected_card_visible })
                     // if (this.handleNotifiParams(res).code == '0') {
                     //     message.success('变更成功')
                     // } else {
@@ -668,7 +668,7 @@ export default class CardItem extends Component {
     }
     // 不在项目分组内，左右移动
     overDragCompleteHandlePositonAbout = () => {
-        const { itemValue: { id, top, start_time, board_id, left, parent_card_id }, group_view_type, gantt_view_mode, gantt_board_id, dispatch } = this.props
+        const { itemValue: { id, top, start_time, board_id, left, parent_card_id }, group_view_type, gantt_view_mode, gantt_board_id, dispatch, card_detail_id, selected_card_visible } = this.props
         const { local_left, local_width, local_width_origin } = this.state
         const { date_arr_one_level, ceilWidth } = this.props
         const updateData = {}
@@ -711,7 +711,7 @@ export default class CardItem extends Component {
         updateTaskVTwo({ card_id: id, due_time: end_time_timestamp, start_time: start_time_timestamp, board_id: board_id || gantt_board_id }, { isNotLoading: false })
             .then(res => {
                 if (isApiResponseOk(res)) {
-                    rebackCreateNotify.call(this, { res, id, board_id, group_view_type, dispatch })
+                    rebackCreateNotify.call(this, { res, id, board_id, group_view_type, dispatch, parent_card_id, card_detail_id, selected_card_visible })
                     // if (this.handleNotifiParams(res).code == '0') {
                     //     message.success('变更成功')
                     // } else {
@@ -754,7 +754,7 @@ export default class CardItem extends Component {
     }
     // 在项目分组内，上下左右移动
     overDragCompleteHandlePositonAround = (data = {}) => {
-        const { itemValue: { id, end_time, start_time, board_id, left, top }, gantt_board_id, gantt_view_mode, group_view_type, dispatch } = this.props
+        const { itemValue: { id, end_time, start_time, board_id, left, top, parent_card_id }, gantt_board_id, gantt_view_mode, group_view_type, dispatch, card_detail_id, selected_card_visible } = this.props
         const { local_left, local_width, local_width_origin } = this.state
         const { date_arr_one_level, ceilWidth } = this.props
         const updateData = {}
@@ -793,7 +793,7 @@ export default class CardItem extends Component {
         updateTaskVTwo({ ...params }, { isNotLoading: false })
             .then(res => {
                 if (isApiResponseOk(res)) {
-                    rebackCreateNotify.call(this, { res, id, board_id, group_view_type, dispatch })
+                    rebackCreateNotify.call(this, { res, id, board_id, group_view_type, dispatch, parent_card_id, card_detail_id, selected_card_visible })
                     // if (this.handleNotifiParams(res).code == '0') {
                     //     message.success('变更成功')
                     // } else {

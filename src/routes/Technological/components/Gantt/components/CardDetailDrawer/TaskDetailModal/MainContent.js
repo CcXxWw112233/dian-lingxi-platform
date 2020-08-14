@@ -547,7 +547,7 @@ export default class MainContent extends Component {
       }
       this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'start_time', value: start_timeStamp, rely_card_datas: res.data.scope_content })
       const { group_view_type } = this.props
-      rebackCreateNotify.call(this, { res, id: card_id, board_id, group_view_type, dispatch }) //创建撤回弹窗
+      rebackCreateNotify.call(this, { res, id: card_id, board_id, group_view_type, dispatch, operate_in_card_detail_panel: true }) //创建撤回弹窗
 
     })
   }
@@ -595,7 +595,7 @@ export default class MainContent extends Component {
       }
       this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'due_time', value: due_timeStamp, rely_card_datas: res.data.scope_content })
       const { group_view_type } = this.props
-      rebackCreateNotify.call(this, { res, id: card_id, board_id, group_view_type, dispatch }) //创建撤回弹窗
+      rebackCreateNotify.call(this, { res, id: card_id, board_id, group_view_type, dispatch, operate_in_card_detail_panel: true }) //创建撤回弹窗
     })
   }
   // 截止时间 chg事件 E
@@ -624,7 +624,7 @@ export default class MainContent extends Component {
       }
       this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'start_time', value: '0', rely_card_datas: res.data.scope_content })
       const { group_view_type } = this.props
-      rebackCreateNotify.call(this, { res, id: card_id, board_id, group_view_type, dispatch }) //创建撤回弹窗
+      rebackCreateNotify.call(this, { res, id: card_id, board_id, group_view_type, dispatch, operate_in_card_detail_panel: true }) //创建撤回弹窗
     })
 
   }
@@ -655,7 +655,7 @@ export default class MainContent extends Component {
       }
       this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'due_time', value: '0', rely_card_datas: res.data.scope_content })
       const { group_view_type } = this.props
-      rebackCreateNotify.call(this, { res, id: card_id, board_id, group_view_type, dispatch }) //创建撤回弹窗
+      rebackCreateNotify.call(this, { res, id: card_id, board_id, group_view_type, dispatch, operate_in_card_detail_panel: true }) //创建撤回弹窗
     })
 
   }

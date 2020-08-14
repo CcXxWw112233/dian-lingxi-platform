@@ -377,8 +377,8 @@ export default class OutLineHeadItem extends Component {
                     updateTaskVTwo({ ...updateParams }, { isNotLoading: false })
                         .then(res => {
                             if (isApiResponseOk(res)) {
-                                rebackCreateNotify.call(this, { res, id: param.id, board_id: gantt_board_id, group_view_type, dispatch })
-
+                                const { card_detail_id, selected_card_visible, } = this.props
+                                rebackCreateNotify.call(this, { res, id: param.id, board_id: gantt_board_id, group_view_type, dispatch, parent_card_id: nodeValue.parent_card_id, card_detail_id, selected_card_visible, })
                                 let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, param.id);
                                 if (nodeValue) {
                                     this.onChangeCardHandleCardDetail(nodeValue)
