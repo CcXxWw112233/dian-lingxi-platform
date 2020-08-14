@@ -417,6 +417,15 @@ export async function discountCustomField(data) {
   })
 }
 
+// 获取字段引用列表
+export async function getCustomFieldQuoteList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/board/field/quote/list`,
+    method: 'get',
+    params
+  })
+}
+
 // 创建关联字段接口
 export async function createRelationCustomField(data) {
   return request({

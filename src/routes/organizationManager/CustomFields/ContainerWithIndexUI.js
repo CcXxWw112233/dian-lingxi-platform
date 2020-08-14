@@ -10,7 +10,7 @@ import axios from 'axios'
 import Cookies from 'js-cookie'
 import { setUploadHeaderBaseInfo } from '../../../utils/businessFunction'
 import CustomFieldQuoteDetail from './component/CustomFieldQuoteDetail'
-import { createCustomFieldGroup, getCustomFieldList } from '../../../services/organization'
+import { createCustomFieldGroup, getCustomFieldList, getCustomFieldQuoteList } from '../../../services/organization'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { getCreateUser, categoryIcon } from './handleOperateModal'
 
@@ -93,9 +93,15 @@ export default class ContainerWithIndexUI extends Component {
   }
 
   // 点击详情
-  handleCustomQuoteDetail = () => {
-    this.setState({
-      isCustomFieldQuoteDetailVisible: true
+  handleCustomQuoteDetail = (e, id) => {
+    e && e.stopPropagation()
+    getCustomFieldQuoteList({id}).then(res => {
+      if (isApiResponseOk(res)) {
+        this.setState({
+          isCustomFieldQuoteDetailVisible: true,
+          quoteList: res.data
+        })
+      }
     })
   }
 
@@ -343,7 +349,7 @@ export default class ContainerWithIndexUI extends Component {
   }
 
   panelContent = (value, index) => {
-    const { field_status, group_id, quote_num, field_type } = value
+    const { field_status, group_id, quote_num, field_type, id } = value
     return (
       <>
         {
@@ -360,7 +366,7 @@ export default class ContainerWithIndexUI extends Component {
               </div>
               <div className={indexStyles.panel_detail}>
                 <span>类型：{categoryIcon(field_type).field_name}</span>
-                <span>被引用次数：{quote_num} 次 <em onClick={this.handleCustomQuoteDetail}>详情</em></span>
+                <span>被引用次数：{quote_num} 次 <em onClick={(e) => { this.handleCustomQuoteDetail(e, id) }}>详情</em></span>
                 <span>创建人：{getCreateUser()}</span>
                 <span>状态: <span style={{ color: field_status == '1' && '#F5222D' }}>{field_status == '0' ? '启用' : '停用'}</span></span>
               </div>
@@ -510,7 +516,7 @@ export default class ContainerWithIndexUI extends Component {
           )
         }
         {/* 点击详情内容 */}
-        {<CustomFieldQuoteDetail visible={isCustomFieldQuoteDetailVisible} updateState={this.updateState} />}
+        {<CustomFieldQuoteDetail visible={isCustomFieldQuoteDetailVisible} updateState={this.updateState} quoteList={this.state.quoteList} />}
       </>
     )
   }

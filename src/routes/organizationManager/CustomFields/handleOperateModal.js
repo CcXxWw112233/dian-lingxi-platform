@@ -38,13 +38,14 @@ export const categoryIcon = (type) => {
 }
 
 // 字段引用详情
-export const fieldsQuoteDetail = (type) => {
+export const fieldsQuoteDetail = (code) => {
   let icon = (<span></span>)
-  switch (type) {
-    case '1':
-      
+  switch (code) {
+    case 'BOARD':
+      icon = <span>&#xe684;</span>
       break;
-  
+    case '':
+      break;
     default:
       break;
   }
