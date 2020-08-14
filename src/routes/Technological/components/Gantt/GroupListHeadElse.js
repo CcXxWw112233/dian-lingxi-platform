@@ -59,7 +59,7 @@ export default class GroupListHeadElse extends Component {
       if (outline_tree_round_length > rows) {
         return 8 * ceiHeight
       } else {
-        return (rows + 5) * ceiHeight
+        return (rows - outline_tree_round_length + 5) * ceiHeight
       }
     }
     return (rows + 5) * ceiHeight + 30
