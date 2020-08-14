@@ -70,6 +70,10 @@ export default class Index extends Component {
   // 添加字段
   handleAddCustomField = (e) => {
     e && e.stopPropagation()
+    this.setState({
+      isOnConfirmAddField: true
+    })
+    if (this.state.isOnConfirmAddField) return
     const { checkedKeys = [], groupsData = [] } = this.state
     let need_checkedKeys = []
     groupsData.forEach(item => {
@@ -78,7 +82,8 @@ export default class Index extends Component {
     const calback = () => {
       this.setState({
         visible: false,
-        checkedKeys: []
+        checkedKeys: [],
+        isOnConfirmAddField: false
       })
     }
     this.props.handleAddCustomField && this.props.handleAddCustomField(need_checkedKeys, calback)

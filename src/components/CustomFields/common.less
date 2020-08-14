@@ -87,6 +87,11 @@
           }
         }
       }
+      :global {
+        .ant-upload-select {
+          width: 100%;
+        }
+      }
     }
     .common_input {
       height:38px;
@@ -155,44 +160,96 @@
   }
 }
 
-      // 每一个用户的样式
-      .user_item {
-        padding    : 2px 8px;
-        box-sizing : border-box;
-        margin-left: 24px;
+// 每一个用户的样式
+.user_item {
+  padding    : 2px 8px;
+  box-sizing : border-box;
+  margin-left: 24px;
 
-        &:hover {
-          background   : rgba(0, 0, 0, 0.09);
-          border-radius: 4px;
-        }
+  &:hover {
+    background   : rgba(0, 0, 0, 0.09);
+    border-radius: 4px;
+  }
 
-        .usericon {
-          width : 40px;
-          height: 40px;
-        }
+  .usericon {
+    width : 40px;
+    height: 40px;
+  }
 
-        .userItemDeleBtn {
-          display          : none;
-          width            : 14px;
-          height           : 14px;
-          border-radius    : 4px;
-          position         : absolute;
-          background       : url(../../assets/workbench/close-circle@2x.png);
-          background-repeat: no-repeat;
-          background-size  : contain;
-          transition       : all 0.3s;
-        }
+  .userItemDeleBtn {
+    display          : none;
+    width            : 14px;
+    height           : 14px;
+    border-radius    : 4px;
+    position         : absolute;
+    background       : url(../../assets/workbench/close-circle@2x.png);
+    background-repeat: no-repeat;
+    background-size  : contain;
+    transition       : all 0.3s;
+  }
 
-        .userItemDeleBtn:hover {
-          background       : url(../../assets/workbench/close-circle-active@2x.png);
-          background-repeat: no-repeat;
-          background-size  : contain;
-        }
-      }
+  .userItemDeleBtn:hover {
+    background       : url(../../assets/workbench/close-circle-active@2x.png);
+    background-repeat: no-repeat;
+    background-size  : contain;
+  }
+}
 
-      .user_item:hover .userItemDeleBtn {
-        display   : inline-block;
-        top       : -4px;
-        right     : -4px;
-        transition: all 0.3s;
-      }
+.user_item:hover .userItemDeleBtn {
+  display   : inline-block;
+  top       : -4px;
+  right     : -4px;
+  transition: all 0.3s;
+}
+
+.file_item {
+  // width:842px;
+  height:38px;
+  background:rgba(0,0,0,0.02);
+  border-radius:4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 2px 8px;
+  margin-top: 8px;
+  .file_theme_code {
+    font-size: 24px;
+    color: #1890FF;
+    vertical-align: middle;
+  }
+  .file_name {
+    font-size:14px;
+    font-family:PingFangSC-Regular,PingFang SC;
+    font-weight:400;
+    color:rgba(0,0,0,0.65);
+    vertical-align: middle;
+    cursor: pointer;
+    margin: 0 8px;
+    display: flex;
+    align-items: center;
+  }
+  .del_name {
+    font-size:14px;
+    font-family:PingFangSC-Regular,PingFang SC;
+    font-weight:400;
+    color:rgba(245,34,45,1);
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+  .down_name {
+    font-size:14px;
+    font-family:PingFangSC-Regular,PingFang SC;
+    font-weight:400;
+    color:#1890FF;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+}
+
+.upload_file_progress {
+  :global {
+    .ant-progress-bg {
+      height: 2px !important;
+    }
+  }
+}

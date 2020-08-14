@@ -1,7 +1,7 @@
 
 // 容器组件
 import React, { Component, useState, useEffect } from 'react'
-import { Input, Button, Modal, Collapse, Tooltip, Dropdown, Menu } from 'antd'
+import { Input, Button, Modal, Collapse, Tooltip, Dropdown, Menu, message } from 'antd'
 import indexStyles from './index.less'
 import commonStyles from './common.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
@@ -271,6 +271,16 @@ export default class ContainerWithIndexUI extends Component {
   handleDeleteField = ({ e, item, type }) => {
     const { domEvent } = e
     domEvent && domEvent.stopPropagation()
+    if (!!(item.fields && item.fields.length)) {
+      let gold_value = item.fields.find(item => item.quote_num != 0)
+      if (!!(gold_value && Object.keys(gold_value).length)) {
+        message.error('字段被引用中，无法删除')
+        return
+      }
+    } else if (item.quote_num != 0) {
+      message.error('字段被引用中，无法删除')
+      return
+    }
     this.deleteConfirm({ item, type })
   }
 
