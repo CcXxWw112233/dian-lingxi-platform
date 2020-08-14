@@ -378,7 +378,6 @@ export default class OutLineHeadItem extends Component {
                         .then(res => {
                             if (isApiResponseOk(res)) {
                                 const { card_detail_id, selected_card_visible, } = this.props
-                                rebackCreateNotify.call(this, { res, id: param.id, board_id: gantt_board_id, group_view_type, dispatch, parent_card_id: nodeValue.parent_card_id, card_detail_id, selected_card_visible, })
                                 let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, param.id);
                                 if (nodeValue) {
                                     this.onChangeCardHandleCardDetail(nodeValue)
@@ -395,6 +394,7 @@ export default class OutLineHeadItem extends Component {
                                 } else {
                                     console.error("OutlineTree.getTreeNodeValue:未查询到节点");
                                 }
+                                rebackCreateNotify.call(this, { res, id: param.id, board_id: gantt_board_id, group_view_type, dispatch, parent_card_id: nodeValue.parent_card_id, card_detail_id, selected_card_visible, })
                                 dispatch({
                                     type: `gantt/updateOutLineTree`,
                                     payload: {
@@ -406,6 +406,7 @@ export default class OutLineHeadItem extends Component {
                                 message.error(res.message)
                             }
                         }).catch(err => {
+                            console.log('err', err)
                             message.error('更新失败')
                         })
                 }
