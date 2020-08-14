@@ -43,17 +43,19 @@ export default class InputExport extends Component {
   }
 
   render() {
-    const { itemKey, itemValue, inputList = [] } = this.props
+    const { itemKey, itemValue, inputList = [], maxLength, disabled } = this.props
     const { value } = itemValue
     const { currentOperateIndex } = this.state
     return (
       <div style={{position: 'relative'}}>
         <Input
+          maxLength={maxLength || 100}
           value={value}
           style={{marginBottom: itemKey == inputList.length -1 ? '0px' : '12px', paddingRight: '24px'}}
           key={itemKey}
           onFocus={ (e) => { this.onFocus(e, itemKey) } }
           onChange={(e) => {this.onChange(e, itemKey)}}
+          disabled={!disabled}
         />
         {
           (currentOperateIndex == itemKey) && inputList.length > 1 ? (

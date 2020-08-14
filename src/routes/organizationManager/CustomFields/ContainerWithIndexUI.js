@@ -508,6 +508,7 @@ export default class ContainerWithIndexUI extends Component {
               onOk={this.onOk}
             >
               <Input
+                maxLength={100}
                 value={re_inputValue} 
                 onChange={this.renameChange}
                 onBlur={this.renameBlur}

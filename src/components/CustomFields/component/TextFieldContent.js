@@ -102,11 +102,11 @@ export default class TextFieldContent extends Component {
           </div>
           {
             this.state.inputVisible ? (
-              <Input value={inputValue} className={commonStyles.common_input} autoFocus={true} style={{ width: '100%', height: '38px' }} onChange={this.onChange} onBlur={this.onBlur} />
+              <Input maxLength={100} value={inputValue} className={commonStyles.common_input} autoFocus={true} style={{ width: '100%', height: '38px' }} onChange={this.onChange} onBlur={this.onBlur} />
             ) : (
                 <div className={`${commonStyles.field_value} ${commonStyles.pub_hover}`}>
                   <div onClick={this.onClick} className={commonStyles.common_select}>
-                    <span>{field_value ? field_value : '未填写'}</span>
+                    <span style={{wordBreak: 'break-all'}} title={field_value}>{field_value ? field_value : '未填写'}</span>
                   </div>
                 </div>
               )

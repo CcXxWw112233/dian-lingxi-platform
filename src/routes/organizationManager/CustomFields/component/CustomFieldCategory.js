@@ -91,6 +91,21 @@ export default class CustomFieldCategory extends Component {
     })
   }
 
+  canEditForm = () => {
+    const { currentOperateFieldItem = {} } = this.props
+    let flag = true
+    if (!!(currentOperateFieldItem && Object.keys(currentOperateFieldItem).length) && currentOperateFieldItem.type == 'no_group') {
+      if (currentOperateFieldItem.quote_num == 0) {
+        flag = true
+      } else {
+        flag = false
+      }
+    } else {
+      flag = true
+    }
+    return flag
+  }
+
   // ------------- 名称事件 S --------------------
 
   handleChangeFieldName = (e) => {
@@ -307,8 +322,10 @@ export default class CustomFieldCategory extends Component {
   }
 
   renderPopoverTitle = () => {
+    const { currentOperateFieldItem = {} } = this.props
+    let title = !!(currentOperateFieldItem && Object.keys(currentOperateFieldItem).length) && currentOperateFieldItem.type == 'no_group' ? '编辑字段' : '添加字段'
     return (
-      <div className={indexStyles.title__wrapper}>添加字段</div>
+      <div className={indexStyles.title__wrapper}>{title}</div>
     )
   }
 
@@ -336,6 +353,8 @@ export default class CustomFieldCategory extends Component {
   renderPopoverContentWithDiffCategoryDetail = (type) => {
     const { field_value } = this.state
     let mainContent = (<div></div>)
+    let disabled = false
+    disabled = this.canEditForm() 
     switch (type) {
       case '1': // 表示单选
         mainContent = (
@@ -344,6 +363,8 @@ export default class CustomFieldCategory extends Component {
             {
               field_value && field_value.map((item, index) => {
                 return <InputExport
+                  disabled={disabled}
+                  maxLength={100}
                   inputList={field_value}
                   itemKey={index}
                   itemValue={item}
@@ -363,6 +384,8 @@ export default class CustomFieldCategory extends Component {
             {
               field_value && field_value.map((item, index) => {
                 return <InputExport
+                  disabled={disabled}
+                  maxLength={100}
                   inputList={field_value}
                   itemKey={index}
                   itemValue={item}
@@ -376,10 +399,11 @@ export default class CustomFieldCategory extends Component {
         )
         break;
       case '3': // 表示日期
+          
         mainContent = (
           <div className={commonStyles.field_item}>
             <label className={commonStyles.label_name}>精确度：</label>
-            <Select value={field_value} optionLabelProp={'label'} style={{ width: '100%' }} onChange={this.handleDateChange}>
+            <Select disabled={!disabled} value={field_value} optionLabelProp={'label'} style={{ width: '100%' }} onChange={this.handleDateChange}>
               <Option value={'YM'} label={'年/月'}>年/月</Option>
               <Option value={'YMD'} label={'年/月/日'}>年/月/日</Option>
               <Option value={'YMDH'} label={'年/月/日 时'}>年/月/日 时</Option>
@@ -403,14 +427,14 @@ export default class CustomFieldCategory extends Component {
           <>
             <div className={commonStyles.field_item}>
               <label className={commonStyles.label_name}>选择限制：</label>
-              <Select value={field_value && field_value.member_selected_type} optionLabelProp={'label'} style={{ width: '100%' }} onChange={this.handleMemberSelectedType}>
+              <Select disabled={!disabled} value={field_value && field_value.member_selected_type} optionLabelProp={'label'} style={{ width: '100%' }} onChange={this.handleMemberSelectedType}>
                 <Option value={'1'} label={'单人'}>单人</Option>
                 <Option value={'2'} label={'多人'}>多人</Option>
               </Select>
             </div>
             <div className={commonStyles.field_item}>
               <label className={commonStyles.label_name}>范围限制：</label>
-              <Select value={field_value && field_value.member_selected_range} optionLabelProp={'label'} style={{ width: '100%' }} onChange={this.handleMemberSelectedRange}>
+              <Select disabled={!disabled} value={field_value && field_value.member_selected_range} optionLabelProp={'label'} style={{ width: '100%' }} onChange={this.handleMemberSelectedRange}>
                 <Option value={'1'} label={'当前组织'}>当前组织</Option>
                 <Option value={'2'} label={'项目内'}>项目内</Option>
               </Select>
@@ -427,8 +451,10 @@ export default class CustomFieldCategory extends Component {
   // 渲染类型选项
   renderPopoverContentSelectedDiffCategory = () => {
     const { field_type } = this.state
+    let disabled = this.canEditForm()
     return (
       <Select
+        disabled={!disabled}
         optionLabelProp={'label'}
         value={[field_type]} onSelect={this.onFieldsChange} style={{ width: '100%' }} getPopupContainer={triggerNode => triggerNode.parentNode}>
         <Option value="1" label={'单选'}>
@@ -467,13 +493,12 @@ export default class CustomFieldCategory extends Component {
   renderPopoverContentCategory = () => {
     const { inputValue, field_type, selected_field_group } = this.state
     const { customFieldsList: { groups = [] }, currentOperateFieldItem = {} } = this.props
-    console.log(field_type);
     // let defaultValue = !!(currentOperateFieldItem && Object.keys(currentOperateFieldItem).length) ? currentOperateFieldItem.id : selected_field_group
     return (
       <div>
         <div className={commonStyles.field_item}>
           <label className={commonStyles.label_name}>名称：</label>
-          <Input value={inputValue} onChange={this.handleChangeFieldName} onBlur={this.handleChangeFieldNameBlur} />
+          <Input maxLength={100} value={inputValue} onChange={this.handleChangeFieldName} onBlur={this.handleChangeFieldNameBlur} />
         </div>
         <div className={commonStyles.field_item}>
           <label className={commonStyles.label_name}>类型：</label>

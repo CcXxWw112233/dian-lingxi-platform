@@ -88,7 +88,7 @@ export default class RextFieldContent extends Component {
           {
             !!(items && Object.keys(items).length) && items.map(item => {
               return (
-                <Menu.Item value={item.id} key={item.id}>
+                <Menu.Item title={item.item_value} value={item.id} key={item.id}>
                   <span>{item.item_value}</span>
                   <div style={{ display: 'none' }}>
                     <Icon type="check" />
