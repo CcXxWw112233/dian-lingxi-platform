@@ -345,12 +345,13 @@ export default class FileFieldContent extends Component {
     return (
       <>
         <div key={item.uid || item.id} className={commonStyles.file_item} onClick={(e) => { this.onFilePreview(e, item) }}>
-          <div style={{ display: 'flex', alignItems: 'center', flex: '1' }} {...alrm_obj}>
-            <span className={`${globalsetStyles.authTheme} ${commonStyles.file_theme_code}`}>&#xe64d;</span>
+          <span className={`${globalsetStyles.authTheme} ${commonStyles.file_theme_code}`}>&#xe64d;</span>
+          <div style={{ display: 'flex', flex: '1', flexDirection: 'column', cursor: 'pointer' }} {...alrm_obj}>
             <span style={{ color: item.status && item.status == 'error' ? 'red' : 'inherit' }} className={commonStyles.file_name}><span style={{
               maxWidth: '315px', display: 'inline-block', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis',
               color: item.status && item.status == 'error' ? 'red' : 'inherit'
             }}>{this.getEllipsisFileName(item.file_name || item.name)}</span>{getSubfixName(item.file_name || item.name)}</span>
+            <div style={{marginLeft: '6px', color: 'rgba(0,0,0,0.45)', fontSize: '12px'}} className={commonStyles.file_info}>{item.creator && item.creator.name || ''} 上传于 {item.create_time && timestampFormat(item.create_time, "MM-dd hh:mm")}</div>
           </div>
           <div style={{ flexShrink: 0 }}>
             <span

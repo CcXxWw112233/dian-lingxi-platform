@@ -329,6 +329,12 @@ export default class BoardItem extends Component {
         const { dispatch, itemValue: { org_id, board_id } } = this.props
         if (!board_info_visible) {
             dispatch({
+                type: 'technological/getCorrespondingOrganizationMmembers',
+                payload: {
+                    _organization_id: org_id
+                }
+            })
+            dispatch({
                 type: 'projectDetail/projectDetailInfo',
                 payload: {
                     id: board_id

@@ -9,8 +9,8 @@ import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { isObjectValueEqual, timeToTimestamp, timestampFormat } from '../../../utils/util'
 import { getGroupList } from '../../../services/technological/organizationMember'
 
-@connect(({ projectDetail: { datas: { projectDetailInfoData = {} } } }) => ({
-  projectDetailInfoData
+@connect(({ projectDetail: { datas: { projectDetailInfoData = {} } }, technological: { datas: { correspondingOrganizationMmembersList = [] } } }) => ({
+  projectDetailInfoData, correspondingOrganizationMmembersList
 }))
 export default class MemberFieldContent extends Component {
 
@@ -31,33 +31,28 @@ export default class MemberFieldContent extends Component {
   }
 
   // 获取组织成员列表
-  getGroupList = (org_id, props) => {
-    getGroupList({ _organization_id: org_id }).then(res => {
-      if (isApiResponseOk(res)) {
-        let data = []
-        res.data.data.forEach(item => {
-          if (item.members && item.members.length) {
-            data.push(...item.members)
-          }
-        })
-        this.setState({
-          orgMembersData: data
-        },() => {
-          this.getMembersList(props, data)
-        })
-      }
-    })
-  }
+  // getGroupList = (org_id, props) => {
+  //   getGroupList({ _organization_id: org_id }).then(res => {
+  //     if (isApiResponseOk(res)) {
+  //       let data = []
+  //       res.data.data.forEach(item => {
+  //         if (item.members && item.members.length) {
+  //           data.push(...item.members)
+  //         }
+  //       })
+  //       this.setState({
+  //         orgMembersData: data
+  //       },() => {
+  //         this.getMembersList(props, data)
+  //       })
+  //     }
+  //   })
+  // }
 
   componentDidMount() {
-    const { projectDetailInfoData: { org_id }, itemValue: { field_content: { field_set: { member_selected_range } } } } = this.props
-    if (member_selected_range == '1') {
-      const { orgMembersData = [] } = this.state
-      if (!!(orgMembersData && orgMembersData.length)) return
-      this.getGroupList(org_id, this.props)
-    } else {
+    setTimeout(() => {
       this.getMembersList(this.props)
-    }
+    }, 200)
   }
 
   componentWillReceiveProps(nextProps) {
@@ -67,14 +62,7 @@ export default class MemberFieldContent extends Component {
       itemKey: nextProps.itemKey,
       selected_memebers_value: nextProps.itemValue && nextProps.itemValue.field_value ? nextProps.itemValue && nextProps.itemValue.field_value : []
     })
-    const { projectDetailInfoData: { org_id }, itemValue: { field_content: { field_set: { member_selected_range } } } } = nextProps
-    if (member_selected_range == '1') {
-      const { orgMembersData = [] } = this.state
-      if (!!(orgMembersData && orgMembersData.length)) return
-      this.getGroupList(org_id, nextProps)
-    } else {
-      this.getMembersList(nextProps)
-    }
+    this.getMembersList(nextProps)
   }
 
   componentWillUnmount() {
@@ -106,7 +94,6 @@ export default class MemberFieldContent extends Component {
     const { itemValue: { id, field_content: { field_set: { member_selected_range } } }, orgMembersData = [], boardMembersData = [] } = this.state
     const { projectDetailInfoData = {} } = this.props
     const { selectedKeys = [], type, key } = data
-    let operateData = member_selected_range == '1' ? orgMembersData : boardMembersData
     if (type == 'add') { // 表示添加的操作
       // let selected_memebers_value = []
       // let users = []
@@ -162,7 +149,7 @@ export default class MemberFieldContent extends Component {
   // 操作多人
   handleMultipleMmembersData = (data) => {
     const { itemValue: { id, field_content: { field_set: { member_selected_range } } }, orgMembersData = [], boardMembersData = [] } = this.state
-    const { projectDetailInfoData = {} } = this.props
+    const { projectDetailInfoData = {}, correspondingOrganizationMmembersList = [] } = this.props
     const { selectedKeys = [], type, key } = data
     let operateData = member_selected_range == '1' ? orgMembersData : boardMembersData
     if (type == 'add') { // 表示添加的操作
@@ -223,14 +210,20 @@ export default class MemberFieldContent extends Component {
 
   // 根据不同的类型获取不同的成员列表
   getMembersList = (props, orgData = []) => {
-    const { projectDetailInfoData: { board_id, org_id, data: boardData } } = props
+    const { projectDetailInfoData: { board_id, org_id, data: boardData }, correspondingOrganizationMmembersList = [] } = props
     const { itemValue: { field_content: { field_set: { member_selected_range } } } } = this.state
-    let membersData = []
     switch (member_selected_range) {
       case '1': // 表示当前组织
         // membersData = [...orgData]
         this.setState({
-          orgMembersData: orgData
+          orgMembersData: correspondingOrganizationMmembersList.map(item => {
+            let new_item = {...item}
+            new_item = {
+              ...item,
+              user_id: item.id
+            }
+            return new_item
+          })
         })
         break;
       case '2': // 表示项目

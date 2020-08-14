@@ -2,6 +2,18 @@ import request from '../../utils/requestAxios'
 import { REQUEST_DOMAIN, REQUEST_DOMAIN_FLOWS } from '../../globalset/js/constant'
 import Cookies from 'js-cookie'
 
+// 获取对应组织下的组织成员列表（仅列表）
+export async function getCorrespondingOrganizationMmembers(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/member/all/list`,
+    method: 'GET',
+    params: {
+      ...params,
+      _organization_id: params._organization_id ? params._organization_id : localStorage.getItem('OrganizationId')
+    }
+  })
+}
+
 //根据用户id获取用户信息，支持获取多个用户
 export async function fetchUsersByIds({ids}){
   //ids: 用户id, 多个用逗号隔开
