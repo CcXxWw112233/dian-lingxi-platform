@@ -5,6 +5,7 @@ import CheckboxFieldContent from './component/CheckboxFieldContent';
 import DateFieldContent from './component/DateFieldContent';
 import NumberFieldContent from './component/NumberFieldContent';
 import TextFieldContent from './component/TextFieldContent';
+import FileFieldContent from './component/FileFieldContent';
 import MemberFieldContent from './component/MemberFieldContent';
 
 export default class CustomCategoriesOperate extends Component {
@@ -34,7 +35,7 @@ export default class CustomCategoriesOperate extends Component {
         mainContent = (<TextFieldContent itemValue={item} itemKey={key} handleUpdateModelDatas={this.props.handleUpdateModelDatas} />)
         break;
       case '6':
-        // mainContent = (<DateFieldContent />)
+        mainContent = (<FileFieldContent itemValue={item} itemKey={key} handleUpdateModelDatas={this.props.handleUpdateModelDatas} />)
         break;
       case '8':
         mainContent = (<MemberFieldContent itemValue={item} itemKey={key} handleUpdateModelDatas={this.props.handleUpdateModelDatas} />)

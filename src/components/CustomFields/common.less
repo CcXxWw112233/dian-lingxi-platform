@@ -125,3 +125,74 @@
     }
   }
 }
+
+/* 添加执行人下拉样式 S */
+.overlay_pricipal {
+  left: 0px !important;
+  min-width: 248px !important;
+  max-width: 248px;
+  :global {
+    li {
+      line-height: 40px !important;
+      height     : 40px !important;
+
+      &:hover {
+        background   : rgba(0, 0, 0, 0.04) !important;
+        cursor       : pointer;
+        border-radius: 4px;
+      }
+
+      .ant-menu-item-selected {
+        background   : rgba(0, 0, 0, 0.04);
+        border-radius: 4px;
+        color        : rgba(0, 0, 0, 0.45);
+      }
+
+      .anticon {
+        margin-right: 0;
+      }
+    }
+  }
+}
+
+      // 每一个用户的样式
+      .user_item {
+        padding    : 2px 8px;
+        box-sizing : border-box;
+        margin-left: 24px;
+
+        &:hover {
+          background   : rgba(0, 0, 0, 0.09);
+          border-radius: 4px;
+        }
+
+        .usericon {
+          width : 40px;
+          height: 40px;
+        }
+
+        .userItemDeleBtn {
+          display          : none;
+          width            : 14px;
+          height           : 14px;
+          border-radius    : 4px;
+          position         : absolute;
+          background       : url(../../assets/workbench/close-circle@2x.png);
+          background-repeat: no-repeat;
+          background-size  : contain;
+          transition       : all 0.3s;
+        }
+
+        .userItemDeleBtn:hover {
+          background       : url(../../assets/workbench/close-circle-active@2x.png);
+          background-repeat: no-repeat;
+          background-size  : contain;
+        }
+      }
+
+      .user_item:hover .userItemDeleBtn {
+        display   : inline-block;
+        top       : -4px;
+        right     : -4px;
+        transition: all 0.3s;
+      }
