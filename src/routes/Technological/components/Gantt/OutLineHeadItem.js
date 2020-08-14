@@ -516,7 +516,8 @@ export default class OutLineHeadItem extends Component {
                                 if (isApiResponseOk(res)) {
                                     let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, param.id);
                                     if (nodeValue && nodeValue.executors) {
-                                        nodeValue.executors.splice(nodeValue.executors.findIndex((item) => item.id == param.id));
+                                        nodeValue.executors = nodeValue.executors.filter(item => (item.id || item.user_id) != param.user_id)
+                                        // nodeValue.executors.splice(nodeValue.executors.findIndex((item) => item.id == param.id));
                                         this.updateOutLineTreeData(outline_tree);
                                     } else {
                                         console.error("OutlineTree.getTreeNodeValue:未查询到节点");
