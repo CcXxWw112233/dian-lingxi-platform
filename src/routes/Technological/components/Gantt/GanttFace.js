@@ -37,6 +37,7 @@ export default class GanttFace extends Component {
       set_scroll_top_timer: null
     }
     this.setGanTTCardHeight = this.setGanTTCardHeight.bind(this)
+    this.target_scrollLeft = 0
   }
 
   componentDidMount() {
@@ -190,7 +191,8 @@ export default class GanttFace extends Component {
   // 处理水平滚动
   handelScrollHorizontal = ({ scrollLeft, scrollWidth, clientWidth, }) => {
     const { searchTimer } = this.state
-    const { gold_date_arr, dispatch, ceilWidth, target_scrollLeft, gantt_view_mode } = this.props
+    const { target_scrollLeft } = this
+    const { gold_date_arr, dispatch, ceilWidth, gantt_view_mode } = this.props
     const delX = target_scrollLeft - scrollLeft //判断向左还是向右
     const scroll_bound_leng = gantt_view_mode == 'month' ? 2 : 16 //判断滚动条触底边界
     const rescroll_leng_to_left = gantt_view_mode == 'month' ? 36 : 60 //滚动条回复位置
@@ -229,6 +231,7 @@ export default class GanttFace extends Component {
         }, 50)
       })
     }
+    this.target_scrollLeft = scrollLeft
     // dispatch({
     //   type: getEffectOrReducerByName('updateDatas'),
     //   payload: {
@@ -249,6 +252,9 @@ export default class GanttFace extends Component {
         date_arr = [].concat(gold_date_arr, getNextMonthDatePush(timestamp))
       } else if (active_triggr == 'to_left') {
         date_arr = [].concat(getLastMonthDateShift(timestamp), gold_date_arr)
+        if (typeof loadedCb === 'function') {
+          loadedCb()
+        }
       } else {
         date_arr = getGoldDateData({ gantt_view_mode, timestamp })
       }
@@ -317,11 +323,12 @@ export default class GanttFace extends Component {
           payload: {
             not_set_loading
           }
-        }).then(res => {
-          if (isApiResponseOk(res) && typeof loadedCb === 'function') {
-            loadedCb()
-          }
         })
+        // .then(res => {
+        //   if (isApiResponseOk(res) && typeof loadedCb === 'function') {
+        //     loadedCb()
+        //   }
+        // })
         that.getHoliday()
       }, 0)
     } else {
@@ -531,7 +538,6 @@ function mapStateToProps({ gantt: { datas: {
   is_show_board_file_area,
   outline_tree,
   gantt_view_mode,
-  target_scrollLeft,
   get_gantt_data_loading_other
 } } }) {
   return {
@@ -549,7 +555,6 @@ function mapStateToProps({ gantt: { datas: {
     is_show_board_file_area,
     outline_tree,
     gantt_view_mode,
-    target_scrollLeft,
     get_gantt_data_loading_other
   }
 }
