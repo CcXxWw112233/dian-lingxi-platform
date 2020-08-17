@@ -4,7 +4,7 @@ import indexStyles from './index.less'
 import GetRowGantt from './GetRowGantt'
 import DateList from './DateList'
 import GroupListHead from './GroupListHead'
-import { getMonthDate, getNextMonthDatePush, getGoldDateData, getYearDate } from './getDate'
+import { getMonthDate, getNextMonthDatePush, getGoldDateData, getLastMonthDateShift } from './getDate'
 import { date_area_height, ganttIsOutlineView } from './constants'
 import GroupListHeadSet from './GroupListHeadSet.js'
 import GroupListHeadSetBottom from './GroupListHeadSetBottom'
@@ -21,6 +21,7 @@ import GetRowGanttItemElse from './GetRowGanttItemElse'
 import { weekDataArray } from './calDate';
 import { closeFeature } from '../../../../utils/temporary';
 import CardDetailDrawer from './components/CardDetailDrawer'
+import { isApiResponseOk } from '../../../../utils/handleResponseData';
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
 export default class GanttFace extends Component {
@@ -202,12 +203,15 @@ export default class GanttFace extends Component {
     }
     if (scrollLeft < scroll_bound_leng * ceilWidth && delX > 0) { //3为分组头部占用三个单元格的长度
       const { timestamp } = gold_date_arr[0]['date_inner'][0] //取第一天
+      const loadedCb = () => {
+        this.setScrollPosition({ position: 30 * ceilWidth })
+      }
       this.setState({
         searchTimer: setTimeout(() => {
-          this.setScrollPosition({ delay: 1, position: rescroll_leng_to_left * ceilWidth }) //大概移动四天的位置
-          setTimeout(() => {
-            this.setGoldDateArr({ timestamp, not_set_loading: true }) //取左边界日期来做日期更新的基准
-          }, 200)
+          // this.setScrollPosition({ delay: 1, position: rescroll_leng_to_left * ceilWidth }) //大概移动四天的位置
+          // setTimeout(() => {
+          this.setGoldDateArr({ timestamp, active_triggr: 'to_left', not_set_loading: false, loadedCb }) //取左边界日期来做日期更新的基准
+          // }, 200)
         }, 50)
       })
 
@@ -218,28 +222,36 @@ export default class GanttFace extends Component {
       const { timestamp } = date_inner[date_inner_length - 1] // 取最后一天
       this.setState({
         searchTimer: setTimeout(() => {
-          this.setScrollPosition({ delay: 1, position: scrollWidth - clientWidth - rescroll_leng_to_right * ceilWidth }) //移动到最新视觉
-          setTimeout(() => {
-            this.setGoldDateArr({ timestamp, to_right: 'to_right', not_set_loading: true }) //取有边界日期来做更新日期的基准
-          }, 200)
+          // this.setScrollPosition({ delay: 1, position: scrollWidth - clientWidth - rescroll_leng_to_right * ceilWidth })
+          // setTimeout(() => {
+          this.setGoldDateArr({ timestamp, active_triggr: 'to_right', not_set_loading: false }) //取有边界日期来做更新日期的基准
+          // }, 200)
         }, 50)
       })
     }
-    dispatch({
-      type: getEffectOrReducerByName('updateDatas'),
-      payload: {
-        target_scrollLeft: scrollLeft
-      }
-    })
+    // dispatch({
+    //   type: getEffectOrReducerByName('updateDatas'),
+    //   payload: {
+    //     target_scrollLeft: scrollLeft
+    //   }
+    // })
   }
 
   //更新日期,日期更新后做相应的数据请求
-  setGoldDateArr = ({ timestamp, to_right, init, not_set_loading }) => {
+  setGoldDateArr = ({ timestamp, active_triggr, init, not_set_loading, loadedCb }) => {
     const { dispatch } = this.props
-    const { gold_date_arr = [], isDragging, gantt_view_mode } = this.props
+    const { gold_date_arr = [], isDragging, gantt_view_mode, ceilWidth } = this.props
     let date_arr = []
-    if (!!to_right && isDragging && gantt_view_mode == 'month') { //如果是拖拽虚线框向右则是累加，否则是取基数前后
-      date_arr = [].concat(gold_date_arr, getNextMonthDatePush(timestamp))
+    if (
+      gantt_view_mode == 'month'
+    ) { //如果是拖拽虚线框向右则是累加，否则是取基数前后
+      if (active_triggr == 'to_right') {
+        date_arr = [].concat(gold_date_arr, getNextMonthDatePush(timestamp))
+      } else if (active_triggr == 'to_left') {
+        date_arr = [].concat(getLastMonthDateShift(timestamp), gold_date_arr)
+      } else {
+        date_arr = getGoldDateData({ gantt_view_mode, timestamp })
+      }
     } else {
       // date_arr = getMonthDate(timestamp)
       // date_arr = getYearDate(timestamp)
@@ -282,7 +294,6 @@ export default class GanttFace extends Component {
         end_date: date_arr[date_arr.length - 1]['date_inner'][date_arr[date_arr.length - 1]['date_inner'].length - 1],
       }
     })
-    this.setWidthArea({ date_arr })
     //  做数据请求
     if (gold_date_arr[0]) {
       const start_time = gold_date_arr[0]['date_inner'][0]['timestamp']
@@ -305,6 +316,10 @@ export default class GanttFace extends Component {
           type: getEffectOrReducerByName('getGanttData'),
           payload: {
             not_set_loading
+          }
+        }).then(res => {
+          if (isApiResponseOk(res) && typeof loadedCb === 'function') {
+            loadedCb()
           }
         })
         that.getHoliday()
@@ -333,6 +348,7 @@ export default class GanttFace extends Component {
       }
       that.getHoliday()
     }
+    this.setWidthArea({ date_arr })
   }
   //设置月份日期宽度区间
   setWidthArea = ({ date_arr }) => {

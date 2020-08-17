@@ -236,7 +236,7 @@ export default {
             get_gantt_data_loading: not_set_loading ? false : true,
           }
         })
-      }, 2000)
+      }, 0)
       yield put({
         type: 'updateDatas',
         payload: {
@@ -298,9 +298,9 @@ export default {
             }
           })
         }
-
+        return { code: '0' }
       } else {
-
+        return { code: '1' }
       }
     },
     // 转化处理大纲视图数据
