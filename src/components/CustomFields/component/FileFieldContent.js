@@ -13,6 +13,7 @@ import { UPLOAD_FILE_SIZE } from '../../../globalset/js/constant'
 import FileListRightBarFileDetailModal from '../../../routes/Technological/components/ProjectDetail/FileModule/FileListRightBarFileDetailModal'
 import { fileDelete } from '../../../services/technological/file'
 import { set } from 'core-js/fn/dict'
+import { judgeFileType } from '../../TaskDetailModal/handleOperateModal'
 
 let CancelToken = axios.CancelToken;
 @connect(({ projectDetail: { datas: { projectDetailInfoData = {} } }, publicFileDetailModal: {
@@ -345,7 +346,7 @@ export default class FileFieldContent extends Component {
     return (
       <>
         <div key={item.uid || item.id} className={commonStyles.file_item} onClick={(e) => { this.onFilePreview(e, item) }}>
-          <span className={`${globalsetStyles.authTheme} ${commonStyles.file_theme_code}`}>&#xe64d;</span>
+          <span className={`${commonStyles.file_theme_code} ${globalsetStyles.authTheme}`} dangerouslySetInnerHTML={{ __html: judgeFileType(item.file_name || item.name) }}></span>
           <div style={{ display: 'flex', flex: '1', flexDirection: 'column', cursor: 'pointer' }} {...alrm_obj}>
             <span style={{ color: item.status && item.status == 'error' ? 'red' : 'inherit' }} className={commonStyles.file_name}><span style={{
               maxWidth: '315px', display: 'inline-block', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis',
