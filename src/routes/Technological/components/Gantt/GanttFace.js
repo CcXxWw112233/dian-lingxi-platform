@@ -252,9 +252,9 @@ export default class GanttFace extends Component {
         date_arr = [].concat(gold_date_arr, getNextMonthDatePush(timestamp))
       } else if (active_triggr == 'to_left') {
         date_arr = [].concat(getLastMonthDateShift(timestamp), gold_date_arr)
-        if (typeof loadedCb === 'function') {
-          loadedCb()
-        }
+        // if (typeof loadedCb === 'function') {
+        //   loadedCb()
+        // }
       } else {
         date_arr = getGoldDateData({ gantt_view_mode, timestamp })
       }
@@ -324,11 +324,11 @@ export default class GanttFace extends Component {
             not_set_loading
           }
         })
-        // .then(res => {
-        //   if (isApiResponseOk(res) && typeof loadedCb === 'function') {
-        //     loadedCb()
-        //   }
-        // })
+        .then(res => {
+          if (isApiResponseOk(res) && typeof loadedCb === 'function') {
+            loadedCb()
+          }
+        })
         that.getHoliday()
       }, 0)
     } else {
