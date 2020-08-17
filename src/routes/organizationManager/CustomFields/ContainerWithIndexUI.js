@@ -13,6 +13,7 @@ import CustomFieldQuoteDetail from './component/CustomFieldQuoteDetail'
 import { createCustomFieldGroup, getCustomFieldList, getCustomFieldQuoteList } from '../../../services/organization'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { getCreateUser, categoryIcon } from './handleOperateModal'
+import EmptyImg from '@/assets/projectDetail/process/Empty@2x.png'
 
 const { Panel } = Collapse;
 
@@ -95,7 +96,7 @@ export default class ContainerWithIndexUI extends Component {
   // 点击详情
   handleCustomQuoteDetail = (e, id) => {
     e && e.stopPropagation()
-    getCustomFieldQuoteList({id}).then(res => {
+    getCustomFieldQuoteList({ id }).then(res => {
       if (isApiResponseOk(res)) {
         this.setState({
           isCustomFieldQuoteDetailVisible: true,
@@ -322,9 +323,9 @@ export default class ContainerWithIndexUI extends Component {
     return (
       <Dropdown trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.customFiledsOverlay({ item, type })}>
         {/* <Tooltip title="字段菜单分类" getPopupContainer={triggerNode => triggerNode.parentNode}> */}
-          <span className={`${commonStyles.custom_fileds_more} ${globalStyles.authTheme}`}>
-            <em>&#xe66f;</em>
-          </span>
+        <span className={`${commonStyles.custom_fileds_more} ${globalStyles.authTheme}`}>
+          <em>&#xe66f;</em>
+        </span>
         {/* </Tooltip> */}
       </Dropdown>
     )
@@ -386,39 +387,50 @@ export default class ContainerWithIndexUI extends Component {
   }
 
   renderCustomCategoryContent = () => {
-    const { customFieldsList: { groups = [], fields = [] } } = this.props
+    const { customFieldsList, customFieldsList: { groups = [], fields = [] } } = this.props
     return (
-      <div className={`${indexStyles.collapse_content}`}>
-        <Collapse destroyInactivePanel={true} bordered={false}>
-          {
-            !!(groups && groups.length) && groups.map(item => {
-              let flag = !!(item.fields && item.fields.length)
-              return (
-                <Panel showArrow={flag} header={this.headerContent(item, flag)} key={item.id}>
+      <>
+        {
+          !(customFieldsList && Object.keys(customFieldsList).length) ? (
+            <div className={indexStyles.custom_noData} style={{minHeight: '540px'}}>
+              <div><img style={{ width: '94px', height: '62px' }} src={EmptyImg} alt="" /></div>
+              <div style={{ color: 'rgba(0,0,0,0.45)' }}>暂无数据</div>
+            </div>
+          ) : (
+              <div className={`${indexStyles.collapse_content}`}>
+                <Collapse destroyInactivePanel={true} bordered={false}>
                   {
-                    item.fields && item.fields.length && item.fields.map(value => {
+                    !!(groups && groups.length) && groups.map(item => {
+                      let flag = !!(item.fields && item.fields.length)
                       return (
-                        <div>
-                          {this.panelContent(value)}
-                        </div>
+                        <Panel showArrow={flag} header={this.headerContent(item, flag)} key={item.id}>
+                          {
+                            item.fields && item.fields.length && item.fields.map(value => {
+                              return (
+                                <div>
+                                  {this.panelContent(value)}
+                                </div>
+                              )
+                            })
+                          }
+                        </Panel>
                       )
                     })
                   }
-                </Panel>
-              )
-            })
-          }
-        </Collapse>
-        {
-          !!(fields && fields.length) && fields.map((item, index) => {
-            return (
-              <div className={indexStyles.no_collapse_content}>
-                {this.panelContent(item, index)}
+                </Collapse>
+                {
+                  !!(fields && fields.length) && fields.map((item, index) => {
+                    return (
+                      <div className={indexStyles.no_collapse_content}>
+                        {this.panelContent(item, index)}
+                      </div>
+                    )
+                  })
+                }
               </div>
             )
-          })
         }
-      </div>
+      </>
     )
   }
 
@@ -502,14 +514,14 @@ export default class ContainerWithIndexUI extends Component {
                   isRenameFieldVisible: false
                 })
               }}
-              okButtonProps={{disabled: (local_rename == re_inputValue) || !re_inputValue}}
+              okButtonProps={{ disabled: (local_rename == re_inputValue) || !re_inputValue }}
               style={{ width: '440px' }}
               maskStyle={{ backgroundColor: 'rgba(0,0,0,.3)' }}
               onOk={this.onOk}
             >
               <Input
                 maxLength={100}
-                value={re_inputValue} 
+                value={re_inputValue}
                 onChange={this.renameChange}
                 onBlur={this.renameBlur}
               />
