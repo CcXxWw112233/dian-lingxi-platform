@@ -171,7 +171,7 @@ export default class Technological extends React.Component {
   // 获取元素并取消提示内容
   handleCancelWarning = () => {
     let warningElement = document.getElementById('notYet_reminder_container')
-    let pageElement = document.getElementById('technologicalOut')
+    let pageElement = document.getElementById('technologicalLayoutWrapper')
     warningElement.style.display = 'none'
     pageElement.style.filter = 'none'
   }
@@ -252,7 +252,7 @@ export default class Technological extends React.Component {
     ]
 
     const defaultLayout = (
-      <Layout id='technologicalLayoutWrapper' >
+      <Layout id='technologicalLayoutWrapper' className={globalClassNmae.technologicalLayoutWrapper} >
         <Sider collapsedWidth={64} theme={'light'} collapsed={true} />
         <SiderLeft />
         <Layout style={{ backgroundColor: 'rgba(245,245,245,1)' }}>
@@ -284,7 +284,7 @@ export default class Technological extends React.Component {
     )
 
     const simpleLayout = (
-      <Layout id='technologicalLayoutWrapper' >
+      <Layout id='technologicalLayoutWrapper' className={globalClassNmae.technologicalLayoutWrapper}>
         <Layout style={{ backgroundColor: 'rgba(245,245,245,1)' }}>
           <Content style={{ height: '100vh' }} >
             <div className={`${globalClassNmae.page_style_3} ${globalClassNmae.global_vertical_scrollbar}`} id={'technologicalOut'} >
@@ -332,7 +332,7 @@ export default class Technological extends React.Component {
           <UpdateLog />
           <UploadNotification />
           {this.renderNotYetSupportEquipment()}
-        </>
+        </>        
       </LocaleProvider>
     );
   }

@@ -598,6 +598,7 @@ class SimpleHeader extends Component {
                             overlay={<SimpleNavigation updateStates={this.updateStates} dropdownHandleVisibleChange={this.handleVisibleChange} />}
                             onVisibleChange={this.handleVisibleChange}
                             visible={leftNavigationVisible}
+                            getPopupContainer={() => document.getElementById('technologicalLayoutWrapper')}
                         >
                             <div className={indexStyles.miniNavigation}>
                                 <i className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '32px' }} >&#xe69f;</i>
