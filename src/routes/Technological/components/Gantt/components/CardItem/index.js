@@ -14,6 +14,8 @@ import { transformTimestamp, isSamDay } from '../../../../../../utils/util'
 import HoverEars from './HoverEars'
 import DragCard from './DragCard'
 import GroupChildCards from './GroupChildCards.js'
+import { EnequeueNotifyTodos, handleReBackNotiParams, rebackCreateNotify } from '../../../../../../components/NotificationTodos'
+
 // 参考自http://www.jq22.com/webqd1348
 
 // const dateAreaHeight = date_area_height //日期区域高度，作为修正
@@ -53,6 +55,7 @@ export default class CardItem extends Component {
             left: 'w-resize',
             right: 'e-resize'
         }
+        this.notify = null
     }
 
     componentDidMount() {
@@ -532,7 +535,7 @@ export default class CardItem extends Component {
 
     }
     overDragCompleteHandleRight = () => { //右侧增减时间
-        const { itemValue: { id, end_time, start_time, board_id, is_has_start_time, parent_card_id }, group_view_type, gantt_view_mode, gantt_board_id, dispatch } = this.props
+        const { itemValue: { id, end_time, start_time, board_id, is_has_start_time, parent_card_id }, group_view_type, gantt_view_mode, gantt_board_id, dispatch, card_detail_id, selected_card_visible } = this.props
         const { local_left, local_width, local_width_origin } = this.state
         const { date_arr_one_level, ceilWidth } = this.props
         const updateData = {}
@@ -578,12 +581,18 @@ export default class CardItem extends Component {
         updateTaskVTwo({ card_id: id, due_time: end_time_timestamp, board_id: board_id || gantt_board_id }, { isNotLoading: false })
             .then(res => {
                 if (isApiResponseOk(res)) {
-                    if (this.handleNotifiParams(res).code == '0') {
-                        message.success('变更成功')
-                    } else {
-                        // 添加弹窗提示代办
-                        this.addNotificationTodos(this.handleNotifiParams(res))
-                    }
+                    rebackCreateNotify.call(this, { res, id, board_id, group_view_type, dispatch, parent_card_id, card_detail_id, selected_card_visible })
+                    // if (this.handleNotifiParams(res).code == '0') {
+                    //     message.success('变更成功')
+                    // } else {
+                    //     if (!this.notify) {
+                    //         this.notify = new EnequeueNotifyTodos({ id, board_id, group_view_type, dispatch })
+                    //     }
+                    //     this.notify.addTodos({ ...handleReBackNotiParams({ ...res, id }) })
+                    //     this.notify = null
+                    //     // 添加弹窗提示代办
+                    //     // this.addNotificationTodos(this.handleNotifiParams(res))
+                    // }
 
                     // 更新甘特图数据
                     this.updateGanttData([{ id, ...updateData }, ...res.data.scope_content.filter(item => item.id != id)])
@@ -619,6 +628,7 @@ export default class CardItem extends Component {
                     message.warn(res.message)
                 }
             }).catch(err => {
+                console.log('notify_err', err)
                 message.error('更新失败')
             })
     }
@@ -658,7 +668,7 @@ export default class CardItem extends Component {
     }
     // 不在项目分组内，左右移动
     overDragCompleteHandlePositonAbout = () => {
-        const { itemValue: { id, top, start_time, board_id, left, parent_card_id }, group_view_type, gantt_view_mode, gantt_board_id, dispatch } = this.props
+        const { itemValue: { id, top, start_time, board_id, left, parent_card_id }, group_view_type, gantt_view_mode, gantt_board_id, dispatch, card_detail_id, selected_card_visible } = this.props
         const { local_left, local_width, local_width_origin } = this.state
         const { date_arr_one_level, ceilWidth } = this.props
         const updateData = {}
@@ -701,12 +711,18 @@ export default class CardItem extends Component {
         updateTaskVTwo({ card_id: id, due_time: end_time_timestamp, start_time: start_time_timestamp, board_id: board_id || gantt_board_id }, { isNotLoading: false })
             .then(res => {
                 if (isApiResponseOk(res)) {
-                    if (this.handleNotifiParams(res).code == '0') {
-                        message.success('变更成功')
-                    } else {
-                        // 添加弹窗提示代办
-                        this.addNotificationTodos(this.handleNotifiParams(res))
-                    }
+                    rebackCreateNotify.call(this, { res, id, board_id, group_view_type, dispatch, parent_card_id, card_detail_id, selected_card_visible })
+                    // if (this.handleNotifiParams(res).code == '0') {
+                    //     message.success('变更成功')
+                    // } else {
+                    //     if (!this.notify) {
+                    //         this.notify = new EnequeueNotifyTodos({ id, board_id, group_view_type, dispatch })
+                    //     }
+                    //     this.notify.addTodos({ ...handleReBackNotiParams({ ...res, id }) })
+                    //     this.notify = null
+                    //     // 添加弹窗提示代办
+                    //     // this.addNotificationTodos(this.handleNotifiParams(res))
+                    // }
                     // if (ganttIsOutlineView({ group_view_type })) {
                     //     dispatch({
                     //         type: 'gantt/updateOutLineTree',
@@ -738,7 +754,7 @@ export default class CardItem extends Component {
     }
     // 在项目分组内，上下左右移动
     overDragCompleteHandlePositonAround = (data = {}) => {
-        const { itemValue: { id, end_time, start_time, board_id, left, top }, gantt_board_id, gantt_view_mode } = this.props
+        const { itemValue: { id, end_time, start_time, board_id, left, top, parent_card_id }, gantt_board_id, gantt_view_mode, group_view_type, dispatch, card_detail_id, selected_card_visible } = this.props
         const { local_left, local_width, local_width_origin } = this.state
         const { date_arr_one_level, ceilWidth } = this.props
         const updateData = {}
@@ -777,12 +793,18 @@ export default class CardItem extends Component {
         updateTaskVTwo({ ...params }, { isNotLoading: false })
             .then(res => {
                 if (isApiResponseOk(res)) {
-                    if (this.handleNotifiParams(res).code == '0') {
-                        message.success('变更成功')
-                    } else {
-                        // 添加弹窗提示代办
-                        this.addNotificationTodos(this.handleNotifiParams(res))
-                    }
+                    rebackCreateNotify.call(this, { res, id, board_id, group_view_type, dispatch, parent_card_id, card_detail_id, selected_card_visible })
+                    // if (this.handleNotifiParams(res).code == '0') {
+                    //     message.success('变更成功')
+                    // } else {
+                    //     if (!this.notify) {
+                    //         this.notify = new EnequeueNotifyTodos({ id, board_id, group_view_type, dispatch })
+                    //     }
+                    //     this.notify.addTodos({ ...handleReBackNotiParams({ ...res, id }) })
+                    //     this.notify = null
+                    //     // 添加弹窗提示代办
+                    //     // this.addNotificationTodos(this.handleNotifiParams(res))
+                    // }
                     this.changeCardBelongGroup({
                         card_id: id,
                         new_list_id: params_list_id,
@@ -804,7 +826,7 @@ export default class CardItem extends Component {
                     local_top: top
                 })
                 message.error('更新失败')
-                // console.log('ssss', err)
+                console.log('ssss', err)
             })
     }
     // 拖拽完成后的事件处理------end---------

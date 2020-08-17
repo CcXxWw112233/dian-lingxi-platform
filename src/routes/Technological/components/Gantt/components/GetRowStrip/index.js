@@ -277,16 +277,25 @@ export default class GetRowStrip extends PureComponent {
     workFlowSetClick = () => {
         const date = this.calHoverDate()
         const { timestamp } = date
-        const { itemValue = {}, gantt_board_id } = this.props
+        const { itemValue = {}, gantt_board_id, dispatch } = this.props
         let { id, } = itemValue
         workflowUpdateTime({ plan_start_time: timestamp, id }, { isNotLoading: false }).then(res => {
             if (isApiResponseOk(res)) {
                 const status = isSamDay(new Date().getTime(), timestamp) ? '1' : '0' //如果是今天则设置为未开始
-                this.changeOutLineTreeNodeProto(id, { start_time: timestamp, status })
+                if (Object.prototype.toString.call(res.data.scope_content) == '[object Array]') {
+                    dispatch({
+                        type: 'gantt/updateOutLineTree',
+                        payload: {
+                            datas: [{ id, start_time: timestamp, status }, ...res.data.scope_content]
+                        }
+                    });
+                }
+                // this.changeOutLineTreeNodeProto(id, { start_time: timestamp, status })
             } else {
                 message.error(res.message)
             }
         }).catch(err => {
+            console.log('eeeee', err)
             message.error('更新失败')
         })
     }

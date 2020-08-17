@@ -81,12 +81,24 @@ export default {
             }
         },
         * updateCardRely({ payload }, { select, call, put }) {
+            const rely_map = yield select(getModelSelectDatasState('gantt', 'rely_map'))
+            const { from_id, to_id, ...update_prop } = payload
             let res = yield call(updateCardRely, payload)
             if (isApiResponseOk(res)) {
+                let _re_rely_map = JSON.parse(JSON.stringify(rely_map))
+                const move_index = rely_map.findIndex(item => item.id == from_id) //起始点索引
+                const move_item = rely_map.find(item => item.id == from_id) //起始点这一项
+                const move_next = move_item.next //起始点所包含的全部终点信息
+                const line_index = move_next.findIndex(item => item.id == to_id)
+                if (typeof update_prop == 'object') {
+                    for (let key in update_prop) {
+                        _re_rely_map[move_index].next[line_index][key] = update_prop[key] //更新赋值
+                    }
+                }
                 yield put({
                     type: 'updateDatas',
                     payload: {
-                        about_user_boards: res.data
+                        rely_map: _re_rely_map
                     }
                 })
             } else {

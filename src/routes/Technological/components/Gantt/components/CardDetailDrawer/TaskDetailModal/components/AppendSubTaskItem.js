@@ -15,8 +15,13 @@ import { arrayNonRepeatfy } from '@/utils/util'
 import { deleteTaskFile } from '@/services/technological/task'
 import { getSubfixName } from "@/utils/businessFunction";
 import UploadAttachment from '../../../../../../../../components/UploadAttachment'
+import { rebackCreateNotify } from '../../../../../../../../components/NotificationTodos'
 
-@connect(({ publicTaskDetailModal: { drawContent = {} } }) => ({
+@connect(({
+  publicTaskDetailModal: { drawContent = {} },
+  gantt: { datas: { group_view_type } },
+}) => ({
+  group_view_type,
   drawContent
 }))
 export default class AppendSubTaskItem extends Component {
@@ -230,7 +235,7 @@ export default class AppendSubTaskItem extends Component {
   }
 
   // 子任务更新弹窗数据 rely_card_datas,更新后返回的相关依赖的更新任务列表
-  setChildTaskIndrawContent = ({ name, value, operate_properties_code }, card_id, rely_card_datas) => {
+  setChildTaskIndrawContent = ({ name, value, operate_properties_code }, card_id, rely_card_datas, res) => {
     const { childDataIndex } = this.props
     const { drawContent = {}, dispatch, childTaskItemValue } = this.props
     let new_drawContent = { ...drawContent }
@@ -248,6 +253,8 @@ export default class AppendSubTaskItem extends Component {
     if ((name && value) || (name && value == null)) {
       this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id: drawContent.card_id, name: 'card_data', value: new_data, operate_properties_code })
       this.props.handleChildTaskChange && this.props.handleChildTaskChange({ parent_card_id: drawContent.card_id, data: { ...childTaskItemValue, [name]: value }, card_id, action: 'update', rely_card_datas })
+      const { group_view_type, board_id } = this.props
+      typeof res == 'object' && rebackCreateNotify.call(this, { res, id: card_id, board_id, group_view_type, dispatch, parent_card_id: drawContent.card_id, operate_in_card_detail_panel: true }) //创建撤回弹窗
     }
   }
 
@@ -299,6 +306,8 @@ export default class AppendSubTaskItem extends Component {
       })
       this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(new_data)
       this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id: drawContent.card_id, name: 'card_data', value: newChildData })
+      const { group_view_type, board_id } = this.props
+      rebackCreateNotify.call(this, { res, id: card_id, board_id, group_view_type, dispatch, parent_card_id: drawContent.card_id, operate_in_card_detail_panel: true }) //创建撤回弹窗
     })
   }
 
@@ -363,7 +372,7 @@ export default class AppendSubTaskItem extends Component {
         new_data = [...res.data.scope_content]
       }
       new_data = new_data.filter(item => item.id == parent_card_id) || []
-      this.setChildTaskIndrawContent({ name: 'start_time', value: start_timeStamp }, card_id, res.data.scope_content)
+      this.setChildTaskIndrawContent({ name: 'start_time', value: start_timeStamp }, card_id, res.data.scope_content, res)
       this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(new_data)
       this.props.updateRelyOnRationList && this.props.updateRelyOnRationList(res.data.scope_content)
     })
@@ -408,7 +417,7 @@ export default class AppendSubTaskItem extends Component {
         update_data = [].concat(update_child_item, ...res.data.scope_content)
       }
       new_data = new_data.filter(item => item.id == parent_card_id) || []
-      this.setChildTaskIndrawContent({ name: 'start_time', value: null }, card_id, update_data)
+      this.setChildTaskIndrawContent({ name: 'start_time', value: null }, card_id, update_data, res)
       this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(new_data)
       this.props.updateRelyOnRationList && this.props.updateRelyOnRationList(res.data.scope_content)
     })
@@ -457,7 +466,7 @@ export default class AppendSubTaskItem extends Component {
         new_data = [...res.data.scope_content]
       }
       new_data = new_data.filter(item => item.id == parent_card_id) || []
-      this.setChildTaskIndrawContent({ name: 'due_time', value: due_timeStamp }, card_id, res.data.scope_content)
+      this.setChildTaskIndrawContent({ name: 'due_time', value: due_timeStamp }, card_id, res.data.scope_content, res)
       this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(new_data)
       this.props.updateRelyOnRationList && this.props.updateRelyOnRationList(res.data.scope_content)
     })
@@ -502,7 +511,7 @@ export default class AppendSubTaskItem extends Component {
         update_data = [].concat(update_child_item, ...res.data.scope_content)
       }
       new_data = new_data.filter(item => item.id == parent_card_id) || []
-      this.setChildTaskIndrawContent({ name: 'due_time', value: null }, card_id, update_data)
+      this.setChildTaskIndrawContent({ name: 'due_time', value: null }, card_id, update_data, res)
       this.props.whetherUpdateParentTaskTime && this.props.whetherUpdateParentTaskTime(new_data)
       this.props.updateRelyOnRationList && this.props.updateRelyOnRationList(res.data.scope_content)
     })

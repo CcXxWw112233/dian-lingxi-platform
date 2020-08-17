@@ -22,6 +22,7 @@ import FileListRightBarFileDetailModal from '@/routes/Technological/components/P
 import { arrayNonRepeatfy } from '../../utils/util'
 import RelyOnRelationship from '../RelyOnRelationship'
 import { getCurrentDrawerContentPropsModelFieldData, filterCurrentUpdateDatasField, getCurrentPropertiesData } from './handleOperateModal'
+import { rebackCreateNotify } from '../NotificationTodos'
 const { LingxiIm, Im } = global.constants
 
 @connect(mapStateToProps)
@@ -150,9 +151,9 @@ export default class MainContent extends Component {
       if (isApiResponseOk(res)) {
         // 检测 该组织是否付费 --> 是否有访问文件权限--> 有 则调接口获取
         if (
-          isPaymentOrgUser(res.data.org_id) && 
+          isPaymentOrgUser(res.data.org_id) &&
           checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW, res.data.board_id)
-          ) {
+        ) {
           this.getProjectFolderList(res.data.board_id)
         }
         this.getMilestone(res.data.board_id)
@@ -206,7 +207,7 @@ export default class MainContent extends Component {
   // 检测不同类型的权限控制类型的是否显示
   checkDiffCategoriesAuthoritiesIsVisible = (code) => {
     const { drawContent = {}, drawContent: { properties = [] } } = this.props
-    const { data = [] } = getCurrentDrawerContentPropsModelFieldData({properties, code: 'EXECUTOR'})
+    const { data = [] } = getCurrentDrawerContentPropsModelFieldData({ properties, code: 'EXECUTOR' })
     const { privileges = [], board_id, is_privilege } = drawContent
     return {
       'visit_control_edit': function () {// 是否是有编辑权限
@@ -388,14 +389,14 @@ export default class MainContent extends Component {
     const { dispatch, projectDetailInfoData = {}, drawContent = {} } = this.props
     const { board_id, data = [] } = projectDetailInfoData
     const { card_id } = drawContent
-    const gold_data = getCurrentPropertiesData(drawContent['properties'],'EXECUTOR')
+    const gold_data = getCurrentPropertiesData(drawContent['properties'], 'EXECUTOR')
     const calback = (res) => {
       const new_users = res.data
       const arr = new_users.filter(item => users.indexOf(item.user_id) != -1)
       const newExecutors = arrayNonRepeatfy([].concat(gold_data, arr), 'user_id')
       let new_drawContent = { ...drawContent }
       // new_drawContent['executors'] = newExecutors
-      new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: new_drawContent['properties'], code: 'EXECUTOR', value: newExecutors})
+      new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: new_drawContent['properties'], code: 'EXECUTOR', value: newExecutors })
       this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'executors', value: newExecutors, operate_properties_code: 'EXECUTOR' })
     }
     dispatch({
@@ -426,7 +427,7 @@ export default class MainContent extends Component {
     }
     let new_drawContent = { ...drawContent }
     // new_drawContent['executors'] = newExecutors
-    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: new_drawContent['properties'], code: 'EXECUTOR', value: newExecutors})
+    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: new_drawContent['properties'], code: 'EXECUTOR', value: newExecutors })
     if (type == 'add') {
       addTaskExecutor({ card_id, executor: key }).then(res => {
         if (isApiResponseOk(res)) {
@@ -454,7 +455,7 @@ export default class MainContent extends Component {
     e && e.stopPropagation()
     const { drawContent = {}, dispatch } = this.props
     const { card_id, properties = [] } = drawContent
-    const { data = [] } = getCurrentDrawerContentPropsModelFieldData({properties, code: 'EXECUTOR'})
+    const { data = [] } = getCurrentDrawerContentPropsModelFieldData({ properties, code: 'EXECUTOR' })
     let new_executors = [...data]
     let new_drawContent = { ...drawContent }
     new_executors.map((item, index) => {
@@ -462,7 +463,7 @@ export default class MainContent extends Component {
         new_executors.splice(index, 1)
       }
     })
-    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: new_drawContent['properties'], code: 'EXECUTOR', value: new_executors})
+    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: new_drawContent['properties'], code: 'EXECUTOR', value: new_executors })
     removeTaskExecutor({ card_id, executor: shouldDeleteItem }).then(res => {
       if (isApiResponseOk(res)) {
         message.success(`已成功删除执行人`, MESSAGE_DURATION_TIME)
@@ -548,6 +549,8 @@ export default class MainContent extends Component {
         }, 500)
       }
       this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'start_time', value: start_timeStamp, rely_card_datas: res.data })
+      rebackCreateNotify.call(this, { res, id: card_id, board_id, dispatch, operate_in_card_detail_panel: true }) //创建撤回弹窗
+
     })
   }
   // 开始时间 chg事件 E
@@ -593,6 +596,8 @@ export default class MainContent extends Component {
         }, 500)
       }
       this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'due_time', value: due_timeStamp, rely_card_datas: res.data })
+      rebackCreateNotify.call(this, { res, id: card_id, board_id, dispatch, operate_in_card_detail_panel: true }) //创建撤回弹窗
+
     })
   }
   // 截止时间 chg事件 E
@@ -620,6 +625,8 @@ export default class MainContent extends Component {
         return
       }
       this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'start_time', value: '0', rely_card_datas: res.data })
+      rebackCreateNotify.call(this, { res, id: card_id, board_id, dispatch, operate_in_card_detail_panel: true }) //创建撤回弹窗
+
     })
 
   }
@@ -649,6 +656,8 @@ export default class MainContent extends Component {
         return
       }
       this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'due_time', value: '0', rely_card_datas: res.data })
+      rebackCreateNotify.call(this, { res, id: card_id, board_id, dispatch, operate_in_card_detail_panel: true }) //创建撤回弹窗
+
     })
 
   }
@@ -923,7 +932,7 @@ export default class MainContent extends Component {
     const { drawContent = {}, projectDetailInfoData } = this.props
     const { showDelColor, currentDelId } = this.state
     const { card_id, board_id, org_id, properties = [] } = drawContent
-    const { data = [], id } = getCurrentDrawerContentPropsModelFieldData({properties, code: 'EXECUTOR'})
+    const { data = [], id } = getCurrentDrawerContentPropsModelFieldData({ properties, code: 'EXECUTOR' })
     const flag = (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()
     return (
       <div>
@@ -1079,7 +1088,7 @@ export default class MainContent extends Component {
   whetherUpdateFolderListData = ({ folder_id, file_id, file_name, create_time }) => {
     if (file_name) {
       const { drawContent = {}, dispatch } = this.props
-      const gold_data = getCurrentPropertiesData(drawContent['properties'],'ATTACHMENT')
+      const gold_data = getCurrentPropertiesData(drawContent['properties'], 'ATTACHMENT')
       let newData = [...gold_data]
       newData = newData && newData.map(item => {
         if (item.file_id == this.props.filePreviewCurrentFileId) {
@@ -1091,7 +1100,7 @@ export default class MainContent extends Component {
           return new_item
         }
       })
-      drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'ATTACHMENT', value: newData})
+      drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'ATTACHMENT', value: newData })
       dispatch({
         type: 'publicTaskDetailModal/updateDatas',
         payload: {
@@ -1105,7 +1114,7 @@ export default class MainContent extends Component {
   // 是否可以修改父任务中的时间
   whetherUpdateParentTaskTime = (data) => {
     const { drawContent = {}, dispatch } = this.props
-    const gold_data = getCurrentPropertiesData(drawContent['properties'],'SUBTASK')
+    const gold_data = getCurrentPropertiesData(drawContent['properties'], 'SUBTASK')
     if (!gold_data) return false;
     let newData = [...gold_data]
     newData = newData.find(item => item.due_time || item.start_time)
@@ -1120,8 +1129,8 @@ export default class MainContent extends Component {
     }
     if (data) {
       if (!(data && data.length)) return
-      const { start_time, id:card_id, due_time } = data[0]
-      let new_drawContent = { ...drawContent }      
+      const { start_time, id: card_id, due_time } = data[0]
+      let new_drawContent = { ...drawContent }
       new_drawContent['start_time'] = start_time
       new_drawContent['due_time'] = due_time
       this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'start_time', value: start_time })
@@ -1135,20 +1144,20 @@ export default class MainContent extends Component {
     if (!dependencies) return
     if (!(dependencies['last'] && dependencies['last'].length) && !(dependencies['next'] && dependencies['next'].length)) return
     let obj = {}
-    let new_drawContent = {...drawContent}
+    let new_drawContent = { ...drawContent }
     let preposeList = dependencies['last'] // 前置
     let postpositionList = dependencies['next'] // 后置
-    
+
     preposeList = preposeList.map(item => {
       let new_item = {}
       const node = change_data.find(n => n.id == item.id) || {}
-      new_item = {...item, ...node}
+      new_item = { ...item, ...node }
       return new_item
     })
     postpositionList = postpositionList.map(item => {
       let new_item = {}
       const node = change_data.find(n => n.id == item.id) || {}
-      new_item = {...item, ...node}
+      new_item = { ...item, ...node }
       return new_item
     })
     obj = {
@@ -1177,7 +1186,7 @@ export default class MainContent extends Component {
       dependencies = []
     } = drawContent
     const { properties = [] } = drawContent
-    const { data = [] } = getCurrentDrawerContentPropsModelFieldData({properties, code: 'EXECUTOR'})
+    const { data = [] } = getCurrentDrawerContentPropsModelFieldData({ properties, code: 'EXECUTOR' })
     const { boardFolderTreeData = [], milestoneList = [], selectedKeys = [], is_edit_title, inputValue } = this.state
     // 状态
     const filedEdit = (
@@ -1201,7 +1210,7 @@ export default class MainContent extends Component {
 
     return (
       <div className={mainContentStyles.main_wrap}>
-        <RelyOnRelationship relationshipList={dependencies} updateRelyOnRationList={this.updateRelyOnRationList}/>
+        <RelyOnRelationship relationshipList={dependencies} updateRelyOnRationList={this.updateRelyOnRationList} />
         <div className={mainContentStyles.main_content}>
           {/* 标题 S */}
           <div>
@@ -1436,7 +1445,7 @@ export default class MainContent extends Component {
                 file_detail_modal_visible={this.props.isInOpenFile}
                 filePreviewCurrentName={this.props.filePreviewCurrentName}
                 setPreviewFileModalVisibile={this.setPreviewFileModalVisibile}
-                // whetherUpdateFolderListData={this.whetherUpdateFolderListData}
+              // whetherUpdateFolderListData={this.whetherUpdateFolderListData}
               />
             )
           }

@@ -482,7 +482,7 @@ export default class DateList extends Component {
       )
     } else {
       contain = (
-        <div className={indexStyles.dateTitle_2}>{date_top}</div>
+        <div className={indexStyles.dateTitle_2} style={{ textAlign: gantt_view_mode == 'year' ? 'center' : 'left' }}>{date_top}</div>
       )
     }
     return contain

@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import { connect } from 'dva'
 import styles from './index.less'
-import { Popconfirm, Modal } from 'antd'
-import { ganttIsOutlineView, task_item_height, task_item_margin_top } from '../../constants'
+import { Popconfirm, Modal, Popover } from 'antd'
+import { ganttIsOutlineView, task_item_height, task_item_margin_top, date_area_height } from '../../constants'
+import PathOperateContent from './PathOperateContent'
 const rely_map = [
     {
         "id": "1265111963571195904",
@@ -21,6 +22,8 @@ const rely_map = [
         ]
     },
 ]
+const coperatedLeftDiv = 297 //滚动条左边还有一个div的宽度，作为修正
+const dateAreaHeight = date_area_height //日期区域高度，作为修正
 // 60 40 20
 const width_diff = 4//8 //宽度误差微调
 const left_diff = 6//12 //位置误差微调
@@ -37,12 +40,29 @@ export default class index extends Component {
         this.state = {
             rely_map: [],
             cards_one_level: [], //所有任务平铺成一维数组
+            operate_visible: false, //操作项的显示
+            opreate_position: {
+                x: 0,
+                y: 0
+            },
+            operator: {
+                move_id: '',
+                line_id: ''
+            }
         }
         this.could_structure_path_type = ['2', '3'] //可以构建依赖关系的类型
     }
 
     componentDidMount() {
         // this.getRelyMaps(this.props)
+        // document.getElementById('gantt_svg_area')
+        window.addEventListener('click', this.listenClick, true)
+        window.addEventListener('scroll', this.closeOperate, true)
+    }
+    componentWillUnmount() {
+        // document.getElementById('gantt_svg_area')
+        window.removeEventListener('click', this.listenClick, true)
+        window.addEventListener('scroll', this.closeOperate, true)
     }
     componentWillReceiveProps(nextProps) {
         const { rely_map = [] } = nextProps
@@ -472,10 +492,51 @@ export default class index extends Component {
         const { relation } = data
         return this.pathFunc[relation](data)
     }
-
-    // 
-    pathClick = (e) => {
-        // debugger
+    // 判断点击位置出现操作
+    listenClick = (e) => {
+        const { pageX, pageY, } = e
+        const { dataset = {} } = e.target
+        if (dataset.svg_operate === 'yes') { //落点在操作区域
+            return
+        }
+        if (e.target.nodeName !== 'path' || dataset.targetrelypath != 'relypath') { //不在svg path上
+            this.setState({
+                operate_visible: false
+            })
+            return
+        }
+        const target_0 = document.getElementById('gantt_card_out')
+        const target_1 = document.getElementById('gantt_card_out_middle')
+        const target = e.target
+        // 取得鼠标位置
+        const x = pageX - target_0.offsetLeft + target_1.scrollLeft - coperatedLeftDiv
+        const y = pageY - target_0.offsetTop + target_1.scrollTop - dateAreaHeight
+        this.setState({
+            operate_visible: true,
+            opreate_position: {
+                x, y
+            }
+        })
+    }
+    closeOperate = () => {
+        if (this.state.operate_visible) {
+            this.setOperateVisible(false)
+        }
+    }
+    setOperateVisible = (bool) => {
+        this.setState({
+            operate_visible: bool
+        })
+    }
+    // 设置当前操作的对象id
+    pathClick = ({ move_id, line_id, color_mark }) => {
+        this.setState({
+            operator: {
+                move_id,
+                line_id,
+                color_mark
+            }
+        })
     }
     onMouseOver = (e) => {
         const currentTarget = e.currentTarget
@@ -559,7 +620,7 @@ export default class index extends Component {
                         const { left: move_left, right: move_right, top: move_top, next = [], id: move_id } = move_item
                         return (
                             next.map(line_item => {
-                                const { left: line_left, right: line_right, top: line_top, relation, id: line_id } = line_item
+                                const { left: line_left, right: line_right, top: line_top, relation, id: line_id, color_mark = '24,144,255' } = line_item
                                 const params = {
                                     move_left,
                                     move_right,
@@ -570,29 +631,35 @@ export default class index extends Component {
                                     relation
                                 }
                                 // console.log('ssssssssssss', params)
+                                if (move_left == 0 || line_left == 0) return ''
                                 if (!this.checkInvalid(params)) return ''
                                 const { Move_Line, Arrow } = this.calPath({ ...params })
                                 return (
                                     <g data-targetclassname="specific_example"
                                         className={`${styles.path_g}`}
-                                        onMouseOver={this.onMouseOver}>
+                                    // onMouseOver={this.onMouseOver}
+                                    >
                                         <path name="arrow"
-                                            stroke="#1890FF"
+                                            stroke={`rgb(${color_mark})`}
                                             stroke-width="1"
                                             data-targetclassname="specific_example"
-                                            fill="#1890FF"
+                                            data-targetrelypath="relypath"
+                                            fill={`rgb(${color_mark})`}
                                             d={Arrow}
-                                            onClick={() => this.deleteRely({ move_id, line_id })}
+                                            onClick={() => this.pathClick({ move_id, line_id, color_mark })}
+                                            // onClick={() => this.deleteRely({ move_id, line_id })}
                                             className={`${styles.path} ${styles.path_arrow}`}
                                             {...this.pathMouseEvent}
                                         />
                                         <path
-                                            stroke="#1890FF"
+                                            stroke={`rgb(${color_mark})`}
                                             fill="none"
                                             data-targetclassname="specific_example"
+                                            data-targetrelypath="relypath"
                                             d={Move_Line}
                                             stroke-width='1'
-                                            onClick={() => this.deleteRely({ move_id, line_id })}
+                                            onClick={() => this.pathClick({ move_id, line_id, color_mark })}
+                                            // onClick={() => this.deleteRely({ move_id, line_id })}
                                             className={`${styles.path} ${styles.path_line}`}
                                             {...this.pathMouseEvent}
                                         />
@@ -608,7 +675,7 @@ export default class index extends Component {
     }
     render() {
         const { date_total, ceilWidth, group_view_type, gantt_view_mode } = this.props
-        const { rely_map = [] } = this.state
+        const { rely_map = [], opreate_position, operate_visible } = this.state
         // console.log('rely_map', rely_map)
         return (
             <div onClick={(e) => e.stopPropagation()}>
@@ -624,6 +691,26 @@ export default class index extends Component {
                     }}>
                     {this.renderPaths()}
                 </svg>
+                <Popover
+                    content={
+                        <PathOperateContent
+                            onSelectColor={this.pathClick}
+                            operator={this.state.operator}
+                            setOperateVisible={this.setOperateVisible} />
+                    }
+                    placement={'bottom'}
+                    trigger={'click'}
+                    zIndex={3}
+                    visible={operate_visible}
+                >
+                    <div
+                        onMouseDown={(e) => e.stopPropagation()}
+                        onMouseUp={(e) => e.stopPropagation()}
+                        onClick={(e) => e.stopPropagation()}
+                        className={styles.path}
+                        style={{ position: 'absolute', left: opreate_position.x, top: opreate_position.y, height: 2, width: 2 }}>
+                    </div>
+                </Popover>
             </div>
         )
     }
