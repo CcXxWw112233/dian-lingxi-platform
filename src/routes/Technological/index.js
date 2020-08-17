@@ -19,6 +19,7 @@ import { routerRedux } from "dva/router";
 import UploadNotification from '@/components/UploadNotification'
 import { CUSTOMIZATION_ORGNIZATIONS } from '../../globalset/js/constant';
 import UpdateLog from './components/Workbench/UpdateLog/index'
+import logoImg from '../../assets/library/lingxi_logo.png'
 
 const { Sider, Content } = Layout;
 let net = null
@@ -32,6 +33,7 @@ export default class Technological extends React.Component {
   componentDidMount() {
     this.historyListenSet()
     this.connectWsToModel()
+    this.checkListeninger()
   }
   componentWillUnmount() {
     // console.log('netnet-ummount', net)
@@ -166,7 +168,48 @@ export default class Technological extends React.Component {
     })
   }
 
+  // 获取元素并取消提示内容
+  handleCancelWarning = () => {
+    let warningElement = document.getElementById('notYet_reminder_container')
+    let pageElement = document.getElementById('technologicalOut')
+    warningElement.style.display = 'none'
+    pageElement.style.filter = 'none'
+  }
 
+  // 检测监听小屏访问提示
+  checkListeninger = () => {
+    let warining = localStorage.getItem('lingxi.skip_mobile_warning')
+    if (warining) {
+      this.handleCancelWarning()
+    }
+  }
+
+  // 点击提示 表示是否继续操作
+  handleContinueAnyway = (e) => {
+    e && e.stopPropagation()
+    localStorage.setItem('lingxi.skip_mobile_warning', '1')
+    this.handleCancelWarning()
+  }
+
+  // 渲染暂未支持小屏设备
+  renderNotYetSupportEquipment = () => {
+    return (
+      <div id={'notYet_reminder_container'} className={globalClassNmae.notYet_reminder_wrapper}>
+        <div className={globalClassNmae.notYet_content}>
+          <img style={{ width: '64px', height: '64px' }} src={logoImg} />
+          <p style={{fontSize: '24px', color: 'rgba(0,0,0,.85)'}}>暂未支持小屏设备访问</p>
+          <p>
+            <span>
+              我们正在努力带来更好的PC端使用体验，也准备了微信小程序以及APP，请使用电脑浏览器访问或关注我们的微信小程序（聆悉协作）获得更好的产品体验，谢谢。
+            </span>
+          </p>
+          <p style={{color: '#2B8AEB'}}>
+            lingxi.di-an.com<span onClick={this.handleContinueAnyway} style={{marginLeft: '12px', cursor: 'pointer'}}> 继续访问 &gt;</span>
+          </p>
+        </div>
+      </div>
+    )
+  }
 
   render() {
     const { page_load_type } = this.props;
@@ -288,6 +331,7 @@ export default class Technological extends React.Component {
           {layout}
           <UpdateLog />
           <UploadNotification />
+          {this.renderNotYetSupportEquipment()}
         </>
       </LocaleProvider>
     );
