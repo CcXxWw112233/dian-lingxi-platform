@@ -473,10 +473,12 @@ export default class SimpleNavigation extends Component {
     // 退出登录的操作
     logout(e) {
         const { dispatch } = this.props
-        Modal.confirm({
+        const modal = Modal.confirm()
+        modal.update({
             title: '确定退出登录？',
             okText: '确认',
-            zIndex: 2000,
+            // zIndex: 2000,
+            getContainer: () => document.getElementById('technologicalLayoutWrapper'),
             onOk() {
                 dispatch({
                     type: 'technological/logout',
@@ -486,8 +488,10 @@ export default class SimpleNavigation extends Component {
                 })
             },
             cancelText: '取消',
-        });
-
+            onCancel: () => {
+                modal.destroy();
+            }
+        })
     }
 
     // 是否显示全部组织

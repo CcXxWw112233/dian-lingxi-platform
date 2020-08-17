@@ -1290,7 +1290,7 @@ class VideoMeetingPopoverContent extends React.Component {
 				}
 				onVisibleChange={this.handleVideoMeetingPopoverVisibleChange}
 				trigger="click"
-			// getPopupContainer={triggerNode => triggerNode.parentNode}
+				getPopupContainer={() => document.getElementById('technologicalLayoutWrapper')}
 			>
 				<div
 					className={indexStyles.videoMeeting__icon}
