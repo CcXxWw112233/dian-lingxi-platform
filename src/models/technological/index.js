@@ -572,6 +572,9 @@ export default {
 
     //名词定义------start
     * getCurrentNounPlan({ payload }, { select, call, put }) {
+      if (localStorage.getItem('OrganizationId') == '0' || !localStorage.getItem('OrganizationId')) {
+        return
+      }
       yield put({
         type: 'organizationManager/getCurrentNounPlan',
         payload: {

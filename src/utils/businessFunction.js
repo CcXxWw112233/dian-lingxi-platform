@@ -153,16 +153,25 @@ export const checkIsHasPermissionInBoard = (code, params_board_id) => {
 //返回当前名词定义对应名称
 export const currentNounPlanFilterName = (code, currentNounPlan_parm) => {
   let currentNounPlan
-  if (typeof currentNounPlan_parm == 'object') {
-    currentNounPlan = currentNounPlan_parm
+  if (localStorage.getItem('OrganizationId') == '0' || !localStorage.getItem('OrganizationId')) { //全组织下采用默认
+    currentNounPlan = NORMAL_NOUN_PLAN
   } else {
-    currentNounPlan = localStorage.getItem('currentNounPlan')
-    if (currentNounPlan) {
-      currentNounPlan = JSON.parse(currentNounPlan)
+    if (!currentNounPlan_parm) {
+      currentNounPlan = localStorage.getItem('currentNounPlan')
+      if (currentNounPlan) {
+        currentNounPlan = JSON.parse(currentNounPlan)
+      } else {
+        currentNounPlan = NORMAL_NOUN_PLAN
+      }
     } else {
-      currentNounPlan = NORMAL_NOUN_PLAN
+      if (typeof currentNounPlan_parm == 'object' && currentNounPlan_parm.hasOwnProperty('Projects')) {
+        currentNounPlan = currentNounPlan_parm
+      } else {
+        currentNounPlan = NORMAL_NOUN_PLAN
+      }
     }
   }
+
   let name = ''
   for (let i in currentNounPlan) {
     if (code === i) {
