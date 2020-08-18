@@ -14,6 +14,7 @@ import {
 } from '../../services/technological/organizationMember'
 import { getMenuList } from '../../services/technological/getMenuList'
 import { getCurrentOrgAllMembers, createMeeting, getVideoConferenceProviderList, appointmentMeeting } from './../../services/technological/workbench'
+import { getCorrespondingOrganizationMmembers } from '../../services/organization'
 import { getCurrentNounPlan } from '../../services/organization'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
@@ -685,6 +686,19 @@ export default {
           type: 'updateDatas',
           payload: {
             currentOrgAllMembersList: res.data.users
+          }
+        })
+      }
+    },
+
+    // 获取对应组织成员列表
+    * getCorrespondingOrganizationMmembers({ payload }, { call, put }) {
+      let res = yield call(getCorrespondingOrganizationMmembers, { ...payload })
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            correspondingOrganizationMmembersList: res.data
           }
         })
       }

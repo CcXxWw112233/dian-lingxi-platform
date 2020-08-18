@@ -123,6 +123,16 @@ export async function fileRemove(data) {
     data,
   });
 }
+
+// 单个文件删除
+export async function fileDelete(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/file/remove`,
+    method: 'DELETE',
+    data,
+  });
+}
+
 // 把文件文件夹 移入到某一个文件夹
 export async function fileMove(data) {
   return request({

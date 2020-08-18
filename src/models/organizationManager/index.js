@@ -2,7 +2,7 @@ import {
   saveNounList, getNounList, getPayingStatus, getOrderList, getPermissions, savePermission, getRolePermissions, saveRolePermission, createRole,
   updateRole, deleteRole, copyRole, updateOrganization, setDefaultRole, getCurrentNounPlan, getFnManagementList,
   setFnManagementStatus, investmentMapAddAdministrators, investmentMapDeleteAdministrators, investmentMapQueryAdministrators,
-  getTemplateList, createTemplete, updateTemplete, deleteTemplete, getTemplateListContainer, createTempleteContainer, deleteTempleteContainer, updateTempleteContainer, sortTempleteContainer
+  getTemplateList, createTemplete, updateTemplete, deleteTemplete, getTemplateListContainer, createTempleteContainer, deleteTempleteContainer, updateTempleteContainer, sortTempleteContainer, getCustomFieldList, createCustomFieldGroup, updateCustomFieldGroup, deleteCustomFieldGroup, createCustomField, updateCustomField, deleteCustomField, discountCustomField, createRelationCustomField, setRelationCustomField, deleteRelationCustomField
 } from '../../services/organization'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
@@ -696,6 +696,190 @@ export default {
       } else {
         message.warn(res.message)
       }
+    },
+
+    // 获取自定义字段分组列表
+    * getCustomFieldList({ payload }, { call, put }) {
+      let res = yield call(getCustomFieldList)
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            customFieldsList: res.data
+          }
+        })
+      }
+    },
+
+    // 创建自定义字段分组
+    * createCustomFieldGroup({ payload }, { call, put }) {
+      let res = yield call(createCustomFieldGroup, { ...payload })
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('创建成功', MESSAGE_DURATION_TIME)
+        }, 200)
+        yield put({
+          type: 'getCustomFieldList',
+          payload: {
+
+          }
+        })
+      } else {
+        message.warn(res.message)
+      }
+    },
+
+    // 更新自定义字段分组
+    * updateCustomFieldGroup({ payload }, { call, put }) {
+      let res = yield call(updateCustomFieldGroup, { ...payload })
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('更新成功', MESSAGE_DURATION_TIME)
+        }, 200)
+        yield put({
+          type: 'getCustomFieldList',
+          payload: {
+
+          }
+        })
+      } else {
+        message.warn(res.message)
+      }
+      return res || {}
+    },
+
+    // 删除自定义字段分组
+    * deleteCustomFieldGroup({ payload }, { call, put }) {
+      let res = yield call(deleteCustomFieldGroup, { ...payload })
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('删除成功', MESSAGE_DURATION_TIME)
+        }, 200)
+        yield put({
+          type: 'getCustomFieldList',
+          payload: {
+
+          }
+        })
+      } else {
+        message.warn(res.message)
+      }
+      return res || {}
+    },
+
+    // 创建自定义字段
+    * createCustomField({ payload }, { call, put }) {
+      let res = yield call(createCustomField, { ...payload })
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('创建成功', MESSAGE_DURATION_TIME)
+        }, 200)
+        yield put({
+          type: 'getCustomFieldList',
+          payload: {
+
+          }
+        })
+      } else {
+        message.warn(res.message)
+      }
+      return res || {}
+    },
+
+    // 更新自定义字段
+    * updateCustomField({ payload }, { call, put }) {
+      let res = yield call(updateCustomField, { ...payload })
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('更新成功', MESSAGE_DURATION_TIME)
+        }, 200)
+        yield put({
+          type: 'getCustomFieldList',
+          payload: {
+
+          }
+        })
+      } else {
+        message.warn(res.message)
+      }
+      return res || {}
+    },
+
+    // 删除自定义字段
+    * deleteCustomField({ payload }, { call, put }) {
+      let res = yield call(deleteCustomField, { ...payload })
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('删除成功', MESSAGE_DURATION_TIME)
+        }, 200)
+        yield put({
+          type: 'getCustomFieldList',
+          payload: {
+
+          }
+        })
+      } else {
+        message.warn(res.message)
+      }
+      return res || {}
+    },
+
+    // 停用自定义字段
+    * discountCustomField({ payload }, { call, put }) {
+      let res = yield call(discountCustomField, { ...payload })
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('停用成功', MESSAGE_DURATION_TIME)
+        }, 200)
+        yield put({
+          type: 'getCustomFieldList',
+          payload: {
+
+          }
+        })
+      } else {
+        message.warn(res.message)
+      }
+      return res || {}
+    },
+
+    // 创建关联字段 
+    * createRelationCustomField({ payload }, { call, put }) {
+      let res = yield call(createRelationCustomField, { ...payload })
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('添加成功', MESSAGE_DURATION_TIME)
+        }, 200)
+      } else {
+        message.warn(res.message)
+      }
+      return res || {}
+    },
+
+    // 设置关联字段值 
+    * setRelationCustomField({ payload }, { call, put }) {
+      let res = yield call(setRelationCustomField, { ...payload })
+      if (isApiResponseOk(res)) {
+        // setTimeout(() => {
+        //   message.success('添加成功', MESSAGE_DURATION_TIME)
+        // }, 200)
+      } else {
+        message.warn(res.message)
+      }
+      return res || {}
+    },
+
+    // 删除关联字段 
+    * deleteRelationCustomField({ payload }, { call, put }) {
+      let res = yield call(deleteRelationCustomField, { ...payload })
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('删除成功', MESSAGE_DURATION_TIME)
+        }, 200)
+      } else {
+        message.warn(res.message)
+      }
+      return res || {}
     },
 
   },

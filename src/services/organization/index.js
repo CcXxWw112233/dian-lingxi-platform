@@ -1,6 +1,18 @@
 import request from '../../utils/requestAxios'
-import { REQUEST_DOMAIN } from '../../globalset/js/constant'
+import { REQUEST_DOMAIN, REQUEST_DOMAIN_FLOWS } from '../../globalset/js/constant'
 import Cookies from 'js-cookie'
+
+// 获取对应组织下的组织成员列表（仅列表）
+export async function getCorrespondingOrganizationMmembers(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/member/all/list`,
+    method: 'GET',
+    params: {
+      ...params,
+      _organization_id: params._organization_id ? params._organization_id : localStorage.getItem('OrganizationId')
+    }
+  })
+}
 
 //根据用户id获取用户信息，支持获取多个用户
 export async function fetchUsersByIds({ids}){
@@ -320,3 +332,137 @@ export async function sortTempleteContainer(data) {
     data
   })
 }
+
+// ------------------------ 自定义字段接口 S --------------------------
+
+// 获取自定义字段列表
+export async function getCustomFieldList(params = {}) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/board/field/group/list`,
+    method: 'GET',
+    params: {
+      ...params,
+      _organization_id: params._organization_id ? params._organization_id : localStorage.getItem('OrganizationId')
+    }
+  })
+}
+
+/**
+ * 创建自定义字段分组
+ * @param {String} name 分组名称 
+ */
+export async function createCustomFieldGroup(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/board/field/group`,
+    method: 'POST',
+    data: {
+      ...data,
+      _organization_id: localStorage.getItem('OrganizationId')
+    }
+  })
+}
+
+/**
+ * 更新自定义字段分组
+ * @param {String} id 分组ID
+ * @param {String} name 分组名称
+ */
+export async function updateCustomFieldGroup(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/board/field/group`,
+    method: 'PUT',
+    data
+  })
+}
+
+/**
+ * 删除自定义字段分组
+ * @param {String} id 分组ID
+ */
+export async function deleteCustomFieldGroup(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/board/field/group`,
+    method: 'DELETE',
+    params
+  })
+}
+
+// 创建自定义字段
+export async function createCustomField(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/board/field`,
+    method: 'POST',
+    data: {
+      ...data,
+      _organization_id: localStorage.getItem('OrganizationId')
+    }
+  })
+}
+
+// 更新自定义字段
+export async function updateCustomField(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/board/field`,
+    method: 'PUT',
+    data: {
+      ...data,
+      // _organization_id: localStorage.getItem('OrganizationId')
+    }
+  })
+}
+
+// 删除自定义字段
+export async function deleteCustomField(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/board/field`,
+    method: 'DELETE',
+    params
+  })
+}
+
+// 停用自定义字段
+export async function discountCustomField(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/board/field/set`,
+    method: 'PUT',
+    data
+  })
+}
+
+// 获取字段引用列表
+export async function getCustomFieldQuoteList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/board/field/quote/list`,
+    method: 'get',
+    params
+  })
+}
+
+// 创建关联字段接口
+export async function createRelationCustomField(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/board/field/relation`,
+    method: 'POST',
+    data
+  })
+}
+
+// 设置自定义字段关联值
+export async function setRelationCustomField(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/board/field/relation`,
+    method: 'PUT',
+    data
+  })
+}
+
+// 删除自定义关联
+export async function deleteRelationCustomField(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_FLOWS}/board/field/relation`,
+    method: 'DELETE',
+    params
+  })
+}
+
+// ------------------------ 自定义字段接口 E --------------------------
