@@ -4,7 +4,7 @@ import indexStyles from './index.less'
 import GetRowGantt from './GetRowGantt'
 import DateList from './DateList'
 import GroupListHead from './GroupListHead'
-import { getMonthDate, getNextMonthDatePush, getGoldDateData, getLastMonthDateShift } from './getDate'
+import { getMonthDate, getNextMonthDatePush, getGoldDateData, getLastMonthDateShift, getNextYearDate, getLastYearDate, getNextWeeksDate, getLastWeeksDate } from './getDate'
 import { date_area_height, ganttIsOutlineView } from './constants'
 import GroupListHeadSet from './GroupListHeadSet.js'
 import GroupListHeadSetBottom from './GroupListHeadSetBottom'
@@ -195,7 +195,12 @@ export default class GanttFace extends Component {
     const { gold_date_arr, dispatch, ceilWidth, gantt_view_mode } = this.props
     const delX = target_scrollLeft - scrollLeft //判断向左还是向右
     const scroll_bound_leng = gantt_view_mode == 'month' ? 2 : 16 //判断滚动条触底边界
-    const rescroll_leng_to_left = gantt_view_mode == 'month' ? 36 : 60 //滚动条回复位置
+    const rescroll_leng_to_left_wrapper = {
+      month: 30,
+      week: 343, //往前添加49周
+      year: 365 //往前添加一年
+    }
+    const rescroll_leng_to_left = gantt_view_mode == 'month' ? 30 : 60 //滚动条回复位置
     const rescroll_leng_to_right = gantt_view_mode == 'month' ? 60 : 90//滚动条回复位置
     if (target_scrollLeft == scrollLeft) {
       return
@@ -206,13 +211,13 @@ export default class GanttFace extends Component {
     if (scrollLeft < scroll_bound_leng * ceilWidth && delX > 0) { //3为分组头部占用三个单元格的长度
       const { timestamp } = gold_date_arr[0]['date_inner'][0] //取第一天
       const loadedCb = () => {
-        this.setScrollPosition({ position: 30 * ceilWidth })
+        this.setScrollPosition({ position: rescroll_leng_to_left_wrapper[gantt_view_mode] * ceilWidth })
       }
       this.setState({
         searchTimer: setTimeout(() => {
           // this.setScrollPosition({ delay: 1, position: rescroll_leng_to_left * ceilWidth }) //大概移动四天的位置
           // setTimeout(() => {
-          this.setGoldDateArr({ timestamp, active_triggr: 'to_left', not_set_loading: false, loadedCb }) //取左边界日期来做日期更新的基准
+          this.setGoldDateArr({ timestamp, active_trigger: 'to_left', not_set_loading: false, loadedCb }) //取左边界日期来做日期更新的基准
           // }, 200)
         }, 50)
       })
@@ -226,7 +231,7 @@ export default class GanttFace extends Component {
         searchTimer: setTimeout(() => {
           // this.setScrollPosition({ delay: 1, position: scrollWidth - clientWidth - rescroll_leng_to_right * ceilWidth })
           // setTimeout(() => {
-          this.setGoldDateArr({ timestamp, active_triggr: 'to_right', not_set_loading: false }) //取有边界日期来做更新日期的基准
+          this.setGoldDateArr({ timestamp, active_trigger: 'to_right', not_set_loading: false }) //取有边界日期来做更新日期的基准
           // }, 200)
         }, 50)
       })
@@ -241,28 +246,52 @@ export default class GanttFace extends Component {
   }
 
   //更新日期,日期更新后做相应的数据请求
-  setGoldDateArr = ({ timestamp, active_triggr, init, not_set_loading, loadedCb }) => {
+  setGoldDateArr = ({ timestamp, active_trigger, init, not_set_loading, loadedCb }) => {
     const { dispatch } = this.props
     const { gold_date_arr = [], isDragging, gantt_view_mode, ceilWidth } = this.props
     let date_arr = []
-    if (
-      gantt_view_mode == 'month'
-    ) { //如果是拖拽虚线框向右则是累加，否则是取基数前后
-      if (active_triggr == 'to_right') {
+    if (active_trigger == 'to_right') {
+      if (gantt_view_mode == 'month') {
         date_arr = [].concat(gold_date_arr, getNextMonthDatePush(timestamp))
-      } else if (active_triggr == 'to_left') {
+      } else if (gantt_view_mode == 'week') {
+        date_arr = [].concat(gold_date_arr, getNextWeeksDate(timestamp))
+      } else if (gantt_view_mode == 'year') {
+        date_arr = [].concat(gold_date_arr, getNextYearDate(timestamp))
+      } else {
+        date_arr = getGoldDateData({ gantt_view_mode, timestamp })
+      }
+    } else if (active_trigger == 'to_left') {
+      if (gantt_view_mode == 'month') {
         date_arr = [].concat(getLastMonthDateShift(timestamp), gold_date_arr)
-        // if (typeof loadedCb === 'function') {
-        //   loadedCb()
-        // }
+      } else if (gantt_view_mode == 'week') {
+        date_arr = [].concat(getLastWeeksDate(timestamp), gold_date_arr)
+      } else if (gantt_view_mode == 'year') {
+        date_arr = [].concat(getLastYearDate(timestamp), gold_date_arr)
       } else {
         date_arr = getGoldDateData({ gantt_view_mode, timestamp })
       }
     } else {
-      // date_arr = getMonthDate(timestamp)
-      // date_arr = getYearDate(timestamp)
       date_arr = getGoldDateData({ gantt_view_mode, timestamp })
     }
+
+    // if (
+    //   gantt_view_mode == 'month'
+    // ) { //如果是拖拽虚线框向右则是累加，否则是取基数前后
+    //   if (active_triggr == 'to_right') {
+    //     date_arr = [].concat(gold_date_arr, getNextMonthDatePush(timestamp))
+    //   } else if (active_triggr == 'to_left') {
+    //     date_arr = [].concat(getLastMonthDateShift(timestamp), gold_date_arr)
+    //     // if (typeof loadedCb === 'function') {
+    //     //   loadedCb()
+    //     // }
+    //   } else {
+    //     date_arr = getGoldDateData({ gantt_view_mode, timestamp })
+    //   }
+    // } else {
+    //   // date_arr = getMonthDate(timestamp)
+    //   // date_arr = getYearDate(timestamp)
+    //   date_arr = getGoldDateData({ gantt_view_mode, timestamp })
+    // }
     // if (!!to_right) { //如果是拖拽虚线框向右则是累加，否则是取基数前后
     //   date_arr = [].concat(gold_date_arr, getNextMonthDatePush(timestamp))
     // } else {
@@ -279,7 +308,7 @@ export default class GanttFace extends Component {
         }
       }
     } else {
-      date_arr_one_level = weekDataArray(timestamp)
+      date_arr_one_level = weekDataArray(date_arr)
       date_total = date_arr_one_level.length * 7 //总共有这么多周
     }
     // if (gantt_view_mode == 'year') {
@@ -324,11 +353,11 @@ export default class GanttFace extends Component {
             not_set_loading
           }
         })
-        .then(res => {
-          if (isApiResponseOk(res) && typeof loadedCb === 'function') {
-            loadedCb()
-          }
-        })
+          .then(res => {
+            if (isApiResponseOk(res) && typeof loadedCb === 'function') {
+              loadedCb()
+            }
+          })
         that.getHoliday()
       }, 0)
     } else {
@@ -425,7 +454,7 @@ export default class GanttFace extends Component {
               height: gantt_card_height,
               backgroundColor: get_gantt_data_loading_other ? 'rgba(255,255,255,.7)' : '',
             }}>
-              <Spin spinning={get_gantt_data_loading || get_gantt_data_loading_other} tip={'甘特图数据正在加载中...'} >
+              <Spin spinning={get_gantt_data_loading || get_gantt_data_loading_other} tip={''} >
               </Spin>
             </div>
           )

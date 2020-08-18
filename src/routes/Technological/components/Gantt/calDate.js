@@ -103,6 +103,7 @@ function setWeekData({ timestamp, type }) {
     return weekData.reverse().slice(0, 49)
   } else if (type == 'next') {
     setNext()
+    weekData2.shift()
     return weekData2
   } else {
     setPre()
