@@ -8,6 +8,7 @@ import './index.css';
 import { Modal } from 'antd'
 import './global_constants' //项目全局属性
 import './object_expand.js'
+import FastClick from 'fastclick'
 //兼容ie10及以下
 Object.setPrototypeOf = require('setprototypeof');
 // var browser=navigator.appName
@@ -41,6 +42,7 @@ const app = dva({
   },
 });
 
+FastClick.attach(document.body)
 // 2. Plugins
 // app.use({});
 
