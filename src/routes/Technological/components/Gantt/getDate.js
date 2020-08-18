@@ -1,5 +1,5 @@
 import base_utils from './base_utils'
-import { weekDataArray, getWeekGoldData } from './calDate'
+import { getWeekGoldData, getNextWeeksDate, getLastWeeksDate } from './calDate'
 
 const _obj = {
   getMonthDate: (timestamp) => { //获取月视图数据
@@ -14,11 +14,25 @@ const _obj = {
   getDateInfo: (timestring) => base_utils.getNeedDate(timestring), //获取传入日期的详细信息
 
   // 年视图所需要数据
-  getYearDate: (timestamp) => {
+  getYearDate: (timestamp) => { //获取初始化年数据[上一年，今年，下年]
     return base_utils.getYearDateData(timestamp)
   },
-  getWeekDate: (timestamp) => {
+
+  getNextYearDate: (timestamp) => { //获取传入时间戳，获取下一年的数据，用于日期累加（月视图）
+    return base_utils.getNextYearDate(timestamp)
+  },
+  getLastYearDate: (timestamp) => { //获取传入时间戳，获取上一年的数据，用于日期累加（月视图）
+    return base_utils.getLastYearDate(timestamp)
+  },
+
+  getWeekDate: (timestamp) => { //获取初始周数据以本周为基准点延申到前后50周
     return getWeekGoldData(timestamp)
+  },
+  getNextWeeksDate: (timestamp) => { //获取上一个区间的周数据
+    return getNextWeeksDate(timestamp)
+  },
+  getLastWeeksDate: (timestamp) => { // //获取下一个区间的周数据
+    return getLastWeeksDate(timestamp)
   },
   // 获取目标数据
   getGoldDateData: ({ timestamp, gantt_view_mode }) => {
