@@ -105,7 +105,7 @@ class BoardDropdownSelect extends Component {
           return;
         }
         if (data.key != '0' && (currentSelectedWorkbenchBox && currentSelectedWorkbenchBox.code) && currentSelectedWorkbenchBox.code == 'maps' && this.isHasEnabledInvestmentMapsApp(selectOrgId)) {
-          message.warn(`该${currentNounPlanFilterName(PROJECTS)}${currentNounPlanFilterName(ORGANIZATION)}下没有开启地图APP`)
+          message.warn(`该${currentNounPlanFilterName(PROJECTS, this.props.currentNounPlan)}${currentNounPlanFilterName(ORGANIZATION, this.props.currentNounPlan)}下没有开启地图APP`)
           return
         }
         setBoardIdStorage(data.key)
@@ -210,7 +210,7 @@ class BoardDropdownSelect extends Component {
 
   getMenuItemList(projectList) {
     const { currentUserOrganizes, currentSelectedWorkbenchBox = {} } = this.props;
-    let menuItemList = [{ id: '0', name: `我参与的${currentNounPlanFilterName(PROJECTS)}` }];
+    let menuItemList = [{ id: '0', name: `我参与的${currentNounPlanFilterName(PROJECTS, this.props.currentNounPlan)}` }];
     projectList.map((board, index) => {
       const { board_id: id, board_name: name, org_id } = board;
       //根据当前模块是付费非付费模块 去设置项目列表中的项目是否可以选择
@@ -233,7 +233,7 @@ class BoardDropdownSelect extends Component {
     const { projectList, simplemodeCurrentProject, iconVisible = true } = this.props;
     const { addProjectModalVisible = false } = this.state;
     const menuItemList = this.getMenuItemList(projectList);
-    const fuctionMenuItemList = this.isHasCreatBoardPermission() ? [{ 'name': `新建${currentNounPlanFilterName(PROJECTS)}`, 'icon': 'plus-circle', 'selectHandleFun': this.createNewBoard, 'id': 'add' }] : [];
+    const fuctionMenuItemList = this.isHasCreatBoardPermission() ? [{ 'name': `新建${currentNounPlanFilterName(PROJECTS, this.props.currentNounPlan)}`, 'icon': 'plus-circle', 'selectHandleFun': this.createNewBoard, 'id': 'add' }] : [];
     let selectedKeys = ['0'];
     if (simplemodeCurrentProject && simplemodeCurrentProject.board_id) {
       selectedKeys = [simplemodeCurrentProject.board_id]
@@ -268,6 +268,11 @@ export default connect(
     },
     technological: {
       datas: { currentUserOrganizes, userOrgPermissions }
+    },
+    organizationManager: {
+      datas: {
+        currentNounPlan
+      }
     }
     , project }) => ({
       project,
@@ -278,5 +283,6 @@ export default connect(
       currentUserOrganizes,
       simplemodeCurrentProject,
       currentSelectedWorkbenchBox,
-      userOrgPermissions
+      userOrgPermissions,
+      currentNounPlan
     }))(BoardDropdownSelect)

@@ -192,12 +192,12 @@ export default class BoardFeatures extends Component {
 				this.setProcessDetailModalVisibile()
 				break;
 			case 'recently_week': // 最近七周
-				this.setTaskDetailModalVisible({limit_time: 7})
-				this.setProcessDetailModalVisibile({limit_time: 7})
+				this.setTaskDetailModalVisible({ limit_time: 7 })
+				this.setProcessDetailModalVisibile({ limit_time: 7 })
 				break
 			case 'recently_month': // 最近一月
-				this.setTaskDetailModalVisible({limit_time: 31})
-				this.setProcessDetailModalVisibile({limit_time: 31})
+				this.setTaskDetailModalVisible({ limit_time: 31 })
+				this.setProcessDetailModalVisibile({ limit_time: 31 })
 				break
 			default:
 				break;
@@ -237,11 +237,11 @@ export default class BoardFeatures extends Component {
 		let tempProjectList = [...projectList]
 		if (selected_board_term == '1') { // 表示我参与的
 			const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
-			let temp = tempProjectList.filter(item=>item.user_id==id)
-			tempBoardToDoList = tempBoardToDoList.filter(item => temp.find(i=>i.board_id==item.board_id)) || []
+			let temp = tempProjectList.filter(item => item.user_id == id)
+			tempBoardToDoList = tempBoardToDoList.filter(item => temp.find(i => i.board_id == item.board_id)) || []
 		} else if (selected_board_term == '2') { // 表示我负责的项目
-			let temp = tempProjectList.filter(item=>item.is_principal=='1')
-			tempBoardToDoList = tempBoardToDoList.filter(item => temp.find(i=>i.board_id==item.board_id)) || []
+			let temp = tempProjectList.filter(item => item.is_principal == '1')
+			tempBoardToDoList = tempBoardToDoList.filter(item => temp.find(i => i.board_id == item.board_id)) || []
 		} else {
 			tempBoardToDoList = [...board_todo_list]
 		}
@@ -282,7 +282,7 @@ export default class BoardFeatures extends Component {
 		return (
 			<div className={`${globalStyles.authTheme} ${styles.nodataArea2}`}>
 				<div className={`${globalStyles.authTheme} ${styles.alarm}`}>&#xe704;</div>
-				<div className={`${styles.title}`}>欢迎来到聆悉，我们有以上{`${currentNounPlanFilterName(PROJECTS)}`}功能，赶快新建一个{`${currentNounPlanFilterName(PROJECTS)}`}体验吧～</div>
+				<div className={`${styles.title}`}>欢迎来到聆悉，我们有以上{`${currentNounPlanFilterName(PROJECTS, this.props.currentNounPlan)}`}功能，赶快新建一个{`${currentNounPlanFilterName(PROJECTS, this.props.currentNounPlan)}`}体验吧～</div>
 			</div>
 		)
 	}
@@ -300,7 +300,7 @@ export default class BoardFeatures extends Component {
 							<>
 								<div>
 									<Dropdown overlayClassName={styles.overlay_featurebox_dropdown} getPopupContainer={() => document.getElementById('featurebox_featuresContent')} overlay={this.timeQuantum()} trigger={['click']}>
-										<div style={{color: '#FFF', lineHeight: '20px', marginLeft: '16px', marginBottom: '12px'}}>
+										<div style={{ color: '#FFF', lineHeight: '20px', marginLeft: '16px', marginBottom: '12px' }}>
 											{selected_filed_time}&nbsp;&nbsp;
 											<span className={globalStyles.authTheme}>&#xe687;</span>
 										</div>
@@ -349,7 +349,12 @@ function mapStateToProps(
 			datas: { currentUserOrganizes, currentSelectOrganize = {} }
 		},
 		publicTaskDetailModal: { drawerVisible },
-		publicProcessDetailModal: { process_detail_modal_visible, processInfo = {} }
+		publicProcessDetailModal: { process_detail_modal_visible, processInfo = {} },
+		organizationManager: {
+			datas: {
+				currentNounPlan
+			}
+		}
 	}) {
 	return {
 		simplemodeCurrentProject,
@@ -361,6 +366,6 @@ function mapStateToProps(
 		projectList,
 		projectInitLoaded,
 		process_detail_modal_visible,
-		processInfo
+		processInfo, currentNounPlan
 	}
 }

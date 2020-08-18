@@ -572,12 +572,18 @@ export default {
 
     //名词定义------start
     * getCurrentNounPlan({ payload }, { select, call, put }) {
-      let res = yield call(getCurrentNounPlan, payload)
-      if (isApiResponseOk(res)) {
-        localStorage.setItem('currentNounPlan', JSON.stringify(res.data || []))
-      } else {
-        message.warn(res.message, MESSAGE_DURATION_TIME)
-      }
+      yield put({
+        type: 'organizationManager/getCurrentNounPlan',
+        payload: {
+          ...payload
+        }
+      })
+      // let res = yield call(getCurrentNounPlan, payload)
+      // if (isApiResponseOk(res)) {
+      //   localStorage.setItem('currentNounPlan', JSON.stringify(res.data || []))
+      // } else {
+      //   message.warn(res.message, MESSAGE_DURATION_TIME)
+      // }
     },
     //名词定义------end
 
@@ -636,7 +642,7 @@ export default {
     },
     // 预约会议 (新接口)
     * appointmentVideoMeeting({ payload }, { call }) {
-      const res = yield call(appointmentMeeting, {...payload})
+      const res = yield call(appointmentMeeting, { ...payload })
       return res || {}
     },
     // 获取视频会议提供商列表

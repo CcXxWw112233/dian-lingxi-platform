@@ -279,8 +279,8 @@ export default class MainBoard extends Component {
             <div>
                 <Menu defaultSelectedKeys="0" selectedKeys={selected_board_term ? selected_board_term : '0'} onClick={this.handleBoardSelectedTerm}>
                     {/* <Menu.Item key="1">我发起的项目</Menu.Item> */}
-                    <Menu.Item key="0">我参与的{`${currentNounPlanFilterName(PROJECTS)}`}</Menu.Item>
-                    <Menu.Item key="2">我负责的{`${currentNounPlanFilterName(PROJECTS)}`}</Menu.Item>
+                    <Menu.Item key="0">我参与的{`${currentNounPlanFilterName(PROJECTS, this.props.currentNounPlan)}`}</Menu.Item>
+                    <Menu.Item key="2">我负责的{`${currentNounPlanFilterName(PROJECTS, this.props.currentNounPlan)}`}</Menu.Item>
                 </Menu>
             </div>
         )
@@ -288,12 +288,13 @@ export default class MainBoard extends Component {
     // 渲染主区域
     renderBoardArea = () => {
         const { simplemodeCurrentProject = {}, local_selected_board = {} } = this.props
+        console.log('this.props.currentNounPlan', this.props.currentNounPlan)
         const { selected_board_term } = simplemodeCurrentProject
         return (
             <div className={styles.board_area}>
                 <div className={styles.board_area_top}>
                     <Dropdown getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.renderBoardSelectedTerm()} trigger={['click']}>
-                        <div className={styles.board_area_top_lf}>{(selected_board_term == '0' || !selected_board_term) ? `我参与的${currentNounPlanFilterName(PROJECTS)}` : selected_board_term == '2' ? `我负责的${currentNounPlanFilterName(PROJECTS)}` : ''} <span className={globalStyles.authTheme}>&#xe7ee;</span></div>
+                        <div className={styles.board_area_top_lf}>{(selected_board_term == '0' || !selected_board_term) ? `我参与的${currentNounPlanFilterName(PROJECTS, this.props.currentNounPlan)}` : selected_board_term == '2' ? `我负责的${currentNounPlanFilterName(PROJECTS, this.props.currentNounPlan)}` : ''} <span className={globalStyles.authTheme}>&#xe7ee;</span></div>
                     </Dropdown>
                     <div className={styles.board_area_top_rt}>
                         <Checkbox
@@ -308,7 +309,7 @@ export default class MainBoard extends Component {
                 <div className={styles.board_area_bott}>
                     <div className={`${styles.create_btn}`} onClick={this.setAddProjectModalVisible}>
                         <i className={`${globalStyles.authTheme}`} style={{ fontSize: 16 }}>&#xe846;</i>
-                        <span>新建{`${currentNounPlanFilterName(PROJECTS)}`}</span>
+                        <span>新建{`${currentNounPlanFilterName(PROJECTS, this.props.currentNounPlan)}`}</span>
                     </div>
                 </div>
             </div>
@@ -320,10 +321,10 @@ export default class MainBoard extends Component {
                 <div className={`${styles.create_top} ${globalStyles.authTheme}`}>
                     &#xe703;
                         </div>
-                <div className={styles.create_middle}>暂无{`${currentNounPlanFilterName(PROJECTS)}`}，赶快新建一个吧</div>
+                <div className={styles.create_middle}>暂无{`${currentNounPlanFilterName(PROJECTS, this.props.currentNounPlan)}`}，赶快新建一个吧</div>
                 <div className={styles.create_btn} onClick={this.setAddProjectModalVisible}>
                     <i className={`${globalStyles.authTheme}`} style={{ fontSize: 16 }}>&#xe846;</i>
-                    <span> {`新建${currentNounPlanFilterName(PROJECTS)}`}</span>
+                    <span> {`新建${currentNounPlanFilterName(PROJECTS, this.props.currentNounPlan)}`}</span>
                 </div>
             </div>
         )
@@ -388,6 +389,11 @@ function mapStateToProps(
                 currentSelectOrganize
             }
         },
+        organizationManager: {
+            datas: {
+                currentNounPlan
+            }
+        }
     }) {
     return {
         projectList,
@@ -398,6 +404,7 @@ function mapStateToProps(
         currentSelectedProjectOrgIdByBoardId,
         userOrgPermissions,
         projectInitLoaded,
-        currentSelectOrganize
+        currentSelectOrganize,
+        currentNounPlan
     }
 }

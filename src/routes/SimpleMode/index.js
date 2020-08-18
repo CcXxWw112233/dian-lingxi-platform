@@ -63,7 +63,7 @@ class SimpleMode extends Component {
           payload: {
             simplemodeCurrentProject: {
               board_id: '0',
-              board_name: `我参与的${currentNounPlanFilterName(PROJECTS)}`,
+              board_name: `我参与的${currentNounPlanFilterName(PROJECTS, this.props.currentNounPlan)}`,
               org_id: ''
             }
           }
@@ -183,19 +183,28 @@ class SimpleMode extends Component {
   }
 };
 
-export default connect(({ simplemode: {
+export default connect(({
+  simplemode: {
+    simpleHeaderVisiable,
+    setWapperCenter,
+    chatImVisiable,
+    leftMainNavVisible,
+    currentUserWallpaperContent,
+  },
+  technological: {
+    datas: { userInfo },
+  },
+  organizationManager: {
+    datas: {
+      currentNounPlan
+    }
+  }
+}) => ({
   simpleHeaderVisiable,
   setWapperCenter,
   chatImVisiable,
   leftMainNavVisible,
   currentUserWallpaperContent,
-}, technological: {
-  datas: { userInfo }
-} }) => ({
-  simpleHeaderVisiable,
-  setWapperCenter,
-  chatImVisiable,
-  leftMainNavVisible,
-  currentUserWallpaperContent,
-  userInfo
+  userInfo,
+  currentNounPlan
 }))(SimpleMode)
