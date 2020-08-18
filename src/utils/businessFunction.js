@@ -151,13 +151,27 @@ export const checkIsHasPermissionInBoard = (code, params_board_id) => {
 }
 
 //返回当前名词定义对应名称
-export const currentNounPlanFilterName = (code) => {
-  let currentNounPlan = localStorage.getItem('currentNounPlan') ///|| NORMAL_NOUN_PLAN
-  if (currentNounPlan) {
-    currentNounPlan = JSON.parse(currentNounPlan)
-  } else {
+export const currentNounPlanFilterName = (code, currentNounPlan_parm) => {
+  let currentNounPlan
+  if (localStorage.getItem('OrganizationId') == '0' || !localStorage.getItem('OrganizationId')) { //全组织下采用默认
     currentNounPlan = NORMAL_NOUN_PLAN
+  } else {
+    if (!currentNounPlan_parm) {
+      currentNounPlan = localStorage.getItem('currentNounPlan')
+      if (currentNounPlan) {
+        currentNounPlan = JSON.parse(currentNounPlan)
+      } else {
+        currentNounPlan = NORMAL_NOUN_PLAN
+      }
+    } else {
+      if (typeof currentNounPlan_parm == 'object' && currentNounPlan_parm.hasOwnProperty('Projects')) {
+        currentNounPlan = currentNounPlan_parm
+      } else {
+        currentNounPlan = NORMAL_NOUN_PLAN
+      }
+    }
   }
+
   let name = ''
   for (let i in currentNounPlan) {
     if (code === i) {
@@ -356,7 +370,7 @@ export const selectBoardToSeeInfo = ({ board_id, selected_board_term, board_name
   dispatch({ //设置极简模式的已选项目
     type: 'simplemode/updateDatas',
     payload: {
-      simplemodeCurrentProject: board_id == '0' ? selected_board_term == '1' ? {selected_board_term:'1'} : selected_board_term == '2' ? {selected_board_term: '2'} : '' : {
+      simplemodeCurrentProject: board_id == '0' ? selected_board_term == '1' ? { selected_board_term: '1' } : selected_board_term == '2' ? { selected_board_term: '2' } : '' : {
         board_id,
         board_name,
         org_id: org_id || getOrgIdByBoardId(board_id),

@@ -620,7 +620,10 @@ export default class index extends Component {
                         const { left: move_left, right: move_right, top: move_top, next = [], id: move_id } = move_item
                         return (
                             next.map(line_item => {
-                                const { left: line_left, right: line_right, top: line_top, relation, id: line_id, color_mark = '24,144,255' } = line_item
+                                let { left: line_left, right: line_right, top: line_top, relation, id: line_id, color_mark = '24,144,255' } = line_item
+                                if (!color_mark) {
+                                    color_mark = '24,144,255'
+                                }
                                 const params = {
                                     move_left,
                                     move_right,

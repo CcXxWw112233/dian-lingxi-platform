@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'dva'
 import styles from './featurebox.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
-import { timestampToTimeNormal, timeColor, isSamDay, transformTimestamp, timestampToHM, timestampToTimeNormal2  } from '../../../../../utils/util'
+import { timestampToTimeNormal, timeColor, isSamDay, transformTimestamp, timestampToHM, timestampToTimeNormal2 } from '../../../../../utils/util'
 import { getOrgNameWithOrgIdFilter, currentNounPlanFilterName } from '../../../../../utils/businessFunction'
 import { compareOppositeTimer } from '../../../../../components/ProcessDetailModal/components/handleOperateModal'
 import { FLOWS } from '../../../../../globalset/js/constant'
@@ -85,7 +85,7 @@ export default class BoardFeaturesProcessItem extends Component {
             <div className={`${!!belong_name ? styles.feature_item2 : styles.feature_item}`} onClick={this.itemClick}>
                 <div className={`${styles.feature_item_lf}`}>
                     <span className={`${globalStyles.authTheme}`}>&#xe68c;</span>
-                    <span>{currentNounPlanFilterName(FLOWS)}</span>
+                    <span>{currentNounPlanFilterName(FLOWS, this.props.currentNounPlan)}</span>
                 </div>
                 <div className={`${styles.feature_item_middle}  ${globalStyles.global_ellipsis}`}>
                     <div className={`${styles.feature_item_middle_name}  ${globalStyles.global_ellipsis}`}>
@@ -118,10 +118,16 @@ function mapStateToProps(
         technological: {
             datas: { currentUserOrganizes, currentSelectOrganize = {} }
         },
+        organizationManager: {
+            datas: {
+                currentNounPlan
+            }
+        }
     }) {
     return {
         simplemodeCurrentProject,
         currentUserOrganizes,
-        currentSelectOrganize
+        currentSelectOrganize,
+        currentNounPlan
     }
 }
