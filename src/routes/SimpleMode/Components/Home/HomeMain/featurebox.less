@@ -211,3 +211,46 @@
         width: 472px !important;
     }
 }
+
+.debounce_select_wrapper {
+    position: relative;
+    margin-top: -6px;
+    width: 100%;
+    // max-width: 100%;
+    // min-width: 96px;
+    display: flex;
+    margin-left: 16px;
+    > span {
+        color: #fff;
+        margin-top: 4px;
+    }
+    > div {
+        flex: 1
+    }
+    :global {
+        .ant-select-selection {
+            border: none;
+            box-shadow: none;
+            background: transparent;
+            // margin-top: -16px;
+            color: #fff;
+        }
+        .ant-select-selection__choice {
+            background-color: transparent;
+            color: #fff;
+            border-color: rgba(255,255,255,0.5);
+        }
+        .ant-select-selection__choice__remove {
+            color: #fff;
+            &:hover {
+                color: #fff;
+            }
+        }
+        .ant-select-selection__rendered {
+            height: 32px;
+            > ul {
+                overflow: hidden;
+            }
+        }
+    }
+}

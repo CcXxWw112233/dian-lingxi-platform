@@ -11,6 +11,7 @@ import { compareOppositeTimer, removeEmptyArrayEle } from '../../../../../compon
 import { currentNounPlanFilterName } from '../../../../../utils/businessFunction'
 import { PROJECTS } from '../../../../../globalset/js/constant'
 import { Dropdown, Menu } from 'antd'
+import UserRemoteSelect from './DebounceSelect'
 
 @connect(mapStateToProps)
 export default class BoardFeatures extends Component {
@@ -74,10 +75,10 @@ export default class BoardFeatures extends Component {
 	}
 
 	// 重新排序
-	reorderBoardToDoList = (props) => {
+	reorderBoardToDoList = (props, data) => {
 		const { board_card_todo_list = [], board_flow_todo_list = [] } = props
 		let new_flow_todo_list = this.updateFlowsOppositeTime(board_flow_todo_list)
-		let new_board_todo_list = [].concat(...board_card_todo_list, ...new_flow_todo_list)
+		let new_board_todo_list = data ? data : [].concat(...board_card_todo_list, ...new_flow_todo_list)
 		// 1. 被驳回列表 并且按照时间排序
 		let temp_overrule_arr = new_board_todo_list.filter(item => item.runtime_type == '1') // 将被驳回列表取出，并进行排序排序
 		let overrule_arr = timeSort(this.compareEvaluationTimeArray(temp_overrule_arr), 'compare_time')
@@ -278,6 +279,20 @@ export default class BoardFeatures extends Component {
 		})
 	}
 
+	// 设置模糊匹配
+	handleVagueMatching = (value) => {
+		console.log(value);
+		const { board_card_todo_list = [], board_flow_todo_list = [] } = this.props
+		let new_board_todo_list = removeEmptyArrayEle([].concat(...board_card_todo_list, ...board_flow_todo_list))
+		if (!(value && value.length)) {
+			this.reorderBoardToDoList(this.props)
+			return
+		}
+		let str = value.join(',')
+		new_board_todo_list = new_board_todo_list.filter(item => (item.related_milestone && Object.keys(item.related_milestone).length) && str.indexOf(item.related_milestone.name) != -1)
+		this.reorderBoardToDoList(this.props, new_board_todo_list)
+	}
+
 	renderWelcome = () => {
 		return (
 			<div className={`${globalStyles.authTheme} ${styles.nodataArea2}`}>
@@ -298,13 +313,17 @@ export default class BoardFeatures extends Component {
 					projectInitLoaded ? (
 						projectList.length ? (
 							<>
-								<div>
-									<Dropdown overlayClassName={styles.overlay_featurebox_dropdown} getPopupContainer={() => document.getElementById('featurebox_featuresContent')} overlay={this.timeQuantum()} trigger={['click']}>
-										<div style={{color: '#FFF', lineHeight: '20px', marginLeft: '16px', marginBottom: '12px'}}>
+								<div style={{display: 'flex', position: 'relative'}}>
+									<Dropdown overlayClassName={styles.overlay_featurebox_dropdown} getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.timeQuantum()} trigger={['click']}>
+										<div style={{color: '#FFF', flexShrink: 0, lineHeight: '20px', marginLeft: '16px', marginBottom: '12px'}}>
 											{selected_filed_time}&nbsp;&nbsp;
 											<span className={globalStyles.authTheme}>&#xe687;</span>
 										</div>
 									</Dropdown>
+									<div className={styles.debounce_select_wrapper}>
+										<span className={globalStyles.authTheme}>&#xe603;</span>
+										<UserRemoteSelect handleVagueMatching={this.handleVagueMatching} />
+									</div>
 								</div>
 								{this.renderTodoList()}
 							</>
