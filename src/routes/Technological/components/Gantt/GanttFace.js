@@ -330,17 +330,17 @@ export default class GanttFace extends Component {
       }
     })
     //  做数据请求
-    if (gold_date_arr[0]) {
-      const start_time = gold_date_arr[0]['date_inner'][0]['timestamp']
-      const end_time = gold_date_arr[gold_date_arr.length - 1]['date_inner'][gold_date_arr[gold_date_arr.length - 1]['date_inner'].length - 1]['timestamp']
-      dispatch({
-        type: getEffectOrReducerByName('getDataByTimestamp'),
-        payload: {
-          start_time,
-          end_time
-        }
-      })
-    }
+    // if (gold_date_arr[0]) {
+    //   const start_time = gold_date_arr[0]['date_inner'][0]['timestamp']
+    //   const end_time = gold_date_arr[gold_date_arr.length - 1]['date_inner'][gold_date_arr[gold_date_arr.length - 1]['date_inner'].length - 1]['timestamp']
+    //   dispatch({
+    //     type: getEffectOrReducerByName('getDataByTimestamp'),
+    //     payload: {
+    //       start_time,
+    //       end_time
+    //     }
+    //   })
+    // }
     //更新任务位置信息
     // this.beforeHandListGroup()
     const that = this
@@ -361,6 +361,9 @@ export default class GanttFace extends Component {
         that.getHoliday()
       }, 0)
     } else {
+      if (typeof loadedCb === 'function') {
+        loadedCb()
+      }
       const { init_get_outline_tree } = this.state
       if (!outline_tree.length && !init_get_outline_tree) {
         setTimeout(function () {
