@@ -281,7 +281,7 @@ export default class BoardFeatures extends Component {
 
 	// 设置模糊匹配
 	handleVagueMatching = (value) => {
-		console.log(value);
+		// console.log(value);
 		const { board_card_todo_list = [], board_flow_todo_list = [] } = this.props
 		let new_board_todo_list = removeEmptyArrayEle([].concat(...board_card_todo_list, ...board_flow_todo_list))
 		if (!(value && value.length)) {

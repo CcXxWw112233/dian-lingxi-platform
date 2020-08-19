@@ -25,10 +25,11 @@ export default class UserRemoteSelect extends React.Component {
   };
 
   componentWillReceiveProps(nextProps) {
-    if (isObjectValueEqual(nextProps.simplemodeCurrentProject, this.props.simplemodeCurrentProject)) return
+    if (isObjectValueEqual(nextProps.simplemodeCurrentProject, this.props.simplemodeCurrentProject) && nextProps.drawerVisible != this.props.drawerVisible && nextProps.drawerVisible == true) return
     this.setState({
       value: []
     })
+    this.props.handleVagueMatching && this.props.handleVagueMatching([])
   }
 
   fetchUser = value => {
@@ -137,9 +138,11 @@ function mapStateToProps(
 	{
 		simplemode: {
 			simplemodeCurrentProject = {},
-		},
+    },
+    publicTaskDetailModal: { drawerVisible },
 	}) {
 	return {
-		simplemodeCurrentProject,
+    simplemodeCurrentProject,
+    drawerVisible
 	}
 }
