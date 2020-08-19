@@ -11,7 +11,7 @@ import { compareOppositeTimer, removeEmptyArrayEle } from '../../../../../compon
 import { currentNounPlanFilterName } from '../../../../../utils/businessFunction'
 import { PROJECTS } from '../../../../../globalset/js/constant'
 import { Dropdown, Menu } from 'antd'
-import UserRemoteSelect from './DebounceSelect'
+import UserRemoteSelect from './UserRemoteSelect'
 
 @connect(mapStateToProps)
 export default class BoardFeatures extends Component {
