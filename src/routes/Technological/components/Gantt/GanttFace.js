@@ -210,14 +210,20 @@ export default class GanttFace extends Component {
     }
     if (scrollLeft < scroll_bound_leng * ceilWidth && delX > 0) { //3为分组头部占用三个单元格的长度
       const { timestamp } = gold_date_arr[0]['date_inner'][0] //取第一天
-      const loadedCb = () => {
-        this.setScrollPosition({ position: rescroll_leng_to_left_wrapper[gantt_view_mode] * ceilWidth })
-      }
+      // const loadedCb = () => {
+      //   this.setScrollPosition({ position: rescroll_leng_to_left_wrapper[gantt_view_mode] * ceilWidth })
+      // }
       this.setState({
         searchTimer: setTimeout(() => {
+          this.setLoading(true)
+          setTimeout(() => {
+            this.smonthScrollEle(rescroll_leng_to_left_wrapper[gantt_view_mode] * ceilWidth)
+            this.setScrollPosition({ position: rescroll_leng_to_left_wrapper[gantt_view_mode] * ceilWidth })
+            this.setGoldDateArr({ timestamp, active_trigger: 'to_left', not_set_loading: false, loadedCb: () => this.replySvgPosition() }) //取左边界日期来做日期更新的基准
+          }, 100)
           // this.setScrollPosition({ delay: 1, position: rescroll_leng_to_left * ceilWidth }) //大概移动四天的位置
           // setTimeout(() => {
-          this.setGoldDateArr({ timestamp, active_trigger: 'to_left', not_set_loading: false, loadedCb }) //取左边界日期来做日期更新的基准
+          // this.setGoldDateArr({ timestamp, active_trigger: 'to_left', not_set_loading: false, loadedCb: () => this.replySvgPosition() }) //取左边界日期来做日期更新的基准
           // }, 200)
         }, 50)
       })
@@ -229,10 +235,11 @@ export default class GanttFace extends Component {
       const { timestamp } = date_inner[date_inner_length - 1] // 取最后一天
       this.setState({
         searchTimer: setTimeout(() => {
+          this.setLoading(true)
           // this.setScrollPosition({ delay: 1, position: scrollWidth - clientWidth - rescroll_leng_to_right * ceilWidth })
-          // setTimeout(() => {
-          this.setGoldDateArr({ timestamp, active_trigger: 'to_right', not_set_loading: false }) //取有边界日期来做更新日期的基准
-          // }, 200)
+          setTimeout(() => {
+            this.setGoldDateArr({ timestamp, active_trigger: 'to_right', not_set_loading: false }) //取有边界日期来做更新日期的基准
+          }, 100)
         }, 50)
       })
     }
@@ -243,6 +250,30 @@ export default class GanttFace extends Component {
     //     target_scrollLeft: scrollLeft
     //   }
     // })
+  }
+  // 打开loading
+  setLoading = (bool) => {
+    const { dispatch, get_gantt_data_loading } = this.props
+    console.log('ssssssss', get_gantt_data_loading)
+    dispatch({
+      type: 'gantt/updateDatas',
+      payload: {
+        get_gantt_data_loading: bool
+      }
+    })
+  }
+  // svg依赖线条平滑处理
+  replySvgPosition = () => {
+    document.getElementById('gantt_svg_area').style.left = '0px'
+  }
+  // 任务设置位置和滚动平滑处理
+  smonthScrollEle = (minus_left) => {
+    const nodes_ = document.getElementsByClassName('gantt_card_flag_special')
+    const nodes = [...nodes_]
+    nodes.forEach(element => {
+      const left = element.style.left
+      element.style.left = `${Number(left.replace('px', '')) + minus_left}px`
+    });
   }
 
   //更新日期,日期更新后做相应的数据请求
@@ -378,12 +409,13 @@ export default class GanttFace extends Component {
           })
         }, 0)
       } else {
-        dispatch({
-          type: 'gantt/handleOutLineTreeData',
-          payload: {
-            data: outline_tree
-          }
-        })
+        this.setLoading(false)
+        // dispatch({
+        //   type: 'gantt/handleOutLineTreeData',
+        //   payload: {
+        //     data: outline_tree
+        //   }
+        // })
       }
       that.getHoliday()
     }
