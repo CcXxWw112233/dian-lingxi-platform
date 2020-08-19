@@ -26,6 +26,7 @@
     "js-cookie": "^2.2.0",
     "js-sha256": "^0.9.0",
     "lingxi-im": "latest",
+    "lodash": "^4.17.20",
     "md5": "^2.2.1",
     "promise-polyfill": "^8.1.0",
     "querystring": "^0.2.0",

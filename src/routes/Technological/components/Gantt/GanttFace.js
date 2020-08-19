@@ -22,6 +22,8 @@ import { weekDataArray } from './calDate';
 import { closeFeature } from '../../../../utils/temporary';
 import CardDetailDrawer from './components/CardDetailDrawer'
 import { isApiResponseOk } from '../../../../utils/handleResponseData';
+import _ from 'lodash'
+
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
 export default class GanttFace extends Component {
@@ -164,6 +166,10 @@ export default class GanttFace extends Component {
     if (gantt_date_area) {
       gantt_date_area.style.left = `-${scrollLeft}px`
     }
+    const gantt_date_buoy = document.getElementById('gantt_date_buoy')
+    if (gantt_date_area) {
+      gantt_date_buoy.style.left = `${scrollLeft}px`
+    }
     this.handelScrollHorizontal({ scrollLeft, scrollWidth, clientWidth, })
   }
   // 处理上下滚动
@@ -250,7 +256,17 @@ export default class GanttFace extends Component {
     //     target_scrollLeft: scrollLeft
     //   }
     // })
+    this.setScrollLeft(scrollLeft)
   }
+  setScrollLeft = _.throttle(function (scrollLeft) {
+    const { dispatch } = this.props
+    dispatch({
+      type: getEffectOrReducerByName('updateDatas'),
+      payload: {
+        target_scrollLeft: scrollLeft
+      }
+    })
+  }, 5000)
   // 打开loading
   setLoading = (bool) => {
     const { dispatch, get_gantt_data_loading } = this.props
