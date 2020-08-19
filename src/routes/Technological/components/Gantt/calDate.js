@@ -13,94 +13,109 @@ function timestampToTime(timestamp, flag) {
   return flag ? Y + M + D + h + m + s : Y + M + D;
 }
 //计算周的数据
-function setWeekData(timestamp) {
+function setWeekData({ timestamp, type }) {
   let weekData = [] // 周的数据
   let weekData2 = []
   let now = timestamp ? new Date(timestamp) : new Date()
   let nowTime = now.getTime();
   let day = now.getDay();
   let oneDayLong = 24 * 60 * 60 * 1000;
-  for (let i = 0; i < 50; i++) {
-    const MondayTime = nowTime - (day - 1 + 7 * i) * oneDayLong;
-    const SundayTime = nowTime + (7 - day - 7 * i) * oneDayLong;
-    const MonDayTimeTranslate = timestampToTime(MondayTime)
-    const SundayTimeTranslate = timestampToTime(SundayTime)
-    const MondayMonth = MonDayTimeTranslate.substring(5, 7)
-    const SundayMonth = SundayTimeTranslate.substring(5, 7)
-    const MonDayDate = MonDayTimeTranslate.substring(8)
-    const SunDayDate = SundayTimeTranslate.substring(8)
-    const MonthText = (Number(MonDayDate) < Number(SunDayDate)) ? Number(MondayMonth).toString() : (Number(MondayMonth) + '/' + Number(SundayMonth))
-    const DayText = (MonDayDate + '-' + SunDayDate).replace(/\s/gim, '')
+  const setPre = () => {
+    for (let i = 0; i < 50; i++) {
+      const MondayTime = nowTime - (day - 1 + 7 * i) * oneDayLong;
+      const SundayTime = nowTime + (7 - day - 7 * i) * oneDayLong;
+      const MonDayTimeTranslate = timestampToTime(MondayTime)
+      const SundayTimeTranslate = timestampToTime(SundayTime)
+      const MondayMonth = MonDayTimeTranslate.substring(5, 7)
+      const SundayMonth = SundayTimeTranslate.substring(5, 7)
+      const MonDayDate = MonDayTimeTranslate.substring(8)
+      const SunDayDate = SundayTimeTranslate.substring(8)
+      const MonthText = (Number(MonDayDate) < Number(SunDayDate)) ? Number(MondayMonth).toString() : (Number(MondayMonth) + '/' + Number(SundayMonth))
+      const DayText = (MonDayDate + '-' + SunDayDate).replace(/\s/gim, '')
 
-    const date_0 = new Date(MonDayTimeTranslate)
-    const year_0 = date_0.getFullYear()
-    const month_0 = date_0.getMonth() + 1
-    const date_no_0 = date_0.getDate()
+      const date_0 = new Date(MonDayTimeTranslate)
+      const year_0 = date_0.getFullYear()
+      const month_0 = date_0.getMonth() + 1
+      const date_no_0 = date_0.getDate()
 
-    const date_1 = new Date(SundayTimeTranslate)
-    const year_1 = date_1.getFullYear()
-    const month_1 = date_1.getMonth() + 1
-    const date_no_1 = date_1.getDate()
+      const date_1 = new Date(SundayTimeTranslate)
+      const year_1 = date_1.getFullYear()
+      const month_1 = date_1.getMonth() + 1
+      const date_no_1 = date_1.getDate()
 
-    const obj = {
-      year: year_1,
-      month: month_1,
-      Mon: MonDayTimeTranslate,
-      Sun: SundayTimeTranslate,
-      timestamp: timeToTimestamp(MonDayTimeTranslate + ' ' + '0:0:0'),
-      timestampEnd: timeToTimestamp(SundayTimeTranslate + ' ' + '23:59:59'),
-      monthText: MonthText,
-      date_no: `${month_0 != month_1 ? month_0 + '/' : ''}${date_no_0}-${date_no_1}`,// `${month_0}/${date_no_0}-${month_1}/${date_no_1}`,
-      description: `${year_1}年${month_1}月`
+      const obj = {
+        year: year_1,
+        month: month_1,
+        Mon: MonDayTimeTranslate,
+        Sun: SundayTimeTranslate,
+        timestamp: timeToTimestamp(MonDayTimeTranslate + ' ' + '0:0:0'),
+        timestampEnd: timeToTimestamp(SundayTimeTranslate + ' ' + '23:59:59'),
+        monthText: MonthText,
+        date_no: `${month_0 != month_1 ? month_0 + '/' : ''}${date_no_0}-${date_no_1}`,// `${month_0}/${date_no_0}-${month_1}/${date_no_1}`,
+        description: `${year_1}年${month_1}月`
+      }
+      weekData.push(obj)
     }
-    weekData.push(obj)
   }
-  for (let i = 0; i < 50; i++) {
-    const MondayTime = nowTime - (day - 1 - 7 * i) * oneDayLong;
-    const SundayTime = nowTime + (7 - day + 7 * i) * oneDayLong;
-    const MonDayTimeTranslate = timestampToTime(MondayTime)
-    const SundayTimeTranslate = timestampToTime(SundayTime)
-    const MondayMonth = MonDayTimeTranslate.substring(5, 7)
-    const SundayMonth = SundayTimeTranslate.substring(5, 7)
-    const MonDayDate = MonDayTimeTranslate.substring(8)
-    const SunDayDate = SundayTimeTranslate.substring(8)
-    const MonthText = (Number(MonDayDate) < Number(SunDayDate)) ? Number(MondayMonth).toString() : (Number(MondayMonth) + '/' + Number(SundayMonth))
-    const DayText = (MonDayDate + '-' + SunDayDate).replace(/\s/gim, '')
+  const setNext = () => {
+    for (let i = 0; i < 50; i++) {
+      const MondayTime = nowTime - (day - 1 - 7 * i) * oneDayLong;
+      const SundayTime = nowTime + (7 - day + 7 * i) * oneDayLong;
+      const MonDayTimeTranslate = timestampToTime(MondayTime)
+      const SundayTimeTranslate = timestampToTime(SundayTime)
+      const MondayMonth = MonDayTimeTranslate.substring(5, 7)
+      const SundayMonth = SundayTimeTranslate.substring(5, 7)
+      const MonDayDate = MonDayTimeTranslate.substring(8)
+      const SunDayDate = SundayTimeTranslate.substring(8)
+      const MonthText = (Number(MonDayDate) < Number(SunDayDate)) ? Number(MondayMonth).toString() : (Number(MondayMonth) + '/' + Number(SundayMonth))
+      const DayText = (MonDayDate + '-' + SunDayDate).replace(/\s/gim, '')
 
-    const date_0 = new Date(MonDayTimeTranslate)
-    const year_0 = date_0.getFullYear()
-    const month_0 = date_0.getMonth() + 1
-    const date_no_0 = date_0.getDate()
+      const date_0 = new Date(MonDayTimeTranslate)
+      const year_0 = date_0.getFullYear()
+      const month_0 = date_0.getMonth() + 1
+      const date_no_0 = date_0.getDate()
 
-    const date_1 = new Date(SundayTimeTranslate)
-    const year_1 = date_1.getFullYear()
-    const month_1 = date_1.getMonth() + 1
-    const date_no_1 = date_1.getDate()
+      const date_1 = new Date(SundayTimeTranslate)
+      const year_1 = date_1.getFullYear()
+      const month_1 = date_1.getMonth() + 1
+      const date_no_1 = date_1.getDate()
 
-    const obj = {
-      year: year_1,
-      month: month_1,
-      Mon: MonDayTimeTranslate,
-      Sun: SundayTimeTranslate,
-      timestamp: timeToTimestamp(MonDayTimeTranslate + ' ' + '0:0:0'),
-      timestampEnd: timeToTimestamp(SundayTimeTranslate + ' ' + '23:59:59'),
-      monthText: MonthText,
-      date_no: `${month_0 != month_1 ? month_0 + '/' : ''}${date_no_0}-${date_no_1}`,//`${month_0}/${date_no_0}-${month_1}/${date_no_1}`,
-      description: `${year_1}年${month_1}月`
+      const obj = {
+        year: year_1,
+        month: month_1,
+        Mon: MonDayTimeTranslate,
+        Sun: SundayTimeTranslate,
+        timestamp: timeToTimestamp(MonDayTimeTranslate + ' ' + '0:0:0'),
+        timestampEnd: timeToTimestamp(SundayTimeTranslate + ' ' + '23:59:59'),
+        monthText: MonthText,
+        date_no: `${month_0 != month_1 ? month_0 + '/' : ''}${date_no_0}-${date_no_1}`,//`${month_0}/${date_no_0}-${month_1}/${date_no_1}`,
+        description: `${year_1}年${month_1}月`
+      }
+      weekData2.push(obj)
     }
-    weekData2.push(obj)
   }
-  return [].concat(weekData.reverse().slice(0, 49), weekData2)
+  if (!type || type == 'init') {
+    setPre()
+    setNext()
+    return [].concat(weekData.reverse().slice(0, 49), weekData2)
+  } else if (type == 'last') {
+    setPre()
+    return weekData.reverse().slice(0, 49)
+  } else if (type == 'next') {
+    setNext()
+    weekData2.shift()
+    return weekData2
+  } else {
+    setPre()
+    setNext()
+    return [].concat(weekData.reverse().slice(0, 49), weekData2)
+  }
 }
 
-function handleWeekData(timestamp) {
-  const arr = setWeekData(timestamp)
+function handleWeekData({ timestamp, type }) {
+  const arr = setWeekData({ timestamp, type })
   let title_arr = arr.map(item => item.description)
-  // console.log('sssssssssssgold_arr0', title_arr)
-
   title_arr = Array.from(new Set(title_arr)) //得到不重的多组
-  // console.log('sssssssssssgold_arr1', title_arr)
-
   let gold_arr = []
   for (let val of title_arr) {
     const obj = {
@@ -114,11 +129,36 @@ function handleWeekData(timestamp) {
     }
     gold_arr.push(obj)
   }
-  // console.log('sssssssssssgold_arr', gold_arr)
   return gold_arr
 }
 
-export const weekDataArray = (timestamp) => setWeekData(timestamp)
-export const getWeekGoldData = (timestamp) => handleWeekData(timestamp)
-console.log('weekDataArray', weekDataArray())
-console.log('weekDataArray', getWeekGoldData())
+// export const weekDataArray = (timestamp) => {setWeekData({ timestamp })}
+/**
+ *   计算周的日期数量
+ *  @param week_data = [] 符合 handleWeekData({ timestamp, type: 'init' })这个调用方式的数据结构
+ *  @return jsonArray
+**/
+export const weekDataArray = (week_data = []) => {
+  let init_arr = []
+  for (let val of week_data) {
+    init_arr = [].concat(init_arr, val.date_inner)
+  }
+  return init_arr
+  // if (!week_data.length) {
+  //   return 0
+  // }
+  // const arr = handleWeekData({ timestamp, type: 'init' })
+  // const len = arr.reduce((prev, cur, index, arr) => {
+  //   return prev + cur.date_inner.length
+  // }, 0)
+  // return len
+}
+
+export const getWeekGoldData = (timestamp) => handleWeekData({ timestamp, type: 'init' })
+export const getNextWeeksDate = (timestamp) => handleWeekData({ timestamp, type: 'next' })
+export const getLastWeeksDate = (timestamp) => handleWeekData({ timestamp, type: 'last' })
+
+// console.log('weekDataArray', weekDataArray())
+// console.log('weekDataArray_1', getWeekGoldData())
+// console.log('weekDataArray_2', getNextWeeksDate())
+// console.log('weekDataArray_3', getLastWeeksDate())

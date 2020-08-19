@@ -1200,7 +1200,7 @@ export default class CardItem extends Component {
         const { is_overdue, due_description } = filterDueTimeSpan({ start_time, due_time, is_has_end_time, is_has_start_time })
         return (
             <div
-                className={`${indexStyles.specific_example} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
+                className={`${'gantt_card_flag_special'} ${indexStyles.specific_example} ${!is_has_start_time && indexStyles.specific_example_no_start_time} ${!is_has_end_time && indexStyles.specific_example_no_due_time}`}
                 data-targetclassname="specific_example"
                 id={id} //大纲视图需要获取该id作为父级id来实现子任务拖拽影响父任务位置
                 ref={this.out_ref}
