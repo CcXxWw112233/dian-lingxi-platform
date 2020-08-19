@@ -21,14 +21,28 @@ export default class BoardFeatures extends Component {
 		let new_flow_todo_list = this.updateFlowsOppositeTime(props.board_flow_todo_list)
 		this.state = {
 			board_todo_list: [].concat(...props.board_card_todo_list, ...new_flow_todo_list),
+			board_card_todo_list: props.board_card_todo_list,
+			board_flow_todo_list: props.board_flow_todo_list,
+			value: [],
 		}
+	}
+
+	updateState = ({value}) => {
+		this.setState({
+			value
+		})
 	}
 
 	componentWillReceiveProps(nextprops) {
 		const { board_card_todo_list = [], board_flow_todo_list = [] } = this.props
 		const { board_card_todo_list: new_board_card_todo_list = [], board_flow_todo_list: new_flow_todo_list = [] } = nextprops
+		this.setState({
+			board_card_todo_list: nextprops.board_card_todo_list,
+			board_flow_todo_list: nextprops.board_flow_todo_list,
+		})
 		if (isObjectValueEqual(board_card_todo_list, new_board_card_todo_list) && isObjectValueEqual(board_flow_todo_list, new_flow_todo_list)) return
-		this.reorderBoardToDoList(nextprops)
+		this.handleVagueMatching(this.state.value, nextprops)
+		// this.reorderBoardToDoList(nextprops)
 	}
 
 	// 更新父组件弹窗显示污染事件
@@ -280,17 +294,16 @@ export default class BoardFeatures extends Component {
 	}
 
 	// 设置模糊匹配
-	handleVagueMatching = (value) => {
-		// console.log(value);
-		const { board_card_todo_list = [], board_flow_todo_list = [] } = this.props
+	handleVagueMatching = (value, props) => {
+		const { board_card_todo_list = [], board_flow_todo_list = [] } = props ? props : this.props
 		let new_board_todo_list = removeEmptyArrayEle([].concat(...board_card_todo_list, ...board_flow_todo_list))
 		if (!(value && value.length)) {
-			this.reorderBoardToDoList(this.props)
+			this.reorderBoardToDoList(props ? props : this.props)
 			return
 		}
 		let str = value.join(',')
-		new_board_todo_list = new_board_todo_list.filter(item => (item.related_milestone && Object.keys(item.related_milestone).length) && str.indexOf(item.related_milestone.name) != -1)
-		this.reorderBoardToDoList(this.props, new_board_todo_list)
+		new_board_todo_list = new_board_todo_list.filter(item => (item.related_milestone && Object.keys(item.related_milestone).length) && str.indexOf(item.related_milestone.name) != -1) || []
+		this.reorderBoardToDoList(props ? props : this.props, new_board_todo_list)
 	}
 
 	renderWelcome = () => {
@@ -322,7 +335,7 @@ export default class BoardFeatures extends Component {
 									</Dropdown>
 									<div className={styles.debounce_select_wrapper}>
 										<span className={globalStyles.authTheme}>&#xe603;</span>
-										<UserRemoteSelect handleVagueMatching={this.handleVagueMatching} />
+										<UserRemoteSelect value={this.state.value} updateState={this.updateState} handleVagueMatching={this.handleVagueMatching} />
 									</div>
 								</div>
 								{this.renderTodoList()}

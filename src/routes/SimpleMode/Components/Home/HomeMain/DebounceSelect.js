@@ -20,16 +20,14 @@ export default class UserRemoteSelect extends React.Component {
 
   state = {
     data: [],
-    value: [],
     fetching: false,
   };
 
   componentWillReceiveProps(nextProps) {
-    if (isObjectValueEqual(nextProps.simplemodeCurrentProject, this.props.simplemodeCurrentProject) && nextProps.drawerVisible != this.props.drawerVisible && nextProps.drawerVisible == true) return
-    this.setState({
-      value: []
-    })
-    this.props.handleVagueMatching && this.props.handleVagueMatching([])
+    if (!isObjectValueEqual(nextProps.simplemodeCurrentProject, this.props.simplemodeCurrentProject)) {
+      this.props.updateState && this.props.updateState({value: []})
+      return
+    }
   }
 
   fetchUser = value => {
@@ -100,15 +98,17 @@ export default class UserRemoteSelect extends React.Component {
 
   handleChange = value => {
     this.setState({
-      value,
+      // value,
       data: [],
       fetching: false,
     });
+    this.props.updateState && this.props.updateState({value: value})
     this.props.handleVagueMatching && this.props.handleVagueMatching(value)
   };
 
   render() {
-    const { fetching, data, value } = this.state;
+    const { fetching, data } = this.state;
+    const { value } = this.props
     return (
       <div>
         <Select
@@ -139,10 +139,8 @@ function mapStateToProps(
 		simplemode: {
 			simplemodeCurrentProject = {},
     },
-    publicTaskDetailModal: { drawerVisible },
 	}) {
 	return {
     simplemodeCurrentProject,
-    drawerVisible
 	}
 }
