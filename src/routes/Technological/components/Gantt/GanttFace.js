@@ -166,10 +166,10 @@ export default class GanttFace extends Component {
     if (gantt_date_area) {
       gantt_date_area.style.left = `-${scrollLeft}px`
     }
-    const gantt_date_buoy = document.getElementById('gantt_date_buoy')
-    if (gantt_date_area) {
-      gantt_date_buoy.style.left = `${scrollLeft}px`
-    }
+    // const gantt_date_buoy = document.getElementById('gantt_date_buoy')
+    // if (gantt_date_area) {
+    //   gantt_date_buoy.style.left = `${scrollLeft}px`
+    // }
     this.handelScrollHorizontal({ scrollLeft, scrollWidth, clientWidth, })
   }
   // 处理上下滚动
@@ -256,7 +256,7 @@ export default class GanttFace extends Component {
     //     target_scrollLeft: scrollLeft
     //   }
     // })
-    this.setScrollLeft(scrollLeft)
+    // this.setScrollLeft(scrollLeft)
   }
   setScrollLeft = _.throttle(function (scrollLeft) {
     const { dispatch } = this.props
