@@ -482,7 +482,7 @@ export default class BoardItem extends Component {
                 }
 
                 {
-                    <Menu.Item key={'board_info'}>{`${currentNounPlanFilterName(PROJECTS)}信息`}</Menu.Item>
+                    <Menu.Item key={'board_info'}>{`${currentNounPlanFilterName(PROJECTS, this.props.currentNounPlan)}信息`}</Menu.Item>
                 }
 
 
@@ -564,6 +564,11 @@ function mapStateToProps(
             datas: {
                 getProjectDetailInfoData = {}
             }
+        },
+        organizationManager: {
+            datas: {
+                currentNounPlan
+            }
         }
     }) {
     return {
@@ -571,6 +576,7 @@ function mapStateToProps(
         simplemodeCurrentProject,
         getProjectDetailInfoData,
         currentUserOrganizes,
-        currentSelectOrganize
+        currentSelectOrganize,
+        currentNounPlan
     }
 }

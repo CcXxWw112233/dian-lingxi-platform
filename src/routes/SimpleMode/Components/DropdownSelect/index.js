@@ -189,7 +189,7 @@ class DropdownSelect extends Component {
                             {(simplemodeCurrentProject && simplemodeCurrentProject.board_id) ?
                                 simplemodeCurrentProject.board_name
                                 :
-                                `我参与的${currentNounPlanFilterName(PROJECTS)}`
+                                `我参与的${currentNounPlanFilterName(PROJECTS, this.props.currentNounPlan)}`
                             }
                             <Icon type="down" style={{ fontSize: '12px' }} />
                         </span>
@@ -220,7 +220,13 @@ class DropdownSelect extends Component {
 export default connect(({
     simplemode: {
         currentSelectedWorkbenchBox = {}
+    },
+    organizationManager: {
+        datas: {
+            currentNounPlan
+        }
     }
 }) => ({
-    currentSelectedWorkbenchBox
+    currentSelectedWorkbenchBox,
+    currentNounPlan
 }))(DropdownSelect);
