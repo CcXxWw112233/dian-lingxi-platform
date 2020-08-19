@@ -21,8 +21,6 @@ export default class BoardFeatures extends Component {
 		let new_flow_todo_list = this.updateFlowsOppositeTime(props.board_flow_todo_list)
 		this.state = {
 			board_todo_list: [].concat(...props.board_card_todo_list, ...new_flow_todo_list),
-			board_card_todo_list: props.board_card_todo_list,
-			board_flow_todo_list: props.board_flow_todo_list,
 			value: [],
 		}
 	}
@@ -36,10 +34,6 @@ export default class BoardFeatures extends Component {
 	componentWillReceiveProps(nextprops) {
 		const { board_card_todo_list = [], board_flow_todo_list = [] } = this.props
 		const { board_card_todo_list: new_board_card_todo_list = [], board_flow_todo_list: new_flow_todo_list = [] } = nextprops
-		this.setState({
-			board_card_todo_list: nextprops.board_card_todo_list,
-			board_flow_todo_list: nextprops.board_flow_todo_list,
-		})
 		if (isObjectValueEqual(board_card_todo_list, new_board_card_todo_list) && isObjectValueEqual(board_flow_todo_list, new_flow_todo_list)) return
 		this.handleVagueMatching(this.state.value, nextprops)
 		// this.reorderBoardToDoList(nextprops)

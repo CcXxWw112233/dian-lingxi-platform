@@ -145,3 +145,9 @@ function mapStateToProps(
     simplemodeCurrentProject,
 	}
 }
+
+UserRemoteSelect.defaultProps = {
+  value: '', // 当前搜索的value值
+  updateState: function(){}, // 更新外部state
+  handleVagueMatching: function(){}, // 设置模糊匹配
+}
