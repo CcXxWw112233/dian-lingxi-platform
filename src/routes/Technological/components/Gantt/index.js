@@ -40,6 +40,12 @@ class Gantt extends Component {
         outline_tree: [],
         gantt_view_mode: 'month',
         ceilWidth: ceil_width,
+        list_group: [],
+        date_arr_one_level: [],
+        gold_date_arr: [],
+        milestoneMap: {},
+        rely_map: [],
+        outline_tree_round: []
       }
     })
     if (page_load_type != 1) {
