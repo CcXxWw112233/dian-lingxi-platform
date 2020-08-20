@@ -87,6 +87,19 @@ app.model(require('./models/organizationManager').default)
 app.model(require('./models/technological/informRemind').default)
 app.model(require('./models/technological').default)
 
+
+app.model(require('./models/emailRedirect').default)
+app.model(require('./models/noviceGuide').default)
+app.model(require('./models/initRouteRedirect').default)
+app.model(require('./models/agreement').default)
+app.model(require('./models/login').default)
+app.model(require('./models/register').default)
+app.model(require('./models/registerSuccess').default)
+app.model(require('./models/resetPassword').default)
+app.model(require('./models/retrievePassword').default)
+
+
+
 // 4. Router
 app.router(require('./router').default);
 

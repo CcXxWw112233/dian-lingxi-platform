@@ -103,35 +103,35 @@ const Routers = function ({ history, app }) {
   const routes = [
     {
       path: '/',
-      models: () => [import('./models/initRouteRedirect')],
+      // models: () => [import('./models/initRouteRedirect')],
       component: () => import('./routes/InitRouteRedirect/index'),
     }, {
       path: '/agreement/service',
-      models: () => [import('./models/agreement')],
+      // models: () => [import('./models/agreement')],
       component: () => import('./routes/Agreement/service')
     }, {
       path: '/agreement/privacy',
-      models: () => [import('./models/agreement')],
+      // models: () => [import('./models/agreement')],
       component: () => import('./routes/Agreement/privacy')
     }, {
       path: '/login',
-      models: () => [import('./models/login')],
+      // models: () => [import('./models/login')],
       component: () => import('./routes/Login/'),
     }, {
       path: '/register',
-      models: () => [import('./models/register')],
+      // models: () => [import('./models/register')],
       component: () => import('./routes/Register/'),
     }, {
       path: '/registerSuccess',
-      models: () => [import('./models/registerSuccess')],
+      // models: () => [import('./models/registerSuccess')],
       component: () => import('./routes/RegisterSuccess/'),
     }, {
       path: '/resetPassword',
-      models: () => [import('./models/resetPassword')],
+      // models: () => [import('./models/resetPassword')],
       component: () => import('./routes/ResetPassword/'),
     }, {
       path: '/retrievePassword',
-      models: () => [import('./models/retrievePassword')],
+      // models: () => [import('./models/retrievePassword')],
       component: () => import('./routes/RetrievePassword/'),
     }, {
       path: '/technological',
@@ -178,49 +178,50 @@ const Routers = function ({ history, app }) {
       component: () => import('./routes/Technological/'),
     }, {
       path: '/emailRedirect',
-      models: () => [import('./models/emailRedirect')],
+      // models: () => [import('./models/emailRedirect')],
       component: () => import('./routes/EmailRedirect/'),
-    }, {
-      path: '/organizationManager',
-      // models: () => [import('./models/organizationManager')],
-      component: () => import('./routes/organizationManager/'),
-    }, {
-      path: '/teamShow',
-      models: () => [
-        import('./models/teamShow'),
-        import('./models/teamShow/editTeamShow'),
-        import('./models/teamShow/teamList'),
-        import('./models/teamShow/teamInfo'),
-        import('./models/modal')
-      ],
-      component: () => import('./routes/TeamShow/'),
-    }, {
-      path: '/noviceGuide',
-      models: () => [import('./models/noviceGuide')],
-      component: () => import('./routes/NoviceGuide'),
-    }, {
-      path: '/test',
-      models: () => [import('./models/organizationManager')],
-      component: () => import('./routes/Test/'),
-    }, {
-      path: '/index',
-      component: () => import('./routes/Index'),
-    }, {
-      path: '/iframeOut',
-      component: () => import('./routes/IframeOut'),
-    }, {
-      path: '/readonly_share/:id',
-      component: () => import('./routes/Technological/ReadonlyShare/AccessInterface/index'),
-    }, {
-      path: '/share_detailed',
-      models: () => [
-        import('./models/technological'),
-        import('./models/technological/projectDetail/projectDetailTask'),
-        import('./models/technological/projectDetail/projectDetailFile'),
-        import('./models/technological/projectDetail'),
-      ],
-      component: () => import('./routes/Technological/ReadonlyShare/DetailedShare/index'),
     },
+    //  {
+    //   path: '/organizationManager',
+    //   // models: () => [import('./models/organizationManager')],
+    //   component: () => import('./routes/organizationManager/'),
+    // }, {
+    //   path: '/teamShow',
+    //   models: () => [
+    //     import('./models/teamShow'),
+    //     import('./models/teamShow/editTeamShow'),
+    //     import('./models/teamShow/teamList'),
+    //     import('./models/teamShow/teamInfo'),
+    //     import('./models/modal')
+    //   ],
+    //   component: () => import('./routes/TeamShow/'),
+    // }, {
+    //   path: '/noviceGuide',
+    //   models: () => [import('./models/noviceGuide')],
+    //   component: () => import('./routes/NoviceGuide'),
+    // }, {
+    //   path: '/test',
+    //   models: () => [import('./models/organizationManager')],
+    //   component: () => import('./routes/Test/'),
+    // }, {
+    //   path: '/index',
+    //   component: () => import('./routes/Index'),
+    // }, {
+    //   path: '/iframeOut',
+    //   component: () => import('./routes/IframeOut'),
+    // }, {
+    //   path: '/readonly_share/:id',
+    //   component: () => import('./routes/Technological/ReadonlyShare/AccessInterface/index'),
+    // }, {
+    //   path: '/share_detailed',
+    //   models: () => [
+    //     import('./models/technological'),
+    //     import('./models/technological/projectDetail/projectDetailTask'),
+    //     import('./models/technological/projectDetail/projectDetailFile'),
+    //     import('./models/technological/projectDetail'),
+    //   ],
+    //   component: () => import('./routes/Technological/ReadonlyShare/DetailedShare/index'),
+    // },
   ]
 
   //去掉exact
