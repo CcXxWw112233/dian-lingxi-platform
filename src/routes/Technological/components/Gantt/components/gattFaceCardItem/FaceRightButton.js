@@ -170,14 +170,16 @@ export default class FaceRightButton extends Component {
                         </div>
                     )
                 } */}
-                {
+                {/* {
                     !this.filterIsInViewArea() && (
                         <div className={styles.card_button} onClick={this.checkToday}>
                             今天
                         </div>
                     )
-                }
-
+                } */}
+                <div className={styles.card_button} onClick={this.checkToday}>
+                    今天
+                </div>
 
                 <div
                     style={{ color: gantt_view_mode == 'month' ? '#1890FF' : '' }}

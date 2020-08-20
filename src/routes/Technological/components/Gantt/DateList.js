@@ -492,16 +492,18 @@ export default class DateList extends Component {
     if (gantt_view_mode != 'month') return <></>
     const index = width_area_section.findIndex(item => target_scrollLeft < item)
     const title = (gold_date_arr[index] || {}).date_top
-    return <div style={{
-      position: 'absolute',
-      left: target_scrollLeft,
-      top: 9,
-      fontWeight: 'bold',
-      backgroundColor: '#fff',
-      zIndex: 0,
-      paddingLeft: 6,
-      color: 'rgba(0, 0, 0, .45)'
-    }}>{title}</div>
+    return <div
+      id={'gantt_date_buoy'}
+      style={{
+        position: 'absolute',
+        // left: target_scrollLeft,
+        top: 9,
+        fontWeight: 'bold',
+        backgroundColor: '#fff',
+        zIndex: 0,
+        paddingLeft: 6,
+        color: 'rgba(0, 0, 0, .45)'
+      }}>{title}</div>
   }
   render() {
     const {
