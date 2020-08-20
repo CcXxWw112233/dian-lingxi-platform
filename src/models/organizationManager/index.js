@@ -384,6 +384,7 @@ export default {
       const { current_scheme_local } = payload
       const res = yield call(saveNounList, payload)
       if (isApiResponseOk(res)) {
+        message.success('已保存', MESSAGE_DURATION_TIME)
         yield put({
           type: 'updateDatas',
           payload: {
@@ -401,7 +402,7 @@ export default {
     * getCurrentNounPlan({ payload }, { select, call, put }) {
       let res = yield call(getCurrentNounPlan, payload)
       if (isApiResponseOk(res)) {
-        message.success('已保存', MESSAGE_DURATION_TIME)
+        // message.success('已保存', MESSAGE_DURATION_TIME)
         const result = JSON.stringify(res.data || [])
         yield put({
           type: 'updateDatas',
