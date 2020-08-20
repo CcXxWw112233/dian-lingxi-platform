@@ -1,14 +1,17 @@
-import React, { Component } from "react";
+import React, { Component, Suspense, lazy } from "react";
 import { connect } from "dva/index"
 import { Route, Switch, } from 'dva/router'
 import indexStyles from './index.less'
-import SimpleHeader from './Components/SimpleHeader/index'
-import WorkbenchPage from './Components/WorkbenchPage'
-import Home from './Components/Home'
 import { isColor } from '@/utils/util'
 import defaultWallpaperSrc from '@/assets/simplemode/acd42051256454f9b070300b8121eae2.png'
 import { setBoardIdStorage, currentNounPlanFilterName } from "../../utils/businessFunction";
 import { PROJECTS } from "../../globalset/js/constant";
+import SimpleHeader from './Components/SimpleHeader/index'
+// import WorkbenchPage from './Components/WorkbenchPage'
+// import Home from './Components/Home'
+// const SimpleHeader = lazy(() => import('./Components/SimpleHeader/index'))
+const WorkbenchPage = lazy(() => import('./Components/WorkbenchPage'))
+const Home = lazy(() => import('./Components/Home'))
 
 const getEffectOrReducerByName = name => `technological/${name}`
 // 待重构，将路由和其它分离出来
@@ -151,10 +154,12 @@ class SimpleMode extends Component {
 
   renderRoutes = () => {
     return (
-      <Switch>
-        <Route path="/technological/simplemode/home" component={Home} />
-        <Route path="/technological/simplemode/workbench" component={WorkbenchPage} />
-      </Switch>
+      <Suspense fallback={<div></div>}>
+        <Switch>
+          <Route path="/technological/simplemode/home" component={Home} />
+          <Route path="/technological/simplemode/workbench" component={WorkbenchPage} />
+        </Switch>
+      </Suspense>
     )
   }
   render() {
@@ -175,8 +180,10 @@ class SimpleMode extends Component {
     }
     return (
       <div className={`${indexStyles.wapper} ${indexStyles.wapperBg} ${setWapperCenter ? indexStyles.wapper_center : ''}`} onClick={this.handleHiddenNav} style={bgStyle}>
-        {simpleHeaderVisiable && <SimpleHeader />}
-        {show && this.renderRoutes()}
+        {/* {simpleHeaderVisiable && <SimpleHeader />}
+        {show && this.renderRoutes()} */}
+        <SimpleHeader />
+        {this.renderRoutes()}
       </div>
 
     )

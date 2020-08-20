@@ -1,14 +1,13 @@
-import React, { Component } from "react";
+import React, { Component, lazy, Suspense } from "react";
 import { connect } from "dva/index"
-import indexStyles from './index.less'
-import SimpleHeader from '../SimpleHeader/index'
-import MyWorkbenchBoxs from '../MyWorkbenchBoxs/index'
-import WallpaperSelect from '../WallpaperSelect/index'
-import WorkbenchBoxSelect from '../WorkbenchBoxSelect/index'
+
+// import WallpaperSelect from '../WallpaperSelect/index'
+// import WorkbenchBoxSelect from '../WorkbenchBoxSelect/index'
 import HomeMain from './HomeMain'
 
-const getEffectOrReducerByName = name => `technological/${name}`
-
+// const HomeMain = lazy(() => import('./HomeMain'))
+const WallpaperSelect = lazy(() => import('../WallpaperSelect/index'))
+const WorkbenchBoxSelect = lazy(() => import('../WorkbenchBoxSelect/index'))
 class Home extends Component {
 
   constructor(props) {
@@ -106,13 +105,14 @@ class Home extends Component {
     return (
       <div>
         {myWorkbenchBoxsVisiable && <HomeMain {...this.state} setHomeVisible={this.setHomeVisible} />}
+        <Suspense fallback={<div></div>}>
+          <div></div>
+          {/* {myWorkbenchBoxsVisiable && <MyWorkbenchBoxs {...this.state} setHomeVisible={this.setHomeVisible} />} */}
 
-        {/* {myWorkbenchBoxsVisiable && <MyWorkbenchBoxs {...this.state} setHomeVisible={this.setHomeVisible} />} */}
+          {wallpaperSelectVisiable && <WallpaperSelect {...this.state} setHomeVisible={this.setHomeVisible} />}
 
-        {wallpaperSelectVisiable && <WallpaperSelect {...this.state} setHomeVisible={this.setHomeVisible} />}
-
-        {workbenchBoxSelectVisiable && <WorkbenchBoxSelect {...this.state} setHomeVisible={this.setHomeVisible} />}
-
+          {workbenchBoxSelectVisiable && <WorkbenchBoxSelect {...this.state} setHomeVisible={this.setHomeVisible} />}
+        </Suspense>
       </div>
     )
   }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { connect, } from 'dva';
 import QueueAnim from 'rc-queue-anim'
 import globalClassNmae from '../../globalset/css/globalClassName.less'
@@ -16,10 +16,16 @@ import { initWsFun } from '../../components/WsNewsDynamic'
 import Cookies from 'js-cookie'
 import { isPaymentOrgUser } from "@/utils/businessFunction"
 import { routerRedux } from "dva/router";
-import UploadNotification from '@/components/UploadNotification'
 import { CUSTOMIZATION_ORGNIZATIONS } from '../../globalset/js/constant';
-import UpdateLog from './components/Workbench/UpdateLog/index'
+
+// import UpdateLog from './components/Workbench/UpdateLog/index'
 import SimpleMode from '../SimpleMode/index'
+// import UploadNotification from '@/components/UploadNotification'
+
+const UpdateLog = lazy(() => import('./components/Workbench/UpdateLog/index'));
+// const SimpleMode = lazy(() => import('../SimpleMode/index'));
+const UploadNotification = lazy(() => import('@/components/UploadNotification'));
+
 const { Sider, Content } = Layout;
 let net = null
 @connect(mapStateToProps)
@@ -295,8 +301,10 @@ export default class Technological extends React.Component {
               </Content>
             </Layout>
           </Layout>
-          <UpdateLog />
-          <UploadNotification />
+          <Suspense fallback={<div></div>}>
+            <UpdateLog />
+            <UploadNotification />
+          </Suspense>
         </>
       </LocaleProvider>
     );

@@ -1,16 +1,27 @@
-import React, { Component } from "react";
+import React, { Component, lazy, Suspense } from "react";
 import { connect } from "dva/index"
 import indexStyles from './index.less'
-import MiniBoxNavigations from '../MiniBoxNavigations/index'
-import BoardCommunication from './BoardCommunication/index'
-import BoardArchives from './BoardArchives/index'
-import BoardPlan from './BoardPlan/index'
-import InvestmentMaps from './InvestmentMaps/index'
-import XczNews from './XczNews/index'
-import Zhichengshe from './Zhichengshe/index'
-import Workglows from './Workflows'
-import StatisticalReport from './StatisticalReport'
 import { isPaymentOrgUser } from "@/utils/businessFunction"
+
+// import MiniBoxNavigations from '../MiniBoxNavigations/index'
+// import BoardCommunication from './BoardCommunication/index'
+// import BoardArchives from './BoardArchives/index'
+// import BoardPlan from './BoardPlan/index'
+// import InvestmentMaps from './InvestmentMaps/index'
+// import XczNews from './XczNews/index'
+// import Zhichengshe from './Zhichengshe/index'
+// import Workglows from './Workflows'
+// import StatisticalReport from './StatisticalReport'
+const BoardPlan = lazy(() => import('./BoardPlan/index'))
+const MiniBoxNavigations = lazy(() => import('../MiniBoxNavigations/index'))
+const BoardCommunication = lazy(() => import('./BoardCommunication/index'))
+const BoardArchives = lazy(() => import('./BoardArchives/index'))
+const InvestmentMaps = lazy(() => import('./InvestmentMaps/index'))
+const XczNews = lazy(() => import('./XczNews/index'))
+const Zhichengshe = lazy(() => import('./Zhichengshe/index'))
+const Workglows = lazy(() => import('./Workflows'))
+const StatisticalReport = lazy(() => import('./StatisticalReport'))
+
 class WorkbenchPage extends Component {
     constructor(props) {
         // console.log("WorkbenchPage组件初始化");
@@ -44,13 +55,13 @@ class WorkbenchPage extends Component {
                 allOrgBoardTreeList: []
             }
         })
-        window.removeEventListener('resize', this.setWorkbenchBoxContentHeight)
+        window.removeEventListener('resize', this.setWorkbenchBoxContentHeight, true)
     }
     componentDidMount() {
         const { currentSelectedWorkbenchBox = {} } = this.props;
         this.setWorkbenchVisible(currentSelectedWorkbenchBox);
         this.setWorkbenchBoxContentHeight()
-        window.addEventListener('resize', this.setWorkbenchBoxContentHeight)
+        window.addEventListener('resize', this.setWorkbenchBoxContentHeight, true)
     }
     componentWillReceiveProps(nextProps) {
         const { currentSelectedWorkbenchBox } = this.props;
@@ -62,7 +73,8 @@ class WorkbenchPage extends Component {
     }
     // 保存区域高度
     setWorkbenchBoxContentHeight = () => {
-        const height = document.getElementById('container_workbenchBoxContent').clientHeight
+        const target = document.getElementById('container_workbenchBoxContent')
+        const height = target.clientHeight || document.querySelector('body').clientHeight - 80
         this.setState({
             workbenchBoxContent_height: height
         })
@@ -109,50 +121,55 @@ class WorkbenchPage extends Component {
         const special_backgroud = ['mine:flows', 'board:files']
         return (
             <div className={indexStyles.workbenchBoxContentModalContainer}>
-                <MiniBoxNavigations currentSelectedWorkbenchBox={currentSelectedWorkbenchBox} />
-                <div id='container_workbenchBoxContent' className={indexStyles.workbenchBoxContentModalWapper} style={workbenchBoxContentWapperModalStyle ? workbenchBoxContentWapperModalStyle : {}}>
-                    <div className={indexStyles.workbenchBoxContentWapper}
-                        style={{ background: special_backgroud.includes(select_box_code) ? 'rgba(245, 245, 245, 1)' : '' }}>
+                <Suspense fallback={<div></div>}>
+                    <MiniBoxNavigations currentSelectedWorkbenchBox={currentSelectedWorkbenchBox} />
+                </Suspense>
+                <Suspense fallback={<div></div>}>
 
-                        {
-                            'board:plans' == select_box_code &&
-                            <BoardPlan />
-                        }
+                    <div id='container_workbenchBoxContent' className={indexStyles.workbenchBoxContentModalWapper} style={workbenchBoxContentWapperModalStyle ? workbenchBoxContentWapperModalStyle : {}}>
+                        <div className={indexStyles.workbenchBoxContentWapper}
+                            style={{ background: special_backgroud.includes(select_box_code) ? 'rgba(245, 245, 245, 1)' : '' }}>
+
+                            {
+                                'board:plans' == select_box_code &&
+                                <BoardPlan workbenchBoxContent_height={workbenchBoxContent_height} />
+                            }
 
 
-                        {
-                            isPaymentUser && 'board:chat' == select_box_code &&
-                            <BoardCommunication />
-                        }
+                            {
+                                isPaymentUser && 'board:chat' == select_box_code &&
+                                <BoardCommunication />
+                            }
 
-                        {
-                            isPaymentUser && 'board:files' == select_box_code &&
-                            <BoardArchives workbenchBoxContent_height={workbenchBoxContent_height} />
-                        }
+                            {
+                                isPaymentUser && 'board:files' == select_box_code &&
+                                <BoardArchives workbenchBoxContent_height={workbenchBoxContent_height} />
+                            }
 
-                        {
-                            isPaymentUser && 'maps' == select_box_code &&
-                            <InvestmentMaps />
-                        }
+                            {
+                                isPaymentUser && 'maps' == select_box_code &&
+                                <InvestmentMaps />
+                            }
 
-                        {
-                            isPaymentUser && 'cases' == select_box_code &&
-                            <XczNews {...this.props} />
-                        }
-                        {
-                            isPaymentUser && 'regulations' == select_box_code &&
-                            <Zhichengshe {...this.props} />
-                        }
-                        {
-                            isPaymentUser && 'mine:flows' == select_box_code &&
-                            <Workglows workbenchBoxContent_height={workbenchBoxContent_height} />
-                        }
-                        {
-                            isPaymentUser && 'report' == select_box_code &&
-                            <StatisticalReport workbenchBoxContent_height={workbenchBoxContent_height} />
-                        }
+                            {
+                                isPaymentUser && 'cases' == select_box_code &&
+                                <XczNews {...this.props} />
+                            }
+                            {
+                                isPaymentUser && 'regulations' == select_box_code &&
+                                <Zhichengshe {...this.props} />
+                            }
+                            {
+                                isPaymentUser && 'mine:flows' == select_box_code &&
+                                <Workglows workbenchBoxContent_height={workbenchBoxContent_height} />
+                            }
+                            {
+                                isPaymentUser && 'report' == select_box_code &&
+                                <StatisticalReport workbenchBoxContent_height={workbenchBoxContent_height} />
+                            }
+                        </div>
                     </div>
-                </div>
+                </Suspense>
             </div>
         )
     }
