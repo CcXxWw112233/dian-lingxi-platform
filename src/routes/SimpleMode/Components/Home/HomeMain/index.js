@@ -43,7 +43,9 @@ export default class index extends Component {
                     <BoardFeatures />
                 </div>
                 <div className={`${styles.main_wapper_after}`}
-                    style={{ ...this.setBgImg() }}
+                    style={{
+                        // ...this.setBgImg() 
+                    }}
                 ></div>
             </div>
         )

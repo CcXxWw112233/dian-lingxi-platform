@@ -165,16 +165,18 @@ class SimpleMode extends Component {
       userInfo = {},
     } = this.props;
     const { show } = this.state
-    const { wallpaper = defaultWallpaperSrc } = userInfo;
-    const wallpaperContent = currentUserWallpaperContent ? currentUserWallpaperContent : wallpaper;
-    let bgStyle = {}
-    if (isColor(wallpaperContent)) {
-      bgStyle = { backgroundColor: wallpaperContent };
-    } else {
-      bgStyle = { backgroundImage: `url(${wallpaperContent})` };
-    }
+    // const { wallpaper = defaultWallpaperSrc } = userInfo;
+    // const wallpaperContent = currentUserWallpaperContent ? currentUserWallpaperContent : wallpaper;
+    // let bgStyle = {}
+    // if (isColor(wallpaperContent)) {
+    //   bgStyle = { backgroundColor: wallpaperContent };
+    // } else {
+    //   bgStyle = { backgroundImage: `url(${wallpaperContent})` };
+    // }
     return (
-      <div className={`${indexStyles.wapper} ${indexStyles.wapperBg} ${setWapperCenter ? indexStyles.wapper_center : ''}`} onClick={this.handleHiddenNav} style={bgStyle}>
+      <div className={`${indexStyles.wapper} ${indexStyles.wapperBg} ${setWapperCenter ? indexStyles.wapper_center : ''}`} onClick={this.handleHiddenNav}
+        // style={bgStyle}
+      >
         {simpleHeaderVisiable && <SimpleHeader />}
         {show && this.renderRoutes()}
       </div>
