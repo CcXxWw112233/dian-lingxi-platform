@@ -121,7 +121,7 @@ export default class UserRemoteSelect extends React.Component {
           filterOption={false}
           onSearch={this.fetchUser}
           onChange={this.handleChange}
-          style={{ width: '100%', minHeight: '32px' }}
+          style={{ width: 'calc(100% - 16px)', minHeight: '32px' }}
           getPopupContainer={triggerNode => triggerNode.parentNode}
         >
           {

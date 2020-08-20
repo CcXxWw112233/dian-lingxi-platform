@@ -291,13 +291,20 @@ export default class BoardFeatures extends Component {
 	handleVagueMatching = (value, props) => {
 		const { board_card_todo_list = [], board_flow_todo_list = [] } = props ? props : this.props
 		let new_board_todo_list = removeEmptyArrayEle([].concat(...board_card_todo_list, ...board_flow_todo_list))
+		let temp_board_todo_list = removeEmptyArrayEle([].concat(...board_card_todo_list, ...board_flow_todo_list))
 		if (!(value && value.length)) {
 			this.reorderBoardToDoList(props ? props : this.props)
 			return
 		}
 		let str = value.join(',')
+		let parentIds = []
+		// 过滤出查询的父任务列表
 		new_board_todo_list = new_board_todo_list.filter(item => (item.related_milestone && Object.keys(item.related_milestone).length) && str.indexOf(item.related_milestone.name) != -1) || []
-		this.reorderBoardToDoList(props ? props : this.props, new_board_todo_list)
+		!!(new_board_todo_list && new_board_todo_list.length) && new_board_todo_list.map(item => {
+			parentIds.push(item.id)
+		})
+		temp_board_todo_list = temp_board_todo_list.filter(item => (parentIds.indexOf(item.id) != -1) || (item.parent_id && parentIds.indexOf(item.parent_id) != -1))
+		this.reorderBoardToDoList(props ? props : this.props, temp_board_todo_list)
 	}
 
 	renderWelcome = () => {
