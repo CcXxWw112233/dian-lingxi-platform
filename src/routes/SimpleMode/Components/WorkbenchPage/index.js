@@ -119,6 +119,7 @@ class WorkbenchPage extends Component {
         }
         const { workbenchBoxContent_height } = this.state
         const special_backgroud = ['mine:flows', 'board:files']
+        console.log('currentSelectedWorkbenchBox', currentSelectedWorkbenchBox)
         return (
             <div className={indexStyles.workbenchBoxContentModalContainer}>
                 <Suspense fallback={<div></div>}>

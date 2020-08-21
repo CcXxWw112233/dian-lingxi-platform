@@ -70,6 +70,20 @@ export default class MainBoard extends Component {
             addProjectModalVisible: !this.state.addProjectModalVisible
         })
     }
+
+    // 设置默认项目计划盒子
+    setBoardPlanDefaultBox = () => {
+        const { dispatch, workbenchBoxList = [] } = this.props
+        const box = workbenchBoxList.find(item => item.code == 'board:plans')
+        dispatch({//重置当前盒子类型
+            type: 'simplemode/updateDatas',
+            payload: {
+                currentSelectedWorkbenchBox: box
+            }
+        });
+
+        window.sessionStorage.setItem('session_currentSelectedWorkbenchBox', JSON.stringify(box))
+    }
     handleSubmitNewProject = data => {
         const { dispatch, projectList = [] } = this.props;
         this.setAddProjectModalVisible();
@@ -81,13 +95,14 @@ export default class MainBoard extends Component {
             afterClearGanttData({ dispatch })
             // if (!projectList.length) {
             selectBoardToSeeInfo({ board_id: id, board_name: name, dispatch, org_id: data._organization_id, group_view_type: '4' }) //极简模式项目选择
-            window.sessionStorage.removeItem('session_currentSelectedWorkbenchBox') //重置当前盒子类型
-            dispatch({//重置当前盒子类型
-                type: 'simplemode/updateDatas',
-                payload: {
-                    currentSelectedWorkbenchBox: {}
-                }
-            });
+            // window.sessionStorage.removeItem('session_currentSelectedWorkbenchBox') //重置当前盒子类型
+            // dispatch({//重置当前盒子类型
+            //     type: 'simplemode/updateDatas',
+            //     payload: {
+            //         currentSelectedWorkbenchBox: {}
+            //     }
+            // });
+            this.setBoardPlanDefaultBox()
             dispatch({
                 type: 'simplemode/routingJump',
                 payload: {
