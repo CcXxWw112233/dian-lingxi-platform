@@ -31,7 +31,7 @@ import { Switch, Route, Redirect, routerRedux, Router } from 'dva/router'
 import dynamic from 'dva/dynamic'
 import { LocaleProvider } from 'antd'
 import zh_CN from 'antd/lib/locale-provider/zh_CN';
-
+import RedirectComp from './routes/RedirectComp.js'
 const { ConnectedRouter } = routerRedux
 
 const Routers = function ({ history, app }) {
@@ -134,7 +134,7 @@ const Routers = function ({ history, app }) {
       // models: () => [import('./models/retrievePassword')],
       component: () => import('./routes/RetrievePassword/'),
     }, {
-      path: '/technological',
+      path: '/technological/:path/:path/:path?/:path?',
       // models: () => [
       //   // import('./models/technological'),
       //   // import('./models/technological/cooperationPush'),
@@ -233,7 +233,8 @@ const Routers = function ({ history, app }) {
             routes.map(({ path, ...dynamics }, key) => {
               return (
                 <Route key={key}
-                  exact={(path.indexOf('/technological') !== -1 || path.indexOf('/teamShow') !== -1) ? false : true}
+                  exact={path == '/'}
+                  // exact={(path.indexOf('/technological') !== -1 || path.indexOf('/teamShow') !== -1) ? false : true}
                   path={path}
                   component={dynamic({
                     app,
@@ -243,6 +244,7 @@ const Routers = function ({ history, app }) {
               )
             })
           }
+          <Route path="*" component={RedirectComp} />
         </Switch>
       </Router>
     </LocaleProvider>
