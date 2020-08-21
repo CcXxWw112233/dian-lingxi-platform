@@ -74,7 +74,10 @@ class WorkbenchPage extends Component {
     // 保存区域高度
     setWorkbenchBoxContentHeight = () => {
         const target = document.getElementById('container_workbenchBoxContent')
-        const height = target.clientHeight || document.querySelector('body').clientHeight - 80
+        const default_height = document.querySelector('body').clientHeight - 80
+        const target_height = target.clientHeight || default_height
+        const height = Math.min(target_height, default_height)
+        // console.log('ssssssssaa', { target_height, default_height })
         this.setState({
             workbenchBoxContent_height: height
         })
@@ -119,7 +122,7 @@ class WorkbenchPage extends Component {
         }
         const { workbenchBoxContent_height } = this.state
         const special_backgroud = ['mine:flows', 'board:files']
-        console.log('currentSelectedWorkbenchBox', currentSelectedWorkbenchBox)
+        // console.log('currentSelectedWorkbenchBox', workbenchBoxContent_height)
         return (
             <div className={indexStyles.workbenchBoxContentModalContainer}>
                 <Suspense fallback={<div></div>}>

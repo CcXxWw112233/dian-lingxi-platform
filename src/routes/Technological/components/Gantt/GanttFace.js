@@ -426,12 +426,12 @@ export default class GanttFace extends Component {
         }, 0)
       } else {
         this.setLoading(false)
-        // dispatch({
-        //   type: 'gantt/handleOutLineTreeData',
-        //   payload: {
-        //     data: outline_tree
-        //   }
-        // })
+        dispatch({
+          type: 'gantt/handleOutLineTreeData',
+          payload: {
+            data: outline_tree
+          }
+        })
       }
       that.getHoliday()
     }
