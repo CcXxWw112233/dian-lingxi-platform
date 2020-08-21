@@ -1163,6 +1163,7 @@ export default class CardItem extends Component {
                 this.onMouseEnter()
             },
             onBlur: () => {
+                alert(1)
                 this.props.setTaskIsDragging && this.props.setTaskIsDragging(false) //当拖动时，有可能会捕获到创建任务的动作，阻断
                 this.setState({
                     drag_lock: false
@@ -1204,7 +1205,7 @@ export default class CardItem extends Component {
                 data-targetclassname="specific_example"
                 id={id} //大纲视图需要获取该id作为父级id来实现子任务拖拽影响父任务位置
                 ref={this.out_ref}
-                tabindex="0"
+                tabindex="1"
                 style={{
                     touchAction: 'none',
                     zIndex: (rely_down || this.is_down || drag_lock) ? 2 : 1,

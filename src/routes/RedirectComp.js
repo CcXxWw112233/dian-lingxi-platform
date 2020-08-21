@@ -6,14 +6,12 @@ import { connect } from 'dva';
 export default class RedirectComp extends Component {
     componentDidMount() {
         const { dispatch } = this.props
-        console.log('route', dispatch)
         dispatch(routerRedux.push('/technological/simplemode/home'))
     }
 
     render() {
         return (
             <div>
-                asdasd
             </div>
         )
     }
