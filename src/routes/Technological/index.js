@@ -54,37 +54,37 @@ export default class Technological extends React.Component {
     })
   }
 
-  // customOrgRouting = (nextProps) => {
-  //   const { currentSelectOrganize: { id: last_id }, dispatch } = this.props
-  //   const { currentSelectOrganize: { id: next_id } } = nextProps
-  //   const { location = {} } = nextProps
-  //   // console.log('sssssssssss', this.props)
-  //   const { pathname } = location
-  //   if (last_id != next_id) { //组织切换的时候
-  //     if (!CUSTOMIZATION_ORGNIZATIONS.includes(next_id)) {
-  //       if (pathname.indexOf('/technological/simplemode') == -1) {
-  //         dispatch({
-  //           type: 'technological/routingReplace',
-  //           payload: {
-  //             route: '/technological/simplemode/home'
-  //           }
-  //         })
-  //       }
-  //     }
-  //   }
+  customOrgRouting = (nextProps) => {
+    const { currentSelectOrganize: { id: last_id }, dispatch } = this.props
+    const { currentSelectOrganize: { id: next_id } } = nextProps
+    const { location = {} } = nextProps
+    // console.log('sssssssssss', this.props)
+    const { pathname } = location
+    if (last_id != next_id) { //组织切换的时候
+      if (!CUSTOMIZATION_ORGNIZATIONS.includes(next_id)) {
+        if (pathname.indexOf('/technological/simplemode') == -1) {
+          dispatch({
+            type: 'technological/routingReplace',
+            payload: {
+              route: '/technological/simplemode/home'
+            }
+          })
+        }
+      }
+    }
 
-  //   if (pathname.indexOf('/technological/simplemode') == -1) { //在普通模式下，校验特定组织
-  //     if (!CUSTOMIZATION_ORGNIZATIONS.includes(next_id)) {
-  //       dispatch({
-  //         type: 'technological/routingReplace',
-  //         payload: {
-  //           route: '/technological/simplemode/home'
-  //         }
-  //       })
-  //     }
-  //   }
+    if (pathname.indexOf('/technological/simplemode') == -1) { //在普通模式下，校验特定组织
+      if (!CUSTOMIZATION_ORGNIZATIONS.includes(next_id)) {
+        dispatch({
+          type: 'technological/routingReplace',
+          payload: {
+            route: '/technological/simplemode/home'
+          }
+        })
+      }
+    }
 
-  // }
+  }
 
   connectWsToModel = () => {
     const { dispatch } = this.props
@@ -107,15 +107,15 @@ export default class Technological extends React.Component {
     }, 1000)
   }
 
-  // componentWillReceiveProps(nextProps) {
-  // const { currentUserOrganizes, dispatch } = nextProps;
-  // const { page_load_type: old_page_load_type } = this.props;
-  // if (old_page_load_type != nextProps.page_load_type) {
+  componentWillReceiveProps(nextProps) {
+    const { currentUserOrganizes, dispatch } = nextProps;
+    const { page_load_type: old_page_load_type } = this.props;
+    if (old_page_load_type != nextProps.page_load_type) {
 
-  // }
-  // this.customOrgRouting(nextProps)
+    }
+    this.customOrgRouting(nextProps)
 
-  // }
+  }
   // shouldComponentUpdate(newProps, newState) {
   //   const { currentUserOrganizes, dispatch } = newProps;
   //   const { page_load_type: old_page_load_type } = this.props;
@@ -172,135 +172,116 @@ export default class Technological extends React.Component {
     })
   }
 
-  // renderRouters = () => {
-  //   const { page_load_type } = this.props;
-  //   const app = dva();
-  //   const routes = [
-  //     {
-  //       path: '/technological/accoutSet',
-  //       component: () => import('./components/AccountSet'),
-  //     }, {
-  //       path: '/technological/project',
-  //       component: () => import('./components/Project'),
-  //     }, {
-  //       path: '/technological/projectDetail/:id?',
-  //       component: () => import('./components/ProjectDetail'),
-  //     }, {
-  //       path: '/technological/newsDynamic',
-  //       component: () => import('./components/NewsDynamic'),
-  //     }, {
-  //       path: '/technological/workbench',
-  //       component: () => import('./components/Workbench'),
-  //     }, {
-  //       path: '/technological/organizationMember',
-  //       component: () => import('./components/OrganizationMember'),
-  //     }, {
-  //       path: '/technological/teamShow',
-  //       component: () => import('../TeamShow/index'),
-  //     }, {
-  //       path: '/technological/gantt',
-  //       component: () => import('./components/Gantt/index'),
-  //     }, {
-  //       path: '/technological/xczNews',
-  //       component: () => import('./components/XczNews')
-  //     }, {
-  //       path: '/technological/simplemode',
-  //       component: () => import('../SimpleMode/index'),
-  //     }, {
-  //       path: '/technological/investmentMap',
-  //       component: () => import('./components/InvestmentMap'),
-  //     },
-  //   ]
+  renderRoutersRoute = () => {
+    const app = dva();
+    const routes = [
+      {
+        path: '/technological/accoutSet',
+        component: lazy(() => import('./components/AccountSet')),
+      }, {
+        path: '/technological/project',
+        component: lazy(() => import('./components/Project')),
+      }, {
+        path: '/technological/projectDetail/:id?',
+        component: lazy(() => import('./components/ProjectDetail')),
+      }, {
+        path: '/technological/newsDynamic',
+        component: lazy(() => import('./components/NewsDynamic')),
+      }, {
+        path: '/technological/workbench',
+        component: lazy(() => import('./components/Workbench')),
+      }, {
+        path: '/technological/organizationMember',
+        component: lazy(() => import('./components/OrganizationMember')),
+      }, {
+        path: '/technological/teamShow',
+        component: lazy(() => import('../TeamShow/index')),
+      }, {
+        path: '/technological/xczNews',
+        component: lazy(() => import('./components/XczNews'))
+      }, {
+        path: '/technological/simplemode',
+        component: SimpleMode,//lazy(() => import('../SimpleMode/index')),
+      }, {
+        path: '/technological/investmentMap',
+        component: lazy(() => import('./components/InvestmentMap')),
+      },
+    ]
+    return (
+      <Suspense fallback={<div></div>}>
+        {
+          routes.map(({ path, component }, key) => {
+            return (
+              <Route
+                key={key}
+                //exact
+                path={path}
+                component={component}
+              />
+            )
+          })
+        }
+      </Suspense>
+    )
+  }
+  renderRouters = () => {
+    const { page_load_type } = this.props;
 
-  //   const defaultLayout = (
-  //     <Layout id='technologicalLayoutWrapper' >
-  //       <Sider collapsedWidth={64} theme={'light'} collapsed={true} />
-  //       <SiderLeft />
-  //       <Layout style={{ backgroundColor: 'rgba(245,245,245,1)' }}>
-  //         <Content style={{
-  //           margin: '0 16px',
-  //         }}
-  //         >
-  //           <div className={`${globalClassNmae.page_style_3} ${globalClassNmae.global_vertical_scrollbar}`} id={'technologicalOut'} >
-  //             {
-  //               routes.map(({ path, ...dynamics }, key) => {
-  //                 return (
-  //                   <Route key={key}
-  //                     //exact
-  //                     path={path}
-  //                     component={dynamic({
-  //                       app,
-  //                       ...dynamics,
-  //                     })}
-  //                   />
-  //                 )
-  //               })
-  //             }
-  //           </div>
-  //         </Content>
-  //       </Layout>
-  //       <SiderRight />
-  //       <GlobalSearch />
-  //     </Layout>
-  //   )
 
-  //   const simpleLayout = (
-  //     <Layout id='technologicalLayoutWrapper' >
-  //       <Layout style={{ backgroundColor: 'rgba(245,245,245,1)' }}>
-  //         <Content style={{ height: '100vh' }} >
-  //           <div className={`${globalClassNmae.page_style_3} ${globalClassNmae.global_vertical_scrollbar}`} id={'technologicalOut'} >
-  //             {
-  //               routes.map(({ path, ...dynamics }, key) => {
-  //                 return (
-  //                   <Route key={key}
-  //                     //exact
-  //                     path={path}
-  //                     component={dynamic({
-  //                       app,
-  //                       ...dynamics,
-  //                     })}
-  //                   />
-  //                 )
-  //               })
-  //             }
-  //           </div>
-  //         </Content>
-  //       </Layout>
-  //     </Layout>
+    const defaultLayout = (
+      <Layout id='technologicalLayoutWrapper' >
+        <Sider collapsedWidth={64} theme={'light'} collapsed={true} />
+        <SiderLeft />
+        <Layout style={{ backgroundColor: 'rgba(245,245,245,1)' }}>
+          <Content style={{
+            margin: '0 16px',
+          }}
+          >
+            <div className={`${globalClassNmae.page_style_3} ${globalClassNmae.global_vertical_scrollbar}`} id={'technologicalOut'} >
+              {this.renderRoutersRoute()}
+            </div>
+          </Content>
+        </Layout>
+        <SiderRight />
+        <GlobalSearch />
+      </Layout>
+    )
 
-  //   )
+    const simpleLayout = (
+      <Layout id='technologicalLayoutWrapper' >
+        <Layout style={{ backgroundColor: 'rgba(245,245,245,1)' }}>
+          <Content style={{ height: '100vh' }} >
+            <div className={`${globalClassNmae.page_style_3} ${globalClassNmae.global_vertical_scrollbar}`} id={'technologicalOut'} >
+              {this.renderRoutersRoute()}
+            </div>
+          </Content>
+        </Layout>
+      </Layout>
 
-  //   let layout = <div></div>
-  //   switch (page_load_type) {
-  //     case 0:
-  //       layout = '<div></div>'
-  //       break;
-  //     case 1:
-  //       layout = simpleLayout
-  //       break;
-  //     case 2:
-  //       layout = defaultLayout
-  //       break;
-  //     default:
-  //       break;
-  //   }
-  //   return layout
-  // }
+    )
+
+    let layout = <div></div>
+    switch (page_load_type) {
+      case 0:
+        layout = '<div></div>'
+        break;
+      case 1:
+        layout = simpleLayout
+        break;
+      case 2:
+        layout = defaultLayout
+        break;
+      default:
+        break;
+    }
+    return layout
+  }
   render() {
     return (
       <LocaleProvider locale={zh_CN}>
         {/*minWidth:1440, */}
         <>
-          {/* {simpleLayout} */}
-          <Layout id='technologicalLayoutWrapper' >
-            <Layout style={{ backgroundColor: 'rgba(245,245,245,1)' }}>
-              <Content style={{ height: '100vh' }} >
-                <div className={`${globalClassNmae.page_style_3} ${globalClassNmae.global_vertical_scrollbar}`} id={'technologicalOut'} >
-                  <Route path="/technological/simplemode" component={SimpleMode} />
-                </div>
-              </Content>
-            </Layout>
-          </Layout>
+          {this.renderRouters()}
           <Suspense fallback={<div></div>}>
             <UpdateLog />
             <UploadNotification />
@@ -315,15 +296,15 @@ export default class Technological extends React.Component {
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({ technological: {
   datas: {
-    // page_load_type,
-    // currentSelectOrganize = {}
+    page_load_type,
+    currentSelectOrganize = {}
     // currentUserOrganizes = [],
   }
 }
 }) {
   return {
-    // page_load_type,
-    // currentSelectOrganize
+    page_load_type,
+    currentSelectOrganize
     // currentUserOrganizes,
 
   }

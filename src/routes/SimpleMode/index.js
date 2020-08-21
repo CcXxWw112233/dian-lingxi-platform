@@ -102,6 +102,7 @@ class SimpleMode extends Component {
   }
 
   componentDidMount() {
+    console.log('componentDidMount', 'SimpleMode')
     this.initGetSimpleModeData()
     window.addEventListener('scroll', this.handleScroll, false) //监听滚动
     window.addEventListener('resize', this.handleResize, false) //监听窗口大小改变

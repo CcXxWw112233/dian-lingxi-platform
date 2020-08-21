@@ -134,7 +134,7 @@ const Routers = function ({ history, app }) {
       // models: () => [import('./models/retrievePassword')],
       component: () => import('./routes/RetrievePassword/'),
     }, {
-      path: '/technological/:path/:path/:path?/:path?',
+      path: '/technological/:path/:path?/:path?/:path?',
       // models: () => [
       //   // import('./models/technological'),
       //   // import('./models/technological/cooperationPush'),
