@@ -74,6 +74,7 @@ export default {
       target_scrollTop: 0, //总体滚动条偏离顶部滑动位置
       target_scrollTop_board_storage: 0, //缓存查看项目视图下，滚动条的位置高度
       current_list_group_id: '0', //当前选中的分组id
+      belong_group_row: undefined, //创建任务时所在所属分组的第几行
       milestoneMap: {},//[], //里程碑列表{time1: [], time2: []}
 
       about_apps_boards: [], //带app的项目列表

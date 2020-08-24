@@ -5,7 +5,7 @@ import GanttFace from './GanttFace'
 // import TaskDetailModal from '../Workbench/CardContent/Modal/TaskDetailModal';
 import TaskDetailModal from '@/components/TaskDetailModal'
 import AddTaskModal from './components/AddTaskModal';
-import { ganttIsFold, getDigitTime, ganttIsOutlineView, ceil_width } from './constants';
+import { ganttIsFold, getDigitTime, ganttIsOutlineView, ceil_width, ganttIsSingleBoardGroupView } from './constants';
 import OutlineTree from './components/OutlineTree';
 
 class Gantt extends Component {
@@ -130,7 +130,8 @@ class Gantt extends Component {
       .then(res => {
         if (res) {
           if (!ganttIsOutlineView({ group_view_type })) {
-            this.insertTaskToListGroup(res)
+            // debugger
+            this.insertTaskToListGroup({ ...data, ...res })
           } else {
             this.insertOutLineTreeNode({ res, params: data })
           }
@@ -174,7 +175,7 @@ class Gantt extends Component {
     })
   }
   handleGetNewTaskParams = (data) => {
-    const { create_start_time, create_end_time, current_list_group_id, gantt_board_id, group_view_type, panel_outline_create_card_params, gantt_board_list_id } = this.props
+    const { create_start_time, create_end_time, current_list_group_id, gantt_board_id, group_view_type, panel_outline_create_card_params, gantt_board_list_id, belong_group_row } = this.props
 
     //设置截止日期最后一秒
     const create_end_time_date = new Date(create_end_time)
@@ -210,6 +211,9 @@ class Gantt extends Component {
         ...param,
         ...panel_outline_create_card_params,
       }
+    }
+    if (ganttIsSingleBoardGroupView({ group_view_type, gantt_board_id })) { //单任务分组下需要传行高
+      param.row = belong_group_row
     }
     this.addNewTask(param)
     this.setAddTaskModalVisible(false)
@@ -709,7 +713,8 @@ function mapStateToProps({
       outline_tree_round,
       panel_outline_create_card_params = {},
       gantt_board_list_id,
-      gantt_view_mode
+      gantt_view_mode,
+      belong_group_row
     }
   },
   technological: {
@@ -736,7 +741,8 @@ function mapStateToProps({
     panel_outline_create_card_params,
     outline_tree_round,
     gantt_board_list_id,
-    gantt_view_mode
+    gantt_view_mode,
+    belong_group_row
   }
 }
 

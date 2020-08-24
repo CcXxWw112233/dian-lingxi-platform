@@ -7,7 +7,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import CheckItem from '@/components/CheckItem'
 import AvatarList from '@/components/avatarList'
 import { Tooltip, Dropdown, message } from 'antd'
-import { date_area_height, task_item_height, task_item_margin_top, ganttIsFold, ceil_height_fold, task_item_height_fold, group_rows_fold, ganttIsOutlineView, ceil_width } from './constants'
+import { date_area_height, task_item_height, task_item_margin_top, ganttIsFold, ceil_height_fold, task_item_height_fold, group_rows_fold, ganttIsOutlineView, ceil_width, ceil_height } from './constants'
 import CardDropDetail from './components/gattFaceCardItem/CardDropDetail'
 import QueueAnim from 'rc-queue-anim'
 import GetRowTaskItem from './components/CardItem/index'
@@ -414,40 +414,56 @@ export default class GetRowGantt extends Component {
     if (top == undefined || top == null) {
       return
     }
-    const { group_view_type } = this.props
+    const { group_view_type, group_list_area_section_height = [], dispatch, list_group } = this.props
     if (ganttIsOutlineView({ group_view_type })) {
       return Promise.resolve({ current_list_group_id: 0 })
     }
-    const getSum = (total, num) => {
-      return total + num;
-    }
-    const { dispatch } = this.props
-    const { group_list_area = [], list_group = [] } = this.props
-    let conter_key = 0
-    for (let i = 0; i < group_list_area.length; i++) {
-      if (i == 0) {
-        if (top < group_list_area[0]) {
-          conter_key = 0
-          break
-        }
-      } else {
-        const arr = group_list_area.slice(0, i + 1)
-        const sum = arr.reduce(getSum);
-        if (top < sum) {
-          conter_key = i
-          break
-        }
+
+    // const getSum = (total, num) => {
+    //   return total + num;
+    // }
+    // const { dispatch } = this.props
+    // const { group_list_area = [], list_group = [] } = this.props
+    // for (let i = 0; i < group_list_area.length; i++) {
+    //   if (i == 0) {
+    //     if (top < group_list_area[0]) {
+    //       conter_key = 0
+    //       break
+    //     }
+    //   } else {
+    //     const arr = group_list_area.slice(0, i + 1)
+    //     const sum = arr.reduce(getSum);
+    //     if (top < sum) {
+    //       conter_key = i
+    //       break
+    //     }
+    //   }
+    // }
+    let conter_key = 0 //所属分组下标
+    let belong_group_row = 0 //所在分组的某一行
+
+    for (let i = 0, len = group_list_area_section_height.length; i < len; i++) {
+      if (top < group_list_area_section_height[i]) {
+        conter_key = i
+        break
       }
     }
+    if (conter_key == 0) {
+      belong_group_row = top / ceil_height + 1
+    } else {
+      belong_group_row = (top - group_list_area_section_height[conter_key - 1]) / ceil_height + 1
+    }
+    console.log('ssssssssss_top', conter_key, belong_group_row)
     const current_list_group_id = list_group[conter_key]['list_id']
     dispatch({
       type: getEffectOrReducerByName('updateDatas'),
       payload: {
-        current_list_group_id
+        current_list_group_id,
+        belong_group_row
       }
     })
 
-    return Promise.resolve({ current_list_group_id })
+    return Promise.resolve({ current_list_group_id, belong_group_row })
   }
 
   //点击某个实例,或者创建任务
