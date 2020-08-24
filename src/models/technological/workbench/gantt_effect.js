@@ -160,6 +160,36 @@ export default {
             })
 
         },
+        // 更新分组下未排期任务 (对未排期的任务进行拖拽 设置时间)
+        * updateGroupListWithCardsNoTime({ payload = {} }, { select, call, put }) {
+            const { datas = [], drop_group_id, original_group_id = '0', card_id, updateData = {}, origin_list_group } = payload
+            const list_group = yield select(getModelSelectDatasState('gantt', 'list_group'))
+            const list_group_new = Object.prototype.toString.call(origin_list_group) == '[object Array]' ? origin_list_group : [...list_group]
+            // 1. 找到下落的分组列表
+            const group_drop_index = list_group_new.findIndex(item => item.lane_id == drop_group_id)
+            // 2. 找到当前未排期任务原始所在的分组列表
+            const group_original_index = list_group_new.findIndex(item => item.lane_id == original_group_id)
+            // 3. 从当前原始的分组中找到当前这条未排期的任务
+            const group_index_cards_index = list_group_new[group_original_index].lane_data.card_no_times.findIndex(item => item.id == updateData.id)
+            // 4. 取出这条任务 （保存一下数据）
+            let group_index_cards_item = list_group_new[group_original_index].lane_data.card_no_times[group_index_cards_index]
+            // 5. 取出的这条任务需要进行更新
+            group_index_cards_item = {
+                ...group_index_cards_item,
+                ...updateData
+            }
+            // 6. 将这条任务添加至已排期的任务中 （下落的分组中添加）
+            list_group_new[group_drop_index].lane_data.cards.push(group_index_cards_item)
+            // 7. 将这条任务从原始未排期中移除
+            list_group_new[group_original_index].lane_data.card_no_times.splice(group_index_cards_index, 1)
+            yield put(({
+                type: 'updateListGroup',
+                payload: {
+                    datas,
+                    origin_list_group: list_group_new
+                }
+            }))
+        },
 
         * updateOutLineTree({ payload = {} }, { select, call, put }) {
             const { datas = [] } = payload

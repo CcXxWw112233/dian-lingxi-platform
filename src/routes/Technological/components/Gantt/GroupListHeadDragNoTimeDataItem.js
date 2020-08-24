@@ -43,11 +43,21 @@ export default class GroupListHeadDragNoTimeDataItem extends Component {
     return b
   }
 
-  updateGanttData = (datas = []) => {
+  /**
+   * 更新甘特图数据
+   * @param {Array} datas 会影响的数组列表
+   * @param {String} drop_group_id 下落的分组ID
+   * @param {String} original_group_id 元素的原始的分组ID
+   * @param {Object} updateData 更新的数据内容
+   */
+  updateGanttData = ({datas = [], drop_group_id, original_group_id, updateData = {}}) => {
     this.props.dispatch({
-        type: `gantt/updateListGroup`,
+        type: `gantt/updateGroupListWithCardsNoTime`,
         payload: {
-            datas
+            datas,
+            drop_group_id,
+            original_group_id,
+            updateData
         }
     })
   }
@@ -95,8 +105,8 @@ export default class GroupListHeadDragNoTimeDataItem extends Component {
     try {
       if (event.target.id == 'gantt_svg_area') { // 表示下落在svg上
         const { x, y } = getXYDropPosition(event)
-        const { ceilWidth, group_list_area_section_height, date_arr_one_level = [], list_group = [], dispatch, itemValue = {}, gantt_board_id } = this.props
-        const { id, board_id } = itemValue
+        const { ceilWidth, group_list_area_section_height, date_arr_one_level = [], list_group = [], dispatch, itemValue = {}, gantt_board_id, selected_card_visible } = this.props
+        const { id, list_id: group_id, board_id, parent_card_id } = itemValue
         // 得到下落的分组位置
         let group_list_position = getDropListPosition(group_list_area_section_height, y)
         // 获取下落的日期位置
@@ -106,11 +116,16 @@ export default class GroupListHeadDragNoTimeDataItem extends Component {
         // return
         updateTaskVTwo({ card_id: id, list_id: list_id || '0', due_time: timestampEnd, start_time: timestamp, board_id: board_id || gantt_board_id }, { isNotLoading: false }).then(res => {
           if (isApiResponseOk(res)) {
-            // rebackCreateNotify.call(this, { res, id, board_id, group_view_type, dispatch, parent_card_id, card_detail_id, selected_card_visible })
+            rebackCreateNotify.call(this, { res, id, board_id, group_view_type, dispatch, parent_card_id, card_detail_id: id, selected_card_visible })
             const updateData = {}
             updateData.start_time = timestamp //!is_has_start_time ? '' : parseInt(start_time_timestamp)
-            updateData.timestampEnd
-            this.updateGanttData([{ id, ...updateData }, ...res.data.scope_content.filter(item => item.id != id)])
+            updateData.due_time = timestampEnd
+            let datas = [{ id, ...updateData }, ...res.data.scope_content.filter(item => item.id != id)]
+            this.updateGanttData({datas, drop_group_id: list_id,  original_group_id: group_id, updateData: {
+              id: id,
+              start_time: timestamp,
+              due_time: timestampEnd
+            }})
             // this.onChangeTimeHandleCardDetail()
             this.curret_panel = ''
             this.setState({
@@ -126,7 +141,6 @@ export default class GroupListHeadDragNoTimeDataItem extends Component {
   }
 
   onDragStartCapture = (e) => {
-    console.log(e.target.id);
     if (!e) return
     if (!e.target) return
     const { id } = e.target
@@ -174,9 +188,9 @@ export default class GroupListHeadDragNoTimeDataItem extends Component {
 }
 
 function mapStateToProps({
-  gantt: { datas: { gantt_board_id, gantt_view_mode, ceilWidth, date_arr_one_level = [], group_list_area_section_height, group_view_type, list_group = [] } },
+  gantt: { datas: { gantt_board_id, gantt_view_mode, ceilWidth, date_arr_one_level = [], group_list_area_section_height, group_view_type, list_group = [], selected_card_visible } },
 }) {
   return {
-    gantt_board_id, gantt_view_mode, ceilWidth, date_arr_one_level, group_list_area_section_height, group_view_type, list_group
+    gantt_board_id, gantt_view_mode, ceilWidth, date_arr_one_level, group_list_area_section_height, group_view_type, list_group, selected_card_visible
   }
 }
