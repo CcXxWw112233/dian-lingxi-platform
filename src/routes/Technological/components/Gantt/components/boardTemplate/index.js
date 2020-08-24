@@ -12,6 +12,7 @@ import BoardTemplateManager from '@/routes/organizationManager/projectTempleteSc
 import SafeConfirmModal from '../SafeConfirmModal';
 import { PROJECT_TEAM_CARD_CREATE, PROJECT_TEAM_BOARD_MILESTONE, NOT_HAS_PERMISION_COMFIRN } from '../../../../../../globalset/js/constant'
 import { transformTimestamp } from '../../../../../../utils/util'
+import { getXYDropPosition, getDropListPosition } from '../../ganttBusiness'
 
 const MenuItem = Menu.Item
 const TreeNode = Tree.TreeNode;
@@ -464,12 +465,32 @@ export default class BoardTemplate extends Component {
         if (!event.target.className) return
         event.preventDefault();
         try {
-            if (event.target.className.indexOf('ganttDetailItem') != -1) {
+
+            if (event.target.id == 'gantt_svg_area') {
+                const { x, y } = getXYDropPosition(event)
+                const { ceilWidth, group_list_area_section_height, date_arr_one_level = [], list_group = [] } = this.props
+                // 得到下落的分组位置
+                let group_list_position = getDropListPosition(group_list_area_section_height, y)
+                // 获取下落分组的元素
+                let { lane_id } = list_group[group_list_position]
+                // 获取下落的日期位置
+                let date_position = parseInt(x / ceilWidth)
+                
+                let { timestamp, timestampEnd } = date_arr_one_level[date_position]
+                // console.log('进来了');
+                if (!lane_id || !timestamp || !timestampEnd) return
+                this.handleDragCompleted({ list_id: lane_id, start_time: timestamp, end_time: timestampEnd })
+                this.current_panel = ''
+
+            } else if (event.target.className.indexOf('ganttDetailItem') != -1) {
                 const { list_id, start_time, end_time } = event.target.dataset
                 if (!list_id || !start_time || !end_time) return
                 this.handleDragCompleted({ list_id, start_time, end_time })
                 this.current_panel = ''
+            } else {
+
             }
+
         } catch (err) {
             // console.log(err)
         }
@@ -885,7 +906,11 @@ function mapStateToProps({
             group_view_type,
             gantt_view_mode,
             triggle_request_board_template,
-            gantt_board_list_id
+            gantt_board_list_id,
+            ceilWidth, 
+            group_list_area_section_height = [], 
+            date_arr_one_level = [], 
+            list_group = []
         }
     },
     technological: { datas: { userBoardPermissions = [] } },
@@ -900,6 +925,10 @@ function mapStateToProps({
         group_view_type,
         gantt_view_mode,
         triggle_request_board_template,
-        gantt_board_list_id
+        gantt_board_list_id,
+        ceilWidth, 
+        group_list_area_section_height, 
+        date_arr_one_level, 
+        list_group
     }
 }
