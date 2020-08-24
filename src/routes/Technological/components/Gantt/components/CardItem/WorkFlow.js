@@ -248,7 +248,7 @@ export default class WorkFlowItem extends Component {
         const { local_left, local_top, rely_down } = this.state
         return (
             <div
-                className={`${indexStyles.flow}`}
+                className={`${indexStyles.flow} ${'gantt_card_flag_special'}`}
                 data-targetclassname="specific_example"
                 data-rely_top={id}
                 data-rely_type={'flow'}

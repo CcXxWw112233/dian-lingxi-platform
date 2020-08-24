@@ -646,7 +646,7 @@ export default class DrawDetailInfo extends React.Component {
               )
             }
           </div>
-          <div style={{ marginTop: '32px' }}>
+          {/* <div style={{ marginTop: '32px' }}>
             <CustomCategoriesOperate fields={fields} handleUpdateModelDatas={this.handleUpdateModelDatas} />
           </div>
           <CustomFidlds org_id={org_id} handleAddCustomField={this.handleAddCustomField} placement="bottomLeft" getPopupContainer={document.getElementById('detailInfoOut')}>
@@ -654,7 +654,7 @@ export default class DrawDetailInfo extends React.Component {
               <span className={globalsetStyles.authTheme}>&#xe8fe;</span>
               <span>添加字段</span>
             </div>
-          </CustomFidlds>
+          </CustomFidlds> */}
           {/* <div className={DrawDetailInfoStyle.dynamic}>
               <div className={ DrawDetailInfoStyle.dy_title }>
                 <div 

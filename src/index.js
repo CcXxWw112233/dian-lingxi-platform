@@ -8,6 +8,7 @@ import './index.css';
 import { Modal } from 'antd'
 import './global_constants' //项目全局属性
 import './object_expand.js'
+// import FastClick from 'fastclick'
 //兼容ie10及以下
 Object.setPrototypeOf = require('setprototypeof');
 // var browser=navigator.appName
@@ -41,6 +42,7 @@ const app = dva({
   },
 });
 
+// FastClick.attach(document.body)
 // 2. Plugins
 // app.use({});
 
@@ -84,6 +86,19 @@ app.model(require('./models/simpleMode/projectCommunication').default)
 app.model(require('./models/organizationManager').default)
 app.model(require('./models/technological/informRemind').default)
 app.model(require('./models/technological').default)
+
+
+app.model(require('./models/emailRedirect').default)
+app.model(require('./models/noviceGuide').default)
+app.model(require('./models/initRouteRedirect').default)
+app.model(require('./models/agreement').default)
+app.model(require('./models/login').default)
+app.model(require('./models/register').default)
+app.model(require('./models/registerSuccess').default)
+app.model(require('./models/resetPassword').default)
+app.model(require('./models/retrievePassword').default)
+
+
 
 // 4. Router
 app.router(require('./router').default);

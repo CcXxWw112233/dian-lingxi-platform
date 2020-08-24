@@ -11,6 +11,7 @@ import { compareOppositeTimer, removeEmptyArrayEle } from '../../../../../compon
 import { currentNounPlanFilterName } from '../../../../../utils/businessFunction'
 import { PROJECTS } from '../../../../../globalset/js/constant'
 import { Dropdown, Menu } from 'antd'
+import UserRemoteSelect from './UserRemoteSelect'
 
 @connect(mapStateToProps)
 export default class BoardFeatures extends Component {
@@ -20,14 +21,22 @@ export default class BoardFeatures extends Component {
 		let new_flow_todo_list = this.updateFlowsOppositeTime(props.board_flow_todo_list)
 		this.state = {
 			board_todo_list: [].concat(...props.board_card_todo_list, ...new_flow_todo_list),
+			value: [],
 		}
+	}
+
+	updateState = ({value}) => {
+		this.setState({
+			value
+		})
 	}
 
 	componentWillReceiveProps(nextprops) {
 		const { board_card_todo_list = [], board_flow_todo_list = [] } = this.props
 		const { board_card_todo_list: new_board_card_todo_list = [], board_flow_todo_list: new_flow_todo_list = [] } = nextprops
 		if (isObjectValueEqual(board_card_todo_list, new_board_card_todo_list) && isObjectValueEqual(board_flow_todo_list, new_flow_todo_list)) return
-		this.reorderBoardToDoList(nextprops)
+		this.handleVagueMatching(this.state.value, nextprops)
+		// this.reorderBoardToDoList(nextprops)
 	}
 
 	// 更新父组件弹窗显示污染事件
@@ -74,10 +83,10 @@ export default class BoardFeatures extends Component {
 	}
 
 	// 重新排序
-	reorderBoardToDoList = (props) => {
+	reorderBoardToDoList = (props, data) => {
 		const { board_card_todo_list = [], board_flow_todo_list = [] } = props
 		let new_flow_todo_list = this.updateFlowsOppositeTime(board_flow_todo_list)
-		let new_board_todo_list = [].concat(...board_card_todo_list, ...new_flow_todo_list)
+		let new_board_todo_list = data ? data : [].concat(...board_card_todo_list, ...new_flow_todo_list)
 		// 1. 被驳回列表 并且按照时间排序
 		let temp_overrule_arr = new_board_todo_list.filter(item => item.runtime_type == '1') // 将被驳回列表取出，并进行排序排序
 		let overrule_arr = timeSort(this.compareEvaluationTimeArray(temp_overrule_arr), 'compare_time')
@@ -192,12 +201,12 @@ export default class BoardFeatures extends Component {
 				this.setProcessDetailModalVisibile()
 				break;
 			case 'recently_week': // 最近七周
-				this.setTaskDetailModalVisible({limit_time: 7})
-				this.setProcessDetailModalVisibile({limit_time: 7})
+				this.setTaskDetailModalVisible({ limit_time: 7 })
+				this.setProcessDetailModalVisibile({ limit_time: 7 })
 				break
 			case 'recently_month': // 最近一月
-				this.setTaskDetailModalVisible({limit_time: 31})
-				this.setProcessDetailModalVisibile({limit_time: 31})
+				this.setTaskDetailModalVisible({ limit_time: 31 })
+				this.setProcessDetailModalVisibile({ limit_time: 31 })
 				break
 			default:
 				break;
@@ -237,11 +246,11 @@ export default class BoardFeatures extends Component {
 		let tempProjectList = [...projectList]
 		if (selected_board_term == '1') { // 表示我参与的
 			const { id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
-			let temp = tempProjectList.filter(item=>item.user_id==id)
-			tempBoardToDoList = tempBoardToDoList.filter(item => temp.find(i=>i.board_id==item.board_id)) || []
+			let temp = tempProjectList.filter(item => item.user_id == id)
+			tempBoardToDoList = tempBoardToDoList.filter(item => temp.find(i => i.board_id == item.board_id)) || []
 		} else if (selected_board_term == '2') { // 表示我负责的项目
-			let temp = tempProjectList.filter(item=>item.is_principal=='1')
-			tempBoardToDoList = tempBoardToDoList.filter(item => temp.find(i=>i.board_id==item.board_id)) || []
+			let temp = tempProjectList.filter(item => item.is_principal == '1')
+			tempBoardToDoList = tempBoardToDoList.filter(item => temp.find(i => i.board_id == item.board_id)) || []
 		} else {
 			tempBoardToDoList = [...board_todo_list]
 		}
@@ -278,11 +287,31 @@ export default class BoardFeatures extends Component {
 		})
 	}
 
+	// 设置模糊匹配
+	handleVagueMatching = (value, props) => {
+		const { board_card_todo_list = [], board_flow_todo_list = [] } = props ? props : this.props
+		let new_board_todo_list = removeEmptyArrayEle([].concat(...board_card_todo_list, ...board_flow_todo_list))
+		let temp_board_todo_list = removeEmptyArrayEle([].concat(...board_card_todo_list, ...board_flow_todo_list))
+		if (!(value && value.length)) {
+			this.reorderBoardToDoList(props ? props : this.props)
+			return
+		}
+		let str = value.join(',')
+		let parentIds = []
+		// 过滤出查询的父任务列表
+		new_board_todo_list = new_board_todo_list.filter(item => (item.related_milestone && Object.keys(item.related_milestone).length) && str.indexOf(item.related_milestone.name) != -1) || []
+		!!(new_board_todo_list && new_board_todo_list.length) && new_board_todo_list.map(item => {
+			parentIds.push(item.id)
+		})
+		temp_board_todo_list = temp_board_todo_list.filter(item => (parentIds.indexOf(item.id) != -1) || (item.parent_id && parentIds.indexOf(item.parent_id) != -1))
+		this.reorderBoardToDoList(props ? props : this.props, temp_board_todo_list)
+	}
+
 	renderWelcome = () => {
 		return (
 			<div className={`${globalStyles.authTheme} ${styles.nodataArea2}`}>
 				<div className={`${globalStyles.authTheme} ${styles.alarm}`}>&#xe704;</div>
-				<div className={`${styles.title}`}>欢迎来到聆悉，我们有以上{`${currentNounPlanFilterName(PROJECTS)}`}功能，赶快新建一个{`${currentNounPlanFilterName(PROJECTS)}`}体验吧～</div>
+				<div className={`${styles.title}`}>欢迎来到聆悉，我们有以上{`${currentNounPlanFilterName(PROJECTS, this.props.currentNounPlan)}`}功能，赶快新建一个{`${currentNounPlanFilterName(PROJECTS, this.props.currentNounPlan)}`}体验吧～</div>
 			</div>
 		)
 	}
@@ -298,13 +327,17 @@ export default class BoardFeatures extends Component {
 					projectInitLoaded ? (
 						projectList.length ? (
 							<>
-								<div>
-									<Dropdown overlayClassName={styles.overlay_featurebox_dropdown} getPopupContainer={() => document.getElementById('featurebox_featuresContent')} overlay={this.timeQuantum()} trigger={['click']}>
-										<div style={{color: '#FFF', lineHeight: '20px', marginLeft: '16px', marginBottom: '12px'}}>
+								<div style={{display: 'flex', position: 'relative'}}>
+									<Dropdown overlayClassName={styles.overlay_featurebox_dropdown} getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.timeQuantum()} trigger={['click']}>
+										<div style={{color: '#FFF', flexShrink: 0, lineHeight: '20px', marginLeft: '16px', marginBottom: '12px'}}>
 											{selected_filed_time}&nbsp;&nbsp;
 											<span className={globalStyles.authTheme}>&#xe687;</span>
 										</div>
 									</Dropdown>
+									<div className={styles.debounce_select_wrapper}>
+										<span className={globalStyles.authTheme}>&#xe603;</span>
+										<UserRemoteSelect value={this.state.value} updateState={this.updateState} handleVagueMatching={this.handleVagueMatching} />
+									</div>
 								</div>
 								{this.renderTodoList()}
 							</>
@@ -349,7 +382,12 @@ function mapStateToProps(
 			datas: { currentUserOrganizes, currentSelectOrganize = {} }
 		},
 		publicTaskDetailModal: { drawerVisible },
-		publicProcessDetailModal: { process_detail_modal_visible, processInfo = {} }
+		publicProcessDetailModal: { process_detail_modal_visible, processInfo = {} },
+		organizationManager: {
+			datas: {
+				currentNounPlan
+			}
+		}
 	}) {
 	return {
 		simplemodeCurrentProject,
@@ -361,6 +399,6 @@ function mapStateToProps(
 		projectList,
 		projectInitLoaded,
 		process_detail_modal_visible,
-		processInfo
+		processInfo, currentNounPlan
 	}
 }

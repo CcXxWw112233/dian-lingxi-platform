@@ -195,10 +195,18 @@ class base_utils {
         })
         return months_detail
     }
-    static getYearDateData(timestamp) { //获取timestamp前 今 后 三年的信息
+
+    static handleYeardate({ timestamp, type }) {
         const tran_time = timestamp || current_date_timestamp
         const year = new Date(tran_time).getFullYear()
-        const year_arr = [year - 1, year, year + 1]
+        let year_arr = []
+        if (!type || type == 'init') {
+            year_arr = [year - 1, year, year + 1]
+        } else if (type == 'last') {
+            year_arr = [year - 1]
+        } else if (type == 'next') {
+            year_arr = [year + 1]
+        }
         const quaters = ['第一季度', '第二季度', '第三季度', '第四季度']
 
         let year_date_arr =
@@ -220,6 +228,17 @@ class base_utils {
         }
         // console.log('gold_date_arr', gold_date_arr)
         return gold_date_arr
+    }
+
+    static getYearDateData(timestamp) { //获取timestamp前 今 后 三年的信息
+        return this.handleYeardate({ timestamp, type: 'init' })
+    }
+    static getNextYearDate(timestamp) { //获取下一年
+        return this.handleYeardate({ timestamp, type: 'next' })
+
+    }
+    static getLastYearDate(timestamp) { //获取上一年
+        return this.handleYeardate({ timestamp, type: 'last' })
     }
 }
 // base_utils.getYearDateData()

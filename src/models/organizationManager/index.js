@@ -23,6 +23,7 @@ export default {
   namespace: 'organizationManager',
   state: {
     datas: {
+      currentNounPlan: {}
     }
   },
   subscriptions: {
@@ -383,6 +384,7 @@ export default {
       const { current_scheme_local } = payload
       const res = yield call(saveNounList, payload)
       if (isApiResponseOk(res)) {
+        message.success('已保存', MESSAGE_DURATION_TIME)
         yield put({
           type: 'updateDatas',
           payload: {
@@ -400,8 +402,15 @@ export default {
     * getCurrentNounPlan({ payload }, { select, call, put }) {
       let res = yield call(getCurrentNounPlan, payload)
       if (isApiResponseOk(res)) {
-        message.success('已保存', MESSAGE_DURATION_TIME)
-        localStorage.setItem('currentNounPlan', JSON.stringify(res.data || []))
+        // message.success('已保存', MESSAGE_DURATION_TIME)
+        const result = JSON.stringify(res.data || [])
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            currentNounPlan: res.data
+          }
+        })
+        localStorage.setItem('currentNounPlan', result)
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -553,7 +562,7 @@ export default {
     // 获取模板列表内容
     * getTemplateListContainer({ payload }, { call, put }) {
       let { template_id } = payload
-      const res = yield call(getTemplateListContainer,{template_id})
+      const res = yield call(getTemplateListContainer, { template_id })
       if (isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
@@ -585,7 +594,7 @@ export default {
     // 更新模板
     * updateTemplete({ payload }, { call, put }) {
       const { _organization_id, id, name } = payload
-      const res = yield call(updateTemplete, {id,name})
+      const res = yield call(updateTemplete, { id, name })
       if (isApiResponseOk(res)) {
         setTimeout(() => {
           message.success('重命名成功', MESSAGE_DURATION_TIME)
@@ -605,7 +614,7 @@ export default {
     // 删除模板
     * deleteTemplete({ payload }, { call, put }) {
       const { _organization_id, id } = payload
-      const res = yield call(deleteTemplete, {id})
+      const res = yield call(deleteTemplete, { id })
       if (isApiResponseOk(res)) {
         setTimeout(() => {
           message.success('删除模板成功', MESSAGE_DURATION_TIME)
@@ -623,7 +632,7 @@ export default {
     },
 
     // 创建模板内容
-    * createTempleteContainer({payload}, { call, put }) {
+    * createTempleteContainer({ payload }, { call, put }) {
       let res = yield call(createTempleteContainer, payload)
       if (isApiResponseOk(res)) {
         setTimeout(() => {
@@ -644,7 +653,7 @@ export default {
     // 更新模板内容
     * updateTempleteContainer({ payload }, { call, put }) {
       let { id, name, template_id } = payload
-      let res = yield call(updateTempleteContainer, {id,name})
+      let res = yield call(updateTempleteContainer, { id, name })
       if (isApiResponseOk(res)) {
         setTimeout(() => {
           message.success('更新成功', MESSAGE_DURATION_TIME)
@@ -662,7 +671,7 @@ export default {
     // 删除模板内容
     * deleteTempleteContainer({ payload }, { call, put }) {
       let { id, template_id } = payload
-      let res = yield call(deleteTempleteContainer, {id})
+      let res = yield call(deleteTempleteContainer, { id })
       if (isApiResponseOk(res)) {
         setTimeout(() => {
           message.success('删除成功', MESSAGE_DURATION_TIME)
@@ -682,7 +691,7 @@ export default {
     // 排序
     * sortTempleteContainer({ payload }, { call, put }) {
       let { template_id } = payload
-      let res = yield call(sortTempleteContainer, {...payload})
+      let res = yield call(sortTempleteContainer, { ...payload })
       if (isApiResponseOk(res)) {
         setTimeout(() => {
           message.success('更新成功', MESSAGE_DURATION_TIME)

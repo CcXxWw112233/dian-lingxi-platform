@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { connect, } from 'dva';
 import QueueAnim from 'rc-queue-anim'
 import globalClassNmae from '../../globalset/css/globalClassName.less'
@@ -16,10 +16,16 @@ import { initWsFun } from '../../components/WsNewsDynamic'
 import Cookies from 'js-cookie'
 import { isPaymentOrgUser } from "@/utils/businessFunction"
 import { routerRedux } from "dva/router";
-import UploadNotification from '@/components/UploadNotification'
 import { CUSTOMIZATION_ORGNIZATIONS } from '../../globalset/js/constant';
-import UpdateLog from './components/Workbench/UpdateLog/index'
 import logoImg from '../../assets/library/lingxi_logo.png'
+
+// import UpdateLog from './components/Workbench/UpdateLog/index'
+import SimpleMode from '../SimpleMode/index'
+// import UploadNotification from '@/components/UploadNotification'
+
+const UpdateLog = lazy(() => import('./components/Workbench/UpdateLog/index'));
+// const SimpleMode = lazy(() => import('../SimpleMode/index'));
+const UploadNotification = lazy(() => import('@/components/UploadNotification'));
 
 const { Sider, Content } = Layout;
 let net = null
@@ -197,59 +203,75 @@ export default class Technological extends React.Component {
       <div id={'notYet_reminder_container'} className={globalClassNmae.notYet_reminder_wrapper}>
         <div className={globalClassNmae.notYet_content}>
           <img style={{ width: '64px', height: '64px' }} src={logoImg} />
-          <p style={{fontSize: '24px', color: 'rgba(0,0,0,.85)'}}>暂未支持小屏设备访问</p>
+          <p style={{ fontSize: '24px', color: 'rgba(0,0,0,.85)' }}>暂未支持小屏设备访问</p>
           <p>
             <span>
               我们正在努力带来更好的PC端使用体验，也准备了微信小程序以及APP，请使用电脑浏览器访问或关注我们的微信小程序（聆悉协作）获得更好的产品体验，谢谢。
-            </span>
+              </span>
           </p>
-          <p style={{color: '#2B8AEB'}}>
-            lingxi.di-an.com<span onClick={this.handleContinueAnyway} style={{marginLeft: '12px', cursor: 'pointer'}}> 继续访问 &gt;</span>
+          <p style={{ color: '#2B8AEB' }}>
+            lingxi.di-an.com<span onClick={this.handleContinueAnyway} style={{ marginLeft: '12px', cursor: 'pointer' }}> 继续访问 &gt;</span>
           </p>
         </div>
       </div>
     )
   }
 
-  render() {
-    const { page_load_type } = this.props;
+  renderRoutersRoute = () => {
     const app = dva();
     const routes = [
       {
         path: '/technological/accoutSet',
-        component: () => import('./components/AccountSet'),
+        component: lazy(() => import('./components/AccountSet')),
       }, {
         path: '/technological/project',
-        component: () => import('./components/Project'),
+        component: lazy(() => import('./components/Project')),
       }, {
         path: '/technological/projectDetail/:id?',
-        component: () => import('./components/ProjectDetail'),
+        component: lazy(() => import('./components/ProjectDetail')),
       }, {
         path: '/technological/newsDynamic',
-        component: () => import('./components/NewsDynamic'),
+        component: lazy(() => import('./components/NewsDynamic')),
       }, {
         path: '/technological/workbench',
-        component: () => import('./components/Workbench'),
+        component: lazy(() => import('./components/Workbench')),
       }, {
         path: '/technological/organizationMember',
-        component: () => import('./components/OrganizationMember'),
+        component: lazy(() => import('./components/OrganizationMember')),
       }, {
         path: '/technological/teamShow',
-        component: () => import('../TeamShow/index'),
-      }, {
-        path: '/technological/gantt',
-        component: () => import('./components/Gantt/index'),
+        component: lazy(() => import('../TeamShow/index')),
       }, {
         path: '/technological/xczNews',
-        component: () => import('./components/XczNews')
+        component: lazy(() => import('./components/XczNews'))
       }, {
         path: '/technological/simplemode',
-        component: () => import('../SimpleMode/index'),
+        component: SimpleMode,//lazy(() => import('../SimpleMode/index')),
       }, {
         path: '/technological/investmentMap',
-        component: () => import('./components/InvestmentMap'),
+        component: lazy(() => import('./components/InvestmentMap')),
       },
     ]
+    return (
+      <Suspense fallback={<div></div>}>
+        {
+          routes.map(({ path, component }, key) => {
+            return (
+              <Route
+                key={key}
+                //exact
+                path={path}
+                component={component}
+              />
+            )
+          })
+        }
+      </Suspense>
+    )
+  }
+  renderRouters = () => {
+    const { page_load_type } = this.props;
+
 
     const defaultLayout = (
       <Layout id='technologicalLayoutWrapper' className={globalClassNmae.technologicalLayoutWrapper} >
@@ -261,20 +283,7 @@ export default class Technological extends React.Component {
           }}
           >
             <div className={`${globalClassNmae.page_style_3} ${globalClassNmae.global_vertical_scrollbar}`} id={'technologicalOut'} >
-              {
-                routes.map(({ path, ...dynamics }, key) => {
-                  return (
-                    <Route key={key}
-                      //exact
-                      path={path}
-                      component={dynamic({
-                        app,
-                        ...dynamics,
-                      })}
-                    />
-                  )
-                })
-              }
+              {this.renderRoutersRoute()}
             </div>
           </Content>
         </Layout>
@@ -288,20 +297,7 @@ export default class Technological extends React.Component {
         <Layout style={{ backgroundColor: 'rgba(245,245,245,1)' }}>
           <Content style={{ height: '100vh' }} >
             <div className={`${globalClassNmae.page_style_3} ${globalClassNmae.global_vertical_scrollbar}`} id={'technologicalOut'} >
-              {
-                routes.map(({ path, ...dynamics }, key) => {
-                  return (
-                    <Route key={key}
-                      //exact
-                      path={path}
-                      component={dynamic({
-                        app,
-                        ...dynamics,
-                      })}
-                    />
-                  )
-                })
-              }
+              {this.renderRoutersRoute()}
             </div>
           </Content>
         </Layout>
@@ -323,17 +319,21 @@ export default class Technological extends React.Component {
       default:
         break;
     }
-
+    return layout
+  }
+  render() {
     return (
       <LocaleProvider locale={zh_CN}>
         {/*minWidth:1440, */}
         <>
-          {layout}
-          <UpdateLog />
-          <UploadNotification />
-          {this.renderNotYetSupportEquipment()}
-        </>        
-      </LocaleProvider>
+          {this.renderRouters()}
+          <Suspense fallback={<div></div>}>
+            <UpdateLog />
+            <UploadNotification />
+            {this.renderNotYetSupportEquipment()}
+          </Suspense>
+        </>
+      </LocaleProvider >
     );
   }
 

@@ -298,7 +298,7 @@ class Organization extends Component {
         {/* <Menu.Item key="6">{`${currentNounPlanFilterName(PROJECTS)}模板`}</Menu.Item> */}
         <Menu.Item key="6">{`自有模板`}</Menu.Item>
         <Menu.Item key="7">{`工作流模板`}</Menu.Item>
-        <Menu.Item key="8">{`自定义字段`}</Menu.Item>
+        {/* <Menu.Item key="8">{`自定义字段`}</Menu.Item> */}
       </Menu>
     )
   }
@@ -424,7 +424,7 @@ class Organization extends Component {
         mainContent = (<div><WorkFlowTemplete /></div>)
         break
       case '8':
-        mainContent = (<div><CustomFields /></div>)
+        // mainContent = (<div><CustomFields /></div>)
         break
       default:
         break;

@@ -620,7 +620,10 @@ export default class index extends Component {
                         const { left: move_left, right: move_right, top: move_top, next = [], id: move_id } = move_item
                         return (
                             next.map(line_item => {
-                                const { left: line_left, right: line_right, top: line_top, relation, id: line_id, color_mark = '24,144,255' } = line_item
+                                let { left: line_left, right: line_right, top: line_top, relation, id: line_id, color_mark = '24,144,255' } = line_item
+                                if (!color_mark) {
+                                    color_mark = '24,144,255'
+                                }
                                 const params = {
                                     move_left,
                                     move_right,
@@ -681,12 +684,14 @@ export default class index extends Component {
             <div onClick={(e) => e.stopPropagation()}>
                 <svg id={'gantt_svg_area'}
                     onClick={(e) => e.stopPropagation()}
+                    className={`${'gantt_card_flag_special'}`}
                     style={{
                         position: 'absolute',
                         width: date_total * ceilWidth,
                         height: this.setSVGHeight(),
                         display: (gantt_view_mode != 'year' && !(['2', '5'].includes(group_view_type))) ? 'block' : 'none',
                         zIndex: 1,
+                        left: 0
                         // zIndex: ganttIsOutlineView({ group_view_type }) ? 1 : -1,
                     }}>
                     {this.renderPaths()}

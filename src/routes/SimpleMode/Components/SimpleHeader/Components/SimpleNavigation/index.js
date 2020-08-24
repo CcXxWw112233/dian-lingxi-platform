@@ -535,7 +535,7 @@ export default class SimpleNavigation extends Component {
         const { current_org = {}, name, avatar, user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
         const { is_simple_model } = user_set
         const { identity_type } = current_org //是否访客 1不是 0是
-        const orgnizationName = currentSelectOrganize.name || currentNounPlanFilterName(ORGANIZATION)
+        const orgnizationName = currentSelectOrganize.name || currentNounPlanFilterName(ORGANIZATION, this.props.currentNounPlan)
         const { logo, id } = currentSelectOrganize
 
         //是否拥有查看成员入口
@@ -658,7 +658,7 @@ export default class SimpleNavigation extends Component {
 
                     <Menu.Item key="10" >
                         <div className={indexStyles.itemDiv}>
-                            <Icon type="plus-circle" theme="outlined" style={{ margin: 0, fontSize: 16 }} /> 创建或加入新{currentNounPlanFilterName(ORGANIZATION)}
+                            <Icon type="plus-circle" theme="outlined" style={{ margin: 0, fontSize: 16 }} /> 创建或加入新{currentNounPlanFilterName(ORGANIZATION, this.props.currentNounPlan)}
                         </div>
                     </Menu.Item>
                     <Menu.Item key="-1">
@@ -698,10 +698,10 @@ export default class SimpleNavigation extends Component {
                         return (
                             <Menu.Item key={id} className={indexStyles.org_name} >
                                 {/* <Tooltip placement="top" title={name}> */}
-                                    <div title={name} style={{ display: 'flex', alignItems: 'center' }}>
-                                        <img src={logo || linxiLogo} className={indexStyles.org_img} />
-                                        <span style={{ maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{name}</span>
-                                    </div>
+                                <div title={name} style={{ display: 'flex', alignItems: 'center' }}>
+                                    <img src={logo || linxiLogo} className={indexStyles.org_img} />
+                                    <span style={{ maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{name}</span>
+                                </div>
                                 {/* </Tooltip> */}
                                 {identity_type == '0' ? (<span className={indexStyles.middle_bott} style={{ display: 'inline-block', backgroundColor: '#e5e5e5', padding: '0 4px', borderRadius: 40, marginLeft: 6, position: 'absolute', right: 34, top: 12 }}>访客</span>) : ('')}
                             </Menu.Item>
@@ -733,8 +733,17 @@ export default class SimpleNavigation extends Component {
         )
     }
 }
-function mapStateToProps({ technological: { datas: {
-    menuList = [], naviHeadTabIndex = {}, currentUserOrganizes = [], currentSelectOrganize = {}, is_show_org_name, is_all_org, is_show_simple, userOrgPermissions
-} } }) {
-    return { menuList, naviHeadTabIndex, currentUserOrganizes, currentSelectOrganize, is_show_org_name, is_all_org, is_show_simple, userOrgPermissions }
+function mapStateToProps({
+    technological: {
+        datas: {
+            menuList = [], naviHeadTabIndex = {}, currentUserOrganizes = [], currentSelectOrganize = {}, is_show_org_name, is_all_org, is_show_simple, userOrgPermissions
+        }
+    },
+    organizationManager: {
+        datas: {
+            currentNounPlan
+        }
+    }
+}) {
+    return { currentNounPlan, menuList, naviHeadTabIndex, currentUserOrganizes, currentSelectOrganize, is_show_org_name, is_all_org, is_show_simple, userOrgPermissions }
 }
