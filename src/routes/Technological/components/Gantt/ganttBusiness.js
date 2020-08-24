@@ -1,5 +1,6 @@
 import base_utils from './base_utils'
 import { isSamDay } from '../../../../utils/util'
+import { date_area_height, coperatedLeftDiv, coperatedX } from './constants'
 
 export const afterCreateBoardUpdateGantt = (dispatch) => {
     afterClearGanttData({ dispatch })
@@ -454,4 +455,39 @@ export const onChangeCardHandleCardDetail = ({
             })
         }
     }
+}
+
+// 获取鼠标下落的相对位置
+export const getXYDropPosition = (e) => {
+    if (!e) return
+    if (!e.target) return
+    const target_0 = document.getElementById('gantt_card_out')
+    const target_1 = document.getElementById('gantt_card_out_middle')
+    // 取得鼠标位置
+    const x = e.pageX - target_0.offsetLeft + target_1.scrollLeft - coperatedLeftDiv - coperatedX
+    const y = e.pageY - target_0.offsetTop + target_1.scrollTop - date_area_height
+    return {
+        x, y
+    }
+}
+
+/**
+ * 获取下落后落在的分组位置
+ * @param {Array} arr 
+ * @param {Number|String} compare_ele 需要比较的元素
+ */
+export const getDropListPosition = (arr,compare_ele) => {
+    let group_list_index = 0;
+    let flag = false;
+    for (let index = 0; index < arr.length; index++) {
+    if (compare_ele <= arr[index]) {
+        group_list_index = index;
+        flag = true;
+        break;
+    }
+    }
+    if (!flag) {
+        group_list_index = arr.length;
+    }
+    return group_list_index
 }

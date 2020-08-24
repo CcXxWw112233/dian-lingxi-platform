@@ -22,6 +22,7 @@ import AddGroupSection from './components/AddGroupsection'
 import ArchiveSelect from './components/ArchiveSelect'
 import { arrayNonRepeatfy } from '../../../../utils/util';
 import { roofTopBoardCardGroup, cancleToofTopBoardCardGroup } from '../../../../services/technological/gantt';
+import GroupListHeadDragNoTimeDataItem from './GroupListHeadDragNoTimeDataItem';
 
 @connect(mapStateToProps)
 export default class GroupListHeadItem extends Component {
@@ -118,27 +119,6 @@ export default class GroupListHeadItem extends Component {
       })
     })
   }
-  setLableColor = (label_data) => {
-    let bgColor = ''
-    let b = ''
-    if (label_data && label_data.length) {
-      const color_arr = label_data.map(item => {
-        return `rgb(${item.label_color})`
-      })
-      const color_arr_length = color_arr.length
-      const color_percent_arr = color_arr.map((item, index) => {
-        return (index + 1) / color_arr_length * 100
-      })
-      bgColor = color_arr.reduce((total, color_item, current_index) => {
-        return `${total},  ${color_item} ${color_percent_arr[current_index - 1] || 0}%, ${color_item} ${color_percent_arr[current_index]}%`
-      }, '')
-
-      b = `linear-gradient(to right${bgColor})`
-    } else {
-      b = '#ffffff'
-    }
-    return b
-  }
 
   // 未分组任务点击事件
   noTimeCardClick = ({ id, board_id }) => {
@@ -212,7 +192,12 @@ export default class GroupListHeadItem extends Component {
             list_no_time_data.map((value, key) => {
               const { name, id, is_realize, executors = [], label_data = [], board_id, is_privilege } = value || {}
               return (
+                <GroupListHeadDragNoTimeDataItem noTimeCardClick={this.noTimeCardClick} itemKey={key} itemValue={value} />
+              )
+              return (
                 <div
+                  data-curret_panel="list_no_time_data"
+                  draggable={true}
                   onClick={() => this.noTimeCardClick({ id, board_id })}
                   style={{ background: this.setLableColor(label_data) }}
                   className={indexStyles.no_time_card_area_card_item}

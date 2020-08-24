@@ -1348,7 +1348,7 @@ export default class MainContent extends Component {
                 </div>
                 <div className={`${mainContentStyles.field_right}`}>
                   <div style={{ display: 'flex' }}>
-                    <div style={{ position: 'relative' }}>
+                    <div style={{ position: 'relative', marginRight: '16px' }}>
                       {/* 开始时间 */}
                       {
                         (((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit())
@@ -1418,7 +1418,7 @@ export default class MainContent extends Component {
                       (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
                         ''
                       ) : (
-                          <span style={{ position: 'relative', marginLeft: '74px' }}>
+                          <span style={{ position: 'relative' }}>
                             <InformRemind commonExecutors={executors.data} style={{ display: 'inline-block', minWidth: '72px', height: '38px', borderRadius: '4px', textAlign: 'center' }} rela_id={card_id} rela_type={type == '0' ? '1' : '2'} />
                           </span>
                         )

@@ -40,6 +40,7 @@ export default class BoardTemplate extends Component {
             template_origin: '2', //0 || 2 平台或自有
         }
         this.drag_init_inner_html = ''
+        this.current_panel = ''
     }
     getHeight = () => {
         const target = document.getElementById('gantt_card_out_middle')
@@ -407,6 +408,7 @@ export default class BoardTemplate extends Component {
         document.body.removeEventListener("drop", this.drop);
     }
     onDragStart = ({ node }) => {
+        this.current_panel = 'board_templete'
         const { data_id, data_type, data_name, data_time_spand } = node.props
         this.setState({
             drag_node_data: {
@@ -456,6 +458,7 @@ export default class BoardTemplate extends Component {
     }
     drop = (event) => {
         // console.log('sssssssssssss', 'drop')
+        if (this.current_panel != 'board_templete') return
         if (!event) return
         if (!event.target) return
         if (!event.target.className) return
@@ -465,6 +468,7 @@ export default class BoardTemplate extends Component {
                 const { list_id, start_time, end_time } = event.target.dataset
                 if (!list_id || !start_time || !end_time) return
                 this.handleDragCompleted({ list_id, start_time, end_time })
+                this.current_panel = ''
             }
         } catch (err) {
             // console.log(err)
@@ -784,6 +788,7 @@ export default class BoardTemplate extends Component {
                                                     onCheck={this.onCheck}
                                                     draggable={gantt_view_mode == 'month'}
                                                     onDragStart={this.onDragStart}
+                                                    data-currentpanel="board_templete"
                                                 // onDragEnter={this.onDragEnter}
                                                 // onDragLeave={this.onDragLeave}
                                                 // onDragOver={this.onDragOver}
