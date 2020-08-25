@@ -420,6 +420,9 @@ export default class BoardTemplate extends Component {
             }
         })
     }
+    onDrop = () => {
+        this.current_panel = ''
+    }
     dragstart = (event) => {
         // console.log('sssssssssssss', 'dragstart')
         const drag_target = event.target
@@ -810,6 +813,7 @@ export default class BoardTemplate extends Component {
                                                     draggable={gantt_view_mode == 'month'}
                                                     onDragStart={this.onDragStart}
                                                     data-currentpanel="board_templete"
+                                                    onDrop={this.onDrop}
                                                 // onDragEnter={this.onDragEnter}
                                                 // onDragLeave={this.onDragLeave}
                                                 // onDragOver={this.onDragOver}

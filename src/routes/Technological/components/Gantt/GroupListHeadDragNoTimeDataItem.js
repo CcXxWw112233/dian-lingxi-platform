@@ -85,9 +85,12 @@ export default class GroupListHeadDragNoTimeDataItem extends Component {
   dragstart = (event) => {
     if (!event) return
     const { dataset: { curret_panel } } = event.target
-    if (curret_panel != 'list_no_time_data') return
-    if (this.state.currentOperateDragElement) return
-    this.curret_panel = 'list_no_time_data'
+    if (curret_panel != 'list_no_time_data') {
+      this.curret_panel = ''
+      return
+    }
+    // if (this.state.currentOperateDragElement) return
+    // this.curret_panel = 'list_no_time_data'
   }
 
   drop = (event) => {
@@ -96,7 +99,7 @@ export default class GroupListHeadDragNoTimeDataItem extends Component {
     if (!event.target) return
     if (!event.target.className) return
     if (this.curret_panel != 'list_no_time_data') return
-    
+    console.log(this.curret_panel);
     // 只有在分组视图以及日视图下
     const { gantt_view_mode, group_view_type, itemValue: { id } } = this.props
     if (gantt_view_mode != 'month' && group_view_type != '1') return
@@ -133,6 +136,11 @@ export default class GroupListHeadDragNoTimeDataItem extends Component {
             })
           }
         })
+      } else {
+        this.curret_panel = ''
+        this.setState({
+          currentOperateDragElement: ''
+        })
       }
     } catch (err) {
       console.log(err)
@@ -147,6 +155,16 @@ export default class GroupListHeadDragNoTimeDataItem extends Component {
     this.setState({
       currentOperateDragElement: id
     })
+    this.curret_panel = 'list_no_time_data'
+  }
+
+  onDropCapture = (e) => {
+    if (!e) return
+    if (!e.target) return
+    this.setState({
+      currentOperateDragElement: ''
+    })
+    this.curret_panel = ''
   }
 
   render() {
@@ -156,6 +174,7 @@ export default class GroupListHeadDragNoTimeDataItem extends Component {
       <div
         id={id}
         onDragStartCapture={this.onDragStartCapture}
+        onDropCapture={this.onDropCapture}
         data-curret_panel="list_no_time_data"
         draggable={true}
         onClick={() => noTimeCardClick({ id, board_id })}
