@@ -579,12 +579,12 @@ export default class GetRowGantt extends Component {
     return (
       list_data.map((value2, key) => {
         // const { id, left, width, start_time, end_time } = value2
-        const { end_time, left, top, time_span, width, height, name, id, board_id, is_realize, executors = [], label_data = [], is_has_start_time, is_has_end_time, start_time, due_time, is_outine_group_head } = value2
+        const { row, end_time, left, top, time_span, width, height, name, id, board_id, is_realize, executors = [], label_data = [], is_has_start_time, is_has_end_time, start_time, due_time, is_outine_group_head } = value2
         const { is_overdue, due_description } = filterDueTimeSpan({ start_time, due_time, is_has_end_time, is_has_start_time })
         return (
           !is_outine_group_head && //大纲视图会将分组头部塞进任务，做统一处理,但并不是真正的任务
           <GetRowTaskItem
-            key={`${id}_${start_time}_${end_time}_${left}_${top}_${time_span}`}
+            key={`${id}_${start_time}_${end_time}_${left}_${top}_${time_span}_${row}`}
             itemValue={value2}
             setSpecilTaskExample={this.setSpecilTaskExample}
             ganttPanelDashedDrag={this.state.drag_creating}
@@ -753,7 +753,7 @@ export default class GetRowGantt extends Component {
           {/* 渲染大纲视图下的任务 */}
           {
             ganttIsOutlineView({ group_view_type }) && outline_tree_round.map((value, key) => {
-              const { end_time, left, top, id, start_time, tree_type, parent_expand, is_expand, parent_card_id } = value
+              const { row, end_time, left, top, id, start_time, tree_type, parent_expand, is_expand, parent_card_id } = value
               const juge_expand = (tree_type == '0' || tree_type == '3') ? parent_expand : (parent_expand && is_expand)
               if (!parent_expand || !left || (gantt_view_mode == 'year' && !!parent_card_id)) {
                 return <></>
@@ -761,7 +761,7 @@ export default class GetRowGantt extends Component {
               if (tree_type == '2') {
                 return (
                   <GetRowTaskItem
-                    key={`${id}_${start_time}_${end_time}_${left}_${top}`}
+                    key={`${id}_${start_time}_${end_time}_${left}_${top}_${row}`}
                     itemValue={value}
                     setSpecilTaskExample={this.setSpecilTaskExample}
                     ganttPanelDashedDrag={this.state.drag_creating}
