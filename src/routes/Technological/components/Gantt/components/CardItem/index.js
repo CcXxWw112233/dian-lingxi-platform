@@ -4,7 +4,7 @@ import { connect } from 'dva'
 import AvatarList from '@/components/avatarList'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import CheckItem from '@/components/CheckItem'
-import { task_item_height, task_item_margin_top, date_area_height, ganttIsOutlineView, ceil_width } from '../../constants'
+import { task_item_height, task_item_margin_top, date_area_height, ganttIsOutlineView, ceil_width, ganttIsSingleBoardGroupView } from '../../constants'
 import { updateTaskVTwo, changeTaskType, revokeCardDo } from '../../../../../../services/technological/task'
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
 import { message, Dropdown, Popover, Tooltip, notification, Button } from 'antd'
@@ -534,11 +534,25 @@ export default class CardItem extends Component {
         }
 
     }
-    overDragCompleteHandleRight = () => { //右侧增减时间
-        const { itemValue: { id, end_time, start_time, board_id, is_has_start_time, parent_card_id }, group_view_type, gantt_view_mode, gantt_board_id, dispatch, card_detail_id, selected_card_visible } = this.props
+    // 获取行高参数
+    getRowsParam = async (top) => {
+        const { gantt_board_id, group_view_type } = this.props
+        if (!ganttIsSingleBoardGroupView({ gantt_board_id, group_view_type })) return {}
+        let param = {}
+        const { getCurrentGroup } = this.props
+        if (typeof getCurrentGroup == 'function') {
+            const { current_list_group_id, belong_group_row } = await getCurrentGroup({ top })
+            if (!!belong_group_row) param.row = Math.round(belong_group_row)
+            if (!!current_list_group_id) param.list_id = current_list_group_id
+        }
+        return param
+    }
+
+    overDragCompleteHandleRight = async () => { //右侧增减时间
+        const { itemValue: { id, end_time, start_time, board_id, is_has_start_time, parent_card_id, row }, group_view_type, gantt_view_mode, gantt_board_id, dispatch, card_detail_id, selected_card_visible } = this.props
         const { local_left, local_width, local_width_origin } = this.state
         const { date_arr_one_level, ceilWidth } = this.props
-        const updateData = {}
+        let updateData = {}
         const end_time_position = local_left + local_width
         let start_date = {}
         let end_date = {}
@@ -578,7 +592,10 @@ export default class CardItem extends Component {
             })
             return
         }
-        updateTaskVTwo({ card_id: id, due_time: end_time_timestamp, board_id: board_id || gantt_board_id }, { isNotLoading: false })
+        const single_board_view = ganttIsSingleBoardGroupView({ group_view_type, gantt_board_id }) //分组视图下
+        const row_param = single_board_view ? { row } : {}
+
+        updateTaskVTwo({ card_id: id, due_time: end_time_timestamp, board_id: board_id || gantt_board_id, ...row_param }, { isNotLoading: false })
             .then(res => {
                 if (isApiResponseOk(res)) {
                     rebackCreateNotify.call(this, { res, id, board_id, group_view_type, dispatch, parent_card_id, card_detail_id, selected_card_visible })
@@ -667,11 +684,11 @@ export default class CardItem extends Component {
         return list_group[list_group_index].list_id
     }
     // 不在项目分组内，左右移动
-    overDragCompleteHandlePositonAbout = () => {
-        const { itemValue: { id, top, start_time, board_id, left, parent_card_id }, group_view_type, gantt_view_mode, gantt_board_id, dispatch, card_detail_id, selected_card_visible } = this.props
-        const { local_left, local_width, local_width_origin } = this.state
+    overDragCompleteHandlePositonAbout = async () => {
+        const { itemValue: { id, top, start_time, board_id, left, parent_card_id, row }, group_view_type, gantt_view_mode, gantt_board_id, dispatch, card_detail_id, selected_card_visible } = this.props
+        const { local_left, local_width, local_top } = this.state
         const { date_arr_one_level, ceilWidth } = this.props
-        const updateData = {}
+        let updateData = {}
         const date_span = local_width / ceilWidth
         const start_time_index = Math.floor(local_left / ceilWidth)
         let start_date = {}
@@ -693,7 +710,16 @@ export default class CardItem extends Component {
         updateData.start_time = parseInt(start_time_timestamp)
         updateData.due_time = parseInt(end_time_timestamp)
         // console.log('ssssssssssaaaa', 1)
-        if (isSamDay(start_time, start_time_timestamp)) { //向右拖动时，如果是在同一天，则不去更新
+        // 改变行
+        const single_board_view = ganttIsSingleBoardGroupView({ group_view_type, gantt_board_id }) //分组视图下
+        const { row: new_row } = await this.getRowsParam(local_top)
+        const row_param = single_board_view ? { row: new_row } : {}
+        updateData = { ...updateData, ...row_param }
+
+        if (
+            isSamDay(start_time, start_time_timestamp) &&
+            (single_board_view ? (!!row && row == new_row) : true) //分组模式下行高微信
+        ) { //向右拖动时，如果是在同一天, 同一行，则不去更新
             this.setState({
                 local_left: left,
                 local_top: top
@@ -708,7 +734,7 @@ export default class CardItem extends Component {
             return
         }
         // console.log('ssssssssssaaaa', 2)
-        updateTaskVTwo({ card_id: id, due_time: end_time_timestamp, start_time: start_time_timestamp, board_id: board_id || gantt_board_id }, { isNotLoading: false })
+        updateTaskVTwo({ card_id: id, due_time: end_time_timestamp, start_time: start_time_timestamp, board_id: board_id || gantt_board_id, ...row_param }, { isNotLoading: false })
             .then(res => {
                 if (isApiResponseOk(res)) {
                     rebackCreateNotify.call(this, { res, id, board_id, group_view_type, dispatch, parent_card_id, card_detail_id, selected_card_visible })
@@ -753,11 +779,11 @@ export default class CardItem extends Component {
             })
     }
     // 在项目分组内，上下左右移动
-    overDragCompleteHandlePositonAround = (data = {}) => {
+    overDragCompleteHandlePositonAround = async (data = {}) => {
         const { itemValue: { id, end_time, start_time, board_id, left, top, parent_card_id }, gantt_board_id, gantt_view_mode, group_view_type, dispatch, card_detail_id, selected_card_visible } = this.props
-        const { local_left, local_width, local_width_origin } = this.state
+        const { local_left, local_width, local_top } = this.state
         const { date_arr_one_level, ceilWidth } = this.props
-        const updateData = {}
+        let updateData = {}
         const date_span = local_width / ceilWidth
         // const start_date = date_arr_one_level[start_time_index] || {}
 
@@ -779,15 +805,19 @@ export default class CardItem extends Component {
         updateData.start_time = start_time_timestamp
         updateData.due_time = end_time_timestamp
 
-        const params_list_id = this.getDragAroundListId()
+        const group_row_param = await this.getRowsParam(local_top)
+        updateData = { ...updateData, ...group_row_param }
+
+        // const params_list_id = this.getDragAroundListId()
         const params = {
             card_id: id,
             due_time: end_time_timestamp,
             start_time: start_time_timestamp,
             board_id,
-            list_id: params_list_id
+            ...group_row_param
         }
-        if (params_list_id == '0') {
+        // debugger
+        if (group_row_param.list_id == '0') {
             delete params.list_id
         }
         updateTaskVTwo({ ...params }, { isNotLoading: false })
@@ -807,7 +837,7 @@ export default class CardItem extends Component {
                     // }
                     this.changeCardBelongGroup({
                         card_id: id,
-                        new_list_id: params_list_id,
+                        new_list_id: group_row_param.list_id,
                         updateData,
                         rely_datas: [{ id, ...updateData }, ...res.data.scope_content.filter(item => item.id != id)]
                     })
