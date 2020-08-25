@@ -7,7 +7,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import CheckItem from '@/components/CheckItem'
 import AvatarList from '@/components/avatarList'
 import { Tooltip, Dropdown, message } from 'antd'
-import { date_area_height, task_item_height, task_item_margin_top, ganttIsFold, ceil_height_fold, task_item_height_fold, group_rows_fold, ganttIsOutlineView, ceil_width } from './constants'
+import { date_area_height, task_item_height, task_item_margin_top, ganttIsFold, ceil_height_fold, task_item_height_fold, group_rows_fold, ganttIsOutlineView, ceil_width, ceil_height } from './constants'
 import CardDropDetail from './components/gattFaceCardItem/CardDropDetail'
 import QueueAnim from 'rc-queue-anim'
 import GetRowTaskItem from './components/CardItem/index'
@@ -414,40 +414,56 @@ export default class GetRowGantt extends Component {
     if (top == undefined || top == null) {
       return
     }
-    const { group_view_type } = this.props
+    const { group_view_type, group_list_area_section_height = [], dispatch, list_group } = this.props
     if (ganttIsOutlineView({ group_view_type })) {
       return Promise.resolve({ current_list_group_id: 0 })
     }
-    const getSum = (total, num) => {
-      return total + num;
-    }
-    const { dispatch } = this.props
-    const { group_list_area = [], list_group = [] } = this.props
-    let conter_key = 0
-    for (let i = 0; i < group_list_area.length; i++) {
-      if (i == 0) {
-        if (top < group_list_area[0]) {
-          conter_key = 0
-          break
-        }
-      } else {
-        const arr = group_list_area.slice(0, i + 1)
-        const sum = arr.reduce(getSum);
-        if (top < sum) {
-          conter_key = i
-          break
-        }
+
+    // const getSum = (total, num) => {
+    //   return total + num;
+    // }
+    // const { dispatch } = this.props
+    // const { group_list_area = [], list_group = [] } = this.props
+    // for (let i = 0; i < group_list_area.length; i++) {
+    //   if (i == 0) {
+    //     if (top < group_list_area[0]) {
+    //       conter_key = 0
+    //       break
+    //     }
+    //   } else {
+    //     const arr = group_list_area.slice(0, i + 1)
+    //     const sum = arr.reduce(getSum);
+    //     if (top < sum) {
+    //       conter_key = i
+    //       break
+    //     }
+    //   }
+    // }
+    let conter_key = 0 //所属分组下标
+    let belong_group_row = 0 //所在分组的某一行
+
+    for (let i = 0, len = group_list_area_section_height.length; i < len; i++) {
+      if (top < group_list_area_section_height[i]) {
+        conter_key = i
+        break
       }
     }
+    if (conter_key == 0) {
+      belong_group_row = top / ceil_height + 1
+    } else {
+      belong_group_row = (top - group_list_area_section_height[conter_key - 1]) / ceil_height + 1
+    }
+    console.log('ssssssssss_top', conter_key, belong_group_row)
     const current_list_group_id = list_group[conter_key]['list_id']
     dispatch({
       type: getEffectOrReducerByName('updateDatas'),
       payload: {
-        current_list_group_id
+        current_list_group_id,
+        belong_group_row
       }
     })
 
-    return Promise.resolve({ current_list_group_id })
+    return Promise.resolve({ current_list_group_id, belong_group_row })
   }
 
   //点击某个实例,或者创建任务
@@ -563,12 +579,12 @@ export default class GetRowGantt extends Component {
     return (
       list_data.map((value2, key) => {
         // const { id, left, width, start_time, end_time } = value2
-        const { end_time, left, top, time_span, width, height, name, id, board_id, is_realize, executors = [], label_data = [], is_has_start_time, is_has_end_time, start_time, due_time, is_outine_group_head } = value2
+        const { row, end_time, left, top, time_span, width, height, name, id, board_id, is_realize, executors = [], label_data = [], is_has_start_time, is_has_end_time, start_time, due_time, is_outine_group_head } = value2
         const { is_overdue, due_description } = filterDueTimeSpan({ start_time, due_time, is_has_end_time, is_has_start_time })
         return (
           !is_outine_group_head && //大纲视图会将分组头部塞进任务，做统一处理,但并不是真正的任务
           <GetRowTaskItem
-            key={`${id}_${start_time}_${end_time}_${left}_${top}_${time_span}`}
+            key={`${id}_${start_time}_${end_time}_${left}_${top}_${time_span}_${row}`}
             itemValue={value2}
             setSpecilTaskExample={this.setSpecilTaskExample}
             ganttPanelDashedDrag={this.state.drag_creating}
@@ -737,7 +753,7 @@ export default class GetRowGantt extends Component {
           {/* 渲染大纲视图下的任务 */}
           {
             ganttIsOutlineView({ group_view_type }) && outline_tree_round.map((value, key) => {
-              const { end_time, left, top, id, start_time, tree_type, parent_expand, is_expand, parent_card_id } = value
+              const { row, end_time, left, top, id, start_time, tree_type, parent_expand, is_expand, parent_card_id } = value
               const juge_expand = (tree_type == '0' || tree_type == '3') ? parent_expand : (parent_expand && is_expand)
               if (!parent_expand || !left || (gantt_view_mode == 'year' && !!parent_card_id)) {
                 return <></>
@@ -745,7 +761,7 @@ export default class GetRowGantt extends Component {
               if (tree_type == '2') {
                 return (
                   <GetRowTaskItem
-                    key={`${id}_${start_time}_${end_time}_${left}_${top}`}
+                    key={`${id}_${start_time}_${end_time}_${left}_${top}_${row}`}
                     itemValue={value}
                     setSpecilTaskExample={this.setSpecilTaskExample}
                     ganttPanelDashedDrag={this.state.drag_creating}

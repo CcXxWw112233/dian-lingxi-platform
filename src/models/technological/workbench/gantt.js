@@ -18,7 +18,7 @@ import {
 } from './selects'
 import { createMilestone } from "../../../services/technological/prjectDetail";
 import { getGlobalData } from '../../../utils/businessFunction';
-import { task_item_height, ceil_height, ceil_height_fold, ganttIsFold, group_rows_fold, task_item_height_fold, test_card_item, mock_gantt_data, ganttIsOutlineView, mock_outline_tree, ceil_width, ceil_width_year, one_group_row_total } from '../../../routes/Technological/components/Gantt/constants';
+import { task_item_height, ceil_height, ceil_height_fold, ganttIsFold, group_rows_fold, task_item_height_fold, test_card_item, mock_gantt_data, ganttIsOutlineView, mock_outline_tree, ceil_width, ceil_width_year, one_group_row_total, ganttIsSingleBoardGroupView } from '../../../routes/Technological/components/Gantt/constants';
 import { getModelSelectDatasState } from '../../utils'
 import { getProjectGoupList } from '../../../services/technological/task';
 import { handleChangeBoardViewScrollTop, setGantTimeSpan, diffGanttTimeSpan } from '../../../routes/Technological/components/Gantt/ganttBusiness';
@@ -74,6 +74,7 @@ export default {
       target_scrollTop: 0, //总体滚动条偏离顶部滑动位置
       target_scrollTop_board_storage: 0, //缓存查看项目视图下，滚动条的位置高度
       current_list_group_id: '0', //当前选中的分组id
+      belong_group_row: undefined, //创建任务时所在所属分组的第几行
       milestoneMap: {},//[], //里程碑列表{time1: [], time2: []}
 
       about_apps_boards: [], //带app的项目列表
@@ -720,7 +721,8 @@ export default {
             })
           }
 
-          const length = one_group_row_total //list_data.length < 5 ? 5 : (list_data.length + 1)
+          const lane_row_count = list_group[i].lane_row_count || 0 //项目分组下默认带的行高
+          const length = Math.max(lane_row_count, one_group_row_total) //list_data.length < 5 ? 5 : (list_data.length + 1)
           const group_height = length * ceiHeight
           group_list_area[i] = group_height
           group_rows[i] = length
@@ -770,53 +772,59 @@ export default {
             }
 
             item.top = after_group_height + j * ceiHeight
-
-            // --------------------时间高度排序start
-            if (!ganttIsOutlineView({ group_view_type })) { // 大纲视图不需要插入排序
-              // {满足在时间区间外的，定义before_start_time_arr先记录符合项。
-              // 该比较项和之前项存在交集，将交集项存入top_arr
-              // 筛选before_start_time_arr，如果top_arr中含有top与某一遍历项相等，则过滤。最终高度取剩余的第一项
-              let before_start_time_arr = []
-              let top_arr = []
-              let all_top = []
-              for (let k = 0; k < j; k++) {
-                all_top.push(list_data[k].top)
-                if (item.start_time > list_data[k].end_time) {
-                  before_start_time_arr.push(list_data[k])
-                }
-                if (item.start_time <= list_data[k].end_time) {
-                  top_arr.push(list_data[k])
-                }
+            // 在单项目分组下
+            if (ganttIsSingleBoardGroupView({ group_view_type, gantt_board_id })) {
+              if (item.row) {
+                item.top = after_group_height + (item.row - 1) * ceiHeight
               }
-              before_start_time_arr = before_start_time_arr.filter(item => {
-                let flag = true
-                for (let val of top_arr) {
-                  if (item.top == val.top) {
-                    flag = false
-                    break
+            } else {
+              // --------------------时间高度排序start
+              if (!ganttIsOutlineView({ group_view_type })) { // 大纲视图不需要插入排序
+                // {满足在时间区间外的，定义before_start_time_arr先记录符合项。
+                // 该比较项和之前项存在交集，将交集项存入top_arr
+                // 筛选before_start_time_arr，如果top_arr中含有top与某一遍历项相等，则过滤。最终高度取剩余的第一项
+                let before_start_time_arr = []
+                let top_arr = []
+                let all_top = []
+                for (let k = 0; k < j; k++) {
+                  all_top.push(list_data[k].top)
+                  if (item.start_time > list_data[k].end_time) {
+                    before_start_time_arr.push(list_data[k])
+                  }
+                  if (item.start_time <= list_data[k].end_time) {
+                    top_arr.push(list_data[k])
                   }
                 }
-                return flag && item
-              })
+                before_start_time_arr = before_start_time_arr.filter(item => {
+                  let flag = true
+                  for (let val of top_arr) {
+                    if (item.top == val.top) {
+                      flag = false
+                      break
+                    }
+                  }
+                  return flag && item
+                })
 
-              all_top = Array.from(new Set(all_top)).sort((a, b) => a - b)
-              const all_top_max = Math.max.apply(null, all_top) == -Infinity ? after_group_height : Math.max.apply(null, all_top)
+                all_top = Array.from(new Set(all_top)).sort((a, b) => a - b)
+                const all_top_max = Math.max.apply(null, all_top) == -Infinity ? after_group_height : Math.max.apply(null, all_top)
 
-              if (before_start_time_arr[0]) {
-                item.top = before_start_time_arr[0].top
-              } else {
-                if (item.top > all_top_max) {
-                  item.top = all_top_max + ceiHeight
+                if (before_start_time_arr[0]) {
+                  item.top = before_start_time_arr[0].top
+                } else {
+                  if (item.top > all_top_max) {
+                    item.top = all_top_max + ceiHeight
+                  }
                 }
               }
+              // --------------------时间高度排序end
             }
-            // --------------------时间高度排序end
             list_group[i]['list_data'][j] = item
           }
           const list_height_arr = list_group[i]['list_data'].map(item => item.top)
           const list_group_item_height = Math.max.apply(null, list_height_arr) + one_group_row_total * ceiHeight - after_group_height
 
-          group_rows[i] = Math.max(group_rows_lock[i] || 0, list_group_item_height / ceiHeight, one_group_row_total) //(list_group_item_height / ceiHeight) < one_group_row_total ? one_group_row_total : list_group_item_height / ceiHeight // 原来是3，现在是2
+          group_rows[i] = Math.max(group_rows_lock[i] || 0, list_group_item_height / ceiHeight, one_group_row_total, lane_row_count) //(list_group_item_height / ceiHeight) < one_group_row_total ? one_group_row_total : list_group_item_height / ceiHeight // 原来是3，现在是2
           if (list_group[i].list_id == '0' && group_view_type == '1' && gantt_board_id != '0') { //默认分组要设置得很高
             group_rows[i] = group_rows[i] + 30
           }
