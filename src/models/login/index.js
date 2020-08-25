@@ -9,6 +9,7 @@ import { getUSerInfo } from "../../services/technological";
 import { selectLoginCaptchaKey } from './selects'
 import { getModelIsImport } from '../utils';
 import { createDefaultOrg } from '../../services/technological/noviceGuide';
+import { diffClientInitToken } from '../../globalset/clientCustorm';
 let redirectLocation
 const clearAboutLocalstorage = () => { //清掉当前相关业务逻辑的用户数据
   const names_arr = [
@@ -138,6 +139,9 @@ export default {
       Cookies.set('Authorization', tokenArray[0], { expires: 30, path: '' })
       Cookies.set('refreshToken', tokenArray[1], { expires: 30, path: '' })
       Cookies.set('is401', false, { expires: 30, path: '' })
+
+      diffClientInitToken(Cookies.get('Authorization'))
+
       yield put({
         type: 'loginRouteJump',
         payload: {}
