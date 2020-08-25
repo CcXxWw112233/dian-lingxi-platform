@@ -8,6 +8,9 @@ import './index.css';
 import { Modal } from 'antd'
 import './global_constants' //项目全局属性
 import './object_expand.js'
+import { diffClientInitToken } from './globalset/clientCustorm';
+import Cookies from 'js-cookie'
+
 // import FastClick from 'fastclick'
 //兼容ie10及以下
 Object.setPrototypeOf = require('setprototypeof');
@@ -105,6 +108,9 @@ app.router(require('./router').default);
 
 // 5. Start
 app.start('#root');
+
+// 初始化进入调用安卓初始化
+diffClientInitToken(Cookies.get('Authorization'))
 
 // window.addEventListener("storage", function (e) {
 //   const { key, newValue, oldValue } = e
