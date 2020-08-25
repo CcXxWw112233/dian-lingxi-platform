@@ -687,12 +687,16 @@ export default class SimpleNavigation extends Component {
                     style={{ maxHeight: 200, overflowY: 'auto' }}
                     selectedKeys={id ? [id] : ['0']}
                     onClick={this.handleOrgListMenuClick.bind(this)} selectable={true} mode="vertical" >
-                    <Menu.Item key="0" className={indexStyles.org_name}>
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                            <img src={linxiLogo} className={indexStyles.org_img} />
-                            <span style={{ maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>全部组织</span>
-                        </div>
-                    </Menu.Item>
+                    {
+											((currentUserOrganizes && currentUserOrganizes.length == 1)) ? null : (
+												<Menu.Item key="0" className={indexStyles.org_name}>
+													<div style={{ display: 'flex', alignItems: 'center' }}>
+														<img src={linxiLogo} className={indexStyles.org_img} />
+														<span style={{ maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>全部组织</span>
+													</div>
+												</Menu.Item>
+											)
+                    }
                     {currentUserOrganizes.map((value, key) => {
                         const { name, id, identity_type, logo } = value
                         return (
