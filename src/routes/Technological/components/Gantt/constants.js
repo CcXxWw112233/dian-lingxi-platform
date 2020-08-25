@@ -33,7 +33,10 @@ export const ganttIsFold = ({ group_view_type, gantt_board_id, show_board_fold, 
         return false
     }
 }
-
+//是否单个项目下分组视图
+export const ganttIsSingleBoardGroupView = ({ gantt_board_id, group_view_type }) => {
+    return gantt_board_id && gantt_board_id != '0' && group_view_type == '1'
+}
 // 甘特图是否大纲视图
 export const ganttIsOutlineView = ({ group_view_type }) => { //gantt是否折叠
     if (group_view_type == '4') {
