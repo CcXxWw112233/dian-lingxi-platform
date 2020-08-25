@@ -413,6 +413,8 @@ export default class DrawDetailInfo extends React.Component {
           }
         })
         if (calback && typeof calback == 'function') calback()
+      } else {
+        if (calback && typeof calback == 'function') calback()
       }
     })
   }
@@ -449,6 +451,11 @@ export default class DrawDetailInfo extends React.Component {
         projectDetailInfoData: new_projectDetailInfoData
       }
     })
+  }
+
+  // 过滤字段数据
+  filterFieldsData = () => {
+
   }
 
   render() {
@@ -649,7 +656,7 @@ export default class DrawDetailInfo extends React.Component {
           <div style={{ marginTop: '32px' }}>
             <CustomCategoriesOperate fields={fields} handleUpdateModelDatas={this.handleUpdateModelDatas} />
           </div>
-          <CustomFidlds org_id={org_id} handleAddCustomField={this.handleAddCustomField} placement="bottomLeft" getPopupContainer={document.getElementById('detailInfoOut')}>
+          <CustomFidlds relations_fields={fields} org_id={org_id} handleAddCustomField={this.handleAddCustomField} placement="bottomLeft" getPopupContainer={document.getElementById('detailInfoOut')}>
             <div className={DrawDetailInfoStyle.add_custom_fields}>
               <span className={globalsetStyles.authTheme}>&#xe8fe;</span>
               <span>添加字段</span>

@@ -6,7 +6,7 @@ import { categoryIcon } from '../../../routes/organizationManager/CustomFields/h
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import { connect } from 'dva'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
-import { isObjectValueEqual, timeToTimestamp, timestampFormat } from '../../../utils/util'
+import { isObjectValueEqual, timeToTimestamp, timestampFormat, isArrayEqual } from '../../../utils/util'
 import { getGroupList } from '../../../services/technological/organizationMember'
 
 @connect(({ projectDetail: { datas: { projectDetailInfoData = {} } }, technological: { datas: { correspondingOrganizationMmembersList = [] } } }) => ({
@@ -56,13 +56,14 @@ export default class MemberFieldContent extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (isObjectValueEqual(this.props.itemValue, nextProps.itemValue)) return
-    this.setState({
-      itemValue: nextProps.itemValue,
-      itemKey: nextProps.itemKey,
-      selected_memebers_value: nextProps.itemValue && nextProps.itemValue.field_value ? nextProps.itemValue && nextProps.itemValue.field_value : []
-    })
-    this.getMembersList(nextProps)
+    if (!isArrayEqual(this.props.projectDetailInfoData.data, nextProps.projectDetailInfoData.data) || !isObjectValueEqual(this.props.itemValue, nextProps.itemValue)) {
+      this.setState({
+        itemValue: nextProps.itemValue,
+        itemKey: nextProps.itemKey,
+        selected_memebers_value: nextProps.itemValue && nextProps.itemValue.field_value ? nextProps.itemValue && nextProps.itemValue.field_value : []
+      })
+      this.getMembersList(nextProps)
+    }
   }
 
   componentWillUnmount() {
@@ -255,7 +256,7 @@ export default class MemberFieldContent extends Component {
   render() {
     const { itemValue, itemKey, selected_memebers_value = [], boardMembersData = [], orgMembersData = [] } = this.state
     const { field_id, id, field_value, field_content: { name, field_type, field_set: { member_selected_range } } } = itemValue
-    let data = member_selected_range == '1' ? orgMembersData : boardMembersData
+    let data = member_selected_range == '1' ? orgMembersData : JSON.parse(JSON.stringify(boardMembersData))
     return (
       <div key={id} className={commonStyles.custom_field_item_wrapper}>
         <div className={commonStyles.custom_field_item}>

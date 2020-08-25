@@ -5,7 +5,7 @@ import indexStyles from './index.less'
 import globalsetStyles from '@/globalset/css/globalClassName.less'
 import { getCustomFieldList } from '../../services/organization'
 import { isApiResponseOk } from '../../utils/handleResponseData'
-import { removeEmptyArrayEle } from '../../utils/util'
+import { removeEmptyArrayEle, isArrayEqual } from '../../utils/util'
 import EmptyImg from '@/assets/projectDetail/process/Empty@2x.png'
 
 const { TreeNode } = Tree;
@@ -16,10 +16,12 @@ export default class Index extends Component {
     super(props)
     this.state = {
       visible: false,
-      checkedKeys: []
+      checkedKeys: [],
+      defaultCheckedKeys: [], // 需要一个默认的选中内容
     }
   }
 
+  // 初始化state
   initeState = () => {
     this.setState({
       visible: false,
@@ -29,17 +31,92 @@ export default class Index extends Component {
     })
   }
 
+  // 对数据进行操作
+  setOperationOfTreeData = (data) => {
+    const { relations_fields = [], groups = [], fields = [], original_treeData = [] } = data
+    const { groupsData = [], fieldsData = [] } = this.state
+    // 获取默认选中的keys
+    let defaultCheckedKeys = this.defaultCheckedKeys(relations_fields)
+    // 过滤没有字段的分组
+    let filter_empty_fields_group = groups.filter(item => !!(item.fields && item.fields.length))
+    // 需要一个树状data
+    let treeData = !!(original_treeData && original_treeData.length) ? original_treeData : removeEmptyArrayEle([].concat(filter_empty_fields_group, fields))
+    // 判断是否该分组下的字段都被引用 引用则选中并且应禁用
+    treeData = treeData.map(item => {
+      if (item.fields && item.fields.every(item => defaultCheckedKeys.indexOf(item.id) != -1)) {
+        let new_item = { ...item }
+        new_item = { ...item, disabled: true }
+        defaultCheckedKeys.push(item.id)
+        return new_item
+      } else {
+        return item
+      }
+    })
+    // 再对每一个chekbox进行禁用逻辑
+    treeData = this.setDisabled(treeData, defaultCheckedKeys)
+    this.setState({
+      treeData,
+      defaultCheckedKeys: defaultCheckedKeys,
+      checkedKeys: defaultCheckedKeys
+    })
+  }
+
+  //禁用
+  setDisabled = (treeData = [], checkedKeys = []) => {
+    let list = []
+    const getIds = (treeData = [], checkedKeys = []) => {
+      let list = []
+      list = treeData.map(k => {
+        if (k.fields && k.fields.length > 0) {
+          checkedKeys.forEach(e => {
+            if (e == k.id) {
+              k.disabled = true;
+            }
+          })
+          getIds(k.fields, checkedKeys)
+        } else {
+          checkedKeys.forEach(e => {
+            if (e == k.id) {
+              k.disabled = true;
+            }
+          })
+        }
+        return k
+      })
+      return list
+    }
+    list = getIds(treeData, checkedKeys);
+    return list
+  }
+
+  // 默认选中的keys
+  defaultCheckedKeys = (fields) => {
+    let checkedKeys = []
+    fields.forEach(item => {
+      checkedKeys.push(item.field_id)
+    })
+    return checkedKeys
+  }
+
   componentDidMount() {
-    const { org_id } = this.props
-    getCustomFieldList({ _organization_id: org_id }).then(res => {
+    const { org_id, relations_fields = [] } = this.props
+    getCustomFieldList({ _organization_id: org_id, field_status: '0' }).then(res => {
       if (isApiResponseOk(res)) {
-        let treeData = removeEmptyArrayEle([].concat(res.data.groups, res.data.fields))
+        this.setOperationOfTreeData({relations_fields, groups: res.data.groups, fields: res.data.fields})
         this.setState({
           groupsData: res.data.groups,
-          treeData
+          fieldsData: res.data.fields
         })
       }
     })
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { relations_fields: old_relations_fields = [] } = this.props
+    const { relations_fields = [] } = nextProps
+    if (isArrayEqual(relations_fields, old_relations_fields)) return
+    // console.log('进来了');
+    this.setOperationOfTreeData({relations_fields, original_treeData: this.state.treeData})
   }
 
   handleVisibleChange = visible => {
@@ -47,13 +124,17 @@ export default class Index extends Component {
       visible: visible,
     });
     if (!visible) {
-      this.setState({
-        checkedKeys: []
-      })
+      // console.log('进来了','sssssssss_visible');
+      const { relations_fields = [] } = this.props
+      this.setOperationOfTreeData({relations_fields, original_treeData: this.state.treeData})
+      // this.setState({
+      //   checkedKeys: []
+      // })
     }
   }
 
   onCheck = (checkedKeys) => {
+    // console.log(checkedKeys);
     this.setState({
       checkedKeys
     })
@@ -62,8 +143,31 @@ export default class Index extends Component {
   // 重置
   handleReSetting = (e) => {
     e && e.stopPropagation()
+    const { relations_fields = [] } = this.props
+    const { groupsData = [], fieldsData = [] } = this.state
+    // this.setOperationOfTreeData({relations_fields, original_treeData: this.state.treeData})
     this.setState({
-      checkedKeys: []
+      // checkedKeys: []
+    })
+    // 获取默认选中的keys
+    let defaultCheckedKeys = this.defaultCheckedKeys(relations_fields)
+    // 过滤没有字段的分组
+    let filter_empty_fields_group = groupsData.filter(item => !!(item.fields && item.fields.length))
+    // 需要一个树状data
+    let treeData = removeEmptyArrayEle([].concat(filter_empty_fields_group, fieldsData))
+    // 判断是否该分组下的字段都被引用 引用则选中并且应禁用
+    treeData = treeData.map(item => {
+      if (item.fields && item.fields.every(item => defaultCheckedKeys.indexOf(item.id) != -1)) {
+        let new_item = { ...item }
+        new_item = { ...item, disabled: true }
+        defaultCheckedKeys.push(item.id)
+        return new_item
+      } else {
+        return item
+      }
+    })
+    this.setState({
+      checkedKeys: defaultCheckedKeys
     })
   }
 
@@ -74,11 +178,19 @@ export default class Index extends Component {
       isOnConfirmAddField: true
     })
     if (this.state.isOnConfirmAddField) return
-    const { checkedKeys = [], groupsData = [] } = this.state
-    let need_checkedKeys = []
+    const { checkedKeys = [], groupsData = [], defaultCheckedKeys = [] } = this.state
+    let need_checkedKeys = [...checkedKeys]
+    // 过滤一遍分组ID
     groupsData.forEach(item => {
-      need_checkedKeys = checkedKeys.filter(n => n != item.id)
+      need_checkedKeys = need_checkedKeys.filter(n => n != item.id)
     })
+    // 过滤一遍已选择的ID
+    need_checkedKeys = need_checkedKeys.filter(n => defaultCheckedKeys.indexOf(n) == -1)
+    // defaultCheckedKeys.forEach(item => {
+    //   need_checkedKeys = need_checkedKeys.filter(n => n != item)
+    // })
+    // console.log(need_checkedKeys,'ssssssssssss_2222');
+    // return
     const calback = () => {
       this.setState({
         visible: false,
@@ -94,18 +206,18 @@ export default class Index extends Component {
     return data.map(item => {
       if (item.fields && item.fields.length) {
         return (
-          <TreeNode title={item.name} key={item.id} dataRef={item}>
+          <TreeNode disabled={item.disabled} title={item.name} key={item.id} dataRef={item}>
             {this.renderTreeNodes(item.fields)}
           </TreeNode>
         );
       }
-      return <TreeNode title={item.name} key={item.id} dataRef={item} />;
+      return <TreeNode disabled={item.disabled} title={item.name} key={item.id} dataRef={item} />;
     });
   }
 
 
   renderSelectedTree = () => {
-    const { treeData = [], checkedKeys = [] } = this.state
+    const { treeData = [], checkedKeys = [], defaultCheckedKeys = [] } = this.state
     return (
       <div className={`${indexStyles.treeWrapper} ${globalsetStyles.global_vertical_scrollbar}`}>
         {
@@ -114,6 +226,7 @@ export default class Index extends Component {
               checkable
               onCheck={this.onCheck}
               checkedKeys={checkedKeys}
+              defaultCheckedKeys={defaultCheckedKeys}
             >
               {this.renderTreeNodes(treeData)}
             </Tree>
@@ -129,7 +242,7 @@ export default class Index extends Component {
   }
 
   renderButton = () => {
-    const { checkedKeys = [] } = this.state
+    const { checkedKeys = [], defaultCheckedKeys = [] } = this.state
     return (
       <div className={indexStyles.fileds_button}>
         <Button onClick={this.handleReSetting}>重置</Button>
@@ -154,7 +267,7 @@ export default class Index extends Component {
   }
 
   componentWillUnmount() {
-    console.log('进来了','sssssssssssssunmount');
+    console.log('进来了', 'sssssssssssssunmount');
   }
 
   render() {
@@ -179,5 +292,6 @@ export default class Index extends Component {
 
 Index.defaultProps = {
   org_id: '', // 需要一个组织ID获取树状列表
-  handleAddCustomField: function(){}, // 添加自定义字段回调，由外部决定
+  relations_fields: [], // 需要一个关联字段（即引用的字段）
+  handleAddCustomField: function () { }, // 添加自定义字段回调，由外部决定
 }
