@@ -736,7 +736,7 @@ export default class DragDropContentComponent extends Component {
               }
               <div className={mainContentStyles.field_hover} style={{maxWidth: 'inherit'}}>
                 <span className={`${globalStyles.authTheme}`}>&#xe7f6;</span>
-                <span>任务说明</span>
+                <span>{`${currentNounPlanFilterName(TASKS)}`}说明</span>
               </div>
             </div>
             <>
@@ -765,7 +765,7 @@ export default class DragDropContentComponent extends Component {
                                   currentItem.data && currentItem.data != '<p></p>' ?
                                     <div className={mainContentStyles.descriptionContent} dangerouslySetInnerHTML={{ __html: currentItem.data }}></div>
                                     :
-                                    '添加备注'
+                                    `添加说明`
                                 }
                               </div>
                             </RichTextEditor>
@@ -1040,7 +1040,7 @@ export default class DragDropContentComponent extends Component {
               }
               <div className={mainContentStyles.field_hover} style={{ maxWidth: 'inherit' }}>
                 <span className={`${globalStyles.authTheme}`}>&#xe7f5;</span>
-                <span>子任务 & 交付物</span>
+                <span>{`子${currentNounPlanFilterName(TASKS)}`} & 交付物</span>
               </div>
             </div>
             <div className={`${mainContentStyles.field_right}`}>
@@ -1053,7 +1053,7 @@ export default class DragDropContentComponent extends Component {
                         {
                           !!!(deliverables && deliverables.length) && (
                             <div className={mainContentStyles.add_sub_btn}>
-                              <span className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe8fe;</span> 新建子任务
+                              <span className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe8fe;</span> 新建{`子${currentNounPlanFilterName(TASKS)}`}
                             </div>
                           )
                         }

@@ -8,6 +8,8 @@ import { isApiResponseOk } from '../../../../../../utils/handleResponseData';
 import OutlineTree from '.';
 import { visual_add_item } from '../../constants';
 import { nonAwayTempleteStartPropcess, workflowDelete } from '../../../../../../services/technological/workFlow';
+import { currentNounPlanFilterName } from '../../../../../../utils/businessFunction';
+import { TASKS, FLOWS } from '../../../../../../globalset/js/constant';
 
 @connect(mapStateToProps)
 export default class NodeOperate extends Component {
@@ -422,7 +424,7 @@ export default class NodeOperate extends Component {
                 { //一级任务是顶级则没有
                     tree_type == '1' && (
                         <div className={styles.menu_item} onClick={() => this.menuItemClick('add_card')}>
-                            新建任务
+                            新建{currentNounPlanFilterName(TASKS)}
                         </div>
                     )
                 }
@@ -438,7 +440,7 @@ export default class NodeOperate extends Component {
                 { //一级任务是顶级则没有
                     (tree_type == '2' || tree_type == '3') && (
                         <div className={styles.menu_item} onClick={() => this.menuItemClick('insert_card')}>
-                            新建同级任务
+                            新建同级{currentNounPlanFilterName(TASKS)}
                         </div>
                     )
                 }
@@ -446,7 +448,7 @@ export default class NodeOperate extends Component {
                 {
                     (parent_type == '1' || !parent_type) && tree_type == '2' && ( //一级任务才有创建子任务功能
                         <div className={styles.menu_item} onClick={() => this.menuItemClick('add_child_card')} >
-                            新建子级任务
+                            新建子级{currentNounPlanFilterName(TASKS)}
                         </div>
                     )
                 }
@@ -518,7 +520,7 @@ class InsertFlows extends Component {
         return (
             <div className={`${styles.menu_item} ${styles.submenu}`}>
                 <div className={`${styles.menu_item_title}`} onClick={() => this.props.setTemplistVisible(true)}>
-                    插入流程
+                    插入{currentNounPlanFilterName(FLOWS)}
                     <div className={`${globalStyles.authTheme} ${styles.menu_item_title_go}`}>&#xe7eb;</div>
                 </div>
                 {

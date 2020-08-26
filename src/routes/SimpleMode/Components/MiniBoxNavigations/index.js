@@ -9,6 +9,8 @@ import { routerRedux } from "dva/router";
 import { isPaymentOrgUser } from "@/utils/businessFunction"
 import { selectBoardToSeeInfo } from '../../../../utils/businessFunction';
 import { changeBoxFeatureName } from '../../../../utils/temporary';
+import { BOARD_PLANS, BOARD_CHAT, BOARD_FILES } from "../../../../globalset/js/constant";
+import { currentNounPlanFilterName } from "../../../../utils/businessFunction";
 
 
 const MiniBoxNavigations = (props) => {
@@ -185,6 +187,27 @@ const MiniBoxNavigations = (props) => {
         return contain
     }
 
+    const renderNounPlanBox = (item) => {
+        const { code, name } = item
+        const { currentNounPlan } = props
+        let dec = ''
+        switch (code) {
+          case 'board:plans':
+            dec = currentNounPlanFilterName(BOARD_PLANS, currentNounPlan)
+            break;
+          case 'board:chat':
+            dec = currentNounPlanFilterName(BOARD_CHAT, currentNounPlan)
+            break;
+          case 'board:files':
+            dec = currentNounPlanFilterName(BOARD_FILES, currentNounPlan)
+            break;
+          default:
+            dec = changeBoxFeatureName({ board_id: simplemodeCurrentProject.board_id, noun: name })
+            break;
+        }
+        return dec
+    }
+
     return (
 
         <div className={indexStyles.workbenchboxsNavsWapper}>
@@ -201,15 +224,15 @@ const MiniBoxNavigations = (props) => {
                         myWorkbenchBoxList.map((item, key) => {
                             const { rela_app_id, id, code } = item
                             const isDisableds = getIsDisabled(item)
-                            const name = changeBoxFeatureName({ board_id: simplemodeCurrentProject.board_id, noun: item.name })
+                            // const name = changeBoxFeatureName({ board_id: simplemodeCurrentProject.board_id, noun: item.name })
                             if (isPaymentUser || item.code === 'board:plans') {
                                 if (item.status == 1) {
                                     return (
-                                        <Tooltip key={item.id} onClick={e => setWorkbenchPage({ rela_app_id, id, code })} placement="bottom" title={name} className={`${indexStyles.nav} ${indexStyles.menu} ${currentSelectedWorkbenchBox.code == item.code ? indexStyles.selected : ''}`} disabled={isDisableds} key={key}>
+                                        <Tooltip key={item.id} onClick={e => setWorkbenchPage({ rela_app_id, id, code })} placement="bottom" title={renderNounPlanBox(item)} className={`${indexStyles.nav} ${indexStyles.menu} ${currentSelectedWorkbenchBox.code == item.code ? indexStyles.selected : ''}`} disabled={isDisableds} key={key}>
 
                                             {/* <div dangerouslySetInnerHTML={{ __html: item.icon }} className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '24px', textShadow: '1px 2px 0px rgba(0,0,0,0.15)' }}></div> */}
                                             <div className={indexStyles.nav_svg}>{renderIconSVG(item.code)}</div>
-                                            <div className={indexStyles.text}>{name}</div>
+                                            <div className={indexStyles.text}>{renderNounPlanBox(item)}</div>
 
                                         </Tooltip>
                                     );
@@ -219,7 +242,7 @@ const MiniBoxNavigations = (props) => {
 
                                             {/* <div dangerouslySetInnerHTML={{ __html: item.icon }} className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '24px', textShadow: '1px 2px 0px rgba(0,0,0,0.15)' }}></div> */}
                                             <div className={indexStyles.nav_svg}>{renderIconSVG(item.code)}</div>
-                                            <div className={indexStyles.text}>{name}</div>
+                                            <div className={indexStyles.text}>{renderNounPlanBox(item)}</div>
 
                                         </Tooltip>
                                     );
@@ -231,7 +254,7 @@ const MiniBoxNavigations = (props) => {
                                     <Tooltip key={item.id} placement="bottom" title={'付费功能：该项目所在企业尚未升级企业版'} className={`${indexStyles.nav} ${indexStyles.menu} ${indexStyles.disabled}`} key={key}>
 
                                         <div dangerouslySetInnerHTML={{ __html: item.icon }} className={`${globalStyles.authTheme}`} style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '24px', textShadow: '1px 2px 0px rgba(0,0,0,0.15)' }}></div>
-                                        <div className={indexStyles.text}>{name}</div>
+                                        <div className={indexStyles.text}>{renderNounPlanBox(item)}</div>
 
                                     </Tooltip>
                                 );
@@ -255,9 +278,15 @@ export default connect(({ simplemode: {
     technological: {
         datas: { currentUserOrganizes }
     },
+    organizationManager: {
+        datas: {
+            currentNounPlan
+        }
+    } 
 }) => ({
     myWorkbenchBoxList,
     currentSelectedWorkbenchBox,
     currentUserOrganizes,
-    simplemodeCurrentProject
+    simplemodeCurrentProject,
+    currentNounPlan
 }))(MiniBoxNavigations)

@@ -134,13 +134,16 @@ export const PROJECT_FILES_COMMENT_VIEW = 'project:files:comment:view' //查看�
 export const PROJECT_TEAM_BOARD_MILESTONE = 'project:team:board:milestone' // 查看项目里程碑 
 
 //名词定义
-export const NORMAL_NOUN_PLAN = { "Organization": "组织", "Tasks": "任务", "Flows": "流程", "Dashboard": "工作台", "Projects": "项目", "Files": "文件", "Members": "成员", "Catch_Up": "动态", "Map_Admin": "地图管理", }
+export const NORMAL_NOUN_PLAN = { "Organization": "组织", "Tasks": "任务", "Flows": "流程", "Dashboard": "工作台", "Projects": "项目", "Files": "文件", "board:plans": "项目计划", "board:chat": "项目交流", "board:files": "项目档案", "Members": "成员", "Catch_Up": "动态", "Map_Admin": "地图管理", }
 export const ORGANIZATION = 'Organization'
 export const TASKS = 'Tasks'
 export const FLOWS = 'Flows'
 export const DASHBOARD = 'Dashboard'
 export const PROJECTS = 'Projects'
 export const FILES = 'Files'
+export const BOARD_PLANS = 'board:plans'
+export const BOARD_CHAT = 'board:chat'
+export const BOARD_FILES = 'board:files'
 export const MEMBERS = 'Members'
 export const CATCH_UP = 'Catch_Up'
 export const MAP_ADMIN = 'Map_Admin'

@@ -12,6 +12,8 @@ import DropdownMultipleSelectWithSearch from './../../Workbench/CardContent/Drop
 import { isApiResponseOk } from '../../../../../utils/handleResponseData';
 import { getMilestoneList } from '../../../../../services/technological/prjectDetail';
 import globalStyles from '@/globalset/css/globalClassName.less'
+import { currentNounPlanFilterName } from '../../../../../utils/businessFunction';
+import { TASKS, PROJECTS } from '../../../../../globalset/js/constant';
 
 /* eslint-disable */
 @connect(({ gantt: { datas: { list_group } } }) => ({ list_group }))
@@ -316,7 +318,7 @@ class AddTaskModal extends Component {
                   <DropdownSelectWithSearch
                     list={filteredNoThatTypeProject}
                     _organization_id={selectedOrg.org_id}
-                    initSearchTitle="选择项目"
+                    initSearchTitle={`选择${currentNounPlanFilterName(PROJECTS)}`}
                     selectedItem={currentSelectedProject}
                     board_id={currentSelectedProject.board_id}
                     handleSelectedItem={this.handleSelectedItem}
@@ -334,7 +336,7 @@ class AddTaskModal extends Component {
                   <div className={styles.groupList__wrapper}>
                     <DropdownSelectWithSearch
                       list={currentSelectedProjectGroupList}
-                      initSearchTitle="任务分组"
+                      initSearchTitle={`${currentNounPlanFilterName(TASKS)}分组`}
                       selectedItem={currentSelectedProjectGroupListItem}
                       handleSelectedItem={this.handleSelectedProjectGroupItem}
                       isShowIcon={true}

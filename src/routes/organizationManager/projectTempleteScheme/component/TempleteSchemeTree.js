@@ -7,6 +7,8 @@ import { connect } from 'dva'
 import { isApiResponseOk } from '@/utils/handleResponseData'
 import { removeEmptyArrayEle } from '../../../../utils/util'
 import { updateTempleteContainer } from '../../../../services/organization'
+import { currentNounPlanFilterName } from '../../../../utils/businessFunction'
+import { TASKS, FLOWS } from '../../../../globalset/js/constant'
 const { TreeNode } = Tree;
 const { SubMenu } = Menu;
 @connect(mapStateToProps)
@@ -1118,14 +1120,14 @@ export default class TempleteSchemeTree extends Component {
         }
         {
           type == '1' ? (
-            <Menu.Item key={'insert_task'}>新建任务</Menu.Item>
+            <Menu.Item key={'insert_task'}>新建{currentNounPlanFilterName(TASKS)}</Menu.Item>
           ) : (
-              <Menu.Item key={'insert_task'}>新建同级任务</Menu.Item>
+          <Menu.Item key={'insert_task'}>新建同级{currentNounPlanFilterName(TASK)}</Menu.Item>
             )
         }
         {
           type == '2' && (!flag) && (
-            <Menu.Item disabled={flag} key={'add_sub_task'}>新建子任务</Menu.Item>
+            <Menu.Item disabled={flag} key={'add_sub_task'}>新建子{currentNounPlanFilterName(TASK)}</Menu.Item>
           )
         }
         {
@@ -1135,7 +1137,7 @@ export default class TempleteSchemeTree extends Component {
           (type == '2' || type == '3') && (!flag) && (
             <SubMenu trigger={['click']}
               title={
-                <span>插入流程</span>
+                <span>插入{currentNounPlanFilterName(FLOWS)}</span>
               }
             >
               {

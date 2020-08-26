@@ -6,7 +6,7 @@ import QueueAnim from 'rc-queue-anim'
 import Cookies from 'js-cookie'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
-  ORG_UPMS_ORGANIZATION_MEMBER_ADD, ORG_UPMS_ORGANIZATION_MEMBER_REMOVE, ORG_UPMS_ORGANIZATION_MEMBER_EDIT, MEMBERS
+  ORG_UPMS_ORGANIZATION_MEMBER_ADD, ORG_UPMS_ORGANIZATION_MEMBER_REMOVE, ORG_UPMS_ORGANIZATION_MEMBER_EDIT, MEMBERS, ORGANIZATION
 } from "../../../../globalset/js/constant";
 import {checkIsHasPermission, currentNounPlanFilterName} from "../../../../utils/businessFunction";
 import { connect } from "dva/index";
@@ -312,7 +312,7 @@ export default class ItemOne extends React.Component {
             is_visitor !== '1' && checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_REMOVE) ? (
               <Menu.Item key={'removeOrgMember'} style={{textAlign: 'center', padding: 0, margin: 0}}>
                 <div className={CreateTaskStyle.elseProjectMemu} style={{color: '#F5222D'}}>
-                  移出组织
+                  移出{currentNounPlanFilterName(ORGANIZATION)}
                 </div>
               </Menu.Item>
             ) : ('')
@@ -321,7 +321,7 @@ export default class ItemOne extends React.Component {
           {is_default == '2' && is_visitor == '1' && checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD) ? (
             <Menu.Item key={'joinORG'} style={{textAlign: 'center', padding: 0, margin: 0}}>
               <div className={CreateTaskStyle.elseProjectMemu}>
-                加入组织
+                加入{currentNounPlanFilterName(ORGANIZATION)}
               </div>
             </Menu.Item>
           ) : ('')}

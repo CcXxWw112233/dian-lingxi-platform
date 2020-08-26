@@ -8,7 +8,8 @@ import CreateProject from '@/routes/Technological/components/Project/components/
 import simpleMode from "../../../../models/simpleMode";
 import { getOrgNameWithOrgIdFilter, setBoardIdStorage, isPaymentOrgUser, selectBoardToSeeInfo, checkIsHasPermission, getOrgIdByBoardId } from "@/utils/businessFunction"
 import { isApiResponseOk } from "../../../../utils/handleResponseData";
-import { ORG_TEAM_BOARD_CREATE } from '../../../../globalset/js/constant'
+import { ORG_TEAM_BOARD_CREATE, PROJECTS } from '../../../../globalset/js/constant'
+import { currentNounPlanFilterName } from "../../../../utils/businessFunction";
 class MyWorkbenchBoxs extends Component {
   constructor(props) {
     super(props);
@@ -236,7 +237,7 @@ class MyWorkbenchBoxs extends Component {
 
   getMenuItemList(projectList) {
     const { currentUserOrganizes } = this.props;
-    let menuItemList = [{ id: '0', name: '我参与的项目' }];
+    let menuItemList = [{ id: '0', name: `我参与的${currentNounPlanFilterName(PROJECTS)}` }];
     projectList.map((board, index) => {
       const { board_id: id, board_name: name, org_id } = board
       menuItemList.push({ id, name, parentName: getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes) });

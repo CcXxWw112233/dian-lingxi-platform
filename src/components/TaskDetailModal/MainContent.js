@@ -21,8 +21,10 @@ import DragDropContentComponent from './DragDropContentComponent'
 import FileListRightBarFileDetailModal from '@/routes/Technological/components/ProjectDetail/FileModule/FileListRightBarFileDetailModal';
 import { arrayNonRepeatfy } from '../../utils/util'
 import RelyOnRelationship from '../RelyOnRelationship'
-import { getCurrentDrawerContentPropsModelFieldData, filterCurrentUpdateDatasField, getCurrentPropertiesData } from './handleOperateModal'
+import { getCurrentDrawerContentPropsModelFieldData, filterCurrentUpdateDatasField, getCurrentPropertiesData, renderTaskNounPlanCode } from './handleOperateModal'
 import { rebackCreateNotify } from '../NotificationTodos'
+import { currentNounPlanFilterName } from '../../utils/businessFunction'
+import { TASKS } from '../../globalset/js/constant'
 const { LingxiIm, Im } = global.constants
 
 @connect(mapStateToProps)
@@ -917,7 +919,7 @@ export default class MainContent extends Component {
               new_propertiesList && new_propertiesList.map((item, index) => (
                 <Menu.Item key={`${item.id}`}>
                   <span className={`${globalStyles.authTheme} ${mainContentStyles.attr_icon}`}>{this.getCurrentFieldIcon(item)}</span>
-                  <span className={mainContentStyles.attr_name}>{item.name}</span>
+                  <span className={mainContentStyles.attr_name}>{renderTaskNounPlanCode(item)}</span>
                 </Menu.Item>
               ))
             }

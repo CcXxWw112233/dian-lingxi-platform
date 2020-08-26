@@ -3,7 +3,8 @@ import styles from './ProjectMenu.less';
 import { connect } from 'dva';
 import classNames from 'classnames/bind';
 import { Tree, Tooltip, Menu, Dropdown, Input, message, Modal } from 'antd';
-import { isHasOrgTeamBoardEditPermission } from './../../../../utils/businessFunction';
+import { isHasOrgTeamBoardEditPermission, currentNounPlanFilterName } from './../../../../utils/businessFunction';
+import { PROJECTS } from '../../../../globalset/js/constant';
 
 const { TreeNode } = Tree;
 const { Item } = Menu;
@@ -454,7 +455,7 @@ class ProjectMenu extends Component {
           }
         >
           <span className={styles.projectGather__participate_title}>
-            我参与的项目
+            我参与的{currentNounPlanFilterName(PROJECTS)}
           </span>
           <span className={styles.projectGather__participate_length}>
             {this.isNumberBigEnough(participate_count)

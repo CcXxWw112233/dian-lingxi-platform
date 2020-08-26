@@ -6,6 +6,8 @@ import { Icon, message, Tooltip } from 'antd';
 import { setBoardIdStorage, isPaymentOrgUser, } from "@/utils/businessFunction"
 import { changeBoxFeatureName } from "../../../../../utils/temporary";
 import { arrayNonRepeatfy } from "../../../../../utils/util";
+import { BOARD_PLANS, BOARD_CHAT, BOARD_FILES } from "../../../../../globalset/js/constant";
+import { currentNounPlanFilterName } from "../../../../../utils/businessFunction";
 class FeatureBox extends Component {
   constructor(props) {
     super(props);
@@ -304,6 +306,27 @@ class FeatureBox extends Component {
       }
     }
 
+    const renderNounPlanBox = (item) => {
+      const { code, name } = item
+      const { currentNounPlan } = this.props
+      let dec = ''
+      switch (code) {
+        case 'board:plans':
+          dec = currentNounPlanFilterName(BOARD_PLANS, currentNounPlan)
+          break;
+        case 'board:chat':
+          dec = currentNounPlanFilterName(BOARD_CHAT, currentNounPlan)
+          break;
+        case 'board:files':
+          dec = currentNounPlanFilterName(BOARD_FILES, currentNounPlan)
+          break;
+        default:
+          dec = changeBoxFeatureName({ board_id: simplemodeCurrentProject.board_id, noun: name })
+          break;
+      }
+      return dec
+    }
+
     return (
       <>
         {tipTitle ? (
@@ -313,7 +336,8 @@ class FeatureBox extends Component {
               <div>
                 {this.renderIconSVG(item.code)}
               </div>
-              <span className={indexStyles.myWorkbenchBox_title}>{changeBoxFeatureName({ board_id: simplemodeCurrentProject.board_id, noun: item.name })}</span>
+              {/* <span className={indexStyles.myWorkbenchBox_title}>{changeBoxFeatureName({ board_id: simplemodeCurrentProject.board_id, noun: item.name })}</span> */}
+              <span className={indexStyles.myWorkbenchBox_title}>{renderNounPlanBox(item)}</span>
             </div>
           </Tooltip>
         )
@@ -323,7 +347,8 @@ class FeatureBox extends Component {
               <div>
                 {this.renderIconSVG(item.code)}
               </div>
-              <span className={indexStyles.myWorkbenchBox_title}>{changeBoxFeatureName({ board_id: simplemodeCurrentProject.board_id, noun: item.name })}</span>
+              {/* <span className={indexStyles.myWorkbenchBox_title}>{changeBoxFeatureName({ board_id: simplemodeCurrentProject.board_id, noun: item.name })}</span> */}
+              <span className={indexStyles.myWorkbenchBox_title}>{renderNounPlanBox(item)}</span>
             </div>
           )}
       </>
@@ -388,6 +413,11 @@ export default connect(
     xczNews: {
       XczNewsOrganizationList
     },
+    organizationManager: {
+      datas: {
+          currentNounPlan
+      }
+    } 
   }) => ({
     projectList,
     myWorkbenchBoxList,
@@ -396,5 +426,6 @@ export default connect(
     XczNewsOrganizationList,
     currentSelectedProjectOrgIdByBoardId,
     userOrgPermissions,
-    mapOrganizationList
+    mapOrganizationList,
+    currentNounPlan
   }))(FeatureBox)

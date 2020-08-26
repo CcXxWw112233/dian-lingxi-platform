@@ -21,6 +21,7 @@ import DragDropContentComponent from './DragDropContentComponent'
 import FileListRightBarFileDetailModal from '@/routes/Technological/components/ProjectDetail/FileModule/FileListRightBarFileDetailModal';
 import { arrayNonRepeatfy } from '@/utils/util'
 import { rebackCreateNotify } from '../../../../../../../components/NotificationTodos'
+import { renderTaskNounPlanCode } from '../../../../../../../components/TaskDetailModal/handleOperateModal'
 const { LingxiIm, Im } = global.constants
 
 @connect(mapStateToProps)
@@ -910,7 +911,7 @@ export default class MainContent extends Component {
             new_propertiesList && new_propertiesList.map((item, index) => (
               <Button onClick={(e) => { this.handleMenuReallySelect(e, item) }} className={mainContentStyles.attr_btn} key={`${item.id}`}>
                 <span className={`${globalStyles.authTheme} ${mainContentStyles.attr_icon}`}>{this.getCurrentFieldIcon(item)}</span>
-                <span className={mainContentStyles.attr_name}>{item.name}</span>
+                <span className={mainContentStyles.attr_name}>{renderTaskNounPlanCode(item)}</span>
               </Button>
             ))
           }

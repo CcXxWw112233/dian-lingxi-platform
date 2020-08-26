@@ -11,6 +11,8 @@ import classNames from 'classnames/bind'
 import { getAccessibleGroupList, getGroupList } from './../../../../services/technological/organizationMember'
 import { isApiResponseOk } from '../../../../utils/handleResponseData'
 import noDataImg from './asset/no_data_select.png'
+import { currentNounPlanFilterName } from '../../../../utils/businessFunction'
+import { PROJECTS } from '../../../../globalset/js/constant'
 let cx = classNames.bind(styles)
 
 const Option = Select.Option
@@ -668,7 +670,7 @@ class InviteOthers extends Component {
           onClick={this.handleClickedInviteFromProject}
         >
           <span className={styles.invite__select_list_item_text}>
-            从项目邀请
+            从{currentNounPlanFilterName(PROJECTS)}邀请
           </span>
           <span className={styles.invite__select_list_item_icon} />
         </div>

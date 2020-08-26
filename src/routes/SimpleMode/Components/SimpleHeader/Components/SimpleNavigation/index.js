@@ -567,7 +567,7 @@ export default class SimpleNavigation extends Component {
                                 <div className={indexStyles.default_select_setting}>
                                     <div className={indexStyles.team}>
                                         <div className={`${globalStyles.authTheme} ${indexStyles.team_icon}`}>&#xe7af;</div>
-                                        <span className={indexStyles.middle_text}>团队成员</span>
+                                        <span className={indexStyles.middle_text}>团队{currentNounPlanFilterName(MEMBERS,this.props.currentNounPlan)}</span>
                                     </div>
                                 </div>
                             </Menu.Item>
@@ -580,7 +580,7 @@ export default class SimpleNavigation extends Component {
                                 <div className={indexStyles.default_select_setting}>
                                     <div className={indexStyles.bank}>
                                         <div className={`${globalStyles.authTheme} ${indexStyles.bank_icon}`}>&#xe719;</div>
-                                        <span className={indexStyles.middle_text}>组织管理后台</span>
+                                        <span className={indexStyles.middle_text}>{currentNounPlanFilterName(ORGANIZATION, this.props.currentNounPlan)}管理后台</span>
                                         <div className={indexStyles.payUpgrade} onClick={(e) => { this.openPayUpgradeModal(e) }} >申请升级</div>
                                     </div>
                                 </div>
@@ -594,7 +594,7 @@ export default class SimpleNavigation extends Component {
                                 <div className={indexStyles.default_select_setting}>
                                     <div className={indexStyles.addUsers}>
                                         <div className={`${globalStyles.authTheme} ${indexStyles.add_icon}`}>&#xe7ae;</div>
-                                        <span className={indexStyles.middle_text}>邀请成员加入</span>
+                                        <span className={indexStyles.middle_text}>邀请{currentNounPlanFilterName(MEMBERS, this.props.currentNounPlan)}加入</span>
                                     </div>
                                 </div>
                             </Menu.Item>
@@ -692,7 +692,7 @@ export default class SimpleNavigation extends Component {
 												<Menu.Item key="0" className={indexStyles.org_name}>
 													<div style={{ display: 'flex', alignItems: 'center' }}>
 														<img src={linxiLogo} className={indexStyles.org_img} />
-														<span style={{ maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>全部组织</span>
+                                                        <span style={{ maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>全部{currentNounPlanFilterName(ORGANIZATION, this.props.currentNounPlan)}</span>
 													</div>
 												</Menu.Item>
 											)

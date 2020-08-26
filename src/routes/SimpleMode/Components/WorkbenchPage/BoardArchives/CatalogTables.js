@@ -2,12 +2,13 @@ import React, { Component } from 'react'
 import { Table, Popconfirm, message, Tooltip } from 'antd';
 import { timestampToTimeNormal, filterFileFormatType } from '../../../../../utils/util';
 import { connect } from 'dva';
-import { getOrgNameWithOrgIdFilter, getSubfixName, setBoardIdStorage } from '../../../../../utils/businessFunction';
+import { getOrgNameWithOrgIdFilter, getSubfixName, setBoardIdStorage, currentNounPlanFilterName } from '../../../../../utils/businessFunction';
 import globalStyles from '@/globalset/css/globalClassName.less'
 import indexStyles from './index.less';
 import { archivedProject } from '../../../../../services/technological/project';
 import { isApiResponseOk } from '../../../../../utils/handleResponseData';
 import FileDetailModal from '@/components/FileDetailModal'
+import { PROJECTS } from '../../../../../globalset/js/constant';
 
 @connect(mapStateToProps)
 export default class CatalogTables extends Component {
@@ -321,7 +322,7 @@ export default class CatalogTables extends Component {
         return (
             <div style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: 20 }}>
                 <Popconfirm
-                    title="你确定要恢复项目吗？"
+                    title={`你确定要恢复${currentNounPlanFilterName(PROJECTS)}吗？`}
                     onConfirm={(e) => this.actionsManager('confirmArchives', item, e)}
                     onCancel={e => e.stopPropagation()}
                     okText="确定"

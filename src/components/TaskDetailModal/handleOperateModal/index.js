@@ -1,6 +1,7 @@
 // 用来封装弹窗中公用方法
 
-import { getSubfixName } from "../../../utils/businessFunction"
+import { getSubfixName, currentNounPlanFilterName } from "../../../utils/businessFunction"
+import { TASKS } from "../../../globalset/js/constant"
 
 /**
  * 获取对应属性的data列表
@@ -164,4 +165,22 @@ export const  getFolderPathName = (fileItem) => {
   digui('parent_folder', target_path)
   const newbreadcrumbList = arr.reverse()
   return newbreadcrumbList
+}
+
+// 根据名词定义获取不同属性内容
+export const renderTaskNounPlanCode = (item) => {
+  let dec_name = ''
+  const { code, name } = item
+  switch (code) {
+    case 'REMARK':
+      dec_name = `${currentNounPlanFilterName(TASKS)}说明`
+      break;
+    case 'SUBTASK':
+      dec_name = `子${currentNounPlanFilterName(TASKS)}&交付物`
+      break
+    default:
+      dec_name = name
+      break;
+  }
+  return dec_name
 }

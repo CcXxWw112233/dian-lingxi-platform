@@ -4,7 +4,8 @@ import { connect } from 'dva'
 import styles from './featurebox.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { timestampToTimeNormal, timeColor, isSamDay, transformTimestamp, timestampToHM } from '../../../../../utils/util'
-import { getOrgNameWithOrgIdFilter } from '../../../../../utils/businessFunction'
+import { getOrgNameWithOrgIdFilter, currentNounPlanFilterName } from '../../../../../utils/businessFunction'
+import { TASKS, FLOWS } from '../../../../../globalset/js/constant'
 
 @connect(mapStateToProps)
 export default class BoardFeaturesItem extends Component {
@@ -86,17 +87,17 @@ export default class BoardFeaturesItem extends Component {
         let container = ''
         switch (rela_type) {
             case '1': //任务
-                container = '任务'
+                container = `${currentNounPlanFilterName(TASKS)}`
                 if (parent_id) {
-                    container = '子任务'
+                    container = `子${currentNounPlanFilterName(TASKS)}`
                 }
                 break
             case '2': //日程
-                container = '日程'
+                container = `${currentNounPlanFilterName(TASKS)}`
 
                 break
             case '3': //流程
-                container = '流程'
+                container = `${currentNounPlanFilterName(FLOWS)}`
                 break
             default:
                 break
