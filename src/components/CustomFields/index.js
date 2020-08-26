@@ -49,7 +49,9 @@ export default class Index extends Component {
         defaultCheckedKeys.push(item.id)
         return new_item
       } else {
-        return item
+        let new_item = { ...item }
+        new_item = { ...item, disabled: false }
+        return new_item
       }
     })
     // 再对每一个chekbox进行禁用逻辑
@@ -67,6 +69,7 @@ export default class Index extends Component {
     const getIds = (treeData = [], checkedKeys = []) => {
       let list = []
       list = treeData.map(k => {
+        k.disabled = false
         if (k.fields && k.fields.length > 0) {
           checkedKeys.forEach(e => {
             if (e == k.id) {
@@ -115,7 +118,6 @@ export default class Index extends Component {
     const { relations_fields: old_relations_fields = [] } = this.props
     const { relations_fields = [] } = nextProps
     if (isArrayEqual(relations_fields, old_relations_fields)) return
-    // console.log('进来了');
     this.setOperationOfTreeData({relations_fields, original_treeData: this.state.treeData})
   }
 
@@ -124,7 +126,6 @@ export default class Index extends Component {
       visible: visible,
     });
     if (!visible) {
-      // console.log('进来了','sssssssss_visible');
       const { relations_fields = [] } = this.props
       this.setOperationOfTreeData({relations_fields, original_treeData: this.state.treeData})
       // this.setState({
@@ -134,7 +135,6 @@ export default class Index extends Component {
   }
 
   onCheck = (checkedKeys) => {
-    // console.log(checkedKeys);
     this.setState({
       checkedKeys
     })
@@ -186,15 +186,10 @@ export default class Index extends Component {
     })
     // 过滤一遍已选择的ID
     need_checkedKeys = need_checkedKeys.filter(n => defaultCheckedKeys.indexOf(n) == -1)
-    // defaultCheckedKeys.forEach(item => {
-    //   need_checkedKeys = need_checkedKeys.filter(n => n != item)
-    // })
-    // console.log(need_checkedKeys,'ssssssssssss_2222');
-    // return
     const calback = () => {
       this.setState({
         visible: false,
-        checkedKeys: [],
+        // checkedKeys: [],
         isOnConfirmAddField: false
       })
     }
@@ -246,7 +241,7 @@ export default class Index extends Component {
     return (
       <div className={indexStyles.fileds_button}>
         <Button onClick={this.handleReSetting}>重置</Button>
-        <Button onClick={this.handleAddCustomField} disabled={!!!(checkedKeys && checkedKeys.length)} type="primary">确定</Button>
+        <Button onClick={this.handleAddCustomField} disabled={isArrayEqual(checkedKeys, defaultCheckedKeys)} type="primary">确定</Button>
       </div>
     )
   }
@@ -267,7 +262,7 @@ export default class Index extends Component {
   }
 
   componentWillUnmount() {
-    console.log('进来了', 'sssssssssssssunmount');
+    // console.log('进来了', 'sssssssssssssunmount');
   }
 
   render() {
