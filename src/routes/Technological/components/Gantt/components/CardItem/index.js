@@ -1235,6 +1235,7 @@ export default class CardItem extends Component {
                 id={id} //大纲视图需要获取该id作为父级id来实现子任务拖拽影响父任务位置
                 ref={this.out_ref}
                 tabindex="0"
+                title={name}
                 style={{
                     touchAction: 'none',
                     zIndex: (rely_down || this.is_down || drag_lock) ? 2 : 1,

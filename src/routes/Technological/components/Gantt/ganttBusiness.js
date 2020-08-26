@@ -1,6 +1,6 @@
 import base_utils from './base_utils'
 import { isSamDay } from '../../../../utils/util'
-import { date_area_height, coperatedLeftDiv, coperatedX } from './constants'
+import { date_area_height, coperatedLeftDiv, coperatedX, ceil_height } from './constants'
 
 export const afterCreateBoardUpdateGantt = (dispatch) => {
     afterClearGanttData({ dispatch })
@@ -471,23 +471,47 @@ export const getXYDropPosition = (e) => {
     }
 }
 
+// /**
+//  * 获取下落后落在的分组位置
+//  * @param {Array} arr 
+//  * @param {Number|String} compare_ele 需要比较的元素
+//  */
+// export const getDropListPosition = (arr, compare_ele) => {
+//     let group_list_index = 0;
+//     let flag = false;
+//     for (let index = 0; index < arr.length; index++) {
+//         if (compare_ele <= arr[index]) {
+//             group_list_index = index;
+//             flag = true;
+//             break;
+//         }
+//     }
+//     if (!flag) {
+//         group_list_index = arr.length;
+//     }
+//     return group_list_index
+// }
 /**
  * 获取下落后落在的分组位置
- * @param {Array} arr 
- * @param {Number|String} compare_ele 需要比较的元素
+ * @param {Array} group_list_area_section_height 甘特图分组高度累加组
+ * @param {Number|String} position_top 需要比较的位置高度
+ * @returns {object} {group_list_index:分组索引, belong_group_row： 所在第几行}
  */
-export const getDropListPosition = (arr,compare_ele) => {
+export const getDropListPosition = ({ group_list_area_section_height = [], position_top = 0 }) => {
     let group_list_index = 0;
-    let flag = false;
-    for (let index = 0; index < arr.length; index++) {
-    if (compare_ele <= arr[index]) {
-        group_list_index = index;
-        flag = true;
-        break;
+    let belong_group_row = 0
+
+    const len = group_list_area_section_height.length
+    for (let i = 0; i < len; i++) {
+        if (position_top <= group_list_area_section_height[i]) {
+            group_list_index = i;
+            break;
+        }
     }
+    if (group_list_index == 0) {
+        belong_group_row = position_top / ceil_height + 1
+    } else {
+        belong_group_row = (position_top - group_list_area_section_height[group_list_index - 1]) / ceil_height + 1
     }
-    if (!flag) {
-        group_list_index = arr.length;
-    }
-    return group_list_index
+    return { group_list_index, belong_group_row: Math.round(belong_group_row) }
 }
