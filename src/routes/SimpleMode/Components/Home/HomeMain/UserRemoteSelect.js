@@ -31,7 +31,7 @@ export default class UserRemoteSelect extends React.Component {
     }
   }
 
-  fetchUser = value => {
+  fetchUser = (value = '') => {
     // console.log('fetching user', value);
     const { simplemodeCurrentProject = {} } = this.props
     const { board_id, org_id } = simplemodeCurrentProject
@@ -121,6 +121,7 @@ export default class UserRemoteSelect extends React.Component {
           filterOption={false}
           onSearch={this.fetchUser}
           onChange={this.handleChange}
+          onFocus={this.fetchUser}
           style={{ width: 'calc(100% - 16px)', minHeight: '32px' }}
           getPopupContainer={triggerNode => triggerNode.parentNode}
         >

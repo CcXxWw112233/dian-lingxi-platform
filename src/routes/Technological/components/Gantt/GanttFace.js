@@ -494,7 +494,7 @@ export default class GanttFace extends Component {
   }
   render() {
     const { gantt_card_out_middle_max_height } = this.state
-    const { gantt_card_height, get_gantt_data_loading, is_need_calculate_left_dx, gantt_board_id, is_show_board_file_area, group_view_type, get_gantt_data_loading_other } = this.props
+    const { gantt_card_height, get_gantt_data_loading, is_need_calculate_left_dx, gantt_board_id, is_show_board_file_area, group_view_type, get_gantt_data_loading_other, currentUserOrganizes = [] } = this.props
     const dataAreaRealHeight = this.getDataAreaRealHeight()
 
     return (
@@ -573,7 +573,7 @@ export default class GanttFace extends Component {
                     setGoldDateArr={this.setGoldDateArr}
                     setScrollPosition={this.setScrollPosition}
                   />
-                  <div style={{ display: !closeFeature({ board_id: gantt_board_id }) ? 'block' : 'none' }}>
+                  <div style={{ display: !closeFeature({ board_id: gantt_board_id, currentUserOrganizes }) ? 'block' : 'none' }}>
                     {
                       gantt_board_id && gantt_board_id != '0' && (
                         <BoardTemplate insertTaskToListGroup={this.props.insertTaskToListGroup} gantt_card_height={gantt_card_height} />
@@ -619,7 +619,9 @@ function mapStateToProps({ gantt: { datas: {
   outline_tree,
   gantt_view_mode,
   get_gantt_data_loading_other
-} } }) {
+} },
+technological: { datas: { currentUserOrganizes = [] } },
+}) {
   return {
     ceilWidth,
     date_total,
@@ -635,7 +637,8 @@ function mapStateToProps({ gantt: { datas: {
     is_show_board_file_area,
     outline_tree,
     gantt_view_mode,
-    get_gantt_data_loading_other
+    get_gantt_data_loading_other,
+    currentUserOrganizes
   }
 }
 GanttFace.defaultProps = {

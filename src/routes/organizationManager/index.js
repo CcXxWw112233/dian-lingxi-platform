@@ -282,9 +282,10 @@ class Organization extends Component {
 
   // 渲染组织管理后台导航栏
   renderManagementNavList = () => {
-    const { model = {} } = this.props
+    const { model = {}, currentUserOrganizes = [] } = this.props
     const { datas: { tabSelectKey } } = model
-
+    const org_id = localStorage.getItem('OrganizationId')
+    const { apply_scenes } = currentUserOrganizes.find(item => item.id == org_id) || {}
     return (
       <Menu
         selectedKeys={[tabSelectKey]}
@@ -296,7 +297,11 @@ class Organization extends Component {
         <Menu.Item key="4">名词定义</Menu.Item>
         {/* <Menu.Item key="5">功能管理</Menu.Item> */}
         {/* <Menu.Item key="6">{`${currentNounPlanFilterName(PROJECTS)}模板`}</Menu.Item> */}
-        <Menu.Item key="6">{`自有模板`}</Menu.Item>
+        {
+          apply_scenes == '0' && (
+            <Menu.Item key="6">{`自有模板`}</Menu.Item>
+          )
+        }
         <Menu.Item key="7">{`工作流模板`}</Menu.Item>
         <Menu.Item key="8">{`自定义字段`}</Menu.Item>
       </Menu>
@@ -461,7 +466,7 @@ class Organization extends Component {
 }
 
 
-function mapStateToProps({ modal, organizationManager, loading }) {
-  return { modal, model: organizationManager, loading }
+function mapStateToProps({ modal, organizationManager, loading, technological: { datas: { currentUserOrganizes = [] } } }) {
+  return { modal, model: organizationManager, loading, currentUserOrganizes }
 }
 export default connect(mapStateToProps)(Organization)

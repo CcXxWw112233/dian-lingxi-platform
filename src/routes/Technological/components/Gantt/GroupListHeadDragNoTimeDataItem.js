@@ -123,24 +123,34 @@ export default class GroupListHeadDragNoTimeDataItem extends Component {
         const { id, list_id: group_id, board_id, parent_card_id } = itemValue
         // 得到下落的分组位置
         let { group_list_index, belong_group_row } = getDropListPosition({ group_list_area_section_height, position_top: y - 24 })
-        console.log(group_list_index);
+        // console.log(group_list_index);
         // 获取下落的日期位置
         let date_position = parseInt(x / ceilWidth)
         let { timestamp, timestampEnd } = date_arr_one_level[date_position]
         const { list_id } = list_group[group_list_index]
+        // 找到这条任务是否是根据依赖保存过来的时间 plan_time_span
+        const { plan_time_span } = list_group[group_list_index].lane_data.card_no_times.find(item => item.id == id) || {}
+        let due_time = ''
+        let one_day_time = 24 * 60 * 60 * 1000
+        let one_minute = 60 * 1000
+        if (plan_time_span) {
+          due_time = timestamp + (plan_time_span * one_day_time - one_minute)
+        } else {
+          due_time = timestampEnd
+        }
         // return
         updateTaskVTwo({ card_id: id, list_id: list_id || '0', due_time: timestampEnd, start_time: timestamp, board_id: board_id || gantt_board_id, row: belong_group_row }, { isNotLoading: false }).then(res => {
           if (isApiResponseOk(res)) {
             rebackCreateNotify.call(this, { res, id, board_id, group_view_type, dispatch, parent_card_id, card_detail_id: id, selected_card_visible })
             const updateData = {}
             updateData.start_time = timestamp //!is_has_start_time ? '' : parseInt(start_time_timestamp)
-            updateData.due_time = timestampEnd
+            updateData.due_time = due_time
             let datas = [{ id, ...updateData, row: belong_group_row }, ...res.data.scope_content.filter(item => item.id != id)]
             this.updateGanttData({
               datas, drop_group_id: list_id, original_group_id: group_id, updateData: {
                 id: id,
                 start_time: timestamp,
-                due_time: timestampEnd
+                due_time: due_time
               }
             })
             this.onChangeTimeHandleCardDetail({card_detail_id: id, selected_card_visible, parent_card_id: '', dispatch})

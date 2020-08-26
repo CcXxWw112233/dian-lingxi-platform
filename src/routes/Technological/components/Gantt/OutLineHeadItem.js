@@ -847,7 +847,7 @@ export default class OutLineHeadItem extends Component {
     }
     render() {
         const { board_info_visible, show_add_menber_visible, safeConfirmModalVisible } = this.state;
-        const { outline_tree, outline_hover_obj, gantt_board_id, projectDetailInfoData, outline_tree_round, changeOutLineTreeNodeProto, deleteOutLineTreeNode } = this.props;
+        const { outline_tree, outline_hover_obj, gantt_board_id, projectDetailInfoData, outline_tree_round, changeOutLineTreeNodeProto, deleteOutLineTreeNode, currentUserOrganizes = [] } = this.props;
         //console.log("刷新了数据", outline_tree);
         return (
             <div className={styles.outline_wrapper} style={{ marginTop: task_item_margin_top }}>
@@ -887,7 +887,7 @@ export default class OutLineHeadItem extends Component {
 
                     <div>
                         {
-                            !closeFeature({ board_id: gantt_board_id }) && (
+                            !closeFeature({ board_id: gantt_board_id, currentUserOrganizes }) && (
                                 <div style={{ color: '#1890FF' }} onClick={() => this.saveBoardTemplateVisible(true)}>
                                     <span className={`${globalStyles.authTheme}`} style={{ fontSize: 16, marginRight: 4 }}>&#xe6b5;</span>
                                     <span style={{ marginRight: 16 }}>保存为{`${currentNounPlanFilterName(PROJECTS)}`}模版</span>
