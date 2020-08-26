@@ -7,6 +7,12 @@ import OutlineTree from '@/routes/Technological/components/Gantt/components/Outl
 import { getProcessTemplateList } from "../../../services/technological/workFlow";
 import { ganttIsOutlineView } from "../../../routes/Technological/components/Gantt/constants"
 // F:\work\newdicolla-platform\src\routes\Technological\components\Gantt\components\OutlineTree\index.js
+const is_schedule = (start_time, due_time) => {
+    if ((!!start_time && !!Number(start_time)) || (!!due_time && !!Number(due_time))) {
+        return true
+    }
+    return false
+}
 export default {
     state: {
         rely_map: [],
@@ -138,17 +144,35 @@ export default {
             //     { id: '1266250771897389056', start_time: '1589990400', due_time: '1590768000' },
             //     { id: '1266250784136368128', start_time: '1590595200', due_time: '1590854400' }
             // ]
-
+            
             const { datas = [], origin_list_group } = payload
             const list_group = yield select(getModelSelectDatasState('gantt', 'list_group'))
             const list_group_new = Object.prototype.toString.call(origin_list_group) == '[object Array]' ? origin_list_group : [...list_group]
             for (let val of datas) {
+                const has_time = is_schedule(val.start_time, val.due_time) //存在时间
                 for (let val2 of list_group_new) {
-                    const card_index = val2.lane_data.cards.findIndex(item => item.id == val.id)
-                    const card_item = val2.lane_data.cards.find(item => item.id == val.id)
-                    if (card_index != -1) {
-                        val2.lane_data.cards[card_index] = { ...card_item, ...val }
-                        // break
+                    const card_index = val2.lane_data.cards.findIndex(item => item.id == val.id) //所在排期的索引
+                    const card_no_time_index = val2.lane_data.card_no_times.findIndex(item => item.id == val.id) //所在未排期的索引
+                    let card_item = {} //存储该条数据
+                    if (card_index != -1) { //如果在已排期的列表中找到了
+                        card_item = val2.lane_data.cards.find(item => item.id == val.id) || {}
+                        if (has_time) { //如果返回的结果存在时间，则操作已排期列表
+                            val2.lane_data.cards[card_index] = { ...card_item, ...val }
+                        } else { //如果返回的结果不存在时间，则将该条任务从已排期挪到未排期
+                            val2.lane_data.cards.splice(card_index, 1)
+                            val2.lane_data.card_no_times.push({ ...card_item, ...val })
+                        }
+                        continue
+                    }
+                    if (card_no_time_index != -1) { //如果在未排期的列表中找到了
+                        card_item = val2.lane_data.card_no_times.find(item => item.id == val.id) || {}
+                        if (has_time) { //如果返回的结果存在时间，则将该条任务挪到已排期排期列表
+                            val2.lane_data.card_no_times.splice(card_no_time_index, 1)
+                            val2.lane_data.cards.push({ ...card_item, ...val })
+                        } else { //没有时间，就操作当前未排期
+                            val2.lane_data.card_no_times[card_no_time_index] = { ...card_item, ...val }
+                        }
+                        continue
                     }
                 }
             }
@@ -160,6 +184,35 @@ export default {
             })
 
         },
+        // // 分组视图下跟新任务
+        // * updateListGroup({ payload = {} }, { select, call, put }) {
+        //     // return
+        //     // datas = [
+        //     //     { id: '1266250771897389056', start_time: '1589990400', due_time: '1590768000' },
+        //     //     { id: '1266250784136368128', start_time: '1590595200', due_time: '1590854400' }
+        //     // ]
+
+        //     const { datas = [], origin_list_group } = payload
+        //     const list_group = yield select(getModelSelectDatasState('gantt', 'list_group'))
+        //     const list_group_new = Object.prototype.toString.call(origin_list_group) == '[object Array]' ? origin_list_group : [...list_group]
+        //     for (let val of datas) {
+        //         for (let val2 of list_group_new) {
+        //             const card_index = val2.lane_data.cards.findIndex(item => item.id == val.id)
+        //             const card_item = val2.lane_data.cards.find(item => item.id == val.id)
+        //             if (card_index != -1) {
+        //                 val2.lane_data.cards[card_index] = { ...card_item, ...val }
+        //                 // break
+        //             }
+        //         }
+        //     }
+        //     yield put({
+        //         type: 'gantt/handleListGroup',
+        //         payload: {
+        //             data: list_group_new
+        //         }
+        //     })
+
+        // },
         // 更新分组下未排期任务 (对未排期的任务进行拖拽 设置时间)
         * updateGroupListWithCardsNoTime({ payload = {} }, { select, call, put }) {
             const { datas = [], drop_group_id, original_group_id = '0', card_id, updateData = {}, origin_list_group } = payload
