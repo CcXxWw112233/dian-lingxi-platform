@@ -111,7 +111,7 @@ export default class GroupListHeadDragNoTimeDataItem extends Component {
         const { ceilWidth, group_list_area_section_height, date_arr_one_level = [], list_group = [], dispatch, itemValue = {}, gantt_board_id, selected_card_visible } = this.props
         const { id, list_id: group_id, board_id, parent_card_id } = itemValue
         // 得到下落的分组位置
-        let { group_list_index, belong_group_row } = getDropListPosition({ group_list_area_section_height, position_top: y })
+        let { group_list_index, belong_group_row } = getDropListPosition({ group_list_area_section_height, position_top: y - 24 })
         // 获取下落的日期位置
         let date_position = parseInt(x / ceilWidth)
         let { timestamp, timestampEnd } = date_arr_one_level[date_position]
