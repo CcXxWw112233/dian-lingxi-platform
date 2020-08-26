@@ -1132,6 +1132,7 @@ export default class CardItem extends Component {
                 data-targetclassname="specific_example"
                 id={id} //大纲视图需要获取该id作为父级id来实现子任务拖拽影响父任务位置
                 ref={this.out_ref}
+                title={name}
                 tabindex="0"
                 style={{
                     touchAction: 'none',

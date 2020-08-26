@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Tooltip } from 'antd'
+import { Tooltip, message } from 'antd'
 import indexStyles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import AvatarList from '@/components/avatarList'
@@ -50,15 +50,15 @@ export default class GroupListHeadDragNoTimeDataItem extends Component {
    * @param {String} original_group_id 元素的原始的分组ID
    * @param {Object} updateData 更新的数据内容
    */
-  updateGanttData = ({datas = [], drop_group_id, original_group_id, updateData = {}}) => {
+  updateGanttData = ({ datas = [], drop_group_id, original_group_id, updateData = {} }) => {
     this.props.dispatch({
-        type: `gantt/updateGroupListWithCardsNoTime`,
-        payload: {
-            datas,
-            drop_group_id,
-            original_group_id,
-            updateData
-        }
+      type: `gantt/updateGroupListWithCardsNoTime`,
+      payload: {
+        datas,
+        drop_group_id,
+        original_group_id,
+        updateData
+      }
     })
   }
 
@@ -111,29 +111,33 @@ export default class GroupListHeadDragNoTimeDataItem extends Component {
         const { ceilWidth, group_list_area_section_height, date_arr_one_level = [], list_group = [], dispatch, itemValue = {}, gantt_board_id, selected_card_visible } = this.props
         const { id, list_id: group_id, board_id, parent_card_id } = itemValue
         // 得到下落的分组位置
-        let group_list_position = getDropListPosition(group_list_area_section_height, y)
+        let { group_list_index, belong_group_row } = getDropListPosition({ group_list_area_section_height, position_top: y - 24 })
         // 获取下落的日期位置
         let date_position = parseInt(x / ceilWidth)
         let { timestamp, timestampEnd } = date_arr_one_level[date_position]
-        const { list_id } = list_group[group_list_position]
+        const { list_id } = list_group[group_list_index]
         // return
-        updateTaskVTwo({ card_id: id, list_id: list_id || '0', due_time: timestampEnd, start_time: timestamp, board_id: board_id || gantt_board_id }, { isNotLoading: false }).then(res => {
+        updateTaskVTwo({ card_id: id, list_id: list_id || '0', due_time: timestampEnd, start_time: timestamp, board_id: board_id || gantt_board_id, row: belong_group_row }, { isNotLoading: false }).then(res => {
           if (isApiResponseOk(res)) {
             rebackCreateNotify.call(this, { res, id, board_id, group_view_type, dispatch, parent_card_id, card_detail_id: id, selected_card_visible })
             const updateData = {}
             updateData.start_time = timestamp //!is_has_start_time ? '' : parseInt(start_time_timestamp)
             updateData.due_time = timestampEnd
-            let datas = [{ id, ...updateData }, ...res.data.scope_content.filter(item => item.id != id)]
-            this.updateGanttData({datas, drop_group_id: list_id,  original_group_id: group_id, updateData: {
-              id: id,
-              start_time: timestamp,
-              due_time: timestampEnd
-            }})
+            let datas = [{ id, ...updateData, row: belong_group_row }, ...res.data.scope_content.filter(item => item.id != id)]
+            this.updateGanttData({
+              datas, drop_group_id: list_id, original_group_id: group_id, updateData: {
+                id: id,
+                start_time: timestamp,
+                due_time: timestampEnd
+              }
+            })
             // this.onChangeTimeHandleCardDetail()
             this.curret_panel = ''
             this.setState({
               currentOperateDragElement: ''
             })
+          } else {
+            message.warn(res.message)
           }
         })
       } else {

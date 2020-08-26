@@ -224,7 +224,7 @@ class Gantt extends Component {
   handleChangeCard = ({ card_id, drawContent, operate_properties_code, ...other_params }) => {
     // operate_properties_code为新任务接口下properties数组的操作code,用来判断执行人和标签更新
     if (this.card_time_type == 'no_schedule') {
-      this.handleNoHasScheduleCard({ card_id, drawContent, operate_properties_code })
+      this.handleNoHasScheduleCard({ card_id, drawContent, operate_properties_code, ...other_params })
     } else {
       this.handleHasScheduleCard({ card_id, drawContent, operate_properties_code, ...other_params })
     }
@@ -256,7 +256,7 @@ class Gantt extends Component {
     return { ...drawContent, [gold_key]: gold_data }
   }
   // 修改没有排期的任务
-  handleNoHasScheduleCard = ({ card_id, drawContent = {}, operate_properties_code }) => {
+  handleNoHasScheduleCard = ({ card_id, drawContent = {}, operate_properties_code, ...other_params }) => {
     const { group_view_type, dispatch, gantt_board_id, show_board_fold, gantt_view_mode } = this.props
     if (operate_properties_code == 'MILESTONE') { //修改的是里程碑
       dispatch({
@@ -266,7 +266,14 @@ class Gantt extends Component {
       })
       return
     }
-    const new_drawContent = this.cardPropertiesPromote({ drawContent, operate_properties_code })
+
+    // 后台会返回行高和时间等信息
+    let update_from_response = {}
+    if (Object.prototype.toString.call(other_params.rely_card_datas) == '[object Array]') {
+      update_from_response = other_params.rely_card_datas.find(item => item.id == card_id) || {}
+    }
+    const new_drawContent = { ...this.cardPropertiesPromote({ drawContent, operate_properties_code }), ...update_from_response }
+
     const { start_time, due_time } = new_drawContent
     const { list_group = [], current_list_group_id } = this.props
     const list_group_new = [...list_group]
