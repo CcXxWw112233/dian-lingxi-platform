@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import styles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
-import { date_area_height } from '../../constants'
+import { date_area_height, ganttIsSingleBoardGroupView } from '../../constants'
 import { Menu, message, Tree, Icon, Spin, Button } from 'antd'
 import { connect, } from 'dva';
 import { getBoardTemplateList, getBoardTemplateInfo, createCardByTemplate, importBoardTemplate } from '../../../../../../services/technological/gantt'
@@ -473,16 +473,17 @@ export default class BoardTemplate extends Component {
                 const { x, y } = getXYDropPosition(event)
                 const { ceilWidth, group_list_area_section_height, date_arr_one_level = [], list_group = [] } = this.props
                 // 得到下落的分组位置
-                let group_list_position = getDropListPosition(group_list_area_section_height, y)
+                let { group_list_index, belong_group_row } = getDropListPosition({ group_list_area_section_height, position_top: y - 24 })
+
                 // 获取下落分组的元素
-                let { lane_id } = list_group[group_list_position]
+                let { lane_id } = list_group[group_list_index]
                 // 获取下落的日期位置
                 let date_position = parseInt(x / ceilWidth)
-                
+
                 let { timestamp, timestampEnd } = date_arr_one_level[date_position]
                 // console.log('进来了');
                 if (!lane_id || !timestamp || !timestampEnd) return
-                this.handleDragCompleted({ list_id: lane_id, start_time: timestamp, end_time: timestampEnd })
+                this.handleDragCompleted({ list_id: lane_id, start_time: timestamp, end_time: timestampEnd, belong_group_row })
                 this.current_panel = ''
 
             } else if (event.target.className.indexOf('ganttDetailItem') != -1) {
@@ -503,7 +504,7 @@ export default class BoardTemplate extends Component {
 
 
 
-    handleDragCompleted = ({ list_id, start_time, end_time }) => {
+    handleDragCompleted = ({ list_id, start_time, end_time, belong_group_row }) => {
         const { dispatch } = this.props
         dispatch({
             type: 'gantt/updateDatas',
@@ -517,7 +518,7 @@ export default class BoardTemplate extends Component {
         if (data_type == '1') {
             this.createMilestone({ end_time })
         } else if (data_type == '2') {
-            this.createCard({ list_id, start_time, end_time })
+            this.createCard({ list_id, start_time, end_time, belong_group_row })
         } else {
 
         }
@@ -551,7 +552,7 @@ export default class BoardTemplate extends Component {
         }
     }
     // 创建任务
-    createCard = async ({ list_id, start_time, end_time }) => {
+    createCard = async ({ list_id, start_time, end_time, belong_group_row }) => {
         const { dispatch, gantt_board_id, group_view_type, gantt_board_list_id } = this.props
         if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE, gantt_board_id)) {
             message.warn(NOT_HAS_PERMISION_COMFIRN)
@@ -572,10 +573,13 @@ export default class BoardTemplate extends Component {
                 params.users = list_id
             }
         }
+        if (ganttIsSingleBoardGroupView({ gantt_board_id, group_view_type })) {
+            params.row = belong_group_row
+        }
         // console.log('sssssparams', params)
         const res = await createCardByTemplate({ ...params })
         if (isApiResponseOk(res)) {
-            this.props.insertTaskToListGroup && this.props.insertTaskToListGroup(res.data) //创建任务后，返回的数据手动插入
+            this.props.insertTaskToListGroup && this.props.insertTaskToListGroup({ ...params, ...res.data }) //创建任务后，返回的数据手动插入
         } else {
             message.error(res.message)
         }
@@ -911,9 +915,9 @@ function mapStateToProps({
             gantt_view_mode,
             triggle_request_board_template,
             gantt_board_list_id,
-            ceilWidth, 
-            group_list_area_section_height = [], 
-            date_arr_one_level = [], 
+            ceilWidth,
+            group_list_area_section_height = [],
+            date_arr_one_level = [],
             list_group = []
         }
     },
@@ -930,9 +934,9 @@ function mapStateToProps({
         gantt_view_mode,
         triggle_request_board_template,
         gantt_board_list_id,
-        ceilWidth, 
-        group_list_area_section_height, 
-        date_arr_one_level, 
+        ceilWidth,
+        group_list_area_section_height,
+        date_arr_one_level,
         list_group
     }
 }
