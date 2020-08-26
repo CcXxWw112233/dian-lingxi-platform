@@ -4,7 +4,7 @@ import indexStyles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import AvatarList from '@/components/avatarList'
 import CheckItem from '@/components/CheckItem'
-import { getXYDropPosition, getDropListPosition } from './ganttBusiness'
+import { getXYDropPosition, getDropListPosition, onChangeCardHandleCardDetail } from './ganttBusiness'
 import { connect } from 'dva'
 import { updateTaskVTwo } from '../../../../services/technological/task'
 import { isApiResponseOk } from '../../../../utils/handleResponseData'
@@ -62,6 +62,18 @@ export default class GroupListHeadDragNoTimeDataItem extends Component {
     })
   }
 
+  // 拖拽完成后，修改成功，在弹出右方详情页的情况下，作比较更新
+  onChangeTimeHandleCardDetail = (props) => {
+    const { card_detail_id, selected_card_visible, parent_card_id, dispatch } = props
+    onChangeCardHandleCardDetail({
+      card_detail_id, //来自任务详情的id
+      selected_card_visible, //任务详情弹窗是否弹开
+      dispatch,
+      operate_id: card_detail_id, //当前操作的id
+      operate_parent_card_id: parent_card_id, //当前操作的任务的父任务id
+    })
+  }
+
   // 处理document的drag事件
   listenDrag = () => {
     // const that = this
@@ -99,7 +111,6 @@ export default class GroupListHeadDragNoTimeDataItem extends Component {
     if (!event.target) return
     if (!event.target.className) return
     if (this.curret_panel != 'list_no_time_data') return
-    console.log(this.curret_panel);
     // 只有在分组视图以及日视图下
     const { gantt_view_mode, group_view_type, itemValue: { id } } = this.props
     if (gantt_view_mode != 'month' && group_view_type != '1') return
@@ -112,6 +123,7 @@ export default class GroupListHeadDragNoTimeDataItem extends Component {
         const { id, list_id: group_id, board_id, parent_card_id } = itemValue
         // 得到下落的分组位置
         let { group_list_index, belong_group_row } = getDropListPosition({ group_list_area_section_height, position_top: y - 24 })
+        console.log(group_list_index);
         // 获取下落的日期位置
         let date_position = parseInt(x / ceilWidth)
         let { timestamp, timestampEnd } = date_arr_one_level[date_position]
@@ -131,7 +143,7 @@ export default class GroupListHeadDragNoTimeDataItem extends Component {
                 due_time: timestampEnd
               }
             })
-            // this.onChangeTimeHandleCardDetail()
+            this.onChangeTimeHandleCardDetail({card_detail_id: id, selected_card_visible, parent_card_id: '', dispatch})
             this.curret_panel = ''
             this.setState({
               currentOperateDragElement: ''

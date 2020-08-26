@@ -178,7 +178,9 @@ export default class Technological extends React.Component {
   handleCancelWarning = () => {
     let warningElement = document.getElementById('notYet_reminder_container')
     let pageElement = document.getElementById('technologicalLayoutWrapper')
-    warningElement.style.display = 'none'
+    if (warningElement) {
+      warningElement.style.display = `none`
+    }
     pageElement.style.filter = 'none'
   }
 
@@ -322,6 +324,7 @@ export default class Technological extends React.Component {
     return layout
   }
   render() {
+    let warining = localStorage.getItem('lingxi.skip_mobile_warning')
     return (
       <LocaleProvider locale={zh_CN}>
         {/*minWidth:1440, */}
@@ -330,7 +333,7 @@ export default class Technological extends React.Component {
           <Suspense fallback={<div></div>}>
             <UpdateLog />
             <UploadNotification />
-            {this.renderNotYetSupportEquipment()}
+            {warining != '1' && this.renderNotYetSupportEquipment()}
           </Suspense>
         </>
       </LocaleProvider >
