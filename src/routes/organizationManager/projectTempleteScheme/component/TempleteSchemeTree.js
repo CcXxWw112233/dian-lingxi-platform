@@ -1122,12 +1122,12 @@ export default class TempleteSchemeTree extends Component {
           type == '1' ? (
             <Menu.Item key={'insert_task'}>新建{currentNounPlanFilterName(TASKS)}</Menu.Item>
           ) : (
-          <Menu.Item key={'insert_task'}>新建同级{currentNounPlanFilterName(TASK)}</Menu.Item>
+          <Menu.Item key={'insert_task'}>新建同级{currentNounPlanFilterName(TASKS)}</Menu.Item>
             )
         }
         {
           type == '2' && (!flag) && (
-            <Menu.Item disabled={flag} key={'add_sub_task'}>新建子{currentNounPlanFilterName(TASK)}</Menu.Item>
+            <Menu.Item disabled={flag} key={'add_sub_task'}>新建子{currentNounPlanFilterName(TASKS)}</Menu.Item>
           )
         }
         {
