@@ -14,3 +14,11 @@ export const diffClientInitToken = (token) => {
         return window.mapAndroid.obtainToken(token)
     }
 }
+
+// 不同客户端跳转方法
+export const diffClientRedirect = (token) => {
+    if (!ENV_ANDROID_APP) return
+    if (typeof window.mapAndroid.refreshRedirect == 'function') {
+        return window.mapAndroid.refreshRedirect(token)
+    }
+}

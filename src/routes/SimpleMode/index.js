@@ -28,7 +28,7 @@ class SimpleMode extends Component {
 
   // 用户信息请求完成后才显示
   setShowByUserInfo = (props) => {
-    const { userInfo: { id, user_set = {} } } = props
+    const { userInfo: { id, user_set = {} }, currentSelectedProjectOrgIdByBoardId } = props
     const { dispatch } = this.props
     const { current_org, current_board_id, current_board_name, current_board_belong_org } = user_set
     if (id) {
@@ -56,7 +56,8 @@ class SimpleMode extends Component {
             id: current_board_id
           }
         })
-        setBoardIdStorage(current_board_id, current_board_belong_org)
+        //orgid优先取用户更新的
+        setBoardIdStorage(current_board_id, currentSelectedProjectOrgIdByBoardId || current_board_belong_org)
         setTimeout(() => {
           this.setState({
             show: true
@@ -202,7 +203,7 @@ export default connect(({
     currentUserWallpaperContent,
   },
   technological: {
-    datas: { userInfo },
+    datas: { userInfo, currentSelectedProjectOrgIdByBoardId },
   },
   organizationManager: {
     datas: {
@@ -216,5 +217,6 @@ export default connect(({
   leftMainNavVisible,
   currentUserWallpaperContent,
   userInfo,
-  currentNounPlan
+  currentNounPlan,
+  currentSelectedProjectOrgIdByBoardId
 }))(SimpleMode)

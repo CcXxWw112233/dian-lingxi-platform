@@ -654,7 +654,7 @@ export default class GetRowGanttItem extends Component {
                                   data-targetclassname="specific_example_milestone"
                                   style={{
                                     top: this.setMiletonesNamesPostionTop(),
-                                    maxWidth: this.setMiletonesNamesWidth(timestampEnd) - 30,
+                                    // maxWidth: this.setMiletonesNamesWidth(timestampEnd) - 30,
                                     color: this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized }),
                                     left: ceilWidth * day + 10 - day,
                                   }}>
