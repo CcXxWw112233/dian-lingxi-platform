@@ -4,6 +4,8 @@ import indexStyles from '../../index.less'
 import { TreeSelect, Button } from 'antd'
 import { connect } from 'dva'
 import { resetGanttScrollTop } from '../../ganttBusiness'
+import { currentNounPlanFilterName } from '../../../../../../utils/businessFunction'
+import { PROJECTS, MEMBERS } from '../../../../../../globalset/js/constant'
 
 const { SHOW_PARENT } = TreeSelect;
   
@@ -93,7 +95,7 @@ export default class ContentFilter extends Component {
                 dropdownClassName={`${indexStyles.treeSelectDropDown} ${globalStyles.global_vertical_scrollbar}`}
                 style={{ width: '100%' }}
                 searchValue={''}
-                searchPlaceholder={`选择${ treeType == 'boards'? '项目': '成员'}`}
+                searchPlaceholder={`选择${ treeType == 'boards'? `${currentNounPlanFilterName(PROJECTS)}` : `${currentNounPlanFilterName(MEMBERS)}` }`}
                 onChange={(value) => this.handleTreeSelectChange({treeType}, value)} />
         )
     }
@@ -102,7 +104,7 @@ export default class ContentFilter extends Component {
             <div className={indexStyles.filter_item}>
                 <div className={indexStyles.filter_item_top}>
                     <div className={indexStyles.filter_item_title}>
-                        {treeType == 'boards'? '项目': '成员'}
+                        {treeType == 'boards'? `${currentNounPlanFilterName(PROJECTS)}`: `${currentNounPlanFilterName(MEMBERS)}`}
                     </div>
                     <div className={`${indexStyles.filter_item_reset} ${globalStyles.link_mouse}`} onClick={() => this.resetTreeSelected({ treeType })}>重置</div>
                 </div>

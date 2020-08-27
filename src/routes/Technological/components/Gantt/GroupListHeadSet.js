@@ -6,8 +6,8 @@ import { connect } from 'dva'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { afterCreateBoardUpdateGantt } from './ganttBusiness';
 import CreateProject from './../Project/components/CreateProject/index';
-import { checkIsHasPermission, selectBoardToSeeInfo, setBoardIdStorage } from '../../../../utils/businessFunction'
-import { ORG_TEAM_BOARD_CREATE } from '../../../../globalset/js/constant'
+import { checkIsHasPermission, selectBoardToSeeInfo, setBoardIdStorage, currentNounPlanFilterName } from '../../../../utils/businessFunction'
+import { ORG_TEAM_BOARD_CREATE, PROJECTS } from '../../../../globalset/js/constant'
 import { ganttIsOutlineView } from './constants'
 
 @connect(mapStateToProps)
@@ -205,7 +205,7 @@ export default class GroupListHeadSet extends Component {
                                 </div>
                             </Tooltip>
 
-                            <Tooltip title={gantt_board_id == '0' ? '项目视图' : '分组视图'}>
+                            <Tooltip title={gantt_board_id == '0' ? `${currentNounPlanFilterName(PROJECTS)}视图` : '分组视图'}>
                                 <div
                                     style={{
                                         borderRadius: gantt_board_id == '0' ? '4px 0 0 4px' : '0 4px 4px 0'

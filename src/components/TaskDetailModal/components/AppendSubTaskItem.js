@@ -17,6 +17,8 @@ import UploadAttachment from '../../UploadAttachment'
 import { deleteTaskFile } from '../../../services/technological/task'
 import { getSubfixName } from "@/utils/businessFunction";
 import { rebackCreateNotify } from '../../NotificationTodos'
+import { currentNounPlanFilterName } from '../../../utils/businessFunction'
+import { TASKS } from '../../../globalset/js/constant'
 
 @connect(({ publicTaskDetailModal: { drawContent = {} } }) => ({
   drawContent
@@ -671,8 +673,8 @@ export default class AppendSubTaskItem extends Component {
                         <div title={'上传交付物'} className={`${appendSubTaskStyles.sub_upload} ${globalStyles.authTheme}`}>&#xe606;</div>
                       </UploadAttachment>
                       {/* </Tooltip> */}
-                      <Popconfirm getPopupContainer={triggerNode => triggerNode.parentNode} onConfirm={() => { this.deleteConfirm({ card_id, childDataIndex }) }} title={'删除该子任务？'} placement={'topRight'}>
-                        <div title={'删除子任务'} className={`${appendSubTaskStyles.del_icon}`}>
+                      <Popconfirm getPopupContainer={triggerNode => triggerNode.parentNode} onConfirm={() => { this.deleteConfirm({ card_id, childDataIndex }) }} title={`删除该子${currentNounPlanFilterName(TASKS)}？`} placement={'topRight'}>
+                        <div title={`删除子${currentNounPlanFilterName(TASKS)}`} className={`${appendSubTaskStyles.del_icon}`}>
                           <span className={`${globalStyles.authTheme}`}>&#xe7c3;</span>
                         </div>
                       </Popconfirm>
