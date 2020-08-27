@@ -281,7 +281,7 @@ class FeatureBox extends Component {
   }
 
   renderBoxItem = (item, isPaymentUser) => {
-    const { projectList = [], simplemodeCurrentProject = {} } = this.props
+    const { projectList = [], simplemodeCurrentProject = {}, currentNounPlan } = this.props
     let tipTitle;
     let isDisabled = this.getIsDisabled(item);
     if (isDisabled) {
@@ -309,7 +309,6 @@ class FeatureBox extends Component {
 
     const renderNounPlanBox = (item) => {
       const { code, name } = item
-      const { currentNounPlan } = this.props
       let dec = ''
       switch (code) {
         case 'board:plans':

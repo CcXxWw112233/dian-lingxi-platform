@@ -1,20 +1,12 @@
 import request from '../../utils/requestAxios'
 import { REQUEST_DOMAIN } from '../../globalset/js/constant'
-import { ENV_ANDROID_APP } from '../../globalset/clientCustorm';
 
 //注册
 export async function formSubmit(data) {
-  let params = {...data}
-  if (ENV_ANDROID_APP) {
-    params = {
-      ...data,
-      register_origin: '2'
-    }
-  }
   return request({
     url: `${REQUEST_DOMAIN}/user/signup`,
     method: 'POST',
-    data: params,
+    data: data
   });
 }
 

@@ -6,6 +6,7 @@ import { INPUT_CHANGE_SEARCH_TIME } from '../../../../globalset/js/constant'
 import { getSearchOrganizationList } from '../../../../services/technological/organizationMember'
 import CustormModal from '../../../../components/CustormModal'
 import { isApiResponseOk } from '../../../../utils/handleResponseData'
+import { ENV_ANDROID_APP } from '../../../../globalset/clientCustorm'
 
 
 const Option = Select.Option
@@ -130,11 +131,18 @@ class CreateOrganizationModal extends React.Component {
           // this.props.applyJoinOrganization({org_id, remarks: values['remarks']})
         }else if(operateType === '1') {
           // 新创建的组织未付费, 需要跳转至极简模式
+          let params = {...values}
+          if (ENV_ANDROID_APP) {
+            params = {
+              ...values,
+              apply_scenes: '1'
+            }
+          }
           Promise.resolve(
             dispatch({
               type: 'technological/createOrganization',
               payload: {
-                ...values
+                ...params
               }
             })
           ).then(res => {

@@ -1,7 +1,6 @@
 import request from '../../utils/requestAxios'
 import { REQUEST_DOMAIN, REQUEST_DOMAIN_BOARD, REQUEST_INTERGFACE_VERSIONN } from '../../globalset/js/constant'
 import Cookies from 'js-cookie'
-import { ENV_ANDROID_APP } from '../../globalset/clientCustorm';
 
 //创建分组
 export async function CreateGroup(data) {
@@ -206,17 +205,10 @@ export async function getSearchOrganizationList(params) {
 
 //创建组织
 export async function createOrganization(data) {
-  let params = {...data}
-  if (ENV_ANDROID_APP) {
-    params = {
-      ...data,
-      apply_scenes: '1'
-    }
-  }
   return request({
     url: `${REQUEST_DOMAIN}/organization`,
     method: 'POST',
-    data: params
+    data
   });
 }
 

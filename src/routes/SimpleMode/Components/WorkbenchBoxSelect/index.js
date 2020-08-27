@@ -5,6 +5,8 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import { Icon, message, Tooltip, Button } from 'antd';
 import { isColor } from '@/utils/util'
 import { changeBoxFeatureName } from "../../../../utils/temporary";
+import { BOARD_PLANS, BOARD_CHAT, BOARD_FILES } from "../../../../globalset/js/constant";
+import { currentNounPlanFilterName } from "../../../../utils/businessFunction";
 
 const WorkbenchBoxSelect = (props) => {
   const { dispatch, workbenchBoxList = [], myWorkbenchBoxList = [] } = props;
@@ -105,6 +107,26 @@ const WorkbenchBoxSelect = (props) => {
     }
     return contain
   }
+  const renderNounPlanBox = (item) => {
+    const { code, name } = item
+    const { currentNounPlan, simplemodeCurrentProject = {} } = props
+    let dec = ''
+    switch (code) {
+      case 'board:plans':
+        dec = currentNounPlanFilterName(BOARD_PLANS, currentNounPlan)
+        break;
+      case 'board:chat':
+        dec = currentNounPlanFilterName(BOARD_CHAT, currentNounPlan)
+        break;
+      case 'board:files':
+        dec = currentNounPlanFilterName(BOARD_FILES, currentNounPlan)
+        break;
+      default:
+        dec = changeBoxFeatureName({ board_id: simplemodeCurrentProject.board_id, noun: name })
+        break;
+    }
+    return dec
+  }
   const renderBoxItem = (boxItem, isSelected) => {
     const { simplemodeCurrentProject = {} } = props
     return (
@@ -114,7 +136,7 @@ const WorkbenchBoxSelect = (props) => {
           {renderIconSVG(boxItem.code)}
         </div>
         <div>
-          <span className={indexStyles.workbenchBox_title}>{changeBoxFeatureName({ board_id: simplemodeCurrentProject.board_id, noun: boxItem.name })}</span>
+          <span className={indexStyles.workbenchBox_title}>{renderNounPlanBox(boxItem)}</span>
         </div>
         {isSelected && (
           <span>
@@ -165,4 +187,10 @@ export default connect(({
   simplemode: { workbenchBoxList, myWorkbenchBoxList, currentUserWallpaperContent, simplemodeCurrentProject },
   technological: {
     datas: { userInfo }
-  } }) => ({ workbenchBoxList, myWorkbenchBoxList, currentUserWallpaperContent, userInfo, simplemodeCurrentProject }))(WorkbenchBoxSelect)
+  },
+  organizationManager: {
+    datas: {
+        currentNounPlan
+    }
+  } 
+}) => ({ workbenchBoxList, myWorkbenchBoxList, currentUserWallpaperContent, userInfo, simplemodeCurrentProject, currentNounPlan }))(WorkbenchBoxSelect)

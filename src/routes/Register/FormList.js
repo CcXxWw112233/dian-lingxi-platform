@@ -7,6 +7,7 @@ import { validateTel, validateEmail, validatePassword } from '../../utils/verify
 import { message } from "antd";
 import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
 import sha256 from 'js-sha256'
+import { ENV_ANDROID_APP } from '../../globalset/clientCustorm';
 
 const FormItem = Form.Item;
 
@@ -84,6 +85,10 @@ class FormList extends React.Component {
         }
         if (values['password']) {
           values['password'] = sha256(values['password'])
+        }
+        // 表示是否是安卓端登录
+        if (ENV_ANDROID_APP) {
+          values['register_origin'] = '2'
         }
         this.props.formSubmit ? this.props.formSubmit(values) : false
       }
