@@ -29,7 +29,7 @@ import { updateFlowInstanceNameOrDescription } from '../../../../services/techno
 import SaveBoardTemplate from './components/Modal/SaveBoardTemplate'
 import { task_item_margin_top } from './constants';
 import { currentNounPlanFilterName } from '../../../../utils/businessFunction';
-import { PROJECTS } from '../../../../globalset/js/constant';
+import { PROJECTS, TASKS } from '../../../../globalset/js/constant';
 import { closeFeature } from '../../../../utils/temporary';
 import { onChangeCardHandleCardDetail } from './ganttBusiness';
 import { rebackCreateNotify } from '../../../../components/NotificationTodos';
@@ -661,9 +661,9 @@ export default class OutLineHeadItem extends Component {
                                     nodeValue={item}
                                     type={'2'}
                                     onHover={this.onHover}
-                                    placeholder={parentNode && parentNode.tree_type == '2' ? '新建子任务' : '新建任务'}
+                                    placeholder={parentNode && parentNode.tree_type == '2' ? `新建子${currentNounPlanFilterName(TASKS)}` : `新建${currentNounPlanFilterName(TASKS)}`}
                                     icon={<span className={`${styles.addTaskNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}
-                                    label={<span className={styles.addTask}>{parentNode && parentNode.tree_type == '2' ? '新建子任务' : '新建任务'}</span>} key={`addTask_${item.index}`}>
+                                    label={<span className={styles.addTask}>{parentNode && parentNode.tree_type == '2' ? `新建子${currentNounPlanFilterName(TASKS)}` : `新建${currentNounPlanFilterName(TASKS)}`}</span>} key={`addTask_${item.index}`}>
                                 </TreeNode>
                             );
                         }
