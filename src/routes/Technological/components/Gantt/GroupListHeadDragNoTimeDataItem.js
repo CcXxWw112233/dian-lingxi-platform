@@ -141,7 +141,7 @@ export default class GroupListHeadDragNoTimeDataItem extends Component {
         // return
         updateTaskVTwo({ card_id: id, list_id: list_id || '0', due_time: timestampEnd, start_time: timestamp, board_id: board_id || gantt_board_id, row: belong_group_row }, { isNotLoading: false }).then(res => {
           if (isApiResponseOk(res)) {
-            rebackCreateNotify.call(this, { res, id, board_id, group_view_type, dispatch, parent_card_id, card_detail_id: id, selected_card_visible })
+            // rebackCreateNotify.call(this, { res, id, board_id, group_view_type, dispatch, parent_card_id, card_detail_id: id, selected_card_visible })
             const updateData = {}
             updateData.start_time = timestamp //!is_has_start_time ? '' : parseInt(start_time_timestamp)
             updateData.due_time = due_time
