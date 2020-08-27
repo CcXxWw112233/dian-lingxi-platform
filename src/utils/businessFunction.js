@@ -3,6 +3,7 @@ import { NORMAL_NOUN_PLAN, CONTENT_DATA_TYPE_FILE } from '../globalset/js/consta
 import { get } from 'https';
 import { Base64 } from 'js-base64';
 import moment from 'moment';
+import { validOnlyNumber } from './verify';
 
 // 权限的过滤和存储在technological下
 // 权限分为全组织和确定组织下
@@ -293,6 +294,7 @@ export const setRequestHeaderBaseInfo = ({ data, params, headers }) => {
   if (data['boardId'] || params['boardId'] || data['board_id'] || params['board_id']) {
     header_base_info_board_id = data['boardId'] || params['boardId'] || data['board_id'] || params['board_id']
   }
+  header_base_info_board_id = validOnlyNumber(header_base_info_board_id) ? header_base_info_board_id : '0'
 
   const header_base_info = Object.assign({
     orgId: header_base_info_orgid,

@@ -55,5 +55,9 @@ export const validateTwoDecimal = (value) => {
   return (/^(\-|\d+)\.\d{2}$/).test(value)
 }
 
+//纯数据
+export const validOnlyNumber = (value) => {
+  return (/^\d+$/).test(value)
+}
 
 
