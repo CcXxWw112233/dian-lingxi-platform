@@ -367,7 +367,8 @@ export default class ContainerWithIndexUI extends Component {
               </div>
               <div className={indexStyles.panel_detail}>
                 <span>类型：{categoryIcon(field_type).field_name}</span>
-                <span>被引用次数：{quote_num} 次 <em onClick={(e) => { this.handleCustomQuoteDetail(e, id) }}>详情</em></span>
+                {/* <span>被引用次数：{quote_num} 次 <em onClick={(e) => { this.handleCustomQuoteDetail(e, id) }}>详情</em></span> */}
+                <span><em onClick={(e) => { this.handleCustomQuoteDetail(e, id) }}>引用详情</em></span>
                 <span>创建人：{getCreateUser()}</span>
                 <span>状态: <span style={{ color: field_status == '1' && '#F5222D' }}>{field_status == '0' ? '启用' : '停用'}</span></span>
               </div>
