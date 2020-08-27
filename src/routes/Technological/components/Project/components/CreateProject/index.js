@@ -122,7 +122,7 @@ class CreateProject extends React.Component {
       params = Object.assign(params, { _organization_id })
       if (!_organization_id || _organization_id == '0') return
     }
-
+    if (!params._organization_id) return
     getAppsList(params).then(res => {
       if (isApiResponseOk(res)) {
         this.setState({

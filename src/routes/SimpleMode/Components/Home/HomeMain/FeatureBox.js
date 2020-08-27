@@ -77,7 +77,8 @@ class FeatureBox extends Component {
       payload: {}
     })
 
-    if (localStorage.getItem('OrganizationId') !== "0") {
+    const OrgID = localStorage.getItem('OrganizationId')
+    if (!!OrgID && OrgID !== "0") {
       dispatch({
         type: 'organizationManager/getFnManagementList',
         payload: {
@@ -368,7 +369,7 @@ class FeatureBox extends Component {
     } else {
       isPaymentUser = isPaymentOrgUser();
     }
-    
+
     return (
 
       <div className={indexStyles.mainContentWapper}>
@@ -415,9 +416,9 @@ export default connect(
     },
     organizationManager: {
       datas: {
-          currentNounPlan
+        currentNounPlan
       }
-    } 
+    }
   }) => ({
     projectList,
     myWorkbenchBoxList,
