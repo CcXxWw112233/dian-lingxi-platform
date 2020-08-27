@@ -23,10 +23,12 @@ import moment from 'moment';
 //设置 和 获取全局属性里面的数据
 global.globalData = {}
 export const setGlobalData = (name, value) => {
-  global.globalData[name] = value
+  window.sessionStorage.setItem(name, value)
+  // global.globalData[name] = value
 }
 export const getGlobalData = (name) => {
-  return global.globalData[name]
+  return window.sessionStorage.getItem(name)
+  // return global.globalData[name]
 }
 
 export const checkIsHasPermission = (code, param_org_id) => {

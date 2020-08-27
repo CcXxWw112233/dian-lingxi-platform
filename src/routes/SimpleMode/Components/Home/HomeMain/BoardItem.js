@@ -41,7 +41,7 @@ export default class BoardItem extends Component {
     onSelectBoard = (board_id, org_id) => {
         const { projectList, dispatch, simplemodeCurrentProject: { selected_board_term } } = this.props
         const selectBoard = projectList.filter(item => item.board_id === board_id);
-        const selectOrgId = getOrgIdByBoardId(board_id)
+        const selectOrgId = org_id || getOrgIdByBoardId(board_id)
         if (!selectBoard && selectBoard.length == 0) {
             message.error('数据异常，请刷新后重试');
             return;
@@ -88,7 +88,7 @@ export default class BoardItem extends Component {
                 board_id: board_id
             }
         })
-        selectBoardToSeeInfo({ board_id: selectBoard[0] && selectBoard[0].board_id, board_name: selectBoard[0] && selectBoard[0].board_name, dispatch, selected_board_term })
+        selectBoardToSeeInfo({ board_id: selectBoard[0] && selectBoard[0].board_id, org_id, board_name: selectBoard[0] && selectBoard[0].board_name, dispatch, selected_board_term })
 
     }
 
