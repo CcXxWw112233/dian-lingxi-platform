@@ -9,8 +9,11 @@ import { getUSerInfo } from "../../services/technological";
 import { selectLoginCaptchaKey } from './selects'
 import { getModelIsImport } from '../utils';
 import { createDefaultOrg } from '../../services/technological/noviceGuide';
-import { diffClientInitToken } from '../../globalset/clientCustorm';
+import { diffClientInitToken, diffClientRedirect } from '../../globalset/clientCustorm';
+import queryString from 'query-string';
+
 let redirectLocation
+let redirect_by_env_provider = null //由端能力提供的跳转方法（webview）
 const clearAboutLocalstorage = () => { //清掉当前相关业务逻辑的用户数据
   const names_arr = [
     'OrganizationId',
@@ -41,7 +44,11 @@ export default {
         message.destroy()
         if (location.pathname === '/login') {
           Cookies.set('is401', false, { expires: 30, path: '' })
-          redirectLocation = location.search.replace('?redirect=', '')
+          // redirectLocation = location.search.replace('?redirect=', '')
+          const urlParam = queryString.parse(location.search)
+          redirectLocation = urlParam.redirectLocation
+          redirect_by_env_provider = urlParam.redirect_by_env_provider
+
           dispatch({
             type: 'updateDatas',
             payload: {
@@ -142,6 +149,11 @@ export default {
 
       diffClientInitToken(Cookies.get('Authorization'))
 
+      if (redirect_by_env_provider) { //由端能力自己提供跳转，当这个参数存在的时候，不允许前端主动跳转，操作由第三方提供的能力
+        diffClientRedirect(tokenArray[0])
+        return
+      }
+      //普通登录跳转
       yield put({
         type: 'loginRouteJump',
         payload: {}
