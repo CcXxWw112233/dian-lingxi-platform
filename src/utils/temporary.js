@@ -30,9 +30,10 @@ export const changeBoxFeatureName = ({ board_id, noun }) => {
  */
 export const closeFeature = ({ board_id, currentUserOrganizes = [] }) => {
     if (!board_id) return true
-    if (!!(currentUserOrganizes && currentUserOrganizes.length)) return true
+    let local_userOrganizes = !!(currentUserOrganizes && currentUserOrganizes.length) ?  currentUserOrganizes : localStorage.getItem('currentUserOrganizes') ? JSON.parse(localStorage.getItem('currentUserOrganizes')) 
+    || [] : []
    const org_id = getOrgIdByBoardId(board_id) || localStorage.getItem('OrganizationId')
-   const { apply_scenes } = currentUserOrganizes.find(i => i.id == org_id) || {}
+   const { apply_scenes } = local_userOrganizes.find(i => i.id == org_id) || {}
    if (apply_scenes == '0') {
        return false
    } else if (apply_scenes == '1') {
