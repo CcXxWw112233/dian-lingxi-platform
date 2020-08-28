@@ -284,10 +284,11 @@ export default class ContainerWithIndexUI extends Component {
         message.error('字段被引用中，无法删除')
         return
       }
-    } else if (item.quote_num != 0) {
-      message.error('字段被引用中，无法删除')
-      return
-    }
+    } 
+    // else if (item.quote_num != 0) {
+    //   message.error('字段被引用中，无法删除')
+    //   return
+    // }
     this.deleteConfirm({ item, type })
   }
 
