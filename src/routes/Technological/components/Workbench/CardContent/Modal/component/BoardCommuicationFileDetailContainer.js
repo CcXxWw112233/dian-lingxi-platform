@@ -10,7 +10,7 @@ import { isApiResponseOk } from '@/utils/handleResponseData'
 import { FILES, MESSAGE_DURATION_TIME, PROJECT_FILES_FILE_UPDATE } from '@/globalset/js/constant'
 import { currentNounPlanFilterName, getOrgNameWithOrgIdFilter, checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl, getSubfixName } from '@/utils/businessFunction.js'
 import { message } from 'antd'
-const { LingxiIm, Im } = global.constants
+import { Im, lx_utils } from 'lingxi-im'
 
 @connect(mapStateToProps)
 export default class BoardCommuicationFileDetailContainer extends Component {
@@ -23,18 +23,18 @@ export default class BoardCommuicationFileDetailContainer extends Component {
     }
   }
 
-    // 获取所有版本列表的IDS
-    getEveryVersionListIds = () => {
-      const { filePreviewCurrentVersionList = [] } = this.state
-      let Ids = []
-      let new_filePreviewCurrentVersionList = [...filePreviewCurrentVersionList]
-      new_filePreviewCurrentVersionList.map(item => {
-        Ids.push(item.id)
-      })
-      return Ids
-    }
+  // 获取所有版本列表的IDS
+  getEveryVersionListIds = () => {
+    const { filePreviewCurrentVersionList = [] } = this.state
+    let Ids = []
+    let new_filePreviewCurrentVersionList = [...filePreviewCurrentVersionList]
+    new_filePreviewCurrentVersionList.map(item => {
+      Ids.push(item.id)
+    })
+    return Ids
+  }
 
-      // 获取当前预览文件的版本ID
+  // 获取当前预览文件的版本ID
   getCurrentFilePreviewVersionId = () => {
     const { filePreviewCurrentVersionList = [], filePreviewCurrentFileId } = this.state
     let versionId = ''
@@ -56,7 +56,7 @@ export default class BoardCommuicationFileDetailContainer extends Component {
     // this.props.setPreviewFileModalVisibile && this.props.setPreviewFileModalVisibile()
     let all_version_list_Ids = this.getEveryVersionListIds()
     let currentPreviewFileVersionId = this.getCurrentFilePreviewVersionId()
-    global.constants.lx_utils && global.constants.lx_utils.setCommentData(currentPreviewFileVersionId || (all_version_list_Ids && all_version_list_Ids.length) && all_version_list_Ids || this.props.filePreviewCurrentFileId || null)
+    lx_utils && lx_utils.setCommentData(currentPreviewFileVersionId || (all_version_list_Ids && all_version_list_Ids.length) && all_version_list_Ids || this.props.filePreviewCurrentFileId || null)
     let workbenchBoxContentWapperModalStyle = { width: '100%' }
     this.props.dispatch({
       type: 'simplemode/updateDatas',
@@ -87,10 +87,10 @@ export default class BoardCommuicationFileDetailContainer extends Component {
     const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
     const { is_simple_model } = user_set;
     if (!data) {
-      global.constants.lx_utils && global.constants.lx_utils.setCommentData(null) 
+      lx_utils && lx_utils.setCommentData(null)
       return false
     }
-    global.constants.lx_utils && global.constants.lx_utils.setCommentData({...data})
+    lx_utils && lx_utils.setCommentData({ ...data })
     if (is_simple_model == '1') {
       const width = document.body.scrollWidth;
       let workbenchBoxContentWapperModalStyle = { width: (width - 400) + 'px' }
@@ -109,7 +109,7 @@ export default class BoardCommuicationFileDetailContainer extends Component {
     let currentPreviewFileVersionId = this.getCurrentFilePreviewVersionId()
     if (isApiResponseOk(res)) {
       this.initStateDatas({ data: res.data })
-      let flag = checkIsHasPermissionInVisitControl('edit', res.data.base_info.privileges, res.data.base_info.is_privilege,[], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, res.data.base_info.board_id))
+      let flag = checkIsHasPermissionInVisitControl('edit', res.data.base_info.privileges, res.data.base_info.is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, res.data.base_info.board_id))
       if (flag) {
         await this.getFilePDFInfo({ id, calback })
       }
@@ -119,7 +119,7 @@ export default class BoardCommuicationFileDetailContainer extends Component {
       message.warn(res.message, MESSAGE_DURATION_TIME)
       setTimeout(() => {
         this.props.hideUpdatedFileDetail && this.props.hideUpdatedFileDetail()
-        global.constants.lx_utils && global.constants.lx_utils.setCommentData(currentPreviewFileVersionId || id || null)
+        lx_utils && lx_utils.setCommentData(currentPreviewFileVersionId || id || null)
       }, 200)
     }
   }
@@ -146,7 +146,7 @@ export default class BoardCommuicationFileDetailContainer extends Component {
         message.warn(res.message)
         setTimeout(() => {
           this.props.hideUpdatedFileDetail && this.props.hideUpdatedFileDetail()
-          global.constants.lx_utils && global.constants.lx_utils.setCommentData(currentPreviewFileVersionId || id || null)
+          lx_utils && lx_utils.setCommentData(currentPreviewFileVersionId || id || null)
         }, 200)
       }
     })
@@ -163,7 +163,7 @@ export default class BoardCommuicationFileDetailContainer extends Component {
         let currentPreviewFileVersionId = this.getCurrentFilePreviewVersionId()
         setTimeout(() => {
           this.props.hideUpdatedFileDetail && this.props.hideUpdatedFileDetail()
-          global.constants.lx_utils && global.constants.lx_utils.setCommentData(currentPreviewFileVersionId || id || null)
+          lx_utils && lx_utils.setCommentData(currentPreviewFileVersionId || id || null)
         }, 500)
       }
     })
@@ -185,7 +185,7 @@ export default class BoardCommuicationFileDetailContainer extends Component {
       this.getCurrentFilePreviewData({ id: filePreviewCurrentFileId })
       let that = this
       if (Im) {
-        Im.on('fileCancel',function({id}){
+        Im.on('fileCancel', function ({ id }) {
           if (id == that.props.filePreviewCurrentFileId) {
             that.onCancel()
           }
@@ -204,7 +204,7 @@ export default class BoardCommuicationFileDetailContainer extends Component {
       let currentPreviewFileVersionId = this.getCurrentFilePreviewVersionId()
       this.props.hideUpdatedFileDetail && this.props.hideUpdatedFileDetail()
       let all_version_list_Ids = this.getEveryVersionListIds()
-      global.constants.lx_utils && global.constants.lx_utils.setCommentData(currentPreviewFileVersionId || (all_version_list_Ids && all_version_list_Ids.length) && all_version_list_Ids || null) 
+      lx_utils && lx_utils.setCommentData(currentPreviewFileVersionId || (all_version_list_Ids && all_version_list_Ids.length) && all_version_list_Ids || null)
     }
   }
 
@@ -213,7 +213,7 @@ export default class BoardCommuicationFileDetailContainer extends Component {
       type: 'simplemode/updateDatas',
       payload: {
         chatImVisiable: false,
-        workbenchBoxContentWapperModalStyle: {width: '100%'}
+        workbenchBoxContentWapperModalStyle: { width: '100%' }
       }
     })
   }

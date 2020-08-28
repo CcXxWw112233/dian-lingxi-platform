@@ -1,7 +1,8 @@
-import LingxiIm, { lx_utils, Im } from 'lingxi-im'
+// import LingxiIm, { lx_utils, Im } from 'lingxi-im'
+// import { lx_utils } from 'lingxi-im'
 
-global.constants = {
-    lx_utils,
-    LingxiIm,
-    Im
-}
+// global.c_onstants = {
+//     lx_utils,
+//     LingxiIm,
+//     Im
+// }

@@ -20,7 +20,8 @@ import { checkIsHasPermissionInBoard, setBoardIdStorage, getGlobalData } from '.
 import { cursorMoveEnd } from './components/handleOperateModal'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import ProcessFile from './ProcessFile'
-const { LingxiIm, Im } = global.constants
+import { lx_utils } from 'lingxi-im'
+
 @connect(mapStateToProps)
 export default class MainContent extends Component {
   constructor(props) {
@@ -42,10 +43,10 @@ export default class MainContent extends Component {
     const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
     const { is_simple_model } = user_set;
     if (!data) {
-      global.constants.lx_utils && global.constants.lx_utils.setCommentData(null)
+      lx_utils && lx_utils.setCommentData(null)
       return false
     }
-    global.constants.lx_utils && global.constants.lx_utils.setCommentData({ ...data })
+    lx_utils && lx_utils.setCommentData({ ...data })
     if (is_simple_model == '1') {
       this.props.dispatch({
         type: 'simplemode/updateDatas',
@@ -108,7 +109,7 @@ export default class MainContent extends Component {
       flag = false
       return flag
     } else {
-      let curr_need_storage_node = (processInfo['nodes'] && processInfo['nodes'].length) && processInfo['nodes'].find(i=>(status == '1' || status == '2') && i.status == '1' && i.node_type == '1') || {}
+      let curr_need_storage_node = (processInfo['nodes'] && processInfo['nodes'].length) && processInfo['nodes'].find(i => (status == '1' || status == '2') && i.status == '1' && i.node_type == '1') || {}
       if (curr_need_storage_node.id == pro_info['nodes'][0].id) { // 如果缓存和当前正在进行的不相等 那么表示已经进行到别的节点了
         flag = true
       } else {
@@ -132,11 +133,11 @@ export default class MainContent extends Component {
         let nodesData = [...processInfo['nodes']]
         nodesData = nodesData.map(item => {
           if (item.id == nodes[0].id) {
-            let new_item = {...item, forms: nodes[0]['forms']}
+            let new_item = { ...item, forms: nodes[0]['forms'] }
             return new_item
           } else {
             if (item.status == '2') {
-              let new_item = {...item, is_confirm: '1'}
+              let new_item = { ...item, is_confirm: '1' }
               return new_item
             } else {
               return item
@@ -144,16 +145,16 @@ export default class MainContent extends Component {
           }
         })
         this.props.dispatch({
-          type:'publicProcessDetailModal/updateDatas',
+          type: 'publicProcessDetailModal/updateDatas',
           payload: {
-            processInfo: {...processInfo, nodes: nodesData},
+            processInfo: { ...processInfo, nodes: nodesData },
             processEditDatas: nodesData
           }
         })
       }
       return
     } else { // 设置缓存
-      let curr_need_storage_node = (processInfo['nodes'] && processInfo['nodes'].length) && processInfo['nodes'].find(i=>(status == '1' || status == '2') && i.status == '1' && i.node_type == '1') || {}
+      let curr_need_storage_node = (processInfo['nodes'] && processInfo['nodes'].length) && processInfo['nodes'].find(i => (status == '1' || status == '2') && i.status == '1' && i.node_type == '1') || {}
       // 这里只缓存资料收集节点 如果没有找到那么就不缓存 并且要将之前的内容清空
       if (!(curr_need_storage_node && Object.keys(curr_need_storage_node).length)) {
         let info = localStorage.getItem('userProcessWithNodesStatusStorage') ? JSON.parse(localStorage.getItem('userProcessWithNodesStatusStorage')) : {}
@@ -170,7 +171,7 @@ export default class MainContent extends Component {
         nodes: [curr_need_storage_node],
         user_id
       }
-      localStorage.setItem('userProcessWithNodesStatusStorage',JSON.stringify(obj))
+      localStorage.setItem('userProcessWithNodesStatusStorage', JSON.stringify(obj))
     }
   }
   // 更新缓存节点
@@ -178,7 +179,7 @@ export default class MainContent extends Component {
     // 这里是处理当缓存的节点与正在进行中的节点不一样的时候
     const { processInfo = {}, processInfo: { id, status } } = props
     const { id: user_id } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
-    let next_props_forms_data = (processInfo['nodes'] && processInfo['nodes'].length) && processInfo['nodes'].find(i=>(status == '1' || status == '2') && i.status == '1' && i.node_type == '1') || {}
+    let next_props_forms_data = (processInfo['nodes'] && processInfo['nodes'].length) && processInfo['nodes'].find(i => (status == '1' || status == '2') && i.status == '1' && i.node_type == '1') || {}
     next_props_forms_data.his_comments ? delete next_props_forms_data.his_comments : ''
     next_props_forms_data.complete_time ? delete next_props_forms_data.complete_time : ''
     if (!this.whetherIsUpdateDatasFromStorageToModel(props)) {
@@ -188,7 +189,7 @@ export default class MainContent extends Component {
         nodes: [next_props_forms_data],
         user_id
       }
-      localStorage.setItem('userProcessWithNodesStatusStorage',JSON.stringify(obj))
+      localStorage.setItem('userProcessWithNodesStatusStorage', JSON.stringify(obj))
     }
   }
   componentDidMount() {
@@ -949,13 +950,13 @@ export default class MainContent extends Component {
                 {not_show_create_node_guide != '1' && <ConfigureGuide />}
               </div>
             ) : (
-              <div id={'add_normal'}>
-                {/* <Tooltip getPopupContainer={() => document.getElementById('add_normal')} placement="topLeft" title="完成节点步骤才能添加"> */}
+                <div id={'add_normal'}>
+                  {/* <Tooltip getPopupContainer={() => document.getElementById('add_normal')} placement="topLeft" title="完成节点步骤才能添加"> */}
                   <div title="完成节点步骤才能添加" className={`${indexStyles.add_normal}`}>
                     <span className={`${globalStyles.authTheme}`}>&#xe8fe;</span>
                     {not_show_create_node_guide != '1' && <ConfigureGuide />}
                   </div>
-                {/* </Tooltip> */}
+                  {/* </Tooltip> */}
                 </div>
               )
           ) : (
@@ -1231,7 +1232,7 @@ export default class MainContent extends Component {
                 {
                   !isEditCurrentFlowInstanceDescription ? (
                     <div className={processPageFlagStep == '4' ? indexStyles.normal_flow_description : indexStyles.flow_description} onClick={processPageFlagStep == '4' ? '' : (e) => { this.handleChangeFlowInstanceDescription(e, '1') }}>
-                      <span style={{whiteSpace: 'pre-wrap'}}>
+                      <span style={{ whiteSpace: 'pre-wrap' }}>
                         {currentFlowInstanceDescription != '' ? currentFlowInstanceDescription : '添加描述'}
                         {
                           processPageFlagStep == '4' && (
@@ -1264,7 +1265,7 @@ export default class MainContent extends Component {
         </div>
         <div className={indexStyles.configure_bottom}>
           {
-            processPageFlagStep == '4' || ((processPageFlagStep == '1' || processPageFlagStep == '2') &&(processEditDatas && processEditDatas.length) && processEditDatas.find(item => item.is_edit == '0')) || processPageFlagStep == '3' ? (
+            processPageFlagStep == '4' || ((processPageFlagStep == '1' || processPageFlagStep == '2') && (processEditDatas && processEditDatas.length) && processEditDatas.find(item => item.is_edit == '0')) || processPageFlagStep == '3' ? (
               <>
                 {processEditDatas.map((value, key) => {
                   return (
@@ -1354,7 +1355,7 @@ function mapStateToProps({ publicProcessDetailModal: { process_detail_modal_visi
   datas: {
     userBoardPermissions = []
   }
-},gantt: { datas: { is_show_board_file_area } } 
+}, gantt: { datas: { is_show_board_file_area } }
 }) {
   return { process_detail_modal_visible, currentFlowInstanceName, currentFlowInstanceDescription, currentTempleteIdentifyId, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription, processPageFlagStep, processEditDatas, processInfo, processDoingList, processNotBeginningList, node_type, processCurrentEditStep, templateInfo, currentFlowTabsStatus, not_show_create_node_guide, projectDetailInfoData, userBoardPermissions, is_show_board_file_area }
 }

@@ -17,8 +17,7 @@ import classNames from "classnames/bind";
 // import GroupChat from './comonent/GroupChat'
 // import InitialChat from './comonent/InitialChat'
 import VideoMeetingPopoverContent from './comonent/videoMeetingPopoverContent/index'
-// import LingxiIm, { Im } from 'lingxi-im'
-const { LingxiIm } = global.constants
+import LingxiIm, { Im, lx_utils } from 'lingxi-im'
 let cx = classNames.bind(indexStyles);
 
 const { Sider } = Layout;
@@ -30,7 +29,7 @@ const Nav = Mention.Nav;
 @connect(({
   technological: { userInfo = {}, datas: { OrganizationId } },
   publicTaskDetailModal: {
-    card_id,drawerVisible
+    card_id, drawerVisible
   },
   publicFileDetailModal: {
     filePreviewCurrentFileId,
@@ -60,7 +59,7 @@ class SiderRight extends React.Component {
     const { OrganizationId: lastOrg } = this.props
     if (nextOrg != lastOrg) {
       const filterId = nextOrg == '0' ? '' : nextOrg
-      global.constants.lx_utils.filterUserList(filterId)
+      lx_utils.filterUserList(filterId)
     }
   }
 
@@ -69,13 +68,12 @@ class SiderRight extends React.Component {
   }
 
   imInitOption = () => {
-    const { Im } = global.constants;
     LingxiIm.hide();
 
     // 设置组织id过滤
     const { OrganizationId } = this.props
     const filterId = OrganizationId == '0' ? '' : OrganizationId
-    global.constants.lx_utils.filterUserList(filterId)
+    lx_utils.filterUserList(filterId)
 
     const { protocol, host } = window.location
     Im.option({
@@ -120,7 +118,7 @@ class SiderRight extends React.Component {
         })
         // console.log('ssss_最新已读', data)
       })
-      Im.on('fileCancel',({id}) => {
+      Im.on('fileCancel', ({ id }) => {
         if (id == this.props.card_id) {
           dispatch({
             type: 'publicTaskDetailModal/updateDatas',
@@ -158,7 +156,7 @@ class SiderRight extends React.Component {
               processStopedList: [], // 已中止的流程
               processComepletedList: [], // 已完成的流程
               processNotBeginningList: [], // 未开始的流程
-              processEditDatas:[],
+              processEditDatas: [],
               not_show_create_node_guide: '1',
               not_show_create_form_guide: '1',
             }

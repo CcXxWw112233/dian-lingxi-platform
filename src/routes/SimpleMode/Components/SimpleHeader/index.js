@@ -8,7 +8,6 @@ import { Tooltip, Dropdown, Modal } from 'antd'
 import Cookies from "js-cookie";
 import SimpleNavigation from "./Components/SimpleNavigation/index"
 import SimpleDrawer from './Components/SimpleDrawer/index'
-// import LingxiIm, { Im } from 'lingxi-im'
 import TaskDetailModal from '@/components/TaskDetailModal'
 import { setBoardIdStorage, getSubfixName, currentNounPlanFilterName } from "../../../../utils/businessFunction";
 import Organization from '@/routes/organizationManager'
@@ -16,7 +15,7 @@ import FileDetailModal from '@/components/FileDetailModal'
 import ProcessDetailModal from '@/components/ProcessDetailModal'
 import Guide from '../Guide/index'
 import { PROJECTS } from "../../../../globalset/js/constant";
-const { LingxiIm } = global.constants
+import LingxiIm, { lx_utils, Im } from 'lingxi-im'
 
 class SimpleHeader extends Component {
     state = {
@@ -104,7 +103,7 @@ class SimpleHeader extends Component {
         const { OrganizationId: lastOrg } = this.props
         if (nextOrg != lastOrg) {
             const filterId = nextOrg == '0' ? '' : nextOrg
-            global.constants.lx_utils.filterUserList(filterId)
+            lx_utils.filterUserList(filterId)
         }
     }
     componentDidMount() {
@@ -114,13 +113,12 @@ class SimpleHeader extends Component {
 
     //圈子
     imInitOption = () => {
-        const { Im } = global.constants;
         const { protocol, host } = window.location
         // 设置组织id过滤
         const { dispatch, OrganizationId } = this.props
         const filterId = OrganizationId == '0' ? '' : OrganizationId
 
-        global.constants.lx_utils.filterUserList(filterId)
+        lx_utils.filterUserList(filterId)
         Im.option({
             baseUrl: `${protocol}//${host}/`,
             // APPKEY: 'ab3db8f71133efc21085a278db04e7e7',//'6b5d044ca33c559b9b91f02e29573f79',//ceshi//"ab3db8f71133efc21085a278db04e7e7", //

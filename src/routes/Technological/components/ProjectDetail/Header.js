@@ -28,6 +28,7 @@ import globalStyle from '@/globalset/css/globalClassName.less'
 import { connect } from "dva/index";
 import { isApiResponseOk } from '../../../../utils/handleResponseData'
 import { arrayNonRepeatfy } from '../../../../utils/util'
+import { lx_utils } from 'lingxi-im'
 
 let is_starinit = null
 
@@ -98,7 +99,7 @@ export default class Header extends React.Component {
       }
     }).then(res => {
       if (isApiResponseOk(res)) {
-        global.constants.lx_utils.editBoardName({ board_id: board_id, name: this.state.localBoardName })
+        lx_utils.editBoardName({ board_id: board_id, name: this.state.localBoardName })
       }
     })
   }
@@ -502,9 +503,9 @@ export default class Header extends React.Component {
     let chooseArray = []
     // for (let i = 0; i < selectedRows.length; i++) {
     //   // chooseArray.push(fileList[selectedRows[i]].file_resource_id)
-      
+
     // }
-    selectedRows.map((item,i) => {
+    selectedRows.map((item, i) => {
       chooseArray.push(item.file_resource_id)
       return chooseArray
     })
@@ -1152,7 +1153,7 @@ export default class Header extends React.Component {
                   {checkIsHasPermissionInBoard(PROJECT_FILES_FOLDER, board_id) && (
                     <Button style={{ height: 24, marginTop: 16, marginLeft: 14 }} onClick={this.createDirectory.bind(this)}>
                       <Icon type="plus" />创建文件夹
-                  </Button>
+                    </Button>
                   )}
 
                   <div>
@@ -1309,7 +1310,7 @@ function mapStateToProps({
   technological: {
     datas: {
       userOrgPermissions,
-  	userBoardPermissions
+      userBoardPermissions
     }
   }
 }) {

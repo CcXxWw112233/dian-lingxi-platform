@@ -23,6 +23,7 @@ import ArchiveSelect from './components/ArchiveSelect'
 import { arrayNonRepeatfy } from '../../../../utils/util';
 import { roofTopBoardCardGroup, cancleToofTopBoardCardGroup } from '../../../../services/technological/gantt';
 import GroupListHeadDragNoTimeDataItem from './GroupListHeadDragNoTimeDataItem';
+import { lx_utils } from 'lingxi-im'
 
 @connect(mapStateToProps)
 export default class GroupListHeadItem extends Component {
@@ -506,7 +507,7 @@ export default class GroupListHeadItem extends Component {
         this.setLocalListName(this.state.edit_input_value)
         // debugger
         message.success('已成功更新项目名称')
-        global.constants.lx_utils.editBoardName({ board_id: data.board_id, name: data.name }) //更新圈子
+        lx_utils.editBoardName({ board_id: data.board_id, name: data.name }) //更新圈子
         this.updateBoardFiles(data)
         this.updateBoardsName()
         this.updateProjectList(data)
@@ -744,13 +745,13 @@ export default class GroupListHeadItem extends Component {
   // 检测是否拥有分组中的某个权限
   checkIsHasPermissionInGroup = (gantt_board_id) => {
     let flag = false
-      if (
-        checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, gantt_board_id) ||
-        checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_GROUP, gantt_board_id)
-      ) {
-        flag = true
-      }
-      return flag
+    if (
+      checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, gantt_board_id) ||
+      checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_GROUP, gantt_board_id)
+    ) {
+      flag = true
+    }
+    return flag
   }
 
   // 操作项

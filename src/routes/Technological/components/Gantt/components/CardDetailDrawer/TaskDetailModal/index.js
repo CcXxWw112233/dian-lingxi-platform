@@ -11,6 +11,7 @@ import {
   PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_CARD_COMMENT_PUBLISH
 } from "@/globalset/js/constant";
 import { message } from 'antd'
+import { lx_utils } from 'lingxi-im'
 
 @connect(mapStateToProps)
 export default class TaskDetailModal extends Component {
@@ -34,7 +35,7 @@ export default class TaskDetailModal extends Component {
     })
     this.props.setTaskDetailModalVisible && this.props.setTaskDetailModalVisible()
     // 圈子关闭联动
-    global.constants.lx_utils && global.constants.lx_utils.setCommentData(this.props.card_id || null)
+    lx_utils && lx_utils.setCommentData(this.props.card_id || null)
   }
 
   // 检测不同类型的权限控制类型的是否显示

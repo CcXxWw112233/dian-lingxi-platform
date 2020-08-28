@@ -1,6 +1,7 @@
 import base_utils from './base_utils'
 import { isSamDay } from '../../../../utils/util'
 import { date_area_height, coperatedLeftDiv, coperatedX, ceil_height } from './constants'
+import { lx_utils } from 'lingxi-im'
 
 export const afterCreateBoardUpdateGantt = (dispatch) => {
     afterClearGanttData({ dispatch })
@@ -81,7 +82,7 @@ export const handleChangeBoardViewScrollTop = ({ group_view_type, gantt_board_id
 }
 // 在删除项目后做的操作
 export const deleteBoardFollow = () => {
-    global.constants.lx_utils.updateUserList()
+    lx_utils.updateUserList()
 }
 
 // 计算时间跨度

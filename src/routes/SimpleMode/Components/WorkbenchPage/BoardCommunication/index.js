@@ -19,7 +19,7 @@ import { isApiResponseOk } from "@/utils/handleResponseData";
 import { getBoardFileList } from '@/services/technological/file'
 import { UPLOAD_FILE_SIZE, FILE_TYPE_UPLOAD_WHITELISTED } from "@/globalset/js/constant";
 import { openImChatBoard } from '../../../../../utils/businessFunction';
-const { Im } = global.constants
+import { lx_utils, Im } from 'lingxi-im'
 
 const { TreeNode, DirectoryTree } = Tree;
 
@@ -1103,7 +1103,7 @@ class BoardCommunication extends Component {
                 filePreviewCurrentName: ''
             }
         })
-        global.constants.lx_utils && global.constants.lx_utils.setCommentData(null)
+        lx_utils && lx_utils.setCommentData(null)
     }
 
     // 设置折叠面板keys

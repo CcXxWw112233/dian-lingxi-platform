@@ -4,6 +4,7 @@ import { get } from 'https';
 import { Base64 } from 'js-base64';
 import moment from 'moment';
 import { validOnlyNumber } from './verify';
+import { lx_utils } from 'lingxi-im'
 
 // 权限的过滤和存储在technological下
 // 权限分为全组织和确定组织下
@@ -466,7 +467,7 @@ export const selectBoardToSeeInfo = ({ board_id, selected_board_term, board_name
 
 }
 export const openImChatBoard = ({ board_id, autoOpenIm }) => {
-  global.constants.lx_utils.openChat({ boardId: board_id == '0' ? '' : board_id, autoOpenIm })
+  lx_utils.openChat({ boardId: board_id == '0' ? '' : board_id, autoOpenIm })
 }
 
 // 清除圈子登录信息

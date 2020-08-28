@@ -6,6 +6,7 @@ import indexStyle from './index.less'
 import { REQUEST_DOMAIN, REQUEST_DOMAIN_FILE, UPLOAD_FILE_SIZE } from "../../../../globalset/js/constant";
 import Cookies from 'js-cookie'
 import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
+import { lx_utils } from 'lingxi-im'
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -130,7 +131,7 @@ class PersonalInfoForm extends React.Component {
             userInfo
           })
           that.props.simplGetUserInfo({})
-          global.constants.lx_utils.updateUserAvatar(id,file.response.data.avatar)
+          lx_utils.updateUserAvatar(id, file.response.data.avatar)
         }
       },
     };

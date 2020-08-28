@@ -3,6 +3,7 @@ import PublicDetailModal from '@/components/PublicDetailModal'
 import MainContent from './MainContent'
 import HeaderContent from './HeaderContent'
 import { connect } from 'dva'
+import { lx_utils } from 'lingxi-im'
 
 @connect(mapStateToProps)
 export default class ProcessDetailModal extends Component {
@@ -17,7 +18,7 @@ export default class ProcessDetailModal extends Component {
         isEditCurrentFlowInstanceName: true, // 是否正在编辑当前实例的名称
         isEditCurrentFlowInstanceDescription: false, // 是否正在编辑当前实例的描述
         processPageFlagStep: '1', // "1", "2", "3", "4" 分别对应 新建， 编辑， 启动
-        processEditDatas:[],
+        processEditDatas: [],
         node_type: '1', // 当前的节点类型
         processCurrentEditStep: 0, // 当前的编辑步骤 第几步
         processCurrentCompleteStep: 0, // 当前处于的操作步骤
@@ -32,8 +33,8 @@ export default class ProcessDetailModal extends Component {
       }
     })
     this.props.setProcessDetailModalVisibile && this.props.setProcessDetailModalVisibile()
-     // 圈子关闭联动
-     global.constants.lx_utils && global.constants.lx_utils.setCommentData(this.props.processInfo.id || null)
+    // 圈子关闭联动
+    lx_utils && lx_utils.setCommentData(this.props.processInfo.id || null)
   }
 
   commonDrawerContentOutClick = () => {
@@ -54,7 +55,7 @@ export default class ProcessDetailModal extends Component {
           }
         })
       }
-    }  
+    }
     if (isEditCurrentFlowInstanceDescription) { // 如果操作的是编辑描述
       this.props.dispatch({
         type: 'publicProcessDetailModal/updateDatas',
@@ -63,7 +64,7 @@ export default class ProcessDetailModal extends Component {
         }
       })
     }
-    
+
   }
 
   render() {
@@ -75,8 +76,8 @@ export default class ProcessDetailModal extends Component {
           modalVisible={process_detail_modal_visible}
           onCancel={this.onCancel}
           isNotShowFileDetailContentRightVisible={true}
-          mainContent={<MainContent request_flows_params={request_flows_params} onCancel={this.onCancel} updateParentProcessTempleteList={updateParentProcessTempleteList}/>}
-          headerContent={<HeaderContent request_flows_params={request_flows_params} onCancel={this.onCancel} whetherUpdateWorkbenchPorcessListData={whetherUpdateWorkbenchPorcessListData}/>}
+          mainContent={<MainContent request_flows_params={request_flows_params} onCancel={this.onCancel} updateParentProcessTempleteList={updateParentProcessTempleteList} />}
+          headerContent={<HeaderContent request_flows_params={request_flows_params} onCancel={this.onCancel} whetherUpdateWorkbenchPorcessListData={whetherUpdateWorkbenchPorcessListData} />}
           commonDrawerContentOutClick={this.commonDrawerContentOutClick}
           isNotShowFileDetailContentLeftScrollBar={true}
         />
@@ -88,15 +89,15 @@ export default class ProcessDetailModal extends Component {
 ProcessDetailModal.defaultProps = {
   getContainer: '', // 对应的选择器对象, 即需要的挂载点
   process_detail_modal_visible: false, // 设置流程弹窗是否显示, 默认为false 不显示
-  whetherUpdateWorkbenchPorcessListData: function(){}, // 修改访问控制后需要更新工作台中的代办列表 的回调
-  updateParentProcessTempleteList: function(){}, // 内部数据修改后用来更新外部数据的回调
+  whetherUpdateWorkbenchPorcessListData: function () { }, // 修改访问控制后需要更新工作台中的代办列表 的回调
+  updateParentProcessTempleteList: function () { }, // 内部数据修改后用来更新外部数据的回调
   request_flows_params: {}, // 接收的外部参数
-  setProcessDetailModalVisibile: function(){}, // 关闭弹窗的回调
+  setProcessDetailModalVisibile: function () { }, // 关闭弹窗的回调
 }
 
 //  只关联public中弹窗内的数据
-function mapStateToProps({ publicProcessDetailModal: { processInfo = {}, currentFlowInstanceName, currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription } 
-  
-} ) {
- return { processInfo, currentFlowInstanceName, currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription}
+function mapStateToProps({ publicProcessDetailModal: { processInfo = {}, currentFlowInstanceName, currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription }
+
+}) {
+  return { processInfo, currentFlowInstanceName, currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription }
 }

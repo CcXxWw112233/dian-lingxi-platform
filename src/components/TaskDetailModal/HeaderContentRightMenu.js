@@ -13,6 +13,8 @@ import {
 } from "@/globalset/js/constant";
 import { arrayNonRepeatfy } from '../../utils/util'
 import { getCurrentDrawerContentPropsModelFieldData } from './handleOperateModal'
+import { lx_utils } from 'lingxi-im'
+
 @connect(mapStateToProps)
 export default class HeaderContentRightMenu extends Component {
 
@@ -396,7 +398,7 @@ export default class HeaderContentRightMenu extends Component {
                 }
               })
               // 删除卡片也需要调用圈子关闭联动
-              setTimeout(() => global.constants.lx_utils && global.constants.lx_utils.setCommentData(card_id || null) , 200)
+              setTimeout(() => lx_utils && lx_utils.setCommentData(card_id || null), 200)
               that.props.handleDeleteCard && that.props.handleDeleteCard({ card_id: card_id })
             }
           }
@@ -412,7 +414,7 @@ export default class HeaderContentRightMenu extends Component {
     const { drawContent = {} } = this.props
     const { properties = [], board_id, card_id, is_privilege, privileges = [], executors = [], is_shared } = drawContent
     const { onlyReadingShareData, onlyReadingShareModalVisible } = this.state
-    const { data = [] } = getCurrentDrawerContentPropsModelFieldData({properties, code: 'EXECUTOR'})
+    const { data = [] } = getCurrentDrawerContentPropsModelFieldData({ properties, code: 'EXECUTOR' })
     return (
 
       <div className={headerStyles.detail_action_list}>
@@ -421,16 +423,16 @@ export default class HeaderContentRightMenu extends Component {
         <span className={`${headerStyles.action} ${headerStyles.visit_wrap}`}>
           {
             board_id && (
-<VisitControl
-              board_id={board_id}
-              isPropVisitControl={is_privilege === '0' ? false : true}
-              handleVisitControlChange={this.handleVisitControlChange}
-              principalList={data}
-              otherPrivilege={privileges}
-              handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
-              handleAddNewMember={this.handleVisitControlAddNewMember}
-            />
-)
+              <VisitControl
+                board_id={board_id}
+                isPropVisitControl={is_privilege === '0' ? false : true}
+                handleVisitControlChange={this.handleVisitControlChange}
+                principalList={data}
+                otherPrivilege={privileges}
+                handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
+                handleAddNewMember={this.handleVisitControlAddNewMember}
+              />
+            )
           }
 
         </span>
@@ -443,15 +445,15 @@ export default class HeaderContentRightMenu extends Component {
               <span className={headerStyles.right__shareIndicator_text}>正在分享</span>
             </span>
           ) : (
-<span className={`${headerStyles.right_menu} ${headerStyles.share_icon}`} >
-              <Tooltip title="分享协作" placement="top">
-                <span onClick={this.handleChangeOnlyReadingShareModalVisible} className={`${globalStyles.authTheme} ${headerStyles.right__share}`} style={{ fontSize: '20px' }}>&#xe7e7;</span>
-              </Tooltip>
-            </span>
-)}
+              <span className={`${headerStyles.right_menu} ${headerStyles.share_icon}`} >
+                <Tooltip title="分享协作" placement="top">
+                  <span onClick={this.handleChangeOnlyReadingShareModalVisible} className={`${globalStyles.authTheme} ${headerStyles.right__share}`} style={{ fontSize: '20px' }}>&#xe7e7;</span>
+                </Tooltip>
+              </span>
+            )}
 
           <ShareAndInvite
-           
+
             onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible}
             data={onlyReadingShareData}
             handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare}

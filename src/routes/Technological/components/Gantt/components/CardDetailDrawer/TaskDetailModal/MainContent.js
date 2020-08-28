@@ -22,7 +22,7 @@ import FileListRightBarFileDetailModal from '@/routes/Technological/components/P
 import { arrayNonRepeatfy } from '@/utils/util'
 import { rebackCreateNotify } from '../../../../../../../components/NotificationTodos'
 import { renderTaskNounPlanCode } from '../../../../../../../components/TaskDetailModal/handleOperateModal'
-const { LingxiIm, Im } = global.constants
+import { lx_utils } from 'lingxi-im'
 
 @connect(mapStateToProps)
 export default class MainContent extends Component {
@@ -41,10 +41,10 @@ export default class MainContent extends Component {
     const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
     const { is_simple_model } = user_set;
     if (!data) {
-      global.constants.lx_utils && global.constants.lx_utils.setCommentData(null)
+      lx_utils && lx_utils.setCommentData(null)
       return false
     }
-    global.constants.lx_utils && global.constants.lx_utils.setCommentData({ ...data })
+    lx_utils && lx_utils.setCommentData({ ...data })
     if (is_simple_model == '1') {
       const width = document.body.scrollWidth;
       let workbenchBoxContentWapperModalStyle = { width: (width - 400) + 'px' }

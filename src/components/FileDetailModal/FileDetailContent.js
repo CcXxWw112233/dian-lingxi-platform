@@ -12,11 +12,12 @@ import { compareACoupleOfObjects } from '@/utils/util'
 import QueryString from 'querystring'
 import NonsupportPreviewFileContent from './NonsupportPreviewFileContent'
 import NonsupportPreviewFileHeader from './NonsupportPreviewFileHeader'
+import { lx_utils } from 'lingxi-im'
+
 let board_id = null
 let appsSelectKey = null
 let file_id = null
 let folder_id = null
-const { LingxiIm, Im } = global.constants
 @connect(mapStateToProps)
 class FileDetailContent extends Component {
 
@@ -73,15 +74,14 @@ class FileDetailContent extends Component {
     // this.judgeWhetherItIsNewVersion({data})
   }
 
-  // global.constants.lx_utils && global.constants.lx_utils.setCommentData({name: })
   linkImWithFile = (data) => {
     const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
     const { is_simple_model } = user_set;
     if (!data) {
-      global.constants.lx_utils && global.constants.lx_utils.setCommentData(null)
+      lx_utils && lx_utils.setCommentData(null)
       return false
     }
-    global.constants.lx_utils && global.constants.lx_utils.setCommentData({ ...data })
+    lx_utils && lx_utils.setCommentData({ ...data })
     if (is_simple_model == '1') {
       this.props.dispatch({
         type: 'simplemode/updateDatas',
@@ -106,7 +106,7 @@ class FileDetailContent extends Component {
       message.warn(res.message, MESSAGE_DURATION_TIME)
       setTimeout(() => {
         this.onCancel()
-        global.constants.lx_utils && global.constants.lx_utils.setCommentData(id || null)
+        lx_utils && lx_utils.setCommentData(id || null)
       }, 200)
     }
   }
@@ -156,7 +156,7 @@ class FileDetailContent extends Component {
     let all_version_list_Ids = this.getEveryVersionListIds()
     let currentPreviewFileVersionId = this.getCurrentFilePreviewVersionId()
 
-    global.constants.lx_utils && global.constants.lx_utils.setCommentData(currentPreviewFileVersionId || (all_version_list_Ids && all_version_list_Ids.length) && all_version_list_Ids || this.props.filePreviewCurrentFileId || null)
+    lx_utils && lx_utils.setCommentData(currentPreviewFileVersionId || (all_version_list_Ids && all_version_list_Ids.length) && all_version_list_Ids || this.props.filePreviewCurrentFileId || null)
     this.whetherUpdateProjectDetailFileBreadCrumbListNav()
   }
 
@@ -176,7 +176,7 @@ class FileDetailContent extends Component {
         let currentPreviewFileVersionId = this.getCurrentFilePreviewVersionId()
         setTimeout(() => {
           this.onCancel()
-          global.constants.lx_utils && global.constants.lx_utils.setCommentData(currentPreviewFileVersionId || id || null)
+          lx_utils && lx_utils.setCommentData(currentPreviewFileVersionId || id || null)
         }, 500)
       }
     })
@@ -203,7 +203,7 @@ class FileDetailContent extends Component {
         message.warn(res.message)
         setTimeout(() => {
           this.onCancel()
-          global.constants.lx_utils && global.constants.lx_utils.setCommentData(currentPreviewFileVersionId || id || null)
+          lx_utils && lx_utils.setCommentData(currentPreviewFileVersionId || id || null)
         }, 200)
       }
     })
@@ -222,33 +222,33 @@ class FileDetailContent extends Component {
             not_support_file_preview ? (
               <NonsupportPreviewFileContent />
             ) : (
-              <MainContent
-              linkImWithFile={this.linkImWithFile}
-              clientWidth={clientWidth}
-              clientHeight={clientHeight}
-              {...this.state}
-              whetherUpdateFolderListData={this.props.whetherUpdateFolderListData}
-              delayUpdatePdfDatas={this.delayUpdatePdfDatas}
-              getCurrentFilePreviewData={this.getCurrentFilePreviewData}
-              updateStateDatas={this.updateStateDatas}
-              filePreviewCurrentFileId={filePreviewCurrentFileId} fileType={fileType} />
-            )
+                <MainContent
+                  linkImWithFile={this.linkImWithFile}
+                  clientWidth={clientWidth}
+                  clientHeight={clientHeight}
+                  {...this.state}
+                  whetherUpdateFolderListData={this.props.whetherUpdateFolderListData}
+                  delayUpdatePdfDatas={this.delayUpdatePdfDatas}
+                  getCurrentFilePreviewData={this.getCurrentFilePreviewData}
+                  updateStateDatas={this.updateStateDatas}
+                  filePreviewCurrentFileId={filePreviewCurrentFileId} fileType={fileType} />
+              )
           }
           isNotShowFileDetailContentRightVisible={true}
           headerContent={
             not_support_file_preview && isOpenAttachmentFile ? (
-              <NonsupportPreviewFileHeader filePreviewCurrentName={filePreviewCurrentName}/>
+              <NonsupportPreviewFileHeader filePreviewCurrentName={filePreviewCurrentName} />
             ) : (
-              <HeaderContent
-                delayUpdatePdfDatas={this.delayUpdatePdfDatas}
-                getCurrentFilePreviewData={this.getCurrentFilePreviewData}
-                updateStateDatas={this.updateStateDatas}
-                {...this.state}
-                shouldUpdateAllFolderListData={this.props.shouldUpdateAllFolderListData}
-                whetherUpdateFolderListData={this.props.whetherUpdateFolderListData}
-                filePreviewCurrentFileId={filePreviewCurrentFileId}
-                fileType={fileType} />
-            )
+                <HeaderContent
+                  delayUpdatePdfDatas={this.delayUpdatePdfDatas}
+                  getCurrentFilePreviewData={this.getCurrentFilePreviewData}
+                  updateStateDatas={this.updateStateDatas}
+                  {...this.state}
+                  shouldUpdateAllFolderListData={this.props.shouldUpdateAllFolderListData}
+                  whetherUpdateFolderListData={this.props.whetherUpdateFolderListData}
+                  filePreviewCurrentFileId={filePreviewCurrentFileId}
+                  fileType={fileType} />
+              )
           }
         />
       </div>
