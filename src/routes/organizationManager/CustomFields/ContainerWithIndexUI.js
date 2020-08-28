@@ -281,14 +281,15 @@ export default class ContainerWithIndexUI extends Component {
     if (!!(item.fields && item.fields.length)) {
       let gold_value = item.fields.find(item => item.quote_num != 0)
       if (!!(gold_value && Object.keys(gold_value).length)) {
-        message.error('字段被引用中，无法删除')
+        message.warn('字段被引用中，无法删除')
         return
       }
     } 
-    // else if (item.quote_num != 0) {
-    //   message.error('字段被引用中，无法删除')
-    //   return
-    // }
+    // else 
+    if (!!item.quote_num && item.quote_num != 0) {
+      message.warn('字段被引用中，无法删除')
+      return
+    }
     this.deleteConfirm({ item, type })
   }
 
