@@ -5,6 +5,8 @@ import indexStyles from '../index.less'
 import commonStyles from '../common.less'
 import { Button, Input, Select } from 'antd'
 import InputExport from './InputExport'
+import { currentNounPlanFilterName } from '../../../../utils/businessFunction'
+import { ORGANIZATION, PROJECTS } from '../../../../globalset/js/constant'
 
 const Option = Select.Option;
 @connect(({ organizationManager: { datas: { currentOperateFieldItem = {} } } }) => ({
@@ -435,8 +437,8 @@ export default class CustomFieldCategory extends Component {
             <div className={commonStyles.field_item}>
               <label className={commonStyles.label_name}>范围限制：</label>
               <Select disabled={!disabled} value={field_value && field_value.member_selected_range} optionLabelProp={'label'} style={{ width: '100%' }} onChange={this.handleMemberSelectedRange}>
-                <Option value={'1'} label={'当前组织'}>当前组织</Option>
-                <Option value={'2'} label={'项目内'}>项目内</Option>
+                <Option value={'1'} label={'当前组织'}>当前{`${currentNounPlanFilterName(ORGANIZATION)}`}</Option>
+                <Option value={'2'} label={'项目内'}>{`${currentNounPlanFilterName(PROJECTS)}`}内</Option>
               </Select>
             </div>
           </>
