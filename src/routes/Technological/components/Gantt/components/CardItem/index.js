@@ -733,8 +733,13 @@ export default class CardItem extends Component {
             })
             return
         }
+        const request_param = { card_id: id, due_time: end_time_timestamp, start_time: start_time_timestamp, board_id: board_id || gantt_board_id, ...row_param }
+        if (isSamDay(start_time, start_time_timestamp)) { //时间一样时只改变行
+            delete request_param.start_time
+            delete request_param.due_time
+        }
         // console.log('ssssssssssaaaa', 2)
-        updateTaskVTwo({ card_id: id, due_time: end_time_timestamp, start_time: start_time_timestamp, board_id: board_id || gantt_board_id, ...row_param }, { isNotLoading: false })
+        updateTaskVTwo({ ...request_param }, { isNotLoading: false })
             .then(res => {
                 if (isApiResponseOk(res)) {
                     rebackCreateNotify.call(this, { res, id, board_id, group_view_type, dispatch, parent_card_id, card_detail_id, selected_card_visible })
@@ -817,8 +822,12 @@ export default class CardItem extends Component {
             ...group_row_param
         }
         // debugger
-        if (group_row_param.list_id == '0') {
-            delete params.list_id
+        // if (group_row_param.list_id == '0') {
+        //     delete params.list_id
+        // }
+        if (isSamDay(start_time, start_time_timestamp)) { //时间一样时只改变行
+            delete params.start_time
+            delete params.due_time
         }
         updateTaskVTwo({ ...params }, { isNotLoading: false })
             .then(res => {
@@ -848,7 +857,7 @@ export default class CardItem extends Component {
                         local_left: left,
                         local_top: top
                     })
-                    message.error(res.message)
+                    message.warn(res.message)
                 }
             }).catch(err => {
                 this.setState({
