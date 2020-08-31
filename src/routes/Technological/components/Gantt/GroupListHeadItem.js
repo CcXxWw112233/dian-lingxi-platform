@@ -24,6 +24,7 @@ import { arrayNonRepeatfy, timestampToTimeNormal } from '../../../../utils/util'
 import { roofTopBoardCardGroup, cancleToofTopBoardCardGroup } from '../../../../services/technological/gantt';
 import GroupListHeadDragNoTimeDataItem from './GroupListHeadDragNoTimeDataItem';
 import { lx_utils } from 'lingxi-im'
+import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 
 @connect(mapStateToProps)
 export default class GroupListHeadItem extends Component {
@@ -1138,13 +1139,43 @@ export default class GroupListHeadItem extends Component {
 
     }
   }
+
+  // 设置分组负责人
+  setGroupExcutor = (user_info) => {
+    const { gantt_board_id, list_id, dispatch } = this.props
+    const { user_id } = user_info
+    updateTaskGroup({
+      leader_user_id: user_id,
+      id: list_id,
+      board_id: gantt_board_id
+    }).then(res => {
+      if (isApiResponseOk(res)) {
+        const { list_group, itemKey } = this.props
+        const list_group_ = [...list_group]
+        list_group_[itemKey].lane_leader = user_info
+        dispatch({
+          type: 'gantt/handleListGroup',
+          payload: {
+            data: list_group_
+          }
+        })
+        message.success('已成功更新分组名称')
+      } else {
+        message.error(res.message)
+      }
+    })
+  }
   render() {
 
     const { currentUserOrganizes = [], gantt_board_id = [], ceiHeight, is_show_org_name, is_all_org, rows = 5, gantt_view_mode, show_board_fold, group_view_type, get_gantt_data_loading } = this.props
-    const { itemValue = {}, itemKey } = this.props
-    const { is_star, list_name, org_id, list_no_time_data = [], list_id, lane_icon, board_id, is_privilege = '0', privileges, create_by = {}, lane_overdue_count, lane_progress_percent, lane_start_time, lane_end_time } = itemValue
+    const { itemValue = {}, projectDetailInfoData: { data: board_users } } = this.props
+    const { is_star, list_name, org_id, list_no_time_data = [], list_id, lane_icon, board_id, is_privilege = '0', privileges, create_by = {}, lane_leader = {}, lane_overdue_count, lane_progress_percent, lane_start_time, lane_end_time } = itemValue
     const { isShowBottDetail, show_edit_input, local_list_name, edit_input_value, show_add_menber_visible, board_info_visible, menu_oprate_visible, arhcived_modal_visible } = this.state
-    const board_create_user = create_by.name
+    const board_create_user = create_by.name || create_by.user_name
+    const board_create_user_id = create_by.user_id || create_by.id
+
+    const lane_leader_user_id = lane_leader.user_id
+    const lane_leader_user_name = lane_leader.name
     return (
       <div>
         <div className={indexStyles.listHeadItem}
@@ -1239,9 +1270,11 @@ export default class GroupListHeadItem extends Component {
                     } */}
                     <div className={`${indexStyles.list_head_body_contain} ${indexStyles.list_head_body_contain_2}`}>
                       {/* <div className={`${indexStyles.list_head_body_contain_lt} ${globalStyle.authTheme}`}>&#xe6db;</div> */}
-                      <div className={`${indexStyles.list_head_body_contain_rt} ${globalStyle.global_ellipsis}`}>
-                        {board_create_user ? `@${board_create_user}` : '设置分组负责人'}
-                      </div>
+                      <Dropdown overlay={renderSetExcutor({ board_users, selecteds: [{ ...lane_leader }].filter(item => item.user_id), selctedCallback: this.setGroupExcutor })}>
+                        <div className={`${indexStyles.list_head_body_contain_rt} ${globalStyle.global_ellipsis}`}>
+                          {lane_leader_user_name ? `@${lane_leader_user_name}` : '设置分组负责人'}
+                        </div>
+                      </Dropdown>
                     </div>
                   </div>
                 )
@@ -1345,4 +1378,22 @@ function mapStateToProps({
     } },
 }) {
   return { gantt_view_mode, single_select_user, group_rows_lock, projectList, boards_flies, list_group, ceiHeight, group_rows, currentUserOrganizes, is_show_org_name, is_all_org, gantt_board_id, group_view_type, get_gantt_data_loading, show_board_fold, projectDetailInfoData, userBoardPermissions }
+}
+
+
+function renderSetExcutor({ board_users = [], selecteds = [], selctedCallback }) {
+  const transformSelected = ({ key }) => {
+    const user_info = board_users.find(item => item.user_id == key)
+    selctedCallback(user_info)
+  }
+  return (
+    <MenuSearchPartner
+      isInvitation={false}
+      listData={board_users}
+      keyCode={'user_id'}
+      searchName={'name'}
+      currentSelect={selecteds}
+      chirldrenTaskChargeChange={transformSelected}
+    />
+  )
 }
