@@ -544,7 +544,7 @@ export default class DragDropContentComponent extends Component {
   }
 
   /* 附件点点点字段 */
-  getAttachmentActionMenus = ({fileInfo, code, card_id}) => {
+  getAttachmentActionMenus = ({ fileInfo, code, card_id }) => {
     return (
       <Menu>
         <Menu.Item>
@@ -682,44 +682,46 @@ export default class DragDropContentComponent extends Component {
         messageValue = (
           // <div className={mainContentStyles.moveWrapper}>
           <div key={id} style={{ position: 'relative' }} className={`${mainContentStyles.field_content} ${showDelColor && currentItem.id == currentDelId && mainContentStyles.showDelColor}`}>
-            <div className={mainContentStyles.field_left}>
-              {
-                !flag && (
-                  <span onClick={() => { this.handleDelCurrentField(currentItem.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
-                )
-              }
-              <div className={mainContentStyles.field_hover}>
-                <span className={`${globalStyles.authTheme}`}>&#xe6b7;</span>
-                <span>里程碑</span>
+            <div className={mainContentStyles.field_item}>
+              <div className={mainContentStyles.field_left}>
+                {
+                  !flag && (
+                    <span onClick={() => { this.handleDelCurrentField(currentItem.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
+                  )
+                }
+                <div className={mainContentStyles.field_hover}>
+                  <span className={`${globalStyles.authTheme}`}>&#xe6b7;</span>
+                  <span>里程碑</span>
+                </div>
               </div>
-            </div>
-            <div className={`${mainContentStyles.field_right}`}>
-              {
-                (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
-                  (
-                    !currentItem.data && !(currentItem.data && currentItem.data.id) ? (
-                      <div className={`${mainContentStyles.pub_hover}`}>
-                        <span>暂无</span>
-                      </div>
-                    ) : (
-                        <div className={`${mainContentStyles.pub_hover} ${mainContentStyles.value_text}`} >
-                          {currentItem.data.name}
+              <div className={`${mainContentStyles.field_right}`}>
+                {
+                  (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
+                    (
+                      !currentItem.data && !(currentItem.data && currentItem.data.id) ? (
+                        <div className={`${mainContentStyles.pub_hover}`}>
+                          <span>暂无</span>
                         </div>
-                      )
-                  )
-                ) : (
-                    // 加入里程碑组件
-                    <MilestoneAdd milestoneList={milestoneList} getMilestone={this.props.getMilestone} onChangeMilestone={this.onMilestoneSelectedChange} dataInfo={{ board_id, board_name, due_time, org_id, data, start_time }} selectedValue={currentItem.data && currentItem.data.id}>
-                      <div className={`${mainContentStyles.pub_hover}`} >
-                        {currentItem.data && currentItem.data.id
-                          ? <span className={mainContentStyles.value_text}>{currentItem.data.name}</span>
-                          :
-                          '加入里程碑'
-                        }
-                      </div>
-                    </MilestoneAdd>
-                  )
-              }
+                      ) : (
+                          <div className={`${mainContentStyles.pub_hover} ${mainContentStyles.value_text}`} >
+                            {currentItem.data.name}
+                          </div>
+                        )
+                    )
+                  ) : (
+                      // 加入里程碑组件
+                      <MilestoneAdd milestoneList={milestoneList} getMilestone={this.props.getMilestone} onChangeMilestone={this.onMilestoneSelectedChange} dataInfo={{ board_id, board_name, due_time, org_id, data, start_time }} selectedValue={currentItem.data && currentItem.data.id}>
+                        <div className={`${mainContentStyles.pub_hover}`} >
+                          {currentItem.data && currentItem.data.id
+                            ? <span className={mainContentStyles.value_text}>{currentItem.data.name}</span>
+                            :
+                            '加入里程碑'
+                          }
+                        </div>
+                      </MilestoneAdd>
+                    )
+                }
+              </div>
             </div>
           </div>
         )
@@ -728,108 +730,110 @@ export default class DragDropContentComponent extends Component {
         messageValue = (
           // <div className={mainContentStyles.moveWrapper}>
           <div key={id} style={{ position: 'relative' }} className={`${mainContentStyles.field_content} ${showDelColor && currentItem.id == currentDelId && mainContentStyles.showDelColor}`}>
-            <div className={mainContentStyles.field_left}>
-              {
-                !flag && (
-                  <span onClick={() => { this.handleDelCurrentField(currentItem.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
-                )
-              }
-              <div className={mainContentStyles.field_hover} style={{maxWidth: 'inherit'}}>
-                <span className={`${globalStyles.authTheme}`}>&#xe7f6;</span>
-                <span>{`${currentNounPlanFilterName(TASKS)}`}说明</span>
-              </div>
-            </div>
-            <>
-              <div className={`${mainContentStyles.field_right}`}>
-                <div style={{ display: 'flex' }}>
-                  {
-                    (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
-                      (
-                        currentItem.data && currentItem.data == '<p></p>' ? (
-                          <div className={`${mainContentStyles.pub_hover}`} style={{width: '100%'}}>
-                            <span>暂无</span>
-                          </div>
-                        ) : (
-                            <div className={`${mainContentStyles.pub_hover}`} >
-                              <div className={mainContentStyles.descriptionContent} dangerouslySetInnerHTML={{ __html: currentItem.data }}></div>
-                            </div>
-                          )
-                      )
-                    ) : (
-                        // 富文本组件
-                        <>
-                          <div style={{ flex: 1, marginRight: '10px' }}>
-                            <RichTextEditor saveBrafitEdit={this.saveBrafitEdit} value={currentItem.data && currentItem.data}>
-                              <div className={`${mainContentStyles.pub_hover}`} >
-                                {
-                                  currentItem.data && currentItem.data != '<p></p>' ?
-                                    <div className={mainContentStyles.descriptionContent} dangerouslySetInnerHTML={{ __html: currentItem.data }}></div>
-                                    :
-                                    `添加说明`
-                                }
-                              </div>
-                            </RichTextEditor>
-                          </div>
-                          <div onClick={(e) => e && e.stopPropagation()}>
-                            <UploadAttachment executors={executors.data} boardFolderTreeData={boardFolderTreeData} projectDetailInfoData={projectDetailInfoData} org_id={org_id} board_id={board_id} card_id={card_id}
-                              title={`任务说明资料设置`}
-                              listDescribe={'说明资料列表'}
-                              isNotShowNoticeList={true}
-                              url={'/api/projects/card/desc/attachment/upload'}
-                              onFileListChange={this.onUploadDescFileListChange}
-                            >
-                              <span className={mainContentStyles.add_sub_upload}>
-                                <span style={{ fontSize: '16px' }} className={globalStyles.authTheme}>&#xe7fa;</span>
-                                <span>上传说明资料</span>
-                              </span>
-                            </UploadAttachment>
-                          </div>
-                        </>
-                      )
-                  }
+            <div className={mainContentStyles.field_item}>
+              <div className={mainContentStyles.field_left}>
+                {
+                  !flag && (
+                    <span onClick={() => { this.handleDelCurrentField(currentItem.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
+                  )
+                }
+                <div className={mainContentStyles.field_hover} style={{ maxWidth: 'inherit' }}>
+                  <span className={`${globalStyles.authTheme}`}>&#xe7f6;</span>
+                  <span>{`${currentNounPlanFilterName(TASKS)}`}说明</span>
                 </div>
-                <div>
-                  {/* 交付物 */}
-                  <div className={mainContentStyles.filelist_wrapper}>
+              </div>
+              <>
+                <div className={`${mainContentStyles.field_right}`}>
+                  <div style={{ display: 'flex' }}>
                     {
-                      !!(dec_files && dec_files.length) && dec_files.map(fileInfo => {
-                        const { name: file_name, file_id } = fileInfo
-                        const breadcrumbList = getFolderPathName(fileInfo)
-                        return (
-                          <div className={`${mainContentStyles.file_item_wrapper}`} key={fileInfo.id}>
-                            <div className={`${mainContentStyles.file_item} ${mainContentStyles.pub_hover}`} onClick={(e) => this.openFileDetailModal(e, fileInfo)} >
-                              <div>
-                                <span className={`${mainContentStyles.file_action} ${globalStyles.authTheme}`} dangerouslySetInnerHTML={{ __html: judgeFileType(file_name) }}></span>
-                              </div>
-                              <div style={{ flex: 1 }}>
-                                <div title={file_name} className={mainContentStyles.pay_file_name}>{file_name}</div>
-                              </div>
-                              <div className={mainContentStyles.file_info}>{showMemberName(fileInfo.create_by, data)} 上传于 {fileInfo.create_time && timestampFormat(fileInfo.create_time, "MM-dd hh:mm")}</div>
-                              <div className={mainContentStyles.breadNav} style={{ position: 'relative' }}>
-                                <Breadcrumb className={mainContentStyles.Breadcrumb} separator=">">
-                                  {breadcrumbList.map((value, key) => {
-                                    return (
-                                      // <Tooltip getPopupContainer={triggerNode => triggerNode.parentNode} title={(value && value.file_name) && value.file_name} placement="top">
-                                      <Breadcrumb.Item key={key}>
-                                        <span title={(value && value.file_name) && value.file_name} className={key == breadcrumbList.length - 1 && mainContentStyles.breadItem}>{(value && value.file_name) && value.file_name}</span>
-                                      </Breadcrumb.Item>
-                                      // </Tooltip>
-                                    )
-                                  })}
-                                </Breadcrumb>
-                              </div>
-                              <Dropdown trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.getAttachmentActionMenus({fileInfo, code: 'REMARK', card_id})}>
-                                <span onClick={(e) => e && e.stopPropagation()} className={`${mainContentStyles.pay_more_icon} ${globalStyles.authTheme}`}>&#xe66f;</span>
-                              </Dropdown>
+                      (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
+                        (
+                          currentItem.data && currentItem.data == '<p></p>' ? (
+                            <div className={`${mainContentStyles.pub_hover}`} style={{ width: '100%' }}>
+                              <span>暂无</span>
                             </div>
-                          </div>
+                          ) : (
+                              <div className={`${mainContentStyles.pub_hover}`} >
+                                <div className={mainContentStyles.descriptionContent} dangerouslySetInnerHTML={{ __html: currentItem.data }}></div>
+                              </div>
+                            )
                         )
-                      })
+                      ) : (
+                          // 富文本组件
+                          <>
+                            <div style={{ flex: 1, marginRight: '10px' }}>
+                              <RichTextEditor saveBrafitEdit={this.saveBrafitEdit} value={currentItem.data && currentItem.data}>
+                                <div className={`${mainContentStyles.pub_hover}`} >
+                                  {
+                                    currentItem.data && currentItem.data != '<p></p>' ?
+                                      <div className={mainContentStyles.descriptionContent} dangerouslySetInnerHTML={{ __html: currentItem.data }}></div>
+                                      :
+                                      `添加说明`
+                                  }
+                                </div>
+                              </RichTextEditor>
+                            </div>
+                            <div onClick={(e) => e && e.stopPropagation()}>
+                              <UploadAttachment executors={executors.data} boardFolderTreeData={boardFolderTreeData} projectDetailInfoData={projectDetailInfoData} org_id={org_id} board_id={board_id} card_id={card_id}
+                                title={`任务说明资料设置`}
+                                listDescribe={'说明资料列表'}
+                                isNotShowNoticeList={true}
+                                url={'/api/projects/card/desc/attachment/upload'}
+                                onFileListChange={this.onUploadDescFileListChange}
+                              >
+                                <span className={mainContentStyles.add_sub_upload}>
+                                  <span style={{ fontSize: '16px' }} className={globalStyles.authTheme}>&#xe7fa;</span>
+                                  <span>上传说明资料</span>
+                                </span>
+                              </UploadAttachment>
+                            </div>
+                          </>
+                        )
                     }
                   </div>
+                  <div>
+                    {/* 交付物 */}
+                    <div className={mainContentStyles.filelist_wrapper}>
+                      {
+                        !!(dec_files && dec_files.length) && dec_files.map(fileInfo => {
+                          const { name: file_name, file_id } = fileInfo
+                          const breadcrumbList = getFolderPathName(fileInfo)
+                          return (
+                            <div className={`${mainContentStyles.file_item_wrapper}`} key={fileInfo.id}>
+                              <div className={`${mainContentStyles.file_item} ${mainContentStyles.pub_hover}`} onClick={(e) => this.openFileDetailModal(e, fileInfo)} >
+                                <div>
+                                  <span className={`${mainContentStyles.file_action} ${globalStyles.authTheme}`} dangerouslySetInnerHTML={{ __html: judgeFileType(file_name) }}></span>
+                                </div>
+                                <div style={{ flex: 1 }}>
+                                  <div title={file_name} className={mainContentStyles.pay_file_name}>{file_name}</div>
+                                </div>
+                                <div className={mainContentStyles.file_info}>{showMemberName(fileInfo.create_by, data)} 上传于 {fileInfo.create_time && timestampFormat(fileInfo.create_time, "MM-dd hh:mm")}</div>
+                                <div className={mainContentStyles.breadNav} style={{ position: 'relative' }}>
+                                  <Breadcrumb className={mainContentStyles.Breadcrumb} separator=">">
+                                    {breadcrumbList.map((value, key) => {
+                                      return (
+                                        // <Tooltip getPopupContainer={triggerNode => triggerNode.parentNode} title={(value && value.file_name) && value.file_name} placement="top">
+                                        <Breadcrumb.Item key={key}>
+                                          <span title={(value && value.file_name) && value.file_name} className={key == breadcrumbList.length - 1 && mainContentStyles.breadItem}>{(value && value.file_name) && value.file_name}</span>
+                                        </Breadcrumb.Item>
+                                        // </Tooltip>
+                                      )
+                                    })}
+                                  </Breadcrumb>
+                                </div>
+                                <Dropdown trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.getAttachmentActionMenus({ fileInfo, code: 'REMARK', card_id })}>
+                                  <span onClick={(e) => e && e.stopPropagation()} className={`${mainContentStyles.pay_more_icon} ${globalStyles.authTheme}`}>&#xe66f;</span>
+                                </Dropdown>
+                              </div>
+                            </div>
+                          )
+                        })
+                      }
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </>
+              </>
+            </div>
             {/* </div> */}
           </div>
         )
@@ -839,81 +843,45 @@ export default class DragDropContentComponent extends Component {
           // <div className={mainContentStyles.moveWrapper}>
           // <>
           <div key={id} className={`${mainContentStyles.field_content} ${showDelColor && currentItem.id == currentDelId && mainContentStyles.showDelColor}`}>
-            <div className={mainContentStyles.field_left}>
-              {
-                !flag && (
-                  <span onClick={() => { this.handleDelCurrentField(currentItem.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
-                )
-              }
-              <div className={mainContentStyles.field_hover}>
-                <span className={`${globalStyles.authTheme}`}>&#xe6b8;</span>
-                <span>标签</span>
-              </div>
-            </div>
-            <div style={{ position: 'relative' }} className={mainContentStyles.field_right}>
-              <div className={mainContentStyles.pub_hover}>
+            <div className={mainContentStyles.field_item}>
+              <div className={mainContentStyles.field_left}>
                 {
-                  (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
-                    (
-                      currentItem.data && currentItem.data.length ? (
-                        <div>
-                          {
-                            currentItem.data.map(item => {
-                              return (
-                                <span className={`${mainContentStyles.labelDelItem}`}>
-                                  <span key={`${item.label_id}`} style={{ background: `rgba(${item.label_color}, 1)` }} className={`${mainContentStyles.normal_label}`}>
-                                    <span>{item.label_name}</span>
-                                    {/* <span onClick={(e) => { this.handleRemoveTaskTag(e, item.label_id) }} className={mainContentStyles.labelDelIcon}></span> */}
-                                  </span>
-                                </span>
-                              )
-                            })
-                          }
-                        </div>
-                      ) : (
-                          <div>暂无</div>
-                        )
-                    )
-                  ) : (
-
-                      currentItem.data && currentItem.data.length ? (
-                        <div style={{ position: 'relative' }}>
-                          <Dropdown
-                            visible={visible}
-                            getPopupContainer={triggerNode => triggerNode.parentNode}
-                            trigger={['click']}
-                            onVisibleChange={(visible) => { this.handleVisibleChange(visible) }}
-                            overlayClassName={mainContentStyles.labelDataWrapper}
-                            overlay={
-                              <LabelDataComponent
-                                board_id={board_id}
-                                listData={boardTagList}
-                                searchName={'name'} currentSelect={currentItem.data}
-                                handleAddBoardTag={this.handleAddBoardTag}
-                                handleUpdateBoardTag={this.handleUpdateBoardTag}
-                                handleRemoveBoardTag={this.handleRemoveBoardTag}
-                                handleChgSelectedLabel={this.handleChgSelectedLabel}
-                                handleClose={this.handleClose}
-                              />
-                            }
-                          >
-                            <div>
-                              {
-                                currentItem.data.map(item => {
-                                  return (
-                                    <span className={`${mainContentStyles.labelDelItem}`}>
-                                      <span key={`${item.label_id}`} style={{ background: `rgba(${item.label_color}, 1)` }} className={`${mainContentStyles.normal_label}`}>
-                                        <span>{item.label_name}</span>
-                                        <span onClick={(e) => { this.handleRemoveTaskTag(e, item.label_id) }} className={mainContentStyles.labelDelIcon}></span>
-                                      </span>
+                  !flag && (
+                    <span onClick={() => { this.handleDelCurrentField(currentItem.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
+                  )
+                }
+                <div className={mainContentStyles.field_hover}>
+                  <span className={`${globalStyles.authTheme}`}>&#xe6b8;</span>
+                  <span>标签</span>
+                </div>
+              </div>
+              <div style={{ position: 'relative' }} className={mainContentStyles.field_right}>
+                <div className={mainContentStyles.pub_hover}>
+                  {
+                    (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
+                      (
+                        currentItem.data && currentItem.data.length ? (
+                          <div>
+                            {
+                              currentItem.data.map(item => {
+                                return (
+                                  <span className={`${mainContentStyles.labelDelItem}`}>
+                                    <span key={`${item.label_id}`} style={{ background: `rgba(${item.label_color}, 1)` }} className={`${mainContentStyles.normal_label}`}>
+                                      <span>{item.label_name}</span>
+                                      {/* <span onClick={(e) => { this.handleRemoveTaskTag(e, item.label_id) }} className={mainContentStyles.labelDelIcon}></span> */}
                                     </span>
-                                  )
-                                })
-                              }
-                            </div>
-                          </Dropdown>
-                        </div>
-                      ) : (
+                                  </span>
+                                )
+                              })
+                            }
+                          </div>
+                        ) : (
+                            <div>暂无</div>
+                          )
+                      )
+                    ) : (
+
+                        currentItem.data && currentItem.data.length ? (
                           <div style={{ position: 'relative' }}>
                             <Dropdown
                               visible={visible}
@@ -935,15 +903,53 @@ export default class DragDropContentComponent extends Component {
                               }
                             >
                               <div>
-                                <span>添加标签</span>
+                                {
+                                  currentItem.data.map(item => {
+                                    return (
+                                      <span className={`${mainContentStyles.labelDelItem}`}>
+                                        <span key={`${item.label_id}`} style={{ background: `rgba(${item.label_color}, 1)` }} className={`${mainContentStyles.normal_label}`}>
+                                          <span>{item.label_name}</span>
+                                          <span onClick={(e) => { this.handleRemoveTaskTag(e, item.label_id) }} className={mainContentStyles.labelDelIcon}></span>
+                                        </span>
+                                      </span>
+                                    )
+                                  })
+                                }
                               </div>
                             </Dropdown>
                           </div>
-                        )
+                        ) : (
+                            <div style={{ position: 'relative' }}>
+                              <Dropdown
+                                visible={visible}
+                                getPopupContainer={triggerNode => triggerNode.parentNode}
+                                trigger={['click']}
+                                onVisibleChange={(visible) => { this.handleVisibleChange(visible) }}
+                                overlayClassName={mainContentStyles.labelDataWrapper}
+                                overlay={
+                                  <LabelDataComponent
+                                    board_id={board_id}
+                                    listData={boardTagList}
+                                    searchName={'name'} currentSelect={currentItem.data}
+                                    handleAddBoardTag={this.handleAddBoardTag}
+                                    handleUpdateBoardTag={this.handleUpdateBoardTag}
+                                    handleRemoveBoardTag={this.handleRemoveBoardTag}
+                                    handleChgSelectedLabel={this.handleChgSelectedLabel}
+                                    handleClose={this.handleClose}
+                                  />
+                                }
+                              >
+                                <div>
+                                  <span>添加标签</span>
+                                </div>
+                              </Dropdown>
+                            </div>
+                          )
 
-                    )
-                }
+                      )
+                  }
 
+                </div>
               </div>
             </div>
           </div>
@@ -1032,91 +1038,93 @@ export default class DragDropContentComponent extends Component {
           // <div className={mainContentStyles.moveWrapper}>
           // <>
           <div key={id} className={`${mainContentStyles.field_content} ${showDelColor && currentItem.id == currentDelId && mainContentStyles.showDelColor}`}>
-            <div className={mainContentStyles.field_left}>
-              {
-                !flag && !(gold_data && gold_data.length) && (
-                  <span onClick={() => { this.handleDelCurrentField(currentItem.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
-                )
-              }
-              <div className={mainContentStyles.field_hover} style={{ maxWidth: 'inherit' }}>
-                <span className={`${globalStyles.authTheme}`}>&#xe7f5;</span>
-                <span>{`子${currentNounPlanFilterName(TASKS)}`} & 交付物</span>
-              </div>
-            </div>
-            <div className={`${mainContentStyles.field_right}`}>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                {/* 添加子任务组件 */}
+            <div className={mainContentStyles.field_item}>
+              <div className={mainContentStyles.field_left}>
                 {
-                  (
-                    <AppendSubTask data={data} handleTaskDetailChange={handleTaskDetailChange} handleChildTaskChange={handleChildTaskChange} whetherUpdateParentTaskTime={whetherUpdateParentTaskTime} updateRelyOnRationList={updateRelyOnRationList} boardFolderTreeData={boardFolderTreeData} projectDetailInfoData={projectDetailInfoData}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        {
-                          !!!(deliverables && deliverables.length) && (
-                            <div className={mainContentStyles.add_sub_btn}>
-                              <span className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe8fe;</span> 新建{`子${currentNounPlanFilterName(TASKS)}`}
-                            </div>
-                          )
-                        }
-                        <div>
+                  !flag && !(gold_data && gold_data.length) && (
+                    <span onClick={() => { this.handleDelCurrentField(currentItem.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
+                  )
+                }
+                <div className={mainContentStyles.field_hover} style={{ maxWidth: 'inherit' }}>
+                  <span className={`${globalStyles.authTheme}`}>&#xe7f5;</span>
+                  <span>{`子${currentNounPlanFilterName(TASKS)}`} & 交付物</span>
+                </div>
+              </div>
+              <div className={`${mainContentStyles.field_right}`}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  {/* 添加子任务组件 */}
+                  {
+                    (
+                      <AppendSubTask data={data} handleTaskDetailChange={handleTaskDetailChange} handleChildTaskChange={handleChildTaskChange} whetherUpdateParentTaskTime={whetherUpdateParentTaskTime} updateRelyOnRationList={updateRelyOnRationList} boardFolderTreeData={boardFolderTreeData} projectDetailInfoData={projectDetailInfoData}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                           {
-                            card_id && !(gold_data && gold_data.length) && (
-                              <div onClick={(e) => e && e.stopPropagation()}>
-                                <UploadAttachment executors={executors.data} boardFolderTreeData={boardFolderTreeData} projectDetailInfoData={projectDetailInfoData} org_id={org_id} board_id={board_id} card_id={card_id}
-                                  title={'上传交付物列表设置'}
-                                  listDescribe={'交付物列表'}
-                                  onFileListChange={this.onUploadFileListChange}>
-                                  <span className={mainContentStyles.add_sub_upload}>
-                                    <span style={{ fontSize: '16px' }} className={globalStyles.authTheme}>&#xe7fa;</span>
-                                    <span>上传交付物</span>
-                                  </span>
-                                </UploadAttachment>
+                            !!!(deliverables && deliverables.length) && (
+                              <div className={mainContentStyles.add_sub_btn}>
+                                <span className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe8fe;</span> 新建{`子${currentNounPlanFilterName(TASKS)}`}
                               </div>
                             )
                           }
-                        </div>
-                      </div>
-                    </ AppendSubTask>
-                  )
-                }
-              </div>
-              <div>
-                {/* 交付物 */}
-                <div className={mainContentStyles.filelist_wrapper}>
-                  {
-                    !!(deliverables && deliverables.length) && deliverables.map(fileInfo => {
-                      const { name: file_name, file_id } = fileInfo
-                      const breadcrumbList = getFolderPathName(fileInfo)
-                      return (
-                        <div className={`${mainContentStyles.file_item_wrapper}`} key={fileInfo.id}>
-                          <div className={`${mainContentStyles.file_item} ${mainContentStyles.pub_hover}`} onClick={(e) => this.openFileDetailModal(e, fileInfo)} >
-                            <div>
-                              <span className={`${mainContentStyles.file_action} ${globalStyles.authTheme}`} dangerouslySetInnerHTML={{ __html: judgeFileType(file_name) }}></span>
-                            </div>
-                            <div style={{ flex: 1 }}>
-                              <div title={file_name} className={mainContentStyles.pay_file_name}>{file_name}</div>
-                            </div>
-                            <div className={mainContentStyles.file_info}>{showMemberName(fileInfo.create_by, data)} 上传于 {fileInfo.create_time && timestampFormat(fileInfo.create_time, "MM-dd hh:mm")}</div>
-                            <div className={mainContentStyles.breadNav} style={{ position: 'relative' }}>
-                              <Breadcrumb className={mainContentStyles.Breadcrumb} separator=">">
-                                {breadcrumbList.map((value, key) => {
-                                  return (
-                                    // <Tooltip getPopupContainer={triggerNode => triggerNode.parentNode} title={(value && value.file_name) && value.file_name} placement="top">
-                                    <Breadcrumb.Item key={key}>
-                                      <span title={(value && value.file_name) && value.file_name} className={key == breadcrumbList.length - 1 && mainContentStyles.breadItem}>{(value && value.file_name) && value.file_name}</span>
-                                    </Breadcrumb.Item>
-                                    // </Tooltip>
-                                  )
-                                })}
-                              </Breadcrumb>
-                            </div>
-                            <Dropdown trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.getAttachmentActionMenus({fileInfo, code: 'SUBTASK_DELIVERABLES', card_id})}>
-                              <span onClick={(e) => e && e.stopPropagation()} className={`${mainContentStyles.pay_more_icon} ${globalStyles.authTheme}`}>&#xe66f;</span>
-                            </Dropdown>
+                          <div>
+                            {
+                              card_id && !(gold_data && gold_data.length) && (
+                                <div onClick={(e) => e && e.stopPropagation()}>
+                                  <UploadAttachment executors={executors.data} boardFolderTreeData={boardFolderTreeData} projectDetailInfoData={projectDetailInfoData} org_id={org_id} board_id={board_id} card_id={card_id}
+                                    title={'上传交付物列表设置'}
+                                    listDescribe={'交付物列表'}
+                                    onFileListChange={this.onUploadFileListChange}>
+                                    <span className={mainContentStyles.add_sub_upload}>
+                                      <span style={{ fontSize: '16px' }} className={globalStyles.authTheme}>&#xe7fa;</span>
+                                      <span>上传交付物</span>
+                                    </span>
+                                  </UploadAttachment>
+                                </div>
+                              )
+                            }
                           </div>
                         </div>
-                      )
-                    })
+                      </ AppendSubTask>
+                    )
                   }
+                </div>
+                <div>
+                  {/* 交付物 */}
+                  <div className={mainContentStyles.filelist_wrapper}>
+                    {
+                      !!(deliverables && deliverables.length) && deliverables.map(fileInfo => {
+                        const { name: file_name, file_id } = fileInfo
+                        const breadcrumbList = getFolderPathName(fileInfo)
+                        return (
+                          <div className={`${mainContentStyles.file_item_wrapper}`} key={fileInfo.id}>
+                            <div className={`${mainContentStyles.file_item} ${mainContentStyles.pub_hover}`} onClick={(e) => this.openFileDetailModal(e, fileInfo)} >
+                              <div>
+                                <span className={`${mainContentStyles.file_action} ${globalStyles.authTheme}`} dangerouslySetInnerHTML={{ __html: judgeFileType(file_name) }}></span>
+                              </div>
+                              <div style={{ flex: 1 }}>
+                                <div title={file_name} className={mainContentStyles.pay_file_name}>{file_name}</div>
+                              </div>
+                              <div className={mainContentStyles.file_info}>{showMemberName(fileInfo.create_by, data)} 上传于 {fileInfo.create_time && timestampFormat(fileInfo.create_time, "MM-dd hh:mm")}</div>
+                              <div className={mainContentStyles.breadNav} style={{ position: 'relative' }}>
+                                <Breadcrumb className={mainContentStyles.Breadcrumb} separator=">">
+                                  {breadcrumbList.map((value, key) => {
+                                    return (
+                                      // <Tooltip getPopupContainer={triggerNode => triggerNode.parentNode} title={(value && value.file_name) && value.file_name} placement="top">
+                                      <Breadcrumb.Item key={key}>
+                                        <span title={(value && value.file_name) && value.file_name} className={key == breadcrumbList.length - 1 && mainContentStyles.breadItem}>{(value && value.file_name) && value.file_name}</span>
+                                      </Breadcrumb.Item>
+                                      // </Tooltip>
+                                    )
+                                  })}
+                                </Breadcrumb>
+                              </div>
+                              <Dropdown trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.getAttachmentActionMenus({ fileInfo, code: 'SUBTASK_DELIVERABLES', card_id })}>
+                                <span onClick={(e) => e && e.stopPropagation()} className={`${mainContentStyles.pay_more_icon} ${globalStyles.authTheme}`}>&#xe66f;</span>
+                              </Dropdown>
+                            </div>
+                          </div>
+                        )
+                      })
+                    }
+                  </div>
                 </div>
               </div>
             </div>

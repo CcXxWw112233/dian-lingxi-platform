@@ -269,27 +269,54 @@
     cursor: pointer;
     //align-items : center;
     // line-height: 55px;
+    .field_item {
+      display: flex;
+      padding-left: 24px;
+      width: 100%;
+    }
     .field_left {
+      // min-width: 150px;
+      // margin-left: 22px;
+      display: flex;
+      align-items: center;
+      margin-left: -24px;
       min-width: 150px;
-      margin-left: 22px;
+      max-width: 150px;
+      max-height: 38px;
+      line-height: 38px;
+      position: relative;
       // cursor: move;
       .field_hover {
         min-width:68px;
         max-width: 96px;
         height:38px;
         border-radius:4px;
-        padding-left: 10px;
-        padding-right: 10px;
+        line-height: 30px;
+        // padding-left: 10px;
+        // padding-right: 10px;
         display: inline-block;
+        max-width:120px;
+        padding: 4px 8px;
+        // height:38px;
+        // line-height: 38px;
+        text-align: center;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        margin-right: 4px;
+        font-weight: 500;
+        margin-left: 24px;
         // cursor: move;
         >span:nth-child(1) {
           font-size   : 16px;
           margin-right: 9px;
-          color       : rgba(0, 0, 0, 0.65)
+          // color       : rgba(0, 0, 0, 0.65)
         }
   
         >span:nth-child(2) {
           font-size: 14px;
+          // font-weight: 600;
+          color: rgba(0, 0, 0, 0.45);
         }
         &:hover {
           background:rgba(0,0,0,0.04);
@@ -306,6 +333,9 @@
       .field_delIcon {
         cursor: pointer;
         display: none;
+        display: none;
+        position: absolute;
+        left: 5px;
         &:hover {
           color: rgba(0, 0, 0, 0.65);
         }

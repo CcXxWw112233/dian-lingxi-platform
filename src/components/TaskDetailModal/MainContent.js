@@ -144,7 +144,7 @@ export default class MainContent extends Component {
     this.props.dispatch({
       type: 'technological/getCorrespondingOrganizationMmembers',
       payload: {
-          _organization_id: org_id
+        _organization_id: org_id
       }
     })
   }
@@ -892,7 +892,7 @@ export default class MainContent extends Component {
   }
 
   // 属性选择的下拉回调 S
-  handleMenuReallySelect = (e,value) => {
+  handleMenuReallySelect = (e, value) => {
     const { dispatch, card_id } = this.props
     const { propertiesList = [] } = this.state
     // const { key, selectedKeys = [] } = e
@@ -944,7 +944,7 @@ export default class MainContent extends Component {
               </Button>
             ))
           }
-          <CustomFields style={{display: 'inline-block'}} relations_fields={[]} org_id={org_id} handleAddCustomField={this.handleAddCustomField} placement="bottomLeft">
+          <CustomFields style={{ display: 'inline-block' }} relations_fields={[]} org_id={org_id} handleAddCustomField={this.handleAddCustomField} placement="bottomLeft">
             <Button className={mainContentStyles.attr_btn}>更多</Button>
           </CustomFields>
           {/* <Menu style={{ padding: '8px 0px', boxShadow: '0px 2px 8px 0px rgba(0,0,0,0.15)', maxWidth: '248px' }}
@@ -976,75 +976,55 @@ export default class MainContent extends Component {
     return (
       <div>
         <div style={{ cursor: 'pointer' }} className={`${mainContentStyles.field_content} ${showDelColor && id == currentDelId && mainContentStyles.showDelColor}`}>
-          <div className={mainContentStyles.field_left}>
-            {
-              !flag && (
-                <span onClick={() => { this.handleDelCurrentField(id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
-              )
-            }
-            <div className={mainContentStyles.field_hover}>
-              <span style={{ fontSize: '16px', color: 'rgba(0,0,0,0.65)' }} className={globalStyles.authTheme}>&#xe7b2;</span>
-              <span className={mainContentStyles.user_executor}>负责人</span>
+          <div className={mainContentStyles.field_item}>
+            <div className={mainContentStyles.field_left}>
+              {
+                !flag && (
+                  <span onClick={() => { this.handleDelCurrentField(id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
+                )
+              }
+              <div className={mainContentStyles.field_hover}>
+                <span style={{ fontSize: '16px', color: 'rgba(0,0,0,0.65)' }} className={globalStyles.authTheme}>&#xe7b2;</span>
+                <span className={mainContentStyles.user_executor}>负责人</span>
+              </div>
             </div>
-          </div>
-          {
-            (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
-              (
-                !data.length ? (
-                  <div className={`${mainContentStyles.field_right}`}>
-                    <div className={`${mainContentStyles.pub_hover}`}>
-                      <span>暂无</span>
-                    </div>
-                  </div>
-                ) : (
-                    <div style={{ display: 'flex', flexWrap: 'wrap' }} className={`${mainContentStyles.field_right} ${mainContentStyles.pub_hover}`}>
-                      {data.map((value) => {
-                        const { avatar, name, user_name, user_id } = value
-                        return (
-                          <div key={user_id} className={`${mainContentStyles.first_pric}`} style={{ display: 'flex', flexWrap: 'wrap', marginLeft: '-12px' }} key={user_id}>
-                            <div className={`${mainContentStyles.user_item}`} style={{ display: 'flex', alignItems: 'center', position: 'relative', margin: '2px 10px', textAlign: 'center' }} key={user_id}>
-                              {avatar ? (
-                                <img style={{ width: '24px', height: '24px', borderRadius: 20, margin: '0 2px' }} src={avatar} />
-                              ) : (
-                                  <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', margin: '0 2px' }}>
-                                    <Icon type={'user'} style={{ fontSize: 12, color: '#8c8c8c' }} />
-                                  </div>
-                                )}
-                              <div style={{ marginRight: 8, fontSize: '14px' }} className={mainContentStyles.value_text}>{name || user_name || '佚名'}</div>
-                              {/* <span onClick={(e) => { this.handleRemoveExecutors(e, user_id) }} className={`${mainContentStyles.userItemDeleBtn}`}></span> */}
-                            </div>
-
-                          </div>
-                        )
-                      })}
-                    </div>
-                  )
-              )
-            ) : (
-                <span style={{ flex: '1' }}>
-                  {
-                    !data.length ? (
-                      <div style={{ flex: '1', position: 'relative' }}>
-                        <Dropdown trigger={['click']} overlayClassName={mainContentStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
-                          overlay={
-                            <MenuSearchPartner
-                              // isInvitation={true}
-                              inviteOthersToBoardCalback={this.inviteOthersToBoardCalback}
-                              invitationType='4'
-                              invitationId={card_id}
-                              invitationOrg={org_id}
-                              listData={projectDetailInfoData.data} keyCode={'user_id'} searchName={'name'} currentSelect={data} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
-                              board_id={board_id} />
-                          }
-                        >
-                          <div className={`${mainContentStyles.field_right}`}>
-                            <div className={`${mainContentStyles.pub_hover}`}>
-                              <span>指派负责人</span>
-                            </div>
-                          </div>
-                        </Dropdown>
+            {
+              (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
+                (
+                  !data.length ? (
+                    <div className={`${mainContentStyles.field_right}`}>
+                      <div className={`${mainContentStyles.pub_hover}`}>
+                        <span>暂无</span>
                       </div>
-                    ) : (
+                    </div>
+                  ) : (
+                      <div style={{ display: 'flex', flexWrap: 'wrap' }} className={`${mainContentStyles.field_right} ${mainContentStyles.pub_hover}`}>
+                        {data.map((value) => {
+                          const { avatar, name, user_name, user_id } = value
+                          return (
+                            <div key={user_id} className={`${mainContentStyles.first_pric}`} style={{ display: 'flex', flexWrap: 'wrap', marginLeft: '-12px' }} key={user_id}>
+                              <div className={`${mainContentStyles.user_item}`} style={{ display: 'flex', alignItems: 'center', position: 'relative', margin: '2px 10px', textAlign: 'center' }} key={user_id}>
+                                {avatar ? (
+                                  <img style={{ width: '24px', height: '24px', borderRadius: 20, margin: '0 2px' }} src={avatar} />
+                                ) : (
+                                    <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', margin: '0 2px' }}>
+                                      <Icon type={'user'} style={{ fontSize: 12, color: '#8c8c8c' }} />
+                                    </div>
+                                  )}
+                                <div style={{ marginRight: 8, fontSize: '14px' }} className={mainContentStyles.value_text}>{name || user_name || '佚名'}</div>
+                                {/* <span onClick={(e) => { this.handleRemoveExecutors(e, user_id) }} className={`${mainContentStyles.userItemDeleBtn}`}></span> */}
+                              </div>
+
+                            </div>
+                          )
+                        })}
+                      </div>
+                    )
+                )
+              ) : (
+                  <span style={{ flex: '1' }}>
+                    {
+                      !data.length ? (
                         <div style={{ flex: '1', position: 'relative' }}>
                           <Dropdown trigger={['click']} overlayClassName={mainContentStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
                             overlay={
@@ -1058,34 +1038,56 @@ export default class MainContent extends Component {
                                 board_id={board_id} />
                             }
                           >
-                            <div style={{ display: 'flex', flexWrap: 'wrap' }} className={`${mainContentStyles.field_right} ${mainContentStyles.pub_hover}`}>
-                              {data.map((value) => {
-                                const { avatar, name, user_name, user_id } = value
-                                return (
-                                  <div key={user_id} className={`${mainContentStyles.first_pric}`} style={{ display: 'flex', flexWrap: 'wrap', marginLeft: '-12px' }} key={user_id}>
-                                    <div className={`${mainContentStyles.user_item}`} style={{ display: 'flex', alignItems: 'center', position: 'relative', margin: '2px 10px', textAlign: 'center' }} key={user_id}>
-                                      {avatar ? (
-                                        <img style={{ width: '24px', height: '24px', borderRadius: 20, margin: '0 2px' }} src={avatar} />
-                                      ) : (
-                                          <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', margin: '0 2px' }}>
-                                            <Icon type={'user'} style={{ fontSize: 12, color: '#8c8c8c' }} />
-                                          </div>
-                                        )}
-                                      <div style={{ marginRight: 8, fontSize: '14px' }} className={mainContentStyles.value_text}>{name || user_name || '佚名'}</div>
-                                      <span onClick={(e) => { this.handleRemoveExecutors(e, user_id) }} className={`${mainContentStyles.userItemDeleBtn}`}></span>
-                                    </div>
-
-                                  </div>
-                                )
-                              })}
+                            <div className={`${mainContentStyles.field_right}`}>
+                              <div className={`${mainContentStyles.pub_hover}`}>
+                                <span>指派负责人</span>
+                              </div>
                             </div>
                           </Dropdown>
                         </div>
-                      )
-                  }
-                </span>
-              )
-          }
+                      ) : (
+                          <div style={{ flex: '1', position: 'relative' }}>
+                            <Dropdown trigger={['click']} overlayClassName={mainContentStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
+                              overlay={
+                                <MenuSearchPartner
+                                  // isInvitation={true}
+                                  inviteOthersToBoardCalback={this.inviteOthersToBoardCalback}
+                                  invitationType='4'
+                                  invitationId={card_id}
+                                  invitationOrg={org_id}
+                                  listData={projectDetailInfoData.data} keyCode={'user_id'} searchName={'name'} currentSelect={data} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
+                                  board_id={board_id} />
+                              }
+                            >
+                              <div style={{ display: 'flex', flexWrap: 'wrap' }} className={`${mainContentStyles.field_right} ${mainContentStyles.pub_hover}`}>
+                                {data.map((value) => {
+                                  const { avatar, name, user_name, user_id } = value
+                                  return (
+                                    <div key={user_id} className={`${mainContentStyles.first_pric}`} style={{ display: 'flex', flexWrap: 'wrap', marginLeft: '-12px' }} key={user_id}>
+                                      <div className={`${mainContentStyles.user_item}`} style={{ display: 'flex', alignItems: 'center', position: 'relative', margin: '2px 10px', textAlign: 'center' }} key={user_id}>
+                                        {avatar ? (
+                                          <img style={{ width: '24px', height: '24px', borderRadius: 20, margin: '0 2px' }} src={avatar} />
+                                        ) : (
+                                            <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', margin: '0 2px' }}>
+                                              <Icon type={'user'} style={{ fontSize: 12, color: '#8c8c8c' }} />
+                                            </div>
+                                          )}
+                                        <div style={{ marginRight: 8, fontSize: '14px' }} className={mainContentStyles.value_text}>{name || user_name || '佚名'}</div>
+                                        <span onClick={(e) => { this.handleRemoveExecutors(e, user_id) }} className={`${mainContentStyles.userItemDeleBtn}`}></span>
+                                      </div>
+
+                                    </div>
+                                  )
+                                })}
+                              </div>
+                            </Dropdown>
+                          </div>
+                        )
+                    }
+                  </span>
+                )
+            }
+          </div>
         </div>
       </div>
     )
@@ -1302,130 +1304,138 @@ export default class MainContent extends Component {
             {/* 状态区域 */}
             <div>
               <div style={{ position: 'relative' }} className={mainContentStyles.field_content} style={{ cursor: 'pointer' }}>
-                <div className={mainContentStyles.field_left} style={{ paddingLeft: '10px' }}>
-                  <span className={`${globalStyles.authTheme}`}>&#xe6b6;</span>
-                  <span>状态</span>
-                </div>
-                {
-                  type == '0' ? (
-                    <>
-                      {
-                        (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
-                          <div className={`${mainContentStyles.field_right}`}>
-                            <div className={`${mainContentStyles.pub_hover}`}>
-                              <span className={is_realize == '0' ? mainContentStyles.incomplete : mainContentStyles.complete}>{is_realize == '0' ? '未完成' : '已完成'}</span>
-                            </div>
-                          </div>
-                        ) : (
-                            <Dropdown trigger={['click']} overlayClassName={mainContentStyles.overlay_item} overlay={filedEdit} getPopupContainer={triggerNode => triggerNode.parentNode}>
-                              <div className={`${mainContentStyles.field_right}`}>
-                                <div className={`${mainContentStyles.pub_hover}`}>
-                                  <span className={is_realize == '0' ? mainContentStyles.incomplete : mainContentStyles.complete}>{is_realize == '0' ? '未完成' : '已完成'}</span>
-                                </div>
+                <div className={mainContentStyles.field_item}>
+                  <div className={mainContentStyles.field_left}>
+                    <div className={mainContentStyles.field_hover}>
+                      <span className={`${globalStyles.authTheme}`}>&#xe6b6;</span>
+                      <span>状态</span>
+                    </div>
+                  </div>
+                  {
+                    type == '0' ? (
+                      <>
+                        {
+                          (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
+                            <div className={`${mainContentStyles.field_right}`}>
+                              <div className={`${mainContentStyles.pub_hover}`}>
+                                <span className={is_realize == '0' ? mainContentStyles.incomplete : mainContentStyles.complete}>{is_realize == '0' ? '未完成' : '已完成'}</span>
                               </div>
-                            </Dropdown>
-                          )
-                      }
-                    </>
-                  ) : (
-                      <div className={`${mainContentStyles.field_right}`}>
-                        <div className={`${mainContentStyles.pub_hover}`}>
-                          {
-                            this.getMeetingStatus && this.getMeetingStatus()
-                          }
-                          {/* <span className={mainContentStyles.incomplete}>{'未完成'}</span> */}
+                            </div>
+                          ) : (
+                              <Dropdown trigger={['click']} overlayClassName={mainContentStyles.overlay_item} overlay={filedEdit} getPopupContainer={triggerNode => triggerNode.parentNode}>
+                                <div className={`${mainContentStyles.field_right}`}>
+                                  <div className={`${mainContentStyles.pub_hover}`}>
+                                    <span className={is_realize == '0' ? mainContentStyles.incomplete : mainContentStyles.complete}>{is_realize == '0' ? '未完成' : '已完成'}</span>
+                                  </div>
+                                </div>
+                              </Dropdown>
+                            )
+                        }
+                      </>
+                    ) : (
+                        <div className={`${mainContentStyles.field_right}`}>
+                          <div className={`${mainContentStyles.pub_hover}`}>
+                            {
+                              this.getMeetingStatus && this.getMeetingStatus()
+                            }
+                            {/* <span className={mainContentStyles.incomplete}>{'未完成'}</span> */}
+                          </div>
                         </div>
-                      </div>
-                    )
-                }
+                      )
+                  }
+                </div>
 
               </div>
             </div>
             {/* 时间区域 */}
             <div>
               <div className={mainContentStyles.field_content} style={{ cursor: 'pointer' }}>
-                <div className={mainContentStyles.field_left} style={{ paddingLeft: '10px' }}>
-                  <span className={globalStyles.authTheme}>&#xe686;</span>
-                  <span>时间</span>
-                </div>
-                <div className={`${mainContentStyles.field_right}`}>
-                  <div style={{ display: 'flex' }}>
-                    <div style={{ position: 'relative' }}>
-                      {/* 开始时间 */}
-                      {
-                        (((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit())
-                          || this.state.is_change_parent_time
-                        ) ? (
-                            (
+                <div className={mainContentStyles.field_item}>
+                  <div className={mainContentStyles.field_left}>
+                    <div className={mainContentStyles.field_hover}>
+                      <span style={{ fontWeight: 500 }} className={globalStyles.authTheme}>&#xe686;</span>
+                      <span>时间</span>
+                    </div>
+                  </div>
+                  <div className={`${mainContentStyles.field_right}`}>
+                    <div style={{ display: 'flex' }}>
+                      <div style={{ position: 'relative' }}>
+                        {/* 开始时间 */}
+                        {
+                          (((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit())
+                            || this.state.is_change_parent_time
+                          ) ? (
+                              (
+                                <div className={`${mainContentStyles.start_time}`}>
+                                  <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
+                                    {start_time ? <span className={mainContentStyles.value_text}>{timestampToTime(start_time, true)}</span> : '暂无'}
+                                  </span>
+                                </div>
+                              )
+                            ) : (
                               <div className={`${mainContentStyles.start_time}`}>
                                 <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
-                                  {start_time ? <span className={mainContentStyles.value_text}>{timestampToTime(start_time, true)}</span> : '暂无'}
+                                  {start_time ? <span className={mainContentStyles.value_text}>{timestampToTime(start_time, true)}</span> : '开始时间'}
+                                  <DatePicker
+                                    disabledDate={this.disabledStartTime.bind(this)}
+                                    // onOk={this.startDatePickerChange.bind(this)}
+                                    onChange={this.startDatePickerChange.bind(this)}
+                                    // getCalendarContainer={triggerNode => triggerNode.parentNode}
+                                    placeholder={start_time ? timestampToTimeNormal(start_time, '/', true) : '开始时间'}
+                                    format="YYYY/MM/DD HH:mm"
+                                    showTime={{ format: 'HH:mm' }}
+                                    style={{ opacity: 0, height: '100%', background: '#000000', position: 'absolute', left: 0, top: 0, width: 'auto' }} />
                                 </span>
+                                <span onClick={this.handleDelStartTime} className={`${mainContentStyles.userItemDeleBtn} ${start_time && mainContentStyles.timeDeleBtn}`}></span>
                               </div>
                             )
-                          ) : (
-                            <div className={`${mainContentStyles.start_time}`}>
-                              <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
-                                {start_time ? <span className={mainContentStyles.value_text}>{timestampToTime(start_time, true)}</span> : '开始时间'}
-                                <DatePicker
-                                  disabledDate={this.disabledStartTime.bind(this)}
-                                  // onOk={this.startDatePickerChange.bind(this)}
-                                  onChange={this.startDatePickerChange.bind(this)}
-                                  // getCalendarContainer={triggerNode => triggerNode.parentNode}
-                                  placeholder={start_time ? timestampToTimeNormal(start_time, '/', true) : '开始时间'}
-                                  format="YYYY/MM/DD HH:mm"
-                                  showTime={{ format: 'HH:mm' }}
-                                  style={{ opacity: 0, height: '100%', background: '#000000', position: 'absolute', left: 0, top: 0, width: 'auto' }} />
-                              </span>
-                              <span onClick={this.handleDelStartTime} className={`${mainContentStyles.userItemDeleBtn} ${start_time && mainContentStyles.timeDeleBtn}`}></span>
-                            </div>
-                          )
-                      }
+                        }
                       &nbsp;
                       <span style={{ color: '#bfbfbf' }}> ~ </span>
                       &nbsp;
                       {/* 截止时间 */}
-                      {
-                        (((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit())
-                          || this.state.is_change_parent_time
-                        ) ? (
-                            (
+                        {
+                          (((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit())
+                            || this.state.is_change_parent_time
+                          ) ? (
+                              (
+                                <div className={`${mainContentStyles.due_time}`}>
+                                  <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
+                                    {due_time ? <span className={mainContentStyles.value_text}>{timestampToTime(due_time, true)}</span> : '暂无'}
+                                  </span>
+                                </div>
+                              )
+                            ) : (
                               <div className={`${mainContentStyles.due_time}`}>
-                                <span style={{ position: 'relative', zIndex: 0, minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
-                                  {due_time ? <span className={mainContentStyles.value_text}>{timestampToTime(due_time, true)}</span> : '暂无'}
+                                <span style={{ position: 'relative', minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
+                                  {due_time ? <span className={mainContentStyles.value_text}>{timestampToTime(due_time, true)}</span> : '截止时间'}
+                                  <DatePicker
+                                    disabledDate={this.disabledDueTime.bind(this)}
+                                    // getCalendarContainer={triggerNode => triggerNode.parentNode}
+                                    placeholder={due_time ? timestampToTimeNormal(due_time, '/', true) : '截止时间'}
+                                    format="YYYY/MM/DD HH:mm"
+                                    showTime={{ format: 'HH:mm' }}
+                                    // onOk={this.endDatePickerChange.bind(this)}
+                                    onChange={this.endDatePickerChange.bind(this)}
+                                    style={{ opacity: 0, height: '100%', background: '#000000', position: 'absolute', left: 0, top: 0, width: 'auto' }} />
                                 </span>
+                                <span onClick={this.handleDelDueTime} className={`${mainContentStyles.userItemDeleBtn} ${due_time && mainContentStyles.timeDeleBtn}`}></span>
                               </div>
                             )
-                          ) : (
-                            <div className={`${mainContentStyles.due_time}`}>
-                              <span style={{ position: 'relative', minWidth: '80px', lineHeight: '38px', padding: '0 12px', display: 'inline-block', textAlign: 'center' }}>
-                                {due_time ? <span className={mainContentStyles.value_text}>{timestampToTime(due_time, true)}</span> : '截止时间'}
-                                <DatePicker
-                                  disabledDate={this.disabledDueTime.bind(this)}
-                                  // getCalendarContainer={triggerNode => triggerNode.parentNode}
-                                  placeholder={due_time ? timestampToTimeNormal(due_time, '/', true) : '截止时间'}
-                                  format="YYYY/MM/DD HH:mm"
-                                  showTime={{ format: 'HH:mm' }}
-                                  // onOk={this.endDatePickerChange.bind(this)}
-                                  onChange={this.endDatePickerChange.bind(this)}
-                                  style={{ opacity: 0, height: '100%', background: '#000000', position: 'absolute', left: 0, top: 0, width: 'auto' }} />
-                              </span>
-                              <span onClick={this.handleDelDueTime} className={`${mainContentStyles.userItemDeleBtn} ${due_time && mainContentStyles.timeDeleBtn}`}></span>
-                            </div>
+                        }
+                      </div>
+                      {/* 通知提醒 */}
+                      {
+                        (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
+                          ''
+                        ) : (
+                            <span style={{ position: 'relative' }}>
+                              <InformRemind commonExecutors={data} style={{ display: 'inline-block', minWidth: '72px', height: '38px', borderRadius: '4px', textAlign: 'center' }} rela_id={card_id} rela_type={type == '0' ? '1' : '2'} />
+                            </span>
                           )
                       }
-                    </div>
-                    {/* 通知提醒 */}
-                    {
-                      (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
-                        ''
-                      ) : (
-                          <span style={{ position: 'relative' }}>
-                            <InformRemind commonExecutors={data} style={{ display: 'inline-block', minWidth: '72px', height: '38px', borderRadius: '4px', textAlign: 'center' }} rela_id={card_id} rela_type={type == '0' ? '1' : '2'} />
-                          </span>
-                        )
-                    }
 
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1437,12 +1447,12 @@ export default class MainContent extends Component {
             <DragDropContentComponent getMilestone={this.getMilestone} selectedKeys={selectedKeys} updateParentPropertiesList={this.updateParentPropertiesList} handleTaskDetailChange={handleTaskDetailChange} handleChildTaskChange={handleChildTaskChange} boardFolderTreeData={boardFolderTreeData} milestoneList={milestoneList} whetherUpdateParentTaskTime={this.whetherUpdateParentTaskTime} updateRelyOnRationList={this.updateRelyOnRationList} />
           </div>
           {/* 不同字段的渲染 E */}
-          
+
           {/* 渲染添加关联字段 */}
           <div>
             <CustomCategoriesOperate fields={fields} handleUpdateModelDatas={this.handleUpdateModelDatas} />
           </div>
-                    
+
           {/* 添加字段 S */}
           <div>
             {
@@ -1455,18 +1465,22 @@ export default class MainContent extends Component {
                       (
                         // this.getDiffAttributies()
                         <div className={mainContentStyles.field_content}>
-                          <div className={mainContentStyles.field_left} style={{ paddingLeft: '10px' }}>
-                            <span className={globalStyles.authTheme}>&#xe8fe;</span>
-                            <span>字段</span>
-                          </div>
-                          <div className={mainContentStyles.field_right}>
-                            <div style={{ position: 'relative' }}>
-                              {this.getDiffAttributies()}
-                              {/* <Dropdown overlayClassName={mainContentStyles.overlay_attribute} trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode}
+                          <div className={mainContentStyles.field_item}>
+                            <div className={mainContentStyles.field_left}>
+                              <div className={mainContentStyles.field_hover}>
+                                <span className={globalStyles.authTheme}>&#xe8fe;</span>
+                                <span>字段</span>
+                              </div>
+                            </div>
+                            <div className={mainContentStyles.field_right}>
+                              <div style={{ position: 'relative' }}>
+                                {this.getDiffAttributies()}
+                                {/* <Dropdown overlayClassName={mainContentStyles.overlay_attribute} trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode}
                                 overlay={this.getDiffAttributies()}
                               >
                                 <div><span>选择属性</span></div>
                               </Dropdown> */}
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -1475,12 +1489,6 @@ export default class MainContent extends Component {
                   </>
                 )
             }
-            {/* 显示自定义字段 */}
-            {/* <CustomFields relations_fields={[]} org_id={org_id} handleAddCustomField={this.handleAddCustomField} placement="bottomLeft">
-              <div className={`${mainContentStyles.add_custom_fields}`}>
-                <div>更多</div>
-              </div>
-          </CustomFields> */}
           </div>
           {/* 添加字段 E */}
         </div>
