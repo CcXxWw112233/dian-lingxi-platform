@@ -104,7 +104,7 @@ export default class GroupListHeadItem extends Component {
       const { itemValue = {}, itemKey, dispatch, group_rows_lock, group_rows, list_group } = this.props
       const { list_no_time_data = [] } = itemValue
       const group_rows_lock_ = [...group_rows_lock]
-      new_isShowBottDetail == '1' ? group_rows_lock_[itemKey] = Math.min(list_no_time_data.length + 7, 7) : group_rows_lock_[itemKey] = 0
+      new_isShowBottDetail == '1' ? group_rows_lock_[itemKey] = Math.min(list_no_time_data.length + 10, 20) : group_rows_lock_[itemKey] = 0
       dispatch({
         type: 'gantt/updateDatas',
         payload: {
