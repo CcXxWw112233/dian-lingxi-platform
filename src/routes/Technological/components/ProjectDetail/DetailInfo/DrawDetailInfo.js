@@ -16,7 +16,7 @@ import { getGlobalData } from "../../../../../utils/businessFunction";
 import { isApiResponseOk } from '../../../../../utils/handleResponseData';
 import { organizationInviteWebJoin, commInviteWebJoin, } from '../../../../../services/technological/index'
 import { cursorMoveEnd } from '../../../../../components/ProcessDetailModal/components/handleOperateModal';
-import CustomFidlds from '../../../../../components/CustomFields'
+import CustomFields from '../../../../../components/CustomFields'
 import CustomCategoriesOperate from '../../../../../components/CustomFields/CustomCategoriesOperate';
 
 const TextArea = Input.TextArea
@@ -656,12 +656,12 @@ export default class DrawDetailInfo extends React.Component {
           <div style={{ marginTop: '32px' }}>
             <CustomCategoriesOperate fields={fields} handleUpdateModelDatas={this.handleUpdateModelDatas} />
           </div>
-          <CustomFidlds relations_fields={fields} org_id={org_id} handleAddCustomField={this.handleAddCustomField} placement="bottomLeft" getPopupContainer={document.getElementById('detailInfoOut')}>
+          <CustomFields relations_fields={fields} org_id={org_id} handleAddCustomField={this.handleAddCustomField} placement="bottomLeft" getPopupContainer={document.getElementById('detailInfoOut')}>
             <div className={DrawDetailInfoStyle.add_custom_fields}>
               <span className={globalsetStyles.authTheme}>&#xe8fe;</span>
               <span>添加字段</span>
             </div>
-          </CustomFidlds>
+          </CustomFields>
           {/* <div className={DrawDetailInfoStyle.dynamic}>
               <div className={ DrawDetailInfoStyle.dy_title }>
                 <div 

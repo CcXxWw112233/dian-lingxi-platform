@@ -147,7 +147,7 @@ export default class BoardFeatures extends Component {
 		if ('EXECUTOR' == operate_properties_code) {
 			const { properties } = drawContent
 			const user_id = (localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}).id
-			const excutors = properties.find(item => item.code == 'EXECUTOR').data || []
+			const excutors = (properties.find(item => item.code == 'EXECUTOR') || {}).data || []
 			if (excutors.findIndex(item => item.user_id == user_id) == -1) {
 				this.handleDeleteCard({ card_id })
 				return

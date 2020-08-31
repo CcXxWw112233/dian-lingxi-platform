@@ -266,9 +266,9 @@ export default class Index extends Component {
   }
 
   render() {
-    const { children, placement, getPopupContainer } = this.props
+    const { children, style, placement, getPopupContainer } = this.props
     return (
-      <div>
+      <div style={{...style}}>
         <Popover
           getPopupContainer={getPopupContainer ? () => getPopupContainer : triggerNode => triggerNode.parentNode}
           placement={placement ? placement : 'bottom'}

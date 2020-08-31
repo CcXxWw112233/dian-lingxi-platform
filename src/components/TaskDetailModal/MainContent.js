@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'dva'
-import { Icon, message, Dropdown, Menu, DatePicker, Modal, Tooltip } from 'antd'
+import { Icon, message, Dropdown, Menu, DatePicker, Modal, Tooltip, Button } from 'antd'
 import mainContentStyles from './MainContent.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import NameChangeInput from '@/components/NameChangeInput'
@@ -21,11 +21,13 @@ import DragDropContentComponent from './DragDropContentComponent'
 import FileListRightBarFileDetailModal from '@/routes/Technological/components/ProjectDetail/FileModule/FileListRightBarFileDetailModal';
 import { arrayNonRepeatfy } from '../../utils/util'
 import RelyOnRelationship from '../RelyOnRelationship'
-import { getCurrentDrawerContentPropsModelFieldData, filterCurrentUpdateDatasField, getCurrentPropertiesData, renderTaskNounPlanCode } from './handleOperateModal'
+import { getCurrentDrawerContentPropsModelFieldData, filterCurrentUpdateDatasField, getCurrentPropertiesData, renderTaskNounPlanCode, getCurrentFieldIcon } from './handleOperateModal'
 import { rebackCreateNotify } from '../NotificationTodos'
 import { currentNounPlanFilterName } from '../../utils/businessFunction'
 import { TASKS } from '../../globalset/js/constant'
 import { lx_utils } from 'lingxi-im'
+import CustomFields from '../CustomFields'
+import CustomCategoriesOperate from '../CustomFields/CustomCategoriesOperate';
 
 @connect(mapStateToProps)
 export default class MainContent extends Component {
@@ -137,6 +139,16 @@ export default class MainContent extends Component {
     })
   }
 
+  // 获取组织成员列表
+  getOrgMemberList = (org_id) => {
+    this.props.dispatch({
+      type: 'technological/getCorrespondingOrganizationMmembers',
+      payload: {
+          _organization_id: org_id
+      }
+    })
+  }
+
   // 获取任务详情数据
   getInitCardDetailDatas = () => {
     const { card_id, dispatch } = this.props
@@ -161,6 +173,8 @@ export default class MainContent extends Component {
         this.getMilestone(res.data.board_id)
         // 初始化获取字段信息 (需过滤已经存现在的字段)
         this.filterCurrentExistenceField(res.data)
+        // 初始化组织成员列表
+        this.getOrgMemberList(res.data.org_id)
         // 是否可以修改父任务时间
         this.whetherUpdateParentTaskTime()
         // this.linkImWithCard({ name: res.data.card_name, type: 'card', board_id: res.data.board_id, id: res.data.card_id })
@@ -818,15 +832,74 @@ export default class MainContent extends Component {
   }
   // 会议的状态值, 比较当前时间和开始时间结束时间的对比 E
 
+  // 添加自定义字段
+  handleAddCustomField = (checkedKeys = [], calback) => {
+    const { drawContent: { board_id, card_id } } = this.props
+    this.props.dispatch({
+      type: 'organizationManager/createRelationCustomField',
+      payload: {
+        fields: checkedKeys,
+        relation_id: card_id,
+        source_type: '2'
+      }
+    }).then(res => {
+      if (isApiResponseOk(res)) {
+        this.props.dispatch({
+          type: 'publicTaskDetailModal/getCardWithAttributesDetail',
+          payload: {
+            id: card_id
+          }
+        })
+        if (calback && typeof calback == 'function') calback()
+      } else {
+        if (calback && typeof calback == 'function') calback()
+      }
+    })
+  }
+
+  // 修改弹窗数据
+  handleUpdateModelDatas = ({ data, type }) => {
+    const { drawContent = {}, drawContent: { fields = [] } } = this.props
+    let new_fields = [...fields]
+    switch (type) {
+      case 'update':
+        const { id, field_value } = data
+        new_fields = new_fields.map(item => {
+          if (item.id == id) {
+            let new_item = { ...item }
+            new_item = { ...item, field_value: field_value }
+            return new_item
+          } else {
+            return item
+          }
+        })
+        break;
+      case 'delete':
+        new_fields = new_fields.filter(item => item.id != data)
+        break;
+
+      default:
+        break;
+    }
+    let new_drawContent = { ...drawContent }
+    new_drawContent['fields'] = new_fields
+    this.props.dispatch({
+      type: 'publicTaskDetailModal/updateDatas',
+      payload: {
+        drawContent: new_drawContent
+      }
+    })
+  }
+
   // 属性选择的下拉回调 S
-  handleMenuReallySelect = (e) => {
+  handleMenuReallySelect = (e,value) => {
     const { dispatch, card_id } = this.props
     const { propertiesList = [] } = this.state
-    const { key, selectedKeys = [] } = e
+    // const { key, selectedKeys = [] } = e
     const that = this
     let new_propertiesList = [...propertiesList]
     new_propertiesList = new_propertiesList.filter(item => {
-      if (item.id != e.key) {
+      if (item.id != value.id) {
         return item
       }
     })
@@ -834,10 +907,10 @@ export default class MainContent extends Component {
     dispatch({
       type: 'publicTaskDetailModal/setCardAttributes',
       payload: {
-        card_id, property_id: key,
+        card_id, property_id: value.id,
         calback: () => {
           that.setState({
-            selectedKeys: selectedKeys,
+            // selectedKeys: selectedKeys,
             propertiesList: new_propertiesList
           })
         }
@@ -846,58 +919,11 @@ export default class MainContent extends Component {
   }
   // 属性选择的下拉回调 E
 
-
-  // 获取对应字段的Icon
-  getCurrentFieldIcon = (value) => {
-    const { code } = value
-    let messageValue = (<span></span>)
-    switch (code) {
-      case 'EXECUTOR':// 表示是负责人
-        messageValue = (
-          <span>&#xe7b2;</span>
-        )
-        break;
-      case 'MILESTONE':// 表示是里程碑
-        messageValue = (
-          <span>&#xe6b7;</span>
-        )
-        break;
-      case 'REMARK':// 表示是备注
-        messageValue = (
-          <span>&#xe7f6;</span>
-        )
-        break;
-      case 'LABEL':// 标签
-        messageValue = (
-          <span>&#xe6b8;</span>
-        )
-        break;
-      case 'ATTACHMENT':// 表示是上传附件
-        messageValue = (
-          <span>&#xe6b9;</span>
-        )
-        break;
-      case 'SUBTASK':// 表示是子任务
-        messageValue = (
-          <span>&#xe7f5;</span>
-        )
-        break;
-      // case 'CONTENTLINK':// 表示是关联内容
-      //   messageValue = (
-      //     <span>&#xe6ba;</span>
-      //   )
-      //   break;
-      default:
-        break;
-    }
-    return messageValue
-  }
-
   // 获取添加属性中的不同字段
   getDiffAttributies = () => {
     const { propertiesList = [], selectedKeys = [] } = this.state
     const { drawContent = {}, projectDetailInfoData } = this.props
-    const { org_id } = drawContent
+    const { org_id, properties = [] } = drawContent
     if (!(propertiesList && propertiesList.length)) {
       return (<></>)
     }
@@ -910,7 +936,18 @@ export default class MainContent extends Component {
     return (
       <div>
         <div className={mainContentStyles.attrWrapper}>
-          <Menu style={{ padding: '8px 0px', boxShadow: '0px 2px 8px 0px rgba(0,0,0,0.15)', maxWidth: '248px' }}
+          {
+            (new_propertiesList && !(properties && properties.length == 6)) && new_propertiesList.map((item, index) => (
+              <Button onClick={(e) => { this.handleMenuReallySelect(e, item) }} className={mainContentStyles.attr_btn} key={`${item.id}`}>
+                <span className={`${globalStyles.authTheme} ${mainContentStyles.attr_icon}`}>{getCurrentFieldIcon(item)}</span>
+                <span className={mainContentStyles.attr_name}>{renderTaskNounPlanCode(item)}</span>
+              </Button>
+            ))
+          }
+          <CustomFields style={{display: 'inline-block'}} relations_fields={[]} org_id={org_id} handleAddCustomField={this.handleAddCustomField} placement="bottomLeft">
+            <Button className={mainContentStyles.attr_btn}>更多</Button>
+          </CustomFields>
+          {/* <Menu style={{ padding: '8px 0px', boxShadow: '0px 2px 8px 0px rgba(0,0,0,0.15)', maxWidth: '248px' }}
             // onDeselect={this.handleMenuReallyDeselect.bind(this)}
             selectedKeys={selectedKeys}
             onSelect={this.handleMenuReallySelect.bind(this)}
@@ -923,7 +960,7 @@ export default class MainContent extends Component {
                 </Menu.Item>
               ))
             }
-          </Menu>
+          </Menu> */}
         </div>
       </div>
     )
@@ -1179,13 +1216,15 @@ export default class MainContent extends Component {
   render() {
     const { drawContent = {}, isInOpenFile, handleTaskDetailChange, handleChildTaskChange } = this.props
     const {
+      org_id,
       card_id,
       card_name,
       type = '0',
       is_realize = '0',
       start_time,
       due_time,
-      dependencies = []
+      dependencies = [],
+      fields = []
     } = drawContent
     const { properties = [] } = drawContent
     const { data = [] } = getCurrentDrawerContentPropsModelFieldData({ properties, code: 'EXECUTOR' })
@@ -1398,7 +1437,12 @@ export default class MainContent extends Component {
             <DragDropContentComponent getMilestone={this.getMilestone} selectedKeys={selectedKeys} updateParentPropertiesList={this.updateParentPropertiesList} handleTaskDetailChange={handleTaskDetailChange} handleChildTaskChange={handleChildTaskChange} boardFolderTreeData={boardFolderTreeData} milestoneList={milestoneList} whetherUpdateParentTaskTime={this.whetherUpdateParentTaskTime} updateRelyOnRationList={this.updateRelyOnRationList} />
           </div>
           {/* 不同字段的渲染 E */}
-
+          
+          {/* 渲染添加关联字段 */}
+          <div>
+            <CustomCategoriesOperate fields={fields} handleUpdateModelDatas={this.handleUpdateModelDatas} />
+          </div>
+                    
           {/* 添加字段 S */}
           <div>
             {
@@ -1407,19 +1451,22 @@ export default class MainContent extends Component {
               ) : (
                   <>
                     {
-                      !(properties && properties.length == 6) && (
+                      // !(properties && properties.length == 6) && 
+                      (
+                        // this.getDiffAttributies()
                         <div className={mainContentStyles.field_content}>
                           <div className={mainContentStyles.field_left} style={{ paddingLeft: '10px' }}>
                             <span className={globalStyles.authTheme}>&#xe8fe;</span>
-                            <span>添加属性</span>
+                            <span>字段</span>
                           </div>
                           <div className={mainContentStyles.field_right}>
-                            <div style={{ position: 'relative' }} className={mainContentStyles.pub_hover}>
-                              <Dropdown overlayClassName={mainContentStyles.overlay_attribute} trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode}
+                            <div style={{ position: 'relative' }}>
+                              {this.getDiffAttributies()}
+                              {/* <Dropdown overlayClassName={mainContentStyles.overlay_attribute} trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode}
                                 overlay={this.getDiffAttributies()}
                               >
                                 <div><span>选择属性</span></div>
-                              </Dropdown>
+                              </Dropdown> */}
                             </div>
                           </div>
                         </div>
@@ -1428,7 +1475,12 @@ export default class MainContent extends Component {
                   </>
                 )
             }
-
+            {/* 显示自定义字段 */}
+            {/* <CustomFields relations_fields={[]} org_id={org_id} handleAddCustomField={this.handleAddCustomField} placement="bottomLeft">
+              <div className={`${mainContentStyles.add_custom_fields}`}>
+                <div>更多</div>
+              </div>
+          </CustomFields> */}
           </div>
           {/* 添加字段 E */}
         </div>

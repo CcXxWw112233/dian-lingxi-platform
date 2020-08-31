@@ -21,7 +21,7 @@ import DragDropContentComponent from './DragDropContentComponent'
 import FileListRightBarFileDetailModal from '@/routes/Technological/components/ProjectDetail/FileModule/FileListRightBarFileDetailModal';
 import { arrayNonRepeatfy } from '@/utils/util'
 import { rebackCreateNotify } from '../../../../../../../components/NotificationTodos'
-import { renderTaskNounPlanCode } from '../../../../../../../components/TaskDetailModal/handleOperateModal'
+import { renderTaskNounPlanCode, getCurrentFieldIcon } from '../../../../../../../components/TaskDetailModal/handleOperateModal'
 import { lx_utils } from 'lingxi-im'
 
 @connect(mapStateToProps)
@@ -844,53 +844,6 @@ export default class MainContent extends Component {
   }
   // 属性选择的下拉回调 E
 
-
-  // 获取对应字段的Icon
-  getCurrentFieldIcon = (value) => {
-    const { code } = value
-    let messageValue = (<span></span>)
-    switch (code) {
-      case 'EXECUTOR':// 表示是负责人
-        messageValue = (
-          <span>&#xe7b2;</span>
-        )
-        break;
-      case 'MILESTONE':// 表示是里程碑
-        messageValue = (
-          <span>&#xe6b7;</span>
-        )
-        break;
-      case 'REMARK':// 表示是备注
-        messageValue = (
-          <span>&#xe7f6;</span>
-        )
-        break;
-      case 'LABEL':// 标签
-        messageValue = (
-          <span>&#xe6b8;</span>
-        )
-        break;
-      case 'ATTACHMENT':// 表示是上传附件
-        messageValue = (
-          <span>&#xe6b9;</span>
-        )
-        break;
-      case 'SUBTASK':// 表示是子任务
-        messageValue = (
-          <span>&#xe7f5;</span>
-        )
-        break;
-      // case 'CONTENTLINK':// 表示是关联内容
-      //   messageValue = (
-      //     <span>&#xe6ba;</span>
-      //   )
-      //   break;
-      default:
-        break;
-    }
-    return messageValue
-  }
-
   // 获取添加属性中的不同字段
   getDiffAttributies = () => {
     const { propertiesList = [], selectedKeys = [] } = this.state
@@ -910,7 +863,7 @@ export default class MainContent extends Component {
           {
             new_propertiesList && new_propertiesList.map((item, index) => (
               <Button onClick={(e) => { this.handleMenuReallySelect(e, item) }} className={mainContentStyles.attr_btn} key={`${item.id}`}>
-                <span className={`${globalStyles.authTheme} ${mainContentStyles.attr_icon}`}>{this.getCurrentFieldIcon(item)}</span>
+                <span className={`${globalStyles.authTheme} ${mainContentStyles.attr_icon}`}>{getCurrentFieldIcon(item)}</span>
                 <span className={mainContentStyles.attr_name}>{renderTaskNounPlanCode(item)}</span>
               </Button>
             ))
