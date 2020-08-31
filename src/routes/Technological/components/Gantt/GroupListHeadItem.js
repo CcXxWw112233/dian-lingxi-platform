@@ -20,7 +20,7 @@ import { deleteBoardFollow } from './ganttBusiness';
 import { currentNounPlanFilterName, setBoardIdStorage } from "@/utils/businessFunction";
 import AddGroupSection from './components/AddGroupsection'
 import ArchiveSelect from './components/ArchiveSelect'
-import { arrayNonRepeatfy } from '../../../../utils/util';
+import { arrayNonRepeatfy, timestampToTimeNormal } from '../../../../utils/util';
 import { roofTopBoardCardGroup, cancleToofTopBoardCardGroup } from '../../../../services/technological/gantt';
 import GroupListHeadDragNoTimeDataItem from './GroupListHeadDragNoTimeDataItem';
 import { lx_utils } from 'lingxi-im'
@@ -104,7 +104,7 @@ export default class GroupListHeadItem extends Component {
       const { itemValue = {}, itemKey, dispatch, group_rows_lock, group_rows, list_group } = this.props
       const { list_no_time_data = [] } = itemValue
       const group_rows_lock_ = [...group_rows_lock]
-      new_isShowBottDetail == '1' ? group_rows_lock_[itemKey] = Math.min(list_no_time_data.length + 3, 7) : group_rows_lock_[itemKey] = 0
+      new_isShowBottDetail == '1' ? group_rows_lock_[itemKey] = Math.min(list_no_time_data.length + 7, 7) : group_rows_lock_[itemKey] = 0
       dispatch({
         type: 'gantt/updateDatas',
         payload: {
@@ -1142,10 +1142,9 @@ export default class GroupListHeadItem extends Component {
 
     const { currentUserOrganizes = [], gantt_board_id = [], ceiHeight, is_show_org_name, is_all_org, rows = 5, gantt_view_mode, show_board_fold, group_view_type, get_gantt_data_loading } = this.props
     const { itemValue = {}, itemKey } = this.props
-    const { is_star, list_name, org_id, list_no_time_data = [], list_id, lane_icon, board_id, is_privilege = '0', privileges, create_by = {}, lane_overdue_count } = itemValue
+    const { is_star, list_name, org_id, list_no_time_data = [], list_id, lane_icon, board_id, is_privilege = '0', privileges, create_by = {}, lane_overdue_count, lane_progress_percent, lane_start_time, lane_end_time } = itemValue
     const { isShowBottDetail, show_edit_input, local_list_name, edit_input_value, show_add_menber_visible, board_info_visible, menu_oprate_visible, arhcived_modal_visible } = this.state
     const board_create_user = create_by.name
-    const { list_data } = itemValue
     return (
       <div>
         <div className={indexStyles.listHeadItem}
@@ -1154,74 +1153,122 @@ export default class GroupListHeadItem extends Component {
             display: ganttIsOutlineView({ group_view_type }) ? 'none' : 'flex'
           }}>
           <div className={`${indexStyles.list_head_top}`}>
-            <div className={`${indexStyles.list_head_top_left}`}>
+            <div className={`${indexStyles.list_head_top_top}`}>
+              <div className={`${indexStyles.list_head_top_left}`}>
+                {
+                  (group_view_type == '2' || (group_view_type == '5' && list_id != '0')) && !get_gantt_data_loading && (
+                    <Avatar src={lane_icon} icon="user" style={{ marginTop: '-4px', marginRight: 8 }}></Avatar>
+                  )
+                }
+                {
+                  group_view_type == '5' && list_id == '0' && (
+                    <div>
+                      未分配的任务
+                    </div>
+                  )
+                }
+                {
+                  group_view_type == '1' && (
+                    gantt_board_id == '0' ? (
+                      <div className={`${globalStyles.authTheme}`} style={{ fontSize: 15, color: '#1890FF', lineHeight: '24px', marginRight: 4 }}>&#xe68a;</div>
+                    ) : (
+                        list_id != '0' &&
+                        <div className={`${globalStyles.authTheme}`} style={{ fontSize: 16, color: '#1890FF', lineHeight: '24px', marginRight: 4 }}>&#xe688;</div>
+                      )
+                  )
+                }
+                {
+                  show_edit_input ? (
+                    <Input
+                      style={{ marginBottom: 6, height: 24 }}
+                      autoFocus
+                      value={edit_input_value}
+                      onChange={this.inputOnchange}
+                      onPressEnter={this.inputOnPressEnter}
+                      onBlur={this.inputOnPressEnter}
+                    />
+                  ) : (
+                      list_id == '0' ? (
+                        <AddGroupSection></AddGroupSection>
+                      ) : (
+                          <div style={{ fontSize: gantt_board_id == '0' && group_view_type == '1' ? 16 : 14 }} title={local_list_name} className={`${indexStyles.list_name} ${globalStyle.global_ellipsis}`} onClick={this.listNameClick}>
+                            {local_list_name}
+                          </div>
+                        )
+                    )
+                }
+                {
+                  is_privilege == '1' && (
+                    <Tooltip title="已开启访问控制" placement="top">
+                      <span className={globalStyle.authTheme} style={{ marginLeft: 10, fontSize: 16, color: '#8c8c8c' }}>&#xe7ca;</span>
+                    </Tooltip>
+                  )
+                }
+                {/* 逾期任务 */}
+                {
+                  ganttIsFold({ gantt_board_id, group_view_type, show_board_fold, gantt_view_mode }) && Number(lane_overdue_count) > 0 && (
+                    <div className={indexStyles.due_time_card_total} title={`存在${lane_overdue_count}条逾期任务`} >{lane_overdue_count}</div>
+                  )
+                }
+
+              </div>
+              <div className={`${indexStyles.list_head_top_right}`}>
+                <span className={indexStyles.list_head_top_right_progress}>{lane_progress_percent.substring(0, lane_progress_percent.length - 1)}</span>
+                <span>%</span>
+              </div>
+            </div>
+            <div className={`${indexStyles.list_head_top_bott}`}>
+              <div className={indexStyles.cal_time}>
+                {lane_start_time && timestampToTimeNormal(lane_start_time, '.')}
+                {
+                  (lane_end_time || lane_start_time) && '-'
+                }
+                {lane_end_time && timestampToTimeNormal(lane_end_time, '.')}
+              </div>
               {
-                (group_view_type == '2' || (group_view_type == '5' && list_id != '0')) && !get_gantt_data_loading && (
-                  <Avatar src={lane_icon} icon="user" style={{ marginTop: '-4px', marginRight: 8 }}></Avatar>
-                )
-              }
-              {
-                group_view_type == '5' && list_id == '0' && (
-                  <div>
-                    未分配的任务
+                (gantt_board_id != '0' && group_view_type == '1' && list_id != '0') && (
+                  <div className={`${indexStyles.list_head_body}`} >
+                    <div></div>
+                    {/* {
+                      is_show_org_name && is_all_org && group_view_type == '1' && !get_gantt_data_loading && gantt_board_id == '0' && (
+                        <div className={indexStyles.list_head_body_contain}>
+                          <div className={`${indexStyles.list_head_body_contain_lt} ${globalStyle.authTheme}`}>&#xe6da;</div>
+                          <div title={getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)} className={`${indexStyles.list_head_footer_contain_rt} ${globalStyle.global_ellipsis}`}>#{getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}</div>
+                        </div>
+                      )
+                    } */}
+                    <div className={`${indexStyles.list_head_body_contain} ${indexStyles.list_head_body_contain_2}`}>
+                      {/* <div className={`${indexStyles.list_head_body_contain_lt} ${globalStyle.authTheme}`}>&#xe6db;</div> */}
+                      <div className={`${indexStyles.list_head_body_contain_rt} ${globalStyle.global_ellipsis}`}>
+                        {board_create_user ? `@${board_create_user}` : '设置分组负责人'}
+                      </div>
+                    </div>
                   </div>
                 )
               }
-              {
-                group_view_type == '1' && (
-                  gantt_board_id == '0' ? (
-                    <div className={`${globalStyles.authTheme}`} style={{ fontSize: 15, color: '#1890FF', lineHeight: '24px', marginRight: 4 }}>&#xe68a;</div>
-                  ) : (
-                      list_id != '0' &&
-                      <div className={`${globalStyles.authTheme}`} style={{ fontSize: 16, color: '#1890FF', lineHeight: '24px', marginRight: 4 }}>&#xe688;</div>
-                    )
-                )
-              }
-              {
-                show_edit_input ? (
-                  <Input
-                    style={{ marginBottom: 6 }}
-                    autoFocus
-                    value={edit_input_value}
-                    onChange={this.inputOnchange}
-                    onPressEnter={this.inputOnPressEnter}
-                    onBlur={this.inputOnPressEnter}
-                  />
-                ) : (
-                    list_id == '0' ? (
-                      <AddGroupSection></AddGroupSection>
-                    ) : (
-                        <div title={local_list_name} className={`${indexStyles.list_name} ${globalStyle.global_ellipsis}`} onClick={this.listNameClick}>
-                          {local_list_name}
-                        </div>
-                      )
-                  )
-              }
-              {
-                is_privilege == '1' && (
-                  <Tooltip title="已开启访问控制" placement="top">
-                    <span className={globalStyle.authTheme} style={{ marginLeft: 10, fontSize: 16, color: '#8c8c8c' }}>&#xe7ca;</span>
-                  </Tooltip>
-                )
-              }
-              {/* 逾期任务 */}
-              {
-                ganttIsFold({ gantt_board_id, group_view_type, show_board_fold, gantt_view_mode }) && Number(lane_overdue_count) > 0 && (
-                  <div className={indexStyles.due_time_card_total} title={`存在${lane_overdue_count}条逾期任务`} >{lane_overdue_count}</div>
-                )
-              }
+            </div>
+          </div>
+
+          {/* 底部ui，是否折叠情况 */}
+          <div className={indexStyles.list_head_footer} >
+            <div style={{ visibility: list_no_time_data.length ? 'visible' : 'hidden', display: (gantt_board_id == '0' && group_view_type == '1') ? 'none' : 'flex' }}
+              onClick={this.setIsShowBottDetail}>
+              <div className={`${globalStyles.authTheme} ${indexStyles.list_head_footer_tip} ${isShowBottDetail == '2' && indexStyles.spin_hide} ${isShowBottDetail == '1' && indexStyles.spin_show}`}>&#xe61f;</div>
+              <div className={indexStyles.list_head_footer_dec}>未排期的事项 {list_no_time_data.length}条</div>
+            </div>
+
+            {/* 操作项 */}
+            <div className={indexStyles.operatorWapper}>
               {/* 置顶 */}
               {
                 (group_view_type == '1' && list_id != '0' && !show_edit_input) && (
                   is_star == '0' ? (
-                    <div className={globalStyle.authTheme} title={'置顶'} onClick={() => this.roofTop('1')} style={{ marginLeft: 10, fontSize: 16, color: '#FFA940' }}>&#xe7e3;</div>
+                    <div className={globalStyle.authTheme} title={'置顶'} onClick={() => this.roofTop('1')} style={{ marginLeft: 10, fontSize: 16, color: 'rgba(0,0,0,.25)' }}>&#xe7e3;</div>
                   ) : (
-                      <div className={globalStyle.authTheme} title={'取消置顶'} onClick={() => this.roofTop('0')} style={{ marginLeft: 10, fontSize: 16, color: '#FFA940' }}>&#xe86e;</div>
+                      <div className={globalStyle.authTheme} title={'取消置顶'} onClick={() => this.roofTop('0')} style={{ marginLeft: 10, fontSize: 16, color: 'rgba(0,0,0,.25)' }}>&#xe86e;</div>
                     )
                 )
               }
-            </div>
-            <div className={`${indexStyles.list_head_top_right}`}>
               {
                 // 只有在项目视图下，且如果在分组id == 0（未分组的情况下不能显示）
                 ((group_view_type == '1' && list_id != '0') && (gantt_board_id != '0' ? this.checkIsHasPermissionInGroup(gantt_board_id) : true)) && (
@@ -1231,52 +1278,34 @@ export default class GroupListHeadItem extends Component {
                 )
               }
             </div>
+            {/* 项目视图显示组织和负责人 */}
+            {
+              (gantt_board_id == '0' && group_view_type == '1') && (
+                <div className={indexStyles.info_detail}>
+                  <div className={globalStyle.global_ellipsis} style={{ maxWidth: 80, marginRight: 6 }} title={getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}>
+                    #{getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}
+                  </div>
+                  <div className={globalStyle.global_ellipsis} style={{ maxWidth: 80 }} title={board_create_user}>
+                    @{board_create_user}
+                  </div>
+
+                </div>
+              )
+            }
           </div>
 
-          {/* 分组视图下未分组的，由于未分组长度太高，放到前面 */}
+          {/* 非项目视图下 */}
           {
-            (gantt_board_id != '0' && group_view_type == '1' && list_id == '0') && (
-              <div className={indexStyles.list_head_footer} onClick={this.setIsShowBottDetail} style={{ marginTop: 16, display: list_no_time_data.length ? 'flex' : 'none' }}>
-                <div className={`${globalStyles.authTheme} ${indexStyles.list_head_footer_tip} ${isShowBottDetail == '2' && indexStyles.spin_hide2} ${isShowBottDetail == '1' && indexStyles.spin_show2}`}>&#xe61f;</div>
-                <div className={indexStyles.list_head_footer_dec}>{list_no_time_data.length}个未排期事项</div>
+            !(gantt_board_id == '0' && group_view_type == '1') && (
+              <div className={`${indexStyles.list_head_card_notimes}`} onWheel={(e) => e.stopPropagation()} style={{ display: ['1'].includes(isShowBottDetail) ? 'flex' : 'none' }}>
+                <div className={`${indexStyles.list_head_body_inner} ${isShowBottDetail == '0' && indexStyles.list_head_body_inner_init} ${isShowBottDetail == '2' && indexStyles.animate_hide} ${isShowBottDetail == '1' && indexStyles.animate_show}`} >
+                  {this.renderTaskItem()}
+                </div>
               </div>
             )
           }
-
-          {/* 没有排期任务列表 */}
-          <div className={`${indexStyles.list_head_body}`} onWheel={(e) => e.stopPropagation()} style={{ visibility: list_no_time_data.length ? 'visible' : 'hidden' }}>
-            <div className={`${indexStyles.list_head_body_inner} ${isShowBottDetail == '0' && indexStyles.list_head_body_inner_init} ${isShowBottDetail == '2' && indexStyles.animate_hide} ${isShowBottDetail == '1' && indexStyles.animate_show}`} >
-              {this.renderTaskItem()}
-            </div>
-          </div>
-          {/* 底部ui，是否折叠情况 */}
-          {
-            // ganttIsFold({ gantt_board_id, group_view_type, show_board_fold }) 
-            gantt_board_id == '0' && group_view_type == '1' ? (
-              <div className={`${indexStyles.list_head_footer}`} onClick={this.setIsShowBottDetail}>
-                {
-                  is_show_org_name && is_all_org && group_view_type == '1' && !get_gantt_data_loading && gantt_board_id == '0' && (
-                    <div className={indexStyles.list_head_footer_contain}>
-                      <div className={`${indexStyles.list_head_footer_contain_lt} ${globalStyle.authTheme}`}>&#xe6da;</div>
-                      <Tooltip placement="top" title={getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}><div className={`${indexStyles.list_head_footer_contain_rt} ${globalStyle.global_ellipsis}`}>{getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}</div></Tooltip>
-                    </div>
-                  )
-                }
-                <div className={indexStyles.list_head_footer_contain}>
-                  <div className={`${indexStyles.list_head_footer_contain_lt} ${globalStyle.authTheme}`}>&#xe6db;</div>
-                  <div className={`${indexStyles.list_head_footer_contain_rt} ${globalStyle.global_ellipsis}`}>{board_create_user}</div>
-                </div>
-              </div>
-            ) : (
-                // 分组视图下，具有实际意义的分组（非未分组下）
-                (list_id && list_id != '0') && (
-                  <div className={indexStyles.list_head_footer} onClick={this.setIsShowBottDetail} style={{ display: list_no_time_data.length ? 'flex' : 'none' }}>
-                    <div className={`${globalStyles.authTheme} ${indexStyles.list_head_footer_tip} ${isShowBottDetail == '2' && indexStyles.spin_hide} ${isShowBottDetail == '1' && indexStyles.spin_show}`}>&#xe61f;</div>
-                    <div className={indexStyles.list_head_footer_dec}>{list_no_time_data.length}个未排期事项</div>
-                  </div>)
-              )
-          }
         </div>
+
         <div onWheel={e => e.stopPropagation()}>
           {
             show_add_menber_visible && (

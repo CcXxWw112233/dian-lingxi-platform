@@ -825,8 +825,15 @@ export default {
           const list_group_item_height = Math.max.apply(null, list_height_arr) + one_group_row_total * ceiHeight - after_group_height
 
           group_rows[i] = Math.max(group_rows_lock[i] || 0, list_group_item_height / ceiHeight, one_group_row_total, lane_row_count) //(list_group_item_height / ceiHeight) < one_group_row_total ? one_group_row_total : list_group_item_height / ceiHeight // 原来是3，现在是2
-          if (list_group[i].list_id == '0' && group_view_type == '1' && gantt_board_id != '0') { //默认分组要设置得很高
-            group_rows[i] = group_rows[i] + 30
+          if (list_group[i].list_id == '0' && group_view_type == '1' && gantt_board_id != '0') { //默认分组要设置得很高,自适应
+            const before_group_row = group_rows.slice(0, i).reduce((total, current) => {
+              console.log('container_workbenchBoxContent', total, current)
+              return total + current
+            })
+            const wapper_height = document.getElementById('container_workbenchBoxContent').clientHeight
+            const fix_row = Math.ceil(wapper_height / ceiHeight) + 2 - before_group_row
+            // console.log('container_workbenchBoxContent', Math.max(length, fix_row))
+            group_rows[i] = group_rows[i] + Math.max(length, fix_row)//30
           }
           // 设置项目汇总的top和left,width
           if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold, gantt_view_mode })) { // 全项目视图下，为收缩状态
