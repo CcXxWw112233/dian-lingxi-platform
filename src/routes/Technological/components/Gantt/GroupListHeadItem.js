@@ -1152,30 +1152,68 @@ export default class GroupListHeadItem extends Component {
       if (isApiResponseOk(res)) {
         const { list_group, itemKey } = this.props
         const list_group_ = [...list_group]
-        list_group_[itemKey].lane_leader = user_info
+        list_group_[itemKey].lane_leader[0] = { ...user_info, id: user_id }
         dispatch({
           type: 'gantt/handleListGroup',
           payload: {
             data: list_group_
           }
         })
-        message.success('已成功更新分组名称')
+        message.success('更新成功')
       } else {
         message.error(res.message)
       }
     })
   }
+  // 分组负责人显示逻辑
+  renderGroupExcutor = ({ lane_leader = [], lane_member_count }) => {
+    const excutors_names = () => {
+      const names = lane_leader.reduce((all_names, curr) => {
+        return all_names + curr.name
+      }, '@')
+      return names
+    }
+    if (lane_leader.length && Number(lane_member_count)) { //有负责人和其它成员
+      return (
+        <>
+          <div className={`${indexStyles.excutors} ${globalStyle.global_ellipsis}`}>
+            {excutors_names()}
+          </div>
+          <div>
+            &nbsp;与&nbsp;{lane_member_count}名成员
+          </div>
+        </>
+      )
+    } else {
+      if (lane_leader.length) { //只有负责人
+        return (
+          <div className={`${indexStyles.excutors} ${globalStyle.global_ellipsis}`}>{excutors_names()}</div>
+        )
+      } else { //只有其它成员
+        return (
+          <div>{lane_member_count}名成员，设置负责人</div>
+        )
+      }
+    }
+  }
+  // 变化lane_leader
+  hanldeLaneLeader = (lane_leader) => {
+    const new_val = lane_leader.map(item => {
+      item.user_id = item.id
+      return item
+    })
+    console.log('sssssssssss', new_val)
+    return new_val
+  }
+
   render() {
 
     const { currentUserOrganizes = [], gantt_board_id = [], ceiHeight, is_show_org_name, is_all_org, rows = 5, gantt_view_mode, show_board_fold, group_view_type, get_gantt_data_loading } = this.props
     const { itemValue = {}, projectDetailInfoData: { data: board_users } } = this.props
-    const { is_star, list_name, org_id, list_no_time_data = [], list_id, lane_icon, board_id, is_privilege = '0', privileges, create_by = {}, lane_leader = {}, lane_overdue_count, lane_progress_percent, lane_start_time, lane_end_time } = itemValue
+    const { is_star, list_name, org_id, list_no_time_data = [], list_id, lane_icon, board_id, is_privilege = '0', privileges, create_by = {}, lane_leader = [], lane_overdue_count, lane_progress_percent, lane_start_time, lane_end_time, lane_member_count } = itemValue
     const { isShowBottDetail, show_edit_input, local_list_name, edit_input_value, show_add_menber_visible, board_info_visible, menu_oprate_visible, arhcived_modal_visible } = this.state
     const board_create_user = create_by.name || create_by.user_name
-    const board_create_user_id = create_by.user_id || create_by.id
 
-    const lane_leader_user_id = lane_leader.user_id
-    const lane_leader_user_name = lane_leader.name
     return (
       <div>
         <div className={indexStyles.listHeadItem}
@@ -1270,9 +1308,9 @@ export default class GroupListHeadItem extends Component {
                     } */}
                     <div className={`${indexStyles.list_head_body_contain} ${indexStyles.list_head_body_contain_2}`}>
                       {/* <div className={`${indexStyles.list_head_body_contain_lt} ${globalStyle.authTheme}`}>&#xe6db;</div> */}
-                      <Dropdown overlay={renderSetExcutor({ board_users, selecteds: [{ ...lane_leader }].filter(item => item.user_id), selctedCallback: this.setGroupExcutor })}>
+                      <Dropdown overlay={renderSetExcutor({ board_users, selecteds: this.hanldeLaneLeader(lane_leader), selctedCallback: this.setGroupExcutor })}>
                         <div className={`${indexStyles.list_head_body_contain_rt} ${globalStyle.global_ellipsis}`}>
-                          {lane_leader_user_name ? `@${lane_leader_user_name}` : '设置分组负责人'}
+                          {this.renderGroupExcutor({ lane_leader, lane_member_count })}
                         </div>
                       </Dropdown>
                     </div>
@@ -1318,8 +1356,8 @@ export default class GroupListHeadItem extends Component {
                   <div className={globalStyle.global_ellipsis} style={{ maxWidth: 80, marginRight: 6 }} title={getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}>
                     #{getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}
                   </div>
-                  <div className={globalStyle.global_ellipsis} style={{ maxWidth: 80 }} title={board_create_user}>
-                    @{board_create_user}
+                  <div className={`${globalStyle.global_ellipsis} ${indexStyles.lane_leader_wrapper}`} >
+                    {this.renderGroupExcutor({ lane_leader, lane_member_count })}
                   </div>
 
                 </div>
@@ -1388,8 +1426,9 @@ function renderSetExcutor({ board_users = [], selecteds = [], selctedCallback })
   }
   return (
     <MenuSearchPartner
-      isInvitation={false}
+      isInvitation={true}
       listData={board_users}
+      single={true}
       keyCode={'user_id'}
       searchName={'name'}
       currentSelect={selecteds}

@@ -576,7 +576,12 @@
               max-width    : 200px;
               overflow     : hidden;
               text-overflow: ellipsis;
-              white-space  : nowrap
+              white-space  : nowrap;
+              display      : flex;
+
+              .excutors {
+                max-width: 100px;
+              }
             }
           }
 
@@ -716,6 +721,14 @@
 
       .info_detail {
         display: flex;
+
+        .lane_leader_wrapper {
+          display: flex;
+
+          .excutors {
+            max-width: 60px;
+          }
+        }
       }
 
     }
