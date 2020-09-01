@@ -185,7 +185,7 @@ export const renderTaskNounPlanCode = (item) => {
   return dec_name
 }
 
-  // 获取对应字段的Icon
+// 获取对应字段的Icon
 export const getCurrentFieldIcon = (value) => {
     const { code } = value
     let messageValue = (<span></span>)
@@ -229,4 +229,17 @@ export const getCurrentFieldIcon = (value) => {
         break;
     }
     return messageValue
+}
+
+// 比较开始和结束时间
+export const compareStartDueTime = (start_time, due_time) => {
+  if (!start_time || !due_time) {
+    return true
   }
+  const newStartTime = start_time.toString().length > 10 ? Number(start_time) / 1000 : Number(start_time)
+  const newDueTime = due_time.toString().length > 10 ? Number(due_time) / 1000 : Number(due_time)
+  if (newStartTime >= newDueTime) {
+    return false
+  }
+  return true
+}

@@ -6,12 +6,12 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import NameChangeInput from '@/components/NameChangeInput'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import InformRemind from '@/components/InformRemind'
-import { timestampToTime, compareTwoTimestamp, timeToTimestamp, timestampToTimeNormal } from '@/utils/util'
+import { timestampToTime, compareTwoTimestamp, timeToTimestamp, timestampToTimeNormal, isSamDay, timestampToTimeNormal3, timestampToTimeNormal4 } from '@/utils/util'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_CARD_EDIT, PROJECT_FILES_FILE_INTERVIEW
 } from "@/globalset/js/constant";
 import { isApiResponseOk } from '../../utils/handleResponseData'
-import { addTaskExecutor, removeTaskExecutor } from '../../services/technological/task'
+import { addTaskExecutor, removeTaskExecutor, deleteTaskFile, getBoardTagList } from '../../services/technological/task'
 import {
   checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl, isPaymentOrgUser
 } from "@/utils/businessFunction";
@@ -21,16 +21,41 @@ import DragDropContentComponent from './DragDropContentComponent'
 import FileListRightBarFileDetailModal from '@/routes/Technological/components/ProjectDetail/FileModule/FileListRightBarFileDetailModal';
 import { arrayNonRepeatfy } from '../../utils/util'
 import RelyOnRelationship from '../RelyOnRelationship'
-import { getCurrentDrawerContentPropsModelFieldData, filterCurrentUpdateDatasField, getCurrentPropertiesData, renderTaskNounPlanCode, getCurrentFieldIcon, compareStartDueTime } from './handleOperateModal'
+import { getCurrentDrawerContentPropsModelFieldData, filterCurrentUpdateDatasField, getCurrentPropertiesData, renderTaskNounPlanCode, getCurrentFieldIcon } from './handleOperateModal'
 import { rebackCreateNotify } from '../NotificationTodos'
+import { currentNounPlanFilterName } from '../../utils/businessFunction'
+import { TASKS } from '../../globalset/js/constant'
 import { lx_utils } from 'lingxi-im'
 import CustomFields from '../CustomFields'
 import CustomCategoriesOperate from '../CustomFields/CustomCategoriesOperate';
 
-// 逻辑组件
-const LogicTaskComponent = {
-  // 打开圈子
-  linkImWithCard: function(data) {
+@connect(mapStateToProps)
+export default class MainContent extends Component {
+
+  constructor(props) {
+    super(props)
+    this.state = {
+      propertiesList: [],
+      is_change_parent_time: false,
+      is_edit_title: false,
+      inputValue: ''
+    }
+  }
+
+  initState = () => {
+    this.setState({
+      propertiesList: [], // 添加的属性字段
+      is_change_parent_time: false, // 是否可以修改父任务时间
+      local_card_name: '', // 当前任务的名称
+    })
+  }
+
+  // 卸载时清空私有数据
+  componentWillUnmount() {
+    this.initState()
+  }
+
+  linkImWithCard = (data) => {
     const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
     const { is_simple_model } = user_set;
     if (!data) {
@@ -46,17 +71,16 @@ const LogicTaskComponent = {
         }
       })
     }
-  },
+  }
 
-  // 点击动态消息 联动圈子
-  handleDynamicComment: function(e) {
+  handleDynamicComment = (e) => {
     e && e.stopPropagation()
     const { drawContent: { card_name, board_id, card_id } } = this.props
     this.linkImWithCard({ name: card_name, type: 'card', board_id: board_id, id: card_id })
-  },
+  }
 
   //获取项目里文件夹列表
-  getProjectFolderList: function(board_id) {
+  getProjectFolderList = (board_id) => {
     getFolderList({ board_id }).then((res) => {
       if (isApiResponseOk(res)) {
         this.setState({
@@ -66,10 +90,10 @@ const LogicTaskComponent = {
         message.error(res.message)
       }
     })
-  },
+  }
 
   //获取项目里程碑列表
-  getMilestone: function(id, callBackObject, milestoneId) {
+  getMilestone = (id, callBackObject, milestoneId) => {
     getMilestoneList({ id }).then((res) => {
       if (isApiResponseOk(res)) {
         this.setState({
@@ -81,10 +105,26 @@ const LogicTaskComponent = {
         message.error(res.message)
       }
     })
-  },
+  }
+
+  componentWillMount() {
+    Promise.resolve(
+      this.props.dispatch({
+        type: 'publicTaskDetailModal/getCardAttributesList',
+        payload: {
+        }
+      })
+    ).then(res => {
+      if (isApiResponseOk(res)) {
+        this.setState({
+          propertiesList: res.data
+        })
+      }
+    })
+  }
 
   // 初始化过滤当前已经存在的字段
-  filterCurrentExistenceField: function(currentData) {
+  filterCurrentExistenceField = (currentData) => {
     const { propertiesList = [] } = this.state
     let newCurrentData = { ...currentData }
     let newPropertiesList = [...propertiesList]
@@ -97,20 +137,20 @@ const LogicTaskComponent = {
     this.setState({
       propertiesList: newPropertiesList
     })
-  },
+  }
 
   // 获取组织成员列表
-  getOrgMemberList: function(org_id) {
+  getOrgMemberList = (org_id) => {
     this.props.dispatch({
       type: 'technological/getCorrespondingOrganizationMmembers',
       payload: {
         _organization_id: org_id
       }
     })
-  },
+  }
 
   // 获取任务详情数据
-  getInitCardDetailDatas: function() {
+  getInitCardDetailDatas = () => {
     const { card_id, dispatch } = this.props
     if (!card_id) return false
     const that = this
@@ -150,10 +190,38 @@ const LogicTaskComponent = {
         }, 500)
       }
     })
-  },
+  }
+
+  componentDidMount() {
+    this.getInitCardDetailDatas()
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { drawerVisible } = nextProps
+    const { drawerVisible: oldDrawerVisible } = this.props
+    // 忘记这步操作是在干嘛
+    if (oldDrawerVisible == false && drawerVisible == true) {
+      Promise.resolve(
+        this.props.dispatch({
+          type: 'publicTaskDetailModal/getCardAttributesList',
+          payload: {
+          }
+        })
+      ).then(res => {
+        if (isApiResponseOk(res)) {
+          this.setState({
+            propertiesList: res.data
+          })
+        }
+      })
+      setTimeout(() => {
+        this.getInitCardDetailDatas()
+      }, 200)
+    }
+  }
 
   // 检测不同类型的权限控制类型的是否显示
-  checkDiffCategoriesAuthoritiesIsVisible: function(code) {
+  checkDiffCategoriesAuthoritiesIsVisible = (code) => {
     const { drawContent = {}, drawContent: { properties = [] } } = this.props
     const { data = [] } = getCurrentDrawerContentPropsModelFieldData({ properties, code: 'EXECUTOR' })
     const { privileges = [], board_id, is_privilege } = drawContent
@@ -165,10 +233,10 @@ const LogicTaskComponent = {
         return checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, data ? data : [], checkIsHasPermissionInBoard(code, board_id))
       },
     }
-  },
+  }
 
   // 更新drawContent中的数据以及调用父级列表更新数据
-  updateDrawContentWithUpdateParentListDatas: function({ drawContent, card_id, name, value, operate_properties_code, rely_card_datas }) {
+  updateDrawContentWithUpdateParentListDatas = ({ drawContent, card_id, name, value, operate_properties_code, rely_card_datas }) => {
     const { dispatch } = this.props
     dispatch({
       type: 'publicTaskDetailModal/updateDatas',
@@ -179,10 +247,10 @@ const LogicTaskComponent = {
     if (name && value) {
       this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id, name, value, operate_properties_code, rely_card_datas })
     }
-  },
+  }
 
   // 设置卡片是否完成 S
-  setIsCheck: function() {
+  setIsCheck = () => {
     const { drawContent = {}, } = this.props
     const { is_realize = '0', card_id, board_id } = drawContent
     if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_COMPLETE).visit_control_edit()) {
@@ -211,11 +279,11 @@ const LogicTaskComponent = {
       new_drawContent['is_realize'] = is_realize === '1' ? '0' : '1'
       this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'is_realize', value: is_realize === '1' ? '0' : '1' })
     })
-  },
+  }
   // 设置卡片是否完成 E
 
   // 设置标题textarea区域修改 S
-  setTitleEdit: function(e, card_name) {
+  setTitleEdit = (e, card_name) => {
     e && e.stopPropagation();
     if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()) {
       return false
@@ -225,21 +293,31 @@ const LogicTaskComponent = {
       local_title_value: card_name,
       inputValue: card_name
     })
-  },
+  }
   // 点击设置标题事件 E
 
   // 设置标题文本内容change事件 S
-  titleTextAreaChange: function(e) {
+  titleTextAreaChange = (e) => {
+    e && e.stopPropagation()
+    let val = e.target.value
+    const { dispatch, drawContent = {}, drawContent: { card_id } } = this.props
+    let reStr = val.trim()
+    if (reStr == "" || reStr == " " || !reStr) return
+    drawContent['card_name'] = reStr
+    this.updateDrawContentWithUpdateParentListDatas({ drawContent, card_id })
+  }
+  // 设置标题文本内容change事件 E
+
+  titleTextAreaChange = (e) => {
     let val = e.target.value
     let reStr = val.trim()
     this.setState({
       inputValue: reStr
     })
-  },
-  // 设置标题文本内容change事件 E
+  }
 
   // 设置标题文本失去焦点回调 S
-  titleTextAreaChangeBlur: function(e) {
+  titleTextAreaChangeBlur = (e) => {
     e && e.stopPropagation()
     let val = e.target.value
     const { local_title_value } = this.state
@@ -285,11 +363,11 @@ const LogicTaskComponent = {
       // 需要调用父级的列表
       this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id, name: 'card_name', value: val })
     })
-  },
+  }
   // 设置标题文本失去焦点回调 E
 
   // 设置是否完成状态的下拉回调 S
-  handleFiledIsComplete: function(e) {
+  handleFiledIsComplete = (e) => {
     const { dispatch, drawContent = {} } = this.props
     const { board_id, card_id, is_realize } = drawContent
     let temp_realize
@@ -318,11 +396,11 @@ const LogicTaskComponent = {
       }
       this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'is_realize', value: temp_realize })
     })
-  },
+  }
   // 设置是否完成状态的下拉回调 E
 
   // 邀请他人参与回调 并设置为执行人
-  inviteOthersToBoardCalback: function({ users = [] }) {
+  inviteOthersToBoardCalback = ({ users = [] }) => {
     if (!users) return
     const { dispatch, projectDetailInfoData = {}, drawContent = {} } = this.props
     const { board_id, data = [] } = projectDetailInfoData
@@ -344,10 +422,10 @@ const LogicTaskComponent = {
         calback
       }
     })
-  },
+  }
 
   // 添加执行人的回调 S
-  chirldrenTaskChargeChange: function(dataInfo) {
+  chirldrenTaskChargeChange = (dataInfo) => {
     const { drawContent = {}, projectDetailInfoData = {}, dispatch } = this.props
     const { card_id } = drawContent
 
@@ -385,11 +463,11 @@ const LogicTaskComponent = {
         }
       })
     }
-  },
+  }
   // 添加执行人的回调 E
 
   // 移除执行人的回调 S
-  handleRemoveExecutors: function(e, shouldDeleteItem) {
+  handleRemoveExecutors = (e, shouldDeleteItem) => {
     e && e.stopPropagation()
     const { drawContent = {}, dispatch } = this.props
     const { card_id, properties = [] } = drawContent
@@ -410,11 +488,24 @@ const LogicTaskComponent = {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     })
-  },
+  }
   // 移除执行人的回调 E
 
+  // 比较开始和结束时间
+  compareStartDueTime = (start_time, due_time) => {
+    if (!start_time || !due_time) {
+      return true
+    }
+    const newStartTime = start_time.toString().length > 10 ? Number(start_time) / 1000 : Number(start_time)
+    const newDueTime = due_time.toString().length > 10 ? Number(due_time) / 1000 : Number(due_time)
+    if (newStartTime >= newDueTime) {
+      return false
+    }
+    return true
+  }
+
   // 禁用截止时间
-  disabledDueTime: function(due_time) {
+  disabledDueTime = (due_time) => {
     const { drawContent = {} } = this.props
     const { start_time } = drawContent
     if (!start_time || !due_time) {
@@ -422,10 +513,10 @@ const LogicTaskComponent = {
     }
     const newStartTime = start_time.toString().length > 10 ? Number(start_time).valueOf() / 1000 : Number(start_time).valueOf()
     return Number(due_time.valueOf()) / 1000 < newStartTime;
-  },
+  }
 
   // 禁用开始时间
-  disabledStartTime: function(start_time) {
+  disabledStartTime = (start_time) => {
     const { drawContent = {} } = this.props
     const { due_time } = drawContent
     if (!start_time || !due_time) {
@@ -433,10 +524,10 @@ const LogicTaskComponent = {
     }
     const newDueTime = due_time.toString().length > 10 ? Number(due_time).valueOf() / 1000 : Number(due_time).valueOf()
     return Number(start_time.valueOf()) / 1000 >= newDueTime//Number(due_time).valueOf();
-  },
+  }
 
   // 开始时间 chg事件 S
-  startDatePickerChange: function(timeString) {
+  startDatePickerChange(timeString) {
     const { drawContent = {}, dispatch } = this.props
     const nowTime = timeToTimestamp(new Date())
     const start_timeStamp = timeToTimestamp(timeString)
@@ -446,7 +537,7 @@ const LogicTaskComponent = {
       card_id, start_time: start_timeStamp,
       board_id
     }
-    if (!compareStartDueTime(start_timeStamp, due_time)) {
+    if (!this.compareStartDueTime(start_timeStamp, due_time)) {
       message.warn('开始时间不能大于结束时间')
       return false
     }
@@ -477,11 +568,11 @@ const LogicTaskComponent = {
       rebackCreateNotify.call(this, { res, id: card_id, board_id, dispatch, operate_in_card_detail_panel: true }) //创建撤回弹窗
 
     })
-  },
+  }
   // 开始时间 chg事件 E
 
   // 截止时间 chg事件 S
-  endDatePickerChange: function(timeString) {
+  endDatePickerChange(timeString) {
     const { drawContent = {}, dispatch } = this.props
     const { card_id, start_time, milestone_data = {}, board_id } = drawContent
     const { data = [] } = drawContent['properties'] && drawContent['properties'].filter(item => item.code == 'MILESTONE').length && drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
@@ -491,7 +582,7 @@ const LogicTaskComponent = {
       card_id, due_time: due_timeStamp, board_id
     }
 
-    if (!compareStartDueTime(start_time, due_timeStamp)) {
+    if (!this.compareStartDueTime(start_time, due_timeStamp)) {
       message.warn('开始时间不能大于结束时间')
       return false
     }
@@ -524,11 +615,11 @@ const LogicTaskComponent = {
       rebackCreateNotify.call(this, { res, id: card_id, board_id, dispatch, operate_in_card_detail_panel: true }) //创建撤回弹窗
 
     })
-  },
+  }
   // 截止时间 chg事件 E
 
   // 删除开始时间 S
-  handleDelStartTime: function(e) {
+  handleDelStartTime = (e) => {
     e && e.stopPropagation()
     const { dispatch, drawContent = {} } = this.props
     const { card_id, start_time, board_id } = drawContent
@@ -554,11 +645,11 @@ const LogicTaskComponent = {
 
     })
 
-  },
+  }
   // 删除开始时间 E
 
   // 删除结束时间 S
-  handleDelDueTime: function(e) {
+  handleDelDueTime = (e) => {
     e && e.stopPropagation()
     const { dispatch, drawContent = {} } = this.props
     const { card_id, due_time, board_id } = drawContent
@@ -585,10 +676,10 @@ const LogicTaskComponent = {
 
     })
 
-  },
+  }
   // 删除结束时间 E
 
-  updateParentPropertiesList: function ({ shouldDeleteId, new_selectedKeys = [] }) {
+  updateParentPropertiesList = ({ shouldDeleteId, new_selectedKeys = [] }) => {
     const { attributesList = [] } = this.props
     const { propertiesList = [] } = this.state
     let new_attributesList = [...attributesList]
@@ -600,10 +691,10 @@ const LogicTaskComponent = {
       selectedKeys: new_selectedKeys
     })
 
-  },
+  }
 
   // 对应字段的删除 S
-  handleDelCurrentField: function (shouldDeleteId) {
+  handleDelCurrentField = (shouldDeleteId) => {
     if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
@@ -707,12 +798,12 @@ const LogicTaskComponent = {
         }
       })
     }
-  },
+  }
   // 对应字段的删除 E
 
 
   // 会议的状态值, 比较当前时间和开始时间结束时间的对比 S
-  getMeetingStatus:  function() {
+  getMeetingStatus = () => {
     let meetingField
     meetingField = (<span></span>)
     const { drawContent = {} } = this.props
@@ -738,11 +829,11 @@ const LogicTaskComponent = {
       )
     }
     return meetingField
-  },
+  }
   // 会议的状态值, 比较当前时间和开始时间结束时间的对比 E
 
   // 添加自定义字段
-  handleAddCustomField: function(checkedKeys = [], calback) {
+  handleAddCustomField = (checkedKeys = [], calback) => {
     const { drawContent: { board_id, card_id } } = this.props
     this.props.dispatch({
       type: 'organizationManager/createRelationCustomField',
@@ -764,10 +855,10 @@ const LogicTaskComponent = {
         if (calback && typeof calback == 'function') calback()
       }
     })
-  },
+  }
 
   // 修改弹窗数据
-  handleUpdateModelDatas: function({ data, type }) {
+  handleUpdateModelDatas = ({ data, type }) => {
     const { drawContent = {}, drawContent: { fields = [] } } = this.props
     let new_fields = [...fields]
     switch (type) {
@@ -798,10 +889,10 @@ const LogicTaskComponent = {
         drawContent: new_drawContent
       }
     })
-  },
+  }
 
   // 属性选择的下拉回调 S
-  handleMenuReallySelect: function(e, value) {
+  handleMenuReallySelect = (e, value) => {
     const { dispatch, card_id } = this.props
     const { propertiesList = [] } = this.state
     // const { key, selectedKeys = [] } = e
@@ -825,205 +916,8 @@ const LogicTaskComponent = {
         }
       }
     })
-  },
+  }
   // 属性选择的下拉回调 E
-
-  // 判断是否存在执行人
-  whetherExistencePriciple: function() {
-    const { drawContent: { properties = [] } } = this.props
-    let flag
-    if (!properties.length) return false
-    flag = properties.filter(item => item.code == 'EXECUTOR')
-    if (flag.length == '0') return flag = false
-    return flag
-  },
-
-  // 附件关闭回调
-  setPreviewFileModalVisibile: function() {
-    // this.setState({
-    //   previewFileModalVisibile: !this.state.previewFileModalVisibile
-    // })
-    this.props.dispatch({
-      type: 'publicFileDetailModal/updateDatas',
-      payload: {
-        filePreviewCurrentFileId: '',
-        fileType: '',
-        isInOpenFile: false,
-        filePreviewCurrentName: ''
-      }
-    })
-    this.props.dispatch({
-      type: 'publicTaskDetailModal/getCardWithAttributesDetail',
-      payload: {
-        id: this.props.card_id
-      }
-    })
-  },
-
-  /* 附件版本更新数据  */
-  whetherUpdateFolderListData: function({ folder_id, file_id, file_name, create_time }) {
-    if (file_name) {
-      const { drawContent = {}, dispatch } = this.props
-      const gold_data = getCurrentPropertiesData(drawContent['properties'], 'ATTACHMENT')
-      let newData = [...gold_data]
-      newData = newData && newData.map(item => {
-        if (item.file_id == this.props.filePreviewCurrentFileId) {
-          let new_item = item
-          new_item = { ...item, file_id: file_id, name: file_name, create_time: create_time }
-          return new_item
-        } else {
-          let new_item = item
-          return new_item
-        }
-      })
-      drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'ATTACHMENT', value: newData })
-      dispatch({
-        type: 'publicTaskDetailModal/updateDatas',
-        payload: {
-          drawContent
-        }
-      })
-    }
-
-  },
-
-  // 是否可以修改父任务中的时间
-  whetherUpdateParentTaskTime: function (data) {
-    const { drawContent = {}, dispatch } = this.props
-    const gold_data = getCurrentPropertiesData(drawContent['properties'], 'SUBTASK')
-    if (!gold_data) return false;
-    let newData = [...gold_data]
-    newData = newData.find(item => item.due_time || item.start_time)
-    if (newData && Object.keys(newData).length) {
-      this.setState({
-        is_change_parent_time: true
-      })
-    } else {
-      this.setState({
-        is_change_parent_time: false
-      })
-    }
-    if (data) {
-      if (!(data && data.length)) return
-      const { start_time, id: card_id, due_time } = data[0]
-      let new_drawContent = { ...drawContent }
-      new_drawContent['start_time'] = start_time
-      new_drawContent['due_time'] = due_time
-      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'start_time', value: start_time })
-      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'due_time', value: due_time })
-    }
-  },
-
-  // 更新对应的依赖项
-  updateRelyOnRationList: function(change_data) {
-    const { drawContent = {}, drawContent: { dependencies = {} }, dispatch } = this.props
-    if (!dependencies) return
-    if (!(dependencies['last'] && dependencies['last'].length) && !(dependencies['next'] && dependencies['next'].length)) return
-    let obj = {}
-    let new_drawContent = { ...drawContent }
-    let preposeList = dependencies['last'] // 前置
-    let postpositionList = dependencies['next'] // 后置
-
-    preposeList = preposeList.map(item => {
-      let new_item = {}
-      const node = change_data.find(n => n.id == item.id) || {}
-      new_item = { ...item, ...node }
-      return new_item
-    })
-    postpositionList = postpositionList.map(item => {
-      let new_item = {}
-      const node = change_data.find(n => n.id == item.id) || {}
-      new_item = { ...item, ...node }
-      return new_item
-    })
-    obj = {
-      ...dependencies,
-      last: preposeList,
-      next: postpositionList
-    }
-    new_drawContent['dependencies'] = obj
-    dispatch({
-      type: 'publicTaskDetailModal/updateDatas',
-      payload: {
-        drawContent: new_drawContent
-      }
-    })
-  },
-}
-
-@connect(mapStateToProps)
-export default class MainContent extends Component {
-
-  constructor(props) {
-    super(props)
-    this.state = {
-      propertiesList: [],
-      is_change_parent_time: false,
-      is_edit_title: false,
-      inputValue: ''
-    }
-    // const log = new LogicTaskComponent()
-    for (let val in LogicTaskComponent) {
-      this[val] = LogicTaskComponent[val].bind(this)
-    }
-  }
-
-  initState = () => {
-    this.setState({
-      propertiesList: [], // 添加的属性字段
-      is_change_parent_time: false, // 是否可以修改父任务时间
-      local_card_name: '', // 当前任务的名称
-    })
-  }
-
-  componentWillMount() {
-    Promise.resolve(
-      this.props.dispatch({
-        type: 'publicTaskDetailModal/getCardAttributesList',
-        payload: {
-        }
-      })
-    ).then(res => {
-      if (isApiResponseOk(res)) {
-        this.setState({
-          propertiesList: res.data
-        })
-      }
-    })
-  }
-
-  componentDidMount() {
-    this.getInitCardDetailDatas()
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { drawerVisible } = nextProps
-    const { drawerVisible: oldDrawerVisible } = this.props
-    // 忘记这步操作是在干嘛
-    if (oldDrawerVisible == false && drawerVisible == true) {
-      Promise.resolve(
-        this.props.dispatch({
-          type: 'publicTaskDetailModal/getCardAttributesList',
-          payload: {
-          }
-        })
-      ).then(res => {
-        if (isApiResponseOk(res)) {
-          this.setState({
-            propertiesList: res.data
-          })
-        }
-      })
-      setTimeout(() => {
-        this.getInitCardDetailDatas()
-      }, 200)
-    }
-  }
-
-  // 卸载时清空私有数据
-  componentWillUnmount() {
-    this.initState()
-  }
 
   // 获取添加属性中的不同字段
   getDiffAttributies = () => {
@@ -1053,6 +947,20 @@ export default class MainContent extends Component {
           <CustomFields style={{ display: 'inline-block' }} relations_fields={[]} org_id={org_id} handleAddCustomField={this.handleAddCustomField} placement="bottomLeft">
             <Button className={mainContentStyles.attr_btn}>更多</Button>
           </CustomFields>
+          {/* <Menu style={{ padding: '8px 0px', boxShadow: '0px 2px 8px 0px rgba(0,0,0,0.15)', maxWidth: '248px' }}
+            // onDeselect={this.handleMenuReallyDeselect.bind(this)}
+            selectedKeys={selectedKeys}
+            onSelect={this.handleMenuReallySelect.bind(this)}
+          >
+            {
+              new_propertiesList && new_propertiesList.map((item, index) => (
+                <Menu.Item key={`${item.id}`}>
+                  <span className={`${globalStyles.authTheme} ${mainContentStyles.attr_icon}`}>{this.getCurrentFieldIcon(item)}</span>
+                  <span className={mainContentStyles.attr_name}>{renderTaskNounPlanCode(item)}</span>
+                </Menu.Item>
+              ))
+            }
+          </Menu> */}
         </div>
       </div>
     )
@@ -1183,6 +1091,128 @@ export default class MainContent extends Component {
         </div>
       </div>
     )
+  }
+
+  // 判断是否存在执行人
+  whetherExistencePriciple = () => {
+    const { drawContent: { properties = [] } } = this.props
+    let flag
+    if (!properties.length) return false
+    flag = properties.filter(item => item.code == 'EXECUTOR')
+    if (flag.length == '0') return flag = false
+    return flag
+  }
+
+  // 附件关闭回调
+  setPreviewFileModalVisibile = () => {
+    // this.setState({
+    //   previewFileModalVisibile: !this.state.previewFileModalVisibile
+    // })
+    this.props.dispatch({
+      type: 'publicFileDetailModal/updateDatas',
+      payload: {
+        filePreviewCurrentFileId: '',
+        fileType: '',
+        isInOpenFile: false,
+        filePreviewCurrentName: ''
+      }
+    })
+    this.props.dispatch({
+      type: 'publicTaskDetailModal/getCardWithAttributesDetail',
+      payload: {
+        id: this.props.card_id
+      }
+    })
+  }
+
+  /* 附件版本更新数据  */
+  whetherUpdateFolderListData = ({ folder_id, file_id, file_name, create_time }) => {
+    if (file_name) {
+      const { drawContent = {}, dispatch } = this.props
+      const gold_data = getCurrentPropertiesData(drawContent['properties'], 'ATTACHMENT')
+      let newData = [...gold_data]
+      newData = newData && newData.map(item => {
+        if (item.file_id == this.props.filePreviewCurrentFileId) {
+          let new_item = item
+          new_item = { ...item, file_id: file_id, name: file_name, create_time: create_time }
+          return new_item
+        } else {
+          let new_item = item
+          return new_item
+        }
+      })
+      drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'ATTACHMENT', value: newData })
+      dispatch({
+        type: 'publicTaskDetailModal/updateDatas',
+        payload: {
+          drawContent
+        }
+      })
+    }
+
+  }
+
+  // 是否可以修改父任务中的时间
+  whetherUpdateParentTaskTime = (data) => {
+    const { drawContent = {}, dispatch } = this.props
+    const gold_data = getCurrentPropertiesData(drawContent['properties'], 'SUBTASK')
+    if (!gold_data) return false;
+    let newData = [...gold_data]
+    newData = newData.find(item => item.due_time || item.start_time)
+    if (newData && Object.keys(newData).length) {
+      this.setState({
+        is_change_parent_time: true
+      })
+    } else {
+      this.setState({
+        is_change_parent_time: false
+      })
+    }
+    if (data) {
+      if (!(data && data.length)) return
+      const { start_time, id: card_id, due_time } = data[0]
+      let new_drawContent = { ...drawContent }
+      new_drawContent['start_time'] = start_time
+      new_drawContent['due_time'] = due_time
+      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'start_time', value: start_time })
+      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'due_time', value: due_time })
+    }
+  }
+
+  // 更新对应的依赖项
+  updateRelyOnRationList = (change_data) => {
+    const { drawContent = {}, drawContent: { dependencies = {} }, dispatch } = this.props
+    if (!dependencies) return
+    if (!(dependencies['last'] && dependencies['last'].length) && !(dependencies['next'] && dependencies['next'].length)) return
+    let obj = {}
+    let new_drawContent = { ...drawContent }
+    let preposeList = dependencies['last'] // 前置
+    let postpositionList = dependencies['next'] // 后置
+
+    preposeList = preposeList.map(item => {
+      let new_item = {}
+      const node = change_data.find(n => n.id == item.id) || {}
+      new_item = { ...item, ...node }
+      return new_item
+    })
+    postpositionList = postpositionList.map(item => {
+      let new_item = {}
+      const node = change_data.find(n => n.id == item.id) || {}
+      new_item = { ...item, ...node }
+      return new_item
+    })
+    obj = {
+      ...dependencies,
+      last: preposeList,
+      next: postpositionList
+    }
+    new_drawContent['dependencies'] = obj
+    dispatch({
+      type: 'publicTaskDetailModal/updateDatas',
+      payload: {
+        drawContent: new_drawContent
+      }
+    })
   }
 
   render() {
