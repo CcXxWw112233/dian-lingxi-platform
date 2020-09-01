@@ -1,13 +1,13 @@
 import React, { Component } from 'react'
-import CommonComponent from './CommonComponent'
-import UIDefaultComponent from './UIComponent'
+import DepositMainComponent from './DepositMainComponent'
+import UIDefaultComponent from './UIComponent/MainContentUIComponent'
 
 export default class MainContent extends Component {
 
   render() {
     const { UIComponent, handleRelyUploading, handleTaskDetailChange, handleChildTaskChange } = this.props    
     return (
-      <CommonComponent
+      <DepositMainComponent
         handleRelyUploading={handleRelyUploading} 
         handleTaskDetailChange={handleTaskDetailChange} 
         handleChildTaskChange={handleChildTaskChange} 

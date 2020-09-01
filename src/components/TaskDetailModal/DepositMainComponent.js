@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { message, Modal } from 'antd'
+import { message, Modal, Menu } from 'antd'
 import { timestampToTime, compareTwoTimestamp, timeToTimestamp } from '@/utils/util'
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_CARD_EDIT, PROJECT_FILES_FILE_INTERVIEW
@@ -15,11 +15,12 @@ import { arrayNonRepeatfy } from '../../utils/util'
 import { getCurrentDrawerContentPropsModelFieldData, filterCurrentUpdateDatasField, getCurrentPropertiesData, compareStartDueTime } from './handleOperateModal'
 import { rebackCreateNotify } from '../NotificationTodos'
 import { lx_utils } from 'lingxi-im'
+import { getSubfixName } from '../../utils/businessFunction';
 
 // 逻辑组件
 const LogicWithMainContent = {
   // 打开圈子
-  linkImWithCard: function(data) {
+  linkImWithCard: function (data) {
     const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
     const { is_simple_model } = user_set;
     if (!data) {
@@ -38,14 +39,14 @@ const LogicWithMainContent = {
   },
 
   // 点击动态消息 联动圈子
-  handleDynamicComment: function(e) {
+  handleDynamicComment: function (e) {
     e && e.stopPropagation()
     const { drawContent: { card_name, board_id, card_id } } = this.props
     this.linkImWithCard({ name: card_name, type: 'card', board_id: board_id, id: card_id })
   },
 
   //获取项目里文件夹列表
-  getProjectFolderList: function(board_id) {
+  getProjectFolderList: function (board_id) {
     getFolderList({ board_id }).then((res) => {
       if (isApiResponseOk(res)) {
         this.setState({
@@ -58,7 +59,7 @@ const LogicWithMainContent = {
   },
 
   //获取项目里程碑列表
-  getMilestone: function(id, callBackObject, milestoneId) {
+  getMilestone: function (id, callBackObject, milestoneId) {
     getMilestoneList({ id }).then((res) => {
       if (isApiResponseOk(res)) {
         this.setState({
@@ -73,7 +74,7 @@ const LogicWithMainContent = {
   },
 
   // 初始化过滤当前已经存在的字段
-  filterCurrentExistenceField: function(currentData) {
+  filterCurrentExistenceField: function (currentData) {
     const { propertiesList = [] } = this.state
     let newCurrentData = { ...currentData }
     let newPropertiesList = [...propertiesList]
@@ -89,7 +90,7 @@ const LogicWithMainContent = {
   },
 
   // 获取组织成员列表
-  getOrgMemberList: function(org_id) {
+  getOrgMemberList: function (org_id) {
     this.props.dispatch({
       type: 'technological/getCorrespondingOrganizationMmembers',
       payload: {
@@ -99,7 +100,7 @@ const LogicWithMainContent = {
   },
 
   // 获取任务详情数据
-  getInitCardDetailDatas: function() {
+  getInitCardDetailDatas: function () {
     const { card_id, dispatch } = this.props
     if (!card_id) return false
     const that = this
@@ -142,7 +143,7 @@ const LogicWithMainContent = {
   },
 
   // 检测不同类型的权限控制类型的是否显示
-  checkDiffCategoriesAuthoritiesIsVisible: function(code) {
+  checkDiffCategoriesAuthoritiesIsVisible: function (code) {
     const { drawContent = {}, drawContent: { properties = [] } } = this.props
     const { data = [] } = getCurrentDrawerContentPropsModelFieldData({ properties, code: 'EXECUTOR' })
     const { privileges = [], board_id, is_privilege } = drawContent
@@ -157,7 +158,7 @@ const LogicWithMainContent = {
   },
 
   // 更新drawContent中的数据以及调用父级列表更新数据
-  updateDrawContentWithUpdateParentListDatas: function({ drawContent, card_id, name, value, operate_properties_code, rely_card_datas }) {
+  updateDrawContentWithUpdateParentListDatas: function ({ drawContent, card_id, name, value, operate_properties_code, rely_card_datas }) {
     const { dispatch } = this.props
     dispatch({
       type: 'publicTaskDetailModal/updateDatas',
@@ -171,7 +172,7 @@ const LogicWithMainContent = {
   },
 
   // 设置卡片是否完成 S
-  setIsCheck: function() {
+  setIsCheck: function () {
     const { drawContent = {}, } = this.props
     const { is_realize = '0', card_id, board_id } = drawContent
     if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_COMPLETE).visit_control_edit()) {
@@ -204,7 +205,7 @@ const LogicWithMainContent = {
   // 设置卡片是否完成 E
 
   // 设置标题textarea区域修改 S
-  setTitleEdit: function(e, card_name) {
+  setTitleEdit: function (e, card_name) {
     e && e.stopPropagation();
     if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()) {
       return false
@@ -218,7 +219,7 @@ const LogicWithMainContent = {
   // 点击设置标题事件 E
 
   // 设置标题文本内容change事件 S
-  titleTextAreaChange: function(e) {
+  titleTextAreaChange: function (e) {
     let val = e.target.value
     let reStr = val.trim()
     this.setState({
@@ -228,7 +229,7 @@ const LogicWithMainContent = {
   // 设置标题文本内容change事件 E
 
   // 设置标题文本失去焦点回调 S
-  titleTextAreaChangeBlur: function(e) {
+  titleTextAreaChangeBlur: function (e) {
     e && e.stopPropagation()
     let val = e.target.value
     const { local_title_value } = this.state
@@ -278,7 +279,7 @@ const LogicWithMainContent = {
   // 设置标题文本失去焦点回调 E
 
   // 设置是否完成状态的下拉回调 S
-  handleFiledIsComplete: function(e) {
+  handleFiledIsComplete: function (e) {
     const { dispatch, drawContent = {} } = this.props
     const { board_id, card_id, is_realize } = drawContent
     let temp_realize
@@ -311,7 +312,7 @@ const LogicWithMainContent = {
   // 设置是否完成状态的下拉回调 E
 
   // 邀请他人参与回调 并设置为执行人
-  inviteOthersToBoardCalback: function({ users = [] }) {
+  inviteOthersToBoardCalback: function ({ users = [] }) {
     if (!users) return
     const { dispatch, projectDetailInfoData = {}, drawContent = {} } = this.props
     const { board_id, data = [] } = projectDetailInfoData
@@ -336,7 +337,7 @@ const LogicWithMainContent = {
   },
 
   // 添加执行人的回调 S
-  chirldrenTaskChargeChange: function(dataInfo) {
+  chirldrenTaskChargeChange: function (dataInfo) {
     const { drawContent = {}, projectDetailInfoData = {}, dispatch } = this.props
     const { card_id } = drawContent
 
@@ -378,7 +379,7 @@ const LogicWithMainContent = {
   // 添加执行人的回调 E
 
   // 移除执行人的回调 S
-  handleRemoveExecutors: function(e, shouldDeleteItem) {
+  handleRemoveExecutors: function (e, shouldDeleteItem) {
     e && e.stopPropagation()
     const { drawContent = {}, dispatch } = this.props
     const { card_id, properties = [] } = drawContent
@@ -403,7 +404,7 @@ const LogicWithMainContent = {
   // 移除执行人的回调 E
 
   // 禁用截止时间
-  disabledDueTime: function(due_time) {
+  disabledDueTime: function (due_time) {
     const { drawContent = {} } = this.props
     const { start_time } = drawContent
     if (!start_time || !due_time) {
@@ -414,7 +415,7 @@ const LogicWithMainContent = {
   },
 
   // 禁用开始时间
-  disabledStartTime: function(start_time) {
+  disabledStartTime: function (start_time) {
     const { drawContent = {} } = this.props
     const { due_time } = drawContent
     if (!start_time || !due_time) {
@@ -425,7 +426,7 @@ const LogicWithMainContent = {
   },
 
   // 开始时间 chg事件 S
-  startDatePickerChange: function(timeString) {
+  startDatePickerChange: function (timeString) {
     const { drawContent = {}, dispatch } = this.props
     const nowTime = timeToTimestamp(new Date())
     const start_timeStamp = timeToTimestamp(timeString)
@@ -470,7 +471,7 @@ const LogicWithMainContent = {
   // 开始时间 chg事件 E
 
   // 截止时间 chg事件 S
-  endDatePickerChange: function(timeString) {
+  endDatePickerChange: function (timeString) {
     const { drawContent = {}, dispatch } = this.props
     const { card_id, start_time, milestone_data = {}, board_id } = drawContent
     const { data = [] } = drawContent['properties'] && drawContent['properties'].filter(item => item.code == 'MILESTONE').length && drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
@@ -517,7 +518,7 @@ const LogicWithMainContent = {
   // 截止时间 chg事件 E
 
   // 删除开始时间 S
-  handleDelStartTime: function(e) {
+  handleDelStartTime: function (e) {
     e && e.stopPropagation()
     const { dispatch, drawContent = {} } = this.props
     const { card_id, start_time, board_id } = drawContent
@@ -547,7 +548,7 @@ const LogicWithMainContent = {
   // 删除开始时间 E
 
   // 删除结束时间 S
-  handleDelDueTime: function(e) {
+  handleDelDueTime: function (e) {
     e && e.stopPropagation()
     const { dispatch, drawContent = {} } = this.props
     const { card_id, due_time, board_id } = drawContent
@@ -577,7 +578,7 @@ const LogicWithMainContent = {
   },
   // 删除结束时间 E
 
-  updateParentPropertiesList: function ({ shouldDeleteId}) {
+  updateParentPropertiesList: function ({ shouldDeleteId }) {
     const { attributesList = [] } = this.props
     const { propertiesList = [] } = this.state
     let new_attributesList = [...attributesList]
@@ -590,7 +591,7 @@ const LogicWithMainContent = {
   },
 
   // 对应字段的删除 S
-  handleDelCurrentField: function (shouldDeleteId) {
+  handleDelCurrentField: function (shouldDeleteId, code) {
     if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
@@ -653,9 +654,7 @@ const LogicWithMainContent = {
                   drawContent: new_drawContent
                 }
               })
-              if (!(gold_executor && gold_executor.length)) {
-                that.props.handleTaskDetailChange && that.props.handleTaskDetailChange({ card_id, drawContent: new_drawContent, operate_properties_code: 'EXECUTOR' })
-              }
+              that.deleteCodeCalback(code, new_drawContent)
             }
           })
         },
@@ -698,7 +697,7 @@ const LogicWithMainContent = {
   // 对应字段的删除 E
 
   // 会议的状态值, 比较当前时间和开始时间结束时间的对比 S
-  getMeetingStatus:  function() {
+  getMeetingStatus: function () {
     let meetingField
     meetingField = (<span></span>)
     const { drawContent = {} } = this.props
@@ -728,7 +727,7 @@ const LogicWithMainContent = {
   // 会议的状态值, 比较当前时间和开始时间结束时间的对比 E
 
   // 添加自定义字段
-  handleAddCustomField: function(checkedKeys = [], calback) {
+  handleAddCustomField: function (checkedKeys = [], calback) {
     const { drawContent: { board_id, card_id } } = this.props
     this.props.dispatch({
       type: 'organizationManager/createRelationCustomField',
@@ -753,7 +752,7 @@ const LogicWithMainContent = {
   },
 
   // 修改弹窗数据
-  handleUpdateModelDatas: function({ data, type }) {
+  handleUpdateModelDatas: function ({ data, type }) {
     const { drawContent = {}, drawContent: { fields = [] } } = this.props
     let new_fields = [...fields]
     switch (type) {
@@ -787,7 +786,7 @@ const LogicWithMainContent = {
   },
 
   // 属性选择的下拉回调 S
-  handleMenuReallySelect: function(e, value) {
+  handleMenuReallySelect: function (e, value) {
     const { dispatch, card_id } = this.props
     const { propertiesList = [] } = this.state
     // const { key, selectedKeys = [] } = e
@@ -815,7 +814,7 @@ const LogicWithMainContent = {
   // 属性选择的下拉回调 E
 
   // 判断是否存在执行人
-  whetherExistencePriciple: function() {
+  whetherExistencePriciple: function () {
     const { drawContent: { properties = [] } } = this.props
     let flag
     if (!properties.length) return false
@@ -825,14 +824,14 @@ const LogicWithMainContent = {
   },
 
   // 更新一个私有变量开启文件弹窗
-  updatePrivateVariablesWithOpenFile: function() {
+  updatePrivateVariablesWithOpenFile: function () {
     this.setState({
       whetherIsOpenFileVisible: !this.state.whetherIsOpenFileVisible
     })
   },
 
   // 附件关闭回调
-  setPreviewFileModalVisibile: function() {
+  setPreviewFileModalVisibile: function () {
     // this.setState({
     //   previewFileModalVisibile: !this.state.previewFileModalVisibile
     // })
@@ -855,7 +854,7 @@ const LogicWithMainContent = {
   },
 
   /* 附件版本更新数据  */
-  whetherUpdateFolderListData: function({ folder_id, file_id, file_name, create_time }) {
+  whetherUpdateFolderListData: function ({ folder_id, file_id, file_name, create_time }) {
     if (file_name) {
       const { drawContent = {}, dispatch } = this.props
       const gold_data = getCurrentPropertiesData(drawContent['properties'], 'ATTACHMENT')
@@ -909,7 +908,7 @@ const LogicWithMainContent = {
   },
 
   // 更新对应的依赖项
-  updateRelyOnRationList: function(change_data) {
+  updateRelyOnRationList: function (change_data) {
     const { drawContent = {}, drawContent: { dependencies = {} }, dispatch } = this.props
     if (!dependencies) return
     if (!(dependencies['last'] && dependencies['last'].length) && !(dependencies['next'] && dependencies['next'].length)) return
@@ -943,18 +942,567 @@ const LogicWithMainContent = {
       }
     })
   },
+
+  // -------------------- 子组件逻辑 -------------------------------
+
+  // 里程碑选择回调 S
+  onMilestoneSelectedChange: function (data) {
+    const { dispatch, drawContent } = this.props;
+    const { card_id, type, due_time } = drawContent
+    const { key, type: actionType, info } = data;
+    const id_time_arr = key.split('__')
+    const id = id_time_arr[0]
+    const deadline = id_time_arr[1]
+    if (!compareTwoTimestamp(deadline, due_time)) {
+      message.warn('关联里程碑的截止日期不能小于任务的截止日期')
+      return
+    }
+
+    if (actionType === 'add') {
+      const params = {
+        rela_id: card_id,
+        id,
+        origin_type: type
+      };
+      dispatch({
+        type: 'publicTaskDetailModal/joinMilestone',
+        payload: {
+          ...params
+        }
+      }).then(res => {
+        if (isApiResponseOk(res)) {
+          this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id, operate_properties_code: 'MILESTONE' })
+        }
+      });
+
+      // drawContent['milestone_data'] = info;
+      drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'MILESTONE', value: info })
+      dispatch({
+        type: 'publicTaskDetailModal/updateDatas',
+        payload: {
+          drawContent: { ...drawContent }
+        }
+      })
+    }
+    if (actionType === 'remove') {
+      const params = {
+        rela_id: card_id,
+        id,
+      }
+      dispatch({
+        type: 'publicTaskDetailModal/shiftOutMilestone',
+        payload: {
+          ...params
+        }
+      }).then(res => {
+        if (isApiResponseOk(res)) {
+          this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id, operate_properties_code: 'MILESTONE' })
+        }
+      });
+      // drawContent['milestone_data'] = [];
+      drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'MILESTONE', value: [] })
+      dispatch({
+        type: 'publicTaskDetailModal/updateDatas',
+        payload: {
+          drawContent: { ...drawContent }
+        }
+      })
+    }
+
+    if (actionType === 'update') {
+      // const { data } = drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
+      const gold_data = getCurrentPropertiesData(drawContent['properties'], 'MILESTONE')
+      const removeParams = {
+        rela_id: card_id,
+        id: gold_data.id,
+      }
+
+      const addParams = {
+        rela_id: card_id,
+        id,
+        origin_type: type
+      }
+
+      dispatch({
+        type: 'publicTaskDetailModal/updateMilestone',
+        payload: {
+          addParams,
+          removeParams
+        }
+      }).then(res => {
+        if (isApiResponseOk(res)) {
+          this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id, operate_properties_code: 'MILESTONE' })
+        }
+      });
+      // drawContent['milestone_data'] = info;
+      drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'MILESTONE', value: info })
+      dispatch({
+        type: 'publicTaskDetailModal/updateDatas',
+        payload: {
+          drawContent: { ...drawContent }
+        }
+      })
+    }
+  },
+  // 里程碑选择回调 E
+
+  // 编辑富文本事件 S
+  saveBrafitEdit: function (brafitEditHtml) {
+    const { drawContent = {}, dispatch } = this.props;
+
+    let { card_id, board_id } = drawContent
+    this.setState({
+      isInEdit: false,
+    })
+    const updateObj = {
+      card_id,
+      board_id,
+      description: brafitEditHtml,
+    }
+
+    drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'REMARK', value: brafitEditHtml })
+    Promise.resolve(
+      dispatch({
+        type: 'publicTaskDetailModal/updateTaskVTwo',
+        payload: {
+          updateObj
+        }
+      })
+    ).then(res => {
+      if (!isApiResponseOk(res)) {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+        return
+      }
+      this.updateDrawContentWithUpdateParentListDatas({ drawContent, card_id, name: 'description', value: brafitEditHtml })
+    })
+  },
+  // 编辑富文本事件 E
+
+  // 控制标签的显示隐藏的回调 S
+  handleVisibleChange: function (visible) {
+    this.setState({
+      visible: visible
+    })
+  },
+  // 控制标签的显示隐藏的回调 E
+
+  // 标签关闭回调 S
+  handleClose: function (e) {
+    this.setState({
+      visible: false,
+    })
+  },
+  // // 标签关闭回调 E
+
+  /**
+   *  添加项目标签事件 S
+   * @param {String} name 当前添加标签的名称
+   * @param {String} color 当前添加标签的颜色
+   */
+  handleAddBoardTag: function ({ name, color }) {
+    const { drawContent = {}, dispatch } = this.props
+    const { card_id, board_id } = drawContent
+    let new_drawContent = { ...drawContent }
+    const glod_data = (drawContent['properties'].find(item => item.code == 'LABEL') || {}).data
+    let temp = [...glod_data]
+    Promise.resolve(
+      dispatch({
+        type: 'publicTaskDetailModal/addBoardTag',
+        payload: {
+          board_id, name, color
+        }
+      })
+    ).then(res => {
+      if (isApiResponseOk(res)) {
+        temp.push(res.data)
+        new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'LABEL', value: temp })
+        this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'label_data', value: temp, operate_properties_code: 'LABEL' })
+        dispatch({
+          type: 'publicTaskDetailModal/addTaskTag',
+          payload: {
+            board_id, card_id, label_id: res.data.label_id
+          }
+        })
+      }
+    })
+  },
+  // 添加项目标签事件 E
+
+  /**
+   * 更新项目标签的回调 S
+   * @param {String} label_id 当前需要修改的标签ID
+   * @param {String} name 当前修改后的标签名称
+   * @param {String} color 当前修改后的标签颜色
+   */
+  handleUpdateBoardTag: function ({ label_id, name, color }) {
+    const { drawContent = {}, dispatch } = this.props
+    const { card_id, board_id } = drawContent
+    const { data: label_data } = drawContent['properties'].filter(item => item.code == 'LABEL')[0]
+    let new_labelData = [...label_data]
+    new_labelData = new_labelData.map(item => {
+      if (item.label_id == label_id) {
+        let new_item = item
+        new_item = { ...item, label_name: name ? name : item.label_name, label_color: color }
+        return new_item
+      } else {
+        let new_item = item
+        return new_item
+      }
+    })
+    let new_drawContent = { ...drawContent }
+    // new_drawContent['label_data'] = new_labelData
+    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'LABEL', value: new_labelData })
+    Promise.resolve(
+      dispatch({
+        type: 'publicTaskDetailModal/updateBoardTag',
+        payload: {
+          board_id, id: label_id, color, name: name && name
+        }
+      })
+    ).then(res => {
+      if (isApiResponseOk(res)) {
+        this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'label_data', value: new_labelData, operate_properties_code: 'LABEL' })
+      }
+    })
+  },
+  // 更新项目标签的回调 E
+
+  /**
+   * 删除项目标签的回调 S
+   * @param {String} label_id 当前需要删除的标签ID
+   */
+  handleRemoveBoardTag: function ({ label_id }) {
+    const { drawContent = {}, dispatch } = this.props
+    const { card_id, board_id } = drawContent
+    const { data: label_data } = drawContent['properties'].filter(item => item.code == 'LABEL')[0]
+    let new_labelData = [...label_data]
+    new_labelData = new_labelData.filter(item => {
+      if (item.label_id != label_id) {
+        let new_item = item
+        return new_item
+      }
+    })
+    let new_drawContent = { ...drawContent }
+    // new_drawContent['label_data'] = new_labelData
+    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'LABEL', value: new_labelData })
+    Promise.resolve(
+      dispatch({
+        type: 'publicTaskDetailModal/deleteBoardTag',
+        payload: {
+          id: label_id,
+          board_id
+        }
+      })
+    ).then(res => {
+      if (isApiResponseOk(res)) {
+        this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'label_data', value: new_labelData, operate_properties_code: 'LABEL' })
+      }
+    })
+  },
+  // 删除项目标签的回调 E
+
+  // 下拉标签的回调 S
+  handleChgSelectedLabel: function (data) {
+    const { drawContent, boardTagList = [], dispatch } = this.props
+    const { board_id, card_id, label_data = [] } = drawContent
+    let newLabelData = []
+    const { selectedKeys = [], type, key } = data
+    // 将选中的ID在标签列表中查询, 找到后push一个新的数组中保存
+    for (let i = 0; i < selectedKeys.length; i++) {
+      for (let j = 0; j < boardTagList.length; j++) {
+        if (selectedKeys[i] === boardTagList[j]['id']) {
+          let obj = {// 这个obj是label_data需要的数据结构
+            label_id: boardTagList[j]['id'],
+            label_name: boardTagList[j]['name'],
+            label_color: boardTagList[j]['color']
+          }
+          newLabelData.push(obj)
+        }
+      }
+    }
+    let new_drawContent = { ...drawContent }
+    // new_drawContent['label_data'] = newLabelData
+    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: new_drawContent['properties'], code: 'LABEL', value: newLabelData })
+    if (type == 'add') {
+      Promise.resolve(
+        dispatch({
+          type: 'publicTaskDetailModal/addTaskTag',
+          payload: {
+            board_id, card_id, label_id: key
+          }
+        })
+      ).then(res => {
+        if (isApiResponseOk(res)) {
+          this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'label_data', value: newLabelData, operate_properties_code: 'LABEL' })
+        }
+      })
+    } else if (type == 'remove') {
+      Promise.resolve(
+        dispatch({
+          type: 'publicTaskDetailModal/removeTaskTag',
+          payload: {
+            card_id, label_id: key
+          }
+        })
+      ).then(res => {
+        if (isApiResponseOk(res)) {
+          this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'label_data', value: newLabelData, operate_properties_code: 'LABEL' })
+        }
+      })
+    }
+  },
+  // 下拉标签的回调 E
+
+  /**
+   * 删除标签 icon 回调 S
+   * @param {Object} e 当前的事件对象
+   * @param {String} shouldDeleteId 当前需要删除的标签ID
+   */
+  handleRemoveTaskTag: function (e, shouldDeleteId) {
+    e && e.stopPropagation()
+    const { dispatch, drawContent, drawContent: { card_id } } = this.props
+    const { data: label_data } = drawContent['properties'].filter(item => item.code == 'LABEL')[0]
+    let new_drawContent = { ...drawContent }
+    let new_labelData = [...label_data]
+    new_labelData = new_labelData.filter(item => {// 过滤掉删除的那一条item
+      if (item.label_id != shouldDeleteId) {
+        return item
+      }
+    })
+    // new_drawContent['label_data'] = new_labelData
+    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: new_drawContent['properties'], code: 'LABEL', value: new_labelData })
+    Promise.resolve(
+      dispatch({
+        type: 'publicTaskDetailModal/removeTaskTag',
+        payload: {
+          card_id, label_id: shouldDeleteId
+        }
+      })
+    ).then(res => {
+      if (isApiResponseOk(res)) {
+        this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'label_data', value: new_labelData, operate_properties_code: 'LABEL' })
+      }
+    })
+  },
+  // 删除标签 icon 回调 E
+
+  // 上传文件 事件 S
+  onUploadFileListChange: function (data) {
+    const { drawContent = {}, dispatch } = this.props;
+    let new_drawContent = { ...drawContent }
+    if (data && data.length > 0) {
+      new_drawContent['deliverables'].push(...data)
+      this.props.dispatch({
+        type: 'publicTaskDetailModal/updateDatas',
+        payload: {
+          drawContent: new_drawContent
+        }
+      })
+    }
+    const { folder_path = {} } = data[0]
+    const { id: folder_id } = folder_path
+    if (typeof this.props.handleRelyUploading == 'function' && folder_id) this.props.handleRelyUploading({ folder_id })
+  },
+
+  onUploadDescFileListChange: function (data) {
+    const { drawContent = {}, dispatch } = this.props;
+    let new_drawContent = { ...drawContent }
+    if (data && data.length > 0) {
+      new_drawContent['dec_files'].push(...data)
+      this.props.dispatch({
+        type: 'publicTaskDetailModal/updateDatas',
+        payload: {
+          drawContent: new_drawContent
+        }
+      })
+    }
+  },
+  // 上传文件 事件 E
+
+  /**附件预览 */
+  openFileDetailModal: function (e, fileInfo) {
+    e && e.stopPropagation()
+    const file_name = fileInfo.name
+    const file_resource_id = fileInfo.file_resource_id
+    const file_id = fileInfo.file_id;
+    const board_id = fileInfo.board_id
+    const { dispatch } = this.props
+    dispatch({
+      type: 'projectDetail/projectDetailInfo',
+      payload: {
+        id: board_id
+      }
+    })
+    dispatch({
+      type: 'publicFileDetailModal/updateDatas',
+      payload: {
+        filePreviewCurrentFileId: file_id,
+        fileType: getSubfixName(file_name),
+        isInOpenFile: true,
+        filePreviewCurrentName: file_name
+      }
+    })
+    this.props.updatePrivateVariablesWithOpenFile && this.props.updatePrivateVariablesWithOpenFile()
+  },
+
+  /**附件下载、删除等操作 */
+  attachmentItemOpera: function ({ type, data = {}, card_id, code }, e) {
+    e.stopPropagation()
+    if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
+    //debugger
+    const { dispatch } = this.props
+    const attachment_id = data.id || (data.response && data.response.data && data.response.data.attachment_id)
+    const file_resource_id = data.file_resource_id || (data.response && data.response.data.file_resource_id)
+    if (!attachment_id) {
+      message.warn('上传中，请稍后...')
+      return
+    }
+    if (type == 'remove') {
+      this.deleteAttachmentFile({ attachment_id, card_id, code })
+    } else if (type == 'download') {
+      dispatch({
+        type: 'projectDetailFile/fileDownload',
+        payload: {
+          ids: file_resource_id,
+          card_id,
+          fileIds: data.file_id
+        }
+      })
+    }
+  },
+
+  /**附件删除 */
+  deleteAttachmentFile: function (data) {
+    if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
+    const { attachment_id, code } = data;
+    const that = this
+    const { drawContent = {}, dispatch } = this.props
+    const { deliverables = [] } = drawContent
+    Modal.confirm({
+      title: `确认要删除这个附件吗？`,
+      zIndex: 1007,
+      content: <div style={{ color: 'rgba(0,0,0, .8)', fontSize: 14 }}>
+        <span >删除后不可恢复</span>
+      </div>,
+      okText: '确认',
+      cancelText: '取消',
+      onOk() {
+        return new Promise((resolve) => {
+          deleteTaskFile(data).then((value) => {
+            if (value.code !== '0') {
+              message.error(value.message)
+              resolve()
+            } else {
+              let new_drawContent = { ...drawContent }
+              // drawContentNew['attachment_data'] = atta_arr
+              if (code == 'REMARK') {
+                new_drawContent['dec_files'] = new_drawContent['dec_files'].filter(n => n.id != attachment_id)
+              } else if (code == 'SUBTASK_DELIVERABLES') {
+                new_drawContent['deliverables'] = new_drawContent['deliverables'].filter(n => n.id != attachment_id)
+              }
+              dispatch({
+                type: 'publicTaskDetailModal/updateDatas',
+                payload: {
+                  drawContent: new_drawContent
+                }
+              })
+              resolve()
+            }
+          })
+          // .catch((e) => {
+          //   // console.log(e);
+
+          //   message.warn('删除出了点问题，请重新删除。')
+          //   resolve()
+          // })
+        })
+
+      }
+    });
+  },
+
+  /* 附件点点点字段 */
+  getAttachmentActionMenus: function ({ fileInfo, code, card_id }) {
+    return (
+      <Menu>
+        <Menu.Item>
+          <a onClick={this.attachmentItemOpera.bind(this, { type: 'download', data: fileInfo, card_id })}>
+            下载到本地
+            </a>
+        </Menu.Item>
+        <Menu.Item>
+          <a onClick={this.attachmentItemOpera.bind(this, { type: 'remove', data: fileInfo, card_id, code })}>
+            删除该附件
+            </a>
+        </Menu.Item>
+      </Menu>
+    );
+  },
+
+  // 递归获取附件路径 S
+  getFolderPathName: function (fileList, fileItem) {
+    let new_fileList = [...fileList]
+    let arr = []
+    const target_path = fileItem.folder_path
+    // 递归添加路径
+    const digui = (name, data) => {
+      if (data[name]) {
+        arr.push({ file_name: data.folder_name, file_id: data.id, type: '1' })
+        digui(name, data[name])
+      } else if (data['parent_id'] == '0') {
+        arr.push({ file_name: '根目录', type: '0' })
+      } else if (data['parent_id'] == '2') {// 表示临时目录
+        arr.push({ file_name: data.folder_name, file_id: data.id, type: '2' })
+      }
+    }
+    digui('parent_folder', target_path)
+    const newbreadcrumbList = arr.reverse()
+    // newbreadcrumbList.push({ file_name: fileItem.name, file_id: fileItem.file_id, type: '1' })
+    return newbreadcrumbList
+  },
+  // 递归获取附件路径 E
+
+  // 删除字段的回调
+  deleteCodeCalback: function (code, new_value = {}) {
+    const { handleTaskDetailChange } = this.props
+    const { card_id } = new_value
+    switch (code) {
+      case 'MILESTONE':
+        handleTaskDetailChange({ card_id, drawContent: { ...new_value }, operate_properties_code: 'MILESTONE' })
+        break;
+      case 'LABEL':
+        handleTaskDetailChange({ card_id, drawContent: { ...new_value }, operate_properties_code: 'LABEL' })
+        break;
+      case 'SUBTASK':
+        handleTaskDetailChange({ card_id, drawContent: { ...new_value }, operate_properties_code: 'SUBTASK' })
+        break;
+      default:
+        break;
+    }
+  },
 }
-export default class CommonComponent extends Component {
+export default class DepositMainComponent extends Component {
 
   render() {
     const { UIComponent, handleRelyUploading, handleTaskDetailChange, handleChildTaskChange } = this.props
     return (
-      <UIComponent 
-        handleRelyUploading={handleRelyUploading} 
-        handleTaskDetailChange={handleTaskDetailChange} 
-        handleChildTaskChange={handleChildTaskChange} 
-        LogicWithMainContent={LogicWithMainContent}/>
+      <UIComponent
+        handleRelyUploading={handleRelyUploading}
+        handleTaskDetailChange={handleTaskDetailChange}
+        handleChildTaskChange={handleChildTaskChange}
+        LogicWithMainContent={LogicWithMainContent} />
     )
   }
+}
+
+// 存放传入的组件容器
+DepositMainComponent.defautProps = {
+
 }
 

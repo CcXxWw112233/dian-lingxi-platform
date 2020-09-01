@@ -1,28 +1,29 @@
 import React, { Component } from 'react'
 import { connect } from 'dva'
 import { Icon, Dropdown, Menu, DatePicker, Tooltip, Button } from 'antd'
-import mainContentStyles from './MainContent.less'
+import mainContentStyles from '../MainContent.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
-import { isApiResponseOk } from '../../utils/handleResponseData'
+import { isApiResponseOk } from '../../../utils/handleResponseData'
 import NameChangeInput from '@/components/NameChangeInput'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import InformRemind from '@/components/InformRemind'
 import { timestampToTime, timestampToTimeNormal } from '@/utils/util'
-import CustomFields from '../CustomFields'
-import CustomCategoriesOperate from '../CustomFields/CustomCategoriesOperate';
-import DragDropContentComponent from './DragDropContentComponent'
+import CustomFields from '../../CustomFields'
+import CustomCategoriesOperate from '../../CustomFields/CustomCategoriesOperate';
+import DragDropContentComponent from '../DragDropContentComponent'
 import FileListRightBarFileDetailModal from '@/routes/Technological/components/ProjectDetail/FileModule/FileListRightBarFileDetailModal';
-import RelyOnRelationship from '../RelyOnRelationship'
-import { getCurrentDrawerContentPropsModelFieldData, renderTaskNounPlanCode, getCurrentFieldIcon } from './handleOperateModal';
+import RelyOnRelationship from '../../RelyOnRelationship'
+import { getCurrentDrawerContentPropsModelFieldData, renderTaskNounPlanCode, getCurrentFieldIcon } from '../handleOperateModal';
 import {
   PROJECT_TEAM_CARD_EDIT
 } from "@/globalset/js/constant";
 import {
   isPaymentOrgUser
 } from "@/utils/businessFunction";
+import DragDropDefaultUIComponent from './DragDropUIComponent'
 
 @connect(mapStateToProps)
-export default class UIComponent extends Component {
+export default class MainContentUIComponent extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -377,7 +378,6 @@ export default class UIComponent extends Component {
                             {
                               this.getMeetingStatus && this.getMeetingStatus()
                             }
-                            {/* <span className={mainContentStyles.incomplete}>{'未完成'}</span> */}
                           </div>
                         </div>
                       )
@@ -483,7 +483,12 @@ export default class UIComponent extends Component {
           {/* 各种字段的不同状态 E */}
           {/* 不同字段的渲染 S */}
           <div style={{ position: 'relative' }}>
-            <DragDropContentComponent getMilestone={this.getMilestone} selectedKeys={selectedKeys} updateParentPropertiesList={this.updateParentPropertiesList} handleTaskDetailChange={handleTaskDetailChange} handleChildTaskChange={handleChildTaskChange} boardFolderTreeData={boardFolderTreeData} milestoneList={milestoneList} whetherUpdateParentTaskTime={this.whetherUpdateParentTaskTime} updateRelyOnRationList={this.updateRelyOnRationList} />
+            <DragDropContentComponent
+              DragDropUIComponent={this.props.DragDropUIComponent ? this.props.DragDropUIComponent : DragDropDefaultUIComponent}
+              LogicWithMainContent={this.props.LogicWithMainContent} 
+              boardFolderTreeData={boardFolderTreeData} 
+              milestoneList={milestoneList} 
+            />
           </div>
           {/* 不同字段的渲染 E */}
 
@@ -502,7 +507,6 @@ export default class UIComponent extends Component {
                     {
                       // !(properties && properties.length == 6) && 
                       (
-                        // this.getDiffAttributies()
                         <div className={mainContentStyles.field_content}>
                           <div className={mainContentStyles.field_item}>
                             <div className={mainContentStyles.field_left}>
@@ -514,11 +518,6 @@ export default class UIComponent extends Component {
                             <div className={mainContentStyles.field_right}>
                               <div style={{ position: 'relative' }}>
                                 {this.getDiffAttributies()}
-                                {/* <Dropdown overlayClassName={mainContentStyles.overlay_attribute} trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode}
-                                overlay={this.getDiffAttributies()}
-                              >
-                                <div><span>选择属性</span></div>
-                              </Dropdown> */}
                               </div>
                             </div>
                           </div>
@@ -546,7 +545,6 @@ export default class UIComponent extends Component {
                 file_detail_modal_visible={this.props.isInOpenFile}
                 filePreviewCurrentName={this.props.filePreviewCurrentName}
                 setPreviewFileModalVisibile={this.setPreviewFileModalVisibile}
-              // whetherUpdateFolderListData={this.whetherUpdateFolderListData}
               />
             )
           }

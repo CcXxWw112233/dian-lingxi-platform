@@ -12,9 +12,11 @@ import { isApiResponseOk } from '@/utils/handleResponseData'
 import {
   isPaymentOrgUser
 } from "@/utils/businessFunction";
-import DragDropContentComponent from './DragDropContentComponent'
 import FileListRightBarFileDetailModal from '@/routes/Technological/components/ProjectDetail/FileModule/FileListRightBarFileDetailModal';
 import { renderTaskNounPlanCode, getCurrentFieldIcon, getCurrentDrawerContentPropsModelFieldData } from '../../../../../../../components/TaskDetailModal/handleOperateModal'
+// import DragDropContentComponent from './DragDropContentComponent'
+import DragDropContentComponent from '../../../../../../../components/TaskDetailModal/DragDropContentComponent'
+import DragDropUIComponent from './DragDropContentComponent'
 
 @connect(mapStateToProps)
 export default class MainContent extends Component {
@@ -424,7 +426,11 @@ export default class MainContent extends Component {
           {/* 各种字段的不同状态 E */}
           {/* 不同字段的渲染 S */}
           <div style={{ position: 'relative' }}>
-            <DragDropContentComponent updatePrivateVariablesWithOpenFile={this.updatePrivateVariablesWithOpenFile} handleRelyUploading={this.props.handleRelyUploading} getMilestone={this.getMilestone} selectedKeys={selectedKeys} updateParentPropertiesList={this.updateParentPropertiesList} handleTaskDetailChange={handleTaskDetailChange} handleChildTaskChange={handleChildTaskChange} boardFolderTreeData={boardFolderTreeData} milestoneList={milestoneList} whetherUpdateParentTaskTime={this.whetherUpdateParentTaskTime} updateRelyOnRationList={this.updateRelyOnRationList} />
+            <DragDropContentComponent 
+              DragDropUIComponent={DragDropUIComponent} 
+              LogicWithMainContent={this.props.LogicWithMainContent}
+              boardFolderTreeData={boardFolderTreeData} 
+              milestoneList={milestoneList}  />
           </div>
           {/* 不同字段的渲染 E */}
 
