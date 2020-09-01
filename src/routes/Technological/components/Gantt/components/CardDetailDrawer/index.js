@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import { Drawer } from 'antd';
 import { connect } from 'dva';
-import MainContent from './TaskDetailModal/MainContent'
+import UIComponent from './TaskDetailModal/MainContent'
 import HeaderContent from './TaskDetailModal/HeaderContent'
 import styles from './index.less'
+import MainContent from '../../../../../../components/TaskDetailModal/MainContent';
 @connect(mapStateToProps)
 export default class Index extends Component {
     onClose = () => {
@@ -33,13 +34,12 @@ export default class Index extends Component {
     }
     render() {
         const { selected_card_visible } = this.props
-        const { users, handleRelyUploading, handleTaskDetailChange, updateParentTaskList, setTaskDetailModalVisible, handleDeleteCard, card_id, handleChildTaskChange } = this.props
+        const { handleRelyUploading, handleTaskDetailChange, updateParentTaskList, setTaskDetailModalVisible, handleDeleteCard, card_id, handleChildTaskChange } = this.props
         return (
             <div className={`${styles.draw_detail} ${!selected_card_visible && styles.hide_over}`}>
                 <Drawer
                     placement="right"
                     title={<HeaderContent
-                        users={users}
                         onClose={this.onClose}
                         handleDeleteCard={handleDeleteCard}
                         setTaskDetailModalVisible={setTaskDetailModalVisible}
@@ -59,7 +59,7 @@ export default class Index extends Component {
                     <>
                         <div style={{ height: 58 }}></div>
                         <MainContent
-                            users={users}
+                            UIComponent={UIComponent}
                             handleRelyUploading={handleRelyUploading}
                             handleTaskDetailChange={handleTaskDetailChange}
                             handleChildTaskChange={handleChildTaskChange}
@@ -74,7 +74,6 @@ export default class Index extends Component {
 
 Index.defaultProps = {
     setTaskDetailModalVisible: function () { }, // 设置任务详情弹窗是否显示
-    users: [], // 用户列表
     handleTaskDetailChange: function () { }, // 外部修改内部弹窗数据的回调
     updateParentTaskList: function () { }, // 内部数据修改后用来更新外部数据的回调
     handleDeleteCard: function () { }, // 删除某条任务

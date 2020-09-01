@@ -6,24 +6,14 @@ import { connect } from 'dva'
 import {
   checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl,
 } from "@/utils/businessFunction";
-import {
-  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
-  PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_CARD_COMMENT_PUBLISH
-} from "@/globalset/js/constant";
 import { message } from 'antd'
 import { lx_utils } from 'lingxi-im'
+
 
 @connect(mapStateToProps)
 export default class TaskDetailModal extends Component {
 
   onCancel = () => {
-    // this.props.dispatch({
-    //   type: 'publicModalComment/updateDatas',
-    //   payload: {
-    //     comment_list: [],
-    //     isShowAllDynamic: true, // 是否显示全部动态
-    //   }
-    // })
     this.props.dispatch({
       type: 'publicTaskDetailModal/updateDatas',
       payload: {
@@ -53,55 +43,8 @@ export default class TaskDetailModal extends Component {
     }
   }
 
-  // //评论
-  // commentSubmitPost = (data) => {
-  //   if (!(this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_COMMENT_PUBLISH).visit_control_comment() || this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_COMMENT_PUBLISH).visit_control_edit())) {
-  //     message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-  //     return false
-  //   }
-  //   let { text } = data
-  //   const { dispatch, card_id, isShowAllDynamic } = this.props
-  //   if(text) {
-  //     text = text.replace(/\r|\n/gim, '')
-  //   }
-  //   if(!text) {
-  //     return
-  //   }
-  //   dispatch({
-  //     type: 'publicModalComment/addCardNewComment',
-  //     payload: {
-  //       origin_type: '1',
-  //       comment: text,
-  //       card_id,
-  //       flag: isShowAllDynamic ? '0' : '1'
-  //     }
-  //   })
-  // }
-
-  // deleteComment = (data) => {
-  //   const { id } = data
-  //   const { dispatch, isShowAllDynamic, card_id } = this.props
-  //   dispatch({
-  //     type: 'publicModalComment/deleteCardNewComment',
-  //     payload: {
-  //       id,
-  //       common_id: card_id,
-  //       flag: isShowAllDynamic ? '0' : '1',
-  //       origin_type: '1'
-  //     }
-  //   })
-  // }
-
   render() {
-    const { task_detail_modal_visible, users, handleTaskDetailChange, updateParentTaskList, setTaskDetailModalVisible, handleDeleteCard, card_id, handleChildTaskChange } = this.props
-    // const siderRightWidth = document.getElementById('siderRight').clientWidth
-    // const commentUseParams = { //公共评论模块所需要的参数
-    //   commentSubmitPost: this.commentSubmitPost,
-    //   deleteComment: this.deleteComment,
-    //   content_detail_use_id: card_id,
-    //   origin_type: '1', //	string评论来源类型 1=任务 2=流程 3=文件 4=里程碑
-    //   // flag: '1', //0或不传：评论和动态，1只显示评论，2只动态
-    // }
+    const { task_detail_modal_visible, users, handleTaskDetailChange, updateParentTaskList, setTaskDetailModalVisible, handleDeleteCard, card_id, handleChildTaskChange, UIComponent } = this.props
 
     return (
       <div>
@@ -113,9 +56,9 @@ export default class TaskDetailModal extends Component {
           onCancel={this.onCancel}
           // commentUseParams={commentUseParams}
           isNotShowFileDetailContentRightVisible={true}
-          mainContent={<MainContent users={users} handleTaskDetailChange={handleTaskDetailChange} handleChildTaskChange={handleChildTaskChange} />}
+          mainContent={<MainContent handleTaskDetailChange={handleTaskDetailChange} handleChildTaskChange={handleChildTaskChange} />}
           headerContent={
-            <HeaderContent users={users}
+            <HeaderContent
               handleDeleteCard={handleDeleteCard}
               setTaskDetailModalVisible={setTaskDetailModalVisible} handleTaskDetailChange={handleTaskDetailChange} updateParentTaskList={updateParentTaskList}
             />}
@@ -128,7 +71,6 @@ export default class TaskDetailModal extends Component {
 TaskDetailModal.defaultProps = {
   task_detail_modal_visible: false, // 设置任务详情弹窗是否显示, 默认为 false 不显示
   setTaskDetailModalVisible: function () { }, // 设置任务详情弹窗是否显示
-  users: [], // 用户列表
   handleTaskDetailChange: function () { }, // 外部修改内部弹窗数据的回调
   updateParentTaskList: function () { }, // 内部数据修改后用来更新外部数据的回调
   handleDeleteCard: function () { }, // 删除某条任务
