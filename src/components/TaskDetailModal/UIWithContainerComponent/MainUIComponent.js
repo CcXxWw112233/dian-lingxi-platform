@@ -99,7 +99,7 @@ export default class MainUIComponent extends Component {
   getDiffAttributies = () => {
     const { propertiesList = [], selectedKeys = [] } = this.state
     const { drawContent = {}, projectDetailInfoData } = this.props
-    const { org_id, properties = [] } = drawContent
+    const { org_id, properties = [], fields = [] } = drawContent
     if (!(propertiesList && propertiesList.length)) {
       return (<></>)
     }
@@ -120,7 +120,7 @@ export default class MainUIComponent extends Component {
               </Button>
             ))
           }
-          <CustomFields style={{ display: 'inline-block' }} relations_fields={[]} org_id={org_id} handleAddCustomField={this.handleAddCustomField} placement="bottomLeft">
+          <CustomFields style={{ display: 'inline-block' }} relations_fields={fields} org_id={org_id} handleAddCustomField={this.handleAddCustomField} placement="bottomLeft">
             <Button className={mainContentStyles.attr_btn}>更多</Button>
           </CustomFields>
         </div>
@@ -491,6 +491,7 @@ export default class MainUIComponent extends Component {
               whetherUpdateParentTaskTime={this.whetherUpdateParentTaskTime}
               handleChildTaskChange={handleChildTaskChange} 
               handleTaskDetailChange={handleTaskDetailChange}
+              updateParentPropertiesList={this.updateParentPropertiesList}
             />
           </div>
           {/* 不同字段的渲染 E */}

@@ -21,6 +21,7 @@ import GetRowGanttItemElse from './GetRowGanttItemElse'
 import { weekDataArray } from './calDate';
 import { closeFeature } from '../../../../utils/temporary';
 import CardDetailDrawer from './components/CardDetailDrawer'
+import CustomFieldDetailDrawer from './components/CardDetailDrawer/CustomFieldDetailDrawer'
 import { isApiResponseOk } from '../../../../utils/handleResponseData';
 import _ from 'lodash'
 
@@ -581,6 +582,8 @@ export default class GanttFace extends Component {
                     }
                   </div>
                   <CardDetailDrawer {...this.props.task_detail_props} />
+                  {/* 查看更多字段 */}
+                  <CustomFieldDetailDrawer selected_more_field_visible={this.props.selected_more_field_visible} />
                 </div>
                 <GetRowGanttItemElse gantt_card_height={gantt_card_height} dataAreaRealHeight={dataAreaRealHeight} />
 
@@ -620,6 +623,7 @@ function mapStateToProps({ gantt: { datas: {
   gantt_view_mode,
   get_gantt_data_loading_other
 } },
+publicTaskDetailModal: { selected_more_field_visible },
 technological: { datas: { currentUserOrganizes = [] } },
 }) {
   return {
@@ -638,7 +642,8 @@ technological: { datas: { currentUserOrganizes = [] } },
     outline_tree,
     gantt_view_mode,
     get_gantt_data_loading_other,
-    currentUserOrganizes
+    selected_more_field_visible,
+    currentUserOrganizes,
   }
 }
 GanttFace.defaultProps = {

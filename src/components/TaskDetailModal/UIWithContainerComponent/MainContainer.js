@@ -647,7 +647,7 @@ const LogicWithMainContent = {
                 shouldDeleteId: '',
                 showDelColor: ''
               })
-              that.updateParentPropertiesList({ shouldDeleteId, new_selectedKeys })
+              that.props.updateParentPropertiesList && that.props.updateParentPropertiesList({ shouldDeleteId, new_selectedKeys })
               dispatch({
                 type: 'publicTaskDetailModal/updateDatas',
                 payload: {
@@ -680,7 +680,7 @@ const LogicWithMainContent = {
             shouldDeleteId: '',
             showDelColor: ''
           })
-          that.updateParentPropertiesList({ shouldDeleteId, new_selectedKeys })
+          that.props.updateParentPropertiesList && that.props.updateParentPropertiesList({ shouldDeleteId, new_selectedKeys })
           dispatch({
             type: 'publicTaskDetailModal/updateDatas',
             payload: {

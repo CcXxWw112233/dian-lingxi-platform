@@ -17,6 +17,7 @@ import { renderTaskNounPlanCode, getCurrentFieldIcon, getCurrentDrawerContentPro
 // import DragDropContentComponent from './DragDropContentComponent'
 import BasicFieldUIComponent from './BasicFieldUIComponent'
 import BasicFieldContainer from '../../../../../../../components/TaskDetailModal/UIWithContainerComponent/BasicFieldContainer'
+import CustomCategoriesOperate from '../../../../../../../components/CustomFields/CustomCategoriesOperate'
 
 @connect(mapStateToProps)
 export default class MainContent extends Component {
@@ -210,6 +211,15 @@ export default class MainContent extends Component {
     )
   }
 
+  handleSetMoreField = () => {
+    this.props.dispatch({
+      type: 'publicTaskDetailModal/updateDatas',
+      payload: {
+        selected_more_field_visible: true
+      }
+    })
+  }
+
   render() {
     const { drawContent = {} } = this.props
     const {
@@ -220,7 +230,7 @@ export default class MainContent extends Component {
       start_time,
       due_time,
     } = drawContent
-    const { properties = [] } = drawContent
+    const { properties = [], fields = [] } = drawContent
     const executors = getCurrentDrawerContentPropsModelFieldData({ properties, code: 'EXECUTOR' })
     const { boardFolderTreeData = [], milestoneList = [], selectedKeys = [], inputValue, is_edit_title } = this.state
     // 状态
@@ -424,38 +434,56 @@ export default class MainContent extends Component {
           {/* 各种字段的不同状态 E */}
           {/* 不同字段的渲染 S */}
           <div style={{ position: 'relative' }}>
-            <BasicFieldContainer 
-              BasicFieldUIComponent={BasicFieldUIComponent} 
+            <BasicFieldContainer
+              BasicFieldUIComponent={BasicFieldUIComponent}
               LogicWithMainContent={this.props.LogicWithMainContent}
-              boardFolderTreeData={boardFolderTreeData} 
-              milestoneList={milestoneList}  
+              boardFolderTreeData={boardFolderTreeData}
+              milestoneList={milestoneList}
               whetherUpdateParentTaskTime={this.whetherUpdateParentTaskTime}
-              handleChildTaskChange={this.props.handleChildTaskChange} 
+              handleChildTaskChange={this.props.handleChildTaskChange}
               handleTaskDetailChange={this.props.handleTaskDetailChange}
+              updateParentPropertiesList={this.updateParentPropertiesList}
             />
           </div>
           {/* 不同字段的渲染 E */}
 
-          {/* 添加字段 S */}
+          {/* 渲染添加关联字段 */}
           <div>
-            {
-              (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
-                ''
-              ) : (
-                  <>
-                    {
-                      !(properties && properties.length == 6) && (
-                        <>
-                          {this.getDiffAttributies()}
-                        </>
-                      )
-                    }
-                  </>
-                )
-            }
-
+            <CustomCategoriesOperate fields={fields} handleUpdateModelDatas={this.handleUpdateModelDatas} />
           </div>
-          {/* 添加字段 E */}
+
+          {/* 渲染字段 */}
+          <div className={mainContentStyles.field_content}>
+            <div className={mainContentStyles.field_left} style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <div className={mainContentStyles.field_hover}>
+                <span>字段</span>
+              </div>
+              <div onClick={this.handleSetMoreField} style={{ color: '#5680FA' }}>
+                <span>更多 &gt;</span>
+              </div>
+            </div>
+            <div className={`${mainContentStyles.field_right}`}>
+              {/* 添加字段 S */}
+              <div>
+                {
+                  (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
+                    ''
+                  ) : (
+                      <>
+                        {
+                          !(properties && properties.length == 6) && (
+                            <>
+                              {this.getDiffAttributies()}
+                            </>
+                          )
+                        }
+                      </>
+                    )
+                }
+              </div>
+              {/* 添加字段 E */}
+            </div>
+          </div>
         </div>
         <div onClick={this.handleDynamicComment} id="dynamic_comment" className={mainContentStyles.dynamic_comment}>
           <Tooltip overlayStyle={{ minWidth: '72px' }} placement="top" title="动态消息" getPopupContainer={() => document.getElementById('dynamic_comment')}>

@@ -105,7 +105,7 @@ export default class Index extends Component {
     const { org_id, relations_fields = [] } = this.props
     getCustomFieldList({ _organization_id: org_id, field_status: '0' }).then(res => {
       if (isApiResponseOk(res)) {
-        this.setOperationOfTreeData({relations_fields, groups: res.data.groups, fields: res.data.fields})
+        this.setOperationOfTreeData({ relations_fields, groups: res.data.groups, fields: res.data.fields })
         this.setState({
           groupsData: res.data.groups,
           fieldsData: res.data.fields
@@ -118,7 +118,7 @@ export default class Index extends Component {
     const { relations_fields: old_relations_fields = [] } = this.props
     const { relations_fields = [] } = nextProps
     if (isArrayEqual(relations_fields, old_relations_fields)) return
-    this.setOperationOfTreeData({relations_fields, original_treeData: this.state.treeData})
+    this.setOperationOfTreeData({ relations_fields, original_treeData: this.state.treeData })
   }
 
   handleVisibleChange = visible => {
@@ -127,7 +127,7 @@ export default class Index extends Component {
     });
     if (!visible) {
       const { relations_fields = [] } = this.props
-      this.setOperationOfTreeData({relations_fields, original_treeData: this.state.treeData})
+      this.setOperationOfTreeData({ relations_fields, original_treeData: this.state.treeData })
       // this.setState({
       //   checkedKeys: []
       // })
@@ -213,8 +213,12 @@ export default class Index extends Component {
 
   renderSelectedTree = () => {
     const { treeData = [], checkedKeys = [], defaultCheckedKeys = [] } = this.state
+    const { onlyShowPopoverContent } = this.props
+    let local_tree_height = document.getElementById('gantt_card_out') && document.getElementById('gantt_card_out').clientHeight - 160 + 'px'
     return (
-      <div className={`${indexStyles.treeWrapper} ${globalsetStyles.global_vertical_scrollbar}`}>
+      <div className={`${indexStyles.treeWrapper} ${globalsetStyles.global_vertical_scrollbar}`}
+        style={{height: onlyShowPopoverContent && local_tree_height, maxHeight: onlyShowPopoverContent && local_tree_height, width: onlyShowPopoverContent && '260px'}}
+      >
         {
           treeData && treeData.length ? (
             <Tree
@@ -266,20 +270,31 @@ export default class Index extends Component {
   }
 
   render() {
-    const { children, style, placement, getPopupContainer } = this.props
+    const { children, style, placement, getPopupContainer, onlyShowPopoverContent } = this.props
     return (
-      <div style={{...style}}>
-        <Popover
-          getPopupContainer={getPopupContainer ? () => getPopupContainer : triggerNode => triggerNode.parentNode}
-          placement={placement ? placement : 'bottom'}
-          title={<div className={indexStyles.popover_title}>添加字段</div>}
-          trigger="click"
-          visible={this.state.visible}
-          onVisibleChange={this.handleVisibleChange}
-          content={this.renderContent()}
-        >
-          {children}
-        </Popover>
+      <div style={{ ...style }}>
+        <>
+          {
+            !onlyShowPopoverContent && (
+              <Popover
+                getPopupContainer={getPopupContainer ? () => getPopupContainer : triggerNode => triggerNode.parentNode}
+                placement={placement ? placement : 'bottom'}
+                title={<div className={indexStyles.popover_title}>添加字段</div>}
+                trigger="click"
+                visible={this.state.visible}
+                onVisibleChange={this.handleVisibleChange}
+                content={this.renderContent()}
+              >
+                {children}
+              </Popover>
+            )
+          }
+        </>
+        {onlyShowPopoverContent && (
+          <div>
+            <div>{this.renderContent()}</div>
+          </div>
+        )}
       </div>
     )
   }
