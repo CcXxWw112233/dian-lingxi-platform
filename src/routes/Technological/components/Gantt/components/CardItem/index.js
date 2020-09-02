@@ -1130,6 +1130,15 @@ export default class CardItem extends Component {
         }
         return true
     }
+    set_drag_else_over_in = (bool) => {
+        const { card_rely_draging } = this.props
+        const { rely_down } = this.state
+        if (card_rely_draging && !rely_down) { //拖拽别条任务依赖生成过程中，鼠标指针hover到本条任务上面
+            this.setState({
+                drag_else_over_in: bool
+            })
+        }
+    }
     handleObj = () => {
         const { itemValue = {}, card_rely_draging } = this.props
         const { drag_lock } = this.state
@@ -1173,6 +1182,11 @@ export default class CardItem extends Component {
                 this.onMouseMove(e)
             },
             onMouseUp: () => {
+                setTimeout(() => {
+                    this.setState({
+                        drag_else_over_in: false
+                    })
+                }, 200)
                 if (card_rely_draging || !drag_lock) return
                 this.setSpecilTaskExample({ id: parent_card_id || id, top, board_id })
             }, //查看子任务是查看父任务
@@ -1200,6 +1214,10 @@ export default class CardItem extends Component {
             }, //查看子任务是查看父任务
             onMouseEnter: () => {
                 this.onMouseEnter()
+                this.set_drag_else_over_in(true)
+            },
+            onMouseLeave: () => {
+                this.set_drag_else_over_in(false)
             },
             onBlur: () => {
                 this.props.setTaskIsDragging && this.props.setTaskIsDragging(false) //当拖动时，有可能会捕获到创建任务的动作，阻断
@@ -1235,7 +1253,7 @@ export default class CardItem extends Component {
             child_card_status = {},
         } = itemValue
         const { has_child, min_start_time: child_min_start_time, max_due_time: child_max_due_time } = child_card_status //子任务状态，实现大纲的父任务三角
-        const { local_left, local_top, local_width, rely_down, drag_lock } = this.state
+        const { local_left, local_top, local_width, rely_down, drag_lock, drag_else_over_in } = this.state
         const { is_overdue, due_description } = filterDueTimeSpan({ start_time, due_time, is_has_end_time, is_has_start_time })
         return (
             <div
@@ -1386,8 +1404,9 @@ export default class CardItem extends Component {
                     )
                 }
                 {
-                    drag_lock && (
+                    (drag_lock || drag_else_over_in) && (
                         <DragCard
+                            drag_else_over_in={drag_else_over_in}
                             id={id}
                             width={(local_width || 6) - (gantt_view_mode == 'year' ? 0 : card_width_diff)}
                         />
