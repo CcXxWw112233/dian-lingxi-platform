@@ -211,7 +211,7 @@ export default class MainContent extends Component {
   }
 
   render() {
-    const { drawContent = {}, handleTaskDetailChange, handleChildTaskChange } = this.props
+    const { drawContent = {} } = this.props
     const {
       card_id,
       card_name,
@@ -219,7 +219,6 @@ export default class MainContent extends Component {
       is_realize = '0',
       start_time,
       due_time,
-      dependencies = []
     } = drawContent
     const { properties = [] } = drawContent
     const executors = getCurrentDrawerContentPropsModelFieldData({ properties, code: 'EXECUTOR' })
@@ -273,7 +272,6 @@ export default class MainContent extends Component {
                       autosize
                       onChange={this.titleTextAreaChange}
                       onBlur={this.titleTextAreaChangeBlur}
-                      // onClick={this.setTitleEdit}
                       onPressEnter={this.titleTextAreaChangeBlur}
                       setIsEdit={this.titleTextAreaChangeBlur}
                       autoFocus={true}
@@ -430,7 +428,11 @@ export default class MainContent extends Component {
               BasicFieldUIComponent={BasicFieldUIComponent} 
               LogicWithMainContent={this.props.LogicWithMainContent}
               boardFolderTreeData={boardFolderTreeData} 
-              milestoneList={milestoneList}  />
+              milestoneList={milestoneList}  
+              whetherUpdateParentTaskTime={this.whetherUpdateParentTaskTime}
+              handleChildTaskChange={this.props.handleChildTaskChange} 
+              handleTaskDetailChange={this.props.handleTaskDetailChange}
+            />
           </div>
           {/* 不同字段的渲染 E */}
 

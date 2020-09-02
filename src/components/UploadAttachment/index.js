@@ -41,31 +41,6 @@ export default class UploadAttachment extends Component {
     }
   }
 
-  // componentDidMount() {
-  //   const { board_id, boardFolderTreeData = [] } = this.props;
-  //   if (board_id) {
-  //     // this.getProjectFolderList(board_id)
-  //     this.setState({
-  //       boardFolderTreeData,
-  //     })
-  //   }
-  // }
-
-
-  //获取项目里文件夹列表
-  // getProjectFolderList = (board_id) => {
-  //   getFolderList({ board_id }).then((res) => {
-  //     if (isApiResponseOk(res)) {
-
-  //       this.setState({
-  //         boardFolderTreeData: res.data
-  //       });
-  //     } else {
-  //       message.error(res.message)
-  //     }
-  //   })
-  // }
-
   //确定，上传开始
   handleOk = e => {
     this.handleUpload();
@@ -97,7 +72,6 @@ export default class UploadAttachment extends Component {
 
   }
 
-
   getUploadProps = () => {
     let $that = this;
     const { fileList } = this.state;
@@ -122,11 +96,12 @@ export default class UploadAttachment extends Component {
       },
     };
   }
+
   handleUpload = () => {
     this.setState({
       uploading: true,
     });
-    const { org_id, board_id, card_id, isNotShowNoticeList, url } = this.props;
+    const { projectDetailInfoData: { org_id, board_id }, card_id, isNotShowNoticeList, url } = this.props;
     const { fileSavePath = null, fileList = [], toNoticeList, isOnlyNoticePersonsVisit } = this.state;
 
     const formData = new FormData();
@@ -221,7 +196,7 @@ export default class UploadAttachment extends Component {
           this.closeUploadAttachmentModal();
           return false
         } else {
-          console.log('进来了');
+          // console.log('进来了');
           message.error('上传失败');
           this.setState({
             uploading: false,
@@ -426,7 +401,7 @@ export default class UploadAttachment extends Component {
 
   render() {
     // 父组件传递的值
-    const { visible, children, board_id, card_id, projectDetailInfoData = {}, org_id, boardFolderTreeData, title, listDescribe, isNotShowNoticeList } = this.props;
+    const { visible, children, projectDetailInfoData = {}, projectDetailInfoData: { board_id, org_id }, boardFolderTreeData, title, listDescribe, isNotShowNoticeList } = this.props;
     const { uploadFileVisible, uploadFilePreviewList = [], toNoticeList = [], fileSavePath, uploading } = this.state;
 
     const { data: projectMemberData } = projectDetailInfoData;
@@ -581,15 +556,28 @@ export default class UploadAttachment extends Component {
     )
   }
 }
+
 // 只关联public弹窗内的数据
 function mapStateToProps({
   technological: {
     datas: {
       userBoardPermissions
     }
-  }
+  },
+  projectDetail: { datas: { projectDetailInfoData = {} } },
 }) {
-  return { userBoardPermissions }
+  return { userBoardPermissions, projectDetailInfoData }
+}
+
+UploadAttachment.defaultProps = {
+  card_id: '', // 对应上传的任务ID
+  executors: [], // 默认通知人
+  isNotShowNoticeList: false, // 是否不显示通知人列表
+  boardFolderTreeData: [], //文件路径列表
+  title: '', // 对应设置上传弹窗标题
+  listDescribe: '', //说明列表名称
+  url: '', // 上传路径
+  onFileListChange: function() {}, // 上传成功回调
 }
 
 

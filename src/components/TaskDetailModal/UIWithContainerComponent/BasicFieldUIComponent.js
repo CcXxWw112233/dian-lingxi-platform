@@ -15,6 +15,7 @@ import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { getCurrentDrawerContentPropsModelFieldData, getCurrentPropertiesData, judgeFileType, showMemberName, getFolderPathName } from '../handleOperateModal';
 import { currentNounPlanFilterName } from '../../../utils/businessFunction';
 import { TASKS } from '../../../globalset/js/constant';
+import SubTaskContainer from './SubTaskContainer';
 
 @connect(mapStateToProps)
 export default class BasicFieldUIComponent extends Component {
@@ -135,7 +136,10 @@ export default class BasicFieldUIComponent extends Component {
                               </RichTextEditor>
                             </div>
                             <div onClick={(e) => e && e.stopPropagation()}>
-                              <UploadAttachment executors={executors.data} boardFolderTreeData={boardFolderTreeData} projectDetailInfoData={projectDetailInfoData} org_id={org_id} board_id={board_id} card_id={card_id}
+                              <UploadAttachment
+                                executors={executors.data}
+                                boardFolderTreeData={boardFolderTreeData}
+                                card_id={card_id}
                                 title={`任务说明资料设置`}
                                 listDescribe={'说明资料列表'}
                                 isNotShowNoticeList={true}
@@ -406,34 +410,44 @@ export default class BasicFieldUIComponent extends Component {
                   {/* 添加子任务组件 */}
                   {
                     (
-                      <AppendSubTask data={data} handleTaskDetailChange={handleTaskDetailChange} handleChildTaskChange={handleChildTaskChange} whetherUpdateParentTaskTime={whetherUpdateParentTaskTime} updateRelyOnRationList={updateRelyOnRationList} boardFolderTreeData={boardFolderTreeData} projectDetailInfoData={projectDetailInfoData}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                          {
-                            !!!(deliverables && deliverables.length) && (
-                              <div className={mainContentStyles.add_sub_btn}>
-                                <span className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe8fe;</span> 新建{`子${currentNounPlanFilterName(TASKS)}`}
-                              </div>
-                            )
-                          }
-                          <div>
+                      <SubTaskContainer
+                        handleTaskDetailChange={handleTaskDetailChange}
+                        handleChildTaskChange={handleChildTaskChange}
+                        whetherUpdateParentTaskTime={whetherUpdateParentTaskTime}
+                        updateRelyOnRationList={updateRelyOnRationList}
+                        boardFolderTreeData={boardFolderTreeData}
+                        children={
+                          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                             {
-                              card_id && !(gold_data && gold_data.length) && (
-                                <div onClick={(e) => e && e.stopPropagation()}>
-                                  <UploadAttachment executors={executors.data} boardFolderTreeData={boardFolderTreeData} projectDetailInfoData={projectDetailInfoData} org_id={org_id} board_id={board_id} card_id={card_id}
-                                    title={'上传交付物列表设置'}
-                                    listDescribe={'交付物列表'}
-                                    onFileListChange={this.onUploadFileListChange}>
-                                    <span className={mainContentStyles.add_sub_upload}>
-                                      <span style={{ fontSize: '16px' }} className={globalStyles.authTheme}>&#xe7fa;</span>
-                                      <span>上传交付物</span>
-                                    </span>
-                                  </UploadAttachment>
+                              !!!(deliverables && deliverables.length) && (
+                                <div className={mainContentStyles.add_sub_btn}>
+                                  <span className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe8fe;</span> 新建{`子${currentNounPlanFilterName(TASKS)}`}
                                 </div>
                               )
                             }
+                            <div>
+                              {
+                                card_id && !(gold_data && gold_data.length) && (
+                                  <div onClick={(e) => e && e.stopPropagation()}>
+                                    <UploadAttachment
+                                      executors={executors.data}
+                                      boardFolderTreeData={boardFolderTreeData}
+                                      card_id={card_id}
+                                      title={'上传交付物列表设置'}
+                                      listDescribe={'交付物列表'}
+                                      onFileListChange={this.onUploadFileListChange}>
+                                      <span className={mainContentStyles.add_sub_upload}>
+                                        <span style={{ fontSize: '16px' }} className={globalStyles.authTheme}>&#xe7fa;</span>
+                                        <span>上传交付物</span>
+                                      </span>
+                                    </UploadAttachment>
+                                  </div>
+                                )
+                              }
+                            </div>
                           </div>
-                        </div>
-                      </ AppendSubTask>
+                        }
+                      />
                     )
                   }
                 </div>

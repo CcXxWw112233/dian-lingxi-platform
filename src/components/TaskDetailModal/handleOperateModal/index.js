@@ -243,3 +243,7 @@ export const compareStartDueTime = (start_time, due_time) => {
   }
   return true
 }
+
+  // 是否是有效的头像
+ export const isValidAvatar = (avatarUrl = '') =>
+    avatarUrl.includes('http://') || avatarUrl.includes('https://');

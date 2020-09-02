@@ -35,7 +35,8 @@ export default class TaskDetailModal extends Component {
           mainContent={
             <MainContent 
               handleTaskDetailChange={handleTaskDetailChange} 
-              handleChildTaskChange={handleChildTaskChange} />
+              handleChildTaskChange={handleChildTaskChange} 
+            />
           }
           headerContent={
             <HeaderContent

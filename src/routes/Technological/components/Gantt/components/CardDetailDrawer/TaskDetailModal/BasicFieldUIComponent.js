@@ -1,28 +1,19 @@
 import React, { Component } from 'react'
 import { connect } from 'dva'
-import { message, Dropdown, Menu, Modal, Breadcrumb, Tooltip } from 'antd'
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { Breadcrumb } from 'antd'
 import mainContentStyles from './MainContent.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import UploadAttachment from '@/components/UploadAttachment'
 import RichTextEditor from '@/components/RichTextEditor'
 import MilestoneAdd from '@/components/MilestoneAdd'
 import LabelDataComponent from '@/components/LabelDataComponent'
-import AppendSubTask from './components/AppendSubTask'
-// import FileDetailModal from '@/components/FileDetailModal'
-import { timestampFormat, compareTwoTimestamp } from '@/utils/util'
-import { getSubfixName } from "@/utils/businessFunction";
-import {
-  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_CARD_EDIT, PROJECT_TEAM_CARD_ATTACHMENT_UPLOAD
-} from "@/globalset/js/constant";
-import { isApiResponseOk } from '@/utils/handleResponseData'
-import { deleteTaskFile } from '@/services/technological/task'
-import {
-  checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl,
-} from "@/utils/businessFunction";
+import { timestampFormat } from '@/utils/util'
+import { PROJECT_TEAM_CARD_EDIT } from "@/globalset/js/constant";
 import { currentNounPlanFilterName } from '../../../../../../../utils/businessFunction';
 import { TASKS } from '../../../../../../../globalset/js/constant';
-import { judgeFileType, showMemberName, getCurrentDrawerContentPropsModelFieldData } from '../../../../../../../components/TaskDetailModal/handleOperateModal';
+import { judgeFileType, showMemberName, getCurrentDrawerContentPropsModelFieldData, getFolderPathName } from '../../../../../../../components/TaskDetailModal/handleOperateModal';
+import SubTaskContainer from '../../../../../../../components/TaskDetailModal/UIWithContainerComponent/SubTaskContainer';
+import AppendSubTask from './components/AppendSubTask';
 
 @connect(mapStateToProps)
 export default class BasicFieldUIComponent extends Component {
@@ -40,11 +31,11 @@ export default class BasicFieldUIComponent extends Component {
   // 对应字段的内容渲染
   filterDiffPropertiesField = (currentItem) => {
     const { visible = false, showDelColor, currentDelId } = this.state
-    const { drawContent = {}, projectDetailInfoData = {}, projectDetailInfoData: { data = [] }, boardTagList = [], handleTaskDetailChange, boardFolderTreeData = [], milestoneList = [], handleChildTaskChange, whetherUpdateParentTaskTime, updateRelyOnRationList } = this.props
+    const { drawContent = {}, projectDetailInfoData: { data = [] }, boardTagList = [], handleTaskDetailChange, boardFolderTreeData = [], milestoneList = [], handleChildTaskChange, whetherUpdateParentTaskTime, updateRelyOnRationList } = this.props
     const { org_id, card_id, board_id, board_name, due_time, start_time, deliverables = [], dec_files = [], properties = [] } = drawContent
     const { code, id } = currentItem
     const flag = (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()
-    let {data: executors = []} = getCurrentDrawerContentPropsModelFieldData({ properties, code: 'EXECUTOR' })
+    let { data: executors = [] } = getCurrentDrawerContentPropsModelFieldData({ properties, code: 'EXECUTOR' })
     const gold_data = (drawContent['properties'].find(item => item.code == 'SUBTASK') || {}).data
     let messageValue = (<div></div>)
     switch (code) {
@@ -111,13 +102,13 @@ export default class BasicFieldUIComponent extends Component {
                 {
                   (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
                     (
-                      currentItem.data && currentItem.data == '<p></p>' ? 
-                      (
-                        <div className={`${mainContentStyles.pub_hover}`}>
-                          <span>暂无</span>
-                        </div>
-                      ) 
-                      : (
+                      currentItem.data && currentItem.data == '<p></p>' ?
+                        (
+                          <div className={`${mainContentStyles.pub_hover}`}>
+                            <span>暂无</span>
+                          </div>
+                        )
+                        : (
                           <>
                             <div className={`${mainContentStyles.pub_hover}`} >
                               <div className={mainContentStyles.descriptionContent} dangerouslySetInnerHTML={{ __html: currentItem.data }}></div>
@@ -131,8 +122,11 @@ export default class BasicFieldUIComponent extends Component {
                         <div>
                           <RichTextEditor saveBrafitEdit={this.saveBrafitEdit} value={currentItem.data && currentItem.data}>
                             <div>
-                              <div style={{paddingLeft: '12px'}} onClick={(e) => e && e.stopPropagation()}>
-                                <UploadAttachment executors={executors.data} boardFolderTreeData={boardFolderTreeData} projectDetailInfoData={projectDetailInfoData} org_id={org_id} board_id={board_id} card_id={card_id}
+                              <div style={{ paddingLeft: '12px' }} onClick={(e) => e && e.stopPropagation()}>
+                                <UploadAttachment
+                                  executors={executors.data}
+                                  boardFolderTreeData={boardFolderTreeData}
+                                  card_id={card_id}
                                   title={`任务说明资料设置`}
                                   listDescribe={'说明资料列表'}
                                   isNotShowNoticeList={true}
@@ -166,7 +160,7 @@ export default class BasicFieldUIComponent extends Component {
                   {
                     !!(dec_files && dec_files.length) && dec_files.map(fileInfo => {
                       const { name: file_name, file_id } = fileInfo
-                      const breadcrumbList = this.getFolderPathName([], fileInfo)
+                      const breadcrumbList = getFolderPathName(fileInfo)
                       return (
                         <div className={`${mainContentStyles.file_item_wrapper}`} key={fileInfo.id}>
                           <div className={`${mainContentStyles.file_item} ${mainContentStyles.pub_hover}`} onClick={(e) => this.openFileDetailModal(e, fileInfo)} >
@@ -188,7 +182,7 @@ export default class BasicFieldUIComponent extends Component {
                                 </Breadcrumb>
                               </div>
                             </div>
-                            <Dropdown trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.getAttachmentActionMenus({fileInfo, code: 'REMARK', card_id})}>
+                            <Dropdown trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.getAttachmentActionMenus({ fileInfo, code: 'REMARK', card_id })}>
                               <span onClick={(e) => e && e.stopPropagation()} className={`${mainContentStyles.pay_more_icon} ${globalStyles.authTheme}`}>&#xe66f;</span>
                             </Dropdown>
                           </div>
@@ -330,34 +324,45 @@ export default class BasicFieldUIComponent extends Component {
               {/* 添加子任务组件 */}
               {
                 (
-                  <AppendSubTask data={data} handleTaskDetailChange={handleTaskDetailChange} handleChildTaskChange={handleChildTaskChange} whetherUpdateParentTaskTime={whetherUpdateParentTaskTime} updateRelyOnRationList={updateRelyOnRationList} boardFolderTreeData={boardFolderTreeData} projectDetailInfoData={projectDetailInfoData} handleRelyUploading={this.props.handleRelyUploading}
+                  <SubTaskContainer
+                    SubTaskUIComponent={AppendSubTask}
+                    handleTaskDetailChange={handleTaskDetailChange}
+                    handleChildTaskChange={handleChildTaskChange}
+                    whetherUpdateParentTaskTime={whetherUpdateParentTaskTime}
+                    updateRelyOnRationList={updateRelyOnRationList}
+                    boardFolderTreeData={boardFolderTreeData}
+                    handleRelyUploading={this.props.handleRelyUploading}
                     updatePrivateVariablesWithOpenFile={this.props.updatePrivateVariablesWithOpenFile}
-                  >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', paddingLeft: '12px' }}>
-                      {
-                        !!!(deliverables && deliverables.length) && (
-                          <div className={mainContentStyles.add_sub_btn}>
-                            <span className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe8fe;</span> 新建{`子${currentNounPlanFilterName(TASKS)}`}
-                          </div>
-                        )
-                      }
-                      <div onClick={(e) => e.stopPropagation()}>
+                    children={
+                      <div style={{ display: 'flex', justifyContent: 'space-between', paddingLeft: '12px' }}>
                         {
-                          card_id && !(gold_data && gold_data.length) && (
-                            <div onClick={(e) => e && e.stopPropagation()}>
-                              <UploadAttachment executors={executors.data} boardFolderTreeData={boardFolderTreeData} projectDetailInfoData={projectDetailInfoData} org_id={org_id} board_id={board_id} card_id={card_id}
-                                onFileListChange={this.onUploadFileListChange}>
-                                <span className={mainContentStyles.add_sub_upload}>
-                                  <span style={{ fontSize: '16px' }} className={globalStyles.authTheme}>&#xe7fa;</span>
-                                  <span>上传交付物</span>
-                                </span>
-                              </UploadAttachment>
+                          !!!(deliverables && deliverables.length) && (
+                            <div className={mainContentStyles.add_sub_btn}>
+                              <span className={`${globalStyles.authTheme}`} style={{ fontSize: '16px' }}>&#xe8fe;</span> 新建{`子${currentNounPlanFilterName(TASKS)}`}
                             </div>
                           )
                         }
+                        <div onClick={(e) => e.stopPropagation()}>
+                          {
+                            card_id && !(gold_data && gold_data.length) && (
+                              <div onClick={(e) => e && e.stopPropagation()}>
+                                <UploadAttachment
+                                  executors={executors.data}
+                                  boardFolderTreeData={boardFolderTreeData}
+                                  card_id={card_id}
+                                  onFileListChange={this.onUploadFileListChange}>
+                                  <span className={mainContentStyles.add_sub_upload}>
+                                    <span style={{ fontSize: '16px' }} className={globalStyles.authTheme}>&#xe7fa;</span>
+                                    <span>上传交付物</span>
+                                  </span>
+                                </UploadAttachment>
+                              </div>
+                            )
+                          }
+                        </div>
                       </div>
-                    </div>
-                  </ AppendSubTask>
+                    }
+                  />
                 )
               }
               <div>
@@ -366,7 +371,7 @@ export default class BasicFieldUIComponent extends Component {
                   {
                     !!(deliverables && deliverables.length) && deliverables.map(fileInfo => {
                       const { name: file_name, file_id } = fileInfo
-                      const breadcrumbList = this.getFolderPathName([], fileInfo)
+                      const breadcrumbList = getFolderPathName(fileInfo)
                       return (
                         <div className={`${mainContentStyles.file_item_wrapper}`} key={fileInfo.id}>
                           <div className={`${mainContentStyles.file_item} ${mainContentStyles.pub_hover}`} onClick={(e) => this.openFileDetailModal(e, fileInfo)} >
@@ -388,7 +393,7 @@ export default class BasicFieldUIComponent extends Component {
                                 </Breadcrumb>
                               </div>
                             </div>
-                            <Dropdown trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.getAttachmentActionMenus({fileInfo, code: 'SUBTASK_DELIVERABLES', card_id})}>
+                            <Dropdown trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.getAttachmentActionMenus({ fileInfo, code: 'SUBTASK_DELIVERABLES', card_id })}>
                               <span onClick={(e) => e && e.stopPropagation()} className={`${mainContentStyles.pay_more_icon} ${globalStyles.authTheme}`}>&#xe66f;</span>
                             </Dropdown>
                           </div>

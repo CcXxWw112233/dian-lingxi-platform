@@ -256,7 +256,7 @@ export default class MainUIComponent extends Component {
   }
 
   render() {
-    const { drawContent = {}, isInOpenFile, handleTaskDetailChange, handleChildTaskChange } = this.props
+    const { drawContent = {}, isInOpenFile, handleTaskDetailChange, handleChildTaskChange, whetherUpdateParentTaskTime } = this.props
     const {
       org_id,
       card_id,
@@ -487,7 +487,10 @@ export default class MainUIComponent extends Component {
               BasicFieldUIComponent={this.props.BasicFieldUIComponent ? this.props.BasicFieldUIComponent : DefaultBasicFieldUIComponent}
               LogicWithMainContent={this.props.LogicWithMainContent} 
               boardFolderTreeData={boardFolderTreeData} 
-              milestoneList={milestoneList} 
+              milestoneList={milestoneList}
+              whetherUpdateParentTaskTime={this.whetherUpdateParentTaskTime}
+              handleChildTaskChange={handleChildTaskChange} 
+              handleTaskDetailChange={handleTaskDetailChange}
             />
           </div>
           {/* 不同字段的渲染 E */}
