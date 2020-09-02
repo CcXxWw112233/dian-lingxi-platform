@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
-export default class DragDropContentComponent extends Component {
+export default class BasicFieldContainer extends Component {
 
   render() {
-    const { DragDropUIComponent, boardFolderTreeData, milestoneList } = this.props
+    const { BasicFieldUIComponent, boardFolderTreeData, milestoneList } = this.props
     return (
-      <DragDropUIComponent 
+      <BasicFieldUIComponent 
         LogicWithMainContent={this.props.LogicWithMainContent}
         boardFolderTreeData={boardFolderTreeData} 
         milestoneList={milestoneList} 

@@ -4,18 +4,18 @@ import { timestampToTime, compareTwoTimestamp, timeToTimestamp } from '@/utils/u
 import {
   MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_CARD_EDIT, PROJECT_FILES_FILE_INTERVIEW
 } from "@/globalset/js/constant";
-import { isApiResponseOk } from '../../utils/handleResponseData'
-import { addTaskExecutor, removeTaskExecutor } from '../../services/technological/task'
+import { isApiResponseOk } from '../../../utils/handleResponseData'
+import { addTaskExecutor, removeTaskExecutor, deleteTaskFile } from '../../../services/technological/task'
 import {
   checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl, isPaymentOrgUser
 } from "@/utils/businessFunction";
 import { getFolderList } from '@/services/technological/file'
 import { getMilestoneList } from '@/services/technological/prjectDetail'
-import { arrayNonRepeatfy } from '../../utils/util'
-import { getCurrentDrawerContentPropsModelFieldData, filterCurrentUpdateDatasField, getCurrentPropertiesData, compareStartDueTime } from './handleOperateModal'
-import { rebackCreateNotify } from '../NotificationTodos'
+import { arrayNonRepeatfy } from '../../../utils/util'
+import { getCurrentDrawerContentPropsModelFieldData, filterCurrentUpdateDatasField, getCurrentPropertiesData, compareStartDueTime } from '../handleOperateModal'
+import { rebackCreateNotify } from '../../NotificationTodos'
 import { lx_utils } from 'lingxi-im'
-import { getSubfixName } from '../../utils/businessFunction';
+import { getSubfixName } from '../../../utils/businessFunction';
 
 // 逻辑组件
 const LogicWithMainContent = {
@@ -1304,6 +1304,7 @@ const LogicWithMainContent = {
     if (typeof this.props.handleRelyUploading == 'function' && folder_id) this.props.handleRelyUploading({ folder_id })
   },
 
+  // 任务说明上传
   onUploadDescFileListChange: function (data) {
     const { drawContent = {}, dispatch } = this.props;
     let new_drawContent = { ...drawContent }
@@ -1490,9 +1491,9 @@ const LogicWithMainContent = {
 export default class DepositMainComponent extends Component {
 
   render() {
-    const { UIComponent, handleRelyUploading, handleTaskDetailChange, handleChildTaskChange } = this.props
+    const { MainUIComponent, handleRelyUploading, handleTaskDetailChange, handleChildTaskChange } = this.props
     return (
-      <UIComponent
+      <MainUIComponent
         handleRelyUploading={handleRelyUploading}
         handleTaskDetailChange={handleTaskDetailChange}
         handleChildTaskChange={handleChildTaskChange}

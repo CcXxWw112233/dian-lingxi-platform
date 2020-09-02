@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Drawer } from 'antd';
 import { connect } from 'dva';
-import UIComponent from './TaskDetailModal/MainContent'
+import MainUIComponent from './TaskDetailModal/MainContent'
 import HeaderContent from './TaskDetailModal/HeaderContent'
 import styles from './index.less'
 import MainContent from '../../../../../../components/TaskDetailModal/MainContent';
@@ -59,7 +59,7 @@ export default class Index extends Component {
                     <>
                         <div style={{ height: 58 }}></div>
                         <MainContent
-                            UIComponent={UIComponent}
+                            MainUIComponent={MainUIComponent}
                             handleRelyUploading={handleRelyUploading}
                             handleTaskDetailChange={handleTaskDetailChange}
                             handleChildTaskChange={handleChildTaskChange}

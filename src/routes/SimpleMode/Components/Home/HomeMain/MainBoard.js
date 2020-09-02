@@ -303,7 +303,7 @@ export default class MainBoard extends Component {
     // 渲染主区域
     renderBoardArea = () => {
         const { simplemodeCurrentProject = {}, local_selected_board = {} } = this.props
-        console.log('this.props.currentNounPlan', this.props.currentNounPlan)
+        // console.log('this.props.currentNounPlan', this.props.currentNounPlan)
         const { selected_board_term } = simplemodeCurrentProject
         return (
             <div className={styles.board_area}>

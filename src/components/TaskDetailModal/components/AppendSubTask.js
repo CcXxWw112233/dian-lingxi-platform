@@ -126,19 +126,8 @@ export default class AppendSubTask extends Component {
     new_data.map(item => {
       if (selectedKeys.indexOf(item.user_id) != -1) {
         sub_executors.push(item)
-        // new_executors.push(item)
       }
     })
-    // let new_drawContent = { ...drawContent }
-    // new_drawContent['executors'] = this.arrayNonRepeatfy(new_executors)
-    // new_drawContent['properties'] = this.filterCurrentUpdateDatasField('EXECUTOR', arrayNonRepeatfy(new_executors, 'user_id'))
-    // dispatch({
-    //   type: 'publicTaskDetailModal/updateDatas',
-    //   payload: {
-    //     drawContent: new_drawContent
-    //   }
-    // })
-    // this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: drawContent, card_id, name: 'executors', value: new_executors, overlay_sub_pricipal: 'EXECUTOR' })
     this.setState({
       sub_executors: arrayNonRepeatfy(sub_executors, 'user_id')
     })

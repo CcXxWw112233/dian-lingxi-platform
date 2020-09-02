@@ -12,12 +12,12 @@ import AppendSubTask from '../components/AppendSubTask'
 import { timestampFormat } from '@/utils/util'
 import { PROJECT_TEAM_CARD_EDIT } from "@/globalset/js/constant";
 import { isApiResponseOk } from '../../../utils/handleResponseData'
-import { getCurrentDrawerContentPropsModelFieldData, filterCurrentUpdateDatasField, getCurrentPropertiesData, judgeFileType, showMemberName, getFolderPathName } from '../handleOperateModal';
+import { getCurrentDrawerContentPropsModelFieldData, getCurrentPropertiesData, judgeFileType, showMemberName, getFolderPathName } from '../handleOperateModal';
 import { currentNounPlanFilterName } from '../../../utils/businessFunction';
 import { TASKS } from '../../../globalset/js/constant';
 
 @connect(mapStateToProps)
-export default class DragDropUIComponent extends Component {
+export default class BasicFieldUIComponent extends Component {
 
   constructor(props) {
     super(props)
@@ -43,7 +43,6 @@ export default class DragDropUIComponent extends Component {
     switch (code) {
       case 'MILESTONE': // 里程碑
         messageValue = (
-          // <div className={mainContentStyles.moveWrapper}>
           <div key={id} style={{ position: 'relative' }} className={`${mainContentStyles.field_content} ${showDelColor && currentItem.id == currentDelId && mainContentStyles.showDelColor}`}>
             <div className={mainContentStyles.field_item}>
               <div className={mainContentStyles.field_left}>
@@ -91,7 +90,6 @@ export default class DragDropUIComponent extends Component {
         break
       case 'REMARK': // 备注
         messageValue = (
-          // <div className={mainContentStyles.moveWrapper}>
           <div key={id} style={{ position: 'relative' }} className={`${mainContentStyles.field_content} ${showDelColor && currentItem.id == currentDelId && mainContentStyles.showDelColor}`}>
             <div className={mainContentStyles.field_item}>
               <div className={mainContentStyles.field_left}>
@@ -175,11 +173,9 @@ export default class DragDropUIComponent extends Component {
                                   <Breadcrumb className={mainContentStyles.Breadcrumb} separator=">">
                                     {breadcrumbList.map((value, key) => {
                                       return (
-                                        // <Tooltip getPopupContainer={triggerNode => triggerNode.parentNode} title={(value && value.file_name) && value.file_name} placement="top">
                                         <Breadcrumb.Item key={key}>
                                           <span title={(value && value.file_name) && value.file_name} className={key == breadcrumbList.length - 1 && mainContentStyles.breadItem}>{(value && value.file_name) && value.file_name}</span>
                                         </Breadcrumb.Item>
-                                        // </Tooltip>
                                       )
                                     })}
                                   </Breadcrumb>
@@ -203,8 +199,6 @@ export default class DragDropUIComponent extends Component {
         break
       case 'LABEL': // 标签
         messageValue = (
-          // <div className={mainContentStyles.moveWrapper}>
-          // <>
           <div key={id} className={`${mainContentStyles.field_content} ${showDelColor && currentItem.id == currentDelId && mainContentStyles.showDelColor}`}>
             <div className={mainContentStyles.field_item}>
               <div className={mainContentStyles.field_left}>
@@ -231,7 +225,6 @@ export default class DragDropUIComponent extends Component {
                                   <span className={`${mainContentStyles.labelDelItem}`}>
                                     <span key={`${item.label_id}`} style={{ background: `rgba(${item.label_color}, 1)` }} className={`${mainContentStyles.normal_label}`}>
                                       <span>{item.label_name}</span>
-                                      {/* <span onClick={(e) => { this.handleRemoveTaskTag(e, item.label_id) }} className={mainContentStyles.labelDelIcon}></span> */}
                                     </span>
                                   </span>
                                 )
@@ -308,15 +301,12 @@ export default class DragDropUIComponent extends Component {
                               </Dropdown>
                             </div>
                           )
-
                       )
                   }
-
                 </div>
               </div>
             </div>
           </div>
-          // {/* </> */}
         )
         break
       case 'ATTACHMENT': // 上传附件
@@ -398,8 +388,6 @@ export default class DragDropUIComponent extends Component {
         break
       case 'SUBTASK':
         messageValue = (
-          // <div className={mainContentStyles.moveWrapper}>
-          // <>
           <div key={id} className={`${mainContentStyles.field_content} ${showDelColor && currentItem.id == currentDelId && mainContentStyles.showDelColor}`}>
             <div className={mainContentStyles.field_item}>
               <div className={mainContentStyles.field_left}>
@@ -470,11 +458,9 @@ export default class DragDropUIComponent extends Component {
                                 <Breadcrumb className={mainContentStyles.Breadcrumb} separator=">">
                                   {breadcrumbList.map((value, key) => {
                                     return (
-                                      // <Tooltip getPopupContainer={triggerNode => triggerNode.parentNode} title={(value && value.file_name) && value.file_name} placement="top">
                                       <Breadcrumb.Item key={key}>
                                         <span title={(value && value.file_name) && value.file_name} className={key == breadcrumbList.length - 1 && mainContentStyles.breadItem}>{(value && value.file_name) && value.file_name}</span>
                                       </Breadcrumb.Item>
-                                      // </Tooltip>
                                     )
                                   })}
                                 </Breadcrumb>
@@ -492,8 +478,6 @@ export default class DragDropUIComponent extends Component {
               </div>
             </div>
           </div>
-          // </>
-          // </div>
         )
         break
       default:
@@ -586,7 +570,6 @@ export default class DragDropUIComponent extends Component {
                     )}
                   </Draggable>
                 ))}
-                {/* {provided.placeholder} */}
               </div>
             )}
           </Droppable>
@@ -612,13 +595,10 @@ export default class DragDropUIComponent extends Component {
                 }
               </>
             ) : (
-                // <SortableList helperContainer={() => document.getElementsByClassName(`${mainContentStyles.field_content}`)[0]} distance={2} items={properties} onSortEnd={this.onSortEnd} />
                 <div>{this.getDragDropContext()}</div>
               )
           }
         </div>
-        {/*查看任务附件*/}
-        {/*外部附件引入结束 */}
       </div>
     )
   }

@@ -25,7 +25,7 @@ import { TASKS } from '../../../../../../../globalset/js/constant';
 import { judgeFileType, showMemberName, getCurrentDrawerContentPropsModelFieldData } from '../../../../../../../components/TaskDetailModal/handleOperateModal';
 
 @connect(mapStateToProps)
-export default class DragDropContentComponent extends Component {
+export default class BasicFieldUIComponent extends Component {
 
   constructor(props) {
     super(props)

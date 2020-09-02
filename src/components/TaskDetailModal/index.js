@@ -3,12 +3,7 @@ import PublicDetailModal from '@/components/PublicDetailModal'
 import MainContent from './MainContent'
 import HeaderContent from './HeaderContent'
 import { connect } from 'dva'
-import {
-  checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl,
-} from "@/utils/businessFunction";
-import { message } from 'antd'
 import { lx_utils } from 'lingxi-im'
-
 
 @connect(mapStateToProps)
 export default class TaskDetailModal extends Component {
@@ -28,39 +23,26 @@ export default class TaskDetailModal extends Component {
     lx_utils && lx_utils.setCommentData(this.props.card_id || null)
   }
 
-  // 检测不同类型的权限控制类型的是否显示
-  checkDiffCategoriesAuthoritiesIsVisible = (code) => {
-    const { drawContent = {} } = this.props
-    const { is_realize = '0', card_id, privileges = [], board_id, is_privilege, executors = [] } = drawContent
-    let flag
-    return {
-      'visit_control_edit': function () {// 是否是有编辑权限
-        return checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, executors, checkIsHasPermissionInBoard(code, board_id))
-      },
-      'visit_control_comment': function () {
-        return checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, executors, checkIsHasPermissionInBoard(code, board_id))
-      },
-    }
-  }
-
   render() {
-    const { task_detail_modal_visible, users, handleTaskDetailChange, updateParentTaskList, setTaskDetailModalVisible, handleDeleteCard, card_id, handleChildTaskChange, UIComponent } = this.props
+    const { task_detail_modal_visible, handleTaskDetailChange, updateParentTaskList, setTaskDetailModalVisible, handleDeleteCard, handleChildTaskChange } = this.props
 
     return (
       <div>
         <PublicDetailModal
-          // width={1200}
-          // dynamicsContent={<CommentDynamicsList />}
-          //style={{padding: '20px 84px 0'}}
           modalVisible={task_detail_modal_visible}
           onCancel={this.onCancel}
-          // commentUseParams={commentUseParams}
           isNotShowFileDetailContentRightVisible={true}
-          mainContent={<MainContent handleTaskDetailChange={handleTaskDetailChange} handleChildTaskChange={handleChildTaskChange} />}
+          mainContent={
+            <MainContent 
+              handleTaskDetailChange={handleTaskDetailChange} 
+              handleChildTaskChange={handleChildTaskChange} />
+          }
           headerContent={
             <HeaderContent
               handleDeleteCard={handleDeleteCard}
-              setTaskDetailModalVisible={setTaskDetailModalVisible} handleTaskDetailChange={handleTaskDetailChange} updateParentTaskList={updateParentTaskList}
+              setTaskDetailModalVisible={setTaskDetailModalVisible} 
+              handleTaskDetailChange={handleTaskDetailChange} 
+              updateParentTaskList={updateParentTaskList}
             />}
         />
       </div>
@@ -78,12 +60,8 @@ TaskDetailModal.defaultProps = {
 }
 
 //  只关联public中弹窗内的数据
-function mapStateToProps({ publicTaskDetailModal: { drawContent = {}, card_id }, publicModalComment: { isShowAllDynamic },
-  technological: {
-    datas: {
-      userBoardPermissions
-    }
-  }
+function mapStateToProps({ 
+  publicTaskDetailModal: { card_id }
 }) {
-  return { drawContent, card_id, isShowAllDynamic, userBoardPermissions }
+  return { card_id }
 }

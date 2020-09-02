@@ -15,8 +15,8 @@ import {
 import FileListRightBarFileDetailModal from '@/routes/Technological/components/ProjectDetail/FileModule/FileListRightBarFileDetailModal';
 import { renderTaskNounPlanCode, getCurrentFieldIcon, getCurrentDrawerContentPropsModelFieldData } from '../../../../../../../components/TaskDetailModal/handleOperateModal'
 // import DragDropContentComponent from './DragDropContentComponent'
-import DragDropContentComponent from '../../../../../../../components/TaskDetailModal/DragDropContentComponent'
-import DragDropUIComponent from './DragDropContentComponent'
+import BasicFieldUIComponent from './BasicFieldUIComponent'
+import BasicFieldContainer from '../../../../../../../components/TaskDetailModal/UIWithContainerComponent/BasicFieldContainer'
 
 @connect(mapStateToProps)
 export default class MainContent extends Component {
@@ -426,8 +426,8 @@ export default class MainContent extends Component {
           {/* 各种字段的不同状态 E */}
           {/* 不同字段的渲染 S */}
           <div style={{ position: 'relative' }}>
-            <DragDropContentComponent 
-              DragDropUIComponent={DragDropUIComponent} 
+            <BasicFieldContainer 
+              BasicFieldUIComponent={BasicFieldUIComponent} 
               LogicWithMainContent={this.props.LogicWithMainContent}
               boardFolderTreeData={boardFolderTreeData} 
               milestoneList={milestoneList}  />

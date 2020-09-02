@@ -10,7 +10,7 @@ import InformRemind from '@/components/InformRemind'
 import { timestampToTime, timestampToTimeNormal } from '@/utils/util'
 import CustomFields from '../../CustomFields'
 import CustomCategoriesOperate from '../../CustomFields/CustomCategoriesOperate';
-import DragDropContentComponent from '../DragDropContentComponent'
+import DefaultBasicFieldUIComponent from './BasicFieldUIComponent'
 import FileListRightBarFileDetailModal from '@/routes/Technological/components/ProjectDetail/FileModule/FileListRightBarFileDetailModal';
 import RelyOnRelationship from '../../RelyOnRelationship'
 import { getCurrentDrawerContentPropsModelFieldData, renderTaskNounPlanCode, getCurrentFieldIcon } from '../handleOperateModal';
@@ -20,10 +20,10 @@ import {
 import {
   isPaymentOrgUser
 } from "@/utils/businessFunction";
-import DragDropDefaultUIComponent from './DragDropUIComponent'
+import BasicFieldContainer  from './BasicFieldContainer'
 
 @connect(mapStateToProps)
-export default class MainContentUIComponent extends Component {
+export default class MainUIComponent extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -483,8 +483,8 @@ export default class MainContentUIComponent extends Component {
           {/* 各种字段的不同状态 E */}
           {/* 不同字段的渲染 S */}
           <div style={{ position: 'relative' }}>
-            <DragDropContentComponent
-              DragDropUIComponent={this.props.DragDropUIComponent ? this.props.DragDropUIComponent : DragDropDefaultUIComponent}
+            <BasicFieldContainer
+              BasicFieldUIComponent={this.props.BasicFieldUIComponent ? this.props.BasicFieldUIComponent : DefaultBasicFieldUIComponent}
               LogicWithMainContent={this.props.LogicWithMainContent} 
               boardFolderTreeData={boardFolderTreeData} 
               milestoneList={milestoneList} 
