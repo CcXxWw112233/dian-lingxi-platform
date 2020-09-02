@@ -1202,7 +1202,7 @@ export default class GroupListHeadItem extends Component {
       item.user_id = item.id
       return item
     })
-    console.log('sssssssssss', new_val)
+    // console.log('sssssssssss', new_val)
     return new_val
   }
 

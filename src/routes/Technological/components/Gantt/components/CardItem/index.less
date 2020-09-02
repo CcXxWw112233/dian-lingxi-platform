@@ -151,6 +151,7 @@
 
     .ears_out {
         // display: none;
+        cursor: pointer !important;
     }
 
     .ears {
@@ -249,7 +250,7 @@
     .line {
         position                 : absolute;
         width                    : 1px;
-        border-right             : 1px dashed #1890FF;
+        border-right             : 2px solid #1890FF;
         // background-color   : ;
         // height                : 100px !important;
         transform                : rotate(0deg);
@@ -286,6 +287,8 @@
         border-top  : 8px solid #1890FF;
         position    : absolute;
         margin-left : -6px;
+        top         : 100%;// calc(100% - 6px);
+        left        : 100%;
     }
 }
 
