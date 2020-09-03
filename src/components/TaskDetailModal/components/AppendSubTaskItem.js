@@ -10,7 +10,7 @@ import { connect } from 'dva'
 import UploadAttachment from '../../UploadAttachment'
 import { currentNounPlanFilterName } from '../../../utils/businessFunction'
 import { TASKS } from '../../../globalset/js/constant'
-import { isValidAvatar } from '../handleOperateModal'
+import { isValidAvatar, getFolderPathName, judgeFileType, showMemberName } from '../handleOperateModal'
 
 @connect(({ publicTaskDetailModal: { drawContent = {} }, projectDetail: { datas: { projectDetailInfoData = {} } } }) => ({
   drawContent, projectDetailInfoData
