@@ -237,7 +237,7 @@ export default class DuplicateAndReportPerson extends Component {
     const { itemValue, itemKey } = this.props
     const { cc_type, recipients } = itemValue
     const { designatedPersonnelList } = this.state
-    let disabledRecipients = (designatedPersonnelList && designatedPersonnelList.length) ? isArrayEqual(recipients.split(','), designatedPersonnelList) : true
+    let disabledRecipients = (designatedPersonnelList && designatedPersonnelList.length) ? isArrayEqual(recipients ? recipients.split(',') : [], designatedPersonnelList) : true
     return (
       <div className={indexStyles.mini_content}>
         <div id={`reportPersonContainer_${itemKey}`} className={`${indexStyles.mini_top} ${globalStyles.global_vertical_scrollbar}`}>

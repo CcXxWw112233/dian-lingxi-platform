@@ -230,7 +230,7 @@ export default class ExamineAndApproveContent extends Component {
     const { itemValue,itemKey } = this.props
     const { assignees } = itemValue
     const { designatedPersonnelList } = this.state
-    let disabledAssignees = (designatedPersonnelList && designatedPersonnelList.length) ? isArrayEqual(assignees.split(','), designatedPersonnelList) : true
+    let disabledAssignees = (designatedPersonnelList && designatedPersonnelList.length) ? isArrayEqual(assignees ? assignees.split(',') : [], designatedPersonnelList) : true
     return (
       <div className={indexStyles.mini_content}>
         <div id={`approveMiniTopContainer_${itemKey}`} className={`${indexStyles.mini_top} ${globalStyles.global_vertical_scrollbar}`}>

@@ -33,22 +33,22 @@ export default class Templates extends Component {
     componentDidMount() {
         const { simplemodeCurrentProject = {} } = this.props
         const { board_id } = simplemodeCurrentProject
-        this.getTemplateList(simplemodeCurrentProject)
+        this.getTemplateList(this.props)
         this.setLocalBoardId(board_id)
     }
     componentWillReceiveProps(nextProps) {
         const { board_id, org_id } = this.props.simplemodeCurrentProject
         const { board_id: next_board_id, org_id: next_org_id } = nextProps.simplemodeCurrentProject
         if (board_id != next_board_id) { //切换项目时做请求
-            this.getTemplateList(nextProps.simplemodeCurrentProject)
+            this.getTemplateList(nextProps)
             this.setLocalBoardId(next_board_id)
         } else if (org_id != next_org_id) {
-            this.getTemplateList(nextProps.simplemodeCurrentProject)
+            this.getTemplateList(nextProps)
         }
     }
     // 获取流程列表
-    getTemplateList = (simplemodeCurrentProject = {}) => {
-        const { dispatch, currentSelectOrganize } = this.props
+    getTemplateList = (props) => {
+        const { dispatch, currentSelectOrganize, simplemodeCurrentProject = {} } = props
         const { board_id, org_id } = simplemodeCurrentProject
         const { id } = currentSelectOrganize
         // 全组织的时候 currentSelectOrganize是{}, 具体组织时才有ID

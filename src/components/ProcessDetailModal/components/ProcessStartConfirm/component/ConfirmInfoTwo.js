@@ -156,7 +156,7 @@ export default class ConfirmInfoTwo extends Component {
                   {/* 填写人 */}
                   <div style={{ display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
                     {
-                      !(transPrincipalList && transPrincipalList.length) ? ('') : (
+                      !(transPrincipalList && transPrincipalList.length) ? (<span style={{color: 'rgba(0,0,0,0.45)'}}>未设置审批人</span>) : (
                         <>
                           <AvatarList
                             size="small"
@@ -190,7 +190,7 @@ export default class ConfirmInfoTwo extends Component {
                     cc_type == '1' && (
                       <div style={{ marginLeft: '8px', display: 'inline-block' }} className={indexStyles.content__principalList_icon}>
                         {
-                          !(transCopyPersonnelList && transCopyPersonnelList.length) ? ('') : (
+                          !(transCopyPersonnelList && transCopyPersonnelList.length) ? (<span style={{color: 'rgba(0,0,0,0.45)'}}>未设置抄送人</span>) : (
                             <>
                               <AvatarList
                                 size="small"
