@@ -24,7 +24,9 @@ export default class BasicFieldUIComponent extends Component {
       previewFileModalVisibile: false,
     }
     for (let val in props.LogicWithMainContent) {
-      this[val] = props.LogicWithMainContent[val].bind(this)
+      if (typeof props.LogicWithMainContent[val] == 'function') {
+        this[val] = props.LogicWithMainContent[val].bind(this)
+      }
     }
   }
 
@@ -69,7 +71,7 @@ export default class BasicFieldUIComponent extends Component {
                   )
                 ) : (
                     // 加入里程碑组件
-                    <MilestoneAdd milestoneList={milestoneList} getMilestone={this.props.getMilestone} onChangeMilestone={this.onMilestoneSelectedChange} dataInfo={{ board_id, board_name, due_time, org_id, data, start_time }} selectedValue={currentItem.data && currentItem.data.id}>
+                    <MilestoneAdd milestoneList={milestoneList} getMilestone={this.getMilestone} onChangeMilestone={this.onMilestoneSelectedChange} dataInfo={{ board_id, board_name, due_time, org_id, data, start_time }} selectedValue={currentItem.data && currentItem.data.id}>
                       <div className={`${mainContentStyles.pub_hover}`} >
                         {currentItem.data && currentItem.data.id
                           ? <><span className={mainContentStyles.lcb_circle}></span><span className={mainContentStyles.value_text}>{currentItem.data.name}</span></>

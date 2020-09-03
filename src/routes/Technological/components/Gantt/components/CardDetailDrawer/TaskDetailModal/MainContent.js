@@ -31,7 +31,9 @@ export default class MainContent extends Component {
       inputValue: ''
     }
     for (let val in props.LogicWithMainContent) {
-      this[val] = props.LogicWithMainContent[val].bind(this)
+      if (typeof props.LogicWithMainContent[val] == 'function') {
+        this[val] = props.LogicWithMainContent[val].bind(this)
+      }
     }
   }
 

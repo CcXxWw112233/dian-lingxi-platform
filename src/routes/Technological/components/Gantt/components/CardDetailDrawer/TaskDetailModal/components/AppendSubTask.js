@@ -3,11 +3,11 @@ import { Tooltip, Button, Dropdown, DatePicker } from 'antd'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import appendSubTaskStyles from './appendSubTask.less'
-import AvatarList from '../AvatarList'
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
 import AppendSubTaskItem from './AppendSubTaskItem'
 import { timestampToTimeNormal3, timestampToTimeNormal } from '@/utils/util'
 import { connect } from 'dva'
+import AvatarList from '@/components/TaskDetailModal/AvatarList'
 
 @connect(({ publicTaskDetailModal: { drawContent = {} }, projectDetail: { datas: { projectDetailInfoData = {} } } }) => ({
   drawContent, projectDetailInfoData
@@ -17,7 +17,9 @@ export default class AppendSubTask extends Component {
   constructor(props) {
     super(props)
     for (let val in props.SubTaskLogic) {
-      this[val] = props.SubTaskLogic[val].bind(this)
+      if (typeof props.SubTaskLogic[val] == 'function') {
+        this[val] = props.SubTaskLogic[val].bind(this)
+      }
     }
   }
 

@@ -3,7 +3,6 @@ import { Icon, Dropdown, Tooltip, Popconfirm, DatePicker, message, Menu, Breadcr
 import appendSubTaskStyles from './appendSubTask.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
-import AvatarList from '../AvatarList'
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png';
 import { timestampFormat, timestampToTimeNormal3, timestampToTimeNormal } from '@/utils/util'
 import { connect } from 'dva'
@@ -11,6 +10,7 @@ import UploadAttachment from '../../../../../../../../components/UploadAttachmen
 import { currentNounPlanFilterName } from '../../../../../../../../utils/businessFunction'
 import { TASKS } from '../../../../../../../../globalset/js/constant'
 import { judgeFileType, isValidAvatar, showMemberName, getFolderPathName } from '../../../../../../../../components/TaskDetailModal/handleOperateModal'
+import AvatarList from '@/components/TaskDetailModal/AvatarList'
 
 @connect(({
   publicTaskDetailModal: { drawContent = {} },
@@ -26,7 +26,9 @@ export default class AppendSubTaskItem extends Component {
   constructor(props) {
     super(props)
     for (let val in props.SubTaskItemLogic) {
-      this[val] = props.SubTaskItemLogic[val].bind(this)
+      if (typeof  props.SubTaskItemLogic[val] == 'function') {
+        this[val] = props.SubTaskItemLogic[val].bind(this)
+      }
     }
   }
 
