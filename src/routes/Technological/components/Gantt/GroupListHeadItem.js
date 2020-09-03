@@ -1152,7 +1152,7 @@ export default class GroupListHeadItem extends Component {
       if (isApiResponseOk(res)) {
         const { list_group, itemKey } = this.props
         const list_group_ = [...list_group]
-        list_group_[itemKey].lane_leader[0] = { ...user_info, id: user_id }
+        list_group_[itemKey].lane_leader ? list_group_[itemKey].lane_leader[0] = { ...user_info, id: user_id } : list_group_[itemKey].lane_leader = [{ ...user_info, id: user_id }]
         dispatch({
           type: 'gantt/handleListGroup',
           payload: {
