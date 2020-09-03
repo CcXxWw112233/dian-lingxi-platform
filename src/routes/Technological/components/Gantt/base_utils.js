@@ -190,6 +190,7 @@ class base_utils {
                 date_no: item,
                 description: year_arr[item - 1],
                 timestamp: new Date(`${year}/${item}/1`).getTime(),
+                include_today: (current_year == year && current_month == item),
                 timestampEnd: new Date(`${year}/${item}/${last_date} 23:59:59`).getTime(),
             }
         })
