@@ -4,6 +4,8 @@ import styles from './index.less'
 import { Popconfirm, Modal, Popover } from 'antd'
 import { ganttIsOutlineView, task_item_height, task_item_margin_top, date_area_height } from '../../constants'
 import PathOperateContent from './PathOperateContent'
+import { coperatedLeftDiv } from '../../constants'
+
 const rely_map = [
     {
         "id": "1265111963571195904",
@@ -22,7 +24,6 @@ const rely_map = [
         ]
     },
 ]
-const coperatedLeftDiv = 297 //滚动条左边还有一个div的宽度，作为修正
 const dateAreaHeight = date_area_height //日期区域高度，作为修正
 // 60 40 20
 const width_diff = 4//8 //宽度误差微调
