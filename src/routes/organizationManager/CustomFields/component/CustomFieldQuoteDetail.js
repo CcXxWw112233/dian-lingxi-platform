@@ -5,8 +5,8 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import { currentNounPlanFilterName } from '../../../../utils/businessFunction'
 import { PROJECTS, TASKS } from '../../../../globalset/js/constant'
 import EmptyImg from '@/assets/projectDetail/process/Empty@2x.png'
-import { data } from '../constant'
-
+import { connect } from 'dva'
+@connect(({ simplemode: { allOrgBoardTreeList = [] } }) => ({ allOrgBoardTreeList }))
 export default class CustomFieldQuoteDetail extends Component {
 
   constructor(props) {
@@ -17,6 +17,10 @@ export default class CustomFieldQuoteDetail extends Component {
   }
 
   onCancel = () => {
+    const { quoteList = [] } = this.props
+    this.setState({
+      currentSelectedCode: quoteList[0].field_quote_code
+    })
     this.props.updateState && this.props.updateState()
   }
 
@@ -28,18 +32,20 @@ export default class CustomFieldQuoteDetail extends Component {
 
   renderTips = (code) => {
     let dec = ''
+    let icon = ''
     switch (code) {
       case 'BOARD':
         dec = `${currentNounPlanFilterName(PROJECTS)}`
+        icon = <>&#xe684;</>
         break;
-      case 'TASK':
+      case 'CARD':
         dec = `${currentNounPlanFilterName(TASKS)}`
+        icon = <>&#xe66a;</>
         break;
-
       default:
         break;
     }
-    return dec
+    return {dec, icon}
   }
 
   handleMenu = (e) => {
@@ -49,15 +55,39 @@ export default class CustomFieldQuoteDetail extends Component {
     })
   }
 
-  renderMenu = (data = []) => {
+  // 查询对应项目列表中的项目名称
+  getBoardName = (board_id) => {
+    const { allOrgBoardTreeList = [] } = this.props
+    let org_id = localStorage.getItem('OrganizationId')
+    let { board_list = [] } = allOrgBoardTreeList.find(item => item.org_id == org_id) || {}
+    let { board_name } = board_list.find(item => item.board_id == board_id) || {}
+    return board_name
+  }
+
+  // 获取当前查询引用详情的内容
+  getFieldCodeContent = (currentSelectedCode) => {
+    const { quoteList = [] } = this.props
+    const current_content = !!(quoteList && quoteList.length) && (quoteList.find(item => item.field_quote_code == currentSelectedCode) || quoteList[0])
+    return current_content || {}
+  }
+
+  renderMenu = (data = [], field_quote_code) => {
     return (
       <div className={indexStyles.custom_quote_c_right}>
         {
           !!(data && data.length) && data.map(item => {
+            const { board_id = '' } = item
             return (
-              <div className={indexStyles.custom_quote_cr_item}>
-                <span className={globalStyles.authTheme}>&#xe684;</span>
-                <span>{item}</span>
+              <div key={item.id} className={indexStyles.custom_quote_cr_item}>
+                <span className={globalStyles.authTheme}>{this.renderTips(field_quote_code).icon}</span>
+                <span>
+                  {item.name}
+                  {
+                    board_id && (
+                     <span style={{color: 'rgba(0,0,0,0.45)',marginLeft: '5px'}}># {this.getBoardName(board_id)}</span>
+                    )
+                  }  
+                </span>
               </div>
             )
           })
@@ -69,7 +99,7 @@ export default class CustomFieldQuoteDetail extends Component {
   renderContent = () => {
     const { quoteList = [] } = this.props
     const { currentSelectedCode } = this.state
-    const { quotes = [] } = !!(quoteList && quoteList.length) && (quoteList.find(item => item.field_quote_code == currentSelectedCode) || quoteList[0])
+    const { quotes = [], field_quote_code } = this.getFieldCodeContent(currentSelectedCode)
     return (
       <>
         {
@@ -81,7 +111,7 @@ export default class CustomFieldQuoteDetail extends Component {
                     quoteList.map(item => {
                       return (
                         <Menu.Item key={item.field_quote_code}>
-                          <span className={globalStyles.authTheme}>&#xe684; {this.renderTips(item.field_quote_code)}·{item.quotes && item.quotes.length || ''}</span>
+                          <span className={globalStyles.authTheme}> <span style={{fontSize: '16px', marginRight: '5px'}}>{this.renderTips(item.field_quote_code).icon}</span>{this.renderTips(item.field_quote_code).dec}·{item.quotes && item.quotes.length || ''}</span>
                         </Menu.Item>
                       )
                     })
@@ -89,7 +119,7 @@ export default class CustomFieldQuoteDetail extends Component {
                 </Menu>
               </div>
               {
-                this.renderMenu(quotes)
+                this.renderMenu(quotes, field_quote_code)
               }
             </div>
           ) : (

@@ -101,8 +101,9 @@ export default class Index extends Component {
     return checkedKeys
   }
 
-  componentDidMount() {
-    const { org_id, relations_fields = [] } = this.props
+  getCustomFieldList = (props) => {
+    const { org_id, relations_fields = [] } = props
+    if (!(relations_fields && relations_fields.length)) return
     getCustomFieldList({ _organization_id: org_id, field_status: '0' }).then(res => {
       if (isApiResponseOk(res)) {
         this.setOperationOfTreeData({ relations_fields, groups: res.data.groups, fields: res.data.fields })
@@ -114,11 +115,15 @@ export default class Index extends Component {
     })
   }
 
+  componentDidMount() {
+    this.getCustomFieldList(this.props)
+  }
+
   componentWillReceiveProps(nextProps) {
     const { relations_fields: old_relations_fields = [] } = this.props
-    const { relations_fields = [] } = nextProps
+    const { relations_fields = [], org_id } = nextProps
     if (isArrayEqual(relations_fields, old_relations_fields)) return
-    this.setOperationOfTreeData({ relations_fields, original_treeData: this.state.treeData })
+    this.getCustomFieldList({relations_fields, org_id})
   }
 
   handleVisibleChange = visible => {
