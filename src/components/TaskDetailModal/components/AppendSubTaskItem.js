@@ -20,7 +20,9 @@ export default class AppendSubTaskItem extends Component {
   constructor(props) {
     super(props)
     for (let val in props.SubTaskItemLogic) {
-      this[val] = props.SubTaskItemLogic[val].bind(this)
+      if (typeof props.SubTaskItemLogic[val] == 'function') {
+        this[val] = props.SubTaskItemLogic[val].bind(this)
+      }
     }
   }
 

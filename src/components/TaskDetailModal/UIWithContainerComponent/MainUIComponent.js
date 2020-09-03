@@ -34,7 +34,9 @@ export default class MainUIComponent extends Component {
     }
     // const log = new LogicTaskComponent()
     for (let val in props.LogicWithMainContent) {
-      this[val] = props.LogicWithMainContent[val].bind(this)
+      if (typeof props.LogicWithMainContent[val] == 'function') {
+        this[val] = props.LogicWithMainContent[val].bind(this)
+      }
     }
   }
 

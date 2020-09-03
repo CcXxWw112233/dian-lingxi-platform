@@ -27,7 +27,9 @@ export default class BasicFieldUIComponent extends Component {
       selectedKeys: [], // 选择字段的选项
     }
     for (let val in props.LogicWithMainContent) {
-      this[val] = props.LogicWithMainContent[val].bind(this)
+      if (typeof props.LogicWithMainContent[val] == 'function') {
+        this[val] = props.LogicWithMainContent[val].bind(this)
+      }
     }
   }
 
