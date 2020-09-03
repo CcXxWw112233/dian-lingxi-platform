@@ -256,9 +256,10 @@ export default class MemberFieldContent extends Component {
   render() {
     const { itemValue, itemKey, selected_memebers_value = [], boardMembersData = [], orgMembersData = [] } = this.state
     const { field_id, id, field_value, field_content: { name, field_type, field_set: { member_selected_range } } } = itemValue
+    const { onlyShowPopoverContent } = this.props
     let data = member_selected_range == '1' ? orgMembersData : JSON.parse(JSON.stringify(boardMembersData))
     return (
-      <div key={id} className={commonStyles.custom_field_item_wrapper}>
+      <div key={id} className={`${commonStyles.custom_field_item_wrapper} ${onlyShowPopoverContent && commonStyles.custom_field_item_wrapper_1}`}>
         <div className={commonStyles.custom_field_item}>
           <div className={commonStyles.c_left}>
             <span onClick={(e) => { this.handleDeleteRelationField(e, id) }} className={`${globalsetStyles.authTheme} ${commonStyles.delete_icon}`}>&#xe7fe;</span>

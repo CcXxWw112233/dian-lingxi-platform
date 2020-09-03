@@ -381,8 +381,9 @@ export default class FileFieldContent extends Component {
     const { field_id, id, field_value, field_content: { name, field_type } } = itemValue
     const { fileList = [] } = this.state
     const { filePreviewCurrentFileId, fileType, isInOpenFile, filePreviewCurrentName } = this.props
+    const { onlyShowPopoverContent } = this.props
     return (
-      <div key={id} className={commonStyles.custom_field_item_wrapper}>
+      <div key={id} className={`${commonStyles.custom_field_item_wrapper} ${onlyShowPopoverContent && commonStyles.custom_field_item_wrapper_1}`}>
         <div className={commonStyles.custom_field_item}>
           <div className={commonStyles.c_left}>
             <span onClick={(e) => { this.handleDeleteRelationField(e, id) }} className={`${globalsetStyles.authTheme} ${commonStyles.delete_icon}`}>&#xe7fe;</span>

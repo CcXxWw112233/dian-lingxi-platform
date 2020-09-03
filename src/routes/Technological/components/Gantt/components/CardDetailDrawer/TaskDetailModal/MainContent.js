@@ -35,6 +35,22 @@ export default class MainContent extends Component {
     }
   }
 
+  componentWillMount() {
+    Promise.resolve(
+      this.props.dispatch({
+        type: 'publicTaskDetailModal/getCardAttributesList',
+        payload: {
+        }
+      })
+    ).then(res => {
+      if (isApiResponseOk(res)) {
+        this.setState({
+          propertiesList: res.data
+        })
+      }
+    })
+  }
+
   componentDidMount() {
     this.getInitCardDetailDatas(this.props)
   }
@@ -449,7 +465,7 @@ export default class MainContent extends Component {
 
           {/* 渲染添加关联字段 */}
           <div>
-            <CustomCategoriesOperate fields={fields} handleUpdateModelDatas={this.handleUpdateModelDatas} />
+            <CustomCategoriesOperate onlyShowPopoverContent={true} fields={fields} handleUpdateModelDatas={this.handleUpdateModelDatas} />
           </div>
 
           {/* 渲染字段 */}

@@ -98,8 +98,9 @@ export default class DateFieldContent extends Component {
     const { itemValue, itemKey } = this.state
     const { field_id, field_value, id, field_content: { name, field_type, field_set: { date_field_code } } } = itemValue
     let value = field_value && timestampFormat(String(field_value), this.getFormatter(date_field_code).formatterValue)
+    const { onlyShowPopoverContent } = this.props
     return (
-      <div key={id} className={commonStyles.custom_field_item_wrapper}>
+      <div key={id} className={`${commonStyles.custom_field_item_wrapper} ${onlyShowPopoverContent && commonStyles.custom_field_item_wrapper_1}`}>
         <div className={commonStyles.custom_field_item}>
           <div className={commonStyles.c_left}>
             <span onClick={(e) => { this.handleDeleteRelationField(e, id) }} className={`${globalsetStyles.authTheme} ${commonStyles.delete_icon}`}>&#xe7fe;</span>

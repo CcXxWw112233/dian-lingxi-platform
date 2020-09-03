@@ -45,7 +45,7 @@ export default class index extends Component {
   render() {
     const { drawContent = {}, selected_more_field_visible } = this.props
     const { org_id, fields = [] } = drawContent
-    console.log(selected_more_field_visible);
+    // console.log(selected_more_field_visible);
     return (
       <div className={`${styles.draw_field_detail} ${!selected_more_field_visible && styles.hide_over}`}>
         <Drawer

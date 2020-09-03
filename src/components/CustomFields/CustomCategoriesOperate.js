@@ -11,6 +11,7 @@ import MemberFieldContent from './component/MemberFieldContent';
 export default class CustomCategoriesOperate extends Component {
 
   renderContent = (item,key) => {
+    const { onlyShowPopoverContent } = this.props
     const { field_content: { field_type } } = item
     let mainContent = (<div></div>)
     // mainContent = (<RextFieldContent />)
@@ -20,25 +21,25 @@ export default class CustomCategoriesOperate extends Component {
     // mainContent = (<TextFieldContent />)
     switch (field_type) {
       case '1':
-        mainContent = (<RadioFieldContent itemValue={item} itemKey={key} handleUpdateModelDatas={this.props.handleUpdateModelDatas} />)
+        mainContent = (<RadioFieldContent onlyShowPopoverContent={onlyShowPopoverContent} itemValue={item} itemKey={key} handleUpdateModelDatas={this.props.handleUpdateModelDatas} />)
         break;
       case '2':
-        mainContent = (<CheckboxFieldContent itemValue={item} itemKey={key} handleUpdateModelDatas={this.props.handleUpdateModelDatas} />)
+        mainContent = (<CheckboxFieldContent onlyShowPopoverContent={onlyShowPopoverContent} itemValue={item} itemKey={key} handleUpdateModelDatas={this.props.handleUpdateModelDatas} />)
         break;
       case '3':
-        mainContent = (<DateFieldContent itemValue={item} itemKey={key} handleUpdateModelDatas={this.props.handleUpdateModelDatas} />)
+        mainContent = (<DateFieldContent onlyShowPopoverContent={onlyShowPopoverContent} itemValue={item} itemKey={key} handleUpdateModelDatas={this.props.handleUpdateModelDatas} />)
         break;
       case '4':
-        mainContent = (<NumberFieldContent itemValue={item} itemKey={key} handleUpdateModelDatas={this.props.handleUpdateModelDatas} />)
+        mainContent = (<NumberFieldContent onlyShowPopoverContent={onlyShowPopoverContent} itemValue={item} itemKey={key} handleUpdateModelDatas={this.props.handleUpdateModelDatas} />)
         break;
       case '5':
-        mainContent = (<TextFieldContent itemValue={item} itemKey={key} handleUpdateModelDatas={this.props.handleUpdateModelDatas} />)
+        mainContent = (<TextFieldContent onlyShowPopoverContent={onlyShowPopoverContent} itemValue={item} itemKey={key} handleUpdateModelDatas={this.props.handleUpdateModelDatas} />)
         break;
       case '6':
-        mainContent = (<FileFieldContent itemValue={item} itemKey={key} handleUpdateModelDatas={this.props.handleUpdateModelDatas} />)
+        mainContent = (<FileFieldContent onlyShowPopoverContent={onlyShowPopoverContent} itemValue={item} itemKey={key} handleUpdateModelDatas={this.props.handleUpdateModelDatas} />)
         break;
       case '8':
-        mainContent = (<MemberFieldContent itemValue={item} itemKey={key} handleUpdateModelDatas={this.props.handleUpdateModelDatas} />)
+        mainContent = (<MemberFieldContent onlyShowPopoverContent={onlyShowPopoverContent} itemValue={item} itemKey={key} handleUpdateModelDatas={this.props.handleUpdateModelDatas} />)
         break;
       default:
         break;

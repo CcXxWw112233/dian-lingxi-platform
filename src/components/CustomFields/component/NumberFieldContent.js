@@ -92,8 +92,9 @@ export default class NumberFieldContent extends Component {
   render() {
     const { itemValue, itemKey, inputValue } = this.state
     const { field_id, id, field_value, field_content: { name, field_type } } = itemValue
+    const { onlyShowPopoverContent } = this.props
     return (
-      <div key={id} className={commonStyles.custom_field_item_wrapper}>
+      <div key={id} className={`${commonStyles.custom_field_item_wrapper} ${onlyShowPopoverContent && commonStyles.custom_field_item_wrapper_1}`}>
         <div className={commonStyles.custom_field_item}>
           <div className={commonStyles.c_left}>
             <span onClick={(e) => { this.handleDeleteRelationField(e, id) }} className={`${globalsetStyles.authTheme} ${commonStyles.delete_icon}`}>&#xe7fe;</span>
