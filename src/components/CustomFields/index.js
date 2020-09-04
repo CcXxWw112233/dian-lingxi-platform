@@ -103,7 +103,7 @@ export default class Index extends Component {
 
   getCustomFieldList = (props) => {
     const { org_id, relations_fields = [] } = props
-    if (!(relations_fields && relations_fields.length)) return
+    // if (!(relations_fields && relations_fields.length)) return
     getCustomFieldList({ _organization_id: org_id, field_status: '0' }).then(res => {
       if (isApiResponseOk(res)) {
         this.setOperationOfTreeData({ relations_fields, groups: res.data.groups, fields: res.data.fields })
@@ -123,6 +123,7 @@ export default class Index extends Component {
     const { relations_fields: old_relations_fields = [] } = this.props
     const { relations_fields = [], org_id } = nextProps
     if (isArrayEqual(relations_fields, old_relations_fields)) return
+    if (relations_fields.length == 0) return
     this.getCustomFieldList({relations_fields, org_id})
   }
 
