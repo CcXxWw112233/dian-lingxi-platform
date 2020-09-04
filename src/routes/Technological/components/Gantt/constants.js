@@ -11,6 +11,7 @@ export const ceil_width_week = 12 //周视图单元格宽度
 export const one_group_row_total = 4 //默认分组行数
 export const coperatedX = 0 //80 //鼠标移动和拖拽的修正位置
 export const coperatedLeftDiv = 297 //滚动条左边还有一个div的宽度，作为修正
+export const gantt_panel_left_diff = 20 //左边遮罩误差
 export const ganttIsFold = ({ group_view_type, gantt_board_id, show_board_fold, gantt_view_mode }) => { //gantt是否折叠
 
     if (gantt_board_id == '0' && gantt_view_mode == 'year' && group_view_type == '1') {

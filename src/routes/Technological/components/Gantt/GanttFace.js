@@ -527,7 +527,7 @@ export default class GanttFace extends Component {
           /> */}
           {/* <DateList /> */}
           <div className={indexStyles.board}>
-            <div className={indexStyles.board_head} style={{ height: gantt_card_height - 20 }}>
+            <div className={indexStyles.board_head} id={'gantt_header_wapper'} style={{ height: gantt_card_height - 20 }}>
               <GroupListHeadSet />
               {/*  //撑住DateList相同高度的底部 */}
               <GroupListHead
@@ -621,7 +621,7 @@ function mapStateToProps({ gantt: { datas: {
   gantt_view_mode,
   get_gantt_data_loading_other
 } },
-technological: { datas: { currentUserOrganizes = [] } },
+  technological: { datas: { currentUserOrganizes = [] } },
 }) {
   return {
     ceilWidth,

@@ -9,6 +9,7 @@ import emptyBoxImageUrl from '@/assets/gantt/empty-box.png';
 import { Button } from 'antd';
 import OutlineGuideModal from './components/OutlineGuideModal';
 import { milestoneInit } from '@/services/technological/task.js';
+import HeaderWidthTriggle from './components/HeaderWidthTriggle'
 @connect(mapStateToProps)
 export default class GroupListHead extends Component {
   constructor(props) {
@@ -279,7 +280,7 @@ export default class GroupListHead extends Component {
             {
               ganttIsOutlineView({ group_view_type }) &&
               <div style={{
-                width: '280px',
+                // width: '280px',
                 boxShadow: '1px 0px 4px 0px rgba(0,0,0,0.15);'
               }}>
                 <OutLineHeadItem
@@ -316,6 +317,7 @@ export default class GroupListHead extends Component {
               </>
             }
           </div>
+          <HeaderWidthTriggle />
         </div>
       )
     }
