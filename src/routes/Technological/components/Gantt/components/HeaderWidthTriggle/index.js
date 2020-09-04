@@ -11,17 +11,18 @@ export default class index extends Component {
         this.state = {
             rela_top: 0,
             dragging: false,
+            show_drag_trigger: false,
+            drag_lock: false,
         }
     }
-    setTriggerPosition = (e, diff = 0) => {
+    setTriggerPosition = (e) => {
         if (this.state.dragging) return //拖拽中就不管了
-        const { pageX, pageY } = e
+        const { pageY } = e
         const { top } = e.currentTarget.getBoundingClientRect()
-        const rela_top = pageY - top - diff
+        const rela_top = pageY - top - 20
         this.setState({
             rela_top
         })
-
         // console.log('sssssssss_setTriggerPosition', pageX, pageY, e.currentTarget.getBoundingClientRect())
     }
 
@@ -30,37 +31,63 @@ export default class index extends Component {
         const gantt_card_out = document.getElementById('gantt_card_out')
         const gantt_card_out_offsetLeft = gantt_card_out.offsetLeft
         const width = pageX - gantt_card_out_offsetLeft - gantt_panel_left_diff
-        console.log('ssssssss_width', width)
-        target.style.width = `${width}px`
+        target.style.width = `${Math.max(12, width)}px`
+    }
+
+    set_drag_lock = () => {
+        this.setState({
+            drag_lock: true
+        }, () => {
+            setTimeout(() => {
+                this.setState({
+                    drag_lock: false
+                })
+            }, 200)
+        })
     }
 
     handleStart = (e) => {
         this.setState({
             dragging: true
         })
-        // console.log('ssssssss_handleStart', e)
+        this.set_drag_lock()
+        document.getElementById('gantt_operate_area_panel').style.cursor = "pointer"
     }
     handleDrag = (e) => {
-        const { pageX } = e
+        if (this.state.drag_lock) return
+        const pageX = (e.pageX !== undefined) ? e.pageX : (e.changedTouches ? e.changedTouches[0].pageX : 280)
         this.set_gantt_header_wapper_width(pageX)
-        // console.log('ssssssss_handleDrag', pageX)
     }
     handleStop = (e) => {
         this.setState({
             dragging: false
         })
+        document.getElementById('gantt_operate_area_panel').style.cursor = "crosshair"
         // console.log('ssssssss_handleStop', e)
+    }
+    onMouseEnter = () => {
+        this.setState({
+            show_drag_trigger: true
+        })
+    }
+    onMouseLeave = () => {
+        if (!this.state.dragging) {
+            this.setState({
+                show_drag_trigger: false
+            })
+        }
     }
     render() {
         const { group_list_area_section_height = [] } = this.props
-        const { rela_top } = this.state
+        const { rela_top, show_drag_trigger } = this.state
         const length = group_list_area_section_height.length
         return (
             <div className={styles.main} style={{ height: group_list_area_section_height[length - 1] }}
-                onMouseMoveCapture={(e) => this.setTriggerPosition(e, 20)}
-            // onMouseE={(e) => this.setTriggerPosition(e, 0)}
+                onMouseMoveCapture={(e) => this.setTriggerPosition(e)}
+                onMouseEnter={this.onMouseEnter}
+                onMouseLeave={this.onMouseLeave}
             >
-                <div className={styles.line}></div>
+                <div className={styles.line} style={{ display: show_drag_trigger ? 'flex' : 'none' }}></div>
 
                 <Draggable
                     axis="x"
@@ -72,7 +99,7 @@ export default class index extends Component {
                     onStart={this.handleStart}
                     onDrag={this.handleDrag}
                     onStop={this.handleStop}>
-                    <div className={styles.handle_shake} style={{ top: rela_top }}>
+                    <div className={styles.handle_shake} style={{ display: show_drag_trigger ? 'flex' : 'none', top: rela_top }}>
                         <div></div>
                         <div></div>
                         <div></div>
