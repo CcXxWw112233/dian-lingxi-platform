@@ -23,3 +23,176 @@
   }
 }
 /* 依赖关系样式 E */
+
+/* 设置依赖关系 S */
+
+.setRelationContainer {
+  display: flex;
+  line-height: 38px;
+  margin-bottom: 12px;
+  margin-left: -26px;
+  cursor: pointer;
+  .setRelationItem {
+    display: flex;
+    padding-left: 24px;
+    width: 100%;
+    .setRela_left {
+      display: flex;
+      align-items: center;
+      margin-left: -24px;
+      min-width: 150px;
+      max-width: 150px;
+      max-height: 38px;
+      line-height: 38px;
+      position: relative;
+      .setRela_hover {
+        min-width:68px;
+        max-width: 96px;
+        height:38px;
+        border-radius:4px;
+        line-height: 30px;
+        display: inline-block;
+        max-width:120px;
+        padding: 4px 8px;
+        text-align: center;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        margin-right: 4px;
+        font-weight: 500;
+        margin-left: 24px;
+        >span:nth-child(1) {
+          font-size   : 16px;
+          margin-right: 9px;
+        }
+  
+        >span:nth-child(2) {
+          font-size: 14px;
+          // font-weight: 600;
+          color: rgba(0, 0, 0, 0.45);
+        }
+        &:hover {
+          background:rgba(0,0,0,0.04);
+        }
+      }
+      .setRela_delIcon {
+        cursor: pointer;
+        display: none;
+        display: none;
+        position: absolute;
+        left: 5px;
+        color: rgba(0, 0, 0, 0.45);
+        &:hover {
+          color: rgba(0, 0, 0, 0.65);
+        }
+      }
+    }
+    .setRela_left:hover .setRela_delIcon {
+      display: inline-block;
+    }
+    .setRela_right {
+      flex: 1;
+      .setRela_r_top, .setRela_r_bottom {
+        display: flex;
+        .setRela_rt_left, .setRela_rb_left {
+          margin-right: 16px;
+          flex-shrink: 0;
+          .setRela_rt_marks {
+            margin-left: 5px;
+          }
+          > span:nth-child(1) {
+            color: rgba(0, 0, 0, 0.45);
+          }
+        }
+        .setRela_rt_right, .setRela_rb_right {
+          flex: 1;
+          position: relative;
+          .setRela_select {
+            width: 100%;
+            margin-bottom: 16px;
+            :global {
+              .ant-select-selection__choice {
+                display: none;
+                visibility: hidden;
+              }
+            }
+          }
+          .setRela_select_option {
+            display: flex;
+            justify-content: space-between;
+            >div {
+              display: flex;
+            }
+            >span:nth-child(1) {
+              margin-right: 12px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              flex: 1;
+              flex-shrink: 0;
+            }
+            >span:nth-child(2) {
+              color: rgba(0, 0, 0, 0.45);
+              font-size: 12px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              max-width: 100px;
+            }
+          }
+          :global {
+            .ant-select-dropdown-menu-item {
+              &:hover {
+                background: rgba(0, 0, 0, 0.04);
+              }
+            }
+          }
+        }
+      }
+      .setRela_rt_item {
+        height: 32px;
+        border-radius: 2px;
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        padding: 0px 5px;
+        margin-bottom: 16px;
+        .setRela_rt_item_content {
+          display: flex;
+          justify-content: space-between;
+          line-height: 32px;
+          .setRela_rt_item_left {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            margin-right: 12px;
+            // flex-shrink: 0;
+            overflow: hidden;
+            >span:nth-child(2) {
+              white-space: nowrap;
+              text-overflow: ellipsis;
+              overflow: hidden;
+              flex: 1;
+            }
+          }
+          .setRela_rt_item_right {
+            >span {
+              color: rgba(0, 0, 0, 0.5);
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// 显示任务图标
+.setRela_task_icon {
+  width: 50px;
+  height: 22px;
+  line-height: 22px;
+  background: #E6F7FF;
+  border-radius: 4px;
+  color: #1890FF;
+  margin-right: 12px;
+}
+
+/* 设置依赖关系 E */

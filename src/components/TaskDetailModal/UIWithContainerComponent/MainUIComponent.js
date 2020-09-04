@@ -21,6 +21,7 @@ import {
   isPaymentOrgUser
 } from "@/utils/businessFunction";
 import BasicFieldContainer  from './BasicFieldContainer'
+import SetRelationContent from '../../RelyOnRelationship/SetRelationContent'
 
 @connect(mapStateToProps)
 export default class MainUIComponent extends Component {
@@ -497,6 +498,11 @@ export default class MainUIComponent extends Component {
             />
           </div>
           {/* 不同字段的渲染 E */}
+
+          {/* 显示设置依赖字段 */}
+          <div>
+            <SetRelationContent />
+          </div>
 
           {/* 渲染添加关联字段 */}
           <div>
