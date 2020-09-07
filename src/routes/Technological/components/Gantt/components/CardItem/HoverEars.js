@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 import indexStyles from './index.less'
-import { date_area_height } from '../../constants'
+import { date_area_height, gantt_panel_left_diff } from '../../constants'
 import { message } from 'antd'
+import { connect } from 'dva'
 const dateAreaHeight = date_area_height //日期区域高度，作为修正
-import { coperatedLeftDiv } from '../../constants'
-const coperatedX = 0
+@connect(mapStateToProps)
 class HoverEars extends Component {
     constructor(props) {
         super(props)
@@ -29,8 +29,9 @@ class HoverEars extends Component {
         const target_0 = document.getElementById('gantt_card_out')
         const target_1 = document.getElementById('gantt_card_out_middle')
         const target = this.left_circle_ref.current
+        const { gantt_head_width } = this.props
         // 取得鼠标位置
-        const x = e.pageX - target_0.offsetLeft + target_1.scrollLeft - coperatedLeftDiv - coperatedX
+        const x = e.pageX - target_0.offsetLeft + target_1.scrollLeft - gantt_head_width - gantt_panel_left_diff
         const y = e.pageY + target_1.scrollTop - dateAreaHeight - target_0.offsetTop
         return {
             x, y
@@ -300,3 +301,14 @@ class HoverEars extends Component {
 }
 
 export default HoverEars
+
+function mapStateToProps({ gantt: {
+    datas: {
+        gantt_head_width
+    }
+}
+}) {
+    return {
+        gantt_head_width
+    }
+}

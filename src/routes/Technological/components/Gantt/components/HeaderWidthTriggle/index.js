@@ -14,6 +14,7 @@ export default class index extends Component {
             show_drag_trigger: false,
             drag_lock: false,
         }
+        this.cal_width = 0
     }
     setTriggerPosition = (e) => {
         if (this.state.dragging) return //拖拽中就不管了
@@ -31,7 +32,9 @@ export default class index extends Component {
         const gantt_card_out = document.getElementById('gantt_card_out')
         const gantt_card_out_offsetLeft = gantt_card_out.offsetLeft
         const width = pageX - gantt_card_out_offsetLeft - gantt_panel_left_diff
-        target.style.width = `${Math.max(12, width)}px`
+        const gold_width = Math.max(12, width)
+        target.style.width = `${gold_width}px`
+        this.cal_width = gold_width
     }
 
     set_drag_lock = () => {
@@ -64,6 +67,13 @@ export default class index extends Component {
         })
         document.getElementById('gantt_operate_area_panel').style.cursor = "crosshair"
         // console.log('ssssssss_handleStop', e)
+        const { dispatch } = this.props
+        dispatch({
+            type: 'gantt/updateDatas',
+            payload: {
+                gantt_head_width: this.cal_width
+            }
+        })
     }
     onMouseEnter = () => {
         this.setState({

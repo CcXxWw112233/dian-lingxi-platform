@@ -1,7 +1,7 @@
 import React, { Component, PureComponent } from 'react';
 import { connect } from 'dva'
 import styles from './index.less'
-import { task_item_margin_top, date_area_height, ceil_height, task_item_height, ganttIsFold, ganttIsOutlineView } from '../../constants';
+import { task_item_margin_top, date_area_height, ceil_height, task_item_height, ganttIsFold, ganttIsOutlineView, gantt_panel_left_diff } from '../../constants';
 import globalStyles from '@/globalset/css/globalClassName.less'
 import OutlineTree from '../OutlineTree';
 import { updateTaskVTwo, updateMilestone } from '../../../../../../services/technological/task';
@@ -13,7 +13,6 @@ import { checkIsHasPermission, checkIsHasPermissionInBoard } from '../../../../.
 import { NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_EDIT, PROJECT_TEAM_CARD_CREATE } from '../../../../../../globalset/js/constant';
 import { isSamDay, getDigit, timestampToTime } from '../../../../../../utils/util';
 import { setDateWithPositionInYearView, setDateWidthPositionWeekView } from '../../ganttBusiness';
-import { coperatedLeftDiv } from '../../constants'
 const dateAreaHeight = date_area_height //日期区域高度，作为修正
 const getEffectOrReducerByName = name => `gantt/${name}`
 
@@ -91,13 +90,12 @@ export default class GetRowStrip extends PureComponent {
         if (this.state.is_item_has_time) { //存在时间的任务不需要再设置时间了
             return
         }
-        const { ceiHeight, ceilWidth } = this.props
-        const { coperatedX = 0 } = this.props
+        const { ceiHeight, ceilWidth, gantt_head_width } = this.props
 
         const target_0 = document.getElementById('gantt_card_out')
         const target_1 = document.getElementById('gantt_card_out_middle')
         // 取得鼠标位置
-        let px = e.pageX - target_0.offsetLeft + target_1.scrollLeft - coperatedLeftDiv - coperatedX
+        let px = e.pageX - target_0.offsetLeft + target_1.scrollLeft - gantt_head_width - gantt_panel_left_diff
         let py = e.pageY - target_0.offsetTop + target_1.scrollTop - date_area_height
 
         const molX = px % ceilWidth
@@ -538,12 +536,11 @@ export default class GetRowStrip extends PureComponent {
         }
         this.setIsDragging(true)
 
-        const { ceilWidth } = this.props
+        const { ceilWidth, gantt_head_width } = this.props
         const target_0 = document.getElementById('gantt_card_out')
         const target_1 = document.getElementById('gantt_card_out_middle')
-        const { coperatedX } = this.props
         // 取得鼠标位置
-        const x = e.pageX - target_0.offsetLeft + target_1.scrollLeft - coperatedLeftDiv - coperatedX
+        const x = e.pageX - target_0.offsetLeft + target_1.scrollLeft - gantt_head_width - gantt_panel_left_diff
         //设置宽度
         const offset_left = Math.abs(x - this.x1);
         // 更新拖拽的最新矩形
@@ -582,12 +579,11 @@ export default class GetRowStrip extends PureComponent {
     }
     //鼠标移动
     dashedMouseMove = (e) => {
-        const { ceilWidth } = this.props
+        const { ceilWidth, gantt_head_width } = this.props
         if (this.isMouseDown) { //按下的情况不处理
             return false
         }
         const { dasheRectShow, } = this.state
-        const { coperatedX } = this.props
         if (!dasheRectShow) {
             this.setState({
                 dasheRectShow: true
@@ -597,7 +593,7 @@ export default class GetRowStrip extends PureComponent {
         const target_0 = document.getElementById('gantt_card_out')
         const target_1 = document.getElementById('gantt_card_out_middle')
         // 取得鼠标位置
-        let px = e.pageX - target_0.offsetLeft + target_1.scrollLeft - coperatedLeftDiv - coperatedX
+        let px = e.pageX - target_0.offsetLeft + target_1.scrollLeft - gantt_head_width - gantt_panel_left_diff
 
         const molX = px % ceilWidth
         px = px - molX
@@ -1037,7 +1033,8 @@ function mapStateToProps({ gantt: {
         outline_tree_round,
         target_scrollLeft,
         date_total,
-        gantt_view_mode
+        gantt_view_mode,
+        gantt_head_width
     } },
     milestoneDetail: {
         milestone_detail = {}
@@ -1068,6 +1065,7 @@ function mapStateToProps({ gantt: {
         projectDetailInfoData,
         target_scrollLeft,
         date_total,
-        gantt_view_mode
+        gantt_view_mode,
+        gantt_head_width
     }
 }
