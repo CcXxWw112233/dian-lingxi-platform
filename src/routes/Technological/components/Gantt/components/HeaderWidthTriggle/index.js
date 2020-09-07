@@ -27,12 +27,27 @@ export default class index extends Component {
         // console.log('sssssssss_setTriggerPosition', pageX, pageY, e.currentTarget.getBoundingClientRect())
     }
 
+    componentDidMount() {
+        const storage_gantt_head_width = localStorage.getItem('gantt_head_width')
+        if (storage_gantt_head_width) {
+            const target = document.getElementById('gantt_header_wapper')
+            target.style.width = `${storage_gantt_head_width}px`
+            const { dispatch } = this.props
+            dispatch({
+                type: 'gantt/updateDatas',
+                payload: {
+                    gantt_head_width: storage_gantt_head_width
+                }
+            })
+        }
+    }
+
     set_gantt_header_wapper_width = (pageX) => {
         const target = document.getElementById('gantt_header_wapper')
         const gantt_card_out = document.getElementById('gantt_card_out')
         const gantt_card_out_offsetLeft = gantt_card_out.offsetLeft
         const width = pageX - gantt_card_out_offsetLeft - gantt_panel_left_diff
-        const gold_width = Math.max(12, width)
+        const gold_width = Math.max(0, width)
         target.style.width = `${gold_width}px`
         this.cal_width = gold_width
     }
@@ -74,6 +89,7 @@ export default class index extends Component {
                 gantt_head_width: this.cal_width
             }
         })
+        localStorage.setItem('gantt_head_width', this.cal_width)
     }
     onMouseEnter = () => {
         this.setState({

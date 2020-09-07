@@ -23,6 +23,7 @@ import { closeFeature } from '../../../../utils/temporary';
 import CardDetailDrawer from './components/CardDetailDrawer'
 import { isApiResponseOk } from '../../../../utils/handleResponseData';
 import _ from 'lodash'
+import HeaderWidthTriggle from './components/HeaderWidthTriggle'
 
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
@@ -540,6 +541,8 @@ export default class GanttFace extends Component {
                 setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
                 gantt_card_height={gantt_card_height}
                 dataAreaRealHeight={dataAreaRealHeight} />
+              <HeaderWidthTriggle />
+
               {/* <GroupListHeadElse gantt_card_height={gantt_card_height} dataAreaRealHeight={dataAreaRealHeight} /> */}
               {/* <GroupListHeadSetBottom /> */}
             </div>

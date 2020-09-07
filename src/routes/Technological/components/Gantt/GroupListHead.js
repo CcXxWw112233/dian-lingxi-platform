@@ -9,7 +9,6 @@ import emptyBoxImageUrl from '@/assets/gantt/empty-box.png';
 import { Button } from 'antd';
 import OutlineGuideModal from './components/OutlineGuideModal';
 import { milestoneInit } from '@/services/technological/task.js';
-import HeaderWidthTriggle from './components/HeaderWidthTriggle'
 @connect(mapStateToProps)
 export default class GroupListHead extends Component {
   constructor(props) {
@@ -276,7 +275,7 @@ export default class GroupListHead extends Component {
           onTouchStart={() => { this.props.setScrollArea('gantt_head') }}
           id={'gantt_group_head'}
         >
-          <div>
+          <>
             {
               ganttIsOutlineView({ group_view_type }) &&
               <div style={{
@@ -316,8 +315,7 @@ export default class GroupListHead extends Component {
                 <GroupListHeadElse gantt_card_height={this.props.gantt_card_height} dataAreaRealHeight={this.props.dataAreaRealHeight} />
               </>
             }
-          </div>
-          <HeaderWidthTriggle />
+          </>
         </div>
       )
     }
