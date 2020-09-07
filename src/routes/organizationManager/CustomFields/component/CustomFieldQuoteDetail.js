@@ -18,9 +18,11 @@ export default class CustomFieldQuoteDetail extends Component {
 
   onCancel = () => {
     const { quoteList = [] } = this.props
-    this.setState({
-      currentSelectedCode: quoteList[0].field_quote_code
-    })
+    if (!!(quoteList && quoteList.length)) {
+      this.setState({
+        currentSelectedCode: quoteList[0].field_quote_code
+      })
+    }
     this.props.updateState && this.props.updateState()
   }
 
