@@ -21,9 +21,9 @@ import GetRowGanttVirtual from './GetRowGanttVirtual'
 import GetRowStrip from './components/GetRowStrip'
 import { isSamDay, timestampToTimeNormal, timestampToTime } from '../../../../utils/util';
 import SvgArea from './components/SvgArea'
+import { coperatedLeftDiv } from './constants'
 const clientWidth = document.documentElement.clientWidth;//获取页面可见高度
 const coperatedX = 0 //80 //鼠标移动和拖拽的修正位置
-const coperatedLeftDiv = 297 //滚动条左边还有一个div的宽度，作为修正
 const dateAreaHeight = date_area_height //日期区域高度，作为修正
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)

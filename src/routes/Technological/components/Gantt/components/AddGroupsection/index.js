@@ -129,7 +129,7 @@ export default class AddGroupSection extends Component {
             <div>
                 {
                     group_view_type == '1' && !add_new_board_group && gantt_board_id != '0' && (
-                        <div onClick={this.addNew} className={globalStyles.link_mouse} style={{ marginTop: 20 }}>
+                        <div onClick={this.addNew} className={globalStyles.link_mouse} style={{ marginTop: 2 }}>
                             <i className={globalStyles.authTheme}>&#xe8fe;</i>
                             新增分组
                         </div>

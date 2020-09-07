@@ -560,6 +560,7 @@ export default class GanttFace extends Component {
                 id={'gantt_card_out_middle'}
                 ref={'gantt_card_out_middle'}
                 onMouseEnter={() => this.setScrollArea('gantt_body')}
+                onTouchStart={() => this.setScrollArea('gantt_body')}
                 onScroll={this.ganttScroll}
               >
                 <div className={indexStyles.panel}>

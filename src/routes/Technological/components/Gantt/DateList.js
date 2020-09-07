@@ -395,7 +395,7 @@ export default class DateList extends Component {
     return (
       <div className={indexStyles.dateDetail} >
         {date_inner.map((value2, key2) => {
-          const { month, last_date, year, timestamp, timestampEnd, date_no } = value2
+          const { month, last_date, year, timestamp, timestampEnd, date_no, include_today } = value2
           const { flag: has_lcb, current_date_miletones, is_over_duetime, is_all_realized } = this.isHasMiletoneList().handleYearMode({
             year, month, last_date, timestamp, timestampEnd
           })
@@ -403,7 +403,7 @@ export default class DateList extends Component {
             group_view_type != '1' ? (
               <div key={`${month}/${timestamp}`}>
                 <div className={`${indexStyles.dateDetailItem}`} key={key2} style={{ width: ceilWidth * 7, fontSize: 12 }}>
-                  <div className={`${indexStyles.dateDetailItem_date_no} `} style={{ fontSize: 12, }}>
+                  <div className={`${indexStyles.dateDetailItem_date_no} ${include_today && indexStyles.include_today} `} style={{ fontSize: 12, }}>
                     {date_no}
                   </div>
                 </div>
@@ -414,8 +414,9 @@ export default class DateList extends Component {
                     <div className={`${indexStyles.dateDetailItem}`} key={key2} style={{ width: ceilWidth * 7, fontSize: 12 }}>
                       <div className={`${indexStyles.dateDetailItem_date_no} 
                                     ${indexStyles.nomal_date_no}
-                                    ${has_lcb && indexStyles.has_moletones_date_no}`}
-                        style={{ background: this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized, fontSize: 12 }) }}
+                                    ${has_lcb && indexStyles.has_moletones_date_no}
+                                    ${include_today && indexStyles.include_today}`}
+                        style={{ background: include_today ? '#1890FF' : this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized, fontSize: 12 }) }}
                       >
                         {date_no}
                       </div>
@@ -425,8 +426,9 @@ export default class DateList extends Component {
                 </Dropdown>
               )
           )
-        })}
-      </div>
+        })
+        }
+      </div >
     )
   }
 
@@ -436,7 +438,7 @@ export default class DateList extends Component {
     return (
       <div className={indexStyles.dateDetail} >
         {date_inner.map((value2, key2) => {
-          const { month, last_date, year, timestamp, timestampEnd, description } = value2
+          const { month, last_date, year, timestamp, timestampEnd, description, include_today } = value2
           const { flag: has_lcb, current_date_miletones, is_over_duetime, is_all_realized } = this.isHasMiletoneList().handleYearMode({
             year, month, last_date, timestamp, timestampEnd
           })
@@ -444,7 +446,7 @@ export default class DateList extends Component {
             group_view_type != '1' ? (
               <div key={`${month}/${timestamp}`}>
                 <div className={`${indexStyles.dateDetailItem}`} key={key2} style={{ width: ceilWidth * last_date }}>
-                  <div className={`${indexStyles.dateDetailItem_date_no} `}>
+                  <div className={`${indexStyles.dateDetailItem_date_no} ${include_today && indexStyles.include_today}`}>
                     {description}
                   </div>
                 </div>
@@ -455,8 +457,9 @@ export default class DateList extends Component {
                     <div className={`${indexStyles.dateDetailItem}`} key={key2} style={{ width: ceilWidth * last_date }}>
                       <div className={`${indexStyles.dateDetailItem_date_no} 
                                     ${indexStyles.nomal_date_no}
-                                    ${has_lcb && indexStyles.has_moletones_date_no}`}
-                        style={{ background: this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized }) }}
+                                    ${has_lcb && indexStyles.has_moletones_date_no}
+                                    ${include_today && indexStyles.include_today}`}
+                        style={{ background: include_today ? '#1890FF' : this.setMiletonesColor({ is_over_duetime, has_lcb, is_all_realized }) }}
                       >
                         {description}
                       </div>

@@ -272,6 +272,7 @@ export default class GroupListHead extends Component {
         <div className={`${ganttIsOutlineView({ group_view_type }) ? indexStyles.listTree : indexStyles.listHead}`}
           onScroll={this.headScroll}
           onMouseEnter={() => this.props.setScrollArea('gantt_head')}
+          onTouchStart={() => { this.props.setScrollArea('gantt_head') }}
           id={'gantt_group_head'}
         >
           <div>

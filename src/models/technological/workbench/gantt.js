@@ -18,7 +18,7 @@ import {
 } from './selects'
 import { createMilestone } from "../../../services/technological/prjectDetail";
 import { getGlobalData } from '../../../utils/businessFunction';
-import { task_item_height, ceil_height, ceil_height_fold, ganttIsFold, group_rows_fold, task_item_height_fold, test_card_item, mock_gantt_data, ganttIsOutlineView, mock_outline_tree, ceil_width, ceil_width_year, one_group_row_total, ganttIsSingleBoardGroupView } from '../../../routes/Technological/components/Gantt/constants';
+import { task_item_height, ceil_height, ceil_height_fold, ganttIsFold, group_rows_fold, task_item_height_fold, test_card_item, mock_gantt_data, ganttIsOutlineView, mock_outline_tree, ceil_width, ceil_width_year, one_group_row_total, ganttIsSingleBoardGroupView, date_area_height } from '../../../routes/Technological/components/Gantt/constants';
 import { getModelSelectDatasState } from '../../utils'
 import { getProjectGoupList } from '../../../services/technological/task';
 import { handleChangeBoardViewScrollTop, setGantTimeSpan, diffGanttTimeSpan } from '../../../routes/Technological/components/Gantt/ganttBusiness';
@@ -825,8 +825,17 @@ export default {
           const list_group_item_height = Math.max.apply(null, list_height_arr) + one_group_row_total * ceiHeight - after_group_height
 
           group_rows[i] = Math.max(group_rows_lock[i] || 0, list_group_item_height / ceiHeight, one_group_row_total, lane_row_count) //(list_group_item_height / ceiHeight) < one_group_row_total ? one_group_row_total : list_group_item_height / ceiHeight // 原来是3，现在是2
-          if (list_group[i].list_id == '0' && group_view_type == '1' && gantt_board_id != '0') { //默认分组要设置得很高
-            group_rows[i] = group_rows[i] + 30
+          if (list_group[i].list_id == '0' && group_view_type == '1' && gantt_board_id != '0') { //默认分组要设置得很高,自适应
+            let before_group_row = 0
+            const wapper_height = document.getElementById('gantt_card_out_middle').clientHeight
+            if (i != 0) {
+              before_group_row = group_rows.slice(0, i).reduce((total, current) => {
+                return total + current
+              })
+            }
+            console.log('before_group_row', before_group_row, Math.floor(wapper_height / ceiHeight))
+            const fix_row = Math.ceil(wapper_height / ceiHeight) - before_group_row //+ 2
+            group_rows[i] = Math.max.apply(null, [length, fix_row, group_rows[i]])//group_rows[i] +30
           }
           // 设置项目汇总的top和left,width
           if (ganttIsFold({ gantt_board_id, group_view_type, show_board_fold, gantt_view_mode })) { // 全项目视图下，为收缩状态

@@ -13,8 +13,8 @@ import { checkIsHasPermission, checkIsHasPermissionInBoard } from '../../../../.
 import { NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_EDIT, PROJECT_TEAM_CARD_CREATE } from '../../../../../../globalset/js/constant';
 import { isSamDay, getDigit, timestampToTime } from '../../../../../../utils/util';
 import { setDateWithPositionInYearView, setDateWidthPositionWeekView } from '../../ganttBusiness';
+import { coperatedLeftDiv } from '../../constants'
 const dateAreaHeight = date_area_height //日期区域高度，作为修正
-const coperatedLeftDiv = 297 //滚动条左边还有一个div的宽度，作为修正
 const getEffectOrReducerByName = name => `gantt/${name}`
 
 @connect(mapStateToProps)
