@@ -16,6 +16,7 @@ import { getCurrentDrawerContentPropsModelFieldData, getCurrentPropertiesData, j
 import { currentNounPlanFilterName } from '../../../utils/businessFunction';
 import { TASKS } from '../../../globalset/js/constant';
 import SubTaskContainer from './SubTaskContainer';
+import SetRelationContent from '../../RelyOnRelationship/SetRelationContent';
 
 @connect(mapStateToProps)
 export default class BasicFieldUIComponent extends Component {
@@ -493,6 +494,13 @@ export default class BasicFieldUIComponent extends Component {
                 </div>
               </div>
             </div>
+          </div>
+        )
+        break
+      case 'DEPENDENCY':
+        messageValue = (
+          <div key={id} style={{ position: 'relative' }} className={`${mainContentStyles.field_content} ${showDelColor && currentItem.id == currentDelId && mainContentStyles.showDelColor}`}>
+            <SetRelationContent currentItem={currentItem} handleDelCurrentField={this.handleDelCurrentField}/>
           </div>
         )
         break

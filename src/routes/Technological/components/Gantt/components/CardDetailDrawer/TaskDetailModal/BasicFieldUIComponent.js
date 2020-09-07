@@ -14,6 +14,7 @@ import { TASKS } from '../../../../../../../globalset/js/constant';
 import { judgeFileType, showMemberName, getCurrentDrawerContentPropsModelFieldData, getFolderPathName } from '../../../../../../../components/TaskDetailModal/handleOperateModal';
 import SubTaskContainer from '../../../../../../../components/TaskDetailModal/UIWithContainerComponent/SubTaskContainer';
 import AppendSubTask from './components/AppendSubTask';
+import SetRelationContent from '../../../../../../../components/RelyOnRelationship/SetRelationContent'
 
 @connect(mapStateToProps)
 export default class BasicFieldUIComponent extends Component {
@@ -406,6 +407,13 @@ export default class BasicFieldUIComponent extends Component {
                 </div>
               </div>
             </div>
+          </div>
+        )
+        break
+      case 'DEPENDENCY':
+        messageValue = (
+          <div key={id} style={{ position: 'relative' }} className={`${mainContentStyles.field_content} ${showDelColor && currentItem.id == currentDelId && mainContentStyles.showDelColor}`}>
+            <SetRelationContent onlyShowPopoverContent={true} currentItem={currentItem} handleDelCurrentField={this.handleDelCurrentField}/>
           </div>
         )
         break

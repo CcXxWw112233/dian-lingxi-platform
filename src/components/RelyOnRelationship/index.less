@@ -29,8 +29,9 @@
 .setRelationContainer {
   display: flex;
   line-height: 38px;
-  margin-bottom: 12px;
-  margin-left: -26px;
+  // margin-bottom: 12px;
+  width: 100%;
+  // margin-left: -26px;
   cursor: pointer;
   .setRelationItem {
     display: flex;
@@ -109,7 +110,7 @@
           position: relative;
           .setRela_select {
             width: 100%;
-            margin-bottom: 16px;
+            // margin-bottom: 16px;
             :global {
               .ant-select-selection__choice {
                 display: none;
@@ -149,12 +150,12 @@
           }
         }
       }
-      .setRela_rt_item {
+      .setRela_rt_item, .setRela_rb_item{
         height: 32px;
         border-radius: 2px;
         border: 1px solid rgba(0, 0, 0, 0.15);
         padding: 0px 5px;
-        margin-bottom: 16px;
+        margin-top: 16px;
         .setRela_rt_item_content {
           display: flex;
           justify-content: space-between;
@@ -192,7 +193,7 @@
 }
 
 .setRelationContainer1 {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+  // border-bottom: 1px solid rgba(0, 0, 0, 0.15);
   margin-left: 0;
   .setRelationItem {
     flex-direction: column;
@@ -213,7 +214,7 @@
       }
     }
     .setRela_right {
-      .setRela_r_top {
+      .setRela_r_top, .setRela_r_bottom {
         flex-direction: column;
       }
     }
@@ -228,6 +229,16 @@
   background: #E6F7FF;
   border-radius: 4px;
   color: #1890FF;
+  margin-right: 12px;
+}
+
+.setRela_flow_icon {
+  width: 50px;
+  height: 22px;
+  line-height: 22px;
+  background: #F6FFED;
+  border-radius: 4px;
+  color: #389E0D;
   margin-right: 12px;
 }
 

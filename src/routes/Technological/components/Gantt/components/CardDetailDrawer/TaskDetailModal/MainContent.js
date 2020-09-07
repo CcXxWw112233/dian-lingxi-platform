@@ -18,7 +18,6 @@ import { renderTaskNounPlanCode, getCurrentFieldIcon, getCurrentDrawerContentPro
 import BasicFieldUIComponent from './BasicFieldUIComponent'
 import BasicFieldContainer from '../../../../../../../components/TaskDetailModal/UIWithContainerComponent/BasicFieldContainer'
 import CustomCategoriesOperate from '../../../../../../../components/CustomFields/CustomCategoriesOperate'
-import SetRelationContent from '../../../../../../../components/RelyOnRelationship/SetRelationContent'
 
 @connect(mapStateToProps)
 export default class MainContent extends Component {
@@ -465,11 +464,6 @@ export default class MainContent extends Component {
             />
           </div>
           {/* 不同字段的渲染 E */}
-
-          {/* 显示设置依赖字段 */}
-          <div>
-            <SetRelationContent onlyShowPopoverContent={true} />
-          </div>
 
           {/* 渲染添加关联字段 */}
           <div>
