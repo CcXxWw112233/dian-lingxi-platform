@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import styles from './index.less'
 import { connect } from 'dva'
 import Draggable from 'react-draggable';
-import { gantt_panel_left_diff } from '../../constants';
+import { gantt_panel_left_diff, date_area_height } from '../../constants';
 
 @connect(mapStateToProps)
 export default class index extends Component {
@@ -21,8 +21,9 @@ export default class index extends Component {
         const { pageY } = e
         const { top } = e.currentTarget.getBoundingClientRect()
         const rela_top = pageY - top - 20
+        const gold_top = Math.max(rela_top, 0)
         this.setState({
-            rela_top
+            rela_top: gold_top
         })
         // console.log('sssssssss_setTriggerPosition', pageX, pageY, e.currentTarget.getBoundingClientRect())
     }
@@ -104,11 +105,11 @@ export default class index extends Component {
         }
     }
     render() {
-        const { group_list_area_section_height = [] } = this.props
+        const { group_list_area_section_height = [], gantt_card_height } = this.props
         const { rela_top, show_drag_trigger } = this.state
         const length = group_list_area_section_height.length
         return (
-            <div className={styles.main} style={{ height: group_list_area_section_height[length - 1] }}
+            <div className={styles.main} style={{ height: gantt_card_height - 20 - date_area_height, top: date_area_height }}
                 onMouseMoveCapture={(e) => this.setTriggerPosition(e)}
                 onMouseEnter={this.onMouseEnter}
                 onMouseLeave={this.onMouseLeave}

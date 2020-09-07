@@ -275,7 +275,7 @@ export default class GroupListHead extends Component {
           onTouchStart={() => { this.props.setScrollArea('gantt_head') }}
           id={'gantt_group_head'}
         >
-          <>
+          <div>
             {
               ganttIsOutlineView({ group_view_type }) &&
               <div style={{
@@ -315,7 +315,7 @@ export default class GroupListHead extends Component {
                 <GroupListHeadElse gantt_card_height={this.props.gantt_card_height} dataAreaRealHeight={this.props.dataAreaRealHeight} />
               </>
             }
-          </>
+          </div>
         </div>
       )
     }
