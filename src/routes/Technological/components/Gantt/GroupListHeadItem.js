@@ -1325,7 +1325,7 @@ export default class GroupListHeadItem extends Component {
             <div style={{ visibility: list_no_time_data.length ? 'visible' : 'hidden', display: (gantt_board_id == '0' && group_view_type == '1') ? 'none' : 'flex' }}
               onClick={this.setIsShowBottDetail}>
               <div className={`${globalStyles.authTheme} ${indexStyles.list_head_footer_tip} ${isShowBottDetail == '2' && indexStyles.spin_hide} ${isShowBottDetail == '1' && indexStyles.spin_show}`}>&#xe61f;</div>
-              <div className={indexStyles.list_head_footer_dec}>未排期的事项 {list_no_time_data.length}条</div>
+              <div className={`${indexStyles.list_head_footer_dec} ${globalStyles.global_ellipsis}`}>未排期的事项 {list_no_time_data.length}条</div>
             </div>
 
             {/* 操作项 */}
