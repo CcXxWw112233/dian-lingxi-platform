@@ -311,7 +311,7 @@ export default class BasicFieldUIComponent extends Component {
         break
       case 'SUBTASK':
         messageValue = (
-          <div key={id} className={`${mainContentStyles.field_content} ${showDelColor && currentItem.id == currentDelId && mainContentStyles.showDelColor}`}>
+          <div key={id} className={`${mainContentStyles.field_content} ${showDelColor && currentItem.id == currentDelId && mainContentStyles.showDelColor}`} style={{paddingBottom: 0}}>
             <div className={mainContentStyles.field_left}>
               <div className={mainContentStyles.field_hover}>
                 <span>子{currentNounPlanFilterName(TASKS)}&交付物</span>

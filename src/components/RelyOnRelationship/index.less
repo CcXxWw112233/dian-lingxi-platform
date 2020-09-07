@@ -174,11 +174,47 @@
             }
           }
           .setRela_rt_item_right {
+            margin-right: 10px;
             >span {
               color: rgba(0, 0, 0, 0.5);
             }
           }
+          .setRela_delIcon {
+            color: rgba(0, 0, 0, 0.45);
+            &:hover {
+              color: rgba(0, 0, 0, 0.5);
+            }
+          }
         }
+      }
+    }
+  }
+}
+
+.setRelationContainer1 {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+  margin-left: 0;
+  .setRelationItem {
+    flex-direction: column;
+    padding-left: 0;
+    .setRela_left {
+      max-width: none;
+      .setRela_delIcon {
+        right: 5px;
+        left: auto;
+      }
+      .setRela_hover {
+        font-weight: 600;
+        >span:nth-child(2) {
+          font-size: 16px;
+          // font-weight: 600;
+          color: rgba(0, 0, 0, 0.65);
+        }
+      }
+    }
+    .setRela_right {
+      .setRela_r_top {
+        flex-direction: column;
       }
     }
   }

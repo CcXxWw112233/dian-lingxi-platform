@@ -20,11 +20,11 @@ export default class SetRelationContent extends Component {
   };
 
   render() {
+    const { onlyShowPopoverContent } = this.props
     const { selectedItems = [], relationList = [] } = this.state;
     const filteredOptions = OPTIONS.filter(o => !selectedItems.includes(o));
-    console.log(relationList);
     return (
-      <div className={indexStyles.setRelationContainer}>
+      <div className={`${indexStyles.setRelationContainer} ${onlyShowPopoverContent && indexStyles.setRelationContainer1}`}>
         <div className={indexStyles.setRelationItem}>
           <div className={indexStyles.setRela_left}>
             <span className={`${globalStyles.authTheme} ${indexStyles.setRela_delIcon}`}>&#xe7fe;</span>
@@ -74,6 +74,7 @@ export default class SetRelationContent extends Component {
                             <div className={indexStyles.setRela_rt_item_right}>
                               <span>#&nbsp;前期准备</span>
                             </div>
+                            <span className={`${globalStyles.authTheme} ${indexStyles.setRela_delIcon}`}>&#xe7fe;</span>
                           </div>
                         </div>
                       )
