@@ -48,9 +48,9 @@ export default class index extends Component {
         const gantt_card_out = document.getElementById('gantt_card_out')
         const gantt_card_out_offsetLeft = gantt_card_out.offsetLeft
         const width = pageX - gantt_card_out_offsetLeft - gantt_panel_left_diff
-        const gold_width = Math.max(0, width)
-        target.style.width = `${gold_width}px`
-        this.cal_width = gold_width
+        if (width > 380 || width < 180) return
+        target.style.width = `${width}px`
+        this.cal_width = width
     }
 
     set_drag_lock = () => {
