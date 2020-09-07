@@ -460,6 +460,7 @@
     // overflow      : hidden;
     display          : flex;
     flex-direction   : column;
+    transform        : scale(1);
   }
 
   .board_body {
@@ -883,7 +884,7 @@
 .groupHeadSet,
 .groupHeadSetBott {
   height          : @date_area_height;
-  // width           : 280px;
+  // width        : 280px;
   background-color: #ffffff;
   padding-right   : @group_head_padding;
 
@@ -992,7 +993,7 @@
 .groupHeadSet {
   box-shadow   : 1px -3px 4px 0px rgba(0, 0, 0, 0.15);
   border-bottom: 1px solid #E8E8E8;
-  // width        : 277px;
+  // width     : 277px;
 
 }
 
@@ -1097,17 +1098,17 @@
 
   background-color: #FFFFFF;
   height          : 100%;
-  transform       : scale(1);
 
   .outline_wrapper {
-    margin-top: 20px;
-    position  : relative;
-    overflow  : hidden;
+    margin-top   : 20px;
+    position     : relative;
+    overflow     : hidden;
+    padding-right: 3px;
 
     .outlineFooter {
       z-index           : 3;
       position          : fixed;
-      left              : 20px;
+      left              : 0px;
       bottom            : 0px;
       width             : 100%;
       // width          : 280px;
@@ -1118,6 +1119,7 @@
       display           : flex;
       align-items       : center;
       justify-content   : space-between;
+      overflow          : hidden;
 
       .actionIcon {
         font-weight : 600;
