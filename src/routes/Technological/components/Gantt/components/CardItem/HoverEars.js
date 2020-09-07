@@ -2,8 +2,8 @@ import React, { Component } from 'react'
 import indexStyles from './index.less'
 import { date_area_height } from '../../constants'
 import { message } from 'antd'
-const dateAreaHeight = date_area_height //日期区域高度，作为修正
 import { coperatedLeftDiv } from '../../constants'
+const dateAreaHeight = date_area_height //日期区域高度，作为修正
 const coperatedX = 0
 class HoverEars extends Component {
     constructor(props) {
