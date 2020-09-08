@@ -52,9 +52,11 @@ export default class SetRelationContent extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (isObjectValueEqual(this.props.currentItem.data, nextProps.currentItem.data)) return
+    console.log('进来了');
     this.setState({
       currentItem: nextProps.currentItem ? nextProps.currentItem : {}
     })
+    this.getCardRelysWithObject()
   }
 
   componentWillUnmount() {
