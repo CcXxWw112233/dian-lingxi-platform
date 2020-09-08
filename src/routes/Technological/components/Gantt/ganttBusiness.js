@@ -1,6 +1,6 @@
 import base_utils from './base_utils'
 import { isSamDay } from '../../../../utils/util'
-import { date_area_height, coperatedLeftDiv, coperatedX, ceil_height } from './constants'
+import { date_area_height, gantt_panel_left_diff, ceil_height } from './constants'
 import { lx_utils } from 'lingxi-im'
 
 export const afterCreateBoardUpdateGantt = (dispatch) => {
@@ -459,13 +459,13 @@ export const onChangeCardHandleCardDetail = ({
 }
 
 // 获取鼠标下落的相对位置
-export const getXYDropPosition = (e) => {
+export const getXYDropPosition = (e, { gantt_head_width }) => {
     if (!e) return
     if (!e.target) return
     const target_0 = document.getElementById('gantt_card_out')
     const target_1 = document.getElementById('gantt_card_out_middle')
     // 取得鼠标位置
-    const x = e.pageX - target_0.offsetLeft + target_1.scrollLeft - coperatedLeftDiv - coperatedX
+    const x = e.pageX - target_0.offsetLeft + target_1.scrollLeft - gantt_head_width - gantt_panel_left_diff
     const y = e.pageY - target_0.offsetTop + target_1.scrollTop - date_area_height
     return {
         x, y

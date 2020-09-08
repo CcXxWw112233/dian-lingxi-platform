@@ -17,7 +17,6 @@ import GroupChildCards from './GroupChildCards.js'
 // 参考自http://www.jq22.com/webqd1348
 
 // const dateAreaHeight = date_area_height //日期区域高度，作为修正
-// const coperatedX = 0
 const card_width_diff = 8 //宽度误差微调
 const card_left_diff = 4 //位置误差微调
 @connect(mapStateToProps)

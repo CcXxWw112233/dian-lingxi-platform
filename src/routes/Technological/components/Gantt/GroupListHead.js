@@ -279,7 +279,7 @@ export default class GroupListHead extends Component {
             {
               ganttIsOutlineView({ group_view_type }) &&
               <div style={{
-                width: '280px',
+                // width: '280px',
                 boxShadow: '1px 0px 4px 0px rgba(0,0,0,0.15);'
               }}>
                 <OutLineHeadItem
