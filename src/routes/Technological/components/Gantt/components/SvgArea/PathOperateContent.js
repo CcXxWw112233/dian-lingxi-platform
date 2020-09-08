@@ -3,6 +3,8 @@ import styles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { connect } from 'dva'
 import { Modal } from 'antd'
+import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
+import { onChangeCardHandleCardDetail } from '../../ganttBusiness'
 
 @connect(mapStateToProps)
 export default class PathOperateContent extends Component {
@@ -32,6 +34,18 @@ export default class PathOperateContent extends Component {
                     payload: {
                         move_id,
                         line_id
+                    }
+                }).then(res => {
+                    if (isApiResponseOk(res)) {
+                        // 甘特图删除依赖后更新任务弹窗依赖数据
+                        const { selected_card_visible, dispatch } = this.props
+                        onChangeCardHandleCardDetail({
+                            card_detail_id: move_id,
+                            selected_card_visible,
+                            parent_card_id: '',
+                            operate_id: move_id,
+                            dispatch
+                        })
                     }
                 })
             }
@@ -79,7 +93,8 @@ function mapStateToProps({ gantt: {
         list_group = [],
         date_total,
         ceiHeight,
-        rely_map
+        rely_map,
+        selected_card_visible
     } },
 }) {
     return {
@@ -91,6 +106,7 @@ function mapStateToProps({ gantt: {
         list_group,
         date_total,
         ceiHeight,
-        rely_map
+        rely_map,
+        selected_card_visible
     }
 }
