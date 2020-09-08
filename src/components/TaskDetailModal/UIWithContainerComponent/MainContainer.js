@@ -603,10 +603,8 @@ const LogicWithMainContent = {
     })
     let flag = false // 判断删除的时候当前是否有数据, 默认为false 表示没有数据直接删除
     const { dispatch, drawContent = {}, drawContent: { card_id } } = that.props
-    const { selectedKeys = [] } = that.state
     let new_drawContent = { ...drawContent }
     let filter_drawContent = { ...drawContent }
-    let new_selectedKeys = [...selectedKeys]
     // 删除的时候判断data类型以及是否有数据
     filter_drawContent['properties'].find(item => {
       if (item.id == shouldDeleteId) { // 表示找到当前item
@@ -620,7 +618,6 @@ const LogicWithMainContent = {
         }
       }
     })
-    new_selectedKeys = new_selectedKeys.filter(item => item != shouldDeleteId)
     new_drawContent['properties'] = new_drawContent['properties'].filter(item => item.id != shouldDeleteId)
     let gold_executor = (new_drawContent['properties'].find(item => item.code == 'EXECUTOR') || {}).data
     if (flag) {
@@ -643,11 +640,11 @@ const LogicWithMainContent = {
           ).then(res => {
             if (isApiResponseOk(res)) {
               that.setState({
-                // selectedKeys: new_selectedKeys,
                 shouldDeleteId: '',
                 showDelColor: ''
               })
-              that.props.updateParentPropertiesList && that.props.updateParentPropertiesList({ shouldDeleteId, new_selectedKeys })
+              that.updateParentPropertiesList && that.updateParentPropertiesList({shouldDeleteId})
+              that.props.updateParentPropertiesList && that.props.updateParentPropertiesList({ shouldDeleteId })
               dispatch({
                 type: 'publicTaskDetailModal/updateDatas',
                 payload: {
@@ -676,11 +673,11 @@ const LogicWithMainContent = {
       ).then(res => {
         if (isApiResponseOk(res)) {
           that.setState({
-            // selectedKeys: new_selectedKeys,
             shouldDeleteId: '',
             showDelColor: ''
           })
-          that.props.updateParentPropertiesList && that.props.updateParentPropertiesList({ shouldDeleteId, new_selectedKeys })
+          that.updateParentPropertiesList && that.updateParentPropertiesList({shouldDeleteId})
+          that.props.updateParentPropertiesList && that.props.updateParentPropertiesList({ shouldDeleteId })
           dispatch({
             type: 'publicTaskDetailModal/updateDatas',
             payload: {
@@ -789,7 +786,6 @@ const LogicWithMainContent = {
   handleMenuReallySelect: function (e, value) {
     const { dispatch, card_id } = this.props
     const { propertiesList = [] } = this.state
-    // const { key, selectedKeys = [] } = e
     const that = this
     let new_propertiesList = [...propertiesList]
     new_propertiesList = new_propertiesList.filter(item => {
@@ -797,14 +793,12 @@ const LogicWithMainContent = {
         return item
       }
     })
-    // selectedKeys.push(key)
     dispatch({
       type: 'publicTaskDetailModal/setCardAttributes',
       payload: {
         card_id, property_id: value.id,
         calback: () => {
           that.setState({
-            // selectedKeys: selectedKeys,
             propertiesList: new_propertiesList
           })
         }
