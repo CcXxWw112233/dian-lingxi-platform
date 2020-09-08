@@ -626,6 +626,15 @@ export async function getCardRelys(data) {
   })
 }
 
+// 查询可依赖的任务列表
+export async function getCardRelysWithObject(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/content/dependency/object`,
+    method: 'GET',
+    params
+  })
+}
+
 //获取子任务列表
 export async function getCardChildCards(params) {
   return request({

@@ -57,6 +57,7 @@ export default {
             } else {
                 message.error(res.message)
             }
+            return res || {}
         },
         * deleteCardRely({ payload }, { select, call, put }) {
             const { move_id, line_id } = payload
@@ -65,7 +66,7 @@ export default {
 
             if (isApiResponseOk(res)) {
                 message.success('已成功删除依赖')
-
+                if (!(rely_map && rely_map.length)) return
                 let _re_rely_map = JSON.parse(JSON.stringify(rely_map))
                 const move_index = rely_map.findIndex(item => item.id == move_id) //起始点索引
                 const move_item = rely_map.find(item => item.id == move_id) //起始点这一项
@@ -85,6 +86,7 @@ export default {
             } else {
                 message.error(res.message)
             }
+            return res || {}
         },
         * updateCardRely({ payload }, { select, call, put }) {
             const rely_map = yield select(getModelSelectDatasState('gantt', 'rely_map'))

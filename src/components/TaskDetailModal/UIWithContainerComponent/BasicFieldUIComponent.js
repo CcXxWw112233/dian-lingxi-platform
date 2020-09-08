@@ -500,7 +500,7 @@ export default class BasicFieldUIComponent extends Component {
       case 'DEPENDENCY':
         messageValue = (
           <div key={id} style={{ position: 'relative' }} className={`${mainContentStyles.field_content} ${showDelColor && currentItem.id == currentDelId && mainContentStyles.showDelColor}`}>
-            <SetRelationContent currentItem={currentItem} handleDelCurrentField={this.handleDelCurrentField}/>
+            <SetRelationContent card_id={card_id} board_id={board_id} currentItem={currentItem} handleDelCurrentField={this.handleDelCurrentField}/>
           </div>
         )
         break
