@@ -470,7 +470,7 @@ export default class BoardTemplate extends Component {
         try {
 
             if (event.target.id == 'gantt_svg_area') {
-                const { x, y } = getXYDropPosition(event)
+                const { x, y } = getXYDropPosition(event, { gantt_head_width })
                 const { ceilWidth, group_list_area_section_height, date_arr_one_level = [], list_group = [] } = this.props
                 // 得到下落的分组位置
                 let { group_list_index, belong_group_row } = getDropListPosition({ group_list_area_section_height, position_top: y - 24 })
@@ -918,7 +918,8 @@ function mapStateToProps({
             ceilWidth,
             group_list_area_section_height = [],
             date_arr_one_level = [],
-            list_group = []
+            list_group = [],
+            gantt_head_width
         }
     },
     technological: { datas: { userBoardPermissions = [] } },
@@ -937,6 +938,7 @@ function mapStateToProps({
         ceilWidth,
         group_list_area_section_height,
         date_arr_one_level,
-        list_group
+        list_group,
+        gantt_head_width
     }
 }

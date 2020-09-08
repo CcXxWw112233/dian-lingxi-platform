@@ -112,13 +112,13 @@ export default class GroupListHeadDragNoTimeDataItem extends Component {
     if (!event.target.className) return
     if (this.curret_panel != 'list_no_time_data') return
     // 只有在分组视图以及日视图下
-    const { gantt_view_mode, group_view_type, itemValue: { id } } = this.props
+    const { gantt_view_mode, group_view_type, itemValue: { id }, gantt_head_width } = this.props
     if (gantt_view_mode != 'month' && group_view_type != '1') return
     if (this.state.currentOperateDragElement != id) return
     event.preventDefault();
     try {
       if (event.target.id == 'gantt_svg_area') { // 表示下落在svg上
-        const { x, y } = getXYDropPosition(event)
+        const { x, y } = getXYDropPosition(event, { gantt_head_width })
         const { ceilWidth, group_list_area_section_height, date_arr_one_level = [], list_group = [], dispatch, itemValue = {}, gantt_board_id, selected_card_visible } = this.props
         const { id, list_id: group_id, board_id, parent_card_id } = itemValue
         // 得到下落的分组位置
@@ -233,9 +233,9 @@ export default class GroupListHeadDragNoTimeDataItem extends Component {
 }
 
 function mapStateToProps({
-  gantt: { datas: { gantt_board_id, gantt_view_mode, ceilWidth, date_arr_one_level = [], group_list_area_section_height, group_view_type, list_group = [], selected_card_visible } },
+  gantt: { datas: { gantt_board_id, gantt_view_mode, ceilWidth, date_arr_one_level = [], group_list_area_section_height, group_view_type, list_group = [], selected_card_visible, gantt_head_width } },
 }) {
   return {
-    gantt_board_id, gantt_view_mode, ceilWidth, date_arr_one_level, group_list_area_section_height, group_view_type, list_group, selected_card_visible
+    gantt_board_id, gantt_view_mode, ceilWidth, date_arr_one_level, group_list_area_section_height, group_view_type, list_group, selected_card_visible, gantt_head_width
   }
 }
