@@ -295,7 +295,7 @@ export default class MainUIComponent extends Component {
 
     return (
       <div className={mainContentStyles.main_wrap}>
-        <RelyOnRelationship relationshipList={dependencies} updateRelyOnRationList={this.updateRelyOnRationList} />
+        {/* <RelyOnRelationship relationshipList={dependencies} updateRelyOnRationList={this.updateRelyOnRationList} /> */}
         <div className={mainContentStyles.main_content}>
           {/* 标题 S */}
           <div>
