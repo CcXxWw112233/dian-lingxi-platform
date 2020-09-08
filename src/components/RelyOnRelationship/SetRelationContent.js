@@ -4,11 +4,11 @@ import indexStyles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { currentNounPlanFilterName } from '../../utils/businessFunction'
 import { TASKS, FLOWS } from '../../globalset/js/constant'
-import { Select, Tooltip, Popconfirm } from 'antd'
+import { Select, Popconfirm } from 'antd'
 import { getCardRelysWithObject } from '../../services/technological/task'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { filterCurrentUpdateDatasField } from '../TaskDetailModal/handleOperateModal'
-import { isObjectValueEqual, compareACoupleOfObjects, isArrayEqual } from '../../utils/util'
+import { isObjectValueEqual } from '../../utils/util'
 
 // const OPTIONS = ['Apples', 'Nails', 'Bananas', 'Helicopters'];
 @connect(({ publicTaskDetailModal: { drawContent = {} } }) => ({ drawContent }))
@@ -34,11 +34,13 @@ export default class SetRelationContent extends Component {
   // 获取可依赖的对象
   getCardRelysWithObject = () => {
     const { card_id, board_id } = this.props
+    if (!card_id || !board_id) return
     getCardRelysWithObject({ card_id, board_id }).then(res => {
       if (isApiResponseOk(res)) {
-        console.log(res);
         this.setState({
           OPTIONS: res.data
+        }, () => {
+          this.filteredOptions()
         })
       }
     })
@@ -56,20 +58,28 @@ export default class SetRelationContent extends Component {
   }
 
   componentWillUnmount() {
-    this.initState()
+    // this.initState()
   }
 
-  handleChange = (e, relation) => {
-    console.log(e);
-    const { key } = e
-    // return
+  onSearch = (value) => {
+    this.filteredOptions(value)
+  }
+
+  onBlur = (value) => {
+    this.filteredOptions('')
+  }
+
+  handleChange = (selectedItems , relation) => {
+    // const { key } = e
+    const gold_name = selectedItems[0] ? selectedItems[0].split('_')[1] : '' || ''
+    const gold_id = selectedItems[0] ? selectedItems[0].split('_')[0] : '' || ''
+    if (!gold_id || !gold_name) return
     const { card_id } = this.props
-    if (!key) return
     this.props.dispatch({
       type: 'gantt/addCardRely',
       payload: {
         from_id: card_id,
-        to_id: key,
+        to_id: gold_id,
         relation: relation
       }
     }).then(res => {
@@ -80,7 +90,9 @@ export default class SetRelationContent extends Component {
             id: card_id
           }
         })
-        this.setState({ selectedItems: [key] });
+        this.setState({
+          selectedItems: []
+        });
       } else {
         this.setState({
           selectedItems: []
@@ -98,10 +110,14 @@ export default class SetRelationContent extends Component {
   onConfirm = ({ e, shouldDeleteId, relation }) => {
     e && e.stopPropagation()
     const { card_id, drawContent = {} } = this.props
-    const { currentItem: { data: { next = [] } } } = this.state
+    const { currentItem: { data = {},data: { next = [] } } } = this.state
     let new_next = next.filter(item => item.id != shouldDeleteId)
+    // return
     let new_drawContent = { ...drawContent }
-    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: new_drawContent['properties'], code: 'DEPENDENCY', value: new_next })
+    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: new_drawContent['properties'], code: 'DEPENDENCY', value: {
+      ...data,
+      next: new_next
+    } })
     this.props.dispatch({
       type: 'gantt/deleteCardRely',
       payload: {
@@ -145,20 +161,26 @@ export default class SetRelationContent extends Component {
   }
 
   // 过滤列表
-  filteredOptions = () => {
+  filteredOptions = (inputValue) => {
     const { selectedItems = [], OPTIONS = [], currentItem = {} } = this.state;
     const { id, data: { next = [] } } = currentItem
     let filteredOptions = []
     filteredOptions = OPTIONS.filter(o => !selectedItems.includes(o.id));
+    if (inputValue) {
+      filteredOptions = OPTIONS.filter(o => o.name.indexOf(inputValue) != -1);
+    }
     filteredOptions = filteredOptions.filter(o => !next.find(i => i.id == o.id))
-    return filteredOptions
+    this.setState({
+      filteredOptions
+    })
+    // return filteredOptions
   }
 
   render() {
     const { onlyShowPopoverContent } = this.props
-    const { selectedItems = [], OPTIONS = [], currentItem = {} } = this.state;
+    const { selectedItems = [], OPTIONS = [], currentItem = {}, filteredOptions = [] } = this.state;
     const { id, data: { next = [] } } = currentItem
-    let filteredOptions = this.filteredOptions()
+    // let filteredOptions = this.filteredOptions(inputValue)
     return (
       <div className={`${indexStyles.setRelationContainer} ${onlyShowPopoverContent && indexStyles.setRelationContainer1}`}>
         <div className={indexStyles.setRelationItem}>
@@ -179,12 +201,14 @@ export default class SetRelationContent extends Component {
                 <Select
                   getPopupContainer={triggerNode => triggerNode.parentNode}
                   mode="multiple"
+                  onSearch={this.onSearch}
                   value={selectedItems}
-                  // onChange={this.handleChange}
+                  onBlur={this.onBlur}
+                  onChange={(e) => { this.handleChange(e, 'end_start') }}
                   placeholder={`添加${currentNounPlanFilterName(TASKS)}依赖`}
                   className={indexStyles.setRela_select}>
                   {filteredOptions.map(item => (
-                    <Select.Option onClick={(e) => { this.handleChange(e, 'end_start') }} key={item.id} value={item.id}>
+                    <Select.Option key={`${item.id}`} value={`${item.id}_${item.name}`}>
                       <div className={indexStyles.setRela_select_option}>
                         <div>
                           <span className={`${item.type == '3' ? indexStyles.setRela_task_icon : item.type == '2' ? indexStyles.setRela_flow_icon : ''} ${globalStyles.authTheme}`}><span>{this.renderRelationItemIcon(item.type).icon}</span>{this.renderRelationItemIcon(item.type).dec}</span>
@@ -239,12 +263,14 @@ export default class SetRelationContent extends Component {
                 <Select
                   getPopupContainer={triggerNode => triggerNode.parentNode}
                   mode="multiple"
+                  onSearch={this.onSearch}
                   value={selectedItems}
-                  // onChange={this.handleChange}
+                  onBlur={this.onBlur}
+                  onChange={(e) => { this.handleChange(e, 'end_end') }}
                   placeholder={`添加${currentNounPlanFilterName(TASKS)}依赖`}
                   className={indexStyles.setRela_select}>
                   {filteredOptions.map(item => (
-                    <Select.Option onClick={(e) => { this.handleChange(e, 'end_end') }} key={item.id} value={item.id}>
+                    <Select.Option key={item.id} value={`${item.id}_${item.name}`}>
                       <div className={indexStyles.setRela_select_option}>
                         <div>
                           <span className={`${item.type == '3' ? indexStyles.setRela_task_icon : item.type == '2' ? indexStyles.setRela_flow_icon : ''} ${globalStyles.authTheme}`}><span>{this.renderRelationItemIcon(item.type).icon}</span>{this.renderRelationItemIcon(item.type).dec}</span>
