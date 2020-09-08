@@ -7,7 +7,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import CheckItem from '@/components/CheckItem'
 import AvatarList from '@/components/avatarList'
 import { Tooltip, Dropdown, message } from 'antd'
-import { date_area_height, task_item_height, task_item_margin_top, ganttIsFold, ceil_height_fold, task_item_height_fold, group_rows_fold, ganttIsOutlineView, ceil_width, ceil_height } from './constants'
+import { date_area_height, task_item_height, task_item_margin_top, ganttIsFold, ceil_height_fold, task_item_height_fold, group_rows_fold, ganttIsOutlineView, ceil_width, ceil_height, gantt_panel_left_diff } from './constants'
 import CardDropDetail from './components/gattFaceCardItem/CardDropDetail'
 import QueueAnim from 'rc-queue-anim'
 import GetRowTaskItem from './components/CardItem/index'
@@ -22,8 +22,6 @@ import GetRowStrip from './components/GetRowStrip'
 import { isSamDay, timestampToTimeNormal, timestampToTime } from '../../../../utils/util';
 import SvgArea from './components/SvgArea'
 const clientWidth = document.documentElement.clientWidth;//获取页面可见高度
-const coperatedX = 0 //80 //鼠标移动和拖拽的修正位置
-const coperatedLeftDiv = 297 //滚动条左边还有一个div的宽度，作为修正
 const dateAreaHeight = date_area_height //日期区域高度，作为修正
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
@@ -95,9 +93,9 @@ export default class GetRowGantt extends Component {
   setGanttCardOutOffsetLeft = () => {
     const { is_need_calculate_left_dx } = this.props
     if (!is_need_calculate_left_dx) { //如果不需要计算做边距，从引用甘特图组件的地方设置
-      this.setState({
-        coperatedX: 0
-      })
+      // this.setState({
+      //   gantt_panel_left_diff: 0
+      // })
       return
     }
     const getPoint = (obj, e) => { //获取某元素以浏览器左上角为原点的坐标
@@ -110,9 +108,9 @@ export default class GetRowGantt extends Component {
     }
     const element = document.getElementById('gantt_card_out')
     const card_offset_left = getPoint(element)
-    this.setState({
-      coperatedX: card_offset_left
-    })
+    // this.setState({
+    //   gantt_panel_left_diff: card_offset_left
+    // })
   }
 
   componentWillReceiveProps(nextProps) {
@@ -173,14 +171,14 @@ export default class GetRowGantt extends Component {
     }
     this.setDragCreating(true)
 
-    const { gantt_view_mode, ceilWidth } = this.props
+    const { gantt_view_mode, ceilWidth, gantt_head_width } = this.props
 
     const target_0 = document.getElementById('gantt_card_out')
     const target_1 = document.getElementById('gantt_card_out_middle')
     const target = this.refs.gantt_operate_area_panel//event.target || event.srcElement;
-    const { coperatedX } = this.state
+    // const { gantt_panel_left_diff } = this.state
     // 取得鼠标位置
-    const x = e.pageX - target_0.offsetLeft + target_1.scrollLeft - coperatedLeftDiv - coperatedX
+    const x = e.pageX - target_0.offsetLeft + target_1.scrollLeft - gantt_head_width - gantt_panel_left_diff
     const y = e.pageY - target.offsetTop + target_1.scrollTop - dateAreaHeight
     //设置宽度
     const offset_left = Math.abs(x - this.x1);
@@ -228,7 +226,7 @@ export default class GetRowGantt extends Component {
 
   //鼠标移动
   dashedMouseMove = (e) => {
-    const { dataAreaRealHeight, gantt_board_id, group_view_type, show_board_fold, gantt_view_mode } = this.props
+    const { dataAreaRealHeight, gantt_board_id, group_view_type, show_board_fold, gantt_view_mode, gantt_head_width } = this.props
     const { drag_creating } = this.state
     if (e.target.offsetTop >= dataAreaRealHeight) return //在全部分组外的其他区域（在创建项目那一栏）
     if (
@@ -250,7 +248,7 @@ export default class GetRowGantt extends Component {
     if (this.state.isMouseDown) { //按下的情况不处理
       return false
     }
-    const { dasheRectShow, coperatedX } = this.state
+    const { dasheRectShow } = this.state
     if (!dasheRectShow) {
       this.setState({
         dasheRectShow: true
@@ -260,7 +258,7 @@ export default class GetRowGantt extends Component {
     const target_0 = document.getElementById('gantt_card_out')
     const target_1 = document.getElementById('gantt_card_out_middle')
     // 取得鼠标位置
-    let px = e.pageX - target_0.offsetLeft + target_1.scrollLeft - coperatedLeftDiv - coperatedX
+    let px = e.pageX - target_0.offsetLeft + target_1.scrollLeft - gantt_head_width - gantt_panel_left_diff
     let py = e.pageY - target_0.offsetTop + target_1.scrollTop - dateAreaHeight
 
     const molX = px % ceilWidth
@@ -816,7 +814,6 @@ export default class GetRowGantt extends Component {
               return parent_expand && (
                 <React.Fragment key={`${id}_${top}`}>
                   <GetRowStrip itemValue={value}
-                    coperatedX={this.state.coperatedX}
                     deleteOutLineTreeNode={this.props.deleteOutLineTreeNode}
                     addTaskModalVisibleChange={this.props.addTaskModalVisibleChange}
                     setGoldDateArr={this.props.setGoldDateArr}
@@ -856,7 +853,8 @@ function mapStateToProps({ gantt: {
     group_list_area_section_height,
     show_board_fold,
     outline_tree_round,
-    gantt_view_mode
+    gantt_view_mode,
+    gantt_head_width
   } },
   technological: {
     datas: {
@@ -881,7 +879,8 @@ function mapStateToProps({ gantt: {
     show_board_fold,
     userBoardPermissions,
     outline_tree_round,
-    gantt_view_mode
+    gantt_view_mode,
+    gantt_head_width
   }
 }
 

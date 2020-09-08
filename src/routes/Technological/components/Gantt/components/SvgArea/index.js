@@ -4,6 +4,7 @@ import styles from './index.less'
 import { Popconfirm, Modal, Popover } from 'antd'
 import { ganttIsOutlineView, task_item_height, task_item_margin_top, date_area_height } from '../../constants'
 import PathOperateContent from './PathOperateContent'
+
 const rely_map = [
     {
         "id": "1265111963571195904",
@@ -22,7 +23,6 @@ const rely_map = [
         ]
     },
 ]
-const coperatedLeftDiv = 297 //滚动条左边还有一个div的宽度，作为修正
 const dateAreaHeight = date_area_height //日期区域高度，作为修正
 // 60 40 20
 const width_diff = 4//8 //宽度误差微调
@@ -496,6 +496,7 @@ export default class index extends Component {
     listenClick = (e) => {
         const { pageX, pageY, } = e
         const { dataset = {} } = e.target
+        const { gantt_head_width } = this.props
         if (dataset.svg_operate === 'yes') { //落点在操作区域
             return
         }
@@ -509,7 +510,7 @@ export default class index extends Component {
         const target_1 = document.getElementById('gantt_card_out_middle')
         const target = e.target
         // 取得鼠标位置
-        const x = pageX - target_0.offsetLeft + target_1.scrollLeft - coperatedLeftDiv
+        const x = pageX - target_0.offsetLeft + target_1.scrollLeft - gantt_head_width
         const y = pageY - target_0.offsetTop + target_1.scrollTop - dateAreaHeight
         this.setState({
             operate_visible: true,
@@ -733,7 +734,8 @@ function mapStateToProps({ gantt: {
         list_group = [],
         date_total,
         ceiHeight,
-        rely_map
+        rely_map,
+        gantt_head_width
     } },
 }) {
     return {
@@ -745,6 +747,7 @@ function mapStateToProps({ gantt: {
         list_group,
         date_total,
         ceiHeight,
-        rely_map
+        rely_map,
+        gantt_head_width
     }
 }

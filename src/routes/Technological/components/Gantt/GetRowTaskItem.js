@@ -15,8 +15,6 @@ import { transformTimestamp, isSamDay } from '../../../../utils/util'
 // 参考自http://www.jq22.com/webqd1348
 
 // const dateAreaHeight = date_area_height //日期区域高度，作为修正
-// const coperatedLeftDiv = 20 //滚动条左边还有一个div的宽度，作为修正
-// const coperatedX = 0
 const card_width_diff = 8 //宽度误差微调
 const card_left_diff = 4 //位置误差微调
 @connect(mapStateToProps)
@@ -271,7 +269,7 @@ export default class GetRowTaskItem extends Component {
         // const target_1 = document.getElementById('gantt_card_out_middle')
         // const target = this.out_ref.current//event.target || event.srcElement;
         // // 取得鼠标位置
-        // const x = e.pageX - target_0.offsetLeft + target_1.scrollLeft - coperatedLeftDiv - coperatedX
+        // const x = e.pageX - target_0.offsetLeft + target_1.scrollLeft - gantt_head_width - gantt_panel_left_diff
         // const y = e.pageY - target.offsetTop + target_1.scrollTop - dateAreaHeight
 
         //获取x和y

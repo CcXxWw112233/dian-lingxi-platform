@@ -5,7 +5,7 @@ import { getModelSelectDatasState } from "../../utils"
 import { message } from "antd"
 import OutlineTree from '@/routes/Technological/components/Gantt/components/OutlineTree';
 import { getProcessTemplateList } from "../../../services/technological/workFlow";
-import { ganttIsOutlineView } from "../../../routes/Technological/components/Gantt/constants"
+import { ganttIsOutlineView, gantt_head_width_init } from "../../../routes/Technological/components/Gantt/constants"
 // F:\work\newdicolla-platform\src\routes\Technological\components\Gantt\components\OutlineTree\index.js
 const is_schedule = (start_time, due_time) => {
     if ((!!start_time && !!Number(start_time)) || (!!due_time && !!Number(due_time))) {
@@ -15,6 +15,7 @@ const is_schedule = (start_time, due_time) => {
 }
 export default {
     state: {
+        gantt_head_width: gantt_head_width_init,
         rely_map: [],
         proccess_templates: [],
         triggle_request_board_template: false, //大纲视图保存为项目模板后，触发为true，右边模板列表接收到变化会触发查询
@@ -146,7 +147,7 @@ export default {
             //     { id: '1266250771897389056', start_time: '1589990400', due_time: '1590768000' },
             //     { id: '1266250784136368128', start_time: '1590595200', due_time: '1590854400' }
             // ]
-            
+
             const { datas = [], origin_list_group } = payload
             const list_group = yield select(getModelSelectDatasState('gantt', 'list_group'))
             const list_group_new = Object.prototype.toString.call(origin_list_group) == '[object Array]' ? origin_list_group : [...list_group]

@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
 import indexStyles from './index.less'
-import { date_area_height } from '../../constants'
+import { date_area_height, gantt_panel_left_diff } from '../../constants'
 import { message } from 'antd'
+import { connect } from 'dva'
+
 const dateAreaHeight = date_area_height //日期区域高度，作为修正
-const coperatedLeftDiv = 297 //滚动条左边还有一个div的宽度，作为修正
-const coperatedX = 0
+@connect(mapStateToProps)
 class HoverEars extends Component {
     constructor(props) {
         super(props)
@@ -29,9 +30,10 @@ class HoverEars extends Component {
         const target_0 = document.getElementById('gantt_card_out')
         const target_1 = document.getElementById('gantt_card_out_middle')
         const target = this.left_circle_ref.current
+        const { gantt_head_width } = this.props
         // 取得鼠标位置
-        const x = e.pageX - target_0.offsetLeft + target_1.scrollLeft - coperatedLeftDiv - coperatedX
-        const y = e.pageY + target_1.scrollTop - dateAreaHeight //- target.offsetTop
+        const x = e.pageX - target_0.offsetLeft + target_1.scrollLeft - gantt_head_width - gantt_panel_left_diff
+        const y = e.pageY + target_1.scrollTop - dateAreaHeight - target_0.offsetTop
         return {
             x, y
         }
@@ -42,7 +44,7 @@ class HoverEars extends Component {
         document.onmouseup = this.onMouseup.bind(this);
         const { x, y } = this.getXY(e)
         const target_ref = e.target.dataset.ref
-        const { itemValue: { width }, setRelyLineDrawing } = this.props
+        const { itemValue: { width, top, left }, setRelyLineDrawing } = this.props
         if (target_ref == 'left_circle_ref') {
             this.setState({
                 x1: -10,
@@ -56,12 +58,12 @@ class HoverEars extends Component {
         } else if (target_ref == 'right_circle_ref') {
             this.setState({
                 x1: width + 46,
-                y1: 8,
+                y1: 1,
                 transformOrigin: `${width + 46} ${8}`,
-                move_to: 'end'
+                move_to: 'end',
             })
-            this.rela_x = x //+ 10
-            this.rela_y = y // - 20
+            this.rela_x = left + width + 52 //x 
+            this.rela_y = top + 12 + 1  //y
 
         } else {
 
@@ -74,17 +76,17 @@ class HoverEars extends Component {
         const { x, y } = this.getXY(e)
         let x2 = x - this.rela_x //- 10 // - 10是为了让鼠标不落在箭头上
         let y2 = y - this.rela_y //- 10
-        const diff = 14
-        if (x2 < 0) {
-            x2 = x2 + diff //+ 18
-        } else {
-            x2 = x2 - diff//- 18
-        }
-        if (y2 < 0) {
-            y2 = y2 + diff// + 18
-        } else {
-            y2 = y2 - diff //- 18
-        }
+        // const diff = 14
+        // if (x2 < 0) {
+        //     x2 = x2 + diff //+ 18
+        // } else {
+        //     x2 = x2 - diff//- 18
+        // }
+        // if (y2 < 0) {
+        //     y2 = y2 + diff// + 18
+        // } else {
+        //     y2 = y2 - diff //- 18
+        // }
         const { angle, length } = this.calHypotenuse({ x2, y2 })
         this.setState({
             angle, length, x2, y2
@@ -276,7 +278,7 @@ class HoverEars extends Component {
                     style={{
                         top: y1,
                         left: x1,
-                        height: length,
+                        height: length ? length - 11 : 0,
                         transform: `rotate(${angle}deg)`,
                         transformOrigin,
                     }}
@@ -284,10 +286,11 @@ class HoverEars extends Component {
                     {
                         rely_down && (
                             <div className={indexStyles.triangle_down}
-                                style={{
-                                    top: '100%',
-                                    left: '100%',
-                                }} />
+                            // style={{
+                            //     // top: '100%',
+                            //     // left: '100%',
+                            // }} 
+                            />
                         )
                     }
 
@@ -299,3 +302,14 @@ class HoverEars extends Component {
 }
 
 export default HoverEars
+
+function mapStateToProps({ gantt: {
+    datas: {
+        gantt_head_width
+    }
+}
+}) {
+    return {
+        gantt_head_width
+    }
+}

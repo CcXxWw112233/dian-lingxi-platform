@@ -24,6 +24,7 @@ import CardDetailDrawer from './components/CardDetailDrawer'
 import CustomFieldDetailDrawer from './components/CardDetailDrawer/CustomFieldDetailDrawer'
 import { isApiResponseOk } from '../../../../utils/handleResponseData';
 import _ from 'lodash'
+import HeaderWidthTriggle from './components/HeaderWidthTriggle'
 
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
@@ -528,7 +529,7 @@ export default class GanttFace extends Component {
           /> */}
           {/* <DateList /> */}
           <div className={indexStyles.board}>
-            <div className={indexStyles.board_head} style={{ height: gantt_card_height - 20 }}>
+            <div className={indexStyles.board_head} id={'gantt_header_wapper'} style={{ height: gantt_card_height - 20 }}>
               <GroupListHeadSet />
               {/*  //撑住DateList相同高度的底部 */}
               <GroupListHead
@@ -541,6 +542,8 @@ export default class GanttFace extends Component {
                 setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
                 gantt_card_height={gantt_card_height}
                 dataAreaRealHeight={dataAreaRealHeight} />
+              <HeaderWidthTriggle gantt_card_height={gantt_card_height} />
+
               {/* <GroupListHeadElse gantt_card_height={gantt_card_height} dataAreaRealHeight={dataAreaRealHeight} /> */}
               {/* <GroupListHeadSetBottom /> */}
             </div>
@@ -560,6 +563,7 @@ export default class GanttFace extends Component {
                 id={'gantt_card_out_middle'}
                 ref={'gantt_card_out_middle'}
                 onMouseEnter={() => this.setScrollArea('gantt_body')}
+                onTouchStart={() => this.setScrollArea('gantt_body')}
                 onScroll={this.ganttScroll}
               >
                 <div className={indexStyles.panel}>
@@ -583,7 +587,7 @@ export default class GanttFace extends Component {
                   </div>
                   <CardDetailDrawer {...this.props.task_detail_props} />
                   {/* 查看更多字段 */}
-                  <CustomFieldDetailDrawer selected_more_field_visible={this.props.selected_more_field_visible} />
+                  <CustomFieldDetailDrawer />
                 </div>
                 <GetRowGanttItemElse gantt_card_height={gantt_card_height} dataAreaRealHeight={dataAreaRealHeight} />
 
@@ -623,8 +627,7 @@ function mapStateToProps({ gantt: { datas: {
   gantt_view_mode,
   get_gantt_data_loading_other
 } },
-publicTaskDetailModal: { selected_more_field_visible },
-technological: { datas: { currentUserOrganizes = [] } },
+  technological: { datas: { currentUserOrganizes = [] } },
 }) {
   return {
     ceilWidth,
@@ -642,7 +645,6 @@ technological: { datas: { currentUserOrganizes = [] } },
     outline_tree,
     gantt_view_mode,
     get_gantt_data_loading_other,
-    selected_more_field_visible,
     currentUserOrganizes,
   }
 }

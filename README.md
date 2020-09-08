@@ -2,27 +2,6 @@
 初始创建项目配置
 // "dva": "^2.3.1",
 
-//递归在文档模块的文件夹移动复制
-
-## hyf_交接说明
-
-### 负责的功能模块
-
-#### 数据层
-
-没有负责独立模块的数据层设计。
-只是在个别的 model 中加入一些字段。
-
-基本上是修改页面的某些组件，所以更多的是一个“切图仔”的角色 :)
-
-#### 页面和组件
-
-##### 页面
-
-- src\routes\Technological\components\Project\index.js 项目首页，页面样式和结构调整，数据层封装和引入沿用之前的风格
-    - src\routes\Technological\components\Project\ProjectItems.js - 项目 items 组件，样式调整， item 内容沿用之前的
-    - src\routes\Technological\components\Project\ProjectMenu.js - 项目菜单组件，渲染项目树 
-
 ##### 组件
 
 - src\routes\Technological\components\InviteOthers\index.js - 项目邀请成员加入组件

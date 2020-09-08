@@ -49,7 +49,7 @@ export default class MenuSearchPartner extends React.Component {
 		this.initSet(this.props)
 	}
 	componentWillReceiveProps(nextProps) {
-		this.initSet(nextProps)
+		// this.initSet(nextProps)
 	}
 	//模糊查询
 	handleMenuReallySelect = (e) => {
@@ -66,11 +66,13 @@ export default class MenuSearchPartner extends React.Component {
 		this.setState({
 			selectedKeys
 		}, () => {
-			const { listData = [], searchName } = this.props
+			const { listData = [], searchName, single } = this.props
 			const { keyWord } = this.state
-			this.setState({
-				resultArr: this.fuzzyQuery(listData, searchName, keyWord),
-			})
+			if (!single) { //多选才排序
+				this.setState({
+					resultArr: this.fuzzyQuery(listData, searchName, keyWord),
+				})
+			}
 		})
 		this.props.chirldrenTaskChargeChange && this.props.chirldrenTaskChargeChange({ selectedKeys, key, type })
 	}
@@ -328,7 +330,8 @@ export default class MenuSearchPartner extends React.Component {
 			not_show_wechat_invite,
 			board_id,
 			user_defined_icon,
-			show_select_all
+			show_select_all,
+			single
 		} = this.props
 		// const { Inputlaceholder = '搜索', searchName, menuSearchSingleSpinning, keyCode, invitationType, invitationId, rela_Condition, invitationOrg, board_id } = this.props
 
@@ -337,7 +340,7 @@ export default class MenuSearchPartner extends React.Component {
 				<Menu style={{ padding: '8px 0px', boxShadow: '0px 2px 8px 0px rgba(0,0,0,0.15)', maxWidth: 200, }}
 					selectedKeys={selectedKeys}
 					onDeselect={this.handleMenuReallyDeselect.bind(this)}
-					onSelect={this.handleMenuReallySelect} multiple >
+					onSelect={this.handleMenuReallySelect} multiple={!single}>
 
 					<div style={{ margin: '0 10px 10px 10px', position: 'relative' }}>
 						<Input style={{ paddingRight: showUserDefinedIconVisible && '38px' }} placeholder={Inputlaceholder} value={keyWord} onChange={this.onChange.bind(this)} />
@@ -450,6 +453,7 @@ MenuSearchPartner.deafultProps = {
 	},
 	show_select_all: false, //默认不显示邀请全部
 	select_all_type: '0', //0默认抛出全部key, 1争对任务设置负责人，只能单点一个就调用接口设置或删除。
+	single: false, //默认多选，是否单选
 }
 
 

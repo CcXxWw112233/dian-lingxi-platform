@@ -1,5 +1,7 @@
 import { timeToTimestamp } from "../../../../utils/util"
 
+const current_date = new Date()
+const current_date_timestamp = current_date.getTime()
 
 //时间戳转换为日期
 function timestampToTime(timestamp, flag) {
@@ -54,6 +56,7 @@ function setWeekData({ timestamp, type }) {
         date_no: `${month_0 != month_1 ? month_0 + '/' : ''}${date_no_0}-${date_no_1}`,// `${month_0}/${date_no_0}-${month_1}/${date_no_1}`,
         description: `${year_1}年${month_1}月`
       }
+      obj.include_today = (timeToTimestamp(MonDayTimeTranslate + ' ' + '0:0:0')) <= current_date_timestamp && (timeToTimestamp(SundayTimeTranslate + ' ' + '23:59:59') >= current_date_timestamp)
       weekData.push(obj)
     }
   }
@@ -91,6 +94,7 @@ function setWeekData({ timestamp, type }) {
         date_no: `${month_0 != month_1 ? month_0 + '/' : ''}${date_no_0}-${date_no_1}`,//`${month_0}/${date_no_0}-${month_1}/${date_no_1}`,
         description: `${year_1}年${month_1}月`
       }
+      obj.include_today = (timeToTimestamp(MonDayTimeTranslate + ' ' + '0:0:0')) <= current_date_timestamp && (timeToTimestamp(SundayTimeTranslate + ' ' + '23:59:59') >= current_date_timestamp)
       weekData2.push(obj)
     }
   }
