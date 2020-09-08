@@ -651,6 +651,9 @@ const LogicWithMainContent = {
                   drawContent: new_drawContent
                 }
               })
+              if (!(gold_executor && gold_executor.length)) {
+                that.props.handleTaskDetailChange && that.props.handleTaskDetailChange({ card_id, drawContent: new_drawContent, operate_properties_code: 'EXECUTOR' })
+              }
               that.deleteCodeCalback(code, new_drawContent)
             }
           })
