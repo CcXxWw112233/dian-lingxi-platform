@@ -167,13 +167,11 @@ export default class SetRelationContent extends Component {
     const { selectedItems = [], OPTIONS = [], currentItem = {} } = this.state;
     const { id, data: { next = [] } } = currentItem
     let filteredOptions = []
-    console.log(selectedItems);
     filteredOptions = OPTIONS.filter(o => !selectedItems.includes(o.id));
     if (inputValue) {
       filteredOptions = OPTIONS.filter(o => o.name.indexOf(inputValue) != -1);
     }
     filteredOptions = filteredOptions.filter(o => !next.find(i => i.id == o.id))
-    console.log(filteredOptions);
     this.setState({
       filteredOptions
     }, () => {
