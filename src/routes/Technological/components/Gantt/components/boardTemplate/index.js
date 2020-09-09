@@ -468,7 +468,7 @@ export default class BoardTemplate extends Component {
         if (!event.target.className) return
         event.preventDefault();
         try {
-
+            const { gantt_head_width } = this.props
             if (event.target.id == 'gantt_svg_area') {
                 const { x, y } = getXYDropPosition(event, { gantt_head_width })
                 const { ceilWidth, group_list_area_section_height, date_arr_one_level = [], list_group = [] } = this.props
