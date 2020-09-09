@@ -315,6 +315,16 @@ class Gantt extends Component {
         data: list_group_new
       }
     })
+    // 修改的是这些则更新分组头部信息
+    // if (['EXECUTOR'].includes(operate_properties_code) || (other_params ? ['is_realize', 'start_time', 'due_time'].includes(other_params.name) : false)) {
+    //   setTimeout(() => {
+    //     dispatch({
+    //       type: 'gantt/getGanttGroupElseInfo',
+    //       payload: {
+    //       }
+    //     })
+    //   }, 500);
+    // }
   }
 
   // 修改有排期的任务
@@ -358,13 +368,24 @@ class Gantt extends Component {
       if (Object.prototype.toString.call(other_params.rely_card_datas) == '[object Array]') {
         // setTimeout(() => {
         dispatch({
-          type: `gantt/${ganttIsOutlineView({ group_view_type }) ? 'updateOutLineTree' : 'updateListGroup'}`,
+          type: `gantt/updateListGroup`,
           payload: {
             datas: other_params.rely_card_datas
           }
         });
         // }, 1000)
       } else {
+        // 修改的是这些则更新分组头部信息
+        if (['EXECUTOR'].includes(operate_properties_code) || (other_params ? ['is_realize', 'start_time', 'due_time'].includes(other_params.name) : false)) {
+          dispatch({
+            type: `gantt/updateListGroup`,
+            payload: {
+              datas: [{ ...new_drawContent, id: card_id }]
+            }
+          });
+          return
+        }
+
         const { list_group = [], current_list_group_id } = this.props
         const list_group_new = [...list_group]
         const group_index = list_group_new.findIndex(item => item.lane_id == current_list_group_id)

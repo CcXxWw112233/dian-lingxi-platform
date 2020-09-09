@@ -1,5 +1,5 @@
 import request from '../../utils/requestAxios'
-import { REQUEST_DOMAIN, REQUEST_DOMAIN_BOARD, REQUEST_DOMAIN_WORK_BENCH, REQUEST_DOMAIN_ARTICLE, WE_APP_ID, REQUEST_DOMAIN_FLOWS, REQUEST_DOMAIN_TEAM_SHOW } from '../../globalset/js/constant'
+import { REQUEST_DOMAIN, REQUEST_DOMAIN_BOARD, REQUEST_DOMAIN_WORK_BENCH, REQUEST_DOMAIN_ARTICLE, WE_APP_ID, REQUEST_DOMAIN_FLOWS, REQUEST_DOMAIN_TEAM_SHOW, REQUEST_INTERGFACE_VERSIONN } from '../../globalset/js/constant'
 import Cookies from 'js-cookie'
 import { getGlobalData } from '../../utils/businessFunction';
 
@@ -141,4 +141,13 @@ export async function cancleToofTopBoardCardGroup(data) {
     method: 'DELETE',
     data
   })
+}
+
+//获取甘特图头部的其它信息
+export async function getGanttGroupElseInfo(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt_chart/progress`,
+    method: 'GET',
+    params
+  }, { isNotLoading: true })
 }

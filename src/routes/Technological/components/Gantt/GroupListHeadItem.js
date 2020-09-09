@@ -1282,7 +1282,7 @@ export default class GroupListHeadItem extends Component {
 
               </div>
               <div className={`${indexStyles.list_head_top_right}`}>
-                <span className={indexStyles.list_head_top_right_progress}>{lane_progress_percent.substring(0, lane_progress_percent.length - 1)}</span>
+                <span className={indexStyles.list_head_top_right_progress}>{lane_progress_percent || 0}</span>
                 <span>%</span>
               </div>
             </div>

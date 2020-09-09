@@ -1,11 +1,12 @@
 import { addCardRely, deleteCardRely, updateCardRely, getCardRelys } from "../../../services/technological/task"
-import { saveGanttOutlineSort } from "../../../services/technological/gantt"
+import { saveGanttOutlineSort, getGanttGroupElseInfo } from "../../../services/technological/gantt"
 import { isApiResponseOk } from "../../../utils/handleResponseData"
 import { getModelSelectDatasState } from "../../utils"
 import { message } from "antd"
 import OutlineTree from '@/routes/Technological/components/Gantt/components/OutlineTree';
 import { getProcessTemplateList } from "../../../services/technological/workFlow";
 import { ganttIsOutlineView, gantt_head_width_init } from "../../../routes/Technological/components/Gantt/constants"
+import { delayInGenerator } from "../../../utils/util"
 // F:\work\newdicolla-platform\src\routes\Technological\components\Gantt\components\OutlineTree\index.js
 const is_schedule = (start_time, due_time) => {
     if ((!!start_time && !!Number(start_time)) || (!!due_time && !!Number(due_time))) {
@@ -139,7 +140,30 @@ export default {
 
             }
         },
-
+        // 获取分组头部的其它信息（百分比进度，人员）
+        * getGanttGroupElseInfo({ payload = {} }, { select, call, put }) {
+            const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id'))
+            const current_list_group_id = yield select(getModelSelectDatasState('gantt', 'current_list_group_id'))
+            const list_group = yield select(getModelSelectDatasState('gantt', 'list_group'))
+            let params = {}
+            if (gantt_board_id == '0') {
+                params = {
+                    board_id: current_list_group_id
+                }
+            } else {
+                params = {
+                    board_id: gantt_board_id, list_id: current_list_group_id
+                }
+            }
+            const res = yield call(getGanttGroupElseInfo, { ...params })
+            if (isApiResponseOk(res)) {
+                const index = list_group.findIndex(item => item.list_id == current_list_group_id)
+                for (let key in res.data) {
+                    list_group[index][key] = res.data[key]
+                }
+            }
+            return list_group
+        },
         // 分组视图下跟新任务
         * updateListGroup({ payload = {} }, { select, call, put }) {
             // return
@@ -150,7 +174,14 @@ export default {
 
             const { datas = [], origin_list_group } = payload
             const list_group = yield select(getModelSelectDatasState('gantt', 'list_group'))
-            const list_group_new = Object.prototype.toString.call(origin_list_group) == '[object Array]' ? origin_list_group : [...list_group]
+            let list_group_new = Object.prototype.toString.call(origin_list_group) == '[object Array]' ? origin_list_group : [...list_group]
+            const Aa = yield put({
+                type: 'getGanttGroupElseInfo',
+            })
+            const transform_list_group = () => new Promise(resolve => {
+                resolve(Aa.then())
+            })
+            list_group_new = yield call(transform_list_group) || list_group_new
             for (let val of datas) {
                 const has_time = is_schedule(val.start_time, val.due_time) //存在时间
                 for (let val2 of list_group_new) {
@@ -185,7 +216,7 @@ export default {
                     data: list_group_new
                 }
             })
-
+            
         },
         // // 分组视图下跟新任务
         // * updateListGroup({ payload = {} }, { select, call, put }) {

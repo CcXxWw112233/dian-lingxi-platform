@@ -848,3 +848,9 @@ export const timestampFormat = (millisecond, format) => {
     return null
   }
 }
+
+export const delayInGenerator = (ms) => new Promise(resolve => {
+  setTimeout(() => {
+    resolve()
+  }, ms)
+})
