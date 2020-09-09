@@ -4,6 +4,7 @@ import { connect } from 'dva'
 import Draggable from 'react-draggable';
 import { gantt_panel_left_diff, date_area_height } from '../../constants';
 
+const body = document.querySelector('body')
 @connect(mapStateToProps)
 export default class index extends Component {
     constructor(props) {
@@ -47,8 +48,14 @@ export default class index extends Component {
         const target = document.getElementById('gantt_header_wapper')
         const gantt_card_out = document.getElementById('gantt_card_out')
         const gantt_card_out_offsetLeft = gantt_card_out.offsetLeft
-        const width = pageX - gantt_card_out_offsetLeft - gantt_panel_left_diff
-        if (width > 380 || width < 180) return
+        let width = pageX - gantt_card_out_offsetLeft - gantt_panel_left_diff
+        if (width > body.clientWidth / 2) {
+            width = body.clientWidth / 2
+        } else if (width < 120) {
+            width = 120
+        } else {
+
+        }
         target.style.width = `${width}px`
         this.cal_width = width
     }
@@ -74,7 +81,7 @@ export default class index extends Component {
     }
     handleDrag = (e) => {
         if (this.state.drag_lock) return
-        const pageX = (e.pageX !== undefined) ? e.pageX : (e.changedTouches ? e.changedTouches[0].pageX : 280)
+        const pageX = (e.pageX !== undefined) ? e.pageX : (e.changedTouches ? e.changedTouches[0].pageX : 120)
         this.set_gantt_header_wapper_width(pageX)
     }
     handleStop = (e) => {

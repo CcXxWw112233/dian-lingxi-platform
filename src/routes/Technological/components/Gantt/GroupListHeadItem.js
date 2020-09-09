@@ -1334,9 +1334,9 @@ export default class GroupListHeadItem extends Component {
               {
                 (group_view_type == '1' && list_id != '0' && !show_edit_input) && (
                   is_star == '0' ? (
-                    <div className={globalStyle.authTheme} title={'置顶'} onClick={() => this.roofTop('1')} style={{ marginLeft: 10, fontSize: 16, color: 'rgba(0,0,0,.25)' }}>&#xe7e3;</div>
+                    <div className={globalStyle.authTheme} title={'置顶'} onClick={() => this.roofTop('1')} style={{ marginLeft: 10, fontSize: 16, color: 'rgb(255, 169, 64)' }}>&#xe7e3;</div>
                   ) : (
-                      <div className={globalStyle.authTheme} title={'取消置顶'} onClick={() => this.roofTop('0')} style={{ marginLeft: 10, fontSize: 16, color: 'rgba(0,0,0,.25)' }}>&#xe86e;</div>
+                      <div className={globalStyle.authTheme} title={'取消置顶'} onClick={() => this.roofTop('0')} style={{ marginLeft: 10, fontSize: 16, color: 'rgb(255, 169, 64)' }}>&#xe86e;</div>
                     )
                 )
               }
