@@ -173,6 +173,21 @@ class Gantt extends Component {
         not_set_scroll_top: true
       }
     })
+
+    setTimeout(async () => {
+      const list_group_ = await dispatch({
+        type: 'gantt/getGanttGroupElseInfo',
+        payload: {
+          list_id: current_list_group_id
+        }
+      })
+      dispatch({
+        type: 'gantt/handleListGroup',
+        payload: {
+          data: list_group_
+        }
+      })
+    }, 2000)
   }
   handleGetNewTaskParams = (data) => {
     const { create_start_time, create_end_time, current_list_group_id, gantt_board_id, group_view_type, panel_outline_create_card_params, gantt_board_list_id, belong_group_row } = this.props

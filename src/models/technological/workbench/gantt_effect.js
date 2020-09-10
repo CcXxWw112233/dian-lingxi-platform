@@ -142,8 +142,12 @@ export default {
         },
         // 获取分组头部的其它信息（百分比进度，人员）
         * getGanttGroupElseInfo({ payload = {} }, { select, call, put }) {
+            const { list_id } = payload
             const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id'))
-            const current_list_group_id = yield select(getModelSelectDatasState('gantt', 'current_list_group_id'))
+            let current_list_group_id = yield select(getModelSelectDatasState('gantt', 'current_list_group_id'))
+            if (!!list_id) {
+                current_list_group_id = list_id
+            }
             const list_group = yield select(getModelSelectDatasState('gantt', 'list_group'))
             let params = {}
             if (gantt_board_id == '0') {
@@ -216,7 +220,7 @@ export default {
                     data: list_group_new
                 }
             })
-            
+
         },
         // // 分组视图下跟新任务
         // * updateListGroup({ payload = {} }, { select, call, put }) {
