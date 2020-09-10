@@ -821,7 +821,7 @@ export default class MainContent extends Component {
           start_up_type: start_time ? '2' : '1',
           plan_start_time: start_time ? start_time : '',
           flow_template_id: id,
-          board_id: REAUEST_BOARD_ID,
+          board_id: (REAUEST_BOARD_ID != 'undefined' && REAUEST_BOARD_ID != '0') ? REAUEST_BOARD_ID : BOARD_ID || board_id,
         }
       })
     ).then(res => {
@@ -851,12 +851,12 @@ export default class MainContent extends Component {
     e && e.stopPropagation()
     const { projectDetailInfoData: { board_id }, request_flows_params = {} } = this.props
     // setBoardIdStorage(board_id)
-    // let BOARD_ID = request_flows_params && request_flows_params.request_board_id
+    let BOARD_ID = request_flows_params && request_flows_params.request_board_id
     // let REAUEST_BOARD_ID = getGlobalData('storageCurrentOperateBoardId')
     this.setState({
       isCreateProcessIng: true
     })
-    if (!checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_CREATE)) {
+    if (!checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_CREATE, BOARD_ID || board_id)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       this.setState({
         isCreateProcessIng: false

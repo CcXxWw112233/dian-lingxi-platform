@@ -61,7 +61,11 @@ export default class index extends Component {
           closable={true}
           className={styles.draw_field_detail}
         >
-          <CustomFields onlyShowPopoverContent={true} relations_fields={fields} org_id={org_id} handleAddCustomField={this.handleAddCustomField} />
+          {
+            selected_more_field_visible && (
+              <CustomFields onlyShowPopoverContent={true} relations_fields={fields} org_id={org_id} handleAddCustomField={this.handleAddCustomField} />
+            )
+          }
         </Drawer>
       </div>
     )

@@ -56,7 +56,7 @@ export default class MemberFieldContent extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!isArrayEqual(this.props.projectDetailInfoData.data, nextProps.projectDetailInfoData.data) || !isObjectValueEqual(this.props.itemValue, nextProps.itemValue)) {
+    if (!isArrayEqual(this.props.projectDetailInfoData.data, nextProps.projectDetailInfoData.data) || !isObjectValueEqual(this.props.itemValue, nextProps.itemValue) || !isArrayEqual(this.props.correspondingOrganizationMmembersList, nextProps.correspondingOrganizationMmembersList)) {
       this.setState({
         itemValue: nextProps.itemValue,
         itemKey: nextProps.itemKey,
@@ -255,7 +255,7 @@ export default class MemberFieldContent extends Component {
 
   render() {
     const { itemValue, itemKey, selected_memebers_value = [], boardMembersData = [], orgMembersData = [] } = this.state
-    const { field_id, id, field_value, field_content: { name, field_type, field_set: { member_selected_range } } } = itemValue
+    const { field_id, id, field_value, field_content: { name, field_type, field_set: { member_selected_range, member_selected_type } } } = itemValue
     const { onlyShowPopoverContent } = this.props
     let data = member_selected_range == '1' ? orgMembersData : JSON.parse(JSON.stringify(boardMembersData))
     return (
@@ -281,6 +281,7 @@ export default class MemberFieldContent extends Component {
                   <Dropdown trigger={['click']} overlayClassName={commonStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
                     overlay={
                       <MenuSearchPartner
+                        single={member_selected_type == '1' ? true : false}
                         isInvitation={true}
                         inviteOthersToBoardCalback={this.inviteOthersToBoardCalback}
                         listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={selected_memebers_value} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
@@ -298,6 +299,7 @@ export default class MemberFieldContent extends Component {
                     <Dropdown trigger={['click']} overlayClassName={commonStyles.overlay_pricipal} getPopupContainer={triggerNode => triggerNode.parentNode}
                       overlay={
                         <MenuSearchPartner
+                          single={member_selected_type == '1' ? true : false}
                           isInvitation={true}
                           // inviteOthersToBoardCalback={this.inviteOthersToBoardCalback}
                           listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={selected_memebers_value} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
