@@ -291,8 +291,8 @@ export default {
                     nodeValue[item] = data[item]
                 })
                 // 为了避免删除开始时间后，关闭弹窗再删除截至时间，大纲树结构item的time覆盖问题
-                if (!data.start_time) nodeValue['start_time'] = ''
-                if (!data.due_time) nodeValue['due_time'] = ''
+                // if (!data.start_time) nodeValue['start_time'] = ''
+                // if (!data.due_time) nodeValue['due_time'] = ''
             }
             for (let val of datas) {
                 const nodeValue = OutlineTree.getTreeNodeValueByName(outline_tree_, 'id', val.id);

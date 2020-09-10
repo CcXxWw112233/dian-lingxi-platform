@@ -192,7 +192,7 @@ export default class TreeNode extends Component {
     onPressEnter = (e) => {
 
         let { nodeValue = {} } = this.state;
-        nodeValue.name = e.target.value;
+        const value = e.target.value;
         const actions = (type) => {
             const obj = {
                 '1': 'milestone',
@@ -201,9 +201,10 @@ export default class TreeNode extends Component {
             }
             return obj[type]
         }
-        if (nodeValue.name) {
+        if (!!value) {
             let action;
             nodeValue.editing = false;
+            nodeValue.name = value
             if (this.props.placeholder) {
                 action = 'add_' + actions(this.props.type) //(this.props.type == '1' ? 'milestone' : 'task');
             } else {
@@ -212,7 +213,7 @@ export default class TreeNode extends Component {
             if (this.props.onDataProcess) {
                 this.props.onDataProcess({
                     action,
-                    param: { ...nodeValue, parentId: this.props.parentId },
+                    param: { name: value, id: nodeValue.id, parentId: this.props.parentId },
                     calback: () => {
                         // setTimeout(() => {
                         //     this.props.deleteOutLineTreeNode('', nodeValue.add_id) //失焦就没了
@@ -290,15 +291,17 @@ export default class TreeNode extends Component {
 
         this.setState({
             nodeValue: newNodeValue
+        }, () => {
+            let action = 'edit_' + (newNodeValue.tree_type == '1' ? 'milestone' : 'task');
+            //console.log("onManHourChange", value, action);
+            if (this.props.onDataProcess) {
+                this.props.onDataProcess({
+                    action,
+                    param: { start_time: newNodeValue.start_time, due_time: newNodeValue.due_time, time_span: new_value, id: nodeValue.id, parentId: this.props.parentId }
+                });
+            }
         });
-        let action = 'edit_' + (newNodeValue.tree_type == '1' ? 'milestone' : 'task');
-        //console.log("onManHourChange", value, action);
-        if (this.props.onDataProcess) {
-            this.props.onDataProcess({
-                action,
-                param: { ...newNodeValue, parentId: this.props.parentId }
-            });
-        }
+
 
 
     }

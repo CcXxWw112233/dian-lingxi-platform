@@ -1288,13 +1288,13 @@ export default class GroupListHeadItem extends Component {
                 }
 
               </div>
-              <div className={`${indexStyles.list_head_top_right}`}>
+              <div className={`${indexStyles.list_head_top_right}`} style={{ display: group_view_type == '1' ? 'block' : 'none' }}>
                 <span className={indexStyles.list_head_top_right_progress}>{lane_progress_percent || 0}</span>
                 <span>%</span>
               </div>
             </div>
             <div className={`${indexStyles.list_head_top_bott}`}>
-              <div className={indexStyles.cal_time}>
+              <div className={indexStyles.cal_time} style={{ display: group_view_type == '1' ? 'block' : 'none' }}>
                 {lane_start_time && timestampToTimeNormal(lane_start_time, '.')}
                 {
                   (lane_end_time || lane_start_time) && '-'

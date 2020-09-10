@@ -358,22 +358,9 @@ export default class OutLineHeadItem extends Component {
                         message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
                         return;
                     }
-                    let updateParams = {};
+                    let updateParams = { ...param };
                     updateParams.card_id = param.id;
-                    updateParams.name = param.name;
-                    updateParams.board_id = gantt_board_id;
-                    // if(){
-
-                    // }
-
-                    updateParams.time_span = param.time_span;
-                    if (param.time_span == 0) {
-                        updateParams.start_time = null;
-                        updateParams.due_time = null;
-                    } else {
-                        updateParams.start_time = param.start_time;
-                        updateParams.due_time = param.due_time;
-                    }
+                    updateParams.board_id = gantt_board_id
                     updateTaskVTwo({ ...updateParams }, { isNotLoading: false })
                         .then(res => {
                             if (isApiResponseOk(res)) {
@@ -381,12 +368,10 @@ export default class OutLineHeadItem extends Component {
                                 let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, param.id);
                                 if (nodeValue) {
                                     this.onChangeCardHandleCardDetail(nodeValue)
-                                    nodeValue.name = param.name;
-                                    nodeValue.time_span = param.time_span;
-                                    if (param.time_span == 0) {
-                                        nodeValue.start_time = null;
-                                        nodeValue.due_time = null;
-                                    } else {
+                                    if (!!param.name) {
+                                        nodeValue.name = param.name;
+                                    }
+                                    if (param.time_span !== undefined) {
                                         nodeValue.start_time = param.start_time;
                                         nodeValue.due_time = param.due_time;
                                     }
