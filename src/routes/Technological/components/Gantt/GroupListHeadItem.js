@@ -1148,11 +1148,18 @@ export default class GroupListHeadItem extends Component {
       leader_user_id: user_id,
       id: list_id,
       board_id: gantt_board_id
-    }).then(res => {
+    }).then(async (res) => {
       if (isApiResponseOk(res)) {
-        const { list_group, itemKey } = this.props
-        const list_group_ = [...list_group]
-        list_group_[itemKey].lane_leader ? list_group_[itemKey].lane_leader[0] = { ...user_info, id: user_id } : list_group_[itemKey].lane_leader = [{ ...user_info, id: user_id }]
+        // const { list_group, itemKey } = this.props
+        // const list_group_ = [...list_group]
+        // list_group_[itemKey].lane_leader ? list_group_[itemKey].lane_leader[0] = { ...user_info, id: user_id } : list_group_[itemKey].lane_leader = [{ ...user_info, id: user_id }]
+
+        const list_group_ = await dispatch({
+          type: 'gantt/getGanttGroupElseInfo',
+          payload: {
+            list_id
+          }
+        })
         dispatch({
           type: 'gantt/handleListGroup',
           payload: {
