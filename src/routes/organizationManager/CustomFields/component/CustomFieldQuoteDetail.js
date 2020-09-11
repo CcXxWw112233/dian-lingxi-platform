@@ -6,7 +6,9 @@ import { currentNounPlanFilterName } from '../../../../utils/businessFunction'
 import { PROJECTS, TASKS } from '../../../../globalset/js/constant'
 import EmptyImg from '@/assets/projectDetail/process/Empty@2x.png'
 import { connect } from 'dva'
-@connect(({ simplemode: { allOrgBoardTreeList = [] } }) => ({ allOrgBoardTreeList }))
+import { getUserAllOrgsBoardList } from '../../../../services/technological'
+import { isApiResponseOk } from '../../../../utils/handleResponseData'
+@connect()
 export default class CustomFieldQuoteDetail extends Component {
 
   constructor(props) {
@@ -14,6 +16,16 @@ export default class CustomFieldQuoteDetail extends Component {
     this.state = {
 
     }
+  }
+
+  componentDidMount() {
+    getUserAllOrgsBoardList().then(res => {
+      if (isApiResponseOk(res)) {
+        this.setState({
+          allOrgBoardTreeList: res.data
+        })
+      }
+    })
   }
 
   onCancel = () => {
@@ -59,7 +71,7 @@ export default class CustomFieldQuoteDetail extends Component {
 
   // 查询对应项目列表中的项目名称
   getBoardName = (board_id) => {
-    const { allOrgBoardTreeList = [] } = this.props
+    const { allOrgBoardTreeList = [] } = this.state
     let org_id = localStorage.getItem('OrganizationId')
     let { board_list = [] } = allOrgBoardTreeList.find(item => item.org_id == org_id) || {}
     let { board_name } = board_list.find(item => item.board_id == board_id) || {}
