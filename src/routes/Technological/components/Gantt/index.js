@@ -511,6 +511,20 @@ class Gantt extends Component {
         data: list_group_new
       }
     })
+    setTimeout(async () => {
+      const list_group_ = await dispatch({
+        type: 'gantt/getGanttGroupElseInfo',
+        payload: {
+          list_id: current_list_group_id
+        }
+      })
+      dispatch({
+        type: 'gantt/handleListGroup',
+        payload: {
+          data: list_group_
+        }
+      })
+    }, 2000)
   }
 
   // 大纲视图的修改
