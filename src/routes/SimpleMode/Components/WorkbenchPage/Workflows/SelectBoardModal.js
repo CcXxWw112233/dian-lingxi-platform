@@ -38,7 +38,7 @@ export default class SelectBoardModal extends Component {
         )
         const aboutBoardOrganizationId = getGlobalData('aboutBoardOrganizationId')
         // 过滤有权限的项目
-        const isHasPermissionProject = target_projectList.filter(item => checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_CREATE, item.board_id) == true && item.org_id == aboutBoardOrganizationId)
+        const isHasPermissionProject = aboutBoardOrganizationId ? target_projectList.filter(item => checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_CREATE, item.board_id) == true && item.org_id == aboutBoardOrganizationId) : target_projectList
         return (
             <div>
                 <Modal
