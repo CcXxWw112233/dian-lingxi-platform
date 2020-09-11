@@ -32,30 +32,34 @@ export default {
             let res = yield call(addCardRely, { from_id, to_id, relation })
             const rely_map = yield select(getModelSelectDatasState('gantt', 'rely_map'))
             const group_view_type = yield select(getModelSelectDatasState('gantt', 'group_view_type'))
+            const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id'))
             let _rely_map = JSON.parse(JSON.stringify(rely_map))
             if (isApiResponseOk(res)) {
                 message.success('已成功添加依赖')
-
-                const index = _rely_map.findIndex(item => item.id == from_id)
-                if (index != -1) { //该任务存在和其它的依赖关系则添加新的一条进next [], 反之构建一个新的item
-                    _rely_map[index].next.push({ id: to_id, relation })
-                } else {
-                    _rely_map.push({ id: from_id, next: [{ id: to_id, relation }] })
-
+                // 只有在分组视图和大纲视图下 才需要更新
+                if ((group_view_type == '1' && gantt_board_id != '0') || group_view_type == '4') {
+                    const index = _rely_map.findIndex(item => item.id == from_id)
+                    if (index != -1) { //该任务存在和其它的依赖关系则添加新的一条进next [], 反之构建一个新的item
+                        _rely_map[index].next.push({ id: to_id, relation })
+                    } else {
+                        _rely_map.push({ id: from_id, next: [{ id: to_id, relation }] })
+    
+                    }
+                    yield put({
+                        type: 'updateDatas',
+                        payload: {
+                            rely_map: _rely_map
+                        }
+                    })
+                    const updateAction = ganttIsOutlineView({ group_view_type }) ? 'updateOutLineTree' : 'updateListGroup'
+                    yield put({
+                        type: updateAction,
+                        payload: {
+                            datas: res.data
+                        }
+                    })
                 }
-                yield put({
-                    type: 'updateDatas',
-                    payload: {
-                        rely_map: _rely_map
-                    }
-                })
-                const updateAction = ganttIsOutlineView({ group_view_type }) ? 'updateOutLineTree' : 'updateListGroup'
-                yield put({
-                    type: updateAction,
-                    payload: {
-                        datas: res.data
-                    }
-                })
+                
             } else {
                 message.error(res.message)
             }
@@ -68,9 +72,9 @@ export default {
 
             if (isApiResponseOk(res)) {
                 message.success('已成功删除依赖')
-                if (!(rely_map && rely_map.length)) return
                 let _re_rely_map = JSON.parse(JSON.stringify(rely_map))
                 const move_index = rely_map.findIndex(item => item.id == move_id) //起始点索引
+                if (move_index == -1) return res || {}
                 const move_item = rely_map.find(item => item.id == move_id) //起始点这一项
                 const move_next = move_item.next //起始点所包含的全部终点信息
                 const line_index = move_next.findIndex(item => item.id == line_id)
@@ -149,6 +153,8 @@ export default {
                 current_list_group_id = list_id
             }
             const list_group = yield select(getModelSelectDatasState('gantt', 'list_group'))
+            const index = list_group.findIndex(item => item.list_id == current_list_group_id)
+            if (index == -1) return list_group
             let params = {}
             if (gantt_board_id == '0') {
                 params = {
@@ -161,7 +167,6 @@ export default {
             }
             const res = yield call(getGanttGroupElseInfo, { ...params })
             if (isApiResponseOk(res)) {
-                const index = list_group.findIndex(item => item.list_id == current_list_group_id)
                 for (let key in res.data) {
                     list_group[index][key] = res.data[key]
                 }
