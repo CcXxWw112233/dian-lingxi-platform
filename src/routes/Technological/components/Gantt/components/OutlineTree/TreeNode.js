@@ -213,7 +213,7 @@ export default class TreeNode extends Component {
             if (this.props.onDataProcess) {
                 this.props.onDataProcess({
                     action,
-                    param: { name: value, id: nodeValue.id, parentId: this.props.parentId },
+                    param: action.indexOf('add') != -1 ? { ...nodeValue, parentId: this.props.parentId } : { name: value, id: nodeValue.id, parentId: this.props.parentId },
                     calback: () => {
                         // setTimeout(() => {
                         //     this.props.deleteOutLineTreeNode('', nodeValue.add_id) //失焦就没了
