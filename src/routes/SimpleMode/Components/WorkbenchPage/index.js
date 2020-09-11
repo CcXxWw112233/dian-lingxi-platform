@@ -128,7 +128,8 @@ class WorkbenchPage extends Component {
                 <Suspense fallback={<div></div>}>
                     <MiniBoxNavigations currentSelectedWorkbenchBox={currentSelectedWorkbenchBox} />
                 </Suspense>
-                <Suspense fallback={<div></div>}>
+                <Suspense fallback={<div className={indexStyles.workbenchBoxContentWapper}
+                    style={{ background: special_backgroud.includes(select_box_code) ? 'rgba(245, 245, 245, 1)' : '' }} />}>
 
                     <div id='container_workbenchBoxContent' className={indexStyles.workbenchBoxContentModalWapper} style={workbenchBoxContentWapperModalStyle ? workbenchBoxContentWapperModalStyle : {}}>
                         <div className={indexStyles.workbenchBoxContentWapper}
