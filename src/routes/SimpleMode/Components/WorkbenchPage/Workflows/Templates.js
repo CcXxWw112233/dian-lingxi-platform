@@ -3,8 +3,8 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import styles from './index.less'
 import { Tooltip, Button, Popconfirm, message, DatePicker, Popover } from 'antd'
 import { connect } from 'dva'
-import { checkIsHasPermissionInBoard, setBoardIdStorage, setOrganizationIdStorage, getOrgNameWithOrgIdFilter, getGlobalData, isPaymentOrgUser } from '../../../../../utils/businessFunction'
-import { PROJECT_FLOWS_FLOW_TEMPLATE, PROJECT_FLOWS_FLOW_CREATE, NOT_HAS_PERMISION_COMFIRN } from '../../../../../globalset/js/constant'
+import { checkIsHasPermissionInBoard, setBoardIdStorage, setOrganizationIdStorage, getOrgNameWithOrgIdFilter, getGlobalData, isPaymentOrgUser, currentNounPlanFilterName } from '../../../../../utils/businessFunction'
+import { PROJECT_FLOWS_FLOW_TEMPLATE, PROJECT_FLOWS_FLOW_CREATE, NOT_HAS_PERMISION_COMFIRN, FLOWS } from '../../../../../globalset/js/constant'
 import SelectBoardModal from './SelectBoardModal'
 import { timeToTimestamp } from '../../../../../utils/util'
 import moment from 'moment'
@@ -74,12 +74,6 @@ export default class Templates extends Component {
     selectModalBoardIdCalback = (board_id) => {
         const { dispatch } = this.props
         this.setLocalBoardId(board_id)
-        // dispatch({
-        //     type: 'projectDetail/projectDetailInfo',
-        //     payload: {
-        //         id: board_id
-        //     }
-        // })
     }
     // 
     setBoardSelectVisible = (visible, item, timeString) => {
@@ -98,9 +92,7 @@ export default class Templates extends Component {
             this.handleOperateStartConfirmProcessOne()
         } else if (enable_change == '1'){
             this.handleStartProcess(curr_temp_info)
-        }
-        
-        // this.handleAddTemplate()
+        }        
     }
     // 新增模板点击的确认
     beforeAddTemplateConfirm = () => {
@@ -132,32 +124,10 @@ export default class Templates extends Component {
             }
         })
     }
-    // 编辑模板的点击事件
-    handleEditTemplete = (item) => {
-        const { id, template_no, board_id } = item
-        const { dispatch } = this.props
-        setBoardIdStorage(board_id)
-        dispatch({
-            type: 'projectDetail/projectDetailInfo',
-            payload: {
-                id: board_id
-            }
-        }).then(res => {
-            dispatch({
-                type: 'publicProcessDetailModal/getTemplateInfo',
-                payload: {
-                    id,
-                    processPageFlagStep: '2',
-                    currentTempleteIdentifyId: template_no,
-                    process_detail_modal_visible: true
-                }
-            })
-        })
-    }
     // 这个是进入启动页, 那么先选择项目
     handleStartBoardProcess = (item) => {
         const { id, board_id, org_id } = item
-        setBoardIdStorage(board_id, org_id)
+        // setBoardIdStorage(board_id, org_id)
         const { local_board_id } = this.state
         // 如果是全部项目, 那么需要选择项目
         if (local_board_id == '0' || !local_board_id) {
@@ -181,81 +151,18 @@ export default class Templates extends Component {
             }
         })
         return
-        dispatch({
-            type: 'projectDetail/projectDetailInfo',
-            payload: {
-                id: board_id
-            }
-        }).then(res => {
-            dispatch({
-                type: 'publicProcessDetailModal/getTemplateInfo',
-                payload: {
-                    id,
-                    processPageFlagStep: '3',
-                    process_detail_modal_visible: true
-                }
-            })
-        })
-
-    }
-    // 删除流程模板的点击事件
-    handleDelteTemplete = (item) => {
-        const { id, board_id } = item
-        const { dispatch, updateParentProcessTempleteList } = this.props
-        setBoardIdStorage(board_id)
-        dispatch({
-            type: 'publicProcessDetailModal/deleteProcessTemplete',
-            payload: {
-                id,
-                board_id,
-                calback: function () {
-                    updateParentProcessTempleteList && updateParentProcessTempleteList()
-                }
-            }
-        })
     }
     handleOperateStartConfirmProcess = (e, item, start_time) => {
         e && e.stopPropagation()
         const { id, board_id, org_id, enable_change } = item
         const { local_board_id } = this.state
-        setBoardIdStorage(board_id, org_id)
+        // setBoardIdStorage(board_id, org_id)
         if (local_board_id == '0' || !local_board_id) {
             this.setBoardSelectVisible(true, item, start_time)
             return
         }
         this.handleOperateStartConfirmProcessOne(e, item, start_time)
         return
-        let that = this
-        const { dispatch, request_flows_params = {} } = this.props
-        let BOARD_ID = request_flows_params && request_flows_params.request_board_id || board_id
-        let REAUEST_BOARD_ID = getGlobalData('storageCurrentOperateBoardId') || board_id
-        Promise.resolve(
-            dispatch({
-                type: 'publicProcessDetailModal/nonAwayTempleteStartPropcess',
-                payload: {
-                    start_up_type: start_time ? '2' : '1',
-                    plan_start_time: start_time ? start_time : '',
-                    flow_template_id: id,
-                    // board_id: REAUEST_BOARD_ID
-                }
-            })
-        ).then(res => {
-            if (isApiResponseOk(res)) {
-                that.props.dispatch({
-                    type: 'publicProcessDetailModal/getProcessListByType',
-                    payload: {
-                        status: start_time ? '0' : '1',
-                        board_id: BOARD_ID,
-                        _organization_id: request_flows_params._organization_id || org_id
-                    }
-                })
-                this.handleProcessStartConfirmVisible(false)
-                this.initState()
-                this.selectModalBoardIdCalback(BOARD_ID)
-            } else {
-                message.warn(res.message)
-            }
-        })
     }
     handleOperateStartConfirmProcessOne = (e, item, start_time) => {
         let that = this
@@ -412,9 +319,9 @@ export default class Templates extends Component {
                                     <>
                                         {
                                             (checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_CREATE, select_board_id) || (select_board_id == '0' || !select_board_id)) && (
-                                                <Tooltip title="启用流程">
+                                                <Tooltip title={`启用${currentNounPlanFilterName(FLOWS)}`}>
                                                     <Popover trigger="click" title={null} visible={this.state.popoStartConfirmVisible && id == this.state.currentVisibleItem} onVisibleChange={(visible) => { this.handleProcessStartConfirmVisible(visible, id) }} content={this.renderProcessStartConfirm(value)} icon={<></>} getPopupContainer={() => document.getElementById('template_item_bott')}>
-                                                        <div className={`${globalStyles.authTheme} ${styles.template_operate}`}>&#xe796; <span style={{fontSize: '12px'}}>启用流程</span></div>
+                                                        <div className={`${globalStyles.authTheme} ${styles.template_operate}`}>&#xe796; <span style={{fontSize: '12px'}}>{`启用${currentNounPlanFilterName(FLOWS)}`}</span></div>
                                                     </Popover>
                                                 </Tooltip>
                                             )
@@ -433,33 +340,6 @@ export default class Templates extends Component {
                                         </>
                                     )
                             }
-
-
-
-                            {/* {
-                                checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_TEMPLATE, board_id) && (
-                                    <Tooltip title={'编辑模板'}>
-                                        <div className={`${globalStyles.authTheme} ${styles.template_operate} ${styles.template_operate_split}`}
-                                            onClick={() => this.handleEditTemplete(value)}
-                                        >&#xe7e1;</div>
-                                    </Tooltip>
-                                )
-                            } */}
-
-                            {/* {
-                                checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_TEMPLATE, board_id) && (
-                                    <Popconfirm
-                                        title="确认删除该模板？"
-                                        onConfirm={() => this.handleDelteTemplete(value)}
-                                        okText="确认"
-                                        cancelText="取消"
-                                    >
-                                        <Tooltip title={'删除模板'}>
-                                            <div className={`${globalStyles.authTheme} ${styles.template_operate}`}>&#xe7c3;</div>
-                                        </Tooltip>
-                                    </Popconfirm>
-                                )
-                            } */}
                         </div>
                     </div >
                 )
