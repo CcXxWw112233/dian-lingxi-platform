@@ -183,7 +183,7 @@ export default class GroupListHeadItem extends Component {
 
   renderTaskItem = () => {
     const { itemValue = {} } = this.props
-    const { list_no_time_data = [] } = itemValue
+    const { list_no_time_data = [], lane_id } = itemValue
     return (
       <div
         className={indexStyles.no_time_card_area_out}
@@ -194,7 +194,7 @@ export default class GroupListHeadItem extends Component {
             list_no_time_data.map((value, key) => {
               const { name, id, is_realize, executors = [], label_data = [], board_id, is_privilege } = value || {}
               return (
-                <GroupListHeadDragNoTimeDataItem noTimeCardClick={this.noTimeCardClick} itemKey={key} itemValue={value} />
+                <GroupListHeadDragNoTimeDataItem noTimeCardClick={this.noTimeCardClick} itemKey={key} lane_id={lane_id} itemValue={value} />
               )
               return (
                 <div
