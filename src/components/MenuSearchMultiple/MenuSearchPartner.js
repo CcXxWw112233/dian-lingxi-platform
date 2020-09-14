@@ -10,6 +10,7 @@ import { organizationInviteWebJoin, commInviteWebJoin, } from '../../services/te
 import { connect } from 'dva';
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { validateTel } from "@/utils/verify";
+import { isArrayEqual } from '../../utils/util';
 
 
 @connect(mapStateToProps)
@@ -49,7 +50,8 @@ export default class MenuSearchPartner extends React.Component {
 		this.initSet(this.props)
 	}
 	componentWillReceiveProps(nextProps) {
-		// this.initSet(nextProps)
+		if (isArrayEqual(nextProps.currentSelect, this.props.currentSelect) && isArrayEqual(nextProps.listData, this.props.listData)) return
+		this.initSet(nextProps)
 	}
 	//模糊查询
 	handleMenuReallySelect = (e) => {
