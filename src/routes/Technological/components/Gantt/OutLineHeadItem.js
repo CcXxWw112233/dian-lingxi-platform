@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import { connect } from 'dva';
-import { message, Menu, Dropdown, Modal, Button, Popover } from 'antd';
+import { message, Menu, Dropdown, Modal, Button, Popover, Spin} from 'antd';
 import styles from './index.less';
 import globalStyles from '@/globalset/css/globalClassName.less';
 import OutlineTree from './components/OutlineTree';
@@ -35,13 +36,25 @@ import { onChangeCardHandleCardDetail } from './ganttBusiness';
 import { rebackCreateNotify } from '../../../../components/NotificationTodos';
 import DomToImage from 'dom-to-image';
 import jsPDF from 'jspdf';
+import { LoadingOutlined } from '@ant-design/icons';
 const { SubMenu } = Menu;
 // const { TreeNode } = OutlineTree;
 const { confirm } = Modal;
 
+const IsLoading = (props) => {
+  const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
+  return (
+    ReactDOM.createPortal(
+      <div className={styles.loadingModal}>
+        <Spin size="large"/>
+      </div>,
+      document.body
+    )
+  )
+}
+
 @connect(mapStateToProps)
 export default class OutLineHeadItem extends Component {
-    loadingModal = null;
 
     state = {
         template_list: [],
@@ -51,6 +64,8 @@ export default class OutLineHeadItem extends Component {
         selectedTpl: null,
         save_board_template_visible: false,
         visibleExportPopover: false, // 显示隐藏导出列表
+        showLoading: false, // 是否显示loading
+        bodyPicture: null, // loading的背景图片
     }
     componentDidMount() {
         const OrganizationId = localStorage.getItem('OrganizationId')
@@ -836,26 +851,6 @@ export default class OutLineHeadItem extends Component {
         )
     }
 
-    // 创建一个div遮罩层
-    createLoadingDiv = async () => {
-      this.loadingModal = document.createElement('div');
-      let style = {
-        width: "100%",
-        height: "100%",
-        position: "fixed",
-        left: 0,
-        top: 0,
-        backgroundColor: "#fff"
-      }
-      Object.assign(this.loadingModal.style, style);
-      let img = new Image();
-      function filter (node) {
-        return (node.tagName?.toUpperCase() !== 'IMG');
-      }
-      img.src = await DomToImage(document.body, {filter});
-      this.loadingModal.appendChild(img);
-      document.body.appendChild(this.loadingModal);
-    }
 
     // 导出文件的样式处理
     toExport = (type = 'svg', pix = 2)=>{
@@ -891,8 +886,6 @@ export default class OutLineHeadItem extends Component {
           let dataUrl ;
           if(type === 'svg') {
             dataUrl = await DomToImage.toSvg(parent, {filter});
-            // resolve(dataUrl);
-            // return ;
           }
           if(type === 'png'){
             dataUrl = await DomToImage.toPng(parent, {filter});
@@ -909,10 +902,18 @@ export default class OutLineHeadItem extends Component {
             let ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, img.width * pix, img.height * pix);
             ctx.scale(img.width/ canvas.width, img.height / canvas.height);
-            canvas.toBlob(blob => {
-              let url = window.URL.createObjectURL(blob);
-              resolve(url);
-            })
+            const toBlob = ()=> {
+              canvas.toBlob(blob => {
+                // console.log(blob)
+                if(!blob){
+                  return toBlob();
+                }
+                let url = window.URL.createObjectURL(blob);
+                resolve(url);
+              })
+            }
+            toBlob();
+
           }
           dom.style.overflow = 'scroll';
           header.style.left = left;
@@ -947,28 +948,42 @@ export default class OutLineHeadItem extends Component {
       })
       switch(type){
         case "pdf":
+          this.setState({
+            // bodyPicture: await createModel(),
+            showLoading: true
+          })
         // this.createLoadingDiv();
         let urlData = await this.toExport('png', 1);
         let pic = new Image();
-        pic.src = urlData;
-        pic.onload = ()=>{
-          let pdf = new jsPDF({
-            orientation: "l",
-            unit: "pt",
-            format: [pic.width, pic.height]
-          });
-          pdf.addImage(pic, 'JPEG', 0, 0, pic.width, pic.height, '', "FAST");
-          pdf.save(projectDetailInfoData.board_name+'_'+ this.getExportFileName() + '.pdf');
-        }
+          pic.src = urlData;
+          pic.onload = async ()=>{
+            let pdf = new jsPDF({
+              orientation: "l",
+              unit: "pt",
+              format: [pic.width, pic.height]
+            });
+            pdf.addImage(pic, 'JPEG', 0, 0, pic.width, pic.height, '', "SLOW");
+            await pdf.save(projectDetailInfoData.board_name+'_'+ this.getExportFileName() + '.pdf');
+            this.setState({
+              showLoading: false,
+              bodyPicture: null
+            })
+          }
         break;
         case "image":
-          let url = await this.toExport();
+          this.setState({
+            showLoading: true
+          })
+          let url = await this.toExport('svg', 2);
           let a = document.createElement('a');
           a.href = url;
           a.download = projectDetailInfoData.board_name+'_'+ this.getExportFileName() + '.png';
           a.click();
           // 内存释放
           a = null;
+          this.setState({
+            showLoading: false,
+          })
           break;
         case "svg":
           let dom = document.body;
@@ -1032,7 +1047,6 @@ export default class OutLineHeadItem extends Component {
                         <div onClick={this.exportToFile.bind(this, 'pdf')}>导出PDF</div>
                         <div onClick={this.exportToFile.bind(this, 'image')}>导出图片</div>
                         <div onClick={this.exportToFile.bind(this, 'excel')}>导出表格</div>
-                        <div onClick={this.exportToFile.bind(this, 'svg')}>svg</div>
                       </div>
                     }
                     >
@@ -1087,6 +1101,11 @@ export default class OutLineHeadItem extends Component {
                         visible={this.state.save_board_template_visible}
                     />
                 </>
+                {this.state.showLoading && (
+                  <IsLoading>
+                    {/* {this.state.bodyPicture} */}
+                  </IsLoading>
+                )}
             </div>
         );
     }
