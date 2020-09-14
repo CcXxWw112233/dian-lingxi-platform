@@ -811,11 +811,11 @@ const LogicWithMainContent = {
   // 属性选择的下拉回调 E
 
   // 判断是否存在执行人
-  whetherExistencePriciple: function () {
+  whetherExistencePriciple: function (code) {
     const { drawContent: { properties = [] } } = this.props
     let flag
     if (!properties.length) return false
-    flag = properties.filter(item => item.code == 'EXECUTOR')
+    flag = properties.filter(item => item.code == code)
     if (flag.length == '0') return flag = false
     return flag
   },

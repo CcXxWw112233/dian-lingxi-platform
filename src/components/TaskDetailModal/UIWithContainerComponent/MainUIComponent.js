@@ -1,26 +1,30 @@
 import React, { Component } from 'react'
 import { connect } from 'dva'
-import { Icon, Dropdown, Menu, DatePicker, Tooltip, Button } from 'antd'
+import { Icon, Dropdown, Menu, DatePicker, Tooltip, Button, Breadcrumb } from 'antd'
 import mainContentStyles from '../MainContent.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import NameChangeInput from '@/components/NameChangeInput'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
+import RichTextEditor from '@/components/RichTextEditor'
+import UploadAttachment from '@/components/UploadAttachment'
 import InformRemind from '@/components/InformRemind'
-import { timestampToTime, timestampToTimeNormal } from '@/utils/util'
+import { timestampToTime, timestampToTimeNormal, timestampFormat  } from '@/utils/util'
 import CustomFields from '../../CustomFields'
 import CustomCategoriesOperate from '../../CustomFields/CustomCategoriesOperate';
 import DefaultBasicFieldUIComponent from './BasicFieldUIComponent'
 import FileListRightBarFileDetailModal from '@/routes/Technological/components/ProjectDetail/FileModule/FileListRightBarFileDetailModal';
 import RelyOnRelationship from '../../RelyOnRelationship'
-import { getCurrentDrawerContentPropsModelFieldData, renderTaskNounPlanCode, getCurrentFieldIcon } from '../handleOperateModal';
+import { getCurrentDrawerContentPropsModelFieldData, renderTaskNounPlanCode, getCurrentFieldIcon, getFolderPathName, judgeFileType, showMemberName } from '../handleOperateModal';
 import {
   PROJECT_TEAM_CARD_EDIT
 } from "@/globalset/js/constant";
 import {
   isPaymentOrgUser
 } from "@/utils/businessFunction";
-import BasicFieldContainer  from './BasicFieldContainer'
+import BasicFieldContainer from './BasicFieldContainer'
+import { currentNounPlanFilterName } from '../../../utils/businessFunction'
+import { TASKS } from '../../../globalset/js/constant'
 
 @connect(mapStateToProps)
 export default class MainUIComponent extends Component {
@@ -257,6 +261,125 @@ export default class MainUIComponent extends Component {
     )
   }
 
+  renderReMarks = () => {
+    const { drawContent = {}, projectDetailInfoData: { data = [] } } = this.props
+    const { showDelColor, currentDelId, boardFolderTreeData = [] } = this.state
+    const { card_id, board_id, org_id, properties = [], dec_files = [] } = drawContent
+    let { data: executors = [] } = getCurrentDrawerContentPropsModelFieldData({ properties, code: 'EXECUTOR' })
+    const { data: gold_data, id } = getCurrentDrawerContentPropsModelFieldData({ properties, code: 'REMARK' })
+    const flag = (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()
+    return (
+      <div key={id} style={{ position: 'relative' }} className={`${mainContentStyles.field_content} ${showDelColor && id == currentDelId && mainContentStyles.showDelColor}`}>
+        <div className={mainContentStyles.field_item}>
+          <div className={mainContentStyles.field_left}>
+            {
+              !flag && (
+                <span onClick={() => { this.handleDelCurrentField(id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
+              )
+            }
+            <div className={mainContentStyles.field_hover} style={{ maxWidth: 'inherit' }}>
+              <span className={`${globalStyles.authTheme}`}>&#xe7f6;</span>
+              <span>{`${currentNounPlanFilterName(TASKS)}`}说明</span>
+            </div>
+          </div>
+          <>
+            <div className={`${mainContentStyles.field_right}`}>
+              <div style={{ display: 'flex' }}>
+                {
+                  (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
+                    (
+                      gold_data && gold_data == '<p></p>' ? (
+                        <div className={`${mainContentStyles.pub_hover}`} style={{ width: '100%' }}>
+                          <span>暂无</span>
+                        </div>
+                      ) : (
+                          <div className={`${mainContentStyles.pub_hover}`} >
+                            <div className={mainContentStyles.descriptionContent} dangerouslySetInnerHTML={{ __html: gold_data }}></div>
+                          </div>
+                        )
+                    )
+                  ) : (
+                      // 富文本组件
+                      <>
+                        <div style={{ flex: 1, marginRight: '10px' }}>
+                          <RichTextEditor saveBrafitEdit={this.saveBrafitEdit} value={gold_data && gold_data}>
+                            <div className={`${mainContentStyles.pub_hover}`} >
+                              {
+                                gold_data && gold_data != '<p></p>' ?
+                                  <div className={mainContentStyles.descriptionContent} dangerouslySetInnerHTML={{ __html: gold_data }}></div>
+                                  :
+                                  `添加说明`
+                              }
+                            </div>
+                          </RichTextEditor>
+                        </div>
+                        <div onClick={(e) => e && e.stopPropagation()}>
+                          <UploadAttachment
+                            executors={executors.data}
+                            boardFolderTreeData={boardFolderTreeData}
+                            card_id={card_id}
+                            title={`任务说明资料设置`}
+                            listDescribe={'说明资料列表'}
+                            isNotShowNoticeList={true}
+                            url={'/api/projects/card/desc/attachment/upload'}
+                            onFileListChange={this.onUploadDescFileListChange}
+                          >
+                            <span className={mainContentStyles.add_sub_upload}>
+                              <span style={{ fontSize: '16px' }} className={globalStyles.authTheme}>&#xe7fa;</span>
+                              <span>上传说明资料</span>
+                            </span>
+                          </UploadAttachment>
+                        </div>
+                      </>
+                    )
+                }
+              </div>
+              <div>
+                {/* 交付物 */}
+                <div className={mainContentStyles.filelist_wrapper}>
+                  {
+                    !!(dec_files && dec_files.length) && dec_files.map(fileInfo => {
+                      const { name: file_name, file_id } = fileInfo
+                      const breadcrumbList = getFolderPathName(fileInfo)
+                      return (
+                        <div className={`${mainContentStyles.file_item_wrapper}`} key={fileInfo.id}>
+                          <div className={`${mainContentStyles.file_item} ${mainContentStyles.pub_hover}`} onClick={(e) => this.openFileDetailModal(e, fileInfo)} >
+                            <div>
+                              <span className={`${mainContentStyles.file_action} ${globalStyles.authTheme}`} dangerouslySetInnerHTML={{ __html: judgeFileType(file_name) }}></span>
+                            </div>
+                            <div style={{ flex: 1 }}>
+                              <div title={file_name} className={mainContentStyles.pay_file_name}>{file_name}</div>
+                            </div>
+                            <div className={mainContentStyles.file_info}>{showMemberName(fileInfo.create_by, data)} 上传于 {fileInfo.create_time && timestampFormat(fileInfo.create_time, "MM-dd hh:mm")}</div>
+                            <div className={mainContentStyles.breadNav} style={{ position: 'relative' }}>
+                              <Breadcrumb className={mainContentStyles.Breadcrumb} separator=">">
+                                {breadcrumbList.map((value, key) => {
+                                  return (
+                                    <Breadcrumb.Item key={key}>
+                                      <span title={(value && value.file_name) && value.file_name} className={key == breadcrumbList.length - 1 && mainContentStyles.breadItem}>{(value && value.file_name) && value.file_name}</span>
+                                    </Breadcrumb.Item>
+                                  )
+                                })}
+                              </Breadcrumb>
+                            </div>
+                            <Dropdown trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.getAttachmentActionMenus({ fileInfo, code: 'REMARK', card_id })}>
+                              <span onClick={(e) => e && e.stopPropagation()} className={`${mainContentStyles.pay_more_icon} ${globalStyles.authTheme}`}>&#xe66f;</span>
+                            </Dropdown>
+                          </div>
+                        </div>
+                      )
+                    })
+                  }
+                </div>
+              </div>
+            </div>
+          </>
+        </div>
+        {/* </div> */}
+      </div>
+    )
+  }
+
   render() {
     const { drawContent = {}, isInOpenFile, handleTaskDetailChange, handleChildTaskChange, whetherUpdateParentTaskTime } = this.props
     const {
@@ -341,11 +464,11 @@ export default class MainUIComponent extends Component {
           {/* 各种字段的不同状态 S */}
           <div>
             {/* 负责人区域 S */}
-            {this.whetherExistencePriciple() && this.renderPriciple()}
+            {this.whetherExistencePriciple('EXECUTOR') && this.renderPriciple()}
             {/* 负责人区域 E */}
             {/* 状态区域 */}
             <div>
-              <div style={{ position: 'relative' }} className={mainContentStyles.field_content} style={{ cursor: 'pointer' }}>
+              {/* <div style={{ position: 'relative' }} className={mainContentStyles.field_content} style={{ cursor: 'pointer' }}>
                 <div className={mainContentStyles.field_item}>
                   <div className={mainContentStyles.field_left}>
                     <div className={mainContentStyles.field_hover}>
@@ -386,7 +509,7 @@ export default class MainUIComponent extends Component {
                   }
                 </div>
 
-              </div>
+              </div> */}
             </div>
             {/* 时间区域 */}
             <div>
@@ -481,17 +604,20 @@ export default class MainUIComponent extends Component {
                 </div>
               </div>
             </div>
+            {/* 备注区域 S */}
+            {this.whetherExistencePriciple('REMARK') && this.renderReMarks()}
+            {/* 备注区域 E */}
           </div>
           {/* 各种字段的不同状态 E */}
           {/* 不同字段的渲染 S */}
           <div style={{ position: 'relative' }}>
             <BasicFieldContainer
               BasicFieldUIComponent={this.props.BasicFieldUIComponent ? this.props.BasicFieldUIComponent : DefaultBasicFieldUIComponent}
-              LogicWithMainContent={this.props.LogicWithMainContent} 
-              boardFolderTreeData={boardFolderTreeData} 
+              LogicWithMainContent={this.props.LogicWithMainContent}
+              boardFolderTreeData={boardFolderTreeData}
               milestoneList={milestoneList}
               whetherUpdateParentTaskTime={this.whetherUpdateParentTaskTime}
-              handleChildTaskChange={handleChildTaskChange} 
+              handleChildTaskChange={handleChildTaskChange}
               handleTaskDetailChange={handleTaskDetailChange}
               updateParentPropertiesList={this.updateParentPropertiesList}
             />
@@ -513,7 +639,7 @@ export default class MainUIComponent extends Component {
                     {
                       // !(properties && properties.length == 6) && 
                       (
-                        <div className={mainContentStyles.field_content} style={{marginTop: '16px'}}>
+                        <div className={mainContentStyles.field_content} style={{ marginTop: '16px' }}>
                           <div className={mainContentStyles.field_item}>
                             <div className={mainContentStyles.field_left}>
                               <div className={mainContentStyles.field_hover}>
