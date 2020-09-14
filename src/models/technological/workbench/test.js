@@ -1,9 +1,8 @@
-import { is } from 'core-js/fn/object'
 import { setGantTimeSpan } from '../../../routes/Technological/components/Gantt/ganttBusiness'
 import { getDigit, transformTimestamp } from '../../../utils/util'
 
 
-export function recusionItem({ tree, parent_expand, parent_type, parent_id, parent_milestone_id, parent_card_id }, { start_date, end_date }) {
+export function recusionItem(tree, { parent_expand, parent_type, parent_id, parent_milestone_id, parent_card_id }, { start_date, end_date }) {
     return tree.map(item => {
         let new_item = { ...item, parent_expand, }
         let { tree_type, children = [], is_expand, id } = item
@@ -43,22 +42,26 @@ export function recusionItem({ tree, parent_expand, parent_type, parent_id, pare
         new_item.time_span = time_span
         new_item.parent_ids = [parent_id]
         new_item.parent_id = parent_id
-        new_item.parent_milestone_id = parent_milestone_id
-        new_item.parent_card_id = parent_card_id
         new_item.parent_type = parent_type
-
-        if (new_item_children.length) {
-            recusionItem({
-                tree: new_item_children,
-                parent_expand: is_expand,
-                parent_type: tree_type,
-                parent_expand: is_expand,
-                parent_id: id,
-                parent_milestone_id: id,
-                parent_card_id: id
-            }, { start_date, end_date })
+        if (parent_type == '1') {
+            new_item.parent_milestone_id = parent_milestone_id
+        } else if (parent_type == '2') {
+            new_item.parent_card_id = parent_card_id
         }
 
+        if (new_item_children.length) {
+            new_item.children = recusionItem(
+                new_item_children,
+                {
+                    parent_expand: is_expand,
+                    parent_type: tree_type,
+                    parent_expand: is_expand,
+                    parent_id: id,
+                    parent_milestone_id: id,
+                    parent_card_id: id
+                }, { start_date, end_date }
+            )
+        }
         return new_item
     })
 

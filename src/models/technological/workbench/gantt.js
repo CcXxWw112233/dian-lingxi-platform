@@ -447,9 +447,8 @@ export default {
           return new_item
         })
       }
-      let filnaly_outline_tree = new_outline_tree
-      recusionItem({ tree: filnaly_outline_tree }, { start_date, end_date })
-      //console.log('filnaly_outline_tree', filnaly_outline_tree)
+      let filnaly_outline_tree = recusionItem(new_outline_tree, { parent_expand: true }, { start_date, end_date })
+      console.log('filnaly_outline_tree_0', filnaly_outline_tree)
       yield put({
         type: 'updateDatas',
         payload: {
@@ -474,6 +473,8 @@ export default {
       for (let val of filnaly_outline_tree) {
         recusion(val)
       }
+      console.log('filnaly_outline_tree_0_1', filnaly_outline_tree)
+
       arr = arr.filter(item => item.parent_expand)
       arr.push({ ...visual_add_item, add_id: 'add_milestone_out' }) //默认有个新建里程碑，占位
       arr = arr.map((item, key) => {
