@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { message, Menu, Dropdown, Modal, Button } from 'antd';
+import { message, Menu, Dropdown, Modal, Button, Popover } from 'antd';
 import styles from './index.less';
 import globalStyles from '@/globalset/css/globalClassName.less';
 import OutlineTree from './components/OutlineTree';
@@ -33,12 +33,16 @@ import { PROJECTS, TASKS } from '../../../../globalset/js/constant';
 import { closeFeature } from '../../../../utils/temporary';
 import { onChangeCardHandleCardDetail } from './ganttBusiness';
 import { rebackCreateNotify } from '../../../../components/NotificationTodos';
+import DomToImage from 'dom-to-image';
+import jsPDF from 'jspdf';
 const { SubMenu } = Menu;
 // const { TreeNode } = OutlineTree;
 const { confirm } = Modal;
 
 @connect(mapStateToProps)
 export default class OutLineHeadItem extends Component {
+    loadingModal = null;
+
     state = {
         template_list: [],
         board_info_visible: false,
@@ -46,6 +50,7 @@ export default class OutLineHeadItem extends Component {
         safeConfirmModalVisible: false,
         selectedTpl: null,
         save_board_template_visible: false,
+        visibleExportPopover: false, // 显示隐藏导出列表
     }
     componentDidMount() {
         const OrganizationId = localStorage.getItem('OrganizationId')
@@ -647,13 +652,13 @@ export default class OutLineHeadItem extends Component {
                                     type={'2'}
                                     onHover={this.onHover}
                                     placeholder={parentNode && parentNode.tree_type == '2' ? `新建子${currentNounPlanFilterName(TASKS)}` : `新建${currentNounPlanFilterName(TASKS)}`}
-                                    icon={<span className={`${styles.addTaskNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}
+                                    icon={<span className={`${styles.addTaskNode} ${globalStyles.authTheme}`} >&#xe8fe;</span>}
                                     label={<span className={styles.addTask}>{parentNode && parentNode.tree_type == '2' ? `新建子${currentNounPlanFilterName(TASKS)}` : `新建${currentNounPlanFilterName(TASKS)}`}</span>} key={`addTask_${item.index}`}>
                                 </TreeNode>
                             );
                         }
                     } else {
-                        return (<TreeNode  {...this.props} setScrollPosition={this.props.setScrollPosition} setGoldDateArr={this.props.setGoldDateArr} key={index} nodeValue={item} level={level} onHover={this.onHover}></TreeNode>);
+                        return (<TreeNode {...this.props} setScrollPosition={this.props.setScrollPosition} setGoldDateArr={this.props.setGoldDateArr} key={index} nodeValue={item} level={level} onHover={this.onHover}></TreeNode>);
                     }
 
                 }
@@ -825,14 +830,162 @@ export default class OutLineHeadItem extends Component {
                 placeholder={'新建里程碑'}
                 onHover={this.onHover}
                 nodeValue={normal ? { add_id: 'add_milestone_out', 'tree_type': '0' } : item}//{{ add_id: 'add_milestone', 'tree_type': '0' }}
-                icon={<span className={`${styles.addMilestoneNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}
+                icon={<span className={`${styles.addMilestoneNode} ${globalStyles.authTheme}`} >&#xe8fe;</span>}
                 label={<span className={styles.addMilestone}>新建里程碑</span>} key="addMilestone">
             </TreeNode>
         )
     }
+
+    // 创建一个div遮罩层
+    createLoadingDiv = async () => {
+      this.loadingModal = document.createElement('div');
+      let style = {
+        width: "100%",
+        height: "100%",
+        position: "fixed",
+        left: 0,
+        top: 0,
+        backgroundColor: "#fff"
+      }
+      Object.assign(this.loadingModal.style, style);
+      let img = new Image();
+      function filter (node) {
+        return (node.tagName?.toUpperCase() !== 'IMG');
+      }
+      img.src = await DomToImage(document.body, {filter});
+      this.loadingModal.appendChild(img);
+      document.body.appendChild(this.loadingModal);
+    }
+
+    // 导出文件的样式处理
+    toExport = (type = 'svg', pix = 2)=>{
+      return new Promise((resolve, reject) => {
+        let header = document.querySelector('#gantt_date_area');
+        let parent = document.querySelector("." + styles.cardDetail_middle);
+        let wapper = parent.querySelector('#gantt_group_head');
+        let listHead = parent.querySelector('#gantt_header_wapper');
+        let list = parent.querySelectorAll('.treeItems_i');
+        let panl = document.querySelector('#gantt_operate_area_panel');
+        list.forEach(item => {
+          item.style.height = '38px';
+          item.style.marginBottom = '0px';
+        })
+        let h = listHead.style.height;
+        if(listHead){
+          listHead.style.height = 'auto';
+        }
+        wapper.style.overflowY = 'inherit'
+        parent.style.overflowY = 'inherit';
+        let left = header.style.left;
+        header.style.left = 0;
+        let dom = parent.querySelector("#gantt_card_out_middle");
+        dom.style.overflow = 'inherit';
+        dom.parentNode.style.overflow = 'inherit';
+        panl.nextElementSibling.style.display = 'none';
+        // 过滤图片的跨域问题
+        function filter (node) {
+          return (node.tagName?.toUpperCase() !== 'IMG');
+        }
+        message.success('正在导出中...');
+        setTimeout(async ()=>{
+          let dataUrl ;
+          if(type === 'svg') {
+            dataUrl = await DomToImage.toSvg(parent, {filter});
+            // resolve(dataUrl);
+            // return ;
+          }
+          if(type === 'png'){
+            dataUrl = await DomToImage.toPng(parent, {filter});
+          }
+          if(type === 'jpeg'){
+            dataUrl = await DomToImage.toJpeg(parent, {filter});
+          }
+          let canvas = document.createElement('canvas');
+          let img = new Image();
+          img.src = dataUrl;
+          img.onload = ()=>{
+            canvas.height = img.height * pix;
+            canvas.width = img.width * pix ;
+            let ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, img.width * pix, img.height * pix);
+            ctx.scale(img.width/ canvas.width, img.height / canvas.height);
+            canvas.toBlob(blob => {
+              let url = window.URL.createObjectURL(blob);
+              resolve(url);
+            })
+          }
+          dom.style.overflow = 'scroll';
+          header.style.left = left;
+          dom.parentNode.style.overflow = 'hidden';
+          parent.style.overflowY = 'auto';
+          wapper.style.overflowY = 'auto';
+          if(listHead){
+            listHead.style.height = h;
+          }
+          list.forEach(item => {
+            item.style.height = '26px';
+            item.style.marginBottom = '12px';
+          })
+          panl.nextElementSibling.style.display = 'block';
+        }, 500)
+
+      })
+    }
+    // 获取导出的文件时间
+    getExportFileName = () => {
+      const { start_date, end_date } = this.props;
+      let flag = start_date.year === end_date.year;
+      if(flag) return start_date.date_top + start_date.date_no +'日 至 '+ end_date.date_top + end_date.date_no +'日';
+      else return start_date.year.toString().substr(-2)+'年' + start_date.month +'月' + start_date.date_no +'日 至 ' + end_date.year.toString().substr(-2 )+'年'+ end_date.month +'月' + end_date.date_no +'日';
+    }
+
+    // 导出的文件类型
+    exportToFile = async (type)=>{
+      const { projectDetailInfoData = {} } = this.props;
+      this.setState({
+        visibleExportPopover: false
+      })
+      switch(type){
+        case "pdf":
+        // this.createLoadingDiv();
+        let urlData = await this.toExport('png', 1);
+        let pic = new Image();
+        pic.src = urlData;
+        pic.onload = ()=>{
+          let pdf = new jsPDF({
+            orientation: "l",
+            unit: "pt",
+            format: [pic.width, pic.height]
+          });
+          pdf.addImage(pic, 'JPEG', 0, 0, pic.width, pic.height, '', "FAST");
+          pdf.save(projectDetailInfoData.board_name+'_'+ this.getExportFileName() + '.pdf');
+        }
+        break;
+        case "image":
+          let url = await this.toExport();
+          let a = document.createElement('a');
+          a.href = url;
+          a.download = projectDetailInfoData.board_name+'_'+ this.getExportFileName() + '.png';
+          a.click();
+          // 内存释放
+          a = null;
+          break;
+        case "svg":
+          let dom = document.body;
+          let p = new jsPDF();
+          p.html(dom, {
+            callback: function (doc) {
+              doc.save('test.pdf');
+            }
+         });
+          break;
+        default:
+          message.warn('功能正在开发中');
+      }
+    }
     render() {
         const { board_info_visible, show_add_menber_visible, safeConfirmModalVisible } = this.state;
-        const { outline_tree, outline_hover_obj, gantt_board_id, projectDetailInfoData, outline_tree_round, changeOutLineTreeNodeProto, deleteOutLineTreeNode, currentUserOrganizes = [] } = this.props;
+        const { outline_tree, outline_hover_obj, gantt_board_id, projectDetailInfoData, outline_tree_round, changeOutLineTreeNodeProto, deleteOutLineTreeNode, currentUserOrganizes = [], start_date, end_date} = this.props;
         //console.log("刷新了数据", outline_tree);
         return (
             <div className={styles.outline_wrapper} style={{ marginTop: task_item_margin_top }}>
@@ -869,7 +1022,22 @@ export default class OutLineHeadItem extends Component {
                                 </div>
                             )
                     }
-
+                    <Popover
+                    trigger="click"
+                    title={this.getExportFileName()}
+                    visible={this.state.visibleExportPopover}
+                    onVisibleChange={(val)=> this.setState({visibleExportPopover: val})}
+                    content={
+                      <div className={styles.exportList}>
+                        <div onClick={this.exportToFile.bind(this, 'pdf')}>导出PDF</div>
+                        <div onClick={this.exportToFile.bind(this, 'image')}>导出图片</div>
+                        <div onClick={this.exportToFile.bind(this, 'excel')}>导出表格</div>
+                        <div onClick={this.exportToFile.bind(this, 'svg')}>svg</div>
+                      </div>
+                    }
+                    >
+                      <a>导出</a>
+                    </Popover>
                     <div>
                         {
                             !closeFeature({ board_id: gantt_board_id, currentUserOrganizes }) && (
@@ -929,11 +1097,11 @@ export default class OutLineHeadItem extends Component {
 function mapStateToProps({
     gantt: { datas: { gantt_board_id, group_view_type, outline_tree, outline_hover_obj, outline_tree_round, date_arr_one_level = [],
         ceilWidth,
-        gantt_view_mode, selected_card_visible } },
+        gantt_view_mode, selected_card_visible, start_date, end_date} },
     technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org, userBoardPermissions = [] } },
     projectDetail: { datas: { projectDetailInfoData = {} } },
     publicTaskDetailModal: { card_id: card_detail_id },
 }) {
-    return { card_detail_id, selected_card_visible, date_arr_one_level, gantt_view_mode, ceilWidth, currentUserOrganizes, is_show_org_name, is_all_org, gantt_board_id, group_view_type, projectDetailInfoData, userBoardPermissions, outline_tree, outline_hover_obj, outline_tree_round }
+    return { card_detail_id, selected_card_visible, date_arr_one_level, gantt_view_mode, ceilWidth, currentUserOrganizes, is_show_org_name, is_all_org, gantt_board_id, group_view_type, projectDetailInfoData, userBoardPermissions, outline_tree, outline_hover_obj, outline_tree_round, start_date, end_date}
 }
 
