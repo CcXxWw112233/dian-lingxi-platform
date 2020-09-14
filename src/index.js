@@ -60,7 +60,7 @@ app.model(require('./models/technological/cooperationPush/imCooperation').defaul
 app.model(require('./models/technological/cooperationPush/simpleModeCooperate').default)
 app.model(require('./models/technological/uploadNormal').default)
 app.model(require('./models/technological/globalSearch').default)
-app.model(require('./models/technological/workbench/gantt').default)
+app.model(require('./models/technological/workbench/gantt/gantt').default)
 app.model(require('./models/technological/public/milestoneDetail').default)
 app.model(require('./models/technological/public/publicModalComment').default)
 app.model(require('./models/technological/public/publicTaskDetailModal').default)

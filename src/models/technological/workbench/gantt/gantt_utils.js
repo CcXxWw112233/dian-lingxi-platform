@@ -1,5 +1,5 @@
-import { setGantTimeSpan } from '../../../routes/Technological/components/Gantt/ganttBusiness'
-import { getDigit, transformTimestamp } from '../../../utils/util'
+import { setGantTimeSpan } from '../../../../routes/Technological/components/Gantt/ganttBusiness'
+import { getDigit, transformTimestamp } from '../../../../utils/util'
 
 function getLeafCountTree(data) {
     if (data.children.length == 0) {
