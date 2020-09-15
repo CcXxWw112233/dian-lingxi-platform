@@ -46,6 +46,15 @@ function BaseLine (props){
   const { baseLine_datas, dispatch } = props;
   // 弹框的显示隐藏状态
   const [ visiblePopover, setVisiblePopover ] = useState(false);
+
+  // 监听项目变更，获取列表数据
+  useMemo(() => {
+    if(visiblePopover)
+    dispatch({
+      type: "gantt/getBaseLineList",
+      payload: {}
+    });
+  }, [visiblePopover])
   // 保存基线的名称数据
   let baseLineName = "";
 

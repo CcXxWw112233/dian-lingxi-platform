@@ -261,7 +261,7 @@ export default class GroupListHeadSet extends Component {
                             {group_view_type == '2' && '成员列表'}
                             {group_view_type == '4' && '我的计划'}
                         </div> */}
-                        { group_view_type === "4" && <BaseLine /> }
+                        { group_view_type === "4" && <BaseLine board_id={ gantt_board_id }/> }
                         {
                             !ganttIsOutlineView({ group_view_type }) && (
                                 <Tooltip title={'内容过滤'}>
