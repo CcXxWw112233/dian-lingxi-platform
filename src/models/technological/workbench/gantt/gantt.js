@@ -1,11 +1,11 @@
-import { getGanttBoardsFiles, getGanttData, getGttMilestoneList, getContentFiterBoardTree, getContentFiterUserTree, getHoliday } from '../../../services/technological/gantt'
-import { getProjectList, getProjectUserList } from '../../../services/technological/workbench'
-import { isApiResponseOk } from '../../../utils/handleResponseData'
+import { getGanttBoardsFiles, getGanttData, getGttMilestoneList, getContentFiterBoardTree, getContentFiterUserTree, getHoliday } from '../../../../services/technological/gantt'
+import { getProjectList, getProjectUserList } from '../../../../services/technological/workbench'
+import { isApiResponseOk } from '../../../../utils/handleResponseData'
 import { message } from 'antd'
-import { MESSAGE_DURATION_TIME } from "../../../globalset/js/constant";
+import { MESSAGE_DURATION_TIME } from "../../../../globalset/js/constant";
 import { routerRedux } from "dva/router";
 import queryString from 'query-string';
-import { getDateInfo } from "../../../routes/Technological/components/Gantt/getDate";
+import { getDateInfo } from "../../../../routes/Technological/components/Gantt/getDate";
 import {
   workbench_projectTabCurrentSelectedProject,
   workbench_start_date,
@@ -15,15 +15,16 @@ import {
   workbench_ceiHeight,
   workbench_ceilWidth,
   workbench_date_arr_one_level
-} from './selects'
-import { createMilestone } from "../../../services/technological/prjectDetail";
-import { getGlobalData } from '../../../utils/businessFunction';
-import { task_item_height, ceil_height, ceil_height_fold, ganttIsFold, group_rows_fold, task_item_height_fold, test_card_item, mock_gantt_data, ganttIsOutlineView, mock_outline_tree, ceil_width, ceil_width_year, one_group_row_total, ganttIsSingleBoardGroupView, date_area_height } from '../../../routes/Technological/components/Gantt/constants';
-import { getModelSelectDatasState } from '../../utils'
-import { getProjectGoupList } from '../../../services/technological/task';
-import { handleChangeBoardViewScrollTop, setGantTimeSpan, diffGanttTimeSpan } from '../../../routes/Technological/components/Gantt/ganttBusiness';
-import { jsonArrayCompareSort, transformTimestamp, isSamDay } from '../../../utils/util';
+} from '../selects'
+import { createMilestone } from "../../../../services/technological/prjectDetail";
+import { getGlobalData } from '../../../../utils/businessFunction';
+import { task_item_height, ceil_height, ceil_height_fold, ganttIsFold, group_rows_fold, task_item_height_fold, test_card_item, mock_gantt_data, ganttIsOutlineView, mock_outline_tree, ceil_width, ceil_width_year, one_group_row_total, ganttIsSingleBoardGroupView, date_area_height } from '../../../../routes/Technological/components/Gantt/constants';
+import { getModelSelectDatasState } from '../../../utils'
+import { getProjectGoupList } from '../../../../services/technological/task';
+import { handleChangeBoardViewScrollTop, setGantTimeSpan, diffGanttTimeSpan } from '../../../../routes/Technological/components/Gantt/ganttBusiness';
+import { jsonArrayCompareSort, transformTimestamp, isSamDay } from '../../../../utils/util';
 import gantt_effect from './gantt_effect'
+import { recusionItem } from './gantt_utils';
 let dispatches = null
 const visual_add_item = {
   "id": "",
@@ -326,126 +327,8 @@ export default {
       // const tree_arr_2 = data.filter(item => item.tree_type != '1')//.sort(jsonArrayCompareSort('start_time', transformTimestamp))
       // new_outline_tree = [].concat(tree_arr_1, tree_arr_2)//先把里程碑排进去，再排没有归属的任务
 
-      const filnaly_outline_tree = new_outline_tree.map(item => {
-        let new_item = { ...item, parent_expand: true }
-        const { tree_type, children = [], is_expand } = item
-        let new_item_children = [...children].filter(item => item.id || (item.add_id && item.editing)) //一般项和正在编辑的输入框占位
-        let child_expand_length = 0 //第一级父节点下所有子孙元素展开的总长
-        const added = new_item_children.find(item => item.tree_type == '0') //表示是否已经添加过虚拟节点
-        if ((tree_type == '1' || tree_type == '2') && !added) { //是里程碑或者一级任务,并且没有添加过
-          // new_item_children.push({ ...visual_add_item, add_id: item.id }) //添加虚拟节点
-        }
-
-        // 时间跨度设置
-        const due_time = getDigit(item['due_time'])
-        const start_time = getDigit(item['start_time']) || due_time //如果没有开始时间，那就取截止时间当天
-        // new_item.is_has_start_time = !!getDigit(item['start_time'])
-        let is_has_start_time = false
-        if (!!getDigit(item['start_time']) && (due_time != start_time)) { //具有开始时间并且开始时间不等于截止时间,因为有可能 开始时间是截止时间赋值的
-          is_has_start_time = true
-        }
-        new_item.is_has_start_time = is_has_start_time
-        new_item.is_has_end_time = !!getDigit(item['due_time'])
-        let time_span = item['time_span'] || item['plan_time_span']
-        new_item.due_time = due_time
-        new_item.start_time = start_time
-        if (tree_type == '1') { //里程碑的周期（时间跨度）,根据一级任务计算
-          const child_time_arr_start = children.map(item => transformTimestamp(item.start_time) || 0).filter(item => item)
-          const child_time_arr_due = children.map(item => transformTimestamp(item.due_time) || 0).filter(item => item)
-          const child_time_arr = [].concat(child_time_arr_due, child_time_arr_start) ////全部时间的集合， [0]防止math.max 。minw
-          time_span = setGantTimeSpan({
-            time_span: '0',
-            start_time: transformTimestamp(Math.min.apply(null, child_time_arr)) == Infinity ? '' : transformTimestamp(Math.min.apply(null, child_time_arr)),
-            due_time: transformTimestamp(due_time) || (transformTimestamp(Math.max.apply(null, child_time_arr)) == -Infinity ? '' : transformTimestamp(Math.max.apply(null, child_time_arr))),
-            start_date,
-            end_date
-          })
-          // console.log('filnaly_outline_tree_1', Math.min.apply(null, child_time_arr), Math.max.apply(null, child_time_arr), time_span)
-        } else { //其它类型就根据开始截至时间计算
-          time_span = setGantTimeSpan({ time_span, start_time, due_time, start_date, end_date })
-        }
-        new_item.time_span = time_span
-        new_item.parent_ids = []
-        new_item.parent_id = ''
-        new_item.parent_milestone_id = ''
-        new_item.parent_card_id = ''
-
-        new_item_children = new_item_children.map(item2 => {
-          let new_item2 = { ...item2, parent_expand: is_expand, parent_type: tree_type, parent_id: item.id }
-          const tree_type2 = item2.tree_type
-          const children2 = (item2.children || []).filter(item => item.id || (item.add_id && item.editing))
-          let new_item_children2 = [...children2]
-          const is_expand2 = item2.is_expand
-
-          // 时间跨度设置
-          const due_time2 = getDigit(item2['due_time'])
-          const start_time2 = getDigit(item2['start_time']) || due_time2 //如果没有开始时间，那就取截止时间当天
-          // new_item2.is_has_start_time = !!getDigit(item2['start_time'])
-          let is_has_start_time2 = false
-          if (!!getDigit(item2['start_time']) && (due_time2 != start_time2)) { //具有开始时间并且开始时间不等于截止时间,因为有可能 开始时间是截止时间赋值的
-            is_has_start_time2 = true
-          }
-          new_item2.is_has_start_time = is_has_start_time2
-          new_item2.is_has_end_time = !!getDigit(item2['due_time'])
-          let time_span2 = item2['time_span'] || item2['plan_time_span']
-          new_item2.due_time = due_time2
-          new_item2.start_time = start_time2
-          time_span2 = setGantTimeSpan({ time_span: time_span2, start_time: start_time2, due_time: due_time2, start_date, end_date })
-          new_item2.time_span = time_span2
-          new_item2.parent_ids = [item.id]
-
-          if (is_expand) {
-            child_expand_length += 1
-          }
-          const added2 = new_item_children2.find(item => item.tree_type == '0') //表示是否已经添加过虚拟节点
-          if ((tree_type2 == '1' || tree_type2 == '2') && !added2) { //是里程碑或者一级任务
-            // new_item_children2.push({ ...visual_add_item, add_id: item2.id }) //添加虚拟节点
-          }
-          if (tree_type == '1') { //父元素是里程碑类型
-            new_item2.parent_milestone_id = item.id
-          }
-          if (tree_type == '1') { //如果第一级是里程碑才有第三级
-            new_item_children2 = new_item_children2.map(item3 => {
-              let new_item3 = { ...item3, parent_expand: new_item2.parent_expand && new_item2.is_expand, parent_type: tree_type2, parent_id: item2.id }
-              if (is_expand && is_expand2) {
-                child_expand_length += 1
-              }
-              // 时间跨度设置
-              const due_time3 = getDigit(item3['due_time'])
-              const start_time3 = getDigit(item3['start_time']) || due_time3 //如果没有开始时间，那就取截止时间当天
-              // new_item3.is_has_start_time = !!getDigit(item3['start_time'])
-              let is_has_start_time3 = false
-              if (!!getDigit(item3['start_time']) && (due_time3 != start_time3)) { //具有开始时间并且开始时间不等于截止时间,因为有可能 开始时间是截止时间赋值的
-                is_has_start_time3 = true
-              }
-              new_item3.is_has_start_time = is_has_start_time3
-              new_item3.is_has_end_time = !!getDigit(item3['due_time'])
-
-              let time_span3 = item3['time_span'] || item3['plan_time_span']
-              new_item3.due_time = due_time3
-              new_item3.start_time = start_time3
-              time_span3 = setGantTimeSpan({ time_span: time_span3, start_time: start_time3, due_time: due_time3, start_date, end_date })
-              new_item3.time_span = time_span3
-              new_item3.parent_ids = [item.id, item2.id]
-
-              if (tree_type2 == '2') {
-                new_item3.parent_card_id = item2.id
-              }
-              return new_item3
-            })
-          } else {
-            new_item2.parent_card_id = item.id
-            new_item_children2 = undefined
-          }
-          new_item2.children = new_item_children2
-          return new_item2
-        })
-        new_item.expand_length = child_expand_length + 1 //子孙节点展开的长度加上自身
-        new_item.children = new_item_children
-        return new_item
-      })
-
-      //console.log('filnaly_outline_tree', filnaly_outline_tree)
+      let filnaly_outline_tree = recusionItem(new_outline_tree, { parent_expand: true }, { start_date, end_date })
+      // console.log('filnaly_outline_tree_0', filnaly_outline_tree)
       yield put({
         type: 'updateDatas',
         payload: {
@@ -470,6 +353,8 @@ export default {
       for (let val of filnaly_outline_tree) {
         recusion(val)
       }
+      // console.log('filnaly_outline_tree_0_1', filnaly_outline_tree)
+
       arr = arr.filter(item => item.parent_expand)
       arr.push({ ...visual_add_item, add_id: 'add_milestone_out' }) //默认有个新建里程碑，占位
       arr = arr.map((item, key) => {
@@ -575,7 +460,6 @@ export default {
       // console.log('filnaly_outline_tree2', filnaly_outline_tree[1].expand_length)
 
     },
-
     * handleListGroup({ payload }, { select, call, put }) {
       try {
         const { data, not_set_scroll_top } = payload

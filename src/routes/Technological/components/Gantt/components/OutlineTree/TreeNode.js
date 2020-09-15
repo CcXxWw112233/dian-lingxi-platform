@@ -115,13 +115,13 @@ export default class TreeNode extends Component {
         }
         const target = document.getElementById('gantt_card_out_middle')
 
-        if (toDayIndex != -1) { //如果今天在当前日期面板内 
+        if (toDayIndex != -1) { //如果今天在当前日期面板内
             let nomal_position = toDayIndex * ceilWidth - 248 + 16 //248为左边面板宽度,16为左边header的宽度和withCeil * n的 %值
             if (gantt_view_mode == 'year') {
                 const date_position = date_arr_one_level.slice(0, toDayIndex).map(item => item.last_date).reduce((total, num) => total + num) //索引月份总天数
                 nomal_position = date_position * ceilWidth - 248 + 16//当天所在位置index
             } else if (gantt_view_mode == 'week') {
-                nomal_position = (toDayIndex - 1) * 7 * ceilWidth  //当天所在位置index 
+                nomal_position = (toDayIndex - 1) * 7 * ceilWidth  //当天所在位置index
             }
             const max_position = target.scrollWidth - target.clientWidth - 2 * ceilWidth//最大值,保持在这个值的范围内，滚动条才能不滚动到触发更新的区域
             const position = max_position > nomal_position ? nomal_position : max_position
@@ -540,7 +540,7 @@ export default class TreeNode extends Component {
         }
         return (
             <>
-                <div className={`${styles.outline_tree_node_content} ${((hoverItem.id && hoverItem.id == id) || (hoverItem.add_id && hoverItem.add_id == add_id)) ? styles.hover : ''}`}
+                <div className={`${styles.outline_tree_node_content} ${((hoverItem.id && hoverItem.id == id) || (hoverItem.add_id && hoverItem.add_id == add_id)) ? styles.hover : ''} treeItems_i`}
                     style={{ paddingLeft: (leve * 23) + 'px', height: task_item_height, lineHeight: `${task_item_height}px`, marginBottom: task_item_margin_top }}
                     onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
                     {
@@ -629,7 +629,7 @@ export default class TreeNode extends Component {
         const isLeaf = true;
         return (
             <>
-                <div className={`${styles.outline_tree_node_content} ${((hoverItem.id && hoverItem.id == id) || (hoverItem.add_id && hoverItem.add_id == add_id)) ? styles.hover : ''}`}
+                <div className={`${styles.outline_tree_node_content} ${((hoverItem.id && hoverItem.id == id) || (hoverItem.add_id && hoverItem.add_id == add_id)) ? styles.hover : ''} treeItems_i`}
                     style={{ paddingLeft: (leve * 23) + 'px', height: task_item_height, lineHeight: `${task_item_height}px`, marginBottom: task_item_margin_top }}
                     onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
                     {
@@ -857,9 +857,9 @@ export default class TreeNode extends Component {
         const { children = [], leve = 0, outline_node_draging, drag_outline_node = {} } = this.props;
         const { id: drag_outline_node_id, parent_id: drag_outline_node_parent_id } = drag_outline_node
         const isLeaf = !(children && children.length)
-        const className = `${styles.outline_tree_node} 
+        const className = `${styles.outline_tree_node}
                         ${styles[`leve_${leve}`]}
-                         ${(outline_node_draging && (!!drag_outline_node_parent_id ? !!parent_id : this.setDragClass())) && styles.drag_over} 
+                         ${(outline_node_draging && (!!drag_outline_node_parent_id ? !!parent_id : this.setDragClass())) && styles.drag_over}
                           ${(!!parent_id && (drag_outline_node.parent_id == parent_id)) && styles.current_drag}
                         outline_drag_node ${isLeaf ? (is_expand ? styles.expanded : '') : ''} `;
 
