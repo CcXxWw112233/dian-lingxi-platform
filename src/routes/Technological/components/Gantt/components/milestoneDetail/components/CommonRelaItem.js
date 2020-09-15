@@ -15,7 +15,7 @@ export default class CommonRelaItem extends React.Component {
   state = {
   }
   deleteConfirm = ({ id }) => {
-    const { milestone_id, dispatch, deleteRelationContent } = this.props
+    const { milestone_id, dispatch, deleteRelationContent, selected_card_visible, card_id } = this.props
     dispatch({
       type: 'milestoneDetail/taskCancelRelaMiletones',
       payload: {
@@ -25,13 +25,21 @@ export default class CommonRelaItem extends React.Component {
     }).then(res => {
       if (isApiResponseOk(res)) {
         if (typeof deleteRelationContent == 'function') deleteRelationContent()
+        if (selected_card_visible) {
+          dispatch({
+            type: 'publicTaskDetailModal/getCardWithAttributesDetail',
+            payload: {
+              id: card_id
+            }
+          })
+        }
       }
     })
   }
   render() {
     const { itemValue = {}, type } = this.props
     const { id, name, deadline, is_completed, users = [], progress_percent } = itemValue
-
+    const result_process = Math.round(progress_percent * 100) / 100
     return (
       <div className={`${taskItemStyles.taskItem}`}>
         <div className={`${taskItemStyles.item_1} ${taskItemStyles.pub_hover}`} >
@@ -47,8 +55,8 @@ export default class CommonRelaItem extends React.Component {
 
           {
             (type == '4') && (
-              <div style={{ marginRight: '6px' }}>
-                {progress_percent || '0'} %
+              <div style={{ marginRight: '6px', color: 'rgba(0,0,0,0.45)' }}>
+                {result_process || '0'} %
               </div>
             )
           }
@@ -80,8 +88,8 @@ export default class CommonRelaItem extends React.Component {
     )
   }
 }
-function mapStateToProps({ milestoneDetail: { milestone_detail = {} } }) {
-  return { milestone_detail }
+function mapStateToProps({ milestoneDetail: { milestone_detail = {} }, gantt: { datas: { selected_card_visible } }, publicTaskDetailModal: { card_id } }) {
+  return { milestone_detail, selected_card_visible, card_id }
 }
 
 CommonRelaItem.defaultProps = {

@@ -362,6 +362,7 @@ export default class MainContent extends React.Component {
       }
     } = this.props
     const { board_id, name, deadline, principals = [], id, content_list = [], org_id, chird_list = [], progress_percent = '0' } = milestone_detail
+    const result_process = Math.round(progress_percent * 100) / 100
     const executors = principals.filter(item => item)
     const new_users = users.map(item => {
       if (!item['user_id']) {
@@ -422,7 +423,7 @@ export default class MainContent extends React.Component {
               <span>进度</span>
             </div>
             <div className={`${indexStyles.contain2_item_right}`} style={{ lineHeight: '28px' }}>
-              <Progress percent={Number(progress_percent).toFixed(2)} strokeColor={'#FAAD14'} />
+              <Progress percent={result_process} strokeColor={'#FAAD14'} />
             </div>
           </div>
           {/*负责人*/}
