@@ -301,16 +301,18 @@ export default class MainContent extends React.Component {
   // 渲染关联内容头部、
   renderRelaTitleContent = (type) => {
     const { milestone_detail = {} } = this.props
-    const { content_list = [], milestone_chird = [], milestone_completed_count, content_completed_count } = milestone_detail
-    let title_name = type == '0' ? `${currentNounPlanFilterName(TASKS)}` : type == '4' ? '里程碑' : ''
+    const { content_list = [], chird_list = [], milestone_completed_count, content_completed_count } = milestone_detail
+    let title_name = ''
     let complete_num = '0'
     let total_num = '0'
     if (type == '0') {
+      title_name = `${currentNounPlanFilterName(TASKS)}`
       complete_num = content_completed_count || '0'
       total_num = content_list.length
     } else if (type == '4') {
+      title_name = '里程碑'
       complete_num = milestone_completed_count || '0'
-      total_num = milestone_chird.length
+      total_num = chird_list.length
     }
 
     return (
