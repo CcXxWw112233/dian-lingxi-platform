@@ -200,6 +200,9 @@ export default class OutLineHeadItem extends Component {
                     let updateParams = {};
                     updateParams.name = param.name;
                     updateParams.board_id = gantt_board_id;
+                    if (param.parent_id) {
+                        updateParams.parent_id = param.parent_id
+                    }
 
                     createMilestone({ ...updateParams }, { isNotLoading: false })
                         .then(res => {
@@ -212,11 +215,30 @@ export default class OutLineHeadItem extends Component {
                                     children: [],
                                     executors: []
                                 };
-                                const index = outline_tree.findIndex(item => item.add_id == 'add_milestone')
-                                if (index != -1) {
-                                    outline_tree.splice(index, 0, addNodeValue);
+                                if (param.parent_id) { // 添加子里程碑
+                                    let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, param.parent_id);
+                                    let children = [];
+                                    if (nodeValue) {
+                                        children = nodeValue.children
+                                    }
+
+                                    if (children.length > 0) {
+                                        const index = children.findIndex((item) => item.tree_type == '0');
+                                        children.splice(index, 0, addNodeValue);
+                                    } else {
+                                        children.push(addNodeValue);
+                                    }
+                                    nodeValue.children = children;
+
+                                    this.setCreateAfterInputFous(nodeValue, outline_tree);
+
                                 } else {
-                                    outline_tree.push(addNodeValue);
+                                    const index = outline_tree.findIndex(item => item.add_id == 'add_milestone')
+                                    if (index != -1) {
+                                        outline_tree.splice(index, 0, addNodeValue);
+                                    } else {
+                                        outline_tree.push(addNodeValue);
+                                    }
                                 }
                                 outline_tree = outline_tree.filter(item => item.add_id != 'add_milestone')
                                 //this.setCreateAfterInputFous(null,outline_tree);
