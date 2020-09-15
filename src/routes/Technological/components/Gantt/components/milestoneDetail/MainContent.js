@@ -333,7 +333,7 @@ export default class MainContent extends React.Component {
           <div className={`${indexStyles.contain2_item_right}`}></div>
         </div>
         <div className={`${indexStyles.contain3}`}>
-          <div className={indexStyles.contain3_inner}>
+          <div className={`${indexStyles.contain3_inner} ${globalStyle.global_vertical_scrollbar}`}>
             {content_list.map((value, key) => {
               const { name, id } = value
               return (
