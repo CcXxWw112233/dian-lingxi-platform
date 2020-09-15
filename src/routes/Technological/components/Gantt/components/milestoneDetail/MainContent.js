@@ -425,7 +425,7 @@ export default class MainContent extends React.Component {
               <span>进度</span>
             </div>
             <div className={`${indexStyles.contain2_item_right}`} style={{ lineHeight: '28px' }}>
-              <Progress percent={result_process} strokeColor={'#FAAD14'} />
+              <Progress percent={result_process} strokeColor={result_process == 100 ? '#52c41a' : '#FAAD14'} />
             </div>
           </div>
           {/*负责人*/}
