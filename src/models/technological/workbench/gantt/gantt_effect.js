@@ -25,6 +25,7 @@ export default {
         selected_card_visible: false, //查看任务抽屉
         uploading_folder_id: '', //任务详情上传文件的文件id, 下方抽屉在上传后判断文件夹id进行更新
         notification_todos: {}, //[id:{code:'', message: ''}]，当更新任务时间后，由于任务列表的key是根据id_start_time duetime等多个属性设置，会重新didmount导致之前操作丢失，用来存放待办
+        baseLine_datas: [], // 基线的版本数据
     },
     effects: {
         * addCardRely({ payload = {} }, { select, call, put }) {
@@ -402,6 +403,58 @@ export default {
             const node = getTreeNodeValue(data, id)
             // console.log('sssssssss_find', { node, outline_tree, id })
             return node
+        },
+        // 获取基线数据列表
+        * getBaseLineList({ payload = {}}, { select, call, put }){
+          yield put({
+            type: "updateDatas",
+            payload: {
+              baseLine_datas: [{id: 1}, {id: 2}]
+            }
+          })
+        },
+        // 添加基线数据
+        * addBaseLineData({ payload = {} }, { select, call, put}){
+          let data = payload.data;
+          let list = [...yield select(getModelSelectDatasState('gantt', 'baseLine_datas'))];
+          list.push(data);
+          yield put({
+            type: 'updateDatas',
+            payload: {
+              baseLine_datas: [...list]
+            }
+          })
+        },
+        // 删除一个基线列表
+        * deleteBaseLineData({ payload = {} }, { select, call, put }){
+          let id = payload.id;
+          let list = [...yield select(getModelSelectDatasState('gantt', 'baseLine_datas'))];
+          if(id){
+            list = list.filter(item => item.id !== id);
+          }
+          yield put({
+            type: "updateDatas",
+            payload: {
+              baseLine_datas: list
+            }
+          })
+        },
+        // 修改基线名称
+        * updateBaseLine({ payload = {} }, { select, call, put }) {
+          let { id, name } = payload;
+          let list = [...yield select(getModelSelectDatasState('gantt', 'baseLine_datas'))];
+          list = list.map(item => {
+            if(item.id === id){
+              item.name = name;
+            }
+            return item;
+          })
+          yield put({
+            type: "updateDatas",
+            payload: {
+              baseLine_datas: list
+            }
+          })
         }
     }
 
