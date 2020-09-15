@@ -248,7 +248,7 @@ export default class MilestoneAdd extends React.Component {
 					}
 					className={timeName ? `${indexStyles.menuItem} ${indexStyles.disabled}` : `${indexStyles.menuItem}`}
 					style={{ height: '40px', lineHeight: '40px', margin: 0 }}
-					disabled={timeName}
+					// disabled={timeName}
 					>
 						{this.renderChildMenu(milestone_chird)}
 					</Menu.SubMenu>
