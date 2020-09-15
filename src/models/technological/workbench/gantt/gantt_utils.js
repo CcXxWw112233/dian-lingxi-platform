@@ -2,7 +2,7 @@ import { setGantTimeSpan } from '../../../../routes/Technological/components/Gan
 import { getDigit, transformTimestamp } from '../../../../utils/util'
 
 function getLeafCountTree(data = {}) {
-    if(!data.children) return 1
+    if (!data.children) return 1
     if (data.children.length == 0) {
         return 1;
     } else {

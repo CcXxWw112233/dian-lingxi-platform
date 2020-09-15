@@ -78,7 +78,7 @@ export default class GetRowGanttItem extends Component {
             <div className={`${indexStyles.ganttDetailItem}`}
               key={key2}
               style={{
-                backgroundColor: (week_day == 0 || week_day == 6) ? 'rgba(0, 0, 0, 0.04)' : 'rgba(0,0,0,.02)',
+                backgroundColor: (week_day == 0 || week_day == 6) ? 'rgb(250,250,250)' : 'rgb(245,245,245)',
                 // backgroundColor: isToday(timestamp) ? 'rgb(242, 251, 255)' : ((week_day == 0 || week_day == 6) ? 'rgba(0, 0, 0, 0.04)' : 'rgba(0,0,0,.02)'),
                 ...this.setBorderTop()
               }}
@@ -100,7 +100,7 @@ export default class GetRowGanttItem extends Component {
               key={key2}
               style={{
                 width: last_date * ceilWidth,
-                backgroundColor: 'rgba(0,0,0,.02)',
+                backgroundColor: 'rgb(245,245,245)',
                 ...this.setBorderTop()
               }}
             >
@@ -121,7 +121,7 @@ export default class GetRowGanttItem extends Component {
               key={key2}
               style={{
                 width: 7 * ceilWidth,
-                backgroundColor: 'rgba(0,0,0,.02)',
+                backgroundColor: 'rgb(245,245,245)',
                 ...this.setBorderTop()
               }}
             >
