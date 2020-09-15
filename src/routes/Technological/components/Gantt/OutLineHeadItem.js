@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'dva';
-import { message, Menu, Dropdown, Modal, Button, Popover, Spin} from 'antd';
+import { message, Menu, Dropdown, Modal, Button, Popover, Spin } from 'antd';
 import styles from './index.less';
 import globalStyles from '@/globalset/css/globalClassName.less';
 import OutlineTree from './components/OutlineTree';
@@ -42,15 +42,15 @@ const { SubMenu } = Menu;
 const { confirm } = Modal;
 
 const IsLoading = (props) => {
-  const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
-  return (
-    ReactDOM.createPortal(
-      <div className={styles.loadingModal}>
-        <Spin size="large"/>
-      </div>,
-      document.body
+    const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
+    return (
+        ReactDOM.createPortal(
+            <div className={styles.loadingModal}>
+                <Spin size="large" />
+            </div>,
+            document.body
+        )
     )
-  )
 }
 
 @connect(mapStateToProps)
@@ -220,6 +220,9 @@ export default class OutLineHeadItem extends Component {
                     let updateParams = {};
                     updateParams.name = param.name;
                     updateParams.board_id = gantt_board_id;
+                    if (param.parent_id) {
+                        updateParams.parent_id = param.parent_id
+                    }
 
                     createMilestone({ ...updateParams }, { isNotLoading: false })
                         .then(res => {
@@ -232,11 +235,30 @@ export default class OutLineHeadItem extends Component {
                                     children: [],
                                     executors: []
                                 };
-                                const index = outline_tree.findIndex(item => item.add_id == 'add_milestone')
-                                if (index != -1) {
-                                    outline_tree.splice(index, 0, addNodeValue);
+                                if (param.parent_id) { // 添加子里程碑
+                                    let nodeValue = OutlineTree.getTreeNodeValue(outline_tree, param.parent_id);
+                                    let children = [];
+                                    if (nodeValue) {
+                                        children = nodeValue.children
+                                    }
+
+                                    if (children.length > 0) {
+                                        const index = children.findIndex((item) => item.tree_type == '0');
+                                        children.splice(index, 0, addNodeValue);
+                                    } else {
+                                        children.push(addNodeValue);
+                                    }
+                                    nodeValue.children = children;
+
+                                    this.setCreateAfterInputFous(nodeValue, outline_tree);
+
                                 } else {
-                                    outline_tree.push(addNodeValue);
+                                    const index = outline_tree.findIndex(item => item.add_id == 'add_milestone')
+                                    if (index != -1) {
+                                        outline_tree.splice(index, 0, addNodeValue);
+                                    } else {
+                                        outline_tree.push(addNodeValue);
+                                    }
                                 }
                                 outline_tree = outline_tree.filter(item => item.add_id != 'add_milestone')
                                 //this.setCreateAfterInputFous(null,outline_tree);
@@ -853,154 +875,155 @@ export default class OutLineHeadItem extends Component {
 
 
     // 导出文件的样式处理
-    toExport = (type = 'svg', pix = 2)=>{
-      return new Promise((resolve, reject) => {
-        let header = document.querySelector('#gantt_date_area');
-        let parent = document.querySelector("." + styles.cardDetail_middle);
-        let wapper = parent.querySelector('#gantt_group_head');
-        let listHead = parent.querySelector('#gantt_header_wapper');
-        let list = parent.querySelectorAll('.treeItems_i');
-        let panl = document.querySelector('#gantt_operate_area_panel');
-        list.forEach(item => {
-          item.style.height = '38px';
-          item.style.marginBottom = '0px';
-        })
-        let h = listHead.style.height;
-        if(listHead){
-          listHead.style.height = 'auto';
-        }
-        wapper.style.overflowY = 'inherit'
-        parent.style.overflowY = 'inherit';
-        let left = header.style.left;
-        header.style.left = 0;
-        let dom = parent.querySelector("#gantt_card_out_middle");
-        dom.style.overflow = 'inherit';
-        dom.parentNode.style.overflow = 'inherit';
-        panl.nextElementSibling.style.display = 'none';
-        // 过滤图片的跨域问题
-        function filter (node) {
-          return (node.tagName?.toUpperCase() !== 'IMG');
-        }
-        message.success('正在导出中...');
-        setTimeout(async ()=>{
-          let dataUrl ;
-          if(type === 'svg') {
-            dataUrl = await DomToImage.toSvg(parent, {filter});
-          }
-          if(type === 'png'){
-            dataUrl = await DomToImage.toPng(parent, {filter});
-          }
-          if(type === 'jpeg'){
-            dataUrl = await DomToImage.toJpeg(parent, {filter});
-          }
-          let canvas = document.createElement('canvas');
-          let img = new Image();
-          img.src = dataUrl;
-          img.onload = ()=>{
-            canvas.height = img.height * pix;
-            canvas.width = img.width * pix ;
-            let ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, img.width * pix, img.height * pix);
-            ctx.scale(img.width/ canvas.width, img.height / canvas.height);
-            const toBlob = ()=> {
-              canvas.toBlob(blob => {
-                // console.log(blob)
-                if(!blob){
-                  return toBlob();
-                }
-                let url = window.URL.createObjectURL(blob);
-                resolve(url);
-              })
+    toExport = (type = 'svg', pix = 2) => {
+        return new Promise((resolve, reject) => {
+            let header = document.querySelector('#gantt_date_area');
+            let parent = document.querySelector("." + styles.cardDetail_middle);
+            let wapper = parent.querySelector('#gantt_group_head');
+            let listHead = parent.querySelector('#gantt_header_wapper');
+            let list = parent.querySelectorAll('.treeItems_i');
+            let panl = document.querySelector('#gantt_operate_area_panel');
+            list.forEach(item => {
+                item.style.height = '38px';
+                item.style.marginBottom = '0px';
+            })
+            let h = listHead.style.height;
+            if (listHead) {
+                listHead.style.height = 'auto';
             }
-            toBlob();
+            wapper.style.overflowY = 'inherit'
+            parent.style.overflowY = 'inherit';
+            let left = header.style.left;
+            header.style.left = 0;
+            let dom = parent.querySelector("#gantt_card_out_middle");
+            dom.style.overflow = 'inherit';
+            dom.parentNode.style.overflow = 'inherit';
+            panl.nextElementSibling.style.display = 'none';
+            // 过滤图片的跨域问题
+            function filter(node) {
+                return true
+                // return (node.tagName?.toUpperCase() !== 'IMG');
+            }
+            message.success('正在导出中...');
+            setTimeout(async () => {
+                let dataUrl;
+                if (type === 'svg') {
+                    dataUrl = await DomToImage.toSvg(parent, { filter });
+                }
+                if (type === 'png') {
+                    dataUrl = await DomToImage.toPng(parent, { filter });
+                }
+                if (type === 'jpeg') {
+                    dataUrl = await DomToImage.toJpeg(parent, { filter });
+                }
+                let canvas = document.createElement('canvas');
+                let img = new Image();
+                img.src = dataUrl;
+                img.onload = () => {
+                    canvas.height = img.height * pix;
+                    canvas.width = img.width * pix;
+                    let ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, img.width * pix, img.height * pix + 80);
+                    ctx.scale(img.width / canvas.width, img.height / canvas.height);
+                    const toBlob = () => {
+                        canvas.toBlob(blob => {
+                            // console.log(blob)
+                            if (!blob) {
+                                return toBlob();
+                            }
+                            let url = window.URL.createObjectURL(blob);
+                            resolve(url);
+                        })
+                    }
+                    toBlob();
 
-          }
-          dom.style.overflow = 'scroll';
-          header.style.left = left;
-          dom.parentNode.style.overflow = 'hidden';
-          parent.style.overflowY = 'auto';
-          wapper.style.overflowY = 'auto';
-          if(listHead){
-            listHead.style.height = h;
-          }
-          list.forEach(item => {
-            item.style.height = '26px';
-            item.style.marginBottom = '12px';
-          })
-          panl.nextElementSibling.style.display = 'block';
-        }, 500)
+                }
+                dom.style.overflow = 'scroll';
+                header.style.left = left;
+                dom.parentNode.style.overflow = 'hidden';
+                parent.style.overflowY = 'auto';
+                wapper.style.overflowY = 'auto';
+                if (listHead) {
+                    listHead.style.height = h;
+                }
+                list.forEach(item => {
+                    item.style.height = '26px';
+                    item.style.marginBottom = '12px';
+                })
+                panl.nextElementSibling.style.display = 'block';
+            }, 500)
 
-      })
+        })
     }
     // 获取导出的文件时间
     getExportFileName = () => {
-      const { start_date, end_date } = this.props;
-      let flag = start_date.year === end_date.year;
-      if(flag) return start_date.date_top + start_date.date_no +'日 至 '+ end_date.date_top + end_date.date_no +'日';
-      else return start_date.year.toString().substr(-2)+'年' + start_date.month +'月' + start_date.date_no +'日 至 ' + end_date.year.toString().substr(-2 )+'年'+ end_date.month +'月' + end_date.date_no +'日';
+        const { start_date, end_date } = this.props;
+        let flag = start_date.year === end_date.year;
+        if (flag) return start_date.date_top + start_date.date_no + '日 至 ' + end_date.date_top + end_date.date_no + '日';
+        else return start_date.year.toString().substr(-2) + '年' + start_date.month + '月' + start_date.date_no + '日 至 ' + end_date.year.toString().substr(-2) + '年' + end_date.month + '月' + end_date.date_no + '日';
     }
 
     // 导出的文件类型
-    exportToFile = async (type)=>{
-      const { projectDetailInfoData = {} } = this.props;
-      this.setState({
-        visibleExportPopover: false
-      })
-      switch(type){
-        case "pdf":
-          this.setState({
-            // bodyPicture: await createModel(),
-            showLoading: true
-          })
-        // this.createLoadingDiv();
-        let urlData = await this.toExport('png', 1);
-        let pic = new Image();
-          pic.src = urlData;
-          pic.onload = async ()=>{
-            let pdf = new jsPDF({
-              orientation: "l",
-              unit: "pt",
-              format: [pic.width, pic.height]
-            });
-            pdf.addImage(pic, 'JPEG', 0, 0, pic.width, pic.height, '', "SLOW");
-            await pdf.save(projectDetailInfoData.board_name+'_'+ this.getExportFileName() + '.pdf');
-            this.setState({
-              showLoading: false,
-              bodyPicture: null
-            })
-          }
-        break;
-        case "image":
-          this.setState({
-            showLoading: true
-          })
-          let url = await this.toExport('svg', 2);
-          let a = document.createElement('a');
-          a.href = url;
-          a.download = projectDetailInfoData.board_name+'_'+ this.getExportFileName() + '.png';
-          a.click();
-          // 内存释放
-          a = null;
-          this.setState({
-            showLoading: false,
-          })
-          break;
-        case "svg":
-          let dom = document.body;
-          let p = new jsPDF();
-          p.html(dom, {
-            callback: function (doc) {
-              doc.save('test.pdf');
-            }
-         });
-          break;
-        default:
-          message.warn('功能正在开发中');
-      }
+    exportToFile = async (type) => {
+        const { projectDetailInfoData = {} } = this.props;
+        this.setState({
+            visibleExportPopover: false
+        })
+        switch (type) {
+            case "pdf":
+                this.setState({
+                    // bodyPicture: await createModel(),
+                    showLoading: true
+                })
+                // this.createLoadingDiv();
+                let urlData = await this.toExport('png', 1);
+                let pic = new Image();
+                pic.src = urlData;
+                pic.onload = async () => {
+                    let pdf = new jsPDF({
+                        orientation: "l",
+                        unit: "pt",
+                        format: [pic.width, pic.height]
+                    });
+                    pdf.addImage(pic, 'JPEG', 0, 0, pic.width, pic.height, '', "SLOW");
+                    await pdf.save(projectDetailInfoData.board_name + '_' + this.getExportFileName() + '.pdf');
+                    this.setState({
+                        showLoading: false,
+                        bodyPicture: null
+                    })
+                }
+                break;
+            case "image":
+                this.setState({
+                    showLoading: true
+                })
+                let url = await this.toExport('svg', 2);
+                let a = document.createElement('a');
+                a.href = url;
+                a.download = projectDetailInfoData.board_name + '_' + this.getExportFileName() + '.png';
+                a.click();
+                // 内存释放
+                a = null;
+                this.setState({
+                    showLoading: false,
+                })
+                break;
+            case "svg":
+                let dom = document.body;
+                let p = new jsPDF();
+                p.html(dom, {
+                    callback: function (doc) {
+                        doc.save('test.pdf');
+                    }
+                });
+                break;
+            default:
+                message.warn('功能正在开发中');
+        }
     }
     render() {
         const { board_info_visible, show_add_menber_visible, safeConfirmModalVisible } = this.state;
-        const { outline_tree, outline_hover_obj, gantt_board_id, projectDetailInfoData, outline_tree_round, changeOutLineTreeNodeProto, deleteOutLineTreeNode, currentUserOrganizes = [], start_date, end_date} = this.props;
+        const { outline_tree, outline_hover_obj, gantt_board_id, projectDetailInfoData, outline_tree_round, changeOutLineTreeNodeProto, deleteOutLineTreeNode, currentUserOrganizes = [], start_date, end_date } = this.props;
         //console.log("刷新了数据", outline_tree);
         return (
             <div className={styles.outline_wrapper} style={{ marginTop: task_item_margin_top }}>
@@ -1038,19 +1061,19 @@ export default class OutLineHeadItem extends Component {
                             )
                     }
                     <Popover
-                    trigger="click"
-                    title={this.getExportFileName()}
-                    visible={this.state.visibleExportPopover}
-                    onVisibleChange={(val)=> this.setState({visibleExportPopover: val})}
-                    content={
-                      <div className={styles.exportList}>
-                        <div onClick={this.exportToFile.bind(this, 'pdf')}>导出PDF</div>
-                        <div onClick={this.exportToFile.bind(this, 'image')}>导出图片</div>
-                        <div onClick={this.exportToFile.bind(this, 'excel')}>导出表格</div>
-                      </div>
-                    }
+                        trigger="click"
+                        title={this.getExportFileName()}
+                        visible={this.state.visibleExportPopover}
+                        onVisibleChange={(val) => this.setState({ visibleExportPopover: val })}
+                        content={
+                            <div className={styles.exportList}>
+                                <div onClick={this.exportToFile.bind(this, 'pdf')}>导出PDF</div>
+                                <div onClick={this.exportToFile.bind(this, 'image')}>导出图片</div>
+                                <div onClick={this.exportToFile.bind(this, 'excel')}>导出表格</div>
+                            </div>
+                        }
                     >
-                      <a>导出</a>
+                        <a>导出</a>
                     </Popover>
                     <div>
                         {
@@ -1102,9 +1125,9 @@ export default class OutLineHeadItem extends Component {
                     />
                 </>
                 {this.state.showLoading && (
-                  <IsLoading>
-                    {/* {this.state.bodyPicture} */}
-                  </IsLoading>
+                    <IsLoading>
+                        {/* {this.state.bodyPicture} */}
+                    </IsLoading>
                 )}
             </div>
         );
@@ -1116,11 +1139,11 @@ export default class OutLineHeadItem extends Component {
 function mapStateToProps({
     gantt: { datas: { gantt_board_id, group_view_type, outline_tree, outline_hover_obj, outline_tree_round, date_arr_one_level = [],
         ceilWidth,
-        gantt_view_mode, selected_card_visible, start_date, end_date} },
+        gantt_view_mode, selected_card_visible, start_date, end_date } },
     technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org, userBoardPermissions = [] } },
     projectDetail: { datas: { projectDetailInfoData = {} } },
     publicTaskDetailModal: { card_id: card_detail_id },
 }) {
-    return { card_detail_id, selected_card_visible, date_arr_one_level, gantt_view_mode, ceilWidth, currentUserOrganizes, is_show_org_name, is_all_org, gantt_board_id, group_view_type, projectDetailInfoData, userBoardPermissions, outline_tree, outline_hover_obj, outline_tree_round, start_date, end_date}
+    return { card_detail_id, selected_card_visible, date_arr_one_level, gantt_view_mode, ceilWidth, currentUserOrganizes, is_show_org_name, is_all_org, gantt_board_id, group_view_type, projectDetailInfoData, userBoardPermissions, outline_tree, outline_hover_obj, outline_tree_round, start_date, end_date }
 }
 
