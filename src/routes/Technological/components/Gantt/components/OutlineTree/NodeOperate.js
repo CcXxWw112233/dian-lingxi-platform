@@ -209,6 +209,9 @@ export default class NodeOperate extends Component {
             case 'insert_milestone':
                 this.insertItem({ type: 'milestone', data })
                 break
+            case 'create_child_milestone':
+                this.addChildMilestone(true)
+                break
             case 'rename':
                 if (typeof this.props.editName == 'function') {
                     this.props.editName()
@@ -389,10 +392,33 @@ export default class NodeOperate extends Component {
             }
         });
     }
+    // 创建子里程碑
+    addChildMilestone = () => {
+        const { nodeValue: { id }, outline_tree = [], dispatch } = this.props
+        let target_id = id
+        this.props.onExpand(target_id, true) //展开
+        let node = OutlineTree.getTreeNodeValue(outline_tree, target_id);
+        console.log('sssssaa_0', target_id, node)
+        if (!node) {
+            return
+        }
+        let new_children = node.children || [];
+        // add_id: create_child ? id : parent_id || id 
+        new_children.push({ ...visual_add_item, editing: true }) //插入创建的虚拟节点
+        node.children = new_children;
+        console.log('sssssaa_1', node.children)
+        // debugger
+        dispatch({
+            type: 'gantt/handleOutLineTreeData',
+            payload: {
+                data: outline_tree
+            }
+        });
+    }
     render() {
         const { group_sub_visible, create_group_visible } = this.state
         const { nodeValue = {} } = this.props
-        const { tree_type, parent_type, parent_id, parent_card_id } = nodeValue
+        const { tree_type, parent_type, parent_id, parent_card_id, parent_milestone_id } = nodeValue
         return (
             <div className={styles.menu} onWheel={e => e.stopPropagation()}>
                 {
@@ -436,7 +462,13 @@ export default class NodeOperate extends Component {
                         </div>
                     )
                 }
-
+                { //一级里程碑上有
+                    (tree_type == '1' && !parent_milestone_id) && (
+                        <div className={styles.menu_item} onClick={() => this.menuItemClick('create_child_milestone')}>
+                            新建子里程碑
+                        </div>
+                    )
+                }
                 { //一级任务是顶级则没有
                     (tree_type == '2' || tree_type == '3') && (
                         <div className={styles.menu_item} onClick={() => this.menuItemClick('insert_card')}>
