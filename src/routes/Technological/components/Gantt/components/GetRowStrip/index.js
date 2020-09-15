@@ -328,7 +328,7 @@ export default class GetRowStrip extends PureComponent {
     //渲染里程碑设置---start
     renderMilestoneSet = () => {
         const { itemValue = {}, group_list_area, list_group_key, ceilWidth, gantt_view_mode } = this.props
-        const { id, name, due_time, left, expand_length } = itemValue
+        const { id, name, due_time, left, expand_length, parent_id } = itemValue
         const { is_item_has_time, currentRect = {} } = this.state
         let display = 'none'
         let marginLeft = currentRect.x
@@ -346,6 +346,9 @@ export default class GetRowStrip extends PureComponent {
         }
         if (marginLeft == '0') {
             display = 'none'
+        }
+        if (!!parent_id) { //代表子里程碑
+            paddingLeft = ceilWidth / 2 - 6
         }
         // console.log('marginLeft', marginLeft)
         const timestamp = gantt_view_mode == 'year' ? this.calHoverDate().timestampEnd : ''
@@ -369,14 +372,23 @@ export default class GetRowStrip extends PureComponent {
                                 <div style={{ width: 10, height: '100%', marginLeft: -6 }}></div>
                             )
                         }
-                        <div
-                            style={{
-                                height: (expand_length - 0.5) * ceil_height
-                            }}
-                            className={styles.board_miletiones_flagpole}>
-                        </div>
-                        <div className={`${styles.board_miletiones_flag} ${globalStyles.authTheme}`}>&#xe6a0;</div>
-                        <div className={styles.board_miletiones_names}>{name}</div>
+                        {
+                            !!parent_id ? (
+                                <div className={styles.board_miletiones_flag2}></div>
+                            ) : (
+                                    <>
+                                        <div
+                                            style={{
+                                                height: (expand_length - 0.5) * ceil_height
+                                            }}
+                                            className={styles.board_miletiones_flagpole}>
+                                        </div>
+                                        <div className={`${styles.board_miletiones_flag} ${globalStyles.authTheme}`}>&#xe6a0;</div>
+                                    </>
+                                )
+                        }
+
+                        <div className={styles.board_miletiones_names} style={{ paddingTop: !!parent_id ? 2 : 0, color: !!parent_id ? 'FFBA67' : '' }}>{name}</div>
                     </>
                 </Tooltip >
 
