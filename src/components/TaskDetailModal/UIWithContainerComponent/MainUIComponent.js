@@ -119,7 +119,7 @@ export default class MainUIComponent extends Component {
       <div>
         <div className={mainContentStyles.attrWrapper}>
           {
-            (new_propertiesList && !(properties && properties.length == 6)) && new_propertiesList.map((item, index) => (
+            (new_propertiesList && !(properties && properties.length == 7)) && new_propertiesList.map((item, index) => (
               <Button onClick={(e) => { this.handleMenuReallySelect(e, item) }} className={mainContentStyles.attr_btn} key={`${item.id}`}>
                 <span className={`${globalStyles.authTheme} ${mainContentStyles.attr_icon}`}>{getCurrentFieldIcon(item)}</span>
                 <span className={mainContentStyles.attr_name}>{renderTaskNounPlanCode(item)}</span>

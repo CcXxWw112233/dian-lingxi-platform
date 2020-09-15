@@ -613,7 +613,7 @@ export default class MainContent extends Component {
                   ) : (
                       <>
                         {
-                          !(properties && properties.length == 6) && (
+                          !(properties && properties.length == 7) && (
                             <>
                               {this.getDiffAttributies()}
                             </>
