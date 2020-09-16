@@ -644,11 +644,11 @@ export default class index extends Component {
                                     // onMouseOver={this.onMouseOver}
                                     >
                                         <path name="arrow"
-                                            stroke={`rgb(${color_mark})`}
+                                            stroke={`rgba(${color_mark},0.5)`}
                                             stroke-width="1"
                                             data-targetclassname="specific_example"
                                             data-targetrelypath="relypath"
-                                            fill={`rgb(${color_mark})`}
+                                            fill={`rgba(${color_mark},0.8)`}
                                             d={Arrow}
                                             onClick={() => this.pathClick({ move_id, line_id, color_mark })}
                                             // onClick={() => this.deleteRely({ move_id, line_id })}
@@ -656,12 +656,12 @@ export default class index extends Component {
                                             {...this.pathMouseEvent}
                                         />
                                         <path
-                                            stroke={`rgb(${color_mark})`}
+                                            stroke={`rgba(${color_mark},0.5)`}
                                             fill="none"
                                             data-targetclassname="specific_example"
                                             data-targetrelypath="relypath"
                                             d={Move_Line}
-                                            stroke-width='1'
+                                            stroke-width='2'
                                             onClick={() => this.pathClick({ move_id, line_id, color_mark })}
                                             // onClick={() => this.deleteRely({ move_id, line_id })}
                                             className={`${styles.path} ${styles.path_line}`}
