@@ -151,3 +151,48 @@ export async function getGanttGroupElseInfo(params) {
     params
   }, { isNotLoading: true })
 }
+
+// 获取基线列表
+export async function getBaseLineList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/baseline`,
+    method: "GET",
+    params
+  })
+}
+
+// 获取基线详情
+export async function getBaseLineInfoData(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/baseline/${data.id}`,
+    method: "GET",
+    data
+  })
+}
+
+// 创建一条基线数据
+export async function createBaseLine(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/baseline`,
+    method: "POST",
+    data
+  })
+}
+
+// 编辑一条基线数据
+export async function EditBaseLine(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/baseline/${data.id}`,
+    method: "PUT",
+    data
+  })
+}
+
+// 删除一条基线数据
+export async function DeleteBaseLine(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/baseline/${data.id}`,
+    method: "DELETE",
+    data
+  })
+}

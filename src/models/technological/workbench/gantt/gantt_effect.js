@@ -1,12 +1,28 @@
 import { addCardRely, deleteCardRely, updateCardRely, getCardRelys } from "../../../../services/technological/task"
-import { saveGanttOutlineSort, getGanttGroupElseInfo } from "../../../../services/technological/gantt"
+import {
+  saveGanttOutlineSort,
+  getGanttGroupElseInfo,
+  getBaseLineInfoData,
+  getBaseLineList,
+  createBaseLine,
+  EditBaseLine,
+  DeleteBaseLine
+} from "../../../../services/technological/gantt"
 import { isApiResponseOk } from "../../../../utils/handleResponseData"
 import { getModelSelectDatasState } from "../../../utils"
 import { message } from "antd"
 import OutlineTree from '@/routes/Technological/components/Gantt/components/OutlineTree';
 import { getProcessTemplateList } from "../../../../services/technological/workFlow";
 import { ganttIsOutlineView, gantt_head_width_init } from "../../../../routes/Technological/components/Gantt/constants"
-import { delayInGenerator } from "../../../../utils/util"
+import {
+  workbench_start_date,
+  workbench_end_date,
+  workbench_ceilWidth,
+  workbench_date_arr_one_level
+} from '../selects'
+import { setGantTimeSpan } from '../../../../routes/Technological/components/Gantt/ganttBusiness'
+// import { delayInGenerator } from "../../../../utils/util"
+import { formatItem } from './gantt_utils';
 // F:\work\newdicolla-platform\src\routes\Technological\components\Gantt\components\OutlineTree\index.js
 const is_schedule = (start_time, due_time) => {
     if ((!!start_time && !!Number(start_time)) || (!!due_time && !!Number(due_time))) {
@@ -26,6 +42,9 @@ export default {
         uploading_folder_id: '', //任务详情上传文件的文件id, 下方抽屉在上传后判断文件夹id进行更新
         notification_todos: {}, //[id:{code:'', message: ''}]，当更新任务时间后，由于任务列表的key是根据id_start_time duetime等多个属性设置，会重新didmount导致之前操作丢失，用来存放待办
         baseLine_datas: [], // 基线的版本数据
+        active_baseline_data: {}, // 基线的版本详情
+        show_base_line_mode: false, // 是否进入基线状态
+        active_baseline: {}, // 基线版本
     },
     effects: {
         * addCardRely({ payload = {} }, { select, call, put }) {
@@ -406,23 +425,26 @@ export default {
         },
         // 获取基线数据列表
         * getBaseLineList({ payload = {}}, { select, call, put }){
+          const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id'))
           // console.log('加载中')
+          let res = yield call( getBaseLineList, { board_id: gantt_board_id });
           yield put({
             type: "updateDatas",
             payload: {
-              baseLine_datas: [{id: 1, name: "test1"}, {id: 2, name: "test2"}]
+              baseLine_datas: res.data
             }
           })
+          return res ;
         },
         // 添加基线数据
         * addBaseLineData({ payload = {} }, { select, call, put}){
           let data = payload.data;
-          let list = [...yield select(getModelSelectDatasState('gantt', 'baseLine_datas'))];
-          list.push(data);
+          const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id'))
+          let res = yield call(createBaseLine, {board_id: gantt_board_id, name: data.name});
           yield put({
             type: 'updateDatas',
             payload: {
-              baseLine_datas: list
+              baseLine_datas: res.data
             }
           })
         },
@@ -430,8 +452,16 @@ export default {
         * deleteBaseLineData({ payload = {} }, { select, call, put }){
           let id = payload.id;
           let list = [...yield select(getModelSelectDatasState('gantt', 'baseLine_datas'))];
+          let active = yield getModelSelectDatasState('gantt', 'active_baseline_data');
+          yield call( DeleteBaseLine, {id: id});
           if(id){
             list = list.filter(item => item.id !== id);
+          }
+          // 如果删除的是正在查看的，则退出基线查看
+          if(id === active.id){
+            yield put({
+              type: "exitBaseLineInfoView"
+            })
           }
           yield put({
             type: "updateDatas",
@@ -444,6 +474,7 @@ export default {
         * updateBaseLine({ payload = {} }, { select, call, put }) {
           let { id, name } = payload;
           let list = [...yield select(getModelSelectDatasState('gantt', 'baseLine_datas'))];
+          yield call( EditBaseLine, {id, name} );
           list = list.map(item => {
             if(item.id === id){
               item.name = name;
@@ -454,6 +485,46 @@ export default {
             type: "updateDatas",
             payload: {
               baseLine_datas: list
+            }
+          })
+        },
+        // 查询基线版本详情
+        * getBaseLineInfo({ payload = {} }, { select, call, put }) {
+          // 参数处理
+          const start_date = yield select(workbench_start_date)
+          const end_date = yield select(workbench_end_date)
+          const ceilWidth = yield select(workbench_ceilWidth)
+          const date_arr_one_level = yield select(workbench_date_arr_one_level)
+          const gantt_view_mode = yield select(getModelSelectDatasState('gantt', 'gantt_view_mode'))
+          let id = payload.id;
+          let res = yield call(getBaseLineInfoData, {id: id});
+          let data = res.data || [];
+          data = data.map(item => {
+            item.time_span = setGantTimeSpan({time_span: "0", start_time: item.start_time + '000', due_time: item.due_time + '000', start_date, end_date})
+            return item;
+          })
+          data = formatItem(data, {ceilWidth, date_arr_one_level, gantt_view_mode})
+          let obj = {};
+          data.forEach(item => {
+            obj[item.id] = item
+          });
+          yield put({
+            type: "updateDatas",
+            payload: {
+              show_base_line_mode: true,
+              active_baseline_data: obj,
+              active_baseline: payload
+            }
+          })
+        },
+        // 退出基线查看
+        * exitBaseLineInfoView({ payload = {} }, { select, call, put }){
+          yield put({
+            type: "updateDatas",
+            payload: {
+              show_base_line_mode: false,
+              active_baseline_data: {},
+              active_baseline: {}
             }
           })
         }

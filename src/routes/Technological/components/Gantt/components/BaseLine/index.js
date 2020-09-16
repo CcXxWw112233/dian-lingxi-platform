@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import styles from './index.less';
 import globalStyles from '../../../../../../globalset/css/globalClassName.less';
 import { dateFormat } from '../../../../../../utils/util';
@@ -49,11 +49,28 @@ function BaseLine (props){
 
   // 获取基线列表
   const GetBaseLineDatas = ()=>{
+    if(!visiblePopover)
     dispatch({
       type: "gantt/getBaseLineList",
       payload: {}
     });
   }
+
+  const componentWillUnmount = ()=>{
+    if(props.group_view_type !== 4){
+      dispatch({
+        type: "gantt/exitBaseLineInfoView"
+      })
+      // 销毁事件
+    }
+  }
+
+  useEffect(()=>{
+    return componentWillUnmount;
+  }, [])
+
+
+
   // 监听项目变更，获取列表数据
   useMemo(() => {
     GetBaseLineDatas();
@@ -68,7 +85,7 @@ function BaseLine (props){
         title: isEdit ? '编辑基线': '创建基线',
         content: (<div>
           <span style={{marginBottom: 5, display: "inline-block"}}>基线名称</span>
-          <Input placeholder="请输入基线名称" defaultValue={baseLineName} type='text' allowClear onInput={(evt)=> {baseLineName = (evt.target.value)}}/>
+          <Input placeholder="请输入基线名称" defaultValue={baseLineName} type='text' allowClear onChange={(evt)=> {baseLineName = (evt.target.value)}}/>
         </div>),
         onOk: ()=>{
           if(!baseLineName) {
@@ -161,6 +178,17 @@ function BaseLine (props){
     })
   }
 
+  const setChooseBaseLine = (val)=>{
+    setVisiblePopover(false);
+    dispatch({
+      type: "gantt/getBaseLineInfo",
+      payload: {
+        id: val.id,
+        name: val.name
+      }
+    })
+  }
+
   // 渲染基线列表
   const renderBaseLineData = ()=> {
 
@@ -171,7 +199,7 @@ function BaseLine (props){
           {createBaseLine(false)}
           { baseLine_datas.map(item => {
             return (
-              <div className={styles.baseline_item} key={item.id}>
+              <div className={styles.baseline_item} key={item.id} onClick={setChooseBaseLine.bind(this, item)}>
                 <div style={{width: '90%'}}>
                   <div className={styles.baseline_item_title}>
                     {item.name}
@@ -182,12 +210,12 @@ function BaseLine (props){
                         创建于
                       </Col>
                       <Col span={16}>
-                        2020.08.31 15:51
+                        {dateFormat(item.create_time+'000', 'yyyy.MM.dd HH:mm')}
                       </Col>
                     </Row>
                   </div>
                 </div>
-                <div className={styles.baseline_operation}>
+                <div className={styles.baseline_operation} onClick={(e)=> e.stopPropagation()}>
                   <DrapMenu data={item} onEdit={editBaseLine} onRemove={removeBaseLine}/>
                 </div>
               </div>
@@ -197,12 +225,14 @@ function BaseLine (props){
         </>
       )
     }else return (
-      <div>
-        {/* <Empty
-        image={EmptyImage}
-        description={<span className={styles.notDatasTips}>当前未创建基线</span>}>
-          {createBaseLine(true)}
-        </Empty> */}
+      <div className={styles.emptyBox}>
+        <div>
+          <img src={EmptyImage} alt="" crossOrigin="anonymous"/>
+        </div>
+        <div>
+          <span className={styles.notDatasTips}>当前未创建基线</span>
+        </div>
+        {createBaseLine(true)}
       </div>
     )
   }
@@ -215,7 +245,7 @@ function BaseLine (props){
     onVisibleChange={(val)=> setVisiblePopover(val)}
     content={renderBaseLineData()}
     >
-      <Button type='default' size='small'>
+      <Button type='default' size='small' onClick={GetBaseLineDatas}>
         基线对照
       </Button>
     </Popover>

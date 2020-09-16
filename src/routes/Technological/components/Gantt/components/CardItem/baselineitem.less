@@ -1,0 +1,46 @@
+.baselineitem_box{
+  position: absolute;
+  .task{
+    border-radius: 50px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    background-color: rgb(235, 235, 235);
+  }
+  .milepost{
+    & > div{
+      color: rgba(0, 0, 0, 0.25);
+    }
+    .icons{
+      position: absolute;
+    }
+  }
+  .parentMilepost{
+    display: flex;
+    padding-left: 28px;
+  }
+  .subMilepost{
+    background-color: rgba(0, 0, 0, 0.25);
+    width: 15px;
+    height: 15px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    -webkit-transform: rotate(45deg);
+    transform: rotate(45deg);
+    margin-left: 9px;
+    margin-top: 7px;
+  }
+  .milepostLine{
+    display: inline-block;
+    box-sizing: border-box;
+    width: 2px;
+    background-color: rgba(0, 0, 0, 0.25);
+    margin-top: 6px;
+    margin-right: 2px;
+  }
+  .process{
+    width: 28px;
+    height: 28px;
+    border-radius: 99px;
+    background-color: rgb(235, 235, 235);
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    margin-left: 6px;
+  }
+}
