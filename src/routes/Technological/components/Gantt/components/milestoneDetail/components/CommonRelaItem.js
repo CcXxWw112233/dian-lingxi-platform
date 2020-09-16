@@ -25,6 +25,7 @@ export default class CommonRelaItem extends React.Component {
     }).then(res => {
       if (isApiResponseOk(res)) {
         if (typeof deleteRelationContent == 'function') deleteRelationContent()
+        // 更新弹窗数据
         if (selected_card_visible) {
           dispatch({
             type: 'publicTaskDetailModal/getCardWithAttributesDetail',
@@ -33,6 +34,13 @@ export default class CommonRelaItem extends React.Component {
             }
           })
         }
+        // 如果是在大纲视图 则需要更新大纲视图下树变化
+        dispatch({
+          type: 'gantt/updateOutLineTreeNode',
+          payload: {
+            card_id: id
+          }
+        })
       }
     })
   }

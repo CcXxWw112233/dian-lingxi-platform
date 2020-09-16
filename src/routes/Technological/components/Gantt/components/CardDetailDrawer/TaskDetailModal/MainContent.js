@@ -62,7 +62,7 @@ export default class MainContent extends Component {
   componentWillReceiveProps(nextProps) {
     const { drawerVisible, card_id } = nextProps
     const { drawerVisible: oldDrawerVisible, card_id: old_card_id } = this.props
-    if (card_id != old_card_id) {
+    if (card_id != old_card_id && card_id) {
       Promise.resolve(
         this.props.dispatch({
           type: 'publicTaskDetailModal/getCardAttributesList',

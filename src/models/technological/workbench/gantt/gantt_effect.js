@@ -7,6 +7,7 @@ import OutlineTree from '@/routes/Technological/components/Gantt/components/Outl
 import { getProcessTemplateList } from "../../../../services/technological/workFlow";
 import { ganttIsOutlineView, gantt_head_width_init } from "../../../../routes/Technological/components/Gantt/constants"
 import { delayInGenerator } from "../../../../utils/util"
+import { getTreeNodeValue } from "./gantt_utils"
 // F:\work\newdicolla-platform\src\routes\Technological\components\Gantt\components\OutlineTree\index.js
 const is_schedule = (start_time, due_time) => {
     if ((!!start_time && !!Number(start_time)) || (!!due_time && !!Number(due_time))) {
@@ -354,108 +355,94 @@ export default {
             const { outline_tree = [], id } = payload
             const outline_tree_ = yield select(getModelSelectDatasState('gantt', 'outline_tree'))
             const data = outline_tree.length ? outline_tree : outline_tree_
-            const getNode = (outline_tree, id) => {
-                let nodeValue = null;
-                if (outline_tree) {
-                    nodeValue = outline_tree.find((item) => item.id == id);
-                    if (nodeValue) {
-                        return nodeValue;
-                    } else {
-                        for (let i = 0; i < outline_tree.length; i++) {
-                            let node = outline_tree[i];
-                            if (node.children && node.children.length > 0) {
-                                nodeValue = getNode(node.children, id);
-                                if (nodeValue) {
-                                    return nodeValue;
-                                }
-                            } else {
-                                continue
-                                // return null;
-                            }
-                        }
-                    }
-                }
-                return nodeValue
-            }
-            const getTreeNodeValue = (outline_tree, id) => {
-                if (outline_tree) {
-                    for (let i = 0; i < outline_tree.length; i++) {
-                        let node = outline_tree[i];
-                        if (node.id == id) {
-                            return node;
-                        } else {
-                            if (node.children && node.children.length > 0) {
-                                let childNode = getNode(node.children, id);
-                                if (childNode) {
-                                    return childNode;
-                                }
-                            } else {
-                                continue
-                                // return null;
-                            }
-                        }
-                    }
-                } else {
-                    return null;
-                }
-
-            }
             const node = getTreeNodeValue(data, id)
             // console.log('sssssssss_find', { node, outline_tree, id })
             return node
         },
         // 获取基线数据列表
-        * getBaseLineList({ payload = {}}, { select, call, put }){
-          // console.log('加载中')
-          yield put({
-            type: "updateDatas",
-            payload: {
-              baseLine_datas: [{id: 1, name: "test1"}, {id: 2, name: "test2"}]
-            }
-          })
+        * getBaseLineList({ payload = {} }, { select, call, put }) {
+            // console.log('加载中')
+            yield put({
+                type: "updateDatas",
+                payload: {
+                    baseLine_datas: [{ id: 1, name: "test1" }, { id: 2, name: "test2" }]
+                }
+            })
         },
         // 添加基线数据
-        * addBaseLineData({ payload = {} }, { select, call, put}){
-          let data = payload.data;
-          let list = [...yield select(getModelSelectDatasState('gantt', 'baseLine_datas'))];
-          list.push(data);
-          yield put({
-            type: 'updateDatas',
-            payload: {
-              baseLine_datas: list
-            }
-          })
+        * addBaseLineData({ payload = {} }, { select, call, put }) {
+            let data = payload.data;
+            let list = [...yield select(getModelSelectDatasState('gantt', 'baseLine_datas'))];
+            list.push(data);
+            yield put({
+                type: 'updateDatas',
+                payload: {
+                    baseLine_datas: list
+                }
+            })
         },
         // 删除一个基线列表
-        * deleteBaseLineData({ payload = {} }, { select, call, put }){
-          let id = payload.id;
-          let list = [...yield select(getModelSelectDatasState('gantt', 'baseLine_datas'))];
-          if(id){
-            list = list.filter(item => item.id !== id);
-          }
-          yield put({
-            type: "updateDatas",
-            payload: {
-              baseLine_datas: list
+        * deleteBaseLineData({ payload = {} }, { select, call, put }) {
+            let id = payload.id;
+            let list = [...yield select(getModelSelectDatasState('gantt', 'baseLine_datas'))];
+            if (id) {
+                list = list.filter(item => item.id !== id);
             }
-          })
+            yield put({
+                type: "updateDatas",
+                payload: {
+                    baseLine_datas: list
+                }
+            })
         },
         // 修改基线名称
         * updateBaseLine({ payload = {} }, { select, call, put }) {
-          let { id, name } = payload;
-          let list = [...yield select(getModelSelectDatasState('gantt', 'baseLine_datas'))];
-          list = list.map(item => {
-            if(item.id === id){
-              item.name = name;
-            }
-            return item;
-          })
-          yield put({
-            type: "updateDatas",
-            payload: {
-              baseLine_datas: list
-            }
-          })
+            let { id, name } = payload;
+            let list = [...yield select(getModelSelectDatasState('gantt', 'baseLine_datas'))];
+            list = list.map(item => {
+                if (item.id === id) {
+                    item.name = name;
+                }
+                return item;
+            })
+            yield put({
+                type: "updateDatas",
+                payload: {
+                    baseLine_datas: list
+                }
+            })
+        },
+        // 更新大纲视图下对应树节点
+        * updateOutLineTreeNode({ payload = {} }, { select, call, put }) {
+            const { id: milestone_id, card_id } = payload
+            const group_view_type = yield select(getModelSelectDatasState('gantt', 'group_view_type'))
+            if (group_view_type != '4') return
+            let outline_tree = yield select(getModelSelectDatasState('gantt', 'outline_tree'))
+            let outline_tree_ = JSON.parse(JSON.stringify(outline_tree))
+            // 1. 找到当前操作的节点
+            const current_node = getTreeNodeValue(outline_tree_, card_id)
+            // 2. 从当前节点找出父节点
+            const from_parent_id = current_node.parent_id
+            const parent_from_node = getTreeNodeValue(outline_tree_, from_parent_id)
+            const parent_to_node = getTreeNodeValue(outline_tree_, milestone_id)
+            if (parent_from_node) { //删除该条
+                parent_from_node.children = parent_from_node.children.filter(item => item.id != card_id)
+              } else {
+                outline_tree_ = outline_tree_.filter(item => item.id != card_id)
+              }
+              if (!milestone_id) { // 表示将其添加至树末尾
+                outline_tree_.push({ ...current_node, parent_id: '', parent_milestone_id: '' })
+              } else {
+                if (parent_to_node) { //将该条移动到指定里程碑之下
+                  parent_to_node.children.push(current_node)
+                }
+              }
+              yield put({
+                type: 'handleOutLineTreeData',
+                payload: {
+                  data: outline_tree_
+                }
+              });
         }
     }
 
