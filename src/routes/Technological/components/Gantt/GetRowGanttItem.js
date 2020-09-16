@@ -445,7 +445,7 @@ export default class GetRowGanttItem extends Component {
               data-end_time={timestampEnd}
               key={timestamp}
               // style={{ backgroundColor: isToday(timestamp) ? 'rgb(242, 251, 255)' : ((week_day == 0 || week_day == 6) ? 'rgba(0, 0, 0, 0.04)' : 'rgba(0,0,0,.02)') }}
-              style={{ backgroundColor: (week_day == 0 || week_day == 6) ? 'rgba(0, 0, 0, 0.04)' : 'rgba(0,0,0,.02)' }}
+              style={{ backgroundColor: (week_day == 0 || week_day == 6) ? 'rgb(245,245,245)' : 'rgb(250,250,250)' }}
             >
               {/* 12为上下margin的总和 */}
               {
@@ -526,7 +526,7 @@ export default class GetRowGanttItem extends Component {
               data-start_time={timestamp}
               data-end_time={timestampEnd}
               key={timestamp}
-              style={{ backgroundColor: 'rgba(0,0,0,.02)', width: ceilWidth * last_date }}
+              style={{ backgroundColor: 'rgb(245,245,245)', width: ceilWidth * last_date }}
             >
               <div style={{ display: 'flex' }}>
                 {
@@ -622,7 +622,7 @@ export default class GetRowGanttItem extends Component {
               data-start_time={timestamp}
               data-end_time={timestampEnd}
               key={timestamp}
-              style={{ backgroundColor: 'rgba(0,0,0,.02)', width: ceilWidth * 7 }}
+              style={{ backgroundColor: 'rgb(245,245,245)', width: ceilWidth * 7 }}
             >
               <div style={{ display: 'flex' }}>
                 {
