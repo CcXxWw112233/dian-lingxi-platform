@@ -3,7 +3,7 @@ import styles from './index.less';
 import globalStyles from '../../../../../../globalset/css/globalClassName.less';
 import { dateFormat } from '../../../../../../utils/util';
 import { connect } from 'dva';
-import { Button, Col, Dropdown, Empty, Input, Menu, message, Modal, Popover, Row } from 'antd';
+import { Button, Col, Dropdown, /** Empty*/ Input, Menu, message, Modal, Popover, Row } from 'antd';
 
 // 基线列表的选项菜单
 const DrapMenu = ({data, onEdit, onRemove})=>{
@@ -47,14 +47,17 @@ function BaseLine (props){
   // 弹框的显示隐藏状态
   const [ visiblePopover, setVisiblePopover ] = useState(false);
 
-  // 监听项目变更，获取列表数据
-  useMemo(() => {
-    if(visiblePopover)
+  // 获取基线列表
+  const GetBaseLineDatas = ()=>{
     dispatch({
       type: "gantt/getBaseLineList",
       payload: {}
     });
-  }, [visiblePopover])
+  }
+  // 监听项目变更，获取列表数据
+  useMemo(() => {
+    GetBaseLineDatas();
+  }, [props.board_id])
   // 保存基线的名称数据
   let baseLineName = "";
 
@@ -62,7 +65,7 @@ function BaseLine (props){
   const toCreate = (isEdit)=>{
     return new Promise((resolve, reject) => {
       Modal.confirm({
-        title: isEdit ? '编辑基线': '新增基线',
+        title: isEdit ? '编辑基线': '创建基线',
         content: (<div>
           <span style={{marginBottom: 5, display: "inline-block"}}>基线名称</span>
           <Input placeholder="请输入基线名称" defaultValue={baseLineName} type='text' allowClear onInput={(evt)=> {baseLineName = (evt.target.value)}}/>
@@ -195,11 +198,11 @@ function BaseLine (props){
       )
     }else return (
       <div>
-        <Empty
+        {/* <Empty
         image={EmptyImage}
         description={<span className={styles.notDatasTips}>当前未创建基线</span>}>
           {createBaseLine(true)}
-        </Empty>
+        </Empty> */}
       </div>
     )
   }

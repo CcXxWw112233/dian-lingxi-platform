@@ -406,7 +406,7 @@ export default {
         },
         // 获取基线数据列表
         * getBaseLineList({ payload = {}}, { select, call, put }){
-          console.log('加载中')
+          // console.log('加载中')
           yield put({
             type: "updateDatas",
             payload: {
@@ -422,7 +422,7 @@ export default {
           yield put({
             type: 'updateDatas',
             payload: {
-              baseLine_datas: [...list]
+              baseLine_datas: list
             }
           })
         },
