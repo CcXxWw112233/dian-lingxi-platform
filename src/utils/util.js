@@ -126,6 +126,40 @@ export const timestampToTimeNormal4 = (timestamp, split, flag) => {
   return flag ? Y + M + D + h + m : Y + M + D;
 }
 
+/**
+ * 时间戳转换成自定义格式
+ * @param {new Date().getTime()} val
+ * @param {yyyy-MM-dd HH:mm:ss} format
+ */
+export function dateFormat(val, format) {
+  val = +val;
+  function Zero(number) {
+    return number < 10 ? "0" + number : number;
+  }
+  let date = new Date(val);
+  let year = date.getFullYear();
+  let month = date.getMonth() + 1;
+  let day = date.getDate();
+  let hour = date.getHours();
+  let minut = date.getMinutes();
+  let secon = date.getSeconds();
+
+  let obj = {
+    yyyy: year,
+    MM: Zero(month),
+    dd: Zero(day),
+    HH: Zero(hour),
+    mm: Zero(minut),
+    ss: Zero(secon),
+  };
+
+  let keys = Object.keys(obj);
+  keys.forEach((item) => {
+    format = format.replace(item, obj[item]);
+  });
+
+  return format;
+}
 //时间戳转换为时分
 export const timestampToHM = (timestamp) => {
   if (!timestamp) {
@@ -631,8 +665,8 @@ export const compareACoupleOfObjects = (obj1, obj2) => {
 
 /**
  * 比较两个对象是否相等 (值)
- * @param {*} arrya1 
- * @param {*} array2 
+ * @param {*} arrya1
+ * @param {*} array2
  */
 export const isObjectValueEqual = (obj1, obj2) => {
   if (!obj1 || !obj2) {

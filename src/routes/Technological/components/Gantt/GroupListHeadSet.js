@@ -9,6 +9,7 @@ import CreateProject from './../Project/components/CreateProject/index';
 import { checkIsHasPermission, selectBoardToSeeInfo, setBoardIdStorage, currentNounPlanFilterName } from '../../../../utils/businessFunction'
 import { ORG_TEAM_BOARD_CREATE, PROJECTS } from '../../../../globalset/js/constant'
 import { ganttIsOutlineView } from './constants'
+import BaseLine from './components/BaseLine'
 
 @connect(mapStateToProps)
 export default class GroupListHeadSet extends Component {
@@ -184,7 +185,6 @@ export default class GroupListHeadSet extends Component {
         const { dropdownVisible, addProjectModalVisible } = this.state
         const { single_select_user, target_scrollLeft, target_scrollTop, group_view_type = '1', gantt_board_id = '0', group_view_filter_boards, group_view_filter_users } = this.props
         const selected = `${indexStyles.button_nomal_background} ${indexStyles.type_select}`;
-        // console.log("gantt_board_id", gantt_board_id);
         return (
             <div className={indexStyles.groupHeadSet}
             // style={{ left: target_scrollLeft, top: target_scrollTop }}
@@ -210,7 +210,7 @@ export default class GroupListHeadSet extends Component {
                                     style={{
                                         borderRadius: gantt_board_id == '0' ? '4px 0 0 4px' : '0 4px 4px 0'
                                     }}
-                                    onClick={() => this.setGroupViewType('1')} className={`${indexStyles.set_content_left_center} ${globalStyles.authTheme} 
+                                    onClick={() => this.setGroupViewType('1')} className={`${indexStyles.set_content_left_center} ${globalStyles.authTheme}
                                     ${(group_view_type == '1' || group_view_type == '5') && selected}`}
                                 >
                                     {
@@ -261,6 +261,7 @@ export default class GroupListHeadSet extends Component {
                             {group_view_type == '2' && '成员列表'}
                             {group_view_type == '4' && '我的计划'}
                         </div> */}
+                        { group_view_type === "4" && <BaseLine board_id={ gantt_board_id }/> }
                         {
                             !ganttIsOutlineView({ group_view_type }) && (
                                 <Tooltip title={'内容过滤'}>
@@ -269,7 +270,7 @@ export default class GroupListHeadSet extends Component {
                                         trigger={['click']}
                                         visible={dropdownVisible}
                                         zIndex={500}>
-                                        <div className={`${indexStyles.set_content_right_left} ${globalStyles.authTheme} 
+                                        <div className={`${indexStyles.set_content_right_left} ${globalStyles.authTheme}
                                     ${(group_view_filter_boards.length || group_view_filter_users.length) && indexStyles.has_filter_content}`}
                                             onClick={() => this.setDropdownVisible(true)} >&#xe8bd;</div>
                                     </Dropdown>
