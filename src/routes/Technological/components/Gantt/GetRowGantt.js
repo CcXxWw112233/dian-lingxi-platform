@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect, } from 'dva';
 import indexStyles from './index.less'
 import GetRowGanttItem from './GetRowGanttItem'
@@ -21,6 +21,7 @@ import GetRowGanttVirtual from './GetRowGanttVirtual'
 import GetRowStrip from './components/GetRowStrip'
 import { isSamDay, timestampToTimeNormal, timestampToTime } from '../../../../utils/util';
 import SvgArea from './components/SvgArea'
+import BaseLineItem from './components/CardItem/BaseLineItem';
 const clientWidth = document.documentElement.clientWidth;//获取页面可见高度
 const dateAreaHeight = date_area_height //日期区域高度，作为修正
 const getEffectOrReducerByName = name => `gantt/${name}`
@@ -720,9 +721,9 @@ export default class GetRowGantt extends Component {
       group_view_type,
       show_board_fold,
       outline_tree_round,
-      gantt_view_mode
+      gantt_view_mode,
+      active_baseline_data,
     } = this.props
-    // console.log('task_is_dragging', this.state.task_is_dragging)
     return (
       <>
 
@@ -758,43 +759,49 @@ export default class GetRowGantt extends Component {
               }
               if (tree_type == '2') {
                 return (
-                  <GetRowTaskItem
-                    key={`${id}_${start_time}_${end_time}_${left}_${top}_${row}`}
-                    itemValue={value}
-                    setSpecilTaskExample={this.setSpecilTaskExample}
-                    ganttPanelDashedDrag={this.state.drag_creating}
-                    getCurrentGroup={this.getCurrentGroup}
-                    // list_id={list_id}
-                    changeOutLineTreeNodeProto={this.props.changeOutLineTreeNodeProto}
-                    task_is_dragging={this.state.task_is_dragging}
-                    setGoldDateArr={this.props.setGoldDateArr}
-                    setScrollPosition={this.props.setScrollPosition}
-                    setDragCreating={this.setDragCreating}
-                    setTaskIsDragging={this.setTaskIsDragging}
-                    setDasheRectShow={this.setDasheRectShow}
-                    setCardRelyDraging={this.setCardRelyDraging}
-                    card_rely_draging={this.state.card_rely_draging}
-                  />
+                  <Fragment>
+                    {active_baseline_data[id] && <BaseLineItem data={active_baseline_data[id]} top={top} type={tree_type} ganttData={value}/>}
+                    <GetRowTaskItem
+                      key={`${id}_${start_time}_${end_time}_${left}_${top}_${row}`}
+                      itemValue={value}
+                      setSpecilTaskExample={this.setSpecilTaskExample}
+                      ganttPanelDashedDrag={this.state.drag_creating}
+                      getCurrentGroup={this.getCurrentGroup}
+                      // list_id={list_id}
+                      changeOutLineTreeNodeProto={this.props.changeOutLineTreeNodeProto}
+                      task_is_dragging={this.state.task_is_dragging}
+                      setGoldDateArr={this.props.setGoldDateArr}
+                      setScrollPosition={this.props.setScrollPosition}
+                      setDragCreating={this.setDragCreating}
+                      setTaskIsDragging={this.setTaskIsDragging}
+                      setDasheRectShow={this.setDasheRectShow}
+                      setCardRelyDraging={this.setCardRelyDraging}
+                      card_rely_draging={this.state.card_rely_draging}
+                    />
+                  </Fragment>
                 )
               } else if (tree_type == '3') {
                 return (
-                  <WorkFlow
-                    key={`${id}_${start_time}_${end_time}_${left}_${top}`}
-                    itemValue={value}
-                    setSpecilTaskExample={this.setSpecilTaskExample}
-                    ganttPanelDashedDrag={this.state.drag_creating}
-                    getCurrentGroup={this.getCurrentGroup}
-                    // list_id={list_id}
-                    changeOutLineTreeNodeProto={this.props.changeOutLineTreeNodeProto}
-                    task_is_dragging={this.state.task_is_dragging}
-                    setGoldDateArr={this.props.setGoldDateArr}
-                    setScrollPosition={this.props.setScrollPosition}
-                    setDragCreating={this.setDragCreating}
-                    setTaskIsDragging={this.setTaskIsDragging}
-                    setDasheRectShow={this.setDasheRectShow}
-                    setCardRelyDraging={this.setCardRelyDraging}
-                    card_rely_draging={this.state.card_rely_draging}
-                  />
+                  <Fragment>
+                    {active_baseline_data[id] && <BaseLineItem data={active_baseline_data[id]} top={top} type={tree_type} ganttData={value}/>}
+                    <WorkFlow
+                      key={`${id}_${start_time}_${end_time}_${left}_${top}`}
+                      itemValue={value}
+                      setSpecilTaskExample={this.setSpecilTaskExample}
+                      ganttPanelDashedDrag={this.state.drag_creating}
+                      getCurrentGroup={this.getCurrentGroup}
+                      // list_id={list_id}
+                      changeOutLineTreeNodeProto={this.props.changeOutLineTreeNodeProto}
+                      task_is_dragging={this.state.task_is_dragging}
+                      setGoldDateArr={this.props.setGoldDateArr}
+                      setScrollPosition={this.props.setScrollPosition}
+                      setDragCreating={this.setDragCreating}
+                      setTaskIsDragging={this.setTaskIsDragging}
+                      setDasheRectShow={this.setDasheRectShow}
+                      setCardRelyDraging={this.setCardRelyDraging}
+                      card_rely_draging={this.state.card_rely_draging}
+                    />
+                  </Fragment>
                 )
               } else {
                 return <></>
@@ -813,6 +820,7 @@ export default class GetRowGantt extends Component {
               const juge_expand = (tree_type == '0' || tree_type == '3') ? parent_expand : (parent_expand && is_expand)
               return parent_expand && (
                 <React.Fragment key={`${id}_${top}`}>
+                  {active_baseline_data[id] && <BaseLineItem data={active_baseline_data[id]} top={top} type={tree_type} ganttData={value}/>}
                   <GetRowStrip itemValue={value}
                     deleteOutLineTreeNode={this.props.deleteOutLineTreeNode}
                     addTaskModalVisibleChange={this.props.addTaskModalVisibleChange}
@@ -854,7 +862,8 @@ function mapStateToProps({ gantt: {
     show_board_fold,
     outline_tree_round,
     gantt_view_mode,
-    gantt_head_width
+    gantt_head_width,
+    active_baseline_data,
   } },
   technological: {
     datas: {
@@ -880,7 +889,8 @@ function mapStateToProps({ gantt: {
     userBoardPermissions,
     outline_tree_round,
     gantt_view_mode,
-    gantt_head_width
+    gantt_head_width,
+    active_baseline_data,
   }
 }
 

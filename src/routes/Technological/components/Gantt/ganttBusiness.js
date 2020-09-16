@@ -186,7 +186,7 @@ export const fileModuleIsHasUnRead = ({ board_id, im_all_latest_unread_messages 
     return count
 }
 
-// 当前某一项文件item是否拥有未读, 
+// 当前某一项文件item是否拥有未读,
 export const fileItemIsHasUnRead = ({ relaDataId, im_all_latest_unread_messages = [] }) => {
     // 递归查询父级id最终push到一个数组，然后在数组下检索传递进来的relaDataId，如果存在就是存在未读
     const arr = []
@@ -474,7 +474,7 @@ export const getXYDropPosition = (e, { gantt_head_width }) => {
 
 // /**
 //  * 获取下落后落在的分组位置
-//  * @param {Array} arr 
+//  * @param {Array} arr
 //  * @param {Number|String} compare_ele 需要比较的元素
 //  */
 // export const getDropListPosition = (arr, compare_ele) => {

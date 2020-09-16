@@ -1,6 +1,7 @@
 import { setGantTimeSpan } from '../../../../routes/Technological/components/Gantt/ganttBusiness'
-import { getDigit, transformTimestamp } from '../../../../utils/util'
-
+import { getDigit, transformTimestamp, isSamDay} from '../../../../utils/util'
+import { task_item_height, ceil_height } from '../../../../routes/Technological/components/Gantt/constants';
+import { getDateInfo } from "../../../../routes/Technological/components/Gantt/getDate";
 function getLeafCountTree(data = {}) {
     if (!data.children) return 1
     if (data.children.length == 0) {
@@ -85,6 +86,104 @@ export function recusionItem(tree, { parent_expand, parent_type, parent_id, pare
         return new_item
     })
 
+}
+
+// 统一更新计算left width
+export function formatItem(data, {ceilWidth, date_arr_one_level, gantt_view_mode, }){
+  if(data && data.length){
+    return data.map((item, key) => {
+      let new_item = {}
+      const { tree_type, children = [], child_card_status = {} } = item //  里程碑/任务/子任务/虚拟占位 1/2/3/4
+      const cal_left_field = tree_type == '1' ? 'due_time' : 'start_time' //计算起始位置的字段
+      item.top = key * ceil_height
+      const due_time = getDigit(item['due_time'])
+      const start_time = getDigit(item['start_time']) || due_time //如果没有开始时间，那就取截止时间当天
+
+      let time_span = item['time_span'] || Number(item['plan_time_span'] || 0)
+      // time_span = setGantTimeSpan({ time_span, start_time, due_time, start_date, end_date })
+      // 获取子任务状态
+      child_card_status.has_child = children.length ? '1' : '0'
+      child_card_status.min_start_time = Math.min.apply(null, children.map(item => item.start_time)) || ''
+      child_card_status.max_due_time = Math.max.apply(null, children.map(item => item.due_time)) || ''
+      new_item = {
+        ...item,
+        start_time,
+        end_time: due_time || getDateInfo(start_time).timestampEnd,
+        time_span,
+        width: time_span * ceilWidth,
+        height: task_item_height,
+        child_card_status
+      }
+      let time_belong_area = false
+      let date_arr_one_level_length = date_arr_one_level.length
+      if (
+        (
+          tree_type == '1' && (
+            getDigit(new_item['due_time']) < getDigit(date_arr_one_level[0]['timestamp']) ||
+            getDigit(new_item['due_time']) > getDigit(date_arr_one_level[date_arr_one_level_length - 1]['timestamp'])
+          )
+        ) || //里程碑只需考虑截止在区间外
+        (
+          tree_type == '2' && ( //任务在可视区域左右区间外
+            (getDigit(new_item['due_time']) < getDigit(date_arr_one_level[0]['timestamp'])) &&
+            (getDigit(start_time) < getDigit(date_arr_one_level[0]['timestamp']))
+          ) ||
+          getDigit(new_item['start_time']) > getDigit(date_arr_one_level[date_arr_one_level_length - 1]['timestamp'])
+        )
+      ) { //如果该任务的起始日期在当前查看面板日期之前，就从最左边开始摆放
+        // new_item.left = -500
+        new_item.width = 0
+        new_item.left = 0
+      } else {
+        for (let k = 0; k < date_arr_one_level_length; k++) {
+          // if (isSamDay(new_item[cal_left_field], date_arr_one_level[k]['timestamp'])) { //是同一天
+          //   const max_width = (date_arr_one_level_length - k) * ceilWidth //剩余最大可放长度
+          //   new_item.left = k * ceilWidth
+          //   new_item.width = Math.min.apply(Math, [max_width, (time_span || 1) * ceilWidth]) //取最小可放的
+          //   time_belong_area = true
+          //   break
+          // }
+          if (gantt_view_mode == 'month') { //月视图下遍历得到和开始时间对的上的日期
+            if (isSamDay(new_item[cal_left_field], date_arr_one_level[k]['timestamp'])) { //是同一天
+              const max_width = (date_arr_one_level_length - k) * ceilWidth //剩余最大可放长度
+              new_item.left = k * ceilWidth
+              new_item.width = Math.min.apply(Math, [max_width, (time_span || 1) * ceilWidth]) //取最小可放的
+              time_belong_area = true
+              break
+            }
+          } else if (gantt_view_mode == 'year') { //年视图下遍历时间，如果时间戳在某个月的区间内，定位到该位置
+            if (new_item[cal_left_field] <= date_arr_one_level[k]['timestampEnd'] && new_item[cal_left_field] >= date_arr_one_level[k]['timestamp']) {
+              // 该月之前每个月的天数+这一条的日期 = 所在的位置索引（需要再乘以单位长度才是真实位置）
+              const all_date_length = date_arr_one_level.slice().map(item => item.last_date).reduce((total, num) => total + num) //该月之前所有日期长度之和
+              const date_length = date_arr_one_level.slice(0, k < 1 ? 1 : k).map(item => item.last_date).reduce((total, num) => total + num) //该月之前所有日期长度之和
+              const date_no = new Date(item[cal_left_field]).getDate() //所属该月几号
+              const max_width = (all_date_length - date_length - date_no) * ceilWidth //剩余最大可放长度
+              new_item.left = (date_length + date_no - 1) * ceilWidth
+              new_item.width = Math.min.apply(Math, [max_width, (time_span || 1) * ceilWidth]) //取最小可放的
+              time_belong_area = true
+              break
+            }
+          } else if (gantt_view_mode == 'week') {
+            if (new_item[cal_left_field] <= date_arr_one_level[k]['timestampEnd'] && new_item[cal_left_field] >= date_arr_one_level[k]['timestamp']) {
+              const date_day = new Date(new_item[cal_left_field]).getDay() //周几
+              new_item.left = ((k + (date_day == 0 ? 1 : 0)) * 7 + date_day - 1) * ceilWidth
+              new_item.width = (time_span || 1) * ceilWidth
+              break
+            }
+          } else {
+
+          }
+        }
+        // if (!time_belong_area) {//如果在当前视图右期间外
+        //   new_item.width = 0
+        //   new_item.time_span = 0
+        //   new_item.left = 0
+        // }
+      }
+      return new_item
+    })
+  }
+  return [];
 }
 
 function getNode(outline_tree, id) {
