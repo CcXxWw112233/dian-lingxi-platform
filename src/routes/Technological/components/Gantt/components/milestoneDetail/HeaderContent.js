@@ -54,13 +54,15 @@ export default class Header extends React.Component {
   render() {
     // console.log(this.props, 'sssss_milestone')
     const { milestone_detail = {}, users = [] } = this.props
-    const { board_name, id, principals = [] } = milestone_detail
+    const { board_name, id, principals = [], parent_id } = milestone_detail
+    let title = parent_id == '0' ? '里程碑' : '子里程碑'
+    let title_icon = parent_id == '0' ? <>&#xe633;</> : <>&#xe7b7;</>
     return (
       <div className={headerStyles.header_out}>
         <div className={headerStyles.header_out_left}>
           <div className={headerStyles.header_out_flag}>
-            <div className={`${headerStyles.header_out_flag_logo} ${globalStyles.authTheme}`}>&#xe633;</div>
-            <div className={`${headerStyles.header_out_flag_name}`}>里程碑</div>
+            <div className={`${headerStyles.header_out_flag_logo} ${globalStyles.authTheme}`}>{title_icon}</div>
+            <div className={`${headerStyles.header_out_flag_name}`}>{title}</div>
           </div>
           <div className={headerStyles.header_out_detail}>
             <div className={headerStyles.header_out_detail_1}>{board_name}</div>

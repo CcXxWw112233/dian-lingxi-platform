@@ -66,6 +66,7 @@ export default modelExtend(technological, {
       } else {
         message.warn(res.message)
       }
+      return res || {}
     },
     * addMilestoneExcutos({ payload }, { select, call, put }) {
       const { id } = payload //此时的rela_id 为任务id

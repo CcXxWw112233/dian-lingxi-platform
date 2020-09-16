@@ -93,116 +93,116 @@ export default class BasicFieldUIComponent extends Component {
         )
         break
       case 'REMARK': // 备注
-        messageValue = (
-          <div key={id} style={{ position: 'relative' }} className={`${mainContentStyles.field_content} ${showDelColor && currentItem.id == currentDelId && mainContentStyles.showDelColor}`}>
-            <div className={mainContentStyles.field_item}>
-              <div className={mainContentStyles.field_left}>
-                {
-                  !flag && (
-                    <span onClick={() => { this.handleDelCurrentField(currentItem.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
-                  )
-                }
-                <div className={mainContentStyles.field_hover} style={{ maxWidth: 'inherit' }}>
-                  <span className={`${globalStyles.authTheme}`}>&#xe7f6;</span>
-                  <span>{`${currentNounPlanFilterName(TASKS)}`}说明</span>
-                </div>
-              </div>
-              <>
-                <div className={`${mainContentStyles.field_right}`}>
-                  <div style={{ display: 'flex' }}>
-                    {
-                      (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
-                        (
-                          currentItem.data && currentItem.data == '<p></p>' ? (
-                            <div className={`${mainContentStyles.pub_hover}`} style={{ width: '100%' }}>
-                              <span>暂无</span>
-                            </div>
-                          ) : (
-                              <div className={`${mainContentStyles.pub_hover}`} >
-                                <div className={mainContentStyles.descriptionContent} dangerouslySetInnerHTML={{ __html: currentItem.data }}></div>
-                              </div>
-                            )
-                        )
-                      ) : (
-                          // 富文本组件
-                          <>
-                            <div style={{ flex: 1, marginRight: '10px' }}>
-                              <RichTextEditor saveBrafitEdit={this.saveBrafitEdit} value={currentItem.data && currentItem.data}>
-                                <div className={`${mainContentStyles.pub_hover}`} >
-                                  {
-                                    currentItem.data && currentItem.data != '<p></p>' ?
-                                      <div className={mainContentStyles.descriptionContent} dangerouslySetInnerHTML={{ __html: currentItem.data }}></div>
-                                      :
-                                      `添加说明`
-                                  }
-                                </div>
-                              </RichTextEditor>
-                            </div>
-                            <div onClick={(e) => e && e.stopPropagation()}>
-                              <UploadAttachment
-                                executors={executors.data}
-                                boardFolderTreeData={boardFolderTreeData}
-                                card_id={card_id}
-                                title={`任务说明资料设置`}
-                                listDescribe={'说明资料列表'}
-                                isNotShowNoticeList={true}
-                                url={'/api/projects/card/desc/attachment/upload'}
-                                onFileListChange={this.onUploadDescFileListChange}
-                              >
-                                <span className={mainContentStyles.add_sub_upload}>
-                                  <span style={{ fontSize: '16px' }} className={globalStyles.authTheme}>&#xe7fa;</span>
-                                  <span>上传说明资料</span>
-                                </span>
-                              </UploadAttachment>
-                            </div>
-                          </>
-                        )
-                    }
-                  </div>
-                  <div>
-                    {/* 交付物 */}
-                    <div className={mainContentStyles.filelist_wrapper}>
-                      {
-                        !!(dec_files && dec_files.length) && dec_files.map(fileInfo => {
-                          const { name: file_name, file_id } = fileInfo
-                          const breadcrumbList = getFolderPathName(fileInfo)
-                          return (
-                            <div className={`${mainContentStyles.file_item_wrapper}`} key={fileInfo.id}>
-                              <div className={`${mainContentStyles.file_item} ${mainContentStyles.pub_hover}`} onClick={(e) => this.openFileDetailModal(e, fileInfo)} >
-                                <div>
-                                  <span className={`${mainContentStyles.file_action} ${globalStyles.authTheme}`} dangerouslySetInnerHTML={{ __html: judgeFileType(file_name) }}></span>
-                                </div>
-                                <div style={{ flex: 1 }}>
-                                  <div title={file_name} className={mainContentStyles.pay_file_name}>{file_name}</div>
-                                </div>
-                                <div className={mainContentStyles.file_info}>{showMemberName(fileInfo.create_by, data)} 上传于 {fileInfo.create_time && timestampFormat(fileInfo.create_time, "MM-dd hh:mm")}</div>
-                                <div className={mainContentStyles.breadNav} style={{ position: 'relative' }}>
-                                  <Breadcrumb className={mainContentStyles.Breadcrumb} separator=">">
-                                    {breadcrumbList.map((value, key) => {
-                                      return (
-                                        <Breadcrumb.Item key={key}>
-                                          <span title={(value && value.file_name) && value.file_name} className={key == breadcrumbList.length - 1 && mainContentStyles.breadItem}>{(value && value.file_name) && value.file_name}</span>
-                                        </Breadcrumb.Item>
-                                      )
-                                    })}
-                                  </Breadcrumb>
-                                </div>
-                                <Dropdown trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.getAttachmentActionMenus({ fileInfo, code: 'REMARK', card_id })}>
-                                  <span onClick={(e) => e && e.stopPropagation()} className={`${mainContentStyles.pay_more_icon} ${globalStyles.authTheme}`}>&#xe66f;</span>
-                                </Dropdown>
-                              </div>
-                            </div>
-                          )
-                        })
-                      }
-                    </div>
-                  </div>
-                </div>
-              </>
-            </div>
-            {/* </div> */}
-          </div>
-        )
+        // messageValue = (
+        //   <div key={id} style={{ position: 'relative' }} className={`${mainContentStyles.field_content} ${showDelColor && currentItem.id == currentDelId && mainContentStyles.showDelColor}`}>
+        //     <div className={mainContentStyles.field_item}>
+        //       <div className={mainContentStyles.field_left}>
+        //         {
+        //           !flag && (
+        //             <span onClick={() => { this.handleDelCurrentField(currentItem.id) }} className={`${globalStyles.authTheme} ${mainContentStyles.field_delIcon}`}>&#xe7fe;</span>
+        //           )
+        //         }
+        //         <div className={mainContentStyles.field_hover} style={{ maxWidth: 'inherit' }}>
+        //           <span className={`${globalStyles.authTheme}`}>&#xe7f6;</span>
+        //           <span>{`${currentNounPlanFilterName(TASKS)}`}说明</span>
+        //         </div>
+        //       </div>
+        //       <>
+        //         <div className={`${mainContentStyles.field_right}`}>
+        //           <div style={{ display: 'flex' }}>
+        //             {
+        //               (this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit() ? (
+        //                 (
+        //                   currentItem.data && currentItem.data == '<p></p>' ? (
+        //                     <div className={`${mainContentStyles.pub_hover}`} style={{ width: '100%' }}>
+        //                       <span>暂无</span>
+        //                     </div>
+        //                   ) : (
+        //                       <div className={`${mainContentStyles.pub_hover}`} >
+        //                         <div className={mainContentStyles.descriptionContent} dangerouslySetInnerHTML={{ __html: currentItem.data }}></div>
+        //                       </div>
+        //                     )
+        //                 )
+        //               ) : (
+        //                   // 富文本组件
+        //                   <>
+        //                     <div style={{ flex: 1, marginRight: '10px' }}>
+        //                       <RichTextEditor saveBrafitEdit={this.saveBrafitEdit} value={currentItem.data && currentItem.data}>
+        //                         <div className={`${mainContentStyles.pub_hover}`} >
+        //                           {
+        //                             currentItem.data && currentItem.data != '<p></p>' ?
+        //                               <div className={mainContentStyles.descriptionContent} dangerouslySetInnerHTML={{ __html: currentItem.data }}></div>
+        //                               :
+        //                               `添加说明`
+        //                           }
+        //                         </div>
+        //                       </RichTextEditor>
+        //                     </div>
+        //                     <div onClick={(e) => e && e.stopPropagation()}>
+        //                       <UploadAttachment
+        //                         executors={executors.data}
+        //                         boardFolderTreeData={boardFolderTreeData}
+        //                         card_id={card_id}
+        //                         title={`任务说明资料设置`}
+        //                         listDescribe={'说明资料列表'}
+        //                         isNotShowNoticeList={true}
+        //                         url={'/api/projects/card/desc/attachment/upload'}
+        //                         onFileListChange={this.onUploadDescFileListChange}
+        //                       >
+        //                         <span className={mainContentStyles.add_sub_upload}>
+        //                           <span style={{ fontSize: '16px' }} className={globalStyles.authTheme}>&#xe7fa;</span>
+        //                           <span>上传说明资料</span>
+        //                         </span>
+        //                       </UploadAttachment>
+        //                     </div>
+        //                   </>
+        //                 )
+        //             }
+        //           </div>
+        //           <div>
+        //             {/* 交付物 */}
+        //             <div className={mainContentStyles.filelist_wrapper}>
+        //               {
+        //                 !!(dec_files && dec_files.length) && dec_files.map(fileInfo => {
+        //                   const { name: file_name, file_id } = fileInfo
+        //                   const breadcrumbList = getFolderPathName(fileInfo)
+        //                   return (
+        //                     <div className={`${mainContentStyles.file_item_wrapper}`} key={fileInfo.id}>
+        //                       <div className={`${mainContentStyles.file_item} ${mainContentStyles.pub_hover}`} onClick={(e) => this.openFileDetailModal(e, fileInfo)} >
+        //                         <div>
+        //                           <span className={`${mainContentStyles.file_action} ${globalStyles.authTheme}`} dangerouslySetInnerHTML={{ __html: judgeFileType(file_name) }}></span>
+        //                         </div>
+        //                         <div style={{ flex: 1 }}>
+        //                           <div title={file_name} className={mainContentStyles.pay_file_name}>{file_name}</div>
+        //                         </div>
+        //                         <div className={mainContentStyles.file_info}>{showMemberName(fileInfo.create_by, data)} 上传于 {fileInfo.create_time && timestampFormat(fileInfo.create_time, "MM-dd hh:mm")}</div>
+        //                         <div className={mainContentStyles.breadNav} style={{ position: 'relative' }}>
+        //                           <Breadcrumb className={mainContentStyles.Breadcrumb} separator=">">
+        //                             {breadcrumbList.map((value, key) => {
+        //                               return (
+        //                                 <Breadcrumb.Item key={key}>
+        //                                   <span title={(value && value.file_name) && value.file_name} className={key == breadcrumbList.length - 1 && mainContentStyles.breadItem}>{(value && value.file_name) && value.file_name}</span>
+        //                                 </Breadcrumb.Item>
+        //                               )
+        //                             })}
+        //                           </Breadcrumb>
+        //                         </div>
+        //                         <Dropdown trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode} overlay={this.getAttachmentActionMenus({ fileInfo, code: 'REMARK', card_id })}>
+        //                           <span onClick={(e) => e && e.stopPropagation()} className={`${mainContentStyles.pay_more_icon} ${globalStyles.authTheme}`}>&#xe66f;</span>
+        //                         </Dropdown>
+        //                       </div>
+        //                     </div>
+        //                   )
+        //                 })
+        //               }
+        //             </div>
+        //           </div>
+        //         </div>
+        //       </>
+        //     </div>
+        //     {/* </div> */}
+        //   </div>
+        // )
         break
       case 'LABEL': // 标签
         messageValue = (

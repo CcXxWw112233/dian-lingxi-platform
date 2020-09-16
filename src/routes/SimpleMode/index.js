@@ -1,4 +1,4 @@
-import React, { Component, Suspense, lazy } from "react";
+import React, { Component, Suspense, lazy, PureComponent } from "react";
 import { connect } from "dva/index"
 import { Route, Switch, } from 'dva/router'
 import indexStyles from './index.less'
@@ -17,12 +17,13 @@ const Home = lazy(() => import('./Components/Home'))
 
 const getEffectOrReducerByName = name => `technological/${name}`
 // 待重构，将路由和其它分离出来
-class SimpleMode extends Component {
+class SimpleMode extends PureComponent {
 
   constructor(props) {
     super(props);
     this.state = {
-      show: false
+      show: false,
+      bgStyle: {}
     }
   }
 
@@ -108,10 +109,12 @@ class SimpleMode extends Component {
     window.addEventListener('scroll', this.handleScroll, false) //监听滚动
     window.addEventListener('resize', this.handleResize, false) //监听窗口大小改变
     this.setShowByUserInfo(this.props)
+    this.lazyLoadBgImg(this.props)
   }
 
   componentWillReceiveProps(nextProps) {
     this.setShowByUserInfo(nextProps)
+    this.lazyLoadBgImg(nextProps)
   }
 
   componentWillUnmount() { //一定要最后移除监听器，以防多个组件之间导致this的指向紊乱
@@ -166,24 +169,38 @@ class SimpleMode extends Component {
       </Suspense>
     )
   }
-  render() {
+  lazyLoadBgImg = (nextProps = {}) => {
     const {
-      simpleHeaderVisiable,
-      setWapperCenter,
       currentUserWallpaperContent,
       userInfo = {},
-    } = this.props;
+    } = nextProps
+    if (currentUserWallpaperContent == this.props.currentUserWallpaperContent && !!currentUserWallpaperContent) return
+    const _self = this
     const { show } = this.state
-    const { wallpaper = defaultWallpaperSrc } = userInfo;
+    const wallpaper = userInfo.id ? userInfo.wallpaper || defaultWallpaperSrc : ''
     const wallpaperContent = currentUserWallpaperContent ? currentUserWallpaperContent : wallpaper;
     let bgStyle = {}
     if (isColor(wallpaperContent)) {
-      bgStyle = { backgroundColor: wallpaperContent };
+      bgStyle = { backgroundColor: wallpaperContent }
+      this.setState({ bgStyle })
     } else {
-      bgStyle = { backgroundImage: `url(${wallpaperContent})` };
+      const temp = new Image()
+      temp.src = wallpaperContent
+      function loaded(e) {
+        // console.log('ssssssssss_', e)
+        _self.setState({
+          bgStyle: { backgroundImage: `url(${wallpaperContent})` }
+        })
+      }
+      temp.onload = loaded()
     }
+  }
+  render() {
+    const {
+      setWapperCenter,
+    } = this.props;
     return (
-      <div className={`${indexStyles.wapper} ${indexStyles.wapperBg} ${setWapperCenter ? indexStyles.wapper_center : ''}`} onClick={this.handleHiddenNav} style={bgStyle}>
+      <div className={`${indexStyles.wapper} ${indexStyles.wapperBg} ${setWapperCenter ? indexStyles.wapper_center : ''}`} onClick={this.handleHiddenNav} style={this.state.bgStyle}>
         {/* {simpleHeaderVisiable && <SimpleHeader />}
         {show && this.renderRoutes()} */}
         <SimpleHeader />

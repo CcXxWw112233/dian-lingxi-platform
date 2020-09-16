@@ -643,7 +643,7 @@ const LogicWithMainContent = {
                 shouldDeleteId: '',
                 showDelColor: ''
               })
-              that.updateParentPropertiesList && that.updateParentPropertiesList({shouldDeleteId})
+              that.updateParentPropertiesList && that.updateParentPropertiesList({ shouldDeleteId })
               that.props.updateParentPropertiesList && that.props.updateParentPropertiesList({ shouldDeleteId })
               dispatch({
                 type: 'publicTaskDetailModal/updateDatas',
@@ -679,7 +679,7 @@ const LogicWithMainContent = {
             shouldDeleteId: '',
             showDelColor: ''
           })
-          that.updateParentPropertiesList && that.updateParentPropertiesList({shouldDeleteId})
+          that.updateParentPropertiesList && that.updateParentPropertiesList({ shouldDeleteId })
           that.props.updateParentPropertiesList && that.props.updateParentPropertiesList({ shouldDeleteId })
           dispatch({
             type: 'publicTaskDetailModal/updateDatas',
@@ -811,11 +811,11 @@ const LogicWithMainContent = {
   // 属性选择的下拉回调 E
 
   // 判断是否存在执行人
-  whetherExistencePriciple: function () {
+  whetherExistencePriciple: function (code) {
     const { drawContent: { properties = [] } } = this.props
     let flag
     if (!properties.length) return false
-    flag = properties.filter(item => item.code == 'EXECUTOR')
+    flag = properties.filter(item => item.code == code)
     if (flag.length == '0') return flag = false
     return flag
   },
@@ -954,7 +954,6 @@ const LogicWithMainContent = {
       message.warn('关联里程碑的截止日期不能小于任务的截止日期')
       return
     }
-
     if (actionType === 'add') {
       const params = {
         rela_id: card_id,
@@ -968,18 +967,16 @@ const LogicWithMainContent = {
         }
       }).then(res => {
         if (isApiResponseOk(res)) {
+          drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'MILESTONE', value: info })
+          dispatch({
+            type: 'publicTaskDetailModal/updateDatas',
+            payload: {
+              drawContent: { ...drawContent }
+            }
+          })
           this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id, operate_properties_code: 'MILESTONE' })
         }
       });
-
-      // drawContent['milestone_data'] = info;
-      drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'MILESTONE', value: info })
-      dispatch({
-        type: 'publicTaskDetailModal/updateDatas',
-        payload: {
-          drawContent: { ...drawContent }
-        }
-      })
     }
     if (actionType === 'remove') {
       const params = {
@@ -993,17 +990,16 @@ const LogicWithMainContent = {
         }
       }).then(res => {
         if (isApiResponseOk(res)) {
+          drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'MILESTONE', value: [] })
+          dispatch({
+            type: 'publicTaskDetailModal/updateDatas',
+            payload: {
+              drawContent: { ...drawContent }
+            }
+          })
           this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id, operate_properties_code: 'MILESTONE' })
         }
       });
-      // drawContent['milestone_data'] = [];
-      drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'MILESTONE', value: [] })
-      dispatch({
-        type: 'publicTaskDetailModal/updateDatas',
-        payload: {
-          drawContent: { ...drawContent }
-        }
-      })
     }
 
     if (actionType === 'update') {
@@ -1028,17 +1024,16 @@ const LogicWithMainContent = {
         }
       }).then(res => {
         if (isApiResponseOk(res)) {
+          drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'MILESTONE', value: info })
+          dispatch({
+            type: 'publicTaskDetailModal/updateDatas',
+            payload: {
+              drawContent: { ...drawContent }
+            }
+          })
           this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id, operate_properties_code: 'MILESTONE' })
         }
       });
-      // drawContent['milestone_data'] = info;
-      drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'MILESTONE', value: info })
-      dispatch({
-        type: 'publicTaskDetailModal/updateDatas',
-        payload: {
-          drawContent: { ...drawContent }
-        }
-      })
     }
   },
   // 里程碑选择回调 E

@@ -185,3 +185,50 @@ export function formatItem(data, {ceilWidth, date_arr_one_level, gantt_view_mode
   }
   return [];
 }
+
+function getNode(outline_tree, id) {
+    let nodeValue = null;
+    if (outline_tree) {
+        nodeValue = outline_tree.find((item) => item.id == id);
+        if (nodeValue) {
+            return nodeValue;
+        } else {
+            for (let i = 0; i < outline_tree.length; i++) {
+                let node = outline_tree[i];
+                if (node.children && node.children.length > 0) {
+                    nodeValue = getNode(node.children, id);
+                    if (nodeValue) {
+                        return nodeValue;
+                    }
+                } else {
+                    continue
+                    // return null;
+                }
+            }
+        }
+    }
+    return nodeValue
+}
+
+export function getTreeNodeValue(outline_tree, id) {
+    if (outline_tree) {
+        for (let i = 0; i < outline_tree.length; i++) {
+            let node = outline_tree[i];
+            if (node.id == id) {
+                return node;
+            } else {
+                if (node.children && node.children.length > 0) {
+                    let childNode = getNode(node.children, id);
+                    if (childNode) {
+                        return childNode;
+                    }
+                } else {
+                    continue
+                    // return null;
+                }
+            }
+        }
+    } else {
+        return null;
+    }
+}

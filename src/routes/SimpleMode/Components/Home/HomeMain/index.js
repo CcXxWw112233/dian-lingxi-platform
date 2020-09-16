@@ -11,8 +11,44 @@ import { connect } from 'dva'
 
 @connect(mapStateToProps)
 export default class index extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            bgStyle: {}
+        }
+    }
     static propTypes = {
         prop: PropTypes
+    }
+    componentDidMount() {
+        this.lazyLoadBgImg(this.props)
+    }
+    componentWillReceiveProps(nextProps) {
+        this.lazyLoadBgImg(nextProps)
+    }
+    lazyLoadBgImg = (nextProps = {}) => {
+        const {
+            currentUserWallpaperContent,
+            userInfo = {},
+        } = nextProps
+        if (currentUserWallpaperContent == this.props.currentUserWallpaperContent && !!currentUserWallpaperContent) return
+        const _self = this
+        const { show } = this.state
+        const wallpaper = userInfo.id ? userInfo.wallpaper || defaultWallpaperSrc : ''
+        const wallpaperContent = currentUserWallpaperContent ? currentUserWallpaperContent : wallpaper;
+        let bgStyle = {}
+        if (isColor(wallpaperContent)) {
+            bgStyle = { backgroundColor: wallpaperContent }
+            this.setState({ bgStyle })
+        } else {
+            const temp = new Image()
+            temp.src = wallpaperContent
+            temp.onload = () => {
+                _self.setState({
+                    bgStyle: { backgroundImage: `url(${wallpaperContent})` }
+                })
+            }
+        }
     }
     setBgImg = () => {
         const {
@@ -43,7 +79,10 @@ export default class index extends Component {
                     <BoardFeatures />
                 </div>
                 <div className={`${styles.main_wapper_after}`}
-                    style={{ ...this.setBgImg() }}
+                    style={{
+                        ...this.state.bgStyle
+                        //  ...this.setBgImg()
+                    }}
                 ></div>
             </div>
         )

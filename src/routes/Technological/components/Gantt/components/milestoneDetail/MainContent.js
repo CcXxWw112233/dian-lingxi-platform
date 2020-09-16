@@ -6,12 +6,13 @@ import MeusearMutiple from '../../../Workbench/CardContent/Modal/TaskItemCompone
 import ExcutorList from '../../../Workbench/CardContent/Modal/TaskItemComponent/components/ExcutorList'
 import BraftEditor from 'braft-editor'
 import Cookies from 'js-cookie'
-import TaskItem from './components/TaskItem'
+import CommonRelaItem from './components/CommonRelaItem'
 import globalStyle from '../../../../../../globalset/css/globalClassName.less'
 import { timestampToTimeNormal, timeToTimestamp, compareTwoTimestamp } from "../../../../../../utils/util";
-import { REQUEST_DOMAIN_FILE } from "../../../../../../globalset/js/constant";
+import { REQUEST_DOMAIN_FILE, TASKS } from "../../../../../../globalset/js/constant";
 import { connect, } from 'dva';
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
+import { currentNounPlanFilterName } from '../../../../../../utils/businessFunction'
 
 const getEffectOrReducerByName = name => `milestoneDetail/${name}`
 @connect(mapStateToProps)
@@ -297,6 +298,54 @@ export default class MainContent extends React.Component {
   }
   //有关于富文本编辑---------------end
 
+  // 渲染关联内容头部、
+  renderRelaTitleContent = (type) => {
+    const { milestone_detail = {} } = this.props
+    const { content_list = [], chird_list = [], milestone_completed_count, content_completed_count } = milestone_detail
+    let title_name = ''
+    let complete_num = '0'
+    let total_num = '0'
+    if (type == '0') {
+      title_name = `${currentNounPlanFilterName(TASKS)}`
+      complete_num = content_completed_count || '0'
+      total_num = content_list.length
+    } else if (type == '4') {
+      title_name = '里程碑'
+      complete_num = milestone_completed_count || '0'
+      total_num = chird_list.length
+    }
+
+    return (
+      <span>关联{title_name} · {complete_num || '0'}/{total_num || '0'}</span>
+    )
+  }
+
+  // 渲染关联内容
+  renderRelaContent = ({ content_list = [], type }) => {
+    const { milestone_detail = {} } = this.props
+    return (
+      <>
+        <div className={indexStyles.contain2_item} >
+          <div className={indexStyles.contain2_item_left} style={{ width: 200 }}>
+            <span className={globalStyle.authTheme}>&#xe7f5;</span>
+            {this.renderRelaTitleContent(type)}
+          </div>
+          <div className={`${indexStyles.contain2_item_right}`}></div>
+        </div>
+        <div className={`${indexStyles.contain3}`}>
+          <div className={`${indexStyles.contain3_inner} ${globalStyle.global_vertical_scrollbar}`}>
+            {content_list.map((value, key) => {
+              const { name, id } = value
+              return (
+                <CommonRelaItem type={type} itemValue={value} key={id} milestone_id={milestone_detail['id']} deleteRelationContent={this.props.deleteRelationContent} />
+              )
+            })}
+          </div>
+        </div>
+      </>
+    )
+  }
+
   render() {
     const { titleIsEdit,
       excutors_out_left_width = 0,
@@ -314,7 +363,8 @@ export default class MainContent extends React.Component {
         data: users = []
       }
     } = this.props
-    const { board_id, complete_num, total_num, name, deadline, remarks, principals = [], id, content_list = [], org_id } = milestone_detail
+    const { board_id, name, deadline, principals = [], id, content_list = [], org_id, chird_list = [], progress_percent = '0' } = milestone_detail
+    const result_process = Math.round(progress_percent * 100) / 100
     const executors = principals.filter(item => item)
     const new_users = users.map(item => {
       if (!item['user_id']) {
@@ -371,11 +421,11 @@ export default class MainContent extends React.Component {
           {/*进度*/}
           <div className={indexStyles.contain2_item}>
             <div className={indexStyles.contain2_item_left}>
-              <span className={globalStyle.authTheme}>&#xe7b2;</span>
+              <span className={globalStyle.authTheme}>&#xe7b5;</span>
               <span>进度</span>
             </div>
             <div className={`${indexStyles.contain2_item_right}`} style={{ lineHeight: '28px' }}>
-              <Progress percent={complete_num / total_num} strokeColor={'#FAAD14'} />
+              <Progress percent={result_process} strokeColor={result_process == 100 ? '#52c41a' : '#FAAD14'} />
             </div>
           </div>
           {/*负责人*/}
@@ -405,7 +455,6 @@ export default class MainContent extends React.Component {
                 <div className={`${indexStyles.contain2_item_right} ${indexStyles.pub_hover} ${indexStyles.excutorsOut}`}>
                   <Dropdown overlay={
                     <MenuSearchPartner
-                      // isInvitation={true}
                       inviteOthersToBoardCalback={this.inviteOthersToBoardCalback}
                       invitationType={'13'}
                       invitationId={id}
@@ -416,13 +465,6 @@ export default class MainContent extends React.Component {
                       currentSelect={executors}
                       chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
                       board_id={board_id} />
-                    // <MeusearMutiple
-                    //   listData={new_users}
-                    //   keyCode={'user_id'}
-                    //   searchName={'name'}
-                    //   currentSelect={executors}
-                    //   chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}
-                    // />
                   }>
                     <div className={indexStyles.excutorsOut_left} ref={this.excutors_out_left_ref}>
                       {executors.map((value, key) => {
@@ -451,7 +493,7 @@ export default class MainContent extends React.Component {
           {/*截至时间*/}
           <div className={indexStyles.contain2_item}>
             <div className={indexStyles.contain2_item_left}>
-              <span className={globalStyle.authTheme}>&#xe7b2;</span>
+              <span className={globalStyle.authTheme}>&#xe686;</span>
               <span>截至时间</span>
             </div>
             <div className={`${indexStyles.contain2_item_right} ${indexStyles.pub_hover}`}>
@@ -470,7 +512,7 @@ export default class MainContent extends React.Component {
           {/*添加备注*/}
           <div className={`${indexStyles.contain2_item} ${indexStyles.contain2_item_2}`}>
             <div className={indexStyles.contain2_item_left}>
-              <span className={globalStyle.authTheme}>&#xe7b2;</span>
+              <span className={globalStyle.authTheme}>&#xe7f6;</span>
               <span>备注</span>
             </div>
             <div className={`${indexStyles.contain2_item_right}`} style={{ height: 'auto', padding: 0 }} >
@@ -493,25 +535,26 @@ export default class MainContent extends React.Component {
                 )}
             </div>
           </div>
-          {/*进度*/}
-          <div className={indexStyles.contain2_item} >
+          {/* 关联内容 */}
+          {/* <div className={indexStyles.contain2_item} >
             <div className={indexStyles.contain2_item_left} style={{ width: 200 }}>
               <span className={globalStyle.authTheme}>&#xe7b2;</span>
               <span>关联任务 · {complete_num || '0'}/{total_num || '0'}</span>
             </div>
             <div className={`${indexStyles.contain2_item_right}`}></div>
-          </div>
+          </div> */}
+          {
+            !!(content_list && content_list.length) && (
+              this.renderRelaContent({ content_list, type: '0' })
+            )
+          }
+          {
+            !!(chird_list && chird_list.length) && (
+              this.renderRelaContent({ content_list: chird_list, type: '4' })
+            )
+          }
         </div>
-        <div className={`${indexStyles.contain3}`}>
-          <div className={indexStyles.contain3_inner}>
-            {content_list.map((value, key) => {
-              const { name, id } = value
-              return (
-                <TaskItem itemValue={value} key={id} milestone_id={milestone_detail['id']} deleteRelationContent={this.props.deleteRelationContent} />
-              )
-            })}
-          </div>
-        </div>
+
       </div>
     )
   }

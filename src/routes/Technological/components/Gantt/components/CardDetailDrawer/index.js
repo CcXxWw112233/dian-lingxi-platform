@@ -15,6 +15,13 @@ export default class Index extends Component {
                 selected_card_visible: false,
             }
         })
+        dispatch({
+            type: 'publicTaskDetailModal/updateDatas',
+            payload: {
+                drawContent: {},
+                card_id: ''
+            }
+        })
     }
     componentWillUnmount() {
         const { dispatch } = this.props

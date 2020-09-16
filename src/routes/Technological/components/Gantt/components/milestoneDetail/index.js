@@ -3,6 +3,7 @@ import PublicDetailModal from '../../../../../../components/PublicDetailModal'
 import MainContent from './MainContent'
 import { connect } from 'dva'
 import HeaderContent from './HeaderContent'
+import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
 @connect(mapStateToProps)
 export default class GanttDetail extends React.Component {
 
@@ -18,6 +19,12 @@ export default class GanttDetail extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    if (this.props.milestone_id == nextProps.milestone_id || this.props.miletone_detail_modal_visible == nextProps.miletone_detail_modal_visible) return
+    // console.log({
+    //   this: this.props.milestone_id,
+    //   next: nextProps.milestone_id,
+    //   state: this.state.milestone_id_local
+    // });
     this.getMilestoneDetail(nextProps)
   }
 
@@ -34,17 +41,20 @@ export default class GanttDetail extends React.Component {
         id: milestone_id
       }
     }).then((res = {}) => {
-      const { board_id } = res
-      dispatch({
-        type: 'projectDetail/projectDetailInfo',
-        payload: {
-          id: board_id
-        }
-      })
+      if (isApiResponseOk(res)) {
+        const { board_id } = res
+        dispatch({
+          type: 'projectDetail/projectDetailInfo',
+          payload: {
+            id: board_id
+          }
+        })
+        this.setState({
+          milestone_id_local: milestone_id
+        })
+      }
     })
-    this.setState({
-      milestone_id_local: milestone_id
-    })
+
   }
 
   onCancel = () => {
