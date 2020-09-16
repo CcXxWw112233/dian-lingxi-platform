@@ -187,7 +187,7 @@ class SimpleMode extends PureComponent {
       const temp = new Image()
       temp.src = wallpaperContent
       function loaded(e) {
-        console.log('ssssssssss_', e)
+        // console.log('ssssssssss_', e)
         _self.setState({
           bgStyle: { backgroundImage: `url(${wallpaperContent})` }
         })
