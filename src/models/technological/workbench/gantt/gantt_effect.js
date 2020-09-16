@@ -452,7 +452,7 @@ export default {
         * deleteBaseLineData({ payload = {} }, { select, call, put }){
           let id = payload.id;
           let list = [...yield select(getModelSelectDatasState('gantt', 'baseLine_datas'))];
-          let active = yield getModelSelectDatasState('gantt', 'active_baseline_data');
+          let active = yield select(getModelSelectDatasState('gantt', 'active_baseline'));
           yield call( DeleteBaseLine, {id: id});
           if(id){
             list = list.filter(item => item.id !== id);
