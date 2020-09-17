@@ -30,6 +30,9 @@ export default class Header extends React.Component {
       onOk() {
         requestDeleteMiletone({ id }).then(res => {
           if (isApiResponseOk(res)) {
+            setTimeout(() => {
+              message.success('删除成功')
+            })
             if (typeof deleteMiletone == 'function') {
               deleteMiletone({ id })
             }
