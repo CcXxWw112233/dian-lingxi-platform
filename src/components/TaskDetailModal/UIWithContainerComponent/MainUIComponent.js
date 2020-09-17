@@ -381,7 +381,7 @@ export default class MainUIComponent extends Component {
   }
 
   render() {
-    const { drawContent = {}, isInOpenFile, handleTaskDetailChange, handleChildTaskChange, whetherUpdateParentTaskTime } = this.props
+    const { drawContent = {}, milestoneList = [], isInOpenFile, handleTaskDetailChange, handleChildTaskChange, whetherUpdateParentTaskTime } = this.props
     const {
       org_id,
       card_id,
@@ -395,7 +395,7 @@ export default class MainUIComponent extends Component {
     } = drawContent
     const { properties = [] } = drawContent
     const { data = [] } = getCurrentDrawerContentPropsModelFieldData({ properties, code: 'EXECUTOR' })
-    const { boardFolderTreeData = [], milestoneList = [], selectedKeys = [], is_edit_title, inputValue } = this.state
+    const { boardFolderTreeData = [], selectedKeys = [], is_edit_title, inputValue } = this.state
     // 状态
     const filedEdit = (
       <Menu onClick={this.handleFiledIsComplete} getPopupContainer={triggerNode => triggerNode.parentNode} selectedKeys={is_realize == '0' ? ['incomplete'] : ['complete']}>
@@ -688,7 +688,7 @@ export default class MainUIComponent extends Component {
 
 // 只关联public弹窗内的数据
 function mapStateToProps({
-  publicTaskDetailModal: { drawerVisible, drawContent = {}, card_id, boardTagList = [], attributesList = [] },
+  publicTaskDetailModal: { drawerVisible, drawContent = {}, card_id, boardTagList = [], attributesList = [], milestoneList = [] },
   projectDetail: { datas: { projectDetailInfoData = {} } },
   publicFileDetailModal: {
     isInOpenFile,
@@ -702,5 +702,5 @@ function mapStateToProps({
     }
   }
 }) {
-  return { drawerVisible, drawContent, card_id, boardTagList, attributesList, projectDetailInfoData, isInOpenFile, filePreviewCurrentFileId, fileType, filePreviewCurrentName, userBoardPermissions }
+  return { drawerVisible, drawContent, card_id, boardTagList, attributesList, milestoneList, projectDetailInfoData, isInOpenFile, filePreviewCurrentFileId, fileType, filePreviewCurrentName, userBoardPermissions }
 }

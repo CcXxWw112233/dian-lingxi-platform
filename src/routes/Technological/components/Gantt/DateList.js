@@ -9,6 +9,7 @@ import AddLCBModal from './components/AddLCBModal'
 import MilestoneDetail from './components/milestoneDetail'
 import { checkIsHasPermissionInBoard, setBoardIdStorage } from '../../../../utils/businessFunction';
 import { PROJECT_TEAM_BOARD_MILESTONE } from "@/globalset/js/constant";
+import { isApiResponseOk } from '../../../../utils/handleResponseData';
 
 const MenuItem = Menu.Item
 
@@ -106,7 +107,7 @@ export default class DateList extends Component {
   }
   // 创建里程碑
   submitCreatMilestone = (data) => {
-    const { dispatch } = this.props
+    const { dispatch, selected_card_visible } = this.props
     const { users, currentSelectedProject, due_time, add_name } = data
     dispatch({
       type: 'gantt/createMilestone',
@@ -115,6 +116,18 @@ export default class DateList extends Component {
         deadline: due_time,
         name: add_name,
         users
+      }
+    }).then(res => {
+      if (isApiResponseOk(res)) {
+        // 如果详情存在 则更新里程碑列表
+        if ( selected_card_visible) {
+          dispatch({
+            type: 'publicTaskDetailModal/getMilestoneList',
+            payload: {
+              id: currentSelectedProject
+            }
+          })
+        }
       }
     })
   }
@@ -649,7 +662,8 @@ function mapStateToProps(
       gold_date_arr = [], about_user_boards = [],
       target_scrollTop = [],
       milestoneMap = [], holiday_list = [],
-      gantt_board_id, group_view_type, gantt_view_mode, ceilWidth, get_gantt_data_loading_other
+      gantt_board_id, group_view_type, gantt_view_mode, ceilWidth, get_gantt_data_loading_other,
+      selected_card_visible
     } },
     technological: { datas: { userBoardPermissions } }
   }) {
@@ -659,7 +673,8 @@ function mapStateToProps(
     target_scrollTop, milestoneMap,
     holiday_list, gantt_board_id,
     group_view_type, about_user_boards,
-    userBoardPermissions, gantt_view_mode, ceilWidth, get_gantt_data_loading_other
+    userBoardPermissions, gantt_view_mode, ceilWidth, get_gantt_data_loading_other,
+    selected_card_visible
   }
 }
 

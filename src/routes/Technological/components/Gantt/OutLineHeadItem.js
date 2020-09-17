@@ -270,6 +270,15 @@ export default class OutLineHeadItem extends Component {
                                         outline_tree
                                     }
                                 })
+                                // 在大纲视图下新增里程碑后 如果详情存在 则需要更新详情中的里程碑列表 (暂时实现方案)
+                                if ( selected_card_visible) {
+                                  dispatch({
+                                    type: 'publicTaskDetailModal/getMilestoneList',
+                                    payload: {
+                                            id: gantt_board_id
+                                    }
+                                  })
+                                }
                             } else {
                                 message.error(res.message)
                             }

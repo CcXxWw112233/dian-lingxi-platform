@@ -361,7 +361,7 @@ export default class MainContent extends Component {
   }
 
   render() {
-    const { drawContent = {} } = this.props
+    const { drawContent = {}, milestoneList = [] } = this.props
     const {
       card_id,
       card_name,
@@ -372,7 +372,7 @@ export default class MainContent extends Component {
     } = drawContent
     const { properties = [], fields = [] } = drawContent
     const executors = getCurrentDrawerContentPropsModelFieldData({ properties, code: 'EXECUTOR' })
-    const { boardFolderTreeData = [], milestoneList = [], selectedKeys = [], inputValue, is_edit_title } = this.state
+    const { boardFolderTreeData = [], selectedKeys = [], inputValue, is_edit_title } = this.state
     // 状态
     const filedEdit = (
       <Menu onClick={this.handleFiledIsComplete} getPopupContainer={triggerNode => triggerNode.parentNode} selectedKeys={is_realize == '0' ? ['incomplete'] : ['complete']}>
@@ -654,7 +654,7 @@ export default class MainContent extends Component {
 
 // 只关联public弹窗内的数据
 function mapStateToProps({
-  publicTaskDetailModal: { drawerVisible, drawContent = {}, card_id, boardTagList = [], attributesList = [] },
+  publicTaskDetailModal: { drawerVisible, drawContent = {}, card_id, boardTagList = [], attributesList = [], milestoneList = [] },
   projectDetail: { datas: { projectDetailInfoData = {} } },
   gantt: { datas: { group_view_type } },
   publicFileDetailModal: {
@@ -669,5 +669,5 @@ function mapStateToProps({
     }
   }
 }) {
-  return { group_view_type, drawerVisible, drawContent, card_id, boardTagList, attributesList, projectDetailInfoData, isInOpenFile, filePreviewCurrentFileId, fileType, filePreviewCurrentName, userBoardPermissions }
+  return { group_view_type, drawerVisible, drawContent, card_id, boardTagList, attributesList, milestoneList, projectDetailInfoData, isInOpenFile, filePreviewCurrentFileId, fileType, filePreviewCurrentName, userBoardPermissions }
 }

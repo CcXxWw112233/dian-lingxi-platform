@@ -27,6 +27,12 @@
 
 .menuItem {
     background-color: #ffffff;
+    :global {
+        .ant-menu-sub {
+            overflow-y: auto;
+            max-height: 200px;
+        }
+    }
 
     .menuItemTip{
         position: relative;

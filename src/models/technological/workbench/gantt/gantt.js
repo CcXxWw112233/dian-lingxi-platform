@@ -837,6 +837,7 @@ export default {
       } else {
         message.error(res.message)
       }
+      return res || {}
     },
     * getGttMilestoneList({ payload }, { select, call, put }) { //
 

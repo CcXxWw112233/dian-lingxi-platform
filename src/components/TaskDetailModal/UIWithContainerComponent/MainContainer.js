@@ -62,6 +62,12 @@ const LogicWithMainContent = {
   getMilestone: function (id, callBackObject, milestoneId) {
     getMilestoneList({ id }).then((res) => {
       if (isApiResponseOk(res)) {
+        this.props.dispatch({
+          type: 'publicTaskDetailModal/updateDatas',
+          payload: {
+            milestoneList: res.data
+          }
+        })
         this.setState({
           milestoneList: res.data
         }, () => {

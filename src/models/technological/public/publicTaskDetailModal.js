@@ -5,6 +5,7 @@ import { message } from 'antd'
 import { currentNounPlanFilterName } from "../../../utils/businessFunction";
 import { MESSAGE_DURATION_TIME, TASKS } from "../../../globalset/js/constant";
 import QueryString from 'querystring'
+import { getMilestoneList } from '@/services/technological/prjectDetail'
 
 let board_id = null
 let appsSelectKey = null
@@ -201,6 +202,19 @@ export default {
     //     })
     //   }
     // },
+
+    //获取里程碑列表
+    *getMilestoneList({ payload }, { call, put }) {
+      let res = yield call(getMilestoneList, { ...payload })
+      if(isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            milestoneList: res.data
+          }
+        })
+      }
+    },
     // 获取项目标签
     * getBoardTagList({ payload }, { call, put }) {
       const { board_id, calback } = payload
