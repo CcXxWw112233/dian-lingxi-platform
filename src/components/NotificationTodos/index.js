@@ -1,4 +1,4 @@
-import { notification, message, Button } from 'antd'
+import { notification, message as antMessage, Button } from 'antd'
 import { revokeCardDo } from '../../services/technological/task'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { ganttIsOutlineView } from '../../routes/Technological/components/Gantt/constants'
@@ -91,7 +91,7 @@ class ExcuteTodo {
         const reBack = () => {
             revokeCardDo({ undo_id, board_id }).then(res => {
                 if (isApiResponseOk(res)) {
-                    message.success('撤回成功')
+                    antMessage.success('撤回成功')
                     this.updateGanttData(res.data)
                     if (operate_in_card_detail_panel) { //如果在详情弹窗种操作时间，只需直接查询，否则在其它地方操作就要做校验
                         this.dispatch({
@@ -110,7 +110,7 @@ class ExcuteTodo {
                         })
                     }
                 } else {
-                    message.warn(res.message)
+                    antMessage.warn(res.message)
                 }
             })
         }
@@ -212,12 +212,12 @@ export class EnequeueNotifyTodos {
 
 
 // 创建实例弹窗列表代办
-/** 
+/**
 *@param  res 后台返回的整串数据{code, message, data:{} }具体见方法调用内解析
 *@param  id 当前id
 *@param  board_id 当前对象id所属的项目id
 *@param  group_view_type 甘特图视图
-*@param  dispatch 
+*@param  dispatch
 *@param  parent_card_id  当前id的父id(子任务 =》 父任务)
 *@param  card_detail_id  任务详情弹窗的弹窗的任务id ， operate_in_card_detail_panel为ture时不需要
 *@param  selected_card_visible 甘特图是否打开任务弹窗, operate_in_card_detail_panel为ture时不需要
@@ -236,7 +236,7 @@ export function rebackCreateNotify({
 }) {
     const { code, message, undo_id } = handleReBackNotiParams({ ...res, id }) //转化所想要的参数 code message undo_id
     if (code == '0') {
-        message.success('变更成功')
+        antMessage.success('变更成功')
     } else {
         console.log('notify_this', this)
         if (!this.notify) {
