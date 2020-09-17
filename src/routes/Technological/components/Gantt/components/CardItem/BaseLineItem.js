@@ -8,7 +8,7 @@ function BaseLineItem(props){
   let [ itemStyle, setItemStyle ] = useState({});
   useMemo(()=>{
     let data = props.data;
-    let bg = props.type
+    // console.log(props.data)
     let style = {
       width: data.width,
       height: data.height,
@@ -19,7 +19,8 @@ function BaseLineItem(props){
     setItemStyle(style);
   }, [props.data])
   // 基线的基础数据
-  const data = props.data;
+  // const data = props.data;
+  const gantt_view_mode = props.gantt_view_mode;
   // 甘特图中对应的数据
   const ganttData = props.ganttData;
 
@@ -29,12 +30,12 @@ function BaseLineItem(props){
       { props.type === "1" ? (
         <div className={styles.milepost}>
           { !ganttData.parent_id ? (
-            <div className={styles.parentMilepost}>
+            <div className={`${styles.parentMilepost} ${styles[gantt_view_mode]}`}>
               <span className={styles.milepostLine} style={{height: (ganttData.expand_length - 0.5) * ceil_height}}></span>
               <div className={`${styles.icons} ${globalStyles.authTheme}`}>&#xe6a0;</div>
             </div>
           ) : (
-            <div className={styles.subMilepost}>
+            <div className={`${styles.subMilepost} ${gantt_view_mode === 'month' ? styles.hasLeft : ""}`}>
 
             </div>
           )}

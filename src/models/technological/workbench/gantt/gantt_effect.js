@@ -447,16 +447,21 @@ export default {
         // 查询基线版本详情
         * getBaseLineInfo({ payload = {} }, { select, call, put }) {
           // 参数处理
+          let id = payload.id;
+          if(!id) return ;
           const start_date = yield select(workbench_start_date)
           const end_date = yield select(workbench_end_date)
           const ceilWidth = yield select(workbench_ceilWidth)
           const date_arr_one_level = yield select(workbench_date_arr_one_level)
           const gantt_view_mode = yield select(getModelSelectDatasState('gantt', 'gantt_view_mode'))
-          let id = payload.id;
+
           let res = yield call(getBaseLineInfoData, {id: id});
           let data = res.data || [];
           data = data.map(item => {
-            item.time_span = setGantTimeSpan({time_span: "0", start_time: item.start_time + '000', due_time: item.due_time + '000', start_date, end_date})
+            item.start_time = item.start_time + '000';
+            item.due_time = item.due_time ? item.due_time + '000' : null;
+            item.time_span = setGantTimeSpan({time_span: "0", start_time: item.start_time, due_time: item.due_time, start_date, end_date})
+
             return item;
           })
           data = formatItem(data, {ceilWidth, date_arr_one_level, gantt_view_mode})

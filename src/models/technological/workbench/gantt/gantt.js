@@ -458,7 +458,12 @@ export default {
       console.log('filnaly_outline_tree2', arr)
       // console.log('filnaly_outline_tree1', filnaly_outline_tree[0].expand_length)
       // console.log('filnaly_outline_tree2', filnaly_outline_tree[1].expand_length)
-
+      // 更新基线信息
+      const active_baseline = yield select(getModelSelectDatasState('gantt', 'active_baseline'))
+      yield put({
+        type: "getBaseLineInfo",
+        payload: {...active_baseline}
+      })
     },
     * handleListGroup({ payload }, { select, call, put }) {
       try {
