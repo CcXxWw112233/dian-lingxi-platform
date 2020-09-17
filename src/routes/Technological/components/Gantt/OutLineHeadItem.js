@@ -46,7 +46,7 @@ const IsLoading = (props) => {
     return (
         ReactDOM.createPortal(
             <div className={styles.loadingModal}>
-                <Spin size="large" />
+                <Spin size="large" tip="正在导出..."/>
             </div>,
             document.body
         )
@@ -913,38 +913,48 @@ export default class OutLineHeadItem extends Component {
                 return true
                 // return (node.tagName?.toUpperCase() !== 'IMG');
             }
-            message.success('正在导出中...');
+            // message.success('正在导出中...');
             setTimeout(async () => {
                 let dataUrl;
                 if (type === 'svg') {
-                    dataUrl = await DomToImage.toSvg(parent, { filter });
+                    dataUrl = await DomToImage.toSvg(parent, { filter }).catch(err => err);
                 }
                 if (type === 'png') {
-                    dataUrl = await DomToImage.toPng(parent, { filter });
+                    dataUrl = await DomToImage.toPng(parent, { filter }).catch(err => err);
                 }
                 if (type === 'jpeg') {
-                    dataUrl = await DomToImage.toJpeg(parent, { filter });
+                    dataUrl = await DomToImage.toJpeg(parent, { filter }).catch(err => err);
                 }
+                if(!dataUrl) reject();
                 let canvas = document.createElement('canvas');
                 let img = new Image();
                 img.src = dataUrl;
                 img.onload = () => {
-                    canvas.height = img.height * pix;
-                    canvas.width = img.width * pix;
-                    let ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, img.width * pix, img.height * pix + 80);
-                    ctx.scale(img.width / canvas.width, img.height / canvas.height);
-                    const toBlob = () => {
-                        canvas.toBlob(blob => {
-                            // console.log(blob)
-                            if (!blob) {
-                                return toBlob();
-                            }
-                            let url = window.URL.createObjectURL(blob);
-                            resolve(url);
-                        })
-                    }
-                    toBlob();
+                  let numbers = 0; // 重试次数
+                  canvas.height = img.height * pix;
+                  canvas.width = img.width * pix;
+                  let ctx = canvas.getContext('2d');
+                  ctx.drawImage(img, 0, 0, img.width * pix, img.height * pix + 80);
+                  ctx.scale(img.width / canvas.width, img.height / canvas.height);
+                  const toBlob = () => {
+                      canvas.toBlob(async blob => {
+                        // 如果奔溃，则重试 次数小于5次，继续
+                        if (!blob && numbers <= 5) {
+                            numbers ++;
+                            return toBlob();
+                        }else if(!blob){
+                          // 如果大于5次，直接返回原图片
+                          if(type === 'svg'){
+                            // 如果是svg，直接导出会无法打开，需要转成jpeg
+                            dataUrl = await this.toExport('jpeg');
+                          }
+                          return resolve(dataUrl);
+                        }
+                        let url = window.URL.createObjectURL(blob);
+                        resolve(url);
+                      })
+                  }
+                  toBlob();
 
                 }
                 dom.style.overflow = 'scroll';

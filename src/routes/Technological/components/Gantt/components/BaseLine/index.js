@@ -115,7 +115,7 @@ function BaseLine (props){
       let resp = await toCreate(false).catch(err => err);
       if(!resp) return ;
       let obj = {id: Math.random() * 10000, name: baseLineName};
-      dispatch({
+      await dispatch({
         type: "gantt/addBaseLineData",
         payload: {
           data: obj
@@ -143,7 +143,7 @@ function BaseLine (props){
     let resp = await toCreate(true).catch(err => err);
     if(resp){
       if(baseLineName !== val.name){
-        dispatch({
+        await dispatch({
           type: "gantt/updateBaseLine",
           payload: {
             id: val.id,
@@ -164,8 +164,8 @@ function BaseLine (props){
       okText: "删除",
       okButtonProps: {type: "danger"},
       cancelText: "取消",
-      onOk: ()=>{
-        dispatch({
+      onOk: async ()=>{
+        await dispatch({
           type: "gantt/deleteBaseLineData",
           payload: {
             id: val.id
