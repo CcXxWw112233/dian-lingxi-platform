@@ -561,8 +561,23 @@ class Gantt extends Component {
       if (node) {
         const { tree_type, children = [] } = node
         outline_tree = OutlineTree.filterTreeNode(outline_tree, id); //删除节点
-        if (tree_type == '1') { //删除掉里程碑，但保留挂载的节点释放
-          outline_tree = [].concat(outline_tree, children)
+        if (tree_type == '1') { //删除掉里程碑，将里面所有叶子节点的任务提到最外面，删除掉叶子里程碑
+          // 将数据平铺
+          let arr = []
+          const recusion = (obj) => { //将树递归平铺成一级
+            if (obj.tree_type != '1' && !obj.parent_card_id) { //非里程碑，非子任务的节点添加进去
+              arr.push(obj)
+            }
+            if (obj.children && obj.children.length) {
+              for (let val of obj.children) {
+                recusion(val)
+              }
+            }
+          }
+          for (let val of children) {
+            recusion(val)
+          }
+          outline_tree = [].concat(outline_tree, arr)
         } else if (tree_type == '2') { //删除任务
         }
       }
