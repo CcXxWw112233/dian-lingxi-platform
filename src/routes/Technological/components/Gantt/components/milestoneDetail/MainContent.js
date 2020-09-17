@@ -544,13 +544,13 @@ export default class MainContent extends React.Component {
             <div className={`${indexStyles.contain2_item_right}`}></div>
           </div> */}
           {
-            !!(content_list && content_list.length) && (
-              this.renderRelaContent({ content_list, type: '0' })
+            !!(chird_list && chird_list.length) && (
+              this.renderRelaContent({ content_list: chird_list, type: '4' })
             )
           }
           {
-            !!(chird_list && chird_list.length) && (
-              this.renderRelaContent({ content_list: chird_list, type: '4' })
+            !!(content_list && content_list.length) && (
+              this.renderRelaContent({ content_list, type: '0' })
             )
           }
         </div>
