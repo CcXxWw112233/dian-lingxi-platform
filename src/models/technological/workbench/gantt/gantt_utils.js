@@ -72,7 +72,7 @@ export function recusionItem(tree, { parent_expand, parent_type, parent_id, pare
                 new_item_children,
                 {
                     parent_type: tree_type,
-                    parent_expand: is_expand,
+                    parent_expand: is_expand && parent_expand,
                     parent_id: id,
                     parent_milestone_id: id,
                     parent_card_id: id,
