@@ -3,6 +3,8 @@ import styles from './index.less';
 import globalStyles from '../../../../../../globalset/css/globalClassName.less';
 import { dateFormat } from '../../../../../../utils/util';
 import { connect } from 'dva';
+import { currentNounPlanFilterName } from '@/utils/businessFunction.js'
+import { PROJECTS } from '@/globalset/js/constant.js'
 import { Button, Col, Dropdown, /** Empty*/ Input, Menu, message, Modal, Popover, Row } from 'antd';
 
 // 基线列表的选项菜单
@@ -238,7 +240,7 @@ function BaseLine (props){
   }
   return (
     <Popover
-    title="基线是当前任务的快照，用于回顾与复盘"
+    title={`基线是当前${currentNounPlanFilterName(PROJECTS)}的快照，用于回顾与复盘`}
     trigger="click"
     placement="bottomLeft"
     visible={visiblePopover}
