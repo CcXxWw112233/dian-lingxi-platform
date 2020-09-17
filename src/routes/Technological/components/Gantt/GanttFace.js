@@ -393,7 +393,7 @@ export default class GanttFace extends Component {
     //更新任务位置信息
     // this.beforeHandListGroup()
     const that = this
-    const { group_view_type, outline_tree } = this.props
+    const { group_view_type, outline_tree, active_baseline} = this.props
     if (!ganttIsOutlineView({ group_view_type })) { //非大纲视图
       setTimeout(function () {
         dispatch({
@@ -428,6 +428,10 @@ export default class GanttFace extends Component {
         }, 0)
       } else {
         this.setLoading(false)
+        dispatch({
+          type: "gantt/getBaseLineInfo",
+          payload: active_baseline
+        })
         dispatch({
           type: 'gantt/handleOutLineTreeData',
           payload: {
@@ -494,9 +498,18 @@ export default class GanttFace extends Component {
       payload: {}
     })
   }
+
+  // 退出基线查看
+  exitBaseLine = ()=>{
+    const { dispatch } = this.props;
+    dispatch({
+      type: "gantt/exitBaseLineInfoView"
+    })
+  }
+
   render() {
     const { gantt_card_out_middle_max_height } = this.state
-    const { gantt_card_height, get_gantt_data_loading, is_need_calculate_left_dx, gantt_board_id, is_show_board_file_area, group_view_type, get_gantt_data_loading_other, currentUserOrganizes = [] } = this.props
+    const { gantt_card_height, get_gantt_data_loading, is_need_calculate_left_dx, gantt_board_id, is_show_board_file_area, group_view_type, get_gantt_data_loading_other, currentUserOrganizes = [], show_base_line_mode, active_baseline} = this.props
     const dataAreaRealHeight = this.getDataAreaRealHeight()
 
     return (
@@ -566,6 +579,12 @@ export default class GanttFace extends Component {
                 onTouchStart={() => this.setScrollArea('gantt_body')}
                 onScroll={this.ganttScroll}
               >
+                { show_base_line_mode && (
+                  <div className={indexStyles.toExitBaseLine} id="exitbaseline">
+                    <span>已加载：{active_baseline.name}</span>
+                    <span className={indexStyles.exit} onClick={this.exitBaseLine}>退出</span>
+                  </div>
+                )}
                 <div className={indexStyles.panel}>
                   <GetRowGantt
                     changeOutLineTreeNodeProto={this.props.changeOutLineTreeNodeProto}
@@ -625,7 +644,9 @@ function mapStateToProps({ gantt: { datas: {
   is_show_board_file_area,
   outline_tree,
   gantt_view_mode,
-  get_gantt_data_loading_other
+  get_gantt_data_loading_other,
+  show_base_line_mode,
+  active_baseline
 } },
   technological: { datas: { currentUserOrganizes = [] } },
 }) {
@@ -646,6 +667,8 @@ function mapStateToProps({ gantt: { datas: {
     gantt_view_mode,
     get_gantt_data_loading_other,
     currentUserOrganizes,
+    show_base_line_mode,
+    active_baseline
   }
 }
 GanttFace.defaultProps = {

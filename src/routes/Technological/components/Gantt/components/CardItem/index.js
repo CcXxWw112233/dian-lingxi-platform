@@ -976,8 +976,8 @@ export default class CardItem extends Component {
             getSameLevelNode: () => { //获取默认最小和最大点
                 return new Promise((resolve, reject) => {
                     const { outline_tree_round = [] } = _self.props
-                    const { time_span, left } = outline_tree_round.find(item => item.id == parent_card_id)
-                    const same_leve_node = outline_tree_round.filter(item => item.parent_card_id == parent_card_id)
+                    const { time_span, left } = outline_tree_round.find(item => item.id == parent_card_id) || {}
+                    const same_leve_node = outline_tree_round.filter(item => item.parent_card_id == parent_card_id) || {}
                     const left_arr = same_leve_node.map(item => item.left).filter(item => item).sort()
                     const width_arr = same_leve_node.map(item => item.left + item.width).filter(item => item).sort()
                     const due_time_arr = same_leve_node.map(item => item.due_time).filter(item => item)
