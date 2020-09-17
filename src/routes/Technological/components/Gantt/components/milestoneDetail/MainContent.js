@@ -13,6 +13,7 @@ import { REQUEST_DOMAIN_FILE, TASKS } from "../../../../../../globalset/js/const
 import { connect, } from 'dva';
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import { currentNounPlanFilterName } from '../../../../../../utils/businessFunction'
+import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
 
 const getEffectOrReducerByName = name => `milestoneDetail/${name}`
 @connect(mapStateToProps)
@@ -110,8 +111,10 @@ export default class MainContent extends React.Component {
   }
   chirldrenTaskChargeChange = (data) => {
     const { key, type } = data
-    const { dispatch, milestone_detail = {} } = this.props
-    const { id } = milestone_detail
+    const { dispatch, milestone_detail = {}, projectDetailInfoData: { data: dataInfo = [] } } = this.props
+    const { id, principals = [] } = milestone_detail
+    let new_principals = [...principals]
+    let gold_item = dataInfo.find(o => o.user_id == key) || {}
     if (type == 'add') {
       dispatch({
         type: 'milestoneDetail/addMilestoneExcutos',
@@ -119,7 +122,13 @@ export default class MainContent extends React.Component {
           id,
           user_id: key
         }
+      }).then(res => {
+        if (isApiResponseOk(res)) {
+          new_principals.push(gold_item)
+          this.handleMiletonesChange({ principals: new_principals })
+        }
       })
+      
     } else if (type == 'remove') {
       dispatch({
         type: 'milestoneDetail/removeMilestoneExcutos',
@@ -127,10 +136,16 @@ export default class MainContent extends React.Component {
           id,
           user_id: key
         }
+      }).then(res => {
+        if (isApiResponseOk(res)) {
+          new_principals = new_principals.filter(n => n.user_id != key)
+          this.handleMiletonesChange({ principals: new_principals })
+        }
       })
     } else {
 
     }
+    
     //用于判判断任务执行人菜单是否显示
     const that = this
     setTimeout(function () {

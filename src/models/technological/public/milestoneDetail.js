@@ -85,6 +85,7 @@ export default modelExtend(technological, {
       } else {
         message.warn(res.message)
       }
+      return res || {}
     },
     * removeMilestoneExcutos({ payload }, { select, call, put }) {
       const { id } = payload //此时的rela_id 为任务id
@@ -103,6 +104,7 @@ export default modelExtend(technological, {
       } else {
         message.warn(res.message)
       }
+      return res || {}
     }
   },
 
