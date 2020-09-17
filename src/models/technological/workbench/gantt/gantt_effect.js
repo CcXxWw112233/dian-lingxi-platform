@@ -434,13 +434,14 @@ export default {
               baseLine_datas: res.data
             }
           })
+          return res;
         },
         // 删除一个基线列表
         * deleteBaseLineData({ payload = {} }, { select, call, put }){
           let id = payload.id;
           let list = [...yield select(getModelSelectDatasState('gantt', 'baseLine_datas'))];
           let active = yield select(getModelSelectDatasState('gantt', 'active_baseline'));
-          yield call( DeleteBaseLine, {id: id});
+          let res = yield call( DeleteBaseLine, {id: id});
           if(id){
             list = list.filter(item => item.id !== id);
           }
@@ -456,12 +457,13 @@ export default {
               baseLine_datas: list
             }
           })
+          return res;
         },
         // 修改基线名称
         * updateBaseLine({ payload = {} }, { select, call, put }) {
           let { id, name } = payload;
           let list = [...yield select(getModelSelectDatasState('gantt', 'baseLine_datas'))];
-          yield call( EditBaseLine, {id, name} );
+          let res = yield call( EditBaseLine, {id, name} );
           list = list.map(item => {
             if(item.id === id){
               item.name = name;
@@ -474,6 +476,7 @@ export default {
               baseLine_datas: list
             }
           })
+          return res;
         },
         // 查询基线版本详情
         * getBaseLineInfo({ payload = {} }, { select, call, put }) {
