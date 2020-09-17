@@ -379,6 +379,7 @@ export default {
             // console.log('sssssssss_find', { node, outline_tree, id })
             return node
         },
+        // 更新大纲视图下对应节点变化
         * updateOutLineTreeNode({ payload = {} }, { select, call, put }) {
             const { id: milestone_id, card_id } = payload
             const group_view_type = yield select(getModelSelectDatasState('gantt', 'group_view_type'))
@@ -409,6 +410,35 @@ export default {
                   data: outline_tree_
                 }
               });
+        },
+        // 针对侧边任务详情更新对应数据
+        * updateCardDetailDrawer({ payload = {} }, { select, call, put }) {
+            const { action, board_id, card_id, calback } = payload
+            const selected_card_visible = yield select(getModelSelectDatasState('gantt', 'selected_card_visible'))
+            if (!selected_card_visible) return
+            const group_view_type = yield select(getModelSelectDatasState('gantt', 'group_view_type'))
+            const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id'))
+            switch (action) {
+                case 'update_lcb': // 表示操作里程碑后 需要同步任务详情中里程碑的变化
+                    yield put({
+                        type: 'publicTaskDetailModal/getMilestoneList',
+                        payload: {
+                            id: board_id || gantt_board_id
+                        }
+                    })
+                    break;
+                case 'update_card_detail': // 表示更新任务详情 (暂时调用任务详情接口 不做数据的增删改)
+                    yield put({
+                        type: 'publicTaskDetailModal/getCardWithAttributesDetail',
+                        payload: {
+                            id: card_id
+                        }
+                    })
+                    break
+                default:
+                    break;
+            }
+            if (calback && typeof calback == 'function') calback()
         },
         // 获取基线数据列表
         * getBaseLineList({ payload = {}}, { select, call, put }){

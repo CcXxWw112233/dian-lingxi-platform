@@ -21,7 +21,7 @@ export default class Header extends React.Component {
   }
 
   confrimDelete = () => {
-    const { milestone_detail: { id }, deleteMiletone = function () { }, selected_card_visible, projectDetailInfoData: { board_id }, card_id } = this.props
+    const { milestone_detail: { id }, deleteMiletone = function () { }, projectDetailInfoData: { board_id }, card_id } = this.props
     const that = this
     Modal.confirm({
       title: '提示',
@@ -33,24 +33,23 @@ export default class Header extends React.Component {
             if (typeof deleteMiletone == 'function') {
               deleteMiletone({ id })
             }
-            if (selected_card_visible) {
-              const calback = () => {
-                // 需要更新弹窗数据以及里程碑数据
-                that.props.dispatch({
-                  type: 'publicTaskDetailModal/getCardWithAttributesDetail',
-                  payload: {
-                    id: card_id
-                  }
-                })
-              }
+            const calback = () => {
+              // 需要更新弹窗数据以及里程碑数据
               that.props.dispatch({
-                type: 'publicTaskDetailModal/getMilestoneList',
+                type: 'publicTaskDetailModal/getCardWithAttributesDetail',
                 payload: {
-                  id: board_id,
-                  calback
+                  id: card_id
                 }
               })
             }
+            that.props.dispatch({
+              type: 'gantt/updateCardDetailDrawer',
+              payload: {
+                board_id,
+                action: 'update_lcb',
+                calback
+              }
+            })
             that.props.onCancel()
           } else {
             message.error(res.message)
@@ -105,6 +104,6 @@ export default class Header extends React.Component {
   }
 }
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ milestoneDetail: { milestone_detail = {} }, projectDetail: { datas: { projectDetailInfoData = {} } }, gantt: { datas: { selected_card_visible } }, publicTaskDetailModal: { card_id } }) {
-  return { milestone_detail, projectDetailInfoData, selected_card_visible, card_id }
+function mapStateToProps({ milestoneDetail: { milestone_detail = {} }, projectDetail: { datas: { projectDetailInfoData = {} } }, publicTaskDetailModal: { card_id } }) {
+  return { milestone_detail, projectDetailInfoData, card_id }
 }

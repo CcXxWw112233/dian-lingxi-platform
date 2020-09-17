@@ -31,8 +31,9 @@ export default class GanttDetail extends React.Component {
 
   //获取里程碑详情
   getMilestoneDetail = (props) => {
-    const { dispatch, milestone_id } = props
+    const { dispatch, milestone_id, miletone_detail_modal_visible } = props
     const { milestone_id_local } = this.state
+    if (!miletone_detail_modal_visible) return
     if (!milestone_id || milestone_id_local == milestone_id) {
       return
     }

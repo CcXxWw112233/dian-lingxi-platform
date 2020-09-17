@@ -15,7 +15,7 @@ export default class CommonRelaItem extends React.Component {
   state = {
   }
   deleteConfirm = ({ id }) => {
-    const { milestone_id, dispatch, deleteRelationContent, selected_card_visible, card_id } = this.props
+    const { milestone_id, dispatch, deleteRelationContent, card_id } = this.props
     dispatch({
       type: 'milestoneDetail/taskCancelRelaMiletones',
       payload: {
@@ -26,14 +26,12 @@ export default class CommonRelaItem extends React.Component {
       if (isApiResponseOk(res)) {
         if (typeof deleteRelationContent == 'function') deleteRelationContent()
         // 更新弹窗数据
-        if (selected_card_visible) {
-          dispatch({
-            type: 'publicTaskDetailModal/getCardWithAttributesDetail',
-            payload: {
-              id: card_id
-            }
-          })
-        }
+        dispatch({
+          type: 'gantt/updateCardDetailDrawer',
+          payload: {
+            card_id
+          }
+        })
         // 如果是在大纲视图 则需要更新大纲视图下树变化
         dispatch({
           type: 'gantt/updateOutLineTreeNode',
@@ -96,8 +94,8 @@ export default class CommonRelaItem extends React.Component {
     )
   }
 }
-function mapStateToProps({ milestoneDetail: { milestone_detail = {} }, gantt: { datas: { selected_card_visible } }, publicTaskDetailModal: { card_id } }) {
-  return { milestone_detail, selected_card_visible, card_id }
+function mapStateToProps({ milestoneDetail: { milestone_detail = {} }, publicTaskDetailModal: { card_id } }) {
+  return { milestone_detail, card_id }
 }
 
 CommonRelaItem.defaultProps = {
