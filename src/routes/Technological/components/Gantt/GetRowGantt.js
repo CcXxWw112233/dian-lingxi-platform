@@ -760,7 +760,14 @@ export default class GetRowGantt extends Component {
               if (tree_type == '2') {
                 return (
                   <Fragment>
-                    {active_baseline_data[id] && <BaseLineItem data={active_baseline_data[id]} top={top} type={tree_type} ganttData={value}/>}
+                    {active_baseline_data[id] && (
+                        <BaseLineItem
+                        data={active_baseline_data[id]}
+                        top={top}
+                        gantt_view_mode={gantt_view_mode}
+                        type={tree_type}
+                        ganttData={value}/>
+                      )}
                     <GetRowTaskItem
                       key={`${id}_${start_time}_${end_time}_${left}_${top}_${row}`}
                       itemValue={value}
@@ -783,7 +790,14 @@ export default class GetRowGantt extends Component {
               } else if (tree_type == '3') {
                 return (
                   <Fragment>
-                    {active_baseline_data[id] && <BaseLineItem data={active_baseline_data[id]} top={top} type={tree_type} ganttData={value}/>}
+                    {active_baseline_data[id] && (
+                      <BaseLineItem
+                      data={active_baseline_data[id]}
+                      top={top}
+                      gantt_view_mode={gantt_view_mode}
+                      type={tree_type}
+                      ganttData={value}/>
+                    )}
                     <WorkFlow
                       key={`${id}_${start_time}_${end_time}_${left}_${top}`}
                       itemValue={value}
@@ -820,7 +834,13 @@ export default class GetRowGantt extends Component {
               const juge_expand = (tree_type == '0' || tree_type == '3') ? parent_expand : (parent_expand && is_expand)
               return parent_expand && (
                 <React.Fragment key={`${id}_${top}`}>
-                  {active_baseline_data[id] && <BaseLineItem data={active_baseline_data[id]} top={top} type={tree_type} ganttData={value}/>}
+                  {active_baseline_data[id] && (
+                    <BaseLineItem
+                    data={active_baseline_data[id]}
+                    top={top} type={tree_type}
+                    gantt_view_mode={gantt_view_mode}
+                    ganttData={value}/>
+                  )}
                   <GetRowStrip itemValue={value}
                     deleteOutLineTreeNode={this.props.deleteOutLineTreeNode}
                     addTaskModalVisibleChange={this.props.addTaskModalVisibleChange}

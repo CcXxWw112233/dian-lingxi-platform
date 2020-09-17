@@ -393,7 +393,7 @@ export default class GanttFace extends Component {
     //更新任务位置信息
     // this.beforeHandListGroup()
     const that = this
-    const { group_view_type, outline_tree } = this.props
+    const { group_view_type, outline_tree, active_baseline} = this.props
     if (!ganttIsOutlineView({ group_view_type })) { //非大纲视图
       setTimeout(function () {
         dispatch({
@@ -428,6 +428,10 @@ export default class GanttFace extends Component {
         }, 0)
       } else {
         this.setLoading(false)
+        dispatch({
+          type: "gantt/getBaseLineInfo",
+          payload: active_baseline
+        })
         dispatch({
           type: 'gantt/handleOutLineTreeData',
           payload: {
