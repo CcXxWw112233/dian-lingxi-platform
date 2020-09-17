@@ -20,6 +20,7 @@ export default class GanttDetail extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.milestone_id == nextProps.milestone_id || this.props.miletone_detail_modal_visible == nextProps.miletone_detail_modal_visible) return
+    if (!nextProps.milestone_id) return
     // console.log({
     //   this: this.props.milestone_id,
     //   next: nextProps.milestone_id,

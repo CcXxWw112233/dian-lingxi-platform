@@ -205,7 +205,8 @@ export default {
 
     //获取里程碑列表
     *getMilestoneList({ payload }, { call, put }) {
-      let res = yield call(getMilestoneList, { ...payload })
+      const { id, calback } = payload
+      let res = yield call(getMilestoneList, { id })
       if(isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
@@ -213,6 +214,7 @@ export default {
             milestoneList: res.data
           }
         })
+        if (calback && typeof calback == 'function') calback()
       }
     },
     // 获取项目标签

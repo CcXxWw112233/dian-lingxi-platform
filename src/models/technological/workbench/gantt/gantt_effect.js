@@ -379,6 +379,37 @@ export default {
             // console.log('sssssssss_find', { node, outline_tree, id })
             return node
         },
+        * updateOutLineTreeNode({ payload = {} }, { select, call, put }) {
+            const { id: milestone_id, card_id } = payload
+            const group_view_type = yield select(getModelSelectDatasState('gantt', 'group_view_type'))
+            if (group_view_type != '4') return
+            let outline_tree = yield select(getModelSelectDatasState('gantt', 'outline_tree'))
+            let outline_tree_ = JSON.parse(JSON.stringify(outline_tree))
+            // 1. 找到当前操作的节点
+            const current_node = getTreeNodeValue(outline_tree_, card_id)
+            // 2. 从当前节点找出父节点
+            const from_parent_id = current_node.parent_id
+            const parent_from_node = getTreeNodeValue(outline_tree_, from_parent_id)
+            const parent_to_node = getTreeNodeValue(outline_tree_, milestone_id)
+            if (parent_from_node) { //删除该条
+                parent_from_node.children = parent_from_node.children.filter(item => item.id != card_id)
+              } else {
+                outline_tree_ = outline_tree_.filter(item => item.id != card_id)
+              }
+              if (!milestone_id) { // 表示将其添加至树末尾
+                outline_tree_.push({ ...current_node, parent_id: '', parent_milestone_id: '' })
+              } else {
+                if (parent_to_node) { //将该条移动到指定里程碑之下
+                  parent_to_node.children.push(current_node)
+                }
+              }
+              yield put({
+                type: 'handleOutLineTreeData',
+                payload: {
+                  data: outline_tree_
+                }
+              });
+        },
         // 获取基线数据列表
         * getBaseLineList({ payload = {}}, { select, call, put }){
           const gantt_board_id = yield select(getModelSelectDatasState('gantt', 'gantt_board_id'))
