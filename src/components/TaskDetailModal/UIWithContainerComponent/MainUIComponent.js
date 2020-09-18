@@ -234,7 +234,6 @@ export default class MainUIComponent extends Component {
                     const { avatar, name, user_name, user_id } = value
                     return (
                       <div
-                        key={user_id}
                         className={`${mainContentStyles.first_pric}`}
                         style={{
                           display: 'flex',

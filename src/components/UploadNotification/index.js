@@ -3,9 +3,9 @@ import { Progress, notification } from 'antd'
 import styles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { connect } from 'dva'
-{
-  /* 该组件用于上传文件时，从右侧弹出提醒框，带上传进度条 */
-}
+// {
+//   /* 该组件用于上传文件时，从右侧弹出提醒框，带上传进度条 */
+// }
 @connect(mapStateToProps)
 export default class UploadNotification extends Component {
   constructor(props) {
