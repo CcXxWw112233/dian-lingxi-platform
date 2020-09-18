@@ -3,8 +3,10 @@
   "scripts": {
     "start": "set port=8000 && cross-env ESLINT=none roadhog server",
     "build": "roadhog build",
-    "lint": "eslint --ext .js src test",
-    "precommit": "npm run lint"
+    "lint:fix": "eslint --ext  --fix .js src",
+    "lint": "eslint --ext  .js src",
+    "test": "eslint --ext .js src test",
+    "lint-staged": "lint-staged"
   },
   "dependencies": {
     "@babel/polyfill": "^7.4.3",
@@ -45,18 +47,37 @@
   },
   "devDependencies": {
     "autoresponsive-react": "^1.1.31",
+    "babel-eslint": "^10.1.0",
     "babel-plugin-dva-hmr": "^0.4.1",
     "babel-plugin-transform-remove-console": "^6.9.4",
     "eslint": "^4.14.0",
+    "eslint-config-airbnb": "^18.2.0",
+    "eslint-config-prettier": "^6.11.0",
     "eslint-config-umi": "^0.1.1",
-    "eslint-plugin-compat": "^2.6.3",
+    "eslint-plugin-compat": "^3.8.0",
     "eslint-plugin-flowtype": "^2.34.1",
-    "eslint-plugin-import": "^2.6.0",
-    "eslint-plugin-jsx-a11y": "^5.1.1",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-jsx-a11y": "^6.3.1",
     "eslint-plugin-prettier": "^3.0.1",
-    "eslint-plugin-react": "^7.1.0",
-    "husky": "^0.12.0",
+    "eslint-plugin-react": "^7.20.6",
+    "eslint-plugin-react-hooks": "^4.1.2",
+    "husky": "^4.3.0",
+    "lint-staged": "^10.4.0",
     "redbox-react": "^1.4.3",
     "roadhog": "^2.5.0-beta.4"
+  },
+  "browserslist": [
+    "defaults"
+  ],
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint-staged"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,tsx,ts,less,md,json}": [
+      "eslint --fix",
+      "git add"
+    ]
   }
 }
