@@ -60,8 +60,8 @@ export default class MainContent extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { drawerVisible, card_id } = nextProps
-    const { drawerVisible: oldDrawerVisible, card_id: old_card_id } = this.props
+    const { dispatch, drawerVisible, card_id } = nextProps
+    const { drawerVisible: oldDrawerVisible, drawContent = {}, card_id: old_card_id, selected_card_visible, simplemodeCurrentProject = {} } = this.props
     if (card_id != old_card_id && card_id) {
       Promise.resolve(
         this.props.dispatch({
@@ -79,6 +79,22 @@ export default class MainContent extends Component {
       setTimeout(() => {
         this.getInitCardDetailDatas(nextProps)
       }, 200)
+    }
+    // 当切换项目时 需要关闭侧边弹窗
+    if (selected_card_visible && (simplemodeCurrentProject.board_id && simplemodeCurrentProject.board_id != '0' && drawContent.board_id && simplemodeCurrentProject.board_id != drawContent.board_id)) {
+      dispatch({
+        type: 'gantt/updateDatas',
+        payload: {
+          selected_card_visible: false,
+        }
+      })
+      dispatch({
+        type: 'publicTaskDetailModal/updateDatas',
+        payload: {
+          drawContent: {},
+          card_id: ''
+        }
+      })
     }
   }
 
@@ -656,12 +672,15 @@ export default class MainContent extends Component {
 function mapStateToProps({
   publicTaskDetailModal: { drawerVisible, drawContent = {}, card_id, boardTagList = [], attributesList = [], milestoneList = [] },
   projectDetail: { datas: { projectDetailInfoData = {} } },
-  gantt: { datas: { group_view_type } },
+  gantt: { datas: { group_view_type, selected_card_visible } },
   publicFileDetailModal: {
     isInOpenFile,
     filePreviewCurrentFileId,
     fileType,
     filePreviewCurrentName
+  },
+  simplemode: {
+    simplemodeCurrentProject = {}
   },
   technological: {
     datas: {
@@ -669,5 +688,5 @@ function mapStateToProps({
     }
   }
 }) {
-  return { group_view_type, drawerVisible, drawContent, card_id, boardTagList, attributesList, milestoneList, projectDetailInfoData, isInOpenFile, filePreviewCurrentFileId, fileType, filePreviewCurrentName, userBoardPermissions }
+  return { group_view_type, selected_card_visible, drawerVisible, drawContent, card_id, boardTagList, attributesList, milestoneList, projectDetailInfoData, isInOpenFile, filePreviewCurrentFileId, fileType, filePreviewCurrentName, simplemodeCurrentProject, userBoardPermissions }
 }
