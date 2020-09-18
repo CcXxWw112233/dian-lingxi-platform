@@ -40,6 +40,7 @@ export default class HotArticlesList extends Component {
                               <a
                                 className={mainStyles.text}
                                 target="_blank"
+                                rel="noreferrer"
                                 href={item.origin_url}
                               >
                                 {item.title}
@@ -63,6 +64,7 @@ export default class HotArticlesList extends Component {
                               <a
                                 className={mainStyles.img_text}
                                 target="_blank"
+                                rel="noreferrer"
                                 href={item.origin_url}
                               >
                                 {item.title}

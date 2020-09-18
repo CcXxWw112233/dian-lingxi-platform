@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-pascal-case */
 /* eslint-disable import/first,react/react-in-jsx-scope */
 import React from 'react'
 import { Input, Mention, Radio, Icon, Checkbox, Menu, Dropdown } from 'antd'

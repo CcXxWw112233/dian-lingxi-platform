@@ -1,12 +1,11 @@
 import React from 'react'
 import indexStyles from '../../index.less'
-import { Avatar, message } from 'antd'
-import {
-  PROJECT_FLOW_FLOW_ACCESS,
-  NOT_HAS_PERMISION_COMFIRN,
-  MESSAGE_DURATION_TIME
-} from '../../../../../../../globalset/js/constant'
-
+// import { Avatar, message } from 'antd'
+// import {
+//   PROJECT_FLOW_FLOW_ACCESS,
+//   NOT_HAS_PERMISION_COMFIRN,
+//   MESSAGE_DURATION_TIME
+// } from '../../../../../../../globalset/js/constant'
 import { Collapse } from 'antd'
 import { getProcessListByType } from '../../../../../../../services/technological/process'
 import nodataImg from '../../../../../../../assets/projectDetail/process/Empty@2x.png'
@@ -104,6 +103,7 @@ export default class PagingnationContent extends React.Component {
       }
       this.setState(
         {
+          // eslint-disable-next-line react/no-direct-mutation-state
           page_number: ++this.state.page_number,
           scrollBlock: false
         },
@@ -215,6 +215,7 @@ export default class PagingnationContent extends React.Component {
       let new_privileges = [...privileges]
       for (let item in obj) {
         if (item == 'privileges') {
+          // eslint-disable-next-line no-loop-func
           obj[item].map(val => {
             let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
             if (temp_arr && !temp_arr.length) return false
@@ -242,6 +243,7 @@ export default class PagingnationContent extends React.Component {
       let new_privileges = []
       for (let item in obj) {
         if (item == 'privileges') {
+          // eslint-disable-next-line no-loop-func
           obj[item].map(val => {
             let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
             return (new_privileges = [...temp_arr])

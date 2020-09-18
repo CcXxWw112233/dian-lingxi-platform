@@ -1,10 +1,10 @@
 import React from 'react'
-import { Modal, Form, Button, Input, message, Select, Icon } from 'antd'
-import { min_page_width } from './../../../globalset/js/styles'
+import { Modal, Form, Input, Select } from 'antd'
+// import { min_page_width } from './../../../globalset/js/styles'
 import indexstyles from './index.less'
-import globalStyles from './../../../globalset/css/globalClassName.less'
+// import globalStyles from './../../../globalset/css/globalClassName.less'
 import SearchResult from './SearchResult'
-import { INPUT_CHANGE_SEARCH_TIME } from '../../../globalset/js/constant'
+// import { INPUT_CHANGE_SEARCH_TIME } from '../../../globalset/js/constant'
 import { connect } from 'dva/index'
 import SearchArea from './SearchArea'
 const FormItem = Form.Item
@@ -17,10 +17,6 @@ const getEffectOrReducerByName = name => `globalSearch/${name}`
 @connect(mapStateToProps)
 export default class GlobalSearch extends React.Component {
   state = {}
-
-  constructor() {
-    super()
-  }
 
   componentDidMount() {
     const { dispatch } = this.props

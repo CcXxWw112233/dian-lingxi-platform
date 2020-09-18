@@ -218,7 +218,7 @@ export default class DetailConfirmInfoOne extends React.Component {
     let compare_user_arr = []
     if (assignee_type == '1') {
       compare_user_arr = users
-      if (typeof assignees == 'Array') {
+      if (Array.isArray(assignees)) {
         currentUserCanReback =
           assignees.findIndex(item => item.user_id == currentUserId) != -1 //在任何人的情况下，谁完成谁才能撤回
       }

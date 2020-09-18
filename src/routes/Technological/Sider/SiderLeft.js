@@ -10,7 +10,6 @@ import {
 } from '../../../utils/businessFunction'
 import {
   DASHBOARD,
-  MEMBERS,
   ORG_UPMS_ORGANIZATION_EDIT,
   ORG_UPMS_ORGANIZATION_ROLE_CREATE,
   ORG_UPMS_ORGANIZATION_ROLE_EDIT,
@@ -23,7 +22,7 @@ import {
   NOT_HAS_PERMISION_COMFIRN,
   CUSTOMIZATION_ORGNIZATIONS
 } from '../../../globalset/js/constant'
-import Cookies from 'js-cookie'
+// import Cookies from 'js-cookie'
 import CreateOrganizationModal from '../components/HeaderNav/CreateOrganizationModal'
 import ShowAddMenberModal from '../components/OrganizationMember/ShowAddMenberModal'
 import NotificationSettingsModal from './comonent/notificationSettings/NotificationSettingsModal'
@@ -31,7 +30,7 @@ import PayUpgrade from './../components/PayUpgrade/index'
 import { color_4 } from '../../../globalset/js/styles'
 import { message } from 'antd/lib/index'
 import { connect } from 'dva'
-import hobbyImg from '@/assets/sider_left/smile.png'
+// import hobbyImg from '@/assets/sider_left/smile.png'
 import { getUsersNoticeSettingList } from '@/services/technological/notificationSetting'
 import { isApiResponseOk } from '@/utils/handleResponseData'
 import {
@@ -132,7 +131,6 @@ export default class SiderLeft extends React.Component {
         route = 'InvestmentMap'
         break
       default:
-        break
     }
     this.routingJump(`/technological/${route}`)
   }
@@ -438,6 +436,7 @@ export default class SiderLeft extends React.Component {
         // break
         case '投资地图':
           _c = { ...c, theme: '&#xe676;' }
+          break
         default:
           break
       }

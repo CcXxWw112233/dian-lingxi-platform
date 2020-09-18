@@ -1,8 +1,7 @@
 import React from 'react'
 // import MenuSearchStyles from './MenuSearch.less'
-import { Icon, Input, Button, DatePicker, Menu, Spin } from 'antd'
+import { Icon, Input, Menu } from 'antd'
 import indexStyles from './menuseachNultiple.less'
-import { addTaskTag } from '../../../../../../../../services/technological/task'
 
 // props => Inputlaceholder searchName listData  keyCode=>列表唯一标识字段，不能直接用map的key 。selectedKeys默认选中
 //父组件设置方法， Dropdown visible设置为dropDonwVisible
@@ -214,14 +213,4 @@ export default class MenuSearchMultiple extends React.Component {
       //   </Spin>
     )
   }
-}
-
-{
-  /*<Menu.Item style={{height: 32,lineHeight: '32px', margin: 0,backgroundColor: '#ffffff'}} key={value[keyCode]} >*/
-}
-{
-  /*{value[searchName]}*/
-}
-{
-  /*</Menu.Item>*/
 }

@@ -1,5 +1,6 @@
+/* eslint-disable jsx-a11y/iframe-has-title */
 import React from 'react'
-import { Modal, Form, Button, Input, message } from 'antd'
+import { Form } from 'antd'
 import CustormModal from '../../../../../components/CustormModal'
 
 class PreviewFileModalRichText extends React.Component {
@@ -55,7 +56,7 @@ class PreviewFileModalRichText extends React.Component {
               </div>
             )
           }
-
+          break
         default:
           break
       }

@@ -31,10 +31,6 @@ const { Sider, Content } = Layout
 let net = null
 @connect(mapStateToProps)
 export default class Technological extends React.Component {
-  constructor(props) {
-    super(props)
-  }
-
   componentDidMount() {
     this.historyListenSet()
     this.connectWsToModel()

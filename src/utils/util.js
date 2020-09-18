@@ -933,6 +933,7 @@ export const removeEmptyArrayEle = arr => {
 }
 
 /*处理时间格式 */
+// eslint-disable-next-line no-extend-native
 Date.prototype.Format = function(fmt) {
   //author: meizz
   var o = {

@@ -184,6 +184,7 @@ export default class SearchArticlesList extends Component {
                             <a
                               className={commonStyles.text}
                               target="_blank"
+                              rel="noreferrer"
                               href={item.origin_url}
                             >
                               {item.title}
@@ -205,6 +206,7 @@ export default class SearchArticlesList extends Component {
                             <a
                               className={commonStyles.img_text}
                               target="_blank"
+                              rel="noreferrer"
                               href={item.origin_url}
                             >
                               {item.title}

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Icon, Modal, message } from 'antd'
+import { Icon, message } from 'antd'
 import Settings from '../../../../../../../components/headerOperate'
 import {
   showConfirm,
@@ -23,8 +23,6 @@ import {
 } from './../../../../../../../services/technological/project'
 // import { projectDetailInfo } from '@/services/technological/projectDetail'
 import InformRemind from '@/components/InformRemind'
-import globalStyles from '@/globalset/css/globalClassName.less'
-import ShareAndInvite from './../../../../ShareAndInvite/index'
 import {
   createShareLink,
   modifOrStopShareLink
@@ -548,7 +546,7 @@ export default class Header extends React.Component {
             }}
           />
           <Settings
-            status={this.props.status}
+            // status={this.props.status}
             status={this.props.listData}
             {...this.props}
             item={ellipsis}

@@ -39,6 +39,7 @@ class PreviewFileModal extends React.Component {
           if (isUsable) {
             contain = (
               <iframe
+                title="1"
                 style={{ height: 600, width: 600 }}
                 src={previewFileSrc}
               ></iframe>
@@ -47,6 +48,7 @@ class PreviewFileModal extends React.Component {
             contain = (
               <div>
                 <iframe
+                  title="2"
                   style={{ height: 0, width: 0 }}
                   src={previewFileSrc}
                 ></iframe>
@@ -54,9 +56,8 @@ class PreviewFileModal extends React.Component {
               </div>
             )
           }
-
-        default:
           break
+        default:
       }
       return contain
     }

@@ -3,54 +3,52 @@ import indexStyles from './index.less'
 import styles from './index.css'
 import {
   Card,
-  Input,
   Icon,
   DatePicker,
   Dropdown,
   Button,
   Upload,
   message,
-  Tooltip,
-  Avatar
+  Tooltip
+  // Avatar
 } from 'antd'
-import MenuSearchMultiple from '../ProcessStartConfirm/MenuSearchMultiple'
+// import MenuSearchMultiple from '../ProcessStartConfirm/MenuSearchMultiple'
 import globalStyles from '../../../../../../globalset/css/globalClassName.less'
 import {
   timestampToTimeNormal,
   timeToTimestamp
 } from '../../../../../../utils/util'
 import {
-  deleteProcessFile,
-  getProcessList
+  deleteProcessFile
+  // getProcessList
 } from '../../../../../../services/technological/process'
 import Cookies from 'js-cookie'
 import OpinionModal from './OpinionModal'
 import {
   PROJECT_FILES_FILE_EDIT,
-  REQUEST_DOMAIN_FLOWS,
-  UPLOAD_FILE_SIZE
+  REQUEST_DOMAIN_FLOWS
+  // UPLOAD_FILE_SIZE
 } from '../../../../../../globalset/js/constant'
 import PreviewFileModal from '../../TaskItemComponent/PreviewFileModal'
-import { filePreview } from '../../../../../../services/technological/file'
+// import { filePreview } from '../../../../../../services/technological/file'
 import {
   checkIsHasPermissionInBoard,
   getSubfixName,
   openPDF
 } from '../../../../../../utils/businessFunction'
 import ContentRaletion from '../../../../../../components/ContentRaletion'
-import {
-  getRelations,
-  JoinRelation
-} from '../../../../../../services/technological/task'
-import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
+// import {
+//   getRelations,
+//   JoinRelation
+// } from '../../../../../../services/technological/task'
+// import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
 import AvatarComps from '../../../../../../components/avatarMore'
 import { setUploadHeaderBaseInfo } from '../../../../../../utils/businessFunction'
 import MenuSearchPartner from '../../../../../../components/MenuSearchMultiple/MenuSearchPartner.js'
-
+import { connect } from 'dva/index'
 const { RangePicker } = DatePicker
 const Dragger = Upload.Dragger
 
-import { connect } from 'dva/index'
 //里程碑确认信息
 @connect(mapStateToProps)
 export default class DetailConfirmInfoTwo extends React.Component {
@@ -409,7 +407,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
     let compare_user_arr = []
     if (assignee_type == '1') {
       compare_user_arr = users
-      if (typeof assignees == 'Array') {
+      if (Array.isArray(assignees)) {
         currentUserCanReback =
           assignees.findIndex(item => item.user_id == currentUserId) != -1 //在任何人的情况下，谁完成谁才能撤回
       }

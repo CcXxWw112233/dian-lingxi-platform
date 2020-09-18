@@ -3,7 +3,6 @@ import DrawerContentStyles from './DrawerContent.less'
 import {
   Icon,
   Tag,
-  Input,
   Dropdown,
   Menu,
   DatePicker,
@@ -1181,6 +1180,7 @@ class DrawContent extends React.Component {
       let new_privileges = []
       for (let item in obj) {
         if (item == 'privileges') {
+          // eslint-disable-next-line no-loop-func
           obj[item].map(val => {
             let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
             return (new_privileges = [...temp_arr])
@@ -1223,6 +1223,7 @@ class DrawContent extends React.Component {
       let new_privileges = [...privileges]
       for (let item in obj) {
         if (item == 'privileges') {
+          // eslint-disable-next-line no-loop-func
           obj[item].map(val => {
             let temp_arr = this.arrayNonRepeatfy([].concat(...privileges, val))
             if (temp_arr && !temp_arr.length) return false
@@ -1516,7 +1517,7 @@ class DrawContent extends React.Component {
     if (executors.length) {
     }
     label_data = label_data || []
-    description = description //|| '<p style="font-size: 14px;color: #595959; cursor: pointer ">编辑描述</p>'
+    // description = description //|| '<p style="font-size: 14px;color: #595959; cursor: pointer ">编辑描述</p>'
     const editorState = BraftEditor.createEditorState(brafitEditHtml)
 
     const editorProps = {

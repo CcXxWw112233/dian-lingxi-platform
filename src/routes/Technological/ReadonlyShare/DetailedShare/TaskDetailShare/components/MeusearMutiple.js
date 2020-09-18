@@ -1,6 +1,6 @@
 import React from 'react'
 // import MenuSearchStyles from './MenuSearch.less'
-import { Icon, Input, Button, DatePicker, Menu, Spin } from 'antd'
+import { Icon, Input, Menu } from 'antd'
 import indexStyles from './menuseachNultiple.less'
 
 // props => Inputlaceholder searchName listData  keyCode=>列表唯一标识字段，不能直接用map的key 。selectedKeys默认选中
@@ -205,20 +205,7 @@ export default class MenuSearchMultiple extends React.Component {
             </Menu.Item>
           )
         })}
-        {/*<div className={indexStyles.checkOk} onClick={this.onCheck.bind(this)}>确定</div>*/}
       </Menu>
-      //       {/*<Spin spinning={menuSearchSingleSpinning} size={'small'}>*/}
-      //   </Spin>
     )
   }
-}
-
-{
-  /*<Menu.Item style={{height: 32,lineHeight: '32px', margin: 0,backgroundColor: '#ffffff'}} key={value[keyCode]} >*/
-}
-{
-  /*{value[searchName]}*/
-}
-{
-  /*</Menu.Item>*/
 }

@@ -238,7 +238,6 @@ export default class ProcessItem extends React.Component {
           >
             <span
               style={{
-                display: 'inline-block',
                 color: '#8c8c8c',
                 cursor: 'pointer',
                 display: 'flex',

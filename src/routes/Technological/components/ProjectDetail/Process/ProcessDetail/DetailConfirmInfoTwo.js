@@ -3,15 +3,13 @@ import indexStyles from './index.less'
 import styles from './index.css'
 import {
   Card,
-  Input,
   Icon,
   DatePicker,
   Dropdown,
   Button,
   Upload,
   message,
-  Tooltip,
-  Avatar
+  Tooltip
 } from 'antd'
 import MenuSearchMultiple from '../ProcessStartConfirm/MenuSearchMultiple'
 import globalStyles from '../../../../../../globalset/css/globalClassName.less'
@@ -19,17 +17,10 @@ import {
   timestampToTimeNormal,
   timeToTimestamp
 } from '../../../../../../utils/util'
-import {
-  deleteProcessFile,
-  getProcessList
-} from '../../../../../../services/technological/process'
+import { deleteProcessFile } from '../../../../../../services/technological/process'
 import Cookies from 'js-cookie'
 import OpinionModal from './OpinionModal'
-import {
-  PROJECT_FILES_FILE_EDIT,
-  REQUEST_DOMAIN_FLOWS,
-  UPLOAD_FILE_SIZE
-} from '../../../../../../globalset/js/constant'
+import { REQUEST_DOMAIN_FLOWS } from '../../../../../../globalset/js/constant'
 // import PreviewFileModal from '../../TaskItemComponent/PreviewFileModal'
 import FileListRightBarFileDetailModal from '@/routes/Technological/components/ProjectDetail/FileModule/FileListRightBarFileDetailModal'
 import { filePreview } from '../../../../../../services/technological/file'
@@ -389,7 +380,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
     let compare_user_arr = []
     if (assignee_type == '1') {
       compare_user_arr = users
-      if (typeof assignees == 'Array') {
+      if (Array.isArray(assignees)) {
         currentUserCanReback =
           assignees.findIndex(item => item.user_id == currentUserId) != -1 //在任何人的情况下，谁完成谁才能撤回
       }

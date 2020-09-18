@@ -69,7 +69,7 @@ export default class AccessInterface extends React.Component {
           const futureTimestamp = futureDate.substr(0, 10)
 
           // hash randomCode timestamp 按照顺序拼接
-          let arrNew = new Array()
+          let arrNew = []
           arrNew.push(hash)
           arrNew.push(randomCode)
           arrNew.push(futureTimestamp)

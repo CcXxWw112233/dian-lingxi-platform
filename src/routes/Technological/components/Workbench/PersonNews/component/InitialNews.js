@@ -1,15 +1,9 @@
 import React from 'react'
 import { connect } from 'dva'
-import { Card, Icon, Input, Tooltip, message } from 'antd'
+import { message } from 'antd'
 import NewsListStyle from './NewsList.less'
-import styles from './index.css'
 import globalStyles from '@/globalset/css/globalClassName.less'
-import QueueAnim from 'rc-queue-anim'
-import {
-  newsDynamicHandleTime,
-  timestampToTime,
-  timestampToTimeNormal2
-} from '../../../../../../utils/util'
+import { timestampToTimeNormal2 } from '../../../../../../utils/util'
 // import Comment from './Comment'
 import {
   ORGANIZATION,
@@ -969,7 +963,7 @@ export default class InitialNews extends React.Component {
                     <img src={double_right} alt="" />
                   </div>
                 )}
-                {jumpToBoard}&nbsp;>
+                {jumpToBoard}&nbsp;&gt;
               </div>
               <div className={NewsListStyle.news_3_group}>
                 {messageValue.lists ? messageValue.lists.name : '无'}
@@ -1044,7 +1038,7 @@ export default class InitialNews extends React.Component {
                     <img src={double_right} alt="" />
                   </div>
                 )}
-                {jumpToBoard}&nbsp;>
+                {jumpToBoard}&nbsp;&gt;
               </div>
               <div className={NewsListStyle.news_3_group}>
                 {messageValue.lists ? messageValue.lists.name : '无'}
@@ -1106,7 +1100,7 @@ export default class InitialNews extends React.Component {
                     <img src={double_right} alt="" />
                   </div>
                 )}
-                {jumpToBoard}&nbsp;>
+                {jumpToBoard}&nbsp;&gt;
               </div>
               <div className={NewsListStyle.news_3_group}>
                 {messageValue.lists ? messageValue.lists.name : '无'}
@@ -1137,7 +1131,7 @@ export default class InitialNews extends React.Component {
                     <img src={double_right} alt="" />
                   </div>
                 )}
-                {jumpToBoard}&nbsp;>
+                {jumpToBoard}&nbsp;&gt;
               </div>
               <div className={NewsListStyle.news_3_group}>
                 {messageValue.lists ? messageValue.lists.name : '无'}
@@ -1168,7 +1162,7 @@ export default class InitialNews extends React.Component {
                     <img src={double_right} alt="" />
                   </div>
                 )}
-                {jumpToBoard}&nbsp;>
+                {jumpToBoard}&nbsp;&gt;
               </div>
               <div className={NewsListStyle.news_3_group}>
                 {messageValue.lists ? messageValue.lists.name : '无'}
@@ -1205,7 +1199,7 @@ export default class InitialNews extends React.Component {
                     <img src={double_right} alt="" />
                   </div>
                 )}
-                {jumpToBoard}&nbsp;>
+                {jumpToBoard}&nbsp;&gt;
               </div>
               <div className={NewsListStyle.news_3_group}>
                 {messageValue.lists ? messageValue.lists.name : '无'}
@@ -1237,7 +1231,7 @@ export default class InitialNews extends React.Component {
                     <img src={double_right} alt="" />
                   </div>
                 )}
-                {jumpToBoard}&nbsp;>
+                {jumpToBoard}&nbsp;&gt;
               </div>
               <div className={NewsListStyle.news_3_group}>
                 {messageValue.lists ? messageValue.lists.name : '无'}
@@ -1269,7 +1263,7 @@ export default class InitialNews extends React.Component {
                     <img src={double_right} alt="" />
                   </div>
                 )}
-                {jumpToBoard}&nbsp;>
+                {jumpToBoard}&nbsp;&gt;
               </div>
               <div className={NewsListStyle.news_3_group}>
                 {messageValue.lists ? messageValue.lists.name : '无'}
@@ -1305,7 +1299,7 @@ export default class InitialNews extends React.Component {
                     <img src={double_right} alt="" />
                   </div>
                 )}
-                {jumpToBoard}&nbsp;>
+                {jumpToBoard}&nbsp;&gt;
               </div>
               <div className={NewsListStyle.news_3_group}>
                 {messageValue.lists ? messageValue.lists.name : '无'}
@@ -1339,7 +1333,7 @@ export default class InitialNews extends React.Component {
                     <img src={double_right} alt="" />
                   </div>
                 )}
-                {jumpToBoard}&nbsp;>
+                {jumpToBoard}&nbsp;&gt;
               </div>
               <div className={NewsListStyle.news_3_group}>
                 {messageValue.lists ? messageValue.lists.name : '无'}
@@ -1372,7 +1366,7 @@ export default class InitialNews extends React.Component {
                     <img src={double_right} alt="" />
                   </div>
                 )}
-                {jumpToBoard}&nbsp;>
+                {jumpToBoard}&nbsp;&gt;
               </div>
               <div className={NewsListStyle.news_3_group}>
                 {messageValue.lists ? messageValue.lists.name : '无'}
@@ -1406,7 +1400,7 @@ export default class InitialNews extends React.Component {
                     <img src={double_right} alt="" />
                   </div>
                 )}
-                {jumpToBoard}&nbsp;>
+                {jumpToBoard}&nbsp;&gt;
               </div>
               <div className={NewsListStyle.news_3_group}>
                 {messageValue.lists ? messageValue.lists.name : '无'}
@@ -1440,7 +1434,7 @@ export default class InitialNews extends React.Component {
                     <img src={double_right} alt="" />
                   </div>
                 )}
-                {jumpToBoard}&nbsp;>
+                {jumpToBoard}&nbsp;&gt;
               </div>
               <div className={NewsListStyle.news_3_group}>
                 {messageValue.lists ? messageValue.lists.name : '无'}
@@ -1595,7 +1589,7 @@ export default class InitialNews extends React.Component {
                       <img src={double_right} alt="" />
                     </div>
                   )}
-                  {jumpToBoard}&nbsp;>
+                  {jumpToBoard}&nbsp;&gt;
                 </div>
                 <div className={NewsListStyle.news_3_group}>
                   {messageValue.lists ? messageValue.lists.name : '无'}
@@ -1635,7 +1629,7 @@ export default class InitialNews extends React.Component {
                       <img src={double_right} alt="" />
                     </div>
                   )}
-                  {jumpToBoard}&nbsp;>
+                  {jumpToBoard}&nbsp;&gt;
                 </div>
                 <div className={NewsListStyle.news_3_group}>
                   {messageValue.lists ? messageValue.lists.name : '无'}
@@ -1677,7 +1671,7 @@ export default class InitialNews extends React.Component {
                     <img src={double_right} alt="" />
                   </div>
                 )}
-                {jumpToBoard}&nbsp;>
+                {jumpToBoard}&nbsp;&gt;
               </div>
               <div className={NewsListStyle.news_3_group}>
                 {messageValue.lists ? messageValue.lists.name : '无'}
@@ -1712,7 +1706,7 @@ export default class InitialNews extends React.Component {
                     <img src={double_right} alt="" />
                   </div>
                 )}
-                {jumpToBoard}&nbsp;>
+                {jumpToBoard}&nbsp;&gt;
               </div>
               <div className={NewsListStyle.news_3_group}>
                 {messageValue.lists ? messageValue.lists.name : '无'}
@@ -1749,7 +1743,7 @@ export default class InitialNews extends React.Component {
               )}
               {/* <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：{jumpToBoard}</div> */}
               <div className={NewsListStyle.news_3_project}>
-                {jumpToBoard} >{' '}
+                {jumpToBoard} &gt;{' '}
               </div>
               <div className={NewsListStyle.news_3_group}>
                 {messageValue.content.lists
@@ -1790,7 +1784,7 @@ export default class InitialNews extends React.Component {
               )}
               {/* <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：{jumpToBoard}</div> */}
               <div className={NewsListStyle.news_3_project}>
-                {jumpToBoard} >{' '}
+                {jumpToBoard} &gt;{' '}
               </div>
               <div className={NewsListStyle.news_3_group}>
                 {messageValue.content.lists
@@ -1832,7 +1826,7 @@ export default class InitialNews extends React.Component {
               )}
               {/* <div className={NewsListStyle.news_3_project}>{currentNounPlanFilterName(PROJECTS)}：{jumpToBoard}</div> */}
               <div className={NewsListStyle.news_3_project}>
-                {jumpToBoard} >{' '}
+                {jumpToBoard} &gt;{' '}
               </div>
               <div className={NewsListStyle.news_3_group}>
                 {messageValue.content.lists
@@ -2111,7 +2105,7 @@ export default class InitialNews extends React.Component {
                     <img src={double_right} alt="" />
                   </div>
                 )}
-                {jumpToBoard}&nbsp;>
+                {jumpToBoard}&nbsp;&gt;
               </div>
               <div className={NewsListStyle.news_3_time}>
                 {timestampToTimeNormal2(messageValue.created)}
@@ -2694,7 +2688,7 @@ export default class InitialNews extends React.Component {
                             val.content.board.name}
                         </span>
                       }{' '}
-                      >
+                      &gt;
                     </div>
                     <div className={NewsListStyle.news_3_group}>
                       {val.content.lists ? val.content.lists.name : '无'}
@@ -2843,7 +2837,7 @@ export default class InitialNews extends React.Component {
                             val.content.board.name}
                         </span>
                       }{' '}
-                      >
+                      &gt;
                     </div>
                     <div className={NewsListStyle.news_3_group}>
                       {val.content.lists ? val.content.lists.name : '无'}
@@ -2918,7 +2912,7 @@ export default class InitialNews extends React.Component {
                             val.content.board.name}
                         </span>
                       }{' '}
-                      >
+                      &gt;
                     </div>
                     <div className={NewsListStyle.news_3_group}>
                       {val.content.lists ? val.content.lists.name : '无'}
@@ -2993,7 +2987,7 @@ export default class InitialNews extends React.Component {
                             val.content.board.name}
                         </span>
                       }{' '}
-                      >
+                      &gt;
                     </div>
                     <div className={NewsListStyle.news_3_group}>
                       {val.content.lists ? val.content.lists.name : '无'}
@@ -3067,7 +3061,7 @@ export default class InitialNews extends React.Component {
                             val.content.board.name}
                         </span>
                       }{' '}
-                      >
+                      &gt;
                     </div>
                     <div className={NewsListStyle.news_3_group}>
                       {val.content.lists ? val.content.lists.name : '无'}
@@ -3201,7 +3195,6 @@ export default class InitialNews extends React.Component {
         //   containner = (commentNews(value, parentKey, childrenKey))
         //   break
         case '18':
-        // containner = (milestoneNews(value))
         case '30': // 申请加入组织
           containner = value.map((val, key) => (
             <div key={key}>{applyOrg(val)}</div>
@@ -3266,22 +3259,6 @@ export default class InitialNews extends React.Component {
             <span style={{ color: 'rgba(217,217,217,1)' }}>暂无动态</span>
           </div>
         )}
-        {/* <MilestoneDetail
-          users={data}
-          miletone_detail_modal_visible={this.state.miletone_detail_modal_visible}
-          set_miletone_detail_modal_visible={this.set_miletone_detail_modal_visible}
-        /> */}
-        {/* <div style={{ margin: 'auto', position: 'absolute', top: 0, right: 0, left: 0, bottom: 0, textAlign: 'center' }}>
-          <div style={{ fontSize: 48, color: 'rgba(0,0,0,0.15)' }} className={`${globalStyles.authTheme}`}>&#xe683;</div>
-          <span style={{ color: 'rgba(217,217,217,1)' }}>动态模块维护中...</span>
-        </div> */}
-        {/*<div style={{marginBottom: 20,maxWidth: 770, minWidth: 600}}>*/}
-        {/*{isHasMore?(*/}
-        {/*<div onClick={this.getNewsDynamicListNext.bind(this,next_id)} style={{height: 30,maxWidth: 770, minWidth: 600, margin: '0 auto',lineHeight: '30px', textAlign: 'center', backgroundColor: '#e5e5e5',borderRadius: 4,marginTop: 20, cursor: 'pointer'}}>点击加载更多<Icon type="arrow-down" theme="outlined" /></div>*/}
-        {/*):(*/}
-        {/*<div  style={{height: 30,maxWidth: 770, minWidth: 600,  margin: '0 auto',lineHeight: '30px', textAlign: 'center',marginTop: 20,color: '#8c8c8c'}}>没有更多了...</div>*/}
-        {/*)}*/}
-        {/*</div>*/}
       </div>
     )
   }
