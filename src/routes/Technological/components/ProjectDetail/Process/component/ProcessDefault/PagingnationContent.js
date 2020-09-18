@@ -105,7 +105,7 @@ export default class PagingnationContent extends React.Component {
       }
       this.setState(
         {
-          page_number: ++this.state.page_number,
+          page_number: this.state.page_number + 1,
           scrollBlock: false
         },
         () => {
@@ -202,6 +202,7 @@ export default class PagingnationContent extends React.Component {
       let new_privileges = [...privileges]
       for (let item in obj) {
         if (item == 'privileges') {
+          // eslint-disable-next-line no-loop-func
           obj[item].map(val => {
             let temp_arr = arrayNonRepeatfy([].concat(...privileges, val))
             if (temp_arr && !temp_arr.length) return false
@@ -229,6 +230,7 @@ export default class PagingnationContent extends React.Component {
       let new_privileges = []
       for (let item in obj) {
         if (item == 'privileges') {
+          // eslint-disable-next-line no-loop-func
           obj[item].map(val => {
             let temp_arr = arrayNonRepeatfy([].concat(...privileges, val))
             return (new_privileges = [...temp_arr])

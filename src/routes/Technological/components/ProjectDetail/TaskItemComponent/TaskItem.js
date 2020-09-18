@@ -57,10 +57,6 @@ export default class TaskItem extends React.Component {
     isShouldBeTaskGroupOperatorDropdownMenuVisible: false,
     shouldHideVisitControlPopover: false
   }
-  constructor(props) {
-    super(props)
-  }
-
   gotoAddItem() {
     if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)

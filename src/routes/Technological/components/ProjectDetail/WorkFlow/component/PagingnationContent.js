@@ -103,25 +103,25 @@ export default class PagingnationContent extends Component {
 
   contentBodyScroll = e => {
     return
-    if (
-      e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight <
-      20
-    ) {
-      console.log('进来了', 'sssssssssssssssssss_我的天')
-      const { scrollBlock } = this.state
-      if (!scrollBlock) {
-        return false
-      }
-      this.setState(
-        {
-          page_number: ++this.state.page_number,
-          scrollBlock: false
-        },
-        () => {
-          this.getProcessListByType()
-        }
-      )
-    }
+    // if (
+    //   e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight <
+    //   20
+    // ) {
+    //   console.log('进来了', 'sssssssssssssssssss_我的天')
+    //   const { scrollBlock } = this.state
+    //   if (!scrollBlock) {
+    //     return false
+    //   }
+    //   this.setState(
+    //     {
+    //       page_number: ++this.state.page_number,
+    //       scrollBlock: false
+    //     },
+    //     () => {
+    //       this.getProcessListByType()
+    //     }
+    //   )
+    // }
   }
 
   render() {
