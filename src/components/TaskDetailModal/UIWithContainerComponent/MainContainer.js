@@ -854,6 +854,7 @@ const LogicWithMainContent = {
       }
     })
     this.updatePrivateVariablesWithOpenFile && this.updatePrivateVariablesWithOpenFile()
+    this.props.updatePrivateVariablesWithOpenFile && this.props.updatePrivateVariablesWithOpenFile()
   },
 
   /* 附件版本更新数据  */
@@ -1341,6 +1342,7 @@ const LogicWithMainContent = {
         filePreviewCurrentName: file_name
       }
     })
+    this.updatePrivateVariablesWithOpenFile && this.updatePrivateVariablesWithOpenFile()
     this.props.updatePrivateVariablesWithOpenFile && this.props.updatePrivateVariablesWithOpenFile()
   },
 

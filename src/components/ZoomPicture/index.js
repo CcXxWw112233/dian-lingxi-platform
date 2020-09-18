@@ -1591,7 +1591,8 @@ class ZoomPicture extends Component {
                   {/* {i.icon} */}
                   {
                     i && i.key && i.key == 'addCommit' && isShow_textArea == true ? (
-                      <span style={{ display: 'flex' }}>{i.icon}&nbsp;&nbsp;<span style={{ fontSize: '14px', width: '56px' }}>圈点评论</span></span>
+                      // <span style={{ display: 'flex' }}>{i.icon}&nbsp;&nbsp;<span style={{ fontSize: '14px', width: '56px' }}>圈点评论</span></span>
+                      <></>
                     ) : (
                         <span>{i.icon}</span>
                       )

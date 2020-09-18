@@ -601,6 +601,7 @@ export default class MainContent extends Component {
               handleChildTaskChange={this.props.handleChildTaskChange}
               handleTaskDetailChange={this.props.handleTaskDetailChange}
               updateParentPropertiesList={this.updateParentPropertiesList}
+              updatePrivateVariablesWithOpenFile={this.updatePrivateVariablesWithOpenFile}
             />
           </div>
           {/* 不同字段的渲染 E */}

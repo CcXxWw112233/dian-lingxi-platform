@@ -99,7 +99,7 @@ class FileDetailContent extends Component {
       this.initStateDatas({ data: res.data })
       let flag = checkIsHasPermissionInVisitControl('edit', res.data.base_info.privileges, res.data.base_info.is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, res.data.base_info.board_id))
       if (file_type == '.pdf' && flag) {
-        await this.getFilePDFInfo({ id, calback })
+        // await this.getFilePDFInfo({ id, calback })
       }
       // !this.props.isOpenAttachmentFile && this.linkImWithFile({ name: res.data.base_info.file_name, type: 'file', board_id: res.data.base_info.board_id, id: res.data.base_info.id, currentPreviewFileVersionId: res.data.base_info.version_id })
     } else {
