@@ -620,6 +620,7 @@ export default class MainUIComponent extends Component {
               handleChildTaskChange={handleChildTaskChange}
               handleTaskDetailChange={handleTaskDetailChange}
               updateParentPropertiesList={this.updateParentPropertiesList}
+              handleRelyUploading={this.props.handleRelyUploading}
             />
           </div>
           {/* 不同字段的渲染 E */}

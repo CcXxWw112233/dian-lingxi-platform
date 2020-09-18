@@ -419,6 +419,7 @@ export default class BasicFieldUIComponent extends Component {
                         whetherUpdateParentTaskTime={whetherUpdateParentTaskTime}
                         updateRelyOnRationList={updateRelyOnRationList}
                         boardFolderTreeData={boardFolderTreeData}
+                        handleRelyUploading={handleRelyUploading}
                         children={
                           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                             {

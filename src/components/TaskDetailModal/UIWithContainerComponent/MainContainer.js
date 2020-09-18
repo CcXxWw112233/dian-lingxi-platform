@@ -1316,6 +1316,9 @@ const LogicWithMainContent = {
         }
       })
     }
+    const { folder_path = {} } = data[0]
+    const { id: folder_id } = folder_path
+    if (typeof this.props.handleRelyUploading == 'function' && folder_id) this.props.handleRelyUploading({ folder_id })
   },
   // 上传文件 事件 E
 
@@ -1445,29 +1448,6 @@ const LogicWithMainContent = {
       </Menu>
     );
   },
-
-  // 递归获取附件路径 S
-  getFolderPathName: function (fileList, fileItem) {
-    let new_fileList = [...fileList]
-    let arr = []
-    const target_path = fileItem.folder_path
-    // 递归添加路径
-    const digui = (name, data) => {
-      if (data[name]) {
-        arr.push({ file_name: data.folder_name, file_id: data.id, type: '1' })
-        digui(name, data[name])
-      } else if (data['parent_id'] == '0') {
-        arr.push({ file_name: '根目录', type: '0' })
-      } else if (data['parent_id'] == '2') {// 表示临时目录
-        arr.push({ file_name: data.folder_name, file_id: data.id, type: '2' })
-      }
-    }
-    digui('parent_folder', target_path)
-    const newbreadcrumbList = arr.reverse()
-    // newbreadcrumbList.push({ file_name: fileItem.name, file_id: fileItem.file_id, type: '1' })
-    return newbreadcrumbList
-  },
-  // 递归获取附件路径 E
 
   // 删除字段的回调
   deleteCodeCalback: function (code, new_value = {}) {

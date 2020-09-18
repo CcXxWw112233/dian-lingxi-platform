@@ -311,13 +311,13 @@ class MainContent extends Component {
                 <div style={{ height: currentZoomPictureComponetHeight }} className={mainContentStyles.fileDetailContentLeft}
                   dangerouslySetInnerHTML={{ __html: this.getIframe(filePreviewUrl) }}>
                 </div>
-                {
+                {/* {
                   !this.props.isOpenAttachmentFile && fileType != '.pdf' && (supportFileTypeArray.indexOf(fileType) != -1) && (
                     <div className={mainContentStyles.otherFilesOperator}>
                       <span onClick={this.handleEnterCirclePointComment} className={mainContentStyles.operator_bar}><span className={`${globalStyles.authTheme} ${mainContentStyles.circle_icon}`}>&#xe664;</span>圈点评论</span>
                     </div>
                   )
-                }
+                } */}
                 {
                   !this.props.isOpenAttachmentFile && (
                     <div onClick={this.handleDynamicComment} id="dynamic_comment" className={mainContentStyles.dynamic_comment}>
@@ -611,13 +611,13 @@ class MainContent extends Component {
                 <div
                   style={{ height: bodyClientHeight, marginTop: '20px' }}
                   dangerouslySetInnerHTML={{ __html: this.getIframe(filePreviewUrl) }}></div>
-                {
+                {/* {
                   !this.props.isOpenAttachmentFile && fileType != '.pdf' && (supportFileTypeArray.indexOf(fileType) != -1) && (
                     <div className={mainContentStyles.otherFilesOperator} style={{ bottom: '100px' }}>
                       <span onClick={this.handleEnterCirclePointComment} className={mainContentStyles.operator_bar}><span className={`${globalStyles.authTheme} ${mainContentStyles.circle_icon}`}>&#xe664;</span>圈点评论</span>
                     </div>
                   )
-                }
+                } */}
               </>
             )
         }
