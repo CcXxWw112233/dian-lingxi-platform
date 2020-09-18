@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import {
   Popover,
   Tooltip,
@@ -9,31 +9,36 @@ import {
   Modal,
   message,
   Icon
-} from 'antd';
-import { connect } from 'dva';
-import styles from './index.less';
-import globalStyles from './../../../../globalset/css/globalClassName.less';
-import AvatarList from './AvatarList/index';
-import InviteOthers from './../InviteOthers/index';
-import defaultUserAvatar from './../../../../assets/invite/user_default_avatar@2x.png';
-import { inviteNewUserInProject } from './../../../../services/technological/index';
-import { fetchUsersByIds } from './../../../../services/organization/index';
-import classNames from 'classnames/bind';
+} from 'antd'
+import { connect } from 'dva'
+import styles from './index.less'
+import globalStyles from './../../../../globalset/css/globalClassName.less'
+import AvatarList from './AvatarList/index'
+import InviteOthers from './../InviteOthers/index'
+import defaultUserAvatar from './../../../../assets/invite/user_default_avatar@2x.png'
+import { inviteNewUserInProject } from './../../../../services/technological/index'
+import { fetchUsersByIds } from './../../../../services/organization/index'
+import classNames from 'classnames/bind'
 import ShowAddMenberModal from '../Project/ShowAddMenberModal'
 import {
-  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
-  PROJECT_TEAM_BOARD_EDIT, PROJECT_TEAM_BOARD_MEMBER
-} from "@/globalset/js/constant";
-import { checkIsHasPermissionInBoard, isHasOrgMemberQueryPermission } from "@/utils/businessFunction";
+  MESSAGE_DURATION_TIME,
+  NOT_HAS_PERMISION_COMFIRN,
+  PROJECT_TEAM_BOARD_EDIT,
+  PROJECT_TEAM_BOARD_MEMBER
+} from '@/globalset/js/constant'
+import {
+  checkIsHasPermissionInBoard,
+  isHasOrgMemberQueryPermission
+} from '@/utils/businessFunction'
 
-let cx = classNames.bind(styles);
+let cx = classNames.bind(styles)
 @connect(({ technological }) => ({
   currentOrgAllMembersList: technological.datas.currentOrgAllMembersList || [],
   userBoardPermissions: technological.datas.userBoardPermissions
 }))
 class VisitControl extends Component {
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       addMemberModalVisible: false, // 是否显示添加成员的弹窗, 默认为 false 不显示
       comfirmRemoveModalVisible: false, // 是否显示移除职员的弹窗, 默认为 false 不显示
@@ -41,58 +46,58 @@ class VisitControl extends Component {
       selectedOtherPersonId: '', //当前选中的外部邀请人员的 id
       othersPersonList: [], //外部邀请人员的list
       transPrincipalList: [], //外部已有权限人的list
-      ShowAddMenberModalVisibile: false,
-    };
+      ShowAddMenberModalVisibile: false
+    }
   }
 
   // 小图标的点击事件或者说访问控制的点击事件
   togglePopoverVisible = e => {
-    if (e) e.stopPropagation();
+    if (e) e.stopPropagation()
     this.setState(state => {
-      const { visible } = state;
+      const { visible } = state
       return {
         visible: !visible
-      };
-    });
-  };
+      }
+    })
+  }
 
   // 理解成是否是有效的头像
   isValidAvatar = (avatarUrl = '') =>
-    avatarUrl.includes('http://') || avatarUrl.includes('https://');
+    avatarUrl.includes('http://') || avatarUrl.includes('https://')
 
   // 获取添加成员的回调
   handleGetAddNewMember = members => {
-    const { handleAddNewMember } = this.props;
+    const { handleAddNewMember } = this.props
     const filterPlatformUsersId = users =>
-      users.filter(u => u.type === 'platform').map(u => u.id);
+      users.filter(u => u.type === 'platform').map(u => u.id)
     this.handleNotPlatformMember(members)
       .then(usersId => [...usersId, ...filterPlatformUsersId(members)])
-      .then(ids => handleAddNewMember(ids));
-  };
+      .then(ids => handleAddNewMember(ids))
+  }
   async handleNotPlatformMember(members) {
-    const isNotPlatformMember = m => m.type === 'other';
+    const isNotPlatformMember = m => m.type === 'other'
     const users = members
       .filter(m => isNotPlatformMember(m))
       .reduce((acc, curr) => {
-        if (!acc) return curr.user;
-        return `${acc},${curr.user}`;
-      }, '');
-    if (!users) return Promise.resolve([]);
-    let res = await inviteNewUserInProject({ data: users });
+        if (!acc) return curr.user
+        return `${acc},${curr.user}`
+      }, '')
+    if (!users) return Promise.resolve([])
+    let res = await inviteNewUserInProject({ data: users })
     if (!res || res.code !== '0') {
-      message.error('注册平台外用户失败.');
-      return Promise.resolve([]);
+      message.error('注册平台外用户失败.')
+      return Promise.resolve([])
     }
-    let usersId = res.data.map(u => u.id);
-    return Promise.resolve(usersId);
+    let usersId = res.data.map(u => u.id)
+    return Promise.resolve(usersId)
   }
   handleInviteMemberReturnResult = members => {
-    this.handleGetAddNewMember(members);
+    this.handleGetAddNewMember(members)
     this.setState({
       addMemberModalVisible: false,
       ShowAddMenberModalVisibile: false
-    });
-  };
+    })
+  }
 
   /**
    * 访问控制的开关切换
@@ -102,10 +107,11 @@ class VisitControl extends Component {
   //   const { handleVisitControlChange } = this.props;
   //   handleVisitControlChange(checked);
   // };
-  handleToggleVisitControl = (e) => {
+  handleToggleVisitControl = e => {
     // console.log(e, 'ssssssss')
     const { handleVisitControlChange } = this.props
-    if (e.key == 'unClock') { // 表示关闭状态
+    if (e.key == 'unClock') {
+      // 表示关闭状态
       this.setState({
         toggle_selectedKey: e.key
       })
@@ -116,15 +122,17 @@ class VisitControl extends Component {
       })
       handleVisitControlChange(true)
     }
-
   }
-
 
   // 我的理解是: 别的地方调用该popover的时候关闭或者打开的控制该状态的回调，
   onPopoverVisibleChange = visible => {
-    const { handleVisitControlPopoverVisible } = this.props;
-    const isClose = visible === false;
-    const { addMemberModalVisible, comfirmRemoveModalVisible, ShowAddMenberModalVisibile } = this.state;
+    const { handleVisitControlPopoverVisible } = this.props
+    const isClose = visible === false
+    const {
+      addMemberModalVisible,
+      comfirmRemoveModalVisible,
+      ShowAddMenberModalVisibile
+    } = this.state
     //关闭页面中的其他 弹窗 会影响到 popover 的状态，这里以示区分。
     if (isClose && !comfirmRemoveModalVisible && !ShowAddMenberModalVisibile) {
       this.setState(
@@ -132,11 +140,11 @@ class VisitControl extends Component {
           visible: false
         },
         () => {
-          handleVisitControlPopoverVisible(false);
+          handleVisitControlPopoverVisible(false)
         }
-      );
+      )
     }
-  };
+  }
 
   /**
    * 获取当前操作的对象的id
@@ -145,36 +153,36 @@ class VisitControl extends Component {
   handleClickedOtherPersonListItem = item => {
     this.setState({
       selectedOtherPersonId: item
-    });
-  };
+    })
+  }
 
   /**
    * 点击选中邀请进来的外部人员的下拉菜单的回调
    */
   handleSelectedOtherPersonListOperatorItem = ({ _, key }) => {
-    const operatorType = key;
-    const { handleClickedOtherPersonListOperatorItem } = this.props;
-    const { selectedOtherPersonId } = this.state;
+    const operatorType = key
+    const { handleClickedOtherPersonListOperatorItem } = this.props
+    const { selectedOtherPersonId } = this.state
 
     if (operatorType === 'remove') {
       return this.setState({
         comfirmRemoveModalVisible: true
-      });
+      })
     }
     handleClickedOtherPersonListOperatorItem(
       selectedOtherPersonId,
       operatorType
-    );
-  };
+    )
+  }
 
   /**
    * 点击移除成员弹窗的确定回调
    * @param {Object} e 当前的事件对象
    */
   handleComfirmRemoveModalOk = e => {
-    if (e) e.stopPropagation();
-    const { handleClickedOtherPersonListOperatorItem } = this.props;
-    const { selectedOtherPersonId } = this.state;
+    if (e) e.stopPropagation()
+    const { handleClickedOtherPersonListOperatorItem } = this.props
+    const { selectedOtherPersonId } = this.state
     this.setState(
       {
         comfirmRemoveModalVisible: false
@@ -183,35 +191,35 @@ class VisitControl extends Component {
         handleClickedOtherPersonListOperatorItem(
           selectedOtherPersonId,
           'remove'
-        );
+        )
       }
-    );
-  };
+    )
+  }
 
   // 关闭移除成员的弹窗回调
   handleCloseComfirmRemoveModal = e => {
-    if (e) e.stopPropagation();
+    if (e) e.stopPropagation()
     this.setState({
       comfirmRemoveModalVisible: false
-    });
-  };
+    })
+  }
 
   // 关闭添加成员弹窗的回调
   handleCloseAddMemberModal = e => {
-    if (e) e.stopPropagation();
+    if (e) e.stopPropagation()
     this.setState({
       addMemberModalVisible: false,
       ShowAddMenberModalVisibile: false
-    });
-  };
+    })
+  }
 
   // 点击添加成员的回调
   handleAddNewMember = () => {
     this.setState({
       addMemberModalVisible: true
-    });
+    })
     this.togglePopoverVisible
-  };
+  }
 
   //点击添加成员操作
   setShowAddMenberModalVisibile = () => {
@@ -220,7 +228,7 @@ class VisitControl extends Component {
       return false
     }
     this.setState({
-      ShowAddMenberModalVisibile: !this.state.ShowAddMenberModalVisibile,
+      ShowAddMenberModalVisibile: !this.state.ShowAddMenberModalVisibile
     })
   }
 
@@ -235,18 +243,18 @@ class VisitControl extends Component {
       })
       return
     }
-    const { currentOrgAllMembersList = [] } = this.props;
+    const { currentOrgAllMembersList = [] } = this.props
     // 是否在负责人列表中的成员能够在当前所有组织成员列表中找到？
     const isEachMemberInPrincipalListCanFoundInCurrentOrgAllMembersList = currentOrgAllMembersList =>
       principalList.every(item =>
         currentOrgAllMembersList.find(each => each.id === item)
-      );
+      )
     let allMember = [...currentOrgAllMembersList]
     // 获取其他人列表？
     const getOthersPersonList = allMember =>
       principalList.reduce((acc, curr) => {
-        const id = curr;
-        const currPerson = allMember.find(item => item.id === id);
+        const id = curr
+        const currPerson = allMember.find(item => item.id === id)
         if (!currPerson) {
           return [...acc]
         }
@@ -256,10 +264,10 @@ class VisitControl extends Component {
           avatar:
             currPerson.avatar && this.isValidAvatar(currPerson.avatar)
               ? currPerson.avatar
-              : defaultUserAvatar,
-        };
-        return [...acc, obj];
-      }, []);
+              : defaultUserAvatar
+        }
+        return [...acc, obj]
+      }, [])
     if (
       !isEachMemberInPrincipalListCanFoundInCurrentOrgAllMembersList(
         currentOrgAllMembersList
@@ -267,61 +275,58 @@ class VisitControl extends Component {
     ) {
       const notFoundInOrgAllMembersListMembers = principalList.filter(
         item => !currentOrgAllMembersList.find(each => each.id === item)
-      );
+      )
       fetchUsersByIds({
         ids: notFoundInOrgAllMembersListMembers.reduce((acc, curr) => {
-          if (!acc) return curr;
-          return `${acc},${curr}`;
+          if (!acc) return curr
+          return `${acc},${curr}`
         }, '')
       }).then(res => {
-        const isApiOk = res => res && res.code === '0';
+        const isApiOk = res => res && res.code === '0'
         if (isApiOk(res)) {
           const getName = user =>
             user.full_name
               ? user.full_name
               : user.mobile
-                ? user.mobile
-                : user.email
-                  ? user.email
-                  : user.name
-                    ? user.name
-                    : 'unknown';
+              ? user.mobile
+              : user.email
+              ? user.email
+              : user.name
+              ? user.name
+              : 'unknown'
           const otherMemberList = res.data.map(u => ({
             id: u.id,
             avatar: u.avatar ? u.avatar : '',
             full_name: getName(u)
-          }));
-          allMember = [...otherMemberList, ...allMember];
+          }))
+          allMember = [...otherMemberList, ...allMember]
           this.setState({
             transPrincipalList: getOthersPersonList(allMember)
           })
-
         } else {
-          message.error('访问控制中有非该组织成员的人');
+          message.error('访问控制中有非该组织成员的人')
           this.setState({
             transPrincipalList: getOthersPersonList(allMember)
           })
           return
         }
-      });
+      })
     } else {
-
       this.setState({
         transPrincipalList: getOthersPersonList(allMember)
       })
     }
-
   }
 
   // 这是分析其他人的权限
   parseOtherPrivileges = otherPrivilege => {
-    const { currentOrgAllMembersList = [] } = this.props;
+    const { currentOrgAllMembersList = [] } = this.props
     const isEachMemberInOtherPrivilegeCanFoundInCurrentOrgAllMembersList = currentOrgAllMembersList =>
       Object.keys(otherPrivilege).every(item =>
         currentOrgAllMembersList.find(each => each.id === item)
-      );
+      )
     //如果现有的组织成员列表，不包括所有的人，那么就更新组织成员列表
-    let allMember = [...currentOrgAllMembersList];
+    let allMember = [...currentOrgAllMembersList]
     const getOthersPersonList = allMember =>
       // console.log(allMember, 'ssssss_allMember')
       Object.entries(otherPrivilege).reduce((acc, curr) => {
@@ -330,22 +335,24 @@ class VisitControl extends Component {
         // }, 'ssssss_reduce')
         // debugger
         // const [id, privilageType] = curr;
-        const [id, user_id, content_privilege_code] = curr;
-        const currPerson = allMember.find(item => item.id === user_id);
+        const [id, user_id, content_privilege_code] = curr
+        const currPerson = allMember.find(item => item.id === user_id)
         // console.log(currPerson, 'sssssss_currPerson')
         // debugger
         const obj = {
           id: currPerson && currPerson.id,
           name: currPerson && currPerson.full_name,
           avatar:
-            currPerson && currPerson.avatar && this.isValidAvatar(currPerson && currPerson.avatar)
+            currPerson &&
+            currPerson.avatar &&
+            this.isValidAvatar(currPerson && currPerson.avatar)
               ? currPerson && currPerson.avatar
               : defaultUserAvatar,
           // privilege: privilageType
           privilege: content_privilege_code
-        };
-        return [...acc, obj];
-      }, []);
+        }
+        return [...acc, obj]
+      }, [])
     if (
       !isEachMemberInOtherPrivilegeCanFoundInCurrentOrgAllMembersList(
         currentOrgAllMembersList
@@ -353,123 +360,120 @@ class VisitControl extends Component {
     ) {
       const notFoundInOrgAllMembersListMembers = Object.keys(
         otherPrivilege
-      ).filter(
-        item => !currentOrgAllMembersList.find(each => each.id === item)
-      );
+      ).filter(item => !currentOrgAllMembersList.find(each => each.id === item))
       fetchUsersByIds({
         ids: notFoundInOrgAllMembersListMembers.reduce((acc, curr) => {
-          if (!acc) return curr;
-          return `${acc},${curr}`;
+          if (!acc) return curr
+          return `${acc},${curr}`
         }, '')
       }).then(res => {
-        const isApiOk = res => res && res.code === '0';
+        const isApiOk = res => res && res.code === '0'
         if (isApiOk(res)) {
           const getName = user =>
             user.full_name
               ? user.full_name
               : user.mobile
-                ? user.mobile
-                : user.email
-                  ? user.email
-                  : user.name
-                    ? user.name
-                    : 'unknown';
+              ? user.mobile
+              : user.email
+              ? user.email
+              : user.name
+              ? user.name
+              : 'unknown'
           const otherMemberList = res.data.map(u => ({
             id: u.id,
             avatar: u.avatar ? u.avatar : '',
             full_name: getName(u)
-          }));
-          allMember = [...otherMemberList, ...allMember];
+          }))
+          allMember = [...otherMemberList, ...allMember]
           return this.setState({
             othersPersonList: getOthersPersonList(allMember)
-          });
+          })
         } else {
-          message.error('访问控制中有非该组织成员的人');
-          return;
+          message.error('访问控制中有非该组织成员的人')
+          return
         }
-      });
+      })
     } else {
       this.setState({
         othersPersonList: getOthersPersonList(allMember)
-      });
+      })
     }
-  };
+  }
 
   // 是否有必要更新比较其他人的权限在props中
   compareOtherPrivilegeInPropsAndUpdateIfNecessary = nextProps => {
-    const { otherPrivilege: nextOtherPrivilege } = nextProps;
-    const { otherPrivilege } = this.props;
+    const { otherPrivilege: nextOtherPrivilege } = nextProps
+    const { otherPrivilege } = this.props
     const isTheSameOtherPrivilege = (otherPrivilege1, otherPrivilege2) => {
-      const objToEntries = obj => Object.entries(obj);
+      const objToEntries = obj => Object.entries(obj)
       const isTheSameLength = (arr1 = [], arr2 = []) =>
-        arr1.length === arr2.length;
+        arr1.length === arr2.length
       const isEntriesSubset = (arr1 = [], arr2 = []) =>
         arr1.every(([key1, value1]) =>
           arr2.find(([key2, value2]) => key1 === key2 && value1 === value2)
-        );
-      const otherPrivilege1Entries = objToEntries(otherPrivilege1);
-      const otherPrivilege2Entries = objToEntries(otherPrivilege2);
+        )
+      const otherPrivilege1Entries = objToEntries(otherPrivilege1)
+      const otherPrivilege2Entries = objToEntries(otherPrivilege2)
       if (
         isTheSameLength(otherPrivilege1Entries, otherPrivilege2Entries) &&
         isEntriesSubset(otherPrivilege1Entries, otherPrivilege2Entries)
       ) {
-        return true;
+        return true
       }
-      return false;
-    };
-    if (!isTheSameOtherPrivilege(otherPrivilege, nextOtherPrivilege)) {
-      this.parseOtherPrivileges(nextOtherPrivilege);
+      return false
     }
-  };
+    if (!isTheSameOtherPrivilege(otherPrivilege, nextOtherPrivilege)) {
+      this.parseOtherPrivileges(nextOtherPrivilege)
+    }
+  }
 
   // 开启访问控制权限回调
   handleClickedInVisitControl = e => {
-    if (e) e.stopPropagation();
-    const { handleVisitControlPopoverVisible } = this.props;
-    handleVisitControlPopoverVisible(true);
-  };
+    if (e) e.stopPropagation()
+    const { handleVisitControlPopoverVisible } = this.props
+    handleVisitControlPopoverVisible(true)
+  }
 
   //组件挂载完成需要调用获取负责人列表以及分析其他人的权限
   componentDidMount() {
     //将[id]:privilageType 对象转化为数组
-    const { otherPrivilege = [], principalList = [] } = this.props;
-    this.parseOtherPrivileges(otherPrivilege);
+    const { otherPrivilege = [], principalList = [] } = this.props
+    this.parseOtherPrivileges(otherPrivilege)
     this.genPrincipalList(principalList)
   }
 
   componentWillReceiveProps(nextProps) {
     // console.log(nextProps, 'ssssssss')
-    this.compareOtherPrivilegeInPropsAndUpdateIfNecessary(nextProps);
+    this.compareOtherPrivilegeInPropsAndUpdateIfNecessary(nextProps)
   }
 
   toggleVisitControl = () => {
     const { isPropVisitControl } = this.props
     return (
-      <Menu onClick={this.handleToggleVisitControl} selectedKeys={!isPropVisitControl ? 'unClock' : 'clock'}>
-        <Menu.Item key="unClock">
-          开放访问
-        </Menu.Item>
-        <Menu.Item key="clock">
-          仅列表人员访问
-        </Menu.Item>
+      <Menu
+        onClick={this.handleToggleVisitControl}
+        selectedKeys={!isPropVisitControl ? 'unClock' : 'clock'}
+      >
+        <Menu.Item key="unClock">开放访问</Menu.Item>
+        <Menu.Item key="clock">仅列表人员访问</Menu.Item>
       </Menu>
     )
   }
 
   // 这是popover中的内容头部标题的控制
   renderPopoverTitle = () => {
-    const { isPropVisitControl } = this.props;
+    const { isPropVisitControl } = this.props
     // console.log(isPropVisitControl, 'sssssss')
     const unClockIcon = (
       <i className={`${globalStyles.authTheme} ${styles.title__text_icon}`}>
         &#xe86b;
       </i>
-    );
+    )
     const clockIcon = (
       <i className={`${globalStyles.authTheme} ${styles.title__text_icon}`}>
         &#xe86a;
       </i>
-    );
+    )
 
     return (
       <div className={styles.title__wrapper}>
@@ -491,15 +495,14 @@ class VisitControl extends Component {
             </span>
           </Dropdown>
         </div>
-
       </div>
-    );
-  };
+    )
+  }
 
   // 渲染其他人操作下拉菜单的选项
   renderOtherPersonOperatorMenu = privilege => {
-    const { otherPersonOperatorMenuItem } = this.props;
-    const { Item } = Menu;
+    const { otherPersonOperatorMenuItem } = this.props
+    const { Item } = Menu
     return (
       <Menu onClick={this.handleSelectedOtherPersonListOperatorItem}>
         {otherPersonOperatorMenuItem.map(({ key, value, style }) => {
@@ -507,12 +510,12 @@ class VisitControl extends Component {
             content__othersPersonList_Item_operator_dropdown_menu_item: true,
             content__othersPersonList_Item_operator_dropdown_menu_item_disabled:
               value === privilege ? true : false
-          });
+          })
           return (
             <Item key={value}>
               <div
                 onClick={
-                  value === privilege ? e => e.stopPropagation() : () => { }
+                  value === privilege ? e => e.stopPropagation() : () => {}
                 }
                 className={itemClass}
                 style={style ? style : {}}
@@ -520,15 +523,15 @@ class VisitControl extends Component {
                 <span>{key}</span>
               </div>
             </Item>
-          );
+          )
         })}
       </Menu>
-    );
-  };
+    )
+  }
 
   // 渲染popover中的负责人列表组件
   renderPopoverContentPrincipalList() {
-    const { principalInfo } = this.props;
+    const { principalInfo } = this.props
     const { transPrincipalList } = this.state
     return (
       <div className={styles.content__principalList_wrapper}>
@@ -553,68 +556,74 @@ class VisitControl extends Component {
         {/* <span className={styles.content__principalList_info}>
           {`${transPrincipalList.length}${principalInfo}`}
         </span> */}
-        <span className={`${styles.content__principalList_info}`} style={{ color: 'rgba(0,0,0,0.25)' }}>默认可访问</span>
+        <span
+          className={`${styles.content__principalList_info}`}
+          style={{ color: 'rgba(0,0,0,0.25)' }}
+        >
+          默认可访问
+        </span>
       </div>
-    );
-  };
+    )
+  }
 
   // 渲染popover中其他人的组件列表
   renderPopoverContentOthersPersonList = () => {
-    const { otherPersonOperatorMenuItem } = this.props;
-    const { othersPersonList } = this.state;
+    const { otherPersonOperatorMenuItem } = this.props
+    const { othersPersonList } = this.state
     // console.log(othersPersonList, 'ssssss_othersPersonList')
     return (
       <div className={styles.content__othersPersonList_wrapper}>
-        {othersPersonList && othersPersonList.map(({ id, name, avatar, privilege }) => (
-          <div
-            key={id}
-            className={styles.content__othersPersonList_Item_wrapper}
-          >
-            <span className={styles.content__othersPersonList_Item_info}>
-              <img
-                width="20"
-                height="20"
-                src={avatar}
-                alt=""
-                className={styles.content__othersPersonList_Item_avatar}
-              />
-              <span className={styles.content__othersPersonList_Item_name}>
-                {name}
-              </span>
-            </span>
-            <Dropdown
-              trigger={['click']}
-              overlay={this.renderOtherPersonOperatorMenu(privilege)}
+        {othersPersonList &&
+          othersPersonList.map(({ id, name, avatar, privilege }) => (
+            <div
+              key={id}
+              className={styles.content__othersPersonList_Item_wrapper}
             >
-              <span
-                onClick={() => this.handleClickedOtherPersonListItem(id)}
-                className={styles.content__othersPersonList_Item_operator}
+              <span className={styles.content__othersPersonList_Item_info}>
+                <img
+                  width="20"
+                  height="20"
+                  src={avatar}
+                  alt=""
+                  className={styles.content__othersPersonList_Item_avatar}
+                />
+                <span className={styles.content__othersPersonList_Item_name}>
+                  {name}
+                </span>
+              </span>
+              <Dropdown
+                trigger={['click']}
+                overlay={this.renderOtherPersonOperatorMenu(privilege)}
               >
                 <span
-                  className={
-                    styles.content__othersPersonList_Item_operator_text
-                  }
+                  onClick={() => this.handleClickedOtherPersonListItem(id)}
+                  className={styles.content__othersPersonList_Item_operator}
                 >
-                  {
-                    (otherPersonOperatorMenuItem.find(
-                      item => item.value === privilege
-                    ) || {}).key
-                  }
+                  <span
+                    className={
+                      styles.content__othersPersonList_Item_operator_text
+                    }
+                  >
+                    {
+                      (
+                        otherPersonOperatorMenuItem.find(
+                          item => item.value === privilege
+                        ) || {}
+                      ).key
+                    }
+                  </span>
+                  <span
+                    className={`${globalStyles.authTheme} ${styles.content__othersPersonList_Item_operator_icon}`}
+                  >
+                    &#xe7ee;
+                  </span>
                 </span>
-                <span
-                  className={`${globalStyles.authTheme} ${
-                    styles.content__othersPersonList_Item_operator_icon
-                    }`}
-                >
-                  &#xe7ee;
-                </span>
-              </span>
-            </Dropdown>
-          </div>
-        ))}
+              </Dropdown>
+            </div>
+          ))}
       </div>
-    );
-  };
+    )
+  }
 
   // 渲染popover组件中的底部 添加成员按钮
   renderPopoverContentAddMemberBtn = () => {
@@ -629,8 +638,8 @@ class VisitControl extends Component {
           添加成员
         </Button>
       </div>
-    );
-  };
+    )
+  }
 
   // 渲染没有数据的时候
   renderPopoverContentNoContent = () => {
@@ -639,15 +648,15 @@ class VisitControl extends Component {
         <div className={styles.content__noConten_img} />
         <div className={styles.content__noConten_text}>暂无人员</div>
       </div>
-    );
-  };
+    )
+  }
 
   // 当前是否没有成员
   isCurrentHasNoMember = () => {
-    const { principalList } = this.props;
-    const { othersPersonList } = this.state;
-    return principalList.length === 0 && othersPersonList.length === 0;
-  };
+    const { principalList } = this.props
+    const { othersPersonList } = this.state
+    return principalList.length === 0 && othersPersonList.length === 0
+  }
 
   // 渲染popover组件中的内容
   renderPopoverContent = () => {
@@ -658,16 +667,16 @@ class VisitControl extends Component {
           {this.isCurrentHasNoMember() ? (
             <>{this.renderPopoverContentNoContent()}</>
           ) : (
-              <>
-                {!notShowPrincipal && this.renderPopoverContentPrincipalList()}
-                {this.renderPopoverContentOthersPersonList()}
-              </>
-            )}
+            <>
+              {!notShowPrincipal && this.renderPopoverContentPrincipalList()}
+              {this.renderPopoverContentOthersPersonList()}
+            </>
+          )}
         </div>
         {this.renderPopoverContentAddMemberBtn()}
       </div>
-    );
-  };
+    )
+  }
 
   render() {
     const {
@@ -679,19 +688,19 @@ class VisitControl extends Component {
       children,
       board_id,
       onlyShowPopoverContent
-    } = this.props;
+    } = this.props
     const {
       addMemberModalVisible,
       visible,
       comfirmRemoveModalVisible
-    } = this.state;
+    } = this.state
     const unClockEle = (
       <Tooltip title={tooltipUnClockText}>
         <i className={`${globalStyles.authTheme} ${styles.trigger__icon}`}>
           &#xe86b;
         </i>
       </Tooltip>
-    );
+    )
     const clockEle = (
       <Tooltip title={tooltipClockText}>
         <span className={styles.trigger__btn__wrapper}>
@@ -703,7 +712,7 @@ class VisitControl extends Component {
           <span className={styles.trigger__btn_text}>访问控制</span>
         </span>
       </Tooltip>
-    );
+    )
     return (
       <div
         className={styles.wrapper}
@@ -728,19 +737,21 @@ class VisitControl extends Component {
                 {children}
               </span>
             ) : (
-                <span
-                  className={styles.trigger__wrapper}
-                  onClick={e => this.togglePopoverVisible(e)}
-                >
-                  {isPropVisitControl ? clockEle : unClockEle}
-                </span>
-              )}
+              <span
+                className={styles.trigger__wrapper}
+                onClick={e => this.togglePopoverVisible(e)}
+              >
+                {isPropVisitControl ? clockEle : unClockEle}
+              </span>
+            )}
           </Popover>
         )}
         {/* 这里是直接显示访问控制中的内容 */}
         {onlyShowPopoverContent && (
           <div style={{ marginLeft: '-40%', textAlign: 'center' }}>
-            <div style={{ marginTop: '-24px' }}>{this.renderPopoverTitle()}</div>
+            <div style={{ marginTop: '-24px' }}>
+              {this.renderPopoverTitle()}
+            </div>
             <div>{this.renderPopoverContent()}</div>
           </div>
         )}
@@ -765,9 +776,13 @@ class VisitControl extends Component {
           submitText="确定"
           show_wechat_invite={false}
           board_id={board_id}
-          new_handleInviteMemberReturnResult={this.handleInviteMemberReturnResult}
+          new_handleInviteMemberReturnResult={
+            this.handleInviteMemberReturnResult
+          }
           modalVisible={this.state.ShowAddMenberModalVisibile}
-          setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)}
+          setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(
+            this
+          )}
         />
         <Modal
           visible={comfirmRemoveModalVisible}
@@ -780,7 +795,7 @@ class VisitControl extends Component {
           <p>{removeMemberPromptText}</p>
         </Modal>
       </div>
-    );
+    )
   }
 }
 
@@ -790,9 +805,9 @@ VisitControl.defaultProps = {
   tooltipUnClockText: '访问控制', //默认的popover包裹元素的tooltip
   tooltipClockText: '关闭访问控制', //默认的popover包裹元素的tooltip
   isPropVisitControl: true, //是否开启访问控制
-  handleVisitControlChange: function () {
+  handleVisitControlChange: function() {
     //访问控制 change 的回调函数
-    message.error('handleVisitControlChange is required. ');
+    message.error('handleVisitControlChange is required. ')
   },
   principalInfo: '位任务负责人', //已有权限人提示信息
   principalList: [
@@ -828,14 +843,14 @@ VisitControl.defaultProps = {
   ],
   otherPrivilege: {}, //现有的添加人员列表
   //{'id': 'read'}
-  handleClickedOtherPersonListOperatorItem: function () {
+  handleClickedOtherPersonListOperatorItem: function() {
     //点击选中邀请进来的外部人员的下拉菜单项目的回调函数
   },
-  handleAddNewMember: function () {
+  handleAddNewMember: function() {
     //...          //添加成员返回的 成员id 数组
   },
   removeMemberPromptText: '移出后用户将不能访问此内容',
-  handleVisitControlPopoverVisible: function () { } //单击本组件，或者是本组件visible改变的时候，将popover组件的visible状态传达到父组件。
-};
+  handleVisitControlPopoverVisible: function() {} //单击本组件，或者是本组件visible改变的时候，将popover组件的visible状态传达到父组件。
+}
 
-export default VisitControl;
+export default VisitControl

@@ -1,15 +1,12 @@
-import React from 'react';
+import React from 'react'
 import CreateTask from './CreateTask'
 
-const Task = (props) => {
-
+const Task = props => {
   return (
     <div>
       <CreateTask />
     </div>
   )
-};
+}
 
 export default Task
-
-

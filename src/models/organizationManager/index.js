@@ -1,23 +1,60 @@
 import {
-  saveNounList, getNounList, getPayingStatus, getOrderList, getPermissions, savePermission, getRolePermissions, saveRolePermission, createRole,
-  updateRole, deleteRole, copyRole, updateOrganization, setDefaultRole, getCurrentNounPlan, getFnManagementList,
-  setFnManagementStatus, investmentMapAddAdministrators, investmentMapDeleteAdministrators, investmentMapQueryAdministrators,
-  getTemplateList, createTemplete, updateTemplete, deleteTemplete, getTemplateListContainer, createTempleteContainer, deleteTempleteContainer, updateTempleteContainer, sortTempleteContainer, getCustomFieldList, createCustomFieldGroup, updateCustomFieldGroup, deleteCustomFieldGroup, createCustomField, updateCustomField, deleteCustomField, discountCustomField, createRelationCustomField, setRelationCustomField, deleteRelationCustomField
+  saveNounList,
+  getNounList,
+  getPayingStatus,
+  getOrderList,
+  getPermissions,
+  savePermission,
+  getRolePermissions,
+  saveRolePermission,
+  createRole,
+  updateRole,
+  deleteRole,
+  copyRole,
+  updateOrganization,
+  setDefaultRole,
+  getCurrentNounPlan,
+  getFnManagementList,
+  setFnManagementStatus,
+  investmentMapAddAdministrators,
+  investmentMapDeleteAdministrators,
+  investmentMapQueryAdministrators,
+  getTemplateList,
+  createTemplete,
+  updateTemplete,
+  deleteTemplete,
+  getTemplateListContainer,
+  createTempleteContainer,
+  deleteTempleteContainer,
+  updateTempleteContainer,
+  sortTempleteContainer,
+  getCustomFieldList,
+  createCustomFieldGroup,
+  updateCustomFieldGroup,
+  deleteCustomFieldGroup,
+  createCustomField,
+  updateCustomField,
+  deleteCustomField,
+  discountCustomField,
+  createRelationCustomField,
+  setRelationCustomField,
+  deleteRelationCustomField
 } from '../../services/organization'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
 import {
-  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
+  MESSAGE_DURATION_TIME,
+  NOT_HAS_PERMISION_COMFIRN,
   ORG_UPMS_ORGANIZATION_ROLE_EDIT
-} from "../../globalset/js/constant";
-import { routerRedux } from "dva/router";
-import Cookies from "js-cookie";
-import { getAppsList } from "../../services/technological/project";
+} from '../../globalset/js/constant'
+import { routerRedux } from 'dva/router'
+import Cookies from 'js-cookie'
+import { getAppsList } from '../../services/technological/project'
 import modelExtend from 'dva-model-extend'
 import technological from './index'
 import { selectTabSelectKey } from './select'
-import { checkIsHasPermission } from "../../utils/businessFunction";
-import { getUSerInfo } from "../../services/technological";
+import { checkIsHasPermission } from '../../utils/businessFunction'
+import { getUSerInfo } from '../../services/technological'
 
 export default {
   namespace: 'organizationManager',
@@ -28,22 +65,34 @@ export default {
   },
   subscriptions: {
     setup({ dispatch, history }) {
-      history.listen((location) => {
+      history.listen(location => {
         message.destroy()
         if (location.pathname === '/organizationManager') {
-          const currentSelectOrganize = localStorage.getItem('currentSelectOrganize') ? JSON.parse(localStorage.getItem('currentSelectOrganize')) : {}//JSON.parse(localStorage.getItem('currentSelectOrganize'))
-          const { name, member_join_model, member_join_content, logo, logo_id, id } = currentSelectOrganize
+          const currentSelectOrganize = localStorage.getItem(
+            'currentSelectOrganize'
+          )
+            ? JSON.parse(localStorage.getItem('currentSelectOrganize'))
+            : {} //JSON.parse(localStorage.getItem('currentSelectOrganize'))
+          const {
+            name,
+            member_join_model,
+            member_join_content,
+            logo,
+            logo_id,
+            id
+          } = currentSelectOrganize
           dispatch({
             type: 'updateDatas',
             payload: {
-              currentOrganizationInfo: { //组织信息
+              currentOrganizationInfo: {
+                //组织信息
                 name,
                 member_join_model,
                 member_join_content,
                 logo,
                 logo_id,
                 id,
-                management_Array: [], //地图管理人员数组
+                management_Array: [] //地图管理人员数组
               },
               content_tree_data: [], //可访问内容
               function_tree_data: [],
@@ -59,52 +108,51 @@ export default {
               field_data: [],
               editable: '0', //当前是否在自定义编辑状态 1是 0 否
               fnmanagement_list: [], //功能管理状态
-              myWorkbenchBoxList: [],
+              myWorkbenchBoxList: []
 
               // projectSchemeBreadCrumbList: [{id: '0', name: '全部方案'}]
             }
           })
 
-          if (true) { //如果有权限才去查 //checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_EDIT)
+          if (true) {
+            //如果有权限才去查 //checkIsHasPermission(ORG_UPMS_ORGANIZATION_ROLE_EDIT)
             dispatch({
               type: 'getRolePermissions',
               payload: {
-                type: '1',
+                type: '1'
               }
             })
             dispatch({
               type: 'getRolePermissions',
               payload: {
-                type: '2',
+                type: '2'
               }
             })
             dispatch({
               type: 'getNounList',
               payload: {}
             })
-            const OrganizationId = localStorage.getItem('OrganizationId');
+            const OrganizationId = localStorage.getItem('OrganizationId')
             if (OrganizationId !== '0') {
               dispatch({
                 type: 'getPayingStatus',
                 payload: { orgId: OrganizationId }
               })
             }
-
           }
-
         } else {
         }
       })
-    },
+    }
   },
   effects: {
-    * updateOrganization({ payload }, { select, call, put }) {
+    *updateOrganization({ payload }, { select, call, put }) {
       let res = yield call(updateOrganization, payload)
       if (isApiResponseOk(res)) {
         yield put({
           type: 'getUSerInfo',
           payload: {
-            calBack: function () {
+            calBack: function() {
               message.success('更新组织信息成功', MESSAGE_DURATION_TIME)
             }
           }
@@ -114,7 +162,8 @@ export default {
       }
     },
 
-    * getUSerInfo({ payload }, { select, call, put }) { //提交表单
+    *getUSerInfo({ payload }, { select, call, put }) {
+      //提交表单
       let res = yield call(getUSerInfo, {})
       const { calBack } = payload
       if (typeof calBack === 'function') {
@@ -123,7 +172,10 @@ export default {
       if (isApiResponseOk(res)) {
         //当前选中的组织
         if (res.data.current_org) {
-          localStorage.setItem('currentSelectOrganize', JSON.stringify(res.data.current_org))
+          localStorage.setItem(
+            'currentSelectOrganize',
+            JSON.stringify(res.data.current_org)
+          )
         }
         //存储
         localStorage.setItem('userInfo', JSON.stringify(res.data))
@@ -131,21 +183,35 @@ export default {
       }
     },
 
-    * getRolePermissions({ payload }, { select, call, put }) {
+    *getRolePermissions({ payload }, { select, call, put }) {
       const { type } = payload
       let res = yield call(getPermissions, { type })
       if (isApiResponseOk(res)) {
-        const { content_tree_data = [], function_tree_data = [], role_data = [], box_data = [] } = res.data
+        const {
+          content_tree_data = [],
+          function_tree_data = [],
+          role_data = [],
+          box_data = []
+        } = res.data
         for (let i = 0; i < role_data.length; i++) {
-          const { already_has_content_permission = [], already_has_function_permission = [] } = role_data[i]
+          const {
+            already_has_content_permission = [],
+            already_has_function_permission = []
+          } = role_data[i]
           //权限树
-          role_data[i]['function_tree_data'] = JSON.parse(JSON.stringify(function_tree_data))
+          role_data[i]['function_tree_data'] = JSON.parse(
+            JSON.stringify(function_tree_data)
+          )
           const authDataChild = role_data[i]['function_tree_data']
-          for (let j = 0; j < authDataChild.length; j++) { //取出相同的
+          for (let j = 0; j < authDataChild.length; j++) {
+            //取出相同的
             let selects = []
             for (let k = 0; k < authDataChild[j].child_data.length; k++) {
               for (let z = 0; z < already_has_function_permission.length; z++) {
-                if (already_has_function_permission[z] === authDataChild[j].child_data[k].id) {
+                if (
+                  already_has_function_permission[z] ===
+                  authDataChild[j].child_data[k].id
+                ) {
                   selects.push(already_has_function_permission[z])
                 }
               }
@@ -177,18 +243,20 @@ export default {
           // }
           // role_data[i]['already_has_content_permission_trans'] = already_has_content_permission_trans
         }
-        if (type === '1') { //组织角色数据
+        if (type === '1') {
+          //组织角色数据
           yield put({
             type: 'updateDatas',
             payload: {
-              orgnization_role_data: role_data,
+              orgnization_role_data: role_data
             }
           })
-        } else if (type === '2') { //项目角色数据
+        } else if (type === '2') {
+          //项目角色数据
           yield put({
             type: 'updateDatas',
             payload: {
-              project_role_data: role_data,
+              project_role_data: role_data
             }
           })
         }
@@ -198,10 +266,9 @@ export default {
           calback()
         }
       } else {
-
       }
     },
-    * saveRolePermission({ payload }, { select, call, put }) {
+    *saveRolePermission({ payload }, { select, call, put }) {
       const tabSelectKey = yield select(selectTabSelectKey)
       const type = tabSelectKey === '2' ? '1' : '2'
       let res = yield call(savePermission, payload)
@@ -210,7 +277,7 @@ export default {
           type: 'getRolePermissions',
           payload: {
             type,
-            calback: function () {
+            calback: function() {
               message.success('保存成功', MESSAGE_DURATION_TIME)
             }
           }
@@ -219,7 +286,7 @@ export default {
         message.warn('保存失败', MESSAGE_DURATION_TIME)
       }
     },
-    * createRole({ payload }, { select, call, put }) {
+    *createRole({ payload }, { select, call, put }) {
       let res = yield call(createRole, payload)
       const tabSelectKey = yield select(selectTabSelectKey)
       const type = tabSelectKey === '2' ? '1' : '2'
@@ -228,7 +295,7 @@ export default {
           type: 'getRolePermissions',
           payload: {
             type,
-            calback: function () {
+            calback: function() {
               message.success('添加角色成功', MESSAGE_DURATION_TIME)
             }
           }
@@ -237,7 +304,7 @@ export default {
         message.warn('添加角色失败', MESSAGE_DURATION_TIME)
       }
     },
-    * updateRole({ payload }, { select, call, put }) {
+    *updateRole({ payload }, { select, call, put }) {
       let res = yield call(updateRole, payload)
       const tabSelectKey = yield select(selectTabSelectKey)
       const type = tabSelectKey === '2' ? '1' : '2'
@@ -246,7 +313,7 @@ export default {
           type: 'getRolePermissions',
           payload: {
             type,
-            calback: function () {
+            calback: function() {
               message.success('更新角色成功', MESSAGE_DURATION_TIME)
             }
           }
@@ -255,7 +322,7 @@ export default {
         message.warn('更新角色失败', MESSAGE_DURATION_TIME)
       }
     },
-    * deleteRole({ payload }, { select, call, put }) {
+    *deleteRole({ payload }, { select, call, put }) {
       let res = yield call(deleteRole, payload)
       const tabSelectKey = yield select(selectTabSelectKey)
       const type = tabSelectKey === '2' ? '1' : '2'
@@ -264,7 +331,7 @@ export default {
           type: 'getRolePermissions',
           payload: {
             type,
-            calback: function () {
+            calback: function() {
               message.success('删除角色成功', MESSAGE_DURATION_TIME)
             }
           }
@@ -273,7 +340,7 @@ export default {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
-    * copyRole({ payload }, { select, call, put }) {
+    *copyRole({ payload }, { select, call, put }) {
       let res = yield call(copyRole, payload)
       const tabSelectKey = yield select(selectTabSelectKey)
       const type = tabSelectKey === '2' ? '1' : '2'
@@ -282,7 +349,7 @@ export default {
           type: 'getRolePermissions',
           payload: {
             type,
-            calback: function () {
+            calback: function() {
               message.success('复制角色成功', MESSAGE_DURATION_TIME)
             }
           }
@@ -291,7 +358,7 @@ export default {
         message.warn('复制角色失败', MESSAGE_DURATION_TIME)
       }
     },
-    * setDefaultRole({ payload }, { select, call, put }) {
+    *setDefaultRole({ payload }, { select, call, put }) {
       let res = yield call(setDefaultRole, payload)
       const tabSelectKey = yield select(selectTabSelectKey)
       const type = tabSelectKey === '2' ? '1' : '2'
@@ -300,7 +367,7 @@ export default {
           type: 'getRolePermissions',
           payload: {
             type,
-            calback: function () {
+            calback: function() {
               message.success('设置默认角色成功', MESSAGE_DURATION_TIME)
             }
           }
@@ -309,7 +376,7 @@ export default {
         message.warn('设置默认角色失败', MESSAGE_DURATION_TIME)
       }
     },
-    * getNounList({ payload }, { select, call, put }) {
+    *getNounList({ payload }, { select, call, put }) {
       const res = yield call(getNounList, {})
 
       if (isApiResponseOk(res)) {
@@ -321,11 +388,14 @@ export default {
 
         for (let i = 0; i < scheme_data.length; i++) {
           //自定义没有列表时设
-          if (!scheme_data[i]['field_value'] || !scheme_data[i]['field_value'].length) {
+          if (
+            !scheme_data[i]['field_value'] ||
+            !scheme_data[i]['field_value'].length
+          ) {
             scheme_data[i]['field_value'] = []
             for (let j = 0; j < scheme_data[0]['field_value'].length; j++) {
               const obj = {
-                field_value: '',
+                field_value: ''
               }
               scheme_data[i]['field_value'].push(obj)
             }
@@ -346,11 +416,10 @@ export default {
           }
         })
       } else {
-
       }
     },
 
-    * getPayingStatus({ payload }, { select, call, put }) {
+    *getPayingStatus({ payload }, { select, call, put }) {
       const res = yield call(getPayingStatus, payload)
       if (isApiResponseOk(res)) {
         const data = res.data || {}
@@ -365,7 +434,7 @@ export default {
       }
     },
 
-    * getOrderList({ payload }, { select, call, put }) {
+    *getOrderList({ payload }, { select, call, put }) {
       const res = yield call(getOrderList, payload)
       if (isApiResponseOk(res)) {
         const data = res.data || {}
@@ -380,7 +449,7 @@ export default {
       }
     },
 
-    * saveNounList({ payload }, { select, call, put }) {
+    *saveNounList({ payload }, { select, call, put }) {
       const { current_scheme_local } = payload
       const res = yield call(saveNounList, payload)
       if (isApiResponseOk(res)) {
@@ -399,7 +468,7 @@ export default {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
-    * getCurrentNounPlan({ payload }, { select, call, put }) {
+    *getCurrentNounPlan({ payload }, { select, call, put }) {
       let res = yield call(getCurrentNounPlan, payload)
       if (isApiResponseOk(res)) {
         // message.success('已保存', MESSAGE_DURATION_TIME)
@@ -417,7 +486,7 @@ export default {
     },
 
     //权限(废弃)
-    * getPermissions({ payload }, { select, call, put }) {
+    *getPermissions({ payload }, { select, call, put }) {
       const { type } = payload
       let res = yield call(getPermissions, { type })
       if (isApiResponseOk(res)) {
@@ -426,7 +495,10 @@ export default {
         for (let i = 0; i < newData.length; i++) {
           for (let j = 0; j < newData[i].child_data.length; j++) {
             newData[i].child_data[j]['role_data'] = role_data
-            if (newData[i].child_data[j]['role_data'].length <= newData[i].child_data[j]['already_has_role'].length) {
+            if (
+              newData[i].child_data[j]['role_data'].length <=
+              newData[i].child_data[j]['already_has_role'].length
+            ) {
               newData[i].child_data[j]['indeterminate'] = false
               newData[i].child_data[j]['checkedAll'] = true
             } else {
@@ -437,7 +509,6 @@ export default {
                 newData[i].child_data[j]['indeterminate'] = false
               }
             }
-
           }
         }
         yield put({
@@ -452,16 +523,15 @@ export default {
           calback()
         }
       } else {
-
       }
     },
-    * savePermission({ payload }, { select, call, put }) {
+    *savePermission({ payload }, { select, call, put }) {
       let res = yield call(savePermission, payload)
       if (isApiResponseOk(res)) {
         yield put({
           type: 'getPermissions',
           payload: {
-            calback: function () {
+            calback: function() {
               message.success('保存成功', MESSAGE_DURATION_TIME)
             }
           }
@@ -471,12 +541,12 @@ export default {
       }
     },
 
-    * routingJump({ payload }, { call, put }) {
+    *routingJump({ payload }, { call, put }) {
       const { route } = payload
-      yield put(routerRedux.push(route));
+      yield put(routerRedux.push(route))
     },
 
-    * getFnManagementList({ payload }, { call, put }) {
+    *getFnManagementList({ payload }, { call, put }) {
       const res = yield call(getFnManagementList, payload)
 
       yield put({
@@ -492,7 +562,7 @@ export default {
       })
     },
 
-    * setFnManagement({ payload }, { call, put }) {
+    *setFnManagement({ payload }, { call, put }) {
       const { id, status } = payload
       let res = yield call(setFnManagementStatus, { id, status })
       const { calback } = payload
@@ -501,13 +571,12 @@ export default {
           calback()
         }
         message.success('修改成功', MESSAGE_DURATION_TIME)
-      }
-      else {
+      } else {
         message.warn('修改失败', MESSAGE_DURATION_TIME)
       }
     },
 
-    * investmentMapQueryAdministrators({ payload }, { call, put }) {
+    *investmentMapQueryAdministrators({ payload }, { call, put }) {
       const res = yield call(investmentMapQueryAdministrators, payload)
       yield put({
         type: 'updateDatas',
@@ -517,7 +586,7 @@ export default {
       })
     },
 
-    * investmentMapAddAdministrators({ payload }, { call, put }) {
+    *investmentMapAddAdministrators({ payload }, { call, put }) {
       const res = yield call(investmentMapAddAdministrators, payload)
       if (isApiResponseOk(res)) {
         yield put({
@@ -531,7 +600,7 @@ export default {
       }
     },
 
-    * investmentMapDeleteAdministrators({ payload }, { call, put }) {
+    *investmentMapDeleteAdministrators({ payload }, { call, put }) {
       const res = yield call(investmentMapDeleteAdministrators, payload)
       if (isApiResponseOk(res)) {
         yield put({
@@ -547,7 +616,7 @@ export default {
     },
 
     // 获取模板列表
-    * getTemplateList({ payload }, { call, put }) {
+    *getTemplateList({ payload }, { call, put }) {
       const res = yield call(getTemplateList, payload)
       if (isApiResponseOk(res)) {
         yield put({
@@ -560,7 +629,7 @@ export default {
     },
 
     // 获取模板列表内容
-    * getTemplateListContainer({ payload }, { call, put }) {
+    *getTemplateListContainer({ payload }, { call, put }) {
       let { template_id } = payload
       const res = yield call(getTemplateListContainer, { template_id })
       if (isApiResponseOk(res)) {
@@ -574,7 +643,7 @@ export default {
     },
 
     // 创建模板
-    * createTemplete({ payload }, { call, put }) {
+    *createTemplete({ payload }, { call, put }) {
       const { _organization_id } = payload
       const res = yield call(createTemplete, payload)
       if (isApiResponseOk(res)) {
@@ -592,7 +661,7 @@ export default {
       }
     },
     // 更新模板
-    * updateTemplete({ payload }, { call, put }) {
+    *updateTemplete({ payload }, { call, put }) {
       const { _organization_id, id, name } = payload
       const res = yield call(updateTemplete, { id, name })
       if (isApiResponseOk(res)) {
@@ -612,7 +681,7 @@ export default {
     },
 
     // 删除模板
-    * deleteTemplete({ payload }, { call, put }) {
+    *deleteTemplete({ payload }, { call, put }) {
       const { _organization_id, id } = payload
       const res = yield call(deleteTemplete, { id })
       if (isApiResponseOk(res)) {
@@ -632,7 +701,7 @@ export default {
     },
 
     // 创建模板内容
-    * createTempleteContainer({ payload }, { call, put }) {
+    *createTempleteContainer({ payload }, { call, put }) {
       let res = yield call(createTempleteContainer, payload)
       if (isApiResponseOk(res)) {
         setTimeout(() => {
@@ -651,7 +720,7 @@ export default {
     },
 
     // 更新模板内容
-    * updateTempleteContainer({ payload }, { call, put }) {
+    *updateTempleteContainer({ payload }, { call, put }) {
       let { id, name, template_id } = payload
       let res = yield call(updateTempleteContainer, { id, name })
       if (isApiResponseOk(res)) {
@@ -669,7 +738,7 @@ export default {
     },
 
     // 删除模板内容
-    * deleteTempleteContainer({ payload }, { call, put }) {
+    *deleteTempleteContainer({ payload }, { call, put }) {
       let { id, template_id } = payload
       let res = yield call(deleteTempleteContainer, { id })
       if (isApiResponseOk(res)) {
@@ -689,7 +758,7 @@ export default {
     },
 
     // 排序
-    * sortTempleteContainer({ payload }, { call, put }) {
+    *sortTempleteContainer({ payload }, { call, put }) {
       let { template_id } = payload
       let res = yield call(sortTempleteContainer, { ...payload })
       if (isApiResponseOk(res)) {
@@ -708,7 +777,7 @@ export default {
     },
 
     // 获取自定义字段分组列表
-    * getCustomFieldList({ payload }, { call, put }) {
+    *getCustomFieldList({ payload }, { call, put }) {
       let res = yield call(getCustomFieldList)
       if (isApiResponseOk(res)) {
         yield put({
@@ -721,7 +790,7 @@ export default {
     },
 
     // 创建自定义字段分组
-    * createCustomFieldGroup({ payload }, { call, put }) {
+    *createCustomFieldGroup({ payload }, { call, put }) {
       let res = yield call(createCustomFieldGroup, { ...payload })
       if (isApiResponseOk(res)) {
         setTimeout(() => {
@@ -729,9 +798,7 @@ export default {
         }, 200)
         yield put({
           type: 'getCustomFieldList',
-          payload: {
-
-          }
+          payload: {}
         })
       } else {
         message.warn(res.message)
@@ -739,7 +806,7 @@ export default {
     },
 
     // 更新自定义字段分组
-    * updateCustomFieldGroup({ payload }, { call, put }) {
+    *updateCustomFieldGroup({ payload }, { call, put }) {
       let res = yield call(updateCustomFieldGroup, { ...payload })
       if (isApiResponseOk(res)) {
         setTimeout(() => {
@@ -747,9 +814,7 @@ export default {
         }, 200)
         yield put({
           type: 'getCustomFieldList',
-          payload: {
-
-          }
+          payload: {}
         })
       } else {
         message.warn(res.message)
@@ -758,7 +823,7 @@ export default {
     },
 
     // 删除自定义字段分组
-    * deleteCustomFieldGroup({ payload }, { call, put }) {
+    *deleteCustomFieldGroup({ payload }, { call, put }) {
       let res = yield call(deleteCustomFieldGroup, { ...payload })
       if (isApiResponseOk(res)) {
         setTimeout(() => {
@@ -766,9 +831,7 @@ export default {
         }, 200)
         yield put({
           type: 'getCustomFieldList',
-          payload: {
-
-          }
+          payload: {}
         })
       } else {
         message.warn(res.message)
@@ -777,7 +840,7 @@ export default {
     },
 
     // 创建自定义字段
-    * createCustomField({ payload }, { call, put }) {
+    *createCustomField({ payload }, { call, put }) {
       let res = yield call(createCustomField, { ...payload })
       if (isApiResponseOk(res)) {
         setTimeout(() => {
@@ -785,9 +848,7 @@ export default {
         }, 200)
         yield put({
           type: 'getCustomFieldList',
-          payload: {
-
-          }
+          payload: {}
         })
       } else {
         message.warn(res.message)
@@ -796,7 +857,7 @@ export default {
     },
 
     // 更新自定义字段
-    * updateCustomField({ payload }, { call, put }) {
+    *updateCustomField({ payload }, { call, put }) {
       let res = yield call(updateCustomField, { ...payload })
       if (isApiResponseOk(res)) {
         setTimeout(() => {
@@ -804,9 +865,7 @@ export default {
         }, 200)
         yield put({
           type: 'getCustomFieldList',
-          payload: {
-
-          }
+          payload: {}
         })
       } else {
         message.warn(res.message)
@@ -815,7 +874,7 @@ export default {
     },
 
     // 删除自定义字段
-    * deleteCustomField({ payload }, { call, put }) {
+    *deleteCustomField({ payload }, { call, put }) {
       let res = yield call(deleteCustomField, { ...payload })
       if (isApiResponseOk(res)) {
         setTimeout(() => {
@@ -823,9 +882,7 @@ export default {
         }, 200)
         yield put({
           type: 'getCustomFieldList',
-          payload: {
-
-          }
+          payload: {}
         })
       } else {
         message.warn(res.message)
@@ -834,7 +891,7 @@ export default {
     },
 
     // 停用自定义字段
-    * discountCustomField({ payload }, { call, put }) {
+    *discountCustomField({ payload }, { call, put }) {
       let res = yield call(discountCustomField, { ...payload })
       if (isApiResponseOk(res)) {
         setTimeout(() => {
@@ -842,9 +899,7 @@ export default {
         }, 200)
         yield put({
           type: 'getCustomFieldList',
-          payload: {
-
-          }
+          payload: {}
         })
       } else {
         message.warn(res.message)
@@ -852,8 +907,8 @@ export default {
       return res || {}
     },
 
-    // 创建关联字段 
-    * createRelationCustomField({ payload }, { call, put }) {
+    // 创建关联字段
+    *createRelationCustomField({ payload }, { call, put }) {
       let res = yield call(createRelationCustomField, { ...payload })
       if (isApiResponseOk(res)) {
         setTimeout(() => {
@@ -865,8 +920,8 @@ export default {
       return res || {}
     },
 
-    // 设置关联字段值 
-    * setRelationCustomField({ payload }, { call, put }) {
+    // 设置关联字段值
+    *setRelationCustomField({ payload }, { call, put }) {
       let res = yield call(setRelationCustomField, { ...payload })
       if (isApiResponseOk(res)) {
         // setTimeout(() => {
@@ -878,8 +933,8 @@ export default {
       return res || {}
     },
 
-    // 删除关联字段 
-    * deleteRelationCustomField({ payload }, { call, put }) {
+    // 删除关联字段
+    *deleteRelationCustomField({ payload }, { call, put }) {
       let res = yield call(deleteRelationCustomField, { ...payload })
       if (isApiResponseOk(res)) {
         setTimeout(() => {
@@ -889,16 +944,15 @@ export default {
         message.warn(res.message)
       }
       return res || {}
-    },
-
+    }
   },
 
   reducers: {
     updateDatas(state, action) {
       return {
         ...state,
-        datas: { ...state.datas, ...action.payload },
+        datas: { ...state.datas, ...action.payload }
       }
     }
-  },
-};
+  }
+}

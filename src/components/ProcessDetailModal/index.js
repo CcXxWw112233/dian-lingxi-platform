@@ -7,7 +7,6 @@ import { lx_utils } from 'lingxi-im'
 
 @connect(mapStateToProps)
 export default class ProcessDetailModal extends Component {
-
   onCancel = () => {
     this.props.dispatch({
       type: 'publicProcessDetailModal/updateDatas',
@@ -29,18 +28,26 @@ export default class ProcessDetailModal extends Component {
         not_show_create_node_guide: '1', // 添加节点步骤的引导
         not_show_create_form_guide: '1', // 配置表项的引导
         not_show_create_rating_guide: '0', // 配置评分节点的引导
-        currentOrgAllMembers: [], // 组织成员
+        currentOrgAllMembers: [] // 组织成员
       }
     })
-    this.props.setProcessDetailModalVisibile && this.props.setProcessDetailModalVisibile()
+    this.props.setProcessDetailModalVisibile &&
+      this.props.setProcessDetailModalVisibile()
     // 圈子关闭联动
     lx_utils && lx_utils.setCommentData(this.props.processInfo.id || null)
   }
 
   commonDrawerContentOutClick = () => {
-    const { currentFlowInstanceName, currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription } = this.props
-    if (isEditCurrentFlowInstanceName) { // 如果操作的是实例名称
-      if (currentFlowInstanceName != '') { // 表示输入了名称, 那么就可以隐藏输入框
+    const {
+      currentFlowInstanceName,
+      currentFlowInstanceDescription,
+      isEditCurrentFlowInstanceName,
+      isEditCurrentFlowInstanceDescription
+    } = this.props
+    if (isEditCurrentFlowInstanceName) {
+      // 如果操作的是实例名称
+      if (currentFlowInstanceName != '') {
+        // 表示输入了名称, 那么就可以隐藏输入框
         this.props.dispatch({
           type: 'publicProcessDetailModal/updateDatas',
           payload: {
@@ -56,7 +63,8 @@ export default class ProcessDetailModal extends Component {
         })
       }
     }
-    if (isEditCurrentFlowInstanceDescription) { // 如果操作的是编辑描述
+    if (isEditCurrentFlowInstanceDescription) {
+      // 如果操作的是编辑描述
       this.props.dispatch({
         type: 'publicProcessDetailModal/updateDatas',
         payload: {
@@ -64,11 +72,16 @@ export default class ProcessDetailModal extends Component {
         }
       })
     }
-
   }
 
   render() {
-    const { process_detail_modal_visible, whetherUpdateWorkbenchPorcessListData, updateParentProcessTempleteList, request_flows_params = {}, getContainer } = this.props
+    const {
+      process_detail_modal_visible,
+      whetherUpdateWorkbenchPorcessListData,
+      updateParentProcessTempleteList,
+      request_flows_params = {},
+      getContainer
+    } = this.props
     return (
       <div>
         <PublicDetailModal
@@ -76,8 +89,22 @@ export default class ProcessDetailModal extends Component {
           modalVisible={process_detail_modal_visible}
           onCancel={this.onCancel}
           isNotShowFileDetailContentRightVisible={true}
-          mainContent={<MainContent request_flows_params={request_flows_params} onCancel={this.onCancel} updateParentProcessTempleteList={updateParentProcessTempleteList} />}
-          headerContent={<HeaderContent request_flows_params={request_flows_params} onCancel={this.onCancel} whetherUpdateWorkbenchPorcessListData={whetherUpdateWorkbenchPorcessListData} />}
+          mainContent={
+            <MainContent
+              request_flows_params={request_flows_params}
+              onCancel={this.onCancel}
+              updateParentProcessTempleteList={updateParentProcessTempleteList}
+            />
+          }
+          headerContent={
+            <HeaderContent
+              request_flows_params={request_flows_params}
+              onCancel={this.onCancel}
+              whetherUpdateWorkbenchPorcessListData={
+                whetherUpdateWorkbenchPorcessListData
+              }
+            />
+          }
           commonDrawerContentOutClick={this.commonDrawerContentOutClick}
           isNotShowFileDetailContentLeftScrollBar={true}
         />
@@ -89,15 +116,27 @@ export default class ProcessDetailModal extends Component {
 ProcessDetailModal.defaultProps = {
   getContainer: '', // 对应的选择器对象, 即需要的挂载点
   process_detail_modal_visible: false, // 设置流程弹窗是否显示, 默认为false 不显示
-  whetherUpdateWorkbenchPorcessListData: function () { }, // 修改访问控制后需要更新工作台中的代办列表 的回调
-  updateParentProcessTempleteList: function () { }, // 内部数据修改后用来更新外部数据的回调
+  whetherUpdateWorkbenchPorcessListData: function() {}, // 修改访问控制后需要更新工作台中的代办列表 的回调
+  updateParentProcessTempleteList: function() {}, // 内部数据修改后用来更新外部数据的回调
   request_flows_params: {}, // 接收的外部参数
-  setProcessDetailModalVisibile: function () { }, // 关闭弹窗的回调
+  setProcessDetailModalVisibile: function() {} // 关闭弹窗的回调
 }
 
 //  只关联public中弹窗内的数据
-function mapStateToProps({ publicProcessDetailModal: { processInfo = {}, currentFlowInstanceName, currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription }
-
+function mapStateToProps({
+  publicProcessDetailModal: {
+    processInfo = {},
+    currentFlowInstanceName,
+    currentFlowInstanceDescription,
+    isEditCurrentFlowInstanceName,
+    isEditCurrentFlowInstanceDescription
+  }
 }) {
-  return { processInfo, currentFlowInstanceName, currentFlowInstanceDescription, isEditCurrentFlowInstanceName, isEditCurrentFlowInstanceDescription }
+  return {
+    processInfo,
+    currentFlowInstanceName,
+    currentFlowInstanceDescription,
+    isEditCurrentFlowInstanceName,
+    isEditCurrentFlowInstanceDescription
+  }
 }

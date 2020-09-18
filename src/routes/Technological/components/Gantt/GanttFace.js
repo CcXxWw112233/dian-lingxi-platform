@@ -1,10 +1,19 @@
-import React, { Component } from 'react';
-import { connect, } from 'dva';
+import React, { Component } from 'react'
+import { connect } from 'dva'
 import indexStyles from './index.less'
 import GetRowGantt from './GetRowGantt'
 import DateList from './DateList'
 import GroupListHead from './GroupListHead'
-import { getMonthDate, getNextMonthDatePush, getGoldDateData, getLastMonthDateShift, getNextYearDate, getLastYearDate, getNextWeeksDate, getLastWeeksDate } from './getDate'
+import {
+  getMonthDate,
+  getNextMonthDatePush,
+  getGoldDateData,
+  getLastMonthDateShift,
+  getNextYearDate,
+  getLastYearDate,
+  getNextWeeksDate,
+  getLastWeeksDate
+} from './getDate'
 import { date_area_height, ganttIsOutlineView } from './constants'
 import GroupListHeadSet from './GroupListHeadSet.js'
 import GroupListHeadSetBottom from './GroupListHeadSetBottom'
@@ -14,15 +23,15 @@ import BoardsFilesArea from './components/boardFile/BoardsFilesArea'
 import FaceRightButton from './components/gattFaceCardItem/FaceRightButton'
 import { Spin } from 'antd'
 import MiletoneGuide from './components/MiletonesGuide/index'
-import { isPaymentOrgUser } from '../../../../utils/businessFunction';
+import { isPaymentOrgUser } from '../../../../utils/businessFunction'
 import BoardTemplate from './components/boardTemplate'
 import GroupListHeadElse from './GroupListHeadElse'
 import GetRowGanttItemElse from './GetRowGanttItemElse'
-import { weekDataArray } from './calDate';
-import { closeFeature } from '../../../../utils/temporary';
+import { weekDataArray } from './calDate'
+import { closeFeature } from '../../../../utils/temporary'
 import CardDetailDrawer from './components/CardDetailDrawer'
 import CustomFieldDetailDrawer from './components/CardDetailDrawer/CustomFieldDetailDrawer'
-import { isApiResponseOk } from '../../../../utils/handleResponseData';
+import { isApiResponseOk } from '../../../../utils/handleResponseData'
 import _ from 'lodash'
 import HeaderWidthTriggle from './components/HeaderWidthTriggle'
 
@@ -60,9 +69,7 @@ export default class GanttFace extends Component {
     const { dispatch } = this.props
     dispatch({
       type: 'gantt/getProcessTemplateList',
-      payload: {
-
-      }
+      payload: {}
     })
   }
   // 获取项目列表的users apps groups
@@ -79,9 +86,7 @@ export default class GanttFace extends Component {
     const { dispatch } = this.props
     dispatch({
       type: 'gantt/getAboutAppsBoards',
-      payload: {
-
-      }
+      payload: {}
     })
   }
   // 获取带分组的项目列表
@@ -89,9 +94,7 @@ export default class GanttFace extends Component {
     const { dispatch } = this.props
     dispatch({
       type: 'gantt/getAboutGroupBoards',
-      payload: {
-
-      }
+      payload: {}
     })
   }
   // 获取带用户的项目列表
@@ -99,9 +102,7 @@ export default class GanttFace extends Component {
     const { dispatch } = this.props
     dispatch({
       type: 'gantt/getAboutUsersBoards',
-      payload: {
-
-      }
+      payload: {}
     })
   }
 
@@ -110,7 +111,7 @@ export default class GanttFace extends Component {
   }
   //设置卡片高度
   setGanTTCardHeight() {
-    const documentHeight = document.documentElement.clientHeight;//获取页面可见高度
+    const documentHeight = document.documentElement.clientHeight //获取页面可见高度
     const gantt_card_out = document.getElementById('gantt_card_out')
     let offsetTop = 0
     if (gantt_card_out) {
@@ -126,13 +127,16 @@ export default class GanttFace extends Component {
     const { ceilWidth } = this.props
     const date = new Date().getDate()
     //60为一个月长度，3为遮住的部分长度，date为当前月到今天为止的长度,1为偏差修复, 16为左边header的宽度和withCeil * n的 %值
-    this.setScrollPosition({ delay: 300, position: ceilWidth * (60 - 4 - 4 + date - 1) - 16 }) //第一为左边头部宽度，第二个4为距离头部距离
+    this.setScrollPosition({
+      delay: 300,
+      position: ceilWidth * (60 - 4 - 4 + date - 1) - 16
+    }) //第一为左边头部宽度，第二个4为距离头部距离
   }
   //设置滚动条位置
   setScrollPosition = ({ delay = 300, position = 200 }) => {
     const that = this
     const target = this.refs.gantt_card_out_middle
-    setTimeout(function () {
+    setTimeout(function() {
       // if (target.scrollTo) {
       //   target.scrollTo(position, 0)
       // } else {
@@ -144,18 +148,18 @@ export default class GanttFace extends Component {
   }
 
   // 设置滚动的区域
-  setScrollArea = (area_type) => {
+  setScrollArea = area_type => {
     this.setState({
       scroll_area: area_type
     })
   }
   //左右拖动,日期会更新
-  ganttScroll = (e) => {
-    e.stopPropagation();
+  ganttScroll = e => {
+    e.stopPropagation()
     if (this.state.scroll_area == 'gantt_head') {
       return
     }
-    if ('gantt_card_out_middle' != e.target.getAttribute("id")) return
+    if ('gantt_card_out_middle' != e.target.getAttribute('id')) return
     const that = this
 
     const { scrollTop, scrollLeft, scrollWidth, clientWidth } = e.target
@@ -172,11 +176,16 @@ export default class GanttFace extends Component {
     // if (gantt_date_area) {
     //   gantt_date_buoy.style.left = `${scrollLeft}px`
     // }
-    this.handelScrollHorizontal({ scrollLeft, scrollWidth, clientWidth, })
+    this.handelScrollHorizontal({ scrollLeft, scrollWidth, clientWidth })
   }
   // 处理上下滚动
   handleScrollVertical = ({ scrollTop }) => {
-    const { group_view_type, gantt_board_id, target_scrollTop, dispatch } = this.props
+    const {
+      group_view_type,
+      gantt_board_id,
+      target_scrollTop,
+      dispatch
+    } = this.props
     if (target_scrollTop == scrollTop) return
     if (group_view_type == '1' && gantt_board_id == '0') {
       const { set_scroll_top_timer } = this.state
@@ -197,7 +206,7 @@ export default class GanttFace extends Component {
     }
   }
   // 处理水平滚动
-  handelScrollHorizontal = ({ scrollLeft, scrollWidth, clientWidth, }) => {
+  handelScrollHorizontal = ({ scrollLeft, scrollWidth, clientWidth }) => {
     const { searchTimer } = this.state
     const { target_scrollLeft } = this
     const { gold_date_arr, dispatch, ceilWidth, gantt_view_mode } = this.props
@@ -209,14 +218,15 @@ export default class GanttFace extends Component {
       year: 365 //往前添加一年
     }
     const rescroll_leng_to_left = gantt_view_mode == 'month' ? 30 : 60 //滚动条回复位置
-    const rescroll_leng_to_right = gantt_view_mode == 'month' ? 60 : 90//滚动条回复位置
+    const rescroll_leng_to_right = gantt_view_mode == 'month' ? 60 : 90 //滚动条回复位置
     if (target_scrollLeft == scrollLeft) {
       return
     }
     if (searchTimer) {
       clearTimeout(searchTimer)
     }
-    if (scrollLeft < scroll_bound_leng * ceilWidth && delX > 0) { //3为分组头部占用三个单元格的长度
+    if (scrollLeft < scroll_bound_leng * ceilWidth && delX > 0) {
+      //3为分组头部占用三个单元格的长度
       const { timestamp } = gold_date_arr[0]['date_inner'][0] //取第一天
       // const loadedCb = () => {
       //   this.setScrollPosition({ position: rescroll_leng_to_left_wrapper[gantt_view_mode] * ceilWidth })
@@ -225,9 +235,19 @@ export default class GanttFace extends Component {
         searchTimer: setTimeout(() => {
           this.setLoading(true)
           setTimeout(() => {
-            this.smonthScrollEle(rescroll_leng_to_left_wrapper[gantt_view_mode] * ceilWidth)
-            this.setScrollPosition({ position: rescroll_leng_to_left_wrapper[gantt_view_mode] * ceilWidth })
-            this.setGoldDateArr({ timestamp, active_trigger: 'to_left', not_set_loading: false, loadedCb: () => this.replySvgPosition() }) //取左边界日期来做日期更新的基准
+            this.smonthScrollEle(
+              rescroll_leng_to_left_wrapper[gantt_view_mode] * ceilWidth
+            )
+            this.setScrollPosition({
+              position:
+                rescroll_leng_to_left_wrapper[gantt_view_mode] * ceilWidth
+            })
+            this.setGoldDateArr({
+              timestamp,
+              active_trigger: 'to_left',
+              not_set_loading: false,
+              loadedCb: () => this.replySvgPosition()
+            }) //取左边界日期来做日期更新的基准
           }, 100)
           // this.setScrollPosition({ delay: 1, position: rescroll_leng_to_left * ceilWidth }) //大概移动四天的位置
           // setTimeout(() => {
@@ -235,8 +255,10 @@ export default class GanttFace extends Component {
           // }, 200)
         }, 50)
       })
-
-    } else if ((scrollWidth - scrollLeft - clientWidth < scroll_bound_leng * ceilWidth) && delX < 0) {
+    } else if (
+      scrollWidth - scrollLeft - clientWidth < scroll_bound_leng * ceilWidth &&
+      delX < 0
+    ) {
       const gold_date_arr_length = gold_date_arr.length
       const date_inner = gold_date_arr[gold_date_arr_length - 1]['date_inner']
       const date_inner_length = date_inner.length
@@ -246,7 +268,11 @@ export default class GanttFace extends Component {
           this.setLoading(true)
           // this.setScrollPosition({ delay: 1, position: scrollWidth - clientWidth - rescroll_leng_to_right * ceilWidth })
           setTimeout(() => {
-            this.setGoldDateArr({ timestamp, active_trigger: 'to_right', not_set_loading: false }) //取有边界日期来做更新日期的基准
+            this.setGoldDateArr({
+              timestamp,
+              active_trigger: 'to_right',
+              not_set_loading: false
+            }) //取有边界日期来做更新日期的基准
           }, 100)
         }, 50)
       })
@@ -260,7 +286,7 @@ export default class GanttFace extends Component {
     // })
     // this.setScrollLeft(scrollLeft)
   }
-  setScrollLeft = _.throttle(function (scrollLeft) {
+  setScrollLeft = _.throttle(function(scrollLeft) {
     const { dispatch } = this.props
     dispatch({
       type: getEffectOrReducerByName('updateDatas'),
@@ -270,7 +296,7 @@ export default class GanttFace extends Component {
     })
   }, 5000)
   // 打开loading
-  setLoading = (bool) => {
+  setLoading = bool => {
     const { dispatch, get_gantt_data_loading } = this.props
     console.log('ssssssss', get_gantt_data_loading)
     dispatch({
@@ -285,19 +311,30 @@ export default class GanttFace extends Component {
     document.getElementById('gantt_svg_area').style.left = '0px'
   }
   // 任务设置位置和滚动平滑处理
-  smonthScrollEle = (minus_left) => {
+  smonthScrollEle = minus_left => {
     const nodes_ = document.getElementsByClassName('gantt_card_flag_special')
     const nodes = [...nodes_]
     nodes.forEach(element => {
       const left = element.style.left
       element.style.left = `${Number(left.replace('px', '')) + minus_left}px`
-    });
+    })
   }
 
   //更新日期,日期更新后做相应的数据请求
-  setGoldDateArr = ({ timestamp, active_trigger, init, not_set_loading, loadedCb }) => {
+  setGoldDateArr = ({
+    timestamp,
+    active_trigger,
+    init,
+    not_set_loading,
+    loadedCb
+  }) => {
     const { dispatch } = this.props
-    const { gold_date_arr = [], isDragging, gantt_view_mode, ceilWidth } = this.props
+    const {
+      gold_date_arr = [],
+      isDragging,
+      gantt_view_mode,
+      ceilWidth
+    } = this.props
     let date_arr = []
     if (active_trigger == 'to_right') {
       if (gantt_view_mode == 'month') {
@@ -375,7 +412,10 @@ export default class GanttFace extends Component {
         date_total,
         date_arr_one_level,
         start_date: date_arr[0]['date_inner'][0],
-        end_date: date_arr[date_arr.length - 1]['date_inner'][date_arr[date_arr.length - 1]['date_inner'].length - 1],
+        end_date:
+          date_arr[date_arr.length - 1]['date_inner'][
+            date_arr[date_arr.length - 1]['date_inner'].length - 1
+          ]
       }
     })
     //  做数据请求
@@ -393,20 +433,20 @@ export default class GanttFace extends Component {
     //更新任务位置信息
     // this.beforeHandListGroup()
     const that = this
-    const { group_view_type, outline_tree, active_baseline} = this.props
-    if (!ganttIsOutlineView({ group_view_type })) { //非大纲视图
-      setTimeout(function () {
+    const { group_view_type, outline_tree, active_baseline } = this.props
+    if (!ganttIsOutlineView({ group_view_type })) {
+      //非大纲视图
+      setTimeout(function() {
         dispatch({
           type: getEffectOrReducerByName('getGanttData'),
           payload: {
             not_set_loading
           }
+        }).then(res => {
+          if (isApiResponseOk(res) && typeof loadedCb === 'function') {
+            loadedCb()
+          }
         })
-          .then(res => {
-            if (isApiResponseOk(res) && typeof loadedCb === 'function') {
-              loadedCb()
-            }
-          })
         that.getHoliday()
       }, 0)
     } else {
@@ -415,7 +455,7 @@ export default class GanttFace extends Component {
       }
       const { init_get_outline_tree } = this.state
       if (!outline_tree.length && !init_get_outline_tree) {
-        setTimeout(function () {
+        setTimeout(function() {
           dispatch({
             type: getEffectOrReducerByName('getGanttData'),
             payload: {
@@ -429,7 +469,7 @@ export default class GanttFace extends Component {
       } else {
         this.setLoading(false)
         dispatch({
-          type: "gantt/getBaseLineInfo",
+          type: 'gantt/getBaseLineInfo',
           payload: active_baseline
         })
         dispatch({
@@ -475,7 +515,6 @@ export default class GanttFace extends Component {
     })
   }
 
-
   // 获取到实际有数据的区域总高度，为了和最后一行区分开
   getDataAreaRealHeight = () => {
     const { list_group = [], group_rows = [], ceiHeight } = this.props
@@ -486,7 +525,7 @@ export default class GanttFace extends Component {
     if (!item_height_arr.length) return 0
 
     // console.log('sssssss_2', {height})
-    const height = item_height_arr.reduce((total, num) => (total + num))
+    const height = item_height_arr.reduce((total, num) => total + num)
     return height
   }
 
@@ -500,37 +539,56 @@ export default class GanttFace extends Component {
   }
 
   // 退出基线查看
-  exitBaseLine = ()=>{
-    const { dispatch } = this.props;
+  exitBaseLine = () => {
+    const { dispatch } = this.props
     dispatch({
-      type: "gantt/exitBaseLineInfoView"
+      type: 'gantt/exitBaseLineInfoView'
     })
   }
 
   render() {
     const { gantt_card_out_middle_max_height } = this.state
-    const { gantt_card_height, get_gantt_data_loading, is_need_calculate_left_dx, gantt_board_id, is_show_board_file_area, group_view_type, get_gantt_data_loading_other, currentUserOrganizes = [], show_base_line_mode, active_baseline} = this.props
+    const {
+      gantt_card_height,
+      get_gantt_data_loading,
+      is_need_calculate_left_dx,
+      gantt_board_id,
+      is_show_board_file_area,
+      group_view_type,
+      get_gantt_data_loading_other,
+      currentUserOrganizes = [],
+      show_base_line_mode,
+      active_baseline
+    } = this.props
     const dataAreaRealHeight = this.getDataAreaRealHeight()
 
     return (
-      <div className={`${indexStyles.cardDetail} ${indexStyles.treeNodeUnselectable}`} id={'gantt_card_out'} style={{ height: gantt_card_height, width: '100%' }}>
-        {
-          (get_gantt_data_loading || get_gantt_data_loading_other) && (
-            <div className={indexStyles.cardDetailMask} style={{
+      <div
+        className={`${indexStyles.cardDetail} ${indexStyles.treeNodeUnselectable}`}
+        id={'gantt_card_out'}
+        style={{ height: gantt_card_height, width: '100%' }}
+      >
+        {(get_gantt_data_loading || get_gantt_data_loading_other) && (
+          <div
+            className={indexStyles.cardDetailMask}
+            style={{
               height: gantt_card_height,
-              backgroundColor: get_gantt_data_loading_other ? 'rgba(255,255,255,.7)' : '',
-            }}>
-              <Spin spinning={get_gantt_data_loading || get_gantt_data_loading_other} tip={''} >
-              </Spin>
-            </div>
-          )
-        }
-        {
-          group_view_type == '1' && <MiletoneGuide />
-        }
+              backgroundColor: get_gantt_data_loading_other
+                ? 'rgba(255,255,255,.7)'
+                : ''
+            }}
+          >
+            <Spin
+              spinning={get_gantt_data_loading || get_gantt_data_loading_other}
+              tip={''}
+            ></Spin>
+          </div>
+        )}
+        {group_view_type == '1' && <MiletoneGuide />}
 
         <div className={indexStyles.cardDetail_left}></div>
-        <div className={indexStyles.cardDetail_middle}
+        <div
+          className={indexStyles.cardDetail_middle}
           // id={'gantt_card_out_middle'}
           // ref={'gantt_card_out_middle'}
           // onScroll={this.ganttScroll}
@@ -542,7 +600,11 @@ export default class GanttFace extends Component {
           /> */}
           {/* <DateList /> */}
           <div className={indexStyles.board}>
-            <div className={indexStyles.board_head} id={'gantt_header_wapper'} style={{ height: gantt_card_height - 20 }}>
+            <div
+              className={indexStyles.board_head}
+              id={'gantt_header_wapper'}
+              style={{ height: gantt_card_height - 20 }}
+            >
               <GroupListHeadSet />
               {/*  //撑住DateList相同高度的底部 */}
               <GroupListHead
@@ -550,11 +612,16 @@ export default class GanttFace extends Component {
                 setScrollPosition={this.setScrollPosition}
                 setGoldDateArr={this.setGoldDateArr}
                 scroll_area={this.state.scroll_area}
-                changeOutLineTreeNodeProto={this.props.changeOutLineTreeNodeProto}
+                changeOutLineTreeNodeProto={
+                  this.props.changeOutLineTreeNodeProto
+                }
                 deleteOutLineTreeNode={this.props.deleteOutLineTreeNode}
-                setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
+                setTaskDetailModalVisibile={
+                  this.props.setTaskDetailModalVisibile
+                }
                 gantt_card_height={gantt_card_height}
-                dataAreaRealHeight={dataAreaRealHeight} />
+                dataAreaRealHeight={dataAreaRealHeight}
+              />
               <HeaderWidthTriggle gantt_card_height={gantt_card_height} />
 
               {/* <GroupListHeadElse gantt_card_height={gantt_card_height} dataAreaRealHeight={dataAreaRealHeight} /> */}
@@ -562,14 +629,15 @@ export default class GanttFace extends Component {
             </div>
             <div
               className={indexStyles.board_body}
-              style={{ height: gantt_card_height - 20 }} >
+              style={{ height: gantt_card_height - 20 }}
+            >
               <DateList />
               <div
                 style={{ height: date_area_height }} //撑住DateList相同高度的底部
               />
               <div
                 style={{
-                  height: gantt_card_height - 20 - date_area_height,
+                  height: gantt_card_height - 20 - date_area_height
                 }}
                 onTouchStart={() => this.setScrollArea('gantt_body')}
                 className={indexStyles.panel_out}
@@ -579,76 +647,103 @@ export default class GanttFace extends Component {
                 onTouchStart={() => this.setScrollArea('gantt_body')}
                 onScroll={this.ganttScroll}
               >
-                { show_base_line_mode && (
+                {show_base_line_mode && (
                   <div className={indexStyles.toExitBaseLine} id="exitbaseline">
                     <span>已加载：{active_baseline.name}</span>
-                    <span className={indexStyles.exit} onClick={this.exitBaseLine}>退出</span>
+                    <span
+                      className={indexStyles.exit}
+                      onClick={this.exitBaseLine}
+                    >
+                      退出
+                    </span>
                   </div>
                 )}
                 <div className={indexStyles.panel}>
                   <GetRowGantt
-                    changeOutLineTreeNodeProto={this.props.changeOutLineTreeNodeProto}
+                    changeOutLineTreeNodeProto={
+                      this.props.changeOutLineTreeNodeProto
+                    }
                     deleteOutLineTreeNode={this.props.deleteOutLineTreeNode}
                     is_need_calculate_left_dx={is_need_calculate_left_dx}
                     gantt_card_height={gantt_card_height}
                     dataAreaRealHeight={dataAreaRealHeight}
-                    setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
-                    addTaskModalVisibleChange={this.props.addTaskModalVisibleChange}
+                    setTaskDetailModalVisibile={
+                      this.props.setTaskDetailModalVisibile
+                    }
+                    addTaskModalVisibleChange={
+                      this.props.addTaskModalVisibleChange
+                    }
                     setGoldDateArr={this.setGoldDateArr}
                     setScrollPosition={this.setScrollPosition}
                   />
-                  <div style={{ display: !closeFeature({ board_id: gantt_board_id, currentUserOrganizes }) ? 'block' : 'none' }}>
-                    {
-                      gantt_board_id && gantt_board_id != '0' && (
-                        <BoardTemplate insertTaskToListGroup={this.props.insertTaskToListGroup} gantt_card_height={gantt_card_height} />
-                      )
-                    }
+                  <div
+                    style={{
+                      display: !closeFeature({
+                        board_id: gantt_board_id,
+                        currentUserOrganizes
+                      })
+                        ? 'block'
+                        : 'none'
+                    }}
+                  >
+                    {gantt_board_id && gantt_board_id != '0' && (
+                      <BoardTemplate
+                        insertTaskToListGroup={this.props.insertTaskToListGroup}
+                        gantt_card_height={gantt_card_height}
+                      />
+                    )}
                   </div>
                   <CardDetailDrawer {...this.props.task_detail_props} />
                   {/* 查看更多字段 */}
                   <CustomFieldDetailDrawer />
                 </div>
-                <GetRowGanttItemElse gantt_card_height={gantt_card_height} dataAreaRealHeight={dataAreaRealHeight} />
-
+                <GetRowGanttItemElse
+                  gantt_card_height={gantt_card_height}
+                  dataAreaRealHeight={dataAreaRealHeight}
+                />
               </div>
-
-
             </div>
           </div>
-
         </div>
         {/* <div className={indexStyles.cardDetail_right}></div> */}
-        <FaceRightButton setGoldDateArr={this.setGoldDateArr} setScrollPosition={this.setScrollPosition} />
-        {
-          isPaymentOrgUser() && is_show_board_file_area != '1' && <ShowFileSlider />
-        }
+        <FaceRightButton
+          setGoldDateArr={this.setGoldDateArr}
+          setScrollPosition={this.setScrollPosition}
+        />
+        {isPaymentOrgUser() && is_show_board_file_area != '1' && (
+          <ShowFileSlider />
+        )}
         <BoardsFilesArea />
-      </div >
+      </div>
     )
   }
-
 }
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ gantt: { datas: {
-  ceilWidth,
-  date_total,
-  target_scrollTop,
-  gold_date_arr = [],
-  isDragging,
-  list_group = [],
-  group_rows = [],
-  get_gantt_data_loading,
-  ceiHeight,
-  group_view_type,
-  gantt_board_id,
-  is_show_board_file_area,
-  outline_tree,
-  gantt_view_mode,
-  get_gantt_data_loading_other,
-  show_base_line_mode,
-  active_baseline
-} },
-  technological: { datas: { currentUserOrganizes = [] } },
+function mapStateToProps({
+  gantt: {
+    datas: {
+      ceilWidth,
+      date_total,
+      target_scrollTop,
+      gold_date_arr = [],
+      isDragging,
+      list_group = [],
+      group_rows = [],
+      get_gantt_data_loading,
+      ceiHeight,
+      group_view_type,
+      gantt_board_id,
+      is_show_board_file_area,
+      outline_tree,
+      gantt_view_mode,
+      get_gantt_data_loading_other,
+      show_base_line_mode,
+      active_baseline
+    }
+  },
+  technological: {
+    datas: { currentUserOrganizes = [] }
+  }
 }) {
   return {
     ceilWidth,
@@ -672,5 +767,5 @@ function mapStateToProps({ gantt: { datas: {
   }
 }
 GanttFace.defaultProps = {
-  gantt_card_height: 600, //甘特图卡片总高度
+  gantt_card_height: 600 //甘特图卡片总高度
 }

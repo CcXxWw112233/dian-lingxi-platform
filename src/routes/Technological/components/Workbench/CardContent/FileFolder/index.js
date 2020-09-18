@@ -1,12 +1,10 @@
-import React, { Component } from 'react';
-import { Breadcrumb, Tooltip, Icon } from 'antd';
-import globalStyles from './../../../../../../globalset/css/globalClassName.less';
-import FileItem from './../FileItem';
-import styles from './index.less';
+import React, { Component } from 'react'
+import { Breadcrumb, Tooltip, Icon } from 'antd'
+import globalStyles from './../../../../../../globalset/css/globalClassName.less'
+import FileItem from './../FileItem'
+import styles from './index.less'
 import { connect } from 'dva'
-import {
-  getOrgNameWithOrgIdFilter
-} from "@/utils/businessFunction";
+import { getOrgNameWithOrgIdFilter } from '@/utils/businessFunction'
 
 /* eslint-disable */
 @connect(({ workbench, technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org } } }) => ({

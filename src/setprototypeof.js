@@ -1,4 +1,6 @@
-module.exports = Object.setPrototypeOf || ({ __proto__: [] } instanceof Array ? setProtoOf : mixinProperties)
+module.exports =
+  Object.setPrototypeOf ||
+  ({ __proto__: [] } instanceof Array ? setProtoOf : mixinProperties)
 
 function setProtoOf(obj, proto) {
   obj.__proto__ = proto
@@ -8,7 +10,7 @@ function setProtoOf(obj, proto) {
 function mixinProperties(obj, proto) {
   // make getPrototypeOf helper work
   Object.defineProperty(obj, '__proto__', {
-    value: proto,
+    value: proto
   })
 
   for (var prop in proto) {

@@ -2,7 +2,7 @@ export default {
   namespace: 'modal',
   state: {
     modalVisible: false,
-    curItem: {},
+    curItem: {}
   },
   reducers: {
     showModal(state, action) {
@@ -14,6 +14,6 @@ export default {
     setItem(state, action) {
       const { curItem } = action.payload
       return { ...state, curItem }
-    },
-  },
+    }
+  }
 }

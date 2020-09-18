@@ -1,4 +1,3 @@
-
 import React from 'react'
 import { Breadcrumb, Menu, Dropdown, Icon } from 'antd'
 import indexStyles from './index.less'
@@ -9,7 +8,7 @@ import { connect } from 'dva'
 export default class FileDerailBreadCrumbFileNav extends React.Component {
   state = {
     breadcrumbWidthIsSuper: false, //面包屑的宽度是否超出规定宽度
-    breadcrumbOutWidth: 0,
+    breadcrumbOutWidth: 0
   }
   componentDidMount() {
     const breadcrumbOut = this.refs.breadcrumbOut
@@ -21,18 +20,22 @@ export default class FileDerailBreadCrumbFileNav extends React.Component {
     const maxWidth = documentWidth * 0.6 * 0.8
     if (breadcrumbOutWidth > maxWidth) {
       this.setState({
-        breadcrumbWidthIsSuper: true,
+        breadcrumbWidthIsSuper: true
       })
     }
     this.setState({
-      breadcrumbOutWidth: breadcrumbOutWidth > maxWidth ? maxWidth : breadcrumbOutWidth
+      breadcrumbOutWidth:
+        breadcrumbOutWidth > maxWidth ? maxWidth : breadcrumbOutWidth
     })
     // console.log('breadcrumbOutWidth', breadcrumbOutWidth)
     // console.log('breadcrumbOutWidth1', documentWidth)
   }
 
   fileNavClick(data) {
-    const { value: { file_id, file_name, type }, key } = data
+    const {
+      value: { file_id, file_name, type },
+      key
+    } = data
     if (type !== '1') {
       return false
     }
@@ -114,7 +117,6 @@ export default class FileDerailBreadCrumbFileNav extends React.Component {
   }
 
   render() {
-
     const { breadcrumbList = [] } = this.props
 
     const { breadcrumbWidthIsSuper, breadcrumbOutWidth } = this.state
@@ -147,12 +149,22 @@ export default class FileDerailBreadCrumbFileNav extends React.Component {
 
     const breadcrumbListMenu = () => {
       return (
-        <Menu style={{ maxWidth: 200 }} onClick={this.fileNavMenuClick.bind(this)}>
+        <Menu
+          style={{ maxWidth: 200 }}
+          onClick={this.fileNavMenuClick.bind(this)}
+        >
           {breadcrumbList.map((value, key) => {
-            return key < breadcrumbList.length - 1 && (
-              <Menu.Item key={key}>
-                <div className={`${indexStyles.eplise}`} style={{ maxWidth: 200 }}>{value && value.file_name}</div>
-              </Menu.Item>
+            return (
+              key < breadcrumbList.length - 1 && (
+                <Menu.Item key={key}>
+                  <div
+                    className={`${indexStyles.eplise}`}
+                    style={{ maxWidth: 200 }}
+                  >
+                    {value && value.file_name}
+                  </div>
+                </Menu.Item>
+              )
             )
           })}
         </Menu>
@@ -161,41 +173,66 @@ export default class FileDerailBreadCrumbFileNav extends React.Component {
 
     return (
       <div>
-        <div style={{ display: 'flex', cursor: 'pointer', background: 'rgba(245,245,245,1)', borderRadius: 4, padding: '0 8px' }} ref={'breadcrumbOut'} >
-          <div className={globalStyles.authTheme} style={{ margin: '2px 10px 0 0', color: '#8c8c8c' }}>&#xe6d6;</div>
+        <div
+          style={{
+            display: 'flex',
+            cursor: 'pointer',
+            background: 'rgba(245,245,245,1)',
+            borderRadius: 4,
+            padding: '0 8px'
+          }}
+          ref={'breadcrumbOut'}
+        >
+          <div
+            className={globalStyles.authTheme}
+            style={{ margin: '2px 10px 0 0', color: '#8c8c8c' }}
+          >
+            &#xe6d6;
+          </div>
           {breadcrumbWidthIsSuper ? (
             <Dropdown overlay={breadcrumbListMenu()}>
-              <div className={`${indexStyles.eplise}`} style={{ maxWidth: breadcrumbOutWidth }}>{breadcrumbList[breadcrumbList.length - 1] && breadcrumbList[breadcrumbList.length - 1].file_name}</div>
+              <div
+                className={`${indexStyles.eplise}`}
+                style={{ maxWidth: breadcrumbOutWidth }}
+              >
+                {breadcrumbList[breadcrumbList.length - 1] &&
+                  breadcrumbList[breadcrumbList.length - 1].file_name}
+              </div>
             </Dropdown>
           ) : (
-              <Breadcrumb separator=">">
-                {breadcrumbList.map((value, key) => {
-                  return (
-                    <Breadcrumb.Item key={key} onClick={this.fileNavClick.bind(this, { value, key })}>
-                      <span className={key != breadcrumbList.length - 1 && indexStyles.breadItem}>{value && value.file_name}</span>
-                    </Breadcrumb.Item>
-                  )
-                })}
-              </Breadcrumb>
-            )}
+            <Breadcrumb separator=">">
+              {breadcrumbList.map((value, key) => {
+                return (
+                  <Breadcrumb.Item
+                    key={key}
+                    onClick={this.fileNavClick.bind(this, { value, key })}
+                  >
+                    <span
+                      className={
+                        key != breadcrumbList.length - 1 &&
+                        indexStyles.breadItem
+                      }
+                    >
+                      {value && value.file_name}
+                    </span>
+                  </Breadcrumb.Item>
+                )
+              })}
+            </Breadcrumb>
+          )}
           {/*<Dropdown overlay={menu}>*/}
           {/*<Icon type="caret-down" theme="outlined" style={{ fontSize: 12, margin: '4px 0 0 8px'}} />*/}
           {/*</Dropdown>*/}
         </div>
-
       </div>
     )
   }
-
 }
 
 function mapStateToProps({
   projectDetailFile: {
-    datas: {
-      breadcrumbList = [],
-      filedata_2 = []
-    }
-  },
+    datas: { breadcrumbList = [], filedata_2 = [] }
+  }
 }) {
   return {
     breadcrumbList,

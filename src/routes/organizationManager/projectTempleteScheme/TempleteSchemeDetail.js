@@ -1,16 +1,16 @@
 import React, { Component } from 'react'
 import indexStyles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
-import { Input, Button, Breadcrumb, Tooltip, Tree } from 'antd';
+import { Input, Button, Breadcrumb, Tooltip, Tree } from 'antd'
 import { connect } from 'dva'
 import TempleteSchemeTree from './component/TempleteSchemeTree'
 
 @connect(mapStateToProps)
 export default class TempleteSchemeDetail extends Component {
-
   // 点击全部方案返回
   handleBackAllScheme = () => {
-    this.props.updateStateDatas && this.props.updateStateDatas({ whetherShowSchemeDetail: false })
+    this.props.updateStateDatas &&
+      this.props.updateStateDatas({ whetherShowSchemeDetail: false })
   }
 
   // 渲染其他方案
@@ -19,8 +19,12 @@ export default class TempleteSchemeDetail extends Component {
     return (
       <div className={indexStyles.breadcrumb_wrapper}>
         <Breadcrumb separator=">" className={indexStyles.breadcrumb}>
-          <Breadcrumb.Item key="0" onClick={this.handleBackAllScheme}>全部方案</Breadcrumb.Item>
-          <Breadcrumb.Item key={current_templete_id}>{current_templete_name}</Breadcrumb.Item>
+          <Breadcrumb.Item key="0" onClick={this.handleBackAllScheme}>
+            全部方案
+          </Breadcrumb.Item>
+          <Breadcrumb.Item key={current_templete_id}>
+            {current_templete_name}
+          </Breadcrumb.Item>
         </Breadcrumb>
       </div>
     )
@@ -41,12 +45,8 @@ export default class TempleteSchemeDetail extends Component {
 
 function mapStateToProps({
   organizationManager: {
-    datas: {
-
-    }
+    datas: {}
   }
 }) {
-  return {
-
-  }
+  return {}
 }

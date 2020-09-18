@@ -7,7 +7,10 @@ export default class ConfirmInfoOne_one extends Component {
     const { title, prompt_content, is_required } = itemValue
     return (
       <div className={indexStyles.text_form}>
-        <p>{title}:&nbsp;&nbsp;{is_required == '1' && <span style={{ color: '#F5222D' }}>*</span>}</p>
+        <p>
+          {title}:&nbsp;&nbsp;
+          {is_required == '1' && <span style={{ color: '#F5222D' }}>*</span>}
+        </p>
         <div className={indexStyles.text_fillOut}>
           <span>{prompt_content}</span>
         </div>

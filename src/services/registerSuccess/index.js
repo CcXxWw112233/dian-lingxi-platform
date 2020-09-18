@@ -7,6 +7,5 @@ export async function initConfirm(params) {
     url: `${REQUEST_DOMAIN}/user/email/confirm`,
     method: 'GET',
     params
-  });
+  })
 }
-

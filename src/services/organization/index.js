@@ -1,5 +1,8 @@
 import request from '../../utils/requestAxios'
-import { REQUEST_DOMAIN, REQUEST_DOMAIN_FLOWS } from '../../globalset/js/constant'
+import {
+  REQUEST_DOMAIN,
+  REQUEST_DOMAIN_FLOWS
+} from '../../globalset/js/constant'
 import Cookies from 'js-cookie'
 
 // 获取对应组织下的组织成员列表（仅列表）
@@ -9,21 +12,22 @@ export async function getCorrespondingOrganizationMmembers(params) {
     method: 'GET',
     params: {
       ...params,
-      _organization_id: params._organization_id ? params._organization_id : localStorage.getItem('OrganizationId')
+      _organization_id: params._organization_id
+        ? params._organization_id
+        : localStorage.getItem('OrganizationId')
     }
   })
 }
 
 //根据用户id获取用户信息，支持获取多个用户
-export async function fetchUsersByIds({ids}){
+export async function fetchUsersByIds({ ids }) {
   //ids: 用户id, 多个用逗号隔开
   return request({
     url: `${REQUEST_DOMAIN}/user/info/list`,
     method: 'GET',
-    params: {ids}
+    params: { ids }
   })
 }
-
 
 //更新组织
 export async function updateOrganization(data) {
@@ -32,9 +36,9 @@ export async function updateOrganization(data) {
     method: 'PUT',
     data: {
       ...data,
-      _organization_id: localStorage.getItem('OrganizationId'),
+      _organization_id: localStorage.getItem('OrganizationId')
     }
-  });
+  })
 }
 
 //上传组织logo
@@ -43,7 +47,7 @@ export async function uploadOrganizationLogo(data) {
     url: `${REQUEST_DOMAIN}/organization/logo_upload`,
     method: 'POST',
     data
-  });
+  })
 }
 
 //角色权限列表
@@ -52,7 +56,7 @@ export async function getRolePermissions(params) {
     url: `${REQUEST_DOMAIN}/permissions/role`,
     method: 'GET',
     params
-  });
+  })
 }
 //保存角色权限
 export async function saveRolePermission(data) {
@@ -60,7 +64,7 @@ export async function saveRolePermission(data) {
     url: `${REQUEST_DOMAIN}/permissions/role`,
     method: 'POST',
     data
-  });
+  })
 }
 //创建角色
 export async function createRole(data) {
@@ -69,9 +73,9 @@ export async function createRole(data) {
     method: 'POST',
     data: {
       ...data,
-      _organization_id: localStorage.getItem('OrganizationId'),
+      _organization_id: localStorage.getItem('OrganizationId')
     }
-  });
+  })
 }
 //更新角色
 export async function updateRole(data) {
@@ -79,7 +83,7 @@ export async function updateRole(data) {
     url: `${REQUEST_DOMAIN}/role`,
     method: 'PUT',
     data
-  });
+  })
 }
 //删除角色
 export async function deleteRole(data) {
@@ -87,7 +91,7 @@ export async function deleteRole(data) {
     url: `${REQUEST_DOMAIN}/role`,
     method: 'DELETE',
     data
-  });
+  })
 }
 //复制角色
 export async function copyRole(data) {
@@ -95,7 +99,7 @@ export async function copyRole(data) {
     url: `${REQUEST_DOMAIN}/role/copy`,
     method: 'PUT',
     data
-  });
+  })
 }
 //创建角色
 export async function setDefaultRole(data) {
@@ -104,9 +108,9 @@ export async function setDefaultRole(data) {
     method: 'PUT',
     data: {
       ...data,
-      _organization_id: localStorage.getItem('OrganizationId'),
+      _organization_id: localStorage.getItem('OrganizationId')
     }
-  });
+  })
 }
 
 //获取权限列表
@@ -116,9 +120,9 @@ export async function getPermissions(params) {
     method: 'GET',
     params: {
       ...params,
-      _organization_id: localStorage.getItem('OrganizationId'),
-    }      
-  });
+      _organization_id: localStorage.getItem('OrganizationId')
+    }
+  })
 }
 //保存权限
 export async function savePermission(data) {
@@ -126,7 +130,7 @@ export async function savePermission(data) {
     url: `${REQUEST_DOMAIN}/permissions`,
     method: 'POST',
     data
-  });
+  })
 }
 
 //获取名词列表
@@ -136,9 +140,9 @@ export async function getNounList(params) {
     method: 'GET',
     params: {
       ...params,
-      _organization_id: localStorage.getItem('OrganizationId'),
+      _organization_id: localStorage.getItem('OrganizationId')
     }
-  });
+  })
 }
 //保存名词列表
 export async function saveNounList(data) {
@@ -147,9 +151,9 @@ export async function saveNounList(data) {
     method: 'POST',
     data: {
       ...data,
-      _organization_id: localStorage.getItem('OrganizationId'),
+      _organization_id: localStorage.getItem('OrganizationId')
     }
-  });
+  })
 }
 
 //获取当前名词定义方案
@@ -159,24 +163,28 @@ export async function getCurrentNounPlan(params) {
     method: 'GET',
     params: {
       ...params,
-      _organization_id: localStorage.getItem('OrganizationId'),
-    }   
-  });
+      _organization_id: localStorage.getItem('OrganizationId')
+    }
+  })
 }
 
 //获取功能管理列表
 export async function getFnManagementList(params) {
-  
-  const _organization_id = localStorage.getItem('OrganizationId') === "0" ? (localStorage.getItem('OrganizationId')) : (!params ? params.organization_id : localStorage.getItem('OrganizationId') ) 
-  
+  const _organization_id =
+    localStorage.getItem('OrganizationId') === '0'
+      ? localStorage.getItem('OrganizationId')
+      : !params
+      ? params.organization_id
+      : localStorage.getItem('OrganizationId')
+
   return request({
     url: `${REQUEST_DOMAIN}/organization_app`,
     method: 'GET',
     params: {
       ...params,
       // _organization_id: localStorage.getItem('OrganizationId'),
-      _organization_id: _organization_id,
-    }      
+      _organization_id: _organization_id
+    }
   })
 }
 
@@ -195,9 +203,9 @@ export async function investmentMapAddAdministrators(data) {
     url: `${REQUEST_DOMAIN}/organization_app/map_admin`,
     method: 'POST',
     data: {
-      ...data,
+      ...data
     }
-  });
+  })
 }
 
 //投资地图权限功能-删除管理员
@@ -206,7 +214,7 @@ export async function investmentMapDeleteAdministrators(data) {
     url: `${REQUEST_DOMAIN}/organization_app/map_admin`,
     method: 'DELETE',
     data
-  });
+  })
 }
 
 //投资地图权限功能-查看管理员列表
@@ -215,9 +223,9 @@ export async function investmentMapQueryAdministrators(params) {
     url: `${REQUEST_DOMAIN}/organization_app/map_admin`,
     method: 'GET',
     params: {
-      ...params,
-    }   
-  });
+      ...params
+    }
+  })
 }
 
 export async function getPayingStatus(params) {
@@ -225,16 +233,16 @@ export async function getPayingStatus(params) {
     url: `${REQUEST_DOMAIN}/organization/paying_status`,
     method: 'GET',
     params: {
-      ...params,
-    }   
-  });
+      ...params
+    }
+  })
 }
 
 export async function getOrderList(params) {
   return request({
     url: `${REQUEST_DOMAIN}/organization/${params.orgId}/order/list`,
     method: 'GET'
-  });
+  })
 }
 
 // 获取模板列表
@@ -244,7 +252,8 @@ export async function getTemplateList(params) {
     method: 'GET',
     params: {
       ...params,
-      _organization_id: params._organization_id || localStorage.getItem('OrganizationId')
+      _organization_id:
+        params._organization_id || localStorage.getItem('OrganizationId')
     }
   })
 }
@@ -274,7 +283,8 @@ export async function createTemplete(data) {
     method: 'POST',
     data: {
       ...data,
-      _organization_id: data._organization_id || localStorage.getItem('OrganizationId')
+      _organization_id:
+        data._organization_id || localStorage.getItem('OrganizationId')
     }
   })
 }
@@ -342,14 +352,16 @@ export async function getCustomFieldList(params = {}) {
     method: 'GET',
     params: {
       ...params,
-      _organization_id: params._organization_id ? params._organization_id : localStorage.getItem('OrganizationId')
+      _organization_id: params._organization_id
+        ? params._organization_id
+        : localStorage.getItem('OrganizationId')
     }
   })
 }
 
 /**
  * 创建自定义字段分组
- * @param {String} name 分组名称 
+ * @param {String} name 分组名称
  */
 export async function createCustomFieldGroup(data) {
   return request({
@@ -405,7 +417,7 @@ export async function updateCustomField(data) {
     url: `${REQUEST_DOMAIN_FLOWS}/board/field`,
     method: 'PUT',
     data: {
-      ...data,
+      ...data
       // _organization_id: localStorage.getItem('OrganizationId')
     }
   })

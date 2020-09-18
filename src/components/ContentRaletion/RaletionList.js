@@ -4,7 +4,6 @@ import indexStyles from './index.less'
 import globalStyles from '../../globalset/css/globalClassName.less'
 //relations 关联内容的列表
 export default class RaletionList extends React.Component {
-
   state = {
     isShowAll: false
   }
@@ -128,7 +127,6 @@ export default class RaletionList extends React.Component {
     return themeCode
   }
 
-
   render() {
     const { relations } = this.props
     const { isShowAll } = this.state
@@ -137,16 +135,40 @@ export default class RaletionList extends React.Component {
     return (
       <div className={indexStyles.relaData}>
         {relations.map((value, key) => {
-          const { id, link_id, linked_name, linked_url, linked_sign, link_local } = value
+          const {
+            id,
+            link_id,
+            linked_name,
+            linked_url,
+            linked_sign,
+            link_local
+          } = value
           if (isShowAll) {
             return (
-              <div key={id} className={indexStyles.relaData_item} onClick={this.relationClick.bind(this, linked_url)}>
+              <div
+                key={id}
+                className={indexStyles.relaData_item}
+                onClick={this.relationClick.bind(this, linked_url)}
+              >
                 <div>
-                  <span className={globalStyles.authTheme} style={{ color: '#1890FF', fontSize: 24, marginRight: 4 }} dangerouslySetInnerHTML={{ __html: this.judgeType(linked_sign) }}></span>
+                  <span
+                    className={globalStyles.authTheme}
+                    style={{ color: '#1890FF', fontSize: 24, marginRight: 4 }}
+                    dangerouslySetInnerHTML={{
+                      __html: this.judgeType(linked_sign)
+                    }}
+                  ></span>
                   <span>{linked_name}</span>
                 </div>
-                <Tooltip title='删除'>
-                  <span className={indexStyles.relaData_item_delete_icon} onClick={(e) => this.handleDeleteRelation(e, { id, link_id, link_local })}><i className={globalStyles.authTheme}>&#xe7c3;</i></span>
+                <Tooltip title="删除">
+                  <span
+                    className={indexStyles.relaData_item_delete_icon}
+                    onClick={e =>
+                      this.handleDeleteRelation(e, { id, link_id, link_local })
+                    }
+                  >
+                    <i className={globalStyles.authTheme}>&#xe7c3;</i>
+                  </span>
                 </Tooltip>
               </div>
             )
@@ -155,20 +177,51 @@ export default class RaletionList extends React.Component {
               // console.log(linked_sign);
 
               return (
-                <div key={id} className={indexStyles.relaData_item} onClick={this.relationClick.bind(this, linked_url)}>
+                <div
+                  key={id}
+                  className={indexStyles.relaData_item}
+                  onClick={this.relationClick.bind(this, linked_url)}
+                >
                   <div>
-                    <span className={globalStyles.authTheme} style={{ color: '#1890FF', fontSize: 24, marginRight: 4 }} dangerouslySetInnerHTML={{ __html: this.judgeType(linked_sign) }}></span>
+                    <span
+                      className={globalStyles.authTheme}
+                      style={{ color: '#1890FF', fontSize: 24, marginRight: 4 }}
+                      dangerouslySetInnerHTML={{
+                        __html: this.judgeType(linked_sign)
+                      }}
+                    ></span>
                     <span>{linked_name}</span>
                   </div>
-                  <Tooltip title='删除'>
-                    <span className={indexStyles.relaData_item_delete_icon} onClick={(e) => this.handleDeleteRelation(e, { id, link_id, link_local })}><i className={globalStyles.authTheme}>&#xe7c3;</i></span>
+                  <Tooltip title="删除">
+                    <span
+                      className={indexStyles.relaData_item_delete_icon}
+                      onClick={e =>
+                        this.handleDeleteRelation(e, {
+                          id,
+                          link_id,
+                          link_local
+                        })
+                      }
+                    >
+                      <i className={globalStyles.authTheme}>&#xe7c3;</i>
+                    </span>
                   </Tooltip>
                 </div>
               )
             }
           }
         })}
-        <span onClick={this.isShowAll.bind(this)} style={{ cursor: 'pointer', color: 'rgb(73, 155, 230)', marginTop: '8px' }}> {isShowAll ? '收起部分' : '查看更多'} </span>
+        <span
+          onClick={this.isShowAll.bind(this)}
+          style={{
+            cursor: 'pointer',
+            color: 'rgb(73, 155, 230)',
+            marginTop: '8px'
+          }}
+        >
+          {' '}
+          {isShowAll ? '收起部分' : '查看更多'}{' '}
+        </span>
       </div>
     )
   }

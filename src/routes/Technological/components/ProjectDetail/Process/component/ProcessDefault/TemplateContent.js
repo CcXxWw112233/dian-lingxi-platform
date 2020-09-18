@@ -2,20 +2,23 @@ import React from 'react'
 import indexStyles from '../../index.less'
 import { Modal } from 'antd'
 import {
-  PROJECT_FLOWS_FLOW_TEMPLATE, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME
-} from "../../../../../../../globalset/js/constant";
-import { checkIsHasPermissionInBoard } from "../../../../../../../utils/businessFunction";
-import { Collapse } from 'antd';
+  PROJECT_FLOWS_FLOW_TEMPLATE,
+  NOT_HAS_PERMISION_COMFIRN,
+  MESSAGE_DURATION_TIME
+} from '../../../../../../../globalset/js/constant'
+import { checkIsHasPermissionInBoard } from '../../../../../../../utils/businessFunction'
+import { Collapse } from 'antd'
 import TemplateItem from './TemplateItem'
-import { message } from "antd/lib/index";
-import { processEditDatasConstant, processEditDatasRecordsConstant } from "../../constant";
-import { connect } from 'dva';
+import { message } from 'antd/lib/index'
+import {
+  processEditDatasConstant,
+  processEditDatasRecordsConstant
+} from '../../constant'
+import { connect } from 'dva'
 
 @connect(mapStateToProps)
 export default class TemplateContent extends React.Component {
-  state = {
-
-  }
+  state = {}
   templateStartClick({ id }) {
     const { dispatch } = this.props
     dispatch({
@@ -40,9 +43,7 @@ export default class TemplateContent extends React.Component {
           }
         })
       }
-    });
-
-
+    })
   }
   startEdit() {
     if (!checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_TEMPLATE)) {
@@ -58,7 +59,9 @@ export default class TemplateContent extends React.Component {
         node_type: '1', //节点类型
         processCurrentEditStep: 0, //编辑第几步，默认 0
         processEditDatas: JSON.parse(JSON.stringify(processEditDatasConstant)), //json数组，每添加一步编辑内容往里面put进去一个obj,刚开始默认含有一个里程碑的
-        processEditDatasRecords: JSON.parse(JSON.stringify(processEditDatasRecordsConstant)), //每一步的每一个类型，记录，数组的全部数据step * type
+        processEditDatasRecords: JSON.parse(
+          JSON.stringify(processEditDatasRecordsConstant)
+        ), //每一步的每一个类型，记录，数组的全部数据step * type
         currentProcessInstanceId: ''
       }
     })
@@ -70,7 +73,10 @@ export default class TemplateContent extends React.Component {
     const maxContentHeight = clientHeight - 108 - 160
     return (
       <div className={indexStyles.content}>
-        <div className={indexStyles.paginationContent} style={{ maxHeight: maxContentHeight }}>
+        <div
+          className={indexStyles.paginationContent}
+          style={{ maxHeight: maxContentHeight }}
+        >
           {processTemplateList.map((value, key) => {
             const { id } = value
             return (
@@ -79,7 +85,9 @@ export default class TemplateContent extends React.Component {
           })}
         </div>
         {checkIsHasPermissionInBoard(PROJECT_FLOWS_FLOW_TEMPLATE) && (
-          <div className={indexStyles.add} onClick={this.startEdit.bind(this)}>新增模板</div>
+          <div className={indexStyles.add} onClick={this.startEdit.bind(this)}>
+            新增模板
+          </div>
         )}
       </div>
     )
@@ -87,15 +95,11 @@ export default class TemplateContent extends React.Component {
 }
 function mapStateToProps({
   projectDetailProcess: {
-    datas: {
-      processTemplateList = []
-    }
+    datas: { processTemplateList = [] }
   },
   technological: {
-    datas: {
-  	userBoardPermissions
-    }
+    datas: { userBoardPermissions }
   }
 }) {
-  return { processTemplateList,userBoardPermissions}
+  return { processTemplateList, userBoardPermissions }
 }

@@ -1,8 +1,11 @@
 import React from 'react'
 import { Dropdown, Input, Icon, Cascader, Spin } from 'antd'
-import { getLinkList, getRelationsSelectionPre } from '../../services/technological/task'
+import {
+  getLinkList,
+  getRelationsSelectionPre
+} from '../../services/technological/task'
 import globalStyles from '../../globalset/css/globalClassName.less'
-import {INPUT_CHANGE_SEARCH_TIME} from "../../globalset/js/constant";
+import { INPUT_CHANGE_SEARCH_TIME } from '../../globalset/js/constant'
 import indexStyles from './index.less'
 //需要传入的props
 // link_id 关联者Id (任务Id，流程Id，流程某一步Id，文件Id。。。)
@@ -14,11 +17,9 @@ export default class SearchUrlRelation extends React.Component {
     inputValue: '',
     searchTimer: null,
     searchLinkList: [],
-    spinning: false,
+    spinning: false
   }
-  componentWillMount() {
-
-  }
+  componentWillMount() {}
   gotoRelation(data) {
     const { inputValue } = this.state
     const { link_id, link_local, board_id } = this.props
@@ -28,10 +29,9 @@ export default class SearchUrlRelation extends React.Component {
       link_local,
       board_id,
       linked_url: origin_url,
-      linked_name: name,
+      linked_name: name
     }
-    this.props.addRelation && this.props.addRelation({...obj})
-
+    this.props.addRelation && this.props.addRelation({ ...obj })
   }
 
   onChange(e) {
@@ -46,16 +46,16 @@ export default class SearchUrlRelation extends React.Component {
       clearTimeout(searchTimer)
     }
     this.setState({
-      searchTimer: setTimeout(function () {
+      searchTimer: setTimeout(function() {
         //  此处调用请求
-        that.getLinkList && that.getLinkList({url: value})
+        that.getLinkList && that.getLinkList({ url: value })
       }, INPUT_CHANGE_SEARCH_TIME)
     })
   }
 
   blur() {
     const that = this
-    setTimeout(function () {
+    setTimeout(function() {
       that.props.setSearch && that.props.setSearch(false)
     }, 300)
   }
@@ -68,17 +68,19 @@ export default class SearchUrlRelation extends React.Component {
     this.setState({
       spinning: false
     })
-    if(res.code == '0') {
+    if (res.code == '0') {
       this.setState({
         searchLinkList: [res.data]
       })
     } else {
       const { inputValue } = this.state
       this.setState({
-        searchLinkList: [{
-          name: inputValue,
-          origin_url: inputValue
-        }]
+        searchLinkList: [
+          {
+            name: inputValue,
+            origin_url: inputValue
+          }
+        ]
       })
     }
   }
@@ -91,30 +93,46 @@ export default class SearchUrlRelation extends React.Component {
     //   content: '拉萨的卢卡斯的拉萨的卢卡斯的拉萨的卢卡斯的拉萨的卢卡斯的拉萨的卢卡斯的拉萨的卢卡斯的拉萨的卢卡斯的拉萨的卢卡斯的',
     //   origin_url: 'https://www.baidu.com/'
     // }]
-    return(
-      <div style={{position: 'relative'}}>
+    return (
+      <div style={{ position: 'relative' }}>
         <Input
           autoFocus
           value={inputValue}
           onChange={this.onChange.bind(this)}
           prefix={<span className={`${globalStyles.authTheme}`}>&#xe61d;</span>}
-          suffix={<span className={`${globalStyles.authTheme}`}
-                        style={{cursor: 'pointer'}}>&#xe611;</span>}
+          suffix={
+            <span
+              className={`${globalStyles.authTheme}`}
+              style={{ cursor: 'pointer' }}
+            >
+              &#xe611;
+            </span>
+          }
           onBlur={this.blur.bind(this)}
-          style={{width: 300, marginTop: 20 }}
+          style={{ width: 300, marginTop: 20 }}
         />
-        {searchLinkList.length? (
-          <div style={{...seachAreaStyles}} >
+        {searchLinkList.length ? (
+          <div style={{ ...seachAreaStyles }}>
             <Spin spinning={spinning} size={'small'}>
               {searchLinkList.map((value, key) => {
-                const {name, icon, content } = value
+                const { name, icon, content } = value
                 return (
-                  <div className={indexStyles.search_item} key={key} onClick={this.gotoRelation.bind(this, value)}>
+                  <div
+                    className={indexStyles.search_item}
+                    key={key}
+                    onClick={this.gotoRelation.bind(this, value)}
+                  >
                     <div className={indexStyles.search_item_left}>
-                      {icon?
-                        (<img src={icon}/>): (
-                          <div className={`${globalStyles.authTheme}`} style={{color: '#1890FF', fontSize: 16}}>&#xe781;</div>)
-                      }
+                      {icon ? (
+                        <img src={icon} />
+                      ) : (
+                        <div
+                          className={`${globalStyles.authTheme}`}
+                          style={{ color: '#1890FF', fontSize: 16 }}
+                        >
+                          &#xe781;
+                        </div>
+                      )}
                     </div>
                     <div className={indexStyles.search_item_right}>
                       <div className={indexStyles.title}>{name}</div>
@@ -122,12 +140,11 @@ export default class SearchUrlRelation extends React.Component {
                     </div>
                   </div>
                 )
-              })
-              }
-              </Spin>
+              })}
+            </Spin>
           </div>
-        ):(
-          <div style={{...seachAreaStyles}} >
+        ) : (
+          <div style={{ ...seachAreaStyles }}>
             <Spin spinning={spinning} size={'small'}>
               <div>暂无数据</div>
             </Spin>

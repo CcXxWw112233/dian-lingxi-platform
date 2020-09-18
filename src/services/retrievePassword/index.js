@@ -6,7 +6,6 @@ export async function formSubmit(data) {
   return request({
     url: `${REQUEST_DOMAIN}/user/email/validate`,
     method: 'PUT',
-    data,
-  });
+    data
+  })
 }
-

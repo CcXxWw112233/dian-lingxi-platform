@@ -1,45 +1,51 @@
-import { formSubmit, requestVerifyCode, checkAccountRestered, wechatSignupBindLogin } from '../../services/register'
+import {
+  formSubmit,
+  requestVerifyCode,
+  checkAccountRestered,
+  wechatSignupBindLogin
+} from '../../services/register'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
 import Cookies from 'js-cookie'
-import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
-import { routerRedux } from "dva/router";
-import queryString from 'query-string';
-import { createDefaultOrg } from '../../services/technological/noviceGuide';
-
-
+import { MESSAGE_DURATION_TIME } from '../../globalset/js/constant'
+import { routerRedux } from 'dva/router'
+import queryString from 'query-string'
+import { createDefaultOrg } from '../../services/technological/noviceGuide'
 
 export default {
   namespace: 'register',
   state: [],
   subscriptions: {
     setup({ dispatch, history }) {
-      history.listen((location) => {
+      history.listen(location => {
         message.destroy()
         if (location.pathname === '/register') {
-
         } else {
           localStorage.removeItem('wechat')
         }
       })
-    },
+    }
   },
   effects: {
-    * formSubmit({ payload }, { select, call, put }) { //提交表单
+    *formSubmit({ payload }, { select, call, put }) {
+      //提交表单
       const { mobile, email } = payload
       let res = yield call(formSubmit, payload)
 
       if (isApiResponseOk(res)) {
         message.success(res.message, MESSAGE_DURATION_TIME)
-        yield put(routerRedux.push({
-          pathname: '/registerSuccess',
-          search: queryString.stringify({ mobile, email, type: 'register' })
-        }))
+        yield put(
+          routerRedux.push({
+            pathname: '/registerSuccess',
+            search: queryString.stringify({ mobile, email, type: 'register' })
+          })
+        )
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
-    * getVerificationcode({ payload }, { select, call, put }) { //获取验证码
+    *getVerificationcode({ payload }, { select, call, put }) {
+      //获取验证码
       const { data, calback } = payload
       calback && typeof calback === 'function' ? calback() : ''
       let res = yield call(requestVerifyCode, data)
@@ -49,22 +55,25 @@ export default {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
-    * routingJump({ payload }, { call, put }) {
+    *routingJump({ payload }, { call, put }) {
       const { route } = payload
-      yield put(routerRedux.push(route));
+      yield put(routerRedux.push(route))
     },
-    * checkAccountRestered({ payload }, { select, call, put }) {
+    *checkAccountRestered({ payload }, { select, call, put }) {
       const { mobile, email, accountType } = payload
       let res = yield call(checkAccountRestered, payload)
       if (isApiResponseOk(res)) {
         if (res.data) {
-          message.warn(accountType === 'mobile' ? '该手机号已被注册' : '该邮箱已被注册', MESSAGE_DURATION_TIME)
+          message.warn(
+            accountType === 'mobile' ? '该手机号已被注册' : '该邮箱已被注册',
+            MESSAGE_DURATION_TIME
+          )
         }
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
-    * wechatSignupBindLogin({ payload }, { select, call, put }) {
+    *wechatSignupBindLogin({ payload }, { select, call, put }) {
       let res = yield call(wechatSignupBindLogin, payload)
       // debugger
       if (isApiResponseOk(res)) {
@@ -87,8 +96,8 @@ export default {
   },
 
   reducers: {
-    'delete'(state, { payload: id }) {
-      return state.filter(item => item.id !== id);
-    },
-  },
-};
+    delete(state, { payload: id }) {
+      return state.filter(item => item.id !== id)
+    }
+  }
+}

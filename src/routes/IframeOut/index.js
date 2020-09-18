@@ -1,13 +1,13 @@
-import React from 'react';
-import { connect } from 'dva';
-import 'moment/locale/zh-cn';
+import React from 'react'
+import { connect } from 'dva'
+import 'moment/locale/zh-cn'
 import { message, Button } from 'antd'
 import { getFilePDFInfo } from '../../services/technological/file'
 import QueryString from 'querystring'
 import indexStyles from './index.less'
 
 const getEffectOrReducerByName = name => `iframeOut/${name}`
-class IframeOut extends React.Component{
+class IframeOut extends React.Component {
   state = {
     iframeSrc: '',
     downloadSrc: '',
@@ -21,20 +21,20 @@ class IframeOut extends React.Component{
     this.setState({
       operateType
     })
-    if(operateType == 'openPDF') {
-      this.getFilePDFInfo({id})
+    if (operateType == 'openPDF') {
+      this.getFilePDFInfo({ id })
     }
   }
   async getFilePDFInfo(params) {
     const res = await getFilePDFInfo(params)
-    if(res.code == '0') {
+    if (res.code == '0') {
       const iframeSrc = res.data.edit_url
       const downloadSrc = res.data.download_annotation_url
       this.setState({
         iframeSrc,
         downloadSrc
       })
-    }else {
+    } else {
       message.warn('打开pdf文件失败，请重试。')
     }
   }
@@ -46,7 +46,7 @@ class IframeOut extends React.Component{
     const { iframeSrc, downloadSrc, operateType } = this.state
 
     return (
-      <div style={{width: '100%', height: '100%'}}>
+      <div style={{ width: '100%', height: '100%' }}>
         <iframe
           src={iframeSrc}
           frameBorder="0"
@@ -54,15 +54,18 @@ class IframeOut extends React.Component{
           height="100%"
         ></iframe>
         {operateType == 'openPDF' && downloadSrc && (
-          <Button type={'primary'} className={indexStyles.downloadBotton} onClick={this.downloadPdf.bind(this)}>
+          <Button
+            type={'primary'}
+            className={indexStyles.downloadBotton}
+            onClick={this.downloadPdf.bind(this)}
+          >
             下载
           </Button>
         )}
-
       </div>
-    );
+    )
   }
-};
+}
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({ modal, iframeOut, loading }) {

@@ -9,38 +9,39 @@ export const newline = (option, number, axis) => {
   }
   labelItem['axisLabel'] = {
     interval: 0,
-    formatter: function (params) {
-      var newParamsName = "";
-      var paramsNameNumber = params.length;
-      var provideNumber = number;
-      var rowNumber = Math.ceil(paramsNameNumber / provideNumber);
+    formatter: function(params) {
+      var newParamsName = ''
+      var paramsNameNumber = params.length
+      var provideNumber = number
+      var rowNumber = Math.ceil(paramsNameNumber / provideNumber)
       if (paramsNameNumber > provideNumber) {
         for (var p = 0; p < rowNumber; p++) {
-          var tempStr = "";
-          var start = p * provideNumber;
-          var end = start + provideNumber;
+          var tempStr = ''
+          var start = p * provideNumber
+          var end = start + provideNumber
           if (p == rowNumber - 1) {
-            tempStr = params.substring(start, paramsNameNumber);
+            tempStr = params.substring(start, paramsNameNumber)
           } else {
-            tempStr = params.substring(start, end) + "\n";
+            tempStr = params.substring(start, end) + '\n'
           }
-          newParamsName += tempStr;
+          newParamsName += tempStr
         }
       } else {
-        newParamsName = params;
+        newParamsName = params
       }
       return newParamsName
     }
   }
-  return option;
+  return option
 }
 
-export const arrayNonRepeatfy = (arr) => {
+export const arrayNonRepeatfy = arr => {
   let temp_arr = []
   let temp_id = []
   for (let i = 0; i < arr.length; i++) {
-    if (!temp_id.includes(arr[i])) {//includes 检测数组是否有某个值
-      temp_arr.push(arr[i]);
+    if (!temp_id.includes(arr[i])) {
+      //includes 检测数组是否有某个值
+      temp_arr.push(arr[i])
       temp_id.push(arr[i])
     }
   }

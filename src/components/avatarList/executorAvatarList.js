@@ -1,16 +1,12 @@
 import React from 'react'
-import styles from './index.less';
-import {
-  Avatar,
-  Icon,
-  Tooltip
-} from 'antd'
+import styles from './index.less'
+import { Avatar, Icon, Tooltip } from 'antd'
 
-const executorAvatarList = (props) => {
+const executorAvatarList = props => {
   const { users = [], size = 'default' } = props
   // console.log(props, 'sssss_avatar')
   const getSizeNum = () => {
-    switch (size){
+    switch (size) {
       case 'small':
         return 24
         break
@@ -38,23 +34,43 @@ const executorAvatarList = (props) => {
   }
   return (
     <div className={styles.avatar_list}>
-      {
-        users.map((value, key) => {
-          const { avatar, name, id, user_id } = value
-          return key < 3 && (
-            user_id != '0' ? (
-              <Avatar key={id || user_id} size={size} src={avatar} style={{...avatar_list_item_style, marginLeft: key == 0?0:-(size_num/2), }}>{name}</Avatar>
-            ) : (
-              <Avatar key={id || user_id} size={size} icon="usergroup-delete" style={{...avatar_list_item_style, marginLeft: key == 0?0:-(size_num/2), }} />
-            )
-          )
-        })
-      }
-      {
-        users.length > 3 && (
-          <div className={styles.more_number} style={{...more_style, marginLeft: -(size_num/2)}}>+{users.length - 3}</div>
+      {users.map((value, key) => {
+        const { avatar, name, id, user_id } = value
+        return (
+          key < 3 &&
+          (user_id != '0' ? (
+            <Avatar
+              key={id || user_id}
+              size={size}
+              src={avatar}
+              style={{
+                ...avatar_list_item_style,
+                marginLeft: key == 0 ? 0 : -(size_num / 2)
+              }}
+            >
+              {name}
+            </Avatar>
+          ) : (
+            <Avatar
+              key={id || user_id}
+              size={size}
+              icon="usergroup-delete"
+              style={{
+                ...avatar_list_item_style,
+                marginLeft: key == 0 ? 0 : -(size_num / 2)
+              }}
+            />
+          ))
         )
-      }
+      })}
+      {users.length > 3 && (
+        <div
+          className={styles.more_number}
+          style={{ ...more_style, marginLeft: -(size_num / 2) }}
+        >
+          +{users.length - 3}
+        </div>
+      )}
     </div>
   )
 }

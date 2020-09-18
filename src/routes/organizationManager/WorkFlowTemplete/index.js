@@ -7,17 +7,20 @@ import ProcessDetailModal from '../../../components/ProcessDetailModal'
 import { Modal, message } from 'antd'
 import { showDeleteTempleteConfirm } from '../../../components/ProcessDetailModal/components/handleOperateModal'
 import { checkIsHasPermission } from '../../../utils/businessFunction'
-import { ORG_TEAM_FLOW_TEMPLETE, NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME } from '../../../globalset/js/constant'
+import {
+  ORG_TEAM_FLOW_TEMPLETE,
+  NOT_HAS_PERMISION_COMFIRN,
+  MESSAGE_DURATION_TIME
+} from '../../../globalset/js/constant'
 import { getTempleteQuoteCount } from '../../../services/organization'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 
 @connect(mapStateToProps)
 export default class WorkFlowTemplete extends Component {
-
   constructor(props) {
     super(props)
     this.state = {
-      whetherShowProcessDetailModalVisible:false
+      whetherShowProcessDetailModalVisible: false
     }
   }
 
@@ -47,17 +50,17 @@ export default class WorkFlowTemplete extends Component {
   }
 
   // 新建模板
-  handleAddTemplete = (e) => {
+  handleAddTemplete = e => {
     e && e.stopPropagation()
     // 判断是否有组织管理模板
     if (!checkIsHasPermission(ORG_TEAM_FLOW_TEMPLETE)) {
-      message.warn(NOT_HAS_PERMISION_COMFIRN,MESSAGE_DURATION_TIME)
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return
     }
     this.props.dispatch({
       type: 'publicProcessDetailModal/updateDatas',
       payload: {
-        process_detail_modal_visible: true,
+        process_detail_modal_visible: true
       }
     })
     this.setState({
@@ -82,9 +85,9 @@ export default class WorkFlowTemplete extends Component {
     })
   }
 
-  getTempleteQuoteCount = (id) => {
+  getTempleteQuoteCount = id => {
     const { dispatch } = this.props
-    getTempleteQuoteCount({rela_id: id}).then(res => {
+    getTempleteQuoteCount({ rela_id: id }).then(res => {
       if (isApiResponseOk(res)) {
         let count = res.data && res.data.length
         let title = '确认要删除模版吗？'
@@ -106,16 +109,16 @@ export default class WorkFlowTemplete extends Component {
           })
         }
         if (count) {
-          showDeleteTempleteConfirm({processTempleteDelete,title,content})
+          showDeleteTempleteConfirm({ processTempleteDelete, title, content })
         } else {
-          showDeleteTempleteConfirm({processTempleteDelete})
+          showDeleteTempleteConfirm({ processTempleteDelete })
         }
       }
     })
   }
 
   // 删除流程模板的点击事件
-  handleDelteTemplete = (e,item) => {
+  handleDelteTemplete = (e, item) => {
     const { dispatch } = this.props
     const { id } = item
     this.getTempleteQuoteCount(id)
@@ -140,31 +143,49 @@ export default class WorkFlowTemplete extends Component {
   }
 
   render() {
-    const { process_detail_modal_visible, isEditCurrentFlowInstanceName } = this.props
+    const {
+      process_detail_modal_visible,
+      isEditCurrentFlowInstanceName
+    } = this.props
     const { whetherShowProcessDetailModalVisible } = this.state
     return (
-      <div id={'workFlowTempleteContent'} className={`${indexStyles.workFlowTempleteContent} ${globalStyles.global_vertical_scrollbar}`}>
+      <div
+        id={'workFlowTempleteContent'}
+        className={`${indexStyles.workFlowTempleteContent} ${globalStyles.global_vertical_scrollbar}`}
+      >
         <div className={indexStyles.wflow_top}>
           <div className={indexStyles.wflow_name}>工作流模板</div>
-          <div className={indexStyles.wflow_add_tem} onClick={this.handleAddTemplete}>
+          <div
+            className={indexStyles.wflow_add_tem}
+            onClick={this.handleAddTemplete}
+          >
             <span>新建模板</span>
             <span className={globalStyles.authTheme}>&#xe846;</span>
           </div>
         </div>
         <div className={indexStyles.wflow_bottom}>
-          <FlowTabs handleEditTemplete={this.handleEditTemplete} handleDelteTemplete={this.handleDelteTemplete} />
+          <FlowTabs
+            handleEditTemplete={this.handleEditTemplete}
+            handleDelteTemplete={this.handleDelteTemplete}
+          />
         </div>
-        <div onClick={(e) => e.stopPropagation()} onMouseDown={(e) => e.stopPropagation()}>
-          {
-            process_detail_modal_visible && whetherShowProcessDetailModalVisible && (
+        <div
+          onClick={e => e.stopPropagation()}
+          onMouseDown={e => e.stopPropagation()}
+        >
+          {process_detail_modal_visible &&
+            whetherShowProcessDetailModalVisible && (
               <ProcessDetailModal
                 process_detail_modal_visible={process_detail_modal_visible}
-                setProcessDetailModalVisibile={this.setProcessDetailModalVisibile}
-                updateParentProcessTempleteList={this.updateParentProcessTempleteList}
+                setProcessDetailModalVisibile={
+                  this.setProcessDetailModalVisibile
+                }
+                updateParentProcessTempleteList={
+                  this.updateParentProcessTempleteList
+                }
                 getContainer={document.getElementById('organizationOut')}
               />
-            )
-          }
+            )}
         </div>
       </div>
     )
@@ -177,9 +198,7 @@ function mapStateToProps({
     processTemplateList = []
   },
   technological: {
-    datas: {
-      userOrgPermissions = []
-    }
+    datas: { userOrgPermissions = [] }
   }
 }) {
   return {

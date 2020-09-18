@@ -1,9 +1,15 @@
-import { boardAppCancelRelaMiletones, getMilestoneDetail, updateMilestone, addMilestoneExcutos, removeMilestoneExcutos } from '../../../services/technological/task'
+import {
+  boardAppCancelRelaMiletones,
+  getMilestoneDetail,
+  updateMilestone,
+  addMilestoneExcutos,
+  removeMilestoneExcutos
+} from '../../../services/technological/task'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
-import { MESSAGE_DURATION_TIME } from "../../../globalset/js/constant";
-import { routerRedux } from "dva/router";
-import queryString from 'query-string';
+import { MESSAGE_DURATION_TIME } from '../../../globalset/js/constant'
+import { routerRedux } from 'dva/router'
+import queryString from 'query-string'
 import modelExtend from 'dva-model-extend'
 import technological from '../index'
 
@@ -11,16 +17,15 @@ export default modelExtend(technological, {
   namespace: 'milestoneDetail',
   state: {
     milestone_id: '',
-    milestone_detail: {},
+    milestone_detail: {}
   },
   subscriptions: {
     setup({ dispatch, history }) {
-      history.listen((location) => {
-      })
-    },
+      history.listen(location => {})
+    }
   },
   effects: {
-    * getMilestoneDetail({ payload = {} }, { select, call, put }) {
+    *getMilestoneDetail({ payload = {} }, { select, call, put }) {
       let res = yield call(getMilestoneDetail, payload)
       if (isApiResponseOk(res)) {
         yield put({
@@ -34,7 +39,7 @@ export default modelExtend(technological, {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
-    * updateMilestone({ payload = {} }, { select, call, put }) {
+    *updateMilestone({ payload = {} }, { select, call, put }) {
       let res = yield call(updateMilestone, payload)
       if (isApiResponseOk(res)) {
         const { id } = payload
@@ -50,7 +55,7 @@ export default modelExtend(technological, {
       }
       return ''
     },
-    * taskCancelRelaMiletones({ payload }, { select, call, put }) {
+    *taskCancelRelaMiletones({ payload }, { select, call, put }) {
       const { id } = payload //此时的rela_id 为任务id
       const res = yield call(boardAppCancelRelaMiletones, payload)
       if (isApiResponseOk(res)) {
@@ -68,7 +73,7 @@ export default modelExtend(technological, {
       }
       return res || {}
     },
-    * addMilestoneExcutos({ payload }, { select, call, put }) {
+    *addMilestoneExcutos({ payload }, { select, call, put }) {
       const { id } = payload //此时的rela_id 为任务id
       const res = yield call(addMilestoneExcutos, payload)
       if (isApiResponseOk(res)) {
@@ -87,7 +92,7 @@ export default modelExtend(technological, {
       }
       return res || {}
     },
-    * removeMilestoneExcutos({ payload }, { select, call, put }) {
+    *removeMilestoneExcutos({ payload }, { select, call, put }) {
       const { id } = payload //此时的rela_id 为任务id
       const res = yield call(removeMilestoneExcutos, payload)
       if (isApiResponseOk(res)) {
@@ -111,8 +116,9 @@ export default modelExtend(technological, {
   reducers: {
     updateDatas(state, action) {
       return {
-        ...state, ...action.payload
+        ...state,
+        ...action.payload
       }
     }
-  },
+  }
 })

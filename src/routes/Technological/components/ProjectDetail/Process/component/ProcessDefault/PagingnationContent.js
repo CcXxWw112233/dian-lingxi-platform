@@ -5,18 +5,16 @@ import {
   PROJECT_FLOW_FLOW_ACCESS,
   NOT_HAS_PERMISION_COMFIRN,
   MESSAGE_DURATION_TIME
-} from "../../../../../../../globalset/js/constant";
-import {
-  checkIsHasPermissionInBoard,
-} from "../../../../../../../utils/businessFunction";
-import { Collapse } from 'antd';
-import { getProcessListByType } from "../../../../../../../services/technological/process";
+} from '../../../../../../../globalset/js/constant'
+import { checkIsHasPermissionInBoard } from '../../../../../../../utils/businessFunction'
+import { Collapse } from 'antd'
+import { getProcessListByType } from '../../../../../../../services/technological/process'
 import nodataImg from '../../../../../../../assets/projectDetail/process/Empty@2x.png'
 import FlowsInstanceItem from './FlowsInstanceItem'
-import { connect } from 'dva';
+import { connect } from 'dva'
 import ProcessDetailModalContainer from './ProcessDetailModalContainer'
-import { arrayNonRepeatfy } from '../../../../../../../utils/util';
-const Panel = Collapse.Panel;
+import { arrayNonRepeatfy } from '../../../../../../../utils/util'
+const Panel = Collapse.Panel
 
 @connect(mapStateToProps)
 export default class PagingnationContent extends React.Component {
@@ -25,19 +23,22 @@ export default class PagingnationContent extends React.Component {
     page_number: 1,
     page_size: 20,
     loadMoreDisplay: 'none',
-    scrollBlock: true, //滚动加载锁，true可以加载，false不执行滚动操作
+    scrollBlock: true //滚动加载锁，true可以加载，false不执行滚动操作
   }
 
   componentDidMount() {
     this.getProcessListByType()
   }
-  componentWillUnmount() {
-
-  }
+  componentWillUnmount() {}
   //分页逻辑
   async getProcessListByType() {
-    const { board_id, processDoingList = [], processStopedList = [], processComepletedList = [] } = this.props
-    const { page_number, page_size, } = this.state
+    const {
+      board_id,
+      processDoingList = [],
+      processStopedList = [],
+      processComepletedList = []
+    } = this.props
+    const { page_number, page_size } = this.state
     const { listData = [], status, dispatch } = this.props
     const obj = {
       // page_number,
@@ -79,29 +80,38 @@ export default class PagingnationContent extends React.Component {
           [listName]: page_number == 1 ? data : [].concat(listData, data)
         }
       })
-      this.setState({
-        scrollBlock: !(data.length < page_size),
-      }, () => {
-        this.setState({
-          loadMoreDisplay: listData.length ? 'block' : 'none',
-          loadMoreText: (data.length < page_size) ? '暂无更多数据' : '加载更多',
-        })
-      })
+      this.setState(
+        {
+          scrollBlock: !(data.length < page_size)
+        },
+        () => {
+          this.setState({
+            loadMoreDisplay: listData.length ? 'block' : 'none',
+            loadMoreText: data.length < page_size ? '暂无更多数据' : '加载更多'
+          })
+        }
+      )
     }
   }
 
   contentBodyScroll(e) {
-    if (e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight < 20) {
+    if (
+      e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight <
+      20
+    ) {
       const { scrollBlock } = this.state
       if (!scrollBlock) {
         return false
       }
-      this.setState({
-        page_number: ++this.state.page_number,
-        scrollBlock: false
-      }, () => {
-        this.getProcessListByType()
-      })
+      this.setState(
+        {
+          page_number: ++this.state.page_number,
+          scrollBlock: false
+        },
+        () => {
+          this.getProcessListByType()
+        }
+      )
     }
   }
   close() {
@@ -159,7 +169,7 @@ export default class PagingnationContent extends React.Component {
 
     await this.setState({
       previewProccessModalVisibile: !this.state.previewProccessModalVisibile
-    });
+    })
   }
 
   commonProcessVisitControlUpdateCurrentModalData = (newProcessInfo, type) => {
@@ -179,7 +189,7 @@ export default class PagingnationContent extends React.Component {
           board_id: board_id
         }
       })
-    }     
+    }
   }
 
   // 访问控制中流程操作
@@ -195,18 +205,24 @@ export default class PagingnationContent extends React.Component {
           obj[item].map(val => {
             let temp_arr = arrayNonRepeatfy([].concat(...privileges, val))
             if (temp_arr && !temp_arr.length) return false
-            return new_privileges = [...temp_arr]
+            return (new_privileges = [...temp_arr])
           })
         }
       }
-      let newProcessInfo = {...processInfo, privileges: new_privileges, is_privilege: obj.is_privilege}
+      let newProcessInfo = {
+        ...processInfo,
+        privileges: new_privileges,
+        is_privilege: obj.is_privilege
+      }
       // this.props.updateDatasProcess({
       //   processInfo: newProcessInfo
       // });
       // 这是需要获取一下流程列表 区分工作台和项目列表
-      this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo, obj.type)
-      
-    };
+      this.commonProcessVisitControlUpdateCurrentModalData(
+        newProcessInfo,
+        obj.type
+      )
+    }
 
     // 访问控制添加
     if (obj && obj.type && obj.type == 'add') {
@@ -215,11 +231,11 @@ export default class PagingnationContent extends React.Component {
         if (item == 'privileges') {
           obj[item].map(val => {
             let temp_arr = arrayNonRepeatfy([].concat(...privileges, val))
-            return new_privileges = [...temp_arr]
+            return (new_privileges = [...temp_arr])
           })
         }
       }
-      let newProcessInfo = {...processInfo, privileges: new_privileges}
+      let newProcessInfo = { ...processInfo, privileges: new_privileges }
       this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo)
     }
 
@@ -231,7 +247,11 @@ export default class PagingnationContent extends React.Component {
           new_privileges.splice(index, 1)
         }
       })
-      let newProcessInfo = {...processInfo, privileges: new_privileges, is_privilege: obj.is_privilege}
+      let newProcessInfo = {
+        ...processInfo,
+        privileges: new_privileges,
+        is_privilege: obj.is_privilege
+      }
       this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo)
     }
 
@@ -239,24 +259,28 @@ export default class PagingnationContent extends React.Component {
     if (obj && obj.type && obj.type == 'change') {
       let { id, content_privilege_code, user_info } = obj.temp_arr
       let new_privileges = [...privileges]
-      new_privileges = new_privileges.map((item) => {
+      new_privileges = new_privileges.map(item => {
         let new_item = item
         if (item.id == id) {
-          new_item = {...item, content_privilege_code: obj.code}
+          new_item = { ...item, content_privilege_code: obj.code }
         } else {
-          new_item = {...item}
+          new_item = { ...item }
         }
         return new_item
       })
-      let newProcessInfo = {...processInfo, privileges: new_privileges}
+      let newProcessInfo = { ...processInfo, privileges: new_privileges }
       this.commonProcessVisitControlUpdateCurrentModalData(newProcessInfo)
     }
-
   }
 
-
   render() {
-    const { processDoingList = [], processStopedList = [], processComepletedList = [], dispatch, projectDetailInfoData = {} } = this.props
+    const {
+      processDoingList = [],
+      processStopedList = [],
+      processComepletedList = [],
+      dispatch,
+      projectDetailInfoData = {}
+    } = this.props
     const { clientHeight, listData = [], status } = this.props
     const { data = [] } = projectDetailInfoData
     const maxContentHeight = clientHeight - 108 - 150
@@ -269,14 +293,17 @@ export default class PagingnationContent extends React.Component {
       <div
         className={indexStyles.paginationContent}
         style={{ maxHeight: maxContentHeight }}
-        onScroll={this.contentBodyScroll.bind(this)}>
+        onScroll={this.contentBodyScroll.bind(this)}
+      >
         <Collapse
           bordered={false}
-          style={{ backgroundColor: '#f5f5f5', marginTop: 4 }}>
+          style={{ backgroundColor: '#f5f5f5', marginTop: 4 }}
+        >
           {listData.map((value, key) => {
             const { id } = value
             return (
-              <Panel key={id}
+              <Panel
+                key={id}
                 style={customPanelStyle}
                 header={
                   <FlowsInstanceItem
@@ -288,7 +315,10 @@ export default class PagingnationContent extends React.Component {
                       processStopedList,
                       processComepletedList
                     }}
-                    processItemClick={this.processItemClick.bind(this)} />} />
+                    processItemClick={this.processItemClick.bind(this)}
+                  />
+                }
+              />
             )
           })}
         </Collapse>
@@ -298,20 +328,27 @@ export default class PagingnationContent extends React.Component {
         {/*)*/}
         {/*})}*/}
         {!listData.length || !listData ? (
-          <div className={indexStyles.nodata} style={{ height: maxContentHeight - 30 }} >
+          <div
+            className={indexStyles.nodata}
+            style={{ height: maxContentHeight - 30 }}
+          >
             <div className={indexStyles.nodata_inner}>
               <img src={nodataImg} />
               <div>暂无数据</div>
             </div>
           </div>
-        ) : ('')}
+        ) : (
+          ''
+        )}
         {/* <div className={indexStyles.Loading} style={{display: loadMoreDisplay }}>{loadMoreText}</div> */}
         <ProcessDetailModalContainer
           status={status}
           getProcessListByType={this.getProcessListByType.bind(this)}
           close={this.close.bind(this)}
           modalVisible={this.state.previewProccessModalVisibile}
-          visitControlUpdateCurrentModalData={this.visitControlUpdateCurrentModalData}
+          visitControlUpdateCurrentModalData={
+            this.visitControlUpdateCurrentModalData
+          }
           principalList={data}
         />
       </div>
@@ -324,8 +361,8 @@ const customPanelStyle = {
   fontSize: 16,
   border: 0,
   marginLeft: 10,
-  overflow: 'hidden',
-};
+  overflow: 'hidden'
+}
 function mapStateToProps({
   projectDetailProcess: {
     datas: {
@@ -338,12 +375,8 @@ function mapStateToProps({
     }
   },
   projectDetail: {
-    datas: {
-      board_id,
-      projectDetailInfoData = {}
-    }
-  },
-
+    datas: { board_id, projectDetailInfoData = {} }
+  }
 }) {
   return {
     processDetailModalVisible,

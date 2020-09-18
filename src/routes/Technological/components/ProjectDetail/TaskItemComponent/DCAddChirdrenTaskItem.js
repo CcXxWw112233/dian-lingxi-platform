@@ -1,15 +1,27 @@
 import React from 'react'
 import DrawerContentStyles from './DrawerContent.less'
-import { Icon, Input, Button, DatePicker, Dropdown, Menu, Avatar, Tooltip, Popconfirm, } from 'antd'
+import {
+  Icon,
+  Input,
+  Button,
+  DatePicker,
+  Dropdown,
+  Menu,
+  Avatar,
+  Tooltip,
+  Popconfirm
+} from 'antd'
 import DCMenuItemOne from './DCMenuItemOne'
-import { timestampToTimeNormal, timeToTimestamp } from '../../../../../utils/util'
+import {
+  timestampToTimeNormal,
+  timeToTimestamp
+} from '../../../../../utils/util'
 import globalStyles from '../../../../../globalset/css/globalClassName.less'
 import { connect } from 'dva'
 const TextArea = Input.TextArea
 
 @connect(mapStateToProps)
 export default class DCAddChirdrenTaskItem extends React.Component {
-
   state = {
     isCheck: false,
     local_card_name: '',
@@ -34,10 +46,11 @@ export default class DCAddChirdrenTaskItem extends React.Component {
   initSet(props) {
     const { chirldTaskItemValue } = this.props
     const { due_time, executors = [], card_name } = chirldTaskItemValue
-    let local_executor = {//任务执行人信息
+    let local_executor = {
+      //任务执行人信息
       user_id: '',
       user_name: '',
-      avatar: '',
+      avatar: ''
     }
     if (executors.length) {
       local_executor = executors[0]
@@ -54,7 +67,7 @@ export default class DCAddChirdrenTaskItem extends React.Component {
   //设置项目名称---start
   setIsInEditTaskName() {
     this.setState({
-      isInEditTaskName: !this.state.isInEditTaskName,
+      isInEditTaskName: !this.state.isInEditTaskName
     })
   }
   localChildTaskNameChange(e) {
@@ -111,7 +124,8 @@ export default class DCAddChirdrenTaskItem extends React.Component {
       card_id,
       is_realize: is_realize === '1' ? '0' : '1'
     }
-    drawContent['child_data'][chirldDataIndex]['is_realize'] = is_realize === '1' ? '0' : '1'
+    drawContent['child_data'][chirldDataIndex]['is_realize'] =
+      is_realize === '1' ? '0' : '1'
 
     dispatch({
       type: 'projectDetailTask/updateDatas',
@@ -133,7 +147,8 @@ export default class DCAddChirdrenTaskItem extends React.Component {
     dispatch({
       type: 'projectDetailTask/removeProjectMenbers',
       payload: {
-        board_id, user_id: id
+        board_id,
+        user_id: id
       }
     })
   }
@@ -154,7 +169,7 @@ export default class DCAddChirdrenTaskItem extends React.Component {
       type: 'projectDetailTask/addTaskExecutor',
       payload: {
         card_id,
-        users: user_id,
+        users: user_id
       }
     })
   }
@@ -174,10 +189,9 @@ export default class DCAddChirdrenTaskItem extends React.Component {
       type: 'projectDetailTask/removeTaskExecutor',
       payload: {
         card_id,
-        user_id: user_id,
+        user_id: user_id
       }
     })
-
   }
 
   datePickerChange(date, dateString) {
@@ -207,7 +221,8 @@ export default class DCAddChirdrenTaskItem extends React.Component {
     dispatch({
       type: 'projectDetailTask/deleteChirldTask',
       payload: {
-        card_id, chirldDataIndex
+        card_id,
+        chirldDataIndex
       }
     })
   }
@@ -215,76 +230,176 @@ export default class DCAddChirdrenTaskItem extends React.Component {
   render() {
     const { chirldTaskItemValue, chirldDataIndex } = this.props
     const { card_id, is_realize = '0' } = chirldTaskItemValue
-    const { projectDetailInfoData = {}, drawContent = {}, } = this.props
+    const { projectDetailInfoData = {}, drawContent = {} } = this.props
     const { data = [] } = projectDetailInfoData //任务执行人列表
-    const { local_card_name, isInEditTaskName, local_executor = {}, local_due_time } = this.state
+    const {
+      local_card_name,
+      isInEditTaskName,
+      local_executor = {},
+      local_due_time
+    } = this.state
 
     return (
       <div className={DrawerContentStyles.taskItem}>
-        <div key={'1'} className={DrawerContentStyles.item_1} >
+        <div key={'1'} className={DrawerContentStyles.item_1}>
           {/*完成*/}
-          <div className={is_realize === '1' ? DrawerContentStyles.nomalCheckBoxActive : DrawerContentStyles.nomalCheckBox} onClick={this.itemOneClick.bind(this)}>
-            <Icon type="check" style={{ color: '#FFFFFF', fontSize: 12, fontWeight: 'bold' }} />
+          <div
+            className={
+              is_realize === '1'
+                ? DrawerContentStyles.nomalCheckBoxActive
+                : DrawerContentStyles.nomalCheckBox
+            }
+            onClick={this.itemOneClick.bind(this)}
+          >
+            <Icon
+              type="check"
+              style={{ color: '#FFFFFF', fontSize: 12, fontWeight: 'bold' }}
+            />
           </div>
           {/*名称和日期*/}
           <div>
             {!isInEditTaskName ? (
-              <div style={{ wordWrap: 'break-word', width: 250, paddingTop: 2 }} onClick={this.setIsInEditTaskName.bind(this)}>
+              <div
+                style={{ wordWrap: 'break-word', width: 250, paddingTop: 2 }}
+                onClick={this.setIsInEditTaskName.bind(this)}
+              >
                 {`${local_card_name}`}
               </div>
             ) : (
-                <TextArea value={local_card_name}
-                  autoFocus
-                  autosize={{ minRows: 1 }}
-                  size={'small'}
-                  onChange={this.localChildTaskNameChange.bind(this)}
-                  onPressEnter={this.editTaskNameComplete.bind(this)}
-                  onBlur={this.editTaskNameComplete.bind(this)} />
-              )}
-            <div style={{ color: '#d5d5d5' }}>{local_due_time ? (local_due_time.indexOf('-') !== -1 ? local_due_time : timestampToTimeNormal(local_due_time, '', true)) + '截止' : ''}</div>
+              <TextArea
+                value={local_card_name}
+                autoFocus
+                autosize={{ minRows: 1 }}
+                size={'small'}
+                onChange={this.localChildTaskNameChange.bind(this)}
+                onPressEnter={this.editTaskNameComplete.bind(this)}
+                onBlur={this.editTaskNameComplete.bind(this)}
+              />
+            )}
+            <div style={{ color: '#d5d5d5' }}>
+              {local_due_time
+                ? (local_due_time.indexOf('-') !== -1
+                    ? local_due_time
+                    : timestampToTimeNormal(local_due_time, '', true)) + '截止'
+                : ''}
+            </div>
           </div>
           {/*cuozuo*/}
-          <div style={{ position: 'relative', height: 22, display: 'flex', justifyContent: 'align-items' }}>
-            <Popconfirm onConfirm={this.deleteConfirm.bind(this, { card_id, chirldDataIndex })} title={'删除该子任务？'}>
-              <div className={`${globalStyles.authTheme} ${DrawerContentStyles.userIconNormal}`} style={{ fontSize: 16 }}>&#xe70f;</div>
+          <div
+            style={{
+              position: 'relative',
+              height: 22,
+              display: 'flex',
+              justifyContent: 'align-items'
+            }}
+          >
+            <Popconfirm
+              onConfirm={this.deleteConfirm.bind(this, {
+                card_id,
+                chirldDataIndex
+              })}
+              title={'删除该子任务？'}
+            >
+              <div
+                className={`${globalStyles.authTheme} ${DrawerContentStyles.userIconNormal}`}
+                style={{ fontSize: 16 }}
+              >
+                &#xe70f;
+              </div>
             </Popconfirm>
-            <Dropdown overlay={
-              <DCMenuItemOne
-                deleteExcutor={this.deleteExcutor.bind(this)} currentExecutor={local_executor}
-                execusorList={data}
-                setList={this.setList.bind(this)}
-                chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)} isInvitation={true}
-                invitationType='4'
-                invitationId={drawContent.list_id} />
-            }>
+            <Dropdown
+              overlay={
+                <DCMenuItemOne
+                  deleteExcutor={this.deleteExcutor.bind(this)}
+                  currentExecutor={local_executor}
+                  execusorList={data}
+                  setList={this.setList.bind(this)}
+                  chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(
+                    this
+                  )}
+                  isInvitation={true}
+                  invitationType="4"
+                  invitationId={drawContent.list_id}
+                />
+              }
+            >
               {local_executor.user_id ? (
-                <Tooltip title={local_executor.user_name || local_executor.full_name || '佚名'}>
+                <Tooltip
+                  title={
+                    local_executor.user_name ||
+                    local_executor.full_name ||
+                    '佚名'
+                  }
+                >
                   {/*{imgOrAvatar(local_executor.avatar)}*/}
-                  <Avatar size={16} src={local_executor.avatar} style={{ fontSize: 14, margin: '4px 12px 0 12px' }}>
-                    {(local_executor.user_name || local_executor.full_name) ? (local_executor.user_name || local_executor.full_name).substring(0, 1) : '佚'}
+                  <Avatar
+                    size={16}
+                    src={local_executor.avatar}
+                    style={{ fontSize: 14, margin: '4px 12px 0 12px' }}
+                  >
+                    {local_executor.user_name || local_executor.full_name
+                      ? (
+                          local_executor.user_name || local_executor.full_name
+                        ).substring(0, 1)
+                      : '佚'}
                   </Avatar>
                 </Tooltip>
               ) : (
-                  <div>
-                    {/*<Icon type="user" style={{fontSize: 16,margin:'0 12px',marginTop: 2,cursor: 'pointer'}} className={DrawerContentStyles.userIconNormal}/>*/}
-                    <div className={`${globalStyles.authTheme} ${DrawerContentStyles.userIconNormal}`} style={{ fontSize: 16, margin: '0 12px', cursor: 'pointer' }}>&#xe70c;</div>
+                <div>
+                  {/*<Icon type="user" style={{fontSize: 16,margin:'0 12px',marginTop: 2,cursor: 'pointer'}} className={DrawerContentStyles.userIconNormal}/>*/}
+                  <div
+                    className={`${globalStyles.authTheme} ${DrawerContentStyles.userIconNormal}`}
+                    style={{
+                      fontSize: 16,
+                      margin: '0 12px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    &#xe70c;
                   </div>
-                )}
-
+                </div>
+              )}
             </Dropdown>
             <div>
               {!local_due_time ? (
-                <div className={`${globalStyles.authTheme} ${DrawerContentStyles.userIconNormal}`} style={{ fontSize: 16, marginRight: '12px', cursor: 'pointer' }}>&#xe709;</div>
+                <div
+                  className={`${globalStyles.authTheme} ${DrawerContentStyles.userIconNormal}`}
+                  style={{
+                    fontSize: 16,
+                    marginRight: '12px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  &#xe709;
+                </div>
               ) : (
-                  <div className={`${globalStyles.authTheme} ${DrawerContentStyles.userIconNormal}`} style={{ fontSize: 16, marginRight: '12px', cursor: 'pointer' }}>&#xe8e0;</div>
-                )}
+                <div
+                  className={`${globalStyles.authTheme} ${DrawerContentStyles.userIconNormal}`}
+                  style={{
+                    fontSize: 16,
+                    marginRight: '12px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  &#xe8e0;
+                </div>
+              )}
             </div>
             <DatePicker
               onChange={this.datePickerChange.bind(this)}
               placeholder={'选择截止日期'}
               format="YYYY/MM/DD HH:mm"
               showTime={{ format: 'HH:mm' }}
-              style={{ opacity: 0, height: 16, width: 16, background: '#000000', position: 'absolute', right: 0, zIndex: 2 }} />
+              style={{
+                opacity: 0,
+                height: 16,
+                width: 16,
+                background: '#000000',
+                position: 'absolute',
+                right: 0,
+                zIndex: 2
+              }}
+            />
           </div>
         </div>
       </div>
@@ -294,15 +409,11 @@ export default class DCAddChirdrenTaskItem extends React.Component {
 
 function mapStateToProps({
   projectDetailTask: {
-    datas: {
-      drawContent = {},
-    }
+    datas: { drawContent = {} }
   },
   projectDetail: {
-    datas: {
-      projectDetailInfoData = {},
-    }
-  },
+    datas: { projectDetailInfoData = {} }
+  }
 }) {
   return {
     drawContent,

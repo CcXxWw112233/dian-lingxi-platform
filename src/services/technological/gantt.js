@@ -1,7 +1,16 @@
 import request from '../../utils/requestAxios'
-import { REQUEST_DOMAIN, REQUEST_DOMAIN_BOARD, REQUEST_DOMAIN_WORK_BENCH, REQUEST_DOMAIN_ARTICLE, WE_APP_ID, REQUEST_DOMAIN_FLOWS, REQUEST_DOMAIN_TEAM_SHOW, REQUEST_INTERGFACE_VERSIONN } from '../../globalset/js/constant'
+import {
+  REQUEST_DOMAIN,
+  REQUEST_DOMAIN_BOARD,
+  REQUEST_DOMAIN_WORK_BENCH,
+  REQUEST_DOMAIN_ARTICLE,
+  WE_APP_ID,
+  REQUEST_DOMAIN_FLOWS,
+  REQUEST_DOMAIN_TEAM_SHOW,
+  REQUEST_INTERGFACE_VERSIONN
+} from '../../globalset/js/constant'
 import Cookies from 'js-cookie'
-import { getGlobalData } from '../../utils/businessFunction';
+import { getGlobalData } from '../../utils/businessFunction'
 
 //获取工作台甘特图数据
 export async function getGanttData(data) {
@@ -10,7 +19,7 @@ export async function getGanttData(data) {
     method: 'POST',
     data: {
       _organization_id: localStorage.getItem('OrganizationId'),
-      ...data,
+      ...data
     }
   })
 }
@@ -26,14 +35,17 @@ export async function getHoliday(params) {
 
 //获取甘特图里程碑列表
 export async function getGttMilestoneList(data) {
-  return request({
-    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt_chart/milestone`,
-    method: 'POST',
-    data: {
-      ...data,
-      // _organization_id: getGlobalData('aboutBoardOrganizationId')
-    }
-  }, { isNotLoading: true });
+  return request(
+    {
+      url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt_chart/milestone`,
+      method: 'POST',
+      data: {
+        ...data
+        // _organization_id: getGlobalData('aboutBoardOrganizationId')
+      }
+    },
+    { isNotLoading: true }
+  )
 }
 
 //获取内容过滤项目分组树
@@ -43,7 +55,7 @@ export async function getContentFiterBoardTree(params) {
     method: 'GET',
     params: {
       _organization_id: localStorage.getItem('OrganizationId'),
-      ...params,
+      ...params
     }
   })
 }
@@ -54,7 +66,7 @@ export async function getContentFiterUserTree(params) {
     method: 'GET',
     params: {
       _organization_id: localStorage.getItem('OrganizationId'),
-      ...params,
+      ...params
     }
   })
 }
@@ -66,7 +78,7 @@ export async function getGanttBoardsFiles(data) {
     method: 'POST',
     data: {
       _organization_id: localStorage.getItem('OrganizationId'),
-      ...data,
+      ...data
     }
   })
 }
@@ -82,11 +94,14 @@ export async function getBoardTemplateList(params) {
 }
 //获取项目模板内容列表
 export async function getBoardTemplateInfo(params) {
-  return request({
-    url: `${REQUEST_DOMAIN}/org/template/content`,
-    method: 'GET',
-    params
-  }, { isNotLoading: true })
+  return request(
+    {
+      url: `${REQUEST_DOMAIN}/org/template/content`,
+      method: 'GET',
+      params
+    },
+    { isNotLoading: true }
+  )
 }
 //拖动模板创建任务
 export async function createCardByTemplate(data) {
@@ -124,7 +139,6 @@ export async function saveGanttOutlineSort(data) {
   })
 }
 
-
 //置顶项目的分组
 export async function roofTopBoardCardGroup(data) {
   return request({
@@ -145,18 +159,21 @@ export async function cancleToofTopBoardCardGroup(data) {
 
 //获取甘特图头部的其它信息
 export async function getGanttGroupElseInfo(params) {
-  return request({
-    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt_chart/progress`,
-    method: 'GET',
-    params
-  }, { isNotLoading: true })
+  return request(
+    {
+      url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt_chart/progress`,
+      method: 'GET',
+      params
+    },
+    { isNotLoading: true }
+  )
 }
 
 // 获取基线列表
 export async function getBaseLineList(params) {
   return request({
     url: `${REQUEST_DOMAIN_WORK_BENCH}/baseline`,
-    method: "GET",
+    method: 'GET',
     params
   })
 }
@@ -165,7 +182,7 @@ export async function getBaseLineList(params) {
 export async function getBaseLineInfoData(data) {
   return request({
     url: `${REQUEST_DOMAIN_WORK_BENCH}/baseline/${data.id}`,
-    method: "GET",
+    method: 'GET',
     data
   })
 }
@@ -174,7 +191,7 @@ export async function getBaseLineInfoData(data) {
 export async function createBaseLine(data) {
   return request({
     url: `${REQUEST_DOMAIN_WORK_BENCH}/baseline`,
-    method: "POST",
+    method: 'POST',
     data
   })
 }
@@ -183,7 +200,7 @@ export async function createBaseLine(data) {
 export async function EditBaseLine(data) {
   return request({
     url: `${REQUEST_DOMAIN_WORK_BENCH}/baseline/${data.id}`,
-    method: "PUT",
+    method: 'PUT',
     data
   })
 }
@@ -192,7 +209,7 @@ export async function EditBaseLine(data) {
 export async function DeleteBaseLine(data) {
   return request({
     url: `${REQUEST_DOMAIN_WORK_BENCH}/baseline/${data.id}`,
-    method: "DELETE",
+    method: 'DELETE',
     data
   })
 }

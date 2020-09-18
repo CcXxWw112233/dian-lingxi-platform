@@ -4,9 +4,7 @@ import CustormModal from '../../../../../components/CustormModal'
 import FileDetail from '../FileModule/FileDetail/index'
 
 class PreviewFileModal extends React.Component {
-
-  state = {
-  }
+  state = {}
   onCancel = () => {
     this.props.updateDatasTask({
       isInOpenFile: false
@@ -14,32 +12,47 @@ class PreviewFileModal extends React.Component {
     this.props.setPreviewFileModalVisibile()
   }
   render() {
-    const { modalVisible, previewFileSrc, previewFileType, isUsable } = this.props;
+    const {
+      modalVisible,
+      previewFileSrc,
+      previewFileType,
+      isUsable
+    } = this.props
     const containner = () => {
       let contain
       switch (previewFileType) {
         case 'img':
           contain = (
-            <img src={previewFileSrc} style={{width: 600, height: 'auto'}}/>
+            <img src={previewFileSrc} style={{ width: 600, height: 'auto' }} />
           )
           break
         case 'video':
           contain = (
-            <video controls src={previewFileSrc} style={{width: 'auto', maxHeight: '600px'}}></video>
+            <video
+              controls
+              src={previewFileSrc}
+              style={{ width: 'auto', maxHeight: '600px' }}
+            ></video>
           )
           break
         case 'attachment':
-          if(isUsable) {
+          if (isUsable) {
             contain = (
-              <iframe style={{height: 600, width: 600}} src={previewFileSrc}></iframe>
+              <iframe
+                style={{ height: 600, width: 600 }}
+                src={previewFileSrc}
+              ></iframe>
             )
-          }else {
+          } else {
             contain = (
               <div>
-                <iframe style={{height: 0, width: 0}} src={previewFileSrc}></iframe>
+                <iframe
+                  style={{ height: 0, width: 0 }}
+                  src={previewFileSrc}
+                ></iframe>
                 当前文件无法预览
               </div>
-)
+            )
           }
 
         default:
@@ -48,7 +61,7 @@ class PreviewFileModal extends React.Component {
       return contain
     }
     const modalTop = 20
-    return(
+    return (
       <div>
         <CustormModal
           visible={modalVisible} //modalVisible
@@ -58,10 +71,10 @@ class PreviewFileModal extends React.Component {
           footer={null}
           destroyOnClose
           maskClosable={false}
-          bodyStyle={{padding: 0}}
-          style={{top: modalTop}}
+          bodyStyle={{ padding: 0 }}
+          style={{ top: modalTop }}
           onCancel={this.onCancel}
-          overInner={<FileDetail {...this.props} modalTop={modalTop}/>}
+          overInner={<FileDetail {...this.props} modalTop={modalTop} />}
         >
           {/*{containner()}*/}
         </CustormModal>

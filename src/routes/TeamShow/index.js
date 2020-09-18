@@ -1,29 +1,28 @@
-import React from 'react';
-import { connect } from 'dva';
+import React from 'react'
+import { connect } from 'dva'
 import QueueAnim from 'rc-queue-anim'
 import globalClassNmae from '../../globalset/css/globalClassName.less'
 import { Route, Router, Switch, Link } from 'dva/router'
-import dynamic from "dva/dynamic";
-import dva from "dva/index";
-import { LocaleProvider } from 'antd';
-import zh_CN from 'antd/lib/locale-provider/zh_CN';
-import 'moment/locale/zh-cn';
+import dynamic from 'dva/dynamic'
+import dva from 'dva/index'
+import { LocaleProvider } from 'antd'
+import zh_CN from 'antd/lib/locale-provider/zh_CN'
+import 'moment/locale/zh-cn'
 import HeaderNav from './Component/HeaderNav'
 
-
 const getEffectOrReducerByName = name => `teamShow/${name}`
-const TeamShow = (options) => {
+const TeamShow = options => {
   const { dispatch, model } = options
-  const app = dva();
+  const app = dva()
   //导航栏props-------------
   const HeaderNavProps = {
     model,
-    routingJump (path) {
+    routingJump(path) {
       dispatch({
         type: getEffectOrReducerByName('routingJump'),
         payload: {
-          route: path,
-        },
+          route: path
+        }
       })
     },
 
@@ -62,9 +61,9 @@ const TeamShow = (options) => {
         type: getEffectOrReducerByName('getCurrentOrgTeamShowList'),
         payload: data
       })
-    },
+    }
   }
-  const updateDatas = (payload) => {
+  const updateDatas = payload => {
     dispatch({
       type: getEffectOrReducerByName('updateDatas'),
       payload: payload
@@ -76,37 +75,39 @@ const TeamShow = (options) => {
   const routes = [
     {
       path: '/technological/teamShow/editTeamShow',
-      component: () => import('./Component/EditTeamShow'),
-    }, {
+      component: () => import('./Component/EditTeamShow')
+    },
+    {
       path: '/technological/teamShow/teamList',
-      component: () => import('./Component/TeamList'),
-    }, {
+      component: () => import('./Component/TeamList')
+    },
+    {
       path: '/technological/teamShow/teamInfo',
-      component: () => import('./Component/TeamInfo'),
+      component: () => import('./Component/TeamInfo')
     }
   ]
   return (
     <LocaleProvider locale={zh_CN}>
       {/*className={globalClassNmae.page_style_3}*/}
-      <div style={{ minWidth: 1440, position: 'relative'}}>
+      <div style={{ minWidth: 1440, position: 'relative' }}>
         {/*<HeaderNav {...HeaderNavProps} updateDatas={updateDatas} />*/}
-        {
-          routes.map(({ path, ...dynamics }, key) =>{
-            return (
-<Route key={key}
-                   exact
-                   path={path}
-                   component={dynamic({
-                     app,
-                     ...dynamics,
-                   })}
+        {routes.map(({ path, ...dynamics }, key) => {
+          return (
+            <Route
+              key={key}
+              exact
+              path={path}
+              component={dynamic({
+                app,
+                ...dynamics
+              })}
             />
-          )})
-        }
+          )
+        })}
       </div>
     </LocaleProvider>
-  );
-};
+  )
+}
 // export default Products;
 // export default connect(({ technological }) => {
 //   return({
@@ -114,7 +115,6 @@ const TeamShow = (options) => {
 //   })
 //
 // })(Technological);
-
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({ modal, teamShow, loading }) {

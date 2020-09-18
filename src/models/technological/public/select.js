@@ -1,1 +1,2 @@
-export const public_selectCurrentFlowTabsStatus = state => state[(`publicProcessDetailModal`)].currentFlowTabsStatus
+export const public_selectCurrentFlowTabsStatus = state =>
+  state[`publicProcessDetailModal`].currentFlowTabsStatus

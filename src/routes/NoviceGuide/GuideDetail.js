@@ -1,16 +1,15 @@
 import React from 'react'
-import { connect } from 'dva';
+import { connect } from 'dva'
 import indexStyles from './index.less'
 import logo from '../../assets/library/lingxi_logo.png'
 import { Input, Button, Spin, Select } from 'antd'
-import {getSearchOrganizationList} from "../../services/technological/organizationMember";
-import {INPUT_CHANGE_SEARCH_TIME} from "../../globalset/js/constant";
+import { getSearchOrganizationList } from '../../services/technological/organizationMember'
+import { INPUT_CHANGE_SEARCH_TIME } from '../../globalset/js/constant'
 
 const Option = Select.Option
 
 export default class GuideDetail extends React.Component {
-
-  state={
+  state = {
     name: '', //名称
     stepContinueDisabled: true, //确认按钮
     operateType: '0', //0默认申请加入 ‘1’创建组织
@@ -19,59 +18,63 @@ export default class GuideDetail extends React.Component {
     searchTimer: null,
     searchOrganizationList: [], //搜索列表
     orgProperty: '1', //组织性质
-    spinning: false,
+    spinning: false
   }
   nameChange(e) {
     const value = e.target.value
     const that = this
     this.setState({
-      name: value,
+      name: value
     })
     let flag = true
-    if(value) {
+    if (value) {
       flag = false
     }
-    this.setState({
-      operateType: '0',
-    }, () => {
-      this.setState({
-        stepContinueDisabled: this.state.operateType === '1'? flag : true,
-        createButtonVisible: this.state.operateType === '0'? !flag : false, //如果是申请加入界面，那就根据输入，如果是创建组织，则隐藏
-        seachAreaVisible: this.state.operateType === '0'? !flag : false,
-      })
-
-      //延时调用查询
-      const { searchTimer, operateType } = this.state
-      if(operateType === '0') {
-        if (searchTimer) {
-          clearTimeout(searchTimer)
-        }
+    this.setState(
+      {
+        operateType: '0'
+      },
+      () => {
         this.setState({
-          searchTimer: setTimeout(function () {
-            //  此处调用请求
-            // that.props.getSearchOrganizationList({name: value})
-            that.setState({
-              spinning: true
-            })
-            getSearchOrganizationList({name: value}).then((res) => {
-              that.setState({
-                searchOrganizationList: res.data,
-                spinning: false
-              })
-            }).catch(err => {
-              that.setState({
-                spinning: false
-              })
-            })
-          }, INPUT_CHANGE_SEARCH_TIME)
+          stepContinueDisabled: this.state.operateType === '1' ? flag : true,
+          createButtonVisible: this.state.operateType === '0' ? !flag : false, //如果是申请加入界面，那就根据输入，如果是创建组织，则隐藏
+          seachAreaVisible: this.state.operateType === '0' ? !flag : false
         })
-      }
 
-    })
+        //延时调用查询
+        const { searchTimer, operateType } = this.state
+        if (operateType === '0') {
+          if (searchTimer) {
+            clearTimeout(searchTimer)
+          }
+          this.setState({
+            searchTimer: setTimeout(function() {
+              //  此处调用请求
+              // that.props.getSearchOrganizationList({name: value})
+              that.setState({
+                spinning: true
+              })
+              getSearchOrganizationList({ name: value })
+                .then(res => {
+                  that.setState({
+                    searchOrganizationList: res.data,
+                    spinning: false
+                  })
+                })
+                .catch(err => {
+                  that.setState({
+                    spinning: false
+                  })
+                })
+            }, INPUT_CHANGE_SEARCH_TIME)
+          })
+        }
+      }
+    )
   }
-  nameBlur(){
+  nameBlur() {
     const that = this
-    setTimeout(function () {
+    setTimeout(function() {
       that.setState({
         seachAreaVisible: false
       })
@@ -80,9 +83,9 @@ export default class GuideDetail extends React.Component {
   setOperateType(type) {
     this.setState({
       operateType: type,
-      seachAreaVisible: type === '1'? false: true,
+      seachAreaVisible: type === '1' ? false : true,
       createButtonVisible: false,
-      stepContinueDisabled: this.state.name ? false :true
+      stepContinueDisabled: this.state.name ? false : true
     })
   }
 
@@ -103,52 +106,103 @@ export default class GuideDetail extends React.Component {
   }
   submitButton() {
     const { operateType, name, org_id, orgProperty } = this.state
-    if(operateType === '0') {
-      this.props.applyJoinOrganization({org_id})
-    }else if(operateType === '1') {
-      this.props.createOrganization({name, property: orgProperty})
+    if (operateType === '0') {
+      this.props.applyJoinOrganization({ org_id })
+    } else if (operateType === '1') {
+      this.props.createOrganization({ name, property: orgProperty })
     }
   }
 
   render() {
-    const { stepContinueDisabled, operateType, createButtonVisible, name, seachAreaVisible, spinning, searchOrganizationList=[], orgProperty } = this.state
+    const {
+      stepContinueDisabled,
+      operateType,
+      createButtonVisible,
+      name,
+      seachAreaVisible,
+      spinning,
+      searchOrganizationList = [],
+      orgProperty
+    } = this.state
 
-    return(
+    return (
       <div className={indexStyles.noviceGuideOut}>
         <div className={indexStyles.contain1}>
           <img src={logo} />
         </div>
         <div className={indexStyles.contain2}>欢迎使用聆悉</div>
-        <div className={indexStyles.contain3}>查找并加入你的组织，轻松连接工作的伙伴与项目：</div>
+        <div className={indexStyles.contain3}>
+          查找并加入你的组织，轻松连接工作的伙伴与项目：
+        </div>
 
         <div className={indexStyles.contain4}>
-
-          <div style={{position: 'relative'}}>
-            <Input placeholder={'请输入'} onBlur={this.nameBlur.bind(this)} value={name} onChange={this.nameChange.bind(this)} maxLength={50} style={{paddingRight: 120, height: 40}}/>
-            {createButtonVisible? (
-              <Button type={'primary'} size={'small'} style={{position: 'absolute', right: 10, top: 8}} onClick={this.setOperateType.bind(this, '1')}>创建组织</Button>) : ('')}
-            {searchOrganizationList.length? (
-              <div style={{...seachAreaStyles, display: !seachAreaVisible ? 'none':'block'}} >
+          <div style={{ position: 'relative' }}>
+            <Input
+              placeholder={'请输入'}
+              onBlur={this.nameBlur.bind(this)}
+              value={name}
+              onChange={this.nameChange.bind(this)}
+              maxLength={50}
+              style={{ paddingRight: 120, height: 40 }}
+            />
+            {createButtonVisible ? (
+              <Button
+                type={'primary'}
+                size={'small'}
+                style={{ position: 'absolute', right: 10, top: 8 }}
+                onClick={this.setOperateType.bind(this, '1')}
+              >
+                创建组织
+              </Button>
+            ) : (
+              ''
+            )}
+            {searchOrganizationList.length ? (
+              <div
+                style={{
+                  ...seachAreaStyles,
+                  display: !seachAreaVisible ? 'none' : 'block'
+                }}
+              >
                 <Spin spinning={spinning} size={'small'}>
                   {searchOrganizationList.map((value, key) => (
-                    <div className={indexStyles.searChItem} key={value.id} onClick={this.searchResultItemClick.bind(this, {name: value.name, id: value.id})}>{value.name}</div>
+                    <div
+                      className={indexStyles.searChItem}
+                      key={value.id}
+                      onClick={this.searchResultItemClick.bind(this, {
+                        name: value.name,
+                        id: value.id
+                      })}
+                    >
+                      {value.name}
+                    </div>
                   ))}
                 </Spin>
               </div>
-            ):(
-              <div style={{...seachAreaStyles, display: !seachAreaVisible ? 'none':'block'}} >
+            ) : (
+              <div
+                style={{
+                  ...seachAreaStyles,
+                  display: !seachAreaVisible ? 'none' : 'block'
+                }}
+              >
                 <div>未找到符合搜索条件的组织</div>
               </div>
             )}
-
           </div>
 
-          {operateType === '0'? (
+          {operateType === '0' ? (
             ''
           ) : (
             <div>
               {/*组织性质*/}
-              <Select style={{ height: 40, width: 350, marginTop: 16 }} value={orgProperty} size={'large'} placeholder={'请选择'} onChange={this.setOrgProperty.bind(this)}>
+              <Select
+                style={{ height: 40, width: 350, marginTop: 16 }}
+                value={orgProperty}
+                size={'large'}
+                placeholder={'请选择'}
+                onChange={this.setOrgProperty.bind(this)}
+              >
                 <Option value="1">投资商</Option>
                 <Option value="2">设计院</Option>
                 <Option value="3">学校</Option>
@@ -157,14 +211,18 @@ export default class GuideDetail extends React.Component {
                 <Option value="6">其他</Option>
               </Select>
               {/*人数*/}
-              </div>
+            </div>
           )}
 
-          <Button type={operateType === '0'?'' : 'primary'} disabled={stepContinueDisabled} onClick={this.submitButton.bind(this)} style={{marginTop: 20, width: 208, height: 40}}>
-            {operateType === '0'? '申请加入' : '创建组织'}
+          <Button
+            type={operateType === '0' ? '' : 'primary'}
+            disabled={stepContinueDisabled}
+            onClick={this.submitButton.bind(this)}
+            style={{ marginTop: 20, width: 208, height: 40 }}
+          >
+            {operateType === '0' ? '申请加入' : '创建组织'}
           </Button>
         </div>
-
       </div>
     )
   }
@@ -182,4 +240,3 @@ const seachAreaStyles = {
   boxShadow: `0px 2px 15px 0px rgba(0,0,0,0.08)`,
   overflow: 'hidden'
 }
-

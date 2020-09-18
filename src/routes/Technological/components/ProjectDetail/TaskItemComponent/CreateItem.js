@@ -4,16 +4,18 @@ import React from 'react'
 import CreateTaskStyle from './CreateTask.less'
 import { Input, message } from 'antd'
 import {
-  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_GROUP,
-} from "../../../../../globalset/js/constant";
-import { checkIsHasPermissionInBoard } from "../../../../../utils/businessFunction";
-import { connect } from 'dva';
+  MESSAGE_DURATION_TIME,
+  NOT_HAS_PERMISION_COMFIRN,
+  PROJECT_TEAM_CARD_GROUP
+} from '../../../../../globalset/js/constant'
+import { checkIsHasPermissionInBoard } from '../../../../../utils/businessFunction'
+import { connect } from 'dva'
 
 @connect(mapStateToProps)
 export default class CreateItem extends React.Component {
   state = {
     isInEditAdd: false,
-    inputValue: '',
+    inputValue: ''
   }
 
   setIsInEditAdd() {
@@ -29,7 +31,7 @@ export default class CreateItem extends React.Component {
   inputEditOk(e) {
     this.setState({
       isInEditAdd: false,
-      inputValue: '',
+      inputValue: ''
     })
     if (!this.state.inputValue) {
       return false
@@ -63,31 +65,38 @@ export default class CreateItem extends React.Component {
     return (
       <div className={CreateTaskStyle.createTaskItem}>
         {!isInEditAdd ? (
-          <div className={CreateTaskStyle.createTaskItemTitle} onClick={this.setIsInEditAdd.bind(this)}>创建新分组…</div>
+          <div
+            className={CreateTaskStyle.createTaskItemTitle}
+            onClick={this.setIsInEditAdd.bind(this)}
+          >
+            创建新分组…
+          </div>
         ) : (
-            <div>
-              <Input autoFocus value={inputValue} placeholder={'创建新分组…'} className={CreateTaskStyle.createTaskItemInput} onChange={this.inputChange.bind(this)} onPressEnter={this.inputEditOk.bind(this)} onBlur={this.inputEditOk.bind(this)} />
-            </div>
-          )}
+          <div>
+            <Input
+              autoFocus
+              value={inputValue}
+              placeholder={'创建新分组…'}
+              className={CreateTaskStyle.createTaskItemInput}
+              onChange={this.inputChange.bind(this)}
+              onPressEnter={this.inputEditOk.bind(this)}
+              onBlur={this.inputEditOk.bind(this)}
+            />
+          </div>
+        )}
       </div>
     )
   }
 }
 function mapStateToProps({
   projectDetailTask: {
-    datas: {
-      taskGroupList = []
-    }
+    datas: { taskGroupList = [] }
   },
   projectDetail: {
-    datas: {
-      projectDetailInfoData = {},
-    }
+    datas: { projectDetailInfoData = {} }
   },
   technological: {
-    datas: {
-  	  userBoardPermissions
-    }
+    datas: { userBoardPermissions }
   }
 }) {
   return {

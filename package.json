@@ -3,7 +3,7 @@
   "scripts": {
     "start": "set port=8000 && cross-env ESLINT=none roadhog server",
     "build": "roadhog build",
-    "lint:fix": "eslint --ext  --fix .js src",
+    "lintfix": "eslint --fix --ext .js src",
     "lint": "eslint --ext  .js src",
     "test": "eslint --ext .js src test",
     "lint-staged": "lint-staged"

@@ -1,20 +1,20 @@
-import React, { Component } from 'react';
-import styles from './index.less';
-import { Select, Spin, message, Tooltip, Button, Input } from 'antd';
-import { validateTel, validateEmail } from './../../../../utils/verify';
-import { debounce } from './../../../../utils/util';
-import { associateUser } from './../../../../services/technological/workbench';
-import defaultUserAvatar from './../../../../assets/invite/user_default_avatar@2x.png';
+import React, { Component } from 'react'
+import styles from './index.less'
+import { Select, Spin, message, Tooltip, Button, Input } from 'antd'
+import { validateTel, validateEmail } from './../../../../utils/verify'
+import { debounce } from './../../../../utils/util'
+import { associateUser } from './../../../../services/technological/workbench'
+import defaultUserAvatar from './../../../../assets/invite/user_default_avatar@2x.png'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import WechatInviteToboard from '../Project/components/WechatInviteToboard'
 
-const Option = Select.Option;
-const { TextArea } = Input;
+const Option = Select.Option
+const { TextArea } = Input
 
 class InviteOtherWithBatch extends Component {
   constructor(props) {
-    super(props);
-    this.fetchUsers = debounce(this.fetchUsers, 300);
+    super(props)
+    this.fetchUsers = debounce(this.fetchUsers, 300)
     this.state = {
       inputValue: [],
       textAreaValue: '',
@@ -22,37 +22,37 @@ class InviteOtherWithBatch extends Component {
       fetching: false,
       selectedMember: [], //已经选择的成员
       multipleMode: false, //是否批量模式
-      wechat_invite_visible: false,
-    };
+      wechat_invite_visible: false
+    }
   }
   isValidMobileOrValidEmail = user => {
-    return validateEmail(user) || validateTel(user);
-  };
+    return validateEmail(user) || validateTel(user)
+  }
   isAvatarValid = avatar => {
-    return avatar && typeof avatar === 'string' && avatar.startsWith('http');
-  };
-  genSplitSymbol = () => '$%$';
+    return avatar && typeof avatar === 'string' && avatar.startsWith('http')
+  }
+  genSplitSymbol = () => '$%$'
   genUserValueStr = (icon, name, user, isFromPlatForm, id) => {
-    const splitSymbol = this.genSplitSymbol();
+    const splitSymbol = this.genSplitSymbol()
     return `${icon}${splitSymbol}${name}${splitSymbol}${user}${splitSymbol}${isFromPlatForm}${
       id ? `${splitSymbol}${id}` : ''
-      }`;
-  };
+    }`
+  }
   parseUserValueStr = userValueStr => {
-    if (!userValueStr) return;
+    if (!userValueStr) return
     const [icon, name, user, isFromPlatForm, id] = userValueStr.split(
       this.genSplitSymbol()
-    );
+    )
     return {
       type: isFromPlatForm === 'true' ? 'platform' : 'other',
       icon,
       name,
       user,
       id: id ? id : ''
-    };
-  };
+    }
+  }
   fetchUsers = user => {
-    if (!user) return;
+    if (!user) return
     this.setState(
       {
         inputRet: [],
@@ -62,7 +62,7 @@ class InviteOtherWithBatch extends Component {
         const params = {
           associate_param: user,
           _organization_id: localStorage.getItem('OrganizationId'),
-          type: (validateTel(user) || validateEmail(user)) ? '2' : '1'
+          type: validateTel(user) || validateEmail(user) ? '2' : '1'
         }
         //发起请求
         associateUser(params)
@@ -83,7 +83,7 @@ class InviteOtherWithBatch extends Component {
                     value,
                     avatar,
                     user: mobile ? mobile : email ? email : '',
-                    name,
+                    name
                   }
                 })
                 // const { avatar, name, id } = res.data;
@@ -100,13 +100,13 @@ class InviteOtherWithBatch extends Component {
                 // });
                 this.setState({
                   inputRet: users,
-                  fetching: false,
+                  fetching: false
                 })
               } else {
                 const isValidUser = this.isValidMobileOrValidEmail(user)
                 if (!isValidUser) {
                   this.setState({
-                    fetching: false,
+                    fetching: false
                   })
                   return
                 }
@@ -116,37 +116,37 @@ class InviteOtherWithBatch extends Component {
                   'default',
                   user,
                   false
-                );
+                )
                 const item = {
                   value,
                   avatar: 'default',
                   user,
                   name: null
-                };
+                }
                 this.setState({
                   inputRet: [item],
                   fetching: false
-                });
+                })
               }
             } else {
               this.setState({
                 fetching: false
-              });
-              message.error('获取联想用户失败');
+              })
+              message.error('获取联想用户失败')
             }
           })
           .catch(err => {
             this.setState({
               fetching: false
-            });
-            message.error('获取联想用户失败');
-          });
+            })
+            message.error('获取联想用户失败')
+          })
       }
-    );
-  };
+    )
+  }
   handleInputDeselected = value => {
-    const selectedUser = this.parseUserValueStr(value.key);
-    const { selectedMember } = this.state;
+    const selectedUser = this.parseUserValueStr(value.key)
+    const { selectedMember } = this.state
     this.setState(
       {
         selectedMember: selectedMember.filter(
@@ -154,42 +154,43 @@ class InviteOtherWithBatch extends Component {
         )
       },
       () => {
-        this.handleReturnResultWhenNotShowSubmitBtn();
+        this.handleReturnResultWhenNotShowSubmitBtn()
       }
-    );
-  };
+    )
+  }
   delFromSelectedMember = item => {
     this.setState(
       state => {
-        const { selectedMember } = state;
+        const { selectedMember } = state
         return {
           selectedMember: selectedMember.filter(i => i.id !== item.id)
-        };
+        }
       },
       () => {
-        this.handleReturnResultWhenNotShowSubmitBtn();
+        this.handleReturnResultWhenNotShowSubmitBtn()
       }
-    );
-  };
+    )
+  }
   handleClickedResultListIcon = (item, e) => {
-    if (e) e.stopPropagation();
-    this.delFromSelectedMember(item);
-  };
+    if (e) e.stopPropagation()
+    this.delFromSelectedMember(item)
+  }
   handleInputSelected = value => {
-    const { selectedMember } = this.state;
-    const selectedUser = this.parseUserValueStr(value.key);
-    const isHasSameMemberInSelectedMember = () => selectedMember.find(item => item.id === selectedUser.id);
-    // console.log('ssss', {selectedMember, selectedUser })  
+    const { selectedMember } = this.state
+    const selectedUser = this.parseUserValueStr(value.key)
+    const isHasSameMemberInSelectedMember = () =>
+      selectedMember.find(item => item.id === selectedUser.id)
+    // console.log('ssss', {selectedMember, selectedUser })
     //如果该用户已经在被选择的列表中了
     if (isHasSameMemberInSelectedMember()) {
-      message.destroy();
-      message.info('已选择该用户');
+      message.destroy()
+      message.info('已选择该用户')
       this.setState({
         inputValue: [],
         inputRet: [],
         fetching: false
-      });
-      return;
+      })
+      return
     }
     this.setState(
       {
@@ -199,65 +200,65 @@ class InviteOtherWithBatch extends Component {
         fetching: false
       },
       () => {
-        this.handleReturnResultWhenNotShowSubmitBtn();
+        this.handleReturnResultWhenNotShowSubmitBtn()
       }
-    );
-  };
+    )
+  }
   handleUsersToUsersStr = (users = []) => {
-    const { returnStrSplitSymbol } = this.props;
+    const { returnStrSplitSymbol } = this.props
     return users.reduce((acc, curr) => {
       const isCurrentUserFromPlatform = () =>
-        curr.type === 'platform' && curr.id;
+        curr.type === 'platform' && curr.id
       if (isCurrentUserFromPlatform()) {
         if (acc) {
-          return acc + returnStrSplitSymbol + curr.id;
+          return acc + returnStrSplitSymbol + curr.id
         }
-        return curr.id;
+        return curr.id
       } else {
         if (acc) {
-          return acc + returnStrSplitSymbol + curr.user;
+          return acc + returnStrSplitSymbol + curr.user
         }
-        return curr.user;
+        return curr.user
       }
-    }, '');
-  };
+    }, '')
+  }
   handleSubmitSeletedMember = () => {
-    const { handleInviteMemberReturnResult, directReturnStr } = this.props;
-    const { selectedMember, multipleMode } = this.state;
+    const { handleInviteMemberReturnResult, directReturnStr } = this.props
+    const { selectedMember, multipleMode } = this.state
     //如果是单选模式
     if (!multipleMode) {
       //如果需要直接返回字符串
       if (directReturnStr) {
-        const memeberListToStr = this.handleUsersToUsersStr(selectedMember);
-        return handleInviteMemberReturnResult(memeberListToStr);
+        const memeberListToStr = this.handleUsersToUsersStr(selectedMember)
+        return handleInviteMemberReturnResult(memeberListToStr)
       }
-      handleInviteMemberReturnResult(selectedMember);
+      handleInviteMemberReturnResult(selectedMember)
     } else {
-      const transedMultipleStr = this.handleTransMentionSelectedOtherMembersMobileString();
-      handleInviteMemberReturnResult(transedMultipleStr);
+      const transedMultipleStr = this.handleTransMentionSelectedOtherMembersMobileString()
+      handleInviteMemberReturnResult(transedMultipleStr)
     }
-  };
+  }
   handleReturnResultWhenNotShowSubmitBtn = () => {
     const {
       handleInviteMemberReturnResult,
       isShowSubmitBtn,
-      directReturnStr,
-    } = this.props;
+      directReturnStr
+    } = this.props
     //如果有提交按钮, 则点击提交按钮的时候统一处理数据
-    if (isShowSubmitBtn) return;
-    const { selectedMember, multipleMode } = this.state;
+    if (isShowSubmitBtn) return
+    const { selectedMember, multipleMode } = this.state
     //如果是单选模式
     if (!multipleMode) {
       if (directReturnStr) {
-        const memeberListToStr = this.handleUsersToUsersStr(selectedMember);
-        return handleInviteMemberReturnResult(memeberListToStr);
+        const memeberListToStr = this.handleUsersToUsersStr(selectedMember)
+        return handleInviteMemberReturnResult(memeberListToStr)
       }
-      handleInviteMemberReturnResult(selectedMember);
+      handleInviteMemberReturnResult(selectedMember)
     } else {
-      const memeberStr = this.handleTransMentionSelectedOtherMembersMobileString();
-      handleInviteMemberReturnResult(memeberStr);
+      const memeberStr = this.handleTransMentionSelectedOtherMembersMobileString()
+      handleInviteMemberReturnResult(memeberStr)
     }
-  };
+  }
   handleInputChange = value => {
     //这个函数根本就不会执行？？？
     // this.setState({
@@ -265,9 +266,9 @@ class InviteOtherWithBatch extends Component {
     //   inputRet: [],
     //   fetching: false
     // })
-  };
+  }
   handleSearchUser = user => {
-    const isValidUser = this.isValidMobileOrValidEmail(user);
+    const isValidUser = this.isValidMobileOrValidEmail(user)
     this.setState(
       {
         inputValue: [],
@@ -275,38 +276,38 @@ class InviteOtherWithBatch extends Component {
         fetching: false
       },
       () => {
-        this.fetchUsers(user);
+        this.fetchUsers(user)
         // if (isValidUser) {
         //   this.fetchUsers(user);
         // }
       }
-    );
-  };
+    )
+  }
   handleTextAreaValueChange = e => {
-    const { value } = e.target;
+    const { value } = e.target
     this.setState(
       {
         textAreaValue: value
       },
       () => {
-        this.handleReturnResultWhenNotShowSubmitBtn();
+        this.handleReturnResultWhenNotShowSubmitBtn()
       }
-    );
-  };
+    )
+  }
   handleTransMentionSelectedOtherMembersMobileString = () => {
-    const { textAreaValue } = this.state;
-    const errorText = 'format error';
+    const { textAreaValue } = this.state
+    const errorText = 'format error'
     //空白符(包括回车，换行)，替换为 ;
     const trimSpace = str => {
-      return str.replace(/\s+/g, ';');
-    };
+      return str.replace(/\s+/g, ';')
+    }
 
     const trimLineBack = str => {
-      return str.replace(/[\r\n]/g, ';');
-    };
+      return str.replace(/[\r\n]/g, ';')
+    }
     const trimOnlySpace = str => {
-      return str.replace(/ /g, '');
-    };
+      return str.replace(/ /g, '')
+    }
     const trimSpaceAndLineBackArr = trimSpace(trimOnlySpace(textAreaValue))
       .replace(/；/g, ';')
       .replace(/,/g, ';')
@@ -314,35 +315,35 @@ class InviteOtherWithBatch extends Component {
       .replace(/\|/g, ';')
       .split(';')
       .map(item => item.trim())
-      .filter(item => item);
+      .filter(item => item)
     const isEachMobileValid = arr =>
-      arr.every(item => validateTel(item) || validateEmail(item));
+      arr.every(item => validateTel(item) || validateEmail(item))
     if (!isEachMobileValid(trimSpaceAndLineBackArr)) {
-      return errorText;
+      return errorText
     } else {
       return trimSpaceAndLineBackArr.reduce((acc, curr) => {
-        return acc ? acc + ',' + curr : curr;
-      }, '');
+        return acc ? acc + ',' + curr : curr
+      }, '')
     }
-  };
+  }
   handleToggleBatchInviteBtn = e => {
-    if (e) e.preventDefault();
+    if (e) e.preventDefault()
     this.setState(state => {
-      const { multipleMode } = state;
+      const { multipleMode } = state
       return {
         multipleMode: !multipleMode
-      };
-    });
-  };
+      }
+    })
+  }
   genOptionLabel = item => {
-    const { avatar, user, name } = item;
+    const { avatar, user, name } = item
     //默认
     if (avatar === 'default') {
       return (
         <p className={styles.input__select_wrapper}>
           <span className={styles.input__select_user}>{user}</span>
         </p>
-      );
+      )
     }
     return (
       <p className={styles.input__select_wrapper}>
@@ -360,8 +361,8 @@ class InviteOtherWithBatch extends Component {
           ({name ? name : '匿名用户'})
         </span>
       </p>
-    );
-  };
+    )
+  }
   getAName = (item = {}) => {
     const { name, mobile, email } = item
     const defaultName = 'unknown'
@@ -383,8 +384,8 @@ class InviteOtherWithBatch extends Component {
       selectedMember,
       multipleMode,
       textAreaValue,
-      wechat_invite_visible,
-    } = this.state;
+      wechat_invite_visible
+    } = this.state
     const {
       isShowSubmitBtn,
       isDisableSubmitWhenNoSelectItem,
@@ -395,12 +396,12 @@ class InviteOtherWithBatch extends Component {
       type,
       invitationType,
       invitationId,
-      invitationOrg,
-    } = this.props;
-    const transedTextAreaValue = this.handleTransMentionSelectedOtherMembersMobileString();
+      invitationOrg
+    } = this.props
+    const transedTextAreaValue = this.handleTransMentionSelectedOtherMembersMobileString()
     const isValidTextAreaValueMobileOrEmail =
-      transedTextAreaValue && transedTextAreaValue !== 'format error';
-    const isHasSelectedItem = !!selectedMember.length;
+      transedTextAreaValue && transedTextAreaValue !== 'format error'
+    const isHasSelectedItem = !!selectedMember.length
     const shouldDisableSubmitBtn = () => {
       //如果在单选模式
       if (
@@ -408,17 +409,17 @@ class InviteOtherWithBatch extends Component {
         !isHasSelectedItem &&
         !multipleMode
       ) {
-        return true;
+        return true
       }
       if (
         isDisableSubmitWhenNoSelectItem &&
         !isValidTextAreaValueMobileOrEmail &&
         multipleMode
       ) {
-        return true;
+        return true
       }
-      return false;
-    };
+      return false
+    }
     return (
       <div className={styles.wrapper}>
         {!multipleMode && (
@@ -432,9 +433,7 @@ class InviteOtherWithBatch extends Component {
                   >
                     <Tooltip
                       title={
-                        item.type === 'other'
-                          ? item.user
-                          : this.getAName(item)
+                        item.type === 'other' ? item.user : this.getAName(item)
                       }
                     >
                       <div
@@ -445,8 +444,8 @@ class InviteOtherWithBatch extends Component {
                             item.type === 'other'
                               ? defaultUserAvatar
                               : this.isAvatarValid(item.icon)
-                                ? item.icon
-                                : defaultUserAvatar
+                              ? item.icon
+                              : defaultUserAvatar
                           }
                           alt=""
                           width="36"
@@ -534,34 +533,48 @@ class InviteOtherWithBatch extends Component {
                 返回
               </a>
             ) : (
-                <a
-                  className={styles.invite__batch_btn}
-                  onClick={e => this.handleToggleBatchInviteBtn(e)}
-                >
-                  批量邀请
+              <a
+                className={styles.invite__batch_btn}
+                onClick={e => this.handleToggleBatchInviteBtn(e)}
+              >
+                批量邀请
               </a>
-              )}
+            )}
           </div>
         )}
         {children}
 
-        {
-          show_wechat_invite && (
-            <div style={{ marginTop: 16, marginBottom: 16, color: '#1890FF', cursor: 'pointer' }} onClick={this.setWechatInviteVisible}>
-              <i className={globalStyles.authTheme} style={{ color: '#46A318', marginRight: 4 }}>&#xe634;</i>
-              微信扫码邀请参与人
-            </div>
-          )
-        }
+        {show_wechat_invite && (
+          <div
+            style={{
+              marginTop: 16,
+              marginBottom: 16,
+              color: '#1890FF',
+              cursor: 'pointer'
+            }}
+            onClick={this.setWechatInviteVisible}
+          >
+            <i
+              className={globalStyles.authTheme}
+              style={{ color: '#46A318', marginRight: 4 }}
+            >
+              &#xe634;
+            </i>
+            微信扫码邀请参与人
+          </div>
+        )}
 
-        {
-          show_wechat_invite && (
-            <WechatInviteToboard invitationId={invitationId} invitationOrg={invitationOrg} invitationType={invitationType} modalVisible={wechat_invite_visible} setModalVisibile={this.setWechatInviteVisible} />
-          )
-        }
-
+        {show_wechat_invite && (
+          <WechatInviteToboard
+            invitationId={invitationId}
+            invitationOrg={invitationOrg}
+            invitationType={invitationType}
+            modalVisible={wechat_invite_visible}
+            setModalVisibile={this.setWechatInviteVisible}
+          />
+        )}
       </div>
-    );
+    )
   }
 }
 
@@ -573,9 +586,9 @@ InviteOtherWithBatch.defaultProps = {
   directReturnStr: false, //单选模式直接返回以逗号隔开的字符串
   returnStrSplitSymbol: ',', //单选模式返回的字符串的分隔符
   show_wechat_invite: false, //显示微信邀请
-  handleInviteMemberReturnResult: function () {
-    message.info('邀请他人组件， 需要被提供一个回调函数');
+  handleInviteMemberReturnResult: function() {
+    message.info('邀请他人组件， 需要被提供一个回调函数')
   }
-};
+}
 
-export default InviteOtherWithBatch;
+export default InviteOtherWithBatch

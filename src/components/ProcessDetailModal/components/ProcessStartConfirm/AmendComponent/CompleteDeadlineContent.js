@@ -3,15 +3,20 @@ import { InputNumber, Select, Radio, Button } from 'antd'
 import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 
-const Option = Select.Option;
+const Option = Select.Option
 export default class CompleteDeadlineContent extends Component {
-
   constructor(props) {
     super(props)
     this.state = {
-      deadlineType: props.itemValue.deadline_type ? props.itemValue.deadline_type : '',
-      deadlineValue: props.itemValue.deadline_value ? props.itemValue.deadline_value : '',
-      deadlineTimeType: props.itemValue.deadline_time_type ? props.itemValue.deadline_time_type : ''
+      deadlineType: props.itemValue.deadline_type
+        ? props.itemValue.deadline_type
+        : '',
+      deadlineValue: props.itemValue.deadline_value
+        ? props.itemValue.deadline_value
+        : '',
+      deadlineTimeType: props.itemValue.deadline_time_type
+        ? props.itemValue.deadline_time_type
+        : ''
     }
   }
 
@@ -28,13 +33,15 @@ export default class CompleteDeadlineContent extends Component {
       this.setState({
         deadlineType: itemValue.deadline_type ? itemValue.deadline_type : '',
         deadlineValue: itemValue.deadline_value ? itemValue.deadline_value : '',
-        deadlineTimeType: itemValue.deadline_time_type ? itemValue.deadline_time_type : ''
+        deadlineTimeType: itemValue.deadline_time_type
+          ? itemValue.deadline_time_type
+          : ''
       })
     }
   }
 
   // 完成期限
-  deadlineValueChange = (value) => {
+  deadlineValueChange = value => {
     if (isNaN(value)) {
       this.setState({
         deadlineValue: ''
@@ -53,7 +60,7 @@ export default class CompleteDeadlineContent extends Component {
     // this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: value }, 'deadline_value')
   }
   // 是否限制时间事件
-  deadlineTypeChange = (e) => {
+  deadlineTypeChange = e => {
     const { itemValue } = this.props
     const { deadline_time_type, deadline_value } = itemValue
     this.setState({
@@ -68,7 +75,7 @@ export default class CompleteDeadlineContent extends Component {
     // this.props.updateConfigureProcess && this.props.updateConfigureProcess({ value: value }, 'deadline_type')
   }
   // 天、时、月事件
-  deadlineTimeTypeValueChange = (value) => {
+  deadlineTimeTypeValueChange = value => {
     this.setState({
       deadlineTimeType: value
     })
@@ -99,7 +106,7 @@ export default class CompleteDeadlineContent extends Component {
           flag = true
         } else {
           flag = false
-        } 
+        }
       }
       if (!flag) {
         return
@@ -119,14 +126,36 @@ export default class CompleteDeadlineContent extends Component {
       is_click_confirm_btn: true
     })
     const { deadlineType, deadlineTimeType, deadlineValue } = this.state
-    this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('deadline_type', deadlineType)
-    this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('deadline_value', deadlineValue)
-    this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('deadline_time_type', deadlineTimeType)
-    await this.props.onVisibleChange && this.props.onVisibleChange(false, this.updateState)
+    this.props.updateCorrespondingPrcodessStepWithNodeContent &&
+      this.props.updateCorrespondingPrcodessStepWithNodeContent(
+        'deadline_type',
+        deadlineType
+      )
+    this.props.updateCorrespondingPrcodessStepWithNodeContent &&
+      this.props.updateCorrespondingPrcodessStepWithNodeContent(
+        'deadline_value',
+        deadlineValue
+      )
+    this.props.updateCorrespondingPrcodessStepWithNodeContent &&
+      this.props.updateCorrespondingPrcodessStepWithNodeContent(
+        'deadline_time_type',
+        deadlineTimeType
+      )
+    ;(await this.props.onVisibleChange) &&
+      this.props.onVisibleChange(false, this.updateState)
     if (deadlineType == '1') {
-      this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('deadline_value', '1')
-      this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('deadline_time_type', 'day')
-      await this.props.onVisibleChange && this.props.onVisibleChange(false, this.updateState)
+      this.props.updateCorrespondingPrcodessStepWithNodeContent &&
+        this.props.updateCorrespondingPrcodessStepWithNodeContent(
+          'deadline_value',
+          '1'
+        )
+      this.props.updateCorrespondingPrcodessStepWithNodeContent &&
+        this.props.updateCorrespondingPrcodessStepWithNodeContent(
+          'deadline_time_type',
+          'day'
+        )
+      ;(await this.props.onVisibleChange) &&
+        this.props.onVisibleChange(false, this.updateState)
     }
   }
 
@@ -137,8 +166,26 @@ export default class CompleteDeadlineContent extends Component {
     const { deadlineType, deadlineTimeType, deadlineValue } = this.state
     return (
       <div className={`${indexStyles.complet_deadline}`}>
-        <InputNumber precision="0.1" min={1} max={deadlineTimeType == 'hour' ? 24 : deadlineTimeType == 'day' ? 30 : 12} value={deadlineValue} onChange={this.deadlineValueChange} onClick={(e) => e.stopPropagation()} className={indexStyles.select_number} />
-        <Select className={indexStyles.select_day} value={deadlineTimeType} onChange={this.deadlineTimeTypeValueChange}>
+        <InputNumber
+          precision="0.1"
+          min={1}
+          max={
+            deadlineTimeType == 'hour'
+              ? 24
+              : deadlineTimeType == 'day'
+              ? 30
+              : 12
+          }
+          value={deadlineValue}
+          onChange={this.deadlineValueChange}
+          onClick={e => e.stopPropagation()}
+          className={indexStyles.select_number}
+        />
+        <Select
+          className={indexStyles.select_day}
+          value={deadlineTimeType}
+          onChange={this.deadlineTimeTypeValueChange}
+        >
           <Option value="hour">时</Option>
           <Option value="day">天</Option>
           <Option value="month">月</Option>
@@ -154,31 +201,37 @@ export default class CompleteDeadlineContent extends Component {
     const { deadlineType, deadlineTimeType, deadlineValue } = this.state
     return (
       <div className={indexStyles.mini_content}>
-        <div className={`${indexStyles.mini_top} ${globalStyles.global_vertical_scrollbar}`}>
-          <Radio.Group style={{ display: 'flex', flexDirection: 'column' }} value={deadlineType} onChange={this.deadlineTypeChange}>
-            <Radio style={{ marginBottom: '12px' }} value="1">不限制时间</Radio>
-            <Radio style={{ marginBottom: '12px' }} value="2">限制时间</Radio>
+        <div
+          className={`${indexStyles.mini_top} ${globalStyles.global_vertical_scrollbar}`}
+        >
+          <Radio.Group
+            style={{ display: 'flex', flexDirection: 'column' }}
+            value={deadlineType}
+            onChange={this.deadlineTypeChange}
+          >
+            <Radio style={{ marginBottom: '12px' }} value="1">
+              不限制时间
+            </Radio>
+            <Radio style={{ marginBottom: '12px' }} value="2">
+              限制时间
+            </Radio>
           </Radio.Group>
-          {
-            deadlineType == '2' && (
-              <div>
-                {this.renderCompletionDeadline()}
-              </div>
-            )
-          }
+          {deadlineType == '2' && <div>{this.renderCompletionDeadline()}</div>}
         </div>
         <div className={indexStyles.mini_bottom}>
-          <Button onClick={this.handleConfirmChangeDeadlineValue} disabled={this.whetherIsHasChange() ? false : true} type="primary">确定</Button>
+          <Button
+            onClick={this.handleConfirmChangeDeadlineValue}
+            disabled={this.whetherIsHasChange() ? false : true}
+            type="primary"
+          >
+            确定
+          </Button>
         </div>
       </div>
     )
   }
 
   render() {
-    return (
-      <span>
-        {this.renderDeadlineContent()}
-      </span>
-    )
+    return <span>{this.renderDeadlineContent()}</span>
   }
 }

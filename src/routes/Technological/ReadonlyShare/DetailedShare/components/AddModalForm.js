@@ -4,25 +4,25 @@ import DragValidation from '../../../../../components/DragValidation'
 import AddModalFormStyles from './AddModalForm.less'
 import AppSwitch from './AppSwitch'
 import { validateTel, validateEmail } from '../../../../../utils/verify'
-import { MESSAGE_DURATION_TIME, PROJECTS } from "../../../../../globalset/js/constant";
-import { currentNounPlanFilterName } from "../../../../../utils/businessFunction";
+import {
+  MESSAGE_DURATION_TIME,
+  PROJECTS
+} from '../../../../../globalset/js/constant'
+import { currentNounPlanFilterName } from '../../../../../utils/businessFunction'
 import CustormModal from '../../../../../components/CustormModal'
 import EditAppList from './EditAppList'
 
 const FormItem = Form.Item
 const TextArea = Input.TextArea
 
-
 class AddModalForm extends React.Component {
-
   onCancel = () => {
     // this.initialSet()
     this.props.setAddModalFormVisibile()
   }
 
   render() {
-
-    const { modalVisible, setAddModalFormVisibile, board_id } = this.props;
+    const { modalVisible, setAddModalFormVisibile, board_id } = this.props
 
     return (
       <div>
@@ -34,8 +34,12 @@ class AddModalForm extends React.Component {
           destroyOnClose={true}
           style={{ textAlign: 'center' }}
           onCancel={this.onCancel}
-          overInner={<EditAppList setAddModalFormVisibile={setAddModalFormVisibile} board_id={board_id}
-          />}
+          overInner={
+            <EditAppList
+              setAddModalFormVisibile={setAddModalFormVisibile}
+              board_id={board_id}
+            />
+          }
         >
           {/*{step_2}*/}
         </CustormModal>
@@ -45,6 +49,3 @@ class AddModalForm extends React.Component {
 }
 
 export default Form.create()(AddModalForm)
-
-
-

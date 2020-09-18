@@ -1,31 +1,52 @@
 //分组列表
 import React from 'react'
 import CreateTaskStyle from './CreateTask.less'
-import { Icon, Checkbox, Collapse, Input, message, Menu, Modal, Dropdown, Avatar } from 'antd'
+import {
+  Icon,
+  Checkbox,
+  Collapse,
+  Input,
+  message,
+  Menu,
+  Modal,
+  Dropdown,
+  Avatar
+} from 'antd'
 import QueueAnim from 'rc-queue-anim'
 import ItemTwo from './ItemTwo'
 import ItemOne from './ItemOne'
 import {
-  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
-  ORG_UPMS_ORGANIZATION_MEMBER_ADD, ORG_UPMS_ORGANIZATION_GROUP, ORG_UPMS_ORGANIZATION_MEMBER_EDIT
-} from "../../../../globalset/js/constant";
+  MESSAGE_DURATION_TIME,
+  NOT_HAS_PERMISION_COMFIRN,
+  ORG_UPMS_ORGANIZATION_MEMBER_ADD,
+  ORG_UPMS_ORGANIZATION_GROUP,
+  ORG_UPMS_ORGANIZATION_MEMBER_EDIT
+} from '../../../../globalset/js/constant'
 import ShowAddMenberModal from './ShowAddMenberModal'
 import TreeGroupModal from './TreeGroupModal'
 import MenuSearchSingleNormal from '../../../../components/MenuSearchSingleNormal'
-import { checkIsHasPermission } from "../../../../utils/businessFunction";
-import { ORGANIZATION, TASKS, FLOWS, DASHBOARD, PROJECTS, FILES, MEMBERS, CATCH_UP } from "../../../../globalset/js/constant";
-import { currentNounPlanFilterName } from "../../../../utils/businessFunction";
-import { connect } from "dva/index";
+import { checkIsHasPermission } from '../../../../utils/businessFunction'
+import {
+  ORGANIZATION,
+  TASKS,
+  FLOWS,
+  DASHBOARD,
+  PROJECTS,
+  FILES,
+  MEMBERS,
+  CATCH_UP
+} from '../../../../globalset/js/constant'
+import { currentNounPlanFilterName } from '../../../../utils/businessFunction'
+import { connect } from 'dva/index'
 
 const Panel = Collapse.Panel
 
 @connect(mapStateToProps)
 export default class TaskItem extends React.Component {
-
   state = {
     isInEditAdd: false,
     inputValue: '',
-    ShowAddMenberModalVisibile: false,
+    ShowAddMenberModalVisibile: false
   }
   //添加成员
   gotoAddItem() {
@@ -52,7 +73,7 @@ export default class TaskItem extends React.Component {
 
   //点击分组操作
   handleMenuClick(e) {
-    e.domEvent.stopPropagation();
+    e.domEvent.stopPropagation()
     if (!checkIsHasPermission(ORG_UPMS_ORGANIZATION_GROUP)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
@@ -77,13 +98,14 @@ export default class TaskItem extends React.Component {
       title: '确认删除？',
       okText: '确认',
       cancelText: '取消',
-      getContainer: () => document.getElementById('organizationMemberContainer'),
+      getContainer: () =>
+        document.getElementById('organizationMemberContainer'),
       zIndex: 1010,
       onOk() {
         that.deleteGroupItem()
       },
       onCancel: () => {
-        modal.destroy();
+        modal.destroy()
       }
     })
     // Modal.confirm({
@@ -111,7 +133,7 @@ export default class TaskItem extends React.Component {
   }
   inputEditOk(e) {
     this.setState({
-      isInEditAdd: false,
+      isInEditAdd: false
     })
     const { inputValue } = this.state
     const { itemValue = {} } = this.props
@@ -120,7 +142,7 @@ export default class TaskItem extends React.Component {
       return false
     }
     this.setState({
-      inputValue: '',
+      inputValue: ''
     })
     this.props.updateGroup({
       group_id: id,
@@ -146,34 +168,45 @@ export default class TaskItem extends React.Component {
   MenuSearchSingleClick(data) {
     const { itemKey } = this.props
     this.props.setGroupLeader({
-      ...data, parentKey: itemKey
+      ...data,
+      parentKey: itemKey
     })
   }
   render() {
     const { isInEditAdd, inputValue } = this.state
     const { itemValue = {}, itemKey } = this.props
-    const { name, is_default, members = [], leader_id = '', leader_avatar = '', leader_members = [] } = itemValue //is_default ==='1' 默认分组不可操作
+    const {
+      name,
+      is_default,
+      members = [],
+      leader_id = '',
+      leader_avatar = '',
+      leader_members = []
+    } = itemValue //is_default ==='1' 默认分组不可操作
     //is_default 0 1 2 普通分组/未分组/访客分组
-    const { datas: { menuSearchSingleSpinning } } = this.props.model
+    const {
+      datas: { menuSearchSingleSpinning }
+    } = this.props.model
 
-    const operateMenu = (is_default) => {
+    const operateMenu = is_default => {
       return (
         <Menu onClick={this.handleMenuClick.bind(this)}>
-          <Menu.Item key={'1'} style={{ textAlign: 'center', padding: 0, margin: 0 }}>
-            <div className={CreateTaskStyle.elseProjectMemu}>
-              重命名
-            </div>
+          <Menu.Item
+            key={'1'}
+            style={{ textAlign: 'center', padding: 0, margin: 0 }}
+          >
+            <div className={CreateTaskStyle.elseProjectMemu}>重命名</div>
           </Menu.Item>
           {is_default === '0' && (
-            <Menu.Item key={'2'} style={{ textAlign: 'center', padding: 0, margin: 0 }}>
-              <div className={CreateTaskStyle.elseProjectDangerMenu}>
-                删除
-              </div>
+            <Menu.Item
+              key={'2'}
+              style={{ textAlign: 'center', padding: 0, margin: 0 }}
+            >
+              <div className={CreateTaskStyle.elseProjectDangerMenu}>删除</div>
             </Menu.Item>
           )}
-
         </Menu>
-      );
+      )
     }
 
     return (
@@ -182,29 +215,61 @@ export default class TaskItem extends React.Component {
           <div className={CreateTaskStyle.title}>
             <div className={CreateTaskStyle.title_l}>
               {is_default === '0' ? (
-                <Dropdown trigger={['click']} overlay={<MenuSearchSingleNormal menuSearchSingleSpinning={menuSearchSingleSpinning} Inputlaceholder={`搜索${currentNounPlanFilterName(MEMBERS)}`} searchName={'name'} listData={leader_members} MenuSearchSingleClick={this.MenuSearchSingleClick.bind(this)} />}>
+                <Dropdown
+                  trigger={['click']}
+                  overlay={
+                    <MenuSearchSingleNormal
+                      menuSearchSingleSpinning={menuSearchSingleSpinning}
+                      Inputlaceholder={`搜索${currentNounPlanFilterName(
+                        MEMBERS
+                      )}`}
+                      searchName={'name'}
+                      listData={leader_members}
+                      MenuSearchSingleClick={this.MenuSearchSingleClick.bind(
+                        this
+                      )}
+                    />
+                  }
+                >
                   {!leader_id ? (
-                    <div className={CreateTaskStyle.leader} onClick={this.getMembersInOneGroup.bind(this)}>
+                    <div
+                      className={CreateTaskStyle.leader}
+                      onClick={this.getMembersInOneGroup.bind(this)}
+                    >
                       <Icon type="ellipsis" theme="outlined" />
                     </div>
                   ) : (
-                      <Avatar onClick={this.getMembersInOneGroup.bind(this)} src={leader_avatar} size={20} icon={"user"} style={{ marginRight: 6, color: '#8c8c8c', backgroundColor: '#d9d9d9' }}></Avatar>
-                    )}
+                    <Avatar
+                      onClick={this.getMembersInOneGroup.bind(this)}
+                      src={leader_avatar}
+                      size={20}
+                      icon={'user'}
+                      style={{
+                        marginRight: 6,
+                        color: '#8c8c8c',
+                        backgroundColor: '#d9d9d9'
+                      }}
+                    ></Avatar>
+                  )}
                 </Dropdown>
               ) : (
-                  ''
-                )}
+                ''
+              )}
 
               <div className={CreateTaskStyle.title_l_name}>{name}</div>
               <div style={{ marginRight: 4, marginLeft: 4 }}>·</div>
               <div>{members.length}</div>
-              {is_default === '0' || is_default === '2' && checkIsHasPermission(ORG_UPMS_ORGANIZATION_GROUP) ? (
+              {is_default === '0' ||
+              (is_default === '2' &&
+                checkIsHasPermission(ORG_UPMS_ORGANIZATION_GROUP)) ? (
                 <Dropdown overlay={operateMenu(is_default)}>
                   <div className={CreateTaskStyle.titleOperate}>
                     <Icon type="ellipsis" theme="outlined" />
                   </div>
                 </Dropdown>
-              ) : ('')}
+              ) : (
+                ''
+              )}
             </div>
             <div className={CreateTaskStyle.title_r}>
               {/*暂时未开放*/}
@@ -212,41 +277,69 @@ export default class TaskItem extends React.Component {
             </div>
           </div>
         ) : (
-            <div>
-              <Input autoFocus defaultValue={name} placeholder={'修改名称'} className={CreateTaskStyle.createTaskItemInput} onChange={this.inputChange.bind(this)} onPressEnter={this.inputEditOk.bind(this)} onBlur={this.inputEditOk.bind(this)} />
-            </div>
-          )}
+          <div>
+            <Input
+              autoFocus
+              defaultValue={name}
+              placeholder={'修改名称'}
+              className={CreateTaskStyle.createTaskItemInput}
+              onChange={this.inputChange.bind(this)}
+              onPressEnter={this.inputEditOk.bind(this)}
+              onBlur={this.inputEditOk.bind(this)}
+            />
+          </div>
+        )}
 
-        <QueueAnim >
+        <QueueAnim>
           {members.map((value, key) => {
             const { status } = value
             let contain
-            if (status == '1' && is_default == '1') {//未分组下的审批状态
+            if (status == '1' && is_default == '1') {
+              //未分组下的审批状态
               contain = (
-                <ItemTwo {...this.props} itemValue={value}
+                <ItemTwo
+                  {...this.props}
+                  itemValue={value}
                   parentItemValue={itemValue}
                   itemKey={key}
-                  key={key} />
+                  key={key}
+                />
               )
             } else {
               contain = (
-                <ItemOne {...this.props} itemValue={value}
+                <ItemOne
+                  {...this.props}
+                  itemValue={value}
                   parentItemValue={itemValue}
                   parentKey={itemKey}
                   itemKey={key}
-                  key={key} />
+                  key={key}
+                />
               )
             }
             return contain
           })}
-          {is_default === '0' && checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD) ? (
-            <div key={'add'} className={CreateTaskStyle.addItem} onClick={this.gotoAddItem.bind(this)}>
+          {is_default === '0' &&
+          checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD) ? (
+            <div
+              key={'add'}
+              className={CreateTaskStyle.addItem}
+              onClick={this.gotoAddItem.bind(this)}
+            >
               <Icon type="plus-circle-o" />
             </div>
-          ) : ('')}
-
+          ) : (
+            ''
+          )}
         </QueueAnim>
-        <ShowAddMenberModal {...this.props} addMembers={this.addMembers.bind(this)} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)} />
+        <ShowAddMenberModal
+          {...this.props}
+          addMembers={this.addMembers.bind(this)}
+          modalVisible={this.state.ShowAddMenberModalVisibile}
+          setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(
+            this
+          )}
+        />
         {/*<TreeGroupModal  {...this.props}/>*/}
       </div>
     )
@@ -254,9 +347,7 @@ export default class TaskItem extends React.Component {
 }
 function mapStateToProps({
   technological: {
-    datas: {
-      userOrgPermissions
-    }
+    datas: { userOrgPermissions }
   }
 }) {
   return {

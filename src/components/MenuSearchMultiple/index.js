@@ -10,12 +10,12 @@ import indexStyles from './index.less'
 //     dropDonwVisible: e
 //   })
 // }
-export default class MenuSearchMultiple extends React.Component{
-   state = {
-     resultArr: [],
-     keyWord: '',
-     selectedKeys: []
-   }
+export default class MenuSearchMultiple extends React.Component {
+  state = {
+    resultArr: [],
+    keyWord: '',
+    selectedKeys: []
+  }
   componentWillMount() {
     const { keyWord } = this.state
     const { listData, searchName, selectedKeys = [] } = this.props
@@ -24,7 +24,7 @@ export default class MenuSearchMultiple extends React.Component{
       selectedKeys
     })
   }
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps(nextProps) {
     // const { keyWord } = this.state
     // const { listData,searchName } = nextProps
     // this.setState({
@@ -32,7 +32,7 @@ export default class MenuSearchMultiple extends React.Component{
     // })
   }
   //模糊查询
-  handleMenuReallySelect = (e) => {
+  handleMenuReallySelect = e => {
     this.setSelectKey(e)
   }
   handleMenuReallyDeselect(e) {
@@ -40,7 +40,7 @@ export default class MenuSearchMultiple extends React.Component{
   }
   setSelectKey(e) {
     const { key, selectedKeys } = e
-    if(!key) {
+    if (!key) {
       return false
     }
     this.setState({
@@ -48,20 +48,20 @@ export default class MenuSearchMultiple extends React.Component{
     })
   }
   onCheck() {
-     if(this.props.onCheck && typeof this.props.onCheck === 'function' ) {
-       this.props.onCheck(this.state.selectedKeys)
-     }
+    if (this.props.onCheck && typeof this.props.onCheck === 'function') {
+      this.props.onCheck(this.state.selectedKeys)
+    }
   }
   fuzzyQuery = (list, searchName, keyWord) => {
-    var arr = [];
+    var arr = []
     for (var i = 0; i < list.length; i++) {
       if (list[i][searchName].indexOf(keyWord) !== -1) {
-        arr.push(list[i]);
+        arr.push(list[i])
       }
     }
-    return arr;
+    return arr
   }
-  onChange = (e) => {
+  onChange = e => {
     const { listData, searchName } = this.props
     const keyWord = e.target.value
     const resultArr = this.fuzzyQuery(listData, searchName, keyWord)
@@ -70,33 +70,48 @@ export default class MenuSearchMultiple extends React.Component{
       resultArr
     })
   }
-  render(){
-    const { keyWord, resultArr, selectedKeys=[] } = this.state
-    const { Inputlaceholder='搜索', searchName, menuSearchSingleSpinning, keyCode } = this.props
+  render() {
+    const { keyWord, resultArr, selectedKeys = [] } = this.state
+    const {
+      Inputlaceholder = '搜索',
+      searchName,
+      menuSearchSingleSpinning,
+      keyCode
+    } = this.props
 
     return (
       <Spin spinning={menuSearchSingleSpinning} size={'small'}>
-        <Menu style={{padding: 8}}
-              selectedKeys={selectedKeys}
-              onDeselect={this.handleMenuReallyDeselect.bind(this)}
-              onSelect={this.handleMenuReallySelect.bind(this)} multiple >
-
-        <Input placeholder={Inputlaceholder} value={keyWord} onChange={this.onChange.bind(this)} style={{marginBottom: 10}}/>
-        {
-          resultArr.map((value, key) => {
+        <Menu
+          style={{ padding: 8 }}
+          selectedKeys={selectedKeys}
+          onDeselect={this.handleMenuReallyDeselect.bind(this)}
+          onSelect={this.handleMenuReallySelect.bind(this)}
+          multiple
+        >
+          <Input
+            placeholder={Inputlaceholder}
+            value={keyWord}
+            onChange={this.onChange.bind(this)}
+            style={{ marginBottom: 10 }}
+          />
+          {resultArr.map((value, key) => {
             return (
-              <Menu.Item style={{height: 32, lineHeight: '32px'}} key={value[keyCode]} >
+              <Menu.Item
+                style={{ height: 32, lineHeight: '32px' }}
+                key={value[keyCode]}
+              >
                 {value[searchName]}
               </Menu.Item>
             )
-          })
-        }
-        <div className={indexStyles.checkOk} onClick={this.onCheck.bind(this)}>确定</div>
-      </Menu>
+          })}
+          <div
+            className={indexStyles.checkOk}
+            onClick={this.onCheck.bind(this)}
+          >
+            确定
+          </div>
+        </Menu>
       </Spin>
-  )
+    )
   }
-
 }
-
-

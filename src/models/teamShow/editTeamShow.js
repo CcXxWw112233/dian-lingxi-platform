@@ -1,10 +1,17 @@
-import { getTeamShowList, addTeamShow, getTeamShowTypeList, getTeamShowDetail, deleteTeamShow, getCurrentOrgTeamShowList } from '../../services/teamShow'
+import {
+  getTeamShowList,
+  addTeamShow,
+  getTeamShowTypeList,
+  getTeamShowDetail,
+  deleteTeamShow,
+  getCurrentOrgTeamShowList
+} from '../../services/teamShow'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
-import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
-import { routerRedux } from "dva/router";
-import Cookies from "js-cookie";
-import {getAppsList} from "../../services/technological/project";
+import { MESSAGE_DURATION_TIME } from '../../globalset/js/constant'
+import { routerRedux } from 'dva/router'
+import Cookies from 'js-cookie'
+import { getAppsList } from '../../services/technological/project'
 import modelExtend from 'dva-model-extend'
 import technological from './index'
 
@@ -14,7 +21,7 @@ export default modelExtend(technological, {
   state: [],
   subscriptions: {
     setup({ dispatch, history }) {
-      history.listen((location) => {
+      history.listen(location => {
         message.destroy()
         if (location.pathname === '/technological/teamShow/editTeamShow') {
           dispatch({
@@ -37,7 +44,7 @@ export default modelExtend(technological, {
               currentTeamShowName: '',
               currentTeamShowId: '',
               currentTeamShowShowId: '',
-              currentTeamShowTypeId: '',
+              currentTeamShowTypeId: ''
             }
           })
           dispatch({
@@ -50,20 +57,18 @@ export default modelExtend(technological, {
           })
         }
       })
-    },
+    }
   },
   effects: {
-    * getTeamShowList({ payload }, { select, call, put }) {
+    *getTeamShowList({ payload }, { select, call, put }) {
       let res = yield call(getTeamShowList, payload)
-      if(isApiResponseOk(res)) {
-
-      }else{
-
+      if (isApiResponseOk(res)) {
+      } else {
       }
     },
-    * addTeamShow({ payload }, { select, call, put }) {
+    *addTeamShow({ payload }, { select, call, put }) {
       let res = yield call(addTeamShow, payload)
-      if(isApiResponseOk(res)) {
+      if (isApiResponseOk(res)) {
         // yield put({
         //   type: 'getCurrentOrgTeamShowList',
         //   payload: {
@@ -79,9 +84,10 @@ export default modelExtend(technological, {
         //   }
         // })
         message.success('保存成功', MESSAGE_DURATION_TIME)
-        const delay = (ms) => new Promise(resolve => {
-          setTimeout(resolve, ms)
-        })
+        const delay = ms =>
+          new Promise(resolve => {
+            setTimeout(resolve, ms)
+          })
         yield call(delay, 1000)
         yield put({
           type: 'routingJump',
@@ -89,31 +95,30 @@ export default modelExtend(technological, {
             route: '/technological/teamShow/teamList'
           }
         })
-      }else{
+      } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
-    * getTeamShowTypeList({ payload }, { select, call, put }) {
+    *getTeamShowTypeList({ payload }, { select, call, put }) {
       let res = yield call(getTeamShowTypeList, payload)
-      if(isApiResponseOk(res)) {
+      if (isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
           payload: {
-            teamShowTypeList: res.data,
+            teamShowTypeList: res.data
           }
         })
-      }else{
-
+      } else {
       }
     },
-    * getTeamShowDetail({ payload }, { select, call, put }) {
+    *getTeamShowDetail({ payload }, { select, call, put }) {
       let res = yield call(getTeamShowDetail, payload)
-      if(isApiResponseOk(res)) {
+      if (isApiResponseOk(res)) {
         const {
-          name= '',
-          cover_img= '',
-          summary= '',
-          content= '',
+          name = '',
+          cover_img = '',
+          summary = '',
+          content = ''
         } = res.data
         yield put({
           type: 'updateDatas',
@@ -128,13 +133,12 @@ export default modelExtend(technological, {
             currentTeamShowTypeId: res.data['show_type_id']
           }
         })
-      }else{
-
+      } else {
       }
     },
-    * deleteTeamShow({ payload }, { select, call, put }) {
+    *deleteTeamShow({ payload }, { select, call, put }) {
       let res = yield call(deleteTeamShow, payload)
-      if(isApiResponseOk(res)) {
+      if (isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
           payload: {
@@ -155,44 +159,43 @@ export default modelExtend(technological, {
         yield put({
           type: 'getCurrentOrgTeamShowList',
           payload: {
-            calBack: function () {
+            calBack: function() {
               message.success('删除成功', MESSAGE_DURATION_TIME)
             }
           }
         })
-      }else{
+      } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
-    * getCurrentOrgTeamShowList({ payload }, { select, call, put }) {
+    *getCurrentOrgTeamShowList({ payload }, { select, call, put }) {
       const { calBack } = payload
       let res = yield call(getCurrentOrgTeamShowList, {})
-      if(isApiResponseOk(res)) {
+      if (isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
           payload: {
             currentOrgTeamShowList: res.data
           }
         })
-        if(typeof calBack === 'function') {
+        if (typeof calBack === 'function') {
           calBack()
         }
-      }else{
-
+      } else {
       }
     },
-    * routingJump({ payload }, { call, put }) {
+    *routingJump({ payload }, { call, put }) {
       const { route } = payload
-      yield put(routerRedux.push(route));
-    },
+      yield put(routerRedux.push(route))
+    }
   },
 
   reducers: {
     updateDatas(state, action) {
       return {
         ...state,
-        datas: { ...state.datas, ...action.payload },
+        datas: { ...state.datas, ...action.payload }
       }
     }
-  },
-});
+  }
+})

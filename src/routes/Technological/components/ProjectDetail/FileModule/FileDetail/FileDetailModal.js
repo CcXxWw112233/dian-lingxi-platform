@@ -1,17 +1,16 @@
 import React from 'react'
-import { Form, Input, } from 'antd'
+import { Form, Input } from 'antd'
 import CustormModal from '../../../../../../components/CustormModal'
 import FileDetail from './index'
 const FormItem = Form.Item
 const TextArea = Input.TextArea
 
-
 class FileDetailModal extends React.Component {
   state = {}
 
-  componentDidMount() { }
+  componentDidMount() {}
 
-  componentWillReceiveProps(nextProps) { }
+  componentWillReceiveProps(nextProps) {}
 
   onCancel() {
     const { dispatch } = this.props
@@ -24,7 +23,7 @@ class FileDetailModal extends React.Component {
   }
 
   render() {
-    const { visible } = this.props;
+    const { visible } = this.props
 
     const modalTop = 20
 
@@ -41,8 +40,7 @@ class FileDetailModal extends React.Component {
         bodyStyle={{ top: 0 }}
         style={{ top: modalTop }}
         onCancel={this.onCancel.bind(this)}
-        overInner={<FileDetail {...this.props} modalTop={modalTop} />
-        }
+        overInner={<FileDetail {...this.props} modalTop={modalTop} />}
       />
     )
   }

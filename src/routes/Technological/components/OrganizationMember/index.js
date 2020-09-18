@@ -1,15 +1,15 @@
-import React from 'react';
-import {connect} from "dva/index";
+import React from 'react'
+import { connect } from 'dva/index'
 import QueueAnim from 'rc-queue-anim'
 import indexStyles from './index.less'
 import Header from './Header'
 import CreateGroup from './CreateGroup'
-import {checkIsHasPermission} from "../../../../utils/businessFunction";
-import { ORG_UPMS_ORGANIZATION_MEMBER_QUERY } from "../../../../globalset/js/constant";
+import { checkIsHasPermission } from '../../../../utils/businessFunction'
+import { ORG_UPMS_ORGANIZATION_MEMBER_QUERY } from '../../../../globalset/js/constant'
 
 const getEffectOrReducerByName = name => `organizationMember/${name}`
 
-const OrganizationMember = (props) => {
+const OrganizationMember = props => {
   const { dispatch, model, modal } = props
   const CreateGroupProps = {
     modal,
@@ -17,103 +17,105 @@ const OrganizationMember = (props) => {
     CreateGroup(data) {
       dispatch({
         type: getEffectOrReducerByName('CreateGroup'),
-        payload: data,
+        payload: data
       })
     },
     joinOrganization(data) {
       dispatch({
         type: getEffectOrReducerByName('joinOrganization'),
-        payload: data,
+        payload: data
       })
     },
     removeUserVisitor(data) {
       dispatch({
         type: getEffectOrReducerByName('removeUserVisitor'),
-        payload: data,
+        payload: data
       })
     },
     removeMembersWithGroup(data) {
       dispatch({
         type: getEffectOrReducerByName('removeMembersWithGroup'),
-        payload: data,
+        payload: data
       })
     },
     setMemberWitchGroup(data) {
       dispatch({
         type: getEffectOrReducerByName('setMemberWitchGroup'),
-        payload: data,
+        payload: data
       })
     },
     getGroupList(data) {
       dispatch({
         type: getEffectOrReducerByName('getGroupList'),
-        payload: data,
+        payload: data
       })
     },
     updateGroup(data) {
       dispatch({
         type: getEffectOrReducerByName('updateGroup'),
-        payload: data,
+        payload: data
       })
     },
     deleteGroup(data) {
       dispatch({
         type: getEffectOrReducerByName('deleteGroup'),
-        payload: data,
+        payload: data
       })
     },
     getGroupPartialInfo(data) {
       dispatch({
         type: getEffectOrReducerByName('getGroupPartialInfo'),
-        payload: data,
+        payload: data
       })
     },
     approvalMember(data) {
       dispatch({
         type: getEffectOrReducerByName('approvalMember'),
-        payload: data,
+        payload: data
       })
     },
     discontinueMember(data) {
       dispatch({
         type: getEffectOrReducerByName('discontinueMember'),
-        payload: data,
+        payload: data
       })
     },
     inviteMemberToGroup(data) {
       dispatch({
         type: getEffectOrReducerByName('inviteMemberToGroup'),
-        payload: data,
+        payload: data
       })
     },
     getCurrentOrgRole(data) {
       dispatch({
         type: getEffectOrReducerByName('getCurrentOrgRole'),
-        payload: data,
+        payload: data
       })
     },
     setMemberRole(data) {
       dispatch({
         type: getEffectOrReducerByName('setMemberRole'),
-        payload: data,
+        payload: data
       })
     },
     getMemberInfo(params) {
       dispatch({
         type: getEffectOrReducerByName('getMemberInfo'),
-        payload: params,
+        payload: params
       })
     },
-    getMembersInOneGroup(params) { //
+    getMembersInOneGroup(params) {
+      //
       dispatch({
         type: getEffectOrReducerByName('getMembersInOneGroup'),
-        payload: params,
+        payload: params
       })
     },
-    setGroupLeader(data) { //setGroupLeader
+    setGroupLeader(data) {
+      //setGroupLeader
       dispatch({
         type: getEffectOrReducerByName('setGroupLeader'),
-        payload: data,
+        payload: data
       })
     },
     inviteJoinOrganization(data) {
@@ -121,44 +123,54 @@ const OrganizationMember = (props) => {
         type: getEffectOrReducerByName('inviteJoinOrganization'),
         payload: data
       })
-    },
+    }
   }
 
-  const routingJump = (path) => {
+  const routingJump = path => {
     dispatch({
       type: getEffectOrReducerByName('routingJump'),
       payload: {
-        route: path,
-      },
+        route: path
+      }
     })
   }
-  const updateDatas = (payload) => {
+  const updateDatas = payload => {
     dispatch({
       type: getEffectOrReducerByName('updateDatas'),
       payload: payload
     })
   }
-  return(
-    <div id={'organizationMemberContainer'} className={indexStyles.OMout} style={{ minHeight: '100%', height: 'auto', position: 'relative', width: '100%', overflow: 'hidden'}}>
+  return (
+    <div
+      id={'organizationMemberContainer'}
+      className={indexStyles.OMout}
+      style={{
+        minHeight: '100%',
+        height: 'auto',
+        position: 'relative',
+        width: '100%',
+        overflow: 'hidden'
+      }}
+    >
       {checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_QUERY) && (
-        <Header {...CreateGroupProps} model={model}/>
+        <Header {...CreateGroupProps} model={model} />
       )}
       {checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_QUERY) && (
         <CreateGroup {...CreateGroupProps} updateDatas={updateDatas} />
       )}
-
     </div>
   )
-};
+}
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ modal, organizationMember, loading, technological: {
-  datas: {
-    userOrgPermissions
+function mapStateToProps({
+  modal,
+  organizationMember,
+  loading,
+  technological: {
+    datas: { userOrgPermissions }
   }
-}}) {
-  return { modal, model: organizationMember, loading,userOrgPermissions }
+}) {
+  return { modal, model: organizationMember, loading, userOrgPermissions }
 }
 export default connect(mapStateToProps)(OrganizationMember)
-
-

@@ -6,8 +6,8 @@ export async function formSubmit(data) {
   return request({
     url: `${REQUEST_DOMAIN}/user/signin`,
     method: 'POST',
-    data,
-  });
+    data
+  })
 }
 
 //获取验证码
@@ -15,8 +15,8 @@ export async function requestVerifyCode(data) {
   return request({
     url: `${REQUEST_DOMAIN}/sms/code/send`,
     method: 'POST',
-    data,
-  });
+    data
+  })
 }
 
 //绑定微信号与账号
@@ -29,7 +29,7 @@ export async function wechatAccountBind(data) {
 }
 
 //刷新Token
-export const refreshTokenApi = (data) => {
+export const refreshTokenApi = data => {
   return request({
     url: `${REQUEST_DOMAIN}/refreshToken`,
     method: 'PUT',
@@ -38,7 +38,7 @@ export const refreshTokenApi = (data) => {
 }
 
 //刷新图片验证码
-export const changePicVerifySrc = (params) => {
+export const changePicVerifySrc = params => {
   return request({
     url: `${REQUEST_DOMAIN}/user/getLoginImageCaptcha`,
     method: 'GET',

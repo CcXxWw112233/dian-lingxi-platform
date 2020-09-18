@@ -8,10 +8,13 @@ export default class AccomplishStepOne_one extends Component {
     return (
       <div className={indexStyles.text_form}>
         <p>
-          <span>{title}:&nbsp;&nbsp;{is_required == '1' && <span style={{ color: '#F5222D' }}>*</span>}</span>
+          <span>
+            {title}:&nbsp;&nbsp;
+            {is_required == '1' && <span style={{ color: '#F5222D' }}>*</span>}
+          </span>
         </p>
         <div className={indexStyles.text_fillOut}>
-          <span style={{marginLeft: '12px'}}>{value || '暂无内容'}</span>
+          <span style={{ marginLeft: '12px' }}>{value || '暂无内容'}</span>
         </div>
       </div>
     )

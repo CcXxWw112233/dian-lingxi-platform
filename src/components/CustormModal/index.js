@@ -1,12 +1,11 @@
 import React from 'react'
 import { Modal, Form, Button, Input, message } from 'antd'
-import { min_page_width } from "./../../globalset/js/styles";
+import { min_page_width } from './../../globalset/js/styles'
 import indexStyles from './index.less'
 import { connect } from 'dva'
 const FormItem = Form.Item
 const TextArea = Input.TextArea
 let selfAdaptationWidth
-
 
 //此弹窗应用于各个业务弹窗，和右边圈子适配
 @connect(mapStateToProps)
@@ -15,18 +14,20 @@ class CustormModal extends React.Component {
     siderRightWidth: 56, //右边栏宽度
     clientHeight: document.documentElement.clientHeight, //获取页面可见高度
     clientWidth: document.documentElement.clientWidth, //获取页面可见高度
-    layoutClientWidth: document.getElementById('technologicalLayoutWrapper') && document.getElementById('technologicalLayoutWrapper').clientWidth,
+    layoutClientWidth:
+      document.getElementById('technologicalLayoutWrapper') &&
+      document.getElementById('technologicalLayoutWrapper').clientWidth
   }
   constructor(props) {
-    super(props);
+    super(props)
     this.resizeTTY = this.resizeTTY.bind(this)
   }
 
   componentWillUnmount() {
-    window.removeEventListener("resize", this.resizeTTY);
+    window.removeEventListener('resize', this.resizeTTY)
   }
   resizeTTY = () => {
-    const clientHeight = document.documentElement.clientHeight;//获取页面可见高度
+    const clientHeight = document.documentElement.clientHeight //获取页面可见高度
     const clientWidth = document.documentElement.clientWidth
     this.setState({
       clientHeight,
@@ -38,15 +39,21 @@ class CustormModal extends React.Component {
     const { clientWidth } = this.state
     const { chatImVisiable, siderRightCollapsed } = this.props
     if (chatImVisiable || siderRightCollapsed) {
-      const technologicalLayoutWrapper = document.getElementById('technologicalLayoutWrapper')
+      const technologicalLayoutWrapper = document.getElementById(
+        'technologicalLayoutWrapper'
+      )
       // let layoutClientWidth = technologicalLayoutWrapper ? technologicalLayoutWrapper.offsetWidth - 400 : clientWidth - 450
       let layoutClientWidth = clientWidth - 400
       this.setState({
         layoutClientWidth
       })
     } else {
-      const technologicalLayoutWrapper = document.getElementById('technologicalLayoutWrapper')
-      let layoutClientWidth = technologicalLayoutWrapper ? technologicalLayoutWrapper.offsetWidth : clientWidth
+      const technologicalLayoutWrapper = document.getElementById(
+        'technologicalLayoutWrapper'
+      )
+      let layoutClientWidth = technologicalLayoutWrapper
+        ? technologicalLayoutWrapper.offsetWidth
+        : clientWidth
       this.setState({
         layoutClientWidth
       })
@@ -58,20 +65,25 @@ class CustormModal extends React.Component {
     const { clientWidth } = this.state
     const { chatImVisiable, siderRightCollapsed } = nextProps
     if (chatImVisiable || siderRightCollapsed) {
-      const technologicalLayoutWrapper = document.getElementById('technologicalLayoutWrapper')
+      const technologicalLayoutWrapper = document.getElementById(
+        'technologicalLayoutWrapper'
+      )
       // let layoutClientWidth = technologicalLayoutWrapper ? technologicalLayoutWrapper.offsetWidth - 400 : clientWidth - 450
       let layoutClientWidth = clientWidth - 400
       this.setState({
         layoutClientWidth
       })
     } else {
-      const technologicalLayoutWrapper = document.getElementById('technologicalLayoutWrapper')
-      let layoutClientWidth = technologicalLayoutWrapper ? technologicalLayoutWrapper.offsetWidth : clientWidth
+      const technologicalLayoutWrapper = document.getElementById(
+        'technologicalLayoutWrapper'
+      )
+      let layoutClientWidth = technologicalLayoutWrapper
+        ? technologicalLayoutWrapper.offsetWidth
+        : clientWidth
       this.setState({
         layoutClientWidth
       })
     }
-
   }
 
   // componentDidMount() {
@@ -130,14 +142,40 @@ class CustormModal extends React.Component {
   //   })
   // }
 
-
   render() {
-    const { whetherShowBodyScreenWidth, siderRightCollapsed = false, visible, overInner, width, zIndex = 1006, maskClosable, footer, destroyOnClose, keyboard = true, maskStyle = {}, style = {}, onOk, onCancel, bodyStyle = {}, closable = true, title, page_load_type, chatImVisiable, getContainer } = this.props;
+    const {
+      whetherShowBodyScreenWidth,
+      siderRightCollapsed = false,
+      visible,
+      overInner,
+      width,
+      zIndex = 1006,
+      maskClosable,
+      footer,
+      destroyOnClose,
+      keyboard = true,
+      maskStyle = {},
+      style = {},
+      onOk,
+      onCancel,
+      bodyStyle = {},
+      closable = true,
+      title,
+      page_load_type,
+      chatImVisiable,
+      getContainer
+    } = this.props
     const { clientWidth, clientHeight, layoutClientWidth } = this.state
     // const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
     // const { is_simple_model } = user_set;
     selfAdaptationWidth = layoutClientWidth
-    let active_width = whetherShowBodyScreenWidth ? clientWidth - 450 > 1200 ? width : (clientWidth - 450 < 818 ? 818 : clientWidth - 450) : width
+    let active_width = whetherShowBodyScreenWidth
+      ? clientWidth - 450 > 1200
+        ? width
+        : clientWidth - 450 < 818
+        ? 818
+        : clientWidth - 450
+      : width
     return (
       <Modal
         title={title}
@@ -149,7 +187,11 @@ class CustormModal extends React.Component {
         footer={footer}
         destroyOnClose={destroyOnClose}
         keyboard={keyboard}
-        getContainer={() => getContainer || document.getElementById('technologicalLayoutWrapper') || document.querySelector('body')}
+        getContainer={() =>
+          getContainer ||
+          document.getElementById('technologicalLayoutWrapper') ||
+          document.querySelector('body')
+        }
         maskStyle={{
           height: clientHeight,
           ...maskStyle,
@@ -159,7 +201,17 @@ class CustormModal extends React.Component {
         bodyStyle={{ ...bodyStyle }}
         onCancel={onCancel}
         onOk={onOk}
-        wrapClassName={`${page_load_type == '2' || whetherShowBodyScreenWidth ? (siderRightCollapsed ? indexStyles.wrapActiveModal : indexStyles.wrapNormalModal) : indexStyles.wrapModal} ${chatImVisiable || siderRightCollapsed ? indexStyles.container_wrapperActiveModal : indexStyles.container_wrapperNormalModal}`}
+        wrapClassName={`${
+          page_load_type == '2' || whetherShowBodyScreenWidth
+            ? siderRightCollapsed
+              ? indexStyles.wrapActiveModal
+              : indexStyles.wrapNormalModal
+            : indexStyles.wrapModal
+        } ${
+          chatImVisiable || siderRightCollapsed
+            ? indexStyles.container_wrapperActiveModal
+            : indexStyles.container_wrapperNormalModal
+        }`}
       >
         {overInner}
       </Modal>
@@ -168,17 +220,14 @@ class CustormModal extends React.Component {
 }
 
 function mapStateToProps({
-  simplemode: {
-    chatImVisiable = false
-  },
+  simplemode: { chatImVisiable = false },
   technological: {
-    datas: {
-      siderRightCollapsed = false
-    }
+    datas: { siderRightCollapsed = false }
   }
 }) {
   return {
-    chatImVisiable, siderRightCollapsed
+    chatImVisiable,
+    siderRightCollapsed
   }
 }
 export default Form.create()(CustormModal)

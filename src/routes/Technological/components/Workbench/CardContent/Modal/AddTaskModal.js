@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import {
   Modal,
   Input,
@@ -9,32 +9,35 @@ import {
   Tooltip,
   notification,
   Dropdown
-} from 'antd';
-import styles from './AddTaskModal.less';
-import { connect } from 'dva';
+} from 'antd'
+import styles from './AddTaskModal.less'
+import { connect } from 'dva'
 import {
   REQUEST_DOMAIN_BOARD,
   UPLOAD_FILE_SIZE,
   ORG_TEAM_BOARD_CREATE
-} from './../../../../../../globalset/js/constant';
-import { deleteUploadFile, getCurrentSelectedProjectMembersList } from './../../../../../../services/technological/workbench';
-import DropdownSelectWithSearch from './../DropdownSelectWithSearch/index';
-import DropdownMultipleSelectWithSearch from './../DropdownMultipleSelectWithSearch/index';
-import DateRangePicker from './../DateRangePicker/index';
-import Cookies from 'js-cookie';
+} from './../../../../../../globalset/js/constant'
+import {
+  deleteUploadFile,
+  getCurrentSelectedProjectMembersList
+} from './../../../../../../services/technological/workbench'
+import DropdownSelectWithSearch from './../DropdownSelectWithSearch/index'
+import DropdownMultipleSelectWithSearch from './../DropdownMultipleSelectWithSearch/index'
+import DateRangePicker from './../DateRangePicker/index'
+import Cookies from 'js-cookie'
 import {
   checkIsHasPermissionInBoard,
   setStorage,
   setBoardIdStorage,
   checkIsHasPermission
-} from '../../../../../../utils/businessFunction';
+} from '../../../../../../utils/businessFunction'
 import {
   MESSAGE_DURATION_TIME,
   NOT_HAS_PERMISION_COMFIRN,
   PROJECT_FILES_FILE_UPLOAD,
   PROJECT_FLOWS_FLOW_CREATE,
   PROJECT_TEAM_CARD_CREATE
-} from '../../../../../../globalset/js/constant';
+} from '../../../../../../globalset/js/constant'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import OrgSearchAndSelect from '@/components/OrgSearchAndSelect'
 import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
@@ -44,7 +47,7 @@ const taskTypeToName = {
   EXAMINE_PROGRESS: 'Flows',
   MEETIMG_ARRANGEMENT: 'Tasks',
   MY_DOCUMENT: 'Files'
-};
+}
 /* eslint-disable */
 @connect(({ workbench,  
   technological: {

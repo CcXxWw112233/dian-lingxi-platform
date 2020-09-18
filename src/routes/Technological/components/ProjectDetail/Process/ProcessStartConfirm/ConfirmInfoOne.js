@@ -7,14 +7,14 @@ import { timeToTimestamp } from '../../../../../../utils/util'
 import ContentRaletion from '../../../../../../components/ContentRaletion'
 import { connect } from 'dva'
 
-const { RangePicker } = DatePicker;
+const { RangePicker } = DatePicker
 //里程碑确认信息
 @connect(mapStateToProps)
 export default class ConfirmInfoOne extends React.Component {
   state = {
     due_time: '',
     isShowBottDetail: false, //是否显示底部详情
-    relations: [], //关联的内容
+    relations: [] //关联的内容
   }
   //这里的逻辑用来设置固定人选时将名称替换成id
   componentWillMount(nextProps) {
@@ -77,7 +77,9 @@ export default class ConfirmInfoOne extends React.Component {
     const { processEditDatas = {}, dispatch } = this.props
     const { itemKey } = this.props
     const new_processEditDatas = [...processEditDatas]
-    new_processEditDatas[itemKey]['deadline_value'] = timeToTimestamp(dateString)
+    new_processEditDatas[itemKey]['deadline_value'] = timeToTimestamp(
+      dateString
+    )
     //业务逻辑修改deadline_value作废
     new_processEditDatas[itemKey]['deadline'] = timeToTimestamp(dateString)
     dispatch({
@@ -87,7 +89,7 @@ export default class ConfirmInfoOne extends React.Component {
       }
     })
   }
-  setAssignees = (data) => {
+  setAssignees = data => {
     // chirldrenTaskChargeChange(data) {
 
     // const { processEditDatas = {}, dispatch } = this.props
@@ -111,32 +113,54 @@ export default class ConfirmInfoOne extends React.Component {
   }
 
   setIsShowBottDetail() {
-    this.setState({
-      isShowBottDetail: !this.state.isShowBottDetail
-    }, function () {
-      this.funTransitionHeight(element, 500, this.state.isShowBottDetail)
-    })
+    this.setState(
+      {
+        isShowBottDetail: !this.state.isShowBottDetail
+      },
+      function() {
+        this.funTransitionHeight(element, 500, this.state.isShowBottDetail)
+      }
+    )
     const { ConfirmInfoOut_1_bott_Id } = this.state
     const element = document.getElementById(ConfirmInfoOut_1_bott_Id)
   }
-  funTransitionHeight = function (element, time, type) { // time, 数值，可缺省
-    if (typeof window.getComputedStyle === "undefined") return;
-    const height = window.getComputedStyle(element).height;
-    element.style.transition = "none"; // 本行2015-05-20新增，mac Safari下，貌似auto也会触发transition, 故要none下~
-    element.style.height = "auto";
-    const targetHeight = window.getComputedStyle(element).height;
-    element.style.height = height;
-    element.offsetWidth;
-    if (time) element.style.transition = "height " + time + "ms";
-    element.style.height = type ? targetHeight : 0;
-  };
+  funTransitionHeight = function(element, time, type) {
+    // time, 数值，可缺省
+    if (typeof window.getComputedStyle === 'undefined') return
+    const height = window.getComputedStyle(element).height
+    element.style.transition = 'none' // 本行2015-05-20新增，mac Safari下，貌似auto也会触发transition, 故要none下~
+    element.style.height = 'auto'
+    const targetHeight = window.getComputedStyle(element).height
+    element.style.height = height
+    element.offsetWidth
+    if (time) element.style.transition = 'height ' + time + 'ms'
+    element.style.height = type ? targetHeight : 0
+  }
 
   render() {
-    const { due_time, isShowBottDetail, ConfirmInfoOut_1_bott_Id, relations = [] } = this.state
-    const { processEditDatas = [], projectDetailInfoData = {}, relations_Prefix } = this.props
+    const {
+      due_time,
+      isShowBottDetail,
+      ConfirmInfoOut_1_bott_Id,
+      relations = []
+    } = this.state
+    const {
+      processEditDatas = [],
+      projectDetailInfoData = {},
+      relations_Prefix
+    } = this.props
     const { itemKey, invitationType } = this.props
     const { board_id } = projectDetailInfoData
-    const { name, description, assignees, assignee_type, deadline_type, deadline_value, is_workday, id } = processEditDatas[itemKey]
+    const {
+      name,
+      description,
+      assignees,
+      assignee_type,
+      deadline_type,
+      deadline_value,
+      is_workday,
+      id
+    } = processEditDatas[itemKey]
     //推进人来源
     const users = projectDetailInfoData.data
     //推进人
@@ -151,53 +175,91 @@ export default class ConfirmInfoOne extends React.Component {
       }
       return img ? (
         <div>
-          <img src={img} style={{ width: 18, height: 18, marginRight: 8, borderRadius: 16, margin: '0 8px' }} />
+          <img
+            src={img}
+            style={{
+              width: 18,
+              height: 18,
+              marginRight: 8,
+              borderRadius: 16,
+              margin: '0 8px'
+            }}
+          />
         </div>
       ) : (
-          <div style={{ lineHeight: '18px', height: 18, width: 16, borderRadius: 18, backgroundColor: '#e8e8e8', marginRight: 8, textAlign: 'center', margin: '0 8px', marginTop: 2, }}>
-            <Icon type={'user'} style={{ fontSize: 10, color: '#8c8c8c', }} />
-          </div>
-        )
+        <div
+          style={{
+            lineHeight: '18px',
+            height: 18,
+            width: 16,
+            borderRadius: 18,
+            backgroundColor: '#e8e8e8',
+            marginRight: 8,
+            textAlign: 'center',
+            margin: '0 8px',
+            marginTop: 2
+          }}
+        >
+          <Icon type={'user'} style={{ fontSize: 10, color: '#8c8c8c' }} />
+        </div>
+      )
     }
-    const filterAssignee = (assignee_type) => {
-      let container = (<div></div>)
+    const filterAssignee = assignee_type => {
+      let container = <div></div>
       switch (assignee_type) {
         case '1':
-          container = (<div style={{ color: '#595959' }}>任何人</div>)
+          container = <div style={{ color: '#595959' }}>任何人</div>
           break
         case '2':
           container = (
             <div>
-              <Dropdown overlay={
-                <MenuSearchMultiple usersArray={users} setAssignees={this.setAssignees.bind(this)} />
-                // <MenuSearchPartner
-                //   invitationType={invitationType}
-                //   invitationId={board_id}
-                //   listData={users}
-                //   keyCode={'user_id'}
-                //   searchName={'name'}
-                //   chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}
-                //   board_id={board_id}
-                // />
-              }
+              <Dropdown
+                overlay={
+                  <MenuSearchMultiple
+                    usersArray={users}
+                    setAssignees={this.setAssignees.bind(this)}
+                  />
+                  // <MenuSearchPartner
+                  //   invitationType={invitationType}
+                  //   invitationId={board_id}
+                  //   listData={users}
+                  //   keyCode={'user_id'}
+                  //   searchName={'name'}
+                  //   chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}
+                  //   board_id={board_id}
+                  // />
+                }
               >
                 {assigneesArray.length ? (
                   <div style={{ display: 'flex' }}>
                     {assigneesArray.map((value, key) => {
                       if (key < 6)
                         return (
-                          <Tooltip key={key} placement="top" title={this.tooltipFilterName.bind(this, { users: users, user_id: value })}>
-                            <div>{imgOrAvatar({ users: users, user_id: value })}</div>
+                          <Tooltip
+                            key={key}
+                            placement="top"
+                            title={this.tooltipFilterName.bind(this, {
+                              users: users,
+                              user_id: value
+                            })}
+                          >
+                            <div>
+                              {imgOrAvatar({ users: users, user_id: value })}
+                            </div>
                           </Tooltip>
                         )
                     })}
-                    {assigneesArray.length > 6 ? (<span style={{ color: '#595959' }}>{`等${assigneesArray.length}人`}</span>) : ('')}
+                    {assigneesArray.length > 6 ? (
+                      <span
+                        style={{ color: '#595959' }}
+                      >{`等${assigneesArray.length}人`}</span>
+                    ) : (
+                      ''
+                    )}
                   </div>
                 ) : (
-                    <div>
-                      设置推进人
-                  </div>
-                  )}
+                  <div>设置推进人</div>
+                )}
               </Dropdown>
             </div>
           )
@@ -208,44 +270,73 @@ export default class ConfirmInfoOne extends React.Component {
               {assigneesArray.map((value, key) => {
                 if (key < 6)
                   return (
-                    <Tooltip key={key} placement="top" title={this.tooltipFilterName.bind(this, { users: users, user_id: value })}>
+                    <Tooltip
+                      key={key}
+                      placement="top"
+                      title={this.tooltipFilterName.bind(this, {
+                        users: users,
+                        user_id: value
+                      })}
+                    >
                       <div>{imgOrAvatar({ users: users, user_id: value })}</div>
                     </Tooltip>
                   )
               })}
-              {assigneesArray.length > 6 ? (<span style={{ color: '#595959' }}>{`等${assigneesArray.length}人`}</span>) : ('')}
+              {assigneesArray.length > 6 ? (
+                <span
+                  style={{ color: '#595959' }}
+                >{`等${assigneesArray.length}人`}</span>
+              ) : (
+                ''
+              )}
             </div>
           )
           break
         default:
-          container = (<div></div>)
+          container = <div></div>
           break
       }
       return container
     }
-    const filterDueTime = (deadline_type) => {
-      let container = (<div></div>)
+    const filterDueTime = deadline_type => {
+      let container = <div></div>
       switch (deadline_type) {
         case '1':
-          container = (<div style={{ color: '#595959' }}>无限期</div>)
+          container = <div style={{ color: '#595959' }}>无限期</div>
           break
         case '2':
           container = (
             <div style={{ position: 'relative' }}>
               {due_time || '设置截止时间'}
-              <DatePicker onChange={this.datePickerChange.bind(this)}
+              <DatePicker
+                onChange={this.datePickerChange.bind(this)}
                 placeholder={'选择截止时间'}
                 showTime
                 format="YYYY-MM-DD HH:mm"
-                style={{ opacity: 0, height: 16, minWidth: 0, maxWidth: '100px', background: '#000000', position: 'absolute', right: 0, zIndex: 2, cursor: 'pointer' }} />
+                style={{
+                  opacity: 0,
+                  height: 16,
+                  minWidth: 0,
+                  maxWidth: '100px',
+                  background: '#000000',
+                  position: 'absolute',
+                  right: 0,
+                  zIndex: 2,
+                  cursor: 'pointer'
+                }}
+              />
             </div>
           )
           break
         case '3':
-          container = (<div style={{ color: '#595959' }}>{`${is_workday === '0' ? '固定' : '工作日'}${deadline_value}天`}</div>)
+          container = (
+            <div style={{ color: '#595959' }}>{`${
+              is_workday === '0' ? '固定' : '工作日'
+            }${deadline_value}天`}</div>
+          )
           break
         default:
-          container = (<div></div>)
+          container = <div></div>
           break
       }
       return container
@@ -256,7 +347,9 @@ export default class ConfirmInfoOne extends React.Component {
         <Card style={{ width: '100%', backgroundColor: '#f5f5f5' }}>
           <div className={indexStyles.ConfirmInfoOut_1_top}>
             <div className={indexStyles.ConfirmInfoOut_1_top_left}>
-              <div className={indexStyles.ConfirmInfoOut_1_top_left_left}>{itemKey + 1}</div>
+              <div className={indexStyles.ConfirmInfoOut_1_top_left_left}>
+                {itemKey + 1}
+              </div>
               <div className={indexStyles.ConfirmInfoOut_1_top_left_right}>
                 <div>{name}</div>
                 <div>里程碑</div>
@@ -268,13 +361,35 @@ export default class ConfirmInfoOne extends React.Component {
               {/*{filterDueTime(deadline_type)}*/}
               {/*只能手动设置*/}
               {filterDueTime('2')}
-              <div className={isShowBottDetail ? indexStyles.upDown_up : indexStyles.upDown_down}><Icon onClick={this.setIsShowBottDetail.bind(this)} type="down" theme="outlined" style={{ color: '#595959' }} /></div>
+              <div
+                className={
+                  isShowBottDetail
+                    ? indexStyles.upDown_up
+                    : indexStyles.upDown_down
+                }
+              >
+                <Icon
+                  onClick={this.setIsShowBottDetail.bind(this)}
+                  type="down"
+                  theme="outlined"
+                  style={{ color: '#595959' }}
+                />
+              </div>
             </div>
           </div>
-          <div className={isShowBottDetail ? indexStyles.ConfirmInfoOut_1_bottShow : indexStyles.ConfirmInfoOut_1_bottNormal} id={ConfirmInfoOut_1_bott_Id} >
+          <div
+            className={
+              isShowBottDetail
+                ? indexStyles.ConfirmInfoOut_1_bottShow
+                : indexStyles.ConfirmInfoOut_1_bottNormal
+            }
+            id={ConfirmInfoOut_1_bott_Id}
+          >
             <div className={indexStyles.ConfirmInfoOut_1_bott_left}></div>
-            <div className={indexStyles.ConfirmInfoOut_1_bott_right} >
-              <div className={indexStyles.ConfirmInfoOut_1_bott_right_dec}>{description}</div>
+            <div className={indexStyles.ConfirmInfoOut_1_bott_right}>
+              <div className={indexStyles.ConfirmInfoOut_1_bott_right_dec}>
+                {description}
+              </div>
               <div>
                 <ContentRaletion
                   relations_Prefix={relations_Prefix}
@@ -292,15 +407,10 @@ export default class ConfirmInfoOne extends React.Component {
 }
 function mapStateToProps({
   projectDetailProcess: {
-    datas: {
-      processEditDatas = [],
-    }
+    datas: { processEditDatas = [] }
   },
   projectDetail: {
-    datas: {
-      projectDetailInfoData = {},
-      relations_Prefix = []
-    }
+    datas: { projectDetailInfoData = {}, relations_Prefix = [] }
   }
 }) {
   return {

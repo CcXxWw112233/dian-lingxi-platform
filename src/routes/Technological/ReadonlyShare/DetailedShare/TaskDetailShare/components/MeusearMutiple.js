@@ -23,13 +23,16 @@ export default class MenuSearchMultiple extends React.Component {
     for (let val of currentSelect) {
       selectedKeys.push(val['user_id'])
     }
-    this.setState({
-      selectedKeys
-    }, () => {
-      this.setState({
-        resultArr: this.fuzzyQuery(listData, searchName, keyWord),
-      })
-    })
+    this.setState(
+      {
+        selectedKeys
+      },
+      () => {
+        this.setState({
+          resultArr: this.fuzzyQuery(listData, searchName, keyWord)
+        })
+      }
+    )
   }
   componentWillReceiveProps(nextProps) {
     // const { keyWord } = this.state
@@ -39,7 +42,7 @@ export default class MenuSearchMultiple extends React.Component {
     // })
   }
   //模糊查询
-  handleMenuReallySelect = (e) => {
+  handleMenuReallySelect = e => {
     this.setSelectKey(e)
   }
   handleMenuReallyDeselect(e) {
@@ -50,15 +53,18 @@ export default class MenuSearchMultiple extends React.Component {
     if (!key) {
       return false
     }
-    this.setState({
-      selectedKeys
-    }, () => {
-      const { listData = [], searchName } = this.props
-      const { keyWord } = this.state
-      this.setState({
-        resultArr: this.fuzzyQuery(listData, searchName, keyWord),
-      })
-    })
+    this.setState(
+      {
+        selectedKeys
+      },
+      () => {
+        const { listData = [], searchName } = this.props
+        const { keyWord } = this.state
+        this.setState({
+          resultArr: this.fuzzyQuery(listData, searchName, keyWord)
+        })
+      }
+    )
     this.props.chirldrenTaskChargeChange({ selectedKeys })
   }
   onCheck() {
@@ -67,10 +73,10 @@ export default class MenuSearchMultiple extends React.Component {
     }
   }
   fuzzyQuery = (list, searchName, keyWord) => {
-    var arr = [];
+    var arr = []
     for (var i = 0; i < list.length; i++) {
       if (list[i][searchName].indexOf(keyWord) !== -1) {
-        arr.push(list[i]);
+        arr.push(list[i])
       }
     }
 
@@ -84,9 +90,9 @@ export default class MenuSearchMultiple extends React.Component {
         }
       }
     }
-    return arr;
+    return arr
   }
-  onChange = (e) => {
+  onChange = e => {
     const { listData = [], searchName } = this.props
     const keyWord = e.target.value
     const resultArr = this.fuzzyQuery(listData, searchName, keyWord)
@@ -97,50 +103,122 @@ export default class MenuSearchMultiple extends React.Component {
   }
   render() {
     const { keyWord, resultArr, selectedKeys = [] } = this.state
-    const { Inputlaceholder = '搜索', searchName, menuSearchSingleSpinning, keyCode } = this.props
+    const {
+      Inputlaceholder = '搜索',
+      searchName,
+      menuSearchSingleSpinning,
+      keyCode
+    } = this.props
 
     return (
-      <Menu style={{ padding: '8px 0px', boxShadow: '0px 2px 8px 0px rgba(0,0,0,0.15)', maxWidth: 200, }}
+      <Menu
+        style={{
+          padding: '8px 0px',
+          boxShadow: '0px 2px 8px 0px rgba(0,0,0,0.15)',
+          maxWidth: 200
+        }}
         selectedKeys={selectedKeys}
         onDeselect={this.handleMenuReallyDeselect.bind(this)}
-        onSelect={this.handleMenuReallySelect.bind(this)} multiple >
+        onSelect={this.handleMenuReallySelect.bind(this)}
+        multiple
+      >
         <div style={{ margin: '0 10px 10px 10px' }}>
-          <Input placeholder={Inputlaceholder} value={keyWord} onChange={this.onChange.bind(this)} />
+          <Input
+            placeholder={Inputlaceholder}
+            value={keyWord}
+            onChange={this.onChange.bind(this)}
+          />
         </div>
-        {
-          resultArr.map((value, key) => {
-            const { avatar, name, user_name, user_id } = value
-            return (
-              <Menu.Item className={indexStyles.menuItem} style={{ height: 32, lineHeight: '32px', margin: 0, padding: '0 10px', }} key={value[keyCode]} >
-
-                <div className={indexStyles.menuItemDiv}>
-                  <div style={{ display: 'flex', alignItems: 'center' }} key={user_id}>
-                    {avatar ? (
-                      <img style={{ width: 20, height: 20, borderRadius: 20, marginRight: 4 }} src={avatar} />
-                    ) : (
-                        <div style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', marginRight: 4, }}>
-                          <Icon type={'user'} style={{ fontSize: 12, marginLeft: 10, color: '#8c8c8c' }} />
-                        </div>
-                      )}
-                    <div style={{ overflow: 'hidden', verticalAlign: ' middle', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 90, marginRight: 8 }}>{name || user_name || '佚名'}</div>
-                  </div>
-                  <div style={{ display: selectedKeys.indexOf(user_id) != -1 ? 'block' : 'none' }}>
-                    <Icon type="check" />
+        {resultArr.map((value, key) => {
+          const { avatar, name, user_name, user_id } = value
+          return (
+            <Menu.Item
+              className={indexStyles.menuItem}
+              style={{
+                height: 32,
+                lineHeight: '32px',
+                margin: 0,
+                padding: '0 10px'
+              }}
+              key={value[keyCode]}
+            >
+              <div className={indexStyles.menuItemDiv}>
+                <div
+                  style={{ display: 'flex', alignItems: 'center' }}
+                  key={user_id}
+                >
+                  {avatar ? (
+                    <img
+                      style={{
+                        width: 20,
+                        height: 20,
+                        borderRadius: 20,
+                        marginRight: 4
+                      }}
+                      src={avatar}
+                    />
+                  ) : (
+                    <div
+                      style={{
+                        width: 20,
+                        height: 20,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderRadius: 20,
+                        backgroundColor: '#f5f5f5',
+                        marginRight: 4
+                      }}
+                    >
+                      <Icon
+                        type={'user'}
+                        style={{
+                          fontSize: 12,
+                          marginLeft: 10,
+                          color: '#8c8c8c'
+                        }}
+                      />
+                    </div>
+                  )}
+                  <div
+                    style={{
+                      overflow: 'hidden',
+                      verticalAlign: ' middle',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      maxWidth: 90,
+                      marginRight: 8
+                    }}
+                  >
+                    {name || user_name || '佚名'}
                   </div>
                 </div>
-              </Menu.Item>
-            )
-          })
-        }
+                <div
+                  style={{
+                    display:
+                      selectedKeys.indexOf(user_id) != -1 ? 'block' : 'none'
+                  }}
+                >
+                  <Icon type="check" />
+                </div>
+              </div>
+            </Menu.Item>
+          )
+        })}
         {/*<div className={indexStyles.checkOk} onClick={this.onCheck.bind(this)}>确定</div>*/}
       </Menu>
       //       {/*<Spin spinning={menuSearchSingleSpinning} size={'small'}>*/}
       //   </Spin>
     )
   }
-
 }
 
-{/*<Menu.Item style={{height: 32,lineHeight: '32px', margin: 0,backgroundColor: '#ffffff'}} key={value[keyCode]} >*/ }
-{/*{value[searchName]}*/ }
-{/*</Menu.Item>*/ }
+{
+  /*<Menu.Item style={{height: 32,lineHeight: '32px', margin: 0,backgroundColor: '#ffffff'}} key={value[keyCode]} >*/
+}
+{
+  /*{value[searchName]}*/
+}
+{
+  /*</Menu.Item>*/
+}

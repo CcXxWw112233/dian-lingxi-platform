@@ -1,9 +1,9 @@
-import React, { Component } from "react";
-import { Menu, Dropdown, Input, message, Icon } from "antd";
-import styles from "./index.less";
-import chackImg from "./../../../../../../assets/workbench/check@2x.png";
-import personGroupImg from "./../../../../../../assets/workbench/person_group@2x.png";
-import Cookies from "js-cookie";
+import React, { Component } from 'react'
+import { Menu, Dropdown, Input, message, Icon } from 'antd'
+import styles from './index.less'
+import chackImg from './../../../../../../assets/workbench/check@2x.png'
+import personGroupImg from './../../../../../../assets/workbench/person_group@2x.png'
+import Cookies from 'js-cookie'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import { connect } from 'dva'
 

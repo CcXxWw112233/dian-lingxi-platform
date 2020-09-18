@@ -11,8 +11,7 @@ const MenuItem = Menu.Item
 
 @connect(mapStateToProps)
 export default class Header extends React.Component {
-  state = {
-  }
+  state = {}
 
   handelOperateMenu = ({ key }) => {
     if ('delete' == key) {
@@ -21,7 +20,12 @@ export default class Header extends React.Component {
   }
 
   confrimDelete = () => {
-    const { milestone_detail: { id }, deleteMiletone = function () { }, projectDetailInfoData: { board_id }, card_id } = this.props
+    const {
+      milestone_detail: { id },
+      deleteMiletone = function() {},
+      projectDetailInfoData: { board_id },
+      card_id
+    } = this.props
     const that = this
     Modal.confirm({
       title: '提示',
@@ -58,15 +62,16 @@ export default class Header extends React.Component {
             message.error(res.message)
           }
         })
-
-      },
+      }
     })
   }
 
   renderOperateMenu = () => {
     return (
       <Menu onClick={this.handelOperateMenu}>
-        <MenuItem key={'delete'} style={{ color: '#FF4D4F' }}>删除</MenuItem>
+        <MenuItem key={'delete'} style={{ color: '#FF4D4F' }}>
+          删除
+        </MenuItem>
       </Menu>
     )
   }
@@ -81,8 +86,14 @@ export default class Header extends React.Component {
       <div className={headerStyles.header_out}>
         <div className={headerStyles.header_out_left}>
           <div className={headerStyles.header_out_flag}>
-            <div className={`${headerStyles.header_out_flag_logo} ${globalStyles.authTheme}`}>{title_icon}</div>
-            <div className={`${headerStyles.header_out_flag_name}`}>{title}</div>
+            <div
+              className={`${headerStyles.header_out_flag_logo} ${globalStyles.authTheme}`}
+            >
+              {title_icon}
+            </div>
+            <div className={`${headerStyles.header_out_flag_name}`}>
+              {title}
+            </div>
           </div>
           <div className={headerStyles.header_out_detail}>
             <div className={headerStyles.header_out_detail_1}>{board_name}</div>
@@ -96,17 +107,38 @@ export default class Header extends React.Component {
             <div className={globalStyles.authTheme} style={{ fontSize: 18, marginRight: 10 }}>&#xe7fd;</div>
           </Dropdown> */}
           <div className={headerStyles.del_milestone}>
-            <Tooltip placement="top" title="删除" getPopupContainer={triggerNode => triggerNode.parentNode}>
-              <div className={`${globalStyles.authTheme} ${headerStyles.del_icon}`} onClick={this.confrimDelete} style={{ fontSize: 18, marginRight: 10, cursor: 'pointer' }}>&#xe7c3;</div>
+            <Tooltip
+              placement="top"
+              title="删除"
+              getPopupContainer={triggerNode => triggerNode.parentNode}
+            >
+              <div
+                className={`${globalStyles.authTheme} ${headerStyles.del_icon}`}
+                onClick={this.confrimDelete}
+                style={{ fontSize: 18, marginRight: 10, cursor: 'pointer' }}
+              >
+                &#xe7c3;
+              </div>
             </Tooltip>
           </div>
-          <InformRemind milestonePrincipals={principals} rela_id={id} rela_type='5' user_remind_info={users} />
+          <InformRemind
+            milestonePrincipals={principals}
+            rela_id={id}
+            rela_type="5"
+            user_remind_info={users}
+          />
         </div>
       </div>
     )
   }
 }
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ milestoneDetail: { milestone_detail = {} }, projectDetail: { datas: { projectDetailInfoData = {} } }, publicTaskDetailModal: { card_id } }) {
+function mapStateToProps({
+  milestoneDetail: { milestone_detail = {} },
+  projectDetail: {
+    datas: { projectDetailInfoData = {} }
+  },
+  publicTaskDetailModal: { card_id }
+}) {
   return { milestone_detail, projectDetailInfoData, card_id }
 }

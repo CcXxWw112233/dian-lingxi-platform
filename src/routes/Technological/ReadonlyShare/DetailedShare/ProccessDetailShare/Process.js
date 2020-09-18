@@ -6,41 +6,33 @@ import ProcessStartConfirm from './ProcessStartConfirm'
 import { connect } from 'dva'
 
 const ProcessIndex = ({ processPageFlagStep }) => {
-
   const filterPage = () => {
-    let containner = (<div></div>)
+    let containner = <div></div>
     switch (processPageFlagStep) {
       case '1':
-        containner = (<ProcessDefault />)
+        containner = <ProcessDefault />
         break
       case '2':
-        containner = (<EditProcess />)
+        containner = <EditProcess />
         break
       case '3':
-        containner = (<ProcessStartConfirm />)
+        containner = <ProcessStartConfirm />
         break
       case '4':
-        containner = (<ProcessDefault />)
+        containner = <ProcessDefault />
         break
       default:
-        containner = (<ProcessDefault />)
+        containner = <ProcessDefault />
         break
     }
     return containner
   }
-  return (
-    <div className={indexStyles.processOut}>
-      {filterPage()}
-    </div>
-  )
-
+  return <div className={indexStyles.processOut}>{filterPage()}</div>
 }
 export default connect(mapStateToProps)(ProcessIndex)
 function mapStateToProps({
   projectDetailProcess: {
-    datas: {
-      processPageFlagStep
-    }
+    datas: { processPageFlagStep }
   }
 }) {
   return { processPageFlagStep }

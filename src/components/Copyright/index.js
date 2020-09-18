@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 import styles from './index.less'
 import { Tooltip } from 'antd'
 
@@ -20,10 +20,9 @@ const Copyright = () => {
       {/* &nbsp;&nbsp;| */}
       &nbsp;&nbsp;©&nbsp;&nbsp;2018&nbsp;&nbsp;聆悉&nbsp;&nbsp;粤ICP备17146321号
     </div>
-  );
-};
+  )
+}
 
-Copyright.propTypes = {
-};
+Copyright.propTypes = {}
 
-export default Copyright;
+export default Copyright

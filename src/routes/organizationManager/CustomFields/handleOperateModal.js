@@ -1,53 +1,53 @@
 // 事件封装
-export const categoryIcon = (type) => {
-  let icon = (<span></span>)
+export const categoryIcon = type => {
+  let icon = <span></span>
   let field_name = ''
   switch (type) {
     case '1':
       icon = <span>&#xe6af;</span>
       field_name = '单选'
-      break;
+      break
     case '2':
       icon = <span>&#xe6b2;</span>
       field_name = '多选'
-      break;
+      break
     case '3':
       icon = <span>&#xe7d3;</span>
       field_name = '日期'
-      break;
+      break
     case '4':
       icon = <span>&#xe6b0;</span>
       field_name = '数字'
-      break;
+      break
     case '5':
       icon = <span>&#xe6b1;</span>
       field_name = '文本'
-      break;
+      break
     case '6':
       icon = <span>&#xe6b3;</span>
       field_name = '文件'
-      break;
+      break
     case '8':
       icon = <span>&#xe7b2;</span>
       field_name = '成员'
-      break;
+      break
     default:
-      break;
+      break
   }
-  return {icon, field_name}
+  return { icon, field_name }
 }
 
 // 字段引用详情
-export const fieldsQuoteDetail = (code) => {
-  let icon = (<span></span>)
+export const fieldsQuoteDetail = code => {
+  let icon = <span></span>
   switch (code) {
     case 'BOARD':
       icon = <span>&#xe684;</span>
-      break;
+      break
     case '':
-      break;
+      break
     default:
-      break;
+      break
   }
 }
 
@@ -56,7 +56,9 @@ export const fieldsQuoteDetail = (code) => {
 // 获取创建人
 export const getCreateUser = () => {
   let create_by = ''
-  const { name } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
+  const { name } = localStorage.getItem('userInfo')
+    ? JSON.parse(localStorage.getItem('userInfo'))
+    : {}
   create_by = name
   return create_by
 }

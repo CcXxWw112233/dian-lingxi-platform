@@ -1,29 +1,61 @@
 import { message } from 'antd'
-import { routerRedux } from "dva/router";
-import Cookies from "js-cookie";
+import { routerRedux } from 'dva/router'
+import Cookies from 'js-cookie'
 import modelExtend from 'dva-model-extend'
 import projectDetail from './index'
 import {
   boardAppCancelRelaMiletones,
   boardAppRelaMiletones,
   addCardNewComment,
-  addChirldTask, addTask, addTaskExecutor, addTaskGroup, addTaskTag,
-  archivedTask, changeTaskType, completeTask,
-  deleteBoardTag, deleteCardNewComment, deleteTask, deleteTaskFile, deleteTaskGroup, getBoardTagList,
-  getCardCommentList, getCardDetail,
-  getProjectGoupList, getTaskGroupList,
-  removeProjectMenbers, removeTaskExecutor,
-  removeTaskTag, toTopBoardTag,
-  updateBoardTag, updateTask,
-  updateTaskGroup, getRelations, JoinRelation, cancelRelation, getRelationsSelectionPre, getRelationsSelectionSub, getCardCommentListAll, getShareCardDetail
-} from "../../../services/technological/task";
+  addChirldTask,
+  addTask,
+  addTaskExecutor,
+  addTaskGroup,
+  addTaskTag,
+  archivedTask,
+  changeTaskType,
+  completeTask,
+  deleteBoardTag,
+  deleteCardNewComment,
+  deleteTask,
+  deleteTaskFile,
+  deleteTaskGroup,
+  getBoardTagList,
+  getCardCommentList,
+  getCardDetail,
+  getProjectGoupList,
+  getTaskGroupList,
+  removeProjectMenbers,
+  removeTaskExecutor,
+  removeTaskTag,
+  toTopBoardTag,
+  updateBoardTag,
+  updateTask,
+  updateTaskGroup,
+  getRelations,
+  JoinRelation,
+  cancelRelation,
+  getRelationsSelectionPre,
+  getRelationsSelectionSub,
+  getCardCommentListAll,
+  getShareCardDetail
+} from '../../../services/technological/task'
 import {
-  selectDrawContent, selectDrawerVisible, selectGetTaskGroupListArrangeType, selectTaskGroupList,
-  selectTaskGroupListIndex, selectTaskGroupListIndexIndex
-} from "../select";
-import { MEMBERS, MESSAGE_DURATION_TIME, PROJECTS, TASKS } from "../../../globalset/js/constant";
-import { isApiResponseOk } from "../../../utils/handleResponseData";
-import { currentNounPlanFilterName } from "../../../utils/businessFunction";
+  selectDrawContent,
+  selectDrawerVisible,
+  selectGetTaskGroupListArrangeType,
+  selectTaskGroupList,
+  selectTaskGroupListIndex,
+  selectTaskGroupListIndexIndex
+} from '../select'
+import {
+  MEMBERS,
+  MESSAGE_DURATION_TIME,
+  PROJECTS,
+  TASKS
+} from '../../../globalset/js/constant'
+import { isApiResponseOk } from '../../../utils/handleResponseData'
+import { currentNounPlanFilterName } from '../../../utils/businessFunction'
 import QueryString from 'querystring'
 
 let board_id = null
@@ -32,14 +64,11 @@ let card_id = null
 export default modelExtend(projectDetail, {
   namespace: 'projectDetailTask',
   state: {
-    datas: {
-
-    }
+    datas: {}
   },
   subscriptions: {
     setup({ dispatch, history }) {
-      history.listen((location) => {
-
+      history.listen(location => {
         if (location.pathname.indexOf('/technological/projectDetail') !== -1) {
           const param = QueryString.parse(location.search.replace('?', ''))
           board_id = param.board_id
@@ -55,8 +84,7 @@ export default modelExtend(projectDetail, {
 
             dispatch({
               type: 'getProjectGoupList',
-              payload: {
-              }
+              payload: {}
             })
 
             dispatch({
@@ -106,7 +134,7 @@ export default modelExtend(projectDetail, {
                 type: 'updateDatas',
                 payload: {
                   drawContent: {}, //任务右方抽屉内容
-                  drawerVisible: false, //查看任务的抽屉是否可见
+                  drawerVisible: false //查看任务的抽屉是否可见
                   // cardCommentList: [], //任务评论列表
                   // projectGoupList: [], //项目分组列表
                   // taskGroupList: [], //任务列表
@@ -117,14 +145,13 @@ export default modelExtend(projectDetail, {
             }
           }
         }
-
       })
-    },
+    }
   },
   effects: {
-
     //获取任务详情信息， 通过url
-    * getCardDetail({ payload }, { select, call, put }) { //查看项目详情信息
+    *getCardDetail({ payload }, { select, call, put }) {
+      //查看项目详情信息
       const { id } = payload
       yield put({
         type: 'updateDatas',
@@ -139,7 +166,7 @@ export default modelExtend(projectDetail, {
           type: 'updateDatas',
           payload: {
             drawerVisible: true,
-            drawContent: res.data,
+            drawContent: res.data
           }
         })
         // yield put({
@@ -153,9 +180,8 @@ export default modelExtend(projectDetail, {
       }
     },
 
-
     //获取任务详情 ---- 解决分享出去之后的任务详情没有权限 ----暂时使用(10月14日)
-    * getShareCardDetail({ payload }, { select, call, put }) {
+    *getShareCardDetail({ payload }, { select, call, put }) {
       const { id } = payload
       yield put({
         type: 'updateDatas',
@@ -181,31 +207,36 @@ export default modelExtend(projectDetail, {
           type: 'updateDatas',
           payload: {
             drawerVisible: true,
-            drawContent: res.data,
+            drawContent: res.data
           }
         })
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
-        if (res.code == 4003) { //分享链接失效,返回验证页面
-          setTimeout(function () {
-            window.history.back();
+        if (res.code == 4003) {
+          //分享链接失效,返回验证页面
+          setTimeout(function() {
+            window.history.back()
           }, 3000)
         } else {
-
         }
       }
     },
 
     //获取任务详情信息, 点击任务
-    * cardItemClickEffect({ payload }, { select, call, put }) { //查看项目详情信息
-      const { taskGroupListIndex, taskGroupListIndex_index, drawContent = {} } = payload
+    *cardItemClickEffect({ payload }, { select, call, put }) {
+      //查看项目详情信息
+      const {
+        taskGroupListIndex,
+        taskGroupListIndex_index,
+        drawContent = {}
+      } = payload
       const { card_id } = drawContent
       yield put({
         type: 'updateDatas',
         payload: {
           taskGroupListIndex,
           taskGroupListIndex_index,
-          card_id,
+          card_id
         }
       })
       yield put({
@@ -214,11 +245,11 @@ export default modelExtend(projectDetail, {
           route: `/technological/projectDetail?board_id=${board_id}&appsSelectKey=${appsSelectKey}&card_id=${card_id}`
         }
       })
-
     },
 
     //任务---start
-    * addTaskGroup({ payload }, { select, call, put }) { //
+    *addTaskGroup({ payload }, { select, call, put }) {
+      //
       let res = yield call(addTaskGroup, payload)
       const { length } = payload
       const taskGroupList = yield select(selectTaskGroupList)
@@ -232,10 +263,14 @@ export default modelExtend(projectDetail, {
             taskGroupList: new_arr_
           }
         })
-        message.success(`添加${currentNounPlanFilterName(TASKS)}分组成功`, MESSAGE_DURATION_TIME)
-        const delay = (ms) => new Promise(resolve => {
-          setTimeout(resolve, ms)
-        })
+        message.success(
+          `添加${currentNounPlanFilterName(TASKS)}分组成功`,
+          MESSAGE_DURATION_TIME
+        )
+        const delay = ms =>
+          new Promise(resolve => {
+            setTimeout(resolve, ms)
+          })
         yield call(delay, MESSAGE_DURATION_TIME * 1000)
         yield put({
           type: 'getProjectGoupList',
@@ -246,7 +281,8 @@ export default modelExtend(projectDetail, {
       }
     },
 
-    * deleteTaskGroup({ payload }, { select, call, put }) { //
+    *deleteTaskGroup({ payload }, { select, call, put }) {
+      //
       let res = yield call(deleteTaskGroup, payload)
       const { itemKey = 0 } = payload
       const taskGroupList = yield select(selectTaskGroupList)
@@ -259,10 +295,14 @@ export default modelExtend(projectDetail, {
             taskGroupList: new_arr_
           }
         })
-        message.success(`删除${currentNounPlanFilterName(TASKS)}分组成功`, MESSAGE_DURATION_TIME)
-        const delay = (ms) => new Promise(resolve => {
-          setTimeout(resolve, ms)
-        })
+        message.success(
+          `删除${currentNounPlanFilterName(TASKS)}分组成功`,
+          MESSAGE_DURATION_TIME
+        )
+        const delay = ms =>
+          new Promise(resolve => {
+            setTimeout(resolve, ms)
+          })
         yield call(delay, MESSAGE_DURATION_TIME * 1000)
         yield put({
           type: 'getProjectGoupList',
@@ -273,7 +313,8 @@ export default modelExtend(projectDetail, {
       }
     },
 
-    * updateTaskGroup({ payload }, { select, call, put }) { //
+    *updateTaskGroup({ payload }, { select, call, put }) {
+      //
       let res = yield call(updateTaskGroup, payload)
       const { itemKey = 0, name } = payload
       const taskGroupList = yield select(selectTaskGroupList)
@@ -286,10 +327,14 @@ export default modelExtend(projectDetail, {
             taskGroupList: new_arr_
           }
         })
-        message.success(`更新${currentNounPlanFilterName(TASKS)}分组成功`, MESSAGE_DURATION_TIME)
-        const delay = (ms) => new Promise(resolve => {
-          setTimeout(resolve, ms)
-        })
+        message.success(
+          `更新${currentNounPlanFilterName(TASKS)}分组成功`,
+          MESSAGE_DURATION_TIME
+        )
+        const delay = ms =>
+          new Promise(resolve => {
+            setTimeout(resolve, ms)
+          })
         yield call(delay, MESSAGE_DURATION_TIME * 1000)
         yield put({
           type: 'getProjectGoupList',
@@ -300,13 +345,15 @@ export default modelExtend(projectDetail, {
       }
     },
 
-    * getTaskGroupList({ payload }, { select, call, put }) { //
+    *getTaskGroupList({ payload }, { select, call, put }) {
+      //
       const { type, board_id, arrange_type, calback, operateType } = payload
       let res = yield call(getTaskGroupList, { type, arrange_type, board_id })
       if (typeof calback === 'function') {
         calback()
       }
-      if (operateType === '1') { //代表分类查询选择
+      if (operateType === '1') {
+        //代表分类查询选择
         yield put({
           type: 'updateDatas',
           payload: {
@@ -326,7 +373,8 @@ export default modelExtend(projectDetail, {
       }
     },
 
-    * getTaskGroupListByUrl({ payload }, { select, call, put }) { //
+    *getTaskGroupListByUrl({ payload }, { select, call, put }) {
+      //
       const { type, board_id, arrange_type, calback, operateType } = payload
       let res = yield call(getTaskGroupList, { type, arrange_type, board_id })
       // message.destroy()
@@ -371,10 +419,13 @@ export default modelExtend(projectDetail, {
       }
     },
 
-    * addTask({ payload }, { select, call, put }) { //
+    *addTask({ payload }, { select, call, put }) {
+      //
       let { add_type = '1' } = payload
       let res = yield call(addTask, { ...payload, add_type })
-      let getTaskGroupListArrangeType = yield select(selectGetTaskGroupListArrangeType)
+      let getTaskGroupListArrangeType = yield select(
+        selectGetTaskGroupListArrangeType
+      )
       if (isApiResponseOk(res)) {
         yield put({
           type: 'getTaskGroupList',
@@ -382,7 +433,7 @@ export default modelExtend(projectDetail, {
             type: '2',
             board_id: board_id,
             arrange_type: getTaskGroupListArrangeType || '1',
-            calback: function () {
+            calback: function() {
               message.success('添加成功', MESSAGE_DURATION_TIME)
             }
           }
@@ -392,10 +443,13 @@ export default modelExtend(projectDetail, {
       }
     },
 
-    * updateTask({ payload }, { select, call, put }) { //
+    *updateTask({ payload }, { select, call, put }) {
+      //
       const { updateObj } = payload
       const taskGroupListIndex = yield select(selectTaskGroupListIndex) //
-      const taskGroupListIndex_index = yield select(selectTaskGroupListIndexIndex)
+      const taskGroupListIndex_index = yield select(
+        selectTaskGroupListIndexIndex
+      )
       const taskGroupList = yield select(selectTaskGroupList) //
       const drawContent = yield select(selectDrawContent)
       const { description } = updateObj
@@ -403,7 +457,9 @@ export default modelExtend(projectDetail, {
       if (isApiResponseOk(res)) {
         if (description) {
           drawContent['description'] = description
-          taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index]['description'] = description
+          taskGroupList[taskGroupListIndex]['card_data'][
+            taskGroupListIndex_index
+          ]['description'] = description
         }
         yield put({
           type: 'updateDatas',
@@ -412,7 +468,8 @@ export default modelExtend(projectDetail, {
             taskGroupList
           }
         })
-        if (res.data && res.data.remind_code != '0') { //通知提醒专用
+        if (res.data && res.data.remind_code != '0') {
+          //通知提醒专用
           message.warn(`更新成功，${res.data.error_msg}`, MESSAGE_DURATION_TIME)
         } else {
           message.success('更新成功', MESSAGE_DURATION_TIME)
@@ -422,15 +479,21 @@ export default modelExtend(projectDetail, {
       }
     },
 
-    * deleteTask({ payload }, { select, call, put }) { //
+    *deleteTask({ payload }, { select, call, put }) {
+      //
       const { id } = payload
       let res = yield call(deleteTask, id)
       if (isApiResponseOk(res)) {
         const taskGroupList = yield select(selectTaskGroupList)
         const taskGroupListIndex = yield select(selectTaskGroupListIndex) //  获取到全局设置filter,分页设置
-        const taskGroupListIndex_index = yield select(selectTaskGroupListIndexIndex)
+        const taskGroupListIndex_index = yield select(
+          selectTaskGroupListIndexIndex
+        )
         const new_arr_ = [...taskGroupList]
-        new_arr_[taskGroupListIndex]['card_data'].splice(taskGroupListIndex_index, 1)
+        new_arr_[taskGroupListIndex]['card_data'].splice(
+          taskGroupListIndex_index,
+          1
+        )
         yield put({
           type: 'updateDatas',
           payload: {
@@ -443,10 +506,13 @@ export default modelExtend(projectDetail, {
       }
     },
 
-    * updateChirldTask({ payload }, { select, call, put }) { //
+    *updateChirldTask({ payload }, { select, call, put }) {
+      //
       const { updateObj } = payload
       const taskGroupListIndex = yield select(selectTaskGroupListIndex) //
-      const taskGroupListIndex_index = yield select(selectTaskGroupListIndexIndex)
+      const taskGroupListIndex_index = yield select(
+        selectTaskGroupListIndexIndex
+      )
       const taskGroupList = yield select(selectTaskGroupList) //
       const drawContent = yield select(selectDrawContent)
       const { description } = updateObj
@@ -454,7 +520,9 @@ export default modelExtend(projectDetail, {
       if (isApiResponseOk(res)) {
         if (description) {
           drawContent['description'] = description
-          taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index]['description'] = description
+          taskGroupList[taskGroupListIndex]['card_data'][
+            taskGroupListIndex_index
+          ]['description'] = description
         }
         yield put({
           type: 'updateDatas',
@@ -469,16 +537,21 @@ export default modelExtend(projectDetail, {
       }
     },
 
-    * deleteChirldTask({ payload }, { select, call, put }) { //
+    *deleteChirldTask({ payload }, { select, call, put }) {
+      //
       const { card_id, chirldDataIndex } = payload
       let res = yield call(deleteTask, card_id)
       if (isApiResponseOk(res)) {
         const taskGroupList = yield select(selectTaskGroupList)
         const taskGroupListIndex = yield select(selectTaskGroupListIndex) //  获取到全局设置filter,分页设置
-        const taskGroupListIndex_index = yield select(selectTaskGroupListIndexIndex)
+        const taskGroupListIndex_index = yield select(
+          selectTaskGroupListIndexIndex
+        )
         const drawContent = yield select(selectDrawContent)
         const new_drawContent_ = { ...drawContent }
-        taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index]['child_data'].splice(chirldDataIndex, 1)
+        taskGroupList[taskGroupListIndex]['card_data'][
+          taskGroupListIndex_index
+        ]['child_data'].splice(chirldDataIndex, 1)
         new_drawContent_['child_data'].splice(chirldDataIndex, 1)
         yield put({
           type: 'updateDatas',
@@ -493,7 +566,8 @@ export default modelExtend(projectDetail, {
       }
     },
 
-    * archivedTask({ payload }, { select, call, put }) { //
+    *archivedTask({ payload }, { select, call, put }) {
+      //
       let res = yield call(archivedTask, payload)
       if (isApiResponseOk(res)) {
         message.success(`已归档`, MESSAGE_DURATION_TIME)
@@ -502,12 +576,15 @@ export default modelExtend(projectDetail, {
       }
     },
 
-    * changeTaskType({ payload }, { select, call, put }) { // 此方法注释掉的地方是先前做了任务跳转sss
+    *changeTaskType({ payload }, { select, call, put }) {
+      // 此方法注释掉的地方是先前做了任务跳转sss
       const { requestObj, indexObj } = payload
       // const { board_id } = requestObj
       // const { taskGroupListIndex, taskGroupListIndex_index } = indexObj
       let res = yield call(changeTaskType, requestObj)
-      const getTaskGroupListArrangeType = yield select(selectGetTaskGroupListArrangeType)
+      const getTaskGroupListArrangeType = yield select(
+        selectGetTaskGroupListArrangeType
+      )
 
       if (isApiResponseOk(res)) {
         //跳转操作
@@ -533,7 +610,7 @@ export default modelExtend(projectDetail, {
             type: '2',
             board_id: board_id,
             arrange_type: getTaskGroupListArrangeType || '1',
-            calback: function () {
+            calback: function() {
               message.success('移动成功', MESSAGE_DURATION_TIME)
             }
           }
@@ -544,13 +621,13 @@ export default modelExtend(projectDetail, {
             drawerVisible: false
           }
         })
-
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
-    * addChirldTask({ payload }, { select, call, put }) { //
+    *addChirldTask({ payload }, { select, call, put }) {
+      //
       const { length } = payload
       const newPayload = { ...payload }
       newPayload.executors ? delete newPayload.executors : '' //去掉不需要的数据
@@ -571,7 +648,8 @@ export default modelExtend(projectDetail, {
       }
     },
 
-    * addTaskExecutor({ payload }, { select, call, put }) { //
+    *addTaskExecutor({ payload }, { select, call, put }) {
+      //
       let res = yield call(addTaskExecutor, payload)
       if (isApiResponseOk(res)) {
         message.success(`已成功设置执行人`, MESSAGE_DURATION_TIME)
@@ -580,7 +658,8 @@ export default modelExtend(projectDetail, {
       }
     },
 
-    * removeTaskExecutor({ payload }, { select, call, put }) { //
+    *removeTaskExecutor({ payload }, { select, call, put }) {
+      //
       let res = yield call(removeTaskExecutor, payload)
       if (isApiResponseOk(res)) {
         message.success(`已成功删除执行人`, MESSAGE_DURATION_TIME)
@@ -589,7 +668,8 @@ export default modelExtend(projectDetail, {
       }
     },
 
-    * completeTask({ payload }, { select, call, put }) { //
+    *completeTask({ payload }, { select, call, put }) {
+      //
       const { is_realize } = payload
       let res = yield call(completeTask, payload)
       if (isApiResponseOk(res)) {
@@ -597,26 +677,39 @@ export default modelExtend(projectDetail, {
           type: 'projectDetail/projectDetailInfo',
           payload: {
             id: board_id,
-            calback: function () {
+            calback: function() {
               // const remind_message_str = res.data && res.data.remind_code !=  '0'? `${res.data.error_msg}`: ''
-              if (res.data && res.data.remind_code != '0') { //通知提醒专用
+              if (res.data && res.data.remind_code != '0') {
+                //通知提醒专用
                 const remind_message_str = `，${res.data.error_msg}`
-                message.warn(is_realize === '1' ? `已完成该${currentNounPlanFilterName(TASKS)}${remind_message_str}` :
-                  `已将该${currentNounPlanFilterName(TASKS)}设置未完成${remind_message_str}`, MESSAGE_DURATION_TIME)
+                message.warn(
+                  is_realize === '1'
+                    ? `已完成该${currentNounPlanFilterName(
+                        TASKS
+                      )}${remind_message_str}`
+                    : `已将该${currentNounPlanFilterName(
+                        TASKS
+                      )}设置未完成${remind_message_str}`,
+                  MESSAGE_DURATION_TIME
+                )
               } else {
-                message.success(is_realize === '1' ? `已完成该${currentNounPlanFilterName(TASKS)}` :
-                  `已将该${currentNounPlanFilterName(TASKS)}设置未完成`, MESSAGE_DURATION_TIME)
+                message.success(
+                  is_realize === '1'
+                    ? `已完成该${currentNounPlanFilterName(TASKS)}`
+                    : `已将该${currentNounPlanFilterName(TASKS)}设置未完成`,
+                  MESSAGE_DURATION_TIME
+                )
               }
             }
           }
         })
-
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
-    * removeTaskTag({ payload }, { select, call, put }) { //
+    *removeTaskTag({ payload }, { select, call, put }) {
+      //
       let res = yield call(removeTaskTag, payload)
       if (isApiResponseOk(res)) {
         message.success('已删除标签', MESSAGE_DURATION_TIME)
@@ -625,8 +718,12 @@ export default modelExtend(projectDetail, {
       }
     },
 
-    * putTask({ payload }, { select, call, put }) {
-      let res = yield call(getTaskGroupList, { type: '2', board_id: board_id, arrange_type: '1' })
+    *putTask({ payload }, { select, call, put }) {
+      let res = yield call(getTaskGroupList, {
+        type: '2',
+        board_id: board_id,
+        arrange_type: '1'
+      })
       const { taskGroupListIndex, taskGroupListIndex_index } = payload
       if (isApiResponseOk(res)) {
         yield put({
@@ -635,23 +732,31 @@ export default modelExtend(projectDetail, {
             taskGroupListIndex,
             taskGroupListIndex_index,
             taskGroupList: res.data,
-            drawContent: res.data[taskGroupListIndex].card_data[taskGroupListIndex_index]
+            drawContent:
+              res.data[taskGroupListIndex].card_data[taskGroupListIndex_index]
           }
         })
       } else {
       }
     },
 
-    * removeProjectMenbers({ payload }, { select, call, put }) { //
+    *removeProjectMenbers({ payload }, { select, call, put }) {
+      //
       let res = yield call(removeProjectMenbers, payload)
       if (isApiResponseOk(res)) {
-        message.success(`已从${currentNounPlanFilterName(PROJECTS)}移出该${currentNounPlanFilterName(MEMBERS)}`, MESSAGE_DURATION_TIME)
+        message.success(
+          `已从${currentNounPlanFilterName(
+            PROJECTS
+          )}移出该${currentNounPlanFilterName(MEMBERS)}`,
+          MESSAGE_DURATION_TIME
+        )
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
-    * getProjectGoupList({ payload }, { select, call, put }) { //
+    *getProjectGoupList({ payload }, { select, call, put }) {
+      //
       let res = yield call(getProjectGoupList, payload)
       if (isApiResponseOk(res)) {
         yield put({
@@ -661,20 +766,19 @@ export default modelExtend(projectDetail, {
           }
         })
       } else {
-
       }
     },
 
-    * deleteTaskFile({ payload }, { select, call, put }) { //
+    *deleteTaskFile({ payload }, { select, call, put }) {
+      //
       let res = yield call(deleteTaskFile, payload)
       if (isApiResponseOk(res)) {
-
       } else {
-
       }
     },
 
-    * addTaskTag({ payload }, { select, call, put }) { //
+    *addTaskTag({ payload }, { select, call, put }) {
+      //
       const { length } = payload
       let res = yield call(addTaskTag, payload)
       const drawContent = yield select(selectDrawContent) //  获取到全局设置filter,分页设置
@@ -690,7 +794,7 @@ export default modelExtend(projectDetail, {
           type: 'getBoardTagList',
           payload: {
             board_id,
-            calback: function () {
+            calback: function() {
               message.success('添加任务标签成功', MESSAGE_DURATION_TIME)
             }
           }
@@ -700,7 +804,8 @@ export default modelExtend(projectDetail, {
       }
     },
 
-    * getBoardTagList({ payload }, { select, call, put }) { //
+    *getBoardTagList({ payload }, { select, call, put }) {
+      //
       const { board_id, calback } = payload
       let res = yield call(getBoardTagList, { board_id })
       if (isApiResponseOk(res)) {
@@ -714,18 +819,18 @@ export default modelExtend(projectDetail, {
           calback()
         }
       } else {
-
       }
     },
 
-    * updateBoardTag({ payload }, { select, call, put }) { //
+    *updateBoardTag({ payload }, { select, call, put }) {
+      //
       let res = yield call(updateBoardTag, payload)
       if (isApiResponseOk(res)) {
         yield put({
           type: 'getBoardTagList',
           payload: {
             board_id,
-            calback: function () {
+            calback: function() {
               message.success('更新标签成功', MESSAGE_DURATION_TIME)
             }
           }
@@ -735,14 +840,15 @@ export default modelExtend(projectDetail, {
       }
     },
 
-    * toTopBoardTag({ payload }, { select, call, put }) { //
+    *toTopBoardTag({ payload }, { select, call, put }) {
+      //
       let res = yield call(toTopBoardTag, payload)
       if (isApiResponseOk(res)) {
         yield put({
           type: 'getBoardTagList',
           payload: {
             board_id,
-            calback: function () {
+            calback: function() {
               message.success('已成功置顶该项目标签', MESSAGE_DURATION_TIME)
             }
           }
@@ -752,14 +858,15 @@ export default modelExtend(projectDetail, {
       }
     },
 
-    * deleteBoardTag({ payload }, { select, call, put }) { //
+    *deleteBoardTag({ payload }, { select, call, put }) {
+      //
       let res = yield call(deleteBoardTag, payload)
       if (isApiResponseOk(res)) {
         yield put({
           type: 'getBoardTagList',
           payload: {
             board_id,
-            calback: function () {
+            calback: function() {
               message.success('已成功删除该项目标签', MESSAGE_DURATION_TIME)
             }
           }
@@ -770,20 +877,22 @@ export default modelExtend(projectDetail, {
     },
 
     //内容关联
-    * getRelations({ payload }, { select, call, put }) { //
+    *getRelations({ payload }, { select, call, put }) {
+      //
       let res = yield call(getRelations, payload)
       if (isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
           payload: {
-            relationTaskList: res.data || [],
+            relationTaskList: res.data || []
           }
         })
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
-    * JoinRelation({ payload }, { select, call, put }) { //
+    *JoinRelation({ payload }, { select, call, put }) {
+      //
       let res = yield call(JoinRelation, payload)
 
       if (isApiResponseOk(res)) {
@@ -799,14 +908,15 @@ export default modelExtend(projectDetail, {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
-    * cancelRelation({ payload }, { select, call, put }) { //
+    *cancelRelation({ payload }, { select, call, put }) {
+      //
       let res = yield call(cancelRelation, payload)
       if (isApiResponseOk(res)) {
         yield put({
           type: 'getBoardTagList',
           payload: {
             board_id,
-            calback: function () {
+            calback: function() {
               message.success('已成功删除该项目标签', MESSAGE_DURATION_TIME)
             }
           }
@@ -815,14 +925,15 @@ export default modelExtend(projectDetail, {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
-    * getRelationsSelectionPre({ payload }, { select, call, put }) { //
+    *getRelationsSelectionPre({ payload }, { select, call, put }) {
+      //
       let res = yield call(getRelationsSelectionPre, payload)
       if (isApiResponseOk(res)) {
         yield put({
           type: 'getBoardTagList',
           payload: {
             board_id,
-            calback: function () {
+            calback: function() {
               message.success('已成功删除该项目标签', MESSAGE_DURATION_TIME)
             }
           }
@@ -831,14 +942,15 @@ export default modelExtend(projectDetail, {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
-    * getRelationsSelectionSub({ payload }, { select, call, put }) { //
+    *getRelationsSelectionSub({ payload }, { select, call, put }) {
+      //
       let res = yield call(getRelationsSelectionSub, payload)
       if (isApiResponseOk(res)) {
         yield put({
           type: 'getBoardTagList',
           payload: {
             board_id,
-            calback: function () {
+            calback: function() {
               message.success('已成功删除该项目标签', MESSAGE_DURATION_TIME)
             }
           }
@@ -851,7 +963,8 @@ export default modelExtend(projectDetail, {
     //任务---end
 
     //评论---start
-    * getCardCommentList({ payload }, { select, call, put }) { //
+    *getCardCommentList({ payload }, { select, call, put }) {
+      //
       const { id } = payload
       yield put({
         type: 'updateDatas',
@@ -871,7 +984,8 @@ export default modelExtend(projectDetail, {
       }
     },
 
-    * addCardNewComment({ payload }, { select, call, put }) { //
+    *addCardNewComment({ payload }, { select, call, put }) {
+      //
       let res = yield call(addCardNewComment, payload)
       if (isApiResponseOk(res)) {
         const { card_id } = payload
@@ -890,7 +1004,8 @@ export default modelExtend(projectDetail, {
       }
     },
 
-    * deleteCardNewComment({ payload }, { select, call, put }) { //
+    *deleteCardNewComment({ payload }, { select, call, put }) {
+      //
       const res = yield call(deleteCardNewComment, payload)
       if (isApiResponseOk(res)) {
         const { card_id } = payload
@@ -909,7 +1024,8 @@ export default modelExtend(projectDetail, {
       }
     },
 
-    * listenWsCardNewComment({ payload }, { select, call, put }) { //
+    *listenWsCardNewComment({ payload }, { select, call, put }) {
+      //
       const { newsData } = payload
       const id = newsData.activityTypeId
       const newsUserId = newsData.userId
@@ -933,7 +1049,7 @@ export default modelExtend(projectDetail, {
     },
 
     //评论--end
-    * getCardCommentListAll({ payload }, { select, call, put }) {
+    *getCardCommentListAll({ payload }, { select, call, put }) {
       yield put({
         type: 'updateDatas',
         payload: {
@@ -950,7 +1066,7 @@ export default modelExtend(projectDetail, {
     },
 
     //关联里程碑
-    * taskRelaMiletones({ payload }, { select, call, put }) {
+    *taskRelaMiletones({ payload }, { select, call, put }) {
       const { rela_id } = payload //此时的rela_id 为任务id
       const res = yield call(boardAppRelaMiletones, payload)
       if (isApiResponseOk(res)) {
@@ -967,7 +1083,7 @@ export default modelExtend(projectDetail, {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
-    * taskCancelRelaMiletones({ payload }, { select, call, put }) {
+    *taskCancelRelaMiletones({ payload }, { select, call, put }) {
       const { rela_id } = payload //此时的rela_id 为任务id
       const res = yield call(boardAppCancelRelaMiletones, payload)
       if (isApiResponseOk(res)) {
@@ -984,15 +1100,14 @@ export default modelExtend(projectDetail, {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     }
-
   },
 
   reducers: {
     updateDatas(state, action) {
       return {
         ...state,
-        datas: { ...state.datas, ...action.payload },
+        datas: { ...state.datas, ...action.payload }
       }
     }
-  },
-});
+  }
+})

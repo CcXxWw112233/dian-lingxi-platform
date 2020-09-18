@@ -1,29 +1,28 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import indexStyles from '../index.less'
 import { connect } from 'dva'
 
 // 引入 ECharts 主模块
 import echarts from 'echarts'
 // 引入柱状图
-import 'echarts/lib/chart/bar';
+import 'echarts/lib/chart/bar'
 // 引入提示框和标题组件
-import 'echarts/lib/component/tooltip';
-import 'echarts/lib/component/title';
-import 'echarts/lib/component/legend';
-import { getReportBoardStatus } from '../../../../../../services/technological/statisticalReport';
-import { isApiResponseOk } from '../../../../../../utils/handleResponseData';
+import 'echarts/lib/component/tooltip'
+import 'echarts/lib/component/title'
+import 'echarts/lib/component/legend'
+import { getReportBoardStatus } from '../../../../../../services/technological/statisticalReport'
+import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
 import echartTheme from '../echartTheme.json'
 @connect(mapStateToProps)
 class PieComponent extends Component {
-
   state = {
     noData: false
   }
 
-  getChartOptions = (props) => {
+  getChartOptions = props => {
     const { status = [], count = [] } = props
     let data = [...count]
-    data = data.map((item,index) => {
+    data = data.map((item, index) => {
       let new_item = {
         value: item,
         name: status[index]
@@ -39,7 +38,7 @@ class PieComponent extends Component {
         orient: 'vertical',
         right: 16,
         data: status,
-        type: 'scroll',
+        type: 'scroll'
       },
       // color: ['#5B8FF9', '#5AD8A6', '#5D7092', '#F6BD16'],
       series: [
@@ -53,13 +52,13 @@ class PieComponent extends Component {
             normal: {
               formatter: function(params) {
                 if (params.value > 0) {
-                  return params.value;
+                  return params.value
                 } else {
-                  return '';
+                  return ''
                 }
               },
-              position: 'inside',
-            },
+              position: 'inside'
+            }
           },
           emphasis: {
             itemStyle: {
@@ -70,20 +69,20 @@ class PieComponent extends Component {
           }
         }
       ]
-    };
+    }
     return option
   }
 
   getReportBoardStatus = () => {
-    echarts.registerTheme('walden',echartTheme)
-    let myChart = echarts.init(document.getElementById('pieContent'),'walden');
+    echarts.registerTheme('walden', echartTheme)
+    let myChart = echarts.init(document.getElementById('pieContent'), 'walden')
     myChart.clear()
     myChart.showLoading({
       text: 'loading',
       color: '#5B8FF9',
       textColor: '#000',
       maskColor: 'rgba(255, 255, 255, 0.2)',
-      zlevel: 0,
+      zlevel: 0
     })
     getReportBoardStatus().then(res => {
       if (isApiResponseOk(res)) {
@@ -103,7 +102,7 @@ class PieComponent extends Component {
           // option = newline(option, 3, 'xAxis')
           // 使用刚指定的配置项和数据显示图表。
           myChart.hideLoading()
-          myChart.setOption(option);
+          myChart.setOption(option)
         } else {
           this.setState({
             noData: true
@@ -115,11 +114,10 @@ class PieComponent extends Component {
   }
 
   resizeTTY = () => {
-    echarts.registerTheme('walden',echartTheme)
-    let myChart = echarts.init(document.getElementById('pieContent'),'walden');
+    echarts.registerTheme('walden', echartTheme)
+    let myChart = echarts.init(document.getElementById('pieContent'), 'walden')
     myChart.resize()
   }
-
 
   componentDidMount() {
     this.getReportBoardStatus()
@@ -131,7 +129,7 @@ class PieComponent extends Component {
     const { chatImVisiable } = this.props
     if (chatImVisiable != prev_chatImVisiable) {
       this.resizeTTY()
-    }    
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -148,25 +146,23 @@ class PieComponent extends Component {
 
   render() {
     return (
-      <div style={{position: 'relative'}}>
-        <div id="pieContent" style={{ width: '100%', height: 580, padding: '0px 2px' }}></div>
-        {
-          this.state.noData && (
-            <div className={indexStyles.chart_noData}>暂无数据</div>
-          )
-        }
+      <div style={{ position: 'relative' }}>
+        <div
+          id="pieContent"
+          style={{ width: '100%', height: 580, padding: '0px 2px' }}
+        ></div>
+        {this.state.noData && (
+          <div className={indexStyles.chart_noData}>暂无数据</div>
+        )}
       </div>
-    );
+    )
   }
 }
 
-export default PieComponent;
+export default PieComponent
 
-function mapStateToProps ({
-  simplemode: {
-      simplemodeCurrentProject = {},
-      chatImVisiable
-  }
+function mapStateToProps({
+  simplemode: { simplemodeCurrentProject = {}, chatImVisiable }
 }) {
   return {
     simplemodeCurrentProject,

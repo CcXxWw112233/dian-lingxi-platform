@@ -1,12 +1,12 @@
-import React, {Component} from 'react'
+import React, { Component } from 'react'
 
 function withBodyClientDimens(WrappedComponent) {
   return class withClientInfo extends Component {
-    state = {bodyClientWidth: 0, bodyClientHeight: 0}
+    state = { bodyClientWidth: 0, bodyClientHeight: 0 }
     getDimensions = () => {
       this.setState({
         bodyClientWidth: document.body.clientWidth,
-        bodyClientHeight: document.body.clientHeight,
+        bodyClientHeight: document.body.clientHeight
       })
     }
     componentDidMount() {
@@ -17,10 +17,10 @@ function withBodyClientDimens(WrappedComponent) {
       window.removeEventListener('resize', this.getDimensions, false)
     }
     render() {
-      const {bodyClientWidth, bodyClientHeight} = this.state
+      const { bodyClientWidth, bodyClientHeight } = this.state
       const injected = {
         bodyClientWidth,
-        bodyClientHeight,
+        bodyClientHeight
       }
       return (
         <div>

@@ -16,7 +16,11 @@ export default class CreatDirector extends React.Component {
     if (!this.state.file_name) {
       return false
     }
-    const { projectDetailInfoData = {}, currentParrentDirectoryId, dispatch } = this.props
+    const {
+      projectDetailInfoData = {},
+      currentParrentDirectoryId,
+      dispatch
+    } = this.props
     const { board_id } = projectDetailInfoData
 
     const { fileList = [], filedata_1 = [] } = this.props
@@ -60,31 +64,40 @@ export default class CreatDirector extends React.Component {
   render() {
     return (
       <div style={{ fontSize: 14 }}>
-        <Input autoFocus style={{ width: 160, height: 24 }} onChange={this.nameInputChange.bind(this)} />
-        <Button style={{ height: 24, marginLeft: 8 }} type={'primary'} onClick={this.onOk.bind(this)}>确认</Button>
-        <Button style={{ marginLeft: 8, height: 24 }} onClick={this.onCancel.bind(this)}>取消</Button>
+        <Input
+          autoFocus
+          style={{ width: 160, height: 24 }}
+          onChange={this.nameInputChange.bind(this)}
+        />
+        <Button
+          style={{ height: 24, marginLeft: 8 }}
+          type={'primary'}
+          onClick={this.onOk.bind(this)}
+        >
+          确认
+        </Button>
+        <Button
+          style={{ marginLeft: 8, height: 24 }}
+          onClick={this.onCancel.bind(this)}
+        >
+          取消
+        </Button>
       </div>
     )
   }
 }
 function mapStateToProps({
   projectDetailFile: {
-    datas: {
-      fileList = [],
-      filedata_1 = [],
-      currentParrentDirectoryId
-    }
+    datas: { fileList = [], filedata_1 = [], currentParrentDirectoryId }
   },
   projectDetail: {
-    datas: {
-      projectDetailInfoData = {},
-    }
+    datas: { projectDetailInfoData = {} }
   }
 }) {
   return {
     fileList,
     filedata_1,
     currentParrentDirectoryId,
-    projectDetailInfoData,
+    projectDetailInfoData
   }
 }

@@ -1,21 +1,30 @@
 import React, { Component } from 'react'
-import {DatePicker, Tooltip } from 'antd'
-import {timestampToTimeNormal, timeToTimestamp} from "../../../../../../../utils/util";
+import { DatePicker, Tooltip } from 'antd'
+import {
+  timestampToTimeNormal,
+  timeToTimestamp
+} from '../../../../../../../utils/util'
 import indexStyles from '../../index.less'
 import globalStyles from '../../../../../../../globalset/css/globalClassName.less'
-import {connect} from "dva/index";
+import { connect } from 'dva/index'
 
-@connect(({ projectDetailProcess: {
-  processDoingList = [], processStopedList, processComepletedList
-}
-}) => ({
-  processDoingList, processStopedList, processComepletedList
-}))
+@connect(
+  ({
+    projectDetailProcess: {
+      processDoingList = [],
+      processStopedList,
+      processComepletedList
+    }
+  }) => ({
+    processDoingList,
+    processStopedList,
+    processComepletedList
+  })
+)
 export default class FlowsInstanceItem extends Component {
-
   state = {
     due_time: '', //最终的截止时间
-    due_time_trans: '', //改变的过程中做变化
+    due_time_trans: '' //改变的过程中做变化
   }
   componentDidMount() {
     const { itemValue = {} } = this.props
@@ -42,21 +51,21 @@ export default class FlowsInstanceItem extends Component {
     }
     return ele
   }
-  processItemClick = (data) => {
+  processItemClick = data => {
     this.props.processItemClick && this.props.processItemClick(data)
   }
 
   //截止日期
-  datePikerOnOpenChange =(bool, id) => {
+  datePikerOnOpenChange = (bool, id) => {
     //关闭后
-    if(!bool) {
+    if (!bool) {
       const { due_time_trans, due_time } = this.state
-      if(!due_time_trans) {
+      if (!due_time_trans) {
         return
       }
-      if(due_time == due_time_trans) {
+      if (due_time == due_time_trans) {
         return
-      }else {
+      } else {
         this.setState({
           due_time: due_time_trans
         })
@@ -75,7 +84,7 @@ export default class FlowsInstanceItem extends Component {
     }
   }
   datePickerChange = (date, dateString, e) => {
-    if(!dateString) {
+    if (!dateString) {
       return
     }
     this.setState({
@@ -84,10 +93,16 @@ export default class FlowsInstanceItem extends Component {
   }
   updateListData = (due_time_trans, id) => {
     const { status, dispatch } = this.props
-    const { listDataObj: { processDoingList = [], processStopedList = [], processComepletedList = [] } } = this.props
+    const {
+      listDataObj: {
+        processDoingList = [],
+        processStopedList = [],
+        processComepletedList = []
+      }
+    } = this.props
     let listName
     let selectList = []
-    switch (status ) {
+    switch (status) {
       case '1':
         listName = 'processDoingList'
         selectList = processDoingList
@@ -106,8 +121,8 @@ export default class FlowsInstanceItem extends Component {
         break
     }
     selectList = selectList.map(item => {
-      let item_new = {...item}
-      if(item_new.id == id) {
+      let item_new = { ...item }
+      if (item_new.id == id) {
         item_new.deadline = due_time_trans
       }
       return item_new
@@ -115,52 +130,93 @@ export default class FlowsInstanceItem extends Component {
     dispatch({
       type: 'projectDetailProcess/updateDatas',
       payload: {
-        [listName]: selectList,
+        [listName]: selectList
       }
     })
   }
-  stopPropagation = (e) => {
+  stopPropagation = e => {
     e.stopPropagation()
   }
 
   render() {
-
     const { due_time } = this.state
     const { itemValue = {}, status } = this.props
-    const { name, curr_node_name, id, board_id, percentage = '100%', completed_node_num, total_node_num, deadline, is_privilege } = itemValue
+    const {
+      name,
+      curr_node_name,
+      id,
+      board_id,
+      percentage = '100%',
+      completed_node_num,
+      total_node_num,
+      deadline,
+      is_privilege
+    } = itemValue
 
     return (
-      <div className={indexStyles.panelHead} onClick={this.processItemClick.bind(this, { flow: id, board: board_id})}>
-        <div className={`${indexStyles.panelHead_l} ${globalStyles.authTheme}`}>&#xe605;</div>
+      <div
+        className={indexStyles.panelHead}
+        onClick={this.processItemClick.bind(this, {
+          flow: id,
+          board: board_id
+        })}
+      >
+        <div className={`${indexStyles.panelHead_l} ${globalStyles.authTheme}`}>
+          &#xe605;
+        </div>
         <div className={indexStyles.panelHead_m}>
-          <div className={indexStyles.panelHead_m_l}>{name}{this.filterProgress.bind(this, { status, completed_node_num, total_node_num })}</div>
+          <div className={indexStyles.panelHead_m_l}>
+            {name}
+            {this.filterProgress.bind(this, {
+              status,
+              completed_node_num,
+              total_node_num
+            })}
+          </div>
           <div className={indexStyles.panelHead_m_r}>{curr_node_name}</div>
-          {
-            is_privilege == '1' && (
-              <Tooltip title="已开启访问控制" placement="top">
-                <div style={{ color: 'rgba(0,0,0,0.50)', marginRight: '5px', marginLeft: '5px' }}>
-                  <span className={`${globalStyles.authTheme}`}>&#xe7ca;</span>
-                </div>
-              </Tooltip>
-            )
-          }
+          {is_privilege == '1' && (
+            <Tooltip title="已开启访问控制" placement="top">
+              <div
+                style={{
+                  color: 'rgba(0,0,0,0.50)',
+                  marginRight: '5px',
+                  marginLeft: '5px'
+                }}
+              >
+                <span className={`${globalStyles.authTheme}`}>&#xe7ca;</span>
+              </div>
+            </Tooltip>
+          )}
         </div>
         <div className={indexStyles.panelHead_r} onClick={this.stopPropagation}>
           {timestampToTimeNormal(due_time, '/', true) || (
-            <div className={globalStyles.authTheme} style={{fontSize: 16}}>&#xe789;</div>
+            <div className={globalStyles.authTheme} style={{ fontSize: 16 }}>
+              &#xe789;
+            </div>
           )}
           {
-            <DatePicker onChange={this.datePickerChange}
-                        onOpenChange={(bool) => this.datePikerOnOpenChange(bool, id)}
-                        placeholder={'选择截止时间'}
-                        showTime
-                        format="YYYY-MM-DD HH:mm"
-                        style={{opacity: 0, height: 16, minWidth: 0, top: 0, maxWidth: '108px', background: '#000000', position: 'absolute', right: 0, zIndex: 2, cursor: 'pointer'}} />
+            <DatePicker
+              onChange={this.datePickerChange}
+              onOpenChange={bool => this.datePikerOnOpenChange(bool, id)}
+              placeholder={'选择截止时间'}
+              showTime
+              format="YYYY-MM-DD HH:mm"
+              style={{
+                opacity: 0,
+                height: 16,
+                minWidth: 0,
+                top: 0,
+                maxWidth: '108px',
+                background: '#000000',
+                position: 'absolute',
+                right: 0,
+                zIndex: 2,
+                cursor: 'pointer'
+              }}
+            />
           }
         </div>
       </div>
     )
-
   }
-
 }

@@ -1,8 +1,27 @@
-import { getAppsList, getProjectList, addNewProject, updateProject, deleteProject, archivedProject, cancelCollection, projectDetail, addMenbersInProject, quitProject, collectionProject, getProjectGroupTree, createProjectGroupTreeNode, updateProjectGroupTreeNodeName, deleteProjectGroupTreeNode, getCurrentProjectGroupProjectList, getProjectGroupSearchTree, moveProjectToProjectGroup } from '../../services/technological/project'
+import {
+  getAppsList,
+  getProjectList,
+  addNewProject,
+  updateProject,
+  deleteProject,
+  archivedProject,
+  cancelCollection,
+  projectDetail,
+  addMenbersInProject,
+  quitProject,
+  collectionProject,
+  getProjectGroupTree,
+  createProjectGroupTreeNode,
+  updateProjectGroupTreeNodeName,
+  deleteProjectGroupTreeNode,
+  getCurrentProjectGroupProjectList,
+  getProjectGroupSearchTree,
+  moveProjectToProjectGroup
+} from '../../services/technological/project'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
-import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
-import { routerRedux } from "dva/router";
+import { MESSAGE_DURATION_TIME } from '../../globalset/js/constant'
+import { routerRedux } from 'dva/router'
 
 export default {
   namespace: 'project',
@@ -10,18 +29,18 @@ export default {
     datas: {
       projectGroupTree: {}, //项目分组
       projectGroupSearchTree: [], //项目分组搜索树
-      currentSelectedProjectMenuItem: '', //当前选择的item
+      currentSelectedProjectMenuItem: '' //当前选择的item
     }
   },
   subscriptions: {
     setup({ dispatch, history }) {
-      history.listen((location) => {
+      history.listen(location => {
         // message.destroy()
         if (location.pathname === '/technological/project') {
           dispatch({
             type: 'updateDatas',
             payload: {
-              collapseActiveKeyArray: ['1', '2', '3'], //折叠面板打开的key
+              collapseActiveKeyArray: ['1', '2', '3'] //折叠面板打开的key
             }
           })
           dispatch({
@@ -44,12 +63,16 @@ export default {
           // console.log(2)
         }
       })
-    },
+    }
   },
   effects: {
-    * fetchProjectListAndUpdateProjectGroupTree(_, { select, put, all }) {
-      const currentSelectedProjectMenuItem = yield select(state => state['project'].datas.currentSelectedProjectMenuItem)
-      const currentSelectedProjectMenuItemType = yield select(state => state['project'].datas.currentSelectedProjectMenuItemType)
+    *fetchProjectListAndUpdateProjectGroupTree(_, { select, put, all }) {
+      const currentSelectedProjectMenuItem = yield select(
+        state => state['project'].datas.currentSelectedProjectMenuItem
+      )
+      const currentSelectedProjectMenuItemType = yield select(
+        state => state['project'].datas.currentSelectedProjectMenuItemType
+      )
       const getFetchCurrentProjectGroupProjectListParam = () => {
         if (currentSelectedProjectMenuItemType === 'keyword') {
           return {
@@ -65,21 +88,24 @@ export default {
           }
         }
       }
-      const reqPromiseArr = yield all([put({
-        type: 'fetchProjectGroupTree'
-      }),
-      put({
-        type: 'fetchCurrentProjectGroupProjectList',
-        payload: getFetchCurrentProjectGroupProjectListParam()
-      })
+      const reqPromiseArr = yield all([
+        put({
+          type: 'fetchProjectGroupTree'
+        }),
+        put({
+          type: 'fetchCurrentProjectGroupProjectList',
+          payload: getFetchCurrentProjectGroupProjectListParam()
+        })
       ])
-      const isAllok = reqPromiseArr.every(each => each.then(res => isApiResponseOk(res) ? true : false))
+      const isAllok = reqPromiseArr.every(each =>
+        each.then(res => (isApiResponseOk(res) ? true : false))
+      )
       if (isAllok) {
         return 'success'
       }
       return 'error'
     },
-    * moveProjectToProjectGroup({ payload }, { call, put }) {
+    *moveProjectToProjectGroup({ payload }, { call, put }) {
       let res = yield call(moveProjectToProjectGroup, payload)
       if (isApiResponseOk(res)) {
         return yield put({
@@ -88,7 +114,7 @@ export default {
       }
       return 'error'
     },
-    * fetchCurrentProjectGroupProjectList({ payload }, { call, put }) {
+    *fetchCurrentProjectGroupProjectList({ payload }, { call, put }) {
       let res = yield call(getCurrentProjectGroupProjectList, payload)
       if (isApiResponseOk(res)) {
         yield put({
@@ -99,7 +125,7 @@ export default {
         })
       }
     },
-    * fetchProjectGroupSearchTree({ payload }, { call, put }) {
+    *fetchProjectGroupSearchTree({ payload }, { call, put }) {
       let res = yield call(getProjectGroupSearchTree, { ...payload })
       if (isApiResponseOk(res)) {
         yield put({
@@ -112,7 +138,7 @@ export default {
       }
       return 'error'
     },
-    * fetchProjectGroupTree(_, { call, put }) {
+    *fetchProjectGroupTree(_, { call, put }) {
       let res = yield call(getProjectGroupTree)
       if (isApiResponseOk(res)) {
         yield put({
@@ -123,7 +149,7 @@ export default {
         })
       }
     },
-    * createProjectGroupTreeNode({ payload }, { call, put }) {
+    *createProjectGroupTreeNode({ payload }, { call, put }) {
       let res = yield call(createProjectGroupTreeNode, payload)
       if (isApiResponseOk(res)) {
         yield put({
@@ -133,7 +159,7 @@ export default {
       }
       return res.message
     },
-    * editProjectGroupTreeNodeName({ payload }, { call, put }) {
+    *editProjectGroupTreeNodeName({ payload }, { call, put }) {
       let res = yield call(updateProjectGroupTreeNodeName, payload)
       if (isApiResponseOk(res)) {
         yield put({
@@ -143,7 +169,7 @@ export default {
       }
       return res.message
     },
-    * deleteProjectGroupTreeNode({ payload }, { call, put }) {
+    *deleteProjectGroupTreeNode({ payload }, { call, put }) {
       const { id } = payload
       let res = yield call(deleteProjectGroupTreeNode, { ...payload })
       if (isApiResponseOk(res)) {
@@ -154,7 +180,7 @@ export default {
       }
       return 'error'
     },
-    * getAppsList({ payload }, { select, call, put }) {
+    *getAppsList({ payload }, { select, call, put }) {
       let res = yield call(getAppsList, payload)
       if (isApiResponseOk(res)) {
         yield put({
@@ -164,11 +190,10 @@ export default {
           }
         })
       } else {
-
       }
     },
 
-    * getProjectList({ payload }, { select, call, put }) {
+    *getProjectList({ payload }, { select, call, put }) {
       return
       const { type = '1', calback } = payload
       let res = yield call(getProjectList, { type })
@@ -180,7 +205,9 @@ export default {
           }
         })
         const projectObj = res.data
-        const currentSelectedProjectMenuItem = yield select(state => state['project'].datas.currentSelectedProjectMenuItem)
+        const currentSelectedProjectMenuItem = yield select(
+          state => state['project'].datas.currentSelectedProjectMenuItem
+        )
         yield put({
           type: 'setCurrentSelectedProjectItem',
           payload: {
@@ -191,10 +218,9 @@ export default {
           calback()
         }
       } else {
-
       }
     },
-    * addNewProject({ payload }, { select, call, put }) {
+    *addNewProject({ payload }, { select, call, put }) {
       const { calback } = payload
       const params = { ...payload }
       delete params.calback
@@ -207,7 +233,7 @@ export default {
         yield put({
           type: 'afterCreateBoardHandle',
           payload: {}
-        });
+        })
 
         return yield put({
           type: 'fetchProjectListAndUpdateProjectGroupTree'
@@ -216,25 +242,25 @@ export default {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
-    * afterCreateBoardHandle({ payload }, { select, call, put }) {
+    *afterCreateBoardHandle({ payload }, { select, call, put }) {
       yield put({
         type: 'technological/getUserAllOrgsAllBoards',
         payload: {}
-      });
+      })
       yield put({
         type: 'technological/getUserOrgPermissions',
         payload: {}
-      });
+      })
       yield put({
         type: 'technological/getUserBoardPermissions',
         payload: {}
-      });
+      })
       yield put({
         type: 'workbench/getProjectList',
         payload: {}
-      });
+      })
     },
-    * collectionProject({ payload }, { select, call, put }) {
+    *collectionProject({ payload }, { select, call, put }) {
       const { org_id, board_id } = payload
       let res = yield call(collectionProject, { org_id, board_id })
       if (isApiResponseOk(res)) {
@@ -255,7 +281,7 @@ export default {
       }
     },
 
-    * cancelCollection({ payload }, { select, call, put }) {
+    *cancelCollection({ payload }, { select, call, put }) {
       const { org_id, board_id } = payload
       let res = yield call(cancelCollection, { org_id, board_id })
       if (isApiResponseOk(res)) {
@@ -276,7 +302,7 @@ export default {
       }
     },
 
-    * quitProject({ payload }, { select, call, put }) {
+    *quitProject({ payload }, { select, call, put }) {
       const { board_id, currentSelectedProjectMenuItem } = payload
       let res = yield call(quitProject, { board_id })
       if (isApiResponseOk(res)) {
@@ -284,7 +310,7 @@ export default {
           type: 'fetchCurrentProjectGroupProjectList',
           payload: {
             keyword: currentSelectedProjectMenuItem,
-            calback: function () {
+            calback: function() {
               message.success('已退出项目', MESSAGE_DURATION_TIME)
             },
             type: '1'
@@ -292,22 +318,20 @@ export default {
         })
         yield put({
           type: 'fetchProjectGroupTree',
-          payload: {
-
-          }
+          payload: {}
         })
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
-    * archivedProject({ payload }, { select, call, put }) {
+    *archivedProject({ payload }, { select, call, put }) {
       let res = yield call(archivedProject, payload)
       if (isApiResponseOk(res)) {
         yield put({
           type: 'getProjectList',
           payload: {
-            calback: function () {
+            calback: function() {
               message.success('已归档项目', MESSAGE_DURATION_TIME)
             },
             type: '1'
@@ -318,14 +342,16 @@ export default {
       }
     },
 
-    * addMenbersInProject({ payload }, { select, call, put }) {
-      const currentSelectedProjectMenuItem = yield select(state => state['project'].datas.currentSelectedProjectMenuItem)
+    *addMenbersInProject({ payload }, { select, call, put }) {
+      const currentSelectedProjectMenuItem = yield select(
+        state => state['project'].datas.currentSelectedProjectMenuItem
+      )
       let res = yield call(addMenbersInProject, payload)
       if (isApiResponseOk(res)) {
         yield put({
           type: 'getProjectList',
           payload: {
-            calback: function () {
+            calback: function() {
               message.success('成功添加项目成员', MESSAGE_DURATION_TIME)
             },
             type: '1'
@@ -343,14 +369,14 @@ export default {
       }
     },
 
-    * deleteProject({ payload }, { select, call, put }) {
+    *deleteProject({ payload }, { select, call, put }) {
       const { id } = payload
       let res = yield call(deleteProject, id)
       if (isApiResponseOk(res)) {
         yield put({
           type: 'fetchCurrentProjectGroupProjectList',
           payload: {
-            calback: function () {
+            calback: function() {
               message.success('已删除项目', MESSAGE_DURATION_TIME)
             },
             type: '1'
@@ -358,34 +384,35 @@ export default {
         })
         yield put({
           type: 'fetchProjectGroupTree',
-          payload: {
-
-          }
+          payload: {}
         })
-
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
-    * routingJump({ payload }, { call, put }) {
+    *routingJump({ payload }, { call, put }) {
       const { route } = payload
-      yield put(routerRedux.push(route));
-    },
+      yield put(routerRedux.push(route))
+    }
   },
 
   reducers: {
     updateDatas(state, action) {
       return {
         ...state,
-        datas: { ...state.datas, ...action.payload },
+        datas: { ...state.datas, ...action.payload }
       }
     },
     setCurrentSelectedProjectMenuItem(state, { payload }) {
       const { selected, type } = payload
       return {
         ...state,
-        datas: { ...state.datas, currentSelectedProjectMenuItem: selected, currentSelectedProjectMenuItemType: type }
+        datas: {
+          ...state.datas,
+          currentSelectedProjectMenuItem: selected,
+          currentSelectedProjectMenuItemType: type
+        }
       }
     },
     setCurrentSelectedProjectItem(state, { payload }) {
@@ -395,5 +422,5 @@ export default {
         datas: { ...state.datas, currentSelectedProjectItem: projectItem }
       }
     }
-  },
-};
+  }
+}

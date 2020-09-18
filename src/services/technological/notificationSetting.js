@@ -1,13 +1,16 @@
 // 通知设置的接口
 import request from '@/utils/requestAxios'
-import { REQUEST_DOMAIN, REQUEST_INTERGFACE_VERSIONN } from '@/globalset/js/constant'
+import {
+  REQUEST_DOMAIN,
+  REQUEST_INTERGFACE_VERSIONN
+} from '@/globalset/js/constant'
 
 // 获取通知设置默认的列表页
 export async function getNoticeSettingList(params) {
   return request({
-      url: `${REQUEST_DOMAIN}/notice_setting/list`,
-      method: "GET",
-      params,
+    url: `${REQUEST_DOMAIN}/notice_setting/list`,
+    method: 'GET',
+    params
   })
 }
 
@@ -15,7 +18,7 @@ export async function getNoticeSettingList(params) {
 export async function getUsersNoticeSettingList(params) {
   return request({
     url: `${REQUEST_DOMAIN}/notice_setting/`,
-    method: "GET",
+    method: 'GET',
     params
   })
 }
@@ -24,7 +27,7 @@ export async function getUsersNoticeSettingList(params) {
 export async function setNoticeSettingList(data) {
   return request({
     url: `${REQUEST_DOMAIN}/notice_setting/`,
-    method: "POST",
+    method: 'POST',
     data
   })
 }

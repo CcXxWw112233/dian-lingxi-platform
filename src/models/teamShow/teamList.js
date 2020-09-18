@@ -1,10 +1,20 @@
-import { getTeamShowList, addTeamShow, getTeamShowTypeList, getTeamShowDetail, deleteTeamShow, getCurrentOrgTeamShowList } from '../../services/teamShow'
+import {
+  getTeamShowList,
+  addTeamShow,
+  getTeamShowTypeList,
+  getTeamShowDetail,
+  deleteTeamShow,
+  getCurrentOrgTeamShowList
+} from '../../services/teamShow'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
-import { MESSAGE_DURATION_TIME, PAGINATION_PAGE_SIZE } from "../../globalset/js/constant";
-import { routerRedux } from "dva/router";
-import Cookies from "js-cookie";
-import {getAppsList} from "../../services/technological/project";
+import {
+  MESSAGE_DURATION_TIME,
+  PAGINATION_PAGE_SIZE
+} from '../../globalset/js/constant'
+import { routerRedux } from 'dva/router'
+import Cookies from 'js-cookie'
+import { getAppsList } from '../../services/technological/project'
 import modelExtend from 'dva-model-extend'
 import technological from './index'
 
@@ -14,7 +24,7 @@ export default modelExtend(technological, {
   state: [],
   subscriptions: {
     setup({ dispatch, history }) {
-      history.listen((location) => {
+      history.listen(location => {
         message.destroy()
         if (location.pathname === '/technological/teamShow/teamList') {
           dispatch({
@@ -24,98 +34,86 @@ export default modelExtend(technological, {
               currentPageNo: 1,
               total: 0,
               teamShowTypeList: [],
-              teamShowTypeId: '',
+              teamShowTypeId: ''
             }
           })
           dispatch({
             type: 'getTeamShowTypeList',
-            payload: {
-
-            }
+            payload: {}
           })
           dispatch({
             type: 'getTeamShowList',
             payload: {
               current: '1',
-              size: PAGINATION_PAGE_SIZE,
+              size: PAGINATION_PAGE_SIZE
             }
           })
         }
       })
-    },
+    }
   },
   effects: {
-    * getTeamShowList({ payload }, { select, call, put }) {
+    *getTeamShowList({ payload }, { select, call, put }) {
       let res = yield call(getTeamShowList, payload)
-      if(isApiResponseOk(res)) {
-         yield put({
-           type: 'updateDatas',
-           payload: {
-             teamShowList: res.data.records || [],
-             total: res.data.total,
-           }
-         })
-      }else{
-
-      }
-    },
-    * addTeamShow({ payload }, { select, call, put }) {
-      let res = yield call(addTeamShow, payload)
-      if(isApiResponseOk(res)) {
-
-      }else{
-
-      }
-    },
-    * getTeamShowTypeList({ payload }, { select, call, put }) {
-      let res = yield call(getTeamShowTypeList, payload)
-      if(isApiResponseOk(res)) {
+      if (isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
           payload: {
-            teamShowTypeList: res.data,
+            teamShowList: res.data.records || [],
+            total: res.data.total
           }
         })
-      }else{
-
+      } else {
       }
     },
-    * getTeamShowDetail({ payload }, { select, call, put }) {
+    *addTeamShow({ payload }, { select, call, put }) {
+      let res = yield call(addTeamShow, payload)
+      if (isApiResponseOk(res)) {
+      } else {
+      }
+    },
+    *getTeamShowTypeList({ payload }, { select, call, put }) {
+      let res = yield call(getTeamShowTypeList, payload)
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            teamShowTypeList: res.data
+          }
+        })
+      } else {
+      }
+    },
+    *getTeamShowDetail({ payload }, { select, call, put }) {
       let res = yield call(getTeamShowDetail, payload)
-      if(isApiResponseOk(res)) {
-
-      }else{
-
+      if (isApiResponseOk(res)) {
+      } else {
       }
     },
-    * deleteTeamShow({ payload }, { select, call, put }) {
+    *deleteTeamShow({ payload }, { select, call, put }) {
       let res = yield call(deleteTeamShow, payload)
-      if(isApiResponseOk(res)) {
-
-      }else{
-
+      if (isApiResponseOk(res)) {
+      } else {
       }
     },
-    * getCurrentOrgTeamShowList({ payload }, { select, call, put }) {
+    *getCurrentOrgTeamShowList({ payload }, { select, call, put }) {
       let res = yield call(getCurrentOrgTeamShowList, payload)
-      if(isApiResponseOk(res)) {
-
-      }else{
-
+      if (isApiResponseOk(res)) {
+      } else {
       }
     },
-    * routingJump({ payload }, { call, put }) {
+    *routingJump({ payload }, { call, put }) {
       const { route } = payload
-      yield put(routerRedux.push(route));
-    },
+      yield put(routerRedux.push(route))
+    }
   },
 
   reducers: {
     updateDatas(state, action) {
       return {
         ...state,
-        datas: { ...state.datas, ...action.payload },
+        datas: { ...state.datas, ...action.payload }
       }
     }
-  },
-});
+  }
+})

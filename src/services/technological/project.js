@@ -1,15 +1,20 @@
-import request from "../../utils/requestAxios";
-import { REQUEST_DOMAIN_BOARD, REQUEST_DOMAIN } from "../../globalset/js/constant";
-import { getGlobalData } from "../../utils/businessFunction";
+import request from '../../utils/requestAxios'
+import {
+  REQUEST_DOMAIN_BOARD,
+  REQUEST_DOMAIN
+} from '../../globalset/js/constant'
+import { getGlobalData } from '../../utils/businessFunction'
 
 //开启关闭特权
 export async function toggleContentPrivilege(data) {
   const { content_id, content_type, is_open, board_id } = data
-  const headers = !!board_id ? {
-    BaseInfo: {
-      boardId: board_id
-    }
-  } : {}
+  const headers = !!board_id
+    ? {
+        BaseInfo: {
+          boardId: board_id
+        }
+      }
+    : {}
   //content_id 内容ID（如 board_id,card_id 等）
   //content_type 内容类型（如 board , list, card, file, folder,flow等）
   //is_open  1: 开启 || 0：关闭
@@ -20,7 +25,7 @@ export async function toggleContentPrivilege(data) {
     data: {
       content_id,
       content_type,
-      is_open,
+      is_open
     }
   })
 }
@@ -48,11 +53,13 @@ export async function setContentPrivilege(data) {
 //移除内容访问特权
 export async function removeContentPrivilege(data) {
   const { id, board_id } = data
-  const headers = !!board_id ? {
-    BaseInfo: {
-      boardId: board_id
-    }
-  } : {}
+  const headers = !!board_id
+    ? {
+        BaseInfo: {
+          boardId: board_id
+        }
+      }
+    : {}
   //contend_id 内容ID（如 board_id,card_id 等）
   //content_type 内容类型（如 board , list, card, file, folder,flow等）
   //user_id 用户id
@@ -165,7 +172,7 @@ export async function getProjectList(params) {
     url: `${REQUEST_DOMAIN_BOARD}/board`,
     method: 'GET',
     params
-  });
+  })
 }
 //获取app标
 export async function getAppsList(params) {
@@ -173,7 +180,7 @@ export async function getAppsList(params) {
     url: `${REQUEST_DOMAIN_BOARD}/app`,
     method: 'GET',
     params
-  });
+  })
 }
 
 //新增项目
@@ -182,7 +189,7 @@ export async function addNewProject(data) {
     url: `${REQUEST_DOMAIN_BOARD}/board`,
     method: 'POST',
     data
-  });
+  })
 }
 
 //更新项目
@@ -191,15 +198,15 @@ export async function updateProject(data) {
     url: `${REQUEST_DOMAIN_BOARD}/board`,
     method: 'PUT',
     data
-  });
+  })
 }
 
 //删除项目
 export async function deleteProject(id) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/board/${id}`,
-    method: 'DELETE',
-  });
+    method: 'DELETE'
+  })
 }
 
 //项目归档
@@ -208,7 +215,7 @@ export async function archivedProject(data) {
     url: `${REQUEST_DOMAIN_BOARD}/board/archived`,
     method: 'PUT',
     data
-  });
+  })
 }
 
 //取消收藏
@@ -222,7 +229,7 @@ export async function cancelCollection({ org_id, board_id }) {
     data: {
       id: board_id
     }
-  });
+  })
 }
 
 //项目详情
@@ -233,7 +240,7 @@ export async function projectDetail(id) {
     data: {
       id
     }
-  });
+  })
 }
 
 //添加项目组成员
@@ -242,7 +249,7 @@ export async function addMenbersInProject(data) {
     url: `${REQUEST_DOMAIN_BOARD}/board/members/add`,
     method: 'POST',
     data
-  });
+  })
 }
 
 // 退出项目
@@ -250,22 +257,23 @@ export async function quitProject(data) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/board/quit`,
     method: 'DELETE',
-    data,
-  });
+    data
+  })
 }
 
 // 收藏项目
 export async function collectionProject({ org_id, board_id }) {
-  return request({
-    url: `${REQUEST_DOMAIN_BOARD}/board/star/${board_id}`,
-    method: 'POST',
-    headers: { BaseInfo: { orgId: org_id } },
-    data: {
-      id: board_id
+  return request(
+    {
+      url: `${REQUEST_DOMAIN_BOARD}/board/star/${board_id}`,
+      method: 'POST',
+      headers: { BaseInfo: { orgId: org_id } },
+      data: {
+        id: board_id
+      }
     }
-  },
     // { isNotLoading: true }
-  );
+  )
 }
 
 // 添加项目app
@@ -274,7 +282,7 @@ export async function addProjectApp(data) {
     url: `${REQUEST_DOMAIN_BOARD}/board/app/add`,
     method: 'POST',
     data
-  });
+  })
 }
 // 编辑项目app
 export async function editProjectApp(data) {
@@ -282,16 +290,19 @@ export async function editProjectApp(data) {
     url: `${REQUEST_DOMAIN_BOARD}/board/app/edit`,
     method: 'PUT',
     data
-  });
+  })
 }
 
 // 项目详情中生成扫码加入项目小程序二维码
 export async function joinBoardQRCode(params) {
-  return request({
-    url: `${REQUEST_DOMAIN}/mini/QRCode/join/board/${params.id}`,
-    method: 'GET',
-    params
-  }, { isNotLoading: true });
+  return request(
+    {
+      url: `${REQUEST_DOMAIN}/mini/QRCode/join/board/${params.id}`,
+      method: 'GET',
+      params
+    },
+    { isNotLoading: true }
+  )
 }
 
 // 查询项目动态列表 (项目详情中)

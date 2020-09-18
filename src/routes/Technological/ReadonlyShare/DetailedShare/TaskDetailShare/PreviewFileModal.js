@@ -4,9 +4,7 @@ import CustormModal from '../../CustormModal'
 // import FileDetail from '../FileModule/FileDetail/index'
 
 class PreviewFileModal extends React.Component {
-
-  state = {
-  }
+  state = {}
   onCancel = () => {
     this.props.updateDatasTask({
       isInOpenFile: false
@@ -14,7 +12,12 @@ class PreviewFileModal extends React.Component {
     this.props.setPreviewFileModalVisibile()
   }
   render() {
-    const { modalVisible, previewFileSrc, previewFileType, isUsable } = this.props;
+    const {
+      modalVisible,
+      previewFileSrc,
+      previewFileType,
+      isUsable
+    } = this.props
     const containner = () => {
       let contain
       switch (previewFileType) {
@@ -25,18 +28,28 @@ class PreviewFileModal extends React.Component {
           break
         case 'video':
           contain = (
-            <video controls src={previewFileSrc} style={{ width: 'auto', maxHeight: '600px' }}></video>
+            <video
+              controls
+              src={previewFileSrc}
+              style={{ width: 'auto', maxHeight: '600px' }}
+            ></video>
           )
           break
         case 'attachment':
           if (isUsable) {
             contain = (
-              <iframe style={{ height: 600, width: 600 }} src={previewFileSrc}></iframe>
+              <iframe
+                style={{ height: 600, width: 600 }}
+                src={previewFileSrc}
+              ></iframe>
             )
           } else {
             contain = (
               <div>
-                <iframe style={{ height: 0, width: 0 }} src={previewFileSrc}></iframe>
+                <iframe
+                  style={{ height: 0, width: 0 }}
+                  src={previewFileSrc}
+                ></iframe>
                 当前文件无法预览
               </div>
             )
@@ -60,7 +73,7 @@ class PreviewFileModal extends React.Component {
           maskClosable={false}
           style={{ top: modalTop }}
           onCancel={this.onCancel}
-        // overInner={<FileDetail {...this.props} modalTop={modalTop}/>}
+          // overInner={<FileDetail {...this.props} modalTop={modalTop}/>}
         >
           {/*{containner()}*/}
         </CustormModal>

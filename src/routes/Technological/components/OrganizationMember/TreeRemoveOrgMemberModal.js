@@ -3,24 +3,33 @@ import { Modal, Icon, Table, Select, message } from 'antd'
 import { connect } from 'dva'
 import indexStyles from './index.less'
 import globalClassName from '@/globalset/css/globalClassName.less'
-import { getTransferSelectedList, getTransferSelectedDetailList, removeMemberWithSettingTransferUser, discontinueMember } from '../../../../services/technological/organizationMember'
+import {
+  getTransferSelectedList,
+  getTransferSelectedDetailList,
+  removeMemberWithSettingTransferUser,
+  discontinueMember
+} from '../../../../services/technological/organizationMember'
 import { isApiResponseOk } from '../../../../utils/handleResponseData'
 import { currentNounPlanFilterName } from '../../../../utils/businessFunction'
-import { PROJECTS, TASKS, FLOWS, MESSAGE_DURATION_TIME } from '../../../../globalset/js/constant'
+import {
+  PROJECTS,
+  TASKS,
+  FLOWS,
+  MESSAGE_DURATION_TIME
+} from '../../../../globalset/js/constant'
 import { removeEmptyArrayEle, arrayNonRepeatfy } from '../../../../utils/util'
 
-const Option = Select.Option;
+const Option = Select.Option
 
 @connect(mapStateToProps)
 export default class TreeRemoveOrgMemberModal extends Component {
-
   constructor(props) {
     super(props)
     this.state = {
       hand_over_visible: false, // 是否交接
       transferSelectedList: [], // 获取初始列表
       currentOperateBoardId: '', //获取详情之后对应项目的成员列表
-      currentBoardName: '', // 当前选择交接的项目
+      currentBoardName: '' // 当前选择交接的项目
     }
   }
 
@@ -29,7 +38,7 @@ export default class TreeRemoveOrgMemberModal extends Component {
       hand_over_visible: false, // 是否交接
       transferSelectedList: [], // 获取初始列表
       currentOperateBoardId: '', //获取详情之后对应项目的成员列表
-      currentBoardName: '', // 当前选择交接的项目
+      currentBoardName: '' // 当前选择交接的项目
     })
   }
 
@@ -92,8 +101,8 @@ export default class TreeRemoveOrgMemberModal extends Component {
    * 1. 如果是同一个人, 那么需要更新父任务中的交接人
    * 2. 如果不是同一个人, 那么更细父任务中的交接人为 ‘多人交接’
    * 3. 如果没有选择全, 那么父如果没有选择人 那么保持不变
-   * @param {*} value 
-   * @param {*} item 
+   * @param {*} value
+   * @param {*} item
    * @returns {Boolean} true 表示是同一个人, false 表示不是
    */
   whetherIsTheSameTransferUsers = () => {
@@ -102,41 +111,52 @@ export default class TreeRemoveOrgMemberModal extends Component {
     let new_transferSelectedList = [...transferSelectedList]
     new_transferSelectedList = new_transferSelectedList.map(item => {
       let new_item = { ...item }
-      if (item.content_transfer && item.content_transfer.length) { // 表示存在详细交接列表
+      if (item.content_transfer && item.content_transfer.length) {
+        // 表示存在详细交接列表
         let brr = [...item.content_transfer]
-        if (brr.every(i => i.transfer_user_id)) { //  是否每一个都存在交接人
+        if (brr.every(i => i.transfer_user_id)) {
+          //  是否每一个都存在交接人
           let compare_transfer_user_id = brr[0].transfer_user_id
           if (brr.every(i => i.transfer_user_id == compare_transfer_user_id)) {
             flag = true
-            new_item = {...item, is_multiple: false, transfer_user_id: compare_transfer_user_id}
+            new_item = {
+              ...item,
+              is_multiple: false,
+              transfer_user_id: compare_transfer_user_id
+            }
             return new_item
           } else {
             flag = false
-            new_item = {...item, is_multiple: true, transfer_user_id: ''}
+            new_item = { ...item, is_multiple: true, transfer_user_id: '' }
             return new_item
           }
-        } else { // 表示有漏选的情况, 那么就为 true
+        } else {
+          // 表示有漏选的情况, 那么就为 true
           flag = true
-          new_item = {...item, is_multiple: false}
+          new_item = { ...item, is_multiple: false }
           return new_item
         }
-        
-      } else { // 表示不存在详情列表, 那么也显示true单个人
+      } else {
+        // 表示不存在详情列表, 那么也显示true单个人
         flag = true
-        new_item = {...item, is_multiple: false}
+        new_item = { ...item, is_multiple: false }
         return new_item
       }
     })
     this.setState({
       transferSelectedList: new_transferSelectedList
-    })    
+    })
   }
 
   // 详细交接点击change事件
   handleOnSelectValue = (value, item) => {
     const { content_id } = item
     const { transferSelectedList = [], hand_over_visible } = this.state
-    let arr = this.updateTreeSelectedTransferUser(content_id, value, transferSelectedList)
+    let arr = this.updateTreeSelectedTransferUser(
+      content_id,
+      value,
+      transferSelectedList
+    )
     if (!hand_over_visible) {
       arr = this.updateSelectedDetailContentDatasWithOutside(arr)
     }
@@ -168,7 +188,11 @@ export default class TreeRemoveOrgMemberModal extends Component {
         new_item = { ...item, transfer_user_id: transfer_id }
         return new_item
       } else if (item.content_transfer && item.content_transfer.length) {
-        let temp = this.updateTreeSelectedTransferUser(target_id, transfer_id, item.content_transfer)
+        let temp = this.updateTreeSelectedTransferUser(
+          target_id,
+          transfer_id,
+          item.content_transfer
+        )
         let new_item = { ...item }
         new_item = {
           ...item,
@@ -184,15 +208,37 @@ export default class TreeRemoveOrgMemberModal extends Component {
 
   // 获取表格的参数
   getTableProps = () => {
-    const { transferSelectedList = [], hand_over_visible, currentOperateBoardId } = this.state
+    const {
+      transferSelectedList = [],
+      hand_over_visible,
+      currentOperateBoardId
+    } = this.state
     const { groupList = [], removeMemberUserId } = this.props
-    let temMemberList = arrayNonRepeatfy(this.getOrgMemberWithRemoveVisitors(groupList))
-    let filterTemMemberList = this.filterRemoveMember(removeMemberUserId, temMemberList)
-    const data = hand_over_visible ? (transferSelectedList.find(i => i.content_id == currentOperateBoardId) || {}).content_transfer || [] : transferSelectedList.map(item => {
-      let new_item = { ...item }
-      new_item = { ...item, key: item.content_id, users: item.content_type == '1' ? this.filterRemoveMember(removeMemberUserId, item.users) : filterTemMemberList }
-      return new_item
-    })
+    let temMemberList = arrayNonRepeatfy(
+      this.getOrgMemberWithRemoveVisitors(groupList)
+    )
+    let filterTemMemberList = this.filterRemoveMember(
+      removeMemberUserId,
+      temMemberList
+    )
+    const data = hand_over_visible
+      ? (
+          transferSelectedList.find(
+            i => i.content_id == currentOperateBoardId
+          ) || {}
+        ).content_transfer || []
+      : transferSelectedList.map(item => {
+          let new_item = { ...item }
+          new_item = {
+            ...item,
+            key: item.content_id,
+            users:
+              item.content_type == '1'
+                ? this.filterRemoveMember(removeMemberUserId, item.users)
+                : filterTemMemberList
+          }
+          return new_item
+        })
     const columns = [
       {
         title: '类型',
@@ -202,7 +248,15 @@ export default class TreeRemoveOrgMemberModal extends Component {
         width: 106,
         render: (text, item) => {
           const { content_type } = item
-          const filed_name = !hand_over_visible ? content_type == '1' ? `${currentNounPlanFilterName(PROJECTS)}` : '模板' : content_type == '1' ? item.name : content_type == '2' ? `${currentNounPlanFilterName(TASKS)}` : `${currentNounPlanFilterName(FLOWS)}`
+          const filed_name = !hand_over_visible
+            ? content_type == '1'
+              ? `${currentNounPlanFilterName(PROJECTS)}`
+              : '模板'
+            : content_type == '1'
+            ? item.name
+            : content_type == '2'
+            ? `${currentNounPlanFilterName(TASKS)}`
+            : `${currentNounPlanFilterName(FLOWS)}`
           return filed_name
         }
       },
@@ -222,23 +276,40 @@ export default class TreeRemoveOrgMemberModal extends Component {
         key: 'opetator',
         ellipsis: true,
         render: (text, item) => {
-          const { content_type, users = [], content_id, transfer_user_id, is_multiple } = item
-          return <div>
-            <span style={{ marginRight: '28px' }}>
-              <Select placeholder={'请选择'} value={is_multiple ? '多人交接' : transfer_user_id} onChange={(e) => { this.handleOnSelectValue(e, item) }}>
-                {
-                  users.map(value => {
+          const {
+            content_type,
+            users = [],
+            content_id,
+            transfer_user_id,
+            is_multiple
+          } = item
+          return (
+            <div>
+              <span style={{ marginRight: '28px' }}>
+                <Select
+                  placeholder={'请选择'}
+                  value={is_multiple ? '多人交接' : transfer_user_id}
+                  onChange={e => {
+                    this.handleOnSelectValue(e, item)
+                  }}
+                >
+                  {users.map(value => {
                     return <Option key={value.user_id}>{value.name}</Option>
-                  })
-                }
-              </Select>
-            </span>
-            {
-              content_type == '1' && !hand_over_visible && (
-                <span onClick={(e) => { this.handleTakeOverVisible(e, content_id) }} className={indexStyles.detail_tips}>详细交接 &gt;</span>
-              )
-            }
-          </div>
+                  })}
+                </Select>
+              </span>
+              {content_type == '1' && !hand_over_visible && (
+                <span
+                  onClick={e => {
+                    this.handleTakeOverVisible(e, content_id)
+                  }}
+                  className={indexStyles.detail_tips}
+                >
+                  详细交接 &gt;
+                </span>
+              )}
+            </div>
+          )
         }
       }
     ]
@@ -297,12 +368,20 @@ export default class TreeRemoveOrgMemberModal extends Component {
       if (isApiResponseOk(res)) {
         let data = res.data
         const { transferSelectedList = [] } = this.state
-        let { users: currentBoardUsers = [], name, content_transfer = [] } = transferSelectedList.find(i => i.content_id == boardId) || {}
+        let { users: currentBoardUsers = [], name, content_transfer = [] } =
+          transferSelectedList.find(i => i.content_id == boardId) || {}
         let new_transferSelectedList = [...transferSelectedList]
-        if (!(content_transfer && content_transfer.length)) { // 不存在的才需要请求接口
+        if (!(content_transfer && content_transfer.length)) {
+          // 不存在的才需要请求接口
           data = data.map(item => {
             let new_item = { ...item }
-            new_item = { ...item, users: this.filterRemoveMember(removeMemberUserId, currentBoardUsers) }
+            new_item = {
+              ...item,
+              users: this.filterRemoveMember(
+                removeMemberUserId,
+                currentBoardUsers
+              )
+            }
             return new_item
           })
           new_transferSelectedList = new_transferSelectedList.map(item => {
@@ -319,7 +398,9 @@ export default class TreeRemoveOrgMemberModal extends Component {
           })
         }
         // new_transferSelectedList = this.updateDefaultTransferUsers(new_transferSelectedList)
-        new_transferSelectedList = this.updateSelectedDetailContentDatasWithOutside(new_transferSelectedList)
+        new_transferSelectedList = this.updateSelectedDetailContentDatasWithOutside(
+          new_transferSelectedList
+        )
         this.setState({
           transferSelectedList: new_transferSelectedList,
           hand_over_visible: true,
@@ -330,13 +411,22 @@ export default class TreeRemoveOrgMemberModal extends Component {
     })
   }
 
-  componentDidMount() {
-  }
+  componentDidMount() {}
 
   componentWillReceiveProps(nextProps) {
-    const { TreeRemoveOrgMemberModalVisible, removeMemberUserId, groupList = [], transferSelectedList = [] } = nextProps
-    const { TreeRemoveOrgMemberModalVisible: old_TreeRemoveOrgMemberModalVisiblie } = this.props
-    if (TreeRemoveOrgMemberModalVisible && old_TreeRemoveOrgMemberModalVisiblie != TreeRemoveOrgMemberModalVisible) {
+    const {
+      TreeRemoveOrgMemberModalVisible,
+      removeMemberUserId,
+      groupList = [],
+      transferSelectedList = []
+    } = nextProps
+    const {
+      TreeRemoveOrgMemberModalVisible: old_TreeRemoveOrgMemberModalVisiblie
+    } = this.props
+    if (
+      TreeRemoveOrgMemberModalVisible &&
+      old_TreeRemoveOrgMemberModalVisiblie != TreeRemoveOrgMemberModalVisible
+    ) {
       // this.getTransferSelectedList(removeMemberUserId)
       this.setState({
         transferSelectedList: transferSelectedList
@@ -388,12 +478,10 @@ export default class TreeRemoveOrgMemberModal extends Component {
             this.initState()
             this.props.dispatch({
               type: 'organizationMember/getGroupList',
-              payload: {
-              }
+              payload: {}
             })
           }
         })
-
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -407,7 +495,7 @@ export default class TreeRemoveOrgMemberModal extends Component {
   }
 
   // 点击返回
-  handleBack = (e) => {
+  handleBack = e => {
     e && e.stopPropagation()
     this.setState({
       hand_over_visible: false
@@ -421,15 +509,30 @@ export default class TreeRemoveOrgMemberModal extends Component {
     const { hand_over_visible, currentBoardName } = this.state
     return (
       <div>
-        {
-          hand_over_visible && (
-            <div style={{ lineHeight: '20px', marginBottom: '10px', letterSpacing: '1px' }}>
-              <span onClick={this.handleBack} style={{ cursor: 'pointer', color: '#4090F7' }}>&lt; 返回 </span>
-              <span style={{ color: 'rgba(0,0,0,.45)' }}> | {currentBoardName}</span>
-            </div>
-          )
-        }
-        <div className={globalClassName.global_vertical_scrollbar} style={{ overflowY: 'auto', maxHeight: '390px' }}>
+        {hand_over_visible && (
+          <div
+            style={{
+              lineHeight: '20px',
+              marginBottom: '10px',
+              letterSpacing: '1px'
+            }}
+          >
+            <span
+              onClick={this.handleBack}
+              style={{ cursor: 'pointer', color: '#4090F7' }}
+            >
+              &lt; 返回{' '}
+            </span>
+            <span style={{ color: 'rgba(0,0,0,.45)' }}>
+              {' '}
+              | {currentBoardName}
+            </span>
+          </div>
+        )}
+        <div
+          className={globalClassName.global_vertical_scrollbar}
+          style={{ overflowY: 'auto', maxHeight: '390px' }}
+        >
           <Table
             columns={columns}
             dataSource={data}
@@ -462,25 +565,32 @@ export default class TreeRemoveOrgMemberModal extends Component {
   }
 
   render() {
-    const { TreeRemoveOrgMemberModalVisible, currentBeOperateMemberId, removeUserConfirm } = this.props
+    const {
+      TreeRemoveOrgMemberModalVisible,
+      currentBeOperateMemberId,
+      removeUserConfirm
+    } = this.props
     const { transferSelectedList = [] } = this.state
     // 查询每一个列表中都有交接人(只需要确认外部的, 因为如果有内部列表, 那么就会默认赋值给外部的交接人)
-    const disabled = (transferSelectedList && transferSelectedList.length) && transferSelectedList.every(n => {
-      if (n.content_transfer && n.content_transfer.length) {
-        let d = [...n.content_transfer]
-        if (d.every(s => s.transfer_user_id)) {
-          return true
+    const disabled =
+      transferSelectedList &&
+      transferSelectedList.length &&
+      transferSelectedList.every(n => {
+        if (n.content_transfer && n.content_transfer.length) {
+          let d = [...n.content_transfer]
+          if (d.every(s => s.transfer_user_id)) {
+            return true
+          } else {
+            return false
+          }
         } else {
-          return false
+          if (n.transfer_user_id) {
+            return true
+          } else {
+            return false
+          }
         }
-      } else {
-        if (n.transfer_user_id) {
-          return true
-        } else {
-          return false
-        }
-      }
-    })
+      })
     return (
       <div>
         <Modal
@@ -495,7 +605,10 @@ export default class TreeRemoveOrgMemberModal extends Component {
           onCancel={this.onCancel}
           okButtonProps={{ disabled: !disabled }}
           onOk={this.onOk}
-          getContainer={() => document.getElementById('organizationMemberContainer') || document.body}
+          getContainer={() =>
+            document.getElementById('organizationMemberContainer') ||
+            document.body
+          }
         >
           {this.renderContent()}
         </Modal>
@@ -506,9 +619,7 @@ export default class TreeRemoveOrgMemberModal extends Component {
 
 function mapStateToProps({
   technological: {
-    datas: {
-      userOrgPermissions
-    }
+    datas: { userOrgPermissions }
   },
   organizationMember: {
     datas: {

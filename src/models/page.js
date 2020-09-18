@@ -5,10 +5,10 @@ export const model = {
     changeState(state, { payload }) {
       return {
         ...state,
-        ...payload,
+        ...payload
       }
-    },
-  },
+    }
+  }
 }
 
 export const listPageModel = modelExtend(model, {
@@ -18,9 +18,9 @@ export const listPageModel = modelExtend(model, {
       pageSize: 10,
       total: 0,
       current: 1,
-      pageNum: 1,
+      pageNum: 1
     },
-    curPowers: [],
+    curPowers: []
   },
   reducers: {
     getListSuccess(state, { payload }) {
@@ -34,11 +34,9 @@ export const listPageModel = modelExtend(model, {
           ...filter,
           pageSize,
           total: totalSize,
-          current: pageNum,
-        },
+          current: pageNum
+        }
       }
-    },
-  },
-
+    }
+  }
 })
-

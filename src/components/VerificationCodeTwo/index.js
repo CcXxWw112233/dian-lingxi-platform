@@ -1,12 +1,11 @@
-import React from 'react';
+import React from 'react'
 import { Button } from 'antd'
 // let interval = null
 // const initTimeValue = 60
 // let initTime = initTimeValue
 
 //参见登录界面验证码
-export default class VerificationCodeTwo extends React.Component{
-
+export default class VerificationCodeTwo extends React.Component {
   constructor(props) {
     super(props)
   }
@@ -23,39 +22,42 @@ export default class VerificationCodeTwo extends React.Component{
   }
   buttonClickAction = () => {
     const that = this
-    if(this.state.buttonDisabled) {
+    if (this.state.buttonDisabled) {
       return false
     }
 
-    that.setState({
-      buttonDisabled: true,
-    }, function () {
-      this.props.getVerifyCode({
-        calback: function () {
-          const {initTimeValue } = that.state
-          that.setState({
-            interval: setInterval(function () {
-              const { initTime } = that.state
-              that.setState({
-                initTime: initTime-1,
-                initTimeText: initTime-1,
-                buttonDisabled: true
-              })
-              if(initTime === 0) {
+    that.setState(
+      {
+        buttonDisabled: true
+      },
+      function() {
+        this.props.getVerifyCode({
+          calback: function() {
+            const { initTimeValue } = that.state
+            that.setState({
+              interval: setInterval(function() {
+                const { initTime } = that.state
                 that.setState({
-                  initTime: initTimeValue,
-                  initTimeText: '重新获取',
-                  buttonDisabled: false,
+                  initTime: initTime - 1,
+                  initTimeText: initTime - 1,
+                  buttonDisabled: true
                 })
-                if(that.state.interval!= null) {
-                  clearInterval(that.state.interval)
+                if (initTime === 0) {
+                  that.setState({
+                    initTime: initTimeValue,
+                    initTimeText: '重新获取',
+                    buttonDisabled: false
+                  })
+                  if (that.state.interval != null) {
+                    clearInterval(that.state.interval)
+                  }
                 }
-              }
-            }, 1000)
-          })
-        }
-      })
-    })
+              }, 1000)
+            })
+          }
+        })
+      }
+    )
 
     // this.props.getVerifyCode({
     //   calback:function () {
@@ -101,19 +103,22 @@ export default class VerificationCodeTwo extends React.Component{
     //     // }, 1000)
     //   }
     // })
-
   }
   render() {
     const { text, style, getVerifyCode } = this.props
     const buttonDisabled = this.state.buttonDisabled
     return (
       //,color: !buttonDisabled ? '#bfbfbf' : 'rgba(0,0,0,.25)'
-      <div className={this.props.className} style={{...style, color: `${buttonDisabled?'#bfbfbf':''}`}} onClick={this.buttonClickAction.bind(this)}>{this.state.initTimeText}</div>
-    //
-    );
+      <div
+        className={this.props.className}
+        style={{ ...style, color: `${buttonDisabled ? '#bfbfbf' : ''}` }}
+        onClick={this.buttonClickAction.bind(this)}
+      >
+        {this.state.initTimeText}
+      </div>
+      //
+    )
   }
+}
 
-};
-
-VerificationCodeTwo.propTypes = {
-};
+VerificationCodeTwo.propTypes = {}

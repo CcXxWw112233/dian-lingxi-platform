@@ -1,7 +1,10 @@
 // 用来封装弹窗中公用方法
 
-import { getSubfixName, currentNounPlanFilterName } from "../../../utils/businessFunction"
-import { TASKS } from "../../../globalset/js/constant"
+import {
+  getSubfixName,
+  currentNounPlanFilterName
+} from '../../../utils/businessFunction'
+import { TASKS } from '../../../globalset/js/constant'
 
 /**
  * 获取对应属性的data列表
@@ -9,7 +12,7 @@ import { TASKS } from "../../../globalset/js/constant"
  * @param {String} code 需要查找的data元素
  * @returns 该方法返回需要查询的data
  */
-export const getCurrentPropertiesData = (arr,code) => {
+export const getCurrentPropertiesData = (arr, code) => {
   if (!arr || !code) return
   const gold_data = (arr.find(item => item.code == code) || {}).data
   return gold_data
@@ -23,10 +26,14 @@ export const getCurrentPropertiesData = (arr,code) => {
  * @param {String} code 需要获取的字段类型
  * @returns {Object} 返回一个对象, 当前对应属性字段
  */
-export const getCurrentDrawerContentPropsModelFieldData = ({properties = [], code}) => {
+export const getCurrentDrawerContentPropsModelFieldData = ({
+  properties = [],
+  code
+}) => {
   if (!properties || !code) return {}
   if (!(properties && properties.length)) return {}
-  const currentFieldInfo =(properties.filter(item => item.code == code) || [])[0]
+  const currentFieldInfo = (properties.filter(item => item.code == code) ||
+    [])[0]
   return currentFieldInfo || {}
 }
 
@@ -37,7 +44,11 @@ export const getCurrentDrawerContentPropsModelFieldData = ({properties = [], cod
  * @param {any} value 需要更新的值
  * @returns {Array} 返回更新完成的列表
  */
-export const filterCurrentUpdateDatasField = ({properties = [], code, value}) => {
+export const filterCurrentUpdateDatasField = ({
+  properties = [],
+  code,
+  value
+}) => {
   if (!properties || !code || !value) return []
   let new_properties = JSON.parse(JSON.stringify(properties || []))
   new_properties = new_properties.map(item => {
@@ -54,7 +65,7 @@ export const filterCurrentUpdateDatasField = ({properties = [], code, value}) =>
 }
 
 // 获取不同类型的文件图标
-export const judgeFileType = (fileName) => {
+export const judgeFileType = fileName => {
   let themeCode = ''
   const type = getSubfixName(fileName)
   switch (type) {
@@ -139,15 +150,15 @@ export const judgeFileType = (fileName) => {
 
 // 显示上传人名称
 export const showMemberName = (userId, data = []) => {
-  const users = data.filter((item) => item.user_id == userId);
+  const users = data.filter(item => item.user_id == userId)
   if (users.length > 0) {
     return <span>{users[0].name}</span>
   }
-  return;
+  return
 }
 
 // 递归获取文件路径
-export const  getFolderPathName = (fileItem) => {
+export const getFolderPathName = fileItem => {
   if (!(fileItem && Object.keys(fileItem).length)) return
   let arr = []
   const target_path = fileItem.folder_path
@@ -158,7 +169,8 @@ export const  getFolderPathName = (fileItem) => {
       digui(name, data[name])
     } else if (data['parent_id'] == '0') {
       arr.push({ file_name: '根目录', type: '0' })
-    } else if (data['parent_id'] == '2') {// 表示临时目录
+    } else if (data['parent_id'] == '2') {
+      // 表示临时目录
       arr.push({ file_name: data.folder_name, file_id: data.id, type: '2' })
     }
   }
@@ -168,67 +180,55 @@ export const  getFolderPathName = (fileItem) => {
 }
 
 // 根据名词定义获取不同属性内容
-export const renderTaskNounPlanCode = (item) => {
+export const renderTaskNounPlanCode = item => {
   let dec_name = ''
   const { code, name } = item
   switch (code) {
     case 'REMARK':
       dec_name = `${currentNounPlanFilterName(TASKS)}说明`
-      break;
+      break
     case 'SUBTASK':
       dec_name = `子${currentNounPlanFilterName(TASKS)}&交付物`
       break
     default:
       dec_name = name
-      break;
+      break
   }
   return dec_name
 }
 
 // 获取对应字段的Icon
-export const getCurrentFieldIcon = (value) => {
-    const { code } = value
-    let messageValue = (<span></span>)
-    switch (code) {
-      case 'EXECUTOR':// 表示是负责人
-        messageValue = (
-          <span>&#xe7b2;</span>
-        )
-        break;
-      case 'MILESTONE':// 表示是里程碑
-        messageValue = (
-          <span>&#xe6b7;</span>
-        )
-        break;
-      case 'REMARK':// 表示是备注
-        messageValue = (
-          <span>&#xe7f6;</span>
-        )
-        break;
-      case 'LABEL':// 标签
-        messageValue = (
-          <span>&#xe6b8;</span>
-        )
-        break;
-      case 'ATTACHMENT':// 表示是上传附件
-        messageValue = (
-          <span>&#xe6b9;</span>
-        )
-        break;
-      case 'SUBTASK':// 表示是子任务
-        messageValue = (
-          <span>&#xe7f5;</span>
-        )
-        break;
-      // case 'CONTENTLINK':// 表示是关联内容
-      //   messageValue = (
-      //     <span>&#xe6ba;</span>
-      //   )
-      //   break;
-      default:
-        break;
-    }
-    return messageValue
+export const getCurrentFieldIcon = value => {
+  const { code } = value
+  let messageValue = <span></span>
+  switch (code) {
+    case 'EXECUTOR': // 表示是负责人
+      messageValue = <span>&#xe7b2;</span>
+      break
+    case 'MILESTONE': // 表示是里程碑
+      messageValue = <span>&#xe6b7;</span>
+      break
+    case 'REMARK': // 表示是备注
+      messageValue = <span>&#xe7f6;</span>
+      break
+    case 'LABEL': // 标签
+      messageValue = <span>&#xe6b8;</span>
+      break
+    case 'ATTACHMENT': // 表示是上传附件
+      messageValue = <span>&#xe6b9;</span>
+      break
+    case 'SUBTASK': // 表示是子任务
+      messageValue = <span>&#xe7f5;</span>
+      break
+    // case 'CONTENTLINK':// 表示是关联内容
+    //   messageValue = (
+    //     <span>&#xe6ba;</span>
+    //   )
+    //   break;
+    default:
+      break
+  }
+  return messageValue
 }
 
 // 比较开始和结束时间
@@ -236,14 +236,18 @@ export const compareStartDueTime = (start_time, due_time) => {
   if (!start_time || !due_time) {
     return true
   }
-  const newStartTime = start_time.toString().length > 10 ? Number(start_time) / 1000 : Number(start_time)
-  const newDueTime = due_time.toString().length > 10 ? Number(due_time) / 1000 : Number(due_time)
+  const newStartTime =
+    start_time.toString().length > 10
+      ? Number(start_time) / 1000
+      : Number(start_time)
+  const newDueTime =
+    due_time.toString().length > 10 ? Number(due_time) / 1000 : Number(due_time)
   if (newStartTime >= newDueTime) {
     return false
   }
   return true
 }
 
-  // 是否是有效的头像
- export const isValidAvatar = (avatarUrl = '') =>
-    avatarUrl.includes('http://') || avatarUrl.includes('https://');
+// 是否是有效的头像
+export const isValidAvatar = (avatarUrl = '') =>
+  avatarUrl.includes('http://') || avatarUrl.includes('https://')

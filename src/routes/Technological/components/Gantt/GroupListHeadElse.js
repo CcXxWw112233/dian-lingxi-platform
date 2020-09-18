@@ -2,20 +2,20 @@ import React, { Component } from 'react'
 import indexStyles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { connect } from 'dva'
-import CreateProject from './../Project/components/CreateProject/index';
+import CreateProject from './../Project/components/CreateProject/index'
 import { Input, message } from 'antd'
-import { addTaskGroup } from '../../../../services/technological/task';
-import { isApiResponseOk } from '../../../../utils/handleResponseData';
-import { afterCreateBoardUpdateGantt } from './ganttBusiness';
-import { ganttIsOutlineView } from './constants';
+import { addTaskGroup } from '../../../../services/technological/task'
+import { isApiResponseOk } from '../../../../utils/handleResponseData'
+import { afterCreateBoardUpdateGantt } from './ganttBusiness'
+import { ganttIsOutlineView } from './constants'
 
 @connect(mapStateToProps)
 export default class GroupListHeadElse extends Component {
   state = {
     add_new_board_group: false,
-    add_new_board_group_value: '', //分组名
+    add_new_board_group_value: '' //分组名
   }
-  setAddProjectModalVisible = (data) => {
+  setAddProjectModalVisible = data => {
     const { addProjectModalVisible } = this.state
     this.setState({
       addProjectModalVisible: !addProjectModalVisible
@@ -23,7 +23,7 @@ export default class GroupListHeadElse extends Component {
   }
 
   handleSubmitNewProject = data => {
-    const { dispatch } = this.props;
+    const { dispatch } = this.props
     Promise.resolve(
       dispatch({
         type: 'project/addNewProject',
@@ -34,15 +34,21 @@ export default class GroupListHeadElse extends Component {
         dispatch({
           type: 'workbench/getProjectList',
           payload: {}
-        });
+        })
       })
       .then(() => {
         afterCreateBoardUpdateGantt(dispatch)
-      });
-  };
+      })
+  }
   getElseHeight = () => {
     let rows = 7
-    const { gantt_card_height, dataAreaRealHeight, ceiHeight, outline_tree_round, group_view_type } = this.props
+    const {
+      gantt_card_height,
+      dataAreaRealHeight,
+      ceiHeight,
+      outline_tree_round,
+      group_view_type
+    } = this.props
     const difference_height = gantt_card_height - dataAreaRealHeight
     const mult = Math.ceil(difference_height / ceiHeight)
     if (dataAreaRealHeight < 0) {
@@ -75,21 +81,21 @@ export default class GroupListHeadElse extends Component {
     }
   }
 
-  setAddNewBoardGroup = (bool) => {
+  setAddNewBoardGroup = bool => {
     this.setState({
       add_new_board_group: bool,
-      add_new_board_group_value: '',
+      add_new_board_group_value: ''
     })
   }
   // 更改名称
-  inputOnPressEnter = (e) => {
+  inputOnPressEnter = e => {
     this.requestAddNewGroup()
     this.setAddNewBoardGroup(false)
   }
-  inputOnBlur = (e) => {
+  inputOnBlur = e => {
     this.setAddNewBoardGroup(false)
   }
-  inputOnchange = (e) => {
+  inputOnchange = e => {
     const { value } = e.target
     if (value.trimLR() == '') {
       message.warn('分组名称不能为空')
@@ -110,7 +116,7 @@ export default class GroupListHeadElse extends Component {
     }
     const params = {
       board_id: gantt_board_id,
-      name: add_new_board_group_value,
+      name: add_new_board_group_value
     }
     const res = await addTaskGroup(params)
     if (isApiResponseOk(res)) {
@@ -131,7 +137,7 @@ export default class GroupListHeadElse extends Component {
   }
 
   filterHeight = () => {
-    const { list_group, group_view_type, gantt_board_id, } = this.props
+    const { list_group, group_view_type, gantt_board_id } = this.props
     if (
       ganttIsOutlineView({ group_view_type }) ||
       (group_view_type == '1' && gantt_board_id == '0') ||
@@ -142,17 +148,23 @@ export default class GroupListHeadElse extends Component {
     ) {
       return this.getElseHeight()
     } else {
-      return 0//30
+      return 0 //30
     }
-
   }
 
   render() {
-    const { addProjectModalVisible, add_new_board_group, add_new_board_group_value } = this.state
+    const {
+      addProjectModalVisible,
+      add_new_board_group,
+      add_new_board_group_value
+    } = this.state
     const { gantt_board_id, group_view_type } = this.props
 
     return (
-      <div style={{ height: this.filterHeight() }} className={`${indexStyles.listHeadItem}`}>
+      <div
+        style={{ height: this.filterHeight() }}
+        className={`${indexStyles.listHeadItem}`}
+      >
         {/* {
           group_view_type == '1' && !add_new_board_group && gantt_board_id != '0' && (
             <div onClick={this.addNew} className={globalStyles.link_mouse} style={{ marginTop: 20 }}>
@@ -161,18 +173,16 @@ export default class GroupListHeadElse extends Component {
             </div>
           )
         } */}
-        {
-          add_new_board_group && (
-            <Input
-              style={{ marginTop: 10 }}
-              autoFocus
-              value={add_new_board_group_value}
-              onChange={this.inputOnchange}
-              onPressEnter={this.inputOnPressEnter}
-              onBlur={this.inputOnBlur}
-            />
-          )
-        }
+        {add_new_board_group && (
+          <Input
+            style={{ marginTop: 10 }}
+            autoFocus
+            value={add_new_board_group_value}
+            onChange={this.inputOnchange}
+            onPressEnter={this.inputOnPressEnter}
+            onBlur={this.inputOnBlur}
+          />
+        )}
         {addProjectModalVisible && (
           <CreateProject
             setAddProjectModalVisible={this.setAddProjectModalVisible}
@@ -186,6 +196,24 @@ export default class GroupListHeadElse extends Component {
 }
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ gantt: { datas: { gold_date_arr = [], ceiHeight, gantt_board_id, group_view_type, list_group, outline_tree_round } } }) {
-  return { gold_date_arr, ceiHeight, group_view_type, gantt_board_id, list_group, outline_tree_round }
+function mapStateToProps({
+  gantt: {
+    datas: {
+      gold_date_arr = [],
+      ceiHeight,
+      gantt_board_id,
+      group_view_type,
+      list_group,
+      outline_tree_round
+    }
+  }
+}) {
+  return {
+    gold_date_arr,
+    ceiHeight,
+    group_view_type,
+    gantt_board_id,
+    list_group,
+    outline_tree_round
+  }
 }

@@ -1,13 +1,20 @@
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message } from 'antd'
-import { MESSAGE_DURATION_TIME } from "../../globalset/js/constant";
-import { routerRedux } from "dva/router";
-import Cookies from "js-cookie";
-import {getAppsList} from "../../services/technological/project";
+import { MESSAGE_DURATION_TIME } from '../../globalset/js/constant'
+import { routerRedux } from 'dva/router'
+import Cookies from 'js-cookie'
+import { getAppsList } from '../../services/technological/project'
 import modelExtend from 'dva-model-extend'
 import technological from './index'
-import { getTeamShowList, addTeamShow, getTeamShowTypeList, getTeamShowDetail, deleteTeamShow, getCurrentOrgTeamShowList } from '../../services/teamShow'
-import queryString from 'query-string';
+import {
+  getTeamShowList,
+  addTeamShow,
+  getTeamShowTypeList,
+  getTeamShowDetail,
+  deleteTeamShow,
+  getCurrentOrgTeamShowList
+} from '../../services/teamShow'
+import queryString from 'query-string'
 
 let naviHeadTabIndex //导航栏naviTab选项
 export default modelExtend(technological, {
@@ -15,7 +22,7 @@ export default modelExtend(technological, {
   state: [],
   subscriptions: {
     setup({ dispatch, history }) {
-      history.listen((location) => {
+      history.listen(location => {
         message.destroy()
         if (location.pathname === '/technological/teamShow/teamInfo') {
           dispatch({
@@ -23,7 +30,6 @@ export default modelExtend(technological, {
             payload: {
               detaiInfo: {}
             }
-
           })
           dispatch({
             type: 'getTeamShowDetail',
@@ -31,74 +37,63 @@ export default modelExtend(technological, {
           })
         }
       })
-    },
+    }
   },
   effects: {
-    * getTeamShowList({ payload }, { select, call, put }) {
+    *getTeamShowList({ payload }, { select, call, put }) {
       let res = yield call(getTeamShowList, payload)
-      if(isApiResponseOk(res)) {
-
-      }else{
-
+      if (isApiResponseOk(res)) {
+      } else {
       }
     },
-    * addTeamShow({ payload }, { select, call, put }) {
+    *addTeamShow({ payload }, { select, call, put }) {
       let res = yield call(addTeamShow, payload)
-      if(isApiResponseOk(res)) {
-
-      }else{
-
+      if (isApiResponseOk(res)) {
+      } else {
       }
     },
-    * getTeamShowTypeList({ payload }, { select, call, put }) {
+    *getTeamShowTypeList({ payload }, { select, call, put }) {
       let res = yield call(getTeamShowTypeList, payload)
-      if(isApiResponseOk(res)) {
-
-      }else{
-
+      if (isApiResponseOk(res)) {
+      } else {
       }
     },
-    * getTeamShowDetail({ payload }, { select, call, put }) {
+    *getTeamShowDetail({ payload }, { select, call, put }) {
       let res = yield call(getTeamShowDetail, payload)
-      if(isApiResponseOk(res)) {
+      if (isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
           payload: {
-            detaiInfo: res.data,
+            detaiInfo: res.data
           }
         })
-      }else{
-
+      } else {
       }
     },
-    * deleteTeamShow({ payload }, { select, call, put }) {
+    *deleteTeamShow({ payload }, { select, call, put }) {
       let res = yield call(deleteTeamShow, payload)
-      if(isApiResponseOk(res)) {
-
-      }else{
-
+      if (isApiResponseOk(res)) {
+      } else {
       }
     },
-    * getCurrentOrgTeamShowList({ payload }, { select, call, put }) {
+    *getCurrentOrgTeamShowList({ payload }, { select, call, put }) {
       let res = yield call(getCurrentOrgTeamShowList, payload)
-      if(isApiResponseOk(res)) {
-
-      }else{
-
+      if (isApiResponseOk(res)) {
+      } else {
       }
     },
-    * routingJump({ payload }, { call, put }) {
+    *routingJump({ payload }, { call, put }) {
       const { route } = payload
-      yield put(routerRedux.push(route));
-    },
+      yield put(routerRedux.push(route))
+    }
   },
 
   reducers: {
     updateDatas(state, action) {
       return {
         ...state,
-        datas: { ...state.datas, ...action.payload },
+        datas: { ...state.datas, ...action.payload }
       }
     }
-  },
-});
+  }
+})

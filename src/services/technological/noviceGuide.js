@@ -1,11 +1,11 @@
-import {REQUEST_DOMAIN, REQUEST_DOMAIN_BOARD} from "@/globalset/js/constant";
-import request from "@/utils/requestAxios";
+import { REQUEST_DOMAIN, REQUEST_DOMAIN_BOARD } from '@/globalset/js/constant'
+import request from '@/utils/requestAxios'
 
 // 新用户默认创建组织和用户的接口
 export async function createDefaultOrg(data) {
   return request({
     url: `${REQUEST_DOMAIN}/organization/default`,
-    method: "POST",
+    method: 'POST',
     data
   })
 }
@@ -14,7 +14,7 @@ export async function createDefaultOrg(data) {
 export async function generateBoardCode(params) {
   return request({
     url: `${REQUEST_DOMAIN}/mini/QRCode/board/${params.boardId}`,
-    method: "GET",
+    method: 'GET',
     params
   })
 }
@@ -23,10 +23,11 @@ export async function generateBoardCode(params) {
 export async function inviteMemberJoinOrg(data) {
   return request({
     url: `${REQUEST_DOMAIN}/organization/invite`,
-    method: "PUT",
+    method: 'PUT',
     data: {
       ...data,
-      _organization_id: data._organization_id || localStorage.getItem('OrganizationId'),
+      _organization_id:
+        data._organization_id || localStorage.getItem('OrganizationId')
     }
   })
 }
@@ -35,7 +36,7 @@ export async function inviteMemberJoinOrg(data) {
 export async function inviteMemberJoinBoard(data) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/board/join`,
-    method: "POST",
+    method: 'POST',
     data
   })
 }

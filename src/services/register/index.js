@@ -7,7 +7,7 @@ export async function formSubmit(data) {
     url: `${REQUEST_DOMAIN}/user/signup`,
     method: 'POST',
     data: data
-  });
+  })
 }
 
 //获取验证码
@@ -15,8 +15,8 @@ export async function requestVerifyCode(data) {
   return request({
     url: `${REQUEST_DOMAIN}/sms/code/send`,
     method: 'POST',
-    data,
-  });
+    data
+  })
 }
 
 //验证邮箱或手机号是否已注册
@@ -28,8 +28,8 @@ export async function checkAccountRestered(data) {
     params: {
       email,
       mobile
-    },
-  });
+    }
+  })
 }
 //注册绑定微信并且登陆
 export async function wechatSignupBindLogin(data) {

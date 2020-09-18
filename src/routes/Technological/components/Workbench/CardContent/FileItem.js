@@ -2,27 +2,55 @@ import React from 'react'
 import indexstyles from '../index.less'
 import { Icon, Button, notification, Tooltip } from 'antd'
 import globalStyles from '../../../../../globalset/css/globalClassName.less'
-import {stopPropagation, timestampToTimeNormal} from '../../../../../utils/util'
+import {
+  stopPropagation,
+  timestampToTimeNormal
+} from '../../../../../utils/util'
 import Cookies from 'js-cookie'
 import {
-  checkIsHasPermission, checkIsHasPermissionInBoard, getSubfixName, openPDF, setBoardIdStorage, getOrgNameWithOrgIdFilter
-} from "../../../../../utils/businessFunction";
-import {message} from "antd/lib/index";
-import {connect} from 'dva'
+  checkIsHasPermission,
+  checkIsHasPermissionInBoard,
+  getSubfixName,
+  openPDF,
+  setBoardIdStorage,
+  getOrgNameWithOrgIdFilter
+} from '../../../../../utils/businessFunction'
+import { message } from 'antd/lib/index'
+import { connect } from 'dva'
 import {
-  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, ORG_TEAM_BOARD_QUERY, PROJECT_FILES_FILE_EDIT,
+  MESSAGE_DURATION_TIME,
+  NOT_HAS_PERMISION_COMFIRN,
+  ORG_TEAM_BOARD_QUERY,
+  PROJECT_FILES_FILE_EDIT,
   PROJECT_FILES_FILE_INTERVIEW
-} from "../../../../../globalset/js/constant";
+} from '../../../../../globalset/js/constant'
 
-@connect(({ workbench, technological: { datas: { currentUserOrganizes = [], is_show_org_name, is_all_org,userOrgPermissions,userBoardPermissions } } }) => ({
-  uploadedFileNotificationIdList:
-    workbench.datas.uploadedFileNotificationIdList,
-  uploadedFileList: workbench.datas.uploadedFileList,
-  projectTabCurrentSelectedProject: workbench.datas.projectTabCurrentSelectedProject,
-  currentUserOrganizes, is_show_org_name, is_all_org,userOrgPermissions,userBoardPermissions
-}))
+@connect(
+  ({
+    workbench,
+    technological: {
+      datas: {
+        currentUserOrganizes = [],
+        is_show_org_name,
+        is_all_org,
+        userOrgPermissions,
+        userBoardPermissions
+      }
+    }
+  }) => ({
+    uploadedFileNotificationIdList:
+      workbench.datas.uploadedFileNotificationIdList,
+    uploadedFileList: workbench.datas.uploadedFileList,
+    projectTabCurrentSelectedProject:
+      workbench.datas.projectTabCurrentSelectedProject,
+    currentUserOrganizes,
+    is_show_org_name,
+    is_all_org,
+    userOrgPermissions,
+    userBoardPermissions
+  })
+)
 class FileItem extends React.Component {
-
   constructor(props) {
     super(props)
     this.state = {
@@ -31,7 +59,7 @@ class FileItem extends React.Component {
   }
 
   judgeFileType(fileName) {
-    let themeCode = '';
+    let themeCode = ''
     const type = getSubfixName(fileName)
     switch (type) {
       case '.xls':
@@ -110,10 +138,10 @@ class FileItem extends React.Component {
         themeCode = '&#xe660;'
         break
     }
-    return themeCode;
+    return themeCode
   }
   gotoBoardDetail({ id, board_id, org_id, file_name }, e) {
-    stopPropagation(e);
+    stopPropagation(e)
     setBoardIdStorage(board_id)
 
     // if (!checkIsHasPermission(ORG_TEAM_BOARD_QUERY, org_id)) {
@@ -122,7 +150,7 @@ class FileItem extends React.Component {
     // }
     this.props.routingJump(
       `/technological/projectDetail?board_id=${board_id}&appsSelectKey=4&file_id=${id}&file_name=${file_name}`
-    );
+    )
   }
   previewFile(data, e) {
     e && e.stopPropagation()
@@ -137,8 +165,8 @@ class FileItem extends React.Component {
       id,
       folder_id,
       version_id
-    } = data;
-    const { dispatch} = this.props
+    } = data
+    const { dispatch } = this.props
     setBoardIdStorage(board_id)
     // if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW)) {
     //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME);
@@ -162,7 +190,7 @@ class FileItem extends React.Component {
     //     file_id: id
     //   }
     // });
-    
+
     // dispatch({
     //   type: 'publicFileDetailModal/updateDatas',
     //   payload: {
@@ -187,7 +215,7 @@ class FileItem extends React.Component {
       }
     })
     this.props.updatePublicDatas({ board_id })
-    
+
     // this.props.updateFileDatas({
     //   seeFileInput: 'fileModule',
     //   board_id,
@@ -221,16 +249,14 @@ class FileItem extends React.Component {
     // })
     // this.props.updatePublicDatas({ board_id })
     // this.props.getBoardMembers({id: board_id})
-    
-
   }
   createUploadFileSuccessNote = file => {
-    const { file_name, id } = file;
+    const { file_name, id } = file
     const handleJump = e => {
-      if (e) e.stopPropagation();
-      this.previewFile(file);
+      if (e) e.stopPropagation()
+      this.previewFile(file)
       notification.close(id)
-    };
+    }
     const descirptionEle = (
       <div>
         <p>
@@ -245,16 +271,16 @@ class FileItem extends React.Component {
           </Button>
         </div>
       </div>
-    );
+    )
     notification.success({
       message: '上传成功',
       description: descirptionEle,
       placement: 'bottomLeft',
       key: id
-    });
-  };
+    })
+  }
   genUploadFileSuccessNoteQueue(fileList = []) {
-    const {dispatch} = this.props
+    const { dispatch } = this.props
     for (let file of fileList) {
       this.createUploadFileSuccessNote(file)
     }
@@ -271,47 +297,55 @@ class FileItem extends React.Component {
     uploadedFileList
   ) => {
     return this.genUploadFileSuccessNoteQueue(
-      uploadedFileList && uploadedFileList.file_list ? uploadedFileList.file_list.filter(file =>
-        uploadedFileNotificationIdList.find(eachId => file.id === eachId)
-      ) : []
-    );
-  };
+      uploadedFileList && uploadedFileList.file_list
+        ? uploadedFileList.file_list.filter(file =>
+            uploadedFileNotificationIdList.find(eachId => file.id === eachId)
+          )
+        : []
+    )
+  }
   handleNewUploadedFileNotification = nextProps => {
-    const { uploadedFileNotificationIdList } = this.props;
-    const isEmptyArr = arr => Array.isArray(arr) && arr.length == 0;
+    const { uploadedFileNotificationIdList } = this.props
+    const isEmptyArr = arr => Array.isArray(arr) && arr.length == 0
     if (isEmptyArr(uploadedFileNotificationIdList)) {
-      const { uploadedFileNotificationIdList, uploadedFileList } = nextProps;
+      const { uploadedFileNotificationIdList, uploadedFileList } = nextProps
       if (uploadedFileNotificationIdList.length) {
         this.showNewUploadedFileNotification(
           uploadedFileNotificationIdList,
           uploadedFileList
-        );
+        )
       }
     }
-  };
+  }
   componentWillReceiveProps(nextProps) {
-    this.handleNewUploadedFileNotification(nextProps);
+    this.handleNewUploadedFileNotification(nextProps)
   }
 
   setPreviewFileModalVisibile = () => {
     this.setState({
       previewFileModalVisibile: !this.state.previewFileModalVisibile
-    });
+    })
   }
-  
-  getEllipsisFileName = (name) => {
+
+  getEllipsisFileName = name => {
     // wx6535e025f795dca9.o6zAJs5_pqZsbrr7sJng7qkxKKbM.ZhMftVUvAIJ9b5dcb721199c1b8f4f84b0954a80e589.png
     // let str = 'wx6535e025f795dca9.o6zAJs5_pqZsbrr7sJng7qkxKKbM.ZhMftVUvAIJ9b5dcb721199c1b8f4f84b0954a80e589.png'
     let str = name
     if (!name) return
     let arr = str.split('.')
-    arr.splice(-1,1)
+    arr.splice(-1, 1)
     arr.join('.')
     return arr
   }
 
   render() {
-    const { itemValue = {}, currentUserOrganizes, is_show_org_name, projectTabCurrentSelectedProject, is_all_org } = this.props;
+    const {
+      itemValue = {},
+      currentUserOrganizes,
+      is_show_org_name,
+      projectTabCurrentSelectedProject,
+      is_all_org
+    } = this.props
     // console.log(is_show_org_name, is_all_org, projectTabCurrentSelectedProject, 'sss')
     const {
       board_id,
@@ -324,7 +358,7 @@ class FileItem extends React.Component {
       id,
       is_privilege,
       privileges = []
-    } = itemValue;
+    } = itemValue
 
     return (
       <div
@@ -344,55 +378,89 @@ class FileItem extends React.Component {
           />
         </div>
         <div className={indexstyles.file_text}>
-          <span style={{display: 'flex', alignItems: 'center'}}><span className={indexstyles.hoverUnderline}>{this.getEllipsisFileName(file_name)}</span>{getSubfixName(file_name)}</span>
-          {
-            is_privilege == '1' && (
-              <Tooltip title="已开启访问控制" placement="top">
-                <span style={{ color: 'rgba(0,0,0,0.50)', marginRight: '5px', marginLeft: '5px' }}>
-                  <span className={`${globalStyles.authTheme}`}>&#xe7ca;</span>
-                </span>
-              </Tooltip>
-            )
-          }
-          {
-            projectTabCurrentSelectedProject == '0' && (
-              <span style={{marginLeft: 5, marginRight: 2, color: '#8C8C8C'}}>#</span>
-            )
-          }
-          <Tooltip placement="topLeft" title={
-           is_show_org_name && projectTabCurrentSelectedProject == '0' && is_all_org ? (<span>{getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)} <Icon type="caret-right" style={{fontSize: 8, color: '#8C8C8C'}}/> {board_name}</span>)
-            : (<span>{board_name}</span>)
-          }>
-            <div
-                style={{ color: "#8c8c8c", cursor: "pointer", display: 'flex', alignItems: 'center' }}
-                onClick={this.gotoBoardDetail.bind(this, { id, board_id, org_id, file_name })}
+          <span style={{ display: 'flex', alignItems: 'center' }}>
+            <span className={indexstyles.hoverUnderline}>
+              {this.getEllipsisFileName(file_name)}
+            </span>
+            {getSubfixName(file_name)}
+          </span>
+          {is_privilege == '1' && (
+            <Tooltip title="已开启访问控制" placement="top">
+              <span
+                style={{
+                  color: 'rgba(0,0,0,0.50)',
+                  marginRight: '5px',
+                  marginLeft: '5px'
+                }}
               >
-                {
-                  is_show_org_name && projectTabCurrentSelectedProject == '0' && is_all_org && (
-                    <span className={indexstyles.org_name}>
-                      {getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}
-                    </span>
-                  )
-                }
-                {
-                  is_show_org_name && projectTabCurrentSelectedProject == '0' && is_all_org && (
-                    <span>
-                      <Icon type="caret-right" style={{fontSize: 8, color: '#8C8C8C'}}/>
-                    </span>
-                  )
-                }
-                {
-                  projectTabCurrentSelectedProject == '0' && (
-                    <span className={indexstyles.ellipsis}>{board_name}</span>
-                  )
-                }
-                
-              </div>
+                <span className={`${globalStyles.authTheme}`}>&#xe7ca;</span>
+              </span>
             </Tooltip>
+          )}
+          {projectTabCurrentSelectedProject == '0' && (
+            <span style={{ marginLeft: 5, marginRight: 2, color: '#8C8C8C' }}>
+              #
+            </span>
+          )}
+          <Tooltip
+            placement="topLeft"
+            title={
+              is_show_org_name &&
+              projectTabCurrentSelectedProject == '0' &&
+              is_all_org ? (
+                <span>
+                  {getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}{' '}
+                  <Icon
+                    type="caret-right"
+                    style={{ fontSize: 8, color: '#8C8C8C' }}
+                  />{' '}
+                  {board_name}
+                </span>
+              ) : (
+                <span>{board_name}</span>
+              )
+            }
+          >
+            <div
+              style={{
+                color: '#8c8c8c',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center'
+              }}
+              onClick={this.gotoBoardDetail.bind(this, {
+                id,
+                board_id,
+                org_id,
+                file_name
+              })}
+            >
+              {is_show_org_name &&
+                projectTabCurrentSelectedProject == '0' &&
+                is_all_org && (
+                  <span className={indexstyles.org_name}>
+                    {getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}
+                  </span>
+                )}
+              {is_show_org_name &&
+                projectTabCurrentSelectedProject == '0' &&
+                is_all_org && (
+                  <span>
+                    <Icon
+                      type="caret-right"
+                      style={{ fontSize: 8, color: '#8C8C8C' }}
+                    />
+                  </span>
+                )}
+              {projectTabCurrentSelectedProject == '0' && (
+                <span className={indexstyles.ellipsis}>{board_name}</span>
+              )}
+            </div>
+          </Tooltip>
         </div>
         <div>{timestampToTimeNormal(create_time, '/', true)}</div>
       </div>
-    );
+    )
   }
 }
 

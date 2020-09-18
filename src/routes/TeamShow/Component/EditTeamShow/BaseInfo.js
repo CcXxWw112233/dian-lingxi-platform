@@ -4,35 +4,36 @@ import indexStyles from './index.less'
 import Cookies from 'js-cookie'
 import {
   MESSAGE_DURATION_TIME,
-  NOT_HAS_PERMISION_COMFIRN, ORG_UPMS_ORGANIZATION_EDIT, REQUEST_DOMAIN_TEAM_SHOW,
-  REQUEST_DOMAIN, UPLOAD_FILE_SIZE
-} from "../../../../globalset/js/constant";
+  NOT_HAS_PERMISION_COMFIRN,
+  ORG_UPMS_ORGANIZATION_EDIT,
+  REQUEST_DOMAIN_TEAM_SHOW,
+  REQUEST_DOMAIN,
+  UPLOAD_FILE_SIZE
+} from '../../../../globalset/js/constant'
 import BraftEditor from 'braft-editor'
 import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
 
 const TextArea = Input.TextArea
 
 export default class BaseInfo extends React.Component {
-  state = {
-  }
+  state = {}
   inputChange(e) {
     this.props.updateDatas({
-      name: e.target.value,
+      name: e.target.value
     })
     this.setPreviewHtml()
   }
   textAreaChange(e) {
     this.props.updateDatas({
-      summary: e.target.value.replace(/\n/gim, '<br/>'),
+      summary: e.target.value.replace(/\n/gim, '<br/>')
     })
     this.setPreviewHtml()
   }
-  setPreviewHtml() {
-  }
-  styles () {
+  setPreviewHtml() {}
+  styles() {
     const editTop = {
       display: 'flex',
-      marginBottom: 40,
+      marginBottom: 40
     }
     const editTop_left_div = {
       width: 240,
@@ -40,11 +41,11 @@ export default class BaseInfo extends React.Component {
       backgroundColor: '#ffffff',
       border: '1px solid rgba(217,217,217,1)',
       borderRadius: 4,
-      cursor: 'pointer',
+      cursor: 'pointer'
     }
     const editTop_right_div = {
       flex: 1,
-      marginLeft: 20,
+      marginLeft: 20
     }
     const editTop_right_div_input = {
       height: 40,
@@ -56,7 +57,7 @@ export default class BaseInfo extends React.Component {
       marginTop: 10,
       width: '100%',
       resize: 'none',
-      fontSize: 12,
+      fontSize: 12
     }
     const detailInfoOut = {
       width: '100%',
@@ -79,7 +80,7 @@ export default class BaseInfo extends React.Component {
       height: 'auto',
       border: '1px solid rgba(217,217,217,1)',
       margin: '0 auto',
-      borderRadius: 4,
+      borderRadius: 4
     }
     const detaiInfo_middle = {
       width: 700,
@@ -92,17 +93,25 @@ export default class BaseInfo extends React.Component {
       margin: '0 auto',
       marginTop: 20,
       fontSize: 14,
-      textAlign: 'left',
+      textAlign: 'left'
     }
     const dangerouslySetInnerHTML = {
       backgroundColor: '#ffffff',
       height: 'auto',
-      clear: 'both',
+      clear: 'both'
     }
     return {
-      editTop, editTop_left_div, editTop_right_div, editTop_right_div_input, editTop_right_div_textArea,
-      detailInfoOut, detailInfo, detailInfo_top, detaiInfo_middle, detailInfo_bott, dangerouslySetInnerHTML,
-
+      editTop,
+      editTop_left_div,
+      editTop_right_div,
+      editTop_right_div_input,
+      editTop_right_div_textArea,
+      detailInfoOut,
+      detailInfo,
+      detailInfo_top,
+      detaiInfo_middle,
+      detailInfo_bott,
+      dangerouslySetInnerHTML
     }
   }
   showEdit() {
@@ -113,9 +122,22 @@ export default class BaseInfo extends React.Component {
   }
   render() {
     const that = this
-    const {datas: {name, cover_img, summary, content }} = this.props.model
-    const { editTop, editTop_left_div, editTop_right_div, editTop_right_div_input, editTop_right_div_textArea, dangerouslySetInnerHTML,
-      detailInfo, detailInfo_top, detaiInfo_middle, detailInfo_bott, detailInfoOut } = this.styles()
+    const {
+      datas: { name, cover_img, summary, content }
+    } = this.props.model
+    const {
+      editTop,
+      editTop_left_div,
+      editTop_right_div,
+      editTop_right_div_input,
+      editTop_right_div_textArea,
+      dangerouslySetInnerHTML,
+      detailInfo,
+      detailInfo_top,
+      detaiInfo_middle,
+      detailInfo_bott,
+      detailInfoOut
+    } = this.styles()
     const uploadProps = {
       name: 'file',
       withCredentials: true,
@@ -123,13 +145,13 @@ export default class BaseInfo extends React.Component {
       headers: {
         Authorization: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
-        ...setUploadHeaderBaseInfo({}),
+        ...setUploadHeaderBaseInfo({})
       },
       beforeUpload(e) {
-        if(e.size == 0) {
+        if (e.size == 0) {
           message.error(`不能上传空文件`)
           return false
-        }else if(e.size > UPLOAD_FILE_SIZE * 1024 * 1024) {
+        } else if (e.size > UPLOAD_FILE_SIZE * 1024 * 1024) {
           message.error(`上传文件不能文件超过${UPLOAD_FILE_SIZE}MB`)
           return false
         }
@@ -147,13 +169,20 @@ export default class BaseInfo extends React.Component {
             uploading: false
           })
         }
-        if (file.status === 'done'&& file.response && file.response.code === '0') {
-          message.success(`上传成功。`);
+        if (
+          file.status === 'done' &&
+          file.response &&
+          file.response.code === '0'
+        ) {
+          message.success(`上传成功。`)
           that.setState({
             uploading: false
           })
-        } else if (file.status === 'error' || (file.response && file.response.code !== '0')) {
-          message.error(`上传失败。`);
+        } else if (
+          file.status === 'error' ||
+          (file.response && file.response.code !== '0')
+        ) {
+          message.error(`上传失败。`)
           that.setState({
             uploading: false
           })
@@ -164,62 +193,98 @@ export default class BaseInfo extends React.Component {
           })
           that.setPreviewHtml()
         }
-      },
-    };
-    const {datas: { editTeamShowPreview, editTeamShowSave }} = this.props.model
+      }
+    }
+    const {
+      datas: { editTeamShowPreview, editTeamShowSave }
+    } = this.props.model
 
     let contentHTML = ''
-    if(typeof content === 'object') {
+    if (typeof content === 'object') {
       contentHTML = content.toHTML()
-
-    }else {
+    } else {
       contentHTML = content
     }
     return (
       <div>
-        <div style={{...editTop, color: '#262626'}}>
-          <Upload {...uploadProps} showUploadList={false} accept={"image/jpg, image/jpeg,  image/png"}>
-            {cover_img?(
-              <div style={{...editTop_left_div}} className={indexStyles.uploadOut}>
+        <div style={{ ...editTop, color: '#262626' }}>
+          <Upload
+            {...uploadProps}
+            showUploadList={false}
+            accept={'image/jpg, image/jpeg,  image/png'}
+          >
+            {cover_img ? (
+              <div
+                style={{ ...editTop_left_div }}
+                className={indexStyles.uploadOut}
+              >
                 <img src={cover_img} />
                 <div className={indexStyles.uploadInner}>
-                  <Icon type="upload" style={{fontSize: 30, color: '#ffffff'}} />
+                  <Icon
+                    type="upload"
+                    style={{ fontSize: 30, color: '#ffffff' }}
+                  />
                 </div>
               </div>
             ) : (
-              <div style={{...editTop_left_div}} className={indexStyles.uploadOut}>
+              <div
+                style={{ ...editTop_left_div }}
+                className={indexStyles.uploadOut}
+              >
                 <div className={indexStyles.uploadInner2}>
-                  <Icon type="upload" style={{fontSize: 30, color: '#ffffff'}} />
+                  <Icon
+                    type="upload"
+                    style={{ fontSize: 30, color: '#ffffff' }}
+                  />
                 </div>
               </div>
             )}
           </Upload>
-          <div style={{...editTop_right_div}}>
-            <Input value={name} onChange={this.inputChange.bind(this)} style={{...editTop_right_div_input}} placeholder={'输入团队名称'}/>
-            <TextArea value={summary} onChange={this.textAreaChange.bind(this)} style={{...editTop_right_div_textArea}} placeholder={'输入团队描述'} />
+          <div style={{ ...editTop_right_div }}>
+            <Input
+              value={name}
+              onChange={this.inputChange.bind(this)}
+              style={{ ...editTop_right_div_input }}
+              placeholder={'输入团队名称'}
+            />
+            <TextArea
+              value={summary}
+              onChange={this.textAreaChange.bind(this)}
+              style={{ ...editTop_right_div_textArea }}
+              placeholder={'输入团队描述'}
+            />
           </div>
         </div>
-        <div style={{...detailInfoOut}} id={'editTeamShow'}>
-          <div style={{...detailInfo}} id={'editTeamShowDetailInfo'}>
-            {cover_img?(
-              <img src={cover_img} style={{...detailInfo_top, height: 'auto'}} ></img>
+        <div style={{ ...detailInfoOut }} id={'editTeamShow'}>
+          <div style={{ ...detailInfo }} id={'editTeamShowDetailInfo'}>
+            {cover_img ? (
+              <img
+                src={cover_img}
+                style={{ ...detailInfo_top, height: 'auto' }}
+              ></img>
             ) : (
               ''
             )}
             {/*<div style={{...detailInfo_top}}></div>*/}
-            <div style={{...detaiInfo_middle}}>{name}</div>
-            <div style={{...detailInfo_bott}} dangerouslySetInnerHTML={{__html: summary}}></div>
+            <div style={{ ...detaiInfo_middle }}>{name}</div>
+            <div
+              style={{ ...detailInfo_bott }}
+              dangerouslySetInnerHTML={{ __html: summary }}
+            ></div>
           </div>
           {/*下个版本不需要富文本后完全放开*/}
-          {(editTeamShowPreview || editTeamShowSave )? (
-            <div id={'editContent'} style={{...dangerouslySetInnerHTML}} dangerouslySetInnerHTML={{__html: contentHTML}} onClick={this.showEdit.bind(this)}></div>
-          ) : ('')}
-
+          {editTeamShowPreview || editTeamShowSave ? (
+            <div
+              id={'editContent'}
+              style={{ ...dangerouslySetInnerHTML }}
+              dangerouslySetInnerHTML={{ __html: contentHTML }}
+              onClick={this.showEdit.bind(this)}
+            ></div>
+          ) : (
+            ''
+          )}
         </div>
-
       </div>
     )
   }
 }
-
-

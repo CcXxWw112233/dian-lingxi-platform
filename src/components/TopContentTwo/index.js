@@ -1,24 +1,23 @@
-import React from 'react';
+import React from 'react'
 import indexStyles from './index.less'
 import logoImg from '../../assets/library/lingxi_logo.png'
 
 //页面顶部样式，参见注册成功后
-const TopContentTwo = (props) => {
+const TopContentTwo = props => {
   const { text, productName } = props
   return (
     <div>
       <div className={indexStyles.circleDec}>
         <div className={indexStyles.circle}>
-          <img src={logoImg}/>
+          <img src={logoImg} />
         </div>
         <div className={indexStyles.productName}>聆悉</div>
       </div>
       <div className={indexStyles.description}>连接共生，协同共享</div>
     </div>
-  );
-};
+  )
+}
 
-TopContentTwo.propTypes = {
-};
+TopContentTwo.propTypes = {}
 
-export default TopContentTwo;
+export default TopContentTwo

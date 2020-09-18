@@ -1,10 +1,9 @@
-import React from "react";
-import indexStyles from "./index.less";
-import CardContent from "./CardContent";
+import React from 'react'
+import indexStyles from './index.less'
+import CardContent from './CardContent'
 import Gantt from '../Gantt'
 
 export default class GroupContent extends React.Component {
-
   filterContain = () => {
     const {
       updateDatas,
@@ -12,20 +11,20 @@ export default class GroupContent extends React.Component {
       CreateTaskProps,
       FileModuleProps,
       model = {}
-    } = this.props;
+    } = this.props
     const {
       datas: { boxList = [] }
-    } = model;
+    } = model
     const container_0 = (
       <div className={indexStyles.cardItem}>
         <div
           className={indexStyles.cardItem_left}
-          style={{ width: boxList.length > 1 ? "50%" : "100%" }}
+          style={{ width: boxList.length > 1 ? '50%' : '100%' }}
         >
           {/*boxList.slice(0,Math.ceil(boxList.length / 2))*/}
           {boxList.map((value, key) => {
-            const { code, name, id } = value;
-            let flag = key % 2 == 0;
+            const { code, name, id } = value
+            let flag = key % 2 == 0
             const container = (
               <CardContent
                 {...this.props}
@@ -39,16 +38,16 @@ export default class GroupContent extends React.Component {
                 updateDatas={updateDatas}
                 CardContentType={code}
               />
-            );
-            return flag && <div key={id}>{container}</div>;
+            )
+            return flag && <div key={id}>{container}</div>
           })}
         </div>
         {boxList.length > 1 ? (
           <div className={indexStyles.cardItem_right}>
             {/*boxList.slice(Math.ceil(boxList.length / 2))*/}
             {boxList.map((value, key) => {
-              const { code, name, id } = value;
-              let flag = key % 2 != 0;
+              const { code, name, id } = value
+              let flag = key % 2 != 0
 
               const container = (
                 <CardContent
@@ -63,33 +62,31 @@ export default class GroupContent extends React.Component {
                   updateDatas={updateDatas}
                   CardContentType={code}
                 />
-              );
-              return flag && <div key={id}>{container}</div>;
+              )
+              return flag && <div key={id}>{container}</div>
             })}
           </div>
         ) : (
-            ""
-          )}
+          ''
+        )}
       </div>
-    );
-    return container_0;
-  };
+    )
+    return container_0
+  }
   render() {
-    const {
-      model = {}
-    } = this.props;
+    const { model = {} } = this.props
     const {
       datas: { workbench_show_gantt_card = '0' }
-    } = model;
+    } = model
 
     return (
       <div className={indexStyles.workbenchOut}>
         {workbench_show_gantt_card == '0' ? (
           this.filterContain()
         ) : (
-            <Gantt is_need_calculate_left_dx />
-          )}
+          <Gantt is_need_calculate_left_dx />
+        )}
       </div>
-    );
+    )
   }
 }

@@ -1,11 +1,20 @@
-import React from 'react';
-import { Card, Icon, Input, Button, Mention, Upload, Tooltip, message } from 'antd'
+import React from 'react'
+import {
+  Card,
+  Icon,
+  Input,
+  Button,
+  Mention,
+  Upload,
+  Tooltip,
+  message
+} from 'antd'
 import indexStyles from './index.less'
 import 'emoji-mart/css/emoji-mart.css'
 import { Picker } from 'emoji-mart'
 import Cookies from 'js-cookie'
 
-const { toString, toContentState, Nav } = Mention;
+const { toString, toContentState, Nav } = Mention
 
 // const TextArea = Input.TextArea
 const Dragger = Upload.Dragger
@@ -15,18 +24,20 @@ export default class CommentMention extends React.Component {
     editText: toContentState(''),
     submitButtonDisabled: true,
     selectUserIds: [], //已选择的用户id
-    selectUsers: [], //已选用户名称或（名称+手机号||email)组合
+    selectUsers: [] //已选用户名称或（名称+手机号||email)组合
   }
-  MentionSpacerClick() {
-  }
+  MentionSpacerClick() {}
   MentionEditorChange(editorState) {
-    this.setState({
-      editText: editorState
-    }, function () {
-      this.setState({
-        submitButtonDisabled: !!!toString(this.state.editText)
-      })
-    })
+    this.setState(
+      {
+        editText: editorState
+      },
+      function() {
+        this.setState({
+          submitButtonDisabled: !!!toString(this.state.editText)
+        })
+      }
+    )
   }
   submitComment() {
     const { editText } = this.state
@@ -34,18 +45,22 @@ export default class CommentMention extends React.Component {
     this.mentionGetUsersToDo(editText)
     this.setState({
       editText: toContentState(''),
-      submitButtonDisabled: true,
+      submitButtonDisabled: true
     })
   }
   onSelect(value) {
     const { users } = this.props
     let { selectUserIds = [], selectUsers = [] } = this.state
     for (let i = 0; i < users.length; i++) {
-      if (value.indexOf('~') != -1) { //如果存在同名的情况下，value 为name~mobile || name~email
+      if (value.indexOf('~') != -1) {
+        //如果存在同名的情况下，value 为name~mobile || name~email
         const nameArr = value.split('~')
         const name = nameArr[0]
         const mobileEmail = nameArr[1]
-        if (users[i].name == name && (users[i].mobile == mobileEmail || users[i].email == mobileEmail)) {
+        if (
+          users[i].name == name &&
+          (users[i].mobile == mobileEmail || users[i].email == mobileEmail)
+        ) {
           selectUserIds.push(users[i].user_id)
         }
       } else {
@@ -62,7 +77,6 @@ export default class CommentMention extends React.Component {
       selectUserIds,
       selectUsers
     })
-
   }
   mentionGetUsersToDo(editText) {
     const str = toString(editText)
@@ -73,7 +87,7 @@ export default class CommentMention extends React.Component {
     if (arr) {
       for (let val of arr) {
         if (val) {
-          arr_2.push(val.replace(/(^\s*)|(\s*$)/g, "").replace('@', ''))
+          arr_2.push(val.replace(/(^\s*)|(\s*$)/g, '').replace('@', ''))
         }
       }
     }
@@ -82,11 +96,15 @@ export default class CommentMention extends React.Component {
     let selectUserIds = []
     for (let val of arr_2) {
       for (let i = 0; i < users.length; i++) {
-        if (val.indexOf('~') != -1) { //如果存在同名的情况下，value 为name~mobile || name~email
+        if (val.indexOf('~') != -1) {
+          //如果存在同名的情况下，value 为name~mobile || name~email
           const nameArr = val.split('~')
           const name = nameArr[0]
           const mobileEmail = nameArr[1]
-          if (users[i].name == name && (users[i].mobile == mobileEmail || users[i].email == mobileEmail)) {
+          if (
+            users[i].name == name &&
+            (users[i].mobile == mobileEmail || users[i].email == mobileEmail)
+          ) {
             selectUserIds.push(users[i].user_id)
           }
         } else {
@@ -95,7 +113,6 @@ export default class CommentMention extends React.Component {
           }
         }
       }
-
     }
     selectUserIds = Array.from(new Set(selectUserIds))
     if (selectUserIds.length) {
@@ -114,11 +131,9 @@ export default class CommentMention extends React.Component {
   }
   mentionBlur(e) {
     this.props.setMentionFocus && this.props.setMentionFocus(false)
-
   }
 
   render() {
-
     const { editText, selectUserIds, selectUsers } = this.state
     const { users = [] } = this.props
     //将名字添加进数组， 如果有相同的名称则用手机号或者email区分
@@ -129,7 +144,10 @@ export default class CommentMention extends React.Component {
       for (let i = 0; i < users.length; i++) {
         let value = users[i].name
         for (let j = 0; j < users.length; j++) {
-          if (users[i].name == users[j].name && users[i].user_id !== users[j].user_id) {
+          if (
+            users[i].name == users[j].name &&
+            users[i].user_id !== users[j].user_id
+          ) {
             value = `${users[i].name}~${users[i].mobile || users[i].email}`
             break
           }
@@ -137,7 +155,6 @@ export default class CommentMention extends React.Component {
         suggestions[i] = <Nav children={value} value={value} />
       }
     }
-
 
     return (
       <div className={indexStyles.comment}>
@@ -149,7 +166,12 @@ export default class CommentMention extends React.Component {
           onChange={this.MentionEditorChange.bind(this)}
           // onSelect = {this.onSelect.bind(this)}
           className={indexStyles.mention}
-          style={{ width: '100%', border: ' none', outline: 'none', height: 48 }}
+          style={{
+            width: '100%',
+            border: ' none',
+            outline: 'none',
+            height: 48
+          }}
           value={editText}
           suggestions={suggestions}
         />
@@ -160,18 +182,27 @@ export default class CommentMention extends React.Component {
               <span style={{ fontSize: 16, color: '#8c8c8c' }}>@</span>
             </Tooltip>
             <Tooltip title="该功能尚未上线，敬请期待">
-              <span><Icon type="smile-o" style={{ marginTop: 10, color: '#8c8c8c' }} /></span>
+              <span>
+                <Icon
+                  type="smile-o"
+                  style={{ marginTop: 10, color: '#8c8c8c' }}
+                />
+              </span>
             </Tooltip>
             <span></span>
           </div>
           <div className={indexStyles.functionBar_right}>
-            <Button disabled={this.state.submitButtonDisabled} type={'primary'} style={{ height: 24, width: 58, marginRight: 12 }} onClick={this.submitComment.bind(this)}>发布</Button>
+            <Button
+              disabled={this.state.submitButtonDisabled}
+              type={'primary'}
+              style={{ height: 24, width: 58, marginRight: 12 }}
+              onClick={this.submitComment.bind(this)}
+            >
+              发布
+            </Button>
           </div>
         </div>
       </div>
-
     )
   }
 }
-
-

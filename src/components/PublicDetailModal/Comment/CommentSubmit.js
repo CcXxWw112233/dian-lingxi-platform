@@ -1,9 +1,18 @@
-import React from 'react';
-import { Card, Icon, Input, Button, Mention, Upload, Tooltip, message } from 'antd'
+import React from 'react'
+import {
+  Card,
+  Icon,
+  Input,
+  Button,
+  Mention,
+  Upload,
+  Tooltip,
+  message
+} from 'antd'
 import CommentStyles from './Comment2.less'
 import 'emoji-mart/css/emoji-mart.css'
 import { Picker } from 'emoji-mart'
-const { toString, toContentState } = Mention;
+const { toString, toContentState } = Mention
 
 // const TextArea = Input.TextArea
 const Dragger = Upload.Dragger
@@ -20,16 +29,18 @@ export default class Comment extends React.Component {
     // })
     // console.log('ssss', 11111)
   }
-  MentionSpacerClick() {
-  }
+  MentionSpacerClick() {}
   MentionEditorChange(editorState) {
-    this.setState({
-      editText: editorState
-    }, function () {
-      this.setState({
-        submitButtonDisabled: !!!toString(this.state.editText)
-      })
-    })
+    this.setState(
+      {
+        editText: editorState
+      },
+      function() {
+        this.setState({
+          submitButtonDisabled: !!!toString(this.state.editText)
+        })
+      }
+    )
   }
   submitComment() {
     const { commentUseParams = {} } = this.props
@@ -46,10 +57,10 @@ export default class Comment extends React.Component {
     })
   }
   async handlerMultiEnter(e) {
-    let code = e.keyCode;
-    let ctrl = e.ctrlKey;
-    let shift = e.shiftKey;
-    let alt = e.altKey;
+    let code = e.keyCode
+    let ctrl = e.ctrlKey
+    let shift = e.shiftKey
+    let alt = e.altKey
     if (code == '10' && ctrl && !shift && !alt) {
       //ctrl + enter
       // return;
@@ -83,31 +94,59 @@ export default class Comment extends React.Component {
       }
     }
     const { img } = projectDetailInfoData
-    const userInfo = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
+    const userInfo = localStorage.getItem('userInfo')
+      ? JSON.parse(localStorage.getItem('userInfo'))
+      : {}
     const { avatar } = userInfo
     const { leftSpaceDivWH = 40 } = this.props
     return (
-      <div className={CommentStyles.out} tabIndex="0" hideFocus={true} style={{ outline: 0, }} onClick={this.stopUp.bind(this)} onMouseDown={this.stopUp.bind(this)}>
+      <div
+        className={CommentStyles.out}
+        tabIndex="0"
+        hideFocus={true}
+        style={{ outline: 0 }}
+        onClick={this.stopUp.bind(this)}
+        onMouseDown={this.stopUp.bind(this)}
+      >
         <div>
           {avatar ? (
-            <img src={avatar} className={CommentStyles.avartarImg} style={{ width: leftSpaceDivWH, height: leftSpaceDivWH }} />
+            <img
+              src={avatar}
+              className={CommentStyles.avartarImg}
+              style={{ width: leftSpaceDivWH, height: leftSpaceDivWH }}
+            />
           ) : (
-              <div style={{ width: 26, height: 26, borderRadius: 26, backgroundColor: '#f5f5f5', textAlign: 'center' }}>
-                <Icon type={'user'} style={{ fontSize: 16, marginTop: 4, color: '#8c8c8c' }} />
-              </div>
-            )}
+            <div
+              style={{
+                width: 26,
+                height: 26,
+                borderRadius: 26,
+                backgroundColor: '#f5f5f5',
+                textAlign: 'center'
+              }}
+            >
+              <Icon
+                type={'user'}
+                style={{ fontSize: 16, marginTop: 4, color: '#8c8c8c' }}
+              />
+            </div>
+          )}
         </div>
         {/*<Dragger {...props} >*/}
         <div className={CommentStyles.right}>
           <div className={CommentStyles.comment}>
-            <textarea value={this.state.text} onChange={this.texAreaChange.bind(this)} minRows={1} onKeyDown={this.handlerMultiEnter.bind(this)} maxRows={1} className={CommentStyles.textArea}></textarea>
+            <textarea
+              value={this.state.text}
+              onChange={this.texAreaChange.bind(this)}
+              minRows={1}
+              onKeyDown={this.handlerMultiEnter.bind(this)}
+              maxRows={1}
+              className={CommentStyles.textArea}
+            ></textarea>
           </div>
         </div>
         {/*</Dragger>*/}
       </div>
-
     )
   }
 }
-
-

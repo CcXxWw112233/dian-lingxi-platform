@@ -1,6 +1,6 @@
 //添加里程碑负责人
-import request from "../../utils/requestAxios";
-import {REQUEST_DOMAIN_BOARD} from "../../globalset/js/constant";
+import request from '../../utils/requestAxios'
+import { REQUEST_DOMAIN_BOARD } from '../../globalset/js/constant'
 
 //获取公共弹窗的评论列表
 export async function getPublicModalDetailCommentList(params) {

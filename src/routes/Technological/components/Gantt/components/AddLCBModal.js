@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import {
   Modal,
   Input,
@@ -9,18 +9,21 @@ import {
   Tooltip,
   notification,
   DatePicker
-} from 'antd';
-import styles from './../../../components/Workbench/CardContent/Modal/AddTaskModal.less';
-import { connect } from 'dva';
+} from 'antd'
+import styles from './../../../components/Workbench/CardContent/Modal/AddTaskModal.less'
+import { connect } from 'dva'
 import {
   REQUEST_DOMAIN_BOARD,
   UPLOAD_FILE_SIZE
-} from './../../../../../globalset/js/constant';
-import { deleteUploadFile, getCurrentSelectedProjectMembersList } from './../../../../../services/technological/workbench';
-import DropdownSelectWithSearch from './../../../components/Workbench/CardContent/DropdownSelectWithSearch/index';
-import DropdownMultipleSelectWithSearch from './../../../components/Workbench/CardContent/DropdownMultipleSelectWithSearch/index';
-import DateRangePicker from './../../../components/Workbench/CardContent/DateRangePicker/index';
-import Cookies from 'js-cookie';
+} from './../../../../../globalset/js/constant'
+import {
+  deleteUploadFile,
+  getCurrentSelectedProjectMembersList
+} from './../../../../../services/technological/workbench'
+import DropdownSelectWithSearch from './../../../components/Workbench/CardContent/DropdownSelectWithSearch/index'
+import DropdownMultipleSelectWithSearch from './../../../components/Workbench/CardContent/DropdownMultipleSelectWithSearch/index'
+import DateRangePicker from './../../../components/Workbench/CardContent/DateRangePicker/index'
+import Cookies from 'js-cookie'
 import moment from 'moment'
 
 import {
@@ -30,16 +33,19 @@ import {
   PROJECT_FLOWS_FLOW_CREATE,
   PROJECT_TEAM_CARD_CREATE,
   PROJECT_TEAM_BOARD_MILESTONE
-} from '../../../../../globalset/js/constant';
-import { timestampToTimeNormal, timeToTimestamp } from "../../../../../utils/util";
+} from '../../../../../globalset/js/constant'
+import {
+  timestampToTimeNormal,
+  timeToTimestamp
+} from '../../../../../utils/util'
 import globalStyles from '../../../../../globalset/css/globalClassName.less'
-import { checkIsHasPermissionInBoard } from '@/utils/businessFunction';
+import { checkIsHasPermissionInBoard } from '@/utils/businessFunction'
 const taskTypeToName = {
   RESPONSIBLE_TASK: 'Tasks',
   EXAMINE_PROGRESS: 'Flows',
   MEETIMG_ARRANGEMENT: 'Tasks',
   MY_DOCUMENT: 'Files'
-};
+}
 /* eslint-disable */
 @connect(({ technological: { datas: { userBoardPermissions } }, }) => ({ userBoardPermissions }))
 class AddTaskModal extends Component {

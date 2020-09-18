@@ -1,15 +1,15 @@
 import React from 'react'
 import indexStyles from './index.less'
 import { Input, Checkbox, Select, InputNumber } from 'antd'
-import { connect } from 'dva';
+import { connect } from 'dva'
 
-const Option = Select.Option;
+const Option = Select.Option
 
 @connect(mapStateToProps)
 export default class EditFormThree_One extends React.Component {
   updateEdit(data, key) {
     const { itemKey } = this.props
-    const { processEditDatas = [], processCurrentEditStep = 0, } = this.props
+    const { processEditDatas = [], processCurrentEditStep = 0 } = this.props
     const { form_data = [] } = processEditDatas[processCurrentEditStep]
     form_data[itemKey][key] = data.value
     this.props.updateEdit({ value: form_data }, 'form_data')
@@ -30,7 +30,11 @@ export default class EditFormThree_One extends React.Component {
     this.updateEdit({ value: value }, 'verification_rule')
   }
   deleteItemForm() {
-    const { processEditDatas = [], processCurrentEditStep = 0, dispatch } = this.props
+    const {
+      processEditDatas = [],
+      processCurrentEditStep = 0,
+      dispatch
+    } = this.props
     const { form_data = [] } = processEditDatas[processCurrentEditStep]
     const { itemKey } = this.props
     let new_processEditDatas = [...processEditDatas]
@@ -48,11 +52,20 @@ export default class EditFormThree_One extends React.Component {
     const { processEditDatas = [], processCurrentEditStep = 0 } = this.props
     const { form_data = [] } = processEditDatas[processCurrentEditStep]
     const { itemKey } = this.props
-    const { property_name, default_value, verification_rule, val_length, is_required, } = form_data[itemKey]
+    const {
+      property_name,
+      default_value,
+      verification_rule,
+      val_length,
+      is_required
+    } = form_data[itemKey]
 
     return (
       <div className={indexStyles.EditFormThreeOneOut}>
-        <div className={indexStyles.EditFormThreeOneOut_delete} onClick={this.deleteItemForm.bind(this)}>
+        <div
+          className={indexStyles.EditFormThreeOneOut_delete}
+          onClick={this.deleteItemForm.bind(this)}
+        >
           <div></div>
         </div>
         <div className={indexStyles.EditFormThreeOneOut_form}>
@@ -60,15 +73,28 @@ export default class EditFormThree_One extends React.Component {
           <div className={indexStyles.EditFormThreeOneOut_form_right}>
             <div className={indexStyles.EditFormThreeOneOutItem}>
               <p>标题</p>
-              <Input value={property_name} style={{ width: 68, height: 24 }} onChange={this.propertyNameChange.bind(this)} />
+              <Input
+                value={property_name}
+                style={{ width: 68, height: 24 }}
+                onChange={this.propertyNameChange.bind(this)}
+              />
             </div>
             <div className={indexStyles.EditFormThreeOneOutItem}>
               <p>默认填写</p>
-              <Input value={default_value} style={{ width: 144, height: 24 }} onChange={this.defaultValueChange.bind(this)} />
+              <Input
+                value={default_value}
+                style={{ width: 144, height: 24 }}
+                onChange={this.defaultValueChange.bind(this)}
+              />
             </div>
             <div className={indexStyles.EditFormThreeOneOutItem}>
               <p>校验规则</p>
-              <Select value={verification_rule} style={{ width: 106 }} size={'small'} onChange={this.verificationRuleChange.bind(this)}>
+              <Select
+                value={verification_rule}
+                style={{ width: 106 }}
+                size={'small'}
+                onChange={this.verificationRuleChange.bind(this)}
+              >
                 <Option value="">不校验格式</Option>
                 <Option value="mobile">手机号码</Option>
                 <Option value="tel">座机</Option>
@@ -84,31 +110,39 @@ export default class EditFormThree_One extends React.Component {
             </div>
             <div className={indexStyles.EditFormThreeOneOutItem}>
               <p>长度</p>
-              <InputNumber min={1} value={Number(val_length)} onChange={this.valLengthChange.bind(this)} size={'small'} style={{ width: 46 }} />
+              <InputNumber
+                min={1}
+                value={Number(val_length)}
+                onChange={this.valLengthChange.bind(this)}
+                size={'small'}
+                style={{ width: 46 }}
+              />
               {/*<Input style={{width: 36, height: 24}}/>*/}
             </div>
-            <div className={indexStyles.EditFormThreeOneOutItem} style={{ textAlign: 'center' }}>
+            <div
+              className={indexStyles.EditFormThreeOneOutItem}
+              style={{ textAlign: 'center' }}
+            >
               <p>必填</p>
-              <Checkbox onChange={this.isRequiredCheck.bind(this)} checked={is_required === '1'} />
+              <Checkbox
+                onChange={this.isRequiredCheck.bind(this)}
+                checked={is_required === '1'}
+              />
             </div>
           </div>
         </div>
       </div>
     )
   }
-
 }
 
 function mapStateToProps({
   projectDetailProcess: {
-    datas: {
-      processEditDatas = [],
-      processCurrentEditStep = 0,
-    }
-  },
+    datas: { processEditDatas = [], processCurrentEditStep = 0 }
+  }
 }) {
   return {
     processEditDatas,
-    processCurrentEditStep,
+    processCurrentEditStep
   }
 }

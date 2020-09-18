@@ -1,18 +1,38 @@
 import React from 'react'
 import DrawDetailInfoStyle from './DrawDetailInfo.less'
-import { Icon, Menu, Dropdown, Tooltip, Modal, Checkbox, Card, Progress, Input, Button, message } from 'antd'
+import {
+  Icon,
+  Menu,
+  Dropdown,
+  Tooltip,
+  Modal,
+  Checkbox,
+  Card,
+  Progress,
+  Input,
+  Button,
+  message
+} from 'antd'
 import ShowAddMenberModal from '../../Project/ShowAddMenberModal'
 import {
-  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN,
-  PROJECT_TEAM_BOARD_EDIT, PROJECT_TEAM_BOARD_MEMBER
-} from "../../../../../globalset/js/constant";
-import { checkIsHasPermissionInBoard, isHasOrgMemberQueryPermission } from "../../../../../utils/businessFunction";
+  MESSAGE_DURATION_TIME,
+  NOT_HAS_PERMISION_COMFIRN,
+  PROJECT_TEAM_BOARD_EDIT,
+  PROJECT_TEAM_BOARD_MEMBER
+} from '../../../../../globalset/js/constant'
+import {
+  checkIsHasPermissionInBoard,
+  isHasOrgMemberQueryPermission
+} from '../../../../../utils/businessFunction'
 import NoPermissionUserCard from './../../../../../components/NoPermissionUserCard/index'
 import UserCard from './../../../../../components/UserCard/index'
-import { connect } from "dva/index";
-import { getGlobalData } from "../../../../../utils/businessFunction";
-import { isApiResponseOk } from '../../../../../utils/handleResponseData';
-import { organizationInviteWebJoin, commInviteWebJoin, } from '../../../../../services/technological/index'
+import { connect } from 'dva/index'
+import { getGlobalData } from '../../../../../utils/businessFunction'
+import { isApiResponseOk } from '../../../../../utils/handleResponseData'
+import {
+  organizationInviteWebJoin,
+  commInviteWebJoin
+} from '../../../../../services/technological/index'
 
 const TextArea = Input.TextArea
 
@@ -20,7 +40,6 @@ const TextArea = Input.TextArea
 const detaiDescription = '添加简介'
 @connect(mapStateToProps)
 export default class DrawDetailInfo extends React.Component {
-
   state = {
     isSoundsEvrybody: false, //confirm是否通知项目所有人
     isSoundsEvrybody_2: false, //edit是否通知项目所有人
@@ -68,12 +87,14 @@ export default class DrawDetailInfo extends React.Component {
     Modal.confirm({
       title: '确认将他移出项目吗？',
       zIndex: 2000,
-      content: <div style={{ color: 'rgba(0,0,0, .8)', fontSize: 14 }}>
-        <span >退出后将无法获取该项目的相关动态</span>
-        {/*<div style={{marginTop:20,}}>*/}
-        {/*<Checkbox style={{color:'rgba(0,0,0, .8)',fontSize: 14, }} onChange={this.setIsSoundsEvrybody.bind(this)}>通知项目所有参与人</Checkbox>*/}
-        {/*</div>*/}
-      </div>,
+      content: (
+        <div style={{ color: 'rgba(0,0,0, .8)', fontSize: 14 }}>
+          <span>退出后将无法获取该项目的相关动态</span>
+          {/*<div style={{marginTop:20,}}>*/}
+          {/*<Checkbox style={{color:'rgba(0,0,0, .8)',fontSize: 14, }} onChange={this.setIsSoundsEvrybody.bind(this)}>通知项目所有参与人</Checkbox>*/}
+          {/*</div>*/}
+        </div>
+      ),
       okText: '确认',
       cancelText: '取消',
       onOk() {
@@ -85,7 +106,7 @@ export default class DrawDetailInfo extends React.Component {
           }
         })
       }
-    });
+    })
   }
   //出现confirm-------------end
 
@@ -143,11 +164,15 @@ export default class DrawDetailInfo extends React.Component {
     })
   }
 
-
   // 邀请人进项目
-  addMenbersInProject = (data) => {
-    const { invitationType, invitationId, rela_Condition, dispatch } = this.props
-    const temp_ids = data.users.split(",")
+  addMenbersInProject = data => {
+    const {
+      invitationType,
+      invitationId,
+      rela_Condition,
+      dispatch
+    } = this.props
+    const temp_ids = data.users.split(',')
     const invitation_org = localStorage.getItem('OrganizationId')
     organizationInviteWebJoin({
       _organization_id: invitation_org,
@@ -160,7 +185,7 @@ export default class DrawDetailInfo extends React.Component {
           role_id: res.data.role_id,
           type: invitationType,
           users: res.data.users,
-          rela_condition: rela_Condition,
+          rela_condition: rela_Condition
         }).then(res => {
           if (isApiResponseOk(res)) {
             const { projectDetailInfoData = {} } = this.props
@@ -206,16 +231,39 @@ export default class DrawDetailInfo extends React.Component {
     })
   }
 
-
   render() {
     const { editDetaiDescription, detaiDescriptionValue } = this.state
-    const { projectInfoDisplay, isInitEntry, projectDetailInfoData = {}, projectRoles = [], invitationId, invitationType } = this.props
-    let { board_id, board_name, data = [], description, residue_quantity, realize_quantity } = projectDetailInfoData //data是参与人列表
+    const {
+      projectInfoDisplay,
+      isInitEntry,
+      projectDetailInfoData = {},
+      projectRoles = [],
+      invitationId,
+      invitationType
+    } = this.props
+    let {
+      board_id,
+      board_name,
+      data = [],
+      description,
+      residue_quantity,
+      realize_quantity
+    } = projectDetailInfoData //data是参与人列表
 
     data = data || []
-    const avatarList = data.concat([1])//[1,2,3,4,5,6,7,8,9]//长度再加一
-    const manImageDropdown = (props) => {
-      const { role_id, role_name = '...', name, email = '...', avatar, mobile = '...', user_id, organization = '...', we_chat = '...' } = props
+    const avatarList = data.concat([1]) //[1,2,3,4,5,6,7,8,9]//长度再加一
+    const manImageDropdown = props => {
+      const {
+        role_id,
+        role_name = '...',
+        name,
+        email = '...',
+        avatar,
+        mobile = '...',
+        user_id,
+        organization = '...',
+        we_chat = '...'
+      } = props
       // if (!isHasOrgMemberQueryPermission()) {
       //   return <NoPermissionUserCard avatar={avatar} full_name={role_name} />
       // }
@@ -225,15 +273,29 @@ export default class DrawDetailInfo extends React.Component {
       // return (<UserCard avatar={avatar} email={email} name={name} mobile={mobile} role_name={''} />)
       return (
         <div className={DrawDetailInfoStyle.manImageDropdown}>
-          <div style={{position: 'relative'}} className={DrawDetailInfoStyle.manImageDropdown_top}>
+          <div
+            style={{ position: 'relative' }}
+            className={DrawDetailInfoStyle.manImageDropdown_top}
+          >
             <div className={DrawDetailInfoStyle.left}>
               {avatar ? (
                 <img src={avatar} />
               ) : (
-                  <div style={{ width: 32, height: 32, borderRadius: 32, backgroundColor: '#f2f2f2', textAlign: 'center' }}>
-                    <Icon type={'user'} style={{ fontSize: 20, color: '#8c8c8c', marginTop: 9 }} />
-                  </div>
-                )}
+                <div
+                  style={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: 32,
+                    backgroundColor: '#f2f2f2',
+                    textAlign: 'center'
+                  }}
+                >
+                  <Icon
+                    type={'user'}
+                    style={{ fontSize: 20, color: '#8c8c8c', marginTop: 9 }}
+                  />
+                </div>
+              )}
             </div>
             <div className={DrawDetailInfoStyle.right}>
               <div className={DrawDetailInfoStyle.name}>{name || '佚名'}</div>
@@ -245,12 +307,20 @@ export default class DrawDetailInfo extends React.Component {
                 </div>
               </Tooltip>
             </div>
-            {role_id === '3' ? ('') : (
-              <Dropdown getPopupContainer={triggerNode => triggerNode.parentNode} overlay={manOperateMenu(props)}>
-                <div className={DrawDetailInfoStyle.manImageDropdown_top_operate}><Icon type="ellipsis" theme="outlined" /></div>
+            {role_id === '3' ? (
+              ''
+            ) : (
+              <Dropdown
+                getPopupContainer={triggerNode => triggerNode.parentNode}
+                overlay={manOperateMenu(props)}
+              >
+                <div
+                  className={DrawDetailInfoStyle.manImageDropdown_top_operate}
+                >
+                  <Icon type="ellipsis" theme="outlined" />
+                </div>
               </Dropdown>
             )}
-
           </div>
           <div className={DrawDetailInfoStyle.manImageDropdown_middle}>
             <div className={DrawDetailInfoStyle.detailItem}>
@@ -280,15 +350,22 @@ export default class DrawDetailInfo extends React.Component {
         </div>
       )
     }
-    const manOperateMenu = (props) => {
+    const manOperateMenu = props => {
       const { is_visitor } = props
       return (
-        <Menu getPopupContainer={triggerNode => triggerNode.parentNode} style={{width: '92px'}} onClick={this.handleSetRoleMenuClick.bind(this, props)}>
+        <Menu
+          getPopupContainer={triggerNode => triggerNode.parentNode}
+          style={{ width: '92px' }}
+          onClick={this.handleSetRoleMenuClick.bind(this, props)}
+        >
           {checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER) ? (
             <Menu.SubMenu title="设置角色" key={'setRole'}>
               {projectRoles.map((value, key) => {
                 return (
-                  <Menu.Item key={`role_${value.id}`} style={{ textAlign: 'center', padding: 0, margin: 0 }}>
+                  <Menu.Item
+                    key={`role_${value.id}`}
+                    style={{ textAlign: 'center', padding: 0, margin: 0 }}
+                  >
                     <div className={DrawDetailInfoStyle.elseProjectMemu}>
                       {value.name}
                     </div>
@@ -296,10 +373,15 @@ export default class DrawDetailInfo extends React.Component {
                 )
               })}
             </Menu.SubMenu>
-          ) : ('')}
+          ) : (
+            ''
+          )}
 
           {checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER) && (
-            <Menu.Item key={'removeMember'} style={{ textAlign: 'center', padding: 0, margin: 0 }}>
+            <Menu.Item
+              key={'removeMember'}
+              style={{ textAlign: 'center', padding: 0, margin: 0 }}
+            >
               <div className={DrawDetailInfoStyle.elseProjectDangerMenu}>
                 移除成员
               </div>
@@ -310,18 +392,36 @@ export default class DrawDetailInfo extends React.Component {
     }
     const EditArea = (
       <div>
-        <TextArea defaultValue={description || detaiDescriptionValue} autosize={true} className={DrawDetailInfoStyle.editTextArea} onChange={this.textAreaChange.bind(this)} />
+        <TextArea
+          defaultValue={description || detaiDescriptionValue}
+          autosize={true}
+          className={DrawDetailInfoStyle.editTextArea}
+          onChange={this.textAreaChange.bind(this)}
+        />
         <div style={{ textAlign: 'right' }}>
           {/*<div>*/}
           {/*<Checkbox style={{color: 'rgba(0,0,0, .8)', fontSize: 14, marginTop: 10 }} onChange={this.setEditIsSoundsEvrybody.bind(this)}>通知项目所有参与人</Checkbox>*/}
           {/*</div>*/}
-          <Button type={'primary'} style={{ fontSize: 14, marginTop: 10 }} onClick={this.editSave.bind(this, board_id)}>保存</Button>
+          <Button
+            type={'primary'}
+            style={{ fontSize: 14, marginTop: 10 }}
+            onClick={this.editSave.bind(this, board_id)}
+          >
+            保存
+          </Button>
         </div>
       </div>
     )
     return (
       <div className={DrawDetailInfoStyle.detailInfoOut}>
-        <div className={projectInfoDisplay ? DrawDetailInfoStyle.detailInfo : DrawDetailInfoStyle.detailInfo_2} style={{ display: isInitEntry ? 'block' : 'none' }}>
+        <div
+          className={
+            projectInfoDisplay
+              ? DrawDetailInfoStyle.detailInfo
+              : DrawDetailInfoStyle.detailInfo_2
+          }
+          style={{ display: isInitEntry ? 'block' : 'none' }}
+        >
           <div className={DrawDetailInfoStyle.top}>
             <div className={DrawDetailInfoStyle.topItem}>
               <div>{residue_quantity || '0'}</div>
@@ -337,40 +437,80 @@ export default class DrawDetailInfo extends React.Component {
             {/*</div>*/}
           </div>
           <div className={DrawDetailInfoStyle.manImageList}>
-            {
-              avatarList.map((value, key) => {
-                if (key < avatarList.length - 1) {
-                  const { avatar, user_id } = value
-                  return (
-                    <div style={{position: 'relative'}} className={DrawDetailInfoStyle.manImageItem} key={key}>
-                      {/*<div className={DrawDetailInfoStyle.delete} onClick={this.confirm.bind(this, { board_id, user_id })}>*/}
-                      {/*<Icon type="close" />*/}
-                      {/*</div>*/}
-                      <Dropdown getPopupContainer={triggerNode => triggerNode.parentNode} overlay={manImageDropdown(value)}>
-                        {avatar ? (<img src={avatar} />) : (
-                          <div style={{ width: 36, height: 36, borderRadius: 36, backgroundColor: '#f2f2f2', textAlign: 'center' }}>
-                            <Icon type={'user'} style={{ fontSize: 20, color: '#8c8c8c', marginTop: 9 }} />
-                          </div>
-                        )
-                        }
-                      </Dropdown>
+            {avatarList.map((value, key) => {
+              if (key < avatarList.length - 1) {
+                const { avatar, user_id } = value
+                return (
+                  <div
+                    style={{ position: 'relative' }}
+                    className={DrawDetailInfoStyle.manImageItem}
+                    key={key}
+                  >
+                    {/*<div className={DrawDetailInfoStyle.delete} onClick={this.confirm.bind(this, { board_id, user_id })}>*/}
+                    {/*<Icon type="close" />*/}
+                    {/*</div>*/}
+                    <Dropdown
+                      getPopupContainer={triggerNode => triggerNode.parentNode}
+                      overlay={manImageDropdown(value)}
+                    >
+                      {avatar ? (
+                        <img src={avatar} />
+                      ) : (
+                        <div
+                          style={{
+                            width: 36,
+                            height: 36,
+                            borderRadius: 36,
+                            backgroundColor: '#f2f2f2',
+                            textAlign: 'center'
+                          }}
+                        >
+                          <Icon
+                            type={'user'}
+                            style={{
+                              fontSize: 20,
+                              color: '#8c8c8c',
+                              marginTop: 9
+                            }}
+                          />
+                        </div>
+                      )}
+                    </Dropdown>
+                  </div>
+                )
+              } else {
+                return (
+                  checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER) && (
+                    <div
+                      className={DrawDetailInfoStyle.addManImageItem}
+                      key={key}
+                      onClick={this.setShowAddMenberModalVisibile.bind(this)}
+                    >
+                      <Icon
+                        type="plus"
+                        style={{
+                          color: '#8c8c8c',
+                          fontSize: 20,
+                          fontWeight: 'bold',
+                          marginTop: 8
+                        }}
+                      />
                     </div>
                   )
-                } else {
-                  return checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER) && (
-                    <div className={DrawDetailInfoStyle.addManImageItem} key={key} onClick={this.setShowAddMenberModalVisibile.bind(this)}>
-                      <Icon type="plus" style={{ color: '#8c8c8c', fontSize: 20, fontWeight: 'bold', marginTop: 8 }} />
-                    </div>
-                  )
-                }
-              })
-            }
+                )
+              }
+            })}
           </div>
           {!editDetaiDescription ? (
-            <div className={DrawDetailInfoStyle.Bottom} onClick={this.setEditDetaiDescriptionShow.bind(this)}>
+            <div
+              className={DrawDetailInfoStyle.Bottom}
+              onClick={this.setEditDetaiDescriptionShow.bind(this)}
+            >
               {description || detaiDescriptionValue}
             </div>
-          ) : (EditArea)}
+          ) : (
+            EditArea
+          )}
         </div>
         <ShowAddMenberModal
           addMenbersInProject={this.addMenbersInProject}
@@ -378,7 +518,11 @@ export default class DrawDetailInfo extends React.Component {
           invitationId={invitationId}
           invitationType={invitationType}
           invitationOrg={getGlobalData('aboutBoardOrganizationId')}
-          modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)} />
+          modalVisible={this.state.ShowAddMenberModalVisibile}
+          setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(
+            this
+          )}
+        />
       </div>
     )
   }
@@ -395,11 +539,8 @@ function mapStateToProps({
     }
   },
   technological: {
-    datas: {
-      userBoardPermissions
-    }
+    datas: { userBoardPermissions }
   }
-
 }) {
   return {
     projectInfoDisplay,

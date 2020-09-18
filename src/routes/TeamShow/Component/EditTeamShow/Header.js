@@ -2,12 +2,12 @@ import React from 'react'
 import indexStyle from './index.less'
 import { Icon, Menu, Dropdown, Tooltip, Button } from 'antd'
 import SaveModal from './SaveModal'
-import {color_4} from '../../../../globalset/js/styles'
+import { color_4 } from '../../../../globalset/js/styles'
 import BraftEditor from 'braft-editor'
 
 export default class Header extends React.Component {
-  state={
-    saveModalVisible: false,
+  state = {
+    saveModalVisible: false
   }
   //团队展示发布编辑
   editTeamShowPreview() {
@@ -17,10 +17,10 @@ export default class Header extends React.Component {
   }
   editTeamShowSave() {
     this.props.updateDatas({
-      editTeamShowSave: true,
+      editTeamShowSave: true
     })
     this.setState({
-      saveModalVisible: true,
+      saveModalVisible: true
     })
   }
   setSaveModalVisible(bool) {
@@ -33,7 +33,7 @@ export default class Header extends React.Component {
       show_id: currentTeamShowShowId
     })
   }
-  currentOrgTeamShowListMenuClick({key}) {
+  currentOrgTeamShowListMenuClick({ key }) {
     switch (key) {
       case 'add':
         this.props.updateDatas({
@@ -46,7 +46,7 @@ export default class Header extends React.Component {
           currentTeamShowShowId: '',
           currentTeamShowName: '',
           currentTeamShowId: '',
-          currentTeamShowTypeId: '',
+          currentTeamShowTypeId: ''
         })
         break
       default:
@@ -62,44 +62,77 @@ export default class Header extends React.Component {
 
   render() {
     const { saveModalVisible } = this.state
-    const { datas: {currentOrgTeamShowList = [], operateType, currentTeamShowShowId, currentTeamShowName}} = this.props.model
-    const menu = (list) => (
+    const {
+      datas: {
+        currentOrgTeamShowList = [],
+        operateType,
+        currentTeamShowShowId,
+        currentTeamShowName
+      }
+    } = this.props.model
+    const menu = list => (
       <Menu onClick={this.currentOrgTeamShowListMenuClick.bind(this)}>
         {list.map((value, key) => {
-          const { name, id } =value
-          return (
-            <Menu.Item key={id}>
-              {name}
-            </Menu.Item>
-          )
+          const { name, id } = value
+          return <Menu.Item key={id}>{name}</Menu.Item>
         })}
         <Menu.Item key={'add'}>
-          <div style={{height: 30, lineHeight: '30px', textAlign: 'center'}}>
-            <Icon type={'plus'} style={{color: color_4}} />
+          <div style={{ height: 30, lineHeight: '30px', textAlign: 'center' }}>
+            <Icon type={'plus'} style={{ color: color_4 }} />
           </div>
         </Menu.Item>
       </Menu>
-    );
+    )
 
     return (
       <div className={indexStyle.out}>
         <div className={indexStyle.contain}>
           <Dropdown overlay={menu(currentOrgTeamShowList)}>
             <div className={indexStyle.left}>
-              {operateType === '1'? '编辑新增': currentTeamShowName || '编辑新增'} <Icon type={'down'} />
+              {operateType === '1'
+                ? '编辑新增'
+                : currentTeamShowName || '编辑新增'}{' '}
+              <Icon type={'down'} />
             </div>
           </Dropdown>
           <div className={indexStyle.right}>
-            <div style={{display: 'flex', alignItems: 'center', }}>
-              {operateType === '2'? (
-                <Button style={{height: 24, color: '#F5222D', background: 'rgba(0,0,0,0.04)', border: '1px solid rgba(217,217,217,1)'}} onClick={this.deleteTeam.bind(this, currentTeamShowShowId)}>删除</Button>
-              ) : ('')}
-              <Button style={{height: 24, marginLeft: 14}} onClick={this.editTeamShowPreview.bind(this)}>预览</Button>
-              <Button type={'primary'} style={{height: 24, marginLeft: 14}} onClick={this.editTeamShowSave.bind(this)}>保存</Button>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              {operateType === '2' ? (
+                <Button
+                  style={{
+                    height: 24,
+                    color: '#F5222D',
+                    background: 'rgba(0,0,0,0.04)',
+                    border: '1px solid rgba(217,217,217,1)'
+                  }}
+                  onClick={this.deleteTeam.bind(this, currentTeamShowShowId)}
+                >
+                  删除
+                </Button>
+              ) : (
+                ''
+              )}
+              <Button
+                style={{ height: 24, marginLeft: 14 }}
+                onClick={this.editTeamShowPreview.bind(this)}
+              >
+                预览
+              </Button>
+              <Button
+                type={'primary'}
+                style={{ height: 24, marginLeft: 14 }}
+                onClick={this.editTeamShowSave.bind(this)}
+              >
+                保存
+              </Button>
             </div>
           </div>
         </div>
-        <SaveModal {...this.props} saveModalVisible={saveModalVisible} setSaveModalVisible={this.setSaveModalVisible.bind(this)} />
+        <SaveModal
+          {...this.props}
+          saveModalVisible={saveModalVisible}
+          setSaveModalVisible={this.setSaveModalVisible.bind(this)}
+        />
       </div>
     )
   }

@@ -4,8 +4,8 @@ import { Icon, Button, DatePicker, Dropdown, Avatar, Tooltip } from 'antd'
 import DCMenuItemOne from './DCMenuItemOne'
 import DCAddChirdrenTaskItem from './DCAddChirdrenTaskItem'
 import { timeToTimestamp } from '../../../../../utils/util'
-import { currentNounPlanFilterName } from "../../../../../utils/businessFunction";
-import { TASKS } from "../../../../../globalset/js/constant";
+import { currentNounPlanFilterName } from '../../../../../utils/businessFunction'
+import { TASKS } from '../../../../../globalset/js/constant'
 import globalStyles from '../../../../../globalset/css/globalClassName.less'
 import { connect } from 'dva'
 
@@ -20,7 +20,7 @@ export default class DCAddChirdrenTask extends React.Component {
     name: '',
     executors: [],
     saveDisabled: true,
-    isCanBlurDo: true, //input失焦是否可以触发设置区域隐藏标志
+    isCanBlurDo: true //input失焦是否可以触发设置区域隐藏标志
   }
   datePickerChange(date, dateString) {
     this.setState({
@@ -35,7 +35,8 @@ export default class DCAddChirdrenTask extends React.Component {
     dispatch({
       type: 'projectDetailTask/removeProjectMenbers',
       payload: {
-        board_id, user_id: id
+        board_id,
+        user_id: id
       }
     })
   }
@@ -65,8 +66,15 @@ export default class DCAddChirdrenTask extends React.Component {
 
   //更新父级任务列表的当前任务
   updateParentTaskList(name, value) {
-    const { taskGroupListIndex, taskGroupListIndex_index, taskGroupList = [], dispatch } = this.props
-    taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index][name] = value
+    const {
+      taskGroupListIndex,
+      taskGroupListIndex_index,
+      taskGroupList = [],
+      dispatch
+    } = this.props
+    taskGroupList[taskGroupListIndex]['card_data'][taskGroupListIndex_index][
+      name
+    ] = value
     dispatch({
       type: 'projectDetailTask/updateDatasTask',
       payload: {
@@ -77,7 +85,13 @@ export default class DCAddChirdrenTask extends React.Component {
 
   //添加子任务
   addChirldTask() {
-    const { drawContent = {}, projectDetailInfoData = {}, taskGroupListIndex, taskGroupListIndex_index, dispatch } = this.props
+    const {
+      drawContent = {},
+      projectDetailInfoData = {},
+      taskGroupListIndex,
+      taskGroupListIndex_index,
+      dispatch
+    } = this.props
     const { card_id, child_data = [], list_id } = drawContent
     const { board_id } = projectDetailInfoData
     const obj = {
@@ -91,7 +105,7 @@ export default class DCAddChirdrenTask extends React.Component {
       card_name: this.state.name,
       taskGroupListIndex,
       taskGroupListIndex_index,
-      length: child_data.length,
+      length: child_data.length
     }
     drawContent['child_data'] && drawContent['child_data'].unshift(obj)
     this.updateParentTaskList('child_data', drawContent['child_data'])
@@ -155,10 +169,10 @@ export default class DCAddChirdrenTask extends React.Component {
     if (!e.target.value) {
       return
     }
-    let code = e.keyCode;
-    let ctrl = e.ctrlKey;
-    let shift = e.shiftKey;
-    let alt = e.altKey;
+    let code = e.keyCode
+    let ctrl = e.ctrlKey
+    let shift = e.shiftKey
+    let alt = e.altKey
     if (code == '10' && ctrl && !shift && !alt) {
       //ctrl + enter
       // return;
@@ -175,15 +189,20 @@ export default class DCAddChirdrenTask extends React.Component {
   }
 
   render() {
-    const { isSelectCalendarIcon, isShowUserCalendar, executors = [] } = this.state
+    const {
+      isSelectCalendarIcon,
+      isShowUserCalendar,
+      executors = []
+    } = this.state
     const { drawContent = {}, projectDetailInfoData = {} } = this.props
     let { child_data = [] } = drawContent
     const { data = [] } = projectDetailInfoData //任务执行人列表
 
-    let executor = {//任务执行人信息
+    let executor = {
+      //任务执行人信息
       user_id: '',
       full_name: '',
-      avatar: '',
+      avatar: ''
     }
     if (executors.length) {
       executor = executors[0]
@@ -195,7 +214,11 @@ export default class DCAddChirdrenTask extends React.Component {
           const { card_id, card_name, due_time, executors = [] } = value
           const { user_id } = executors[0] || {}
           return (
-            <DCAddChirdrenTaskItem chirldTaskItemValue={value} key={`${card_id}-${card_name}-${user_id}-${due_time}`} chirldDataIndex={key} />
+            <DCAddChirdrenTaskItem
+              chirldTaskItemValue={value}
+              key={`${card_id}-${card_name}-${user_id}-${due_time}`}
+              chirldDataIndex={key}
+            />
           )
         })}
         <div className={DrawerContentStyles.contain_7}>
@@ -213,39 +236,98 @@ export default class DCAddChirdrenTask extends React.Component {
                   value={this.state.name}
                 />
               </div>
-              <div style={{ display: isShowUserCalendar ? 'flex' : 'none' }} onMouseOver={this.setAreaMouseOver.bind(this)} onMouseLeave={this.setAreaMouseLeave.bind(this)}>
-                <Dropdown overlay={
-                  <DCMenuItemOne
-                    deleteExcutor={this.deleteExcutor.bind(this)}
-                    currentExecutor={executor}
-                    execusorList={data}
-                    setList={this.setList.bind(this)} chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(this)}
-                    isInvitation={false} />
-                }>
+              <div
+                style={{ display: isShowUserCalendar ? 'flex' : 'none' }}
+                onMouseOver={this.setAreaMouseOver.bind(this)}
+                onMouseLeave={this.setAreaMouseLeave.bind(this)}
+              >
+                <Dropdown
+                  overlay={
+                    <DCMenuItemOne
+                      deleteExcutor={this.deleteExcutor.bind(this)}
+                      currentExecutor={executor}
+                      execusorList={data}
+                      setList={this.setList.bind(this)}
+                      chirldrenTaskChargeChange={this.chirldrenTaskChargeChange.bind(
+                        this
+                      )}
+                      isInvitation={false}
+                    />
+                  }
+                >
                   {/* <Dropdown overlay={
                   <MenuSearchPartner />
                 }> */}
                   {executor.user_id ? (
                     <Tooltip title={executor.full_name || '佚名'}>
                       {/*{imgOrAvatar(executor.avatar)}*/}
-                      <Avatar size={16} src={executor.avatar} style={{ fontSize: 14, margin: '4px 12px 0 12px', }}>{executor.full_name.substring(0, 1) || '佚'}</Avatar>
+                      <Avatar
+                        size={16}
+                        src={executor.avatar}
+                        style={{ fontSize: 14, margin: '4px 12px 0 12px' }}
+                      >
+                        {executor.full_name.substring(0, 1) || '佚'}
+                      </Avatar>
                     </Tooltip>
                   ) : (
-                      <div>
-                        {/*<Icon type="user" style={{fontSize: 16,margin:'0 12px',marginTop: 2,cursor: 'pointer'}} className={DrawerContentStyles.userIconNormal}/>*/}
-                        <div className={`${globalStyles.authTheme} ${DrawerContentStyles.userIconNormal}`} style={{ fontSize: 16, margin: '0 12px', cursor: 'pointer' }}>&#xe70c;</div>
+                    <div>
+                      {/*<Icon type="user" style={{fontSize: 16,margin:'0 12px',marginTop: 2,cursor: 'pointer'}} className={DrawerContentStyles.userIconNormal}/>*/}
+                      <div
+                        className={`${globalStyles.authTheme} ${DrawerContentStyles.userIconNormal}`}
+                        style={{
+                          fontSize: 16,
+                          margin: '0 12px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        &#xe70c;
                       </div>
-                    )}
+                    </div>
+                  )}
                   {/*<Icon type="user" style={{fontSize: 16,margin:'0 12px',cursor: 'pointer'}} className={!isSelectUserIcon ? DrawerContentStyles.userIconNormal: DrawerContentStyles.userIconSelected}/>*/}
                 </Dropdown>
-                <div className={`${globalStyles.authTheme} ${!isSelectCalendarIcon ? DrawerContentStyles.calendarIconNormal : DrawerContentStyles.calendarIconSelected}`} style={{ fontSize: 16, marginRight: '12px', cursor: 'pointer' }}>&#xe709;</div>
+                <div
+                  className={`${globalStyles.authTheme} ${
+                    !isSelectCalendarIcon
+                      ? DrawerContentStyles.calendarIconNormal
+                      : DrawerContentStyles.calendarIconSelected
+                  }`}
+                  style={{
+                    fontSize: 16,
+                    marginRight: '12px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  &#xe709;
+                </div>
                 {/*<Icon type="calendar" style={{fontSize: 16, marginRight: 12 ,cursor: 'pointer'}} className={!isSelectCalendarIcon?DrawerContentStyles.calendarIconNormal:DrawerContentStyles.calendarIconSelected}/>*/}
-                <DatePicker onChange={this.datePickerChange.bind(this)}
+                <DatePicker
+                  onChange={this.datePickerChange.bind(this)}
                   placeholder={'选择截止日期'}
                   format="YYYY/MM/DD HH:mm"
                   showTime={{ format: 'HH:mm' }}
-                  style={{ opacity: 0, width: 16, background: '#000000', position: 'absolute', right: 50, zIndex: 2 }} />
-                <Button disabled={this.state.saveDisabled} onClick={this.addChirldTask.bind(this)} type={'primary'} style={{ width: 40, height: 20, padding: '0 5px', fontSize: 12, }}>保存</Button>
+                  style={{
+                    opacity: 0,
+                    width: 16,
+                    background: '#000000',
+                    position: 'absolute',
+                    right: 50,
+                    zIndex: 2
+                  }}
+                />
+                <Button
+                  disabled={this.state.saveDisabled}
+                  onClick={this.addChirldTask.bind(this)}
+                  type={'primary'}
+                  style={{
+                    width: 40,
+                    height: 20,
+                    padding: '0 5px',
+                    fontSize: 12
+                  }}
+                >
+                  保存
+                </Button>
               </div>
             </div>
           </div>
@@ -261,20 +343,18 @@ function mapStateToProps({
       drawContent = {},
       taskGroupListIndex = 0,
       taskGroupListIndex_index = 0,
-      taskGroupList = [],
+      taskGroupList = []
     }
   },
   projectDetail: {
-    datas: {
-      projectDetailInfoData = {},
-    }
-  },
+    datas: { projectDetailInfoData = {} }
+  }
 }) {
   return {
     drawContent,
     projectDetailInfoData,
     taskGroupListIndex,
     taskGroupListIndex_index,
-    taskGroupList,
+    taskGroupList
   }
 }

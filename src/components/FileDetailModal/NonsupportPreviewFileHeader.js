@@ -13,16 +13,18 @@ export default class NonsupportPreviewFileHeader extends Component {
           {/* 这里是头部图标样式 */}
           <div className={headerStyles.header_icon}>
             <span>
-              <i className={`${globalStyles.authTheme} ${headerStyles.title_icon}`}>&#xe691;</i>
+              <i
+                className={`${globalStyles.authTheme} ${headerStyles.title_icon}`}
+              >
+                &#xe691;
+              </i>
             </span>
             <span style={{ fontSize: '14px' }}>
               {currentNounPlanFilterName(FILES)}
             </span>
           </div>
           {/* 这里是面包屑路径 */}
-          <div>
-            {this.props.filePreviewCurrentName || ''}
-          </div>
+          <div>{this.props.filePreviewCurrentName || ''}</div>
         </div>
         {/* 这里是头部左边 E */}
       </div>

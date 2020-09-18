@@ -1,10 +1,6 @@
 import React from 'react'
-import styles from './index.less';
-import {
-  Avatar,
-  Icon,
-  Tooltip
-} from 'antd'
+import styles from './index.less'
+import { Avatar, Icon, Tooltip } from 'antd'
 
 export default class AvatarList extends React.Component {
   constructor(props) {
@@ -32,7 +28,7 @@ export default class AvatarList extends React.Component {
   }
   avatar_list_item_style = () => {
     return {
-      border: '1px solid #FFFFFF',
+      border: '1px solid #FFFFFF'
     }
   }
   more_style = () => {
@@ -46,7 +42,11 @@ export default class AvatarList extends React.Component {
   }
   renderAvatar = ({ avatar, name, key }) => {
     const { targetclassname } = this.props
-    const content_style = { ...this.avatar_list_item_style(), ...this.more_style(), marginLeft: key == 0 ? 0 : -(this.getSizeNum() / 2), }
+    const content_style = {
+      ...this.avatar_list_item_style(),
+      ...this.more_style(),
+      marginLeft: key == 0 ? 0 : -(this.getSizeNum() / 2)
+    }
     const img = (
       <img
         data-targetclassname={targetclassname}
@@ -59,7 +59,8 @@ export default class AvatarList extends React.Component {
       <div
         data-targetclassname={targetclassname}
         className={styles.img_avatar}
-        style={{ ...content_style }} >
+        style={{ ...content_style }}
+      >
         {name}
       </div>
     )
@@ -73,10 +74,10 @@ export default class AvatarList extends React.Component {
     const { users = [], targetclassname } = this.props
     return (
       <div className={styles.avatar_list}>
-        {
-          users.map((value, key) => {
-            const { avatar, name, id, user_id } = value
-            return key < 1 && (
+        {users.map((value, key) => {
+          const { avatar, name, id, user_id } = value
+          return (
+            key < 1 && (
               <React.Fragment key={id || user_id}>
                 {this.renderAvatar({ avatar, name, key })}
               </React.Fragment>
@@ -92,15 +93,20 @@ export default class AvatarList extends React.Component {
               //   {name}
               // </Avatar>
             )
-          })
-        }
-        {
-          users.length > 1 && (
-            <div
-              data-targetclassname={targetclassname}
-              className={styles.more_number} style={{ ...this.more_style(), marginLeft: -(this.getSizeNum() / 2) }}>+{users.length - 1}</div>
           )
-        }
+        })}
+        {users.length > 1 && (
+          <div
+            data-targetclassname={targetclassname}
+            className={styles.more_number}
+            style={{
+              ...this.more_style(),
+              marginLeft: -(this.getSizeNum() / 2)
+            }}
+          >
+            +{users.length - 1}
+          </div>
+        )}
       </div>
     )
   }
@@ -108,6 +114,6 @@ export default class AvatarList extends React.Component {
 
 AvatarList.defaultProps = {
   users: [],
-  size: 'default', // defaut / small / large / typeOf size == 'number 
+  size: 'default', // defaut / small / large / typeOf size == 'number
   targetclassname: ''
 }

@@ -1,5 +1,10 @@
 import request from '@/utils/requestAxios'
-import { REQUEST_DOMAIN_WORK_BENCH, REQUEST_DOMAIN_FILE, REQUEST_DOMAIN_BOARD, REQUEST_INTERGFACE_VERSIONN} from "@/globalset/js/constant";
+import {
+  REQUEST_DOMAIN_WORK_BENCH,
+  REQUEST_DOMAIN_FILE,
+  REQUEST_DOMAIN_BOARD,
+  REQUEST_INTERGFACE_VERSIONN
+} from '@/globalset/js/constant'
 // import Cookies from 'js-cookie'
 // import { getGlobalData } from '../../utils/businessFunction';
 
@@ -24,10 +29,11 @@ export async function getProjectList(params) {
     method: 'GET',
     params: {
       // contain_type: '0',
-      _organization_id: params._organization_id || localStorage.getItem('OrganizationId'),
-      ...params,
+      _organization_id:
+        params._organization_id || localStorage.getItem('OrganizationId'),
+      ...params
     }
-  });
+  })
 }
 
 //文件夹树形列表
@@ -35,8 +41,8 @@ export async function getFolderList(params) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/folder`,
     method: 'GET',
-    params,
-  });
+    params
+  })
 }
 
 // 查询文件列表-（只有文件）
@@ -45,9 +51,9 @@ export async function getOnlyThumbnailFileList(params) {
     url: `${REQUEST_DOMAIN_FILE}/file/page`,
     method: 'GET',
     params: {
-      _organization_id: params._organization_id || localStorage.getItem('OrganizationId'),
-      ...params,
+      _organization_id:
+        params._organization_id || localStorage.getItem('OrganizationId'),
+      ...params
     }
-  });
+  })
 }
-

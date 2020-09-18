@@ -6,22 +6,28 @@ import { connect } from 'dva'
 import axios from 'axios'
 import Cookies from 'js-cookie'
 import {
-  getSubfixName, setUploadHeaderBaseInfo, checkIsHasPermissionInBoard
-} from "@/utils/businessFunction";
+  getSubfixName,
+  setUploadHeaderBaseInfo,
+  checkIsHasPermissionInBoard
+} from '@/utils/businessFunction'
 import {
-  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_ATTACHMENT_UPLOAD, PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE, PROJECT_FILES_FILE_INTERVIEW, UPLOAD_FILE_SIZE
-} from "@/globalset/js/constant";
-import _ from "lodash";
+  MESSAGE_DURATION_TIME,
+  NOT_HAS_PERMISION_COMFIRN,
+  PROJECT_TEAM_CARD_ATTACHMENT_UPLOAD,
+  PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE,
+  PROJECT_FILES_FILE_INTERVIEW,
+  UPLOAD_FILE_SIZE
+} from '@/globalset/js/constant'
+import _ from 'lodash'
 import { currentNounPlanFilterName } from '../../../../../utils/businessFunction'
 import { FILES } from '../../../../../globalset/js/constant'
 import FileListRightBarFileDetailModal from '../../../../../routes/Technological/components/ProjectDetail/FileModule/FileListRightBarFileDetailModal'
 import { updateUserStorage } from '../../handleOperateModal'
 
 let uploadMaxFileSize = []
-let CancelToken = axios.CancelToken;
+let CancelToken = axios.CancelToken
 @connect(mapStateToProps)
 export default class BeginningStepOne_five extends Component {
-
   constructor(props) {
     super(props)
     this.state = {
@@ -40,10 +46,12 @@ export default class BeginningStepOne_five extends Component {
   componentDidMount() {
     const { itemValue = {} } = this.props
     let { files: fileList } = itemValue
-    fileList = fileList && fileList.map(item => {
-      item.uid = item.file_id
-      return item
-    })
+    fileList =
+      fileList &&
+      fileList.map(item => {
+        item.uid = item.file_id
+        return item
+      })
     this.setState({
       fileList
     })
@@ -62,9 +70,10 @@ export default class BeginningStepOne_five extends Component {
     const { itemKey, parentKey, processEditDatas = [] } = this.props
     const { forms = [] } = processEditDatas[parentKey]
     forms[itemKey][key] = data.value
-    this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('forms', forms)
+    this.props.updateCorrespondingPrcodessStepWithNodeContent &&
+      this.props.updateCorrespondingPrcodessStepWithNodeContent('forms', forms)
     if (data.update_storage) {
-      updateUserStorage({forms: forms})
+      updateUserStorage({ forms: forms })
     }
   }
 
@@ -78,18 +87,29 @@ export default class BeginningStepOne_five extends Component {
       file.status = 'error'
       file.errorMsg = `不能上传空文件`
       return false
-    }
-    else if (size > UPLOAD_FILE_SIZE * 1024 * 1024 || size > limit_file_size * 1024 * 1024) {
+    } else if (
+      size > UPLOAD_FILE_SIZE * 1024 * 1024 ||
+      size > limit_file_size * 1024 * 1024
+    ) {
       file.status = 'error'
-      file.errorMsg = `上传文件不能超过${UPLOAD_FILE_SIZE > limit_file_size ? limit_file_size : UPLOAD_FILE_SIZE}MB`
+      file.errorMsg = `上传文件不能超过${
+        UPLOAD_FILE_SIZE > limit_file_size ? limit_file_size : UPLOAD_FILE_SIZE
+      }MB`
       return false
     } else {
-
     }
-    const effective_file_list = fileList.filter(item => item.status != 'error') || []
-    const effective_state_file_list = state_filelist && state_filelist.filter(item => item.status != 'error') || []
+    const effective_file_list =
+      fileList.filter(item => item.status != 'error') || []
+    const effective_state_file_list =
+      (state_filelist &&
+        state_filelist.filter(item => item.status != 'error')) ||
+      []
 
-    if (limit_file_num != 0 && ((effective_file_list.length + effective_state_file_list.length) > limit_file_num)) {
+    if (
+      limit_file_num != 0 &&
+      effective_file_list.length + effective_state_file_list.length >
+        limit_file_num
+    ) {
       file.status = 'up_limit'
       message.warn(`上传文件总数不能超过${limit_file_num}个`)
       return false
@@ -100,25 +120,43 @@ export default class BeginningStepOne_five extends Component {
     let new_filelist = fileList.filter(item => item.status != 'up_limit')
     new_filelist = new_filelist.map(item => {
       if (item.response && item.response.code == '1') {
-        let new_item = {...item, status: 'error', errorMsg: item.response.message}
+        let new_item = {
+          ...item,
+          status: 'error',
+          errorMsg: item.response.message
+        }
         return new_item
       } else {
         return item
       }
     })
     let temp_list = new_filelist.filter(item => item.status != 'error')
-    this.setState({ 
+    this.setState({
       fileList: new_filelist
     })
-    this.updateEdit({ value: temp_list, update_storage:true }, 'files')
+    this.updateEdit({ value: temp_list, update_storage: true }, 'files')
   }
 
   onFilePreview = (e, item) => {
     e && e.stopPropagation()
-    const file_id = item.file_id || ((item.response && item.response.data) && item.response.data.file_id) || ''
-    const file_name = item.file_name || ((item.response && item.response.data) && item.response.data.file_name) || ''
-    const file_size = item.file_size || ((item.response && item.response.data) && item.response.data.file_size) || ''
-    const file_resource_id = item.file_resource_id || ((item.response && item.response.data) && item.response.data.file_resource_id) || ''
+    const file_id =
+      item.file_id ||
+      (item.response && item.response.data && item.response.data.file_id) ||
+      ''
+    const file_name =
+      item.file_name ||
+      (item.response && item.response.data && item.response.data.file_name) ||
+      ''
+    const file_size =
+      item.file_size ||
+      (item.response && item.response.data && item.response.data.file_size) ||
+      ''
+    const file_resource_id =
+      item.file_resource_id ||
+      (item.response &&
+        item.response.data &&
+        item.response.data.file_resource_id) ||
+      ''
     if (!file_id) return
     this.props.dispatch({
       type: 'publicFileDetailModal/updateDatas',
@@ -149,10 +187,14 @@ export default class BeginningStepOne_five extends Component {
     })
   }
 
-
   getUploadProps = () => {
-    const { fileList } = this.state;
-    const { processInfo = {}, itemValue, processEditDatas = [], parentKey } = this.props;
+    const { fileList } = this.state
+    const {
+      processInfo = {},
+      itemValue,
+      processEditDatas = [],
+      parentKey
+    } = this.props
     const { id: flow_node_instance_id } = processEditDatas[parentKey]
     const { org_id, board_id, folder_id, id: flow_instance_id } = processInfo
     const { id: field_id } = itemValue
@@ -163,7 +205,12 @@ export default class BeginningStepOne_five extends Component {
         Authorization: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
 
-        ...setUploadHeaderBaseInfo({ orgId: org_id, boardId: board_id, aboutBoardOrganizationId: org_id, contentDataType: "file" }),
+        ...setUploadHeaderBaseInfo({
+          orgId: org_id,
+          boardId: board_id,
+          aboutBoardOrganizationId: org_id,
+          contentDataType: 'file'
+        })
       },
       method: 'post',
       data: {
@@ -178,11 +225,11 @@ export default class BeginningStepOne_five extends Component {
       beforeUpload: this.onBeforeUpload,
       onChange: this.handleChange,
       customRequest: this.customRequest
-    };
+    }
   }
 
   // 自定义上传
-  customRequest = async (e) => {
+  customRequest = async e => {
     let {
       action,
       data,
@@ -192,17 +239,17 @@ export default class BeginningStepOne_five extends Component {
       onError,
       onProgress,
       onSuccess,
-      withCredentials,
+      withCredentials
     } = e
-    const formData = new FormData();
-    formData.append(filename, file);
+    const formData = new FormData()
+    formData.append(filename, file)
     // 小文件上传
     if (data) {
       Object.keys(data).forEach(key => {
-        formData.append(key, data[key]);
-      });
+        formData.append(key, data[key])
+      })
     }
-    const context = this;
+    const context = this
     // 进行文件上传
     axios
       .post(action, formData, {
@@ -210,25 +257,27 @@ export default class BeginningStepOne_five extends Component {
         headers,
         timeout: 0,
         onUploadProgress: ({ total, loaded }) => {
-          onProgress({ percent: Math.round(loaded / total * 100).toFixed(0) }, file);
+          onProgress(
+            { percent: Math.round((loaded / total) * 100).toFixed(0) },
+            file
+          )
         },
         cancelToken: new CancelToken(function executor(c) {
-          context.cancelAxios = c;
-        }),
+          context.cancelAxios = c
+        })
       })
       .then(({ data: response }) => {
-        onSuccess(response, file);
+        onSuccess(response, file)
       })
-      .catch(onError);
+      .catch(onError)
 
     return {
-      abort() {
-      },
-    };
+      abort() {}
+    }
   }
 
   // 删除文件
-  handleDeleteProcessFile = (e,shouldDeleteItem, UID) => {
+  handleDeleteProcessFile = (e, shouldDeleteItem, UID) => {
     e && e.stopPropagation()
     const { dispatch } = this.props
     let that = this
@@ -253,11 +302,14 @@ export default class BeginningStepOne_five extends Component {
       this.setState({
         fileList: newFilesData
       })
-      let temp_list = newFilesData && newFilesData.filter(item => item.status != 'error') || []
+      let temp_list =
+        (newFilesData && newFilesData.filter(item => item.status != 'error')) ||
+        []
       this.updateEdit({ value: temp_list }, 'files')
     }
     setTimeout(() => {
-      if (!shouldDeleteItem && UID) { // 表示是文件上传失败之后
+      if (!shouldDeleteItem && UID) {
+        // 表示是文件上传失败之后
         this.setState({
           isDeleteProcessFile: false
         })
@@ -283,7 +335,7 @@ export default class BeginningStepOne_five extends Component {
     })
   }
 
-  getEllipsisFileName = (name) => {
+  getEllipsisFileName = name => {
     // wx6535e025f795dca9.o6zAJs5_pqZsbrr7sJng7qkxKKbM.ZhMftVUvAIJ9b5dcb721199c1b8f4f84b0954a80e589.png
     // let str = 'wx6535e025f795dca9.o6zAJs5_pqZsbrr7sJng7qkxKKbM.ZhMftVUvAIJ9b5dcb721199c1b8f4f84b0954a80e589.png'
     let str = name
@@ -313,10 +365,22 @@ export default class BeginningStepOne_five extends Component {
     return fileTypeArrayText.join('、')
   }
 
-  renderFileList = (item) => {
+  renderFileList = item => {
     const { fileList = [] } = this.state
-    let gold_item_id = (item.status && item.status == 'done' && item.response && item.response.code == '0') && item.response.data.flow_file_id
-    let gold_item_error_messaage = (item.status && item.status == 'error' && item.error && item.error.response && item.error.response.data && item.error.response.data.code == '1') && item.error.response.data.message
+    let gold_item_id =
+      item.status &&
+      item.status == 'done' &&
+      item.response &&
+      item.response.code == '0' &&
+      item.response.data.flow_file_id
+    let gold_item_error_messaage =
+      item.status &&
+      item.status == 'error' &&
+      item.error &&
+      item.error.response &&
+      item.error.response.data &&
+      item.error.response.data.code == '1' &&
+      item.error.response.data.message
     const { percent, status, errorMsg } = item
     // let flag = fileList && fileList.find(item => item.percent && Number(item.percent) != 0 && Number(item.percent) != 100)
     // console.log(flag,'sssssssssssssss_flag')
@@ -335,86 +399,159 @@ export default class BeginningStepOne_five extends Component {
     }
     return (
       <>
-        <div key={item.uid} className={indexStyles.file_item} onClick={(e) => { this.onFilePreview(e, item) }}>
-          <div style={{ display: 'flex', alignItems: 'center', flex: '1' }} {...alrm_obj}>
-            <span className={`${globalStyles.authTheme} ${indexStyles.file_theme_code}`}>&#xe64d;</span>
-            <span style={{ color: item.status && item.status == 'error' ? 'red' : 'inherit' }} className={indexStyles.file_name}><span style={{
-              maxWidth: '874px', display: 'inline-block', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis',
-              color: item.status && item.status == 'error' ? 'red' : 'inherit'
-            }}>{this.getEllipsisFileName(item.file_name || item.name)}</span>{getSubfixName(item.file_name || item.name)}</span>
+        <div
+          key={item.uid}
+          className={indexStyles.file_item}
+          onClick={e => {
+            this.onFilePreview(e, item)
+          }}
+        >
+          <div
+            style={{ display: 'flex', alignItems: 'center', flex: '1' }}
+            {...alrm_obj}
+          >
+            <span
+              className={`${globalStyles.authTheme} ${indexStyles.file_theme_code}`}
+            >
+              &#xe64d;
+            </span>
+            <span
+              style={{
+                color: item.status && item.status == 'error' ? 'red' : 'inherit'
+              }}
+              className={indexStyles.file_name}
+            >
+              <span
+                style={{
+                  maxWidth: '874px',
+                  display: 'inline-block',
+                  overflow: 'hidden',
+                  whiteSpace: 'nowrap',
+                  textOverflow: 'ellipsis',
+                  color:
+                    item.status && item.status == 'error' ? 'red' : 'inherit'
+                }}
+              >
+                {this.getEllipsisFileName(item.file_name || item.name)}
+              </span>
+              {getSubfixName(item.file_name || item.name)}
+            </span>
           </div>
           <div style={{ flexShrink: 0 }}>
-            <span onClick={(e) => { this.handleDeleteProcessFile(e,item.flow_file_id || gold_item_id, item.uid) }} className={indexStyles.del_name}>删除</span>
+            <span
+              onClick={e => {
+                this.handleDeleteProcessFile(
+                  e,
+                  item.flow_file_id || gold_item_id,
+                  item.uid
+                )
+              }}
+              className={indexStyles.del_name}
+            >
+              删除
+            </span>
           </div>
         </div>
         {/* <div className={indexStyles.file_percent}></div> */}
-        {
-          (
-            percent &&
-            Number(percent) != 0 &&
-            Number(percent) != 100 || status == 'uploading'
-          ) ? (
-              <span className={indexStyles.upload_file_progress}>
-                <Progress style={{ top: '-12px', height: '2px' }} showInfo={false} percent={percent} />
-              </span>
-            ) : ''
-        }
+        {(percent && Number(percent) != 0 && Number(percent) != 100) ||
+        status == 'uploading' ? (
+          <span className={indexStyles.upload_file_progress}>
+            <Progress
+              style={{ top: '-12px', height: '2px' }}
+              showInfo={false}
+              percent={percent}
+            />
+          </span>
+        ) : (
+          ''
+        )}
       </>
     )
   }
 
   render() {
-    const { itemValue, isInOpenFile, fileType, filePreviewCurrentFileId, filePreviewCurrentName  } = this.props
-    const { title, limit_file_num, limit_file_type, limit_file_size, is_required, } = itemValue
+    const {
+      itemValue,
+      isInOpenFile,
+      fileType,
+      filePreviewCurrentFileId,
+      filePreviewCurrentName
+    } = this.props
+    const {
+      title,
+      limit_file_num,
+      limit_file_type,
+      limit_file_size,
+      is_required
+    } = itemValue
     const { fileList = [] } = this.state
     return (
       <div className={indexStyles.text_form}>
         <p>
-          <span>{title}:&nbsp;&nbsp;{is_required == '1' && <span style={{ color: '#F5222D' }}>*</span>}</span>
+          <span>
+            {title}:&nbsp;&nbsp;
+            {is_required == '1' && <span style={{ color: '#F5222D' }}>*</span>}
+          </span>
         </p>
-        <Upload {...this.getUploadProps()} className={indexStyles.upload_process_file}>
+        <Upload
+          {...this.getUploadProps()}
+          className={indexStyles.upload_process_file}
+        >
           <div className={indexStyles.upload_static}>
-            <span style={{ color: '#1890FF', fontSize: '28px', marginTop: '-6px' }} className={`${globalStyles.authTheme}`}>&#xe692;</span>
+            <span
+              style={{ color: '#1890FF', fontSize: '28px', marginTop: '-6px' }}
+              className={`${globalStyles.authTheme}`}
+            >
+              &#xe692;
+            </span>
             <div style={{ flex: 1, marginLeft: '12px' }}>
-              <div className={indexStyles.file_drap_tips}>点击或拖拽文件到此开始上传</div>
-              <div className={indexStyles.file_layout}>{limit_file_size == 0 ? `不限制大小` : `${limit_file_size}MB以内`}、{limit_file_num == 0 ? `不限制数量` : `最多${limit_file_num}个`}、 {this.renderFileTypeArrayText()}格式</div>
+              <div className={indexStyles.file_drap_tips}>
+                点击或拖拽文件到此开始上传
+              </div>
+              <div className={indexStyles.file_layout}>
+                {limit_file_size == 0
+                  ? `不限制大小`
+                  : `${limit_file_size}MB以内`}
+                、
+                {limit_file_num == 0 ? `不限制数量` : `最多${limit_file_num}个`}
+                、 {this.renderFileTypeArrayText()}格式
+              </div>
             </div>
           </div>
         </Upload>
-        {
-          fileList && fileList.map(item => {
+        {fileList &&
+          fileList.map(item => {
             return this.renderFileList(item)
-          })
-        }
-        {
-          isInOpenFile && (
-            <FileListRightBarFileDetailModal 
-              filePreviewCurrentFileId={filePreviewCurrentFileId}
-              fileType={fileType}
-              filePreviewCurrentName={filePreviewCurrentName}
-              file_detail_modal_visible={isInOpenFile}
-              setPreviewFileModalVisibile={this.setPreviewFileModalVisibile}
-            />
-          )
-        }
+          })}
+        {isInOpenFile && (
+          <FileListRightBarFileDetailModal
+            filePreviewCurrentFileId={filePreviewCurrentFileId}
+            fileType={fileType}
+            filePreviewCurrentName={filePreviewCurrentName}
+            file_detail_modal_visible={isInOpenFile}
+            setPreviewFileModalVisibile={this.setPreviewFileModalVisibile}
+          />
+        )}
       </div>
     )
   }
 }
 
-function mapStateToProps({ 
+function mapStateToProps({
   publicProcessDetailModal: { processEditDatas = [], processInfo = {} },
   publicFileDetailModal: {
     filePreviewCurrentFileId,
     fileType,
     isInOpenFile,
-    filePreviewCurrentName,
-  },
+    filePreviewCurrentName
+  }
 }) {
-  return { 
-    processEditDatas, processInfo, 
+  return {
+    processEditDatas,
+    processInfo,
     filePreviewCurrentFileId,
     fileType,
     isInOpenFile,
-    filePreviewCurrentName }
+    filePreviewCurrentName
+  }
 }

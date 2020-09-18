@@ -1,6 +1,9 @@
 import React from 'react'
 import { Button, Input, Upload, message } from 'antd'
-import {REQUEST_DOMAIN, UPLOAD_FILE_SIZE} from "../../../../../../globalset/js/constant";
+import {
+  REQUEST_DOMAIN,
+  UPLOAD_FILE_SIZE
+} from '../../../../../../globalset/js/constant'
 import Cookies from 'js-cookie'
 import Detail from './Detail'
 import { setUploadHeaderBaseInfo } from '@/utils/businessFunction'
@@ -9,13 +12,15 @@ const TextArea = Input.TextArea
 
 export default class ImageTextOne extends React.Component {
   state = {
-    logoUrl: '',
+    logoUrl: ''
   }
-  styles () {
-    const { datas: {teamShowCertainOneShow = true}} = this.props.model
+  styles() {
+    const {
+      datas: { teamShowCertainOneShow = true }
+    } = this.props.model
     const detailInfoOut = {
       width: '100%',
-      backgroundColor: '#ffffff',
+      backgroundColor: '#ffffff'
     }
     const detailInfo = {
       marginTop: 20,
@@ -31,7 +36,7 @@ export default class ImageTextOne extends React.Component {
       height: 200,
       border: '1px solid rgba(217,217,217,1)',
       margin: '0 auto',
-      borderRadius: 4,
+      borderRadius: 4
     }
     const detaiInfo_middle = {
       marginTop: 16,
@@ -40,16 +45,25 @@ export default class ImageTextOne extends React.Component {
     const detailInfo_bott = {
       marginTop: 20,
       fontSize: 14,
-      textAlign: 'left',
+      textAlign: 'left'
     }
     return {
-      detailInfoOut, detailInfo, detailInfo_top, detaiInfo_middle, detailInfo_bott,
-
+      detailInfoOut,
+      detailInfo,
+      detailInfo_top,
+      detaiInfo_middle,
+      detailInfo_bott
     }
   }
   render() {
     const that = this
-    const { detailInfoOut, detailInfo, detailInfo_top, detaiInfo_middle, detailInfo_bott, } = this.styles()
+    const {
+      detailInfoOut,
+      detailInfo,
+      detailInfo_top,
+      detaiInfo_middle,
+      detailInfo_bott
+    } = this.styles()
     const { logoUrl } = this.state
     const uploadProps = {
       name: 'file',
@@ -58,13 +72,13 @@ export default class ImageTextOne extends React.Component {
       headers: {
         Authorization: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
-        ...setUploadHeaderBaseInfo({}),
+        ...setUploadHeaderBaseInfo({})
       },
       beforeUpload(e) {
-        if(e.size == 0) {
+        if (e.size == 0) {
           message.error(`不能上传空文件`)
           return false
-        }else if(e.size > UPLOAD_FILE_SIZE * 1024 * 1024) {
+        } else if (e.size > UPLOAD_FILE_SIZE * 1024 * 1024) {
           message.error(`上传文件不能文件超过${UPLOAD_FILE_SIZE}MB`)
           return false
         }
@@ -83,12 +97,12 @@ export default class ImageTextOne extends React.Component {
           })
         }
         if (file.status === 'done') {
-          message.success(`上传成功。`);
+          message.success(`上传成功。`)
           that.setState({
             uploading: false
           })
         } else if (file.status === 'error') {
-          message.error(`上传失败。`);
+          message.error(`上传失败。`)
           that.setState({
             uploading: false
           })
@@ -98,18 +112,21 @@ export default class ImageTextOne extends React.Component {
             logoUrl: file.response.data.logo
           })
         }
-      },
-    };
+      }
+    }
 
     return (
-      <div style={{...detailInfoOut}}>
-
-        <div style={{...detailInfo}}>
-          <Upload {...uploadProps} showUploadList={false} accept={"image/jpg, image/jpeg,  image/png"}>
-            {logoUrl?(
-              <img src={logoUrl} style={{...detailInfo_top}}/>
+      <div style={{ ...detailInfoOut }}>
+        <div style={{ ...detailInfo }}>
+          <Upload
+            {...uploadProps}
+            showUploadList={false}
+            accept={'image/jpg, image/jpeg,  image/png'}
+          >
+            {logoUrl ? (
+              <img src={logoUrl} style={{ ...detailInfo_top }} />
             ) : (
-              <div style={{...detailInfo_top}}></div>
+              <div style={{ ...detailInfo_top }}></div>
             )}
           </Upload>
           <Detail {...this.props} />
@@ -120,5 +137,3 @@ export default class ImageTextOne extends React.Component {
     )
   }
 }
-
-

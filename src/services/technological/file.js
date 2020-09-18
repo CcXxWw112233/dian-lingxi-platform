@@ -1,7 +1,13 @@
 //项目归档
-import { REQUEST_DOMAIN_FILE, CONTENT_DATA_TYPE_FILE, CONTENT_DATA_TYPE_FOLDER, CONTENT_DATA_TYPE_CARD, REQUEST_INTERGFACE_VERSIONN } from "../../globalset/js/constant";
-import request from "../../utils/requestAxios";
-import { getGlobalData } from "../../utils/businessFunction";
+import {
+  REQUEST_DOMAIN_FILE,
+  CONTENT_DATA_TYPE_FILE,
+  CONTENT_DATA_TYPE_FOLDER,
+  CONTENT_DATA_TYPE_CARD,
+  REQUEST_INTERGFACE_VERSIONN
+} from '../../globalset/js/constant'
+import request from '../../utils/requestAxios'
+import { getGlobalData } from '../../utils/businessFunction'
 
 const createHeaderContentData = (contentType, contentId) => {
   if (contentType && contentId) {
@@ -16,7 +22,7 @@ const createHeaderContentData = (contentType, contentId) => {
   }
 }
 
-const createHeaderContentDataByFileId = (cardId) => {
+const createHeaderContentDataByFileId = cardId => {
   if (cardId) {
     return {
       BaseInfo: {
@@ -29,15 +35,16 @@ const createHeaderContentDataByFileId = (cardId) => {
   }
 }
 
-
 //文件列表包括文件夹
 export async function getFileList(params) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}${REQUEST_INTERGFACE_VERSIONN}/file`,
     method: 'GET',
-    headers: params.folder_id ? createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.folder_id) : {},
-    params,
-  });
+    headers: params.folder_id
+      ? createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.folder_id)
+      : {},
+    params
+  })
 }
 
 //文件列表包括文件夹
@@ -45,9 +52,11 @@ export async function getBoardFileList(params) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/file/list`,
     method: 'GET',
-    headers: params.folder_id ? createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.folder_id) : {},
-    params,
-  });
+    headers: params.folder_id
+      ? createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.folder_id)
+      : {},
+    params
+  })
 }
 
 // 复制文件到某一个文件夹
@@ -56,8 +65,8 @@ export async function fileCopy(data) {
     url: `${REQUEST_DOMAIN_FILE}/file/copy`,
     method: 'PUT',
     headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, data.file_ids),
-    data,
-  });
+    data
+  })
 }
 
 //文件下载
@@ -69,9 +78,10 @@ export async function fileDownload(params) {
     headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.ids),
     params: {
       ...params,
-      _organization_id: params._organization_id || getGlobalData('aboutBoardOrganizationId')
-    },
-  });
+      _organization_id:
+        params._organization_id || getGlobalData('aboutBoardOrganizationId')
+    }
+  })
 }
 
 // 保存为新版本
@@ -81,8 +91,8 @@ export async function saveAsNewVersion(data) {
     url: `${REQUEST_DOMAIN_FILE}/file/save_as/new_version`,
     method: 'POST',
     // headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, data.id),
-    data,
-  });
+    data
+  })
 }
 
 //文件预览
@@ -91,8 +101,8 @@ export async function filePreview(params) {
     url: `${REQUEST_DOMAIN_FILE}/file/preview/${params.id}`,
     method: 'GET',
     headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.id),
-    params,
-  });
+    params
+  })
 }
 
 // 设为当前版本文件
@@ -101,7 +111,7 @@ export async function setCurrentVersionFile(data) {
     url: `${REQUEST_DOMAIN_FILE}/file`,
     method: 'PUT',
     // headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.fileIds),
-    data,
+    data
   })
 }
 
@@ -111,7 +121,7 @@ export async function updateVersionFileDescription(data) {
     url: `${REQUEST_DOMAIN_FILE}/file`,
     method: 'PUT',
     // headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.fileIds),
-    data,
+    data
   })
 }
 
@@ -120,8 +130,8 @@ export async function fileRemove(data) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/file/remove`,
     method: 'POST',
-    data,
-  });
+    data
+  })
 }
 
 // 单个文件删除
@@ -129,8 +139,8 @@ export async function fileDelete(data) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/file/remove`,
     method: 'DELETE',
-    data,
-  });
+    data
+  })
 }
 
 // 把文件文件夹 移入到某一个文件夹
@@ -139,8 +149,8 @@ export async function fileMove(data) {
     url: `${REQUEST_DOMAIN_FILE}/file/remove`,
     method: 'PUT',
     headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, data.file_ids),
-    data,
-  });
+    data
+  })
 }
 
 // 文件上传
@@ -148,8 +158,8 @@ export async function fileUpload(data) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/file/upload`,
     method: 'PUT',
-    data,
-  });
+    data
+  })
 }
 
 //文件版本列表
@@ -158,8 +168,8 @@ export async function fileVersionist(params) {
     url: `${REQUEST_DOMAIN_FILE}/file/version_list`,
     method: 'GET',
     headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.version_id),
-    params,
-  });
+    params
+  })
 }
 
 //回收站列表
@@ -167,8 +177,8 @@ export async function recycleBinList(params) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/recycle_bin`,
     method: 'GET',
-    params,
-  });
+    params
+  })
 }
 
 //删除文件/文件夹
@@ -176,42 +186,41 @@ export async function deleteFile(data) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/recycle_bin`,
     method: 'POST',
-    data,
-  });
+    data
+  })
 }
 //还原文件/文件夹
 export async function restoreFile(data) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/recycle_bin/restore`,
     method: 'POST',
-    data,
-  });
+    data
+  })
 }
-
 
 //文件夹树形列表
 export async function getFolderList(params) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/folder`,
     method: 'GET',
-    params,
-  });
+    params
+  })
 }
 //新建文件夹
 export async function addNewFolder(data) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/folder`,
     method: 'POST',
-    data,
-  });
+    data
+  })
 }
 //更新文件夹
 export async function updateFolder(data) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/folder`,
     method: 'PUT',
-    data,
-  });
+    data
+  })
 }
 
 //获取评论列表
@@ -220,8 +229,8 @@ export async function getPreviewFileCommits(params) {
     url: `${REQUEST_DOMAIN_FILE}/file/comment/list`,
     headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.id),
     method: 'GET',
-    params,
-  });
+    params
+  })
 }
 
 //新增文件评论
@@ -230,8 +239,8 @@ export async function addFileCommit(data) {
     url: `${REQUEST_DOMAIN_FILE}/file/comment`,
     method: 'POST',
     headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, data.file_id),
-    data,
-  });
+    data
+  })
 }
 
 //删除评论
@@ -239,8 +248,8 @@ export async function deleteCommit(params) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/file/comment/${params.id}`,
     method: 'DELETE',
-    params,
-  });
+    params
+  })
 }
 
 //获取图评点的列表
@@ -249,10 +258,9 @@ export async function getFileCommitPoints(params) {
     url: `${REQUEST_DOMAIN_FILE}/file/comment/point`,
     method: 'GET',
     headers: createHeaderContentData(CONTENT_DATA_TYPE_FOLDER, params.id),
-    params,
-  });
+    params
+  })
 }
-
 
 //文件预览-通过file_id, 从分享url里面获取
 export async function filePreviewByUrl(params) {
@@ -260,8 +268,8 @@ export async function filePreviewByUrl(params) {
     url: `${REQUEST_DOMAIN_FILE}/file/preview/${params.id}`,
     method: 'GET',
     headers: createHeaderContentData(CONTENT_DATA_TYPE_FOLDER, params.id),
-    params,
-  });
+    params
+  })
 }
 //文件信息-通过file_id, 从分享url里面获取, 查询文件信息，包括预览信息、版本列表
 export async function fileInfoByUrl(params) {
@@ -269,8 +277,8 @@ export async function fileInfoByUrl(params) {
     url: `${REQUEST_DOMAIN_FILE}/file/info/${params.id}`,
     method: 'GET',
     headers: createHeaderContentData(CONTENT_DATA_TYPE_FOLDER, params.id),
-    params,
-  });
+    params
+  })
 }
 //文件信息-通过file_id, 从分享url里面获取, 查询文件信息，包括预览信息、版本列表和路径(fileId)(废弃)
 // export async function fileInfoByUrl_2(params) {
@@ -288,9 +296,9 @@ export async function getFilePDFInfo(params) {
     method: 'GET',
     params: {
       ...params,
-      _organization_id: getGlobalData('aboutBoardOrganizationId'),
-    },
-  });
+      _organization_id: getGlobalData('aboutBoardOrganizationId')
+    }
+  })
 }
 
 //获取文件详情的动态
@@ -354,9 +362,11 @@ export async function getArchiveBoardFileList(params) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/archived/file`,
     method: 'GET',
-    headers: params.folder_id ? createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.folder_id) : {},
-    params,
-  });
+    headers: params.folder_id
+      ? createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.folder_id)
+      : {},
+    params
+  })
 }
 
 //搜索归档的列表
@@ -364,6 +374,6 @@ export async function searchArchives(data) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/archived/search`,
     method: 'POST',
-    data,
-  });
+    data
+  })
 }

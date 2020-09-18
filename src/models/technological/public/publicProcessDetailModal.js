@@ -1,14 +1,44 @@
-
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
-import { currentNounPlanFilterName } from "../../../utils/businessFunction";
-import { MESSAGE_DURATION_TIME, FILES, FLOWS } from "../../../globalset/js/constant";
+import { currentNounPlanFilterName } from '../../../utils/businessFunction'
+import {
+  MESSAGE_DURATION_TIME,
+  FILES,
+  FLOWS
+} from '../../../globalset/js/constant'
 import { getSubfixName } from '../../../utils/businessFunction'
 import QueryString from 'querystring'
-import { processEditDatasConstant, processEditDatasRecordsConstant, processDoingListMatch, processInfoMatch } from '../../../components/ProcessDetailModal/constant';
-import { getProcessTemplateList, saveProcessTemplate, getTemplateInfo, saveEditProcessTemplete, deleteProcessTemplete, createProcess, getProcessInfo, getProcessListByType, fillFormComplete, rejectProcessTask, workflowEnd, workflowDelete, restartProcess, processFileUpload, deleteProcessFile, fileDownload, configurePorcessGuide, rebackProcessTask, nonAwayTempleteStartPropcess, updateFlowInstanceNameOrDescription, getCurrentOrgAllMembers } from "../../../services/technological/workFlow"
+import {
+  processEditDatasConstant,
+  processEditDatasRecordsConstant,
+  processDoingListMatch,
+  processInfoMatch
+} from '../../../components/ProcessDetailModal/constant'
+import {
+  getProcessTemplateList,
+  saveProcessTemplate,
+  getTemplateInfo,
+  saveEditProcessTemplete,
+  deleteProcessTemplete,
+  createProcess,
+  getProcessInfo,
+  getProcessListByType,
+  fillFormComplete,
+  rejectProcessTask,
+  workflowEnd,
+  workflowDelete,
+  restartProcess,
+  processFileUpload,
+  deleteProcessFile,
+  fileDownload,
+  configurePorcessGuide,
+  rebackProcessTask,
+  nonAwayTempleteStartPropcess,
+  updateFlowInstanceNameOrDescription,
+  getCurrentOrgAllMembers
+} from '../../../services/technological/workFlow'
 // import { getCurrentOrgAllMembers } from '../../../services/technological/workbench'
-import {public_selectCurrentFlowTabsStatus} from './select'
+import { public_selectCurrentFlowTabsStatus } from './select'
 
 let dispatchEvent = null
 let board_id = null
@@ -28,7 +58,7 @@ export default {
     processStopedList: [], // 已中止的流程
     processComepletedList: [], // 已完成的流程
     processNotBeginningList: [], // 未开始的流程
-    processEditDatas:[],
+    processEditDatas: [],
     processCurrentEditStep: 0, // 当前的编辑步骤 第几步
     processCurrentCompleteStep: 0, // 当前处于的操作步骤
     templateInfo: {}, // 模板信息
@@ -42,17 +72,16 @@ export default {
   },
   subscriptions: {
     setup({ dispatch, history }) {
-      history.listen((location) => {
+      history.listen(location => {
         dispatchEvent = dispatch
         if (location.pathname.indexOf('/technological/projectDetail') !== -1) {
-          
         }
       })
-    },
+    }
   },
   effects: {
     // 初始化数据
-    * initData({ payload }, { call, put }) {
+    *initData({ payload }, { call, put }) {
       const { board_id, flow_id, calback } = payload
       yield put({
         type: 'updateDatas',
@@ -73,7 +102,7 @@ export default {
           processStopedList: [], // 已中止的流程
           processComepletedList: [], // 已完成的流程
           processNotBeginningList: [], // 未开始的流程
-          processEditDatas:[],
+          processEditDatas: [],
           not_show_create_node_guide: '1',
           not_show_create_form_guide: '1',
           not_show_create_rating_guide: '1'
@@ -83,9 +112,13 @@ export default {
     },
 
     // 获取流程模板列表
-    * getProcessTemplateList({ payload }, { call, put }) {
+    *getProcessTemplateList({ payload }, { call, put }) {
       const { id, board_id, calback, _organization_id } = payload
-      let res = yield call(getProcessTemplateList, { id, board_id, _organization_id })
+      let res = yield call(getProcessTemplateList, {
+        id,
+        board_id,
+        _organization_id
+      })
       if (isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
@@ -97,18 +130,25 @@ export default {
           calback()
         }
       } else {
-
       }
     },
 
     // 获取模板信息内容
-    * getTemplateInfo({ payload }, { call, put }) {
-      const { id, processPageFlagStep, currentTempleteIdentifyId, process_detail_modal_visible, calback } = payload
+    *getTemplateInfo({ payload }, { call, put }) {
+      const {
+        id,
+        processPageFlagStep,
+        currentTempleteIdentifyId,
+        process_detail_modal_visible,
+        calback
+      } = payload
       let res = yield call(getTemplateInfo, { id })
       if (isApiResponseOk(res)) {
-        let newProcessEditDatas = JSON.parse(JSON.stringify([...res.data.nodes] || []))
+        let newProcessEditDatas = JSON.parse(
+          JSON.stringify([...res.data.nodes] || [])
+        )
         newProcessEditDatas = newProcessEditDatas.map(item => {
-          let new_item ={...item, is_edit: '1'}
+          let new_item = { ...item, is_edit: '1' }
           return new_item
         })
         yield put({
@@ -119,7 +159,7 @@ export default {
             process_detail_modal_visible: process_detail_modal_visible,
             processEditDatas: newProcessEditDatas,
             currentFlowInstanceName: res.data.name,
-            isEditCurrentFlowInstanceName:false,
+            isEditCurrentFlowInstanceName: false,
             currentFlowInstanceDescription: res.data.description,
             currentTempleteIdentifyId: currentTempleteIdentifyId
           }
@@ -130,11 +170,11 @@ export default {
     },
 
     // 新建流程模板中的保存模板(即保存新的流程模板)
-    * saveProcessTemplate({ payload }, { call, select, put }) {
+    *saveProcessTemplate({ payload }, { call, select, put }) {
       const { calback } = payload
-      let newPayload = {...payload}
+      let newPayload = { ...payload }
       newPayload.calback ? delete newPayload.calback : ''
-      let res = yield call(saveProcessTemplate,newPayload)
+      let res = yield call(saveProcessTemplate, newPayload)
       if (isApiResponseOk(res)) {
         // yield put({
         //   type: 'getProcessTemplateList',
@@ -151,14 +191,14 @@ export default {
     },
 
     // 点击编辑流程时对已经保存模板接口
-    * saveEditProcessTemplete({ payload }, { call, put }) {
+    *saveEditProcessTemplete({ payload }, { call, put }) {
       const { calback } = payload
-      let newPayload = {...payload}
+      let newPayload = { ...payload }
       newPayload.calback ? delete newPayload.calback : ''
-      let res = yield call(saveEditProcessTemplete,newPayload)
+      let res = yield call(saveEditProcessTemplete, newPayload)
       if (isApiResponseOk(res)) {
         setTimeout(() => {
-          message.success(`保存模板成功`,MESSAGE_DURATION_TIME)
+          message.success(`保存模板成功`, MESSAGE_DURATION_TIME)
         }, 200)
         // yield put({
         //   type: 'getProcessTemplateList',
@@ -175,13 +215,13 @@ export default {
     },
 
     // 删除流程模板
-    * deleteProcessTemplete({ payload }, { call, put }) {
+    *deleteProcessTemplete({ payload }, { call, put }) {
       const { id, calback } = payload
-      let res = yield call(deleteProcessTemplete,{id})
+      let res = yield call(deleteProcessTemplete, { id })
       if (isApiResponseOk(res)) {
         setTimeout(() => {
           message.success('删除模板成功')
-        },200)
+        }, 200)
         // yield put({
         //   type: 'getProcessTemplateList',
         //   payload: {
@@ -196,14 +236,17 @@ export default {
     },
 
     // 开始流程
-    * createProcess({ payload }, { call, put }) {
+    *createProcess({ payload }, { call, put }) {
       const { calback } = payload
-      let newPayload = {...payload}
+      let newPayload = { ...payload }
       newPayload.calback ? delete newPayload.calback : ''
-      let res = yield call(createProcess,newPayload)
+      let res = yield call(createProcess, newPayload)
       if (isApiResponseOk(res)) {
         setTimeout(() => {
-          message.success(`启动${currentNounPlanFilterName(FLOWS)}成功`,MESSAGE_DURATION_TIME)
+          message.success(
+            `启动${currentNounPlanFilterName(FLOWS)}成功`,
+            MESSAGE_DURATION_TIME
+          )
         }, 200)
         if (calback && typeof calback == 'function') calback()
       } else {
@@ -213,7 +256,7 @@ export default {
     },
 
     // 从URL进来获取流程详情信息
-    * getProcessInfoByUrl({ payload }, { call, put }) {
+    *getProcessInfoByUrl({ payload }, { call, put }) {
       const { currentProcessInstanceId } = payload
       yield put({
         type: 'updateDatas',
@@ -230,7 +273,7 @@ export default {
               type: 'updateDatas',
               payload: {
                 process_detail_modal_visible: true,
-                currentProcessInstanceId: currentProcessInstanceId,
+                currentProcessInstanceId: currentProcessInstanceId
               }
             })
           }
@@ -239,19 +282,22 @@ export default {
     },
 
     // 获取流程实例信息
-    * getProcessInfo({ payload }, { call, put }) {
+    *getProcessInfo({ payload }, { call, put }) {
       const { id, calback } = payload
-      let res = yield call(getProcessInfo, {id})
+      let res = yield call(getProcessInfo, { id })
       if (isApiResponseOk(res)) {
-        let newProcessEditDatas = JSON.parse(JSON.stringify([...res.data.nodes] || []))
+        let newProcessEditDatas = JSON.parse(
+          JSON.stringify([...res.data.nodes] || [])
+        )
         newProcessEditDatas = newProcessEditDatas.map(item => {
-         if (item.status == '2') { // 表示找到已完成的节点
-          let new_item = {...item, is_confirm: '1'}
-          return new_item
-         } else {
-           let new_item = item
-           return new_item
-         }
+          if (item.status == '2') {
+            // 表示找到已完成的节点
+            let new_item = { ...item, is_confirm: '1' }
+            return new_item
+          } else {
+            let new_item = item
+            return new_item
+          }
         })
         //设置当前节点排行,数据返回只返回当前节点id,要根据id来确认当前走到哪一步
         const curr_node_id = res.data.curr_node_id
@@ -270,28 +316,30 @@ export default {
             isEditCurrentFlowInstanceName: false,
             currentFlowInstanceDescription: res.data.description,
             processEditDatas: newProcessEditDatas,
-            processInfo: {...res.data, curr_node_sort: curr_node_sort},
+            processInfo: { ...res.data, curr_node_sort: curr_node_sort },
             currentFlowTabsStatus: res.data.status
           }
         })
         if (calback && typeof calback == 'function') calback()
       } else {
         // 兼容弹窗调用失败 需关闭
-        message.warn(res.message,MESSAGE_DURATION_TIME)
+        message.warn(res.message, MESSAGE_DURATION_TIME)
         yield put({
           type: 'initData',
-          payload: {
-            
-          }
+          payload: {}
         })
       }
       return res || {}
     },
 
     // 获取流程列表，类型进行中 已终止 已完成
-    * getProcessListByType({ payload }, { call, put }) {
+    *getProcessListByType({ payload }, { call, put }) {
       const { status, board_id, _organization_id } = payload
-      const res = yield call(getProcessListByType, { status, board_id, _organization_id })
+      const res = yield call(getProcessListByType, {
+        status,
+        board_id,
+        _organization_id
+      })
       let listName
       switch (status) {
         case '1':
@@ -323,16 +371,16 @@ export default {
     },
 
     // 流程节点步骤的完成
-    * fillFormComplete({ payload }, { call, put }) {
+    *fillFormComplete({ payload }, { call, put }) {
       const { flow_instance_id, calback } = payload
-      let newPayload = {...payload}
+      let newPayload = { ...payload }
       newPayload.calback ? delete newPayload.calback : ''
-      let res = yield call(fillFormComplete,newPayload)
+      let res = yield call(fillFormComplete, newPayload)
       if (isApiResponseOk(res)) {
         yield put({
           type: 'getProcessInfo',
           payload: {
-            id:flow_instance_id,
+            id: flow_instance_id,
             calback: () => {
               message.success('已完成节点', MESSAGE_DURATION_TIME)
             }
@@ -345,16 +393,16 @@ export default {
     },
 
     // 驳回节点
-    * rejectProcessTask({ payload }, { call, put }) {
+    *rejectProcessTask({ payload }, { call, put }) {
       const { flow_instance_id, calback } = payload
-      let newPayload = {...payload}
+      let newPayload = { ...payload }
       newPayload.calback ? delete newPayload.calback : ''
-      let res = yield call(rejectProcessTask,newPayload)
+      let res = yield call(rejectProcessTask, newPayload)
       if (isApiResponseOk(res)) {
         yield put({
           type: 'getProcessInfo',
           payload: {
-            id:flow_instance_id,
+            id: flow_instance_id,
             calback: () => {
               message.success('已驳回节点', MESSAGE_DURATION_TIME)
             }
@@ -362,15 +410,15 @@ export default {
         })
         if (calback && typeof calback == 'function') calback()
       } else {
-        message.warn(res.message,MESSAGE_DURATION_TIME)
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
     // 中止流程
-    * workflowEnd({ payload }, { call, select, put }) {
+    *workflowEnd({ payload }, { call, select, put }) {
       const { id, board_id, calback } = payload
       let status = yield select(public_selectCurrentFlowTabsStatus) || '1'
-      let res = yield call(workflowEnd, {id})
+      let res = yield call(workflowEnd, { id })
       if (isApiResponseOk(res)) {
         // yield put({
         //   type: 'getProcessListByType',
@@ -385,10 +433,10 @@ export default {
       }
     },
     // 删除流程
-    * workflowDelete({ payload }, { call, select, put }) {
+    *workflowDelete({ payload }, { call, select, put }) {
       const { id, board_id, calback } = payload
       let status = yield select(public_selectCurrentFlowTabsStatus) || '1'
-      let res = yield call(workflowDelete, {id})
+      let res = yield call(workflowDelete, { id })
       if (isApiResponseOk(res)) {
         // yield put({
         //   type: 'getProcessListByType',
@@ -404,10 +452,10 @@ export default {
     },
 
     // 重启流程
-    * restartProcess({ payload }, { call, select, put }) {
+    *restartProcess({ payload }, { call, select, put }) {
       const { id, board_id, calback } = payload
       let status = yield select(public_selectCurrentFlowTabsStatus) || '1'
-      let res = yield call(restartProcess, {id})
+      let res = yield call(restartProcess, { id })
       if (isApiResponseOk(res)) {
         // yield put({
         //   type: 'getProcessListByType',
@@ -423,26 +471,28 @@ export default {
     },
 
     // 删除流程文件
-    * deleteProcessFile({ payload },{ call, put }) {
+    *deleteProcessFile({ payload }, { call, put }) {
       const { id, calback } = payload
-      let res = yield call(deleteProcessFile,{id})
+      let res = yield call(deleteProcessFile, { id })
       if (isApiResponseOk(res)) {
         if (calback && typeof calback == 'function') calback()
       } else {
-        message.warn(res.message,MESSAGE_DURATION_TIME)
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
     // 文件下载
-    * fileDownload({ payload }, { call, put }) {
+    *fileDownload({ payload }, { call, put }) {
       function openWin(url) {
-        var element1 = document.createElement("a");
-        element1.href = url;
-        element1.download = url // 需要加上download属性 
+        var element1 = document.createElement('a')
+        element1.href = url
+        element1.download = url // 需要加上download属性
         element1.id = 'openWin'
         document.querySelector('body').appendChild(element1)
-        document.getElementById("openWin").click();//点击事件
-        document.getElementById("openWin").parentNode.removeChild(document.getElementById("openWin"))
+        document.getElementById('openWin').click() //点击事件
+        document
+          .getElementById('openWin')
+          .parentNode.removeChild(document.getElementById('openWin'))
       }
 
       let res = yield call(fileDownload, payload)
@@ -460,8 +510,8 @@ export default {
     },
 
     // 引导接口
-    * configurePorcessGuide({ payload }, { call, put }) {
-      let res = yield call(configurePorcessGuide,payload)
+    *configurePorcessGuide({ payload }, { call, put }) {
+      let res = yield call(configurePorcessGuide, payload)
       if (isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
@@ -472,17 +522,24 @@ export default {
           }
         })
       } else {
-
       }
     },
 
     // 撤回任务
-    * rebackProcessTask({ payload }, { call, put }) {
-      const { flow_instance_id, flow_node_instance_id, board_id, calback } = payload
-      let res = yield call(rebackProcessTask, {flow_instance_id, flow_node_instance_id})
+    *rebackProcessTask({ payload }, { call, put }) {
+      const {
+        flow_instance_id,
+        flow_node_instance_id,
+        board_id,
+        calback
+      } = payload
+      let res = yield call(rebackProcessTask, {
+        flow_instance_id,
+        flow_node_instance_id
+      })
       if (isApiResponseOk(res)) {
         setTimeout(() => {
-          message.success('撤回步骤成功',MESSAGE_DURATION_TIME)
+          message.success('撤回步骤成功', MESSAGE_DURATION_TIME)
         }, 200)
         yield put({
           type: 'getProcessInfo',
@@ -504,14 +561,17 @@ export default {
     },
 
     // 不经过模板时启动
-    * nonAwayTempleteStartPropcess({ payload }, { call, put }) {
+    *nonAwayTempleteStartPropcess({ payload }, { call, put }) {
       const { calback } = payload
-      let newPayload = {...payload}
+      let newPayload = { ...payload }
       newPayload.calback ? delete newPayload.calback : ''
-      let res = yield call(nonAwayTempleteStartPropcess,newPayload)
+      let res = yield call(nonAwayTempleteStartPropcess, newPayload)
       if (isApiResponseOk(res)) {
         setTimeout(() => {
-          message.success(`启动${currentNounPlanFilterName(FLOWS)}成功`,MESSAGE_DURATION_TIME)
+          message.success(
+            `启动${currentNounPlanFilterName(FLOWS)}成功`,
+            MESSAGE_DURATION_TIME
+          )
         }, 200)
         if (calback && typeof calback == 'function') calback()
       } else {
@@ -520,25 +580,25 @@ export default {
       return res || {}
     },
     // 进行中修改名称和描述
-    * updateFlowInstanceNameOrDescription({ payload }, { call, put }) {
+    *updateFlowInstanceNameOrDescription({ payload }, { call, put }) {
       const { calback } = payload
-      let newPayload = {...payload}
+      let newPayload = { ...payload }
       newPayload.calback ? delete newPayload.calback : ''
-      let res = yield call(updateFlowInstanceNameOrDescription,newPayload)
+      let res = yield call(updateFlowInstanceNameOrDescription, newPayload)
       if (isApiResponseOk(res)) {
         if (calback && typeof calback == 'function') calback()
       } else {
-        message.warn(res.message,MESSAGE_DURATION_TIME)
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
       return res || {}
     },
     // 获取组织成员
-    * getCurrentOrgAllMembers({ payload }, { call, put }) {
+    *getCurrentOrgAllMembers({ payload }, { call, put }) {
       let res = yield call(getCurrentOrgAllMembers, { ...payload })
       if (isApiResponseOk(res)) {
         let membersData = [...res.data.users]
         membersData = membersData.map(item => {
-          let new_item = {...item, user_id: item.id}
+          let new_item = { ...item, user_id: item.id }
           return new_item
         })
         yield put({
@@ -553,7 +613,8 @@ export default {
   reducers: {
     updateDatas(state, action) {
       return {
-        ...state, ...action.payload
+        ...state,
+        ...action.payload
       }
     }
   }

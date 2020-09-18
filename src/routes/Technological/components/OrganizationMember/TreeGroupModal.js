@@ -2,48 +2,51 @@ import React from 'react'
 import { Input, Button, Modal, Tree, message } from 'antd'
 import indexStyles from './index.less'
 
-const TreeNode = Tree.TreeNode;
+const TreeNode = Tree.TreeNode
 
 export default class TreeGroupModal extends React.Component {
-
-  state={
+  state = {
     groups: ''
   }
 
   onCancel = () => {
-    this.props.updateDatas({TreeGroupModalVisiblie: false})
+    this.props.updateDatas({ TreeGroupModalVisiblie: false })
   }
 
   onOk = () => {
-    const { datas: { currentBeOperateMemberId } } = this.props.model
-    this.props.updateDatas({TreeGroupModalVisiblie: false})
+    const {
+      datas: { currentBeOperateMemberId }
+    } = this.props.model
+    this.props.updateDatas({ TreeGroupModalVisiblie: false })
     this.props.setMemberWitchGroup({
       groups: this.state.groups,
       member_id: currentBeOperateMemberId
     })
   }
 
-  onCheck = (e) => {
+  onCheck = e => {
     this.setState({
       groups: e.join(',')
     })
   }
-  render () {
-    const { datas: { TreeGroupModalVisiblie, groupTreeList = []} } = this.props.model
+  render() {
+    const {
+      datas: { TreeGroupModalVisiblie, groupTreeList = [] }
+    } = this.props.model
     const loop = data => {
-      if(!data || !data.length){
+      if (!data || !data.length) {
         return
       }
-      return data.map((item) => {
+      return data.map(item => {
         if (item.child_data) {
           return (
             <TreeNode key={item.id} title={item.name}>
               {loop(item.child_data)}
             </TreeNode>
-          );
+          )
         }
-        return <TreeNode key={item.id} title={item.name}/>;
-      });
+        return <TreeNode key={item.id} title={item.name} />
+      })
     }
     return (
       <div>
@@ -58,19 +61,22 @@ export default class TreeGroupModal extends React.Component {
           cancelText="取消"
           onCancel={this.onCancel}
           onOk={this.onOk}
-          okButtonProps={{disabled: groupTreeList && groupTreeList.length ? false : true}}
-          getContainer={() => document.getElementById('organizationMemberContainer') || document.body}
+          okButtonProps={{
+            disabled: groupTreeList && groupTreeList.length ? false : true
+          }}
+          getContainer={() =>
+            document.getElementById('organizationMemberContainer') ||
+            document.body
+          }
         >
           <div className={indexStyles.MoveToDirectoryOut}>
-            {
-              groupTreeList && groupTreeList.length ? (
-                <Tree checkable multiple onCheck={this.onCheck.bind(this)}>
-                  {loop(groupTreeList)}
-                </Tree>
-              ) : (
-                <div>暂无分组</div>
-              )
-            }
+            {groupTreeList && groupTreeList.length ? (
+              <Tree checkable multiple onCheck={this.onCheck.bind(this)}>
+                {loop(groupTreeList)}
+              </Tree>
+            ) : (
+              <div>暂无分组</div>
+            )}
           </div>
         </Modal>
       </div>

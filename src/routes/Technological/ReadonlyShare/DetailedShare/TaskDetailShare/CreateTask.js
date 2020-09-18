@@ -2,22 +2,21 @@ import React from 'react'
 import CreateTaskStyle from './CreateTask.less'
 import TaskItem from './TaskItem'
 import CreateItem from './CreateItem'
-import { stopPropagation } from "../../../../../utils/util";
+import { stopPropagation } from '../../../../../utils/util'
 import DrawContentModal from './components/DrawContentModal'
 import QueryString from 'querystring'
-import { checkIsHasPermissionInBoard } from "../../../../../utils/businessFunction";
-import { PROJECT_TEAM_CARD_GROUP } from "../../../../../globalset/js/constant";
-import { connect } from 'dva';
+import { checkIsHasPermissionInBoard } from '../../../../../utils/businessFunction'
+import { PROJECT_TEAM_CARD_GROUP } from '../../../../../globalset/js/constant'
+import { connect } from 'dva'
 
 const documentWidth = document.querySelector('body').offsetWidth
-let defaultScrollLeft = 0;
+let defaultScrollLeft = 0
 function changeClientHeight() {
-  const clientHeight = document.documentElement.clientHeight;//获取页面可见高度
+  const clientHeight = document.documentElement.clientHeight //获取页面可见高度
   return clientHeight
 }
 @connect(mapStateToProps)
 export default class CreateTask extends React.Component {
-
   state = {
     drawerVisible: false,
     taskGroupListMouseOver: true,
@@ -25,24 +24,23 @@ export default class CreateTask extends React.Component {
     /*定义两个值用来存放当前元素的left和top值*/
     needX: 0,
     needY: 0,
-    isScrolling: false, //是否正在滚动
+    isScrolling: false //是否正在滚动
   }
   constructor() {
-    super();
+    super()
     // this.state = {
     //   needX: 0,
     //   needY: 0
     // }
     /*定义两个值用来存放鼠标按下的地方距离元素上侧和左侧边界的值*/
-    this.disX = 0;
-    this.disY = 0;
+    this.disX = 0
+    this.disY = 0
 
     //横向滚动条位置
     let task_page_scrollLeft = localStorage.getItem('task_page_scrollLeft')
     this.scrollLeft = task_page_scrollLeft || 0
     this.resizeTTY.bind(this)
   }
-
 
   componentDidMount() {
     const target = this.refs.outerMost
@@ -54,9 +52,9 @@ export default class CreateTask extends React.Component {
     }
 
     //在本地监听一个scroll事件，缓存下来持久化，在model
-    let latoutNode = document.getElementById("taskAppOuterMost");
+    let latoutNode = document.getElementById('taskAppOuterMost')
     if (latoutNode) {
-      latoutNode.addEventListener("scroll", e => {
+      latoutNode.addEventListener('scroll', e => {
         //判断是否在滚动
         if (this.timer) {
           clearTimeout(this.timer)
@@ -69,15 +67,14 @@ export default class CreateTask extends React.Component {
             isScrolling: false
           })
         }, 500)
-        localStorage.setItem('task_page_scrollLeft', e.target.scrollLeft);
-      });
+        localStorage.setItem('task_page_scrollLeft', e.target.scrollLeft)
+      })
     }
     // window.addEventListener('resize', this.resizeTTY.bind(this, 'ing'))
   }
   componentWillUnmount() {
-    let latoutNode = document.getElementById("taskAppOuterMost");
+    let latoutNode = document.getElementById('taskAppOuterMost')
     if (latoutNode) {
-
       //如果跳转到其他页面，则重置滚动条位置
       const urlArr = window.location.href.split('?') || []
       let param = {}
@@ -87,16 +84,16 @@ export default class CreateTask extends React.Component {
         appsSelectKey = param['appsSelectKey']
       }
       if (!appsSelectKey || appsSelectKey != '3') {
-        localStorage.setItem('task_page_scrollLeft', 0);
-        latoutNode.removeEventListener("scroll", e => {
-          localStorage.setItem('task_page_scrollLeft', e.target.scrollLeft);
-        });
+        localStorage.setItem('task_page_scrollLeft', 0)
+        latoutNode.removeEventListener('scroll', e => {
+          localStorage.setItem('task_page_scrollLeft', e.target.scrollLeft)
+        })
       }
     }
     // window.removeEventListener('resize', this.resizeTTY.bind(this,'ed'))
   }
   resizeTTY(type) {
-    const clientHeight = document.documentElement.clientHeight;//获取页面可见高度
+    const clientHeight = document.documentElement.clientHeight //获取页面可见高度
     this.setState({
       clientHeight
     })
@@ -106,23 +103,23 @@ export default class CreateTask extends React.Component {
   fnDown(e) {
     stopPropagation(e)
     /*事件兼容*/
-    let event = e || window.event;
+    let event = e || window.event
     /*事件源对象兼容*/
-    let target = this.refs.outerMost//event.target || event.srcElement;
+    let target = this.refs.outerMost //event.target || event.srcElement;
     /*获取鼠标按下的地方距离元素左侧和上侧的距离*/
-    this.disX = event.clientX - target.offsetLeft;
-    this.disY = event.clientY - target.offsetTop;
+    this.disX = event.clientX - target.offsetLeft
+    this.disY = event.clientY - target.offsetTop
     /*定义鼠标移动事件*/
-    document.onmousemove = this.fnMove.bind(this);
+    document.onmousemove = this.fnMove.bind(this)
     /*定义鼠标抬起事件*/
-    document.onmouseup = this.fnUp.bind(this);
+    document.onmouseup = this.fnUp.bind(this)
   }
   /*定义鼠标移动事件*/
   fnMove(e) {
     /*事件兼容*/
-    let event = e || window.event;
+    let event = e || window.event
     /*事件源对象兼容*/
-    let target = event.target || event.srcElement;
+    let target = event.target || event.srcElement
 
     //在查看任务时不可挪动
     const { drawerVisible, taskGroupList = [] } = this.props
@@ -134,27 +131,33 @@ export default class CreateTask extends React.Component {
     if (taskGroupList) {
       return false
     }
-    if (this.state.needX < 0 && (event.clientX - this.disX) < -(taskGroupList.length * 314)) {
+    if (
+      this.state.needX < 0 &&
+      event.clientX - this.disX < -(taskGroupList.length * 314)
+    ) {
       return false
     }
-    if (this.state.needX > documentWidth / 2 && (event.clientX - this.disX) > documentWidth / 2) {
+    if (
+      this.state.needX > documentWidth / 2 &&
+      event.clientX - this.disX > documentWidth / 2
+    ) {
       return false
     }
     this.setState({
       needX: event.clientX - this.disX,
       needY: event.clientY - this.disY
-    });
+    })
   }
   fnUp() {
-    document.onmousemove = null;
-    document.onmuseup = null;
+    document.onmousemove = null
+    document.onmuseup = null
   }
 
   //鼠标滚轮
   fnWheel(e) {
     stopPropagation(e)
     /*事件兼容*/
-    const event = e || window.event;
+    const event = e || window.event
     /*事件源对象兼容*/
     const target = this.refs.outerMost
     const target_2 = this.refs.outerMostListContainer
@@ -199,7 +202,11 @@ export default class CreateTask extends React.Component {
   // 右方抽屉弹窗---start
   setDrawerVisibleOpen(data) {
     const that = this
-    const { drawContent: { card_id }, taskGroupListIndex_index, taskGroupListIndex } = data
+    const {
+      drawContent: { card_id },
+      taskGroupListIndex_index,
+      taskGroupListIndex
+    } = data
     //不需要及时更新drawcontent
     const { dispatch } = this.props
     dispatch({
@@ -240,21 +247,28 @@ export default class CreateTask extends React.Component {
     dispatch({
       type: 'projectDetailTask/updateDatas',
       payload: {
-        drawerVisible: false,
+        drawerVisible: false
       }
     })
   }
   //右方抽屉弹窗---end
   render() {
     const { clientHeight = changeClientHeight(), isScrolling } = this.state
-    const { taskGroupList = [], drawerVisible = false, getTaskGroupListArrangeType = '1', board_id, dispatch } = this.props
+    const {
+      taskGroupList = [],
+      drawerVisible = false,
+      getTaskGroupListArrangeType = '1',
+      board_id,
+      dispatch
+    } = this.props
     let corretDegree = 0 //  修正度，媒体查询变化两条header高度
     if (clientHeight < 900) {
       corretDegree = 44
     }
     return (
       <div>
-        <div className={CreateTaskStyle.outerMost}
+        <div
+          className={CreateTaskStyle.outerMost}
           // style={{left:this.state.needX,}}
           // onMouseDown={this.fnDown.bind(this)}
           id={'taskAppOuterMost'}
@@ -263,12 +277,14 @@ export default class CreateTask extends React.Component {
           style={{ height: clientHeight - 172 + corretDegree }}
           ref={'outerMost'}
         >
-          <div className={CreateTaskStyle.outerMostListContainer} ref={'outerMostListContainer'}>
+          <div
+            className={CreateTaskStyle.outerMostListContainer}
+            ref={'outerMostListContainer'}
+          >
             {taskGroupList.map((value, key) => {
               const { list_id } = value
               return (
-                <div style={{ width: 'auto', marginRight: 40 }}
-                  key={list_id}>
+                <div style={{ width: 'auto', marginRight: 40 }} key={list_id}>
                   <TaskItem
                     isScrolling={isScrolling}
                     taskItemValue={value}
@@ -282,9 +298,12 @@ export default class CreateTask extends React.Component {
                 </div>
               )
             })}
-            {getTaskGroupListArrangeType === '1' && checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_GROUP) ? (
+            {getTaskGroupListArrangeType === '1' &&
+            checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_GROUP) ? (
               <CreateItem />
-            ) : ('')}
+            ) : (
+              ''
+            )}
           </div>
         </div>
 
@@ -292,7 +311,8 @@ export default class CreateTask extends React.Component {
         <DrawContentModal
           dispatch={dispatch}
           visible={drawerVisible}
-          setDrawerVisibleClose={this.setDrawerVisibleClose.bind(this)} />
+          setDrawerVisibleClose={this.setDrawerVisibleClose.bind(this)}
+        />
       </div>
     )
   }
@@ -302,20 +322,15 @@ function mapStateToProps({
     datas: {
       taskGroupList = [],
       drawerVisible = false,
-      getTaskGroupListArrangeType = '1',
+      getTaskGroupListArrangeType = '1'
     }
   },
   projectDetail: {
-    datas: {
-      board_id
-    }
+    datas: { board_id }
   },
   technological: {
-    datas: {
-      userBoardPermissions
-    }
+    datas: { userBoardPermissions }
   }
-
 }) {
   return {
     taskGroupList,

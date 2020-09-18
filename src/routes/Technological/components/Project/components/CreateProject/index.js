@@ -1,23 +1,41 @@
 import React from 'react'
-import { Modal, Form, Button, Input, message, Select, Tooltip, Dropdown, Menu } from 'antd'
+import {
+  Modal,
+  Form,
+  Button,
+  Input,
+  message,
+  Select,
+  Tooltip,
+  Dropdown,
+  Menu
+} from 'antd'
 import DragValidation from '../../../../../../components/DragValidation'
 import indexStyles from './index.less'
 import StepTwoListItem from './StepTwoListItem'
 import { validateTel, validateEmail } from '../../../../../../utils/verify'
-import { MESSAGE_DURATION_TIME, PROJECTS, ORG_TEAM_BOARD_CREATE, NOT_HAS_PERMISION_COMFIRN } from "../../../../../../globalset/js/constant";
-import { currentNounPlanFilterName, checkIsHasPermission } from "../../../../../../utils/businessFunction";
+import {
+  MESSAGE_DURATION_TIME,
+  PROJECTS,
+  ORG_TEAM_BOARD_CREATE,
+  NOT_HAS_PERMISION_COMFIRN
+} from '../../../../../../globalset/js/constant'
+import {
+  currentNounPlanFilterName,
+  checkIsHasPermission
+} from '../../../../../../utils/businessFunction'
 import CustormModal from '../../../../../../components/CustormModal'
 import InviteOthers from './../../../InviteOthers/index'
 import { getProjectList } from '../../../../../../services/technological/workbench'
-import { isApiResponseOk } from "../../../../../../utils/handleResponseData";
+import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
 import { connect } from 'dva'
-import { getAppsList } from "../../../../../../services/technological/project";
+import { getAppsList } from '../../../../../../services/technological/project'
 import { getBoardTemplateList } from '../../../../../../services/technological/gantt'
 import globalStyles from '@/globalset/css/globalClassName.less'
 
 const FormItem = Form.Item
 const TextArea = Input.TextArea
-const { Option } = Select;
+const { Option } = Select
 
 @connect(mapStateToProps)
 class CreateProject extends React.Component {
@@ -40,7 +58,7 @@ class CreateProject extends React.Component {
     _organization_id: this.props._organization_id || '', //选择的组织id
     appsList: [], //app列表
     board_template_list: [], //项目模板
-    selected_board_template_id: undefined, //项目模板id
+    selected_board_template_id: undefined //项目模板id
   }
 
   // 初始化数据
@@ -62,7 +80,7 @@ class CreateProject extends React.Component {
       OrganizationId: localStorage.getItem('OrganizationId'),
       _organization_id: this.props._organization_id || '', //选择的组织id
       copy_flow_template_visible: false,
-      invit_others_visible: false,
+      invit_others_visible: false
       // appsList: [], //app列表
     })
   }
@@ -82,11 +100,10 @@ class CreateProject extends React.Component {
     this.setAddProjectModalVisibleLocal(this.props)
   }
 
-
   // 项目模板---end
 
   // 缓存是否可见在state
-  setAddProjectModalVisibleLocal = (props) => {
+  setAddProjectModalVisibleLocal = props => {
     const { addProjectModalVisible } = this.props
     this.setState({
       addProjectModalVisibleLocal: addProjectModalVisible
@@ -97,13 +114,15 @@ class CreateProject extends React.Component {
   handleOrgSetInit = () => {
     const { currentUserOrganizes = [], _organization_id } = this.props
     if (currentUserOrganizes.length == 1 && !!!_organization_id) {
-      this.setState({
-        _organization_id: currentUserOrganizes[0].id
-      }, () => {
-        this.getProjectList(true)
-        this.getAppList(true)
-      })
-
+      this.setState(
+        {
+          _organization_id: currentUserOrganizes[0].id
+        },
+        () => {
+          this.getProjectList(true)
+          this.getAppList(true)
+        }
+      )
     } else {
       this.getProjectList(true)
       this.getAppList(true)
@@ -116,7 +135,8 @@ class CreateProject extends React.Component {
     let params = {
       type: '2'
     }
-    if (OrganizationId != '0') { //如果是初始化和非全组织状态时才调用
+    if (OrganizationId != '0') {
+      //如果是初始化和非全组织状态时才调用
       params = Object.assign(params, { _organization_id: OrganizationId })
     } else {
       params = Object.assign(params, { _organization_id })
@@ -142,15 +162,18 @@ class CreateProject extends React.Component {
       message.warn('您在该组织没有创建项目权限')
       return false
     }
-    this.setState({
-      _organization_id: id,
-      _organization_name: name,
-      selected_board_template_id: undefined,
-      select_project_id: undefined
-    }, () => {
-      this.getAppList()
-      this.getProjectList()
-    })
+    this.setState(
+      {
+        _organization_id: id,
+        _organization_name: name,
+        selected_board_template_id: undefined,
+        select_project_id: undefined
+      },
+      () => {
+        this.getAppList()
+        this.getProjectList()
+      }
+    )
   }
 
   // 项目名称 onChange 事件
@@ -173,17 +196,18 @@ class CreateProject extends React.Component {
     this.setState({
       step: 1
     })
-    this.props.setAddProjectModalVisible && this.props.setAddProjectModalVisible()
+    this.props.setAddProjectModalVisible &&
+      this.props.setAddProjectModalVisible()
     this.initData()
   }
 
-
   handleUsersToUsersStr = (users = []) => {
     return users.reduce((acc, curr) => {
-      const isCurrentUserFromPlatform = () => curr.type === 'platform' && curr.id
+      const isCurrentUserFromPlatform = () =>
+        curr.type === 'platform' && curr.id
       if (isCurrentUserFromPlatform()) {
         if (acc) {
-          return acc + "," + curr.id
+          return acc + ',' + curr.id
         }
         return curr.id
       } else {
@@ -201,7 +225,7 @@ class CreateProject extends React.Component {
   }
 
   //复制
-  selectProjectChange = (board_id) => {
+  selectProjectChange = board_id => {
     const { projects = [] } = this.state
     const apps = (projects.find(item => board_id == item.board_id) || {}).apps
     this.setState({
@@ -211,12 +235,12 @@ class CreateProject extends React.Component {
     this.setCopyValue()
   }
   // 获取带有app的项目列表
-  getProjectList = (init) => {
+  getProjectList = init => {
     const that = this
     const { OrganizationId, _organization_id } = this.state
     let params = {}
-    if (OrganizationId != '0' && init) { //如果是初始化和非全组织状态时才调用
-
+    if (OrganizationId != '0' && init) {
+      //如果是初始化和非全组织状态时才调用
     } else {
       params['_organization_id'] = _organization_id
     }
@@ -231,7 +255,7 @@ class CreateProject extends React.Component {
     })
   }
 
-  setCopyValue = (data) => {
+  setCopyValue = data => {
     this.setState({
       copy_value: {
         flows: {
@@ -246,7 +270,7 @@ class CreateProject extends React.Component {
     let newProjects = [...projects]
     let arr = []
     for (let i = 0; i < newProjects.length; i++) {
-      let element = newProjects[i].apps || [];
+      let element = newProjects[i].apps || []
       // console.log(element, 'ssssssssssssss')
       for (let j = 0; j < element.length; j++) {
         if (element[j].code == 'Flows') {
@@ -255,7 +279,9 @@ class CreateProject extends React.Component {
       }
     }
     return arr
-    let permissionArr = this.filterProjectWhichCurrentUserHasAccessFlowsPermission(arr)
+    let permissionArr = this.filterProjectWhichCurrentUserHasAccessFlowsPermission(
+      arr
+    )
     return permissionArr
     // console.log(newProjects, 'sssssssssssss_newProjects')
   }
@@ -272,18 +298,29 @@ class CreateProject extends React.Component {
 
   // 获取项目权限
   getProjectPermission = (permissionType, board_id) => {
-    const userBoardPermissions = this.getInfoFromLocalStorage('userBoardPermissions')
+    const userBoardPermissions = this.getInfoFromLocalStorage(
+      'userBoardPermissions'
+    )
     if (!userBoardPermissions || !userBoardPermissions.length) {
       return false
     }
-    const isFindedBoard = userBoardPermissions.find(board => board.board_id === board_id)
+    const isFindedBoard = userBoardPermissions.find(
+      board => board.board_id === board_id
+    )
     if (!isFindedBoard) return false
     const { permissions = [] } = isFindedBoard
-    return !!permissions.find(permission => permission.code === permissionType && permission.type === '1')
+    return !!permissions.find(
+      permission =>
+        permission.code === permissionType && permission.type === '1'
+    )
   }
   // 查询当前用户是否有权限
-  filterProjectWhichCurrentUserHasAccessFlowsPermission = (projectList = []) => {
-    return projectList.filter(({ board_id }) => this.getProjectPermission('project:flows:flow:access', board_id))
+  filterProjectWhichCurrentUserHasAccessFlowsPermission = (
+    projectList = []
+  ) => {
+    return projectList.filter(({ board_id }) =>
+      this.getProjectPermission('project:flows:flow:access', board_id)
+    )
   }
 
   // 直接渲染复制流程模板
@@ -293,7 +330,7 @@ class CreateProject extends React.Component {
       step_2_type,
       projects = [],
       project_apps = [],
-      select_project_id,
+      select_project_id
     } = this.state
     const filterProject = this.filterCurrentProjectListWithFlows() || []
     const step_2_copy = (
@@ -312,7 +349,9 @@ class CreateProject extends React.Component {
               {filterProject.map((value, key) => {
                 const { board_id, board_name } = value
                 return (
-                  <Option value={board_id} key={board_id}>{board_name}</Option>
+                  <Option value={board_id} key={board_id}>
+                    {board_name}
+                  </Option>
                 )
               })}
             </Select>
@@ -327,19 +366,24 @@ class CreateProject extends React.Component {
   renderOrgMenu = () => {
     const { currentUserOrganizes = [] } = this.props
     return (
-      <Menu onClick={this.orgOnChange} style={{ maxHeight: 240, overflow: 'auto' }}>
-        {
-          currentUserOrganizes.map(value => {
-            const { name, id } = value
-            return (
-              <Menu.Item key={`${id}__${name}`} style={{ width: 248 }}>
-                <div style={{ maxWidth: 232 }} className={`${globalStyles.global_ellipsis}`} title={name}>
-                  {name}
-                </div>
-              </Menu.Item>
-            )
-          })
-        }
+      <Menu
+        onClick={this.orgOnChange}
+        style={{ maxHeight: 240, overflow: 'auto' }}
+      >
+        {currentUserOrganizes.map(value => {
+          const { name, id } = value
+          return (
+            <Menu.Item key={`${id}__${name}`} style={{ width: 248 }}>
+              <div
+                style={{ maxWidth: 232 }}
+                className={`${globalStyles.global_ellipsis}`}
+                title={name}
+              >
+                {name}
+              </div>
+            </Menu.Item>
+          )
+        })}
       </Menu>
     )
   }
@@ -359,35 +403,55 @@ class CreateProject extends React.Component {
 
   // 以上几步合成一步
   renderCreateStep = () => {
-    const { _organization_id,
-      OrganizationId, stepOneContinueDisabled, step_2_type, invit_others_visible, copy_flow_template_visible, _organization_name } = this.state
-    const { currentUserOrganizes = [], form: { getFieldDecorator } } = this.props;
-    const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
-    const { is_simple_model } = user_set;
+    const {
+      _organization_id,
+      OrganizationId,
+      stepOneContinueDisabled,
+      step_2_type,
+      invit_others_visible,
+      copy_flow_template_visible,
+      _organization_name
+    } = this.state
+    const {
+      currentUserOrganizes = [],
+      form: { getFieldDecorator }
+    } = this.props
+    const { user_set = {} } = localStorage.getItem('userInfo')
+      ? JSON.parse(localStorage.getItem('userInfo'))
+      : {}
+    const { is_simple_model } = user_set
     const step = (
       <div>
         <div className={indexStyles.head}>
           <div className={indexStyles.head_left}>
-            新建{currentNounPlanFilterName(PROJECTS)}{OrganizationId == '0' && '到'}
+            新建{currentNounPlanFilterName(PROJECTS)}
+            {OrganizationId == '0' && '到'}
           </div>
-          {
-            OrganizationId == '0' && (
-              <Dropdown overlay={this.renderOrgMenu()}>
-                <div className={indexStyles.head_org}>
-                  <div style={{ maxWidth: 246 }} className={`${globalStyles.global_ellipsis}`}>{(_organization_id && _organization_id != '0') ? _organization_name : '请选择组织'}</div>
-                  <div className={globalStyles.authTheme}>&#xe7ee;</div>
+          {OrganizationId == '0' && (
+            <Dropdown overlay={this.renderOrgMenu()}>
+              <div className={indexStyles.head_org}>
+                <div
+                  style={{ maxWidth: 246 }}
+                  className={`${globalStyles.global_ellipsis}`}
+                >
+                  {_organization_id && _organization_id != '0'
+                    ? _organization_name
+                    : '请选择组织'}
                 </div>
-              </Dropdown>
-            )
-          }
+                <div className={globalStyles.authTheme}>&#xe7ee;</div>
+              </div>
+            </Dropdown>
+          )}
         </div>
 
         <div className={indexStyles.operateAreaOut}>
           <div className={indexStyles.operateArea}>
             {/* 项目名称 */}
-            <Input placeholder={`输入${currentNounPlanFilterName(PROJECTS)}名称`}
+            <Input
+              placeholder={`输入${currentNounPlanFilterName(PROJECTS)}名称`}
               onChange={this.boardNameChange.bind(this)}
-              style={{ height: 40, marginBottom: 16 }} />
+              style={{ height: 40, marginBottom: 16 }}
+            />
             <div className={indexStyles.setelse}>
               <div className={indexStyles.setelse_left}>
                 {/* {
@@ -399,23 +463,65 @@ class CreateProject extends React.Component {
                 </div> */}
                 {/* )
                 } */}
-                <div className={indexStyles.setelse_item} onClick={this.setInviteOthersVisible}>
-                  <div className={`${globalStyles.authTheme} ${indexStyles.addUSer}`}>&#xe685;</div>
-                  <div className={indexStyles.setelse_item_name}>邀请他人加入</div>
-                  <div className={`${globalStyles.authTheme} ${indexStyles.spin} ${!invit_others_visible && indexStyles.spin_down}`}>&#xe66b;</div>
+                <div
+                  className={indexStyles.setelse_item}
+                  onClick={this.setInviteOthersVisible}
+                >
+                  <div
+                    className={`${globalStyles.authTheme} ${indexStyles.addUSer}`}
+                  >
+                    &#xe685;
+                  </div>
+                  <div className={indexStyles.setelse_item_name}>
+                    邀请他人加入
+                  </div>
+                  <div
+                    className={`${globalStyles.authTheme} ${
+                      indexStyles.spin
+                    } ${!invit_others_visible && indexStyles.spin_down}`}
+                  >
+                    &#xe66b;
+                  </div>
                 </div>
               </div>
               <div className={indexStyles.setelse_right}>
-                <Button type="primary" disabled={stepOneContinueDisabled || (OrganizationId == '0' && (!_organization_id || !checkIsHasPermission(ORG_TEAM_BOARD_CREATE, _organization_id)))} onClick={this.createBoard} style={{ width: 96, height: 40, }}>创建{`${currentNounPlanFilterName(PROJECTS)}`}</Button>
+                <Button
+                  type="primary"
+                  disabled={
+                    stepOneContinueDisabled ||
+                    (OrganizationId == '0' &&
+                      (!_organization_id ||
+                        !checkIsHasPermission(
+                          ORG_TEAM_BOARD_CREATE,
+                          _organization_id
+                        )))
+                  }
+                  onClick={this.createBoard}
+                  style={{ width: 96, height: 40 }}
+                >
+                  创建{`${currentNounPlanFilterName(PROJECTS)}`}
+                </Button>
               </div>
             </div>
             {/* 复制流程模板 */}
-            <div style={{ display: copy_flow_template_visible ? 'block' : 'none' }}>
+            <div
+              style={{ display: copy_flow_template_visible ? 'block' : 'none' }}
+            >
               {this.renderCopyFlowTemplete()}
             </div>
             {/* 邀请他人 */}
             <div style={{ display: invit_others_visible ? 'block' : 'none' }}>
-              <InviteOthers selectDisabled={OrganizationId == '0' && !!!_organization_id} _organization_id={_organization_id || localStorage.getItem('OrganizationId')} isShowTitle={false} isShowSubmitBtn={false} handleInviteMemberReturnResult={this.handleInviteMemberReturnResult} />
+              <InviteOthers
+                selectDisabled={OrganizationId == '0' && !!!_organization_id}
+                _organization_id={
+                  _organization_id || localStorage.getItem('OrganizationId')
+                }
+                isShowTitle={false}
+                isShowSubmitBtn={false}
+                handleInviteMemberReturnResult={
+                  this.handleInviteMemberReturnResult
+                }
+              />
             </div>
             {/* </div> */}
           </div>
@@ -425,7 +531,16 @@ class CreateProject extends React.Component {
     return step
   }
   createBoard = () => {
-    const { _organization_id, OrganizationId, board_name, users, appsList = [], copy_value, select_project_id, selected_board_template_id } = this.state
+    const {
+      _organization_id,
+      OrganizationId,
+      board_name,
+      users,
+      appsList = [],
+      copy_value,
+      select_project_id,
+      selected_board_template_id
+    } = this.state
     if (copy_value && Object.keys(copy_value).length && select_project_id) {
       let apps = appsList.map(item => item.id).join(',')
       const copy_obj = {
@@ -463,11 +578,12 @@ class CreateProject extends React.Component {
 
     // }
     // this.props.addNewProject ? this.props.addNewProject(params) : false
-    this.props.setAddProjectModalVisible && this.props.setAddProjectModalVisible({ visible: false })
+    this.props.setAddProjectModalVisible &&
+      this.props.setAddProjectModalVisible({ visible: false })
     this.initData()
   }
   render() {
-    const { addProjectModalVisible } = this.props;
+    const { addProjectModalVisible } = this.props
 
     return (
       <div>
@@ -479,11 +595,8 @@ class CreateProject extends React.Component {
           destroyOnClose
           style={{ textAlign: 'center' }}
           onCancel={this.onCancel}
-          overInner={
-            this.renderCreateStep()
-          }
-        >
-        </CustormModal>
+          overInner={this.renderCreateStep()}
+        ></CustormModal>
       </div>
     )
   }
@@ -491,12 +604,16 @@ class CreateProject extends React.Component {
 export default Form.create()(CreateProject)
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ technological: { datas: { currentUserOrganizes = [], userOrgPermissions } } }) {
-  return { currentUserOrganizes, userOrgPermissions };
+function mapStateToProps({
+  technological: {
+    datas: { currentUserOrganizes = [], userOrgPermissions }
+  }
+}) {
+  return { currentUserOrganizes, userOrgPermissions }
 }
 
 CreateProject.defaultProps = {
-  setAddProjectModalVisible: function () { }, // 控制新建项目的弹窗回调
+  setAddProjectModalVisible: function() {}, // 控制新建项目的弹窗回调
   addProjectModalVisible: false, // 该弹窗的显示隐藏
-  addNewProject: function () { }, // 创建完成时的回调
+  addNewProject: function() {} // 创建完成时的回调
 }

@@ -1,5 +1,5 @@
-import React from 'react';
-import { connect } from "dva/index";
+import React from 'react'
+import { connect } from 'dva/index'
 import { Icon, Tabs, message } from 'antd'
 import indexStyles from './index.less'
 import { color_4 } from '../../globalset/js/styles'
@@ -7,31 +7,32 @@ import ProjectRole from './ProjectRole'
 import OrgnizationRole from './OrgnizationRole'
 import BaseInfo from './BaseInfo'
 import { getUrlQueryString } from '../../utils/util'
-import NounDefinition from "./NounDefinition";
-import { ORGANIZATION, PROJECTS } from "../../globalset/js/constant";
-import { currentNounPlanFilterName } from "../../utils/businessFunction";
-import FnManagement from './FnManagement';
-
+import NounDefinition from './NounDefinition'
+import { ORGANIZATION, PROJECTS } from '../../globalset/js/constant'
+import { currentNounPlanFilterName } from '../../utils/businessFunction'
+import FnManagement from './FnManagement'
 
 const TabPane = Tabs.TabPane
 
 const getEffectOrReducerByName = name => `organizationManager/${name}`
 
-const Organization = (options) => {
+const Organization = options => {
   const { dispatch, model = {}, showBackBtn = true } = options
-  const { datas: { tabSelectKey } } = model
-  const updateDatas = (payload) => {
+  const {
+    datas: { tabSelectKey }
+  } = model
+  const updateDatas = payload => {
     dispatch({
       type: getEffectOrReducerByName('updateDatas'),
       payload: payload
     })
   }
 
-  const routingJump = (path) => {
+  const routingJump = path => {
     dispatch({
       type: getEffectOrReducerByName('routingJump'),
       payload: {
-        route: path,
+        route: path
       }
     })
   }
@@ -139,41 +140,57 @@ const Organization = (options) => {
         type: getEffectOrReducerByName('saveNounList'),
         payload: data
       })
-    },
+    }
   }
 
-  const onTabClick = (key) => {
+  const onTabClick = key => {
     updateDatas({
       tabSelectKey: key
     })
   }
 
-
-
   return (
     <div className={indexStyles.organizationOut}>
       <div className={indexStyles.main}>
-        {
-          showBackBtn && (
-            <div className={indexStyles.back} onClick={historyGoBack}>
-              <Icon type="left" theme="outlined" />返回
+        {showBackBtn && (
+          <div className={indexStyles.back} onClick={historyGoBack}>
+            <Icon type="left" theme="outlined" />
+            返回
           </div>
-          )}
+        )}
 
         <div className={indexStyles.topTitle}>
-          <Icon type="home" theme="outlined" style={{ color: color_4, fontSize: 32 }} />
-          <div className={indexStyles.titleName}>{currentNounPlanFilterName(ORGANIZATION)}管理后台</div>
+          <Icon
+            type="home"
+            theme="outlined"
+            style={{ color: color_4, fontSize: 32 }}
+          />
+          <div className={indexStyles.titleName}>
+            {currentNounPlanFilterName(ORGANIZATION)}管理后台
+          </div>
           {/*tabs 页*/}
           <div className={indexStyles.tabsOut}>
-            <Tabs defaultActiveKey="1" size='small' tabBarGutter={60} activeKey={tabSelectKey} onTabClick={onTabClick}>
+            <Tabs
+              defaultActiveKey="1"
+              size="small"
+              tabBarGutter={60}
+              activeKey={tabSelectKey}
+              onTabClick={onTabClick}
+            >
               <TabPane tab="基本信息" key="1">
                 <BaseInfo {...asyncProprs} updateDatas={updateDatas} />
               </TabPane>
-              <TabPane tab={`${currentNounPlanFilterName(ORGANIZATION)}角色`} key="2">
+              <TabPane
+                tab={`${currentNounPlanFilterName(ORGANIZATION)}角色`}
+                key="2"
+              >
                 <OrgnizationRole {...asyncProprs} updateDatas={updateDatas} />
                 {/*<RoleTabPaneContent {...asyncProprs} updateDatas={updateDatas}/>*/}
               </TabPane>
-              <TabPane tab={`${currentNounPlanFilterName(PROJECTS)}角色`} key="3">
+              <TabPane
+                tab={`${currentNounPlanFilterName(PROJECTS)}角色`}
+                key="3"
+              >
                 <ProjectRole {...asyncProprs} updateDatas={updateDatas} />
                 {/*<AuthTabPaneContent {...asyncProprs} updateDatas={updateDatas}/>*/}
               </TabPane>
@@ -181,7 +198,10 @@ const Organization = (options) => {
                 <NounDefinition {...asyncProprs} updateDatas={updateDatas} />
               </TabPane>
               <TabPane tab="功能管理" key="5">
-                <FnManagement {...asyncProprs} updateDatas={updateDatas}></FnManagement>
+                <FnManagement
+                  {...asyncProprs}
+                  updateDatas={updateDatas}
+                ></FnManagement>
               </TabPane>
             </Tabs>
           </div>
@@ -189,7 +209,7 @@ const Organization = (options) => {
       </div>
     </div>
   )
-};
+}
 
 function mapStateToProps({ modal, organizationManager, loading }) {
   return { modal, model: organizationManager, loading }

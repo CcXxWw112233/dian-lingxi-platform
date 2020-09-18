@@ -30,12 +30,12 @@ import './components/Message'
 import { Switch, Route, Redirect, routerRedux, Router } from 'dva/router'
 import dynamic from 'dva/dynamic'
 import { LocaleProvider } from 'antd'
-import zh_CN from 'antd/lib/locale-provider/zh_CN';
+import zh_CN from 'antd/lib/locale-provider/zh_CN'
 import RedirectComp from './routes/RedirectComp.js'
 const { ConnectedRouter } = routerRedux
 
-const Routers = function ({ history, app }) {
-  history.listen((location) => {
+const Routers = function({ history, app }) {
+  history.listen(location => {
     switch (location.pathname) {
       case '/login':
         document.title = '聆悉-登录'
@@ -104,36 +104,44 @@ const Routers = function ({ history, app }) {
     {
       path: '/',
       // models: () => [import('./models/initRouteRedirect')],
-      component: () => import('./routes/InitRouteRedirect/index'),
-    }, {
+      component: () => import('./routes/InitRouteRedirect/index')
+    },
+    {
       path: '/agreement/service',
       // models: () => [import('./models/agreement')],
       component: () => import('./routes/Agreement/service')
-    }, {
+    },
+    {
       path: '/agreement/privacy',
       // models: () => [import('./models/agreement')],
       component: () => import('./routes/Agreement/privacy')
-    }, {
+    },
+    {
       path: '/login',
       // models: () => [import('./models/login')],
-      component: () => import('./routes/Login/'),
-    }, {
+      component: () => import('./routes/Login/')
+    },
+    {
       path: '/register',
       // models: () => [import('./models/register')],
-      component: () => import('./routes/Register/'),
-    }, {
+      component: () => import('./routes/Register/')
+    },
+    {
       path: '/registerSuccess',
       // models: () => [import('./models/registerSuccess')],
-      component: () => import('./routes/RegisterSuccess/'),
-    }, {
+      component: () => import('./routes/RegisterSuccess/')
+    },
+    {
       path: '/resetPassword',
       // models: () => [import('./models/resetPassword')],
-      component: () => import('./routes/ResetPassword/'),
-    }, {
+      component: () => import('./routes/ResetPassword/')
+    },
+    {
       path: '/retrievePassword',
       // models: () => [import('./models/retrievePassword')],
-      component: () => import('./routes/RetrievePassword/'),
-    }, {
+      component: () => import('./routes/RetrievePassword/')
+    },
+    {
       path: '/technological/:path/:path?/:path?/:path?',
       // models: () => [
       //   // import('./models/technological'),
@@ -175,12 +183,13 @@ const Routers = function ({ history, app }) {
       //   // import('./models/organizationManager'),
       //   // import('./models/technological/informRemind'),
       // ],
-      component: () => import('./routes/Technological/'),
-    }, {
+      component: () => import('./routes/Technological/')
+    },
+    {
       path: '/emailRedirect',
       // models: () => [import('./models/emailRedirect')],
-      component: () => import('./routes/EmailRedirect/'),
-    },
+      component: () => import('./routes/EmailRedirect/')
+    }
     //  {
     //   path: '/organizationManager',
     //   // models: () => [import('./models/organizationManager')],
@@ -229,21 +238,20 @@ const Routers = function ({ history, app }) {
     <LocaleProvider locale={zh_CN}>
       <Router history={history}>
         <Switch>
-          {
-            routes.map(({ path, ...dynamics }, key) => {
-              return (
-                <Route key={key}
-                  exact={path == '/'}
-                  // exact={(path.indexOf('/technological') !== -1 || path.indexOf('/teamShow') !== -1) ? false : true}
-                  path={path}
-                  component={dynamic({
-                    app,
-                    ...dynamics,
-                  })}
-                />
-              )
-            })
-          }
+          {routes.map(({ path, ...dynamics }, key) => {
+            return (
+              <Route
+                key={key}
+                exact={path == '/'}
+                // exact={(path.indexOf('/technological') !== -1 || path.indexOf('/teamShow') !== -1) ? false : true}
+                path={path}
+                component={dynamic({
+                  app,
+                  ...dynamics
+                })}
+              />
+            )
+          })}
           <Route path="*" component={RedirectComp} />
         </Switch>
       </Router>
@@ -253,7 +261,7 @@ const Routers = function ({ history, app }) {
 
 Routers.propTypes = {
   history: PropTypes.object,
-  app: PropTypes.object,
+  app: PropTypes.object
 }
 
 export default Routers

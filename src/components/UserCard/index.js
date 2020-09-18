@@ -1,15 +1,28 @@
 import Ract from 'react'
 import detailInfoStyle from './index.less'
-import {Icon, Tooltip} from 'antd'
+import { Icon, Tooltip } from 'antd'
 
-const UserCard = ({avatar, name, role_name, email, mobile}) => {
+const UserCard = ({ avatar, name, role_name, email, mobile }) => {
   return (
     <div className={detailInfoStyle.manImageDropdown}>
       <div className={detailInfoStyle.manImageDropdown_top}>
         <div className={detailInfoStyle.left}>
-          {avatar ? (<img src={avatar} alt='' />) : (
-            <div style={{backgroundColor: '#f2f2f2', textAlign: 'center', width: 32, height: 32, borderRadius: 32}}>
-              <Icon type={'user'} style={{color: '#8c8c8c', fontSize: 20, marginTop: 6}}/>
+          {avatar ? (
+            <img src={avatar} alt="" />
+          ) : (
+            <div
+              style={{
+                backgroundColor: '#f2f2f2',
+                textAlign: 'center',
+                width: 32,
+                height: 32,
+                borderRadius: 32
+              }}
+            >
+              <Icon
+                type={'user'}
+                style={{ color: '#8c8c8c', fontSize: 20, marginTop: 6 }}
+              />
             </div>
           )}
         </div>
@@ -17,9 +30,9 @@ const UserCard = ({avatar, name, role_name, email, mobile}) => {
           <div className={detailInfoStyle.name}>{name || '佚名'}</div>
           <Tooltip title="该功能即将上线">
             <div className={detailInfoStyle.percent}>
-              <div style={{width: '0'}}></div>
-              <div style={{width: '0'}}></div>
-              <div style={{width: '100%'}}></div>
+              <div style={{ width: '0' }}></div>
+              <div style={{ width: '0' }}></div>
+              <div style={{ width: '100%' }}></div>
             </div>
           </Tooltip>
         </div>
@@ -47,7 +60,7 @@ const UserCard = ({avatar, name, role_name, email, mobile}) => {
         </div> */}
       </div>
       {/*<div className={detailInfoStyle.manImageDropdown_bott}>*/}
-        {/*<img src="" />*/}
+      {/*<img src="" />*/}
       {/*</div>*/}
     </div>
   )

@@ -1,11 +1,11 @@
 import React from 'react'
 import { Modal, Form, Button, Input, message, Select, Icon } from 'antd'
-import {min_page_width} from "./../../../globalset/js/styles";
+import { min_page_width } from './../../../globalset/js/styles'
 import { getGlobalSearchResultList } from '../../../services/technological'
 import indexstyles from './index.less'
 import globalStyles from './../../../globalset/css/globalClassName.less'
 
-import {connect} from "dva/index";
+import { connect } from 'dva/index'
 import MeetingItem from './MeetingItem'
 import TaskItem from './TaskItem'
 import BoardItem from './BoardItem'
@@ -14,8 +14,8 @@ import FileItem from './FileItem'
 
 const FormItem = Form.Item
 const TextArea = Input.TextArea
-const InputGroup = Input.Group;
-const Option = Select.Option;
+const InputGroup = Input.Group
+const Option = Select.Option
 
 //此弹窗应用于各个业务弹窗，和右边圈子适配
 const getEffectOrReducerByName = name => `globalSearch/${name}`
@@ -23,33 +23,35 @@ const getEffectOrReducerByName = name => `globalSearch/${name}`
 export default class PaginResult extends React.Component {
   state = {
     loadMoreDisplay: 'none',
-    scrollBlock: true, //滚动加载锁，true可以加载，false不执行滚动操作
+    scrollBlock: true //滚动加载锁，true可以加载，false不执行滚动操作
   }
 
   componentDidMount() {
     const { dispatch } = this.props
     dispatch({
       type: getEffectOrReducerByName('getGlobalSearchResultList'),
-      payload: {
-
-      }
+      payload: {}
     })
   }
 
-  componentWillReceiveProps(nextProps) {
-
-  }
+  componentWillReceiveProps(nextProps) {}
 
   //分页逻辑
   async getGlobalSearchResultList() {
-    const { page_number, page_size, searchInputValue, defaultSearchType, dispatch } = this.props
-    const { listData = [], status, } = this.props
+    const {
+      page_number,
+      page_size,
+      searchInputValue,
+      defaultSearchType,
+      dispatch
+    } = this.props
+    const { listData = [], status } = this.props
 
     const obj = {
       page_number,
       page_size,
       search_type: defaultSearchType,
-      search_term: searchInputValue,
+      search_term: searchInputValue
     }
     dispatch({
       type: getEffectOrReducerByName('getGlobalSearchResultList'),
@@ -60,17 +62,20 @@ export default class PaginResult extends React.Component {
   }
 
   contentBodyScroll(e) {
-    if(e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight < 2) {
+    if (
+      e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight <
+      2
+    ) {
       const { page_number = 1, scrollBlock, dispatch } = this.props
       let page_no = page_number
-      if(!scrollBlock) {
+      if (!scrollBlock) {
         return false
       }
       dispatch({
         type: getEffectOrReducerByName('updateDatas'),
         payload: {
           page_number: ++page_no,
-          scrollBlock: false,
+          scrollBlock: false
         }
       })
       setTimeout(() => {
@@ -80,10 +85,15 @@ export default class PaginResult extends React.Component {
   }
 
   render() {
-    const { sigleTypeResultList = [], loadMoreTextType, loadMoreDisplay, page_number } = this.props
+    const {
+      sigleTypeResultList = [],
+      loadMoreTextType,
+      loadMoreDisplay,
+      page_number
+    } = this.props
     const { dispatch } = this.props
     const sigleItem = sigleTypeResultList[0] || {}
-    const { listType, lists=[] } = sigleItem
+    const { listType, lists = [] } = sigleItem
     const filterTitle = (listType, value) => {
       let title = ''
       let ele = <div></div>
@@ -114,7 +124,7 @@ export default class PaginResult extends React.Component {
       return { title, ele }
     }
 
-    const fiterLoadMoreTextType = (loadMoreTextType) => {
+    const fiterLoadMoreTextType = loadMoreTextType => {
       let text = ''
       switch (loadMoreTextType) {
         case '1':
@@ -132,30 +142,53 @@ export default class PaginResult extends React.Component {
       return text
     }
 
-    return(
-      <div className={`${indexstyles.typeResult} ${indexstyles.paginResult}`}
-           onScroll={this.contentBodyScroll.bind(this)}>
+    return (
+      <div
+        className={`${indexstyles.typeResult} ${indexstyles.paginResult}`}
+        onScroll={this.contentBodyScroll.bind(this)}
+      >
         <div className={`${indexstyles.paginResultInner}`}>
           {lists.map((value, key) => {
-            return (
-              <div key={key}>
-                {filterTitle(listType, value).ele}
-              </div>
-            )
+            return <div key={key}>{filterTitle(listType, value).ele}</div>
           })}
         </div>
 
         {/*如果是在第一页，必须完成请求结束没有更多数据*/}
-        {((page_number == 1 && loadMoreTextType == '1') || (page_number != 1)) && (
-          <div className={indexstyles.lookMore} >{fiterLoadMoreTextType(loadMoreTextType)}</div>
+        {((page_number == 1 && loadMoreTextType == '1') ||
+          page_number != 1) && (
+          <div className={indexstyles.lookMore}>
+            {fiterLoadMoreTextType(loadMoreTextType)}
+          </div>
         )}
         {/*<div className={indexstyles.lookMore} style={{display: loadMoreDisplay }}>{fiterLoadMoreTextType(loadMoreTextType)}</div>*/}
       </div>
     )
   }
 }
-function mapStateToProps({ globalSearch: { datas: {searchTypeList = [], defaultSearchType, searchInputValue, page_number, page_size, sigleTypeResultList, loadMoreDisplay, scrollBlock, loadMoreTextType} } }) {
+function mapStateToProps({
+  globalSearch: {
+    datas: {
+      searchTypeList = [],
+      defaultSearchType,
+      searchInputValue,
+      page_number,
+      page_size,
+      sigleTypeResultList,
+      loadMoreDisplay,
+      scrollBlock,
+      loadMoreTextType
+    }
+  }
+}) {
   return {
-    searchTypeList, defaultSearchType, searchInputValue, page_number, page_size, sigleTypeResultList, scrollBlock, loadMoreTextType, loadMoreDisplay
+    searchTypeList,
+    defaultSearchType,
+    searchInputValue,
+    page_number,
+    page_size,
+    sigleTypeResultList,
+    scrollBlock,
+    loadMoreTextType,
+    loadMoreDisplay
   }
 }

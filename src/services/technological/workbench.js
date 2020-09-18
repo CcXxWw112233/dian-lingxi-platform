@@ -1,5 +1,14 @@
 import request from '../../utils/requestAxios'
-import { REQUEST_DOMAIN, REQUEST_DOMAIN_BOARD, REQUEST_DOMAIN_WORK_BENCH, REQUEST_DOMAIN_ARTICLE, WE_APP_ID, REQUEST_DOMAIN_FLOWS, REQUEST_DOMAIN_TEAM_SHOW, REQUEST_INTERGFACE_VERSIONN } from '../../globalset/js/constant'
+import {
+  REQUEST_DOMAIN,
+  REQUEST_DOMAIN_BOARD,
+  REQUEST_DOMAIN_WORK_BENCH,
+  REQUEST_DOMAIN_ARTICLE,
+  WE_APP_ID,
+  REQUEST_DOMAIN_FLOWS,
+  REQUEST_DOMAIN_TEAM_SHOW,
+  REQUEST_INTERGFACE_VERSIONN
+} from '../../globalset/js/constant'
 import Cookies from 'js-cookie'
 
 export async function getTaskList_new({ id }) {
@@ -78,11 +87,14 @@ export async function associateUser(params) {
   // const params = {
   //   associate_param
   // }
-  return request({
-    url: `${REQUEST_DOMAIN}/user/associate`,
-    method: 'GET',
-    params
-  }, { isNotLoading: true })
+  return request(
+    {
+      url: `${REQUEST_DOMAIN}/user/associate`,
+      method: 'GET',
+      params
+    },
+    { isNotLoading: true }
+  )
 }
 
 export async function createShareLink(data) {
@@ -106,8 +118,8 @@ export async function verificationShareLink(data) {
 export async function modifOrStopShareLink(payload = {}) {
   const { expiretime = '', id = '', status = '' } = payload
   const putData = { id }
-  expiretime ? putData['expiretime'] = expiretime : ''
-  status ? putData['status'] = status : ''
+  expiretime ? (putData['expiretime'] = expiretime) : ''
+  status ? (putData['status'] = status) : ''
 
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/share_link`,
@@ -117,7 +129,17 @@ export async function modifOrStopShareLink(payload = {}) {
 }
 
 export async function createMeeting(payload) {
-  const { board_id, flag, topic, user_for = null, user_ids = null, _organization_id, start_time = '', end_time = '', provider_id } = payload
+  const {
+    board_id,
+    flag,
+    topic,
+    user_for = null,
+    user_ids = null,
+    _organization_id,
+    start_time = '',
+    end_time = '',
+    provider_id
+  } = payload
   return request({
     url: `${REQUEST_DOMAIN_TEAM_SHOW}/meeting`,
     method: 'POST',
@@ -165,13 +187,13 @@ export async function getVideoConferenceProviderList(params) {
 
 //获取当前组织的所有成员信息
 export async function getCurrentOrgAllMembers(params = {}) {
-
   return request({
     url: `${REQUEST_DOMAIN}/member/userlist`,
     method: 'GET',
     params: {
       ...params,
-      _organization_id: params._organization_id || localStorage.getItem('OrganizationId')
+      _organization_id:
+        params._organization_id || localStorage.getItem('OrganizationId')
     }
   })
 }
@@ -183,7 +205,8 @@ export async function getCurrentOrgAccessibleAllMembers(params = {}) {
     method: 'GET',
     params: {
       ...params,
-      _organization_id: params._organization_id || localStorage.getItem('OrganizationId')
+      _organization_id:
+        params._organization_id || localStorage.getItem('OrganizationId')
     }
   })
 }
@@ -223,7 +246,7 @@ export async function getcurrentOrgFileUploads() {
     url: `${REQUEST_DOMAIN_WORK_BENCH}/file/curr/uploading`,
     method: 'GET',
     params: {
-      _organization_id: localStorage.getItem('OrganizationId'),
+      _organization_id: localStorage.getItem('OrganizationId')
     }
   })
 }
@@ -234,7 +257,7 @@ export async function getCurrentMeetingList() {
     url: `${REQUEST_DOMAIN_WORK_BENCH}/card/meeting_arrangement`,
     method: 'GET',
     params: {
-      _organization_id: localStorage.getItem('OrganizationId'),
+      _organization_id: localStorage.getItem('OrganizationId')
     }
   })
 }
@@ -245,7 +268,7 @@ export async function getCurrentBackLogProcessList() {
     url: `${REQUEST_DOMAIN_WORK_BENCH}/flow/backlog`,
     method: 'GET',
     params: {
-      _organization_id: localStorage.getItem('OrganizationId'),
+      _organization_id: localStorage.getItem('OrganizationId')
     }
   })
 }
@@ -256,7 +279,7 @@ export async function getCurrentResponsibleTask() {
     url: `${REQUEST_DOMAIN_WORK_BENCH}/card/responsible`,
     method: 'GET',
     params: {
-      _organization_id: localStorage.getItem('OrganizationId'),
+      _organization_id: localStorage.getItem('OrganizationId')
     }
   })
 }
@@ -276,9 +299,10 @@ export async function getProjectList(params) {
     method: 'GET',
     params: {
       contain_type: '3',
-      _organization_id: params._organization_id || localStorage.getItem('OrganizationId')
+      _organization_id:
+        params._organization_id || localStorage.getItem('OrganizationId')
     }
-  });
+  })
 }
 //获取项目列表(只返回用户)
 export async function getProjectUserList(params) {
@@ -289,44 +313,44 @@ export async function getProjectUserList(params) {
       contain_type: '2',
       _organization_id: localStorage.getItem('OrganizationId')
     }
-  });
+  })
 }
 export async function getUserImToken(data) {
   return request({
     url: `${REQUEST_DOMAIN}/user/im/token`,
-    method: 'GET',
-  });
+    method: 'GET'
+  })
 }
 export async function getImRelaId(params) {
   return request({
     url: `${REQUEST_DOMAIN}/im/data/${params['relaId']}`,
     method: 'GET',
     params
-  });
+  })
 }
 
 //获取项目列表(只返回用户)
 export async function getProjectStarList(params) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/board/star/list`,
-    method: 'GET',
-  });
+    method: 'GET'
+  })
 }
 
 //获取组织成员列表
 export async function getOrgMembers(params) {
   return request({
     url: `${REQUEST_DOMAIN}/group`,
-    method: 'GET',
-  });
+    method: 'GET'
+  })
 }
 
 //获取工作台盒子
 export async function getBoxList(params) {
   return request({
     url: `${REQUEST_DOMAIN_WORK_BENCH}/box`,
-    method: 'GET',
-  });
+    method: 'GET'
+  })
 }
 //获取工作台单个盒子设置过滤条件
 export async function getItemBoxFilter(data) {
@@ -334,7 +358,7 @@ export async function getItemBoxFilter(data) {
     url: `${REQUEST_DOMAIN_WORK_BENCH}/box`,
     method: 'POST',
     data
-  });
+  })
 }
 //获取工作台单个盒子设置过滤条件
 export async function updateBox(data) {
@@ -342,20 +366,20 @@ export async function updateBox(data) {
     url: `${REQUEST_DOMAIN_WORK_BENCH}/box`,
     method: 'PUT',
     data
-  });
+  })
 }
 //我负责的任务
 export async function getResponsibleTaskList(params) {
   return request({
     url: `${REQUEST_DOMAIN_WORK_BENCH}/card/responsible/${params['id']}`,
-    method: 'GET',
-  });
+    method: 'GET'
+  })
 }
 export async function getTodoList(params) {
   return request({
     url: `${REQUEST_DOMAIN_WORK_BENCH}/card/responsible/${params['id']}`,
-    method: 'GET',
-  });
+    method: 'GET'
+  })
 }
 
 // 完成任务
@@ -363,52 +387,52 @@ export async function completeTask(data) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/card/realize`,
     method: 'PUT',
-    data,
-  });
+    data
+  })
 }
 
 //获取当前组织下我上传的文档上传的文档
 export async function getCurrentOrgFileUploads(params) {
   return request({
     url: `${REQUEST_DOMAIN_WORK_BENCH}/file/uploading`,
-    method: 'GET',
-  });
+    method: 'GET'
+  })
 }
 
 //我上传的文档
 export async function getUploadedFileList(params) {
   return request({
     url: `${REQUEST_DOMAIN_WORK_BENCH}/file/uploading/${params['id']}`,
-    method: 'GET',
-  });
+    method: 'GET'
+  })
 }
 //待我处理的流程
 export async function getBackLogProcessList(params) {
   return request({
     url: `${REQUEST_DOMAIN_WORK_BENCH}/flow/backlog/${params['id']}`,
-    method: 'GET',
-  });
+    method: 'GET'
+  })
 }
 //我参与的流程
 export async function getJoinedProcessList(params) {
   return request({
     url: `${REQUEST_DOMAIN_WORK_BENCH}/flow/participation/${params['id']}`,
-    method: 'GET',
-  });
+    method: 'GET'
+  })
 }
 //获取会议列表
 export async function getMeetingList(params) {
   return request({
     url: `${REQUEST_DOMAIN_WORK_BENCH}/card/meeting_arrangement/${params['id']}`,
-    method: 'GET',
-  });
+    method: 'GET'
+  })
 }
 //获取当前用户可用盒子列表
 export async function getBoxUsableList(params) {
   return request({
     url: `${REQUEST_DOMAIN_WORK_BENCH}/box/user/usable/list`,
-    method: 'GET',
-  });
+    method: 'GET'
+  })
 }
 //获取当前用户可用盒子列表
 export async function addBox(data) {
@@ -416,7 +440,7 @@ export async function addBox(data) {
     url: `${REQUEST_DOMAIN_WORK_BENCH}/box/user/add`,
     method: 'POST',
     data
-  });
+  })
 }
 //获取当前用户可用盒子列表
 export async function deleteBox(params) {
@@ -424,53 +448,54 @@ export async function deleteBox(params) {
     url: `${REQUEST_DOMAIN_WORK_BENCH}/box/user/${params.box_type_id}`,
     method: 'DELETE',
     params
-  });
+  })
 }
-
 
 //获取文章列表
 export async function getArticleList(params) {
-  return request({
-    url: `${REQUEST_DOMAIN_ARTICLE}/articles`,
-    method: 'GET',
-    params,
-    headers: {
-      appid: WE_APP_ID(params['appType']),
-    }
-  }, { isNotLoading: true });
+  return request(
+    {
+      url: `${REQUEST_DOMAIN_ARTICLE}/articles`,
+      method: 'GET',
+      params,
+      headers: {
+        appid: WE_APP_ID(params['appType'])
+      }
+    },
+    { isNotLoading: true }
+  )
 }
 //获取文章内容
 export async function getArticleDetail(params) {
-  return request({
-    url: `${REQUEST_DOMAIN_ARTICLE}/article/${params.id}`,
-    method: 'GET',
-    params: {
-      ...params,
-      openid: '0',
+  return request(
+    {
+      url: `${REQUEST_DOMAIN_ARTICLE}/article/${params.id}`,
+      method: 'GET',
+      params: {
+        ...params,
+        openid: '0'
+      },
+      headers: {
+        appid: WE_APP_ID(params['appType'])
+      }
     },
-    headers: {
-      appid: WE_APP_ID(params['appType']),
-    }
-  }, { isNotLoading: true });
+    { isNotLoading: true }
+  )
 }
 //更新阅读量
 export async function updateViewCounter(data) {
-  return request({
-    url: `${REQUEST_DOMAIN_ARTICLE}/viewcounter`,
-    method: 'PUT',
-    data: {
-      ...data,
-      openid: '0',
+  return request(
+    {
+      url: `${REQUEST_DOMAIN_ARTICLE}/viewcounter`,
+      method: 'PUT',
+      data: {
+        ...data,
+        openid: '0'
+      },
+      headers: {
+        appid: WE_APP_ID(data['appType'])
+      }
     },
-    headers: {
-      appid: WE_APP_ID(data['appType']),
-    },
-  }, { isNotLoading: true });
+    { isNotLoading: true }
+  )
 }
-
-
-
-
-
-
-

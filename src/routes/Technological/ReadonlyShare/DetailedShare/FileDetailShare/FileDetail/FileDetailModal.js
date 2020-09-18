@@ -1,14 +1,14 @@
 import React from 'react'
-import { Form, Input, } from 'antd'
+import { Form, Input } from 'antd'
 import CustormModal from '../../../CustormModal'
 import FileDetail from './index'
 
 class FileDetailModal extends React.Component {
   state = {}
 
-  componentDidMount() { }
+  componentDidMount() {}
 
-  componentWillReceiveProps(nextProps) { }
+  componentWillReceiveProps(nextProps) {}
 
   onCancel() {
     const { dispatch } = this.props
@@ -21,7 +21,7 @@ class FileDetailModal extends React.Component {
   }
 
   render() {
-    const { visible } = this.props;
+    const { visible } = this.props
 
     const modalTop = 20
 

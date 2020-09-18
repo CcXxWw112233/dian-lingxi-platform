@@ -1,12 +1,21 @@
 import React, { Component } from 'react'
 export default class BasicFieldContainer extends Component {
-
   render() {
-    const { BasicFieldUIComponent, boardFolderTreeData, milestoneList, whetherUpdateParentTaskTime, handleTaskDetailChange, handleChildTaskChange, updateParentPropertiesList, updatePrivateVariablesWithOpenFile, handleRelyUploading } = this.props
+    const {
+      BasicFieldUIComponent,
+      boardFolderTreeData,
+      milestoneList,
+      whetherUpdateParentTaskTime,
+      handleTaskDetailChange,
+      handleChildTaskChange,
+      updateParentPropertiesList,
+      updatePrivateVariablesWithOpenFile,
+      handleRelyUploading
+    } = this.props
     return (
-      <BasicFieldUIComponent 
+      <BasicFieldUIComponent
         LogicWithMainContent={this.props.LogicWithMainContent}
-        boardFolderTreeData={boardFolderTreeData} 
+        boardFolderTreeData={boardFolderTreeData}
         milestoneList={milestoneList}
         whetherUpdateParentTaskTime={whetherUpdateParentTaskTime}
         handleTaskDetailChange={handleTaskDetailChange}
@@ -18,4 +27,3 @@ export default class BasicFieldContainer extends Component {
     )
   }
 }
-

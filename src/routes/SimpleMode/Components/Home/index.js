@@ -1,5 +1,5 @@
-import React, { Component, lazy, Suspense } from "react";
-import { connect } from "dva/index"
+import React, { Component, lazy, Suspense } from 'react'
+import { connect } from 'dva/index'
 
 // import WallpaperSelect from '../WallpaperSelect/index'
 // import WorkbenchBoxSelect from '../WorkbenchBoxSelect/index'
@@ -9,20 +9,19 @@ import HomeMain from './HomeMain'
 const WallpaperSelect = lazy(() => import('../WallpaperSelect/index'))
 const WorkbenchBoxSelect = lazy(() => import('../WorkbenchBoxSelect/index'))
 class Home extends Component {
-
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       simpleHeaderVisiable: true,
       myWorkbenchBoxsVisiable: true,
       wallpaperSelectVisiable: true,
       workbenchBoxSelectVisiable: false,
-      createNewBoardVisiable: false,
+      createNewBoardVisiable: false
     }
   }
 
   componentDidMount() {
-    const { dispatch } = this.props;
+    const { dispatch } = this.props
     // dispatch({
     //   type: 'simplemode/getMyBoxs',
     //   payload: {}
@@ -37,11 +36,9 @@ class Home extends Component {
         chatImVisiable: false,
         leftMainNavIconVisible: true
       }
-    });
+    })
     window.addEventListener('keydown', this.handleEscKeypress.bind(this))
-
   }
-
 
   componentWillUnmount() {
     const { dispatch } = this.props
@@ -61,65 +58,74 @@ class Home extends Component {
     window.removeEventListener('keydown', this.handleEscKeypress.bind(this))
   }
 
-  handleEscKeypress = (e) => {
+  handleEscKeypress = e => {
     // console.log('esc',e.which);
 
     if (e.which == 27) {
-      const { workbenchBoxSelectVisiable } = this.state;
+      const { workbenchBoxSelectVisiable } = this.state
       if (workbenchBoxSelectVisiable) {
         this.setHomeVisible({
           simpleHeaderVisiable: true,
           myWorkbenchBoxsVisiable: true,
           wallpaperSelectVisiable: true,
           workbenchBoxSelectVisiable: false,
-          createProjectVisiable: false,
-        });
+          createProjectVisiable: false
+        })
       }
     }
   }
 
-
-  setHomeVisible = (data) => {
+  setHomeVisible = data => {
     this.setState(data)
   }
 
   showDrawer = () => {
     this.setState({
-      visible: true,
-    });
-  };
+      visible: true
+    })
+  }
 
   onClose = () => {
     this.setState({
-      visible: false,
-    });
-  };
+      visible: false
+    })
+  }
 
   render() {
     const {
       myWorkbenchBoxsVisiable,
       wallpaperSelectVisiable,
-      workbenchBoxSelectVisiable,
-    } = this.state;
+      workbenchBoxSelectVisiable
+    } = this.state
 
     return (
       <div>
-        {myWorkbenchBoxsVisiable && <HomeMain {...this.state} setHomeVisible={this.setHomeVisible} />}
+        {myWorkbenchBoxsVisiable && (
+          <HomeMain {...this.state} setHomeVisible={this.setHomeVisible} />
+        )}
         <Suspense fallback={<div></div>}>
           <div></div>
           {/* {myWorkbenchBoxsVisiable && <MyWorkbenchBoxs {...this.state} setHomeVisible={this.setHomeVisible} />} */}
 
-          {wallpaperSelectVisiable && <WallpaperSelect {...this.state} setHomeVisible={this.setHomeVisible} />}
+          {wallpaperSelectVisiable && (
+            <WallpaperSelect
+              {...this.state}
+              setHomeVisible={this.setHomeVisible}
+            />
+          )}
 
-          {workbenchBoxSelectVisiable && <WorkbenchBoxSelect {...this.state} setHomeVisible={this.setHomeVisible} />}
+          {workbenchBoxSelectVisiable && (
+            <WorkbenchBoxSelect
+              {...this.state}
+              setHomeVisible={this.setHomeVisible}
+            />
+          )}
         </Suspense>
       </div>
     )
   }
-};
+}
 
-export default connect(({ simplemode: {
-  leftMainNavIconVisible
-} }) => ({
+export default connect(({ simplemode: { leftMainNavIconVisible } }) => ({
   leftMainNavIconVisible
 }))(Home)

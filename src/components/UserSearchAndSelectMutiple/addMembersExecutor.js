@@ -26,13 +26,16 @@ export default class AddMembersExecutor extends React.Component {
     for (let val of currentSelect) {
       selectedKeys.push(val['user_id'])
     }
-    this.setState({
-      selectedKeys
-    }, () => {
-      this.setState({
-        resultArr: this.fuzzyQuery(listData, searchName, keyWord),
-      })
-    })
+    this.setState(
+      {
+        selectedKeys
+      },
+      () => {
+        this.setState({
+          resultArr: this.fuzzyQuery(listData, searchName, keyWord)
+        })
+      }
+    )
   }
 
   // // 比较两个数组user_id
@@ -61,30 +64,35 @@ export default class AddMembersExecutor extends React.Component {
     })
   }
   //选择
-  handleMenuReallySelect = (e) => {
+  handleMenuReallySelect = e => {
     this.setSelectKey(e, 'add')
   }
   //移除
   handleMenuReallyDeselect(e) {
     this.setSelectKey(e, 'remove')
   }
-  setSelectKey(e, type) { //type add/remove
+  setSelectKey(e, type) {
+    //type add/remove
     const { key, selectedKeys } = e
     // console.log(key, selectedKeys, 'ssssss')
     if (!key) {
       return false
     }
-    this.setState({
-      selectedKeys
-    }, () => {
-      const { listData = [], searchName } = this.props
-      const { keyWord } = this.state
-      this.setState({
-        resultArr: this.fuzzyQuery(listData, searchName, keyWord),
-      })
-    })
+    this.setState(
+      {
+        selectedKeys
+      },
+      () => {
+        const { listData = [], searchName } = this.props
+        const { keyWord } = this.state
+        this.setState({
+          resultArr: this.fuzzyQuery(listData, searchName, keyWord)
+        })
+      }
+    )
     // debugger
-    this.props.multipleSelectUserChange && this.props.multipleSelectUserChange({ selectedKeys, key, type })
+    this.props.multipleSelectUserChange &&
+      this.props.multipleSelectUserChange({ selectedKeys, key, type })
   }
   onCheck() {
     if (this.props.onCheck && typeof this.props.onCheck === 'function') {
@@ -92,13 +100,12 @@ export default class AddMembersExecutor extends React.Component {
     }
   }
 
-
   //模糊查询
   fuzzyQuery = (list, searchName, keyWord) => {
-    var arr = [];
+    var arr = []
     for (var i = 0; i < list.length; i++) {
       if (list[i][searchName].indexOf(keyWord) !== -1) {
-        arr.push(list[i]);
+        arr.push(list[i])
       }
     }
 
@@ -124,28 +131,44 @@ export default class AddMembersExecutor extends React.Component {
       //   }
       // }
       // 不存在执行人,推送人以及负责人的情况下
-      if (rela_type != '1' && rela_type != '2' && rela_type != '3' && rela_type != '5') {
+      if (
+        rela_type != '1' &&
+        rela_type != '2' &&
+        rela_type != '3' &&
+        rela_type != '5'
+      ) {
         // console.log(selectedKeys, 'ssssss')
-        if (selectedKeys.indexOf(arr[i]['user_id']) != -1) { // 如果说 user_id 存在
-          if (i > 0 && selectedKeys.indexOf(arr[i - 1]['user_id']) == -1) { // 如果说点击的前一个元素不存在
+        if (selectedKeys.indexOf(arr[i]['user_id']) != -1) {
+          // 如果说 user_id 存在
+          if (i > 0 && selectedKeys.indexOf(arr[i - 1]['user_id']) == -1) {
+            // 如果说点击的前一个元素不存在
             const deItem = arr.splice(i, 1)
             arr.splice(1, 0, ...deItem)
           }
         }
       }
 
-      if (selectedKeys.indexOf(arr[i]['user_id']) != -1) { // 如果说 user_id 存在
-        if (i > 0 && arr[i - 1]['user_id'] == '0') { //如果点击的时候, 前面是全部成员, 没有执行人
+      if (selectedKeys.indexOf(arr[i]['user_id']) != -1) {
+        // 如果说 user_id 存在
+        if (i > 0 && arr[i - 1]['user_id'] == '0') {
+          //如果点击的时候, 前面是全部成员, 没有执行人
           // 就将它从第一个后面插入
           // console.log('进来了', 'ssss_第一个if')
           const deItem = arr.splice(i, 1)
           arr.splice(1, 0, ...deItem)
-        } else if (i > 0 && (arr[i - 1]['user_id'] == '1' || arr[i - 1]['user_id'] == '2' || arr[i - 1]['user_id'] == '3')) { // 表示前面是执行人,推进人,负责人
+        } else if (
+          i > 0 &&
+          (arr[i - 1]['user_id'] == '1' ||
+            arr[i - 1]['user_id'] == '2' ||
+            arr[i - 1]['user_id'] == '3')
+        ) {
+          // 表示前面是执行人,推进人,负责人
           // 如果说点击的的时候,前面是执行人或者推进人或者是负责人, 那么将它从第二个插入
           // console.log('进来了', 'ssss_第二个if')
           const deItem = arr.splice(i, 1)
           arr.splice(2, 0, ...deItem)
-        } else if (i > 0 && selectedKeys.indexOf(arr[i - 1]['user_id']) == -1) { // 表示的是其他选项
+        } else if (i > 0 && selectedKeys.indexOf(arr[i - 1]['user_id']) == -1) {
+          // 表示的是其他选项
           // 如果说点击的是其他的时候，需要判断是否有推进人,执行人,负责人
           const deItem = arr.splice(i, 1)
           arr.splice(2, 0, ...deItem)
@@ -160,9 +183,9 @@ export default class AddMembersExecutor extends React.Component {
       //   }
       // }
     }
-    return arr;
+    return arr
   }
-  onChange = (e) => {
+  onChange = e => {
     const { listData = [], searchName } = this.props
     const keyWord = e.target.value
     const resultArr = this.fuzzyQuery(listData, searchName, keyWord)
@@ -176,49 +199,114 @@ export default class AddMembersExecutor extends React.Component {
     const { Inputlaceholder = '搜索', keyCode } = this.props
     // console.log({selectedKeys}, 'sssss') // currentSelect listData
     return (
-      <Menu style={{ padding: '8px 0px', boxShadow: '0px 2px 8px 0px rgba(0,0,0,0.15)', maxWidth: 200, }}
+      <Menu
+        style={{
+          padding: '8px 0px',
+          boxShadow: '0px 2px 8px 0px rgba(0,0,0,0.15)',
+          maxWidth: 200
+        }}
         selectedKeys={selectedKeys}
         onDeselect={this.handleMenuReallyDeselect.bind(this)}
-        onSelect={this.handleMenuReallySelect.bind(this)} multiple >
+        onSelect={this.handleMenuReallySelect.bind(this)}
+        multiple
+      >
         <div style={{ margin: '0 10px 10px 10px' }}>
-          <Input placeholder={Inputlaceholder} value={keyWord} onChange={this.onChange.bind(this)} />
+          <Input
+            placeholder={Inputlaceholder}
+            value={keyWord}
+            onChange={this.onChange.bind(this)}
+          />
         </div>
 
-        {
-          resultArr.map((value, key) => {
-            const { avatar, name, user_name, user_id } = value
-            return (
-              <Menu.Item className={indexStyles.menuItem} style={{ height: 32, lineHeight: '32px', margin: 0, padding: '0 10px', }} key={value[keyCode]} >
-
-                <div className={indexStyles.menuItemDiv}>
-                  <div style={{ display: 'flex', alignItems: 'center' }} key={user_id}>
-                    {avatar ? (
-                      <img style={{ width: 20, height: 20, borderRadius: 20, marginRight: 4 }} src={avatar} />
-                    ) : (
-                        <div style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', marginRight: 4, }}>
-                          {
-                            user_id == '0' ? (
-                              // <Icon type={'user'} style={{ fontSize: 12, marginLeft: 10, color: '#8c8c8c' }} />
-                              <Icon type="usergroup-delete" style={{ fontSize: 12, marginLeft: 10, color: '#8c8c8c' }} />
-                            ) : (
-                                <Icon type={'user'} style={{ fontSize: 12, marginLeft: 10, color: '#8c8c8c' }} />
-                              )
-                          }
-                        </div>
+        {resultArr.map((value, key) => {
+          const { avatar, name, user_name, user_id } = value
+          return (
+            <Menu.Item
+              className={indexStyles.menuItem}
+              style={{
+                height: 32,
+                lineHeight: '32px',
+                margin: 0,
+                padding: '0 10px'
+              }}
+              key={value[keyCode]}
+            >
+              <div className={indexStyles.menuItemDiv}>
+                <div
+                  style={{ display: 'flex', alignItems: 'center' }}
+                  key={user_id}
+                >
+                  {avatar ? (
+                    <img
+                      style={{
+                        width: 20,
+                        height: 20,
+                        borderRadius: 20,
+                        marginRight: 4
+                      }}
+                      src={avatar}
+                    />
+                  ) : (
+                    <div
+                      style={{
+                        width: 20,
+                        height: 20,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderRadius: 20,
+                        backgroundColor: '#f5f5f5',
+                        marginRight: 4
+                      }}
+                    >
+                      {user_id == '0' ? (
+                        // <Icon type={'user'} style={{ fontSize: 12, marginLeft: 10, color: '#8c8c8c' }} />
+                        <Icon
+                          type="usergroup-delete"
+                          style={{
+                            fontSize: 12,
+                            marginLeft: 10,
+                            color: '#8c8c8c'
+                          }}
+                        />
+                      ) : (
+                        <Icon
+                          type={'user'}
+                          style={{
+                            fontSize: 12,
+                            marginLeft: 10,
+                            color: '#8c8c8c'
+                          }}
+                        />
                       )}
-                    <div style={{ overflow: 'hidden', verticalAlign: ' middle', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 90, marginRight: 8 }}>{name || user_name || '佚名'}</div>
-                  </div>
-                  <div style={{ display: selectedKeys.indexOf(user_id) != -1 ? 'block' : 'none' }}>
-                    <Icon type="check" />
+                    </div>
+                  )}
+                  <div
+                    style={{
+                      overflow: 'hidden',
+                      verticalAlign: ' middle',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      maxWidth: 90,
+                      marginRight: 8
+                    }}
+                  >
+                    {name || user_name || '佚名'}
                   </div>
                 </div>
-              </Menu.Item>
-            )
-          })
-        }
+                <div
+                  style={{
+                    display:
+                      selectedKeys.indexOf(user_id) != -1 ? 'block' : 'none'
+                  }}
+                >
+                  <Icon type="check" />
+                </div>
+              </div>
+            </Menu.Item>
+          )
+        })}
       </Menu>
     )
   }
-
 }
-

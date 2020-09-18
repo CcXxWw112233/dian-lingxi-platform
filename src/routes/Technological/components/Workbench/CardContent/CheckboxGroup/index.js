@@ -1,15 +1,18 @@
-import React, { Component } from 'react';
-import { Checkbox, message } from 'antd';
-import styles from './index.less';
+import React, { Component } from 'react'
+import { Checkbox, message } from 'antd'
+import styles from './index.less'
 
 class CheckboxGroup extends Component {
   onItemCheckStatusChange = (item, checkedValue) => {
-    const { onItemChange } = this.props;
-    if(checkedValue) checkedValue.stopPropagation()
-    onItemChange(item, {checked: checkedValue.target.checked, disabled: checkedValue.target.disabled});
-  };
+    const { onItemChange } = this.props
+    if (checkedValue) checkedValue.stopPropagation()
+    onItemChange(item, {
+      checked: checkedValue.target.checked,
+      disabled: checkedValue.target.disabled
+    })
+  }
   render() {
-    const { dataList } = this.props;
+    const { dataList } = this.props
     return (
       <div className={styles.wrapper}>
         {dataList.map((item = {}, index) => (
@@ -18,8 +21,7 @@ class CheckboxGroup extends Component {
             key={index}
             defaultChecked={item.checked}
             disabled={item.disabled}
-            onChange={
-              (checkedValue) =>
+            onChange={checkedValue =>
               this.onItemCheckStatusChange(item, checkedValue)
             }
           >
@@ -27,7 +29,7 @@ class CheckboxGroup extends Component {
           </Checkbox>
         ))}
       </div>
-    );
+    )
   }
 }
 
@@ -53,8 +55,8 @@ CheckboxGroup.defaultProps = {
     }
   ],
   onItemChange: function() {
-    message.error('CheckboxGroup component Need callback: onItemChange');
+    message.error('CheckboxGroup component Need callback: onItemChange')
   }
-};
+}
 
-export default CheckboxGroup;
+export default CheckboxGroup

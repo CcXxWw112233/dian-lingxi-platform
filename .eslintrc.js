@@ -1,6 +1,10 @@
 module.exports = {
   root: true,
-  extends: ['umi', 'prettier', 'prettier/react'],
+  extends: [
+    // 'umi',
+    'prettier',
+    'prettier/react'
+  ],
   globals: {
     luckysheet: true
   },

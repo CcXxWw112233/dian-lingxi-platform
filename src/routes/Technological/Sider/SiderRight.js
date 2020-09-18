@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react'
 import {
   Layout,
   Popover,
@@ -8,51 +8,49 @@ import {
   Button,
   message,
   Modal
-} from "antd";
-import indexStyles from "./index.less";
-import glabalStyles from "../../../globalset/css/globalClassName.less";
-import { connect } from "dva";
-import Cookies from "js-cookie";
-import classNames from "classnames/bind";
+} from 'antd'
+import indexStyles from './index.less'
+import glabalStyles from '../../../globalset/css/globalClassName.less'
+import { connect } from 'dva'
+import Cookies from 'js-cookie'
+import classNames from 'classnames/bind'
 // import GroupChat from './comonent/GroupChat'
 // import InitialChat from './comonent/InitialChat'
 import VideoMeetingPopoverContent from './comonent/videoMeetingPopoverContent/index'
 import LingxiIm, { Im, lx_utils } from 'lingxi-im'
-let cx = classNames.bind(indexStyles);
+let cx = classNames.bind(indexStyles)
 
-const { Sider } = Layout;
-const Option = Select.Option;
-const { TextArea } = Input;
-const { getMentions, toString, toContentState } = Mention;
-const Nav = Mention.Nav;
+const { Sider } = Layout
+const Option = Select.Option
+const { TextArea } = Input
+const { getMentions, toString, toContentState } = Mention
+const Nav = Mention.Nav
 
-@connect(({
-  technological: { userInfo = {}, datas: { OrganizationId } },
-  publicTaskDetailModal: {
-    card_id, drawerVisible
-  },
-  publicFileDetailModal: {
-    filePreviewCurrentFileId,
-    isInOpenFile
-  },
-  publicProcessDetailModal: {
-    processInfo = {}
+@connect(
+  ({
+    technological: {
+      userInfo = {},
+      datas: { OrganizationId }
+    },
+    publicTaskDetailModal: { card_id, drawerVisible },
+    publicFileDetailModal: { filePreviewCurrentFileId, isInOpenFile },
+    publicProcessDetailModal: { processInfo = {} }
+  }) => {
+    return {
+      userInfo,
+      OrganizationId,
+      card_id,
+      drawerVisible,
+      filePreviewCurrentFileId,
+      isInOpenFile,
+      processInfo
+    }
   }
-}) => {
-  return {
-    userInfo,
-    OrganizationId,
-    card_id,
-    drawerVisible,
-    filePreviewCurrentFileId,
-    isInOpenFile,
-    processInfo
-  };
-})
+)
 class SiderRight extends React.Component {
   state = {
-    collapsed: true,
-  };
+    collapsed: true
+  }
 
   componentWillReceiveProps(nextProps) {
     const { OrganizationId: nextOrg } = nextProps
@@ -68,7 +66,7 @@ class SiderRight extends React.Component {
   }
 
   imInitOption = () => {
-    LingxiIm.hide();
+    LingxiIm.hide()
 
     // 设置组织id过滤
     const { OrganizationId } = this.props
@@ -77,21 +75,23 @@ class SiderRight extends React.Component {
 
     const { protocol, host } = window.location
     Im.option({
-      baseUrl: `${protocol}//${host}/`,
+      baseUrl: `${protocol}//${host}/`
       // APPKEY: "18268e20ae05c4ac49e4c23644aa38c8"
     })
-    const clickDynamicFunc = (data) => {
+    const clickDynamicFunc = data => {
       setTimeout(() => this.imClickDynamic(data), 100)
     }
-    const visibleFunc = (visible) => {
+    const visibleFunc = visible => {
       this.handleImToggle(visible)
     }
     const { dispatch } = this.props
     if (Im) {
       Im.on('visible', visibleFunc)
-      Im.on('clickDynamic', clickDynamicFunc);
-      Im.on('hasNewImMsg', ({ data, unread }) => { //最新一条未读消息推送过来                
-        if (!data.hasOwnProperty('action')) { //首次进入不处理
+      Im.on('clickDynamic', clickDynamicFunc)
+      Im.on('hasNewImMsg', ({ data, unread }) => {
+        //最新一条未读消息推送过来
+        if (!data.hasOwnProperty('action')) {
+          //首次进入不处理
           // console.log('ssss_初始化首次', unread)
           dispatch({
             type: 'imCooperation/getImUnReadAllMessages',
@@ -109,7 +109,8 @@ class SiderRight extends React.Component {
         })
         // console.log('ssss_最新未读', data)
       })
-      Im.on('readImMsg', (data) => { //最新已读消息推送过来
+      Im.on('readImMsg', data => {
+        //最新已读消息推送过来
         dispatch({
           type: 'imCooperation/listenImLatestAreadyReadMessages',
           payload: {
@@ -158,7 +159,7 @@ class SiderRight extends React.Component {
               processNotBeginningList: [], // 未开始的流程
               processEditDatas: [],
               not_show_create_node_guide: '1',
-              not_show_create_form_guide: '1',
+              not_show_create_form_guide: '1'
             }
           })
         }
@@ -169,13 +170,13 @@ class SiderRight extends React.Component {
   onCollapse(bool) {
     this.setState({
       collapsed: bool
-    });
+    })
   }
 
   setCollapsed() {
     this.setState({
       collapsed: !this.state.collapsed
-    });
+    })
     this.props.dispatch({
       type: 'technological/updateDatas',
       payload: {
@@ -184,7 +185,7 @@ class SiderRight extends React.Component {
     })
   }
 
-  handleImToggle = (toggle) => {
+  handleImToggle = toggle => {
     this.props.dispatch({
       type: 'technological/updateDatas',
       payload: {
@@ -201,13 +202,13 @@ class SiderRight extends React.Component {
       case 'board':
         break
       case 'folder':
-        break;
+        break
       case 'file':
         else_params = `&appsSelectKey=4&file_id=${relaDataId}&file_name=${relaDataName}`
         break
       case 'card':
         else_params = `&appsSelectKey=3&card_id=${cardId}`
-        break;
+        break
       case 'flow':
         else_params = `&appsSelectKey=2&flow_id=${relaDataId}`
         break
@@ -236,13 +237,26 @@ class SiderRight extends React.Component {
     //   [indexStyles.ImMaskExpand]: !collapsed
     // });
 
-    const { userInfo: { user_set = {} } } = this.props
+    const {
+      userInfo: { user_set = {} }
+    } = this.props
     const { is_simple_model } = user_set
 
     return (
-      <div style={{ flex: "none", paddingBottom: '50px', position: 'relative', backgroundColor: '#fff', zIndex: '1010' }}>
-        <LingxiIm token={Cookies.get('Authorization')} width='400px' />
-        <div className={indexStyles.videoMeetingWapper} style={{ position: 'absolute', bottom: '10px' }}>
+      <div
+        style={{
+          flex: 'none',
+          paddingBottom: '50px',
+          position: 'relative',
+          backgroundColor: '#fff',
+          zIndex: '1010'
+        }}
+      >
+        <LingxiIm token={Cookies.get('Authorization')} width="400px" />
+        <div
+          className={indexStyles.videoMeetingWapper}
+          style={{ position: 'absolute', bottom: '10px' }}
+        >
           <VideoMeetingPopoverContent />
         </div>
       </div>
@@ -347,8 +361,8 @@ class SiderRight extends React.Component {
       //     </div>
       //   </Sider>
       // </div>
-    );
+    )
   }
 }
 
-export default SiderRight;
+export default SiderRight

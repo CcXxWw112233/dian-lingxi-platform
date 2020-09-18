@@ -4,13 +4,19 @@ import CreateTaskStyle from './CreateTask.less'
 import { Icon, Collapse, message, Tooltip } from 'antd'
 import ItemTwoChirldren from './ItemTwoChirldren'
 import QueueAnim from 'rc-queue-anim'
-import { checkIsHasPermissionInBoard, currentNounPlanFilterName, checkIsHasPermissionInVisitControl } from "../../../../../utils/businessFunction";
 import {
-  MESSAGE_DURATION_TIME, PROJECT_TEAM_CARD_COMPLETE, NOT_HAS_PERMISION_COMFIRN,
+  checkIsHasPermissionInBoard,
+  currentNounPlanFilterName,
+  checkIsHasPermissionInVisitControl
+} from '../../../../../utils/businessFunction'
+import {
+  MESSAGE_DURATION_TIME,
+  PROJECT_TEAM_CARD_COMPLETE,
+  NOT_HAS_PERMISION_COMFIRN,
   TASKS
-} from "../../../../../globalset/js/constant";
+} from '../../../../../globalset/js/constant'
 import globalStyle from '../../../../../globalset/css/globalClassName.less'
-import { timestampToTimeNormal } from "../../../../../utils/util";
+import { timestampToTimeNormal } from '../../../../../utils/util'
 import { connect } from 'dva'
 import AvatarList from '../../../../../components/avatarList'
 
@@ -18,26 +24,44 @@ const Panel = Collapse.Panel
 
 let thumbMArgin = 22
 const ua = navigator.userAgent.toLocaleLowerCase()
-if (ua.indexOf('chrome') != - 1 || ua.indexOf('safari') != - 1) {
+if (ua.indexOf('chrome') != -1 || ua.indexOf('safari') != -1) {
   thumbMArgin = 6
 }
 
 @connect(mapStateToProps)
 export default class ItemTwo extends React.Component {
   state = {
-    collapseClose: true, //折叠面板变化回调
+    collapseClose: true //折叠面板变化回调
   }
   itemOneClick(e) {
-    e.stopPropagation();
+    e.stopPropagation()
     // if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE)) {
     //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
     //   return false
     // }
-    const { itemValue, taskGroupListIndex, taskGroupListIndex_index } = this.props
+    const {
+      itemValue,
+      taskGroupListIndex,
+      taskGroupListIndex_index
+    } = this.props
     const { taskGroupList } = this.props
     let new_arr = [...taskGroupList]
-    const { card_id, is_realize = '0', privileges = [], executors = [], is_privilege } = itemValue
-    if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, executors, checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE))) {
+    const {
+      card_id,
+      is_realize = '0',
+      privileges = [],
+      executors = [],
+      is_privilege
+    } = itemValue
+    if (
+      !checkIsHasPermissionInVisitControl(
+        'edit',
+        privileges,
+        is_privilege,
+        executors,
+        checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE)
+      )
+    ) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
@@ -45,19 +69,21 @@ export default class ItemTwo extends React.Component {
       card_id,
       is_realize: is_realize === '1' ? '0' : '1'
     }
-    new_arr[taskGroupListIndex]['card_data'][taskGroupListIndex_index]['is_realize'] = is_realize === '1' ? '0' : '1'
+    new_arr[taskGroupListIndex]['card_data'][taskGroupListIndex_index][
+      'is_realize'
+    ] = is_realize === '1' ? '0' : '1'
     const { dispatch } = this.props
     dispatch({
       type: 'projectDetailTask/updateDatas',
       payload: {
         taskGroupList: new_arr
-      },
+      }
     })
     dispatch({
       type: 'publicTaskDetailModal/completeTask',
       payload: {
         ...obj
-      },
+      }
     })
   }
   seeDetailInfo(data, e) {
@@ -70,73 +96,157 @@ export default class ItemTwo extends React.Component {
   }
 
   render() {
-    const { itemValue = {}, isPropVisitControl, taskGroupListIndex_index, taskGroupListIndex, taskGroupList } = this.props
-    const { card_id, card_name, child_data = [], is_realize = '0', executors = [], type = '0', start_time, due_time, label_data = [] } = itemValue
+    const {
+      itemValue = {},
+      isPropVisitControl,
+      taskGroupListIndex_index,
+      taskGroupListIndex,
+      taskGroupList
+    } = this.props
+    const {
+      card_id,
+      card_name,
+      child_data = [],
+      is_realize = '0',
+      executors = [],
+      type = '0',
+      start_time,
+      due_time,
+      label_data = []
+    } = itemValue
 
-    let executor = {//任务执行人信息
+    let executor = {
+      //任务执行人信息
       user_id: '',
       user_name: '',
-      avatar: '',
+      avatar: ''
     }
     if (executors.length) {
       executor = executors[0]
     }
     return (
-      <div key={'2'} className={CreateTaskStyle.item_2} style={{ marginRight: thumbMArgin }} >
-        <div className={CreateTaskStyle.item_2_top} onClick={this.seeDetailInfo.bind(this, { drawContent: itemValue, taskGroupListIndex: taskGroupListIndex, taskGroupListIndex_index: taskGroupListIndex_index })}>
+      <div
+        key={'2'}
+        className={CreateTaskStyle.item_2}
+        style={{ marginRight: thumbMArgin }}
+      >
+        <div
+          className={CreateTaskStyle.item_2_top}
+          onClick={this.seeDetailInfo.bind(this, {
+            drawContent: itemValue,
+            taskGroupListIndex: taskGroupListIndex,
+            taskGroupListIndex_index: taskGroupListIndex_index
+          })}
+        >
           {type === '0' ? (
-            <div className={is_realize === '1' ? CreateTaskStyle.nomalCheckBoxActive : CreateTaskStyle.nomalCheckBox} onClick={this.itemOneClick.bind(this)}>
-              <Icon type="check" style={{ color: '#FFFFFF', fontSize: 12, fontWeight: 'bold' }} />
+            <div
+              className={
+                is_realize === '1'
+                  ? CreateTaskStyle.nomalCheckBoxActive
+                  : CreateTaskStyle.nomalCheckBox
+              }
+              onClick={this.itemOneClick.bind(this)}
+            >
+              <Icon
+                type="check"
+                style={{ color: '#FFFFFF', fontSize: 12, fontWeight: 'bold' }}
+              />
             </div>
           ) : (
-              <div style={{ fontSize: 16, color: '#8c8c8c', marginRight: 6 }}>
-                <i className={globalStyle.authTheme}>&#xe709;</i>
-              </div>
-            )}
-          <div className={CreateTaskStyle.card_name} style={{ textDecoration: is_realize === '1' ? 'line-through' : 'none', lineHeight: '24px', marginRight: '8px' }}>
-            <div style={{ margin: 0, height: 'auto', marginTop: '2px', wordBreak: 'break-all' }}>
+            <div style={{ fontSize: 16, color: '#8c8c8c', marginRight: 6 }}>
+              <i className={globalStyle.authTheme}>&#xe709;</i>
+            </div>
+          )}
+          <div
+            className={CreateTaskStyle.card_name}
+            style={{
+              textDecoration: is_realize === '1' ? 'line-through' : 'none',
+              lineHeight: '24px',
+              marginRight: '8px'
+            }}
+          >
+            <div
+              style={{
+                margin: 0,
+                height: 'auto',
+                marginTop: '2px',
+                wordBreak: 'break-all'
+              }}
+            >
               {/*`${type==='1'? '4px':'4px'}`*/}
               {card_name}
             </div>
             {type === '1' ? (
-              <div style={{ margin: 0, height: 'auto', fontSize: 12, color: '#8c8c8c', wordBreak: 'break-all' }}>
-                {`${timestampToTimeNormal(start_time, '/', true)}~${timestampToTimeNormal(due_time, '/', true)}`}
+              <div
+                style={{
+                  margin: 0,
+                  height: 'auto',
+                  fontSize: 12,
+                  color: '#8c8c8c',
+                  wordBreak: 'break-all'
+                }}
+              >
+                {`${timestampToTimeNormal(
+                  start_time,
+                  '/',
+                  true
+                )}~${timestampToTimeNormal(due_time, '/', true)}`}
               </div>
-            ) : ('')}
+            ) : (
+              ''
+            )}
 
-            <div style={{ margin: 0, height: 'auto', marginTop: '2px', display: 'flex', flexWrap: 'wrap' }}>
+            <div
+              style={{
+                margin: 0,
+                height: 'auto',
+                marginTop: '2px',
+                display: 'flex',
+                flexWrap: 'wrap'
+              }}
+            >
               {label_data.map((value, key) => {
                 const { label_name, label_id, label_color = '90,90,90' } = value
                 return (
-                  <div key={key} style={{ marginLeft: 0, marginRight: 4, color: `rgba(${label_color})`, backgroundColor: `rgba(${label_color},0.1)`, border: `1px solid rgba(${label_color},1)` }}>{label_name || key}</div>
+                  <div
+                    key={key}
+                    style={{
+                      marginLeft: 0,
+                      marginRight: 4,
+                      color: `rgba(${label_color})`,
+                      backgroundColor: `rgba(${label_color},0.1)`,
+                      border: `1px solid rgba(${label_color},1)`
+                    }}
+                  >
+                    {label_name || key}
+                  </div>
                 )
               })}
             </div>
           </div>
 
           {/* 这里放置访问控制的小锁 */}
-          {
-            isPropVisitControl && (
-              <Tooltip title="已开启访问控制" placement="top">
-                <div style={{ color: 'rgba(0,0,0,0.50)', lineHeight: '24px' }}>
-                  <span className={`${globalStyle.authTheme}`}>&#xe7ca;</span>
-                </div>
-              </Tooltip>
-            )
-          }
+          {isPropVisitControl && (
+            <Tooltip title="已开启访问控制" placement="top">
+              <div style={{ color: 'rgba(0,0,0,0.50)', lineHeight: '24px' }}>
+                <span className={`${globalStyle.authTheme}`}>&#xe7ca;</span>
+              </div>
+            </Tooltip>
+          )}
 
           <div className={CreateTaskStyle.executor}>
             {executor.user_id ? (
               // executor.avatar ? (
               <AvatarList users={executors} size={'small'} />
+            ) : (
               // <img src={executor.avatar} style={{ width: 24, height: 24 }} />
               // ) : (
               //     <div style={{ height: 24, width: 24, borderRadius: 16, paddingTop: 4, backgroundColor: '#e8e8e8', textAlign: 'center', margin: '0 12px', }}>
               //       <Icon type={'user'} style={{ fontSize: 14, color: '#8c8c8c', display: 'block', marginTop: 2 }} />
               //     </div>
               //   )
-            ) : ('')}
-
+              ''
+            )}
           </div>
           <div className={CreateTaskStyle.ellipsis}>
             <Icon type="ellipsis" style={{ fontSize: 16 }} />
@@ -144,9 +254,24 @@ export default class ItemTwo extends React.Component {
         </div>
         {child_data.length ? (
           <div className={CreateTaskStyle.item_2_bott}>
-            <Collapse accordion bordered={false} style={{ backgroundColor: '#f5f5f5' }} onChange={this.collapseChange.bind(this)}>
-              <Panel header={<span style={{ color: '#8c8c8c' }}>{`${this.state.collapseClose ? '显示' : '隐藏'}${child_data.length}个子${currentNounPlanFilterName(TASKS)}`}</span>} key="1" style={customPanelStyle}>
-                <QueueAnim >
+            <Collapse
+              accordion
+              bordered={false}
+              style={{ backgroundColor: '#f5f5f5' }}
+              onChange={this.collapseChange.bind(this)}
+            >
+              <Panel
+                header={
+                  <span style={{ color: '#8c8c8c' }}>{`${
+                    this.state.collapseClose ? '显示' : '隐藏'
+                  }${child_data.length}个子${currentNounPlanFilterName(
+                    TASKS
+                  )}`}</span>
+                }
+                key="1"
+                style={customPanelStyle}
+              >
+                <QueueAnim>
                   {child_data.map((value, key) => {
                     return (
                       <ItemTwoChirldren
@@ -154,8 +279,8 @@ export default class ItemTwo extends React.Component {
                         ItemTwoChirldrenIndex={key}
                         taskGroupListIndex={taskGroupListIndex}
                         taskGroupListIndex_index={taskGroupListIndex_index}
-                        key={key}>
-                      </ItemTwoChirldren>
+                        key={key}
+                      ></ItemTwoChirldren>
                     )
                   })}
                 </QueueAnim>
@@ -163,10 +288,8 @@ export default class ItemTwo extends React.Component {
             </Collapse>
           </div>
         ) : (
-            ''
-          )}
-
-
+          ''
+        )}
       </div>
     )
   }
@@ -178,20 +301,15 @@ const customPanelStyle = {
   fontSize: 12,
   color: '#8c8c8c',
   border: 0,
-  overflow: 'hidden',
-};
+  overflow: 'hidden'
+}
 function mapStateToProps({
   projectDetailTask: {
-    datas: {
-      taskGroupList = []
-    }
+    datas: { taskGroupList = [] }
   },
   technological: {
-    datas: {
-      userBoardPermissions
-    }
+    datas: { userBoardPermissions }
   }
-
 }) {
   return {
     taskGroupList,

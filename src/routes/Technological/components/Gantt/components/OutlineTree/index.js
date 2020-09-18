@@ -1,17 +1,17 @@
 import React, { Component } from 'react'
-import styles from './index.less';
-import { Input, Dropdown, message, Tooltip, Menu } from 'antd';
-import globalStyles from '@/globalset/css/globalClassName.less';
-import ManhourSet from './ManhourSet.js';
-import { Popover, Avatar } from 'antd';
+import styles from './index.less'
+import { Input, Dropdown, message, Tooltip, Menu } from 'antd'
+import globalStyles from '@/globalset/css/globalClassName.less'
+import ManhourSet from './ManhourSet.js'
+import { Popover, Avatar } from 'antd'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
-import { getOrgIdByBoardId } from '@/utils/businessFunction';
-import moment from 'moment';
+import { getOrgIdByBoardId } from '@/utils/businessFunction'
+import moment from 'moment'
 import AvatarList from '@/components/avatarList'
 import NodeOperate from './NodeOperate'
-import { validatePositiveInt } from '../../../../../../utils/verify';
-import { connect } from 'dva';
-import { isSamDay } from '../../../../../../utils/util';
+import { validatePositiveInt } from '../../../../../../utils/verify'
+import { connect } from 'dva'
+import { isSamDay } from '../../../../../../utils/util'
 import TreeNode from './TreeNode'
 
 // @connect(({ gantt: { datas: {
@@ -45,8 +45,6 @@ import TreeNode from './TreeNode'
 //         });
 //     }
 
-
-
 //     isShowSetTimeSpan = (nodeValue) => {
 //         if (nodeValue.tree_type == '2' || (nodeValue.tree_type == '1' && nodeValue.time_span)) {
 //             return true;
@@ -56,8 +54,6 @@ import TreeNode from './TreeNode'
 //         }
 
 //     }
-
-
 
 //     onChangeExpand = (e) => {
 //         e.stopPropagation();
@@ -102,7 +98,7 @@ import TreeNode from './TreeNode'
 //         }
 //         const target = document.getElementById('gantt_card_out_middle')
 
-//         if (toDayIndex != -1) { //如果今天在当前日期面板内 
+//         if (toDayIndex != -1) { //如果今天在当前日期面板内
 //             let nomal_position = toDayIndex * ceilWidth - 248 + 16 //248为左边面板宽度,16为左边header的宽度和withCeil * n的 %值
 //             if (gantt_view_mode == 'year') {
 //                 const date_position = date_arr_one_level.slice(0, toDayIndex).map(item => item.last_date).reduce((total, num) => total + num) //索引月份总天数
@@ -166,7 +162,6 @@ import TreeNode from './TreeNode'
 //         this.props.onHover(id || add_id, false, this.props.parentId, add_id ? true : false);
 
 //     }
-
 
 //     onPressEnter = (e) => {
 
@@ -279,10 +274,7 @@ import TreeNode from './TreeNode'
 //             });
 //         }
 
-
 //     }
-
-
 
 //     onExecutorTaskChargeChange = (data) => {
 //         let { nodeValue = {} } = this.state;
@@ -334,7 +326,6 @@ import TreeNode from './TreeNode'
 
 //     }
 
-
 //     renderExecutor = (members = [], { user_id }) => {
 
 //         const currExecutor = members.find((item) => item.user_id == user_id);
@@ -358,7 +349,6 @@ import TreeNode from './TreeNode'
 //         }
 
 //         //console.log("isTitleHover || isTitleEdit", isTitleHover, isTitleEdit);
-
 
 //         return (
 //             <span className={`${styles.outline_tree_node_label} ${isTitleHover ? styles.hoverTitle : ''}`}>
@@ -391,9 +381,7 @@ import TreeNode from './TreeNode'
 //                 </Tooltip>
 //                 {/* <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe7b2;</span>
 
-
 //                     <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe6d9;</span> */}
-
 
 //                 {
 //                     tree_type != '0' &&
@@ -604,219 +592,232 @@ import TreeNode from './TreeNode'
 // }
 
 class MyOutlineTree extends Component {
-    render() {
-        const { onDataProcess, onExpand, onHover, hoverItem, gantt_board_id, projectDetailInfoData, outline_tree_round, changeOutLineTreeNodeProto, deleteOutLineTreeNode } = this.props;
+  render() {
+    const {
+      onDataProcess,
+      onExpand,
+      onHover,
+      hoverItem,
+      gantt_board_id,
+      projectDetailInfoData,
+      outline_tree_round,
+      changeOutLineTreeNodeProto,
+      deleteOutLineTreeNode
+    } = this.props
 
-        return (
-            <div className={styles.outline_tree}>
-                {
-                    React.Children.map(this.props.children, (child, i) => {
-                        return (
-                            <TreeNode {...child.props}
-                                changeOutLineTreeNodeProto={changeOutLineTreeNodeProto}
-                                deleteOutLineTreeNode={deleteOutLineTreeNode}
-                                onDataProcess={onDataProcess} onExpand={onExpand} onHover={onHover} hoverItem={hoverItem} gantt_board_id={gantt_board_id} projectDetailInfoData={projectDetailInfoData} outline_tree_round={outline_tree_round}>
-                                {child.props.children}
-                            </TreeNode>
-                        );
-                    })
-                }
-            </div>
-        );
-    }
+    return (
+      <div className={styles.outline_tree}>
+        {React.Children.map(this.props.children, (child, i) => {
+          return (
+            <TreeNode
+              {...child.props}
+              changeOutLineTreeNodeProto={changeOutLineTreeNodeProto}
+              deleteOutLineTreeNode={deleteOutLineTreeNode}
+              onDataProcess={onDataProcess}
+              onExpand={onExpand}
+              onHover={onHover}
+              hoverItem={hoverItem}
+              gantt_board_id={gantt_board_id}
+              projectDetailInfoData={projectDetailInfoData}
+              outline_tree_round={outline_tree_round}
+            >
+              {child.props.children}
+            </TreeNode>
+          )
+        })}
+      </div>
+    )
+  }
 }
 
 const getNode = (outline_tree, id) => {
-    let nodeValue = null;
-    if (outline_tree) {
-        nodeValue = outline_tree.find((item) => item.id == id);
-        if (nodeValue) {
-            return nodeValue;
+  let nodeValue = null
+  if (outline_tree) {
+    nodeValue = outline_tree.find(item => item.id == id)
+    if (nodeValue) {
+      return nodeValue
+    } else {
+      for (let i = 0; i < outline_tree.length; i++) {
+        let node = outline_tree[i]
+        if (node.children && node.children.length > 0) {
+          nodeValue = getNode(node.children, id)
+          if (nodeValue) {
+            return nodeValue
+          }
         } else {
-            for (let i = 0; i < outline_tree.length; i++) {
-                let node = outline_tree[i];
-                if (node.children && node.children.length > 0) {
-                    nodeValue = getNode(node.children, id);
-                    if (nodeValue) {
-                        return nodeValue;
-                    }
-                } else {
-                    continue
-                    // return null;
-                }
-            }
+          continue
+          // return null;
         }
+      }
     }
-    return nodeValue
+  }
+  return nodeValue
 }
 
 const getNodeByname = (outline_tree, key, value) => {
-    let nodeValue = null;
-    if (outline_tree) {
-        nodeValue = outline_tree.find((item) => item[key] == value);
-        if (nodeValue) {
-            return nodeValue;
+  let nodeValue = null
+  if (outline_tree) {
+    nodeValue = outline_tree.find(item => item[key] == value)
+    if (nodeValue) {
+      return nodeValue
+    } else {
+      let length = outline_tree.length
+      for (let i = 0; i < length; i++) {
+        let node = outline_tree[i]
+        if (node.children && node.children.length > 0) {
+          nodeValue = getNodeByname(node.children, key, value)
+          if (nodeValue) {
+            return nodeValue
+          }
         } else {
-            let length = outline_tree.length
-            for (let i = 0; i < length; i++) {
-                let node = outline_tree[i];
-                if (node.children && node.children.length > 0) {
-                    nodeValue = getNodeByname(node.children, key, value);
-                    if (nodeValue) {
-                        return nodeValue;
-                    }
-                } else {
-                    continue
-                    // return null;
-                }
-            }
+          continue
+          // return null;
         }
+      }
     }
-    return nodeValue
+  }
+  return nodeValue
 }
 
 const getTreeNodeValue = (outline_tree, id) => {
-    if (outline_tree) {
-        for (let i = 0; i < outline_tree.length; i++) {
-            let node = outline_tree[i];
-            if (node.id == id) {
-                return node;
-            } else {
-                if (node.children && node.children.length > 0) {
-                    let childNode = getNode(node.children, id);
-                    if (childNode) {
-                        return childNode;
-                    }
-                } else {
-                    continue
-                    // return null;
-                }
-            }
+  if (outline_tree) {
+    for (let i = 0; i < outline_tree.length; i++) {
+      let node = outline_tree[i]
+      if (node.id == id) {
+        return node
+      } else {
+        if (node.children && node.children.length > 0) {
+          let childNode = getNode(node.children, id)
+          if (childNode) {
+            return childNode
+          }
+        } else {
+          continue
+          // return null;
         }
-    } else {
-        return null;
+      }
     }
-
+  } else {
+    return null
+  }
 }
 
 const getAddNode = (outline_tree, add_id) => {
-    let nodeValue = null;
-    if (outline_tree) {
-        nodeValue = outline_tree.find((item) => item.add_id == add_id);
-        if (nodeValue) {
-            return nodeValue;
+  let nodeValue = null
+  if (outline_tree) {
+    nodeValue = outline_tree.find(item => item.add_id == add_id)
+    if (nodeValue) {
+      return nodeValue
+    } else {
+      for (let i = 0; i < outline_tree.length; i++) {
+        let node = outline_tree[i]
+        if (node.children && node.children.length > 0) {
+          nodeValue = getAddNode(node.children, add_id)
+          if (nodeValue) {
+            return nodeValue
+          }
         } else {
-            for (let i = 0; i < outline_tree.length; i++) {
-                let node = outline_tree[i];
-                if (node.children && node.children.length > 0) {
-                    nodeValue = getAddNode(node.children, add_id);
-                    if (nodeValue) {
-                        return nodeValue;
-                    }
-                } else {
-                    continue
-                    // return null;
-                }
-            }
+          continue
+          // return null;
         }
+      }
     }
-    return nodeValue
+  }
+  return nodeValue
 }
 
-
 const getTreeAddNodeValue = (outline_tree, add_id) => {
-    if (outline_tree) {
-        for (let i = 0; i < outline_tree.length; i++) {
-            let node = outline_tree[i];
-            if (node.add_id == add_id) {
-                return node;
-            } else {
-                if (node.children && node.children.length > 0) {
-                    let childNode = getAddNode(node.children, add_id);
-                    if (childNode) {
-                        return childNode;
-                    }
-                } else {
-                    continue
-                    // return null;
-                }
-            }
+  if (outline_tree) {
+    for (let i = 0; i < outline_tree.length; i++) {
+      let node = outline_tree[i]
+      if (node.add_id == add_id) {
+        return node
+      } else {
+        if (node.children && node.children.length > 0) {
+          let childNode = getAddNode(node.children, add_id)
+          if (childNode) {
+            return childNode
+          }
+        } else {
+          continue
+          // return null;
         }
-    } else {
-        return null;
+      }
     }
-
+  } else {
+    return null
+  }
 }
 
 // 过滤掉指定的树节点(删除树节点)
 const filterTreeNode = (tree, id) => {
-    if (!(tree instanceof Array)) {
-        return tree
-    }
-    const length = tree.length
-    for (let i = 0; i < length; i++) {
-        let el = tree[i]
-        if (el.id == id) {
-            tree.splice(i, 1)
-            break
-        } else {
-            if (el.children && el.children.length) {
-                filterTreeNode(el.children, id)
-            }
-        }
-    }
+  if (!(tree instanceof Array)) {
     return tree
+  }
+  const length = tree.length
+  for (let i = 0; i < length; i++) {
+    let el = tree[i]
+    if (el.id == id) {
+      tree.splice(i, 1)
+      break
+    } else {
+      if (el.children && el.children.length) {
+        filterTreeNode(el.children, id)
+      }
+    }
+  }
+  return tree
 }
 // 过滤掉指定的树节点(删除树节点)(通过指定属性)
 const filterTreeNodeByName = (tree, key, value) => {
-    if (!(tree instanceof Array)) {
-        return tree
-    }
-    const length = tree.length
-    for (let i = 0; i < length; i++) {
-        let el = tree[i]
-        if (el[key] == value) {
-            tree.splice(i, 1)
-            break
-        } else {
-            if (el.children && el.children.length) {
-                filterTreeNodeByName(el.children, key, value)
-            }
-        }
-    }
+  if (!(tree instanceof Array)) {
     return tree
+  }
+  const length = tree.length
+  for (let i = 0; i < length; i++) {
+    let el = tree[i]
+    if (el[key] == value) {
+      tree.splice(i, 1)
+      break
+    } else {
+      if (el.children && el.children.length) {
+        filterTreeNodeByName(el.children, key, value)
+      }
+    }
+  }
+  return tree
 }
 const getTreeNodeValueByName = (outline_tree, key, value) => {
-    if (outline_tree) {
-        let length = outline_tree.length
-        for (let i = 0; i < length; i++) {
-            let node = outline_tree[i];
-            if (node[key] == value) {
-                return node;
-            } else {
-                if (node.children && node.children.length > 0) {
-                    let childNode = getNodeByname(node.children, key, value);
-                    if (childNode) {
-                        return childNode;
-                    }
-                } else {
-                    continue
-                    // return null;
-                }
-            }
+  if (outline_tree) {
+    let length = outline_tree.length
+    for (let i = 0; i < length; i++) {
+      let node = outline_tree[i]
+      if (node[key] == value) {
+        return node
+      } else {
+        if (node.children && node.children.length > 0) {
+          let childNode = getNodeByname(node.children, key, value)
+          if (childNode) {
+            return childNode
+          }
+        } else {
+          continue
+          // return null;
         }
-    } else {
-        return null;
+      }
     }
+  } else {
+    return null
+  }
 }
 
-const OutlineTree = MyOutlineTree;
+const OutlineTree = MyOutlineTree
 //树节点
-OutlineTree.TreeNode = TreeNode;
+OutlineTree.TreeNode = TreeNode
 //树方法
-OutlineTree.getTreeNodeValue = getTreeNodeValue;
-OutlineTree.getTreeAddNodeValue = getTreeAddNodeValue;
+OutlineTree.getTreeNodeValue = getTreeNodeValue
+OutlineTree.getTreeAddNodeValue = getTreeAddNodeValue
 OutlineTree.filterTreeNode = filterTreeNode
 OutlineTree.getTreeNodeValueByName = getTreeNodeValueByName
 OutlineTree.filterTreeNodeByName = filterTreeNodeByName
-export default OutlineTree;
+export default OutlineTree

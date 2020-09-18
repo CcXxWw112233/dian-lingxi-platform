@@ -1,37 +1,52 @@
 import React from 'react'
-import { Icon, Layout, Menu, Dropdown, Tooltip, Switch, Modal } from 'antd';
+import { Icon, Layout, Menu, Dropdown, Tooltip, Switch, Modal } from 'antd'
 import indexStyles from './index.less'
 import glabalStyles from '../../../globalset/css/globalClassName.less'
 import linxiLogo from '../../../assets/library/lingxi_logo.png'
-import { checkIsHasPermission, currentNounPlanFilterName, isPaymentOrgUser } from "../../../utils/businessFunction";
 import {
-  DASHBOARD, MEMBERS, ORG_UPMS_ORGANIZATION_EDIT, ORG_UPMS_ORGANIZATION_ROLE_CREATE,
-  ORG_UPMS_ORGANIZATION_ROLE_EDIT, ORG_UPMS_ORGANIZATION_ROLE_DELETE, ORG_UPMS_ORGANIZATION_MEMBER_ADD,
-  ORGANIZATION, PROJECTS, ORG_UPMS_ORGANIZATION_MEMBER_QUERY, MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, CUSTOMIZATION_ORGNIZATIONS
-} from "../../../globalset/js/constant";
+  checkIsHasPermission,
+  currentNounPlanFilterName,
+  isPaymentOrgUser
+} from '../../../utils/businessFunction'
+import {
+  DASHBOARD,
+  MEMBERS,
+  ORG_UPMS_ORGANIZATION_EDIT,
+  ORG_UPMS_ORGANIZATION_ROLE_CREATE,
+  ORG_UPMS_ORGANIZATION_ROLE_EDIT,
+  ORG_UPMS_ORGANIZATION_ROLE_DELETE,
+  ORG_UPMS_ORGANIZATION_MEMBER_ADD,
+  ORGANIZATION,
+  PROJECTS,
+  ORG_UPMS_ORGANIZATION_MEMBER_QUERY,
+  MESSAGE_DURATION_TIME,
+  NOT_HAS_PERMISION_COMFIRN,
+  CUSTOMIZATION_ORGNIZATIONS
+} from '../../../globalset/js/constant'
 import Cookies from 'js-cookie'
 import CreateOrganizationModal from '../components/HeaderNav/CreateOrganizationModal'
 import ShowAddMenberModal from '../components/OrganizationMember/ShowAddMenberModal'
 import NotificationSettingsModal from './comonent/notificationSettings/NotificationSettingsModal'
 import PayUpgrade from './../components/PayUpgrade/index'
-import { color_4 } from "../../../globalset/js/styles";
-import { message } from "antd/lib/index";
-import { connect, } from 'dva';
+import { color_4 } from '../../../globalset/js/styles'
+import { message } from 'antd/lib/index'
+import { connect } from 'dva'
 import hobbyImg from '@/assets/sider_left/smile.png'
 import { getUsersNoticeSettingList } from '@/services/technological/notificationSetting'
-import { isApiResponseOk } from "@/utils/handleResponseData";
-import { organizationInviteWebJoin, commInviteWebJoin, } from '@/services/technological/index'
-const { Sider } = Layout;
-const { SubMenu } = Menu;
-let timer;
-
+import { isApiResponseOk } from '@/utils/handleResponseData'
+import {
+  organizationInviteWebJoin,
+  commInviteWebJoin
+} from '@/services/technological/index'
+const { Sider } = Layout
+const { SubMenu } = Menu
+let timer
 
 @connect(mapStateToProps)
 export default class SiderLeft extends React.Component {
-
   constructor(props) {
-    super(props);
-    const { is_simplemode = false, collapsed = true } = props;
+    super(props)
+    const { is_simplemode = false, collapsed = true } = props
     this.state = {
       collapsed: collapsed,
       createOrganizationVisable: false,
@@ -39,7 +54,7 @@ export default class SiderLeft extends React.Component {
       NotificationSettingsModalVisible: false, // 是否显示通知设置的弹框, 默认为 false 不显示
       is_disabled: false, // 是否是禁用状态, 默认为true 表示禁用状态
       is_simplemode: is_simplemode,
-      payUpgradeModalVisible: false,
+      payUpgradeModalVisible: false
     }
   }
   componentDidMount() {
@@ -47,7 +62,7 @@ export default class SiderLeft extends React.Component {
     dispatch({
       type: 'technological/updateDatas',
       payload: {
-        is_all_org: localStorage.getItem('OrganizationId') == '0',
+        is_all_org: localStorage.getItem('OrganizationId') == '0'
       }
     })
     this.getInitList()
@@ -55,7 +70,7 @@ export default class SiderLeft extends React.Component {
 
   // 获取通知设置的列表
   getInitList = () => {
-    getUsersNoticeSettingList().then((res) => {
+    getUsersNoticeSettingList().then(res => {
       if (isApiResponseOk(res)) {
         // console.log(res, 'sssss')
         // console.log(res, 'ssss')
@@ -75,7 +90,6 @@ export default class SiderLeft extends React.Component {
         collapsed
       })
     }
-
   }
   routingJump(route) {
     const { dispatch } = this.props
@@ -149,9 +163,8 @@ export default class SiderLeft extends React.Component {
   }
 
   addMembers(data) {
-
     const { invitationType, invitationId, rela_Condition } = this.props
-    const temp_ids = data.users.split(",")
+    const temp_ids = data.users.split(',')
     const invitation_org = localStorage.getItem('OrganizationId')
     organizationInviteWebJoin({
       _organization_id: invitation_org,
@@ -164,10 +177,8 @@ export default class SiderLeft extends React.Component {
           role_id: res.data.role_id,
           type: '11',
           users: res.data.users,
-          rela_condition: rela_Condition,
-        }).then(res => {
-
-        })
+          rela_condition: rela_Condition
+        }).then(res => {})
       }
     })
 
@@ -184,7 +195,7 @@ export default class SiderLeft extends React.Component {
   }
 
   // 切换组织的点击事件
-  handleOrgListMenuClick = (e) => {
+  handleOrgListMenuClick = e => {
     // console.log(e, 'ssss')
     const { key } = e
     const { is_disabled } = this.state
@@ -212,13 +223,21 @@ export default class SiderLeft extends React.Component {
 
     switch (key) {
       case '24': // 匹配团队成员
-        isHasMemberView() && this.routingJump('/technological/organizationMember')
+        isHasMemberView() &&
+          this.routingJump('/technological/organizationMember')
         break
       case '23': // 匹配成员管理后台
-        isHasManagerBack() && this.routingJump(`/organizationManager?nextpath=${window.location.hash.replace('#', '')}`)
+        isHasManagerBack() &&
+          this.routingJump(
+            `/organizationManager?nextpath=${window.location.hash.replace(
+              '#',
+              ''
+            )}`
+          )
         break
       case '22': // 匹配邀请成员加入弹框显示
-        checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD) && this.setShowAddMenberModalVisibile()
+        checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD) &&
+          this.setShowAddMenberModalVisibile()
         break
       case '20': // 匹配用户设置
         this.routingJump('/technological/accoutSet')
@@ -237,7 +256,7 @@ export default class SiderLeft extends React.Component {
 
         break
       case 'subShowSimple':
-        this.handleMode(1);
+        this.handleMode(1)
         break
       case '10': // 创建或加入新组织
         this.setCreateOrgnizationOModalVisable()
@@ -258,14 +277,15 @@ export default class SiderLeft extends React.Component {
           payload: {
             currentSelectOrganize: {},
             is_all_org: true,
-            is_show_org_name: is_show_org_name ? true : false,
+            is_show_org_name: is_show_org_name ? true : false
           }
         })
 
         // this.nextMenuClick(key)
 
         break
-      default: // 其他组织的切换
+      default:
+        // 其他组织的切换
         this.setState({
           is_disabled: true
         })
@@ -331,28 +351,26 @@ export default class SiderLeft extends React.Component {
       onOk() {
         dispatch({
           type: 'technological/logout',
-          payload: {
-
-          }
+          payload: {}
         })
       },
-      cancelText: '取消',
-    });
+      cancelText: '取消'
+    })
   }
 
-  openPayUpgradeModal = (e) => {
-    e.stopPropagation();
+  openPayUpgradeModal = e => {
+    e.stopPropagation()
     window.open('https://docs.qq.com/form/edit/DSHRaQ01GSU1qZHlT#/edit')
     return
     this.setState({
       payUpgradeModalVisible: true
-    });
+    })
   }
 
-  setPayUpgradeModalVisible = (visible) => {
+  setPayUpgradeModalVisible = visible => {
     this.setState({
       payUpgradeModalVisible: visible
-    });
+    })
   }
 
   // 是否显示全部组织
@@ -391,11 +409,17 @@ export default class SiderLeft extends React.Component {
     })
   }
 
-
   render() {
-    const { menuList = [], naviHeadTabIndex = {}, currentUserOrganizes = [], currentSelectOrganize = {}, is_show_org_name, is_all_org } = this.props //currentUserOrganizes currentSelectOrganize组织列表和当前组织
+    const {
+      menuList = [],
+      naviHeadTabIndex = {},
+      currentUserOrganizes = [],
+      currentSelectOrganize = {},
+      is_show_org_name,
+      is_all_org
+    } = this.props //currentUserOrganizes currentSelectOrganize组织列表和当前组织
     let temp = []
-    menuList.forEach((item) => {
+    menuList.forEach(item => {
       if (item.status === '1') {
         temp.push(item)
       }
@@ -417,10 +441,7 @@ export default class SiderLeft extends React.Component {
         default:
           break
       }
-      return [
-        ...r,
-        _c
-      ]
+      return [...r, _c]
     }, [])
 
     const { collapsed, is_disabled } = this.state
@@ -438,25 +459,33 @@ export default class SiderLeft extends React.Component {
       },
       ...res
     ]
-    const removeEmptyArrayEle = (arr) => {
+    const removeEmptyArrayEle = arr => {
       for (var i = 0; i < arr.length; i++) {
         if (arr[i] == undefined) {
-          arr.splice(i, 1);
-          i = i - 1; // i - 1 ,因为空元素在数组下标 2 位置，删除空之后，后面的元素要向前补位，
+          arr.splice(i, 1)
+          i = i - 1 // i - 1 ,因为空元素在数组下标 2 位置，删除空之后，后面的元素要向前补位，
           // 这样才能真正去掉空元素,觉得这句可以删掉的连续为空试试，然后思考其中逻辑
         }
       }
-      return arr;
-    };
+      return arr
+    }
 
     // 去除空数组
     let new_arr = removeEmptyArrayEle(navArray)
 
-    const { current_org = {}, name, avatar, user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {}
+    const {
+      current_org = {},
+      name,
+      avatar,
+      user_set = {}
+    } = localStorage.getItem('userInfo')
+      ? JSON.parse(localStorage.getItem('userInfo'))
+      : {}
     const { is_simple_model } = user_set
     // console.log(is_simple_model, 'sssssssss')
     const { identity_type } = current_org //是否访客 1不是 0是
-    const orgnizationName = currentSelectOrganize.name || currentNounPlanFilterName(ORGANIZATION)
+    const orgnizationName =
+      currentSelectOrganize.name || currentNounPlanFilterName(ORGANIZATION)
     const { logo, id } = currentSelectOrganize
 
     //是否拥有查看成员入口
@@ -480,61 +509,90 @@ export default class SiderLeft extends React.Component {
 
     const orgListMenu = (
       <div className={`${glabalStyles.global_card} ${indexStyles.menuWrapper}`}>
-        <Menu onClick={this.handleOrgListMenuClick.bind(this)} selectable={true} style={{ marginTop: -20 }} mode={!collapsed ? 'vertical' : 'inline'} >
+        <Menu
+          onClick={this.handleOrgListMenuClick.bind(this)}
+          selectable={true}
+          style={{ marginTop: -20 }}
+          mode={!collapsed ? 'vertical' : 'inline'}
+        >
+          {identity_type == '1' && isHasMemberView() && (
+            <Menu.Item key="24">
+              <div className={indexStyles.default_select_setting}>
+                <div className={indexStyles.team}>
+                  <div
+                    className={`${glabalStyles.authTheme} ${indexStyles.team_icon}`}
+                  >
+                    &#xe7af;
+                  </div>
+                  <span className={indexStyles.middle_text}>团队成员</span>
+                </div>
+              </div>
+            </Menu.Item>
+          )}
 
-          {
-            identity_type == '1' && isHasMemberView() && (
-              <Menu.Item key="24">
-                <div className={indexStyles.default_select_setting}>
-                  <div className={indexStyles.team}>
-                    <div className={`${glabalStyles.authTheme} ${indexStyles.team_icon}`}>&#xe7af;</div>
-                    <span className={indexStyles.middle_text}>团队成员</span>
+          {identity_type == '1' && isHasManagerBack() && (
+            <Menu.Item key="23">
+              <div className={indexStyles.default_select_setting}>
+                <div className={indexStyles.bank}>
+                  <div
+                    className={`${glabalStyles.authTheme} ${indexStyles.bank_icon}`}
+                  >
+                    &#xe719;
+                  </div>
+                  <span className={indexStyles.middle_text}>组织管理后台</span>
+                  <div
+                    className={indexStyles.payUpgrade}
+                    onClick={e => {
+                      this.openPayUpgradeModal(e)
+                    }}
+                  >
+                    申请升级
                   </div>
                 </div>
-              </Menu.Item>
-            )
-          }
+              </div>
+            </Menu.Item>
+          )}
 
-          {
-            identity_type == '1' && isHasManagerBack() && (
-              <Menu.Item key="23">
-                <div className={indexStyles.default_select_setting}>
-                  <div className={indexStyles.bank}>
-                    <div className={`${glabalStyles.authTheme} ${indexStyles.bank_icon}`}>&#xe719;</div>
-                    <span className={indexStyles.middle_text}>组织管理后台</span>
-                    <div className={indexStyles.payUpgrade} onClick={(e) => { this.openPayUpgradeModal(e) }} >申请升级</div>
-                  </div>
-                </div>
-              </Menu.Item>
-            )
-          }
-
-          {
-            identity_type == '1' && checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD) && (
+          {identity_type == '1' &&
+            checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD) && (
               <Menu.Item key="22">
                 <div className={indexStyles.default_select_setting}>
                   <div className={indexStyles.addUsers}>
-                    <div className={`${glabalStyles.authTheme} ${indexStyles.add_icon}`}>&#xe7ae;</div>
-                    <span className={indexStyles.middle_text}>邀请成员加入</span>
+                    <div
+                      className={`${glabalStyles.authTheme} ${indexStyles.add_icon}`}
+                    >
+                      &#xe7ae;
+                    </div>
+                    <span className={indexStyles.middle_text}>
+                      邀请成员加入
+                    </span>
                   </div>
                 </div>
               </Menu.Item>
-            )
-          }
+            )}
 
           {identity_type == '1' && <Menu.Divider />}
 
           <Menu.Item key="20">
             <div className={indexStyles.default_select_setting}>
               <div className={indexStyles.account_setting}>
-                {
-                  avatar ? <span className={indexStyles.left_img}><img src={avatar} className={indexStyles.avartarImg} /></span> : ''
-                }
+                {avatar ? (
+                  <span className={indexStyles.left_img}>
+                    <img src={avatar} className={indexStyles.avartarImg} />
+                  </span>
+                ) : (
+                  ''
+                )}
                 <span className={indexStyles.middle_text}>账户设置</span>
                 <Tooltip placement="top" title="退出登录">
                   <div
-                    onClick={(e) => { this.logout(e) }}
-                    className={`${glabalStyles.authTheme} ${indexStyles.layout_icon}`}>&#xe78c;</div>
+                    onClick={e => {
+                      this.logout(e)
+                    }}
+                    className={`${glabalStyles.authTheme} ${indexStyles.layout_icon}`}
+                  >
+                    &#xe78c;
+                  </div>
                 </Tooltip>
               </div>
             </div>
@@ -543,9 +601,16 @@ export default class SiderLeft extends React.Component {
           <SubMenu
             key="21"
             title={
-              <div id="default_select_setting" className={indexStyles.default_select_setting}>
+              <div
+                id="default_select_setting"
+                className={indexStyles.default_select_setting}
+              >
                 <div className={indexStyles.hobby}>
-                  <span className={`${glabalStyles.authTheme} ${indexStyles.hobby_icon}`}>&#xe783;</span>
+                  <span
+                    className={`${glabalStyles.authTheme} ${indexStyles.hobby_icon}`}
+                  >
+                    &#xe783;
+                  </span>
                   <span className={indexStyles.middle_text}>偏好设置</span>
                   {/* <span><Icon type="right" /></span> */}
                 </div>
@@ -554,10 +619,13 @@ export default class SiderLeft extends React.Component {
           >
             {/* <Menu.Item disabled={!is_show_org_name || is_disabled} key="subShowOrgName"> */}
             <Menu.Item key="subShowOrgName">
-              <span>显示组织名称
-                  <Switch
+              <span>
+                显示组织名称
+                <Switch
                   style={{ display: 'inline-block', marginLeft: 8 }}
-                  onClick={(checked) => { this.handleShowAllOrg(checked) }}
+                  onClick={checked => {
+                    this.handleShowAllOrg(checked)
+                  }}
                   checked={is_show_org_name}
                 ></Switch>
                 {/* 这是控制禁用的状态逻辑(保留) */}
@@ -583,22 +651,24 @@ export default class SiderLeft extends React.Component {
             <Menu.Item key="subInfoSet">
               <span>通知设置</span>
             </Menu.Item>
-            {
-              CUSTOMIZATION_ORGNIZATIONS.includes(this.props.currentSelectOrganize.id) &&
-              true &&
-              (
+            {CUSTOMIZATION_ORGNIZATIONS.includes(
+              this.props.currentSelectOrganize.id
+            ) &&
+              true && (
                 <Menu.Item key="subShowSimple">
-                  <span>
-                    切换极简模式
-                  </span>
+                  <span>切换极简模式</span>
                 </Menu.Item>
-              )
-            }
+              )}
           </SubMenu>
 
-          <Menu.Item key="10" >
+          <Menu.Item key="10">
             <div className={indexStyles.itemDiv} style={{ color: color_4 }}>
-              <Icon type="plus-circle" theme="outlined" style={{ margin: 0, fontSize: 16 }} /> 创建或加入新{currentNounPlanFilterName(ORGANIZATION)}
+              <Icon
+                type="plus-circle"
+                theme="outlined"
+                style={{ margin: 0, fontSize: 16 }}
+              />{' '}
+              创建或加入新{currentNounPlanFilterName(ORGANIZATION)}
             </div>
           </Menu.Item>
 
@@ -608,23 +678,69 @@ export default class SiderLeft extends React.Component {
           className={`${glabalStyles.global_vertical_scrollbar}`}
           style={{ maxHeight: 200, overflowY: 'auto' }}
           selectedKeys={id ? [id] : ['0']}
-          onClick={this.handleOrgListMenuClick.bind(this)} selectable={true} mode="vertical" >
+          onClick={this.handleOrgListMenuClick.bind(this)}
+          selectable={true}
+          mode="vertical"
+        >
           <Menu.Item key="0" className={indexStyles.org_name}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <img src={linxiLogo} className={indexStyles.org_img} />
-              <span style={{ maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>全部组织</span>
+              <span
+                style={{
+                  maxWidth: 100,
+                  overflow: 'hidden',
+                  whiteSpace: 'nowrap',
+                  textOverflow: 'ellipsis'
+                }}
+              >
+                全部组织
+              </span>
             </div>
           </Menu.Item>
           {currentUserOrganizes.map((value, key) => {
-            const { name, id, identity_type, logo } = value;
-            let disabled = !isPaymentOrgUser(id);//是否付费组织
+            const { name, id, identity_type, logo } = value
+            let disabled = !isPaymentOrgUser(id) //是否付费组织
             return (
-              <Menu.Item key={id} className={indexStyles.org_name} disabled={disabled}>
+              <Menu.Item
+                key={id}
+                className={indexStyles.org_name}
+                disabled={disabled}
+              >
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <img src={logo || linxiLogo} className={indexStyles.org_img} />
-                  <span style={{ maxWidth: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{name}</span>
+                  <img
+                    src={logo || linxiLogo}
+                    className={indexStyles.org_img}
+                  />
+                  <span
+                    style={{
+                      maxWidth: 100,
+                      overflow: 'hidden',
+                      whiteSpace: 'nowrap',
+                      textOverflow: 'ellipsis'
+                    }}
+                  >
+                    {name}
+                  </span>
                 </div>
-                {identity_type == '0' ? (<span className={indexStyles.middle_bott} style={{ display: 'inline-block', backgroundColor: '#e5e5e5', padding: '0 4px', borderRadius: 40, marginLeft: 6, position: 'absolute', right: 34, top: 12 }}>访客</span>) : ('')}
+                {identity_type == '0' ? (
+                  <span
+                    className={indexStyles.middle_bott}
+                    style={{
+                      display: 'inline-block',
+                      backgroundColor: '#e5e5e5',
+                      padding: '0 4px',
+                      borderRadius: 40,
+                      marginLeft: 6,
+                      position: 'absolute',
+                      right: 34,
+                      top: 12
+                    }}
+                  >
+                    访客
+                  </span>
+                ) : (
+                  ''
+                )}
               </Menu.Item>
             )
           })}
@@ -657,41 +773,56 @@ export default class SiderLeft extends React.Component {
         collapsible={true}
         onMouseEnter={this.setCollapsed.bind(this, false)}
         onMouseLeave={this.setCollapsed.bind(this, true)}
-        className={`${indexStyles.siderLeft} ${collapsed ? indexStyles.siderLeft_state_min : indexStyles.siderLeft_state_exp}`} collapsedWidth={64} width={260} theme={'light'} collapsed={collapsed}
+        className={`${indexStyles.siderLeft} ${
+          collapsed
+            ? indexStyles.siderLeft_state_min
+            : indexStyles.siderLeft_state_exp
+        }`}
+        collapsedWidth={64}
+        width={260}
+        theme={'light'}
+        collapsed={collapsed}
       >
-
-        <Dropdown getPopupContainer={() => document.getElementById('siderLeft')} overlay={orgListMenu}>
-          <div className={indexStyles.contain_1} style={{ position: 'relative' }}>
+        <Dropdown
+          getPopupContainer={() => document.getElementById('siderLeft')}
+          overlay={orgListMenu}
+        >
+          <div
+            className={indexStyles.contain_1}
+            style={{ position: 'relative' }}
+          >
             <div className={indexStyles.left}>
               <img src={logo || linxiLogo} className={indexStyles.left_img} />
             </div>
             <div className={indexStyles.middle}>
-              <div className={indexStyles.username}>
-                {name}
-              </div>
-              {
-                is_show_org_name && (
-                  <div className={indexStyles.middle_top}>
-                    {orgnizationName}
-                  </div>
-                )
-              }
-
+              <div className={indexStyles.username}>{name}</div>
+              {is_show_org_name && (
+                <div className={indexStyles.middle_top}>{orgnizationName}</div>
+              )}
             </div>
-            {
-              identity_type == '0' && collapsed == false ? (
-                <div className={indexStyles.middle_bott} style={{ position: 'absolute', top: 16, right: 30 }}>
-                  访客
-                  </div>
-              ) : ('')
-            }
+            {identity_type == '0' && collapsed == false ? (
+              <div
+                className={indexStyles.middle_bott}
+                style={{ position: 'absolute', top: 16, right: 30 }}
+              >
+                访客
+              </div>
+            ) : (
+              ''
+            )}
           </div>
         </Dropdown>
 
-
         <div className={indexStyles.contain_2}>
-          <div className={`${indexStyles.navItem}`} onClick={this.setGlobalSearchModalVisible.bind(this)} >
-            <div className={`${glabalStyles.authTheme} ${indexStyles.navItem_left}`}>&#xe611;</div>
+          <div
+            className={`${indexStyles.navItem}`}
+            onClick={this.setGlobalSearchModalVisible.bind(this)}
+          >
+            <div
+              className={`${glabalStyles.authTheme} ${indexStyles.navItem_left}`}
+            >
+              &#xe611;
+            </div>
             <div className={indexStyles.navItem_right}> 搜索</div>
           </div>
         </div>
@@ -700,33 +831,83 @@ export default class SiderLeft extends React.Component {
           {new_arr.map((value, key) => {
             const { theme, name, code } = value
             return (
-              <div key={key} className={`${indexStyles.navItem} ${code == naviHeadTabIndex ? indexStyles.navItemSelected : ''}`} onClick={this.menuClick.bind(this, { key, code })}>
-                <div className={`${glabalStyles.authTheme} ${indexStyles.navItem_left}`} dangerouslySetInnerHTML={{ __html: theme }}></div>
+              <div
+                key={key}
+                className={`${indexStyles.navItem} ${
+                  code == naviHeadTabIndex ? indexStyles.navItemSelected : ''
+                }`}
+                onClick={this.menuClick.bind(this, { key, code })}
+              >
+                <div
+                  className={`${glabalStyles.authTheme} ${indexStyles.navItem_left}`}
+                  dangerouslySetInnerHTML={{ __html: theme }}
+                ></div>
                 <div className={indexStyles.navItem_right}> {name}</div>
               </div>
             )
           })}
         </div>
 
-        <CreateOrganizationModal dispatch={this.props.dispatch} createOrganizationVisable={this.state.createOrganizationVisable} setCreateOrgnizationOModalVisable={this.setCreateOrgnizationOModalVisable.bind(this)} />
+        <CreateOrganizationModal
+          dispatch={this.props.dispatch}
+          createOrganizationVisable={this.state.createOrganizationVisable}
+          setCreateOrgnizationOModalVisable={this.setCreateOrgnizationOModalVisable.bind(
+            this
+          )}
+        />
 
-        <ShowAddMenberModal dispatch={this.props.dispatch} addMembers={this.addMembers.bind(this)} modalVisible={this.state.ShowAddMenberModalVisibile} setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(this)} invitationId={localStorage.getItem('OrganizationId')} invitationType='11' invitationOrg={localStorage.getItem('OrganizationId')} />
+        <ShowAddMenberModal
+          dispatch={this.props.dispatch}
+          addMembers={this.addMembers.bind(this)}
+          modalVisible={this.state.ShowAddMenberModalVisibile}
+          setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(
+            this
+          )}
+          invitationId={localStorage.getItem('OrganizationId')}
+          invitationType="11"
+          invitationOrg={localStorage.getItem('OrganizationId')}
+        />
 
         {this.state.NotificationSettingsModalVisible && (
-          <NotificationSettingsModal notificationSettingsModalVisible={this.state.NotificationSettingsModalVisible} setNotificationSettingsModalVisible={this.setNotificationSettingsModalVisible.bind(this)} />
+          <NotificationSettingsModal
+            notificationSettingsModalVisible={
+              this.state.NotificationSettingsModalVisible
+            }
+            setNotificationSettingsModalVisible={this.setNotificationSettingsModalVisible.bind(
+              this
+            )}
+          />
         )}
-        {
-          this.state.payUpgradeModalVisible && <PayUpgrade setPayUpgradeModalVisible={this.setPayUpgradeModalVisible} />
-        }
-
+        {this.state.payUpgradeModalVisible && (
+          <PayUpgrade
+            setPayUpgradeModalVisible={this.setPayUpgradeModalVisible}
+          />
+        )}
       </Sider>
-
     )
   }
 }
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ technological: { datas: {
-  menuList = [], naviHeadTabIndex = {}, currentUserOrganizes = [], currentSelectOrganize = {}, is_show_org_name, is_all_org,userOrgPermissions
-} } }) {
-  return { menuList, naviHeadTabIndex, currentUserOrganizes, currentSelectOrganize, is_show_org_name, is_all_org, userOrgPermissions}
+function mapStateToProps({
+  technological: {
+    datas: {
+      menuList = [],
+      naviHeadTabIndex = {},
+      currentUserOrganizes = [],
+      currentSelectOrganize = {},
+      is_show_org_name,
+      is_all_org,
+      userOrgPermissions
+    }
+  }
+}) {
+  return {
+    menuList,
+    naviHeadTabIndex,
+    currentUserOrganizes,
+    currentSelectOrganize,
+    is_show_org_name,
+    is_all_org,
+    userOrgPermissions
+  }
 }

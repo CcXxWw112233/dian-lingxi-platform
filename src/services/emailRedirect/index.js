@@ -6,8 +6,8 @@ export async function confirmEmail(params) {
   return request({
     url: `${REQUEST_DOMAIN}/user/change/email/confirm`,
     method: 'GET',
-    params,
-  });
+    params
+  })
 }
 
 //点击邮件确认加入组织,验证
@@ -15,6 +15,6 @@ export async function confirmJoinORG(params) {
   return request({
     url: `${REQUEST_DOMAIN}/organization/apply/email/confirm`,
     method: 'GET',
-    params,
-  });
+    params
+  })
 }

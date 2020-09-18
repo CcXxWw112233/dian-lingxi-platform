@@ -7,7 +7,7 @@ import { connect } from 'dva'
 const TabPane = Tabs.TabPane
 
 const changeClientHeight = () => {
-  const clientHeight = document.documentElement.clientHeight;//获取页面可见高度
+  const clientHeight = document.documentElement.clientHeight //获取页面可见高度
   return clientHeight
 }
 
@@ -27,12 +27,12 @@ export default class ProcessDefault extends React.Component {
     window.removeEventListener('resize', this.resizeTTY)
   }
   resizeTTY = () => {
-    const clientHeight = changeClientHeight();//获取页面可见高度
+    const clientHeight = changeClientHeight() //获取页面可见高度
     this.setState({
       clientHeight
     })
   }
-  handleMenuReallyClick = (e) => {
+  handleMenuReallyClick = e => {
     const { key } = e
     if (!key) {
       return false
@@ -57,19 +57,65 @@ export default class ProcessDefault extends React.Component {
     })
   }
 
-  tabsChange() {
-
-  }
+  tabsChange() {}
 
   render() {
     const { clientHeight } = this.state
-    const { board_id, processDoingList = [], processStopedList = [], processComepletedList = [] } = this.props
+    const {
+      board_id,
+      processDoingList = [],
+      processStopedList = [],
+      processComepletedList = []
+    } = this.props
     const flowTabs = () => {
       return (
-        <Tabs defaultActiveKey="1" onChange={this.tabsChange.bind(this)} tabBarStyle={{ marginLeft: 26, width: '100%', maxWidth: 1100, paddingTop: 0, fontSize: 16 }}>
-          <TabPane tab={<div style={{ padding: 0, fontSize: 16 }}>进行中 </div>} key="1">{<PagingnationContent listData={processDoingList} status={'1'} clientHeight={clientHeight} />}</TabPane>
-          <TabPane tab={<div style={{ padding: 0, fontSize: 16 }}>已终止 </div>} key="2">{<PagingnationContent listData={processStopedList} status={'2'} clientHeight={clientHeight} />}</TabPane>
-          <TabPane tab={<div style={{ padding: 0, fontSize: 16 }}>已完成 </div>} key="3">{<PagingnationContent listData={processComepletedList} status={'3'} clientHeight={clientHeight} />}</TabPane>
+        <Tabs
+          defaultActiveKey="1"
+          onChange={this.tabsChange.bind(this)}
+          tabBarStyle={{
+            marginLeft: 26,
+            width: '100%',
+            maxWidth: 1100,
+            paddingTop: 0,
+            fontSize: 16
+          }}
+        >
+          <TabPane
+            tab={<div style={{ padding: 0, fontSize: 16 }}>进行中 </div>}
+            key="1"
+          >
+            {
+              <PagingnationContent
+                listData={processDoingList}
+                status={'1'}
+                clientHeight={clientHeight}
+              />
+            }
+          </TabPane>
+          <TabPane
+            tab={<div style={{ padding: 0, fontSize: 16 }}>已终止 </div>}
+            key="2"
+          >
+            {
+              <PagingnationContent
+                listData={processStopedList}
+                status={'2'}
+                clientHeight={clientHeight}
+              />
+            }
+          </TabPane>
+          <TabPane
+            tab={<div style={{ padding: 0, fontSize: 16 }}>已完成 </div>}
+            key="3"
+          >
+            {
+              <PagingnationContent
+                listData={processComepletedList}
+                status={'3'}
+                clientHeight={clientHeight}
+              />
+            }
+          </TabPane>
         </Tabs>
       )
     }
@@ -81,9 +127,7 @@ export default class ProcessDefault extends React.Component {
           <TemplateContent clientHeight={clientHeight} />
         </div>
         {/*右方流程*/}
-        <div className={indexStyles.processDefautOut_right}>
-          {flowTabs()}
-        </div>
+        <div className={indexStyles.processDefautOut_right}>{flowTabs()}</div>
       </div>
     )
   }
@@ -100,9 +144,7 @@ function mapStateToProps({
     }
   },
   projectDetailProcess: {
-    datas: {
-      board_id
-    }
+    datas: { board_id }
   }
 }) {
   return {

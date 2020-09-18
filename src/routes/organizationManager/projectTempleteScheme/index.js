@@ -4,13 +4,17 @@ import { Modal } from 'antd'
 import CustormModal from '@/components/CustormModal'
 
 export default class index extends Component {
-
   onCancel = () => {
-    this.props.setProjectTempleteSchemeModal && this.props.setProjectTempleteSchemeModal()
+    this.props.setProjectTempleteSchemeModal &&
+      this.props.setProjectTempleteSchemeModal()
   }
 
   render() {
-    const { project_templete_scheme_visible, style, _organization_id } = this.props
+    const {
+      project_templete_scheme_visible,
+      style,
+      _organization_id
+    } = this.props
     // console.log('sssssss__organization_id', _organization_id)
     return (
       <div>
@@ -22,7 +26,7 @@ export default class index extends Component {
           destroyOnClose={true}
           style={{ width: '714px', height: '860px', ...style }}
           maskClosable={false}
-          bodyStyle={{height: '860px'}}
+          bodyStyle={{ height: '860px' }}
           onCancel={this.onCancel}
         >
           <ProjectTempleteSchemeModal _organization_id={_organization_id} />

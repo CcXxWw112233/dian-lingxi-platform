@@ -1,9 +1,9 @@
-import detailInfoStyle from './index.less';
-import React from 'react';
-import{Icon, Tooltip} from 'antd'
+import detailInfoStyle from './index.less'
+import React from 'react'
+import { Icon, Tooltip } from 'antd'
 import globalStyles from './../../globalset/css/globalClassName.less'
 
-const NoPermissionUserCard = ({avatar, full_name}) => {
+const NoPermissionUserCard = ({ avatar, full_name }) => {
   return (
     <div className={detailInfoStyle.manImageDropdown}>
       <div className={detailInfoStyle.manImageDropdown_top}>
@@ -39,11 +39,15 @@ const NoPermissionUserCard = ({avatar, full_name}) => {
         </div>
       </div>
       <div className={detailInfoStyle.noPermissionPrompt__wrapper}>
-            <div className={detailInfoStyle.noPermissionPrompt__icon}><i className={globalStyles.authTheme}>&#xe86a;</i></div>
-            <div className={detailInfoStyle.noPermissionPrompt__text}>暂无权限查看</div>
+        <div className={detailInfoStyle.noPermissionPrompt__icon}>
+          <i className={globalStyles.authTheme}>&#xe86a;</i>
+        </div>
+        <div className={detailInfoStyle.noPermissionPrompt__text}>
+          暂无权限查看
+        </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default NoPermissionUserCard;
+export default NoPermissionUserCard

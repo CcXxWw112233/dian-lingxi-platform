@@ -1,5 +1,5 @@
-import React from 'react';
-import {connect} from "dva/index";
+import React from 'react'
+import { connect } from 'dva/index'
 import indexStyles from './index.less'
 import PersonNews from './PersonNews'
 import GroupContent from './GropContent'
@@ -15,26 +15,27 @@ const getEffectOrReducerByName_5 = name => `workbenchFileDetail/${name}`
 const getEffectOrReducerByName_6 = name => `workbenchPublicDatas/${name}`
 const getEffectOrReducerByNameProcess = name => `workbenchDetailProcess/${name}`
 
-
-const Workbench = (props) => {
+const Workbench = props => {
   // console.log(props)
   const { dispatch, model, modal } = props
-  const { datas: {boxList = []}} = model
-  const routingJump = (path) => {
+  const {
+    datas: { boxList = [] }
+  } = model
+  const routingJump = path => {
     dispatch({
       type: getEffectOrReducerByName('routingJump'),
       payload: {
-        route: path,
-      },
+        route: path
+      }
     })
   }
-  const updateDatas = (payload) => {
+  const updateDatas = payload => {
     dispatch({
       type: getEffectOrReducerByName('updateDatas'),
       payload: payload
     })
   }
-  const updatePublicDatas = (payload) => {
+  const updatePublicDatas = payload => {
     dispatch({
       type: getEffectOrReducerByName_6('updateDatas'),
       payload: payload
@@ -168,8 +169,8 @@ const Workbench = (props) => {
       dispatch({
         type: getEffectOrReducerByName('routingJump'),
         payload: {
-          route: path,
-        },
+          route: path
+        }
       })
     },
     fileDownload(data) {
@@ -210,18 +211,18 @@ const Workbench = (props) => {
     dispatch,
     logout() {
       dispatch({
-        type: getEffectOrReducerByName_2('logout'),
+        type: getEffectOrReducerByName_2('logout')
       })
     },
     routingJump(path) {
       dispatch({
         type: getEffectOrReducerByName_2('routingJump'),
         payload: {
-          route: path,
-        },
+          route: path
+        }
       })
     },
-    updateDatas (payload) {
+    updateDatas(payload) {
       dispatch({
         type: getEffectOrReducerByName_2('updateDatas'),
         payload: payload
@@ -242,7 +243,7 @@ const Workbench = (props) => {
     },
     updateOrganization(data) {
       dispatch({
-        type: getEffectOrReducerByName_2('updateOrganization'),
+        type: getEffectOrReducerByName_2('updateOrganization')
       })
     },
     applyJoinOrganization(data) {
@@ -283,7 +284,7 @@ const Workbench = (props) => {
     getNewsDynamicList(next_id) {
       dispatch({
         type: getEffectOrReducerByName_3('getNewsDynamicListActivity'),
-        payload: {next_id}
+        payload: { next_id }
       })
     },
     addCardNewComment(data) {
@@ -292,7 +293,7 @@ const Workbench = (props) => {
         payload: data
       })
     },
-    routingJump(data){
+    routingJump(data) {
       dispatch({
         type: getEffectOrReducerByName_3('routingJump'),
         payload: data
@@ -308,7 +309,7 @@ const Workbench = (props) => {
         payload: payload
       })
     },
-    getCardDetail(payload){
+    getCardDetail(payload) {
       dispatch({
         type: getEffectOrReducerByName_4('getCardDetail'),
         payload: payload
@@ -323,46 +324,46 @@ const Workbench = (props) => {
     deleteTaskFile(data) {
       dispatch({
         type: getEffectOrReducerByName_4('deleteTaskFile'),
-        payload: data,
+        payload: data
       })
     },
     addTaskGroup(data) {
       dispatch({
         type: getEffectOrReducerByName_4('addTaskGroup'),
-        payload: data,
+        payload: data
       })
     },
     deleteTaskGroup(data) {
       dispatch({
         type: getEffectOrReducerByName_4('deleteTaskGroup'),
-        payload: data,
+        payload: data
       })
     },
     updateTaskGroup(data) {
       dispatch({
         type: getEffectOrReducerByName_4('updateTaskGroup'),
-        payload: data,
+        payload: data
       })
     },
-    getTaskGroupList(data){
+    getTaskGroupList(data) {
       dispatch({
         type: getEffectOrReducerByName_4('getTaskGroupList'),
         payload: data
       })
     },
-    addTask(data){
+    addTask(data) {
       dispatch({
         type: getEffectOrReducerByName_4('addTask'),
         payload: data
       })
     },
-    updateTask(data){
+    updateTask(data) {
       dispatch({
         type: getEffectOrReducerByName_4('updateTask'),
         payload: data
       })
     },
-    deleteTask(id){
+    deleteTask(id) {
       dispatch({
         type: getEffectOrReducerByName_4('deleteTask'),
         payload: {
@@ -370,68 +371,68 @@ const Workbench = (props) => {
         }
       })
     },
-    updateChirldTask(data){
+    updateChirldTask(data) {
       dispatch({
         type: getEffectOrReducerByName_4('updateChirldTask'),
         payload: data
       })
     },
-    deleteChirldTask(data){
+    deleteChirldTask(data) {
       dispatch({
         type: getEffectOrReducerByName_4('deleteChirldTask'),
         payload: data
       })
     },
 
-    archivedTask(data){
+    archivedTask(data) {
       dispatch({
         type: getEffectOrReducerByName_4('archivedTask'),
         payload: data
       })
     },
-    changeTaskType(data){
+    changeTaskType(data) {
       dispatch({
         type: getEffectOrReducerByName_4('changeTaskType'),
         payload: data
       })
     },
-    addChirldTask(data){
+    addChirldTask(data) {
       dispatch({
         type: getEffectOrReducerByName_4('addChirldTask'),
         payload: data
       })
     },
-    addTaskExecutor(data){
+    addTaskExecutor(data) {
       dispatch({
         type: getEffectOrReducerByName_4('addTaskExecutor'),
         payload: data
       })
     },
-    removeTaskExecutor(data){
+    removeTaskExecutor(data) {
       dispatch({
         type: getEffectOrReducerByName_4('removeTaskExecutor'),
         payload: data
       })
     },
-    completeTask(data){
+    completeTask(data) {
       dispatch({
         type: getEffectOrReducerByName_4('completeTask'),
         payload: data
       })
     },
-    addTaskTag(data){
+    addTaskTag(data) {
       dispatch({
         type: getEffectOrReducerByName_4('addTaskTag'),
         payload: data
       })
     },
-    removeTaskTag(data){
+    removeTaskTag(data) {
       dispatch({
         type: getEffectOrReducerByName_4('removeTaskTag'),
         payload: data
       })
     },
-    removeProjectMenbers(data){
+    removeProjectMenbers(data) {
       dispatch({
         type: getEffectOrReducerByName_4('removeProjectMenbers'),
         payload: data
@@ -491,79 +492,79 @@ const Workbench = (props) => {
         payload: payload
       })
     },
-    getFileList(params){
+    getFileList(params) {
       dispatch({
         type: getEffectOrReducerByName('getFileList'),
         payload: params
       })
     },
-    fileCopy(data){
+    fileCopy(data) {
       dispatch({
         type: getEffectOrReducerByName_5('fileCopy'),
         payload: data
       })
     },
-    fileDownload(params){
+    fileDownload(params) {
       dispatch({
         type: getEffectOrReducerByName_5('fileDownload'),
         payload: params
       })
     },
-    fileRemove(data){
+    fileRemove(data) {
       dispatch({
         type: getEffectOrReducerByName_5('fileRemove'),
         payload: data
       })
     },
-    fileMove(data){
+    fileMove(data) {
       dispatch({
         type: getEffectOrReducerByName_5('fileMove'),
         payload: data
       })
     },
-    fileUpload(data){
+    fileUpload(data) {
       dispatch({
         type: getEffectOrReducerByName_5('fileUpload'),
         payload: data
       })
     },
-    fileVersionist(params){
+    fileVersionist(params) {
       dispatch({
         type: getEffectOrReducerByName_5('fileVersionist'),
         payload: params
       })
     },
-    recycleBinList(params){
+    recycleBinList(params) {
       dispatch({
         type: getEffectOrReducerByName_5('recycleBinList'),
         payload: params
       })
     },
-    deleteFile(data){
+    deleteFile(data) {
       dispatch({
         type: getEffectOrReducerByName_5('deleteFile'),
         payload: data
       })
     },
-    restoreFile(data){
+    restoreFile(data) {
       dispatch({
         type: getEffectOrReducerByName_5('restoreFile'),
         payload: data
       })
     },
-    getFolderList(params){
+    getFolderList(params) {
       dispatch({
         type: getEffectOrReducerByName_5('getFolderList'),
         payload: params
       })
     },
-    addNewFolder(data){
+    addNewFolder(data) {
       dispatch({
         type: getEffectOrReducerByName_5('addNewFolder'),
         payload: data
       })
     },
-    updateFolder(data){
+    updateFolder(data) {
       dispatch({
         type: getEffectOrReducerByName_5('updateFolder'),
         payload: data
@@ -592,7 +593,7 @@ const Workbench = (props) => {
         type: getEffectOrReducerByName_5('deleteCommit'),
         payload: params
       })
-    },
+    }
   }
   const ProcessProps = {
     modal,
@@ -600,16 +601,16 @@ const Workbench = (props) => {
     postCommentToDynamics(data) {
       dispatch({
         type: getEffectOrReducerByNameProcess('postCommentToDynamics'),
-        payload: data,
+        payload: data
       })
     },
-    getProcessTemplateList(data){
+    getProcessTemplateList(data) {
       dispatch({
         type: getEffectOrReducerByNameProcess('saveProcessTemplate'),
         payload: data
       })
     },
-    saveProcessTemplate(data){
+    saveProcessTemplate(data) {
       dispatch({
         type: getEffectOrReducerByNameProcess('saveProcessTemplate'),
         payload: data
@@ -627,19 +628,19 @@ const Workbench = (props) => {
         payload: id
       })
     },
-    getProcessList(data){
+    getProcessList(data) {
       dispatch({
         type: getEffectOrReducerByNameProcess('getProcessList'),
         payload: data
       })
     },
-    createProcess(data){
+    createProcess(data) {
       dispatch({
         type: getEffectOrReducerByNameProcess('createProcess'),
         payload: data
       })
     },
-    completeProcessTask(data){
+    completeProcessTask(data) {
       dispatch({
         type: getEffectOrReducerByNameProcess('completeProcessTask'),
         payload: data
@@ -651,7 +652,7 @@ const Workbench = (props) => {
         payload: data
       })
     },
-    rebackProcessTask(data){
+    rebackProcessTask(data) {
       dispatch({
         type: getEffectOrReducerByNameProcess('rebackProcessTask'),
         payload: data
@@ -669,7 +670,7 @@ const Workbench = (props) => {
         payload: data
       })
     },
-    getProcessInfo(data){
+    getProcessInfo(data) {
       dispatch({
         type: getEffectOrReducerByNameProcess('getProcessInfo'),
         payload: data
@@ -682,19 +683,19 @@ const Workbench = (props) => {
       })
     }
   }
-  const updateDatasTask = (payload) => {
+  const updateDatasTask = payload => {
     dispatch({
       type: getEffectOrReducerByName_4('updateDatas'),
       payload: payload
     })
   }
-  const updateDatasFile = (payload) => {
+  const updateDatasFile = payload => {
     dispatch({
       type: getEffectOrReducerByName_5('updateDatas'),
       payload: payload
     })
   }
-  const updateDatasProcess = (payload) => {
+  const updateDatasProcess = payload => {
     dispatch({
       type: 'projectDetailProcess/updateDatas',
       payload: payload
@@ -730,28 +731,61 @@ const Workbench = (props) => {
 
   let isPropVisitControl = false
   // const handleVisitControlChange = flag => console.log(flag, 'ffffffffffffffflag')
-  return(
+  return (
     <div className={indexStyles.wrapper}>
       {/* <UpdateLog /> */}
-      < PersonNews {...PersonNewsProps} {...NewsListProps}/>
+      <PersonNews {...PersonNewsProps} {...NewsListProps} />
       {/* <Header {...cardContentListProps} /> */}
       <div className={indexStyles.projectListBarWrapper_index}>
-      <div className={indexStyles.projectListBar} style={{marginRight: 20}} ><ProjectListBar /></div>
-      <div className={indexStyles.toggleView} >
-        <ChangeCardView />
-      </div>
+        <div className={indexStyles.projectListBar} style={{ marginRight: 20 }}>
+          <ProjectListBar />
+        </div>
+        <div className={indexStyles.toggleView}>
+          <ChangeCardView />
+        </div>
       </div>
       {/* <VisitControl isPropVisitControl={isPropVisitControl} handleVisitControlChange={handleVisitControlChange} /> */}
       {/*<EditCardDrop {...cardContentListProps}/>*/}
-       <GroupContent {...workflowComments} {...props} {...ProcessProps} updateDatasTask={updateDatasTask} updateDatasFile={updateDatasFile} updateDatasProcess={updateDatasProcess} {...FileModuleProps} updateDatas={updateDatas} updatePublicDatas={updatePublicDatas} cardContentListProps={cardContentListProps} CreateTaskProps={CreateTaskProps} />
+      <GroupContent
+        {...workflowComments}
+        {...props}
+        {...ProcessProps}
+        updateDatasTask={updateDatasTask}
+        updateDatasFile={updateDatasFile}
+        updateDatasProcess={updateDatasProcess}
+        {...FileModuleProps}
+        updateDatas={updateDatas}
+        updatePublicDatas={updatePublicDatas}
+        cardContentListProps={cardContentListProps}
+        CreateTaskProps={CreateTaskProps}
+      />
     </div>
   )
-};
+}
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
-function mapStateToProps({ modal, workbench, technological, newsDynamic, workbenchTaskDetail, projectDetailProcess, workbenchFileDetail, workbenchDetailProcess, workbenchPublicDatas, loading }) {
+function mapStateToProps({
+  modal,
+  workbench,
+  technological,
+  newsDynamic,
+  workbenchTaskDetail,
+  projectDetailProcess,
+  workbenchFileDetail,
+  workbenchDetailProcess,
+  workbenchPublicDatas,
+  loading
+}) {
   const modelObj = {
-    datas: {...technological['datas'], ...workbench['datas'], ...newsDynamic['datas'], ...workbenchTaskDetail['datas'], ...workbenchFileDetail['datas'], ...workbenchDetailProcess['datas'], ...workbenchPublicDatas['datas']}
+    datas: {
+      ...technological['datas'],
+      ...workbench['datas'],
+      ...newsDynamic['datas'],
+      ...workbenchTaskDetail['datas'],
+      ...workbenchFileDetail['datas'],
+      ...workbenchDetailProcess['datas'],
+      ...workbenchPublicDatas['datas']
+    }
   }
   return { modal, model: modelObj, loading }
 }

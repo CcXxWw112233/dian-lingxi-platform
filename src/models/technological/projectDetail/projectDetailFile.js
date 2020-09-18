@@ -1,13 +1,21 @@
 import { message } from 'antd'
-import { routerRedux } from "dva/router";
-import Cookies from "js-cookie";
+import { routerRedux } from 'dva/router'
+import Cookies from 'js-cookie'
 import modelExtend from 'dva-model-extend'
 import projectDetail from './index'
 import { getSubfixName } from '../../../utils/businessFunction'
 import {
   filePreviewByUrl,
   fileInfoByUrl,
-  addFileCommit, addNewFolder, deleteCommit, deleteFile, fileCopy, fileDownload, fileMove, filePreview, fileRemove,
+  addFileCommit,
+  addNewFolder,
+  deleteCommit,
+  deleteFile,
+  fileCopy,
+  fileDownload,
+  fileMove,
+  filePreview,
+  fileRemove,
   fileUpload,
   fileVersionist,
   getFileCommitPoints,
@@ -24,7 +32,7 @@ import {
   updateVersionFileDescription,
   fileConvertPdfAlsoUpdateVersion,
   saveAsNewVersion
-} from "../../../services/technological/file";
+} from '../../../services/technological/file'
 import {
   selectAppsSelectKey,
   selectBreadcrumbList,
@@ -32,13 +40,17 @@ import {
   selectFilePreviewCommitPointNumber,
   selectFilePreviewCurrentFileId,
   selectFileList,
-  selectFilePreviewCurrentVersionList,
-} from "../select";
-import { MESSAGE_DURATION_TIME } from "../../../globalset/js/constant";
-import { isApiResponseOk } from "../../../utils/handleResponseData";
+  selectFilePreviewCurrentVersionList
+} from '../select'
+import { MESSAGE_DURATION_TIME } from '../../../globalset/js/constant'
+import { isApiResponseOk } from '../../../utils/handleResponseData'
 import QueryString from 'querystring'
-import { projectDetailInfo } from "../../../services/technological/prjectDetail";
-import { project_selectFilePreviewIsEntryCirclePreviewLoading, project_selectFilePreviewCurrentPreviewFileName, project_selectCurrentPreviewFileBaseInfo } from './select'
+import { projectDetailInfo } from '../../../services/technological/prjectDetail'
+import {
+  project_selectFilePreviewIsEntryCirclePreviewLoading,
+  project_selectFilePreviewCurrentPreviewFileName,
+  project_selectCurrentPreviewFileBaseInfo
+} from './select'
 import { getModelSelectDatasState } from '../../utils'
 let board_id = null
 let appsSelectKey = null
@@ -86,10 +98,8 @@ export default modelExtend(projectDetail, {
   },
   subscriptions: {
     setup({ dispatch, history }) {
-      history.listen((location) => {
-
+      history.listen(location => {
         if (location.pathname.indexOf('/technological/projectDetail') !== -1) {
-
           const param = QueryString.parse(location.search.replace('?', ''))
           board_id = param.board_id
           appsSelectKey = param.appsSelectKey
@@ -158,20 +168,15 @@ export default modelExtend(projectDetail, {
                   id: file_id
                 }
               })
-
             }
           }
-
-
         }
-
       })
-    },
+    }
   },
   effects: {
-
     //文档----------start
-    * initialget({ payload }, { select, call, put }) {
+    *initialget({ payload }, { select, call, put }) {
       const { id } = payload
       let result = yield call(projectDetailInfo, id)
       if (isApiResponseOk(result)) {
@@ -179,8 +184,14 @@ export default modelExtend(projectDetail, {
           type: 'updateDatas',
           payload: {
             //文档需要数据初始化
-            breadcrumbList: [{ file_name: result.data.folder_name, file_id: result.data.folder_id, type: '1' }],
-            currentParrentDirectoryId: result.data.folder_id,
+            breadcrumbList: [
+              {
+                file_name: result.data.folder_name,
+                file_id: result.data.folder_id,
+                type: '1'
+              }
+            ],
+            currentParrentDirectoryId: result.data.folder_id
           }
         })
 
@@ -197,7 +208,8 @@ export default modelExtend(projectDetail, {
               folder_id: result.data.folder_id
             }
           })
-        } else { // 点击app的时候没有file_id
+        } else {
+          // 点击app的时候没有file_id
           yield put({
             type: 'getFileList',
             payload: {
@@ -209,7 +221,7 @@ export default modelExtend(projectDetail, {
       }
     },
     // 从url预览
-    * previewFileByUrl({ payload }, { select, call, put }) {
+    *previewFileByUrl({ payload }, { select, call, put }) {
       const { file_id } = payload
       let res = yield call(fileInfoByUrl, { id: file_id })
 
@@ -218,11 +230,10 @@ export default modelExtend(projectDetail, {
         payload: {
           // isInOpenFile: true,
           seeFileInput: 'fileModule',
-          filePreviewCurrentFileId: file_id,
+          filePreviewCurrentFileId: file_id
           // filePreviewCurrentId: file_resource_id,
           // filePreviewCurrentVersionId: version_id
         }
-
       })
       if (isApiResponseOk(res)) {
         yield put({
@@ -247,19 +258,19 @@ export default modelExtend(projectDetail, {
             id: file_id
           }
         })
-
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
-        if (res.code == 4003) { //分享链接失效,返回验证页面
-          setTimeout(function () {
-            window.history.back();
+        if (res.code == 4003) {
+          //分享链接失效,返回验证页面
+          setTimeout(function() {
+            window.history.back()
           }, 3000)
         } else {
         }
       }
     },
     // 更新面包屑路径
-    * updateBreadcrumbList({ payload }, { select, call, put }) {
+    *updateBreadcrumbList({ payload }, { select, call, put }) {
       const { file_id } = payload
       let res = yield call(fileInfoByUrl, { id: file_id })
       if (isApiResponseOk(res)) {
@@ -268,7 +279,11 @@ export default modelExtend(projectDetail, {
         // 递归添加路径
         const digui = (name, data) => {
           if (data[name]) {
-            arr.push({ file_name: data.folder_name, file_id: data.id, type: '1' })
+            arr.push({
+              file_name: data.folder_name,
+              file_id: data.id,
+              type: '1'
+            })
             digui(name, data[name])
           } else if (data['parent_id'] == '0') {
             arr.push({ file_name: '根目录', file_id: data.id, type: '1' })
@@ -276,7 +291,12 @@ export default modelExtend(projectDetail, {
         }
         digui('parent_folder', target_path)
         const newbreadcrumbList = arr.reverse()
-        newbreadcrumbList.push({ file_name: res.data.base_info.file_name, file_id: res.data.base_info.id, type: '2', folder_id: res.data.base_info.folder_id })
+        newbreadcrumbList.push({
+          file_name: res.data.base_info.file_name,
+          file_id: res.data.base_info.id,
+          type: '2',
+          folder_id: res.data.base_info.folder_id
+        })
         yield put({
           type: 'updateDatas',
           payload: {
@@ -284,17 +304,22 @@ export default modelExtend(projectDetail, {
           }
         })
       }
-
     },
-    * fileInfoByUrl({ payload }, { select, call, put }) {
-      const { file_id, isNotNecessaryUpdateBread, whetherUpdateFileList } = payload
+    *fileInfoByUrl({ payload }, { select, call, put }) {
+      const {
+        file_id,
+        isNotNecessaryUpdateBread,
+        whetherUpdateFileList
+      } = payload
       let res = yield call(fileInfoByUrl, { id: file_id })
       if (isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
           payload: {
             filePreviewCurrentVersionList: res.data.version_list,
-            filePreviewCurrentVersionId: res.data.version_list.length ? res.data.version_list[0]['version_id'] : '',
+            filePreviewCurrentVersionId: res.data.version_list.length
+              ? res.data.version_list[0]['version_id']
+              : '',
             filePreviewCurrentId: res.data.base_info.file_resource_id,
             currentPreviewFileBaseInfo: res.data.base_info,
             currentPreviewFileName: res.data.base_info.file_name,
@@ -322,7 +347,11 @@ export default modelExtend(projectDetail, {
         // 递归添加路径
         const digui = (name, data) => {
           if (data[name]) {
-            arr.push({ file_name: data.folder_name, file_id: data.id, type: '1' })
+            arr.push({
+              file_name: data.folder_name,
+              file_id: data.id,
+              type: '1'
+            })
             digui(name, data[name])
           } else if (data['parent_id'] == '0') {
             arr.push({ file_name: '根目录', file_id: data.id, type: '1' })
@@ -330,7 +359,12 @@ export default modelExtend(projectDetail, {
         }
         digui('parent_folder', target_path)
         const newbreadcrumbList = arr.reverse()
-        newbreadcrumbList.push({ file_name: res.data.base_info.file_name, file_id: res.data.base_info.id, type: '2', folder_id: res.data.base_info.folder_id })
+        newbreadcrumbList.push({
+          file_name: res.data.base_info.file_name,
+          file_id: res.data.base_info.id,
+          type: '2',
+          folder_id: res.data.base_info.folder_id
+        })
         //递归添加路径
         // const digui = (name, data) => {
         //   if (data[name] && data['parent_id'] != '0') {
@@ -350,12 +384,16 @@ export default modelExtend(projectDetail, {
             }
           })
         }
-        if (whetherUpdateFileList) { // 只有文件弹窗以及文件列表中需要调用fileList
+        if (whetherUpdateFileList) {
+          // 只有文件弹窗以及文件列表中需要调用fileList
           yield put({
             type: 'getFileList',
             payload: {
               // folder_id: newbreadcrumbList[newbreadcrumbList.length - 2].file_id // -2
-              folder_id: newbreadcrumbList[newbreadcrumbList.length - 2].folder_id ? newbreadcrumbList[newbreadcrumbList.length - 2].folder_id : newbreadcrumbList[newbreadcrumbList.length - 2].file_id // -2
+              folder_id: newbreadcrumbList[newbreadcrumbList.length - 2]
+                .folder_id
+                ? newbreadcrumbList[newbreadcrumbList.length - 2].folder_id
+                : newbreadcrumbList[newbreadcrumbList.length - 2].file_id // -2
             }
           })
         }
@@ -363,7 +401,7 @@ export default modelExtend(projectDetail, {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
-    * openFileInUrl({ payload }, { select, call, put }) {
+    *openFileInUrl({ payload }, { select, call, put }) {
       const { file_id, file_name } = payload
       yield put({
         type: 'routingJump',
@@ -379,7 +417,7 @@ export default modelExtend(projectDetail, {
         }
       })
     },
-    * getfolderInfo({ payload }, { select, call, put }) {
+    *getfolderInfo({ payload }, { select, call, put }) {
       const { folder_id } = payload
       let res = yield call(fileInfoByUrl, { id: folder_id })
       if (isApiResponseOk(res)) {
@@ -389,7 +427,11 @@ export default modelExtend(projectDetail, {
         //递归添加路径
         const digui = (name, data) => {
           if (data[name] && data['parent_id'] != '0') {
-            arr.push({ file_name: data.folder_name, file_id: data.id, type: '1' })
+            arr.push({
+              file_name: data.folder_name,
+              file_id: data.id,
+              type: '1'
+            })
             digui(name, data[name])
           }
         }
@@ -413,7 +455,7 @@ export default modelExtend(projectDetail, {
     },
 
     // 文件版本更新描述
-    * updateVersionFileDescription({ payload }, { select, call, put }) {
+    *updateVersionFileDescription({ payload }, { select, call, put }) {
       // console.log(payload, 'sssss')
       let res = yield call(updateVersionFileDescription, payload)
       if (isApiResponseOk(res)) {
@@ -424,9 +466,16 @@ export default modelExtend(projectDetail, {
     },
 
     // 设为当前版本
-    * setCurrentVersionFile({ payload }, { select, call, put }) {
+    *setCurrentVersionFile({ payload }, { select, call, put }) {
       // console.log(payload, 'ssssss')
-      const { id, set_major_version, version_id, file_name, isNeedPreviewFile, isPDF } = payload
+      const {
+        id,
+        set_major_version,
+        version_id,
+        file_name,
+        isNeedPreviewFile,
+        isPDF
+      } = payload
       let res = yield call(setCurrentVersionFile, { id, set_major_version })
       // const new_fileList = yield select(selectFileList)
       // const new_filePreviewId = yield select(selectFilePreviewCurrentFileId)
@@ -464,22 +513,21 @@ export default modelExtend(projectDetail, {
         //     fileList: temp_list
         //   }
         // })
-
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
-    * getFileList({ payload }, { select, call, put }) {
+    *getFileList({ payload }, { select, call, put }) {
       const { folder_id, calback } = payload
       let res = yield call(getFileList, { folder_id })
       if (isApiResponseOk(res)) {
-        const filedata_1 = res.data.folder_data;
+        const filedata_1 = res.data.folder_data
         for (let val of filedata_1) {
           val['file_name'] = val['folder_name']
           val['file_id'] = val['folder_id']
         }
-        const filedata_2 = res.data.file_data;
+        const filedata_2 = res.data.file_data
         yield put({
           type: 'updateDatas',
           payload: {
@@ -502,7 +550,7 @@ export default modelExtend(projectDetail, {
         message.warning(res.message)
       }
     },
-    * getFolderList({ payload }, { select, call, put }) {
+    *getFolderList({ payload }, { select, call, put }) {
       const { board_id, calback } = payload
       let res = yield call(getFolderList, { board_id })
       if (isApiResponseOk(res)) {
@@ -519,8 +567,13 @@ export default modelExtend(projectDetail, {
         message.warning(res.message)
       }
     },
-    * filePreview({ payload }, { select, call, put }) {
-      const { file_id, file_resource_id, version_id, whetherToggleFilePriview } = payload
+    *filePreview({ payload }, { select, call, put }) {
+      const {
+        file_id,
+        file_resource_id,
+        version_id,
+        whetherToggleFilePriview
+      } = payload
       yield put({
         type: 'fileInfoByUrl',
         payload: {
@@ -561,19 +614,19 @@ export default modelExtend(projectDetail, {
         //     }
         //   })
         // }
-
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
-        if (res.code == 4003) { //分享链接失效,返回验证页面
+        if (res.code == 4003) {
+          //分享链接失效,返回验证页面
 
-          setTimeout(function () {
-            window.history.back();
+          setTimeout(function() {
+            window.history.back()
           }, 3000)
         } else {
         }
       }
     },
-    * getFilePDFInfo({ payload }, { select, call, put }) {
+    *getFilePDFInfo({ payload }, { select, call, put }) {
       //pdf做了特殊处理
       const { id } = payload // id = file_id
       let fileListData = yield select(project_selectCurrentPreviewFileBaseInfo)
@@ -607,24 +660,26 @@ export default modelExtend(projectDetail, {
             id: id
           }
         })
-
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
 
-    * fileUpload({ payload }, { select, call, put }) {
+    *fileUpload({ payload }, { select, call, put }) {
       let res = yield call(fileUpload, payload)
       if (isApiResponseOk(res)) {
-
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
-    * fileCopy({ payload }, { select, call, put }) {
+    *fileCopy({ payload }, { select, call, put }) {
       let res = yield call(fileCopy, payload)
-      const currentParrentDirectoryId = yield select(selectCurrentParrentDirectoryId)
-      let projectDetailInfoData = yield select(getModelSelectDatasState('projectDetail', 'projectDetailInfoData'))
+      const currentParrentDirectoryId = yield select(
+        selectCurrentParrentDirectoryId
+      )
+      let projectDetailInfoData = yield select(
+        getModelSelectDatasState('projectDetail', 'projectDetailInfoData')
+      )
       projectDetailInfoData = projectDetailInfoData || {}
       const BOARD_ID = projectDetailInfoData.board_id
       if (isApiResponseOk(res)) {
@@ -645,7 +700,7 @@ export default modelExtend(projectDetail, {
           type: 'getFolderList',
           payload: {
             board_id: board_id || BOARD_ID,
-            calback: function () {
+            calback: function() {
               message.success('复制成功', MESSAGE_DURATION_TIME)
             }
           }
@@ -654,15 +709,17 @@ export default modelExtend(projectDetail, {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
-    * fileDownload({ payload }, { select, call, put }) {
+    *fileDownload({ payload }, { select, call, put }) {
       function openWin(url) {
-        var element1 = document.createElement("a");
-        element1.href = url;
-        element1.download = url // 需要加上download属性 
+        var element1 = document.createElement('a')
+        element1.href = url
+        element1.download = url // 需要加上download属性
         element1.id = 'openWin'
         document.querySelector('body').appendChild(element1)
-        document.getElementById("openWin").click();//点击事件
-        document.getElementById("openWin").parentNode.removeChild(document.getElementById("openWin"))
+        document.getElementById('openWin').click() //点击事件
+        document
+          .getElementById('openWin')
+          .parentNode.removeChild(document.getElementById('openWin'))
       }
 
       let res = yield call(fileDownload, payload)
@@ -681,7 +738,7 @@ export default modelExtend(projectDetail, {
         yield put({
           type: 'updateDatas',
           payload: {
-            selectedRowKeys: [], 
+            selectedRowKeys: [],
             selectedRows: []
           }
         })
@@ -695,7 +752,7 @@ export default modelExtend(projectDetail, {
       let res = yield call(saveAsNewVersion, payload)
       if (isApiResponseOk(res)) {
         const data = res.data
-        const version_id = data.version_id;
+        const version_id = data.version_id
         setTimeout(() => {
           message.success('保存为新版本成功', MESSAGE_DURATION_TIME)
         }, 200)
@@ -703,7 +760,7 @@ export default modelExtend(projectDetail, {
           type: 'projectDetailFile/fileVersionist',
           payload: {
             version_id: version_id, //file_id,
-            isNeedPreviewFile: false,
+            isNeedPreviewFile: false
           }
         })
         yield put({
@@ -718,10 +775,12 @@ export default modelExtend(projectDetail, {
       }
     },
 
-    * fileRemove({ payload }, { select, call, put }) {
+    *fileRemove({ payload }, { select, call, put }) {
       const { board_id } = payload
       let res = yield call(fileRemove, payload)
-      const currentParrentDirectoryId = yield select(selectCurrentParrentDirectoryId)
+      const currentParrentDirectoryId = yield select(
+        selectCurrentParrentDirectoryId
+      )
       if (isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
@@ -740,7 +799,7 @@ export default modelExtend(projectDetail, {
           type: 'getFolderList',
           payload: {
             board_id: board_id,
-            calback: function () {
+            calback: function() {
               message.success('已成功移入回收站', MESSAGE_DURATION_TIME)
             }
           }
@@ -749,10 +808,14 @@ export default modelExtend(projectDetail, {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
-    * fileMove({ payload }, { select, call, put }) {
+    *fileMove({ payload }, { select, call, put }) {
       let res = yield call(fileMove, payload)
-      const currentParrentDirectoryId = yield select(selectCurrentParrentDirectoryId)
-      let projectDetailInfoData = yield select(getModelSelectDatasState('projectDetail', 'projectDetailInfoData'))
+      const currentParrentDirectoryId = yield select(
+        selectCurrentParrentDirectoryId
+      )
+      let projectDetailInfoData = yield select(
+        getModelSelectDatasState('projectDetail', 'projectDetailInfoData')
+      )
       projectDetailInfoData = projectDetailInfoData || {}
       const BOARD_ID = projectDetailInfoData.board_id
 
@@ -776,7 +839,7 @@ export default modelExtend(projectDetail, {
           type: 'getFolderList',
           payload: {
             board_id: board_id || BOARD_ID,
-            calback: function () {
+            calback: function() {
               message.success('移动成功', MESSAGE_DURATION_TIME)
             }
           }
@@ -785,14 +848,18 @@ export default modelExtend(projectDetail, {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
-    * fileVersionist({ payload }, { select, call, put }) {
+    *fileVersionist({ payload }, { select, call, put }) {
       const { isNeedPreviewFile, isPDF, file_id, version_id } = payload //是否需要重新读取文档
       let res = yield call(fileVersionist, { version_id })
       // console.log(payload, 'ssssss')
       // console.log(version_id, 'ssssss')
       const new_breadcrumbList = yield select(selectBreadcrumbList)
-      const filePreviewCurrentFileId = yield select(selectFilePreviewCurrentFileId)
-      const currentParrentDirectoryId = yield select(selectCurrentParrentDirectoryId)
+      const filePreviewCurrentFileId = yield select(
+        selectFilePreviewCurrentFileId
+      )
+      const currentParrentDirectoryId = yield select(
+        selectCurrentParrentDirectoryId
+      )
       const new_breadcrumbList_new_ = [...new_breadcrumbList]
       let temp_list = [...res.data]
       let temp_arr = []
@@ -802,14 +869,16 @@ export default modelExtend(projectDetail, {
           // console.log(val, 'ssssss')
           temp_arr.unshift(val)
         }
-        if (val['file_id'] == filePreviewCurrentFileId) { // 如果说当前版本是主版本的默认选项
+        if (val['file_id'] == filePreviewCurrentFileId) {
+          // 如果说当前版本是主版本的默认选项
           default_arr.push(val)
         }
       }
       // console.log(temp_arr, default_arr, 'sssss')
       if (isApiResponseOk(res)) {
         // 修改弹窗中的文件路径
-        new_breadcrumbList_new_[new_breadcrumbList_new_.length - 1] = temp_arr && temp_arr.length ? temp_arr[0] : default_arr[0]
+        new_breadcrumbList_new_[new_breadcrumbList_new_.length - 1] =
+          temp_arr && temp_arr.length ? temp_arr[0] : default_arr[0]
         yield put({
           type: 'updateDatas',
           payload: {
@@ -830,7 +899,7 @@ export default modelExtend(projectDetail, {
             yield put({
               type: 'getFilePDFInfo',
               payload: {
-                id: res.data[0].file_id,
+                id: res.data[0].file_id
               }
             })
           }
@@ -839,38 +908,31 @@ export default modelExtend(projectDetail, {
         yield put({
           type: 'getFileList',
           payload: {
-            folder_id: currentParrentDirectoryId,
+            folder_id: currentParrentDirectoryId
           }
         })
       } else {
-
       }
     },
-    * recycleBinList({ payload }, { select, call, put }) {
+    *recycleBinList({ payload }, { select, call, put }) {
       let res = yield call(recycleBinList, payload)
       if (isApiResponseOk(res)) {
-
       } else {
-
       }
     },
-    * deleteFile({ payload }, { select, call, put }) {
+    *deleteFile({ payload }, { select, call, put }) {
       let res = yield call(deleteFile, payload)
       if (isApiResponseOk(res)) {
-
       } else {
-
       }
     },
-    * restoreFile({ payload }, { select, call, put }) {
+    *restoreFile({ payload }, { select, call, put }) {
       let res = yield call(restoreFile, payload)
       if (isApiResponseOk(res)) {
-
       } else {
-
       }
     },
-    * addNewFolder({ payload }, { select, call, put }) {
+    *addNewFolder({ payload }, { select, call, put }) {
       const { parent_id, boardId } = payload
       let res = yield call(addNewFolder, payload)
       if (isApiResponseOk(res)) {
@@ -884,7 +946,7 @@ export default modelExtend(projectDetail, {
           type: 'getFolderList',
           payload: {
             board_id: boardId || board_id,
-            calback: function () {
+            calback: function() {
               message.success('已成功添加文件夹', MESSAGE_DURATION_TIME)
             }
           }
@@ -893,46 +955,47 @@ export default modelExtend(projectDetail, {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
-    * updateFolder({ payload }, { select, call, put }) {
+    *updateFolder({ payload }, { select, call, put }) {
       let res = yield call(updateFolder, payload)
       if (isApiResponseOk(res)) {
-
       } else {
-
       }
     },
-    * getPreviewFileCommits({ payload }, { select, call, put }) {
-      const filePreviewCommitPointNumber = yield select(selectFilePreviewCommitPointNumber)
+    *getPreviewFileCommits({ payload }, { select, call, put }) {
+      const filePreviewCommitPointNumber = yield select(
+        selectFilePreviewCommitPointNumber
+      )
       const { type } = payload
-      let name = type != 'point' ? 'filePreviewCommits' : 'filePreviewPointNumCommits'
-      let res = yield call(getPreviewFileCommits, { ...payload, point_number: type == 'point' ? filePreviewCommitPointNumber : '' })
+      let name =
+        type != 'point' ? 'filePreviewCommits' : 'filePreviewPointNumCommits'
+      let res = yield call(getPreviewFileCommits, {
+        ...payload,
+        point_number: type == 'point' ? filePreviewCommitPointNumber : ''
+      })
 
       if (isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
           payload: {
-            [name]: res.data,
+            [name]: res.data
           }
         })
       } else {
-
       }
     },
-    * getFileCommitPoints({ payload }, { select, call, put }) {
+    *getFileCommitPoints({ payload }, { select, call, put }) {
       let res = yield call(getFileCommitPoints, payload)
       if (isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
           payload: {
-            filePreviewCommitPoints: res.data,
-
+            filePreviewCommitPoints: res.data
           }
         })
       } else {
-
       }
     },
-    * addFileCommit({ payload }, { select, call, put }) {
+    *addFileCommit({ payload }, { select, call, put }) {
       let res = yield call(addFileCommit, payload)
       const { file_id, type, filePreviewCommitType = '0' } = payload
       //filePreviewCommitType 0 新增 1 回复
@@ -960,7 +1023,7 @@ export default modelExtend(projectDetail, {
         yield put({
           type: 'getPreviewFileCommits',
           payload: {
-            id: file_id,
+            id: file_id
           }
         })
 
@@ -972,18 +1035,19 @@ export default modelExtend(projectDetail, {
         })
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
-
       }
     },
-    * deleteCommit({ payload }, { select, call, put }) {
+    *deleteCommit({ payload }, { select, call, put }) {
       let res = yield call(deleteCommit, payload)
-      const filePreviewCommitPointNumber = yield select(selectFilePreviewCommitPointNumber)
+      const filePreviewCommitPointNumber = yield select(
+        selectFilePreviewCommitPointNumber
+      )
       const { file_id, type, point_number } = payload
       if (isApiResponseOk(res)) {
         yield put({
           type: 'getPreviewFileCommits',
           payload: {
-            id: file_id,
+            id: file_id
           }
         })
 
@@ -1003,14 +1067,12 @@ export default modelExtend(projectDetail, {
             id: file_id
           }
         })
-
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
-
       }
     },
     //获取文件详情的动态
-    * getCardCommentListAll({ payload }, { select, call, put }) {
+    *getCardCommentListAll({ payload }, { select, call, put }) {
       yield put({
         type: 'updateDatas',
         payload: {
@@ -1028,31 +1090,22 @@ export default modelExtend(projectDetail, {
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         if (res.code === 4003) {
-
         } else {
-
         }
       }
-
     },
 
-    * getFileType({ payload }, { select, call, put }) {
+    *getFileType({ payload }, { select, call, put }) {
       let { fileList = [], file_id } = payload
       let fileId = yield select(selectFilePreviewCurrentFileId)
       let res
       if (fileId) {
         res = fileList.reduce((r, c) => {
-          return [
-            ...r,
-            ...(c.file_id === fileId ? [c] : [])
-          ]
+          return [...r, ...(c.file_id === fileId ? [c] : [])]
         }, [])
       } else {
         res = fileList.reduce((r, c) => {
-          return [
-            ...r,
-            ...(c.file_id === file_id ? [c] : [])
-          ]
+          return [...r, ...(c.file_id === file_id ? [c] : [])]
         }, [])
       }
 
@@ -1074,7 +1127,7 @@ export default modelExtend(projectDetail, {
     },
 
     // 圈评转换pdf并且设置为新版本
-    * fileConvertPdfAlsoUpdateVersion({ payload }, { select, call, put }) {
+    *fileConvertPdfAlsoUpdateVersion({ payload }, { select, call, put }) {
       // const timer = setTimeout(() => {
       //   actionReducer({
       //     type: 'updateDatas',
@@ -1084,14 +1137,39 @@ export default modelExtend(projectDetail, {
       //   })
       // }, 2000)
       const { id } = payload
-      let fileName = getSubfixName(yield select(project_selectFilePreviewCurrentPreviewFileName))
-      let is_loading = yield select(project_selectFilePreviewIsEntryCirclePreviewLoading)
+      let fileName = getSubfixName(
+        yield select(project_selectFilePreviewCurrentPreviewFileName)
+      )
+      let is_loading = yield select(
+        project_selectFilePreviewIsEntryCirclePreviewLoading
+      )
       let fileListData = yield select(project_selectCurrentPreviewFileBaseInfo)
-      const supportFileTypeArray = ['.xlsx', '.xls', '.doc', '.docx', '.ppt', '.pptx', '.png', '.txt']
+      const supportFileTypeArray = [
+        '.xlsx',
+        '.xls',
+        '.doc',
+        '.docx',
+        '.ppt',
+        '.pptx',
+        '.png',
+        '.txt'
+      ]
       // [png,gif,jpg,jpeg,tif,bmp,ico]
-      const supportPictureFileTypeArray = ['.png', '.gif', '.jpg', '.jpeg', '.tif', '.bmp', '.ico']
+      const supportPictureFileTypeArray = [
+        '.png',
+        '.gif',
+        '.jpg',
+        '.jpeg',
+        '.tif',
+        '.bmp',
+        '.ico'
+      ]
       if (is_loading) return
-      if (supportFileTypeArray.indexOf(fileName) != -1 || supportPictureFileTypeArray.indexOf(fileName) != -1) { // 表示存在
+      if (
+        supportFileTypeArray.indexOf(fileName) != -1 ||
+        supportPictureFileTypeArray.indexOf(fileName) != -1
+      ) {
+        // 表示存在
         let res = yield call(fileConvertPdfAlsoUpdateVersion, { id })
         if (isApiResponseOk(res)) {
           let isPDF = getSubfixName(res.data.file_name) == '.pdf'
@@ -1118,7 +1196,10 @@ export default modelExtend(projectDetail, {
               payload: {
                 fileType: isPDF,
                 filePreviewCurrentFileId: res.data.id,
-                currentPreviewFileBaseInfo: { ...fileListData, id: res.data.id },
+                currentPreviewFileBaseInfo: {
+                  ...fileListData,
+                  id: res.data.id
+                },
                 currentPreviewFileName: res.data.file_name
               }
             })
@@ -1142,7 +1223,8 @@ export default modelExtend(projectDetail, {
           // })
         } else {
           message.warn(res.message, MESSAGE_DURATION_TIME)
-          if (res.code == 4047) { // 表示转换失败
+          if (res.code == 4047) {
+            // 表示转换失败
             message.error(res.message, MESSAGE_DURATION_TIME)
           }
         }
@@ -1158,8 +1240,8 @@ export default modelExtend(projectDetail, {
     updateDatas(state, action) {
       return {
         ...state,
-        datas: { ...state.datas, ...action.payload },
+        datas: { ...state.datas, ...action.payload }
       }
     }
-  },
-});
+  }
+})

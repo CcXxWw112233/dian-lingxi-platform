@@ -1,5 +1,5 @@
-import React from 'react';
-import {connect} from "dva/index";
+import React from 'react'
+import { connect } from 'dva/index'
 import Header from './Header'
 import FirstEntry from './FirstEntry'
 import NewsList from './NewsList'
@@ -8,7 +8,7 @@ import QueueAnim from 'rc-queue-anim'
 
 const getEffectOrReducerByName = name => `newsDynamic/${name}`
 
-const NewsDynamic = (props) => {
+const NewsDynamic = props => {
   const { dispatch, model, modal } = props
   const { datas: { isFirstEntry } = false } = model
   const NewsListProps = {
@@ -23,7 +23,7 @@ const NewsDynamic = (props) => {
     getNewsDynamicList(next_id) {
       dispatch({
         type: getEffectOrReducerByName('getNewsDynamicList'),
-        payload: {next_id}
+        payload: { next_id }
       })
     },
     addCardNewComment(data) {
@@ -33,38 +33,40 @@ const NewsDynamic = (props) => {
       })
     }
   }
-  const routingJump = (path) => {
+  const routingJump = path => {
     dispatch({
       type: getEffectOrReducerByName('routingJump'),
       payload: {
-        route: path,
-      },
+        route: path
+      }
     })
   }
-  const updateDatas = (payload) => {
+  const updateDatas = payload => {
     dispatch({
       type: getEffectOrReducerByName('updateDatas'),
       payload: payload
     })
   }
-  return(
+  return (
     <div>
-      <Header/>
+      <Header />
       <QueueAnim type="top">
         {isFirstEntry ? (
           <FirstEntry key={'1'}></FirstEntry>
         ) : (
-          <NewsListNewDatas key={'2'} {...NewsListProps} updateDatas={updateDatas} />
+          <NewsListNewDatas
+            key={'2'}
+            {...NewsListProps}
+            updateDatas={updateDatas}
+          />
         )}
       </QueueAnim>
     </div>
   )
-};
+}
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({ modal, newsDynamic, loading }) {
   return { modal, model: newsDynamic, loading }
 }
 export default connect(mapStateToProps)(NewsDynamic)
-
-

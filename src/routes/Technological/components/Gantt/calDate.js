@@ -1,38 +1,44 @@
-import { timeToTimestamp } from "../../../../utils/util"
+import { timeToTimestamp } from '../../../../utils/util'
 
 const current_date = new Date()
 const current_date_timestamp = current_date.getTime()
 
 //时间戳转换为日期
 function timestampToTime(timestamp, flag) {
-  let date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
-  let Y = date.getFullYear() + '/';
-  let M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '/';
-  let D = date.getDate() + ' ';
-  let h = date.getHours() + ':';
-  let m = date.getMinutes() + ':';
-  let s = date.getSeconds();
-  return flag ? Y + M + D + h + m + s : Y + M + D;
+  let date = new Date(timestamp) //时间戳为10位需*1000，时间戳为13位的话不需乘1000
+  let Y = date.getFullYear() + '/'
+  let M =
+    (date.getMonth() + 1 < 10
+      ? '0' + (date.getMonth() + 1)
+      : date.getMonth() + 1) + '/'
+  let D = date.getDate() + ' '
+  let h = date.getHours() + ':'
+  let m = date.getMinutes() + ':'
+  let s = date.getSeconds()
+  return flag ? Y + M + D + h + m + s : Y + M + D
 }
 //计算周的数据
 function setWeekData({ timestamp, type }) {
   let weekData = [] // 周的数据
   let weekData2 = []
   let now = timestamp ? new Date(timestamp) : new Date()
-  let nowTime = now.getTime();
-  let day = now.getDay();
-  let oneDayLong = 24 * 60 * 60 * 1000;
+  let nowTime = now.getTime()
+  let day = now.getDay()
+  let oneDayLong = 24 * 60 * 60 * 1000
   const setPre = () => {
     for (let i = 0; i < 50; i++) {
-      const MondayTime = nowTime - (day - 1 + 7 * i) * oneDayLong;
-      const SundayTime = nowTime + (7 - day - 7 * i) * oneDayLong;
+      const MondayTime = nowTime - (day - 1 + 7 * i) * oneDayLong
+      const SundayTime = nowTime + (7 - day - 7 * i) * oneDayLong
       const MonDayTimeTranslate = timestampToTime(MondayTime)
       const SundayTimeTranslate = timestampToTime(SundayTime)
       const MondayMonth = MonDayTimeTranslate.substring(5, 7)
       const SundayMonth = SundayTimeTranslate.substring(5, 7)
       const MonDayDate = MonDayTimeTranslate.substring(8)
       const SunDayDate = SundayTimeTranslate.substring(8)
-      const MonthText = (Number(MonDayDate) < Number(SunDayDate)) ? Number(MondayMonth).toString() : (Number(MondayMonth) + '/' + Number(SundayMonth))
+      const MonthText =
+        Number(MonDayDate) < Number(SunDayDate)
+          ? Number(MondayMonth).toString()
+          : Number(MondayMonth) + '/' + Number(SundayMonth)
       const DayText = (MonDayDate + '-' + SunDayDate).replace(/\s/gim, '')
 
       const date_0 = new Date(MonDayTimeTranslate)
@@ -53,24 +59,31 @@ function setWeekData({ timestamp, type }) {
         timestamp: timeToTimestamp(MonDayTimeTranslate + ' ' + '0:0:0'),
         timestampEnd: timeToTimestamp(SundayTimeTranslate + ' ' + '23:59:59'),
         monthText: MonthText,
-        date_no: `${date_no_0}-${date_no_1}`,// `${month_0}/${date_no_0}-${month_1}/${date_no_1}`,
+        date_no: `${date_no_0}-${date_no_1}`, // `${month_0}/${date_no_0}-${month_1}/${date_no_1}`,
         description: `${year_1}年${month_1}月`
       }
-      obj.include_today = (timeToTimestamp(MonDayTimeTranslate + ' ' + '0:0:0')) <= current_date_timestamp && (timeToTimestamp(SundayTimeTranslate + ' ' + '23:59:59') >= current_date_timestamp)
+      obj.include_today =
+        timeToTimestamp(MonDayTimeTranslate + ' ' + '0:0:0') <=
+          current_date_timestamp &&
+        timeToTimestamp(SundayTimeTranslate + ' ' + '23:59:59') >=
+          current_date_timestamp
       weekData.push(obj)
     }
   }
   const setNext = () => {
     for (let i = 0; i < 50; i++) {
-      const MondayTime = nowTime - (day - 1 - 7 * i) * oneDayLong;
-      const SundayTime = nowTime + (7 - day + 7 * i) * oneDayLong;
+      const MondayTime = nowTime - (day - 1 - 7 * i) * oneDayLong
+      const SundayTime = nowTime + (7 - day + 7 * i) * oneDayLong
       const MonDayTimeTranslate = timestampToTime(MondayTime)
       const SundayTimeTranslate = timestampToTime(SundayTime)
       const MondayMonth = MonDayTimeTranslate.substring(5, 7)
       const SundayMonth = SundayTimeTranslate.substring(5, 7)
       const MonDayDate = MonDayTimeTranslate.substring(8)
       const SunDayDate = SundayTimeTranslate.substring(8)
-      const MonthText = (Number(MonDayDate) < Number(SunDayDate)) ? Number(MondayMonth).toString() : (Number(MondayMonth) + '/' + Number(SundayMonth))
+      const MonthText =
+        Number(MonDayDate) < Number(SunDayDate)
+          ? Number(MondayMonth).toString()
+          : Number(MondayMonth) + '/' + Number(SundayMonth)
       const DayText = (MonDayDate + '-' + SunDayDate).replace(/\s/gim, '')
 
       const date_0 = new Date(MonDayTimeTranslate)
@@ -91,10 +104,14 @@ function setWeekData({ timestamp, type }) {
         timestamp: timeToTimestamp(MonDayTimeTranslate + ' ' + '0:0:0'),
         timestampEnd: timeToTimestamp(SundayTimeTranslate + ' ' + '23:59:59'),
         monthText: MonthText,
-        date_no: `${date_no_0}-${date_no_1}`,//`${month_0}/${date_no_0}-${month_1}/${date_no_1}`,
+        date_no: `${date_no_0}-${date_no_1}`, //`${month_0}/${date_no_0}-${month_1}/${date_no_1}`,
         description: `${year_1}年${month_1}月`
       }
-      obj.include_today = (timeToTimestamp(MonDayTimeTranslate + ' ' + '0:0:0')) <= current_date_timestamp && (timeToTimestamp(SundayTimeTranslate + ' ' + '23:59:59') >= current_date_timestamp)
+      obj.include_today =
+        timeToTimestamp(MonDayTimeTranslate + ' ' + '0:0:0') <=
+          current_date_timestamp &&
+        timeToTimestamp(SundayTimeTranslate + ' ' + '23:59:59') >=
+          current_date_timestamp
       weekData2.push(obj)
     }
   }
@@ -141,7 +158,7 @@ function handleWeekData({ timestamp, type }) {
  *   计算周的日期数量
  *  @param week_data = [] 符合 handleWeekData({ timestamp, type: 'init' })这个调用方式的数据结构
  *  @return jsonArray
-**/
+ **/
 export const weekDataArray = (week_data = []) => {
   let init_arr = []
   for (let val of week_data) {
@@ -158,9 +175,12 @@ export const weekDataArray = (week_data = []) => {
   // return len
 }
 
-export const getWeekGoldData = (timestamp) => handleWeekData({ timestamp, type: 'init' })
-export const getNextWeeksDate = (timestamp) => handleWeekData({ timestamp, type: 'next' })
-export const getLastWeeksDate = (timestamp) => handleWeekData({ timestamp, type: 'last' })
+export const getWeekGoldData = timestamp =>
+  handleWeekData({ timestamp, type: 'init' })
+export const getNextWeeksDate = timestamp =>
+  handleWeekData({ timestamp, type: 'next' })
+export const getLastWeeksDate = timestamp =>
+  handleWeekData({ timestamp, type: 'last' })
 
 // console.log('weekDataArray', weekDataArray())
 // console.log('weekDataArray_1', getWeekGoldData())

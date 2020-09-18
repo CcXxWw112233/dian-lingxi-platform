@@ -4,26 +4,33 @@ import { connect } from 'dva'
 import headerStyles from './HeaderContent.less'
 import VisitControl from '@/routes/Technological/components/VisitControl/index'
 import ShareAndInvite from '@/routes/Technological/components/ShareAndInvite/index'
-import { setContentPrivilege, toggleContentPrivilege, removeContentPrivilege } from '@/services/technological/project'
-import { createMeeting, createShareLink, modifOrStopShareLink } from '@/services/technological/workbench'
-import globalStyles from '@/globalset/css/globalClassName.less'
-import { currentNounPlanFilterName } from "@/utils/businessFunction";
 import {
-  MESSAGE_DURATION_TIME, TASKS,
-} from "@/globalset/js/constant";
+  setContentPrivilege,
+  toggleContentPrivilege,
+  removeContentPrivilege
+} from '@/services/technological/project'
+import {
+  createMeeting,
+  createShareLink,
+  modifOrStopShareLink
+} from '@/services/technological/workbench'
+import globalStyles from '@/globalset/css/globalClassName.less'
+import { currentNounPlanFilterName } from '@/utils/businessFunction'
+import { MESSAGE_DURATION_TIME, TASKS } from '@/globalset/js/constant'
 import { arrayNonRepeatfy } from '@/utils/util'
 import { lx_utils } from 'lingxi-im'
 
 @connect(mapStateToProps)
 export default class HeaderContentRightMenu extends Component {
-
   state = {
     onlyReadingShareModalVisible: false, //只读分享modal
-    onlyReadingShareData: {},
+    onlyReadingShareData: {}
   }
 
   getCurrentDrawerContentPropsModelDatasExecutors = () => {
-    const { drawContent: { properties = [] } } = this.props
+    const {
+      drawContent: { properties = [] }
+    } = this.props
     const pricipleInfo = properties.filter(item => item.code == 'EXECUTOR')[0]
     return pricipleInfo || {}
   }
@@ -33,7 +40,7 @@ export default class HeaderContentRightMenu extends Component {
    * 访问控制的开关切换
    * @param {Boolean} flag 开关切换
    */
-  handleVisitControlChange = (flag) => {
+  handleVisitControlChange = flag => {
     const { drawContent = {} } = this.props
     const { is_privilege = '0', card_id } = drawContent
     const toBool = str => !!Number(str)
@@ -54,7 +61,14 @@ export default class HeaderContentRightMenu extends Component {
           message.success('设置成功')
         }, 500)
         let temp_arr = res && res.data
-        this.visitControlUpdateCurrentModalData({ is_privilege: flag ? '1' : '0', type: 'privilege', privileges: temp_arr }, flag)
+        this.visitControlUpdateCurrentModalData(
+          {
+            is_privilege: flag ? '1' : '0',
+            type: 'privilege',
+            privileges: temp_arr
+          },
+          flag
+        )
       } else {
         message.warning(res.message)
       }
@@ -82,7 +96,11 @@ export default class HeaderContentRightMenu extends Component {
           drawContent: new_drawContent
         }
       })
-      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
+      this.props.handleTaskDetailChange &&
+        this.props.handleTaskDetailChange({
+          drawContent: new_drawContent,
+          card_id
+        })
     }
     // 这是添加成员的操作
     // 这是更新弹窗中的priveleges
@@ -92,7 +110,7 @@ export default class HeaderContentRightMenu extends Component {
         if (item == 'privileges') {
           obj[item].map(val => {
             let temp_arr = arrayNonRepeatfy([].concat(...privileges, val))
-            return new_privileges = [...temp_arr]
+            return (new_privileges = [...temp_arr])
           })
         }
       }
@@ -103,14 +121,18 @@ export default class HeaderContentRightMenu extends Component {
           drawContent: new_drawContent
         }
       })
-      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
+      this.props.handleTaskDetailChange &&
+        this.props.handleTaskDetailChange({
+          drawContent: new_drawContent,
+          card_id
+        })
     }
 
     // 这是更新type类型
     if (obj && obj.type && obj.type == 'change') {
       let { id } = obj.temp_arr
       let new_privileges = [...privileges]
-      new_privileges = new_privileges.map((item) => {
+      new_privileges = new_privileges.map(item => {
         let new_item = item
         if (item.id == id) {
           new_item = { ...item, content_privilege_code: obj.code }
@@ -126,7 +148,11 @@ export default class HeaderContentRightMenu extends Component {
           drawContent: new_drawContent
         }
       })
-      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
+      this.props.handleTaskDetailChange &&
+        this.props.handleTaskDetailChange({
+          drawContent: new_drawContent,
+          card_id
+        })
     }
 
     // 访问控制的切换
@@ -137,18 +163,28 @@ export default class HeaderContentRightMenu extends Component {
           obj[item].map(val => {
             let temp_arr = arrayNonRepeatfy([].concat(...privileges, val))
             if (temp_arr && !temp_arr.length) return false
-            return new_privileges = [...temp_arr]
+            return (new_privileges = [...temp_arr])
           })
         }
       }
-      let new_drawContent = { ...drawContent, is_privilege: obj.is_privilege, privileges: new_privileges }
+      let new_drawContent = {
+        ...drawContent,
+        is_privilege: obj.is_privilege,
+        privileges: new_privileges
+      }
       dispatch({
         type: 'publicTaskDetailModal/updateDatas',
         payload: {
           drawContent: new_drawContent
         }
       })
-      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id, name: 'is_privilege', value: obj.is_privilege })
+      this.props.handleTaskDetailChange &&
+        this.props.handleTaskDetailChange({
+          drawContent: new_drawContent,
+          card_id,
+          name: 'is_privilege',
+          value: obj.is_privilege
+        })
       this.props.updateParentTaskList && this.props.updateParentTaskList()
     }
 
@@ -162,7 +198,6 @@ export default class HeaderContentRightMenu extends Component {
         id: board_id
       }
     })
-
   }
 
   /**
@@ -171,7 +206,9 @@ export default class HeaderContentRightMenu extends Component {
    */
   handleVisitControlAddNewMember = (users_arr = []) => {
     if (!users_arr.length) return
-    const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
+    const { user_set = {} } = localStorage.getItem('userInfo')
+      ? JSON.parse(localStorage.getItem('userInfo'))
+      : {}
     const { user_id } = user_set
     const { drawContent = {} } = this.props
     const { card_id, privileges = [] } = drawContent
@@ -182,38 +219,47 @@ export default class HeaderContentRightMenu extends Component {
     let new_privileges = [...privileges]
 
     // 这是所有添加成员的id列表
-    users_arr && users_arr.map(item => {
-      temp_ids.push(item.id)
-    })
+    users_arr &&
+      users_arr.map(item => {
+        temp_ids.push(item.id)
+      })
     let flag
     // 权限列表中的id
-    new_privileges = new_privileges && new_privileges.map(item => {
-      let { id } = (item && item.user_info) && item.user_info
-      if (user_id == id) { // 从权限列表中找到自己
-        if (temp_ids.indexOf(id) != -1) { // 判断自己是否在添加的列表中
-          flag = true
+    new_privileges =
+      new_privileges &&
+      new_privileges.map(item => {
+        let { id } = item && item.user_info && item.user_info
+        if (user_id == id) {
+          // 从权限列表中找到自己
+          if (temp_ids.indexOf(id) != -1) {
+            // 判断自己是否在添加的列表中
+            flag = true
+          }
         }
-      }
-      new_ids.push(id)
-    })
+        new_ids.push(id)
+      })
 
     // 这里是需要做一个只添加了自己的一条提示
-    if (flag && temp_ids.length == '1') { // 表示只选择了自己, 而不是全选
+    if (flag && temp_ids.length == '1') {
+      // 表示只选择了自己, 而不是全选
       message.warn('该成员已存在, 请不要重复添加', MESSAGE_DURATION_TIME)
       return false
-    } else { // 否则表示进行了全选, 那么就过滤
-      temp_ids = temp_ids && temp_ids.filter(item => {
-        if (new_ids.indexOf(item) == -1) {
-          return item
-        }
-      })
+    } else {
+      // 否则表示进行了全选, 那么就过滤
+      temp_ids =
+        temp_ids &&
+        temp_ids.filter(item => {
+          if (new_ids.indexOf(item) == -1) {
+            return item
+          }
+        })
     }
 
     setContentPrivilege({
       content_id,
       content_type,
       privilege_code: 'read',
-      user_ids: temp_ids,
+      user_ids: temp_ids
     }).then(res => {
       if (res && res.code === '0') {
         setTimeout(() => {
@@ -221,7 +267,10 @@ export default class HeaderContentRightMenu extends Component {
         }, 500)
         let temp_arr = []
         temp_arr.push(res.data)
-        this.visitControlUpdateCurrentModalData({ privileges: temp_arr, type: 'add' })
+        this.visitControlUpdateCurrentModalData({
+          privileges: temp_arr,
+          type: 'add'
+        })
       } else {
         message.warn(res.message)
       }
@@ -241,7 +290,10 @@ export default class HeaderContentRightMenu extends Component {
         setTimeout(() => {
           message.success('移除用户成功')
         }, 500)
-        this.visitControlUpdateCurrentModalData({ removeId: id, type: 'remove' })
+        this.visitControlUpdateCurrentModalData({
+          removeId: id,
+          type: 'remove'
+        })
       } else {
         message.warn(res.message)
       }
@@ -272,7 +324,11 @@ export default class HeaderContentRightMenu extends Component {
         }, 500)
         let temp_arr = []
         temp_arr = res && res.data[0]
-        this.visitControlUpdateCurrentModalData({ temp_arr: temp_arr, type: 'change', code: type })
+        this.visitControlUpdateCurrentModalData({
+          temp_arr: temp_arr,
+          type: 'change',
+          code: type
+        })
       } else {
         message.warn(res.message)
       }
@@ -296,7 +352,7 @@ export default class HeaderContentRightMenu extends Component {
   // 访问控制操作 E
 
   // 分享操作 S
-  handleOnlyReadingShareExpChangeOrStopShare = (obj) => {
+  handleOnlyReadingShareExpChangeOrStopShare = obj => {
     const isStopShare = obj && obj['status'] && obj['status'] === '0'
     return modifOrStopShareLink(obj).then(res => {
       if (res && res.code === '0') {
@@ -304,20 +360,28 @@ export default class HeaderContentRightMenu extends Component {
           message.success('停止分享成功')
         } else {
           message.success('修改成功')
-          const { dispatch, drawContent = {}, drawContent: { card_id } } = this.props
+          const {
+            dispatch,
+            drawContent = {},
+            drawContent: { card_id }
+          } = this.props
           const isShared = obj && obj['status'] && obj['status']
           if (isShared) {
             let new_drawContent = { ...drawContent, is_shared: obj['status'] }
             dispatch({
               type: 'publicTaskDetailModal/updateDatas',
               payload: {
-                drawContent: new_drawContent,
+                drawContent: new_drawContent
               }
             })
-            this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent: new_drawContent, card_id })
+            this.props.handleTaskDetailChange &&
+              this.props.handleTaskDetailChange({
+                drawContent: new_drawContent,
+                card_id
+              })
           }
         }
-        this.setState((state) => {
+        this.setState(state => {
           const { onlyReadingShareData } = state
           return {
             onlyReadingShareData: Object.assign({}, onlyReadingShareData, obj)
@@ -333,11 +397,13 @@ export default class HeaderContentRightMenu extends Component {
     const { onlyReadingShareModalVisible } = this.state
     //打开之前确保获取到数据
     if (!onlyReadingShareModalVisible) {
-      Promise.resolve(this.createOnlyReadingShareLink()).then(() => {
-        this.setState({
-          onlyReadingShareModalVisible: true
+      Promise.resolve(this.createOnlyReadingShareLink())
+        .then(() => {
+          this.setState({
+            onlyReadingShareModalVisible: true
+          })
         })
-      }).catch(() => message.error('获取分享信息失败'))
+        .catch(() => message.error('获取分享信息失败'))
     } else {
       this.setState({
         onlyReadingShareModalVisible: false
@@ -351,7 +417,7 @@ export default class HeaderContentRightMenu extends Component {
     // const { board_id = '', appsSelectKey = '', card_id = '' } = this.getSearchFromLocation(location)
 
     const { drawContent = {} } = this.props
-    const { board_id, card_id, } = drawContent
+    const { board_id, card_id } = drawContent
 
     const payload = {
       board_id,
@@ -393,93 +459,131 @@ export default class HeaderContentRightMenu extends Component {
           type: 'publicTaskDetailModal/deleteTaskVTwo',
           payload: {
             id: card_id,
-            calback: function () {
+            calback: function() {
               dispatch({
                 type: 'publicTaskDetailModal/updateDatas',
                 payload: {
                   drawerVisible: false,
                   drawContent: {},
-                  card_id: '',
+                  card_id: ''
                 }
               })
               that.props.closeDrawer && that.props.closeDrawer()
               // 删除卡片也需要调用圈子关闭联动
-              setTimeout(() => lx_utils && lx_utils.setCommentData(card_id || null), 200)
-              that.props.handleDeleteCard && that.props.handleDeleteCard({ card_id: card_id })
+              setTimeout(
+                () => lx_utils && lx_utils.setCommentData(card_id || null),
+                200
+              )
+              that.props.handleDeleteCard &&
+                that.props.handleDeleteCard({ card_id: card_id })
             }
           }
         })
       }
-    });
+    })
   }
 
   // 删除任务的操作 E
 
-
   render() {
     const { drawContent = {} } = this.props
-    const { board_id, card_id, is_privilege, privileges = [], executors = [], is_shared } = drawContent
+    const {
+      board_id,
+      card_id,
+      is_privilege,
+      privileges = [],
+      executors = [],
+      is_shared
+    } = drawContent
     const { onlyReadingShareData, onlyReadingShareModalVisible } = this.state
     const { data } = this.getCurrentDrawerContentPropsModelDatasExecutors()
     return (
-
       <div className={headerStyles.detail_action_list}>
         {/* 删除 */}
         <span className={`${headerStyles.action}`}>
           <Tooltip title="删除">
-            <span className={headerStyles.dele_icon} onClick={this.handleDelCard}>
-              <span className={`${globalStyles.authTheme} ${headerStyles.dele}`}>&#xe7c3;</span>
+            <span
+              className={headerStyles.dele_icon}
+              onClick={this.handleDelCard}
+            >
+              <span
+                className={`${globalStyles.authTheme} ${headerStyles.dele}`}
+              >
+                &#xe7c3;
+              </span>
             </span>
           </Tooltip>
         </span>
         {/* 分享协作 */}
         <span className={`${headerStyles.action} `}>
-
           {is_shared === '1' ? (
-            <span className={headerStyles.right__shareIndicator} onClick={this.handleChangeOnlyReadingShareModalVisible}>
-              <span className={`${globalStyles.authTheme} ${headerStyles.right__shareIndicator_icon}`}>&#xe7e7;</span>
-              <span className={headerStyles.right__shareIndicator_text}>正在分享</span>
+            <span
+              className={headerStyles.right__shareIndicator}
+              onClick={this.handleChangeOnlyReadingShareModalVisible}
+            >
+              <span
+                className={`${globalStyles.authTheme} ${headerStyles.right__shareIndicator_icon}`}
+              >
+                &#xe7e7;
+              </span>
+              <span className={headerStyles.right__shareIndicator_text}>
+                正在分享
+              </span>
             </span>
           ) : (
-              <span className={`${headerStyles.right_menu} ${headerStyles.share_icon}`} >
-                <Tooltip title="分享协作" placement="top">
-                  <span onClick={this.handleChangeOnlyReadingShareModalVisible} className={`${globalStyles.authTheme} ${headerStyles.right__share}`} style={{ fontSize: '20px' }}>&#xe7e7;</span>
-                </Tooltip>
-              </span>
-            )}
+            <span
+              className={`${headerStyles.right_menu} ${headerStyles.share_icon}`}
+            >
+              <Tooltip title="分享协作" placement="top">
+                <span
+                  onClick={this.handleChangeOnlyReadingShareModalVisible}
+                  className={`${globalStyles.authTheme} ${headerStyles.right__share}`}
+                  style={{ fontSize: '20px' }}
+                >
+                  &#xe7e7;
+                </span>
+              </Tooltip>
+            </span>
+          )}
 
           <ShareAndInvite
-
-            onlyReadingShareModalVisible={onlyReadingShareModalVisible} handleChangeOnlyReadingShareModalVisible={this.handleChangeOnlyReadingShareModalVisible}
+            onlyReadingShareModalVisible={onlyReadingShareModalVisible}
+            handleChangeOnlyReadingShareModalVisible={
+              this.handleChangeOnlyReadingShareModalVisible
+            }
             data={onlyReadingShareData}
-            handleOnlyReadingShareExpChangeOrStopShare={this.handleOnlyReadingShareExpChangeOrStopShare}
+            handleOnlyReadingShareExpChangeOrStopShare={
+              this.handleOnlyReadingShareExpChangeOrStopShare
+            }
           />
         </span>
         {/* 访问控制 */}
         <span className={`${headerStyles.action} ${headerStyles.visit_wrap}`}>
-          {
-            board_id && (
-              <VisitControl
-                board_id={board_id}
-                isPropVisitControl={is_privilege === '0' ? false : true}
-                handleVisitControlChange={this.handleVisitControlChange}
-                principalList={data}
-                otherPrivilege={privileges}
-                handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
-                handleAddNewMember={this.handleVisitControlAddNewMember}
-              />
-            )
-          }
-
+          {board_id && (
+            <VisitControl
+              board_id={board_id}
+              isPropVisitControl={is_privilege === '0' ? false : true}
+              handleVisitControlChange={this.handleVisitControlChange}
+              principalList={data}
+              otherPrivilege={privileges}
+              handleClickedOtherPersonListOperatorItem={
+                this.handleClickedOtherPersonListOperatorItem
+              }
+              handleAddNewMember={this.handleVisitControlAddNewMember}
+            />
+          )}
         </span>
-
       </div>
-
     )
   }
 }
 
 // 只关联public弹窗内的数据
-function mapStateToProps({ publicTaskDetailModal: { drawContent = {}, card_id }, projectDetail: { datas: { projectDetailInfoData = {} } } }) {
+function mapStateToProps({
+  publicTaskDetailModal: { drawContent = {}, card_id },
+  projectDetail: {
+    datas: { projectDetailInfoData = {} }
+  }
+}) {
   return { drawContent, card_id, projectDetailInfoData }
 }

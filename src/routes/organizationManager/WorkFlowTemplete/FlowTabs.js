@@ -4,12 +4,9 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import { connect } from 'dva'
 @connect(mapStateToProps)
 export default class FlowTabs extends Component {
-
   constructor(props) {
     super(props)
-    this.state = {
-
-    }
+    this.state = {}
   }
 
   componentDidMount() {
@@ -30,7 +27,7 @@ export default class FlowTabs extends Component {
     this.props.handleDelteTemplete && this.props.handleDelteTemplete(e, item)
   }
 
-  initData = (props) => {
+  initData = props => {
     const { processTemplateList = [] } = props
     const dataSource = processTemplateList.map(item => {
       return item
@@ -43,14 +40,43 @@ export default class FlowTabs extends Component {
         ellipsis: true,
         width: 228,
         render: (text, item) => {
-          return <div style={{ overflow: 'hidden' }}>
-            <p style={{marginBottom: '0px'}}>
-              <span style={{ width: '32px', height: '32px', borderRadius: '4px', background: '#69C0FF', display: 'inline-block', textAlign: 'center', marginRight: '8px', }}>
-                <span style={{ fontSize: '16px', color: '#fff', lineHeight: '32px' }} className={globalStyles.authTheme}>&#xe68c;</span>
-              </span>
-              <span style={{ fontSize: '14px', fontWeight: 400, lineHeight: '32px' }}>{text}</span>
-            </p>
-          </div>
+          return (
+            <div style={{ overflow: 'hidden' }}>
+              <p style={{ marginBottom: '0px' }}>
+                <span
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '4px',
+                    background: '#69C0FF',
+                    display: 'inline-block',
+                    textAlign: 'center',
+                    marginRight: '8px'
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: '16px',
+                      color: '#fff',
+                      lineHeight: '32px'
+                    }}
+                    className={globalStyles.authTheme}
+                  >
+                    &#xe68c;
+                  </span>
+                </span>
+                <span
+                  style={{
+                    fontSize: '14px',
+                    fontWeight: 400,
+                    lineHeight: '32px'
+                  }}
+                >
+                  {text}
+                </span>
+              </p>
+            </div>
+          )
         }
       },
       {
@@ -59,8 +85,12 @@ export default class FlowTabs extends Component {
         key: 'node_num',
         ellipsis: true,
         width: 148,
-        render: (text) => {
-          return <div style={{ marginLeft: '8px' }}>共 <span style={{ color: '#1890FF' }}>{text}</span> 步</div>
+        render: text => {
+          return (
+            <div style={{ marginLeft: '8px' }}>
+              共 <span style={{ color: '#1890FF' }}>{text}</span> 步
+            </div>
+          )
         }
       },
       {
@@ -69,8 +99,12 @@ export default class FlowTabs extends Component {
         key: 'quote_num',
         ellipsis: true,
         width: 152,
-        render: (text) => {
-          return <div style={{ marginLeft: '8px' }}><span style={{ color: '#1890FF' }}>{text}</span> 次</div>
+        render: text => {
+          return (
+            <div style={{ marginLeft: '8px' }}>
+              <span style={{ color: '#1890FF' }}>{text}</span> 次
+            </div>
+          )
         }
       },
       {
@@ -80,13 +114,33 @@ export default class FlowTabs extends Component {
         ellipsis: true,
         width: 110,
         render: (text, item) => {
-          return <div>
-            <span onClick={(e) => { this.handleEditTemplete(e, item) }} style={{ color: '#1890FF', marginRight: '12px', cursor: 'pointer' }}>编辑</span>
-            <span onClick={(e) => { this.handleDelteTemplete(e, item) }} style={{ color: '#F5222D', cursor: 'pointer' }}>删除</span>
-          </div>
+          return (
+            <div>
+              <span
+                onClick={e => {
+                  this.handleEditTemplete(e, item)
+                }}
+                style={{
+                  color: '#1890FF',
+                  marginRight: '12px',
+                  cursor: 'pointer'
+                }}
+              >
+                编辑
+              </span>
+              <span
+                onClick={e => {
+                  this.handleDelteTemplete(e, item)
+                }}
+                style={{ color: '#F5222D', cursor: 'pointer' }}
+              >
+                删除
+              </span>
+            </div>
+          )
         }
-      },
-    ];
+      }
+    ]
     this.setState({
       columns,
       dataSource
@@ -106,7 +160,7 @@ export default class FlowTabs extends Component {
           dataSource={dataSource}
           columns={columns}
           pagination={false}
-        // scroll={{ y: scroll_height, }} 
+          // scroll={{ y: scroll_height, }}
         />
       </div>
     )
@@ -119,9 +173,7 @@ function mapStateToProps({
     processTemplateList = []
   },
   technological: {
-    datas: {
-      userOrgPermissions = []
-    }
+    datas: { userOrgPermissions = [] }
   }
 }) {
   return {

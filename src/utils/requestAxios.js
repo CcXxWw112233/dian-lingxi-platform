@@ -1,45 +1,43 @@
-import { message, notification } from 'antd';
+import { message, notification } from 'antd'
 import axios from 'axios'
 import Cookies from 'js-cookie'
-import _ from "lodash";
+import _ from 'lodash'
 import { reRefreshToken } from './oauth'
 import { setRequestHeaderBaseInfo } from './businessFunction'
 function messageLoading() {
-  return (
-    message.loading('加载中...', 0)
-  )
+  return message.loading('加载中...', 0)
 }
-const openNotification = (message) => {
+const openNotification = message => {
   notification.error({
     message: '提示',
-    description: message,
-  });
-};
+    description: message
+  })
+}
 axios.interceptors.request.use(
   config => {
-    return config;
+    return config
   },
   error => {
-    return Promise.reject(error);
+    return Promise.reject(error)
   }
-);
+)
 
 export default function request(options = {}, elseSet = {}) {
   const { isNotLoading } = elseSet
   const {
     url = '',
     headers = {},
-    method = "post",
+    method = 'post',
     params = {},
-    data = {},
-  } = options;
+    data = {}
+  } = options
 
   let loading = !isNotLoading ? messageLoading(url) : ''
   let header = Object.assign({}, headers)
   const Authorization = Cookies.get('Authorization')
   const refreshToken = Cookies.get('refreshToken')
 
-  header['Authorization'] = Authorization//refreshToken
+  header['Authorization'] = Authorization //refreshToken
   header['refreshToken'] = refreshToken
 
   const header_base_info = setRequestHeaderBaseInfo({ data, params, headers })
@@ -59,28 +57,33 @@ export default function request(options = {}, elseSet = {}) {
       ...{
         url,
         // headers: { ...header, ...headers, ...header_base_info, },
-        headers: { ...header, ...headers, ...header_base_info, ...headers_share },
+        headers: {
+          ...header,
+          ...headers,
+          ...header_base_info,
+          ...headers_share
+        },
         method,
         params: {
-          ...params,
+          ...params
           // ...new_param
         },
         data: {
-          ...data,
+          ...data
           // ...new_param
         },
-        timeout: 60000,
+        timeout: 60000
       }
     })
       .then(res => {
-        setTimeout(loading, 0);
+        setTimeout(loading, 0)
 
-        resolve(res.data);
+        resolve(res.data)
       })
       .catch((error, e) => {
-        setTimeout(loading, 0);
+        setTimeout(loading, 0)
 
-        if (_.has(error, "response.status")) {
+        if (_.has(error, 'response.status')) {
           switch (error.response.status) {
             case '200':
               break
@@ -106,5 +109,3 @@ export default function request(options = {}, elseSet = {}) {
       })
   })
 }
-
-

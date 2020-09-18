@@ -1,1 +1,2 @@
-export const getSelectState = (state, stateName) => state[('informRemind')][stateName]
+export const getSelectState = (state, stateName) =>
+  state['informRemind'][stateName]

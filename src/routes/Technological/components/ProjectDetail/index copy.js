@@ -1,21 +1,24 @@
 import React, { Component } from 'react'
-import { connect } from "dva/index";
+import { connect } from 'dva/index'
 import Header from './Header'
 import CreateTask from './TaskItemComponent/CreateTask'
 import FileModule from './FileModule'
 import ProcessIndex from './Process'
 import indexStyles from './index.less'
-import { checkIsHasPermissionInBoard, setBoardIdStorage } from "../../../../utils/businessFunction";
-import { Route, Switch } from 'dva/router'
-import dynamic from "dva/dynamic"
-import dva from "dva/index";
 import {
-  PROJECT_FILES_FILE_INTERVIEW, PROJECT_FLOW_FLOW_ACCESS,
+  checkIsHasPermissionInBoard,
+  setBoardIdStorage
+} from '../../../../utils/businessFunction'
+import { Route, Switch } from 'dva/router'
+import dynamic from 'dva/dynamic'
+import dva from 'dva/index'
+import {
+  PROJECT_FILES_FILE_INTERVIEW,
+  PROJECT_FLOW_FLOW_ACCESS,
   PROJECT_TEAM_CARD_INTERVIEW
-} from "../../../../globalset/js/constant";
+} from '../../../../globalset/js/constant'
 
 class ProjectDetail extends Component {
-
   constructor(props) {
     super(props)
   }
@@ -36,7 +39,7 @@ class ProjectDetail extends Component {
         isInitEntry: false, //是否初次进来项目详情
         relations_Prefix: [], //内容关联前部分
         projectDetailInfoData: {},
-        milestoneList: [],
+        milestoneList: []
       }
     })
   }
@@ -45,9 +48,7 @@ class ProjectDetail extends Component {
     const { dispatch } = this.props
     dispatch({
       type: 'projectDetail/historyListenSet',
-      payload: {
-
-      }
+      payload: {}
     })
   }
 
@@ -60,7 +61,8 @@ class ProjectDetail extends Component {
     // console.log('sss', 3333)
     this.initialData()
     const { dispatch } = this.props
-    dispatch({//清空项目默认页面可见数据--（一进来就看到的）
+    dispatch({
+      //清空项目默认页面可见数据--（一进来就看到的）
       type: 'projectDetail/removeAllProjectData',
       payload: {}
     })
@@ -72,19 +74,22 @@ class ProjectDetail extends Component {
 
   filterAppsModule = () => {
     const { appsSelectKey } = this.props
-    let appFace = (<div></div>)
+    let appFace = <div></div>
     switch (appsSelectKey) {
       case '2':
-        appFace = checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS) &&
-          (<ProcessIndex />)
+        appFace = checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS) && (
+          <ProcessIndex />
+        )
         break
       case '3':
-        appFace = checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_INTERVIEW) &&
-          (<CreateTask />)
+        appFace = checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_INTERVIEW) && (
+          <CreateTask />
+        )
         break
       case '4':
-        appFace = checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW) &&
-          (<FileModule />)
+        appFace = checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW) && (
+          <FileModule />
+        )
         break
       default:
         break
@@ -93,54 +98,59 @@ class ProjectDetail extends Component {
   }
 
   render() {
-    const app = dva();
+    const app = dva()
     const routes = [
       {
         path: '/technological/projectDetail/:id/card/:id?',
-        component: () => CreateTask,
-      }, {
-        path: '/technological/projectDetail/:id/flow/:id?',
-        component: () => ProcessIndex,
-      }, {
-        path: '/technological/projectDetail/:id/file/:id?',
-        component: () => FileModule,
+        component: () => CreateTask
       },
+      {
+        path: '/technological/projectDetail/:id/flow/:id?',
+        component: () => ProcessIndex
+      },
+      {
+        path: '/technological/projectDetail/:id/file/:id?',
+        component: () => FileModule
+      }
     ]
     return (
-      <div style={{ height: 'auto', position: 'relative', width: '100%', minHeight: '100vh', margin: '0 auto' }}>
+      <div
+        style={{
+          height: 'auto',
+          position: 'relative',
+          width: '100%',
+          minHeight: '100vh',
+          margin: '0 auto'
+        }}
+      >
         <div className={indexStyles.headerMaskDown}></div>
         <Header />
         <div style={{ padding: '0 20px' }}>
           {/* {this.filterAppsModule()} */}
           <Switch>
-
-          {
-            routes.map(({ path, ...dynamics }, key) => {
+            {routes.map(({ path, ...dynamics }, key) => {
               return (
-                <Route key={key}
+                <Route
+                  key={key}
                   path={path}
                   component={dynamic({
                     app,
-                    ...dynamics,
+                    ...dynamics
                   })}
                 />
               )
-            })
-          }
+            })}
           </Switch>
         </div>
       </div>
     )
   }
-
-};
+}
 
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({
   technological: {
-    datas: {
-      userBoardPermissions
-    }
+    datas: { userBoardPermissions }
   }
 }) {
   return {
@@ -148,5 +158,3 @@ function mapStateToProps({
   }
 }
 export default connect(mapStateToProps)(ProjectDetail)
-
-

@@ -1,22 +1,35 @@
-
 import React from 'react'
 import indexStyles from './index.less'
-import { Table, Menu, Dropdown, Icon, message, Modal, Tooltip } from 'antd';
+import { Table, Menu, Dropdown, Icon, message, Modal, Tooltip } from 'antd'
 import CreatDirector from './CreatDirector'
 import globalStyles from '../../../../../globalset/css/globalClassName.less'
 import {
-  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_FILES_FILE_DOWNLOAD,
-  PROJECT_FILES_FILE_DELETE, PROJECT_FILES_FILE_UPLOAD, PROJECT_FILES_FOLDER
-} from "../../../../../globalset/js/constant";
-import { checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl } from "../../../../../utils/businessFunction";
-import { FILES } from "../../../../../globalset/js/constant";
-import { currentNounPlanFilterName, getSubfixName } from "../../../../../utils/businessFunction";
+  MESSAGE_DURATION_TIME,
+  NOT_HAS_PERMISION_COMFIRN,
+  PROJECT_FILES_FILE_DOWNLOAD,
+  PROJECT_FILES_FILE_DELETE,
+  PROJECT_FILES_FILE_UPLOAD,
+  PROJECT_FILES_FOLDER
+} from '../../../../../globalset/js/constant'
+import {
+  checkIsHasPermissionInBoard,
+  checkIsHasPermissionInVisitControl
+} from '../../../../../utils/businessFunction'
+import { FILES } from '../../../../../globalset/js/constant'
+import {
+  currentNounPlanFilterName,
+  getSubfixName
+} from '../../../../../utils/businessFunction'
 
 import VisitControl from './../../VisitControl/index'
-import { toggleContentPrivilege, setContentPrivilege, removeContentPrivilege } from './../../../../../services/technological/project'
-import { connect } from 'dva';
+import {
+  toggleContentPrivilege,
+  setContentPrivilege,
+  removeContentPrivilege
+} from './../../../../../services/technological/project'
+import { connect } from 'dva'
 import { timestampToTimeNormal } from '@/utils/util'
-import { arrayNonRepeatfy } from '../../../../../utils/util';
+import { arrayNonRepeatfy } from '../../../../../utils/util'
 
 const bodyOffsetHeight = document.querySelector('body').offsetHeight
 
@@ -31,12 +44,10 @@ export default class FileList extends React.Component {
     visitControlModalData: {}, //访问控制Modal data
     shouldHideVisitControlPopover: false, // 是否显示访问控制
     fileGroupOperatorDropdownMenuVisible: false, // 文件列表中的点点点
-    isShouldBeFileGroupOperatorDropdownMenuVisible: false,
-  };
-  //table变换
-  handleChange = (pagination, filters, sorter) => {
-
+    isShouldBeFileGroupOperatorDropdownMenuVisible: false
   }
+  //table变换
+  handleChange = (pagination, filters, sorter) => {}
   //选择框单选或者全选
   onSelectChange = (selectedRowKeys, selectedRows) => {
     const { dispatch } = this.props
@@ -61,7 +72,15 @@ export default class FileList extends React.Component {
       case '1':
         break
       case '2': // 下载
-        if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD, board_id))) {
+        if (
+          !checkIsHasPermissionInVisitControl(
+            'edit',
+            privileges,
+            is_privilege,
+            [],
+            checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD, board_id)
+          )
+        ) {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
@@ -74,7 +93,15 @@ export default class FileList extends React.Component {
         })
         break
       case '3': // 移动
-        if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD, board_id))) {
+        if (
+          !checkIsHasPermissionInVisitControl(
+            'edit',
+            privileges,
+            is_privilege,
+            [],
+            checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD, board_id)
+          )
+        ) {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
@@ -90,7 +117,15 @@ export default class FileList extends React.Component {
         })
         break
       case '4': // 复制
-        if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD, board_id))) {
+        if (
+          !checkIsHasPermissionInVisitControl(
+            'edit',
+            privileges,
+            is_privilege,
+            [],
+            checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD, board_id)
+          )
+        ) {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
@@ -106,7 +141,15 @@ export default class FileList extends React.Component {
         })
         break
       case '5': // 移动到回收站
-        if (!checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DELETE, board_id))) {
+        if (
+          !checkIsHasPermissionInVisitControl(
+            'edit',
+            privileges,
+            is_privilege,
+            [],
+            checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DELETE, board_id)
+          )
+        ) {
           message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           return false
         }
@@ -130,20 +173,20 @@ export default class FileList extends React.Component {
   //列表排序, 有限排序文件夹
   normalSort(filedata_1, filedata_2, key, state) {
     const that = this
-    filedata_1.sort(function (a, b) {
+    filedata_1.sort(function(a, b) {
       if (that.state[state]) {
-        return a[key].localeCompare(b[key]);
+        return a[key].localeCompare(b[key])
       } else {
-        return b[key].localeCompare(a[key]);
+        return b[key].localeCompare(a[key])
       }
-    });
-    filedata_2.sort(function (a, b) {
+    })
+    filedata_2.sort(function(a, b) {
       if (that.state[state]) {
-        return a[key].localeCompare(b[key]);
+        return a[key].localeCompare(b[key])
       } else {
-        return b[key].localeCompare(a[key]);
+        return b[key].localeCompare(a[key])
       }
-    });
+    })
     const { dispatch } = this.props
     dispatch({
       type: 'projectDetailFile/updateDatas',
@@ -173,20 +216,20 @@ export default class FileList extends React.Component {
 
   sizeSort(filedata_1, filedata_2, key, state) {
     const that = this
-    filedata_1.sort(function (a, b) {
+    filedata_1.sort(function(a, b) {
       if (that.state[state]) {
-        return that.fiterSizeUnit(a[key]) - that.fiterSizeUnit(b[key]);
+        return that.fiterSizeUnit(a[key]) - that.fiterSizeUnit(b[key])
       } else {
         return that.fiterSizeUnit(b[key]) - that.fiterSizeUnit(a[key])
       }
-    });
-    filedata_2.sort(function (a, b) {
+    })
+    filedata_2.sort(function(a, b) {
       if (that.state[state]) {
-        return that.fiterSizeUnit(a[key]) - that.fiterSizeUnit(b[key]);
+        return that.fiterSizeUnit(a[key]) - that.fiterSizeUnit(b[key])
       } else {
         return that.fiterSizeUnit(b[key]) - that.fiterSizeUnit(a[key])
       }
-    });
+    })
 
     const { dispatch } = this.props
     dispatch({
@@ -201,25 +244,34 @@ export default class FileList extends React.Component {
     const { filedata_1, filedata_2 } = this.props
     switch (key) {
       case '1':
-        this.setState({
-          nameSort: !this.state.nameSort
-        }, function () {
-          this.normalSort(filedata_1, filedata_2, 'file_name', 'nameSort')
-        })
+        this.setState(
+          {
+            nameSort: !this.state.nameSort
+          },
+          function() {
+            this.normalSort(filedata_1, filedata_2, 'file_name', 'nameSort')
+          }
+        )
         break
       case '2':
-        this.setState({
-          sizeSort: !this.state.sizeSort
-        }, function () {
-          this.sizeSort(filedata_1, filedata_2, 'file_size', 'sizeSort')
-        })
+        this.setState(
+          {
+            sizeSort: !this.state.sizeSort
+          },
+          function() {
+            this.sizeSort(filedata_1, filedata_2, 'file_size', 'sizeSort')
+          }
+        )
         break
       case '3':
-        this.setState({
-          creatorSort: !this.state.creatorSort
-        }, function () {
-          this.normalSort(filedata_1, filedata_2, 'creator', 'creatorSort')
-        })
+        this.setState(
+          {
+            creatorSort: !this.state.creatorSort
+          },
+          function() {
+            this.normalSort(filedata_1, filedata_2, 'creator', 'creatorSort')
+          }
+        )
         break
       default:
         break
@@ -335,7 +387,8 @@ export default class FileList extends React.Component {
       type: 'projectDetailFile/updateDatas',
       payload: {
         breadcrumbList: new_breadcrumbList,
-        currentParrentDirectoryId: type === '1' ? file_id : currentParrentDirectoryId,
+        currentParrentDirectoryId:
+          type === '1' ? file_id : currentParrentDirectoryId,
         isInAddDirectory: false
       }
     })
@@ -363,7 +416,14 @@ export default class FileList extends React.Component {
   }
 
   openFile(data) {
-    const { file_id, version_id, file_resource_id, file_name, board_id, id } = data
+    const {
+      file_id,
+      version_id,
+      file_resource_id,
+      file_name,
+      board_id,
+      id
+    } = data
     // console.log(data, 'ssssss')
     // if(getSubfixName(file_name) == '.pdf' && checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT)) {
     //   openPDF({id: file_id})
@@ -481,7 +541,7 @@ export default class FileList extends React.Component {
   // 访问控制切换的数据
   toggleVisitControlModal = flag => {
     this.setState({
-      visitControlModalVisible: flag,
+      visitControlModalVisible: flag
     })
   }
 
@@ -492,8 +552,13 @@ export default class FileList extends React.Component {
     if (isEmptyObj(originData)) {
       return {}
     }
-    const { type, folder_name, file_name, is_privilege, privileges,
-      // child_privilegeuser_ids 
+    const {
+      type,
+      folder_name,
+      file_name,
+      is_privilege,
+      privileges
+      // child_privilegeuser_ids
     } = originData
     const fileTypeName = type == '1' ? '文件夹' : '文件'
     const fileOrFolderName = type == '1' ? folder_name : file_name
@@ -542,7 +607,9 @@ export default class FileList extends React.Component {
       }
       return []
     }
-    const visitControlOtherPersonOperatorMenuItem = genVisitControlOtherPersonOperatorMenuItem(type)
+    const visitControlOtherPersonOperatorMenuItem = genVisitControlOtherPersonOperatorMenuItem(
+      type
+    )
     return {
       // child_privilegeuser_ids,
       fileTypeName,
@@ -550,7 +617,10 @@ export default class FileList extends React.Component {
       visitControlOtherPersonOperatorMenuItem,
       is_privilege,
       privileges,
-      removeMemberPromptText: type === '1' ? '移出后用户将不能访问此文件夹' : '移出后用户将不能访问此文件',
+      removeMemberPromptText:
+        type === '1'
+          ? '移出后用户将不能访问此文件夹'
+          : '移出后用户将不能访问此文件'
     }
   }
 
@@ -563,7 +633,7 @@ export default class FileList extends React.Component {
     if (isShouldBeFileGroupOperatorDropdownMenuVisible) return
     if (visible == true) {
       this.setState({
-        shouldHideVisitControlPopover: false, // 不让他隐藏
+        shouldHideVisitControlPopover: false // 不让他隐藏
       })
       this.initVisitControlModalData(data)
     }
@@ -573,14 +643,14 @@ export default class FileList extends React.Component {
   }
 
   // 访问控制的popover显示
-  handleVisitControlPopoverVisible = (flag) => {
+  handleVisitControlPopoverVisible = flag => {
     if (!flag) {
       this.setState({
         fileGroupOperatorDropdownMenuVisible: false // 如果flag为false, 则相当于点击了两次,则要控制隐藏
       })
     }
     this.setState({
-      isShouldBeFileGroupOperatorDropdownMenuVisible: flag,
+      isShouldBeFileGroupOperatorDropdownMenuVisible: flag
     })
   }
 
@@ -591,7 +661,7 @@ export default class FileList extends React.Component {
       this.setState({
         isShouldBeFileGroupOperatorDropdownMenuVisible: false,
         fileGroupOperatorDropdownMenuVisible: false,
-        shouldHideVisitControlPopover: true,
+        shouldHideVisitControlPopover: true
       })
     }
   }
@@ -602,18 +672,24 @@ export default class FileList extends React.Component {
 
   // 获取访问控制弹窗中的数据类型??
   getVisitControlModalDataType = () => {
-    const { visitControlModalData: { type } } = this.state
+    const {
+      visitControlModalData: { type }
+    } = this.state
     return type == '1' ? 'folder' : 'file'
   }
 
   getVisitControlModalDataId = () => {
     const dataType = this.getVisitControlModalDataType()
-    const { visitControlModalData: { folder_id, file_id } } = this.state
+    const {
+      visitControlModalData: { folder_id, file_id }
+    } = this.state
     return dataType == 'file' ? file_id : folder_id
   }
 
-  isTheSameVisitControlState = (flag) => {
-    const { visitControlModalData: { is_privilege } } = this.state
+  isTheSameVisitControlState = flag => {
+    const {
+      visitControlModalData: { is_privilege }
+    } = this.state
     const toBool = str => !!Number(str)
     const is_privilege_bool = toBool(is_privilege)
     if (flag == is_privilege_bool) {
@@ -637,7 +713,10 @@ export default class FileList extends React.Component {
         setTimeout(() => {
           message.success('移除用户成功')
         }, 500)
-        this.visitControlUpdateCurrentProjectData({ removeId: id, type: 'remove' })
+        this.visitControlUpdateCurrentProjectData({
+          removeId: id,
+          type: 'remove'
+        })
       } else {
         message.warning(res.message)
       }
@@ -645,12 +724,14 @@ export default class FileList extends React.Component {
   }
 
   /**
-  * 访问控制设置更新成员
-  * @param {String} id 设置成员对应的id
-  * @param {String} type 设置成员对应的字段
-  */
+   * 访问控制设置更新成员
+   * @param {String} id 设置成员对应的id
+   * @param {String} type 设置成员对应的字段
+   */
   handleVisitControlChangeContentPrivilege = (id, type, errorText) => {
-    const { visitControlModalData: { folder_id, version_id, privileges } } = this.state
+    const {
+      visitControlModalData: { folder_id, version_id, privileges }
+    } = this.state
     const dataType = this.getVisitControlModalDataType()
     const content_id = dataType == 'file' ? version_id : folder_id
     const content_type = dataType == 'file' ? 'file' : 'folder'
@@ -670,7 +751,11 @@ export default class FileList extends React.Component {
         let temp_arr = []
         temp_arr = res && res.data[0]
         // const addedPrivileges = ids.split(',').reduce((acc, curr) => Object.assign({}, acc, { [curr]: type }), {})
-        this.visitControlUpdateCurrentProjectData({ temp_arr: temp_arr, type: 'change', code: type })
+        this.visitControlUpdateCurrentProjectData({
+          temp_arr: temp_arr,
+          type: 'change',
+          code: type
+        })
       } else {
         message.warning(res.message)
       }
@@ -687,7 +772,11 @@ export default class FileList extends React.Component {
     if (type == 'remove') {
       this.handleVisitControlRemoveContentPrivilege(removeId)
     } else {
-      this.handleVisitControlChangeContentPrivilege(id, type, '更新用户控制类型失败')
+      this.handleVisitControlChangeContentPrivilege(
+        id,
+        type,
+        '更新用户控制类型失败'
+      )
     }
   }
 
@@ -705,11 +794,18 @@ export default class FileList extends React.Component {
   }
 
   // 访问控制设置成员
-  handleSetContentPrivilege = (users_arr = [], type, errorText = '访问控制添加人员失败，请稍后再试') => {
-
-    const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
+  handleSetContentPrivilege = (
+    users_arr = [],
+    type,
+    errorText = '访问控制添加人员失败，请稍后再试'
+  ) => {
+    const { user_set = {} } = localStorage.getItem('userInfo')
+      ? JSON.parse(localStorage.getItem('userInfo'))
+      : {}
     const { user_id } = user_set
-    const { visitControlModalData: { folder_id, version_id, privileges } } = this.state
+    const {
+      visitControlModalData: { folder_id, version_id, privileges }
+    } = this.state
     const dataType = this.getVisitControlModalDataType()
     const content_id = dataType == 'file' ? version_id : folder_id
     const content_type = dataType == 'file' ? 'file' : 'folder'
@@ -719,32 +815,41 @@ export default class FileList extends React.Component {
     let new_privileges = [...privileges]
 
     // 这是所有添加成员的id列表
-    users_arr && users_arr.map(item => {
-      temp_ids.push(item.id)
-    })
+    users_arr &&
+      users_arr.map(item => {
+        temp_ids.push(item.id)
+      })
 
     let flag
     // 权限列表中的id
-    new_privileges = new_privileges && new_privileges.map(item => {
-      let { id } = (item && item.user_info) && item.user_info
-      if (user_id == id) { // 从权限列表中找到自己
-        if (temp_ids.indexOf(id) != -1) { // 判断自己是否在添加的列表中
-          flag = true
+    new_privileges =
+      new_privileges &&
+      new_privileges.map(item => {
+        let { id } = item && item.user_info && item.user_info
+        if (user_id == id) {
+          // 从权限列表中找到自己
+          if (temp_ids.indexOf(id) != -1) {
+            // 判断自己是否在添加的列表中
+            flag = true
+          }
         }
-      }
-      new_ids.push(id)
-    })
+        new_ids.push(id)
+      })
 
     // 这里是需要做一个只添加了自己的一条提示
-    if (flag && temp_ids.length == '1') { // 表示只选择了自己, 而不是全选
+    if (flag && temp_ids.length == '1') {
+      // 表示只选择了自己, 而不是全选
       message.warn('该成员已存在, 请不要重复添加', MESSAGE_DURATION_TIME)
       return false
-    } else { // 否则表示进行了全选, 那么就过滤
-      temp_ids = temp_ids && temp_ids.filter(item => {
-        if (new_ids.indexOf(item) == -1) {
-          return item
-        }
-      })
+    } else {
+      // 否则表示进行了全选, 那么就过滤
+      temp_ids =
+        temp_ids &&
+        temp_ids.filter(item => {
+          if (new_ids.indexOf(item) == -1) {
+            return item
+          }
+        })
     }
 
     setContentPrivilege({
@@ -759,7 +864,10 @@ export default class FileList extends React.Component {
         }, 500)
         let temp_arr = res && res.data
         if (!Array.isArray(temp_arr)) return false
-        this.visitControlUpdateCurrentProjectData({ privileges: temp_arr, type: 'add' })
+        this.visitControlUpdateCurrentProjectData({
+          privileges: temp_arr,
+          type: 'add'
+        })
       } else {
         message.warning(res.message)
       }
@@ -782,10 +890,12 @@ export default class FileList extends React.Component {
    * @param {Boolean} flag 开关切换
    */
   handleToggleContentPrivilege = flag => {
-    const { visitControlModalData: { folder_id, file_id, version_id } } = this.state
+    const {
+      visitControlModalData: { folder_id, file_id, version_id }
+    } = this.state
     const dataType = this.getVisitControlModalDataType()
     const data = {
-      content_id: dataType == "file" ? version_id : folder_id,
+      content_id: dataType == 'file' ? version_id : folder_id,
       content_type: dataType == 'file' ? 'file' : 'folder',
       is_open: flag ? 1 : 0
     }
@@ -797,7 +907,11 @@ export default class FileList extends React.Component {
         }, 500)
         let temp_arr = res && res.data
         if (!Array.isArray(temp_arr)) return false
-        this.visitControlUpdateCurrentProjectData({ is_privilege: flag ? '1' : '0', type: 'privilege', privileges: temp_arr })
+        this.visitControlUpdateCurrentProjectData({
+          is_privilege: flag ? '1' : '0',
+          type: 'privilege',
+          privileges: temp_arr
+        })
       } else {
         message.warning(res.message)
       }
@@ -806,7 +920,10 @@ export default class FileList extends React.Component {
 
   // 访问控制更新数据
   visitControlUpdateCurrentProjectData = obj => {
-    const { visitControlModalData, visitControlModalData: { belong_folder_id, privileges, file_id } } = this.state
+    const {
+      visitControlModalData,
+      visitControlModalData: { belong_folder_id, privileges, file_id }
+    } = this.state
     const { dispatch, selectedRows = [] } = this.props
 
     // 访问控制开关切换
@@ -818,11 +935,15 @@ export default class FileList extends React.Component {
           obj[item].map(val => {
             let temp_arr = arrayNonRepeatfy([].concat(...privileges, val))
             if (!Array.isArray(temp_arr)) return false
-            return new_privileges = [...temp_arr]
+            return (new_privileges = [...temp_arr])
           })
         }
       }
-      let new_visitControlModalData = { ...visitControlModalData, is_privilege: obj.is_privilege, privileges: new_privileges }
+      let new_visitControlModalData = {
+        ...visitControlModalData,
+        is_privilege: obj.is_privilege,
+        privileges: new_privileges
+      }
       this.setState({
         visitControlModalData: new_visitControlModalData
       })
@@ -835,7 +956,11 @@ export default class FileList extends React.Component {
       })
       // 这里是也要更新选中的列表, 但是需要这个选择列表存在的情况下
       if (selectedRows && selectedRows.length) {
-        this.updateSelectedRowsData({ new_privileges, is_privilege: obj.is_privilege, file_id })
+        this.updateSelectedRowsData({
+          new_privileges,
+          is_privilege: obj.is_privilege,
+          file_id
+        })
       }
     }
 
@@ -847,11 +972,14 @@ export default class FileList extends React.Component {
           obj[item].map(val => {
             let temp_arr = arrayNonRepeatfy([].concat(...privileges, val))
             if (!Array.isArray(temp_arr)) return false
-            return new_privileges = [...temp_arr]
+            return (new_privileges = [...temp_arr])
           })
         }
       }
-      let new_visitControlModalData = { ...visitControlModalData, privileges: new_privileges }
+      let new_visitControlModalData = {
+        ...visitControlModalData,
+        privileges: new_privileges
+      }
 
       this.setState({
         visitControlModalData: new_visitControlModalData
@@ -876,7 +1004,10 @@ export default class FileList extends React.Component {
           new_privileges.splice(index, 1)
         }
       })
-      let new_visitControlModalData = { ...visitControlModalData, privileges: new_privileges }
+      let new_visitControlModalData = {
+        ...visitControlModalData,
+        privileges: new_privileges
+      }
       this.setState({
         visitControlModalData: new_visitControlModalData
       })
@@ -897,7 +1028,7 @@ export default class FileList extends React.Component {
     if (obj && obj.type && obj.type == 'change') {
       let { id, content_privilege_code, user_info } = obj.temp_arr
       let new_privileges = [...privileges]
-      new_privileges = new_privileges.map((item) => {
+      new_privileges = new_privileges.map(item => {
         let new_item = item
         if (item.id == id) {
           new_item = { ...item, content_privilege_code: obj.code }
@@ -906,7 +1037,10 @@ export default class FileList extends React.Component {
         }
         return new_item
       })
-      let new_visitControlModalData = { ...visitControlModalData, privileges: new_privileges }
+      let new_visitControlModalData = {
+        ...visitControlModalData,
+        privileges: new_privileges
+      }
       this.setState({
         visitControlModalData: new_visitControlModalData
       })
@@ -922,23 +1056,29 @@ export default class FileList extends React.Component {
         this.updateSelectedRowsData({ new_privileges, file_id })
       }
     }
-
-
   }
 
   // 文件选中列表中的更新数据
-  updateSelectedRowsData = (obj) => {
+  updateSelectedRowsData = obj => {
     const { selectedRows = [], dispatch } = this.props
     let new_selectedRows = [...selectedRows]
-    new_selectedRows = new_selectedRows && new_selectedRows.map(item => {
-      let new_item = item
-      if (item.file_id == obj.file_id) {
-        new_item = { ...item, privileges: obj.new_privileges, is_privilege: obj.is_privilege ? obj.is_privilege : item.is_privilege }
-      } else {
-        new_item = { ...item }
-      }
-      return new_item
-    })
+    new_selectedRows =
+      new_selectedRows &&
+      new_selectedRows.map(item => {
+        let new_item = item
+        if (item.file_id == obj.file_id) {
+          new_item = {
+            ...item,
+            privileges: obj.new_privileges,
+            is_privilege: obj.is_privilege
+              ? obj.is_privilege
+              : item.is_privilege
+          }
+        } else {
+          new_item = { ...item }
+        }
+        return new_item
+      })
     dispatch({
       type: 'projectDetailFile/updateDatas',
       payload: {
@@ -947,32 +1087,64 @@ export default class FileList extends React.Component {
     })
   }
 
-  getEllipsisFileName = (name) => {
+  getEllipsisFileName = name => {
     // wx6535e025f795dca9.o6zAJs5_pqZsbrr7sJng7qkxKKbM.ZhMftVUvAIJ9b5dcb721199c1b8f4f84b0954a80e589.png
     // let str = 'wx6535e025f795dca9.o6zAJs5_pqZsbrr7sJng7qkxKKbM.ZhMftVUvAIJ9b5dcb721199c1b8f4f84b0954a80e589.png'
     let str = name
     if (!name) return
     let arr = str.split('.')
-    arr.splice(-1,1)
+    arr.splice(-1, 1)
     arr.join('.')
     return arr
   }
 
   render() {
-    const { selectedRowKeys, selectedRows, fileList = [], board_id } = this.props
-    const { nameSort, sizeSort, creatorSort, visitControlModalVisible, visitControlModalData, visitControlModalData: { belong_folder_id, privileges = [], privileges_extend = [] }, shouldHideVisitControlPopover } = this.state;
-    const new_projectParticipant = (privileges_extend && privileges_extend.length) ? arrayNonRepeatfy([].concat(...privileges_extend)) : []
+    const {
+      selectedRowKeys,
+      selectedRows,
+      fileList = [],
+      board_id
+    } = this.props
+    const {
+      nameSort,
+      sizeSort,
+      creatorSort,
+      visitControlModalVisible,
+      visitControlModalData,
+      visitControlModalData: {
+        belong_folder_id,
+        privileges = [],
+        privileges_extend = []
+      },
+      shouldHideVisitControlPopover
+    } = this.state
+    const new_projectParticipant =
+      privileges_extend && privileges_extend.length
+        ? arrayNonRepeatfy([].concat(...privileges_extend))
+        : []
     // 文件列表的点点点选项
     const operationMenu = (data, board_id) => {
       const { type, is_privilege, privileges, file_id } = data
       // 当type为1的时候为文件夹: 只有访问控制和移动回收站
       return (
-        <Menu getPopupContainer={triggerNode => triggerNode.parentNode} onClick={this.operationMenuClick.bind(this, data, board_id)}>
+        <Menu
+          getPopupContainer={triggerNode => triggerNode.parentNode}
+          onClick={this.operationMenuClick.bind(this, data, board_id)}
+        >
           {/*<Menu.Item key="1">收藏</Menu.Item>*/}
-          {type != '1' && checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD, board_id)) ? (
+          {type != '1' &&
+          checkIsHasPermissionInVisitControl(
+            'edit',
+            privileges,
+            is_privilege,
+            [],
+            checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD, board_id)
+          ) ? (
             <Menu.Item key="2">下载</Menu.Item>
-          ) : ('')}
-          {(
+          ) : (
+            ''
+          )}
+          {
             <Menu.Item key="99">
               {!shouldHideVisitControlPopover && (
                 <div
@@ -983,96 +1155,204 @@ export default class FileList extends React.Component {
                     popoverPlacement={'rightTop'}
                     isPropVisitControl={is_privilege == '0' ? false : true}
                     principalList={new_projectParticipant}
-                    principalInfo='位任务列表负责人'
+                    principalInfo="位任务列表负责人"
                     // notShowPrincipal={true}
                     otherPrivilege={privileges}
-                    otherPersonOperatorMenuItem={visitControlOtherPersonOperatorMenuItem}
-                    removeMemberPromptText='移出后用户将不能访问此任务列表'
+                    otherPersonOperatorMenuItem={
+                      visitControlOtherPersonOperatorMenuItem
+                    }
+                    removeMemberPromptText="移出后用户将不能访问此任务列表"
                     handleVisitControlChange={this.handleVisitControlChange}
-                    handleVisitControlPopoverVisible={this.handleVisitControlPopoverVisible}
-                    handleClickedOtherPersonListOperatorItem={this.handleClickedOtherPersonListOperatorItem}
+                    handleVisitControlPopoverVisible={
+                      this.handleVisitControlPopoverVisible
+                    }
+                    handleClickedOtherPersonListOperatorItem={
+                      this.handleClickedOtherPersonListOperatorItem
+                    }
                     handleAddNewMember={this.handleVisitControlAddNewMember}
                   >
-                    <span>访问控制&nbsp;&nbsp;<span className={globalStyles.authTheme}>&#xe7eb;</span></span>
+                    <span>
+                      访问控制&nbsp;&nbsp;
+                      <span className={globalStyles.authTheme}>&#xe7eb;</span>
+                    </span>
                   </VisitControl>
                 </div>
               )}
             </Menu.Item>
-          )
           }
           {/* PROJECT_FILES_FOLDER */}
-          {
-            type != '1' && checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD, board_id)) ? (
-              <Menu.Item key="3">移动</Menu.Item>
-            ) : ('')
-          }
-          {
-            type != '1' && checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD, board_id)) ? (
-              <Menu.Item key="4">复制</Menu.Item>
-            ) : ('')
-          }
-          {
-            checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, [], checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DELETE, board_id)) && (
-              <Menu.Item key="5" >移到回收站</Menu.Item>
-            )
-          }
-        </Menu >
+          {type != '1' &&
+          checkIsHasPermissionInVisitControl(
+            'edit',
+            privileges,
+            is_privilege,
+            [],
+            checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD, board_id)
+          ) ? (
+            <Menu.Item key="3">移动</Menu.Item>
+          ) : (
+            ''
+          )}
+          {type != '1' &&
+          checkIsHasPermissionInVisitControl(
+            'edit',
+            privileges,
+            is_privilege,
+            [],
+            checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD, board_id)
+          ) ? (
+            <Menu.Item key="4">复制</Menu.Item>
+          ) : (
+            ''
+          )}
+          {checkIsHasPermissionInVisitControl(
+            'edit',
+            privileges,
+            is_privilege,
+            [],
+            checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DELETE, board_id)
+          ) && <Menu.Item key="5">移到回收站</Menu.Item>}
+        </Menu>
       )
     }
 
     // 采用的table组件, 这是每一列的标题等内容
     const columns = [
       {
-        title: <div style={{ color: '#8c8c8c', cursor: 'pointer' }} onClick={this.listSort.bind(this, '1')} >{currentNounPlanFilterName(FILES)}名<Icon type={nameSort ? "caret-down" : "caret-up"} theme="outlined" style={{ fontSize: 10, marginLeft: 6, color: '#595959' }} /></div>,
+        title: (
+          <div
+            style={{ color: '#8c8c8c', cursor: 'pointer' }}
+            onClick={this.listSort.bind(this, '1')}
+          >
+            {currentNounPlanFilterName(FILES)}名
+            <Icon
+              type={nameSort ? 'caret-down' : 'caret-up'}
+              theme="outlined"
+              style={{ fontSize: 10, marginLeft: 6, color: '#595959' }}
+            />
+          </div>
+        ),
         key: 'file_name',
-        render: (data) => {
+        render: data => {
           const { type, file_name, isInAdd, is_privilege } = data
           if (isInAdd) {
-            return (
-              <CreatDirector />
-            )
+            return <CreatDirector />
           } else {
-            return (type === '1' ?
-              (
-                <span onClick={this.openDirectory.bind(this, data)} style={{ cursor: 'pointer', display: 'inline-block', maxWidth: '700px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
-                  <i className={globalStyles.authTheme} style={{ fontStyle: 'normal', fontSize: 22, color: '#1890FF', marginRight: 8, cursor: 'pointer' }}>&#xe6c4;</i>
-                  {file_name}
-                  {
-                    is_privilege == '1' && (
-                      <Tooltip title="已开启访问控制" placement="top">
-                        <span style={{ color: 'rgba(0,0,0,0.50)', marginRight: '5px', marginLeft: '5px' }}>
-                          <span className={`${globalStyles.authTheme}`}>&#xe7ca;</span>
-                        </span>
-                      </Tooltip>
-                    )
-                  }
+            return type === '1' ? (
+              <span
+                onClick={this.openDirectory.bind(this, data)}
+                style={{
+                  cursor: 'pointer',
+                  display: 'inline-block',
+                  maxWidth: '700px',
+                  overflow: 'hidden',
+                  whiteSpace: 'nowrap',
+                  textOverflow: 'ellipsis'
+                }}
+              >
+                <i
+                  className={globalStyles.authTheme}
+                  style={{
+                    fontStyle: 'normal',
+                    fontSize: 22,
+                    color: '#1890FF',
+                    marginRight: 8,
+                    cursor: 'pointer'
+                  }}
+                >
+                  &#xe6c4;
+                </i>
+                {file_name}
+                {is_privilege == '1' && (
+                  <Tooltip title="已开启访问控制" placement="top">
+                    <span
+                      style={{
+                        color: 'rgba(0,0,0,0.50)',
+                        marginRight: '5px',
+                        marginLeft: '5px'
+                      }}
+                    >
+                      <span className={`${globalStyles.authTheme}`}>
+                        &#xe7ca;
+                      </span>
+                    </span>
+                  </Tooltip>
+                )}
+              </span>
+            ) : (
+              <span
+                onClick={this.openFile.bind(this, data)}
+                style={{
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center'
+                }}
+              >
+                <i
+                  className={globalStyles.authTheme}
+                  style={{
+                    fontStyle: 'normal',
+                    fontSize: 30,
+                    color: '#1890FF',
+                    marginRight: 8,
+                    cursor: 'pointer'
+                  }}
+                  dangerouslySetInnerHTML={{
+                    __html: this.judgeFileType(file_name)
+                  }}
+                ></i>
+                <span style={{ display: 'flex' }}>
+                  <span
+                    style={{
+                      maxWidth: '500px',
+                      overflow: 'hidden',
+                      whiteSpace: 'nowrap',
+                      textOverflow: 'ellipsis'
+                    }}
+                  >
+                    {this.getEllipsisFileName(file_name)}
+                  </span>
+                  {getSubfixName(file_name)}
                 </span>
-
-              )
-              : (
-                <span onClick={this.openFile.bind(this, data)} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
-                  <i className={globalStyles.authTheme} style={{ fontStyle: 'normal', fontSize: 30, color: '#1890FF', marginRight: 8, cursor: 'pointer' }} dangerouslySetInnerHTML={{ __html: this.judgeFileType(file_name) }}></i>
-                    <span style={{display: 'flex'}}><span style={{maxWidth: '500px', overflow: 'hidden',  whiteSpace: 'nowrap', textOverflow: 'ellipsis'}}>{this.getEllipsisFileName(file_name)}</span>{getSubfixName(file_name)}</span>
-                  {/* {file_name} */}
-                  {
-                    is_privilege == '1' && (
-                      <Tooltip title="已开启访问控制" placement="top">
-                        <span style={{ color: 'rgba(0,0,0,0.50)', marginRight: '5px', marginLeft: '5px' }}>
-                          <span className={`${globalStyles.authTheme}`}>&#xe7ca;</span>
-                        </span>
-                      </Tooltip>
-                    )
-                  }
-                </span>
-              )
+                {/* {file_name} */}
+                {is_privilege == '1' && (
+                  <Tooltip title="已开启访问控制" placement="top">
+                    <span
+                      style={{
+                        color: 'rgba(0,0,0,0.50)',
+                        marginRight: '5px',
+                        marginLeft: '5px'
+                      }}
+                    >
+                      <span className={`${globalStyles.authTheme}`}>
+                        &#xe7ca;
+                      </span>
+                    </span>
+                  </Tooltip>
+                )}
+              </span>
             )
           }
         }
-      }, {
-        title: <div style={{ color: '#8c8c8c', cursor: 'pointer' }} onClick={this.listSort.bind(this, '2')}>大小<Icon type={sizeSort ? "caret-down" : "caret-up"} theme="outlined" style={{ fontSize: 10, marginLeft: 6, color: '#595959' }} /></div>,
+      },
+      {
+        title: (
+          <div
+            style={{ color: '#8c8c8c', cursor: 'pointer' }}
+            onClick={this.listSort.bind(this, '2')}
+          >
+            大小
+            <Icon
+              type={sizeSort ? 'caret-down' : 'caret-up'}
+              theme="outlined"
+              style={{ fontSize: 10, marginLeft: 6, color: '#595959' }}
+            />
+          </div>
+        ),
         dataIndex: 'file_size',
-        key: 'file_size',
-      }, {
+        key: 'file_size'
+      },
+      {
         title: '更新时间',
         dataIndex: 'update_time',
         key: 'update_time',
@@ -1086,15 +1366,28 @@ export default class FileList extends React.Component {
             </div>
           )
         }
-      }, {
-        title: <div style={{ color: '#8c8c8c', cursor: 'pointer' }} onClick={this.listSort.bind(this, '3')}>创建人<Icon type={creatorSort ? "caret-down" : "caret-up"} theme="outlined" style={{ fontSize: 10, marginLeft: 6, color: '#595959' }} /></div>,
+      },
+      {
+        title: (
+          <div
+            style={{ color: '#8c8c8c', cursor: 'pointer' }}
+            onClick={this.listSort.bind(this, '3')}
+          >
+            创建人
+            <Icon
+              type={creatorSort ? 'caret-down' : 'caret-up'}
+              theme="outlined"
+              style={{ fontSize: 10, marginLeft: 6, color: '#595959' }}
+            />
+          </div>
+        ),
         dataIndex: 'creator',
-        key: 'creator',
+        key: 'creator'
       },
       {
         title: '操作',
         key: 'operator',
-        render: (data) => {
+        render: data => {
           // 这个data为当前行的值, 有以下这些等等, 这是antd中自带的组件
           /**
            * belong_folder_id: "1173834546270048258"
@@ -1114,30 +1407,44 @@ export default class FileList extends React.Component {
           if (!isInAdd) {
             return (
               <div style={{ cursor: 'pointer', position: 'relative' }}>
-                <Dropdown zIndex={5} getPopupContainer={triggerNode => triggerNode.parentNode} overlay={operationMenu(data, board_id)} trigger={['click']} onVisibleChange={(visible) => { this.toggleDropdownVisible(visible, data) }} >
-                  <Icon type="ellipsis" theme="outlined" style={{ fontSize: 22, color: '#000000' }}
-                  // onClick={this.toggleDropdownVisible} 
+                <Dropdown
+                  zIndex={5}
+                  getPopupContainer={triggerNode => triggerNode.parentNode}
+                  overlay={operationMenu(data, board_id)}
+                  trigger={['click']}
+                  onVisibleChange={visible => {
+                    this.toggleDropdownVisible(visible, data)
+                  }}
+                >
+                  <Icon
+                    type="ellipsis"
+                    theme="outlined"
+                    style={{ fontSize: 22, color: '#000000' }}
+                    // onClick={this.toggleDropdownVisible}
                   />
                 </Dropdown>
               </div>
             )
           } else {
-            return (
-              <div>--</div>
-            )
+            return <div>--</div>
           }
         }
-
-
-      },
-    ];
+      }
+    ]
     const {
-      // child_privilegeuser_ids, 
-      removeMemberPromptText, is_privilege, fileTypeName, fileOrFolderName, visitControlOtherPersonOperatorMenuItem
+      // child_privilegeuser_ids,
+      removeMemberPromptText,
+      is_privilege,
+      fileTypeName,
+      fileOrFolderName,
+      visitControlOtherPersonOperatorMenuItem
     } = this.genVisitContorlData(visitControlModalData)
 
     return (
-      <div className={indexStyles.tableOut} style={{ minHeight: (bodyOffsetHeight) }}>
+      <div
+        className={indexStyles.tableOut}
+        style={{ minHeight: bodyOffsetHeight }}
+      >
         <Table
           rowSelection={{
             selectedRowKeys,
@@ -1148,13 +1455,15 @@ export default class FileList extends React.Component {
               disabled: data.type === '1', //data.isInAdd === true || data.type === '1', // Column configuration not to be checked
               name: data.type === '2' ? data.folder_id : data.file_id, //data.file_id,
               type: data.type
-            }),
+            })
           }}
           columns={columns}
           dataSource={fileList}
           pagination={false}
           onChange={this.handleChange.bind(this)}
-          rowKey={record => record.type == '2' ? record.file_id : record.folder_id}
+          rowKey={record =>
+            record.type == '2' ? record.file_id : record.folder_id
+          }
         />
         {/* <Modal
           title={visitControlModalTitle}
@@ -1198,16 +1507,10 @@ function mapStateToProps({
     }
   },
   projectDetail: {
-    datas: {
-      projectDetailInfoData = {},
-      board_id
-    }
+    datas: { projectDetailInfoData = {}, board_id }
   },
   technological: {
-    datas: {
-
-  	userBoardPermissions
-    }
+    datas: { userBoardPermissions }
   }
 }) {
   return {

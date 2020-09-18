@@ -7,12 +7,11 @@ import DuplicateAndReportPerson from './DuplicateAndReportPerson'
 import CompleteDeadlineContent from './CompleteDeadlineContent'
 
 export default class index extends Component {
-
   state = {
     popoverVisible: false
   }
 
-  onVisibleChange = (visible,calback) => {
+  onVisibleChange = (visible, calback) => {
     this.setState({
       popoverVisible: visible
     })
@@ -20,21 +19,46 @@ export default class index extends Component {
   }
 
   // 根据不同的类型 渲染不同的内容 填写人 | 审批人 | 抄送人/抄报人
-  renderDiffTypeContent = (type) => {
-    let container = (<div></div>)
+  renderDiffTypeContent = type => {
+    let container = <div></div>
     switch (type) {
       case '1': // 资料收集中的填写人
-        container = <FillInPersonContent popoverVisible={this.state.popoverVisible} onVisibleChange={this.onVisibleChange} {...this.props}/>
-        break;
+        container = (
+          <FillInPersonContent
+            popoverVisible={this.state.popoverVisible}
+            onVisibleChange={this.onVisibleChange}
+            {...this.props}
+          />
+        )
+        break
       case '2': // 审批类型中的审批人
-        container = <ExamineAndApproveContent popoverVisible={this.state.popoverVisible} onVisibleChange={this.onVisibleChange} {...this.props} />
+        container = (
+          <ExamineAndApproveContent
+            popoverVisible={this.state.popoverVisible}
+            onVisibleChange={this.onVisibleChange}
+            {...this.props}
+          />
+        )
         break
       case '3': // 抄送中的抄送人 | 抄报人
-        container = <DuplicateAndReportPerson popoverVisible={this.state.popoverVisible} onVisibleChange={this.onVisibleChange} {...this.props}/>
+        container = (
+          <DuplicateAndReportPerson
+            popoverVisible={this.state.popoverVisible}
+            onVisibleChange={this.onVisibleChange}
+            {...this.props}
+          />
+        )
         break
-      default: // 其他的显示完成期限
-        container = <CompleteDeadlineContent popoverVisible={this.state.popoverVisible} onVisibleChange={this.onVisibleChange} {...this.props}/>
-        break;
+      default:
+        // 其他的显示完成期限
+        container = (
+          <CompleteDeadlineContent
+            popoverVisible={this.state.popoverVisible}
+            onVisibleChange={this.onVisibleChange}
+            {...this.props}
+          />
+        )
+        break
     }
     return container
   }

@@ -6,10 +6,8 @@ import { connect } from 'dva'
 
 @connect(mapStateToProps)
 export default class TagDropDown extends React.Component {
-
   state = {
-    resultArr: [],
-
+    resultArr: []
   }
   componentWillMount() {
     this.setResultArr(this.props)
@@ -27,58 +25,67 @@ export default class TagDropDown extends React.Component {
   }
 
   fuzzyQuery = (list, searchName, keyWord) => {
-    var arr = [];
+    var arr = []
     for (var i = 0; i < list.length; i++) {
       if (searchName) {
         if (list[i][searchName].indexOf(keyWord) !== -1) {
-          arr.push(list[i]);
+          arr.push(list[i])
         }
       } else {
         if (list[i].indexOf(keyWord) !== -1) {
-          arr.push(list[i]);
+          arr.push(list[i])
         }
       }
     }
-    return arr;
+    return arr
   }
 
   toAdd() {
-    const { tagInputValue, } = this.props
+    const { tagInputValue } = this.props
     this.props.tagDropItemClick({ name: tagInputValue })
   }
   render() {
-    const { tagInputValue, } = this.props
+    const { tagInputValue } = this.props
     const { resultArr } = this.state
     return (
       <div className={TagDropDownStyles.outercontainer}>
-        <div className={TagDropDownStyles.dropOut} >
-          <div className={TagDropDownStyles.dropItem} style={{ display: `${tagInputValue ? 'flex' : 'none'}` }}>
+        <div className={TagDropDownStyles.dropOut}>
+          <div
+            className={TagDropDownStyles.dropItem}
+            style={{ display: `${tagInputValue ? 'flex' : 'none'}` }}
+          >
             <div className={TagDropDownStyles.dropItem_left}>
               {tagInputValue}
             </div>
             <div className={TagDropDownStyles.dropItem_right}>
-              <div className={globalStyles.authTheme} onClick={this.toAdd.bind(this)}>&#xe70b;</div>
+              <div
+                className={globalStyles.authTheme}
+                onClick={this.toAdd.bind(this)}
+              >
+                &#xe70b;
+              </div>
             </div>
           </div>
 
           {resultArr.map((value, key) => {
             return (
-              <TagDropDownItem key={key} tagDropItemClick={this.props.tagDropItemClick} itemKey={key} itemValue={value} />
+              <TagDropDownItem
+                key={key}
+                tagDropItemClick={this.props.tagDropItemClick}
+                itemKey={key}
+                itemValue={value}
+              />
             )
           })}
         </div>
       </div>
-
     )
   }
-
 }
 function mapStateToProps({
   projectDetailTask: {
-    datas: {
-      boardTagList = [],
-    }
-  },
+    datas: { boardTagList = [] }
+  }
 }) {
   return {
     boardTagList

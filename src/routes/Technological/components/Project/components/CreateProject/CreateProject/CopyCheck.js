@@ -2,20 +2,22 @@ import React, { Component } from 'react'
 import { Checkbox, message } from 'antd'
 import indexStyles from './index.less'
 import {
-  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_FLOW_FLOW_ACCESS,
+  MESSAGE_DURATION_TIME,
+  NOT_HAS_PERMISION_COMFIRN,
+  PROJECT_FLOW_FLOW_ACCESS,
   PROJECT_FLOWS_FLOW_TEMPLATE
-} from "../../../../../../globalset/js/constant";
-import {checkIsHasPermissionInBoard} from "../../../../../../utils/businessFunction";
-import { connect } from "dva/index";
+} from '../../../../../../globalset/js/constant'
+import { checkIsHasPermissionInBoard } from '../../../../../../utils/businessFunction'
+import { connect } from 'dva/index'
 
 @connect(mapStateToProps)
-export default class CopyCheck extends Component{
+export default class CopyCheck extends Component {
   state = {
     parentChecked: false
   }
-  parentCheckedChange = (e) => {
+  parentCheckedChange = e => {
     const { code, board_id } = this.props //Tasks Flows Files
-    if(!checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS)){
+    if (!checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
@@ -28,7 +30,7 @@ export default class CopyCheck extends Component{
         is_copy_flow_template: checked
       }
     }
-    if('Flows' == code) {
+    if ('Flows' == code) {
       this.props.setCopyValue && this.props.setCopyValue(obj)
     }
   }
@@ -41,15 +43,15 @@ export default class CopyCheck extends Component{
       case 'Tasks':
         parentDescription = '复制原项目的任务列表'
         childrenDescription = '复制原项目的任务'
-        break;
+        break
       case 'Flows':
         parentDescription = '复制原项目的流程模版'
         childrenDescription = ''
-        break;
+        break
       case 'Files':
         parentDescription = '复制原项目的文件夹'
         childrenDescription = '复制文件'
-        break;
+        break
       default:
         break
     }
@@ -58,16 +60,19 @@ export default class CopyCheck extends Component{
       <div>
         {checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS) && (
           <div className={indexStyles.checkParent}>
-            <Checkbox checked={parentChecked} onChange={this.parentCheckedChange}>
+            <Checkbox
+              checked={parentChecked}
+              onChange={this.parentCheckedChange}
+            >
               {parentDescription}
             </Checkbox>
           </div>
         )}
 
         {/*<div className={indexStyles.checkChildren}>*/}
-          {/*<Checkbox >*/}
-            {/*{childrenDescription}*/}
-          {/*</Checkbox>*/}
+        {/*<Checkbox >*/}
+        {/*{childrenDescription}*/}
+        {/*</Checkbox>*/}
         {/*</div>*/}
       </div>
     )
@@ -75,17 +80,13 @@ export default class CopyCheck extends Component{
   }
   render() {
     return (
-      <div className={indexStyles.copyCheckOut}>
-        {this.renderCopyType()}
-      </div>
+      <div className={indexStyles.copyCheckOut}>{this.renderCopyType()}</div>
     )
   }
 }
 function mapStateToProps({
   technological: {
-    datas: {
-      userBoardPermissions
-    }
+    datas: { userBoardPermissions }
   }
 }) {
   return {

@@ -1,15 +1,14 @@
 import React from 'react'
 import { Modal, Tree, message } from 'antd'
 import indexStyles from './index.less'
-import { connect } from 'dva';
+import { connect } from 'dva'
 
-const TreeNode = Tree.TreeNode;
+const TreeNode = Tree.TreeNode
 
 @connect(mapStateToProps)
 export default class MoveToDirectory extends React.Component {
-
   state = {
-    selectFolderId: '',
+    selectFolderId: ''
   }
 
   onCancel = () => {
@@ -22,20 +21,41 @@ export default class MoveToDirectory extends React.Component {
     })
   }
   //重新改变面包屑，递归
-  findChildrenParent = (arr, childDataKey, key, value, originalData, callback) => {
+  findChildrenParent = (
+    arr,
+    childDataKey,
+    key,
+    value,
+    originalData,
+    callback
+  ) => {
     const { breadcrumbList = [] } = this.props
     for (var i = 0; i < arr.length; i++) {
       if (arr[i][key] == value) {
         callback(arr[i])
-        this.findChildrenParent(originalData, 'child_data', 'folder_id', arr[i]['parent_id'], originalData, function (data) {
-          data['type'] = '1'
-          data['file_name'] = data['folder_name']
-          data['file_id'] = data['folder_id']
-          breadcrumbList.unshift(data)
-        });
+        this.findChildrenParent(
+          originalData,
+          'child_data',
+          'folder_id',
+          arr[i]['parent_id'],
+          originalData,
+          function(data) {
+            data['type'] = '1'
+            data['file_name'] = data['folder_name']
+            data['file_id'] = data['folder_id']
+            breadcrumbList.unshift(data)
+          }
+        )
         break
       } else {
-        this.findChildrenParent(arr[i][childDataKey], childDataKey, key, value, originalData, callback);
+        this.findChildrenParent(
+          arr[i][childDataKey],
+          childDataKey,
+          key,
+          value,
+          originalData,
+          callback
+        )
       }
     }
     const { dispatch } = this.props
@@ -61,7 +81,17 @@ export default class MoveToDirectory extends React.Component {
         moveToDirectoryVisiblie: false
       }
     })
-    const { fileList, selectedRowKeys, selectedRows, copyOrMove, currentFileListMenuOperatorId, openMoveDirectoryType, filePreviewCurrentFileId, breadcrumbList, treeFolderData } = this.props
+    const {
+      fileList,
+      selectedRowKeys,
+      selectedRows,
+      copyOrMove,
+      currentFileListMenuOperatorId,
+      openMoveDirectoryType,
+      filePreviewCurrentFileId,
+      breadcrumbList,
+      treeFolderData
+    } = this.props
 
     let file_ids
     //分别从多文件选择， fileList单条信息 ， 文件预览进来
@@ -81,25 +111,33 @@ export default class MoveToDirectory extends React.Component {
         dispatch({
           type: 'projectDetailFile/updateDatas',
           payload: {
-            currentParrentDirectoryId: selectFolderId,
+            currentParrentDirectoryId: selectFolderId
           }
         })
-        this.findChildrenParent([{ ...treeFolderData }], 'child_data', 'folder_id', selectFolderId, [{ ...treeFolderData }], function (data) {
-          data['type'] = '1'
-          data['file_name'] = data['folder_name']
-          data['file_id'] = data['folder_id']
-          breadcrumbList.unshift(data)
-          dispatch({
-            type: 'projectDetailFile/updateDatas',
-            payload: {
-              breadcrumbList
-            }
-          })
-        });
+        this.findChildrenParent(
+          [{ ...treeFolderData }],
+          'child_data',
+          'folder_id',
+          selectFolderId,
+          [{ ...treeFolderData }],
+          function(data) {
+            data['type'] = '1'
+            data['file_name'] = data['folder_name']
+            data['file_id'] = data['folder_id']
+            breadcrumbList.unshift(data)
+            dispatch({
+              type: 'projectDetailFile/updateDatas',
+              payload: {
+                breadcrumbList
+              }
+            })
+          }
+        )
       }
     }
 
-    if (copyOrMove === '0') { //移动0 复制1
+    if (copyOrMove === '0') {
+      //移动0 复制1
       dispatch({
         type: 'projectDetailFile/fileMove',
         payload: {
@@ -116,9 +154,8 @@ export default class MoveToDirectory extends React.Component {
         }
       })
     }
-
   }
-  onSelect = (e) => {
+  onSelect = e => {
     // console.log(e)
     this.setState({
       selectFolderId: e[0]
@@ -126,22 +163,26 @@ export default class MoveToDirectory extends React.Component {
   }
 
   render() {
-    const { moveToDirectoryVisiblie, copyOrMove, treeFolderData = {} } = this.props
+    const {
+      moveToDirectoryVisiblie,
+      copyOrMove,
+      treeFolderData = {}
+    } = this.props
 
     const loop = data => {
       if (!data || !data.length) {
         return
       }
-      return data.map((item) => {
+      return data.map(item => {
         if (item.child_data) {
           return (
             <TreeNode key={item.folder_id} title={item.folder_name}>
               {loop(item.child_data)}
             </TreeNode>
-          );
+          )
         }
-        return <TreeNode key={item.folder_id} title={item.folder_name} />;
-      });
+        return <TreeNode key={item.folder_id} title={item.folder_name} />
+      })
     }
     return (
       <div>
@@ -158,7 +199,10 @@ export default class MoveToDirectory extends React.Component {
         >
           <div className={indexStyles.MoveToDirectoryOut}>
             <Tree onSelect={this.onSelect.bind(this)}>
-              <TreeNode key={treeFolderData.folder_id} title={treeFolderData.folder_name}>
+              <TreeNode
+                key={treeFolderData.folder_id}
+                title={treeFolderData.folder_name}
+              >
                 {loop(treeFolderData.child_data)}
               </TreeNode>
             </Tree>
@@ -180,11 +224,9 @@ function mapStateToProps({
       selectedRows,
       currentFileListMenuOperatorId,
       openMoveDirectoryType,
-      filePreviewCurrentFileId,
-
-
+      filePreviewCurrentFileId
     }
-  },
+  }
 }) {
   return {
     breadcrumbList,
@@ -196,6 +238,6 @@ function mapStateToProps({
     selectedRows,
     currentFileListMenuOperatorId,
     openMoveDirectoryType,
-    filePreviewCurrentFileId,
+    filePreviewCurrentFileId
   }
 }

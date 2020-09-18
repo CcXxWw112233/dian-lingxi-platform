@@ -6,9 +6,9 @@ import CustormModal from '../../../../../components/CustormModal'
 class DetailInfoModal extends React.Component {
   state = {}
 
-  componentDidMount() { }
+  componentDidMount() {}
 
-  componentWillReceiveProps(nextProps) { }
+  componentWillReceiveProps(nextProps) {}
 
   onCancel() {
     const { dispatch } = this.props
@@ -21,7 +21,7 @@ class DetailInfoModal extends React.Component {
   }
 
   render() {
-    const { modalVisible, invitationType, invitationId, } = this.props;
+    const { modalVisible, invitationType, invitationId } = this.props
 
     return (
       <CustormModal
@@ -32,7 +32,12 @@ class DetailInfoModal extends React.Component {
         footer={null}
         destroyOnClose
         onCancel={this.onCancel.bind(this)}
-        overInner={<DrawDetailInfo invitationType={invitationType} invitationId={invitationId} />}
+        overInner={
+          <DrawDetailInfo
+            invitationType={invitationType}
+            invitationId={invitationId}
+          />
+        }
       />
     )
   }

@@ -6,24 +6,18 @@ import BoardItem from './BoardItem'
 import FlowItem from './FlowItem'
 import FileItem from './FileItem'
 
-import { connect } from "dva/index";
-
+import { connect } from 'dva/index'
 
 //此弹窗应用于各个业务弹窗，和右边圈子适配
 //此弹窗应用于各个业务弹窗，和右边圈子适配
 const getEffectOrReducerByName = name => `globalSearch/${name}`
 @connect(mapStateToProps)
 export default class TypeResult extends React.Component {
-  state = {
+  state = {}
 
-  }
+  componentDidMount() {}
 
-  componentDidMount() {
-  }
-
-  componentWillReceiveProps(nextProps) {
-
-  }
+  componentWillReceiveProps(nextProps) {}
 
   filterTitle = (listType, value) => {
     // console.log(value, 'sss')
@@ -74,7 +68,6 @@ export default class TypeResult extends React.Component {
   }
 
   render() {
-
     const { allTypeResultList } = this.props
     const { dispatch } = this.props
 
@@ -84,35 +77,49 @@ export default class TypeResult extends React.Component {
           const { lists = [], listType } = value
           return (
             <div className={indexstyles.typeResult} key={key}>
-              <div className={indexstyles.contentTitle}>{this.filterTitle(listType).title}</div>
+              <div className={indexstyles.contentTitle}>
+                {this.filterTitle(listType).title}
+              </div>
               {lists.map((value, key) => {
                 return (
-                  <div key={key}>
-                    {this.filterTitle(listType, value).ele}
-                  </div>
+                  <div key={key}>{this.filterTitle(listType, value).ele}</div>
                 )
               })}
               {lists.length ? (
-                <div className={indexstyles.lookMore} onClick={this.lookMore.bind(this, this.filterTitle(listType).defaultSearchType)}>
+                <div
+                  className={indexstyles.lookMore}
+                  onClick={this.lookMore.bind(
+                    this,
+                    this.filterTitle(listType).defaultSearchType
+                  )}
+                >
                   查看更多...
                 </div>
               ) : (
-                  <div className={indexstyles.lookMore} >
-                    暂无数据
-                </div>
-                )}
-
+                <div className={indexstyles.lookMore}>暂无数据</div>
+              )}
             </div>
           )
         })}
       </div>
-
     )
   }
 }
 
-function mapStateToProps({ globalSearch: { datas: { searchTypeList = [], defaultSearchType, searchInputValue, allTypeResultList = [] } } }) {
+function mapStateToProps({
+  globalSearch: {
+    datas: {
+      searchTypeList = [],
+      defaultSearchType,
+      searchInputValue,
+      allTypeResultList = []
+    }
+  }
+}) {
   return {
-    searchTypeList, defaultSearchType, searchInputValue, allTypeResultList
+    searchTypeList,
+    defaultSearchType,
+    searchInputValue,
+    allTypeResultList
   }
 }

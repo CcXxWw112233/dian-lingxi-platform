@@ -10,37 +10,45 @@ export default class PreviewModal extends React.Component {
     })
   }
   render() {
-    const {datas: { editTeamShowPreview, content }} = this.props.model
+    const {
+      datas: { editTeamShowPreview, content }
+    } = this.props.model
 
     //预览的内容等于详情和富文本编辑
     let previewHtmlString = ''
     let contentHTML = ''
     let detailIfoString = ''
-    if(document.getElementById('editTeamShowDetailInfo')) {
-      detailIfoString = document.getElementById('editTeamShowDetailInfo').innerHTML
+    if (document.getElementById('editTeamShowDetailInfo')) {
+      detailIfoString = document.getElementById('editTeamShowDetailInfo')
+        .innerHTML
     }
-    if(typeof content === 'object') {
-      contentHTML = '<div style="max-width: 1200px;margin: 0 auto; overflow: hidden">' +content.toHTML()+'</div>'
-
-    }else {
-      contentHTML = '<div style="max-width: 1200px;margin: 0 auto; overflow: hidden">' +content+'</div>'
+    if (typeof content === 'object') {
+      contentHTML =
+        '<div style="max-width: 1200px;margin: 0 auto; overflow: hidden">' +
+        content.toHTML() +
+        '</div>'
+    } else {
+      contentHTML =
+        '<div style="max-width: 1200px;margin: 0 auto; overflow: hidden">' +
+        content +
+        '</div>'
     }
     previewHtmlString = detailIfoString + contentHTML
     const step = (
-       <div dangerouslySetInnerHTML={{__html: previewHtmlString}}></div>
+      <div dangerouslySetInnerHTML={{ __html: previewHtmlString }}></div>
     )
 
-    return(
+    return (
       <div>
         <Modal
           visible={editTeamShowPreview}
           width={'100%'}
-          height = {'100%'}
+          height={'100%'}
           zIndex={1006}
           maskClosable={false}
           footer={null}
           destroyOnClose
-          style={{textAlign: 'center'}}
+          style={{ textAlign: 'center' }}
           onCancel={this.onCancel}
         >
           {step}

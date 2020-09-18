@@ -1,28 +1,49 @@
 import React, { Component } from 'react'
 import { message, Modal, Menu } from 'antd'
-import { timestampToTime, compareTwoTimestamp, timeToTimestamp } from '@/utils/util'
 import {
-  MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN, PROJECT_TEAM_CARD_COMPLETE, PROJECT_TEAM_CARD_EDIT, PROJECT_FILES_FILE_INTERVIEW
-} from "@/globalset/js/constant";
+  timestampToTime,
+  compareTwoTimestamp,
+  timeToTimestamp
+} from '@/utils/util'
+import {
+  MESSAGE_DURATION_TIME,
+  NOT_HAS_PERMISION_COMFIRN,
+  PROJECT_TEAM_CARD_COMPLETE,
+  PROJECT_TEAM_CARD_EDIT,
+  PROJECT_FILES_FILE_INTERVIEW
+} from '@/globalset/js/constant'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
-import { addTaskExecutor, removeTaskExecutor, deleteTaskFile } from '../../../services/technological/task'
 import {
-  checkIsHasPermissionInBoard, checkIsHasPermissionInVisitControl, isPaymentOrgUser
-} from "@/utils/businessFunction";
+  addTaskExecutor,
+  removeTaskExecutor,
+  deleteTaskFile
+} from '../../../services/technological/task'
+import {
+  checkIsHasPermissionInBoard,
+  checkIsHasPermissionInVisitControl,
+  isPaymentOrgUser
+} from '@/utils/businessFunction'
 import { getFolderList } from '@/services/technological/file'
 import { getMilestoneList } from '@/services/technological/prjectDetail'
 import { arrayNonRepeatfy } from '../../../utils/util'
-import { getCurrentDrawerContentPropsModelFieldData, filterCurrentUpdateDatasField, getCurrentPropertiesData, compareStartDueTime } from '../handleOperateModal'
+import {
+  getCurrentDrawerContentPropsModelFieldData,
+  filterCurrentUpdateDatasField,
+  getCurrentPropertiesData,
+  compareStartDueTime
+} from '../handleOperateModal'
 import { rebackCreateNotify } from '../../NotificationTodos'
 import { lx_utils } from 'lingxi-im'
-import { getSubfixName } from '../../../utils/businessFunction';
+import { getSubfixName } from '../../../utils/businessFunction'
 
 // 逻辑组件
 const LogicWithMainContent = {
   // 打开圈子
-  linkImWithCard: function (data) {
-    const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
-    const { is_simple_model } = user_set;
+  linkImWithCard: function(data) {
+    const { user_set = {} } = localStorage.getItem('userInfo')
+      ? JSON.parse(localStorage.getItem('userInfo'))
+      : {}
+    const { is_simple_model } = user_set
     if (!data) {
       lx_utils && lx_utils.setCommentData(null)
       return false
@@ -39,19 +60,26 @@ const LogicWithMainContent = {
   },
 
   // 点击动态消息 联动圈子
-  handleDynamicComment: function (e) {
+  handleDynamicComment: function(e) {
     e && e.stopPropagation()
-    const { drawContent: { card_name, board_id, card_id } } = this.props
-    this.linkImWithCard({ name: card_name, type: 'card', board_id: board_id, id: card_id })
+    const {
+      drawContent: { card_name, board_id, card_id }
+    } = this.props
+    this.linkImWithCard({
+      name: card_name,
+      type: 'card',
+      board_id: board_id,
+      id: card_id
+    })
   },
 
   //获取项目里文件夹列表
-  getProjectFolderList: function (board_id) {
-    getFolderList({ board_id }).then((res) => {
+  getProjectFolderList: function(board_id) {
+    getFolderList({ board_id }).then(res => {
       if (isApiResponseOk(res)) {
         this.setState({
           boardFolderTreeData: res.data
-        });
+        })
       } else {
         message.error(res.message)
       }
@@ -59,8 +87,8 @@ const LogicWithMainContent = {
   },
 
   //获取项目里程碑列表
-  getMilestone: function (id, callBackObject, milestoneId) {
-    getMilestoneList({ id }).then((res) => {
+  getMilestone: function(id, callBackObject, milestoneId) {
+    getMilestoneList({ id }).then(res => {
       if (isApiResponseOk(res)) {
         this.props.dispatch({
           type: 'publicTaskDetailModal/updateDatas',
@@ -68,11 +96,15 @@ const LogicWithMainContent = {
             milestoneList: res.data
           }
         })
-        this.setState({
-          milestoneList: res.data
-        }, () => {
-          callBackObject && callBackObject.callBackFun(res.data, callBackObject.param);
-        });
+        this.setState(
+          {
+            milestoneList: res.data
+          },
+          () => {
+            callBackObject &&
+              callBackObject.callBackFun(res.data, callBackObject.param)
+          }
+        )
       } else {
         message.error(res.message)
       }
@@ -80,12 +112,15 @@ const LogicWithMainContent = {
   },
 
   // 初始化过滤当前已经存在的字段
-  filterCurrentExistenceField: function (currentData) {
+  filterCurrentExistenceField: function(currentData) {
     const { propertiesList = [] } = this.state
     let newCurrentData = { ...currentData }
     let newPropertiesList = [...propertiesList]
     newPropertiesList = newPropertiesList.filter((value, index) => {
-      const gold_code = (newCurrentData['properties'].find(item => item.code === value.code) || {}).code
+      const gold_code = (
+        newCurrentData['properties'].find(item => item.code === value.code) ||
+        {}
+      ).code
       if (value.code != gold_code) {
         return value
       }
@@ -96,7 +131,7 @@ const LogicWithMainContent = {
   },
 
   // 获取组织成员列表
-  getOrgMemberList: function (org_id) {
+  getOrgMemberList: function(org_id) {
     this.props.dispatch({
       type: 'technological/getCorrespondingOrganizationMmembers',
       payload: {
@@ -106,7 +141,7 @@ const LogicWithMainContent = {
   },
 
   // 获取任务详情数据
-  getInitCardDetailDatas: function () {
+  getInitCardDetailDatas: function() {
     const { card_id, dispatch } = this.props
     if (!card_id) return false
     const that = this
@@ -122,7 +157,10 @@ const LogicWithMainContent = {
         // 检测 该组织是否付费 --> 是否有访问文件权限--> 有 则调接口获取
         if (
           isPaymentOrgUser(res.data.org_id) &&
-          checkIsHasPermissionInBoard(PROJECT_FILES_FILE_INTERVIEW, res.data.board_id)
+          checkIsHasPermissionInBoard(
+            PROJECT_FILES_FILE_INTERVIEW,
+            res.data.board_id
+          )
         ) {
           this.getProjectFolderList(res.data.board_id)
         }
@@ -149,22 +187,48 @@ const LogicWithMainContent = {
   },
 
   // 检测不同类型的权限控制类型的是否显示
-  checkDiffCategoriesAuthoritiesIsVisible: function (code) {
-    const { drawContent = {}, drawContent: { properties = [] } } = this.props
-    const { data = [] } = getCurrentDrawerContentPropsModelFieldData({ properties, code: 'EXECUTOR' })
+  checkDiffCategoriesAuthoritiesIsVisible: function(code) {
+    const {
+      drawContent = {},
+      drawContent: { properties = [] }
+    } = this.props
+    const { data = [] } = getCurrentDrawerContentPropsModelFieldData({
+      properties,
+      code: 'EXECUTOR'
+    })
     const { privileges = [], board_id, is_privilege } = drawContent
     return {
-      'visit_control_edit': function () {// 是否是有编辑权限
-        return checkIsHasPermissionInVisitControl('edit', privileges, is_privilege, data ? data : [], checkIsHasPermissionInBoard(code, board_id))
+      visit_control_edit: function() {
+        // 是否是有编辑权限
+        return checkIsHasPermissionInVisitControl(
+          'edit',
+          privileges,
+          is_privilege,
+          data ? data : [],
+          checkIsHasPermissionInBoard(code, board_id)
+        )
       },
-      'visit_control_comment': function () {
-        return checkIsHasPermissionInVisitControl('comment', privileges, is_privilege, data ? data : [], checkIsHasPermissionInBoard(code, board_id))
-      },
+      visit_control_comment: function() {
+        return checkIsHasPermissionInVisitControl(
+          'comment',
+          privileges,
+          is_privilege,
+          data ? data : [],
+          checkIsHasPermissionInBoard(code, board_id)
+        )
+      }
     }
   },
 
   // 更新drawContent中的数据以及调用父级列表更新数据
-  updateDrawContentWithUpdateParentListDatas: function ({ drawContent, card_id, name, value, operate_properties_code, rely_card_datas }) {
+  updateDrawContentWithUpdateParentListDatas: function({
+    drawContent,
+    card_id,
+    name,
+    value,
+    operate_properties_code,
+    rely_card_datas
+  }) {
     const { dispatch } = this.props
     dispatch({
       type: 'publicTaskDetailModal/updateDatas',
@@ -173,15 +237,29 @@ const LogicWithMainContent = {
       }
     })
     if (name && value) {
-      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id, name, value, operate_properties_code, rely_card_datas })
+      this.props.handleTaskDetailChange &&
+        this.props.handleTaskDetailChange({
+          drawContent,
+          card_id,
+          name,
+          value,
+          operate_properties_code,
+          rely_card_datas
+        })
     }
   },
 
   // 设置卡片是否完成 S
-  setIsCheck: function () {
-    const { drawContent = {}, } = this.props
+  setIsCheck: function() {
+    const { drawContent = {} } = this.props
     const { is_realize = '0', card_id, board_id } = drawContent
-    if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_COMPLETE).visit_control_edit()) {
+    if (
+      this.checkDiffCategoriesAuthoritiesIsVisible &&
+      this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit &&
+      !this.checkDiffCategoriesAuthoritiesIsVisible(
+        PROJECT_TEAM_CARD_COMPLETE
+      ).visit_control_edit()
+    ) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
@@ -205,15 +283,26 @@ const LogicWithMainContent = {
       }
       let new_drawContent = { ...drawContent }
       new_drawContent['is_realize'] = is_realize === '1' ? '0' : '1'
-      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'is_realize', value: is_realize === '1' ? '0' : '1' })
+      this.updateDrawContentWithUpdateParentListDatas({
+        drawContent: new_drawContent,
+        card_id,
+        name: 'is_realize',
+        value: is_realize === '1' ? '0' : '1'
+      })
     })
   },
   // 设置卡片是否完成 E
 
   // 设置标题textarea区域修改 S
-  setTitleEdit: function (e, card_name) {
-    e && e.stopPropagation();
-    if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()) {
+  setTitleEdit: function(e, card_name) {
+    e && e.stopPropagation()
+    if (
+      this.checkDiffCategoriesAuthoritiesIsVisible &&
+      this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit &&
+      !this.checkDiffCategoriesAuthoritiesIsVisible(
+        PROJECT_TEAM_CARD_EDIT
+      ).visit_control_edit()
+    ) {
       return false
     }
     this.setState({
@@ -225,7 +314,7 @@ const LogicWithMainContent = {
   // 点击设置标题事件 E
 
   // 设置标题文本内容change事件 S
-  titleTextAreaChange: function (e) {
+  titleTextAreaChange: function(e) {
     let val = e.target.value
     let reStr = val.trim()
     this.setState({
@@ -235,7 +324,7 @@ const LogicWithMainContent = {
   // 设置标题文本内容change事件 E
 
   // 设置标题文本失去焦点回调 S
-  titleTextAreaChangeBlur: function (e) {
+  titleTextAreaChangeBlur: function(e) {
     e && e.stopPropagation()
     let val = e.target.value
     const { local_title_value } = this.state
@@ -243,7 +332,7 @@ const LogicWithMainContent = {
     const { card_id, board_id, card_name } = drawContent
     const { local_card_name } = this.state
     let reStr = val.trim()
-    if (reStr == "" || reStr == " " || !reStr || val == local_title_value) {
+    if (reStr == '' || reStr == ' ' || !reStr || val == local_title_value) {
       this.setState({
         is_edit_title: false
       })
@@ -274,26 +363,34 @@ const LogicWithMainContent = {
       dispatch({
         type: 'publicTaskDetailModal/updateDatas',
         payload: {
-          drawContent,
+          drawContent
         }
       })
       // this.updateDrawContentWithUpdateParentListDatas({ drawContent, card_id })
       // 需要调用父级的列表
-      this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id, name: 'card_name', value: val })
+      this.props.handleTaskDetailChange &&
+        this.props.handleTaskDetailChange({
+          drawContent,
+          card_id,
+          name: 'card_name',
+          value: val
+        })
     })
   },
   // 设置标题文本失去焦点回调 E
 
   // 设置是否完成状态的下拉回调 S
-  handleFiledIsComplete: function (e) {
+  handleFiledIsComplete: function(e) {
     const { dispatch, drawContent = {} } = this.props
     const { board_id, card_id, is_realize } = drawContent
     let temp_realize
     let new_drawContent = { ...drawContent }
-    if (e.key == 'incomplete') { // 表示未完成
+    if (e.key == 'incomplete') {
+      // 表示未完成
       temp_realize = '0'
       new_drawContent['is_realize'] = temp_realize
-    } else if (e.key == 'complete' && is_realize != '1') { // 表示已完成
+    } else if (e.key == 'complete' && is_realize != '1') {
+      // 表示已完成
       temp_realize = '1'
       new_drawContent['is_realize'] = temp_realize
     }
@@ -304,7 +401,9 @@ const LogicWithMainContent = {
       dispatch({
         type: 'publicTaskDetailModal/completeTask',
         payload: {
-          is_realize: temp_realize, card_id, board_id
+          is_realize: temp_realize,
+          card_id,
+          board_id
         }
       })
     ).then(res => {
@@ -312,26 +411,51 @@ const LogicWithMainContent = {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         return
       }
-      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'is_realize', value: temp_realize })
+      this.updateDrawContentWithUpdateParentListDatas({
+        drawContent: new_drawContent,
+        card_id,
+        name: 'is_realize',
+        value: temp_realize
+      })
     })
   },
   // 设置是否完成状态的下拉回调 E
 
   // 邀请他人参与回调 并设置为执行人
-  inviteOthersToBoardCalback: function ({ users = [] }) {
+  inviteOthersToBoardCalback: function({ users = [] }) {
     if (!users) return
-    const { dispatch, projectDetailInfoData = {}, drawContent = {} } = this.props
+    const {
+      dispatch,
+      projectDetailInfoData = {},
+      drawContent = {}
+    } = this.props
     const { board_id, data = [] } = projectDetailInfoData
     const { card_id } = drawContent
-    const gold_data = getCurrentPropertiesData(drawContent['properties'], 'EXECUTOR')
-    const calback = (res) => {
+    const gold_data = getCurrentPropertiesData(
+      drawContent['properties'],
+      'EXECUTOR'
+    )
+    const calback = res => {
       const new_users = res.data
       const arr = new_users.filter(item => users.indexOf(item.user_id) != -1)
-      const newExecutors = arrayNonRepeatfy([].concat(gold_data, arr), 'user_id')
+      const newExecutors = arrayNonRepeatfy(
+        [].concat(gold_data, arr),
+        'user_id'
+      )
       let new_drawContent = { ...drawContent }
       // new_drawContent['executors'] = newExecutors
-      new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: new_drawContent['properties'], code: 'EXECUTOR', value: newExecutors })
-      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'executors', value: newExecutors, operate_properties_code: 'EXECUTOR' })
+      new_drawContent['properties'] = filterCurrentUpdateDatasField({
+        properties: new_drawContent['properties'],
+        code: 'EXECUTOR',
+        value: newExecutors
+      })
+      this.updateDrawContentWithUpdateParentListDatas({
+        drawContent: new_drawContent,
+        card_id,
+        name: 'executors',
+        value: newExecutors,
+        operate_properties_code: 'EXECUTOR'
+      })
     }
     dispatch({
       type: 'projectDetail/projectDetailInfo',
@@ -343,8 +467,12 @@ const LogicWithMainContent = {
   },
 
   // 添加执行人的回调 S
-  chirldrenTaskChargeChange: function (dataInfo) {
-    const { drawContent = {}, projectDetailInfoData = {}, dispatch } = this.props
+  chirldrenTaskChargeChange: function(dataInfo) {
+    const {
+      drawContent = {},
+      projectDetailInfoData = {},
+      dispatch
+    } = this.props
     const { card_id } = drawContent
 
     // 多个任务执行人
@@ -361,12 +489,22 @@ const LogicWithMainContent = {
     }
     let new_drawContent = { ...drawContent }
     // new_drawContent['executors'] = newExecutors
-    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: new_drawContent['properties'], code: 'EXECUTOR', value: newExecutors })
+    new_drawContent['properties'] = filterCurrentUpdateDatasField({
+      properties: new_drawContent['properties'],
+      code: 'EXECUTOR',
+      value: newExecutors
+    })
     if (type == 'add') {
       addTaskExecutor({ card_id, executor: key }).then(res => {
         if (isApiResponseOk(res)) {
           message.success(`已成功设置执行人`, MESSAGE_DURATION_TIME)
-          this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'executors', value: newExecutors, operate_properties_code: 'EXECUTOR' })
+          this.updateDrawContentWithUpdateParentListDatas({
+            drawContent: new_drawContent,
+            card_id,
+            name: 'executors',
+            value: newExecutors,
+            operate_properties_code: 'EXECUTOR'
+          })
         } else {
           message.warn(res.message, MESSAGE_DURATION_TIME)
         }
@@ -375,7 +513,13 @@ const LogicWithMainContent = {
       removeTaskExecutor({ card_id, executor: key }).then(res => {
         if (isApiResponseOk(res)) {
           message.success(`已成功删除执行人`, MESSAGE_DURATION_TIME)
-          this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'executors', value: newExecutors, operate_properties_code: 'EXECUTOR' })
+          this.updateDrawContentWithUpdateParentListDatas({
+            drawContent: new_drawContent,
+            card_id,
+            name: 'executors',
+            value: newExecutors,
+            operate_properties_code: 'EXECUTOR'
+          })
         } else {
           message.warn(res.message, MESSAGE_DURATION_TIME)
         }
@@ -385,11 +529,14 @@ const LogicWithMainContent = {
   // 添加执行人的回调 E
 
   // 移除执行人的回调 S
-  handleRemoveExecutors: function (e, shouldDeleteItem) {
+  handleRemoveExecutors: function(e, shouldDeleteItem) {
     e && e.stopPropagation()
     const { drawContent = {}, dispatch } = this.props
     const { card_id, properties = [] } = drawContent
-    const { data = [] } = getCurrentDrawerContentPropsModelFieldData({ properties, code: 'EXECUTOR' })
+    const { data = [] } = getCurrentDrawerContentPropsModelFieldData({
+      properties,
+      code: 'EXECUTOR'
+    })
     let new_executors = [...data]
     let new_drawContent = { ...drawContent }
     new_executors.map((item, index) => {
@@ -397,11 +544,21 @@ const LogicWithMainContent = {
         new_executors.splice(index, 1)
       }
     })
-    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: new_drawContent['properties'], code: 'EXECUTOR', value: new_executors })
+    new_drawContent['properties'] = filterCurrentUpdateDatasField({
+      properties: new_drawContent['properties'],
+      code: 'EXECUTOR',
+      value: new_executors
+    })
     removeTaskExecutor({ card_id, executor: shouldDeleteItem }).then(res => {
       if (isApiResponseOk(res)) {
         message.success(`已成功删除执行人`, MESSAGE_DURATION_TIME)
-        this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'executors', value: new_executors, operate_properties_code: 'EXECUTOR' })
+        this.updateDrawContentWithUpdateParentListDatas({
+          drawContent: new_drawContent,
+          card_id,
+          name: 'executors',
+          value: new_executors,
+          operate_properties_code: 'EXECUTOR'
+        })
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
@@ -410,36 +567,47 @@ const LogicWithMainContent = {
   // 移除执行人的回调 E
 
   // 禁用截止时间
-  disabledDueTime: function (due_time) {
+  disabledDueTime: function(due_time) {
     const { drawContent = {} } = this.props
     const { start_time } = drawContent
     if (!start_time || !due_time) {
-      return false;
+      return false
     }
-    const newStartTime = start_time.toString().length > 10 ? Number(start_time).valueOf() / 1000 : Number(start_time).valueOf()
-    return Number(due_time.valueOf()) / 1000 < newStartTime;
+    const newStartTime =
+      start_time.toString().length > 10
+        ? Number(start_time).valueOf() / 1000
+        : Number(start_time).valueOf()
+    return Number(due_time.valueOf()) / 1000 < newStartTime
   },
 
   // 禁用开始时间
-  disabledStartTime: function (start_time) {
+  disabledStartTime: function(start_time) {
     const { drawContent = {} } = this.props
     const { due_time } = drawContent
     if (!start_time || !due_time) {
-      return false;
+      return false
     }
-    const newDueTime = due_time.toString().length > 10 ? Number(due_time).valueOf() / 1000 : Number(due_time).valueOf()
-    return Number(start_time.valueOf()) / 1000 >= newDueTime//Number(due_time).valueOf();
+    const newDueTime =
+      due_time.toString().length > 10
+        ? Number(due_time).valueOf() / 1000
+        : Number(due_time).valueOf()
+    return Number(start_time.valueOf()) / 1000 >= newDueTime //Number(due_time).valueOf();
   },
 
   // 开始时间 chg事件 S
-  startDatePickerChange: function (timeString) {
+  startDatePickerChange: function(timeString) {
     const { drawContent = {}, dispatch } = this.props
     const nowTime = timeToTimestamp(new Date())
     const start_timeStamp = timeToTimestamp(timeString)
     const { card_id, due_time, board_id } = drawContent
-    const { data = [] } = drawContent['properties'] && drawContent['properties'].filter(item => item.code == 'MILESTONE').length && drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
+    const { data = [] } =
+      drawContent['properties'] &&
+      drawContent['properties'].filter(item => item.code == 'MILESTONE')
+        .length &&
+      drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
     const updateObj = {
-      card_id, start_time: start_timeStamp,
+      card_id,
+      start_time: start_timeStamp,
       board_id
     }
     if (!compareStartDueTime(start_timeStamp, due_time)) {
@@ -466,25 +634,44 @@ const LogicWithMainContent = {
       }
       if (!compareTwoTimestamp(start_timeStamp, nowTime)) {
         setTimeout(() => {
-          message.warn(`您设置了一个今天之前的日期: ${timestampToTime(timeString, true)}`)
+          message.warn(
+            `您设置了一个今天之前的日期: ${timestampToTime(timeString, true)}`
+          )
         }, 500)
       }
-      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'start_time', value: start_timeStamp, rely_card_datas: res.data })
-      rebackCreateNotify.call(this, { res, id: card_id, board_id, dispatch, operate_in_card_detail_panel: true }) //创建撤回弹窗
-
+      this.updateDrawContentWithUpdateParentListDatas({
+        drawContent: new_drawContent,
+        card_id,
+        name: 'start_time',
+        value: start_timeStamp,
+        rely_card_datas: res.data
+      })
+      rebackCreateNotify.call(this, {
+        res,
+        id: card_id,
+        board_id,
+        dispatch,
+        operate_in_card_detail_panel: true
+      }) //创建撤回弹窗
     })
   },
   // 开始时间 chg事件 E
 
   // 截止时间 chg事件 S
-  endDatePickerChange: function (timeString) {
+  endDatePickerChange: function(timeString) {
     const { drawContent = {}, dispatch } = this.props
     const { card_id, start_time, milestone_data = {}, board_id } = drawContent
-    const { data = [] } = drawContent['properties'] && drawContent['properties'].filter(item => item.code == 'MILESTONE').length && drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
+    const { data = [] } =
+      drawContent['properties'] &&
+      drawContent['properties'].filter(item => item.code == 'MILESTONE')
+        .length &&
+      drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
     const nowTime = timeToTimestamp(new Date())
     const due_timeStamp = timeToTimestamp(timeString)
     const updateObj = {
-      card_id, due_time: due_timeStamp, board_id
+      card_id,
+      due_time: due_timeStamp,
+      board_id
     }
 
     if (!compareStartDueTime(start_time, due_timeStamp)) {
@@ -513,23 +700,39 @@ const LogicWithMainContent = {
       }
       if (!compareTwoTimestamp(due_timeStamp, nowTime)) {
         setTimeout(() => {
-          message.warn(`您设置了一个今天之前的日期: ${timestampToTime(timeString, true)}`, MESSAGE_DURATION_TIME)
+          message.warn(
+            `您设置了一个今天之前的日期: ${timestampToTime(timeString, true)}`,
+            MESSAGE_DURATION_TIME
+          )
         }, 500)
       }
-      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'due_time', value: due_timeStamp, rely_card_datas: res.data })
-      rebackCreateNotify.call(this, { res, id: card_id, board_id, dispatch, operate_in_card_detail_panel: true }) //创建撤回弹窗
-
+      this.updateDrawContentWithUpdateParentListDatas({
+        drawContent: new_drawContent,
+        card_id,
+        name: 'due_time',
+        value: due_timeStamp,
+        rely_card_datas: res.data
+      })
+      rebackCreateNotify.call(this, {
+        res,
+        id: card_id,
+        board_id,
+        dispatch,
+        operate_in_card_detail_panel: true
+      }) //创建撤回弹窗
     })
   },
   // 截止时间 chg事件 E
 
   // 删除开始时间 S
-  handleDelStartTime: function (e) {
+  handleDelStartTime: function(e) {
     e && e.stopPropagation()
     const { dispatch, drawContent = {} } = this.props
     const { card_id, start_time, board_id } = drawContent
     const updateObj = {
-      card_id, start_time: '0', board_id
+      card_id,
+      start_time: '0',
+      board_id
     }
     let new_drawContent = { ...drawContent }
     new_drawContent['start_time'] = null
@@ -545,21 +748,33 @@ const LogicWithMainContent = {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         return
       }
-      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'start_time', value: '0', rely_card_datas: res.data })
-      rebackCreateNotify.call(this, { res, id: card_id, board_id, dispatch, operate_in_card_detail_panel: true }) //创建撤回弹窗
-
+      this.updateDrawContentWithUpdateParentListDatas({
+        drawContent: new_drawContent,
+        card_id,
+        name: 'start_time',
+        value: '0',
+        rely_card_datas: res.data
+      })
+      rebackCreateNotify.call(this, {
+        res,
+        id: card_id,
+        board_id,
+        dispatch,
+        operate_in_card_detail_panel: true
+      }) //创建撤回弹窗
     })
-
   },
   // 删除开始时间 E
 
   // 删除结束时间 S
-  handleDelDueTime: function (e) {
+  handleDelDueTime: function(e) {
     e && e.stopPropagation()
     const { dispatch, drawContent = {} } = this.props
     const { card_id, due_time, board_id } = drawContent
     const updateObj = {
-      card_id, due_time: '0', board_id
+      card_id,
+      due_time: '0',
+      board_id
     }
     let new_drawContent = { ...drawContent }
     new_drawContent['due_time'] = null
@@ -576,29 +791,47 @@ const LogicWithMainContent = {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         return
       }
-      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'due_time', value: '0', rely_card_datas: res.data })
-      rebackCreateNotify.call(this, { res, id: card_id, board_id, dispatch, operate_in_card_detail_panel: true }) //创建撤回弹窗
-
+      this.updateDrawContentWithUpdateParentListDatas({
+        drawContent: new_drawContent,
+        card_id,
+        name: 'due_time',
+        value: '0',
+        rely_card_datas: res.data
+      })
+      rebackCreateNotify.call(this, {
+        res,
+        id: card_id,
+        board_id,
+        dispatch,
+        operate_in_card_detail_panel: true
+      }) //创建撤回弹窗
     })
-
   },
   // 删除结束时间 E
 
-  updateParentPropertiesList: function ({ shouldDeleteId }) {
+  updateParentPropertiesList: function({ shouldDeleteId }) {
     const { attributesList = [] } = this.props
     const { propertiesList = [] } = this.state
     let new_attributesList = [...attributesList]
     let new_propertiesList = [...propertiesList]
-    const currentDataItem = new_attributesList.filter(item => item.id == shouldDeleteId)[0]
+    const currentDataItem = new_attributesList.filter(
+      item => item.id == shouldDeleteId
+    )[0]
     new_propertiesList.push(currentDataItem)
     this.setState({
-      propertiesList: new_propertiesList,
+      propertiesList: new_propertiesList
     })
   },
 
   // 对应字段的删除 S
-  handleDelCurrentField: function (shouldDeleteId, code) {
-    if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()) {
+  handleDelCurrentField: function(shouldDeleteId, code) {
+    if (
+      this.checkDiffCategoriesAuthoritiesIsVisible &&
+      this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit &&
+      !this.checkDiffCategoriesAuthoritiesIsVisible(
+        PROJECT_TEAM_CARD_EDIT
+      ).visit_control_edit()
+    ) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
@@ -608,31 +841,42 @@ const LogicWithMainContent = {
       currentDelId: shouldDeleteId
     })
     let flag = false // 判断删除的时候当前是否有数据, 默认为false 表示没有数据直接删除
-    const { dispatch, drawContent = {}, drawContent: { card_id } } = that.props
+    const {
+      dispatch,
+      drawContent = {},
+      drawContent: { card_id }
+    } = that.props
     let new_drawContent = { ...drawContent }
     let filter_drawContent = { ...drawContent }
     // 删除的时候判断data类型以及是否有数据
     filter_drawContent['properties'].find(item => {
-      if (item.id == shouldDeleteId) { // 表示找到当前item
+      if (item.id == shouldDeleteId) {
+        // 表示找到当前item
         if (Array.isArray(item.data)) {
           flag = item.data.length
         } else if (item.data instanceof Object) {
-          let arr = Object.keys(item.data);
+          let arr = Object.keys(item.data)
           flag = !(arr.length == '0')
         } else if (item.data) {
           flag = true
         }
       }
     })
-    new_drawContent['properties'] = new_drawContent['properties'].filter(item => item.id != shouldDeleteId)
-    let gold_executor = (new_drawContent['properties'].find(item => item.code == 'EXECUTOR') || {}).data
+    new_drawContent['properties'] = new_drawContent['properties'].filter(
+      item => item.id != shouldDeleteId
+    )
+    let gold_executor = (
+      new_drawContent['properties'].find(item => item.code == 'EXECUTOR') || {}
+    ).data
     if (flag) {
       Modal.confirm({
         title: `确认要删除这条字段吗？`,
         zIndex: 1007,
-        content: <div style={{ color: 'rgba(0,0,0, .65)', fontSize: 14 }}>
-          <span >删除包括删除这条字段已填写的内容。</span>
-        </div>,
+        content: (
+          <div style={{ color: 'rgba(0,0,0, .65)', fontSize: 14 }}>
+            <span>删除包括删除这条字段已填写的内容。</span>
+          </div>
+        ),
         okText: '确认',
         cancelText: '取消',
         onOk() {
@@ -640,7 +884,8 @@ const LogicWithMainContent = {
             dispatch({
               type: 'publicTaskDetailModal/removeCardAttributes',
               payload: {
-                card_id, property_id: shouldDeleteId
+                card_id,
+                property_id: shouldDeleteId
               }
             })
           ).then(res => {
@@ -649,8 +894,10 @@ const LogicWithMainContent = {
                 shouldDeleteId: '',
                 showDelColor: ''
               })
-              that.updateParentPropertiesList && that.updateParentPropertiesList({ shouldDeleteId })
-              that.props.updateParentPropertiesList && that.props.updateParentPropertiesList({ shouldDeleteId })
+              that.updateParentPropertiesList &&
+                that.updateParentPropertiesList({ shouldDeleteId })
+              that.props.updateParentPropertiesList &&
+                that.props.updateParentPropertiesList({ shouldDeleteId })
               dispatch({
                 type: 'publicTaskDetailModal/updateDatas',
                 payload: {
@@ -658,7 +905,12 @@ const LogicWithMainContent = {
                 }
               })
               if (!(gold_executor && gold_executor.length)) {
-                that.props.handleTaskDetailChange && that.props.handleTaskDetailChange({ card_id, drawContent: new_drawContent, operate_properties_code: 'EXECUTOR' })
+                that.props.handleTaskDetailChange &&
+                  that.props.handleTaskDetailChange({
+                    card_id,
+                    drawContent: new_drawContent,
+                    operate_properties_code: 'EXECUTOR'
+                  })
               }
               that.deleteCodeCalback(code, new_drawContent)
             }
@@ -676,7 +928,8 @@ const LogicWithMainContent = {
         dispatch({
           type: 'publicTaskDetailModal/removeCardAttributes',
           payload: {
-            card_id, property_id: shouldDeleteId
+            card_id,
+            property_id: shouldDeleteId
           }
         })
       ).then(res => {
@@ -685,8 +938,10 @@ const LogicWithMainContent = {
             shouldDeleteId: '',
             showDelColor: ''
           })
-          that.updateParentPropertiesList && that.updateParentPropertiesList({ shouldDeleteId })
-          that.props.updateParentPropertiesList && that.props.updateParentPropertiesList({ shouldDeleteId })
+          that.updateParentPropertiesList &&
+            that.updateParentPropertiesList({ shouldDeleteId })
+          that.props.updateParentPropertiesList &&
+            that.props.updateParentPropertiesList({ shouldDeleteId })
           dispatch({
             type: 'publicTaskDetailModal/updateDatas',
             payload: {
@@ -694,7 +949,12 @@ const LogicWithMainContent = {
             }
           })
           if (!(gold_executor && gold_executor.length)) {
-            that.props.handleTaskDetailChange && that.props.handleTaskDetailChange({ card_id, drawContent: new_drawContent, operate_properties_code: 'EXECUTOR' })
+            that.props.handleTaskDetailChange &&
+              that.props.handleTaskDetailChange({
+                card_id,
+                drawContent: new_drawContent,
+                operate_properties_code: 'EXECUTOR'
+              })
           }
         }
       })
@@ -703,29 +963,72 @@ const LogicWithMainContent = {
   // 对应字段的删除 E
 
   // 会议的状态值, 比较当前时间和开始时间结束时间的对比 S
-  getMeetingStatus: function () {
+  getMeetingStatus: function() {
     let meetingField
-    meetingField = (<span></span>)
+    meetingField = <span></span>
     const { drawContent = {} } = this.props
     const { start_time, due_time, type } = drawContent
     if (type == '0' || !start_time || !due_time) return
     let timeString
     timeString = new Date().getTime().toString()
-    if (timeString.length == 13) { // 表示是13位的时间戳
+    if (timeString.length == 13) {
+      // 表示是13位的时间戳
       timeString = parseInt(timeString / 1000)
     }
-    if (compareTwoTimestamp(timeString, start_time)) { // 如果说当前时间大于开始时间表示进行中
+    if (compareTwoTimestamp(timeString, start_time)) {
+      // 如果说当前时间大于开始时间表示进行中
       meetingField = (
-        <span style={{ display: 'inline-block', width: '58px', height: '26px', background: '#FFE7BA', borderRadius: '4px', lineHeight: '26px', textAlign: 'center', color: '#FA8C16' }}>{'进行中'}</span>
+        <span
+          style={{
+            display: 'inline-block',
+            width: '58px',
+            height: '26px',
+            background: '#FFE7BA',
+            borderRadius: '4px',
+            lineHeight: '26px',
+            textAlign: 'center',
+            color: '#FA8C16'
+          }}
+        >
+          {'进行中'}
+        </span>
       )
-      if (compareTwoTimestamp(timeString, due_time)) { // 如果说当前时间大于截止时间表示已完成
+      if (compareTwoTimestamp(timeString, due_time)) {
+        // 如果说当前时间大于截止时间表示已完成
         meetingField = (
-          <span style={{ display: 'inline-block', width: '58px', height: '26px', background: '#D0EFB4', borderRadius: '4px', lineHeight: '26px', textAlign: 'center', color: '#389E0D' }}>{'已完成'}</span>
+          <span
+            style={{
+              display: 'inline-block',
+              width: '58px',
+              height: '26px',
+              background: '#D0EFB4',
+              borderRadius: '4px',
+              lineHeight: '26px',
+              textAlign: 'center',
+              color: '#389E0D'
+            }}
+          >
+            {'已完成'}
+          </span>
         )
       }
-    } else { // 表示未开始
+    } else {
+      // 表示未开始
       meetingField = (
-        <span style={{ display: 'inline-block', width: '58px', height: '26px', background: '#D4F1FF', borderRadius: '4px', lineHeight: '26px', textAlign: 'center', color: '#1890FF' }}>{'未开始'}</span>
+        <span
+          style={{
+            display: 'inline-block',
+            width: '58px',
+            height: '26px',
+            background: '#D4F1FF',
+            borderRadius: '4px',
+            lineHeight: '26px',
+            textAlign: 'center',
+            color: '#1890FF'
+          }}
+        >
+          {'未开始'}
+        </span>
       )
     }
     return meetingField
@@ -733,33 +1036,40 @@ const LogicWithMainContent = {
   // 会议的状态值, 比较当前时间和开始时间结束时间的对比 E
 
   // 添加自定义字段
-  handleAddCustomField: function (checkedKeys = [], calback) {
-    const { drawContent: { board_id, card_id } } = this.props
-    this.props.dispatch({
-      type: 'organizationManager/createRelationCustomField',
-      payload: {
-        fields: checkedKeys,
-        relation_id: card_id,
-        source_type: '2'
-      }
-    }).then(res => {
-      if (isApiResponseOk(res)) {
-        this.props.dispatch({
-          type: 'publicTaskDetailModal/getCardWithAttributesDetail',
-          payload: {
-            id: card_id
-          }
-        })
-        if (calback && typeof calback == 'function') calback()
-      } else {
-        if (calback && typeof calback == 'function') calback()
-      }
-    })
+  handleAddCustomField: function(checkedKeys = [], calback) {
+    const {
+      drawContent: { board_id, card_id }
+    } = this.props
+    this.props
+      .dispatch({
+        type: 'organizationManager/createRelationCustomField',
+        payload: {
+          fields: checkedKeys,
+          relation_id: card_id,
+          source_type: '2'
+        }
+      })
+      .then(res => {
+        if (isApiResponseOk(res)) {
+          this.props.dispatch({
+            type: 'publicTaskDetailModal/getCardWithAttributesDetail',
+            payload: {
+              id: card_id
+            }
+          })
+          if (calback && typeof calback == 'function') calback()
+        } else {
+          if (calback && typeof calback == 'function') calback()
+        }
+      })
   },
 
   // 修改弹窗数据
-  handleUpdateModelDatas: function ({ data, type }) {
-    const { drawContent = {}, drawContent: { fields = [] } } = this.props
+  handleUpdateModelDatas: function({ data, type }) {
+    const {
+      drawContent = {},
+      drawContent: { fields = [] }
+    } = this.props
     let new_fields = [...fields]
     switch (type) {
       case 'update':
@@ -773,13 +1083,13 @@ const LogicWithMainContent = {
             return item
           }
         })
-        break;
+        break
       case 'delete':
         new_fields = new_fields.filter(item => item.id != data)
-        break;
+        break
 
       default:
-        break;
+        break
     }
     let new_drawContent = { ...drawContent }
     new_drawContent['fields'] = new_fields
@@ -792,7 +1102,7 @@ const LogicWithMainContent = {
   },
 
   // 属性选择的下拉回调 S
-  handleMenuReallySelect: function (e, value) {
+  handleMenuReallySelect: function(e, value) {
     const { dispatch, card_id } = this.props
     const { propertiesList = [] } = this.state
     const that = this
@@ -805,7 +1115,8 @@ const LogicWithMainContent = {
     dispatch({
       type: 'publicTaskDetailModal/setCardAttributes',
       payload: {
-        card_id, property_id: value.id,
+        card_id,
+        property_id: value.id,
         calback: () => {
           that.setState({
             propertiesList: new_propertiesList
@@ -817,24 +1128,26 @@ const LogicWithMainContent = {
   // 属性选择的下拉回调 E
 
   // 判断是否存在执行人
-  whetherExistencePriciple: function (code) {
-    const { drawContent: { properties = [] } } = this.props
+  whetherExistencePriciple: function(code) {
+    const {
+      drawContent: { properties = [] }
+    } = this.props
     let flag
     if (!properties.length) return false
     flag = properties.filter(item => item.code == code)
-    if (flag.length == '0') return flag = false
+    if (flag.length == '0') return (flag = false)
     return flag
   },
 
   // 更新一个私有变量开启文件弹窗
-  updatePrivateVariablesWithOpenFile: function () {
+  updatePrivateVariablesWithOpenFile: function() {
     this.setState({
       whetherIsOpenFileVisible: !this.state.whetherIsOpenFileVisible
     })
   },
 
   // 附件关闭回调
-  setPreviewFileModalVisibile: function () {
+  setPreviewFileModalVisibile: function() {
     // this.setState({
     //   previewFileModalVisibile: !this.state.previewFileModalVisibile
     // })
@@ -853,27 +1166,48 @@ const LogicWithMainContent = {
         id: this.props.card_id
       }
     })
-    this.updatePrivateVariablesWithOpenFile && this.updatePrivateVariablesWithOpenFile()
-    this.props.updatePrivateVariablesWithOpenFile && this.props.updatePrivateVariablesWithOpenFile()
+    this.updatePrivateVariablesWithOpenFile &&
+      this.updatePrivateVariablesWithOpenFile()
+    this.props.updatePrivateVariablesWithOpenFile &&
+      this.props.updatePrivateVariablesWithOpenFile()
   },
 
   /* 附件版本更新数据  */
-  whetherUpdateFolderListData: function ({ folder_id, file_id, file_name, create_time }) {
+  whetherUpdateFolderListData: function({
+    folder_id,
+    file_id,
+    file_name,
+    create_time
+  }) {
     if (file_name) {
       const { drawContent = {}, dispatch } = this.props
-      const gold_data = getCurrentPropertiesData(drawContent['properties'], 'ATTACHMENT')
+      const gold_data = getCurrentPropertiesData(
+        drawContent['properties'],
+        'ATTACHMENT'
+      )
       let newData = [...gold_data]
-      newData = newData && newData.map(item => {
-        if (item.file_id == this.props.filePreviewCurrentFileId) {
-          let new_item = item
-          new_item = { ...item, file_id: file_id, name: file_name, create_time: create_time }
-          return new_item
-        } else {
-          let new_item = item
-          return new_item
-        }
+      newData =
+        newData &&
+        newData.map(item => {
+          if (item.file_id == this.props.filePreviewCurrentFileId) {
+            let new_item = item
+            new_item = {
+              ...item,
+              file_id: file_id,
+              name: file_name,
+              create_time: create_time
+            }
+            return new_item
+          } else {
+            let new_item = item
+            return new_item
+          }
+        })
+      drawContent['properties'] = filterCurrentUpdateDatasField({
+        properties: drawContent['properties'],
+        code: 'ATTACHMENT',
+        value: newData
       })
-      drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'ATTACHMENT', value: newData })
       dispatch({
         type: 'publicTaskDetailModal/updateDatas',
         payload: {
@@ -881,14 +1215,16 @@ const LogicWithMainContent = {
         }
       })
     }
-
   },
 
   // 是否可以修改父任务中的时间
-  whetherUpdateParentTaskTime: function (data) {
+  whetherUpdateParentTaskTime: function(data) {
     const { drawContent = {}, dispatch } = this.props
-    const gold_data = getCurrentPropertiesData(drawContent['properties'], 'SUBTASK')
-    if (!gold_data) return false;
+    const gold_data = getCurrentPropertiesData(
+      drawContent['properties'],
+      'SUBTASK'
+    )
+    if (!gold_data) return false
     let newData = [...gold_data]
     newData = newData.find(item => item.due_time || item.start_time)
     if (newData && Object.keys(newData).length) {
@@ -906,16 +1242,34 @@ const LogicWithMainContent = {
       let new_drawContent = { ...drawContent }
       new_drawContent['start_time'] = start_time
       new_drawContent['due_time'] = due_time
-      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'start_time', value: start_time })
-      this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'due_time', value: due_time })
+      this.updateDrawContentWithUpdateParentListDatas({
+        drawContent: new_drawContent,
+        card_id,
+        name: 'start_time',
+        value: start_time
+      })
+      this.updateDrawContentWithUpdateParentListDatas({
+        drawContent: new_drawContent,
+        card_id,
+        name: 'due_time',
+        value: due_time
+      })
     }
   },
 
   // 更新对应的依赖项
-  updateRelyOnRationList: function (change_data) {
-    const { drawContent = {}, drawContent: { dependencies = {} }, dispatch } = this.props
+  updateRelyOnRationList: function(change_data) {
+    const {
+      drawContent = {},
+      drawContent: { dependencies = {} },
+      dispatch
+    } = this.props
     if (!dependencies) return
-    if (!(dependencies['last'] && dependencies['last'].length) && !(dependencies['next'] && dependencies['next'].length)) return
+    if (
+      !(dependencies['last'] && dependencies['last'].length) &&
+      !(dependencies['next'] && dependencies['next'].length)
+    )
+      return
     let obj = {}
     let new_drawContent = { ...drawContent }
     let preposeList = dependencies['last'] // 前置
@@ -950,10 +1304,10 @@ const LogicWithMainContent = {
   // -------------------- 子组件逻辑 -------------------------------
 
   // 里程碑选择回调 S
-  onMilestoneSelectedChange: function (data) {
-    const { dispatch, drawContent } = this.props;
+  onMilestoneSelectedChange: function(data) {
+    const { dispatch, drawContent } = this.props
     const { card_id, type, due_time } = drawContent
-    const { key, type: actionType, info } = data;
+    const { key, type: actionType, info } = data
     const id_time_arr = key.split('__')
     const id = id_time_arr[0]
     const deadline = id_time_arr[1]
@@ -966,7 +1320,7 @@ const LogicWithMainContent = {
         rela_id: card_id,
         id,
         origin_type: type
-      };
+      }
       dispatch({
         type: 'publicTaskDetailModal/joinMilestone',
         payload: {
@@ -974,21 +1328,30 @@ const LogicWithMainContent = {
         }
       }).then(res => {
         if (isApiResponseOk(res)) {
-          drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'MILESTONE', value: info })
+          drawContent['properties'] = filterCurrentUpdateDatasField({
+            properties: drawContent['properties'],
+            code: 'MILESTONE',
+            value: info
+          })
           dispatch({
             type: 'publicTaskDetailModal/updateDatas',
             payload: {
               drawContent: { ...drawContent }
             }
           })
-          this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id, operate_properties_code: 'MILESTONE' })
+          this.props.handleTaskDetailChange &&
+            this.props.handleTaskDetailChange({
+              drawContent,
+              card_id,
+              operate_properties_code: 'MILESTONE'
+            })
         }
-      });
+      })
     }
     if (actionType === 'remove') {
       const params = {
         rela_id: card_id,
-        id,
+        id
       }
       dispatch({
         type: 'publicTaskDetailModal/shiftOutMilestone',
@@ -997,24 +1360,36 @@ const LogicWithMainContent = {
         }
       }).then(res => {
         if (isApiResponseOk(res)) {
-          drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'MILESTONE', value: [] })
+          drawContent['properties'] = filterCurrentUpdateDatasField({
+            properties: drawContent['properties'],
+            code: 'MILESTONE',
+            value: []
+          })
           dispatch({
             type: 'publicTaskDetailModal/updateDatas',
             payload: {
               drawContent: { ...drawContent }
             }
           })
-          this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id, operate_properties_code: 'MILESTONE' })
+          this.props.handleTaskDetailChange &&
+            this.props.handleTaskDetailChange({
+              drawContent,
+              card_id,
+              operate_properties_code: 'MILESTONE'
+            })
         }
-      });
+      })
     }
 
     if (actionType === 'update') {
       // const { data } = drawContent['properties'].filter(item => item.code == 'MILESTONE')[0]
-      const gold_data = getCurrentPropertiesData(drawContent['properties'], 'MILESTONE')
+      const gold_data = getCurrentPropertiesData(
+        drawContent['properties'],
+        'MILESTONE'
+      )
       const removeParams = {
         rela_id: card_id,
-        id: gold_data.id,
+        id: gold_data.id
       }
 
       const addParams = {
@@ -1031,35 +1406,48 @@ const LogicWithMainContent = {
         }
       }).then(res => {
         if (isApiResponseOk(res)) {
-          drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'MILESTONE', value: info })
+          drawContent['properties'] = filterCurrentUpdateDatasField({
+            properties: drawContent['properties'],
+            code: 'MILESTONE',
+            value: info
+          })
           dispatch({
             type: 'publicTaskDetailModal/updateDatas',
             payload: {
               drawContent: { ...drawContent }
             }
           })
-          this.props.handleTaskDetailChange && this.props.handleTaskDetailChange({ drawContent, card_id, operate_properties_code: 'MILESTONE' })
+          this.props.handleTaskDetailChange &&
+            this.props.handleTaskDetailChange({
+              drawContent,
+              card_id,
+              operate_properties_code: 'MILESTONE'
+            })
         }
-      });
+      })
     }
   },
   // 里程碑选择回调 E
 
   // 编辑富文本事件 S
-  saveBrafitEdit: function (brafitEditHtml) {
-    const { drawContent = {}, dispatch } = this.props;
+  saveBrafitEdit: function(brafitEditHtml) {
+    const { drawContent = {}, dispatch } = this.props
 
     let { card_id, board_id } = drawContent
     this.setState({
-      isInEdit: false,
+      isInEdit: false
     })
     const updateObj = {
       card_id,
       board_id,
-      description: brafitEditHtml,
+      description: brafitEditHtml
     }
 
-    drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'REMARK', value: brafitEditHtml })
+    drawContent['properties'] = filterCurrentUpdateDatasField({
+      properties: drawContent['properties'],
+      code: 'REMARK',
+      value: brafitEditHtml
+    })
     Promise.resolve(
       dispatch({
         type: 'publicTaskDetailModal/updateTaskVTwo',
@@ -1072,13 +1460,18 @@ const LogicWithMainContent = {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         return
       }
-      this.updateDrawContentWithUpdateParentListDatas({ drawContent, card_id, name: 'description', value: brafitEditHtml })
+      this.updateDrawContentWithUpdateParentListDatas({
+        drawContent,
+        card_id,
+        name: 'description',
+        value: brafitEditHtml
+      })
     })
   },
   // 编辑富文本事件 E
 
   // 控制标签的显示隐藏的回调 S
-  handleVisibleChange: function (visible) {
+  handleVisibleChange: function(visible) {
     this.setState({
       visible: visible
     })
@@ -1086,9 +1479,9 @@ const LogicWithMainContent = {
   // 控制标签的显示隐藏的回调 E
 
   // 标签关闭回调 S
-  handleClose: function (e) {
+  handleClose: function(e) {
     this.setState({
-      visible: false,
+      visible: false
     })
   },
   // // 标签关闭回调 E
@@ -1098,28 +1491,44 @@ const LogicWithMainContent = {
    * @param {String} name 当前添加标签的名称
    * @param {String} color 当前添加标签的颜色
    */
-  handleAddBoardTag: function ({ name, color }) {
+  handleAddBoardTag: function({ name, color }) {
     const { drawContent = {}, dispatch } = this.props
     const { card_id, board_id } = drawContent
     let new_drawContent = { ...drawContent }
-    const glod_data = (drawContent['properties'].find(item => item.code == 'LABEL') || {}).data
+    const glod_data = (
+      drawContent['properties'].find(item => item.code == 'LABEL') || {}
+    ).data
     let temp = [...glod_data]
     Promise.resolve(
       dispatch({
         type: 'publicTaskDetailModal/addBoardTag',
         payload: {
-          board_id, name, color
+          board_id,
+          name,
+          color
         }
       })
     ).then(res => {
       if (isApiResponseOk(res)) {
         temp.push(res.data)
-        new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'LABEL', value: temp })
-        this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'label_data', value: temp, operate_properties_code: 'LABEL' })
+        new_drawContent['properties'] = filterCurrentUpdateDatasField({
+          properties: drawContent['properties'],
+          code: 'LABEL',
+          value: temp
+        })
+        this.updateDrawContentWithUpdateParentListDatas({
+          drawContent: new_drawContent,
+          card_id,
+          name: 'label_data',
+          value: temp,
+          operate_properties_code: 'LABEL'
+        })
         dispatch({
           type: 'publicTaskDetailModal/addTaskTag',
           payload: {
-            board_id, card_id, label_id: res.data.label_id
+            board_id,
+            card_id,
+            label_id: res.data.label_id
           }
         })
       }
@@ -1133,15 +1542,21 @@ const LogicWithMainContent = {
    * @param {String} name 当前修改后的标签名称
    * @param {String} color 当前修改后的标签颜色
    */
-  handleUpdateBoardTag: function ({ label_id, name, color }) {
+  handleUpdateBoardTag: function({ label_id, name, color }) {
     const { drawContent = {}, dispatch } = this.props
     const { card_id, board_id } = drawContent
-    const { data: label_data } = drawContent['properties'].filter(item => item.code == 'LABEL')[0]
+    const { data: label_data } = drawContent['properties'].filter(
+      item => item.code == 'LABEL'
+    )[0]
     let new_labelData = [...label_data]
     new_labelData = new_labelData.map(item => {
       if (item.label_id == label_id) {
         let new_item = item
-        new_item = { ...item, label_name: name ? name : item.label_name, label_color: color }
+        new_item = {
+          ...item,
+          label_name: name ? name : item.label_name,
+          label_color: color
+        }
         return new_item
       } else {
         let new_item = item
@@ -1150,17 +1565,30 @@ const LogicWithMainContent = {
     })
     let new_drawContent = { ...drawContent }
     // new_drawContent['label_data'] = new_labelData
-    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'LABEL', value: new_labelData })
+    new_drawContent['properties'] = filterCurrentUpdateDatasField({
+      properties: drawContent['properties'],
+      code: 'LABEL',
+      value: new_labelData
+    })
     Promise.resolve(
       dispatch({
         type: 'publicTaskDetailModal/updateBoardTag',
         payload: {
-          board_id, id: label_id, color, name: name && name
+          board_id,
+          id: label_id,
+          color,
+          name: name && name
         }
       })
     ).then(res => {
       if (isApiResponseOk(res)) {
-        this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'label_data', value: new_labelData, operate_properties_code: 'LABEL' })
+        this.updateDrawContentWithUpdateParentListDatas({
+          drawContent: new_drawContent,
+          card_id,
+          name: 'label_data',
+          value: new_labelData,
+          operate_properties_code: 'LABEL'
+        })
       }
     })
   },
@@ -1170,10 +1598,12 @@ const LogicWithMainContent = {
    * 删除项目标签的回调 S
    * @param {String} label_id 当前需要删除的标签ID
    */
-  handleRemoveBoardTag: function ({ label_id }) {
+  handleRemoveBoardTag: function({ label_id }) {
     const { drawContent = {}, dispatch } = this.props
     const { card_id, board_id } = drawContent
-    const { data: label_data } = drawContent['properties'].filter(item => item.code == 'LABEL')[0]
+    const { data: label_data } = drawContent['properties'].filter(
+      item => item.code == 'LABEL'
+    )[0]
     let new_labelData = [...label_data]
     new_labelData = new_labelData.filter(item => {
       if (item.label_id != label_id) {
@@ -1183,7 +1613,11 @@ const LogicWithMainContent = {
     })
     let new_drawContent = { ...drawContent }
     // new_drawContent['label_data'] = new_labelData
-    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: drawContent['properties'], code: 'LABEL', value: new_labelData })
+    new_drawContent['properties'] = filterCurrentUpdateDatasField({
+      properties: drawContent['properties'],
+      code: 'LABEL',
+      value: new_labelData
+    })
     Promise.resolve(
       dispatch({
         type: 'publicTaskDetailModal/deleteBoardTag',
@@ -1194,14 +1628,20 @@ const LogicWithMainContent = {
       })
     ).then(res => {
       if (isApiResponseOk(res)) {
-        this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'label_data', value: new_labelData, operate_properties_code: 'LABEL' })
+        this.updateDrawContentWithUpdateParentListDatas({
+          drawContent: new_drawContent,
+          card_id,
+          name: 'label_data',
+          value: new_labelData,
+          operate_properties_code: 'LABEL'
+        })
       }
     })
   },
   // 删除项目标签的回调 E
 
   // 下拉标签的回调 S
-  handleChgSelectedLabel: function (data) {
+  handleChgSelectedLabel: function(data) {
     const { drawContent, boardTagList = [], dispatch } = this.props
     const { board_id, card_id, label_data = [] } = drawContent
     let newLabelData = []
@@ -1210,7 +1650,8 @@ const LogicWithMainContent = {
     for (let i = 0; i < selectedKeys.length; i++) {
       for (let j = 0; j < boardTagList.length; j++) {
         if (selectedKeys[i] === boardTagList[j]['id']) {
-          let obj = {// 这个obj是label_data需要的数据结构
+          let obj = {
+            // 这个obj是label_data需要的数据结构
             label_id: boardTagList[j]['id'],
             label_name: boardTagList[j]['name'],
             label_color: boardTagList[j]['color']
@@ -1221,18 +1662,30 @@ const LogicWithMainContent = {
     }
     let new_drawContent = { ...drawContent }
     // new_drawContent['label_data'] = newLabelData
-    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: new_drawContent['properties'], code: 'LABEL', value: newLabelData })
+    new_drawContent['properties'] = filterCurrentUpdateDatasField({
+      properties: new_drawContent['properties'],
+      code: 'LABEL',
+      value: newLabelData
+    })
     if (type == 'add') {
       Promise.resolve(
         dispatch({
           type: 'publicTaskDetailModal/addTaskTag',
           payload: {
-            board_id, card_id, label_id: key
+            board_id,
+            card_id,
+            label_id: key
           }
         })
       ).then(res => {
         if (isApiResponseOk(res)) {
-          this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'label_data', value: newLabelData, operate_properties_code: 'LABEL' })
+          this.updateDrawContentWithUpdateParentListDatas({
+            drawContent: new_drawContent,
+            card_id,
+            name: 'label_data',
+            value: newLabelData,
+            operate_properties_code: 'LABEL'
+          })
         }
       })
     } else if (type == 'remove') {
@@ -1240,12 +1693,19 @@ const LogicWithMainContent = {
         dispatch({
           type: 'publicTaskDetailModal/removeTaskTag',
           payload: {
-            card_id, label_id: key
+            card_id,
+            label_id: key
           }
         })
       ).then(res => {
         if (isApiResponseOk(res)) {
-          this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'label_data', value: newLabelData, operate_properties_code: 'LABEL' })
+          this.updateDrawContentWithUpdateParentListDatas({
+            drawContent: new_drawContent,
+            card_id,
+            name: 'label_data',
+            value: newLabelData,
+            operate_properties_code: 'LABEL'
+          })
         }
       })
     }
@@ -1257,37 +1717,55 @@ const LogicWithMainContent = {
    * @param {Object} e 当前的事件对象
    * @param {String} shouldDeleteId 当前需要删除的标签ID
    */
-  handleRemoveTaskTag: function (e, shouldDeleteId) {
+  handleRemoveTaskTag: function(e, shouldDeleteId) {
     e && e.stopPropagation()
-    const { dispatch, drawContent, drawContent: { card_id } } = this.props
-    const { data: label_data } = drawContent['properties'].filter(item => item.code == 'LABEL')[0]
+    const {
+      dispatch,
+      drawContent,
+      drawContent: { card_id }
+    } = this.props
+    const { data: label_data } = drawContent['properties'].filter(
+      item => item.code == 'LABEL'
+    )[0]
     let new_drawContent = { ...drawContent }
     let new_labelData = [...label_data]
-    new_labelData = new_labelData.filter(item => {// 过滤掉删除的那一条item
+    new_labelData = new_labelData.filter(item => {
+      // 过滤掉删除的那一条item
       if (item.label_id != shouldDeleteId) {
         return item
       }
     })
     // new_drawContent['label_data'] = new_labelData
-    new_drawContent['properties'] = filterCurrentUpdateDatasField({ properties: new_drawContent['properties'], code: 'LABEL', value: new_labelData })
+    new_drawContent['properties'] = filterCurrentUpdateDatasField({
+      properties: new_drawContent['properties'],
+      code: 'LABEL',
+      value: new_labelData
+    })
     Promise.resolve(
       dispatch({
         type: 'publicTaskDetailModal/removeTaskTag',
         payload: {
-          card_id, label_id: shouldDeleteId
+          card_id,
+          label_id: shouldDeleteId
         }
       })
     ).then(res => {
       if (isApiResponseOk(res)) {
-        this.updateDrawContentWithUpdateParentListDatas({ drawContent: new_drawContent, card_id, name: 'label_data', value: new_labelData, operate_properties_code: 'LABEL' })
+        this.updateDrawContentWithUpdateParentListDatas({
+          drawContent: new_drawContent,
+          card_id,
+          name: 'label_data',
+          value: new_labelData,
+          operate_properties_code: 'LABEL'
+        })
       }
     })
   },
   // 删除标签 icon 回调 E
 
   // 上传文件 事件 S
-  onUploadFileListChange: function (data) {
-    const { drawContent = {}, dispatch } = this.props;
+  onUploadFileListChange: function(data) {
+    const { drawContent = {}, dispatch } = this.props
     let new_drawContent = { ...drawContent }
     if (data && data.length > 0) {
       new_drawContent['deliverables'].push(...data)
@@ -1300,12 +1778,13 @@ const LogicWithMainContent = {
     }
     const { folder_path = {} } = data[0]
     const { id: folder_id } = folder_path
-    if (typeof this.props.handleRelyUploading == 'function' && folder_id) this.props.handleRelyUploading({ folder_id })
+    if (typeof this.props.handleRelyUploading == 'function' && folder_id)
+      this.props.handleRelyUploading({ folder_id })
   },
 
   // 任务说明上传
-  onUploadDescFileListChange: function (data) {
-    const { drawContent = {}, dispatch } = this.props;
+  onUploadDescFileListChange: function(data) {
+    const { drawContent = {}, dispatch } = this.props
     let new_drawContent = { ...drawContent }
     if (data && data.length > 0) {
       new_drawContent['dec_files'].push(...data)
@@ -1318,16 +1797,17 @@ const LogicWithMainContent = {
     }
     const { folder_path = {} } = data[0]
     const { id: folder_id } = folder_path
-    if (typeof this.props.handleRelyUploading == 'function' && folder_id) this.props.handleRelyUploading({ folder_id })
+    if (typeof this.props.handleRelyUploading == 'function' && folder_id)
+      this.props.handleRelyUploading({ folder_id })
   },
   // 上传文件 事件 E
 
   /**附件预览 */
-  openFileDetailModal: function (e, fileInfo) {
+  openFileDetailModal: function(e, fileInfo) {
     e && e.stopPropagation()
     const file_name = fileInfo.name
     const file_resource_id = fileInfo.file_resource_id
-    const file_id = fileInfo.file_id;
+    const file_id = fileInfo.file_id
     const board_id = fileInfo.board_id
     const { dispatch } = this.props
     dispatch({
@@ -1345,21 +1825,33 @@ const LogicWithMainContent = {
         filePreviewCurrentName: file_name
       }
     })
-    this.updatePrivateVariablesWithOpenFile && this.updatePrivateVariablesWithOpenFile()
-    this.props.updatePrivateVariablesWithOpenFile && this.props.updatePrivateVariablesWithOpenFile()
+    this.updatePrivateVariablesWithOpenFile &&
+      this.updatePrivateVariablesWithOpenFile()
+    this.props.updatePrivateVariablesWithOpenFile &&
+      this.props.updatePrivateVariablesWithOpenFile()
   },
 
   /**附件下载、删除等操作 */
-  attachmentItemOpera: function ({ type, data = {}, card_id, code }, e) {
+  attachmentItemOpera: function({ type, data = {}, card_id, code }, e) {
     e.stopPropagation()
-    if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()) {
+    if (
+      this.checkDiffCategoriesAuthoritiesIsVisible &&
+      this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit &&
+      !this.checkDiffCategoriesAuthoritiesIsVisible(
+        PROJECT_TEAM_CARD_EDIT
+      ).visit_control_edit()
+    ) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
     //debugger
     const { dispatch } = this.props
-    const attachment_id = data.id || (data.response && data.response.data && data.response.data.attachment_id)
-    const file_resource_id = data.file_resource_id || (data.response && data.response.data.file_resource_id)
+    const attachment_id =
+      data.id ||
+      (data.response && data.response.data && data.response.data.attachment_id)
+    const file_resource_id =
+      data.file_resource_id ||
+      (data.response && data.response.data.file_resource_id)
     if (!attachment_id) {
       message.warn('上传中，请稍后...')
       return
@@ -1379,26 +1871,34 @@ const LogicWithMainContent = {
   },
 
   /**附件删除 */
-  deleteAttachmentFile: function (data) {
-    if ((this.checkDiffCategoriesAuthoritiesIsVisible && this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit) && !this.checkDiffCategoriesAuthoritiesIsVisible(PROJECT_TEAM_CARD_EDIT).visit_control_edit()) {
+  deleteAttachmentFile: function(data) {
+    if (
+      this.checkDiffCategoriesAuthoritiesIsVisible &&
+      this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit &&
+      !this.checkDiffCategoriesAuthoritiesIsVisible(
+        PROJECT_TEAM_CARD_EDIT
+      ).visit_control_edit()
+    ) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    const { attachment_id, code } = data;
+    const { attachment_id, code } = data
     const that = this
     const { drawContent = {}, dispatch } = this.props
     const { deliverables = [] } = drawContent
     Modal.confirm({
       title: `确认要删除这个附件吗？`,
       zIndex: 1007,
-      content: <div style={{ color: 'rgba(0,0,0, .8)', fontSize: 14 }}>
-        <span >删除后不可恢复</span>
-      </div>,
+      content: (
+        <div style={{ color: 'rgba(0,0,0, .8)', fontSize: 14 }}>
+          <span>删除后不可恢复</span>
+        </div>
+      ),
       okText: '确认',
       cancelText: '取消',
       onOk() {
-        return new Promise((resolve) => {
-          deleteTaskFile(data).then((value) => {
+        return new Promise(resolve => {
+          deleteTaskFile(data).then(value => {
             if (value.code !== '0') {
               message.error(value.message)
               resolve()
@@ -1406,9 +1906,13 @@ const LogicWithMainContent = {
               let new_drawContent = { ...drawContent }
               // drawContentNew['attachment_data'] = atta_arr
               if (code == 'REMARK') {
-                new_drawContent['dec_files'] = new_drawContent['dec_files'].filter(n => n.id != attachment_id)
+                new_drawContent['dec_files'] = new_drawContent[
+                  'dec_files'
+                ].filter(n => n.id != attachment_id)
               } else if (code == 'SUBTASK_DELIVERABLES') {
-                new_drawContent['deliverables'] = new_drawContent['deliverables'].filter(n => n.id != attachment_id)
+                new_drawContent['deliverables'] = new_drawContent[
+                  'deliverables'
+                ].filter(n => n.id != attachment_id)
               }
               dispatch({
                 type: 'publicTaskDetailModal/updateDatas',
@@ -1426,64 +1930,90 @@ const LogicWithMainContent = {
           //   resolve()
           // })
         })
-
       }
-    });
+    })
   },
 
   /* 附件点点点字段 */
-  getAttachmentActionMenus: function ({ fileInfo, code, card_id }) {
+  getAttachmentActionMenus: function({ fileInfo, code, card_id }) {
     return (
       <Menu>
         <Menu.Item>
-          <a onClick={this.attachmentItemOpera.bind(this, { type: 'download', data: fileInfo, card_id })}>
+          <a
+            onClick={this.attachmentItemOpera.bind(this, {
+              type: 'download',
+              data: fileInfo,
+              card_id
+            })}
+          >
             下载到本地
-            </a>
+          </a>
         </Menu.Item>
         <Menu.Item>
-          <a onClick={this.attachmentItemOpera.bind(this, { type: 'remove', data: fileInfo, card_id, code })}>
+          <a
+            onClick={this.attachmentItemOpera.bind(this, {
+              type: 'remove',
+              data: fileInfo,
+              card_id,
+              code
+            })}
+          >
             删除该附件
-            </a>
+          </a>
         </Menu.Item>
       </Menu>
-    );
+    )
   },
 
   // 删除字段的回调
-  deleteCodeCalback: function (code, new_value = {}) {
+  deleteCodeCalback: function(code, new_value = {}) {
     const { handleTaskDetailChange } = this.props
     const { card_id } = new_value
     switch (code) {
       case 'MILESTONE':
-        handleTaskDetailChange({ card_id, drawContent: { ...new_value }, operate_properties_code: 'MILESTONE' })
-        break;
+        handleTaskDetailChange({
+          card_id,
+          drawContent: { ...new_value },
+          operate_properties_code: 'MILESTONE'
+        })
+        break
       case 'LABEL':
-        handleTaskDetailChange({ card_id, drawContent: { ...new_value }, operate_properties_code: 'LABEL' })
-        break;
+        handleTaskDetailChange({
+          card_id,
+          drawContent: { ...new_value },
+          operate_properties_code: 'LABEL'
+        })
+        break
       case 'SUBTASK':
-        handleTaskDetailChange({ card_id, drawContent: { ...new_value }, operate_properties_code: 'SUBTASK' })
-        break;
+        handleTaskDetailChange({
+          card_id,
+          drawContent: { ...new_value },
+          operate_properties_code: 'SUBTASK'
+        })
+        break
       default:
-        break;
+        break
     }
-  },
+  }
 }
 export default class DepositMainComponent extends Component {
-
   render() {
-    const { MainUIComponent, handleRelyUploading, handleTaskDetailChange, handleChildTaskChange } = this.props
+    const {
+      MainUIComponent,
+      handleRelyUploading,
+      handleTaskDetailChange,
+      handleChildTaskChange
+    } = this.props
     return (
       <MainUIComponent
         handleRelyUploading={handleRelyUploading}
         handleTaskDetailChange={handleTaskDetailChange}
         handleChildTaskChange={handleChildTaskChange}
-        LogicWithMainContent={LogicWithMainContent} />
+        LogicWithMainContent={LogicWithMainContent}
+      />
     )
   }
 }
 
 // 存放传入的组件容器
-DepositMainComponent.defautProps = {
-
-}
-
+DepositMainComponent.defautProps = {}

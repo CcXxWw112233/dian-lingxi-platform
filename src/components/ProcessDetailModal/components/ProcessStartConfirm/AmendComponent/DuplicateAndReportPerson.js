@@ -3,17 +3,21 @@ import { Button, Dropdown, Tooltip, Icon, Tabs } from 'antd'
 import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
-import { compareACoupleOfObjects, isArrayEqual } from '../../../../../utils/util'
+import {
+  compareACoupleOfObjects,
+  isArrayEqual
+} from '../../../../../utils/util'
 import { getOrgIdByBoardId } from '../../../../../utils/businessFunction'
 
-const { TabPane } = Tabs;
+const { TabPane } = Tabs
 
 export default class DuplicateAndReportPerson extends Component {
-
   constructor(props) {
     super(props)
     this.state = {
-      designatedPersonnelList: props.itemValue.recipients ? props.itemValue.recipients.split(',') : [], // 表示当前的执行人
+      designatedPersonnelList: props.itemValue.recipients
+        ? props.itemValue.recipients.split(',')
+        : [] // 表示当前的执行人
     }
   }
 
@@ -28,7 +32,9 @@ export default class DuplicateAndReportPerson extends Component {
     const { is_click_confirm_btn } = this.state
     if (!popoverVisible && !is_click_confirm_btn && this.props.popoverVisible) {
       this.setState({
-        designatedPersonnelList: itemValue.recipients ? itemValue.recipients.split(',') : [],
+        designatedPersonnelList: itemValue.recipients
+          ? itemValue.recipients.split(',')
+          : [],
         is_click_confirm_btn: false
       })
     }
@@ -39,16 +45,20 @@ export default class DuplicateAndReportPerson extends Component {
     const { data = [] } = this.props
     const { designatedPersonnelList = [] } = this.state
     let newData = [...data]
-    let newTransCopyPersonnelList= designatedPersonnelList && designatedPersonnelList.map(item => {
-      return newData.find(item2 => item2.user_id == item) || {}
-    })
-    newTransCopyPersonnelList = newTransCopyPersonnelList.filter(item => item.user_id)  
+    let newTransCopyPersonnelList =
+      designatedPersonnelList &&
+      designatedPersonnelList.map(item => {
+        return newData.find(item2 => item2.user_id == item) || {}
+      })
+    newTransCopyPersonnelList = newTransCopyPersonnelList.filter(
+      item => item.user_id
+    )
     return newTransCopyPersonnelList
   }
 
   //修改通知人的回调 S
-  chirldrenTaskChargeChange = (data) => {
-    const { data: membersData } = this.props;
+  chirldrenTaskChargeChange = data => {
+    const { data: membersData } = this.props
     // 多个任务执行人
     // const membersData = [...data] //所有的人
     // const excutorData = new_userInfo_data //所有的人
@@ -64,7 +74,7 @@ export default class DuplicateAndReportPerson extends Component {
       }
       this.setState({
         designatedPersonnelList: assignee_value
-      });
+      })
       // this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('assignees', assignee_value.join(','))
     }
 
@@ -121,10 +131,18 @@ export default class DuplicateAndReportPerson extends Component {
     })
     const { designatedPersonnelList = [], assignee_type } = this.state
     let newDesignatedPersonnelList = [...designatedPersonnelList]
-    await this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('recipients', newDesignatedPersonnelList.join(','))
-    await this.props.updateParentsAssigneesOrCopyPersonnel && this.props.updateParentsAssigneesOrCopyPersonnel({ value: newDesignatedPersonnelList }, 'transCopyPersonnelList')
-    await this.props.onVisibleChange && this.props.onVisibleChange(false, this.updateState)
-
+    ;(await this.props.updateCorrespondingPrcodessStepWithNodeContent) &&
+      this.props.updateCorrespondingPrcodessStepWithNodeContent(
+        'recipients',
+        newDesignatedPersonnelList.join(',')
+      )
+    ;(await this.props.updateParentsAssigneesOrCopyPersonnel) &&
+      this.props.updateParentsAssigneesOrCopyPersonnel(
+        { value: newDesignatedPersonnelList },
+        'transCopyPersonnelList'
+      )
+    ;(await this.props.onVisibleChange) &&
+      this.props.onVisibleChange(false, this.updateState)
   }
 
   // 渲染指定人员
@@ -135,84 +153,176 @@ export default class DuplicateAndReportPerson extends Component {
     let org_id = getOrgIdByBoardId(board_id) || '0'
     return (
       <div style={{ flex: 1, padding: '8px 0' }}>
-        {
-          !designatedPersonnelList.length ? (
-            <div style={{ position: 'relative' }}>
-              <Dropdown autoAdjustOverflow={false} trigger={['click']} overlayClassName={indexStyles.overlay_pricipal}
-                // getPopupContainer={triggerNode => triggerNode.parentNode}
-                getPopupContainer={() => document.getElementById(`reportPersonContainer_${itemKey}`)}
-                overlayStyle={{ maxWidth: '200px' }}
-                overlay={
-                  <MenuSearchPartner
-                    isInvitation={true}
-                    // show_select_all={true}
-                    // select_all_type={'0'}
-                    listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={designatedPersonnelList}
-                    // board_id={board_id}
-                    // invitationType='1'
-                    // invitationId={board_id}
-                    // invitationOrg={org_id}
-                    chirldrenTaskChargeChange={this.chirldrenTaskChargeChange} />
-                }
-              >
-                {/* 添加通知人按钮 */}
+        {!designatedPersonnelList.length ? (
+          <div style={{ position: 'relative' }}>
+            <Dropdown
+              autoAdjustOverflow={false}
+              trigger={['click']}
+              overlayClassName={indexStyles.overlay_pricipal}
+              // getPopupContainer={triggerNode => triggerNode.parentNode}
+              getPopupContainer={() =>
+                document.getElementById(`reportPersonContainer_${itemKey}`)
+              }
+              overlayStyle={{ maxWidth: '200px' }}
+              overlay={
+                <MenuSearchPartner
+                  isInvitation={true}
+                  // show_select_all={true}
+                  // select_all_type={'0'}
+                  listData={data}
+                  keyCode={'user_id'}
+                  searchName={'name'}
+                  currentSelect={designatedPersonnelList}
+                  // board_id={board_id}
+                  // invitationType='1'
+                  // invitationId={board_id}
+                  // invitationOrg={org_id}
+                  chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
+                />
+              }
+            >
+              {/* 添加通知人按钮 */}
 
-                <div className={indexStyles.addNoticePerson}>
-                  <span className={`${globalStyles.authTheme} ${indexStyles.plus_icon}`}>&#xe8fe;</span>
-                </div>
-              </Dropdown>
-            </div>
-          ) : (
-              <div style={{ position: 'relative', display: 'flex', alignItems: 'center', flexWrap: 'wrap', lineHeight: '22px' }}>
-                {designatedPersonnelList.map((value, index) => {
-                  const { avatar, name, user_name, user_id } = value
-                  return (
-                    <div style={{ display: 'flex', alignItems: 'center' }} key={user_id}>
-                      <div className={`${indexStyles.user_item}`} style={{ position: 'relative', textAlign: 'center', marginBottom: '8px' }} key={user_id}>
-                        {avatar ? (
-                          <Tooltip overlayStyle={{ minWidth: '62px' }} getPopupContainer={() => document.getElementById(`reportPersonContainer_${itemKey}`)} placement="top" title={name || user_name || '佚名'}>
-                            <img className={indexStyles.img_hover} style={{ width: '32px', height: '32px', borderRadius: 20, margin: '0 2px' }} src={avatar} />
-                          </Tooltip>
-                        ) : (
-                            <Tooltip overlayStyle={{ minWidth: '62px' }} getPopupContainer={() => document.getElementById(`reportPersonContainer_${itemKey}`)} placement="top" title={name || user_name || '佚名'}>
-                              <div className={indexStyles.default_user_hover} style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: '#f5f5f5', margin: '0 2px' }}>
-                                <Icon type={'user'} style={{ fontSize: 14, color: '#8c8c8c' }} />
-                              </div>
-                            </Tooltip>
-                          )}
-                        {/* <div style={{ marginRight: 8, fontSize: '14px' }}>{name || user_name || '佚名'}</div> */}
-                        <span onClick={(e) => { this.handleRemoveExecutors(e, user_id) }} className={`${indexStyles.userItemDeleBtn}`}></span>
-                      </div>
-                    </div>
-                  )
-                })}
-                <Dropdown autoAdjustOverflow={false} trigger={['click']} overlayClassName={indexStyles.overlay_pricipal}
-                  // getPopupContainer={triggerNode => triggerNode.parentNode}
-                  getPopupContainer={() => document.getElementById(`reportPersonContainer_${itemKey}`)}
-                  overlayStyle={{ maxWidth: '200px' }}
-                  overlay={
-                    <MenuSearchPartner
-                      isInvitation={true}
-                      // show_select_all={true}
-                      // select_all_type={'0'}
-                      listData={data} keyCode={'user_id'} searchName={'name'} currentSelect={designatedPersonnelList}
-                      // board_id={board_id}
-                      // invitationType='1'
-                      // invitationId={board_id}
-                      // invitationOrg={org_id}
-                      chirldrenTaskChargeChange={this.chirldrenTaskChargeChange} />
-                  }
+              <div className={indexStyles.addNoticePerson}>
+                <span
+                  className={`${globalStyles.authTheme} ${indexStyles.plus_icon}`}
                 >
-                  {/* 添加通知人按钮 */}
-
-                  <div className={indexStyles.addNoticePerson} style={{ marginTop: '-6px' }}>
-                    <span className={`${globalStyles.authTheme} ${indexStyles.plus_icon}`}>&#xe8fe;</span>
-                  </div>
-                </Dropdown>
+                  &#xe8fe;
+                </span>
               </div>
-            )
-        }
+            </Dropdown>
+          </div>
+        ) : (
+          <div
+            style={{
+              position: 'relative',
+              display: 'flex',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              lineHeight: '22px'
+            }}
+          >
+            {designatedPersonnelList.map((value, index) => {
+              const { avatar, name, user_name, user_id } = value
+              return (
+                <div
+                  style={{ display: 'flex', alignItems: 'center' }}
+                  key={user_id}
+                >
+                  <div
+                    className={`${indexStyles.user_item}`}
+                    style={{
+                      position: 'relative',
+                      textAlign: 'center',
+                      marginBottom: '8px'
+                    }}
+                    key={user_id}
+                  >
+                    {avatar ? (
+                      <Tooltip
+                        overlayStyle={{ minWidth: '62px' }}
+                        getPopupContainer={() =>
+                          document.getElementById(
+                            `reportPersonContainer_${itemKey}`
+                          )
+                        }
+                        placement="top"
+                        title={name || user_name || '佚名'}
+                      >
+                        <img
+                          className={indexStyles.img_hover}
+                          style={{
+                            width: '32px',
+                            height: '32px',
+                            borderRadius: 20,
+                            margin: '0 2px'
+                          }}
+                          src={avatar}
+                        />
+                      </Tooltip>
+                    ) : (
+                      <Tooltip
+                        overlayStyle={{ minWidth: '62px' }}
+                        getPopupContainer={() =>
+                          document.getElementById(
+                            `reportPersonContainer_${itemKey}`
+                          )
+                        }
+                        placement="top"
+                        title={name || user_name || '佚名'}
+                      >
+                        <div
+                          className={indexStyles.default_user_hover}
+                          style={{
+                            width: '32px',
+                            height: '32px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            borderRadius: 20,
+                            backgroundColor: '#f5f5f5',
+                            margin: '0 2px'
+                          }}
+                        >
+                          <Icon
+                            type={'user'}
+                            style={{ fontSize: 14, color: '#8c8c8c' }}
+                          />
+                        </div>
+                      </Tooltip>
+                    )}
+                    {/* <div style={{ marginRight: 8, fontSize: '14px' }}>{name || user_name || '佚名'}</div> */}
+                    <span
+                      onClick={e => {
+                        this.handleRemoveExecutors(e, user_id)
+                      }}
+                      className={`${indexStyles.userItemDeleBtn}`}
+                    ></span>
+                  </div>
+                </div>
+              )
+            })}
+            <Dropdown
+              autoAdjustOverflow={false}
+              trigger={['click']}
+              overlayClassName={indexStyles.overlay_pricipal}
+              // getPopupContainer={triggerNode => triggerNode.parentNode}
+              getPopupContainer={() =>
+                document.getElementById(`reportPersonContainer_${itemKey}`)
+              }
+              overlayStyle={{ maxWidth: '200px' }}
+              overlay={
+                <MenuSearchPartner
+                  isInvitation={true}
+                  // show_select_all={true}
+                  // select_all_type={'0'}
+                  listData={data}
+                  keyCode={'user_id'}
+                  searchName={'name'}
+                  currentSelect={designatedPersonnelList}
+                  // board_id={board_id}
+                  // invitationType='1'
+                  // invitationId={board_id}
+                  // invitationOrg={org_id}
+                  chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
+                />
+              }
+            >
+              {/* 添加通知人按钮 */}
 
+              <div
+                className={indexStyles.addNoticePerson}
+                style={{ marginTop: '-6px' }}
+              >
+                <span
+                  className={`${globalStyles.authTheme} ${indexStyles.plus_icon}`}
+                >
+                  &#xe8fe;
+                </span>
+              </div>
+            </Dropdown>
+          </div>
+        )}
       </div>
     )
   }
@@ -237,16 +347,33 @@ export default class DuplicateAndReportPerson extends Component {
     const { itemValue, itemKey } = this.props
     const { cc_type, recipients } = itemValue
     const { designatedPersonnelList } = this.state
-    let disabledRecipients = (designatedPersonnelList && designatedPersonnelList.length) ? isArrayEqual(recipients ? recipients.split(',') : [], designatedPersonnelList) : true
+    let disabledRecipients =
+      designatedPersonnelList && designatedPersonnelList.length
+        ? isArrayEqual(
+            recipients ? recipients.split(',') : [],
+            designatedPersonnelList
+          )
+        : true
     return (
       <div className={indexStyles.mini_content}>
-        <div id={`reportPersonContainer_${itemKey}`} className={`${indexStyles.mini_top} ${globalStyles.global_vertical_scrollbar}`}>
+        <div
+          id={`reportPersonContainer_${itemKey}`}
+          className={`${indexStyles.mini_top} ${globalStyles.global_vertical_scrollbar}`}
+        >
           <div>
-            {cc_type == '1' ? this.renderDesignatedPersonnel() : this.renderHandReportPersonnel()}
+            {cc_type == '1'
+              ? this.renderDesignatedPersonnel()
+              : this.renderHandReportPersonnel()}
           </div>
         </div>
         <div className={indexStyles.mini_bottom}>
-          <Button disabled={disabledRecipients ? true : false} onClick={this.handleConfirmChangeAssignees} type="primary">确定</Button>
+          <Button
+            disabled={disabledRecipients ? true : false}
+            onClick={this.handleConfirmChangeAssignees}
+            type="primary"
+          >
+            确定
+          </Button>
         </div>
       </div>
     )

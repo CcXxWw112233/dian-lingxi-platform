@@ -1,19 +1,15 @@
-import React, { Component } from 'react';
-import {
-  Modal,
-  Input,
-  Button,
-} from 'antd';
-import styles from './../../Workbench/CardContent/Modal/AddTaskModal.less';
-import { connect } from 'dva';
-import { getCurrentSelectedProjectMembersList } from '@/services/technological/workbench';
-import DropdownSelectWithSearch from './../../Workbench/CardContent/DropdownSelectWithSearch/index';
-import DropdownMultipleSelectWithSearch from './../../Workbench/CardContent/DropdownMultipleSelectWithSearch/index';
-import { isApiResponseOk } from '../../../../../utils/handleResponseData';
-import { getMilestoneList } from '../../../../../services/technological/prjectDetail';
+import React, { Component } from 'react'
+import { Modal, Input, Button } from 'antd'
+import styles from './../../Workbench/CardContent/Modal/AddTaskModal.less'
+import { connect } from 'dva'
+import { getCurrentSelectedProjectMembersList } from '@/services/technological/workbench'
+import DropdownSelectWithSearch from './../../Workbench/CardContent/DropdownSelectWithSearch/index'
+import DropdownMultipleSelectWithSearch from './../../Workbench/CardContent/DropdownMultipleSelectWithSearch/index'
+import { isApiResponseOk } from '../../../../../utils/handleResponseData'
+import { getMilestoneList } from '../../../../../services/technological/prjectDetail'
 import globalStyles from '@/globalset/css/globalClassName.less'
-import { currentNounPlanFilterName } from '../../../../../utils/businessFunction';
-import { TASKS, PROJECTS } from '../../../../../globalset/js/constant';
+import { currentNounPlanFilterName } from '../../../../../utils/businessFunction'
+import { TASKS, PROJECTS } from '../../../../../globalset/js/constant'
 
 /* eslint-disable */
 @connect(({ gantt: { datas: { list_group } } }) => ({ list_group }))

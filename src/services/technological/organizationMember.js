@@ -1,5 +1,9 @@
 import request from '../../utils/requestAxios'
-import { REQUEST_DOMAIN, REQUEST_DOMAIN_BOARD, REQUEST_INTERGFACE_VERSIONN } from '../../globalset/js/constant'
+import {
+  REQUEST_DOMAIN,
+  REQUEST_DOMAIN_BOARD,
+  REQUEST_INTERGFACE_VERSIONN
+} from '../../globalset/js/constant'
 import Cookies from 'js-cookie'
 
 //创建分组
@@ -9,9 +13,9 @@ export async function CreateGroup(data) {
     method: 'POST',
     data: {
       ...data,
-      _organization_id: localStorage.getItem('OrganizationId'),
+      _organization_id: localStorage.getItem('OrganizationId')
     }
-  });
+  })
 }
 
 //获取分组树状列表
@@ -21,9 +25,9 @@ export async function getGroupTreeList(params) {
     method: 'GET',
     params: {
       ...params,
-      _organization_id: localStorage.getItem('OrganizationId'),
+      _organization_id: localStorage.getItem('OrganizationId')
     }
-  });
+  })
 }
 
 //移出分组成员
@@ -33,9 +37,9 @@ export async function removeMembersWithGroup(data) {
     method: 'DELETE',
     data: {
       ...data,
-      _organization_id: localStorage.getItem('OrganizationId'),
+      _organization_id: localStorage.getItem('OrganizationId')
     }
-  });
+  })
 }
 
 //将访客加入组织
@@ -45,9 +49,9 @@ export async function joinOrganization(data) {
     method: 'PUT',
     data: {
       ...data,
-      _organization_id: localStorage.getItem('OrganizationId'),
+      _organization_id: localStorage.getItem('OrganizationId')
     }
-  });
+  })
 }
 //将访客移除
 export async function removeUserVisitor(data) {
@@ -55,7 +59,7 @@ export async function removeUserVisitor(data) {
     url: `${REQUEST_DOMAIN}/member/visitor/remove/${data.id}`,
     method: 'DELETE',
     data
-  });
+  })
 }
 
 //给职员设置分组
@@ -65,9 +69,9 @@ export async function setMemberWitchGroup(data) {
     method: 'PUT',
     data: {
       ...data,
-      _organization_id: localStorage.getItem('OrganizationId'),
+      _organization_id: localStorage.getItem('OrganizationId')
     }
-  });
+  })
 }
 //分组列表
 export async function getGroupList(params) {
@@ -75,10 +79,10 @@ export async function getGroupList(params) {
     url: `${REQUEST_DOMAIN}/group`,
     method: 'GET',
     params: {
-      ...params,
+      ...params
       // _organization_id: localStorage.getItem('OrganizationId'),
     }
-  });
+  })
 }
 
 //分组列表（访问控制）
@@ -87,10 +91,10 @@ export async function getAccessibleGroupList(params) {
     url: `${REQUEST_DOMAIN}/group/accessible/list`,
     method: 'GET',
     params: {
-      ...params,
+      ...params
       // _organization_id: localStorage.getItem('OrganizationId'),
     }
-  });
+  })
 }
 
 //更新分组
@@ -99,7 +103,7 @@ export async function updateGroup(data) {
     url: `${REQUEST_DOMAIN}/group`,
     method: 'PUT',
     data
-  });
+  })
 }
 //删除分组
 export async function deleteGroup(data) {
@@ -107,7 +111,7 @@ export async function deleteGroup(data) {
     url: `${REQUEST_DOMAIN}/group/${data.id}`,
     method: 'DELETE',
     data
-  });
+  })
 }
 
 //获取局部分组数据
@@ -116,7 +120,7 @@ export async function getGroupPartialInfo(data) {
     url: `${REQUEST_DOMAIN}/group/partial`,
     method: 'PUT',
     data
-  });
+  })
 }
 
 //审批 拒绝或通过
@@ -126,9 +130,9 @@ export async function approvalMember(data) {
     method: 'PUT',
     data: {
       ...data,
-      _organization_id: localStorage.getItem('OrganizationId'),
+      _organization_id: localStorage.getItem('OrganizationId')
     }
-  });
+  })
 }
 
 //停用
@@ -138,9 +142,9 @@ export async function discontinueMember(data) {
     method: 'PUT',
     data: {
       ...data,
-      _organization_id: localStorage.getItem('OrganizationId'),
+      _organization_id: localStorage.getItem('OrganizationId')
     }
-  });
+  })
 }
 
 //邀请加入当前分组
@@ -150,18 +154,21 @@ export async function inviteMemberToGroup(data) {
     method: 'PUT',
     data: {
       ...data,
-      _organization_id: localStorage.getItem('OrganizationId'),
+      _organization_id: localStorage.getItem('OrganizationId')
     }
-  });
+  })
 }
 
 //查询当前用户所拥有或所属组织
 export async function getCurrentUserOrganizes(params) {
-  return request({
-    url: `${REQUEST_DOMAIN}/organization`,
-    method: 'GET',
-    params
-  }, { isNotLoading: true });
+  return request(
+    {
+      url: `${REQUEST_DOMAIN}/organization`,
+      method: 'GET',
+      params
+    },
+    { isNotLoading: true }
+  )
 }
 
 // 切换组织
@@ -170,7 +177,7 @@ export async function changeCurrentOrg(data) {
     url: `${REQUEST_DOMAIN}${REQUEST_INTERGFACE_VERSIONN}/user/changecurrentorg/${data.org_id}`,
     method: 'PUT',
     data
-  });
+  })
 }
 
 //查询当前组织角色
@@ -180,9 +187,9 @@ export async function getCurrentOrgRole(params) {
     method: 'GET',
     params: {
       ...params,
-      _organization_id: localStorage.getItem('OrganizationId'),
+      _organization_id: localStorage.getItem('OrganizationId')
     }
-  });
+  })
 }
 //给成员设置角色
 export async function setMemberRole(data) {
@@ -190,17 +197,19 @@ export async function setMemberRole(data) {
     url: `${REQUEST_DOMAIN}/role/set`,
     method: 'PUT',
     data
-  });
+  })
 }
-
 
 //模糊查询组织列表
 export async function getSearchOrganizationList(params) {
-  return request({
-    url: `${REQUEST_DOMAIN}/organization/search`,
-    method: 'GET',
-    params
-  }, { isNotLoading: true });
+  return request(
+    {
+      url: `${REQUEST_DOMAIN}/organization/search`,
+      method: 'GET',
+      params
+    },
+    { isNotLoading: true }
+  )
 }
 
 //创建组织
@@ -209,7 +218,7 @@ export async function createOrganization(data) {
     url: `${REQUEST_DOMAIN}/organization`,
     method: 'POST',
     data
-  });
+  })
 }
 
 //更新组织
@@ -219,9 +228,9 @@ export async function updateOrganization(data) {
     method: 'PUT',
     data: {
       ...data,
-      _organization_id: localStorage.getItem('OrganizationId'),
+      _organization_id: localStorage.getItem('OrganizationId')
     }
-  });
+  })
 }
 
 //申请加入组织
@@ -230,7 +239,7 @@ export async function applyJoinOrganization(data) {
     url: `${REQUEST_DOMAIN}/organization/apply`,
     method: 'POST',
     data
-  });
+  })
 }
 
 //邀请成员加入组织
@@ -240,9 +249,9 @@ export async function inviteJoinOrganization(data) {
     method: 'PUT',
     data: {
       ...data,
-      _organization_id: localStorage.getItem('OrganizationId'),
+      _organization_id: localStorage.getItem('OrganizationId')
     }
-  });
+  })
 }
 
 //上传组织logo
@@ -251,7 +260,7 @@ export async function uploadOrganizationLogo(data) {
     url: `${REQUEST_DOMAIN}/organization/logo_upload`,
     method: 'POST',
     data
-  });
+  })
 }
 
 //获取组织成员信息
@@ -261,21 +270,24 @@ export async function getMemberInfo(params) {
     method: 'GET',
     params: {
       ...params,
-      _organization_id: localStorage.getItem('OrganizationId'),
+      _organization_id: localStorage.getItem('OrganizationId')
     }
-  });
+  })
 }
 
 //获取某个分组的成员 => 用于设置分组负责人
 export async function getMembersInOneGroup(params) {
-  return request({
-    url: `${REQUEST_DOMAIN}/group/members`,
-    method: 'GET',
-    params: {
-      _organization_id: localStorage.getItem('OrganizationId'),
-      ...params
-    }
-  }, { isNotLoading: true });
+  return request(
+    {
+      url: `${REQUEST_DOMAIN}/group/members`,
+      method: 'GET',
+      params: {
+        _organization_id: localStorage.getItem('OrganizationId'),
+        ...params
+      }
+    },
+    { isNotLoading: true }
+  )
 }
 //获取某个分组的成员 => 用于设置分组负责人
 export async function setGroupLeader(data) {
@@ -283,7 +295,7 @@ export async function setGroupLeader(data) {
     url: `${REQUEST_DOMAIN}/group/leader/set`,
     method: 'PUT',
     data
-  });
+  })
 }
 
 //组织成员获取权限列表 =>获取自己在组织中的权限--已废弃
@@ -292,24 +304,30 @@ export async function getOrganizationMemberPermissions(params) {
     url: `${REQUEST_DOMAIN}/permissions/member`,
     method: 'GET',
     params
-  });
+  })
 }
 
 //获取用户所有组织所有权限
 export async function getUserOrgPermissions(params) {
-  return request({
-    url: `${REQUEST_DOMAIN}/permissions/org`,
-    method: 'GET',
-    params
-  }, { isNotLoading: true });
+  return request(
+    {
+      url: `${REQUEST_DOMAIN}/permissions/org`,
+      method: 'GET',
+      params
+    },
+    { isNotLoading: true }
+  )
 }
 //获取用户所有项目所有权限
 export async function getUserBoardPermissions(params) {
-  return request({
-    url: `${REQUEST_DOMAIN_BOARD}/permissions/board`,
-    method: 'GET',
-    params
-  }, { isNotLoading: true });
+  return request(
+    {
+      url: `${REQUEST_DOMAIN_BOARD}/permissions/board`,
+      method: 'GET',
+      params
+    },
+    { isNotLoading: true }
+  )
 }
 
 // 用户设置是否显示组织名称
@@ -318,7 +336,7 @@ export async function getSetShowOrgName(data) {
     url: `${REQUEST_DOMAIN}/user/set`,
     method: 'PUT',
     data
-  });
+  })
 }
 
 // 用户设置是否显示极简模式
@@ -342,7 +360,7 @@ export async function getTransferSelectedList(params) {
       ...params,
       _organization_id: localStorage.getItem('OrganizationId')
     }
-  });
+  })
 }
 
 // 获取移除成员详细交接列表
@@ -351,9 +369,9 @@ export async function getTransferSelectedDetailList(params) {
     url: `${REQUEST_DOMAIN_BOARD}/board/transfer/selected/detail`,
     method: 'GET',
     params: {
-      ...params,
+      ...params
     }
-  });
+  })
 }
 
 // 移除成员并设置交接人
@@ -365,5 +383,5 @@ export async function removeMemberWithSettingTransferUser(data) {
       ...data,
       _organization_id: localStorage.getItem('OrganizationId')
     }
-  });
+  })
 }

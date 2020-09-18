@@ -1,7 +1,6 @@
-
 import React from 'react'
 import { Mention } from 'antd'
-const { toString, toContentState, Nav } = Mention;
+const { toString, toContentState, Nav } = Mention
 
 export default class MentionAssignees extends React.Component {
   state = {
@@ -12,7 +11,10 @@ export default class MentionAssignees extends React.Component {
     const { users = [] } = this.props
     //将选择的名称转化成id
     // let strNew = str.replace(/\s@/gim, ',').replace(/\s*/gim, '').replace(/@/, ',')
-    let strNew = str.replace(/\s@/gim, ',').replace(/@/, ',').trim()
+    let strNew = str
+      .replace(/\s@/gim, ',')
+      .replace(/@/, ',')
+      .trim()
 
     let strNewArray = strNew.split(',')
     for (let i = 0; i < strNewArray.length; i++) {
@@ -23,11 +25,12 @@ export default class MentionAssignees extends React.Component {
         }
       }
     }
-    strNew = strNewArray.length ? `${strNewArray.join(',').replace(/,/gim, ' @')}` : ''
+    strNew = strNewArray.length
+      ? `${strNewArray.join(',').replace(/,/gim, ' @')}`
+      : ''
     this.props.mentionOnChange(toContentState(strNew))
 
     // this.props.mentionOnChange(contentState)
-
   }
   render() {
     const { defaultAssignees, suggestions } = this.props
@@ -39,7 +42,9 @@ export default class MentionAssignees extends React.Component {
     }
 
     //解析从父组件传过来的 ‘@123 @234’格式的数据， @后面跟的是id。 转化数组，遍历得到id的名字，填入mention
-    let defaultAssigneesNew = defaultAssignees.replace(/\s@/gim, ',').replace(/\s*/gim, '')
+    let defaultAssigneesNew = defaultAssignees
+      .replace(/\s@/gim, ',')
+      .replace(/\s*/gim, '')
     let defaultAssigneesNewArray = defaultAssigneesNew.split(',')
     for (let i = 0; i < defaultAssigneesNewArray.length; i++) {
       for (let j = 0; j < users.length; j++) {
@@ -49,7 +54,9 @@ export default class MentionAssignees extends React.Component {
         }
       }
     }
-    defaultAssigneesNew = defaultAssigneesNewArray.length ? `${defaultAssigneesNewArray.join(',').replace(/,/gim, ' @')}` : ''
+    defaultAssigneesNew = defaultAssigneesNewArray.length
+      ? `${defaultAssigneesNewArray.join(',').replace(/,/gim, ' @')}`
+      : ''
 
     return (
       <div>
@@ -60,10 +67,9 @@ export default class MentionAssignees extends React.Component {
           // defaultValue={toContentState(defaultAssignees)}
           suggestions={suggestions}
           defaultValue={toContentState(defaultAssigneesNew)}
-        // suggestions={suggestionsNew}
+          // suggestions={suggestionsNew}
         />
       </div>
     )
-
   }
 }

@@ -1,7 +1,13 @@
-import { REQUEST_DOMAIN_FLOWS, REQUEST_DOMAIN_FILE, CONTENT_DATA_TYPE_FLOW, REQUEST_INTERGFACE_VERSIONN, REQUEST_DOMAIN } from "../../globalset/js/constant";
-import request from "../../utils/requestAxios";
+import {
+  REQUEST_DOMAIN_FLOWS,
+  REQUEST_DOMAIN_FILE,
+  CONTENT_DATA_TYPE_FLOW,
+  REQUEST_INTERGFACE_VERSIONN,
+  REQUEST_DOMAIN
+} from '../../globalset/js/constant'
+import request from '../../utils/requestAxios'
 
-const createHeaderContentDataByFlowInstantId = (flowInstantId) => {
+const createHeaderContentDataByFlowInstantId = flowInstantId => {
   if (flowInstantId) {
     return {
       BaseInfo: {
@@ -18,15 +24,15 @@ const createHeaderContentDataByFlowInstantId = (flowInstantId) => {
 
 /**
  * 获取流程模板列表
- * @param {String} board_id 项目ID 
- * @param {String} id 项目ID 
+ * @param {String} board_id 项目ID
+ * @param {String} id 项目ID
  */
 export async function getProcessTemplateList(params) {
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}${REQUEST_INTERGFACE_VERSIONN}/template/list`,
     method: 'GET',
-    params,
-  });
+    params
+  })
 }
 
 /**
@@ -141,8 +147,8 @@ export async function getProcessListByType(params) {
 
 /**
  * 完成流程任务
- * @param {String} flow_instance_id 当前流程的ID 
- * @param {String} flow_node_instance_id 当前流程节点的ID 
+ * @param {String} flow_instance_id 当前流程的ID
+ * @param {String} flow_node_instance_id 当前流程节点的ID
  * @param {String} message 审批意见
  * @param {Array} form_values 提交表单的数据
  */
@@ -151,14 +157,14 @@ export async function fillFormComplete(data) {
     url: `${REQUEST_DOMAIN_FLOWS}${REQUEST_INTERGFACE_VERSIONN}/flow/task/complete`,
     method: 'PUT',
     data,
-    headers: createHeaderContentDataByFlowInstantId(data.flow_instance_id),
+    headers: createHeaderContentDataByFlowInstantId(data.flow_instance_id)
   })
 }
 
 /**
  * 驳回
- * @param {String} flow_instance_id 当前流程的ID 
- * @param {String} flow_node_instance_id 当前流程节点的ID 
+ * @param {String} flow_instance_id 当前流程的ID
+ * @param {String} flow_node_instance_id 当前流程节点的ID
  * @param {String} message 驳回意见
  */
 export async function rejectProcessTask(data) {
@@ -166,7 +172,7 @@ export async function rejectProcessTask(data) {
     url: `${REQUEST_DOMAIN_FLOWS}${REQUEST_INTERGFACE_VERSIONN}/flow/task/reject`,
     method: 'PUT',
     data,
-    headers: createHeaderContentDataByFlowInstantId(data.flow_instance_id),
+    headers: createHeaderContentDataByFlowInstantId(data.flow_instance_id)
   })
 }
 
@@ -215,7 +221,7 @@ export async function processFileUpload(data) {
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}${REQUEST_INTERGFACE_VERSIONN}/flow/task/upload`,
     method: 'POST',
-    data,
+    data
     // headers: createHeaderContentDataByFlowInstantId(params.id)
   })
 }
@@ -229,8 +235,8 @@ export async function deleteProcessFile(params) {
     url: `${REQUEST_DOMAIN_FLOWS}${REQUEST_INTERGFACE_VERSIONN}/flow/task/file`,
     method: 'DELETE',
     // headers: createHeaderContentDataByFlowInstantId(data.flow_instance_id),
-    params,
-  });
+    params
+  })
 }
 
 //文件下载
@@ -240,9 +246,9 @@ export async function fileDownload(params) {
     url: `${REQUEST_DOMAIN_FILE}/file/download`,
     method: 'GET',
     params: {
-      ...params,
-    },
-  });
+      ...params
+    }
+  })
 }
 
 // 关于引导的接口
@@ -251,7 +257,7 @@ export async function configurePorcessGuide(data) {
     url: `${REQUEST_DOMAIN}/user/guide`,
     method: 'POST',
     data
-  });
+  })
 }
 
 // 关于撤回按钮
@@ -260,7 +266,7 @@ export async function rebackProcessTask(data) {
     url: `${REQUEST_DOMAIN_FLOWS}${REQUEST_INTERGFACE_VERSIONN}/flow/task/recall`,
     method: 'PUT',
     data
-  });
+  })
 }
 
 // 关于直接启动不经过模板页面
@@ -269,7 +275,7 @@ export async function nonAwayTempleteStartPropcess(data) {
     url: `${REQUEST_DOMAIN_FLOWS}${REQUEST_INTERGFACE_VERSIONN}/workflow/start`,
     method: 'POST',
     data
-  });
+  })
 }
 
 // 进行中修改实例名称以及描述
@@ -278,7 +284,7 @@ export async function updateFlowInstanceNameOrDescription(data) {
     url: `${REQUEST_DOMAIN_FLOWS}${REQUEST_INTERGFACE_VERSIONN}/workflow `,
     method: 'PUT',
     data
-  });
+  })
 }
 
 // 关于直接启动不经过模板页面
@@ -287,7 +293,7 @@ export async function workflowUpdateTime(data) {
     url: `${REQUEST_DOMAIN_FLOWS}${REQUEST_INTERGFACE_VERSIONN}/workflow/change`,
     method: 'PUT',
     data
-  });
+  })
 }
 
 //获取当前组织的所有成员信息
@@ -297,7 +303,8 @@ export async function getCurrentOrgAllMembers(params = {}) {
     method: 'GET',
     params: {
       ...params,
-      _organization_id: params._organization_id || localStorage.getItem('OrganizationId')
+      _organization_id:
+        params._organization_id || localStorage.getItem('OrganizationId')
     }
   })
 }
@@ -310,7 +317,8 @@ export async function getOnlineExcelWithProcess(data = {}) {
     data: {
       ...data,
       type: '2', // 2表示流程节点
-      _organization_id: data._organization_id || localStorage.getItem('OrganizationId')
+      _organization_id:
+        data._organization_id || localStorage.getItem('OrganizationId')
     }
   })
 }
@@ -336,8 +344,7 @@ export async function saveOnlineExcelWithProcess(data) {
 export async function getOnlineExcelDataWithProcess(params) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/file/online/excel/${params.id}`,
-    method: 'GET',
+    method: 'GET'
     // params
   })
 }
-

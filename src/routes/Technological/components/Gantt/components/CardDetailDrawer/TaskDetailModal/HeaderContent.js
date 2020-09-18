@@ -1,7 +1,11 @@
 import React, { Component } from 'react'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import headerStyles from './HeaderContent.less'
-import { currentNounPlanFilterName, getOrgNameWithOrgIdFilter, checkIsHasPermissionInVisitControl } from '@/utils/businessFunction.js'
+import {
+  currentNounPlanFilterName,
+  getOrgNameWithOrgIdFilter,
+  checkIsHasPermissionInVisitControl
+} from '@/utils/businessFunction.js'
 import { TASKS } from '@/globalset/js/constant'
 import HeaderContentRightMenu from './HeaderContentRightMenu'
 import { connect } from 'dva'
@@ -12,7 +16,16 @@ class HeaderContent extends Component {
     this.props.onClose && this.props.onClose()
   }
   render() {
-    const { drawContent = {}, currentUserOrganizes = [], is_all_org, is_show_org_name, updateParentTaskList, handleTaskDetailChange, setTaskDetailModalVisible, handleDeleteCard } = this.props
+    const {
+      drawContent = {},
+      currentUserOrganizes = [],
+      is_all_org,
+      is_show_org_name,
+      updateParentTaskList,
+      handleTaskDetailChange,
+      setTaskDetailModalVisible,
+      handleDeleteCard
+    } = this.props
     const { card_id, org_id, board_id, board_name, list_name } = drawContent
 
     return (
@@ -20,7 +33,7 @@ class HeaderContent extends Component {
         {/* 这里是头部左边 */}
         <div className={headerStyles.detail_head_left}>
           {/* 这里是头部图标样式 */}
-          <div >
+          <div>
             {/* <span>
               <i className={`${globalStyles.authTheme} ${headerStyles.title_icon}`}>&#xe66a;</i>
             </span>
@@ -29,8 +42,15 @@ class HeaderContent extends Component {
             </span> */}
             <span className={`${headerStyles.action}`}>
               <Tooltip title="关闭">
-                <span className={headerStyles.normal_icon} onClick={this.closeDrawer}>
-                  <span className={`${globalStyles.authTheme} ${headerStyles.dele}`}>&#xe7fe;</span>
+                <span
+                  className={headerStyles.normal_icon}
+                  onClick={this.closeDrawer}
+                >
+                  <span
+                    className={`${globalStyles.authTheme} ${headerStyles.dele}`}
+                  >
+                    &#xe7fe;
+                  </span>
                 </span>
               </Tooltip>
             </span>
@@ -57,9 +77,9 @@ class HeaderContent extends Component {
             handleTaskDetailChange={handleTaskDetailChange}
             updateParentTaskList={updateParentTaskList}
             handleDeleteCard={handleDeleteCard}
-            setTaskDetailModalVisible={setTaskDetailModalVisible} />
+            setTaskDetailModalVisible={setTaskDetailModalVisible}
+          />
         </div>
-
       </div>
     )
   }
@@ -68,11 +88,16 @@ class HeaderContent extends Component {
 HeaderContent.defaultProps = {
   board_id: '', // 项目id
   board_name: '', // 项目名
-  card_id: '', // 任务id
+  card_id: '' // 任务id
 }
 
 //  只关联public中弹窗内的数据
-function mapStateToProps({ publicTaskDetailModal: { drawContent = {} }, technological: { datas: { currentUserOrganizes = [], is_all_org, is_show_org_name } } }) {
+function mapStateToProps({
+  publicTaskDetailModal: { drawContent = {} },
+  technological: {
+    datas: { currentUserOrganizes = [], is_all_org, is_show_org_name }
+  }
+}) {
   return { drawContent, currentUserOrganizes, is_show_org_name, is_all_org }
 }
 export default connect(mapStateToProps)(HeaderContent)

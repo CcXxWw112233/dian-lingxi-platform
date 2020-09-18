@@ -3,19 +3,22 @@ import { Modal, Form, Button, Input, message } from 'antd'
 import CustormModal from '../../CustormModal'
 
 class PreviewFileModalRichText extends React.Component {
-
-  state = {
-  }
+  state = {}
   onCancel = () => {
     this.props.setPreivewProp({
       isUsable: true,
       previewFileType: '',
-      previewFileSrc: '',
+      previewFileSrc: ''
     })
     this.props.setPreviewFileModalVisibile()
   }
   render() {
-    const { modalVisible, previewFileSrc, previewFileType, isUsable } = this.props;
+    const {
+      modalVisible,
+      previewFileSrc,
+      previewFileType,
+      isUsable
+    } = this.props
     const containner = () => {
       let contain
       switch (previewFileType) {
@@ -26,18 +29,28 @@ class PreviewFileModalRichText extends React.Component {
           break
         case 'video':
           contain = (
-            <video controls src={previewFileSrc} style={{ width: 'auto', maxHeight: '600px' }}></video>
+            <video
+              controls
+              src={previewFileSrc}
+              style={{ width: 'auto', maxHeight: '600px' }}
+            ></video>
           )
           break
         case 'attachment':
           if (isUsable) {
             contain = (
-              <iframe style={{ height: 600, width: 600 }} src={previewFileSrc}></iframe>
+              <iframe
+                style={{ height: 600, width: 600 }}
+                src={previewFileSrc}
+              ></iframe>
             )
           } else {
             contain = (
               <div>
-                <iframe style={{ height: 0, width: 0 }} src={previewFileSrc}></iframe>
+                <iframe
+                  style={{ height: 0, width: 0 }}
+                  src={previewFileSrc}
+                ></iframe>
                 当前文件无法预览
               </div>
             )

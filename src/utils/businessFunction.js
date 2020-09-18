@@ -1,9 +1,12 @@
 //业务逻辑公共工具类
-import { NORMAL_NOUN_PLAN, CONTENT_DATA_TYPE_FILE } from '../globalset/js/constant'
-import { get } from 'https';
-import { Base64 } from 'js-base64';
-import moment from 'moment';
-import { validOnlyNumber } from './verify';
+import {
+  NORMAL_NOUN_PLAN,
+  CONTENT_DATA_TYPE_FILE
+} from '../globalset/js/constant'
+import { get } from 'https'
+import { Base64 } from 'js-base64'
+import moment from 'moment'
+import { validOnlyNumber } from './verify'
 import { lx_utils } from 'lingxi-im'
 
 // 权限的过滤和存储在technological下
@@ -28,19 +31,22 @@ export const setGlobalData = (name, value) => {
   window.sessionStorage.setItem(name, value)
   // global.globalData[name] = value
 }
-export const getGlobalData = (name) => {
+export const getGlobalData = name => {
   return window.sessionStorage.getItem(name)
   // return global.globalData[name]
 }
 
 export const checkIsHasPermission = (code, param_org_id) => {
   const OrganizationId = localStorage.getItem('OrganizationId')
-  const organizationMemberPermissions = JSON.parse(localStorage.getItem('userOrgPermissions')) || []
-  if (OrganizationId == '0') { //全组织下需要取出传入组织对应的权限
+  const organizationMemberPermissions =
+    JSON.parse(localStorage.getItem('userOrgPermissions')) || []
+  if (OrganizationId == '0') {
+    //全组织下需要取出传入组织对应的权限
     if (!param_org_id) {
       return true
     } else {
-      const currentOrgPermissions = organizationMemberPermissions[param_org_id] || []
+      const currentOrgPermissions =
+        organizationMemberPermissions[param_org_id] || []
       if (!Array.isArray(currentOrgPermissions)) {
         return false
       }
@@ -52,18 +58,17 @@ export const checkIsHasPermission = (code, param_org_id) => {
     }
     return organizationMemberPermissions.includes(code)
   }
-
 }
 
 /**
  * 这是检测某个用户的访问控制权限
  * 思路: 先在该用户所在的权限列表中查询找到对应的用户, 如果存在, 那么该用户的权限就是
- * code 类型 { edit > comment > read > permissionsValue } 中的一种, 
+ * code 类型 { edit > comment > read > permissionsValue } 中的一种,
  * 如果不存在, 那么就去查看该用户在项目中对应的权限列表
- * 
+ *
  * 想要达到的效果是,在哪里调用就返回对应的true/false
  * 比如想判断它是否是编辑, 那么传入对应的code,
- * 
+ *
  * 缺点: 就是限制了code类型, 而且必须要在你知道的情况下
  * @param {String} code 对应用户的字段类型
  * @param {Array} privileges 该用户所在的权限列表
@@ -71,17 +76,27 @@ export const checkIsHasPermission = (code, param_org_id) => {
  * @param {Boolean} permissionsValue 所有用户在项目中的权限
  * @return {Boolean} 该方法返回一个布尔类型的值, 为true 表示可以行使该权限
  */
-export const checkIsHasPermissionInVisitControl = (code, privileges, is_privilege, principalList, permissionsValue) => {
+export const checkIsHasPermissionInVisitControl = (
+  code,
+  privileges,
+  is_privilege,
+  principalList,
+  permissionsValue
+) => {
   // 1. 从localstorage中获取当前操作的用户信息
   // 2. 在privileges列表中查找该用户, 如果找到了, 根据返回的code类型来判断该用户的操作权限
   // 3. 找不到, 那么就取permissionsValue中对应的权限
-  const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
+  const { user_set = {} } = localStorage.getItem('userInfo')
+    ? JSON.parse(localStorage.getItem('userInfo'))
+    : {}
   const { user_id } = user_set
   let flag
-  if (!Array.isArray(privileges)) { // 纯属为了高端, 没啥用
+  if (!Array.isArray(privileges)) {
+    // 纯属为了高端, 没啥用
     return false
   }
-  if (!Array.isArray(principalList)) { // 纯属为了高端, 没啥用
+  if (!Array.isArray(principalList)) {
+    // 纯属为了高端, 没啥用
     return false
   }
   let new_privileges = [...privileges]
@@ -113,10 +128,16 @@ export const checkIsHasPermissionInVisitControl = (code, privileges, is_privileg
    */
   if (!(currentUserArr && currentUserArr.length)) {
     // 如果说也不在执行人列表中, 那么就返回项目中的权限列表
-    if (!(currentPricipalListWhetherOrNotSelf && currentPricipalListWhetherOrNotSelf.length)) {
-      return flag = permissionsValue
-    } else { // 否则返回true, 代表有权限
-      return flag = true
+    if (
+      !(
+        currentPricipalListWhetherOrNotSelf &&
+        currentPricipalListWhetherOrNotSelf.length
+      )
+    ) {
+      return (flag = permissionsValue)
+    } else {
+      // 否则返回true, 代表有权限
+      return (flag = true)
     }
   }
 
@@ -125,13 +146,17 @@ export const checkIsHasPermissionInVisitControl = (code, privileges, is_privileg
     if (!(item && item.user_info)) return false
     let { id } = item && item.user_info
     if (!id) return false
-    if (user_id == id) { // 判断改成员能不能在自己的权限列表中查询到
-      if (item.content_privilege_code == code) { // 如果说该职员的权限状态与code匹配, 返回true, 表示有权利
+    if (user_id == id) {
+      // 判断改成员能不能在自己的权限列表中查询到
+      if (item.content_privilege_code == code) {
+        // 如果说该职员的权限状态与code匹配, 返回true, 表示有权利
         flag = true
-      } else { // 返回false,表示没有权利
+      } else {
+        // 返回false,表示没有权利
         flag = false
       }
-    } else { // 找不到该成员, 那么就在对应的该项目中查找对应的权限列表
+    } else {
+      // 找不到该成员, 那么就在对应的该项目中查找对应的权限列表
       flag = permissionsValue // 返回对应项目权限列表中的状态
     }
     return flag
@@ -140,8 +165,10 @@ export const checkIsHasPermissionInVisitControl = (code, privileges, is_privileg
 }
 //在当前项目中检查是否有权限操作
 export const checkIsHasPermissionInBoard = (code, params_board_id) => {
-  const userBoardPermissions = JSON.parse(localStorage.getItem('userBoardPermissions')) || []
-  const board_id = params_board_id || getGlobalData('storageCurrentOperateBoardId')
+  const userBoardPermissions =
+    JSON.parse(localStorage.getItem('userBoardPermissions')) || []
+  const board_id =
+    params_board_id || getGlobalData('storageCurrentOperateBoardId')
 
   if (!board_id || board_id == '0') {
     return true
@@ -157,7 +184,11 @@ export const checkIsHasPermissionInBoard = (code, params_board_id) => {
 //返回当前名词定义对应名称
 export const currentNounPlanFilterName = (code, currentNounPlan_parm) => {
   let currentNounPlan
-  if (localStorage.getItem('OrganizationId') == '0' || !localStorage.getItem('OrganizationId')) { //全组织下采用默认
+  if (
+    localStorage.getItem('OrganizationId') == '0' ||
+    !localStorage.getItem('OrganizationId')
+  ) {
+    //全组织下采用默认
     currentNounPlan = NORMAL_NOUN_PLAN
   } else {
     if (!currentNounPlan_parm) {
@@ -168,7 +199,10 @@ export const currentNounPlanFilterName = (code, currentNounPlan_parm) => {
         currentNounPlan = NORMAL_NOUN_PLAN
       }
     } else {
-      if (typeof currentNounPlan_parm == 'object' && currentNounPlan_parm.hasOwnProperty('Projects')) {
+      if (
+        typeof currentNounPlan_parm == 'object' &&
+        currentNounPlan_parm.hasOwnProperty('Projects')
+      ) {
         currentNounPlan = currentNounPlan_parm
       } else {
         currentNounPlan = NORMAL_NOUN_PLAN
@@ -189,24 +223,31 @@ export const currentNounPlanFilterName = (code, currentNounPlan_parm) => {
 // 返回全组织（各个组织下）或某个确认组织下对应的org_name
 export const getOrgNameWithOrgIdFilter = (org_id, organizations = []) => {
   const OrganizationId = localStorage.getItem('OrganizationId')
-  if (OrganizationId != '0') { //确认组织
-    let currentSelectOrganize = localStorage.getItem('currentSelectOrganize') || '{}'
+  if (OrganizationId != '0') {
+    //确认组织
+    let currentSelectOrganize =
+      localStorage.getItem('currentSelectOrganize') || '{}'
     currentSelectOrganize = JSON.parse(currentSelectOrganize)
     return currentSelectOrganize['name']
-  } else { //全组织
+  } else {
+    //全组织
     const name = (organizations.find(item => org_id == item.id) || {}).name
     return name
   }
 }
 
 //打开pdf文件名
-export const openPDF = (params) => {
+export const openPDF = params => {
   const { protocol, hostname } = window.location
-  window.open(`${protocol}//${hostname}/#/iframeOut?operateType=openPDF&id=${params['id']}`)
+  window.open(
+    `${protocol}//${hostname}/#/iframeOut?operateType=openPDF&id=${params['id']}`
+  )
 }
 //获取后缀名
-export const getSubfixName = (file_name) => {
-  return file_name ? file_name.substr(file_name.lastIndexOf(".")).toLowerCase() : ''
+export const getSubfixName = file_name => {
+  return file_name
+    ? file_name.substr(file_name.lastIndexOf('.')).toLowerCase()
+    : ''
 }
 
 //设置localstorage缓存
@@ -214,7 +255,7 @@ export const setStorage = (key, value) => {
   localStorage.setItem(key, value)
 }
 //设置组织id localstorage缓存
-export const setOrganizationIdStorage = (value) => {
+export const setOrganizationIdStorage = value => {
   localStorage.setItem('OrganizationId', value)
 }
 //设置board_id localstorage缓存, 同时存储board_id对应的org_id
@@ -232,7 +273,8 @@ export const setBoardIdStorage = (value, param_org_id) => {
     return
   }
 
-  let userAllOrgsAllBoards = localStorage.getItem('userAllOrgsAllBoards') || '[]'
+  let userAllOrgsAllBoards =
+    localStorage.getItem('userAllOrgsAllBoards') || '[]'
   if (userAllOrgsAllBoards) {
     userAllOrgsAllBoards = JSON.parse(userAllOrgsAllBoards)
   }
@@ -251,11 +293,12 @@ export const setBoardIdStorage = (value, param_org_id) => {
   setGlobalData('aboutBoardOrganizationId', org_id || '0')
 }
 // 通过board_id查询得到board_id所属的org_id
-export const getOrgIdByBoardId = (boardId) => {
+export const getOrgIdByBoardId = boardId => {
   if (!boardId) {
     return ''
   }
-  let userAllOrgsAllBoards = localStorage.getItem('userAllOrgsAllBoards') || '[]'
+  let userAllOrgsAllBoards =
+    localStorage.getItem('userAllOrgsAllBoards') || '[]'
   if (userAllOrgsAllBoards) {
     userAllOrgsAllBoards = JSON.parse(userAllOrgsAllBoards)
   }
@@ -274,34 +317,54 @@ export const getOrgIdByBoardId = (boardId) => {
   return org_id
 }
 
-
 //是否有组织成员查看权限
 
-export const isHasOrgMemberQueryPermission = () => checkIsHasPermission('org:upms:organization:member:query')
+export const isHasOrgMemberQueryPermission = () =>
+  checkIsHasPermission('org:upms:organization:member:query')
 
-export const isHasOrgTeamBoardEditPermission = () => checkIsHasPermission('org:team:board:edit')
-
+export const isHasOrgTeamBoardEditPermission = () =>
+  checkIsHasPermission('org:team:board:edit')
 
 // 返回通用接口设置header里的baseinfo(访问控制后台需要)
 export const setRequestHeaderBaseInfo = ({ data, params, headers }) => {
-
-  let header_base_info_orgid = (headers['BaseInfo'] || {}).orgId || localStorage.getItem('OrganizationId') || '0'
-  let header_base_info_board_id = (headers['BaseInfo'] || {}).boardId || getGlobalData('storageCurrentOperateBoardId') || '0'
+  let header_base_info_orgid =
+    (headers['BaseInfo'] || {}).orgId ||
+    localStorage.getItem('OrganizationId') ||
+    '0'
+  let header_base_info_board_id =
+    (headers['BaseInfo'] || {}).boardId ||
+    getGlobalData('storageCurrentOperateBoardId') ||
+    '0'
 
   if (data['_organization_id'] || params['_organization_id']) {
-    header_base_info_orgid = data['_organization_id'] || params['_organization_id']
+    header_base_info_orgid =
+      data['_organization_id'] || params['_organization_id']
   }
 
-  if (data['boardId'] || params['boardId'] || data['board_id'] || params['board_id']) {
-    header_base_info_board_id = data['boardId'] || params['boardId'] || data['board_id'] || params['board_id']
+  if (
+    data['boardId'] ||
+    params['boardId'] ||
+    data['board_id'] ||
+    params['board_id']
+  ) {
+    header_base_info_board_id =
+      data['boardId'] ||
+      params['boardId'] ||
+      data['board_id'] ||
+      params['board_id']
   }
-  header_base_info_board_id = validOnlyNumber(header_base_info_board_id) ? header_base_info_board_id : '0'
+  header_base_info_board_id = validOnlyNumber(header_base_info_board_id)
+    ? header_base_info_board_id
+    : '0'
 
-  const header_base_info = Object.assign({
-    orgId: header_base_info_orgid,
-    boardId: header_base_info_board_id,
-    aboutBoardOrganizationId: getGlobalData('aboutBoardOrganizationId') || '0',
-  }, headers['BaseInfo'] || {})
+  const header_base_info = Object.assign(
+    {
+      orgId: header_base_info_orgid,
+      boardId: header_base_info_board_id,
+      aboutBoardOrganizationId: getGlobalData('aboutBoardOrganizationId') || '0'
+    },
+    headers['BaseInfo'] || {}
+  )
   const header_base_info_str = JSON.stringify(header_base_info)
   const header_base_info_str_base64 = Base64.encode(header_base_info_str)
   const new_herders = {
@@ -312,11 +375,19 @@ export const setRequestHeaderBaseInfo = ({ data, params, headers }) => {
 }
 
 // 返回设置上传接口设置header里的baseinfo(访问控制后台需要)
-export const setUploadHeaderBaseInfo = ({ orgId, boardId, aboutBoardOrganizationId, contentDataId, contentDataType }) => {
-
-  let header_base_info_orgid = orgId || localStorage.getItem('OrganizationId') || '0'
-  let header_base_info_board_id = boardId || getGlobalData('storageCurrentOperateBoardId') || '0'
-  let header_base_info_about_board_org_id = aboutBoardOrganizationId || getGlobalData('aboutBoardOrganizationId') || '0'
+export const setUploadHeaderBaseInfo = ({
+  orgId,
+  boardId,
+  aboutBoardOrganizationId,
+  contentDataId,
+  contentDataType
+}) => {
+  let header_base_info_orgid =
+    orgId || localStorage.getItem('OrganizationId') || '0'
+  let header_base_info_board_id =
+    boardId || getGlobalData('storageCurrentOperateBoardId') || '0'
+  let header_base_info_about_board_org_id =
+    aboutBoardOrganizationId || getGlobalData('aboutBoardOrganizationId') || '0'
   const header_base_info = {
     orgId: header_base_info_orgid,
     boardId: header_base_info_board_id,
@@ -333,14 +404,15 @@ export const setUploadHeaderBaseInfo = ({ orgId, boardId, aboutBoardOrganization
   return new_herders
 }
 
-export const isPaymentOrgUser = (_org_id) => {
-  let OrganizationId;
+export const isPaymentOrgUser = _org_id => {
+  let OrganizationId
   if (_org_id) {
-    OrganizationId = _org_id;
+    OrganizationId = _org_id
   } else {
     OrganizationId = localStorage.getItem('OrganizationId')
   }
-  const currentUserOrganizes = JSON.parse(localStorage.getItem('currentUserOrganizes')) || [];
+  const currentUserOrganizes =
+    JSON.parse(localStorage.getItem('currentUserOrganizes')) || []
   // console.log("OrganizationId", OrganizationId);
   // console.log("currentUserOrganizes", currentUserOrganizes);
 
@@ -350,41 +422,74 @@ export const isPaymentOrgUser = (_org_id) => {
       if (org.payment_status == 1) {
         return true
       }
-    };
+    }
   } else {
     //单组织
-    let curentOrgs = currentUserOrganizes.filter(item => item.id == OrganizationId);
+    let curentOrgs = currentUserOrganizes.filter(
+      item => item.id == OrganizationId
+    )
     // console.log("curentOrgs", curentOrgs);
     if (curentOrgs && curentOrgs.length > 0) {
-      let curentOrg = curentOrgs[0] || {};
-      if (curentOrg.payment_status == 1 && moment(parseInt(curentOrg.payment_end_date.length == 10 ? curentOrg.payment_end_date + "000" : curentOrg.payment_end_date)).isAfter(new Date())) {
-        return true;
+      let curentOrg = curentOrgs[0] || {}
+      if (
+        curentOrg.payment_status == 1 &&
+        moment(
+          parseInt(
+            curentOrg.payment_end_date.length == 10
+              ? curentOrg.payment_end_date + '000'
+              : curentOrg.payment_end_date
+          )
+        ).isAfter(new Date())
+      ) {
+        return true
       } else {
-        return false;
+        return false
       }
     } else {
-      return false;
+      return false
     }
   }
-
 }
 
 // (极简模式下)，点击或选择某个项目时，做项目联动，圈子联动和相关规划统一处理
-export const selectBoardToSeeInfo = ({ board_id, selected_board_term, board_name, dispatch, autoOpenIm = true, org_id, is_new_board, group_view_type = '1' }) => {
+export const selectBoardToSeeInfo = ({
+  board_id,
+  selected_board_term,
+  board_name,
+  dispatch,
+  autoOpenIm = true,
+  org_id,
+  is_new_board,
+  group_view_type = '1'
+}) => {
   setBoardIdStorage(board_id, org_id)
-  dispatch({ //设置极简模式的已选项目
+  dispatch({
+    //设置极简模式的已选项目
     type: 'simplemode/updateDatas',
     payload: {
-      simplemodeCurrentProject: board_id == '0' ? selected_board_term == '1' ? { selected_board_term: '1' } : selected_board_term == '2' ? { selected_board_term: '2' } : '' : {
-        board_id,
-        board_name,
-        org_id: org_id || getOrgIdByBoardId(board_id),
-        selected_board_term: selected_board_term == '1' ? selected_board_term : selected_board_term == '2' ? selected_board_term : '0'
-      }
+      simplemodeCurrentProject:
+        board_id == '0'
+          ? selected_board_term == '1'
+            ? { selected_board_term: '1' }
+            : selected_board_term == '2'
+            ? { selected_board_term: '2' }
+            : ''
+          : {
+              board_id,
+              board_name,
+              org_id: org_id || getOrgIdByBoardId(board_id),
+              selected_board_term:
+                selected_board_term == '1'
+                  ? selected_board_term
+                  : selected_board_term == '2'
+                  ? selected_board_term
+                  : '0'
+            }
     }
   })
 
-  if (board_id && board_id != '0') { //请求项目详情
+  if (board_id && board_id != '0') {
+    //请求项目详情
     dispatch({
       type: 'projectDetail/projectDetailInfo',
       payload: {
@@ -398,7 +503,8 @@ export const selectBoardToSeeInfo = ({ board_id, selected_board_term, board_name
     new_group_view_type = '1'
   }
 
-  dispatch({ //更新甘特图
+  dispatch({
+    //更新甘特图
     type: 'gantt/updateDatas',
     payload: {
       gantt_board_id: board_id || '0',
@@ -409,19 +515,21 @@ export const selectBoardToSeeInfo = ({ board_id, selected_board_term, board_name
       target_scrollTop: 0
     }
   })
-  dispatch({ //更新用户信息中已选项目（接口）
+  dispatch({
+    //更新用户信息中已选项目（接口）
     type: 'accountSet/updateUserSet',
     payload: {
       current_board: board_id || '0'
     }
-  });
-  dispatch({ //更新用户信息中已选项目
+  })
+  dispatch({
+    //更新用户信息中已选项目
     type: 'technological/setUserInfoAbout',
     payload: {
       current_board_id: board_id,
       current_board_name: board_name
     }
-  });
+  })
   const target = document.getElementById('gantt_card_out_middle')
   if (target) {
     target.scrollTop = 0
@@ -430,27 +538,32 @@ export const selectBoardToSeeInfo = ({ board_id, selected_board_term, board_name
   // console.log('sssss', window.location)
   const hash = window.location.hash
   if (hash.indexOf('/technological/simplemode/workbench') != -1) {
-    const sessionStorage_item = window.sessionStorage.getItem('session_currentSelectedWorkbenchBox')
-    const session_currentSelectedWorkbenchBox = JSON.parse(sessionStorage_item || '{}')
+    const sessionStorage_item = window.sessionStorage.getItem(
+      'session_currentSelectedWorkbenchBox'
+    )
+    const session_currentSelectedWorkbenchBox = JSON.parse(
+      sessionStorage_item || '{}'
+    )
     const { code } = session_currentSelectedWorkbenchBox
-    if (code == 'board:plans') { //项目计划
+    if (code == 'board:plans') {
+      //项目计划
       dispatch({
         type: 'gantt/getGanttData',
         payload: {
           gantt_board_id: board_id || '0'
         }
       })
-    } else if (code == 'board:chat') { //项目交流
+    } else if (code == 'board:chat') {
+      //项目交流
       dispatch({
         type: 'gantt/updateDatas',
         payload: {
           gantt_board_id: board_id || '0'
         }
       })
-    } else if (code == 'board:files') { //项目文档
-
+    } else if (code == 'board:files') {
+      //项目文档
     } else {
-
     }
   } else if (hash.indexOf('/technological/workbench') != -1) {
     dispatch({
@@ -460,11 +573,9 @@ export const selectBoardToSeeInfo = ({ board_id, selected_board_term, board_name
       }
     })
   } else {
-
   }
 
   openImChatBoard({ board_id, autoOpenIm })
-
 }
 export const openImChatBoard = ({ board_id, autoOpenIm }) => {
   lx_utils.openChat({ boardId: board_id == '0' ? '' : board_id, autoOpenIm })
@@ -473,10 +584,7 @@ export const openImChatBoard = ({ board_id, autoOpenIm }) => {
 // 清除圈子登录信息
 export const clearnImAuth = () => {
   if (window.NIM) {
-    if (
-      window.NIM.disconnect &&
-      typeof window.NIM.disconnect == 'function'
-    ) {
+    if (window.NIM.disconnect && typeof window.NIM.disconnect == 'function') {
       window.NIM.disconnect()
     }
   }

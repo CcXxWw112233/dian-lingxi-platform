@@ -1,27 +1,27 @@
-import React, { Component } from 'react';
-import { Menu, Dropdown, Input, Tooltip } from 'antd';
-import classNames from 'classnames/bind';
-import styles from './index.less';
-import MenuItem from 'antd/lib/menu/MenuItem';
-import AddModalFormWithExplicitProps from './../../../Project/AddModalFormWithExplicitProps';
-import { connect } from 'dva/index';
-import Cookies from 'js-cookie';
+import React, { Component } from 'react'
+import { Menu, Dropdown, Input, Tooltip } from 'antd'
+import classNames from 'classnames/bind'
+import styles from './index.less'
+import MenuItem from 'antd/lib/menu/MenuItem'
+import AddModalFormWithExplicitProps from './../../../Project/AddModalFormWithExplicitProps'
+import { connect } from 'dva/index'
+import Cookies from 'js-cookie'
 import {
   MESSAGE_DURATION_TIME,
   NOT_HAS_PERMISION_COMFIRN,
   ORG_TEAM_BOARD_CREATE
-} from '../../../../../../globalset/js/constant';
+} from '../../../../../../globalset/js/constant'
 import {
   checkIsHasPermissionInBoard,
   checkIsHasPermission,
   setStorage,
   setBoardIdStorage
-} from '../../../../../../utils/businessFunction';
-import { message } from 'antd/lib/index';
-import CreateProject from './../../../Project/components/CreateProject/index';
+} from '../../../../../../utils/businessFunction'
+import { message } from 'antd/lib/index'
+import CreateProject from './../../../Project/components/CreateProject/index'
 import globalStyles from '@/globalset/css/globalClassName.less'
 
-let cx = classNames.bind(styles);
+let cx = classNames.bind(styles)
 
 /* eslint-disable */
 class DropdownSelectWithSearch extends Component {

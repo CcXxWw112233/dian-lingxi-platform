@@ -1,34 +1,39 @@
 import React from 'react'
-import { Input, Select, Cascader} from 'antd'
+import { Input, Select, Cascader } from 'antd'
 import indexStyles from './index.less'
-import { areaData } from "../../../../../../utils/areaData";
+import { areaData } from '../../../../../../utils/areaData'
 
-const Option = Select.Option;
+const Option = Select.Option
 
 export default class ConfirmInfoThreeOne extends React.Component {
-
-  areaChange = (value) => {
+  areaChange = value => {
     // console.log(value)
   }
 
-
-
   render() {
-
-    const multipleSelectChildren = [];
+    const multipleSelectChildren = []
     for (let i = 10; i < 36; i++) {
-      multipleSelectChildren.push(<Option key={i.toString(36) + i}>{i.toString(36) + i}</Option>);
+      multipleSelectChildren.push(
+        <Option key={i.toString(36) + i}>{i.toString(36) + i}</Option>
+      )
     }
-    const fiterSelect = (value) => {
+    const fiterSelect = value => {
       let container = ''
       switch (value) {
         case 'redio':
           container = (
-            <div className={indexStyles.EditFormThreeOneOutItem} style={{ width: '100%'}}>
-              <Select defaultValue="lucy" style={{ width: '100%' }} size={'small'}>
+            <div
+              className={indexStyles.EditFormThreeOneOutItem}
+              style={{ width: '100%' }}
+            >
+              <Select
+                defaultValue="lucy"
+                style={{ width: '100%' }}
+                size={'small'}
+              >
                 <Option value="jack">Jack</Option>
                 <Option value="lucy">Lucy</Option>
-                <Option value="disabled" >Disabled</Option>
+                <Option value="disabled">Disabled</Option>
                 <Option value="Yiminghe">yiminghe</Option>
               </Select>
             </div>
@@ -36,7 +41,10 @@ export default class ConfirmInfoThreeOne extends React.Component {
           break
         case 'multiple':
           container = (
-            <div className={indexStyles.EditFormThreeOneOutItem} style={{ width: '100%'}}>
+            <div
+              className={indexStyles.EditFormThreeOneOutItem}
+              style={{ width: '100%' }}
+            >
               <Select
                 mode="multiple"
                 size={'small'}
@@ -51,10 +59,18 @@ export default class ConfirmInfoThreeOne extends React.Component {
           break
         case 'province':
           container = (
-            <div className={indexStyles.EditFormThreeOneOutItem} style={{ width: '100%'}}>
+            <div
+              className={indexStyles.EditFormThreeOneOutItem}
+              style={{ width: '100%' }}
+            >
               <p>所在归属地 (必填)</p>
               <div>
-                <Cascader options={areaData} onChange={this.areaChange.bind(this)} placeholder="请选择省市区" style={{ width: '100%'}}/>
+                <Cascader
+                  options={areaData}
+                  onChange={this.areaChange.bind(this)}
+                  placeholder="请选择省市区"
+                  style={{ width: '100%' }}
+                />
               </div>
             </div>
           )
@@ -64,7 +80,6 @@ export default class ConfirmInfoThreeOne extends React.Component {
       }
       return container
     }
-
 
     return (
       <div className={indexStyles.EditFormThreeOneOut}>
@@ -111,8 +126,6 @@ export default class ConfirmInfoThreeOne extends React.Component {
 //     secondArea: value,
 //   });
 // }
-
-
 
 // const { cities, secondCity, areas, secondArea} = this.state
 //

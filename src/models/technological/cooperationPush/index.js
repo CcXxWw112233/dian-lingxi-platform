@@ -1,8 +1,11 @@
-
 import { message } from 'antd'
-import { MEMBERS, MESSAGE_DURATION_TIME, ORGANIZATION } from "../../../globalset/js/constant";
-import { routerRedux } from "dva/router";
-import Cookies from "js-cookie";
+import {
+  MEMBERS,
+  MESSAGE_DURATION_TIME,
+  ORGANIZATION
+} from '../../../globalset/js/constant'
+import { routerRedux } from 'dva/router'
+import Cookies from 'js-cookie'
 import { initWs } from '../../../components/WsNewsDynamic'
 import QueryString from 'querystring'
 import {
@@ -41,7 +44,7 @@ import {
   workbench_selectFilePreviewPointNumCommits,
   workbench_selectFilePreviewCommitPoints,
   workbench_selectFilePreviewCommitPointNumber,
-  workbench_currentProcessInstanceId,
+  workbench_currentProcessInstanceId
 } from '../workbench/selects'
 import { getModelSelectState, getModelSelectDatasState } from '../../utils'
 
@@ -70,7 +73,7 @@ export default {
   subscriptions: {
     setup({ dispatch, history }) {
       dispathes = dispatch
-      history.listen((location) => {
+      history.listen(location => {
         locationPath = location.pathname
         message.destroy()
         //头部table key
@@ -105,20 +108,19 @@ export default {
         //     localStorage.removeItem(`newMessage`)
         //   }
         // }
-
       })
-    },
+    }
   },
   effects: {
-    * connectWsToModel({ payload }, { call, put }) {
+    *connectWsToModel({ payload }, { call, put }) {
       const { event } = payload
       if (!event) {
         return
       }
-      let data = event.data;
+      let data = event.data
       //服务器端回复心跳内容
-      if (data == "pong") {
-        return;
+      if (data == 'pong') {
+        return
       }
       yield put({
         type: 'updateDatas',
@@ -150,9 +152,12 @@ export default {
         handleType = 'handleWsData_board_detail'
       } else if (locationPath.indexOf('technological/project') != -1) {
         handleType = 'handleWsData_board_list'
-      } else if (locationPath.indexOf('/technological/simplemode/workbench') != -1) {
+      } else if (
+        locationPath.indexOf('/technological/simplemode/workbench') != -1
+      ) {
         handleType = 'simpleModeCooperate/handleSimpleModeCooperate'
-      } else if (locationPath.indexOf('/technological/simplemode/home') != -1) { // 极简首页, 处理代办
+      } else if (locationPath.indexOf('/technological/simplemode/home') != -1) {
+        // 极简首页, 处理代办
         handleType = 'simpleModeCooperate/handleCooperateToDoListAgent'
       }
       yield put({
@@ -169,7 +174,7 @@ export default {
       })
     },
 
-    * handleWsData_board_detail({ payload }, { call, put, select }) {
+    *handleWsData_board_detail({ payload }, { call, put, select }) {
       const { res } = payload
       const { data } = res
       // console.log('eee', data)
@@ -187,7 +192,8 @@ export default {
       // console.log('eee_name',coperateName)
       // console.log('eee_coperateData',coperateData)
 
-      const getAfterNameId = (coperateName) => { //获取跟在名字后面的id
+      const getAfterNameId = coperateName => {
+        //获取跟在名字后面的id
         return coperateName.substring(coperateName.indexOf('/') + 1)
       }
 
@@ -203,8 +209,13 @@ export default {
           let is_deleted_ = coperateData['is_deleted']
           if (op_board_id == currentProjectBoardId) {
             if (is_deleted_ == '0') {
-              let projectDetailInfoData = yield select(selectProjectDetailInfoData)
-              projectDetailInfoData = { ...projectDetailInfoData, ...coperateData }
+              let projectDetailInfoData = yield select(
+                selectProjectDetailInfoData
+              )
+              projectDetailInfoData = {
+                ...projectDetailInfoData,
+                ...coperateData
+              }
               dispathes({
                 type: model_projectDetail('updateDatas'),
                 payload: {
@@ -214,7 +225,6 @@ export default {
             } else if (is_deleted_ == '1') {
               message.warn('当前项目已被删除')
             }
-
           }
           break
         case 'change:card': //监听到修改任务
@@ -227,10 +237,13 @@ export default {
 
           let is_archived_ = coperateData['is_archived']
 
-          if (is_archived_ == '1') { //归档
+          if (is_archived_ == '1') {
+            //归档
             for (let i = 0; i < taskGroupList_.length; i++) {
               for (let j = 0; j < taskGroupList_[i]['card_data'].length; j++) {
-                if (parent_card_id == taskGroupList_[i]['card_data'][j]['card_id']) {
+                if (
+                  parent_card_id == taskGroupList_[i]['card_data'][j]['card_id']
+                ) {
                   taskGroupList_[i]['card_data'].splice(j, 1)
                   break
                 }
@@ -248,19 +261,23 @@ export default {
               })
             }
 
-            if (!child_card_id) { //父任务
+            if (!child_card_id) {
+              //父任务
               dispathes({
                 type: model_projectDetailTask('updateDatas'),
                 payload: {
                   drawContent: { ...drawContent, ...coperateData }
                 }
               })
-
-            } else { //子任务
+            } else {
+              //子任务
 
               for (let i = 0; i < drawContent['child_data'].length; i++) {
                 if (drawContent['child_data'][i]['card_id'] == child_card_id) {
-                  drawContent['child_data'][i] = { ...drawContent['child_data'][i], ...coperateData['child_data'][0] }
+                  drawContent['child_data'][i] = {
+                    ...drawContent['child_data'][i],
+                    ...coperateData['child_data'][0]
+                  }
                   break
                 }
               }
@@ -285,7 +302,6 @@ export default {
               //     break
               //   }
               // }
-
             }
           }
           dispathes({
@@ -305,20 +321,31 @@ export default {
           let parent_card_id = id_arr_[2] //如果有则是添加子任务
           let { is_archived, is_deleted } = coperateData
           if (is_archived == '1' || is_deleted == '1') {
-
           }
-          if (board_id_ == currentProjectBoardId) { //当前查看的项目
-            if (parent_card_id) { //二级任务
+          if (board_id_ == currentProjectBoardId) {
+            //当前查看的项目
+            if (parent_card_id) {
+              //二级任务
               if (parent_card_id == card_id_) {
                 drawContent_['child_data'].push(coperateData['child_data'][0])
               }
               for (let i = 0; i < taskGroupList.length; i++) {
-                if (list_id === taskGroupList[i]['list_id']) { //匹配到list_id
+                if (list_id === taskGroupList[i]['list_id']) {
+                  //匹配到list_id
                   //如果某一列里面有完成的任务，则在完成的任务前面增加一条，否则直接往后塞
                   let is_has_realize = false
-                  for (let j = 0; j < taskGroupList[i]['card_data'].length; j++) {
-                    if (taskGroupList[i]['card_data'][j]['card_id'] == parent_card_id) {
-                      taskGroupList[i]['card_data'][j]['child_data'].push(coperateData['child_data'][0])
+                  for (
+                    let j = 0;
+                    j < taskGroupList[i]['card_data'].length;
+                    j++
+                  ) {
+                    if (
+                      taskGroupList[i]['card_data'][j]['card_id'] ==
+                      parent_card_id
+                    ) {
+                      taskGroupList[i]['card_data'][j]['child_data'].push(
+                        coperateData['child_data'][0]
+                      )
                       break
                     }
                   }
@@ -326,13 +353,18 @@ export default {
                   break
                 }
               }
-
-            } else { //一级任务
+            } else {
+              //一级任务
               for (let i = 0; i < taskGroupList.length; i++) {
-                if (list_id === taskGroupList[i]['list_id']) { //匹配到list_id
+                if (list_id === taskGroupList[i]['list_id']) {
+                  //匹配到list_id
                   //如果某一列里面有完成的任务，则在完成的任务前面增加一条，否则直接往后塞
                   let is_has_realize = false
-                  for (let j = 0; j < taskGroupList[i]['card_data'].length; j++) {
+                  for (
+                    let j = 0;
+                    j < taskGroupList[i]['card_data'].length;
+                    j++
+                  ) {
                     if (taskGroupList[i]['card_data'][j]['is_realize'] == '1') {
                       is_has_realize = true
                       taskGroupList[i]['card_data'].splice(j, 0, coperateData)
@@ -364,12 +396,20 @@ export default {
           list_id = id_arr_[1]
           parent_card_id = id_arr_[2]
           let op_card_id = coperateData['card_id']
-          if (board_id_ == currentProjectBoardId) { //当前查看的项目
-            if (!parent_card_id) { //删除父类任务
+          if (board_id_ == currentProjectBoardId) {
+            //当前查看的项目
+            if (!parent_card_id) {
+              //删除父类任务
               for (let i = 0; i < taskGroupList.length; i++) {
                 if (list_id == taskGroupList[i]['list_id']) {
-                  for (let j = 0; j < taskGroupList[i]['card_data'].length; j++) {
-                    if (op_card_id == taskGroupList[i]['card_data'][j]['card_id']) {
+                  for (
+                    let j = 0;
+                    j < taskGroupList[i]['card_data'].length;
+                    j++
+                  ) {
+                    if (
+                      op_card_id == taskGroupList[i]['card_data'][j]['card_id']
+                    ) {
                       taskGroupList[i]['card_data'].splice(j, 1)
                       break
                     }
@@ -377,14 +417,35 @@ export default {
                   break
                 }
               }
-            } else { //删除子类任务
+            } else {
+              //删除子类任务
               for (let i = 0; i < taskGroupList.length; i++) {
                 if (list_id == taskGroupList[i]['list_id']) {
-                  for (let j = 0; j < taskGroupList[i]['card_data'].length; j++) {
-                    if (parent_card_id == taskGroupList[i]['card_data'][j]['card_id']) {
-                      for (let k = 0; k < taskGroupList[i]['card_data'][j]['child_data'].length; k++) {
-                        if (op_card_id == taskGroupList[i]['card_data'][j]['child_data'][k]['card_id']) {
-                          taskGroupList[i]['card_data'][j]['child_data'].splice(k, 1)
+                  for (
+                    let j = 0;
+                    j < taskGroupList[i]['card_data'].length;
+                    j++
+                  ) {
+                    if (
+                      parent_card_id ==
+                      taskGroupList[i]['card_data'][j]['card_id']
+                    ) {
+                      for (
+                        let k = 0;
+                        k <
+                        taskGroupList[i]['card_data'][j]['child_data'].length;
+                        k++
+                      ) {
+                        if (
+                          op_card_id ==
+                          taskGroupList[i]['card_data'][j]['child_data'][k][
+                            'card_id'
+                          ]
+                        ) {
+                          taskGroupList[i]['card_data'][j]['child_data'].splice(
+                            k,
+                            1
+                          )
                           break
                         }
                       }
@@ -417,7 +478,8 @@ export default {
           is_deleted = coperateData['is_deleted']
           let op_list_id = coperateData['list_id']
           if (board_id_ !== currentProjectBoardId) {
-            if (is_deleted == '0') { //增加列表或修改列表
+            if (is_deleted == '0') {
+              //增加列表或修改列表
               //如果时修改则替换，如果时增加则push
               let is_has_list = false
               for (let i = 0; i < taskGroupList.length; i++) {
@@ -430,7 +492,8 @@ export default {
               if (!is_has_list) {
                 taskGroupList.push(coperateData)
               }
-            } else if (is_deleted == '1') { //删除列表
+            } else if (is_deleted == '1') {
+              //删除列表
               for (let i = 0; i < taskGroupList.length; i++) {
                 if (op_list_id == taskGroupList[i]['list_id']) {
                   taskGroupList.splice(i, 1)
@@ -438,7 +501,6 @@ export default {
                 }
               }
             } else {
-
             }
           }
           dispathes({
@@ -452,7 +514,9 @@ export default {
         case 'change:flow:template': //新增流程模板
           board_id_ = getAfterNameId(coperateName)
           if (board_id_ == currentProjectBoardId) {
-            const processTemplateList = yield select(selectCurrentProcessTemplateList)
+            const processTemplateList = yield select(
+              selectCurrentProcessTemplateList
+            )
             processTemplateList.push(coperateData)
             dispathes({
               type: model_projectDetailProcess('updateDatas'),
@@ -465,7 +529,9 @@ export default {
         case 'delete:flow:template': //删除流程模板
           board_id_ = getAfterNameId(coperateName)
           if (board_id_ == currentProjectBoardId) {
-            const processTemplateList = yield select(selectCurrentProcessTemplateList)
+            const processTemplateList = yield select(
+              selectCurrentProcessTemplateList
+            )
             const processTemplateList_New = [...processTemplateList]
             let template_id = coperateData['id']
             for (let i = 0; i < processTemplateList_New.length; i++) {
@@ -496,11 +562,16 @@ export default {
           }
           break
         case 'change:flow':
-          const currentProcessInstanceId = yield select(selectCurrentProcessInstanceId)
+          const currentProcessInstanceId = yield select(
+            selectCurrentProcessInstanceId
+          )
           const processPageFlagStep = yield select(selectProcessPageFlagStep) //1为编辑界面，编辑界面不更新
           const flow_id = getAfterNameId(coperateName)
           // debugger
-          if (currentProcessInstanceId == flow_id && processPageFlagStep == '4') {
+          if (
+            currentProcessInstanceId == flow_id &&
+            processPageFlagStep == '4'
+          ) {
             const curr_node_id = coperateData.curr_node_id
             let curr_node_sort
             for (let i = 0; i < coperateData.nodes.length; i++) {
@@ -514,14 +585,16 @@ export default {
               type: model_projectDetailProcess('updateDatas'),
               payload: {
                 processInfo: { ...coperateData, curr_node_sort },
-                processEditDatas: coperateData.nodes || [],
+                processEditDatas: coperateData.nodes || []
               }
             })
           }
 
           break
         case 'change:file':
-          const currentParrentDirectoryId = yield select(selectCurrentParrentDirectoryId)
+          const currentParrentDirectoryId = yield select(
+            selectCurrentParrentDirectoryId
+          )
           const directoryId = getAfterNameId(coperateName)
           //当当前的文件夹id 和操作的文件id的所属文件夹id 一样
           if (currentParrentDirectoryId == directoryId) {
@@ -537,7 +610,6 @@ export default {
                   fileList.splice(i, 1)
                   break
                 }
-
               }
             } else {
               //fileType 2 表示新增文件 1 表示新增文件夹
@@ -552,7 +624,11 @@ export default {
                 })
               } else if (fileType == '1') {
                 //先文件夹后文件
-                const obj = { ...coperateData, file_name: coperateData['folder_name'], file_id: coperateData['folder_id'] }
+                const obj = {
+                  ...coperateData,
+                  file_name: coperateData['folder_name'],
+                  file_id: coperateData['folder_id']
+                }
                 for (let i = 0; i < fileList.length; i++) {
                   if (fileList[i].type == '2') {
                     if (i > 0) {
@@ -571,21 +647,30 @@ export default {
                 fileList
               }
             })
-
           }
           break
         case 'change:file:comment':
           const comment_file_id = getAfterNameId(coperateName)
           let file_id = yield select(selectFilePreviewCurrentFileId)
-          if (comment_file_id == file_id) { //如果推送评论的文档id和查看的id是一样
-            const filePreviewCommits = yield select(selectFilePreviewCommits) || []
-            const filePreviewPointNumCommits = yield select(selectFilePreviewPointNumCommits) || []
-            const filePreviewCommitPointNumber = yield select(selectFilePreviewCommitPointNumber) || []
-            const filePreviewCommitPoints = yield select(selectFilePreviewCommitPoints) || []
+          if (comment_file_id == file_id) {
+            //如果推送评论的文档id和查看的id是一样
+            const filePreviewCommits = yield select(selectFilePreviewCommits) ||
+              []
+            const filePreviewPointNumCommits = yield select(
+              selectFilePreviewPointNumCommits
+            ) || []
+            const filePreviewCommitPointNumber = yield select(
+              selectFilePreviewCommitPointNumber
+            ) || []
+            const filePreviewCommitPoints = yield select(
+              selectFilePreviewCommitPoints
+            ) || []
 
             let pointNo = coperateData['flag']
-            if (pointNo) { //圈评
-              if (pointNo == filePreviewCommitPointNumber) { //如果是当前圈评的这个点
+            if (pointNo) {
+              //圈评
+              if (pointNo == filePreviewCommitPointNumber) {
+                //如果是当前圈评的这个点
                 filePreviewPointNumCommits.push(coperateData)
               } else {
                 let isHasPoint = false
@@ -614,10 +699,17 @@ export default {
           break
         case 'change:file:comment:delete':
           let commitId = getAfterNameId(coperateName)
-          const filePreviewCommits = yield select(selectFilePreviewCommits) || []
-          const filePreviewPointNumCommits = yield select(selectFilePreviewPointNumCommits) || []
-          const filePreviewCommitPointNumber = yield select(selectFilePreviewCommitPointNumber) || []
-          const filePreviewCommitPoints = yield select(selectFilePreviewCommitPoints) || []
+          const filePreviewCommits = yield select(selectFilePreviewCommits) ||
+            []
+          const filePreviewPointNumCommits = yield select(
+            selectFilePreviewPointNumCommits
+          ) || []
+          const filePreviewCommitPointNumber = yield select(
+            selectFilePreviewCommitPointNumber
+          ) || []
+          const filePreviewCommitPoints = yield select(
+            selectFilePreviewCommitPoints
+          ) || []
 
           //删除点 存在最后一条is_last和点flag
           let flag_ = coperateData['flag']
@@ -631,7 +723,8 @@ export default {
             }
           }
 
-          if (filePreviewPointNumCommits) { //处理点的评论
+          if (filePreviewPointNumCommits) {
+            //处理点的评论
             for (let i = 0; i < filePreviewPointNumCommits.length; i++) {
               if (filePreviewPointNumCommits[i]['id'] == commitId) {
                 filePreviewPointNumCommits.splice(i, 1)
@@ -640,7 +733,8 @@ export default {
             }
           }
 
-          if (filePreviewCommits) { //处理整体评论
+          if (filePreviewCommits) {
+            //处理整体评论
             for (let i = 0; i < filePreviewCommits.length; i++) {
               if (filePreviewCommits[i]['id'] == commitId) {
                 filePreviewCommits.splice(i, 1)
@@ -664,29 +758,31 @@ export default {
           let fileList_ = yield select(selectFileList)
           let folder_id = yield select(selectCurrentParrentDirectoryId)
           let coFileList = coperateData['file_list']
-          if (idArr.length == 1) { //复制
+          if (idArr.length == 1) {
+            //复制
             if (idArr[0] == folder_id) {
               fileList_ = [].concat(fileList_, coFileList)
             }
-          } else if (idArr.length == 2) { //移动
-            if (idArr[0] != idArr[1]) { ////移入的文件和移除的文件夹不是同一个
-              if (idArr[1] == folder_id) { //当前文件夹有文件移除
+          } else if (idArr.length == 2) {
+            //移动
+            if (idArr[0] != idArr[1]) {
+              ////移入的文件和移除的文件夹不是同一个
+              if (idArr[1] == folder_id) {
+                //当前文件夹有文件移除
                 for (let i = 0; i < fileList_.length; i++) {
                   for (let j = 0; j < coFileList.length; j++) {
                     if (fileList_[i]['file_id'] == coFileList[j]['file_id']) {
                       fileList_.splice(i, 1)
                       break
                     }
-
                   }
                 }
-              } else if (idArr[0] == folder_id) { //当前文件夹有文件移进
+              } else if (idArr[0] == folder_id) {
+                //当前文件夹有文件移进
                 fileList_ = [].concat(fileList_, coFileList)
               }
-
             }
           } else {
-
           }
           dispathes({
             type: model_projectDetailFile('updateDatas'),
@@ -711,9 +807,15 @@ export default {
         //修改里程碑
         case 'change:milestone':
           //当前的里程碑id和返回的里程碑id对应上
-          let milestone_id = yield select(getModelSelectState('milestoneDetail', 'milestone_id'))
-          let milestone_detail = yield select(getModelSelectState('milestoneDetail', 'milestone_detail'))
-          let milestone_list = yield select(getModelSelectDatasState('projectDetail', 'milestoneList'))
+          let milestone_id = yield select(
+            getModelSelectState('milestoneDetail', 'milestone_id')
+          )
+          let milestone_detail = yield select(
+            getModelSelectState('milestoneDetail', 'milestone_detail')
+          )
+          let milestone_list = yield select(
+            getModelSelectDatasState('projectDetail', 'milestoneList')
+          )
           let cope_milestone_id = getAfterNameId(coperateName)
           //更新里程碑详情
           if (milestone_id == cope_milestone_id) {
@@ -747,9 +849,15 @@ export default {
         //里程碑关联任务
         case 'add:milestone:content':
           //当前的里程碑id和返回的里程碑id对应上
-          milestone_id = yield select(getModelSelectState('milestoneDetail', 'milestone_id'))
-          milestone_detail = yield select(getModelSelectState('milestoneDetail', 'milestone_detail'))
-          milestone_list = yield select(getModelSelectDatasState('projectDetail', 'milestoneList'))
+          milestone_id = yield select(
+            getModelSelectState('milestoneDetail', 'milestone_id')
+          )
+          milestone_detail = yield select(
+            getModelSelectState('milestoneDetail', 'milestone_detail')
+          )
+          milestone_list = yield select(
+            getModelSelectDatasState('projectDetail', 'milestoneList')
+          )
           cope_milestone_id = getAfterNameId(coperateName)
           //更新里程碑详情
           if (milestone_id == cope_milestone_id) {
@@ -772,16 +880,23 @@ export default {
         //取消关联里程碑
         case 'remove:milestone:content':
           //当前的里程碑id和返回的里程碑id对应上
-          milestone_id = yield select(getModelSelectState('milestoneDetail', 'milestone_id'))
-          milestone_detail = yield select(getModelSelectState('milestoneDetail', 'milestone_detail'))
-          milestone_list = yield select(getModelSelectDatasState('projectDetail', 'milestoneList'))
+          milestone_id = yield select(
+            getModelSelectState('milestoneDetail', 'milestone_id')
+          )
+          milestone_detail = yield select(
+            getModelSelectState('milestoneDetail', 'milestone_detail')
+          )
+          milestone_list = yield select(
+            getModelSelectDatasState('projectDetail', 'milestoneList')
+          )
           cope_milestone_id = getAfterNameId(coperateName)
           let milestone_rela_id = coperateData['rela_id']
           let new_milestone_detail = { ...milestone_detail }
           //更新里程碑详情
           if (milestone_id == cope_milestone_id) {
             let content_list = new_milestone_detail['content_list']
-            if (typeof content_list != 'object') { //array
+            if (typeof content_list != 'object') {
+              //array
               return
             }
             //如果删除的是某一条id则遍历 数组将之删除
@@ -801,8 +916,12 @@ export default {
         //关联里程碑的任务更新信息后
         case 'change:milestone:content:update':
           //当前的里程碑id和返回的里程碑id对应上
-          milestone_id = yield select(getModelSelectState('milestoneDetail', 'milestone_id'))
-          milestone_detail = yield select(getModelSelectState('milestoneDetail', 'milestone_detail'))
+          milestone_id = yield select(
+            getModelSelectState('milestoneDetail', 'milestone_id')
+          )
+          milestone_detail = yield select(
+            getModelSelectState('milestoneDetail', 'milestone_detail')
+          )
           cope_milestone_id = getAfterNameId(coperateName)
           if (milestone_id == cope_milestone_id) {
             new_milestone_detail = { ...milestone_detail }
@@ -812,7 +931,12 @@ export default {
               const { id } = item
               let new_item = { ...item }
               if (id == rela_id) {
-                new_item = { ...item, ...coperateData, name: rela_name, id: rela_id }
+                new_item = {
+                  ...item,
+                  ...coperateData,
+                  name: rela_name,
+                  id: rela_id
+                }
               }
               return new_item
             })
@@ -828,14 +952,15 @@ export default {
         default:
           break
       }
-
     },
 
-    * handleWsData_workbench({ payload }, { call, put, select }) {
+    *handleWsData_workbench({ payload }, { call, put, select }) {
       const { res } = payload
       const { data } = res
       // console.log('eee', data)
-      const currentProjectBoardId = yield select(getModelSelectDatasState('workbenchPublicDatas', 'board_id'))
+      const currentProjectBoardId = yield select(
+        getModelSelectDatasState('workbenchPublicDatas', 'board_id')
+      )
 
       let coperate = data[0] //协作
       let news = data[1] || {} //消息
@@ -846,7 +971,8 @@ export default {
       // console.log('eee_coperateName', coperateName)
       // console.log('eee_coperateData', coperateData)
 
-      const getAfterNameId = (coperateName) => { //获取跟在名字后面的id
+      const getAfterNameId = coperateName => {
+        //获取跟在名字后面的id
         return coperateName.substring(coperateName.indexOf('/') + 1)
       }
 
@@ -885,10 +1011,13 @@ export default {
           id_arr_ = getAfterNameId(coperateName).split('/')
           let parent_card_id = id_arr_[0]
           const child_card_id = id_arr_[1]
-          const task_list = yield select(workbench_selectrResponsibleTaskList) || []
+          const task_list = yield select(
+            workbench_selectrResponsibleTaskList
+          ) || []
           let is_archived_ = coperateData['is_archived']
 
-          if (is_archived_ == '1') { //归档
+          if (is_archived_ == '1') {
+            //归档
             for (let i = 0; i < task_list.length; i++) {
               if (parent_card_id == task_list[i]['id']) {
                 task_list.splice(i, 1)
@@ -899,7 +1028,8 @@ export default {
           //如果当前查看的任务和推送的任务id一样，会发生更新
 
           if (card_id == parent_card_id) {
-            if (!child_card_id) { //父任务
+            if (!child_card_id) {
+              //父任务
               //归档
               if (is_archived_ == '1') {
                 dispathes({
@@ -915,10 +1045,14 @@ export default {
                   drawContent: { ...drawContent, ...coperateData }
                 }
               })
-            } else { //子任务
+            } else {
+              //子任务
               for (let i = 0; i < drawContent['child_data'].length; i++) {
                 if (drawContent['child_data'][i]['card_id'] == child_card_id) {
-                  drawContent['child_data'][i] = { ...drawContent['child_data'][i], ...coperateData['child_data'][0] }
+                  drawContent['child_data'][i] = {
+                    ...drawContent['child_data'][i],
+                    ...coperateData['child_data'][0]
+                  }
                   break
                 }
               }
@@ -928,7 +1062,6 @@ export default {
                   drawContent: drawContent
                 }
               })
-
             }
           }
 
@@ -940,7 +1073,8 @@ export default {
           })
           break
         case 'change:cards':
-          let task_list_ = yield select(workbench_selectrResponsibleTaskList) || []
+          let task_list_ = yield select(workbench_selectrResponsibleTaskList) ||
+            []
           let meetingList = yield select(workbench_selectrMeetingLsit) || []
           let selectDrawContent = yield select(workbench_selectDrawContent)
           let id_arr_ = getAfterNameId(coperateName).split('/')
@@ -951,7 +1085,12 @@ export default {
           let { is_archived, is_deleted, executors = [] } = coperateData
           let card_type = coperateData['type']
           let is_has_realize = false //插入还是push标志
-          let cObj = { ...coperateData, name: coperateData['card_name'], id: coperateData['card_id'], board_id: board_id_ }
+          let cObj = {
+            ...coperateData,
+            name: coperateData['card_name'],
+            id: coperateData['card_id'],
+            board_id: board_id_
+          }
 
           const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {}
           const user_id = userInfo['id']
@@ -960,9 +1099,12 @@ export default {
           //   return
           // }
 
-          if (!work_parent_card_id_) { //新增父任务
-            if (is_handler) { //并且执行人有当前操作人
-              if (card_type == '0') { //任务
+          if (!work_parent_card_id_) {
+            //新增父任务
+            if (is_handler) {
+              //并且执行人有当前操作人
+              if (card_type == '0') {
+                //任务
                 for (let i = 0; i < task_list_.length; i++) {
                   //如果某一列里面有完成的任务，则在完成的任务前面增加一条，否则直接往后塞
                   if (task_list_[i]['is_realize'] == '1') {
@@ -970,12 +1112,11 @@ export default {
                     task_list_.splice(i, 0, cObj)
                     break
                   }
-
                 }
-              } else if (card_type == '1') { //会议
+              } else if (card_type == '1') {
+                //会议
                 meetingList.push(cObj)
               } else {
-
               }
               if (!is_has_realize) {
                 if (card_type == '0') {
@@ -983,9 +1124,13 @@ export default {
                 }
               }
             }
-          } else { //新增子任务
-            if (selectCard_id == work_parent_card_id_) { //当前查看的card_id是父类任务id
-              selectDrawContent['child_data'].push(coperateData['child_data'][0])
+          } else {
+            //新增子任务
+            if (selectCard_id == work_parent_card_id_) {
+              //当前查看的card_id是父类任务id
+              selectDrawContent['child_data'].push(
+                coperateData['child_data'][0]
+              )
             }
           }
 
@@ -1008,7 +1153,8 @@ export default {
           list_id = id_arr_[1]
           parent_card_id = id_arr_[2]
           let op_card_id = coperateData['card_id']
-          if (!parent_card_id) { //删除父类任务
+          if (!parent_card_id) {
+            //删除父类任务
             for (let i = 0; i < task_list_.length; i++) {
               if (op_card_id == task_list_[i]['id']) {
                 task_list_.splice(i, 1)
@@ -1021,10 +1167,13 @@ export default {
                 break
               }
             }
-          } else { //删除子任务
+          } else {
+            //删除子任务
             if (selectCard_id == parent_card_id) {
               for (let i = 0; i < selectDrawContent['child_data'].length; i++) {
-                if (selectDrawContent['child_data'][i]['card_id'] == op_card_id) {
+                if (
+                  selectDrawContent['child_data'][i]['card_id'] == op_card_id
+                ) {
                   selectDrawContent['child_data'].splice(i, 1)
                   break
                 }
@@ -1054,7 +1203,9 @@ export default {
           // }
           break
         case 'change:flow':
-          const currentProcessInstanceId = yield select(workbench_currentProcessInstanceId)
+          const currentProcessInstanceId = yield select(
+            workbench_currentProcessInstanceId
+          )
           const flow_id = getAfterNameId(coperateName)
           // debugger
           if (currentProcessInstanceId == flow_id) {
@@ -1071,7 +1222,7 @@ export default {
               type: model_workbenchDetailProcess('updateDatas'),
               payload: {
                 processInfo: { ...coperateData, curr_node_sort },
-                processEditDatas: coperateData.nodes || [],
+                processEditDatas: coperateData.nodes || []
               }
             })
           }
@@ -1080,7 +1231,9 @@ export default {
         case 'change:file':
           //增减filelist
           //当当前的文件夹id 和操作的文件id的所属文件夹id 一样
-          const uploadedFileList = yield select(workbench_selectrUploadedFileList)
+          const uploadedFileList = yield select(
+            workbench_selectrUploadedFileList
+          )
           const fileType = coperateData.type
           const { status } = coperateData
           //status 2删除
@@ -1102,16 +1255,29 @@ export default {
           break
         case 'change:file:comment':
           const comment_file_id = getAfterNameId(coperateName)
-          let file_id = yield select(workbench_selectFilePreviewCurrentFileId) || ''
-          if (comment_file_id == file_id) { //如果推送评论的文档id和查看的id是一样
-            const filePreviewCommits = yield select(workbench_selectFilePreviewCommits) || []
-            const filePreviewPointNumCommits = yield select(workbench_selectFilePreviewPointNumCommits) || []
-            const filePreviewCommitPointNumber = yield select(workbench_selectFilePreviewCommitPointNumber) || []
-            const filePreviewCommitPoints = yield select(workbench_selectFilePreviewCommitPoints) || []
+          let file_id = yield select(
+            workbench_selectFilePreviewCurrentFileId
+          ) || ''
+          if (comment_file_id == file_id) {
+            //如果推送评论的文档id和查看的id是一样
+            const filePreviewCommits = yield select(
+              workbench_selectFilePreviewCommits
+            ) || []
+            const filePreviewPointNumCommits = yield select(
+              workbench_selectFilePreviewPointNumCommits
+            ) || []
+            const filePreviewCommitPointNumber = yield select(
+              workbench_selectFilePreviewCommitPointNumber
+            ) || []
+            const filePreviewCommitPoints = yield select(
+              workbench_selectFilePreviewCommitPoints
+            ) || []
 
             let pointNo = coperateData['flag']
-            if (pointNo) { //圈评
-              if (pointNo == filePreviewCommitPointNumber) { //如果是当前圈评的这个点
+            if (pointNo) {
+              //圈评
+              if (pointNo == filePreviewCommitPointNumber) {
+                //如果是当前圈评的这个点
                 filePreviewPointNumCommits.push(coperateData)
               } else {
                 let isHasPoint = false
@@ -1140,10 +1306,18 @@ export default {
           break
         case 'change:file:comment:delete':
           let commitId = getAfterNameId(coperateName)
-          const filePreviewCommits = yield select(workbench_selectFilePreviewCommits) || []
-          const filePreviewPointNumCommits = yield select(workbench_selectFilePreviewPointNumCommits) || []
-          const filePreviewCommitPointNumber = yield select(workbench_selectFilePreviewCommitPointNumber) || []
-          const filePreviewCommitPoints = yield select(workbench_selectFilePreviewCommitPoints) || []
+          const filePreviewCommits = yield select(
+            workbench_selectFilePreviewCommits
+          ) || []
+          const filePreviewPointNumCommits = yield select(
+            workbench_selectFilePreviewPointNumCommits
+          ) || []
+          const filePreviewCommitPointNumber = yield select(
+            workbench_selectFilePreviewCommitPointNumber
+          ) || []
+          const filePreviewCommitPoints = yield select(
+            workbench_selectFilePreviewCommitPoints
+          ) || []
 
           //删除点 存在最后一条is_last和点flag
           let flag_ = coperateData['flag']
@@ -1157,7 +1331,8 @@ export default {
             }
           }
 
-          if (filePreviewPointNumCommits) { //处理点的评论
+          if (filePreviewPointNumCommits) {
+            //处理点的评论
             for (let i = 0; i < filePreviewPointNumCommits.length; i++) {
               if (filePreviewPointNumCommits[i]['id'] == commitId) {
                 filePreviewPointNumCommits.splice(i, 1)
@@ -1166,7 +1341,8 @@ export default {
             }
           }
 
-          if (filePreviewCommits) { //处理整体评论
+          if (filePreviewCommits) {
+            //处理整体评论
             for (let i = 0; i < filePreviewCommits.length; i++) {
               if (filePreviewCommits[i]['id'] == commitId) {
                 filePreviewCommits.splice(i, 1)
@@ -1222,23 +1398,33 @@ export default {
         // })
         //添加里程碑
         case 'add:milestone':
-          let workbench_show_gantt_card = yield select(getModelSelectDatasState('workbench', 'workbench_show_gantt_card'))
+          let workbench_show_gantt_card = yield select(
+            getModelSelectDatasState('workbench', 'workbench_show_gantt_card')
+          )
           board_id_ = getAfterNameId(coperateName)
           //如果是在甘特图模式下查看该项目
-          if (board_id_ == currentProjectBoardId && workbench_show_gantt_card == '1') {
+          if (
+            board_id_ == currentProjectBoardId &&
+            workbench_show_gantt_card == '1'
+          ) {
             dispathes({
               type: 'gantt/getGttMilestoneList',
-              payload: {
-              }
+              payload: {}
             })
           }
           break
         //修改里程碑
         case 'change:milestone':
           //当前的里程碑id和返回的里程碑id对应上
-          let milestone_id = yield select(getModelSelectState('milestoneDetail', 'milestone_id'))
-          let milestone_detail = yield select(getModelSelectState('milestoneDetail', 'milestone_detail'))
-          workbench_show_gantt_card = yield select(getModelSelectDatasState('workbench', 'workbench_show_gantt_card'))
+          let milestone_id = yield select(
+            getModelSelectState('milestoneDetail', 'milestone_id')
+          )
+          let milestone_detail = yield select(
+            getModelSelectState('milestoneDetail', 'milestone_detail')
+          )
+          workbench_show_gantt_card = yield select(
+            getModelSelectDatasState('workbench', 'workbench_show_gantt_card')
+          )
           let cope_milestone_id = getAfterNameId(coperateName)
           //更新里程碑详情
           if (milestone_id == cope_milestone_id) {
@@ -1252,19 +1438,25 @@ export default {
           }
           //如果是项目id匹配上了,并且在查看甘特图的情况下，则更新甘特图里程碑列表
           board_id_ = coperateData['board_id']
-          if (board_id_ == currentProjectBoardId && workbench_show_gantt_card == '1') {
+          if (
+            board_id_ == currentProjectBoardId &&
+            workbench_show_gantt_card == '1'
+          ) {
             dispathes({
               type: 'gantt/getGttMilestoneList',
-              payload: {
-              }
+              payload: {}
             })
           }
           break
         //里程碑关联任务
         case 'add:milestone:content':
           //当前的里程碑id和返回的里程碑id对应上
-          milestone_id = yield select(getModelSelectState('milestoneDetail', 'milestone_id'))
-          milestone_detail = yield select(getModelSelectState('milestoneDetail', 'milestone_detail'))
+          milestone_id = yield select(
+            getModelSelectState('milestoneDetail', 'milestone_id')
+          )
+          milestone_detail = yield select(
+            getModelSelectState('milestoneDetail', 'milestone_detail')
+          )
           cope_milestone_id = getAfterNameId(coperateName)
           //更新里程碑详情
           if (milestone_id == cope_milestone_id) {
@@ -1287,15 +1479,20 @@ export default {
         //取消关联里程碑
         case 'remove:milestone:content':
           //当前的里程碑id和返回的里程碑id对应上
-          milestone_id = yield select(getModelSelectState('milestoneDetail', 'milestone_id'))
-          milestone_detail = yield select(getModelSelectState('milestoneDetail', 'milestone_detail'))
+          milestone_id = yield select(
+            getModelSelectState('milestoneDetail', 'milestone_id')
+          )
+          milestone_detail = yield select(
+            getModelSelectState('milestoneDetail', 'milestone_detail')
+          )
           cope_milestone_id = getAfterNameId(coperateName)
           let milestone_rela_id = coperateData['rela_id']
           let new_milestone_detail = { ...milestone_detail }
           //更新里程碑详情
           if (milestone_id == cope_milestone_id) {
             let content_list = new_milestone_detail['content_list']
-            if (typeof content_list != 'object') { //array
+            if (typeof content_list != 'object') {
+              //array
               return
             }
             //如果删除的是某一条id则遍历 数组将之删除
@@ -1315,8 +1512,12 @@ export default {
         //关联里程碑的任务更新信息后
         case 'change:milestone:content:update':
           //当前的里程碑id和返回的里程碑id对应上
-          milestone_id = yield select(getModelSelectState('milestoneDetail', 'milestone_id'))
-          milestone_detail = yield select(getModelSelectState('milestoneDetail', 'milestone_detail'))
+          milestone_id = yield select(
+            getModelSelectState('milestoneDetail', 'milestone_id')
+          )
+          milestone_detail = yield select(
+            getModelSelectState('milestoneDetail', 'milestone_detail')
+          )
           cope_milestone_id = getAfterNameId(coperateName)
           if (milestone_id == cope_milestone_id) {
             new_milestone_detail = { ...milestone_detail }
@@ -1326,7 +1527,12 @@ export default {
               const { id } = item
               let new_item = { ...item }
               if (id == rela_id) {
-                new_item = { ...item, ...coperateData, name: rela_name, id: rela_id }
+                new_item = {
+                  ...item,
+                  ...coperateData,
+                  name: rela_name,
+                  id: rela_id
+                }
               }
               return new_item
             })
@@ -1364,10 +1570,9 @@ export default {
           newsItem: JSON.parse(news['d'] || '{}')
         }
       })
-
     },
 
-    * handleWsData_public({ payload }, { call, put, select }) {
+    *handleWsData_public({ payload }, { call, put, select }) {
       const { res } = payload
       const { data } = res
       let coperate = data[0] //协作
@@ -1376,7 +1581,8 @@ export default {
       const coperateName = coperate.e
       const coperateType = coperateName.substring(0, coperateName.indexOf('/'))
       let coperateData = JSON.parse(coperate.d)
-      const getAfterNameId = (coperateName) => { //获取跟在名字后面的id
+      const getAfterNameId = coperateName => {
+        //获取跟在名字后面的id
         return coperateName.substring(coperateName.indexOf('/') + 1)
       }
       switch (coperateType) {
@@ -1388,16 +1594,18 @@ export default {
           const { current_org = {} } = userInfo
           const current_org_id = current_org['id']
           if (current_org_id == remove_org_id && remove_user_id == user_id) {
-            message.error('您已被当前组织移除访客身份，即将跳转到登陆界面。', MESSAGE_DURATION_TIME)
-            const delay = (ms) => new Promise(resolve => {
-              setTimeout(resolve, ms)
-            })
+            message.error(
+              '您已被当前组织移除访客身份，即将跳转到登陆界面。',
+              MESSAGE_DURATION_TIME
+            )
+            const delay = ms =>
+              new Promise(resolve => {
+                setTimeout(resolve, ms)
+              })
             yield call(delay, MESSAGE_DURATION_TIME * 1000)
             yield put({
               type: model_technological('logout'),
-              payload: {
-
-              }
+              payload: {}
             })
           }
 
@@ -1407,28 +1615,22 @@ export default {
           if (permission_type == '1') {
             dispathes({
               type: model_technological('getUserOrgPermissions'),
-              payload: {
-
-              }
+              payload: {}
             })
           } else if (permission_type == '2') {
             dispathes({
               type: model_technological('getUserBoardPermissions'),
-              payload: {
-
-              }
+              payload: {}
             })
           } else {
-
           }
           break
         default:
           break
       }
-
     },
 
-    * handleWsData_board_list({ payload }, { call, put, select }) {
+    *handleWsData_board_list({ payload }, { call, put, select }) {
       const { res } = payload
       const { data } = res
       let coperate = data[0] //协作
@@ -1437,7 +1639,8 @@ export default {
       const coperateName = coperate.e
       const coperateType = coperateName.substring(0, coperateName.indexOf('/'))
       let coperateData = JSON.parse(coperate.d)
-      const getAfterNameId = (coperateName) => { //获取跟在名字后面的id
+      const getAfterNameId = coperateName => {
+        //获取跟在名字后面的id
         return coperateName.substring(coperateName.indexOf('/') + 1)
       }
       switch (coperateType) {
@@ -1452,16 +1655,17 @@ export default {
               }
             })
           } else {
-
           }
           break
         default:
           break
       }
-
     },
 
-    * handleWsData_comments_dynamics_in_detail_modal({ payload }, { call, put, select }) {
+    *handleWsData_comments_dynamics_in_detail_modal(
+      { payload },
+      { call, put, select }
+    ) {
       const { res } = payload
       const { data } = res
       let coperate = data[0] //协作
@@ -1470,7 +1674,8 @@ export default {
       const coperateName = coperate.e
       const coperateType = coperateName.substring(0, coperateName.indexOf('/'))
       let coperateData = JSON.parse(coperate.d)
-      const getAfterNameId = (coperateName) => { //获取跟在名字后面的id
+      const getAfterNameId = coperateName => {
+        //获取跟在名字后面的id
         return coperateName.substring(coperateName.indexOf('/') + 1)
       }
       switch (coperateType) {
@@ -1482,16 +1687,18 @@ export default {
           const { current_org = {} } = userInfo
           const current_org_id = current_org['id']
           if (current_org_id == remove_org_id && remove_user_id == user_id) {
-            message.error('您已被当前组织移除访客身份，即将跳转到登陆界面。', MESSAGE_DURATION_TIME)
-            const delay = (ms) => new Promise(resolve => {
-              setTimeout(resolve, ms)
-            })
+            message.error(
+              '您已被当前组织移除访客身份，即将跳转到登陆界面。',
+              MESSAGE_DURATION_TIME
+            )
+            const delay = ms =>
+              new Promise(resolve => {
+                setTimeout(resolve, ms)
+              })
             yield call(delay, MESSAGE_DURATION_TIME * 1000)
             yield put({
               type: model_technological('logout'),
-              payload: {
-
-              }
+              payload: {}
             })
           }
 
@@ -1501,38 +1708,33 @@ export default {
           if (permission_type == '1') {
             dispathes({
               type: model_technological('getUserOrgPermissions'),
-              payload: {
-
-              }
+              payload: {}
             })
           } else if (permission_type == '2') {
             dispathes({
               type: model_technological('getUserBoardPermissions'),
-              payload: {
-
-              }
+              payload: {}
             })
           } else {
-
           }
           break
         default:
           break
       }
-
     },
 
-    * routingJump({ payload }, { call, put }) {
+    *routingJump({ payload }, { call, put }) {
       const { route } = payload
-      yield put(routerRedux.push(route));
-    },
+      yield put(routerRedux.push(route))
+    }
   },
 
   reducers: {
     updateDatas(state, action) {
       return {
-        ...state, ...action.payload
+        ...state,
+        ...action.payload
       }
     }
-  },
-};
+  }
+}

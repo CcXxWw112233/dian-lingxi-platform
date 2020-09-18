@@ -3,44 +3,57 @@ import { Modal, Form, Button, Input, message } from 'antd'
 import CustormModal from '../../../../../components/CustormModal'
 
 class PreviewFileModalRichText extends React.Component {
-
-  state = {
-  }
+  state = {}
   onCancel = () => {
     this.props.setPreivewProp({
       isUsable: true,
       previewFileType: '',
-      previewFileSrc: '',
+      previewFileSrc: ''
     })
     this.props.setPreviewFileModalVisibile()
   }
   render() {
-    const { modalVisible, previewFileSrc, previewFileType, isUsable } = this.props;
+    const {
+      modalVisible,
+      previewFileSrc,
+      previewFileType,
+      isUsable
+    } = this.props
     const containner = () => {
       let contain
       switch (previewFileType) {
         case 'img':
           contain = (
-            <img src={previewFileSrc} style={{width: 600, height: 'auto'}}/>
+            <img src={previewFileSrc} style={{ width: 600, height: 'auto' }} />
           )
           break
         case 'video':
           contain = (
-            <video controls src={previewFileSrc} style={{width: 'auto', maxHeight: '600px'}}></video>
+            <video
+              controls
+              src={previewFileSrc}
+              style={{ width: 'auto', maxHeight: '600px' }}
+            ></video>
           )
           break
         case 'attachment':
-          if(isUsable) {
+          if (isUsable) {
             contain = (
-              <iframe style={{height: 600, width: 600}} src={previewFileSrc}></iframe>
+              <iframe
+                style={{ height: 600, width: 600 }}
+                src={previewFileSrc}
+              ></iframe>
             )
-          }else {
+          } else {
             contain = (
               <div>
-                <iframe style={{height: 0, width: 0}} src={previewFileSrc}></iframe>
+                <iframe
+                  style={{ height: 0, width: 0 }}
+                  src={previewFileSrc}
+                ></iframe>
                 当前文件无法预览
               </div>
-)
+            )
           }
 
         default:
@@ -51,7 +64,7 @@ class PreviewFileModalRichText extends React.Component {
 
     const modalTop = 20
 
-    return(
+    return (
       <div>
         <CustormModal
           visible={modalVisible} //modalVisible

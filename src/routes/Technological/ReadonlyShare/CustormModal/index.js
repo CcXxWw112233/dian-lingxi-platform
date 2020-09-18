@@ -7,12 +7,29 @@ class CustormModal extends React.Component {
   state = {
     siderRightWidth: 56, //右边栏宽度
     clientHeight: document.documentElement.clientHeight, //获取页面可见高度
-    clientWidth: document.documentElement.clientWidth, //获取页面可见高度
+    clientWidth: document.documentElement.clientWidth //获取页面可见高度
   }
 
-
   render() {
-    const { siderRightCollapsed = false, visible, overInner, width, zIndex = 1006, maskClosable, footer, destroyOnClose, keyboard = true, maskStyle = {}, style = {}, onOk, onCancel, bodyStyle = {}, closable = true, title, page_load_type } = this.props;
+    const {
+      siderRightCollapsed = false,
+      visible,
+      overInner,
+      width,
+      zIndex = 1006,
+      maskClosable,
+      footer,
+      destroyOnClose,
+      keyboard = true,
+      maskStyle = {},
+      style = {},
+      onOk,
+      onCancel,
+      bodyStyle = {},
+      closable = true,
+      title,
+      page_load_type
+    } = this.props
     // const { user_set = {} } = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : {};
     // const { is_simple_model } = user_set;
 
@@ -29,7 +46,7 @@ class CustormModal extends React.Component {
         keyboard={keyboard}
         getContainer={() => document.querySelector('body')}
         maskStyle={{
-          ...maskStyle,
+          ...maskStyle
         }}
         style={{ ...style }}
         bodyStyle={{ ...bodyStyle }}

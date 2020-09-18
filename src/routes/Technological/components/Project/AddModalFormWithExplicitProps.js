@@ -4,8 +4,11 @@ import DragValidation from '../../../../components/DragValidation'
 import AddModalFormStyles from './AddModalForm.less'
 import StepTwoList from './StepTwoList'
 import { validateTel, validateEmail } from '../../../../utils/verify'
-import {MESSAGE_DURATION_TIME, PROJECTS} from "../../../../globalset/js/constant";
-import {currentNounPlanFilterName} from "../../../../utils/businessFunction";
+import {
+  MESSAGE_DURATION_TIME,
+  PROJECTS
+} from '../../../../globalset/js/constant'
+import { currentNounPlanFilterName } from '../../../../utils/businessFunction'
 import CustormModal from '../../../../components/CustormModal'
 import InviteOthers from './../InviteOthers/index'
 
