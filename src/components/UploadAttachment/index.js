@@ -143,7 +143,7 @@ export default class UploadAttachment extends Component {
     })
 
     let loading = message.loading('文件正在上传中...', 0)
-    let notify_user_ids = new Array()
+    let notify_user_ids = []
     for (var i = 0; i < toNoticeList.length; i++) {
       notify_user_ids.push(toNoticeList[i].user_id)
     }

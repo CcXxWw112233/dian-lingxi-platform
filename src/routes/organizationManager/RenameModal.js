@@ -73,7 +73,6 @@ class RenameModal extends React.Component {
             rules: [
               {
                 required: false,
-                message: '',
                 whitespace: true,
                 message: `名称不能为空`
               }

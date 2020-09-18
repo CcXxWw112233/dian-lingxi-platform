@@ -42,6 +42,7 @@ export default {
     },
     *initSimpleWorkbenchboxCommData({ payload }, { call, put }) {
       const { route } = payload
+      yield
     },
     *getFileList({ payload }, { call, put }) {
       const { folder_id, board_id, calback } = payload
