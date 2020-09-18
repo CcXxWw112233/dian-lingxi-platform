@@ -372,7 +372,6 @@ export default class MainUIComponent extends Component {
                                 flexWrap: 'wrap',
                                 marginLeft: '-12px'
                               }}
-                              key={user_id}
                             >
                               <div
                                 className={`${mainContentStyles.user_item}`}

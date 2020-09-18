@@ -42,12 +42,14 @@ class PreviewFileModalRichText extends React.Component {
               <iframe
                 style={{ height: 600, width: 600 }}
                 src={previewFileSrc}
+                title={'1'}
               ></iframe>
             )
           } else {
             contain = (
               <div>
                 <iframe
+                  title={'2'}
                   style={{ height: 0, width: 0 }}
                   src={previewFileSrc}
                 ></iframe>
@@ -55,7 +57,7 @@ class PreviewFileModalRichText extends React.Component {
               </div>
             )
           }
-
+          break
         default:
           break
       }

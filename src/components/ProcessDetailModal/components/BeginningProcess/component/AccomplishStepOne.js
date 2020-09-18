@@ -206,6 +206,7 @@ export default class AccomplishStepOne extends Component {
     switch (field_type) {
       case '1':
         container = (
+          // eslint-disable-next-line react/jsx-pascal-case
           <AccomplishStepOne_one
             parentKey={itemKey}
             updateCorrespondingPrcodessStepWithNodeContent={
@@ -218,6 +219,7 @@ export default class AccomplishStepOne extends Component {
         break
       case '2':
         container = (
+          // eslint-disable-next-line react/jsx-pascal-case
           <AccomplishStepOne_two
             parentKey={itemKey}
             updateCorrespondingPrcodessStepWithNodeContent={
@@ -230,6 +232,7 @@ export default class AccomplishStepOne extends Component {
         break
       case '3':
         container = (
+          // eslint-disable-next-line react/jsx-pascal-case
           <AccomplishStepOne_three
             parentKey={itemKey}
             updateCorrespondingPrcodessStepWithNodeContent={
@@ -242,6 +245,7 @@ export default class AccomplishStepOne extends Component {
         break
       case '5':
         container = (
+          // eslint-disable-next-line react/jsx-pascal-case
           <AccomplishStepOne_five
             parentKey={itemKey}
             updateCorrespondingPrcodessStepWithNodeContent={
@@ -254,6 +258,7 @@ export default class AccomplishStepOne extends Component {
         break
       case '6':
         container = (
+          // eslint-disable-next-line react/jsx-pascal-case
           <AccomplishStepOne_six
             parentKey={itemKey}
             updateCorrespondingPrcodessStepWithNodeContent={

@@ -23,34 +23,32 @@ export default class RenderContent extends Component {
       milestonePrincipals = []
     } = this.props
 
-    {
-      return (
-        <div className={infoRemindStyle.content}>
-          {historyList.map((value, index) => {
-            const { id } = value
-            return (
-              <RenderHistory
-                is_add_remind={is_add_remind}
-                rela_type={rela_type}
-                user_remind_info={user_remind_info}
-                rela_id={rela_id}
-                itemValue={value}
-                key={id}
-              />
-            )
-          })}
-          {is_add_remind && (
-            <RenderAdd
+    return (
+      <div className={infoRemindStyle.content}>
+        {historyList.map((value, index) => {
+          const { id } = value
+          return (
+            <RenderHistory
+              is_add_remind={is_add_remind}
               rela_type={rela_type}
-              commonExecutors={commonExecutors}
-              processPrincipalList={processPrincipalList}
-              milestonePrincipals={milestonePrincipals}
-              rela_id={rela_id}
               user_remind_info={user_remind_info}
+              rela_id={rela_id}
+              itemValue={value}
+              key={id}
             />
-          )}
-        </div>
-      )
-    }
+          )
+        })}
+        {is_add_remind && (
+          <RenderAdd
+            rela_type={rela_type}
+            commonExecutors={commonExecutors}
+            processPrincipalList={processPrincipalList}
+            milestonePrincipals={milestonePrincipals}
+            rela_id={rela_id}
+            user_remind_info={user_remind_info}
+          />
+        )}
+      </div>
+    )
   }
 }

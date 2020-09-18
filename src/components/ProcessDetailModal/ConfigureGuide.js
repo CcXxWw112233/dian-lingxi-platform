@@ -8,9 +8,6 @@ import { connect } from 'dva'
   not_show_create_node_guide
 }))
 export default class ConfigureGuide extends Component {
-  constructor(props) {
-    super(props)
-  }
   quit = () => {
     this.props.dispatch({
       type: 'publicProcessDetailModal/configurePorcessGuide',

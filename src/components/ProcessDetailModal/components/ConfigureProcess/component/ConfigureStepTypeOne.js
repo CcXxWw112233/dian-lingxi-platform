@@ -284,6 +284,7 @@ export default class ConfigureStepTypeOne extends Component {
     switch (field_type) {
       case '1':
         container = (
+          // eslint-disable-next-line react/jsx-pascal-case
           <ConfigureStepOne_one
             updateConfigureProcess={this.updateConfigureProcess}
             itemKey={key}
@@ -295,6 +296,7 @@ export default class ConfigureStepTypeOne extends Component {
         break
       case '2':
         container = (
+          // eslint-disable-next-line react/jsx-pascal-case
           <ConfigureStepOne_two
             updateConfigureProcess={this.updateConfigureProcess}
             itemKey={key}
@@ -306,6 +308,7 @@ export default class ConfigureStepTypeOne extends Component {
         break
       case '3':
         container = (
+          // eslint-disable-next-line react/jsx-pascal-case
           <ConfigureStepOne_three
             updateConfigureProcess={this.updateConfigureProcess}
             itemKey={key}
@@ -317,6 +320,7 @@ export default class ConfigureStepTypeOne extends Component {
         break
       case '5':
         container = (
+          // eslint-disable-next-line react/jsx-pascal-case
           <ConfigureStepOne_five
             updateConfigureProcess={this.updateConfigureProcess}
             itemKey={key}
@@ -328,6 +332,7 @@ export default class ConfigureStepTypeOne extends Component {
         break
       case '6':
         container = (
+          // eslint-disable-next-line react/jsx-pascal-case
           <ConfigureStepOne_six
             setSheet={this.props.setSheet}
             updateSheetList={updateSheetList}

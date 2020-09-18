@@ -123,7 +123,7 @@ export default class DetailContent extends React.Component {
             } ${showActiveStyles && indexStyles.active_fileDetailContentRight}`}
           >
             <div
-              style={{ position: 'relative' }}
+              // style={{ position: 'relative' }}
               className={`${indexStyles.fileDetailContentRight_middle}`}
               style={{
                 height:

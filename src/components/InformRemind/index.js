@@ -69,7 +69,6 @@ export default class index extends Component {
       type: 'informRemind/updateDatas',
       payload: {
         informRemindUsers: [],
-        is_add_remind: false,
         setInfoRemindList: [
           {
             rela_id: '',

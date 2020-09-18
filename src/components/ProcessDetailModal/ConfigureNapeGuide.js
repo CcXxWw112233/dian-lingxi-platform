@@ -8,10 +8,6 @@ import { connect } from 'dva'
   not_show_create_form_guide
 }))
 export default class ConfigureNapeGuide extends Component {
-  constructor(props) {
-    super(props)
-  }
-
   quit = () => {
     this.props.dispatch({
       type: 'publicProcessDetailModal/configurePorcessGuide',

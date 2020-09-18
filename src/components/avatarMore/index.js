@@ -75,7 +75,6 @@ const AvatarMore = ({ datas }) => {
         width: '100px',
         minHeight: '50px',
         display: 'flex',
-        width: '100px',
         background: 'rgba(255,255,255,1)',
         boxShadow: '0px 2px 4px 0px rgba(0,0,0,0.15)',
         borderRadius: '4px'

@@ -254,6 +254,7 @@ export default {
       }
     },
 
+    // eslint-disable-next-line require-yield
     *appsSelectKeyIsAreadyClickArray({ payload }, { select, call, put }) {
       const { appsSelectKey } = payload
 

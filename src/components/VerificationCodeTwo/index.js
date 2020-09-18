@@ -6,9 +6,6 @@ import { Button } from 'antd'
 
 //参见登录界面验证码
 export default class VerificationCodeTwo extends React.Component {
-  constructor(props) {
-    super(props)
-  }
   state = {
     initTimeText: '获取验证码',
     buttonDisabled: false, //初始设置按钮是可以点击的

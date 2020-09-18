@@ -1,3 +1,4 @@
+/* eslint-disable require-yield */
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME } from '../../../globalset/js/constant'

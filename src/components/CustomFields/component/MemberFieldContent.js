@@ -502,7 +502,6 @@ export default class MemberFieldContent extends Component {
                             flexWrap: 'wrap',
                             marginLeft: '-12px'
                           }}
-                          key={user_id}
                         >
                           <div
                             className={`${commonStyles.user_item}`}

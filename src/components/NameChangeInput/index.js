@@ -6,11 +6,11 @@ const TextArea = Input.TextArea
 export default class NameChangeInput extends React.Component {
   constructor(props) {
     super(props)
+    this.state = {
+      localName: ''
+    }
   }
 
-  state = {
-    localName: ''
-  }
   componentWillMount() {
     //设置默认项目名称
     this.initSet(this.props)

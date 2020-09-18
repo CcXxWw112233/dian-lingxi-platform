@@ -101,6 +101,7 @@ export default class HeaderContentRightMenu extends Component {
       let new_privileges = []
       for (let item in obj) {
         if (item == 'privileges') {
+          // eslint-disable-next-line no-loop-func
           obj[item].map(val => {
             let temp_arr = arrayNonRepeatfy([].concat(...privileges, val))
             return (new_privileges = [...temp_arr])
@@ -153,6 +154,7 @@ export default class HeaderContentRightMenu extends Component {
       let new_privileges = [...privileges]
       for (let item in obj) {
         if (item == 'privileges') {
+          // eslint-disable-next-line no-loop-func
           obj[item].map(val => {
             let temp_arr = arrayNonRepeatfy([].concat(...privileges, val))
             if (temp_arr && !temp_arr.length) return false

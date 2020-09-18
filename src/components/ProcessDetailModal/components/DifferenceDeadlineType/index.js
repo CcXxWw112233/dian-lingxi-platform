@@ -57,6 +57,7 @@ export default class DifferenceDeadlineType extends Component {
             </span>
           ))
         }
+        break
       case '2':
         container = (
           <span>

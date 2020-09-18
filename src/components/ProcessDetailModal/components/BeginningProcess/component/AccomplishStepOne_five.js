@@ -8,10 +8,6 @@ import FileListRightBarFileDetailModal from '../../../../../routes/Technological
 
 @connect(mapStateToProps)
 export default class AccomplishStepOne_five extends Component {
-  constructor(props) {
-    super(props)
-  }
-
   handleFileDownload = (e, { file_resource_id, file_id }) => {
     e && e.stopPropagation()
     const {

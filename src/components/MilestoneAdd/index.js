@@ -13,7 +13,7 @@ import { connect } from 'dva'
 import globalStyles from '@/globalset/css/globalClassName.less'
 /**加入里程碑组件 */
 const { SubMenu } = Menu
-@connect(({}) => ({}))
+@connect()
 export default class MilestoneAdd extends React.Component {
   state = {
     milestoneAddVisible: false,
@@ -213,7 +213,7 @@ export default class MilestoneAdd extends React.Component {
   }
 
   getSortLilestoneList = (milestoneList, dataInfo) => {
-    let sortMilestoneList = new Array()
+    let sortMilestoneList = []
     let selectableArray = milestoneList.filter(item => {
       return (
         compareTwoTimestamp(item.deadline, dataInfo.due_time) &&
@@ -223,6 +223,7 @@ export default class MilestoneAdd extends React.Component {
     sortMilestoneList = sortMilestoneList.concat(selectableArray)
     for (var i = 0; i < milestoneList.length; i++) {
       if (
+        // eslint-disable-next-line no-loop-func
         selectableArray.filter(item => item.id == milestoneList[i].id).length ==
         0
       ) {

@@ -1008,8 +1008,11 @@ export default {
         case 'change:card': //监听到修改任务
           const drawContent = yield select(workbench_selectDrawContent)
           const card_id = yield select(workbench_selectCard_id)
+          // eslint-disable-next-line no-use-before-define
           id_arr_ = getAfterNameId(coperateName).split('/')
+          // eslint-disable-next-line no-use-before-define
           let parent_card_id = id_arr_[0]
+          // eslint-disable-next-line no-use-before-define
           const child_card_id = id_arr_[1]
           const task_list = yield select(
             workbench_selectrResponsibleTaskList
@@ -1361,42 +1364,43 @@ export default {
           })
           break
         case 'change:file:operation': //移动和复制
-        // let ids = getAfterNameId(coperateName)
-        // let idArr = ids.split('/')
-        // let fileList_ = yield select(selectFileList)
-        // let folder_id = yield select(selectCurrentParrentDirectoryId)
-        // let coFileList = coperateData['file_list']
-        // if(idArr.length == 1) { //复制
-        //   if(idArr[0] == folder_id) {
-        //     fileList_ = [].concat(fileList_, coFileList)
-        //   }
-        // }else if(idArr.length == 2) { //移动
-        //   if(idArr[0] != idArr[1]) { ////移入的文件和移除的文件夹不是同一个
-        //     if(idArr[1] == folder_id) { //当前文件夹有文件移除
-        //       for(let i = 0; i< fileList_.length; i++) {
-        //         for (let j = 0; j < coFileList.length; j++) {
-        //           if(fileList_[i]['file_id'] == coFileList[j]['file_id']) {
-        //             fileList_.splice(i, 1)
-        //             break
-        //           }
-        //
-        //         }
-        //       }
-        //     }else if(idArr[0] == folder_id){ //当前文件夹有文件移进
-        //       fileList_ = [].concat(fileList_, coFileList)
-        //     }
-        //
-        //   }
-        // } else {
-        //
-        // }
-        // dispathes({
-        //   type: model_projectDetailFile('updateDatas'),
-        //   payload: {
-        //     fileList: fileList_
-        //   }
-        // })
-        //添加里程碑
+          // let ids = getAfterNameId(coperateName)
+          // let idArr = ids.split('/')
+          // let fileList_ = yield select(selectFileList)
+          // let folder_id = yield select(selectCurrentParrentDirectoryId)
+          // let coFileList = coperateData['file_list']
+          // if(idArr.length == 1) { //复制
+          //   if(idArr[0] == folder_id) {
+          //     fileList_ = [].concat(fileList_, coFileList)
+          //   }
+          // }else if(idArr.length == 2) { //移动
+          //   if(idArr[0] != idArr[1]) { ////移入的文件和移除的文件夹不是同一个
+          //     if(idArr[1] == folder_id) { //当前文件夹有文件移除
+          //       for(let i = 0; i< fileList_.length; i++) {
+          //         for (let j = 0; j < coFileList.length; j++) {
+          //           if(fileList_[i]['file_id'] == coFileList[j]['file_id']) {
+          //             fileList_.splice(i, 1)
+          //             break
+          //           }
+          //
+          //         }
+          //       }
+          //     }else if(idArr[0] == folder_id){ //当前文件夹有文件移进
+          //       fileList_ = [].concat(fileList_, coFileList)
+          //     }
+          //
+          //   }
+          // } else {
+          //
+          // }
+          // dispathes({
+          //   type: model_projectDetailFile('updateDatas'),
+          //   payload: {
+          //     fileList: fileList_
+          //   }
+          // })
+          //添加里程碑
+          break
         case 'add:milestone':
           let workbench_show_gantt_card = yield select(
             getModelSelectDatasState('workbench', 'workbench_show_gantt_card')
@@ -1630,6 +1634,7 @@ export default {
       }
     },
 
+    // eslint-disable-next-line require-yield
     *handleWsData_board_list({ payload }, { call, put, select }) {
       const { res } = payload
       const { data } = res

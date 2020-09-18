@@ -105,7 +105,6 @@ export default class ConfirmInfoThree_one extends Component {
                           position: 'relative',
                           marginRight: '9px',
                           cursor: 'pointer',
-                          display: 'inline-block',
                           display: 'flex',
                           flex: 1
                         }}

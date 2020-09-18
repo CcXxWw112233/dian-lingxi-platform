@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-pascal-case */
 import React, { Component } from 'react'
 import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'

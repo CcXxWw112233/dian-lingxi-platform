@@ -66,6 +66,6 @@ export default class Drag extends React.Component {
 }
 
 //使用方法
-{
-  /*<DragMove style={{width:'100px',height:'100px',backgroundColor:'green',position:'absolute'}}/>*/
-}
+// {
+//   /*<DragMove style={{width:'100px',height:'100px',backgroundColor:'green',position:'absolute'}}/>*/
+// }

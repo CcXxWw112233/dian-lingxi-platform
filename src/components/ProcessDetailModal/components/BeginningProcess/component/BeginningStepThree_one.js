@@ -48,6 +48,7 @@ export default class BeginningStepThree_one extends Component {
   }
   componentWillReceiveProps(nextProps) {
     if (!isObjectValueEqual(this.props, nextProps)) {
+      // eslint-disable-next-line react/no-direct-mutation-state
       this.state = {
         score_items:
           nextProps.itemValue && nextProps.itemValue.score_items
@@ -628,7 +629,6 @@ export default class BeginningStepThree_one extends Component {
                               position: 'relative',
                               marginRight: '9px',
                               cursor: 'pointer',
-                              display: 'inline-block',
                               display: 'flex',
                               flex: 1
                             }}

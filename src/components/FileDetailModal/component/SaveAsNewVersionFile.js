@@ -642,7 +642,6 @@ export default class SaveAsNewVersionFile extends Component {
           title={<div style={{ textAlign: 'center' }}>{title}</div>}
           onOk={this.onOk}
           onCancel={this.hideModal}
-          okText="确认"
           cancelText="取消"
           destroyOnClose={true}
           maskClosable={false}

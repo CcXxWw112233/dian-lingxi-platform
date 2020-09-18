@@ -513,6 +513,7 @@ export default class BeginningStepOne extends Component {
     switch (field_type) {
       case '1':
         container = (
+          // eslint-disable-next-line react/jsx-pascal-case
           <BeginningStepOne_one
             parentKey={itemKey}
             FormCanEdit={this.FormCanEdit()}
@@ -526,6 +527,7 @@ export default class BeginningStepOne extends Component {
         break
       case '2':
         container = (
+          // eslint-disable-next-line react/jsx-pascal-case
           <BeginningStepOne_two
             parentKey={itemKey}
             FormCanEdit={this.FormCanEdit()}
@@ -539,6 +541,7 @@ export default class BeginningStepOne extends Component {
         break
       case '3':
         container = (
+          // eslint-disable-next-line react/jsx-pascal-case
           <BeginningStepOne_three
             parentKey={itemKey}
             FormCanEdit={this.FormCanEdit()}
@@ -552,6 +555,7 @@ export default class BeginningStepOne extends Component {
         break
       case '5':
         container = (
+          // eslint-disable-next-line react/jsx-pascal-case
           <BeginningStepOne_five
             updateState={this.updateState}
             parentKey={itemKey}
@@ -566,6 +570,7 @@ export default class BeginningStepOne extends Component {
         break
       case '6':
         container = (
+          // eslint-disable-next-line react/jsx-pascal-case
           <BeginningStepOne_six
             updateSheetList={this.updateSheetList}
             updateState={this.updateState}

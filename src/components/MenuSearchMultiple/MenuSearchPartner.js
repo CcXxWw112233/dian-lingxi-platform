@@ -604,7 +604,6 @@ export default class MenuSearchPartner extends React.Component {
           board_id={board_id}
           addMenbersInProject={this.addMenbersInProject}
           show_wechat_invite={not_show_wechat_invite ? false : true}
-          board_id={board_id}
           invitationType={invitationType}
           invitationId={invitationId}
           rela_Condition={rela_Condition}
