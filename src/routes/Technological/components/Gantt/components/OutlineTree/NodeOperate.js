@@ -10,7 +10,8 @@ import {
   requestDeleteMiletone,
   deleteTaskVTwo,
   boardAppRelaMiletones,
-  updateTaskVTwo
+  updateTaskVTwo,
+  updateMilestone
 } from '../../../../../../services/technological/task'
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
 import OutlineTree from '.'
@@ -203,16 +204,25 @@ export default class NodeOperate extends Component {
   relationGroup = list_id => {
     const {
       gantt_board_id,
-      nodeValue: { id, list_id: selected_list_id }
+      nodeValue: { id, list_id: selected_list_id },
+      nodeValue: { tree_type }
     } = this.props
-    const params = {
-      list_id,
-      board_id: gantt_board_id,
-      card_id: id
+    let params = {
+      list_id
     }
     const is_cancle = list_id == selected_list_id
     if (is_cancle) params.list_id = '0'
-    updateTaskVTwo({ ...params }, { isNotLoading: false }).then(res => {
+    if (tree_type == '1') {
+      params = { ...params, id }
+    } else {
+      params = {
+        ...params,
+        board_id: gantt_board_id,
+        card_id: id
+      }
+    }
+    const func = tree_type == '1' ? updateMilestone : updateTaskVTwo
+    func({ ...params }, { isNotLoading: false }).then(res => {
       if (isApiResponseOk(res)) {
         message.success(!is_cancle ? '关联分组成功' : '已取消关联')
         this.setRelationGroupId({ list_id: params.list_id })
@@ -517,29 +527,28 @@ export default class NodeOperate extends Component {
     } = nodeValue
     return (
       <div className={styles.menu} onWheel={e => e.stopPropagation()}>
-        {tree_type == '2' &&
-        parent_type != '2' && ( //只有一级任务选择分组
-            <div className={`${styles.menu_item} ${styles.submenu}`}>
+        {((tree_type == '2' && parent_type != '2') || tree_type == '1') && ( //只有一级任务选择分组
+          <div className={`${styles.menu_item} ${styles.submenu}`}>
+            <div
+              className={`${styles.menu_item_title}`}
+              onClick={() => this.setGroupSubShow(true)}
+            >
+              选择分组
               <div
-                className={`${styles.menu_item_title}`}
-                onClick={() => this.setGroupSubShow(true)}
+                className={`${globalStyles.authTheme} ${styles.menu_item_title_go}`}
               >
-                选择分组
-                <div
-                  className={`${globalStyles.authTheme} ${styles.menu_item_title_go}`}
-                >
-                  &#xe7eb;
-                </div>
+                &#xe7eb;
               </div>
-              {group_sub_visible && (
-                <div className={`${styles.submenu_area}`}>
-                  {create_group_visible
-                    ? this.renderCreateGroup()
-                    : this.renderGroupList()}
-                </div>
-              )}
             </div>
-          )}
+            {group_sub_visible && (
+              <div className={`${styles.submenu_area}`}>
+                {create_group_visible
+                  ? this.renderCreateGroup()
+                  : this.renderGroupList()}
+              </div>
+            )}
+          </div>
+        )}
         <div
           className={styles.menu_item}
           onClick={() => this.menuItemClick('rename')}
