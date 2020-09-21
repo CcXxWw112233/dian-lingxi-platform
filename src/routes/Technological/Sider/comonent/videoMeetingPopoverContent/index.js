@@ -44,6 +44,7 @@ import { MESSAGE_DURATION_TIME } from '../../../../../globalset/js/constant'
 import moment from 'moment'
 import { checkIsHasPermissionInBoard } from '../../../../../utils/businessFunction'
 import { arrayNonRepeatfy, isObjectValueEqual } from '../../../../../utils/util'
+import { platformNouns } from '../../../../../globalset/clientCustorm'
 const Option = Select.Option
 const { TextArea } = Input
 const { getMentions, toString, toContentState } = Mention
@@ -1507,7 +1508,7 @@ class VideoMeetingPopoverContent extends React.Component {
                     <span className={globalStyles.authTheme}>&#xe7ec;</span>
                   </div>
                 )}
-              <span>聆悉推荐使用以下方式开展远程会议: </span>
+              <span>{platformNouns}推荐使用以下方式开展远程会议: </span>
               <div
                 style={{
                   position: 'relative',

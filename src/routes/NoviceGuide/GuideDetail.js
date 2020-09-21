@@ -5,6 +5,7 @@ import logo from '../../assets/library/lingxi_logo.png'
 import { Input, Button, Spin, Select } from 'antd'
 import { getSearchOrganizationList } from '../../services/technological/organizationMember'
 import { INPUT_CHANGE_SEARCH_TIME } from '../../globalset/js/constant'
+import { platformNouns } from '../../globalset/clientCustorm'
 
 const Option = Select.Option
 
@@ -130,7 +131,7 @@ export default class GuideDetail extends React.Component {
         <div className={indexStyles.contain1}>
           <img src={logo} />
         </div>
-        <div className={indexStyles.contain2}>欢迎使用聆悉</div>
+        <div className={indexStyles.contain2}>欢迎使用{platformNouns}</div>
         <div className={indexStyles.contain3}>
           查找并加入你的组织，轻松连接工作的伙伴与项目：
         </div>

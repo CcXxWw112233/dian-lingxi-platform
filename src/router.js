@@ -32,67 +32,68 @@ import dynamic from 'dva/dynamic'
 import { LocaleProvider } from 'antd'
 import zh_CN from 'antd/lib/locale-provider/zh_CN'
 import RedirectComp from './routes/RedirectComp.js'
+import { platformNouns } from './globalset/clientCustorm'
 const { ConnectedRouter } = routerRedux
 
 const Routers = function({ history, app }) {
   history.listen(location => {
     switch (location.pathname) {
       case '/login':
-        document.title = '聆悉-登录'
+        document.title = `${platformNouns}-登录`
         break
       case '/login/wechatBind':
-        document.title = '聆悉-微信绑定'
+        document.title = `${platformNouns}-微信绑定`
         break
       case '/register':
-        document.title = '聆悉-注册'
+        document.title = `${platformNouns}-注册`
         break
       case '/registerSuccess':
-        document.title = '聆悉-注册成功'
+        document.title = `${platformNouns}-注册成功`
         break
       case '/agreement/service':
-        document.title = '聆悉-服务协议'
+        document.title = `${platformNouns}-服务协议`
         break
       case '/agreement/privacy':
-        document.title = '聆悉-隐私协议'
+        document.title = `${platformNouns}-隐私协议`
         break
       case '/resetPassword':
-        document.title = '聆悉-重置密码'
+        document.title = `${platformNouns}-重置密码`
         break
       case '/retrievePassword':
-        document.title = '聆悉-找回密码'
+        document.title = `${platformNouns}-找回密码`
         break
       case '/organizationManager':
-        document.title = '聆悉-组织管理'
+        document.title = `${platformNouns}-组织管理`
         break
       case '/technological/accoutSet':
-        document.title = '聆悉-账户设置'
+        document.title = `${platformNouns}-账户设置`
         break
       case '/technological/project':
-        document.title = '聆悉-项目'
+        document.title = `${platformNouns}-项目`
         break
       case '/technological/projectDetail':
-        document.title = '聆悉-项目详情'
+        document.title = `${platformNouns}-项目详情`
         break
       case '/technological/newsDynamic':
-        document.title = '聆悉-动态'
+        document.title = `${platformNouns}-动态`
         break
       case '/technological/workbench':
-        document.title = '聆悉-工作台'
+        document.title = `${platformNouns}-工作台`
         break
       case '/technological/organizationMember':
-        document.title = '聆悉-团队管理'
+        document.title = `${platformNouns}-团队管理`
         break
       case '/teamShow/editTeamShow':
-        document.title = '聆悉-编辑团队秀'
+        document.title = `${platformNouns}-编辑团队秀`
         break
       case '/teamShow/teamList':
-        document.title = '聆悉-团队秀'
+        document.title = `${platformNouns}-团队秀`
         break
       case '/teamShow/teamInfo':
-        document.title = '聆悉-团队秀'
+        document.title = `${platformNouns}-团队秀`
         break
       default:
-        document.title = '聆悉'
+        document.title = `${platformNouns}`
         break
     }
   })

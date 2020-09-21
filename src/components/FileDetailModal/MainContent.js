@@ -22,6 +22,7 @@ import {
   PROJECT_FILES_FILE_UPDATE
 } from '@/globalset/js/constant'
 import NotSupportImg from '@/assets/projectDetail/fileDetail/not_support.png'
+import { platformNouns } from '../../globalset/clientCustorm'
 // let this.timer
 
 @connect(mapStateToProps)
@@ -556,7 +557,7 @@ class MainContent extends Component {
                 fontStyle: 'normal'
               }}
             >
-              把文件转换为pdf格式即可在聆悉上圈点协作
+              把文件转换为pdf格式即可在{platformNouns}上圈点协作
             </i>
           </div>
         )
@@ -592,7 +593,7 @@ class MainContent extends Component {
                 fontStyle: 'normal'
               }}
             >
-              把文件转换为pdf格式即可在聆悉上圈点协作
+              把文件转换为pdf格式即可在{platformNouns}上圈点协作
             </i>
           </div>
         )
@@ -628,7 +629,7 @@ class MainContent extends Component {
                 fontStyle: 'normal'
               }}
             >
-              把文件转换为pdf格式即可在聆悉上圈点协作
+              把文件转换为pdf格式即可在{platformNouns}上圈点协作
             </i>
           </div>
         )
@@ -664,7 +665,7 @@ class MainContent extends Component {
                 fontStyle: 'normal'
               }}
             >
-              把文件转换为pdf格式即可在聆悉上圈点协作
+              把文件转换为pdf格式即可在{platformNouns}上圈点协作
             </i>
           </div>
         )
@@ -700,7 +701,7 @@ class MainContent extends Component {
                 fontStyle: 'normal'
               }}
             >
-              把文件转换为pdf格式即可在聆悉上圈点协作
+              把文件转换为pdf格式即可在{platformNouns}上圈点协作
             </i>
           </div>
         )
@@ -736,7 +737,7 @@ class MainContent extends Component {
                 fontStyle: 'normal'
               }}
             >
-              把文件转换为pdf格式即可在聆悉上圈点协作
+              把文件转换为pdf格式即可在{platformNouns}上圈点协作
             </i>
           </div>
         )
@@ -772,7 +773,7 @@ class MainContent extends Component {
                 fontStyle: 'normal'
               }}
             >
-              把文件转换为pdf格式即可在聆悉上圈点协作
+              把文件转换为pdf格式即可在{platformNouns}上圈点协作
             </i>
           </div>
         )
@@ -808,7 +809,7 @@ class MainContent extends Component {
                 fontStyle: 'normal'
               }}
             >
-              把文件转换为pdf格式即可在聆悉上圈点协作
+              把文件转换为pdf格式即可在{platformNouns}上圈点协作
             </i>
           </div>
         )
@@ -844,7 +845,7 @@ class MainContent extends Component {
                 fontStyle: 'normal'
               }}
             >
-              把文件转换为pdf格式即可在聆悉上圈点协作
+              把文件转换为pdf格式即可在{platformNouns}上圈点协作
             </i>
           </div>
         )
@@ -880,7 +881,7 @@ class MainContent extends Component {
                 fontStyle: 'normal'
               }}
             >
-              把文件转换为pdf格式即可在聆悉上圈点协作
+              把文件转换为pdf格式即可在{platformNouns}上圈点协作
             </i>
           </div>
         )
@@ -916,7 +917,7 @@ class MainContent extends Component {
                 fontStyle: 'normal'
               }}
             >
-              把文件转换为pdf格式即可在聆悉上圈点协作
+              把文件转换为pdf格式即可在{platformNouns}上圈点协作
             </i>
           </div>
         )
@@ -952,7 +953,7 @@ class MainContent extends Component {
                 fontStyle: 'normal'
               }}
             >
-              把文件转换为pdf格式即可在聆悉上圈点协作
+              把文件转换为pdf格式即可在{platformNouns}上圈点协作
             </i>
           </div>
         )
@@ -988,7 +989,7 @@ class MainContent extends Component {
                 fontStyle: 'normal'
               }}
             >
-              把文件转换为pdf格式即可在聆悉上圈点协作
+              把文件转换为pdf格式即可在{platformNouns}上圈点协作
             </i>
           </div>
         )

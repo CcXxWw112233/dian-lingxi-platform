@@ -21,6 +21,7 @@ import {
   commInviteWebJoin
 } from '@/services/technological/index'
 import { isApiResponseOk } from '@/utils/handleResponseData'
+import { platformNouns } from '../../globalset/clientCustorm'
 
 export default class Boundary extends Component {
   state = {
@@ -172,7 +173,7 @@ export default class Boundary extends Component {
     let new_input_list = [...inputList]
     // let phoneTemp = [] // 定义一个手机号的空数组
     // let emailTemp = [] // 定义一个邮箱的空数组
-    let allTemp = new Array() // 所有的数组列表
+    let allTemp = [] // 所有的数组列表
     for (const val of new_input_list) {
       const result = val['value']
       if (val['value'] != '') {
@@ -237,7 +238,9 @@ export default class Boundary extends Component {
   renderInit() {
     return (
       <div className={styles.introduce}>
-        <h1>欢迎使用聆悉，我们准备了以下功能以便你能更好地管理项目</h1>
+        <h1>
+          欢迎使用{platformNouns}，我们准备了以下功能以便你能更好地管理项目
+        </h1>
         <div className={styles.middle}>
           <div className={styles.left}>
             <h3>项目功能</h3>
@@ -362,7 +365,7 @@ export default class Boundary extends Component {
     return (
       <div className={styles.introduce}>
         <h1 style={{ textAlign: 'center', marginBottom: 88 }}>
-          是否现在就邀请其他人共同使用聆悉
+          是否现在就邀请其他人共同使用{platformNouns}
         </h1>
         <div className={styles.form}>
           <h3 style={{ marginBottom: 12 }}>输入被邀请人手机号/邮箱</h3>

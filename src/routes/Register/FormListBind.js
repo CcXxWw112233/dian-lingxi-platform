@@ -11,6 +11,7 @@ import {
 import { message } from 'antd'
 import { MESSAGE_DURATION_TIME } from '../../globalset/js/constant'
 import sha256 from 'js-sha256'
+import { platformNouns } from '../../globalset/clientCustorm'
 
 const FormItem = Form.Item
 
@@ -333,7 +334,7 @@ class FormList extends React.Component {
             onChange={this.checkBoxOnChange}
           />
           <span style={{ color: '#000', fontSize: 14 }}>
-            同意 聆悉《
+            同意 {platformNouns}《
             <a
               href={hrefService}
               target="view_window"

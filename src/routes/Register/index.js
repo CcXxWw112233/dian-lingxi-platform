@@ -7,6 +7,7 @@ import globalClassNmae from '../../globalset/css/globalClassName.less'
 import TopContent from '../../components/TopContent'
 import BottomContent from '../../components/BottomContent'
 import Copyright from '../../components/Copyright'
+import { platformNouns } from '../../globalset/clientCustorm'
 const getEffectOrReducerByName = name => `register/${name}`
 const juge = localStorage.getItem('wechat')
   ? localStorage.getItem('wechat')
@@ -88,7 +89,7 @@ const Register = options => {
                 borderRadius: '4px'
               }}
             >
-              <TopContent text={'欢迎加入'} productName={'聆悉'} />
+              <TopContent text={'欢迎加入'} productName={`${platformNouns}`} />
               <FormListBind {...formListProps} />
               {/* <BottomContent {...BottomContentProps} type={'register'}/> */}
               <div
@@ -131,7 +132,7 @@ const Register = options => {
                 borderRadius: '4px'
               }}
             >
-              <TopContent text={'欢迎加入'} productName={'聆悉'} />
+              <TopContent text={'欢迎加入'} productName={`${platformNouns}`} />
               <FormList {...formListProps} />
               <BottomContent {...BottomContentProps} type={'register'} />
             </div>

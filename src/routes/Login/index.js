@@ -11,7 +11,7 @@ import TopContent from '../../components/TopContent'
 import BottomContent from '../../components/BottomContent'
 import Copyright from '../../components/Copyright'
 import indexStyles from './index.less'
-import sha256 from 'js-sha256'
+import { platformNouns } from '../../globalset/clientCustorm'
 
 const juge = localStorage.getItem('bindType')
   ? localStorage.getItem('bindType')
@@ -155,8 +155,12 @@ class Login extends React.Component {
                   borderRadius: '4px'
                 }}
               >
-                <TopContent text={'欢迎来到'} productName={'聆悉'} />
+                <TopContent
+                  text={'欢迎来到'}
+                  productName={`${platformNouns}`}
+                />
                 <div style={{ width: '100%', textAlign: 'center' }}>
+                  {/* eslint-disable-next-line jsx-a11y/iframe-has-title */}
                   <iframe
                     id="wechatCode"
                     frameBorder="0"
@@ -221,7 +225,10 @@ class Login extends React.Component {
                   borderRadius: '4px'
                 }}
               >
-                <TopContent text={'欢迎来到'} productName={'聆悉'} />
+                <TopContent
+                  text={'欢迎来到'}
+                  productName={`${platformNouns}`}
+                />
                 <FormList
                   {...formListProps}
                   setLoginType={this.setLoginType.bind(this)}
@@ -296,7 +303,10 @@ class Login extends React.Component {
                   borderRadius: '4px'
                 }}
               >
-                <TopContent text={'欢迎来到'} productName={'聆悉'} />
+                <TopContent
+                  text={'欢迎来到'}
+                  productName={`${platformNouns}`}
+                />
                 <FormListBind
                   bindType={this.state.bindType}
                   {...formListProps}
@@ -353,7 +363,10 @@ class Login extends React.Component {
                   borderRadius: '4px'
                 }}
               >
-                <TopContent text={'欢迎来到'} productName={'聆悉'} />
+                <TopContent
+                  text={'欢迎来到'}
+                  productName={`${platformNouns}`}
+                />
                 <FormList
                   {...formListProps}
                   setLoginType={this.setLoginType.bind(this)}
