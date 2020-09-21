@@ -679,6 +679,7 @@ class SimpleHeader extends Component {
             </i>
           </div>
         </Tooltip>
+        <VideoMeeting />
         <Tooltip
           title={`${currentNounPlanFilterName(
             PROJECTS,
@@ -725,9 +726,9 @@ class SimpleHeader extends Component {
                     </div> */}
           <LingxiIm token={Cookies.get('Authorization')} width="400px" />
 
-          <div className={indexStyles.videoMeetingWapper}>
+          {/* <div className={indexStyles.videoMeetingWapper}>
             <VideoMeeting />
-          </div>
+          </div> */}
         </div>
 
         {simpleDrawerVisible && (

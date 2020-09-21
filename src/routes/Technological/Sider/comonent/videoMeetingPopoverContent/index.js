@@ -1661,10 +1661,13 @@ class VideoMeetingPopoverContent extends React.Component {
         }
       >
         <div
-          className={indexStyles.videoMeeting__icon}
-          onMouseEnter={this.handleShowVideoMeeting}
+          title="视频会议"
+          className={`${indexStyles.videoMeeting__icon} ${globalStyles.authTheme}`}
+          // onMouseEnter={this.handleShowVideoMeeting}
           onClick={this.handleToggleVideoMeetingPopover}
-        />
+        >
+          &#xe865;
+        </div>
       </Popover>
     )
   }
