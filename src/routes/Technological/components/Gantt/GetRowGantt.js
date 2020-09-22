@@ -291,14 +291,32 @@ export default class GetRowGantt extends Component {
     const { drag_creating } = this.state
     if (e.target.offsetTop >= dataAreaRealHeight) return //在全部分组外的其他区域（在创建项目那一栏）
     if (
-      e.target.dataset.targetclassname == 'specific_example' || //不能滑动到某一个任务实例上
-      (!drag_creating &&
-        e.target.dataset.targetclassname == 'specific_example_milestone') //非拖拽的过程中,滑倒里程碑旗子上没问题
+      e.target.dataset.targetclassname == 'specific_example' //不能滑动到某一个任务实例上
     ) {
       // this.setState({
       //   dasheRectShow: false
       // })
       return false
+    }
+    if (
+      !drag_creating &&
+      e.target.dataset.targetclassname == 'specific_example_milestone' //非拖拽的过程中,滑倒里程碑旗子上没问题)
+    ) {
+      this.setState({
+        dasheRectShow: false
+      })
+      return false
+    } else {
+      if (
+        //滑动到任务上
+        !this.state.dasheRectShow &&
+        e.target.dataset.targetclassname != 'specific_example'
+      ) {
+        //非拖拽的过程中,滑倒里程碑旗子上没问题)
+        this.setState({
+          dasheRectShow: true
+        })
+      }
     }
     if (
       ganttIsFold({

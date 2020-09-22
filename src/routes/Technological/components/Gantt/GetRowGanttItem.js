@@ -554,7 +554,13 @@ export default class GetRowGanttItem extends Component {
   // 里程碑详情和列表
   renderLCBList = (current_date_miletones, timestamp) => {
     return (
-      <Menu onClick={e => this.selectLCB(e, timestamp)} style={{ width: 216 }}>
+      <Menu
+        onMouseDown={e => e.stopPropagation()}
+        onMouseUp={e => e.stopPropagation()}
+        onClick={e => this.selectLCB(e, timestamp)}
+        style={{ width: 216 }}
+        data-targetclassname="specific_example_milestone"
+      >
         {current_date_miletones.map((value, key) => {
           const { id, name, board_id } = value
           return (
@@ -584,6 +590,7 @@ export default class GetRowGanttItem extends Component {
   }
   // 选择里程碑
   selectLCB = (e, timestamp) => {
+    e.domEvent.stopPropagation()
     const idarr = e.key.split('__')
     const id = idarr[1]
     const board_id = idarr[0]
