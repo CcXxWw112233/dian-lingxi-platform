@@ -1,14 +1,14 @@
 .videoMeeting__icon {
     cursor: pointer;
     position: absolute;
-    top: 18px;
-    right: 90px;
+    top: 12px;
+    right: 95px;
     width: 25px;
     height: 20px;
     box-sizing: border-box;
     padding: 5px;
     color: #fff;
-    font-size: 24px;
+    font-size: 32px;
     // background: url(./../../../../../assets/sider_right/video.png) center center
     //   no-repeat;
     // background-size: contain;
@@ -63,11 +63,12 @@
   }
 
   .videoMeeting__wrapper {
-    width: 400px;
+    // width: 400px;
+    width: 320px;
     // height: 587px;
     max-height: 450px;
     overflow-y: auto;
-    padding: 16px;
+    padding: 0px;
     font-size: 14px;
     font-weight: 400;
     color: rgba(89, 89, 89, 1);
@@ -75,7 +76,7 @@
     padding-left: 8px;
     overflow-x: hidden;
     .videoMeeting__topic {
-      margin-bottom: 24px;
+      margin-bottom: 16px;
     }
     .videoMeeting__topic_content {
       display: block;
@@ -85,7 +86,7 @@
       }
       .videoMeeting__topic_content_time {
         display: flex;
-        justify-content: space-between;
+        // justify-content: space-between;
         align-items: center;
       }
       .videoMeeting__topic_content_datePicker {
@@ -100,7 +101,7 @@
     }
     .videoMeeting__submitBtn {
       margin-top: 24px;
-      margin-bottom: 24px;
+      // margin-bottom: 24px;
       width: 100%;
       button {
         width: 100%;
@@ -119,8 +120,10 @@
   }
   
   .videoMeeting__header {
-    width:376px;
-    min-height:137px;
+    // width:376px;
+    width: 320px;
+    min-height:47px;
+    max-height: 47px;
     background:rgba(255,255,255,1);
     border-radius:4px 4px 0px 0px;
     .videoMeeting__mark {
@@ -128,14 +131,14 @@
       color: #40A9FF;
     }
     .videoMeeting__title {
-      font-size:24px;
+      font-size:16px;
       font-family:PingFangSC-Medium,PingFang SC;
-      font-weight:500;
+      font-weight:600;
       color:rgba(0,0,0,0.85);
-      line-height:33px;
-      margin-top: 24px;
+      // margin-top: 24px;
       display: flex;
       align-items: center;
+      line-height: 47px;
     }
   }
 
