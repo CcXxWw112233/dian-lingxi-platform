@@ -594,8 +594,8 @@ export default class GetRowGanttItem extends Component {
     const idarr = e.key.split('__')
     const id = idarr[1]
     const board_id = idarr[0]
-    this.setCurrentSelectedProjectMembersList({ board_id })
-    this.set_miletone_detail_modal_visible()
+    // this.setCurrentSelectedProjectMembersList({ board_id })
+    // this.set_miletone_detail_modal_visible()
     // this.getMilestoneDetail(id)
     //更新里程碑id,在里程碑的生命周期会监听到id改变，发生请求
     const { dispatch } = this.props
@@ -605,6 +605,18 @@ export default class GetRowGanttItem extends Component {
       type: 'milestoneDetail/updateDatas',
       payload: {
         milestone_id: id
+      }
+    })
+    dispatch({
+      type: 'gantt/updateDatas',
+      payload: {
+        miletone_detail_modal_visible: true
+      }
+    })
+    dispatch({
+      type: 'projectDetail/projectDetailInfo',
+      payload: {
+        id: board_id
       }
     })
   }
@@ -1331,7 +1343,7 @@ export default class GetRowGanttItem extends Component {
             )
           })}
         </div>
-        <MilestoneDetail
+        {/* <MilestoneDetail
           deleteMiletone={this.deleteMiletone}
           handleMiletonesChange={this.handleMiletonsChangeMountInGantt}
           users={currentSelectedProjectMembersList}
@@ -1342,7 +1354,7 @@ export default class GetRowGanttItem extends Component {
             this.set_miletone_detail_modal_visible
           }
           deleteRelationContent={this.deleteRelationContent}
-        />
+        /> */}
       </div>
     )
   }
