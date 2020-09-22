@@ -67,6 +67,7 @@ export default class GetRowGanttItem extends Component {
 
     let is_over_duetime = false
     let is_all_realized = '1'
+    let is_all_child_realized = '1'
     if (!timestamp || group_view_type != '1') {
       //只有在项目视图才可以看
       return {
@@ -139,10 +140,17 @@ export default class GetRowGanttItem extends Component {
         break
       }
     }
+    for (let val of current_date_board_child_miletones) {
+      if (val['is_all_realized'] == '0') {
+        is_all_child_realized = '0'
+        break
+      }
+    }
     return {
       is_over_duetime,
       flag,
       is_all_realized,
+      is_all_child_realized,
       current_date_board_miletones,
       has_child_flag,
       current_date_board_child_miletones
@@ -169,6 +177,7 @@ export default class GetRowGanttItem extends Component {
     let has_child_flag = false //当前日期存在二级里程碑
     let is_over_duetime = false
     let is_all_realized = '1'
+    let is_all_child_realized = '1'
     if (!timestamp || group_view_type != '1' || !timestampEnd) {
       //只有在项目视图才可以看
       return {
@@ -238,6 +247,12 @@ export default class GetRowGanttItem extends Component {
     for (let val of current_date_board_miletones) {
       if (val['is_all_realized'] == '0') {
         is_all_realized = '0'
+        break
+      }
+    }
+    for (let val of current_date_board_child_miletones) {
+      if (val['is_all_realized'] == '0') {
+        is_all_child_realized = '0'
         break
       }
     }
@@ -286,6 +301,7 @@ export default class GetRowGanttItem extends Component {
       flag,
       has_child_flag,
       is_all_realized,
+      is_all_child_realized,
       every_day_miletones,
       every_day_child_miletones,
       current_date_board_miletones,
@@ -308,6 +324,7 @@ export default class GetRowGanttItem extends Component {
     let has_child_flag = false //当前日期存在二级里程碑
     let is_over_duetime = false
     let is_all_realized = '1'
+    let is_all_child_realized = '1'
     if (!timestamp || group_view_type != '1' || !timestampEnd) {
       //只有在项目视图才可以看
       return {
@@ -380,6 +397,12 @@ export default class GetRowGanttItem extends Component {
         break
       }
     }
+    for (let val of current_date_board_child_miletones) {
+      if (val['is_all_realized'] == '0') {
+        is_all_child_realized = '0'
+        break
+      }
+    }
     let every_day_miletones = []
     let every_day_child_miletones = []
     const day = [1, 2, 3, 4, 5, 6, 7]
@@ -422,6 +445,7 @@ export default class GetRowGanttItem extends Component {
       flag,
       has_child_flag,
       is_all_realized,
+      is_all_child_realized,
       current_date_board_miletones,
       current_date_board_child_miletones,
       every_day_miletones: every_day_miletones,
@@ -643,6 +667,7 @@ export default class GetRowGanttItem extends Component {
             current_date_board_miletones,
             is_over_duetime,
             is_all_realized,
+            is_all_child_realized,
             has_child_flag,
             current_date_board_child_miletones
           } = this.isHasMiletoneList(Number(timestampEnd))
@@ -733,7 +758,12 @@ export default class GetRowGanttItem extends Component {
                             className={indexStyles.board_miletiones_flag2}
                             style={{
                               top: this.setMiletonesNamesPostionTop(),
-                              left: (ceilWidth - 14) / 2
+                              left: (ceilWidth - 14) / 2,
+                              backgroundColor: this.setMiletonesColor({
+                                is_over_duetime,
+                                has_lcb: has_child_flag,
+                                is_all_realized: is_all_child_realized
+                              })
                             }}
                           />
                         </Dropdown>
@@ -752,8 +782,8 @@ export default class GetRowGanttItem extends Component {
                                 this.setMiletonesNamesWidth(timestampEnd) - 30,
                               color: this.setMiletonesColor({
                                 is_over_duetime,
-                                has_lcb,
-                                is_all_realized
+                                has_lcb: has_child_flag,
+                                is_all_realized: is_all_child_realized
                               }),
                               paddingTop: 2,
                               left: (ceilWidth - 14) / 2 + 16
@@ -844,6 +874,7 @@ export default class GetRowGanttItem extends Component {
             every_day_child_miletones,
             is_over_duetime,
             is_all_realized,
+            is_all_child_realized,
             every_day_miletones = []
           } = this.isHasMiletoneListYear({
             year,
@@ -987,7 +1018,12 @@ export default class GetRowGanttItem extends Component {
                                     }
                                     style={{
                                       top: this.setMiletonesNamesPostionTop(),
-                                      left: ceilWidth * day - 3 - day
+                                      left: ceilWidth * day - 3 - day,
+                                      backgroundColor: this.setMiletonesColor({
+                                        is_over_duetime,
+                                        has_lcb: has_child_flag,
+                                        is_all_realized: is_all_child_realized
+                                      })
                                     }}
                                   />
                                   {/* 渲染里程碑名称铺开 */}
@@ -998,8 +1034,8 @@ export default class GetRowGanttItem extends Component {
                                       top: this.setMiletonesNamesPostionTop(),
                                       color: this.setMiletonesColor({
                                         is_over_duetime,
-                                        has_lcb,
-                                        is_all_realized
+                                        has_lcb: has_child_flag,
+                                        is_all_realized: is_all_child_realized
                                       }),
                                       left: ceilWidth * day + 13 - day
                                     }}
@@ -1058,7 +1094,8 @@ export default class GetRowGanttItem extends Component {
             is_all_realized,
             every_day_miletones = [],
             every_day_child_miletones,
-            has_child_flag
+            has_child_flag,
+            is_all_child_realized
           } = this.isHasMilestoneListWeek({
             year,
             month,
@@ -1213,7 +1250,12 @@ export default class GetRowGanttItem extends Component {
                                     }
                                     style={{
                                       top: this.setMiletonesNamesPostionTop(),
-                                      left: ceilWidth * day - 3 - day
+                                      left: ceilWidth * day - 3 - day,
+                                      backgroundColor: this.setMiletonesColor({
+                                        is_over_duetime,
+                                        has_lcb: has_child_flag,
+                                        is_all_realized: is_all_child_realized
+                                      })
                                     }}
                                   />
                                   {/* 渲染里程碑名称铺开 */}
@@ -1224,8 +1266,8 @@ export default class GetRowGanttItem extends Component {
                                       top: this.setMiletonesNamesPostionTop(),
                                       color: this.setMiletonesColor({
                                         is_over_duetime,
-                                        has_lcb,
-                                        is_all_realized
+                                        has_lcb: has_child_flag,
+                                        is_all_realized: is_all_child_realized
                                       }),
                                       left: ceilWidth * day + 13 - day
                                     }}
