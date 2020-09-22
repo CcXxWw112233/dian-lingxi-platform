@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, { Component } from 'react'
 import { connect } from 'dva'
 import {
@@ -233,7 +234,6 @@ export default class MainContent extends Component {
                         flexWrap: 'wrap',
                         marginLeft: '-12px'
                       }}
-                      key={user_id}
                     >
                       <div
                         className={`${mainContentStyles.user_item}`}
@@ -361,7 +361,6 @@ export default class MainContent extends Component {
                               flexWrap: 'wrap',
                               marginLeft: '-12px'
                             }}
-                            key={user_id}
                           >
                             <div
                               className={`${mainContentStyles.user_item}`}
