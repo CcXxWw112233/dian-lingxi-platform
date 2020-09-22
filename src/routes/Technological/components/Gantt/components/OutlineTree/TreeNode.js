@@ -511,7 +511,15 @@ export default class TreeNode extends Component {
             ) : placeholder ? (
               label
             ) : title ? (
-              title
+              <span>
+                <span
+                  title="隐藏"
+                  className={`${globalStyles.authTheme} ${styles.outline_tree_node_show_eye_icon}`}
+                >
+                  &#xe668;
+                </span>
+                {title}
+              </span>
             ) : (
               '未填写任务名称'
             )}
