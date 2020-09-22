@@ -34,6 +34,7 @@ import CustomFieldDetailDrawer from './components/CardDetailDrawer/CustomFieldDe
 import { isApiResponseOk } from '../../../../utils/handleResponseData'
 import _ from 'lodash'
 import HeaderWidthTriggle from './components/HeaderWidthTriggle'
+import GanttMilestonePublicInput from './components/milestoneDetail/GanttMilestonePublicInput'
 
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
@@ -714,6 +715,7 @@ export default class GanttFace extends Component {
           <ShowFileSlider />
         )}
         <BoardsFilesArea />
+        <GanttMilestonePublicInput />
       </div>
     )
   }

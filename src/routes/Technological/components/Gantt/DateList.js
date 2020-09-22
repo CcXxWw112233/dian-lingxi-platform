@@ -99,14 +99,14 @@ export default class DateList extends Component {
     const idarr = e.key.split('__')
     const id = idarr[1]
     const board_id = idarr[0]
-    this.setCurrentSelectedProjectMembersList({ board_id })
     if (id == '0') {
       this.setAddLCBModalVisibile()
       this.setCreateLcbTime({ timestamp, timestampEnd })
       return
     }
-    this.set_miletone_detail_modal_visible()
+    // this.set_miletone_detail_modal_visible()
     // this.getMilestoneDetail(id)
+    // this.setCurrentSelectedProjectMembersList({ board_id })
     //更新里程碑id,在里程碑的生命周期会监听到id改变，发生请求
     const { dispatch } = this.props
     setBoardIdStorage(board_id)
@@ -114,6 +114,18 @@ export default class DateList extends Component {
       type: 'milestoneDetail/updateDatas',
       payload: {
         milestone_id: id
+      }
+    })
+    dispatch({
+      type: 'gantt/updateDatas',
+      payload: {
+        miletone_detail_modal_visible: true
+      }
+    })
+    dispatch({
+      type: 'projectDetail/projectDetailInfo',
+      payload: {
+        id: board_id
       }
     })
   }
@@ -786,7 +798,7 @@ export default class DateList extends Component {
           defaultPickerValue={create_lcb_time_arr[0]}
         />
         {/* )} */}
-        <MilestoneDetail
+        {/* <MilestoneDetail
           handleMiletonesChange={this.handleMiletonsChangeMountInGantt}
           users={currentSelectedProjectMembersList}
           miletone_detail_modal_visible={
@@ -797,7 +809,7 @@ export default class DateList extends Component {
           }
           deleteMiletone={this.deleteMiletone}
           deleteRelationContent={this.deleteRelationContent}
-        />
+        /> */}
       </div>
     )
   }
