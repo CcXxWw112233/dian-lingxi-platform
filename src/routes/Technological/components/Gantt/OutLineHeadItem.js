@@ -1207,11 +1207,27 @@ export default class OutLineHeadItem extends Component {
     }
   }
 
+  // 点击保存
+  handleSaveHideTerm = () => {
+    this.props.dispatch({
+      type: 'gantt/updateDatas',
+      payload: {
+        selected_hide_term: false
+      }
+    })
+  }
+
   // 类型选择
   handleOnSelect = e => {
     const { key } = e
     switch (key) {
       case 'select_hide_term': // 选择隐藏项
+        this.props.dispatch({
+          type: 'gantt/updateDatas',
+          payload: {
+            selected_hide_term: true
+          }
+        })
         break
       case 'export_pdf': // 导出pdf
         this.exportToFile('pdf')
@@ -1263,9 +1279,10 @@ export default class OutLineHeadItem extends Component {
       deleteOutLineTreeNode,
       currentUserOrganizes = [],
       start_date,
-      end_date
+      end_date,
+      selected_hide_term
     } = this.props
-    //console.log("刷新了数据", outline_tree);
+    // console.log("刷新了数据", outline_tree);
     return (
       <div
         className={styles.outline_wrapper}
@@ -1289,6 +1306,13 @@ export default class OutLineHeadItem extends Component {
         </OutlineTree>
 
         <div className={styles.outlineFooter}>
+          {selected_hide_term && (
+            <div>
+              <Button type="primary" onClick={this.handleSaveHideTerm}>
+                保存
+              </Button>
+            </div>
+          )}
           {!this.isExistExpand() ? (
             <div
               className={styles.outline_footer_icon}
@@ -1437,7 +1461,8 @@ function mapStateToProps({
       gantt_view_mode,
       selected_card_visible,
       start_date,
-      end_date
+      end_date,
+      selected_hide_term
     }
   },
   technological: {
@@ -1470,6 +1495,7 @@ function mapStateToProps({
     outline_hover_obj,
     outline_tree_round,
     start_date,
-    end_date
+    end_date,
+    selected_hide_term
   }
 }

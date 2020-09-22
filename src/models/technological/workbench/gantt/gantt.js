@@ -143,8 +143,10 @@ export default {
       outline_tree_round: [], //大纲树每一级平铺开来
       panel_outline_create_card_params: {}, //大纲视图下，面板拖拽创建任务通过弹窗创建才需要这个参数
       boardTemplateShow: 0,
-      startPlanType: 0
+      startPlanType: 0,
       // outline_current_oprate_add_id: '', //大纲视图下面板拖拽创建任务所属add_id
+
+      selected_hide_term: false // 表示是否选择隐藏项 true 表示是
     }
   },
   subscriptions: {

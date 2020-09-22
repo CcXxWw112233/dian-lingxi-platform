@@ -600,6 +600,18 @@ export default {
       }
       if (calback && typeof calback == 'function') calback()
     },
+    // 更新大纲视图显示隐藏状态
+    *updateOutLineTreeHideStatus({ payload = {} }, { select }) {
+      const group_view_type = yield select(
+        getModelSelectDatasState('gantt', 'group_view_type')
+      )
+      if (group_view_type != '4') return
+      const outline_tree = yield select(
+        getModelSelectDatasState('gantt', 'outline_tree')
+      )
+      let outline_tree_ = JSON.parse(JSON.stringify(outline_tree))
+      
+    },
     // 获取基线数据列表
     *getBaseLineList({ payload = {} }, { select, call, put }) {
       const gantt_board_id = yield select(
