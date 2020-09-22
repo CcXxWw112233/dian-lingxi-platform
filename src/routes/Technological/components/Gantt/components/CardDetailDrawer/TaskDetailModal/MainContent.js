@@ -56,20 +56,20 @@ export default class MainContent extends Component {
     }
   }
 
-  componentWillMount() {
-    Promise.resolve(
-      this.props.dispatch({
-        type: 'publicTaskDetailModal/getCardAttributesList',
-        payload: {}
-      })
-    ).then(res => {
-      if (isApiResponseOk(res)) {
-        this.setState({
-          propertiesList: res.data
-        })
-      }
-    })
-  }
+  // componentWillMount() {
+  //   Promise.resolve(
+  //     this.props.dispatch({
+  //       type: 'publicTaskDetailModal/getCardAttributesList',
+  //       payload: {}
+  //     })
+  //   ).then(res => {
+  //     if (isApiResponseOk(res)) {
+  //       this.setState({
+  //         propertiesList: res.data
+  //       })
+  //     }
+  //   })
+  // }
 
   componentDidMount() {
     this.getInitCardDetailDatas(this.props)
@@ -85,18 +85,18 @@ export default class MainContent extends Component {
       simplemodeCurrentProject = {}
     } = this.props
     if (card_id != old_card_id && card_id) {
-      Promise.resolve(
-        this.props.dispatch({
-          type: 'publicTaskDetailModal/getCardAttributesList',
-          payload: {}
-        })
-      ).then(res => {
-        if (isApiResponseOk(res)) {
-          this.setState({
-            propertiesList: res.data
-          })
-        }
-      })
+      // Promise.resolve(
+      //   this.props.dispatch({
+      //     type: 'publicTaskDetailModal/getCardAttributesList',
+      //     payload: {}
+      //   })
+      // ).then(res => {
+      //   if (isApiResponseOk(res)) {
+      //     this.setState({
+      //       propertiesList: res.data
+      //     })
+      //   }
+      // })
       setTimeout(() => {
         this.getInitCardDetailDatas(nextProps)
       }, 200)
@@ -127,8 +127,8 @@ export default class MainContent extends Component {
 
   // 获取添加属性中的不同字段
   getDiffAttributies = () => {
-    const { propertiesList = [], selectedKeys = [] } = this.state
-    const { drawContent = {}, projectDetailInfoData } = this.props
+    // const { propertiesList = [], selectedKeys = [] } = this.state
+    const { propertiesList = [], drawContent = {} } = this.props
     const { org_id } = drawContent
     if (!(propertiesList && propertiesList.length)) {
       return <></>
@@ -1147,6 +1147,7 @@ function mapStateToProps({
     card_id,
     boardTagList = [],
     attributesList = [],
+    propertiesList = [],
     milestoneList = []
   },
   projectDetail: {
@@ -1174,6 +1175,7 @@ function mapStateToProps({
     card_id,
     boardTagList,
     attributesList,
+    propertiesList,
     milestoneList,
     projectDetailInfoData,
     isInOpenFile,

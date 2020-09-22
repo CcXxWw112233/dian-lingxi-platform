@@ -112,23 +112,23 @@ const LogicWithMainContent = {
   },
 
   // 初始化过滤当前已经存在的字段
-  filterCurrentExistenceField: function(currentData) {
-    const { propertiesList = [] } = this.state
-    let newCurrentData = { ...currentData }
-    let newPropertiesList = [...propertiesList]
-    newPropertiesList = newPropertiesList.filter((value, index) => {
-      const gold_code = (
-        newCurrentData['properties'].find(item => item.code === value.code) ||
-        {}
-      ).code
-      if (value.code != gold_code) {
-        return value
-      }
-    })
-    this.setState({
-      propertiesList: newPropertiesList
-    })
-  },
+  // filterCurrentExistenceField: function(currentData) {
+  //   const { propertiesList = [] } = this.state
+  //   let newCurrentData = { ...currentData }
+  //   let newPropertiesList = [...propertiesList]
+  //   newPropertiesList = newPropertiesList.filter((value, index) => {
+  //     const gold_code = (
+  //       newCurrentData['properties'].find(item => item.code === value.code) ||
+  //       {}
+  //     ).code
+  //     if (value.code != gold_code) {
+  //       return value
+  //     }
+  //   })
+  //   this.setState({
+  //     propertiesList: newPropertiesList
+  //   })
+  // },
 
   // 获取组织成员列表
   getOrgMemberList: function(org_id) {
@@ -141,8 +141,8 @@ const LogicWithMainContent = {
   },
 
   // 获取任务详情数据
-  getInitCardDetailDatas: function() {
-    const { card_id, dispatch } = this.props
+  getInitCardDetailDatas: function(props) {
+    const { card_id, dispatch } = props
     if (!card_id) return false
     const that = this
     Promise.resolve(
@@ -166,7 +166,7 @@ const LogicWithMainContent = {
         }
         this.getMilestone(res.data.board_id)
         // 初始化获取字段信息 (需过滤已经存现在的字段)
-        this.filterCurrentExistenceField(res.data)
+        // this.filterCurrentExistenceField(res.data)
         // 初始化组织成员列表
         this.getOrgMemberList(res.data.org_id)
         // 是否可以修改父任务时间
@@ -810,17 +810,23 @@ const LogicWithMainContent = {
   // 删除结束时间 E
 
   updateParentPropertiesList: function({ shouldDeleteId }) {
-    const { attributesList = [] } = this.props
-    const { propertiesList = [] } = this.state
+    const { attributesList = [], propertiesList = [] } = this.props
+    // const { } = this.state
     let new_attributesList = [...attributesList]
     let new_propertiesList = [...propertiesList]
     const currentDataItem = new_attributesList.filter(
       item => item.id == shouldDeleteId
     )[0]
     new_propertiesList.push(currentDataItem)
-    this.setState({
-      propertiesList: new_propertiesList
+    this.props.dispatch({
+      type: 'publicTaskDetailModal/updateDatas',
+      payload: {
+        propertiesList: arrayNonRepeatfy(new_propertiesList, 'id')
+      }
     })
+    // this.setState({
+    //   propertiesList: new_propertiesList
+    // })
   },
 
   // 对应字段的删除 S
