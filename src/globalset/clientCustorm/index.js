@@ -22,3 +22,6 @@ export const diffClientRedirect = token => {
     return window.mapAndroid.refreshRedirect(token)
   }
 }
+
+// 区分会协宝与聆悉
+export const platformNouns = ENV_ANDROID_APP ? '聆悉会协宝' : '聆悉'

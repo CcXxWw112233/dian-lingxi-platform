@@ -437,6 +437,36 @@ export default class TreeNode extends Component {
     return <span className={`${styles.editIcon}`}>&#xe7b2;</span>
   }
 
+  recursion = (data, currentId, type) => {
+    let new_data = [...data]
+    new_data = new_data.map(item => {
+      // if (item.id == currentId)
+    })
+  }
+
+  /**
+   * 点击操作显示隐藏
+   * @param {Object} e 事件对象
+   * @param {Boolean} type 选择类型 false 为隐藏 true 为显示
+   */
+  handleOperateEyeIcon = ({ e, nodeValue = {}, type }) => {
+    e && e.stopPropagation()
+    console.log(e)
+    const { id } = nodeValue
+    const { outline_tree = [] } = this.props
+    let outline_tree_ = JSON.parse(JSON.stringify(outline_tree))
+    if (type) {
+    } else {
+      outline_tree_ = this.recursion(outline_tree_, id, type)
+    }
+    // this.props.dispatch({
+    //   type: 'gantt/updateDatas',
+    //   payload: {
+    //     outline_tree: outline_tree_
+    //   }
+    // })
+  }
+
   renderTitle = () => {
     const { isTitleHover, isTitleEdit, nodeValue = {} } = this.state
     const {
@@ -448,7 +478,8 @@ export default class TreeNode extends Component {
       executors = [],
       is_focus,
       editing,
-      status
+      status,
+      is_display
     } = nodeValue
     const {
       onDataProcess,
@@ -461,7 +492,8 @@ export default class TreeNode extends Component {
       label,
       hoverItem = {},
       gantt_board_id,
-      projectDetailInfoData = {}
+      projectDetailInfoData = {},
+      selected_hide_term
     } = this.props
     let type
     if (tree_type) {
@@ -511,7 +543,28 @@ export default class TreeNode extends Component {
             ) : placeholder ? (
               label
             ) : title ? (
-              title
+              <span>
+                {selected_hide_term &&
+                  (is_display ? (
+                    <span
+                      title="隐藏"
+                      className={`${globalStyles.authTheme} ${styles.outline_tree_node_show_eye_icon}`}
+                      onClick={e => {
+                        this.handleOperateEyeIcon({ e, nodeValue, type: false })
+                      }}
+                    >
+                      &#xe6f9;
+                    </span>
+                  ) : (
+                    <span
+                      title="显示"
+                      className={`${globalStyles.authTheme} ${styles.outline_tree_node_show_eye_icon}`}
+                    >
+                      &#xe8ff;
+                    </span>
+                  ))}
+                {title}
+              </span>
             ) : (
               '未填写任务名称'
             )}
@@ -1212,7 +1265,8 @@ function mapStateToProps({
       gantt_view_mode,
       drag_outline_node = {},
       outline_tree,
-      outline_node_draging
+      outline_node_draging,
+      selected_hide_term
     }
   }
 }) {
@@ -1222,6 +1276,7 @@ function mapStateToProps({
     gantt_view_mode,
     drag_outline_node,
     outline_tree,
-    outline_node_draging
+    outline_node_draging,
+    selected_hide_term
   }
 }

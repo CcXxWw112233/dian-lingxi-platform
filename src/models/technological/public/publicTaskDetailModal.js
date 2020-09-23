@@ -107,6 +107,13 @@ export default {
           }
         })
         // 成功后调用 projectDetailInfo, 将项目成员关联进来
+        // 获取属性列表
+        yield put({
+          type: 'getCardAttributesList',
+          payload: {
+            propertiesList: res.data.properties
+          }
+        })
         yield put({
           type: 'projectDetail/projectDetailInfo',
           payload: {
@@ -135,11 +142,23 @@ export default {
     },
     // 获取默认属性列表字段
     *getCardAttributesList({ payload }, { call, put }) {
+      const { propertiesList = [] } = payload
       let res = yield call(getCardAttributesList)
       if (isApiResponseOk(res)) {
+        let newPropertiesList = [...propertiesList]
+        let newAttributesList = [...res.data]
+        newAttributesList = newAttributesList.filter((value, index) => {
+          const gold_code = (
+            newPropertiesList.find(item => item.code === value.code) || {}
+          ).code
+          if (value.code != gold_code) {
+            return value
+          }
+        })
         yield put({
           type: 'updateDatas',
           payload: {
+            propertiesList: newAttributesList,
             attributesList: res.data
           }
         })

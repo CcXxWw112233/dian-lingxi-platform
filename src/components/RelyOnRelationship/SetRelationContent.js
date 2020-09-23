@@ -9,9 +9,21 @@ import { getCardRelysWithObject } from '../../services/technological/task'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { filterCurrentUpdateDatasField } from '../TaskDetailModal/handleOperateModal'
 import { isObjectValueEqual } from '../../utils/util'
+import { rebackCreateNotify } from '../NotificationTodos'
 
 // const OPTIONS = ['Apples', 'Nails', 'Bananas', 'Helicopters'];
-@connect(({ publicTaskDetailModal: { drawContent = {} } }) => ({ drawContent }))
+@connect(
+  ({
+    publicTaskDetailModal: { drawContent = {} },
+    gantt: {
+      datas: { group_view_type, gantt_board_id }
+    }
+  }) => ({
+    drawContent,
+    group_view_type,
+    gantt_board_id
+  })
+)
 export default class SetRelationContent extends Component {
   constructor(props) {
     super(props)
@@ -31,8 +43,8 @@ export default class SetRelationContent extends Component {
   }
 
   // 获取可依赖的对象
-  getCardRelysWithObject = () => {
-    const { card_id, board_id } = this.props
+  getCardRelysWithObject = props => {
+    const { card_id, board_id } = props
     if (!card_id || !board_id) return
     getCardRelysWithObject({ card_id, board_id }).then(res => {
       if (isApiResponseOk(res)) {
@@ -49,7 +61,7 @@ export default class SetRelationContent extends Component {
   }
 
   componentDidMount() {
-    this.getCardRelysWithObject()
+    this.getCardRelysWithObject(this.props)
   }
 
   componentWillReceiveProps(nextProps) {
@@ -60,11 +72,10 @@ export default class SetRelationContent extends Component {
       )
     )
       return
-    console.log('进来了')
     this.setState({
       currentItem: nextProps.currentItem ? nextProps.currentItem : {}
     })
-    this.getCardRelysWithObject()
+    this.getCardRelysWithObject(nextProps)
   }
 
   componentWillUnmount() {
@@ -80,6 +91,12 @@ export default class SetRelationContent extends Component {
   }
 
   handleChange = (selectedItems, relation) => {
+    const {
+      dispatch,
+      group_view_type,
+      gantt_board_id,
+      drawContent: { board_id }
+    } = this.props
     // const { key } = e
     const gold_name = selectedItems[0]
       ? selectedItems[0].split('_')[1]
@@ -103,6 +120,18 @@ export default class SetRelationContent extends Component {
             payload: {
               id: card_id
             }
+          })
+          rebackCreateNotify.call(this, {
+            res,
+            id: card_id,
+            board_id:
+              gantt_board_id && gantt_board_id != '0'
+                ? gantt_board_id
+                : board_id,
+            group_view_type,
+            dispatch,
+            parent_card_id: '',
+            operate_in_card_detail_panel: true
           })
           this.setState(
             {

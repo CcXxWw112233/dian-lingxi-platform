@@ -1206,6 +1206,63 @@ export default class OutLineHeadItem extends Component {
         message.warn('功能正在开发中')
     }
   }
+
+  // 点击保存
+  handleSaveHideTerm = () => {
+    this.props.dispatch({
+      type: 'gantt/updateDatas',
+      payload: {
+        selected_hide_term: false
+      }
+    })
+  }
+
+  // 类型选择
+  handleOnSelect = e => {
+    const { key } = e
+    switch (key) {
+      case 'select_hide_term': // 选择隐藏项
+        this.props.dispatch({
+          type: 'gantt/updateDatas',
+          payload: {
+            selected_hide_term: true
+          }
+        })
+        break
+      case 'export_pdf': // 导出pdf
+        this.exportToFile('pdf')
+        break
+      case 'export_img': // 导出图片
+        this.exportToFile('img')
+        break
+      case 'export_sheet': // 导出表格
+        this.exportToFile('excel')
+        break
+      case 'save_templete': // 保存为模板
+        this.saveBoardTemplateVisible(true)
+        break
+      default:
+        break
+    }
+  }
+
+  // 渲染底部导航
+  renderOutlineFooter = () => {
+    return (
+      <Menu onClick={this.handleOnSelect}>
+        {/* <Menu.Item key="select_hide_term">选择隐藏项</Menu.Item> */}
+        <SubMenu title="导出">
+          <Menu.Item key="export_pdf">导出PDF</Menu.Item>
+          <Menu.Item key="export_img">导出图片</Menu.Item>
+          <Menu.Item key="export_sheet">导出表格</Menu.Item>
+        </SubMenu>
+        <Menu.Item key="save_templete">
+          保存为{currentNounPlanFilterName(PROJECTS)}模板
+        </Menu.Item>
+      </Menu>
+    )
+  }
+
   render() {
     const {
       board_info_visible,
@@ -1222,9 +1279,10 @@ export default class OutLineHeadItem extends Component {
       deleteOutLineTreeNode,
       currentUserOrganizes = [],
       start_date,
-      end_date
+      end_date,
+      selected_hide_term
     } = this.props
-    //console.log("刷新了数据", outline_tree);
+    // console.log("刷新了数据", outline_tree);
     return (
       <div
         className={styles.outline_wrapper}
@@ -1248,34 +1306,60 @@ export default class OutLineHeadItem extends Component {
         </OutlineTree>
 
         <div className={styles.outlineFooter}>
+          {selected_hide_term && (
+            <div>
+              <Button type="primary" onClick={this.handleSaveHideTerm}>
+                保存
+              </Button>
+            </div>
+          )}
           {!this.isExistExpand() ? (
             <div
+              className={styles.outline_footer_icon}
               onClick={() => this.outlineTreeFold('expand')}
               style={{ color: '#1890FF' }}
             >
-              <span
+              <span title="展开全部" className={`${globalStyles.authTheme}`}>
+                &#xe7bb;
+              </span>
+              {/* <span
                 className={`${globalStyles.authTheme}`}
                 style={{ fontSize: 16, marginRight: 2 }}
               >
                 &#xe712;
               </span>
-              <span>展开全部</span>
+              <span>展开全部</span> */}
             </div>
           ) : (
             <div
+              className={styles.outline_footer_icon}
               onClick={() => this.outlineTreeFold('fold')}
               style={{ color: '#1890FF' }}
             >
-              <span
+              <span title="收起全部" className={`${globalStyles.authTheme}`}>
+                &#xe7ba;
+              </span>
+              {/* <span
                 className={`${globalStyles.authTheme}`}
                 style={{ fontSize: 16, marginRight: 4 }}
               >
                 &#xe712;
               </span>
-              <span>收起全部</span>
+              <span>收起全部</span> */}
             </div>
           )}
-          <Popover
+          <Dropdown
+            trigger={['click']}
+            placement="topLeft"
+            overlay={this.renderOutlineFooter()}
+          >
+            <div
+              className={`${styles.outline_footer_icon} ${styles.outline_more_spot}`}
+            >
+              <span className={globalStyles.authTheme}>&#xe66f;</span>
+            </div>
+          </Dropdown>
+          {/* <Popover
             trigger="click"
             title={this.getExportFileName()}
             visible={this.state.visibleExportPopover}
@@ -1295,8 +1379,8 @@ export default class OutLineHeadItem extends Component {
             }
           >
             <a>导出</a>
-          </Popover>
-          <div>
+          </Popover> */}
+          {/* <div>
             {!closeFeature({
               board_id: gantt_board_id,
               currentUserOrganizes
@@ -1316,15 +1400,7 @@ export default class OutLineHeadItem extends Component {
                 </span>
               </div>
             )}
-            {/* {
-                            checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER, gantt_board_id) &&
-                            <span className={`${styles.actionIcon} ${globalStyles.authTheme}`} onClick={this.invitationJoin}>&#xe7ae;</span>
-                        }
-
-                        <Dropdown overlay={this.ganttProjectMenus()} trigger={['click']} placement={'topCenter'}>
-                            <span className={`${styles.actionIcon} ${globalStyles.authTheme}`}>&#xe66f;</span>
-                        </Dropdown> */}
-          </div>
+          </div> */}
         </div>
         <div onWheel={e => e.stopPropagation()}>
           {show_add_menber_visible && (
@@ -1385,7 +1461,8 @@ function mapStateToProps({
       gantt_view_mode,
       selected_card_visible,
       start_date,
-      end_date
+      end_date,
+      selected_hide_term
     }
   },
   technological: {
@@ -1418,6 +1495,7 @@ function mapStateToProps({
     outline_hover_obj,
     outline_tree_round,
     start_date,
-    end_date
+    end_date,
+    selected_hide_term
   }
 }

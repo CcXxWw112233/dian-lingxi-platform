@@ -3,6 +3,7 @@ import indexStyles from './index.less'
 import { Menu, Tabs, Icon } from 'antd'
 import React, { Component } from 'react'
 import dva, { connect } from 'dva/index'
+import { platformNouns } from '../../../../globalset/clientCustorm'
 const { TabPane } = Tabs
 
 class Guide extends Component {
@@ -73,7 +74,7 @@ class Guide extends Component {
           <div className={indexStyles.guideModal}>
             <div className={indexStyles.guideModalLeft}>
               <div className={indexStyles.guideModalLeftHender}>
-                聆悉操作指引
+                {platformNouns}操作指引
               </div>
               <div className={indexStyles.guideNavigationView}>
                 <Menu defaultSelectedKeys={id ? [id] : []} mode="inline">

@@ -44,6 +44,7 @@ import { MESSAGE_DURATION_TIME } from '../../../../../globalset/js/constant'
 import moment from 'moment'
 import { checkIsHasPermissionInBoard } from '../../../../../utils/businessFunction'
 import { arrayNonRepeatfy, isObjectValueEqual } from '../../../../../utils/util'
+import { platformNouns } from '../../../../../globalset/clientCustorm'
 const Option = Select.Option
 const { TextArea } = Input
 const { getMentions, toString, toContentState } = Mention
@@ -1235,7 +1236,7 @@ class VideoMeetingPopoverContent extends React.Component {
                     style={{
                       position: 'relative',
                       zIndex: 0,
-                      minWidth: '200px',
+                      maxWidth: '150px',
                       lineHeight: '38px',
                       display: 'inline-block',
                       textAlign: 'center'
@@ -1279,7 +1280,7 @@ class VideoMeetingPopoverContent extends React.Component {
 
                       getPopupContainer={triggerNode => triggerNode.parentNode}
                       dropdownClassName={`${indexStyles.select_overlay} ${globalStyles.global_vertical_scrollbar}`}
-                      style={{ width: '136px' }}
+                      style={{ width: '138px' }}
                       value={[defaultValue]}
                     >
                       {dueTimeList &&
@@ -1394,9 +1395,9 @@ class VideoMeetingPopoverContent extends React.Component {
                           <Icon
                             type="plus-circle"
                             style={{
-                              fontSize: '40px',
+                              fontSize: '32px',
                               color: '#40A9FF',
-                              margin: '0 12px 16px'
+                              margin: '0 12px 0px'
                             }}
                           />
                         </div>
@@ -1416,8 +1417,8 @@ class VideoMeetingPopoverContent extends React.Component {
                                   display: 'flex',
                                   alignItems: 'center',
                                   position: 'relative',
-                                  marginRight: '12px',
-                                  marginBottom: '16px',
+                                  // marginRight: '12px',
+                                  // marginBottom: '16px',
                                   textAlign: 'center'
                                 }}
                                 key={user_id}
@@ -1430,8 +1431,8 @@ class VideoMeetingPopoverContent extends React.Component {
                                     <img
                                       className={indexStyles.img_hover}
                                       style={{
-                                        width: '40px',
-                                        height: '40px',
+                                        width: '32px',
+                                        height: '32px',
                                         borderRadius: 20,
                                         margin: '0 2px'
                                       }}
@@ -1446,8 +1447,8 @@ class VideoMeetingPopoverContent extends React.Component {
                                     <div
                                       className={indexStyles.default_user_hover}
                                       style={{
-                                        width: '40px',
-                                        height: '40px',
+                                        width: '32px',
+                                        height: '32px',
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
@@ -1488,7 +1489,7 @@ class VideoMeetingPopoverContent extends React.Component {
             <div
               id={'videoProviderWrapper'}
               style={{
-                width: '400px',
+                width: '320px',
                 position: 'relative',
                 marginRight: '-16px',
                 margin: 'auto',
@@ -1507,11 +1508,11 @@ class VideoMeetingPopoverContent extends React.Component {
                     <span className={globalStyles.authTheme}>&#xe7ec;</span>
                   </div>
                 )}
-              <span>聆悉推荐使用以下方式开展远程会议: </span>
+              <span>{platformNouns}推荐使用以下方式开展远程会议: </span>
               <div
                 style={{
                   position: 'relative',
-                  width: '372px',
+                  width: '278px',
                   overflow: 'hidden'
                 }}
               >
@@ -1582,7 +1583,8 @@ class VideoMeetingPopoverContent extends React.Component {
                 disabled={
                   !defaultSaveToProject ||
                   this.state.notProjectList ||
-                  (this.state.meetingTitle == '' && this.state.changeValue)
+                  (this.state.meetingTitle == '' && this.state.changeValue) ||
+                  !(newToNoticeList && newToNoticeList.length)
                 }
                 type="primary"
                 onClick={this.handleVideoMeetingSubmit}
@@ -1614,15 +1616,15 @@ class VideoMeetingPopoverContent extends React.Component {
       <div>
         {videoMeetingPopoverVisible && (
           <div className={indexStyles.videoMeeting__header}>
-            <div
+            {/* <div
               className={`${globalStyles.authTheme} ${indexStyles.videoMeeting__mark}`}
             >
               &#xe6de;
-            </div>
+            </div> */}
             <div className={indexStyles.videoMeeting__title}>
               <span
                 style={{
-                  maxWidth: '256px',
+                  maxWidth: '200px',
                   marginRight: '5px',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
@@ -1651,7 +1653,7 @@ class VideoMeetingPopoverContent extends React.Component {
     return (
       <Popover
         visible={videoMeetingPopoverVisible}
-        placement="leftBottom"
+        placement="bottomRight"
         title={this.renderPopoverHeader()}
         content={this.renderPopover()}
         onVisibleChange={this.handleVideoMeetingPopoverVisibleChange}
@@ -1661,10 +1663,13 @@ class VideoMeetingPopoverContent extends React.Component {
         }
       >
         <div
-          className={indexStyles.videoMeeting__icon}
-          onMouseEnter={this.handleShowVideoMeeting}
+          title="视频会议"
+          className={`${indexStyles.videoMeeting__icon} ${globalStyles.authTheme}`}
+          // onMouseEnter={this.handleShowVideoMeeting}
           onClick={this.handleToggleVideoMeetingPopover}
-        />
+        >
+          &#xe865;
+        </div>
       </Popover>
     )
   }

@@ -122,7 +122,7 @@ export default {
 
       gantt_board_id: '0', //"1192342431761305600",//, //甘特图查看的项目id
       gantt_board_list_id: '0', //项目分组的操作id
-      group_view_type: '1', //分组视图1项目， 2成员, 4大纲, 5项目分组再分组成成员
+      group_view_type: '4', //分组视图1项目， 2成员, 4大纲, 5项目分组再分组成成员
       group_view_filter_boards: [], //内容过滤项目id 列表
       group_view_filter_users: [], //内容过滤职员id 列表
       single_select_user: { id: '', name: '' }, //成员视图下，点击成员
@@ -143,8 +143,10 @@ export default {
       outline_tree_round: [], //大纲树每一级平铺开来
       panel_outline_create_card_params: {}, //大纲视图下，面板拖拽创建任务通过弹窗创建才需要这个参数
       boardTemplateShow: 0,
-      startPlanType: 0
+      startPlanType: 0,
       // outline_current_oprate_add_id: '', //大纲视图下面板拖拽创建任务所属add_id
+
+      selected_hide_term: false // 表示是否选择隐藏项 true 表示是
     }
   },
   subscriptions: {

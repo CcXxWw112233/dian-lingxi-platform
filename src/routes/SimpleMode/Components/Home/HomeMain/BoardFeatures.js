@@ -20,6 +20,7 @@ import { currentNounPlanFilterName } from '../../../../../utils/businessFunction
 import { PROJECTS } from '../../../../../globalset/js/constant'
 import { Dropdown, Menu } from 'antd'
 import UserRemoteSelect from './UserRemoteSelect'
+import { platformNouns } from '../../../../../globalset/clientCustorm'
 
 @connect(mapStateToProps)
 export default class BoardFeatures extends Component {
@@ -415,7 +416,7 @@ export default class BoardFeatures extends Component {
           &#xe704;
         </div>
         <div className={`${styles.title}`}>
-          欢迎来到聆悉，我们有以上
+          欢迎来到{platformNouns}，我们有以上
           {`${currentNounPlanFilterName(PROJECTS, this.props.currentNounPlan)}`}
           功能，赶快新建一个
           {`${currentNounPlanFilterName(PROJECTS, this.props.currentNounPlan)}`}

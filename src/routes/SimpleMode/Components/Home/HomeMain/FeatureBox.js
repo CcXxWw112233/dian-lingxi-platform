@@ -12,6 +12,7 @@ import {
   BOARD_FILES
 } from '../../../../../globalset/js/constant'
 import { currentNounPlanFilterName } from '../../../../../utils/businessFunction'
+import { platformNouns } from '../../../../../globalset/clientCustorm'
 class FeatureBox extends Component {
   constructor(props) {
     super(props)
@@ -584,7 +585,7 @@ class FeatureBox extends Component {
 
     if (!isPaymentUser) {
       if (item.code != 'board:plans') {
-        tipTitle = '付费功能，请升级聆悉企业版'
+        tipTitle = `付费功能，请升级${platformNouns}企业版`
         isDisabled = true
       }
     } else {

@@ -245,6 +245,26 @@ export default {
       // ]
 
       const { datas = [], origin_list_group } = payload
+      // 获取影响数据
+      const influenceDatas = datas.scope_content ? datas.scope_content : datas
+      // 获取依赖数据
+      const dependencyDatas = datas.scope_dependency || {}
+      if (!!(dependencyDatas && Object.keys(dependencyDatas).length)) {
+        // 表示如果依赖项存在, 则 表示需要删除依赖
+        const move_id = dependencyDatas.id || ''
+        const line_id =
+          dependencyDatas['next'] &&
+          dependencyDatas['next'][0] &&
+          dependencyDatas['next'][0].id
+        if (!move_id || !line_id) return
+        yield put({
+          type: 'deleteCardRely',
+          payload: {
+            move_id,
+            line_id
+          }
+        })
+      }
       const list_group = yield select(
         getModelSelectDatasState('gantt', 'list_group')
       )
@@ -260,7 +280,7 @@ export default {
           resolve(Aa.then())
         })
       list_group_new = yield call(transform_list_group) || list_group_new
-      for (let val of datas) {
+      for (let val of influenceDatas) {
         const has_time = is_schedule(val.start_time, val.due_time) //存在时间
         for (let val2 of list_group_new) {
           const card_index = val2.lane_data.cards.findIndex(
@@ -398,6 +418,26 @@ export default {
 
     *updateOutLineTree({ payload = {} }, { select, call, put }) {
       const { datas = [] } = payload
+      // 获取影响数据
+      const influenceDatas = datas.scope_content ? datas.scope_content : datas
+      // 获取依赖数据
+      const dependencyDatas = datas.scope_dependency || {}
+      if (!!(dependencyDatas && Object.keys(dependencyDatas).length)) {
+        // 表示如果依赖项存在, 则 表示需要删除依赖
+        const move_id = dependencyDatas.id || ''
+        const line_id =
+          dependencyDatas['next'] &&
+          dependencyDatas['next'][0] &&
+          dependencyDatas['next'][0].id
+        if (!move_id || !line_id) return
+        yield put({
+          type: 'deleteCardRely',
+          payload: {
+            move_id,
+            line_id
+          }
+        })
+      }
       let outline_tree = yield select(
         getModelSelectDatasState('gantt', 'outline_tree')
       )
@@ -410,7 +450,7 @@ export default {
         // if (!data.start_time) nodeValue['start_time'] = ''
         // if (!data.due_time) nodeValue['due_time'] = ''
       }
-      for (let val of datas) {
+      for (let val of influenceDatas) {
         const nodeValue = OutlineTree.getTreeNodeValueByName(
           outline_tree_,
           'id',
@@ -560,6 +600,17 @@ export default {
           break
       }
       if (calback && typeof calback == 'function') calback()
+    },
+    // 更新大纲视图显示隐藏状态
+    *updateOutLineTreeHideStatus({ payload = {} }, { select }) {
+      const group_view_type = yield select(
+        getModelSelectDatasState('gantt', 'group_view_type')
+      )
+      if (group_view_type != '4') return
+      const outline_tree = yield select(
+        getModelSelectDatasState('gantt', 'outline_tree')
+      )
+      let outline_tree_ = JSON.parse(JSON.stringify(outline_tree))
     },
     // 获取基线数据列表
     *getBaseLineList({ payload = {} }, { select, call, put }) {

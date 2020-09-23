@@ -867,7 +867,13 @@ export default class BasicFieldUIComponent extends Component {
 
 // 只关联public弹窗内的数据
 function mapStateToProps({
-  publicTaskDetailModal: { drawContent = {}, card_id, boardTagList = [] },
+  publicTaskDetailModal: {
+    drawContent = {},
+    card_id,
+    boardTagList = [],
+    attributesList = [],
+    propertiesList = []
+  },
   projectDetail: {
     datas: { projectDetailInfoData = {} }
   },
@@ -879,6 +885,8 @@ function mapStateToProps({
     drawContent,
     card_id,
     boardTagList,
+    attributesList,
+    propertiesList,
     projectDetailInfoData,
     userBoardPermissions
   }

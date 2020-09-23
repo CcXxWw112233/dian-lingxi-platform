@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, { Component } from 'react'
 import { connect } from 'dva'
 import {
@@ -67,44 +68,45 @@ export default class MainUIComponent extends Component {
     })
   }
 
-  componentWillMount() {
-    Promise.resolve(
-      this.props.dispatch({
-        type: 'publicTaskDetailModal/getCardAttributesList',
-        payload: {}
-      })
-    ).then(res => {
-      if (isApiResponseOk(res)) {
-        this.setState({
-          propertiesList: res.data
-        })
-      }
-    })
-  }
+  // componentWillMount() {
+  //   Promise.resolve(
+  //     this.props.dispatch({
+  //       type: 'publicTaskDetailModal/getCardAttributesList',
+  //       payload: {}
+  //     })
+  //   ).then(res => {
+  //     if (isApiResponseOk(res)) {
+  //       this.setState({
+  //         propertiesList: res.data
+  //       })
+  //     }
+  //   })
+  // }
 
   componentDidMount() {
-    this.getInitCardDetailDatas()
+    this.getInitCardDetailDatas(this.props)
   }
 
   componentWillReceiveProps(nextProps) {
-    const { drawerVisible } = nextProps
-    const { drawerVisible: oldDrawerVisible } = this.props
+    const { drawerVisible, card_id } = nextProps
+    const { drawerVisible: oldDrawerVisible, card_id: old_card_id } = this.props
     // 忘记这步操作是在干嘛
-    if (oldDrawerVisible == false && drawerVisible == true) {
-      Promise.resolve(
-        this.props.dispatch({
-          type: 'publicTaskDetailModal/getCardAttributesList',
-          payload: {}
-        })
-      ).then(res => {
-        if (isApiResponseOk(res)) {
-          this.setState({
-            propertiesList: res.data
-          })
-        }
-      })
+    // if (oldDrawerVisible == false && drawerVisible == true) {
+    if (card_id != old_card_id && card_id) {
+      // Promise.resolve(
+      //   this.props.dispatch({
+      //     type: 'publicTaskDetailModal/getCardAttributesList',
+      //     payload: {}
+      //   })
+      // ).then(res => {
+      //   if (isApiResponseOk(res)) {
+      //     this.setState({
+      //       propertiesList: res.data
+      //     })
+      //   }
+      // })
       setTimeout(() => {
-        this.getInitCardDetailDatas()
+        this.getInitCardDetailDatas(nextProps)
       }, 200)
     }
   }
@@ -116,8 +118,8 @@ export default class MainUIComponent extends Component {
 
   // 获取添加属性中的不同字段
   getDiffAttributies = () => {
-    const { propertiesList = [], selectedKeys = [] } = this.state
-    const { drawContent = {}, projectDetailInfoData } = this.props
+    // const { propertiesList = [] } = this.state
+    const { drawContent = {}, propertiesList = [] } = this.props
     const { org_id, properties = [], fields = [] } = drawContent
     if (!(propertiesList && propertiesList.length)) {
       return <></>
@@ -1181,6 +1183,7 @@ function mapStateToProps({
     card_id,
     boardTagList = [],
     attributesList = [],
+    propertiesList = [],
     milestoneList = []
   },
   projectDetail: {
@@ -1202,6 +1205,7 @@ function mapStateToProps({
     card_id,
     boardTagList,
     attributesList,
+    propertiesList,
     milestoneList,
     projectDetailInfoData,
     isInOpenFile,

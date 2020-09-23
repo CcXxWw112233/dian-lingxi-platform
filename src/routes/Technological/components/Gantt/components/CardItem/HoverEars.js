@@ -3,6 +3,9 @@ import indexStyles from './index.less'
 import { date_area_height, gantt_panel_left_diff } from '../../constants'
 import { message } from 'antd'
 import { connect } from 'dva'
+import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
+import { rebackCreateNotify } from '../../../../../../components/NotificationTodos'
+import { onChangeCardHandleCardDetail } from '../../ganttBusiness'
 
 const dateAreaHeight = date_area_height //日期区域高度，作为修正
 @connect(mapStateToProps)
@@ -142,7 +145,7 @@ class HoverEars extends Component {
   handleCreateRely = e => {
     //当落点在具体任务上
     const {
-      itemValue: { id: move_id, parent_id },
+      itemValue: { id: move_id, parent_id, board_id },
       dispatch
     } = this.props
     const target = e.target
@@ -187,6 +190,29 @@ class HoverEars extends Component {
         from_id: move_id,
         to_id: line_id,
         relation: `${move_to}_${line_to}`
+      }
+    }).then(res => {
+      if (isApiResponseOk(res)) {
+        // 添加依赖之后 需撤回 以及 更新弹窗数据
+        const { selected_card_visible, group_view_type } = this.props
+        rebackCreateNotify.call(this, {
+          res,
+          id: move_id,
+          board_id,
+          group_view_type,
+          dispatch,
+          parent_card_id: parent_id,
+          card_detail_id: move_id,
+          selected_card_visible
+        })
+        // 甘特图删除依赖后更新任务弹窗依赖数据
+        onChangeCardHandleCardDetail({
+          card_detail_id: move_id,
+          selected_card_visible,
+          parent_card_id: parent_id,
+          operate_id: move_id,
+          dispatch
+        })
       }
     })
     console.log('最终结果', { line_id, move_id, move_to, line_to })
@@ -320,10 +346,12 @@ export default HoverEars
 
 function mapStateToProps({
   gantt: {
-    datas: { gantt_head_width }
+    datas: { gantt_head_width, group_view_type, selected_card_visible }
   }
 }) {
   return {
-    gantt_head_width
+    gantt_head_width,
+    group_view_type,
+    selected_card_visible
   }
 }
