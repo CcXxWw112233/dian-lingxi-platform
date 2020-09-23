@@ -17,6 +17,7 @@ import {
   task_item_margin_top,
   ceil_height
 } from '../../constants'
+import { getTreeNodeValue } from '../../../../../../models/technological/workbench/gantt/gantt_utils'
 
 @connect(mapStateToProps)
 export default class TreeNode extends Component {
@@ -459,7 +460,13 @@ export default class TreeNode extends Component {
     data = data.map((item, i) => {
       if (item.id == currentId) {
         let new_item = { ...item }
-        new_item = { ...item, is_display: type }
+        new_item = {
+          ...item,
+          is_display: type,
+          children: this.rev(new_item.children, type)
+        }
+        // console.log(new_item, 'new_item')
+        this.rev(new_item.children, type)
         return new_item
       } else if (item.children && item.children.length) {
         item.children = this.recursion({
@@ -469,6 +476,18 @@ export default class TreeNode extends Component {
         })
       }
       return item
+    })
+    return data
+  }
+
+  rev = (data = [], type) => {
+    data = data.map(item => {
+      let new_item = { ...item }
+      new_item = { ...item, is_display: type }
+      if (item.children && item.children.length) {
+        item.children = this.rev(item.children, type)
+      }
+      return new_item
     })
     return data
   }
