@@ -17,7 +17,6 @@ import {
   task_item_margin_top,
   ceil_height
 } from '../../constants'
-import { turn } from 'core-js/fn/array'
 
 @connect(mapStateToProps)
 export default class TreeNode extends Component {
@@ -437,12 +436,41 @@ export default class TreeNode extends Component {
     return <span className={`${styles.editIcon}`}>&#xe7b2;</span>
   }
 
-  recursion = (data, currentId, type) => {
-    let new_data = [...data]
-    new_data = new_data.map(item => {
-      // if (item.id == currentId)
+  updateOutLineTreeData = outline_tree => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'gantt/handleOutLineTreeData',
+      payload: {
+        data: outline_tree
+      }
     })
-    
+  }
+
+  /**
+   * 递归遍历,修改当前item数据
+   * @param {Array} data 树结构
+   * @param {String} currentId 当前点击的元素
+   * @param {Boolean} type 改变值得内容
+   * 1. 找到当前需要改变的元素
+   * 2. 如果说当前点击的是父元素, 则该对应的子元素都应改变
+   * 3. 只要有一个子元素是显示, 则父元素显示，即不隐藏
+   */
+  recursion = ({ outline_tree_: data, id: currentId, type }) => {
+    data = data.map((item, i) => {
+      if (item.id == currentId) {
+        let new_item = { ...item }
+        new_item = { ...item, is_display: type }
+        return new_item
+      } else if (item.children && item.children.length) {
+        item.children = this.recursion({
+          outline_tree_: item.children,
+          id: currentId,
+          type
+        })
+      }
+      return item
+    })
+    return data
   }
 
   /**
@@ -450,23 +478,12 @@ export default class TreeNode extends Component {
    * @param {Object} e 事件对象
    * @param {Boolean} type 选择类型 false 为隐藏 true 为显示
    */
-  handleOperateEyeIcon = ({e, nodeValue = {}, type}) => {
+  handleOperateEyeIcon = ({ e, id, parent_id, type }) => {
     e && e.stopPropagation()
-    console.log(e)
-    const { id } = nodeValue
-    const { outline_tree = [] } = this.props
+    let { outline_tree = [] } = this.props
     let outline_tree_ = JSON.parse(JSON.stringify(outline_tree))
-    if (type) {
-
-    } else {
-      outline_tree_ = this.recursion(outline_tree_, id, type)
-    }
-    // this.props.dispatch({
-    //   type: 'gantt/updateDatas',
-    //   payload: {
-    //     outline_tree: outline_tree_
-    //   }
-    // })
+    outline_tree_ = this.recursion({ outline_tree_, id, parent_id, type })
+    this.updateOutLineTreeData(outline_tree_)
   }
 
   renderTitle = () => {
@@ -481,7 +498,8 @@ export default class TreeNode extends Component {
       is_focus,
       editing,
       status,
-      is_display
+      is_display,
+      parent_id
     } = nodeValue
     const {
       onDataProcess,
@@ -547,12 +565,17 @@ export default class TreeNode extends Component {
             ) : title ? (
               <span>
                 {selected_hide_term &&
-                  (is_display ? (
+                  (is_display || is_display == undefined ? (
                     <span
                       title="隐藏"
                       className={`${globalStyles.authTheme} ${styles.outline_tree_node_show_eye_icon}`}
                       onClick={e => {
-                        this.handleOperateEyeIcon({ e, nodeValue, type: false })
+                        this.handleOperateEyeIcon({
+                          e,
+                          id,
+                          parent_id: parent_id || id,
+                          type: false
+                        })
                       }}
                     >
                       &#xe6f9;
@@ -561,6 +584,14 @@ export default class TreeNode extends Component {
                     <span
                       title="显示"
                       className={`${globalStyles.authTheme} ${styles.outline_tree_node_show_eye_icon}`}
+                      onClick={e => {
+                        this.handleOperateEyeIcon({
+                          e,
+                          id,
+                          parent_id: parent_id || id,
+                          type: true
+                        })
+                      }}
                     >
                       &#xe8ff;
                     </span>

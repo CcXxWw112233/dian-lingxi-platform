@@ -1250,7 +1250,7 @@ export default class OutLineHeadItem extends Component {
   renderOutlineFooter = () => {
     return (
       <Menu onClick={this.handleOnSelect}>
-        {/* <Menu.Item key="select_hide_term">选择隐藏项</Menu.Item> */}
+        <Menu.Item key="select_hide_term">选择隐藏项</Menu.Item>
         <SubMenu title="导出">
           <Menu.Item key="export_pdf">导出PDF</Menu.Item>
           <Menu.Item key="export_img">导出图片</Menu.Item>
@@ -1305,7 +1305,12 @@ export default class OutLineHeadItem extends Component {
           {this.renderAddMilestone({}, true)}
         </OutlineTree>
 
-        <div className={styles.outlineFooter}>
+        <div
+          className={styles.outlineFooter}
+          style={{
+            justifyContent: selected_hide_term ? 'space-between' : 'flex-end'
+          }}
+        >
           {selected_hide_term && (
             <div>
               <Button type="primary" onClick={this.handleSaveHideTerm}>
@@ -1315,13 +1320,12 @@ export default class OutLineHeadItem extends Component {
           )}
           {!this.isExistExpand() ? (
             <div
+              title="展开全部"
               className={styles.outline_footer_icon}
               onClick={() => this.outlineTreeFold('expand')}
-              style={{ color: '#1890FF' }}
+              // style={{ color: '#1890FF' }}
             >
-              <span title="展开全部" className={`${globalStyles.authTheme}`}>
-                &#xe7bb;
-              </span>
+              <span className={`${globalStyles.authTheme}`}>&#xe7bb;</span>
               {/* <span
                 className={`${globalStyles.authTheme}`}
                 style={{ fontSize: 16, marginRight: 2 }}
@@ -1332,13 +1336,12 @@ export default class OutLineHeadItem extends Component {
             </div>
           ) : (
             <div
+              title="收起全部"
               className={styles.outline_footer_icon}
               onClick={() => this.outlineTreeFold('fold')}
-              style={{ color: '#1890FF' }}
+              // style={{ color: '#1890FF' }}
             >
-              <span title="收起全部" className={`${globalStyles.authTheme}`}>
-                &#xe7ba;
-              </span>
+              <span className={`${globalStyles.authTheme}`}>&#xe7ba;</span>
               {/* <span
                 className={`${globalStyles.authTheme}`}
                 style={{ fontSize: 16, marginRight: 4 }}
@@ -1348,17 +1351,20 @@ export default class OutLineHeadItem extends Component {
               <span>收起全部</span> */}
             </div>
           )}
-          <Dropdown
-            trigger={['click']}
-            placement="topLeft"
-            overlay={this.renderOutlineFooter()}
-          >
-            <div
-              className={`${styles.outline_footer_icon} ${styles.outline_more_spot}`}
+          {!selected_hide_term && (
+            <Dropdown
+              trigger={['click']}
+              placement="topLeft"
+              overlay={this.renderOutlineFooter()}
             >
-              <span className={globalStyles.authTheme}>&#xe66f;</span>
-            </div>
-          </Dropdown>
+              <div
+                className={`${styles.outline_footer_icon} ${styles.outline_more_spot}`}
+              >
+                <span className={globalStyles.authTheme}>&#xe66f;</span>
+              </div>
+            </Dropdown>
+          )}
+
           {/* <Popover
             trigger="click"
             title={this.getExportFileName()}
