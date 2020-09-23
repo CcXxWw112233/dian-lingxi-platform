@@ -63,6 +63,8 @@ const _obj = {
       return _obj.getMonthDate(timestamp)
     } else if ('week' == gantt_view_mode) {
       return _obj.getWeekDate(timestamp)
+    } else if ('hours' == gantt_view_mode) {
+      return _obj.getHourDate(timestamp)
     } else {
       return _obj.getMonthDate(timestamp)
     }

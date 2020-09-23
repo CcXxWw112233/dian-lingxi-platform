@@ -12,7 +12,10 @@ import {
   getNextYearDate,
   getLastYearDate,
   getNextWeeksDate,
-  getLastWeeksDate
+  getLastWeeksDate,
+  getNextHourDate,
+  getLastHourDate,
+  getHourDate
 } from './getDate'
 import { date_area_height, ganttIsOutlineView } from './constants'
 import GroupListHeadSet from './GroupListHeadSet.js'
@@ -344,6 +347,8 @@ export default class GanttFace extends Component {
         date_arr = [].concat(gold_date_arr, getNextWeeksDate(timestamp))
       } else if (gantt_view_mode == 'year') {
         date_arr = [].concat(gold_date_arr, getNextYearDate(timestamp))
+      } else if (gantt_view_mode == 'hours') {
+        date_arr = [].concat(gold_date_arr, getNextHourDate(timestamp))
       } else {
         date_arr = getGoldDateData({ gantt_view_mode, timestamp })
       }
@@ -354,6 +359,8 @@ export default class GanttFace extends Component {
         date_arr = [].concat(getLastWeeksDate(timestamp), gold_date_arr)
       } else if (gantt_view_mode == 'year') {
         date_arr = [].concat(getLastYearDate(timestamp), gold_date_arr)
+      } else if (gantt_view_mode == 'hours') {
+        date_arr = [].concat(getLastHourDate(timestamp), gold_date_arr)
       } else {
         date_arr = getGoldDateData({ gantt_view_mode, timestamp })
       }
@@ -386,11 +393,11 @@ export default class GanttFace extends Component {
     // }
     let date_arr_one_level = []
     let date_total = 0
-    if (gantt_view_mode == 'year' || gantt_view_mode == 'month') {
+    if (['year', 'month', 'hours'].includes(gantt_view_mode)) {
       for (let val of date_arr) {
         const { date_inner = [] } = val
         for (let val2 of date_inner) {
-          date_total += gantt_view_mode == 'month' ? 1 : val2.last_date
+          date_total += gantt_view_mode == 'year' ? val2.last_date : 1
           date_arr_one_level.push(val2)
         }
       }
@@ -640,7 +647,6 @@ export default class GanttFace extends Component {
                 style={{
                   height: gantt_card_height - 20 - date_area_height
                 }}
-                onTouchStart={() => this.setScrollArea('gantt_body')}
                 className={indexStyles.panel_out}
                 id={'gantt_card_out_middle'}
                 ref={'gantt_card_out_middle'}

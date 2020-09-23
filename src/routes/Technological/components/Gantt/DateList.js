@@ -371,7 +371,55 @@ export default class DateList extends Component {
       payload: {}
     })
   }
-
+  // 渲染时视图 日期数据
+  renderHoursViewDate = (date_inner = []) => {
+    const { ceilWidth, group_view_type } = this.props
+    return (
+      <div className={indexStyles.dateDetail}>
+        {date_inner.map((value2, key2) => {
+          const {
+            month,
+            last_date,
+            year,
+            timestamp,
+            timestampEnd,
+            date_no,
+            include_today
+          } = value2
+          const {
+            flag: has_lcb,
+            current_date_miletones,
+            is_over_duetime,
+            is_all_realized
+          } = this.isHasMiletoneList().handleYearMode({
+            year,
+            month,
+            last_date,
+            timestamp,
+            timestampEnd
+          })
+          return (
+            <div key={`${timestamp}`}>
+              <div
+                className={`${indexStyles.dateDetailItem}`}
+                key={key2}
+                style={{ width: ceilWidth, fontSize: 12 }}
+              >
+                <div
+                  className={`${
+                    indexStyles.dateDetailItem_date_no
+                  } ${include_today && indexStyles.include_today} `}
+                  style={{ fontSize: 12 }}
+                >
+                  {date_no}
+                </div>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    )
+  }
   // 渲染月视图日期数据
   renderMonthViewDate = (date_inner = []) => {
     const { group_view_type } = this.props
@@ -778,6 +826,8 @@ export default class DateList extends Component {
                   this.renderMonthViewDate(date_inner)}
                 {gantt_view_mode == 'week' &&
                   this.renderWeekViewDate(date_inner)}
+                {gantt_view_mode == 'hours' &&
+                  this.renderHoursViewDate(date_inner)}
               </div>
             )
           })}
