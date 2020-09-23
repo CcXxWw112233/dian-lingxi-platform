@@ -1250,7 +1250,7 @@ export default class OutLineHeadItem extends Component {
   renderOutlineFooter = () => {
     return (
       <Menu onClick={this.handleOnSelect}>
-        <Menu.Item key="select_hide_term">选择隐藏项</Menu.Item>
+        {/* <Menu.Item key="select_hide_term">选择隐藏项</Menu.Item> */}
         <SubMenu title="导出">
           <Menu.Item key="export_pdf">导出PDF</Menu.Item>
           <Menu.Item key="export_img">导出图片</Menu.Item>
