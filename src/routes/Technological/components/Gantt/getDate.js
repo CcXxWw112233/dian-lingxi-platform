@@ -43,6 +43,18 @@ const _obj = {
     // //获取下一个区间的周数据
     return getLastWeeksDate(timestamp)
   },
+
+  // 时视图所需要数据
+  getHourDate: timestamp => {
+    return base_utils.getHourDate(timestamp)
+  },
+  getLastHourDate: timestamp => {
+    return base_utils.getLastHourDate(timestamp)
+  },
+  getNextHourDate: timestamp => {
+    return base_utils.getNextHourDate(timestamp)
+  },
+
   // 获取目标数据
   getGoldDateData: ({ timestamp, gantt_view_mode }) => {
     if ('year' == gantt_view_mode) {
