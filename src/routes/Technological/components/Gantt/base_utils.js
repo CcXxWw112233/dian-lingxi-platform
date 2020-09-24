@@ -277,6 +277,7 @@ class base_utils {
   static setOneDayHours = ({ date_string, week_day_name }) => {
     const date_inner = this.getHours().map(item => {
       return {
+        date_string,
         timestamp: new Date(`${date_string} ${item}:00:00`).getTime(),
         timestampEnd: new Date(`${date_string} ${item}:59:59`).getTime(),
         date_no: item

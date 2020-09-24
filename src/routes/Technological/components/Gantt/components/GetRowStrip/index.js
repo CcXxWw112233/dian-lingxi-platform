@@ -170,7 +170,7 @@ export default class GetRowStrip extends PureComponent {
     const { date_arr_one_level, ceilWidth } = this.props
     let counter = 0
     let date = {}
-    if (gantt_view_mode == 'month') {
+    if (gantt_view_mode == 'month' || gantt_view_mode == 'hours') {
       for (let val of date_arr_one_level) {
         counter += 1
         if (counter * ceilWidth > x) {
@@ -241,16 +241,24 @@ export default class GetRowStrip extends PureComponent {
     )
   }
   cardSetClick = () => {
-    const { itemValue = {}, gantt_board_id, dispatch } = this.props
+    const {
+      itemValue = {},
+      gantt_board_id,
+      dispatch,
+      gantt_view_mode
+    } = this.props
     if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, gantt_board_id)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN)
       return
     }
     const date = this.calHoverDate()
-    const { timestamp } = date
+    const { timestamp, timestampEnd } = date
     let { id, time_span = 1, parent_card_id } = itemValue
     if (isNaN(time_span) || time_span == 0) time_span = 1
-    const due_time = timestamp + time_span * 24 * 60 * 60 * 1000 - 1000
+    const due_time =
+      gantt_view_mode == 'hours'
+        ? timestampEnd
+        : timestamp + time_span * 24 * 60 * 60 * 1000 - 1000
     updateTaskVTwo(
       {
         card_id: id,
