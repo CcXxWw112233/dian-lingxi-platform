@@ -213,3 +213,21 @@ export async function DeleteBaseLine(data) {
     data
   })
 }
+
+// 保存大纲视图隐藏可见
+export async function saveGanttOutlineNonDisplay(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt_chart/outline/nondisplay`,
+    method: 'PUT',
+    data
+  })
+}
+
+// 获取已经隐藏的视图列表
+export async function getGanttOutlineHideTrem(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt_chart/outline/nondisplay`,
+    method: 'GET',
+    params
+  })
+}

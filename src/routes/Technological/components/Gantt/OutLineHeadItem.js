@@ -1,3 +1,4 @@
+/* eslint-disable no-lone-blocks */
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import { connect } from 'dva'
@@ -51,6 +52,11 @@ import { rebackCreateNotify } from '../../../../components/NotificationTodos'
 import DomToImage from 'dom-to-image'
 import jsPDF from 'jspdf'
 import { LoadingOutlined } from '@ant-design/icons'
+import {
+  getGanttOutlineHideTrem,
+  saveGanttOutlineNonDisplay
+} from '../../../../services/technological/gantt'
+import { getTreeNodeValue } from '../../../../models/technological/workbench/gantt/gantt_utils'
 const { SubMenu } = Menu
 // const { TreeNode } = OutlineTree;
 const { confirm } = Modal
@@ -81,6 +87,8 @@ export default class OutLineHeadItem extends Component {
   componentDidMount() {
     const OrganizationId = localStorage.getItem('OrganizationId')
     const aboutBoardOrganizationId = getGlobalData('aboutBoardOrganizationId')
+    // 获取已隐藏的元素
+    this.getOutlineHideTerm()
     if (
       !OrganizationId ||
       (OrganizationId == '0' &&
@@ -99,6 +107,62 @@ export default class OutLineHeadItem extends Component {
         })
       } else {
         message.error(res.message)
+      }
+    })
+  }
+
+  // 获取隐藏视图列表
+  getOutlineHideTerm = () => {
+    getGanttOutlineHideTrem({ board_id: this.props.gantt_board_id }).then(
+      res => {
+        if (isApiResponseOk(res)) {
+          this.props.dispatch({
+            type: 'gantt/updateDatas',
+            payload: {
+              isDisplayContentIds: res.data
+            }
+          })
+          // this.filterAlreadyHideData(res.data)
+        }
+      }
+    )
+  }
+
+  // 过滤已经隐藏的数组
+  // filterAlreadyHideData = (isDisplayData = []) => {
+  //   let { outline_tree = [] } = this.props
+  //   let outline_tree_ = JSON.parse(JSON.stringify(outline_tree))
+  //   // outline_tree_ = this.rev(outline_tree_)
+  //   for (let val of isDisplayData) {
+  //     // 1. 找到当前操作的节点
+  //     const current_node = getTreeNodeValue(outline_tree_, val)
+  //     if (current_node) {
+  //       // 2. 从当前节点找出父节点
+  //       const from_parent_id = current_node.parent_id
+  //       const parent_from_node = getTreeNodeValue(outline_tree_, from_parent_id)
+  //       if (from_parent_id) {
+  //         parent_from_node.children = parent_from_node.children.filter(
+  //           item => item.id != val
+  //         )
+  //       } else {
+  //         outline_tree_ = outline_tree_.filter(item => item.id != val)
+  //       }
+  //     }
+  //   }
+  //   this.props.dispatch({
+  //     type: 'gantt/handleOutLineTreeData',
+  //     payload: {
+  //       data: outline_tree_
+  //     }
+  //   })
+  // }
+
+  rev = (data = []) => {
+    return data.filter(item => {
+      if (item.is_display == true) {
+        return item
+      } else if (item.children && item.children.length) {
+        item.children = this.rev(item.children)
       }
     })
   }
@@ -223,7 +287,7 @@ export default class OutLineHeadItem extends Component {
   }
 
   onDataProcess = ({ action, param, calback }) => {
-    //console.log("大纲:onDataProcess", action, param);
+    // console.log('大纲:onDataProcess', action, param)
     const { dispatch, gantt_board_id, group_view_type } = this.props
     let { outline_tree = [] } = this.props
     switch (action) {
@@ -1207,12 +1271,85 @@ export default class OutLineHeadItem extends Component {
     }
   }
 
+  // 点击显示全部
+  handleShowHideTerm = () => {
+    const { gantt_board_id } = this.props
+    saveGanttOutlineNonDisplay({
+      board_id: gantt_board_id,
+      content_ids: []
+    }).then(res => {
+      if (isApiResponseOk(res)) {
+        // this.getOutlineHideTerm()
+        // message.success('保存成功')
+        this.props.dispatch({
+          type: 'gantt/getGanttData',
+          payload: {}
+        })
+        this.props.dispatch({
+          type: 'gantt/updateDatas',
+          payload: {
+            isDisplayContentIds: []
+          }
+        })
+      }
+    })
+  }
+
   // 点击保存
   handleSaveHideTerm = () => {
+    const {
+      outline_tree = [],
+      gantt_board_id,
+      isDisplayContentIds = []
+    } = this.props
+    let content_ids = []
+    const mapGetContentId = arr => {
+      for (let val of arr) {
+        const { children = [], id, is_display } = val
+        if (is_display == false) {
+          content_ids.push(id)
+        }
+        if (children.length) {
+          mapGetContentId(children)
+        }
+      }
+    }
+    content_ids.push(...isDisplayContentIds)
+    mapGetContentId(outline_tree)
+    // return
+    saveGanttOutlineNonDisplay({ board_id: gantt_board_id, content_ids }).then(
+      res => {
+        if (isApiResponseOk(res)) {
+          message.success('保存成功')
+          this.props.dispatch({
+            type: 'gantt/handleOutLineTreeData',
+            payload: {
+              data: outline_tree,
+              filter_display: true
+            }
+          })
+          this.getOutlineHideTerm()
+          this.props.dispatch({
+            type: 'gantt/updateDatas',
+            payload: {
+              selected_hide_term: false
+            }
+          })
+          // this.getOutlineHideTerm()
+        }
+      }
+    )
+  }
+
+  // 取消
+  handleCancelHideTerm = () => {
+    const { outline_tree_original = [] } = this.props
     this.props.dispatch({
       type: 'gantt/updateDatas',
       payload: {
-        selected_hide_term: false
+        outline_tree: outline_tree_original,
+        selected_hide_term: false,
+        outline_tree_original: []
       }
     })
   }
@@ -1222,10 +1359,14 @@ export default class OutLineHeadItem extends Component {
     const { key } = e
     switch (key) {
       case 'select_hide_term': // 选择隐藏项
+        const { outline_tree = [] } = this.props
+        const outline_tree_ = JSON.parse(JSON.stringify(outline_tree))
         this.props.dispatch({
           type: 'gantt/updateDatas',
           payload: {
-            selected_hide_term: true
+            selected_hide_term: true,
+            // 进行快照
+            outline_tree_original: outline_tree_
           }
         })
         break
@@ -1280,7 +1421,8 @@ export default class OutLineHeadItem extends Component {
       currentUserOrganizes = [],
       start_date,
       end_date,
-      selected_hide_term
+      selected_hide_term,
+      isDisplayContentIds = []
     } = this.props
     // console.log("刷新了数据", outline_tree);
     return (
@@ -1308,62 +1450,82 @@ export default class OutLineHeadItem extends Component {
         <div
           className={styles.outlineFooter}
           style={{
-            justifyContent: selected_hide_term ? 'space-between' : 'flex-end'
+            justifyContent:
+              selected_hide_term ||
+              !!(isDisplayContentIds && isDisplayContentIds.length)
+                ? 'space-between'
+                : 'flex-end'
           }}
         >
+          {!!(isDisplayContentIds && isDisplayContentIds.length) &&
+            !selected_hide_term && (
+              <div
+                onClick={this.handleShowHideTerm}
+                style={{ color: '#6294FF' }}
+              >
+                显示全部
+              </div>
+            )}
           {selected_hide_term && (
             <div>
-              <Button type="primary" onClick={this.handleSaveHideTerm}>
+              <Button
+                style={{ marginRight: '5px' }}
+                type="primary"
+                onClick={this.handleSaveHideTerm}
+              >
                 保存
               </Button>
+              <Button onClick={this.handleCancelHideTerm}>取消</Button>
             </div>
           )}
-          {!this.isExistExpand() ? (
-            <div
-              title="展开全部"
-              className={styles.outline_footer_icon}
-              onClick={() => this.outlineTreeFold('expand')}
-              // style={{ color: '#1890FF' }}
-            >
-              <span className={`${globalStyles.authTheme}`}>&#xe7bb;</span>
-              {/* <span
+          <div style={{ display: 'flex' }}>
+            {!this.isExistExpand() ? (
+              <div
+                title="展开全部"
+                className={styles.outline_footer_icon}
+                onClick={() => this.outlineTreeFold('expand')}
+                // style={{ color: '#1890FF' }}
+              >
+                <span className={`${globalStyles.authTheme}`}>&#xe7bb;</span>
+                {/* <span
                 className={`${globalStyles.authTheme}`}
                 style={{ fontSize: 16, marginRight: 2 }}
               >
                 &#xe712;
               </span>
               <span>展开全部</span> */}
-            </div>
-          ) : (
-            <div
-              title="收起全部"
-              className={styles.outline_footer_icon}
-              onClick={() => this.outlineTreeFold('fold')}
-              // style={{ color: '#1890FF' }}
-            >
-              <span className={`${globalStyles.authTheme}`}>&#xe7ba;</span>
-              {/* <span
+              </div>
+            ) : (
+              <div
+                title="收起全部"
+                className={styles.outline_footer_icon}
+                onClick={() => this.outlineTreeFold('fold')}
+                // style={{ color: '#1890FF' }}
+              >
+                <span className={`${globalStyles.authTheme}`}>&#xe7ba;</span>
+                {/* <span
                 className={`${globalStyles.authTheme}`}
                 style={{ fontSize: 16, marginRight: 4 }}
               >
                 &#xe712;
               </span>
               <span>收起全部</span> */}
-            </div>
-          )}
-          {!selected_hide_term && (
-            <Dropdown
-              trigger={['click']}
-              placement="topLeft"
-              overlay={this.renderOutlineFooter()}
-            >
-              <div
-                className={`${styles.outline_footer_icon} ${styles.outline_more_spot}`}
-              >
-                <span className={globalStyles.authTheme}>&#xe66f;</span>
               </div>
-            </Dropdown>
-          )}
+            )}
+            {!selected_hide_term && (
+              <Dropdown
+                trigger={['click']}
+                placement="topLeft"
+                overlay={this.renderOutlineFooter()}
+              >
+                <div
+                  className={`${styles.outline_footer_icon} ${styles.outline_more_spot}`}
+                >
+                  <span className={globalStyles.authTheme}>&#xe66f;</span>
+                </div>
+              </Dropdown>
+            )}
+          </div>
 
           {/* <Popover
             trigger="click"
@@ -1468,7 +1630,9 @@ function mapStateToProps({
       selected_card_visible,
       start_date,
       end_date,
-      selected_hide_term
+      selected_hide_term,
+      isDisplayContentIds = [],
+      outline_tree_original = []
     }
   },
   technological: {
@@ -1502,6 +1666,8 @@ function mapStateToProps({
     outline_tree_round,
     start_date,
     end_date,
-    selected_hide_term
+    selected_hide_term,
+    isDisplayContentIds,
+    outline_tree_original
   }
 }

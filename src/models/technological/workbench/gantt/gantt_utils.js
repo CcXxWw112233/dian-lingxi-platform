@@ -32,9 +32,9 @@ export function recusionItem(
     parent_card_id,
     parent_ids = []
   },
-  { start_date, end_date }
+  { start_date, end_date, filter_display }
 ) {
-  return tree.map(item => {
+  let arr = tree.map(item => {
     let new_item = { ...item, parent_expand }
     let { tree_type, children = [], is_expand, id } = item
     let new_item_children = [...children].filter(
@@ -116,14 +116,22 @@ export function recusionItem(
           parent_card_id: id,
           parent_ids: new_item.parent_ids
         },
-        { start_date, end_date }
+        { start_date, end_date, filter_display }
       )
+      if (filter_display) {
+        new_item.children = new_item.children.filter(item => item.is_display)
+      }
     }
     if (tree_type == '1') {
       new_item.expand_length = getLeafCountTree(new_item)
     }
     return new_item
   })
+  if (filter_display) {
+    arr = arr.filter(item => item.is_display)
+  }
+
+  return arr
 }
 
 // 统一更新计算left width

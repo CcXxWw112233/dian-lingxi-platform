@@ -122,7 +122,7 @@ export default {
 
       gantt_board_id: '0', //"1192342431761305600",//, //甘特图查看的项目id
       gantt_board_list_id: '0', //项目分组的操作id
-      group_view_type: '4', //分组视图1项目， 2成员, 4大纲, 5项目分组再分组成成员
+      group_view_type: '1', //分组视图1项目， 2成员, 4大纲, 5项目分组再分组成成员
       group_view_filter_boards: [], //内容过滤项目id 列表
       group_view_filter_users: [], //内容过滤职员id 列表
       single_select_user: { id: '', name: '' }, //成员视图下，点击成员
@@ -146,7 +146,9 @@ export default {
       startPlanType: 0,
       // outline_current_oprate_add_id: '', //大纲视图下面板拖拽创建任务所属add_id
 
-      selected_hide_term: false // 表示是否选择隐藏项 true 表示是
+      selected_hide_term: false, // 表示是否选择隐藏项 true 表示是
+      isDisplayContentIds: [], // 表示已经隐藏的content_ids
+      outline_tree_original: [] // 大纲视图显示隐藏快照 数据源
     }
   },
   subscriptions: {
@@ -355,7 +357,10 @@ export default {
           payload: {
             get_gantt_data_loading: false,
             get_gantt_data_loaded: true,
-            folder_seeing_board_id: '0'
+            folder_seeing_board_id: '0',
+            // 清空关于大纲视图显示隐藏数据
+            selected_hide_term: false,
+            outline_tree_original: []
           }
         })
         // console.log('sssss', {res})
@@ -381,7 +386,8 @@ export default {
             yield put({
               type: 'handleOutLineTreeData',
               payload: {
-                data: res.data
+                data: res.data,
+                filter_display: true
               }
             })
           }
@@ -395,7 +401,8 @@ export default {
     },
     // 转化处理大纲视图数据
     *handleOutLineTreeData({ payload }, { select, call, put }) {
-      const { data = [] } = payload
+      // filter_display 为true时,将大纲视图中is_display为false的隐藏
+      const { data = [], filter_display } = payload
       const start_date = yield select(workbench_start_date)
       const end_date = yield select(workbench_end_date)
       const ceilWidth = yield select(workbench_ceilWidth)
@@ -412,7 +419,7 @@ export default {
       let filnaly_outline_tree = recusionItem(
         new_outline_tree,
         { parent_expand: true },
-        { start_date, end_date }
+        { start_date, end_date, filter_display }
       )
       // console.log('filnaly_outline_tree_0', filnaly_outline_tree)
       yield put({
