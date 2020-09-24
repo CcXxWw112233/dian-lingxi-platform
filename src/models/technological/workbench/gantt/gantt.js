@@ -862,7 +862,7 @@ export default {
                 //   item.left = k * ceilWidth
                 //   break
                 // }
-                if (gantt_view_mode == 'month') {
+                if (gantt_view_mode == 'month' || gantt_view_mode == 'hours') {
                   //月视图下遍历得到和开始时间对的上的日期
                   if (
                     isSamDay(

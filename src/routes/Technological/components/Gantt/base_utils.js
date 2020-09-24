@@ -1,3 +1,5 @@
+import { hours_view_total } from './constants'
+
 const current_date = new Date()
 const current_year = current_date.getFullYear()
 const current_month = current_date.getMonth() + 1
@@ -271,7 +273,15 @@ class base_utils {
 
   // 时视图 ----------start
   static getHours = () => {
-    return [9, 10, 11, 12, 13, 14, 15, 16, 17]
+    const arr = []
+    let init_oclock = 9
+    let i = 0
+    while (i < hours_view_total) {
+      arr.push(init_oclock + i)
+      ++i
+    }
+    return arr
+    // return [9, 10, 11, 12, 13, 14, 15, 16, 17]
   }
   // 设置一天内工作时间的处理
   static setOneDayHours = ({ date_string, week_day_name }) => {

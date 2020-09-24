@@ -5,7 +5,7 @@ import { isToday } from './base_utils'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import MilestoneDetail from './components/milestoneDetail'
 import { Dropdown, Menu } from 'antd'
-import { ganttIsFold } from './constants'
+import { ganttIsFold, hours_view_total } from './constants'
 import {
   caldiffDays,
   isSamDay,
@@ -884,7 +884,9 @@ export default class GetRowGanttItem extends Component {
               key={timestamp}
               style={{
                 borderRight:
-                  key2 == 8 ? '1px solid rgba(154, 159, 166, 0.15)' : 'none',
+                  key2 == hours_view_total - 1
+                    ? '1px solid rgba(154, 159, 166, 0.15)'
+                    : 'none',
                 // borderLeft:
                 //   key2 == 0 ? '1px solid rgba(154, 159, 166, 0.15)' : 'none',
                 backgroundColor: 'rgb(245,245,245)'

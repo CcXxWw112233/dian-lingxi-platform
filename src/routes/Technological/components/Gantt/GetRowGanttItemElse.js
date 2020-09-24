@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'dva'
 import indexStyles from './index.less'
 import { isToday } from './base_utils'
-import { ganttIsOutlineView } from './constants'
+import { ganttIsOutlineView, hours_view_total } from './constants'
 // 这是一个甘特图面板尾部的日期列表
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
@@ -165,7 +165,9 @@ export default class GetRowGanttItem extends Component {
               key={timestamp}
               style={{
                 borderRight:
-                  key2 == 8 ? '1px solid rgba(154, 159, 166, 0.15)' : 'none',
+                  key2 == hours_view_total - 1
+                    ? '1px solid rgba(154, 159, 166, 0.15)'
+                    : 'none',
                 // borderLeft:
                 //   key2 == 0 ? '1px solid rgba(154, 159, 166, 0.15)' : 'none',
                 backgroundColor: 'rgb(245,245,245)',
