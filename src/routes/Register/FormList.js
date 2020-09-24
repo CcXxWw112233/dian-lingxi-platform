@@ -27,7 +27,8 @@ class FormList extends React.Component {
     email: '',
     mobile: '',
     verifycode: '',
-    password: ''
+    password: '',
+    invitation_code: ''
   }
 
   setFormFieldsState(type, e) {
@@ -50,7 +51,9 @@ class FormList extends React.Component {
       // console.log(values)
       if (!err) {
         if (
-          (!this.state.emailBlurCheck && !this.state.phoneBlurCheck) ||
+          (!this.state.emailBlurCheck &&
+            !this.state.phoneBlurCheck &&
+            !this.state.invitationCodeBlurCheck) ||
           !this.state.passwordBlurCheck
         ) {
           return false
@@ -161,6 +164,12 @@ class FormList extends React.Component {
             accountType: name
           })
         }
+      } else if (name == 'invitation_code') {
+        const reg = /^[A-Za-z0-9]{4,12}$/
+        if (!reg.test(values[name])) {
+          message.warn('请输入正确的邀请码', MESSAGE_DURATION_TIME)
+        } else {
+        }
       } else {
       }
     })
@@ -204,10 +213,12 @@ class FormList extends React.Component {
       mobile,
       verifycode,
       password,
+      invitation_code,
       checkBoxChecked,
       submitButtonDisabled
     } = this.state
     let submitButtonDisabledLocal = submitButtonDisabled
+    const reg = /^[A-Za-z0-9]{4,12}$/
     if (
       name &&
       name.trimLR() != '' &&
@@ -215,7 +226,8 @@ class FormList extends React.Component {
       validateTel(mobile) &&
       verifycode &&
       validatePassword(password) &&
-      checkBoxChecked
+      checkBoxChecked &&
+      reg.test(invitation_code)
     ) {
       submitButtonDisabledLocal = false
     }
@@ -326,6 +338,22 @@ class FormList extends React.Component {
               placeholder="密码(数字与字母组合，至少6位)"
               type={'password'}
               onBlur={this.verifyByBlur.bind(null, 'password')}
+            />
+          )}
+        </FormItem>
+        {/* Invitation code 邀请码 */}
+        <FormItem style={{ marginTop: 0 }}>
+          {getFieldDecorator('invitation_code', {
+            rules: [
+              { required: false, message: '请输入邀请码', whitespace: true }
+            ]
+          })(
+            <Input
+              onChange={this.setFormFieldsState.bind(this, 'invitation_code')}
+              style={{ height: '40px', fontSize: 16 }}
+              maxLength={12}
+              placeholder="邀请码(必填)"
+              onBlur={this.verifyByBlur.bind(null, 'invitation_code')}
             />
           )}
         </FormItem>
