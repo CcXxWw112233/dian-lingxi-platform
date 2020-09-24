@@ -23,6 +23,7 @@ import {
 } from '@/globalset/js/constant'
 import NotSupportImg from '@/assets/projectDetail/fileDetail/not_support.png'
 import { platformNouns } from '../../globalset/clientCustorm'
+import PdfComment from '../pdfComment'
 // let this.timer
 
 @connect(mapStateToProps)
@@ -55,7 +56,9 @@ class MainContent extends Component {
         '.tif',
         '.bmp',
         '.ico'
-      ]
+      ],
+      isInPdfComment: false, // 是否进入了圈评
+      pdfCommentData: {}, // pdf圈评需要的数据
     }
   }
 
@@ -312,6 +315,37 @@ class MainContent extends Component {
     }, 200)
   }
 
+  // 进入pdf圈评
+  handleToShowPdf = async (type = 'pdf')=> {
+    const { currentPreviewFileData = {}, filePreviewUrl} = this.props
+    const {
+      board_id,
+      privileges = [],
+      is_privilege,
+      id,
+      file_name,
+      folder_id
+    } = currentPreviewFileData;
+    let obj = {
+      url: filePreviewUrl,
+      file_id: id,
+      file_name,
+      fileType: type
+    }
+    this.setState({
+      pdfCommentData: obj,
+      isInPdfComment: true
+    })
+  }
+
+  // 退出pdf圈评
+  exitPdfComment = () => {
+    this.setState({
+      pdfCommentData: {},
+      isInPdfComment: false
+    })
+  }
+
   // 除pdf外的其他文件进入圈评
   handleEnterCirclePointComment = async () => {
     const { isZoomPictureFullScreenMode } = this.props
@@ -417,7 +451,7 @@ class MainContent extends Component {
                 handleFullScreen={this.handleZoomPictureFullScreen}
                 filePreviewCurrentFileId={filePreviewCurrentFileId}
                 handleEnterCirclePointComment={
-                  this.handleEnterCirclePointComment
+                  this.handleToShowPdf.bind(this, 'img')
                 }
                 isShow_textArea={true}
                 isOpenAttachmentFile={this.props.isOpenAttachmentFile}
@@ -492,12 +526,17 @@ class MainContent extends Component {
               }}
             ></div>
             {/* {
-                  !this.props.isOpenAttachmentFile && fileType != '.pdf' && (supportFileTypeArray.indexOf(fileType) != -1) && (
-                    <div className={mainContentStyles.otherFilesOperator}>
-                      <span onClick={this.handleEnterCirclePointComment} className={mainContentStyles.operator_bar}><span className={`${globalStyles.authTheme} ${mainContentStyles.circle_icon}`}>&#xe664;</span>圈点评论</span>
-                    </div>
-                  )
-                } */}
+              !this.props.isOpenAttachmentFile && fileType != '.pdf' && (supportFileTypeArray.indexOf(fileType) != -1) && (
+                <div className={mainContentStyles.otherFilesOperator}>
+                  <span onClick={this.handleEnterCirclePointComment} className={mainContentStyles.operator_bar}><span className={`${globalStyles.authTheme} ${mainContentStyles.circle_icon}`}>&#xe664;</span>圈点评论</span>
+                </div>
+              )
+            } */}
+            {
+              <div className={mainContentStyles.otherFilesOperator}>
+                <span onClick={()=>this.handleToShowPdf('pdf')} className={mainContentStyles.operator_bar}><span className={`${globalStyles.authTheme} ${mainContentStyles.circle_icon}`}>&#xe664;</span>圈点评论</span>
+              </div>
+            }
             {!this.props.isOpenAttachmentFile && (
               <div
                 onClick={this.handleDynamicComment}
@@ -1226,6 +1265,11 @@ class MainContent extends Component {
             )}
           </div>
         )}
+        {
+          this.state.isInPdfComment && (
+            <PdfComment {...this.state.pdfCommentData} onClose={this.exitPdfComment}/>
+          )
+        }
       </div>
     )
   }

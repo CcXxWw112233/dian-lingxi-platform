@@ -143,9 +143,9 @@ export default class BoardCommuicationFileDetailContainer extends Component {
           res.data.base_info.board_id
         )
       )
-      if (flag) {
-        await this.getFilePDFInfo({ id, calback })
-      }
+      // if (flag) {
+      //   await this.getFilePDFInfo({ id, calback })
+      // }
       // await this.getFilePDFInfo({ id })
       // this.linkImWithFile({name: res.data.base_info.file_name, type: 'file', board_id: res.data.base_info.board_id, id: res.data.base_info.id})
     } else {
