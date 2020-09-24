@@ -448,61 +448,96 @@ export default class TreeNode extends Component {
   }
 
   /**
-   * 递归遍历,修改当前item数据
-   * @param {Array} data 树结构
-   * @param {String} currentId 当前点击的元素
-   * @param {Boolean} type 改变值得内容
-   * 1. 找到当前需要改变的元素
-   * 2. 如果说当前点击的是父元素, 则该对应的子元素都应改变
-   * 3. 只要有一个子元素是显示, 则父元素显示，即不隐藏
+   * 递归遍历,修改当前操作的节点数据
+   * @param {Boolean} display_type 改变值得内容 false 隐藏 true显示
+   * @param {String} parent_id 当前操作元素的父ID
+   * @param {Object} node 当前操作的元素节点
+   * @param {Array} parent_ids 当前操作元素的父节点ID
+   * 1. 父 关 子 关
+   * 2. 父 开 子 不管
+   * 3. 子 开 父 一定开
+   * 4. 子 关 父 不管
    */
-  recursion = ({ outline_tree_: data, id: currentId, type }) => {
-    data = data.map((item, i) => {
-      if (item.id == currentId) {
-        let new_item = { ...item }
-        new_item = {
-          ...item,
-          is_display: type,
-          children: this.rev(new_item.children, type)
-        }
-        // console.log(new_item, 'new_item')
-        this.rev(new_item.children, type)
-        return new_item
-      } else if (item.children && item.children.length) {
-        item.children = this.recursion({
-          outline_tree_: item.children,
-          id: currentId,
-          type
+  recursion = ({ display_type, parent_id, node, parent_ids = [] }) => {
+    if (!parent_id) {
+      // 如果说父ID不存在, 表示点击的是最外层元素
+      if (!node) return
+      // 首先：点击某个元素 就是对当前这个元素进行状态改变
+      node.is_display = display_type
+      // 父 关 子 关
+      if (!display_type && node.children.length) {
+        node.children = node.children.map(item => {
+          // 点击某个元素 就是对当前这个元素进行状态改变
+          item.is_display = display_type
+          this.recursion({
+            id: item.id,
+            display_type,
+            parent_id: item.parent_id,
+            node: item
+          })
+          return item
         })
       }
-      return item
-    })
-    return data
+      return
+    }
+    // 父ID存在, 表示点击的是子元素了
+    // 进行判断
+    if (!node) return
+    // 表示: 子 开 父 一定开
+    if (!!parent_ids.length) {
+      this.updateParentDisplayType(parent_ids)
+    }
+    // 点击某个元素 就是对当前这个元素进行状态改变
+    node.is_display = display_type
+    if (!display_type && node.children && node.children.length) {
+      node.children = node.children.map((item, i) => {
+        // 点击某个元素 就是对当前这个元素进行状态改变
+        item.is_display = display_type
+        this.recursion({
+          id: item.id,
+          display_type,
+          parent_id: item.parent_id,
+          node: item
+        })
+        return item
+      })
+    }
   }
 
-  rev = (data = [], type) => {
-    data = data.map(item => {
-      let new_item = { ...item }
-      new_item = { ...item, is_display: type }
-      if (item.children && item.children.length) {
-        item.children = this.rev(item.children, type)
-      }
-      return new_item
-    })
-    return data
+  /**
+   * 更新父的显示隐藏状态
+   * 表示: 子 开 父 一定开
+   * @param {*} parent_ids
+   */
+  updateParentDisplayType = (parent_ids = []) => {
+    if (!parent_ids.length) return true
+    for (let val of parent_ids) {
+      const node = getTreeNodeValue(this.props.outline_tree, val)
+      node.is_display = true
+    }
   }
 
   /**
    * 点击操作显示隐藏
    * @param {Object} e 事件对象
-   * @param {Boolean} type 选择类型 false 为隐藏 true 为显示
+   * @param {String} id 当前点击的ID
+   * @param {String} parent_id 当前点击的父ID
+   * @param {Boolean} display_type 选择类型 false 为隐藏 true 为显示
    */
-  handleOperateEyeIcon = ({ e, id, parent_id, type }) => {
+  handleOperateEyeIcon = ({ e, id, parent_id, display_type }) => {
     e && e.stopPropagation()
     let { outline_tree = [] } = this.props
-    let outline_tree_ = JSON.parse(JSON.stringify(outline_tree))
-    outline_tree_ = this.recursion({ outline_tree_, id, parent_id, type })
-    this.updateOutLineTreeData(outline_tree_)
+    // 只考虑当期节点进行操作
+    const node = getTreeNodeValue(outline_tree, id)
+    this.recursion({
+      outline_tree_: node.children || [],
+      id,
+      parent_id,
+      parent_ids: node.parent_ids || [],
+      display_type,
+      node
+    })
+    this.updateOutLineTreeData(outline_tree)
   }
 
   renderTitle = () => {
@@ -587,13 +622,13 @@ export default class TreeNode extends Component {
                   (is_display || is_display == undefined ? (
                     <span
                       title="隐藏"
-                      className={`${globalStyles.authTheme} ${styles.outline_tree_node_show_eye_icon}`}
+                      className={`${globalStyles.authTheme} ${styles.outline_tree_node_hide_eye_icon}`}
                       onClick={e => {
                         this.handleOperateEyeIcon({
                           e,
                           id,
-                          parent_id: parent_id || id,
-                          type: false
+                          parent_id: parent_id,
+                          display_type: false
                         })
                       }}
                     >
@@ -607,8 +642,8 @@ export default class TreeNode extends Component {
                         this.handleOperateEyeIcon({
                           e,
                           id,
-                          parent_id: parent_id || id,
-                          type: true
+                          parent_id: parent_id,
+                          display_type: true
                         })
                       }}
                     >
