@@ -1345,9 +1345,14 @@ export default class OutLineHeadItem extends Component {
   handleCancelHideTerm = () => {
     const { outline_tree_original = [] } = this.props
     this.props.dispatch({
+      type: 'gantt/handleOutLineTreeData',
+      payload: {
+        data: outline_tree_original
+      }
+    })
+    this.props.dispatch({
       type: 'gantt/updateDatas',
       payload: {
-        outline_tree: outline_tree_original,
         selected_hide_term: false,
         outline_tree_original: []
       }

@@ -129,7 +129,7 @@ class VideoMeetingPopoverContent extends React.Component {
     if (projectId == 0) return
     // this.setVideoMeetingDefaultSuggesstionsByBoardUser({ board_users: [] })
     getCurrentSelectedProjectMembersList({ projectId }).then(res => {
-      if (res.code == '0') {
+      if (isApiResponseOk(res)) {
         const board_users = res.data
         currentDelayDueTime = null
         // defaultDelayDueTime = this.getNormalCurrentDueTime()
@@ -144,6 +144,7 @@ class VideoMeetingPopoverContent extends React.Component {
           isShowNowTime: true,
           changeValue: false // 保存一个正在修改文本框的状态
         })
+        this.getCurrentRemindUser()
       } else {
         // message.error(res.message)
       }
@@ -160,12 +161,8 @@ class VideoMeetingPopoverContent extends React.Component {
 
   getCurrentProject = props => {
     let { projectList = [] } = props
-    const { user_set } = this.getInfoFromLocalStorage('userInfo') || {}
-    if (!user_set) return
-    const { current_board } = user_set
-    // projectList = this.filterProjectWhichCurrentUserHasEditPermission(projectList)
     let new_projectList = [...projectList]
-    if (projectList && projectList.length) {
+    if (!!(projectList && projectList.length)) {
       //过滤出来当前用户有编辑权限的项目
       if (new_projectList.find(item => item.is_my_private == '1')) {
         let { board_id, org_id } =
@@ -341,12 +338,20 @@ class VideoMeetingPopoverContent extends React.Component {
         let { board_id: gold_id, board_name } =
           new_projectList.find(item => item.is_my_private == '1') || {}
         defaultSaveProjectName = board_name
+        // this.setState({
+        //   saveProjectName: board_name,
+        //   saveToProject: gold_id
+        // })
         return gold_id
       } else {
         // let gold_id = (new_projectList.find((item, index) => index == '0') || {}).board_id
         let { board_id: gold_id, board_name } =
           new_projectList.find((item, index) => index == '0') || {}
         defaultSaveProjectName = board_name
+        // this.setState({
+        //   saveProjectName: board_name,
+        //   saveToProject: gold_id
+        // })
         return gold_id
       }
     } else {
@@ -640,7 +645,9 @@ class VideoMeetingPopoverContent extends React.Component {
       new_currentSelectedProjectMembersList.find(
         item => item.id == currentUser.id
       ) || {}
-    toNoticeList.push(gold_item)
+    if (Object.keys(gold_item).length) {
+      toNoticeList.push(gold_item)
+    }
     let nonRepeatArr = arrayNonRepeatfy(toNoticeList, 'user_id')
     this.setState({
       toNoticeList: nonRepeatArr,
@@ -663,7 +670,7 @@ class VideoMeetingPopoverContent extends React.Component {
     }
     this.setState({
       toNoticeList: newNoticeUserList,
-      userIds: selectedKeys.filter(i => i.length != '11') || [] // 这里需要过滤掉手机号
+      userIds: selectedKeys.filter(i => i && i.length != '11') || [] // 这里需要过滤掉手机号
     })
   }
 
@@ -683,7 +690,7 @@ class VideoMeetingPopoverContent extends React.Component {
         new_toNoticeList.splice(index, 1)
       }
     })
-    let new_userIds = userIds.filter(i => i != shouldDeleteItem) || []
+    let new_userIds = userIds.filter(i => i && i != shouldDeleteItem) || []
     // 表示邀请手机号进来的成员 事件处理
     if (new_othersPeople && new_othersPeople.length) {
       new_othersPeople.map((item, index) => {
@@ -691,7 +698,8 @@ class VideoMeetingPopoverContent extends React.Component {
           new_othersPeople.splice(index, 1)
         }
       })
-      let new_user_phone = user_phone.filter(i => i != shouldDeleteItem) || []
+      let new_user_phone =
+        user_phone.filter(i => i && i != shouldDeleteItem) || []
       this.setState({
         othersPeople: new_othersPeople,
         user_phone: new_user_phone
@@ -1175,13 +1183,16 @@ class VideoMeetingPopoverContent extends React.Component {
     let { projectList, board_id, videoConferenceProviderList = [] } = this.props
     //过滤出来当前用户有编辑权限的项目
     // projectList = this.filterProjectWhichCurrentUserHasEditPermission(projectList)
-
-    let newToNoticeList = [].concat(...toNoticeList, ...othersPeople)
+    let newToNoticeList = toNoticeList
+    if (othersPeople && othersPeople.length) {
+      newToNoticeList.push(...othersPeople)
+    }
     let {
       defaultSaveToProject,
       defaultMeetingTitle,
       currentDelayStartTime
     } = this.getVideoMeetingPopoverContentNoramlDatas()
+    console.log(toNoticeList, othersPeople)
     const videoMeetingPopoverContent_ = (
       <div>
         {videoMeetingPopoverVisible && (
@@ -1196,9 +1207,8 @@ class VideoMeetingPopoverContent extends React.Component {
                   className={indexStyles.videoMeeting__topic_content_save}
                 >
                   <Select
-                    defaultValue={
-                      saveToProject ? saveToProject : defaultSaveToProject
-                    }
+                    value={saveToProject ? saveToProject : defaultSaveToProject}
+                    optionLabelProp="label"
                     onChange={this.handleVideoMeetingSaveSelectChange}
                     style={{ width: '100%' }}
                     getPopupContainer={triggerNode => triggerNode.parentNode}
@@ -1206,7 +1216,11 @@ class VideoMeetingPopoverContent extends React.Component {
                     {/* <Option value={null}>不存入项目</Option> */}
                     {projectList.length !== 0 &&
                       projectList.map(project => (
-                        <Option value={project.board_id} key={project.board_id}>
+                        <Option
+                          label={project.board_name}
+                          value={project.board_id}
+                          key={project.board_id}
+                        >
                           {project.board_name}
                         </Option>
                       ))}
@@ -1403,9 +1417,10 @@ class VideoMeetingPopoverContent extends React.Component {
                         </div>
 
                         {newToNoticeList.map(value => {
+                          if (!Object.keys(value).length) return <></>
                           const { avatar, name, user_name, user_id } = value
-                          let tempValue = Object.keys(value)
-                          if (!tempValue) return
+                          // let tempValue = Object.keys(value).length
+                          // if (!tempValue) return
                           return (
                             <div
                               style={{ display: 'flex', flexWrap: 'wrap' }}
