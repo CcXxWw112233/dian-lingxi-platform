@@ -30,6 +30,7 @@ export default {
     *formSubmit({ payload }, { select, call, put }) {
       //提交表单
       const { mobile, email } = payload
+      console.log(payload)
       let res = yield call(formSubmit, payload)
 
       if (isApiResponseOk(res)) {
