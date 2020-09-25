@@ -1192,7 +1192,6 @@ class VideoMeetingPopoverContent extends React.Component {
       defaultMeetingTitle,
       currentDelayStartTime
     } = this.getVideoMeetingPopoverContentNoramlDatas()
-    console.log(toNoticeList, othersPeople)
     const videoMeetingPopoverContent_ = (
       <div>
         {videoMeetingPopoverVisible && (
