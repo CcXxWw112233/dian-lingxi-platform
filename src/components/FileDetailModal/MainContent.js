@@ -48,11 +48,7 @@ class MainContent extends Component {
         '.docx',
         '.ppt',
         '.pptx',
-        '.png',
         '.txt',
-        '.gif',
-        '.jpg',
-        '.jpeg',
         '.tif',
         '.bmp',
         '.ico'
@@ -332,6 +328,8 @@ class MainContent extends Component {
       file_name,
       fileType: type
     }
+    let canEnter = await this.handleEnterCirclePointComment();
+    if(canEnter)
     this.setState({
       pdfCommentData: obj,
       isInPdfComment: true
@@ -368,20 +366,22 @@ class MainContent extends Component {
       )
     ) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      this.props.updateStateDatas({
-        isPdfLoaded: false
-      })
+      // this.props.updateStateDatas({
+      //   isPdfLoaded: false
+      // })
       return false
     }
-    await this.props.updateStateDatas({
-      isPdfLoaded: true
-    })
-    await this.updateProcessPercent()
-    await this.fetchConvertPdfAlsoUpdateVersion({
-      file_id: id,
-      file_name: file_name,
-      folder_id: folder_id
-    })
+    // await this.props.updateStateDatas({
+    //   isPdfLoaded: true
+    // })
+    // await this.updateProcessPercent()
+    // 文件转换
+    // await this.fetchConvertPdfAlsoUpdateVersion({
+    //   file_id: id,
+    //   file_name: file_name,
+    //   folder_id: folder_id
+    // })
+    return true;
     // this.setState({
     //   is_petty_loading: !isZoomPictureFullScreenMode,
     //   is_large_loading: isZoomPictureFullScreenMode,

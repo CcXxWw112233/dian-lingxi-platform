@@ -1473,7 +1473,8 @@ export default class PdfComment extends React.Component{
     )
   }
   // 切换版本
-  setActioveVersion =(val)=> {
+  setActioveVersion =(val = {})=> {
+    if(this.state.versionMsg.id === val.id) return ;
     this.setState({
       versionMsg: val
     }, () => {
