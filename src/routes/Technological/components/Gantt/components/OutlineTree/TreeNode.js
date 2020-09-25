@@ -830,7 +830,8 @@ export default class TreeNode extends Component {
       hoverItem = {},
       gantt_board_id,
       projectDetailInfoData = {},
-      outline_tree_round = []
+      outline_tree_round = [],
+      selected_hide_term
     } = this.props
     const isLeaf = false
     let type
@@ -857,9 +858,10 @@ export default class TreeNode extends Component {
           onMouseEnter={this.onMouseEnter}
           onMouseLeave={this.onMouseLeave}
         >
-          {(hoverItem.id && hoverItem.id == id) ||
-          (hoverItem.add_id && hoverItem.add_id == add_id) ||
-          operateVisible ? (
+          {((hoverItem.id && hoverItem.id == id) ||
+            (hoverItem.add_id && hoverItem.add_id == add_id) ||
+            operateVisible) &&
+          !selected_hide_term ? (
             <Dropdown
               overlay={this.renderOperate()}
               visible={operateVisible}
@@ -991,7 +993,8 @@ export default class TreeNode extends Component {
       hoverItem = {},
       gantt_board_id,
       projectDetailInfoData = {},
-      outline_tree_round = []
+      outline_tree_round = [],
+      selected_hide_term
     } = this.props
     let type
     if (tree_type) {
@@ -1026,9 +1029,10 @@ export default class TreeNode extends Component {
                 className={`${styles.outline_tree_line_node_dot} ${this.setDotStyle[type]}`}
               ></span>
             )
-          ) : (hoverItem.id && hoverItem.id == id) ||
-            (hoverItem.add_id && hoverItem.add_id == add_id) ||
-            operateVisible ? (
+          ) : ((hoverItem.id && hoverItem.id == id) ||
+              (hoverItem.add_id && hoverItem.add_id == add_id) ||
+              operateVisible) &&
+            !selected_hide_term ? (
             <Dropdown
               overlay={this.renderOperate()}
               visible={operateVisible}
