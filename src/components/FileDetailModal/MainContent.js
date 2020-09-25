@@ -170,6 +170,8 @@ class MainContent extends Component {
     clearTimeout(this.timer)
   }
 
+  //
+
   // PDF圈评转换事件
   fetchConvertPdfAlsoUpdateVersion = ({ file_name, file_id, folder_id }) => {
     const {
@@ -1112,7 +1114,7 @@ class MainContent extends Component {
                 handleFullScreen={this.handleZoomPictureFullScreen}
                 filePreviewCurrentFileId={filePreviewCurrentFileId}
                 handleEnterCirclePointComment={
-                  this.handleEnterCirclePointComment
+                  this.handleToShowPdf.bind(this, 'img')
                 }
                 isShow_textArea={true}
                 isOpenAttachmentFile={this.props.isOpenAttachmentFile}
