@@ -125,7 +125,8 @@ export default class PdfComment extends React.Component{
     this.historyContainerRef = React.createRef(); // 滚动内容
     this.user = localStorage.getItem('userInfo')
     ? JSON.parse(localStorage.getItem('userInfo'))
-    : {}
+    : {};
+    this.errormsg = '加载失败，请重试';
   }
   async componentDidMount (){
     this.mounted = true;
@@ -194,7 +195,11 @@ export default class PdfComment extends React.Component{
       })
       xhr.send(null);
       xhr.onload = (e)=> {
+        console.log(e)
         resolve(e.target)
+      }
+      xhr.onerror = ()=> {
+        message.warn(this.errormsg)
       }
     })
 
@@ -909,6 +914,8 @@ export default class PdfComment extends React.Component{
       }, ()=>{
         this.loadPage();
       })
+    }).catch(err => {
+      message.warn(this.errormsg)
     })
   }
   // 选中元素

@@ -56,6 +56,13 @@ class MainContent extends Component {
       isInPdfComment: false, // 是否进入了圈评
       pdfCommentData: {}, // pdf圈评需要的数据
     }
+    this.dontTransferType = [
+      '.pdf',
+      '.png',
+      '.gif',
+      '.jpeg',
+      '.jpg'
+    ]
   }
 
   componentDidMount() {
@@ -292,7 +299,7 @@ class MainContent extends Component {
           }
         })
       }
-      else if(FILE_NAME === '.pdf'){
+      else if(this.dontTransferType.indexOf(FILE_NAME) !== -1){
         resolve({})
       }
     })
