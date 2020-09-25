@@ -214,41 +214,6 @@ class VideoMeetingPopoverContent extends Component {
     })
   }
 
-  // 获取当前推迟时间
-  getCurrentDelayStartTimestampToTime = (timestamp, flag) => {
-    if (!timestamp) {
-      return false
-    }
-    const timestampNew =
-      timestamp.length === 10 ? Number(timestamp) * 1000 : Number(timestamp)
-    let date = new Date(timestampNew) //时间戳为10位需*1000，时间戳为13位的话不需乘1000
-    const now_year = nowDate.getFullYear()
-    let Y = now_year == date.getFullYear() ? '' : date.getFullYear() + '年'
-    // let Y = date.getFullYear() + '年';
-    let M =
-      (date.getMonth() + 1 < 10
-        ? '0' + (date.getMonth() + 1)
-        : date.getMonth() + 1) + '月'
-    let D =
-      date.getDate() < 10
-        ? '0' + date.getDate() + '日 '
-        : date.getDate() + '日 '
-    let h =
-      date.getMinutes() >= 0 && date.getMinutes() < 30
-        ? date.getHours() + ':'
-        : date.getHours() + 1 + ':'
-    let m = date.getMinutes() >= 0 && date.getMinutes() < 30 ? '30' : '00'
-    return flag ? Y + M + D + h + m : Y + M + D
-  }
-
-  // 获取具有年月日文案的开始时间
-  getCurrentStartTimeStamp = () => {
-    return this.getCurrentDelayStartTimestampToTime(
-      timeToTimestamp(nowDate),
-      true
-    )
-  }
-
   // 选择项目的下拉回调
   handleSaveToProjectSelectChange = value => {
     const { projectList = [] } = this.state
@@ -492,7 +457,6 @@ class VideoMeetingPopoverContent extends Component {
         },
         async () => {
           await this.initVideoMeetingPopover()
-          await this.getCurrentRemindUser()
         }
       )
       start_url && this.openWinNiNewTabWithATag(start_url)
@@ -525,7 +489,6 @@ class VideoMeetingPopoverContent extends Component {
         },
         () => {
           this.initVideoMeetingPopover()
-          this.getCurrentRemindUser()
         }
       )
       this.openWinNiNewTabWithATag(start_url)
@@ -554,7 +517,6 @@ class VideoMeetingPopoverContent extends Component {
             },
             () => {
               this.initVideoMeetingPopover()
-              this.getCurrentRemindUser()
             }
           )
           this.openWinNiNewTabWithATag(start_url)
@@ -618,7 +580,6 @@ class VideoMeetingPopoverContent extends Component {
         const { start_url, card_id } = res.data
         if (!isOrderTime)
           remind_time_value = parseInt(meeting_start_time / 1000)
-        // this.openWinNiNewTabWithATag(start_url)
         this.inviteMemberJoin({ card_id, userIds, user_phone, start_url })
       } else if (res.code === '1') {
         message.error(res.message)
