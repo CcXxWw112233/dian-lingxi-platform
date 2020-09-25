@@ -716,7 +716,7 @@ export default class index extends Component {
   setSVGHeight = () => {
     const rows = 7
     const { ceiHeight, group_view_type, outline_tree_round = [] } = this.props
-    return '100%'
+    // return '100%'
     if (ganttIsOutlineView({ group_view_type })) {
       const outline_tree_round_length = outline_tree_round.length
       if (outline_tree_round_length > rows) {
@@ -732,7 +732,8 @@ export default class index extends Component {
   checkInvalid = obj => {
     let flag = true
     for (let [, value] of Object.entries(obj)) {
-      if (value === undefined || isNaN(value)) {
+      // eslint-disable-next-line use-isnan
+      if (value === undefined || value === NaN) {
         flag = false
         break
       }
