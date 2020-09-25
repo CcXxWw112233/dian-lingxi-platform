@@ -1507,7 +1507,7 @@ export default class PdfComment extends React.Component{
       id:Math.floor(Math.random() * 100000),
       createTime: new Date().getTime()
     }
-    let arr = Array.from (this.state.version_history);
+    let arr = Array.from(this.state.version_history);
     arr.unshift(addParam);
     this.setState({
       version_history: arr
@@ -1563,9 +1563,9 @@ export default class PdfComment extends React.Component{
     })
     if(!isHistoryIn)
     this.getHistory(param).then(data => {
-      this.historyLast = data.next_id;
+      this.historyLast = data.next_id || "";
       this.setState({
-        version_history: data.records
+        version_history: data.records || []
       })
     });
   }
@@ -1618,7 +1618,7 @@ export default class PdfComment extends React.Component{
       let arr = Array.from(this.state.version_history);
       if(!res.records) return message.warn('没有更多数据了');
       this.historyLast = res.next_id;
-      let list = res.records;
+      let list = res.records || [];
       list.forEach(item => {
         arr.push(item);
       })
