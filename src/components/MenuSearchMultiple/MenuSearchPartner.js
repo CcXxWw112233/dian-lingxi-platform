@@ -316,7 +316,8 @@ export default class MenuSearchPartner extends React.Component {
   }
 
   // 当自定义图标显示的时候的回调
-  chgUserDefinedIcon = () => {
+  chgUserDefinedIcon = e => {
+    e && e.stopPropagation()
     const { keyWord } = this.state
     const { listData = [], searchName } = this.props
     let new_listData = [...listData]
@@ -328,32 +329,17 @@ export default class MenuSearchPartner extends React.Component {
       user_id: keyWord,
       type: 'phone'
     }
-    new_listData = new_listData.find(item => item.mobile == obj.mobile)
-    this.setState(
-      {
-        keyWord: '',
-        showUserDefinedIconVisible: false
-      },
-      () => {
-        this.setState({
-          resultArr: this.fuzzyQuery(listData, searchName, '')
-        })
-      }
-    )
-    if (new_listData) {
+    const gold_item = new_listData.find(item => item.mobile == obj.mobile) || {}
+    this.setState({
+      keyWord: '',
+      showUserDefinedIconVisible: false
+    })
+    if (!!(gold_item && Object.keys(gold_item).length)) {
       message.warn('该用户已存在', MESSAGE_DURATION_TIME)
       return false
     }
 
     this.props.chgUserDefinedIcon && this.props.chgUserDefinedIcon({ obj })
-    // this.setState({
-    // 	keyWord: '',
-    // 	showUserDefinedIconVisible: false,
-    // }, () => {
-    // 	this.setState({
-    // 		resultArr: this.fuzzyQuery(listData, searchName, ''),
-    // 	})
-    // })
   }
 
   render() {

@@ -30,7 +30,24 @@ export default class index extends Component {
   }
 
   componentDidMount() {
-    const storage_gantt_head_width = localStorage.getItem('gantt_head_width')
+    //初始化进来根据缓存中的头部设置宽度
+    let storage_gantt_head_width = localStorage.getItem('gantt_head_width')
+    let storage_gantt_head_width_origin = storage_gantt_head_width
+    storage_gantt_head_width = Number(storage_gantt_head_width)
+    if (isNaN(storage_gantt_head_width) || !storage_gantt_head_width) {
+      storage_gantt_head_width = 280
+    } else {
+      if (storage_gantt_head_width > body.clientWidth / 2) {
+        storage_gantt_head_width = body.clientWidth / 2
+      } else if (storage_gantt_head_width < 120) {
+        storage_gantt_head_width = 120
+      } else {
+      }
+    }
+    if (storage_gantt_head_width_origin != storage_gantt_head_width) {
+      //当发现缓存中的数据和转化数据不一致，将转化后的宽度缓存
+      localStorage.setItem('gantt_head_width', storage_gantt_head_width)
+    }
     if (storage_gantt_head_width) {
       const target = document.getElementById('gantt_header_wapper')
       target.style.width = `${storage_gantt_head_width}px`
