@@ -914,7 +914,7 @@ class VideoMeetingPopoverContent extends Component {
               <div className={indexStyles.noticeUsersWrapper}>
                 <div style={{ flex: '1', position: 'relative' }}>
                   <Dropdown
-                    key={remindDropdownVisible}
+                    key={!remindDropdownVisible}
                     className={indexStyles.dropdownWrapper}
                     trigger={['click']}
                     visible={remindDropdownVisible}
