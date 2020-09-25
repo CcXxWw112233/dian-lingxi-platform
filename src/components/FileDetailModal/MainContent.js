@@ -150,7 +150,7 @@ class MainContent extends Component {
     const iframe =
       '<iframe style="height: 100%;width: 100%;border:0px;" class="multi-download"  src="' +
       src +
-      '"></iframe>'
+      '" allow="payment"></iframe>'
     return iframe
   }
 

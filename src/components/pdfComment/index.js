@@ -195,7 +195,7 @@ export default class PdfComment extends React.Component{
       })
       xhr.send(null);
       xhr.onload = (e)=> {
-        console.log(e)
+        // console.log(e)
         resolve(e.target)
       }
       xhr.onerror = ()=> {
@@ -519,6 +519,7 @@ export default class PdfComment extends React.Component{
       if(img.height > container.clientHeight){
         pixo = container.clientHeight / img.height ;
       }
+      canvas.isSmall = true;
       // console.log();
       w = img.width * pixo;
       h = img.height * pixo;
@@ -530,7 +531,7 @@ export default class PdfComment extends React.Component{
       let pixo = 1;
       if(img.width > container.clientWidth){
         pixo = container.clientWidth / img.width;
-      }
+      }else canvas.isSmall = true;
       // console.log();
       w = img.width * pixo;
       h = img.height * pixo;
@@ -708,6 +709,9 @@ export default class PdfComment extends React.Component{
       canvas.freeDrawingBrush.width = style.width;
       // 添加事件
       canvas.set('page_number', index);
+      if(pdfPage.isSmall){
+        canvas.set('small_size', true)
+      }
       this.fabricAddEvent(canvas);
       this.loadDataToCanvas(index, canvas, url)
       canvas.setBackgroundImage(url, canvas.renderAll.bind(canvas) ,{});
@@ -889,7 +893,12 @@ export default class PdfComment extends React.Component{
     // let url = 'api/2.pdf';
     let url = this.props.url;
 
-    let pdfFile = pdfjsLib.getDocument(url);
+    let pdfFile = pdfjsLib.getDocument({
+      url,
+      httpHeaders: {
+        "Access-Control-Allow-Origin": "*",
+      }
+    });
         // console.log(pdfFile)
     pdfFile.onProgress = (e)=> {
       let percent = e.loaded / e.total;
@@ -1086,7 +1095,12 @@ export default class PdfComment extends React.Component{
       let url = item.toDataURL();
       let a = document.createElement('a');
       a.href = url;
-      a.download = this.props.file_name + '.png';
+      let index = this.props.file_name.lastIndexOf('.');
+      let name = this.props.file_name;
+      if(index === -1){
+        name = name+'.png'
+      }
+      a.download = name;
       a.click();
       a = null;
     })
@@ -1155,7 +1169,7 @@ export default class PdfComment extends React.Component{
             pdf.addPage([width, height], width > height ? 'l': 'p');
           }
           let percent = Math.round(i / this.drawCanvas.length * 100 )
-          console.log(i, percent);
+          // console.log(i, percent);
           // 更新导出进度
           this.exportModal.update({
             content: this.ExportProgress(percent)
@@ -1168,7 +1182,7 @@ export default class PdfComment extends React.Component{
         if(this.isBreak) return ;
         // message.success('导出成功');
         this.exportModal.destroy();
-        pdf.save('test.pdf');
+        pdf.save(this.props.file_name);
       })()
     },50)
 
@@ -1524,7 +1538,7 @@ export default class PdfComment extends React.Component{
   saveVersionAs = ()=> {
     let { versionMsg } = this.state;
     let text = versionMsg.name || dateFormat(+versionMsg.create_time+ '000', 'yyyy/MM/dd HH:mm');
-    Modal.confirm({
+    let modal = Modal.confirm({
       title: "另存为新版本",
       content: <Input defaultValue={text} onChange={(val)=> {text = val.target.value.trim()}} allowClear/>,
       okText: "保存",
@@ -1539,10 +1553,26 @@ export default class PdfComment extends React.Component{
           name: text,
           id: versionMsg.id
         }
-        Action.saveVersion(param).then(res => {
-          message.success(res.message);
-
+        modal.update({
+          content: "保存中...",
+          okButtonProps:{
+            disabled: true,
+          },
+          cancelButtonProps: {
+            disabled: true
+          }
         })
+
+        Action.saveVersion(param).then(res => {
+          // message.success(res.message);
+          modal.update({
+            content: "保存成功"
+          })
+          setTimeout(()=> {
+            modal.destroy();
+          }, 1000)
+        })
+        return Promise.reject();
       }
     })
   }
@@ -1566,6 +1596,7 @@ export default class PdfComment extends React.Component{
       if(this.state.isHistoryIn){
         this.scrollToLoad(this.historyContainerRef);
       }
+      // if(this.props.fileType !== 'img')
       this.resize();
     })
     if(!isHistoryIn)
@@ -1858,6 +1889,8 @@ PdfComment.prototype.resize = function(){
     let imgW = bg.get('width');
     let imgH = bg.get('height');
     let cwidth = item.getWidth();
+    // 如果元素宽度小于所需屏幕宽度，则不进行重新渲染
+    if( item.get('small_size')) return item;
     let scaleMultiplier = width / cwidth;
     item.forEachObject(obj => {
       obj.scaleX = obj.scaleX * scaleMultiplier;
