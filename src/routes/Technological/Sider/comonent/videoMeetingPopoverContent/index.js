@@ -36,7 +36,6 @@ import { getProjectList } from '../../../../../services/technological/workbench'
 const Option = Select.Option
 
 // 定义组件中需要的默认状态值
-let nowDate = new Date()
 let remind_time_value = '5' // 设置的提醒时间
 let stepIndex = 0
 
@@ -423,7 +422,8 @@ class VideoMeetingPopoverContent extends Component {
     user_phone.push(obj.mobile)
     this.setState({
       othersPeople: arrayNonRepeatfy(new_othersPeople, 'user_id'),
-      user_phone: this.arrayNonRepeatPhone(user_phone)
+      user_phone: this.arrayNonRepeatPhone(user_phone),
+      remindDropdownVisible: false
     })
   }
 
@@ -912,84 +912,48 @@ class VideoMeetingPopoverContent extends Component {
                 </span>
               </div>
               <div className={indexStyles.noticeUsersWrapper}>
-                {!(newToNoticeList && newToNoticeList.length) ? (
-                  <div style={{ flex: '1', position: 'relative' }}>
-                    <Dropdown
-                      className={indexStyles.dropdownWrapper}
-                      trigger={['click']}
-                      visible={remindDropdownVisible}
-                      onVisibleChange={this.handleVisibleChange}
-                      overlayClassName={indexStyles.overlay_pricipal}
-                      getPopupContainer={triggerNode => triggerNode.parentNode}
-                      overlayStyle={{ maxWidth: '200px' }}
-                      overlay={
-                        <MenuSearchPartner
-                          isInvitation={true}
-                          show_select_all={true}
-                          select_all_type={'0'}
-                          listData={currentSelectedProjectMembersList}
-                          keyCode={'user_id'}
-                          searchName={'name'}
-                          currentSelect={newToNoticeList}
-                          board_id={board_id}
-                          user_defined_icon={<span>&#xe846;</span>}
-                          chgUserDefinedIcon={this.chgUserDefinedIcon}
-                          chirldrenTaskChargeChange={
-                            this.chirldrenTaskChargeChange
-                          }
-                        />
-                      }
-                    >
+                <div style={{ flex: '1', position: 'relative' }}>
+                  <Dropdown
+                    key={remindDropdownVisible}
+                    className={indexStyles.dropdownWrapper}
+                    trigger={['click']}
+                    visible={remindDropdownVisible}
+                    onVisibleChange={this.handleVisibleChange}
+                    overlayClassName={indexStyles.overlay_pricipal}
+                    getPopupContainer={triggerNode => triggerNode.parentNode}
+                    overlayStyle={{ maxWidth: '200px' }}
+                    overlay={
+                      <MenuSearchPartner
+                        isInvitation={true}
+                        Inputlaceholder="输入手机号"
+                        show_select_all={true}
+                        select_all_type={'0'}
+                        listData={currentSelectedProjectMembersList}
+                        keyCode={'user_id'}
+                        searchName={'name'}
+                        currentSelect={newToNoticeList}
+                        board_id={board_id}
+                        user_defined_icon={<span>&#xe846;</span>}
+                        chgUserDefinedIcon={this.chgUserDefinedIcon}
+                        chirldrenTaskChargeChange={
+                          this.chirldrenTaskChargeChange
+                        }
+                      />
+                    }
+                  >
+                    <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                       <div className={indexStyles.addNoticePerson}>
                         <Icon
                           type="plus-circle"
-                          style={{ fontSize: '40px', color: '#40A9FF' }}
+                          style={{
+                            fontSize: '32px',
+                            color: '#40A9FF',
+                            margin: '0 12px 0px'
+                          }}
                         />
                       </div>
-                    </Dropdown>
-                  </div>
-                ) : (
-                  <div style={{ flex: '1', position: 'relative' }}>
-                    <Dropdown
-                      className={indexStyles.dropdownWrapper}
-                      trigger={['click']}
-                      visible={remindDropdownVisible}
-                      onVisibleChange={this.handleVisibleChange}
-                      overlayClassName={indexStyles.overlay_pricipal}
-                      getPopupContainer={triggerNode => triggerNode.parentNode}
-                      overlayStyle={{ maxWidth: '200px' }}
-                      overlay={
-                        <MenuSearchPartner
-                          isInvitation={true}
-                          Inputlaceholder="输入手机号"
-                          show_select_all={true}
-                          select_all_type={'0'}
-                          listData={currentSelectedProjectMembersList}
-                          keyCode={'user_id'}
-                          searchName={'name'}
-                          currentSelect={newToNoticeList}
-                          board_id={board_id}
-                          user_defined_icon={<span>&#xe846;</span>}
-                          chgUserDefinedIcon={this.chgUserDefinedIcon}
-                          chirldrenTaskChargeChange={
-                            this.chirldrenTaskChargeChange
-                          }
-                        />
-                      }
-                    >
-                      <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                        <div className={indexStyles.addNoticePerson}>
-                          <Icon
-                            type="plus-circle"
-                            style={{
-                              fontSize: '32px',
-                              color: '#40A9FF',
-                              margin: '0 12px 0px'
-                            }}
-                          />
-                        </div>
-
-                        {newToNoticeList.map(value => {
+                      {!!(newToNoticeList && newToNoticeList.length) &&
+                        newToNoticeList.map(value => {
                           if (!Object.keys(value).length) return <></>
                           const { avatar, name, user_name, user_id } = value
                           return (
@@ -1061,10 +1025,9 @@ class VideoMeetingPopoverContent extends Component {
                             </div>
                           )
                         })}
-                      </div>
-                    </Dropdown>
-                  </div>
-                )}
+                    </div>
+                  </Dropdown>
+                </div>
               </div>
             </div>
             {/* 设置通知提醒 E */}
