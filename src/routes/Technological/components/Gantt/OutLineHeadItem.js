@@ -1379,7 +1379,7 @@ export default class OutLineHeadItem extends Component {
         this.exportToFile('pdf')
         break
       case 'export_img': // 导出图片
-        this.exportToFile('img')
+        this.exportToFile('image')
         break
       case 'export_sheet': // 导出表格
         this.exportToFile('excel')
