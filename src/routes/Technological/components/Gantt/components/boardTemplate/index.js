@@ -25,6 +25,7 @@ import {
 } from '../../../../../../globalset/js/constant'
 import { transformTimestamp } from '../../../../../../utils/util'
 import { getXYDropPosition, getDropListPosition } from '../../ganttBusiness'
+import { getTreeNodeValue } from '../../../../../../models/technological/workbench/gantt/gantt_utils'
 
 const MenuItem = Menu.Item
 const TreeNode = Tree.TreeNode
@@ -385,7 +386,7 @@ export default class BoardTemplate extends Component {
         template_data_type,
         child_content = [],
         id,
-        time_spand
+        time_span
       } = item
       const params = {
         template_data_type,
@@ -395,13 +396,15 @@ export default class BoardTemplate extends Component {
           ? parent_content_length
           : child_content.length //如果是父类任务，就取子任务长度，如果是子任务，就取父类任务的全部子任务长度
       }
+      const { time_span: data_time_span } =
+        getTreeNodeValue(this.state.template_data, parrent_id) || {} //统一取父的time_span,
       if (child_content) {
         return (
           <TreeNode
             data_type={template_data_type}
             data_id={is_child_task ? parrent_id : id} //当父级是任务的时候，默认存储的是父类任务
             data_name={is_child_task ? parrent_name : name}
-            data_time_spand={time_spand}
+            data_time_span={data_time_span || time_span} //父任务挂载在里程碑下，里程碑是没有time_span，所以取自己的time_span, 子任务取父任务的time_span
             icon={<i className={globalStyles.authTheme}>&#xe6f0;</i>}
             key={id}
             title={this.renderTreeItemName(params)}
@@ -422,7 +425,7 @@ export default class BoardTemplate extends Component {
           data_type={template_data_type}
           data_id={id}
           data_name={is_child_task ? parrent_name : name}
-          data_time_spand={time_spand}
+          data_time_span={data_time_span || time_span} //父任务挂载在里程碑下，里程碑是没有time_span，所以取自己的time_span, 子任务取父任务的time_span
           key={id}
           title={this.renderTreeItemName(params)}
           selectable={false}
@@ -512,13 +515,13 @@ export default class BoardTemplate extends Component {
   }
   onDragStart = ({ node }) => {
     this.current_panel = 'board_templete'
-    const { data_id, data_type, data_name, data_time_spand } = node.props
+    const { data_id, data_type, data_name, data_time_span } = node.props
     this.setState({
       drag_node_data: {
         data_id,
         data_type,
         data_name,
-        data_time_spand
+        data_time_span
       }
     })
   }
@@ -690,11 +693,11 @@ export default class BoardTemplate extends Component {
       return
     }
     const {
-      drag_node_data: { data_id, data_time_spand = 1 }
+      drag_node_data: { data_id, data_time_span = 1 }
     } = this.state
     const due_time =
       transformTimestamp(start_time) +
-      data_time_spand * 24 * 60 * 60 * 1000 -
+      data_time_span * 24 * 60 * 60 * 1000 -
       1000
     const params = {
       board_id: gantt_board_id,
