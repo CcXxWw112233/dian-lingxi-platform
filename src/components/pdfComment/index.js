@@ -1571,6 +1571,13 @@ export default class PdfComment extends React.Component{
           setTimeout(()=> {
             modal.destroy();
           }, 1000)
+        }).catch(err => {
+          modal.update({
+            content: "保存失败"
+          })
+          setTimeout(()=> {
+            modal.destroy();
+          }, 1000)
         })
         return Promise.reject();
       }

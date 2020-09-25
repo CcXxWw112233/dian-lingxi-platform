@@ -2,7 +2,8 @@ module.exports = {
   root: true,
   extends: ['umi', 'prettier', 'prettier/react'],
   globals: {
-    luckysheet: true
+    luckysheet: true,
+    pdfjsLib: true
   },
   parser: 'babel-eslint',
   plugins: ['react', 'prettier'],
