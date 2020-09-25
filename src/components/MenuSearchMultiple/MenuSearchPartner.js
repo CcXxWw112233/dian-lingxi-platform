@@ -365,7 +365,7 @@ export default class MenuSearchPartner extends React.Component {
     } = this.state
     let new_selectedKeys = [...selectedKeys]
     // 需要过滤手机号
-    new_selectedKeys = new_selectedKeys.filter(i => i.length != '11') || []
+    new_selectedKeys = new_selectedKeys.filter(i => i && i.length != '11') || []
     const {
       Inputlaceholder = '搜索',
       isInvitation,
