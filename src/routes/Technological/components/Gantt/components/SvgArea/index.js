@@ -732,7 +732,8 @@ export default class index extends Component {
   checkInvalid = obj => {
     let flag = true
     for (let [, value] of Object.entries(obj)) {
-      if (value === undefined || isNaN(value)) {
+      // eslint-disable-next-line use-isnan
+      if (value === undefined || value === NaN) {
         flag = false
         break
       }
