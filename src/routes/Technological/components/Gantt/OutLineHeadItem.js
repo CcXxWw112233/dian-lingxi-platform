@@ -1140,7 +1140,7 @@ export default class OutLineHeadItem extends Component {
           const toBlob = () => {
             canvas.toBlob(async blob => {
               // 如果奔溃，则重试 次数小于5次，继续
-              if (!blob && numbers <= 5) {
+              if (!blob && numbers <= 2) {
                 numbers++
                 return toBlob()
               } else if (!blob) {
@@ -1242,7 +1242,8 @@ export default class OutLineHeadItem extends Component {
         this.setState({
           showLoading: true
         })
-        let url = await this.toExport('svg', 2)
+        // svg为高清图，png和jpeg为普通清晰的图
+        let url = await this.toExport('jpeg', 2)
         let a = document.createElement('a')
         a.href = url
         a.download =
