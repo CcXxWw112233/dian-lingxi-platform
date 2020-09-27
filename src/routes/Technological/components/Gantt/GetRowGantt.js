@@ -832,7 +832,7 @@ export default class GetRowGantt extends Component {
         is_has_start_time
       })
       return (
-        <React.Fragment key={`${id}_${top}`}>
+        <React.Fragment key={`${id}_${top}_${due_time}_${start_time}`}>
           <GetRowStrip
             itemValue={value2}
             list_id={list_id}
@@ -1118,14 +1118,21 @@ export default class GetRowGantt extends Component {
               // return (
               //   this.renderStripSc({ list_data, list_id, list_group_key: key })
               // )
-              const { id, top, parent_expand, is_expand, tree_type } = value
+              const {
+                id,
+                top,
+                parent_expand,
+                is_expand,
+                tree_type,
+                due_time
+              } = value
               const juge_expand =
                 tree_type == '0' || tree_type == '3'
                   ? parent_expand
                   : parent_expand && is_expand
               return (
                 parent_expand && (
-                  <React.Fragment key={`${id}_${top}`}>
+                  <React.Fragment key={`${id}_${top}_${due_time}`}>
                     {active_baseline_data[id] && (
                       <BaseLineItem
                         data={active_baseline_data[id]}

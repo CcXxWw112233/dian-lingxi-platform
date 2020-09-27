@@ -36,8 +36,12 @@ import {
 } from '../../../../../../utils/util'
 import {
   setDateWithPositionInYearView,
-  setDateWidthPositionWeekView
+  setDateWidthPositionWeekView,
+  getXYDropPosition,
+  getPageXY
 } from '../../ganttBusiness'
+import Draggable from 'react-draggable'
+
 const dateAreaHeight = date_area_height //日期区域高度，作为修正
 const getEffectOrReducerByName = name => `gantt/${name}`
 
@@ -57,10 +61,13 @@ export default class GetRowStrip extends PureComponent {
     }
     this.setIsCardHasTime()
 
-    this.x1 = 0 //用于做拖拽生成一条任务
-    this.isDragging = false //判断是否在拖拽虚线框
-    this.isMouseDown = false //是否鼠标按下
-    this.task_is_dragging = false //任务实例是否在拖拽中
+    // this.x1 = 0 //用于做拖拽生成一条任务
+    // this.isDragging = false //判断是否在拖拽虚线框
+    // this.isMouseDown = false //是否鼠标按下
+    // this.task_is_dragging = false //任务实例是否在拖拽中
+
+    this.milestone_ref = React.createRef() //里程碑实例
+    this.milestone_dragging = false //里程碑拖拽中
   }
   componentDidMount() {
     this.setCurrentSelectedProjectMembersList()
@@ -122,6 +129,9 @@ export default class GetRowStrip extends PureComponent {
       //存在时间的任务不需要再设置时间了
       return
     }
+    return this.setCurrentRect(e)
+  }
+  setCurrentRect = e => {
     const { ceiHeight, ceilWidth, gantt_head_width } = this.props
 
     const target_0 = document.getElementById('gantt_card_out')
@@ -148,6 +158,7 @@ export default class GetRowStrip extends PureComponent {
     this.setState({
       currentRect: property
     })
+    return Promise.resolve(property)
   }
   // 长条鼠标事件---end
   //是否当前滑动在这一条上
@@ -378,7 +389,6 @@ export default class GetRowStrip extends PureComponent {
         }
       })
       .catch(err => {
-        console.log('eeeee', err)
         message.error('更新失败')
       })
   }
@@ -410,8 +420,99 @@ export default class GetRowStrip extends PureComponent {
     }
   }
 
+  // 里程碑的拖拽 -----------start
+  milestoneDragStart = e => {
+    this.milestone_drag_ele = e //缓存拖拽的里程碑节点
+    this.milestone_initial_left = this.milestone_ref.current.dataset.left
+    const { x } = getXYDropPosition(e, {
+      gantt_head_width: this.props.gantt_head_width
+    })
+    this.milestone_drag_point_diff = x - this.milestone_initial_left //做初始标记，由于鼠标拖拽的位置在该元素上不同，记录元素最左边和鼠标落点的差值
+    // console.log('sssssssss_00', this.milestone_drag_point_diff)
+  }
+  milestoneDraging = e => {
+    const { pageX } = getPageXY(e)
+    if (!pageX) return
+    this.milestone_drag_ele = e
+    this.milestone_dragging = true
+    // console.log('sssssssss_11', this.milestone_initial_left)
+  }
+  milestoneDragStop = async () => {
+    const {
+      gantt_view_mode,
+      date_arr_one_level,
+      ceilWidth,
+      gantt_head_width,
+      itemValue
+    } = this.props
+    setTimeout(() => {
+      this.milestone_dragging = false
+    }, 200)
+    let { x } =
+      getXYDropPosition(this.milestone_drag_ele, {
+        gantt_head_width
+      }) || {}
+    x = x - this.milestone_drag_point_diff + ceilWidth //校准
+    // const { x } = (await this.setCurrentRect(this.milestone_drag_ele)) || {}
+    let date = {} //具体日期
+    let counter = 0
+    if (gantt_view_mode == 'month' || gantt_view_mode == 'hours') {
+      for (let val of date_arr_one_level) {
+        counter += 1
+        if (counter * ceilWidth > x) {
+          date = val
+          break
+        }
+      }
+    } else if (gantt_view_mode == 'year') {
+      date = setDateWithPositionInYearView({
+        _position: x + ceilWidth,
+        date_arr_one_level,
+        ceilWidth,
+        width: ceilWidth,
+        x
+      })
+    } else if (gantt_view_mode == 'week') {
+      date = setDateWidthPositionWeekView({
+        position: x,
+        date_arr_one_level,
+        ceilWidth
+      })
+    } else {
+    }
+    // console.log('sssssssssss_22', x, date)
+    // debugger
+    const { timestamp, timestampEnd } = date
+    if (!timestampEnd) return
+
+    this.milestoneSetClick({ timestamp, timestampEnd })
+      .then()
+      .catch(err => {
+        this.changeOutLineTreeNodeProto(itemValue.id, {
+          due_time: itemValue.due_time - 1
+        })
+      })
+  }
+  // 里程碑的拖拽 -----------end
   //渲染里程碑设置---start
   renderMilestoneSet = () => {
+    const {
+      itemValue: { due_time }
+    } = this.props
+    return !!due_time ? (
+      <Draggable
+        axis="x"
+        onStart={this.milestoneDragStart}
+        onDrag={this.milestoneDraging}
+        onStop={this.milestoneDragStop}
+      >
+        {this.renderMilestone()}
+      </Draggable>
+    ) : (
+      this.renderMilestone()
+    )
+  }
+  renderMilestone = () => {
     const {
       itemValue = {},
       group_list_area,
@@ -449,9 +550,11 @@ export default class GetRowStrip extends PureComponent {
       <div
         onClick={() => this.miletonesClick(due_time)}
         className={styles.will_set_item_milestone}
+        ref={this.milestone_ref}
+        data-left={marginLeft}
         style={{
           display,
-          marginLeft,
+          left: marginLeft,
           paddingLeft
         }}
       >
@@ -496,31 +599,38 @@ export default class GetRowStrip extends PureComponent {
     )
   }
   miletonesClick = due_time => {
+    if (this.milestone_dragging) return //拖拽过程中不能点击
     if (due_time) {
       this.milestoneDetail()
     } else {
       this.milestoneSetClick()
     }
   }
-  milestoneSetClick = () => {
-    const date = this.calHoverDate()
+  milestoneSetClick = param_date => {
+    const date = param_date || this.calHoverDate()
     const { timestamp, timestampEnd } = date
     const { itemValue = {} } = this.props
     let { id } = itemValue
-    updateMilestone({ id, deadline: timestampEnd }, { isNotLoading: false })
-      .then(res => {
-        if (isApiResponseOk(res)) {
-          this.changeOutLineTreeNodeProto(id, {
-            start_time: timestamp,
-            due_time: timestampEnd
-          })
-        } else {
-          message.error(res.message)
-        }
-      })
-      .catch(err => {
-        message.error('更新失败')
-      })
+    return new Promise((resolve, reject) => {
+      updateMilestone({ id, deadline: timestampEnd }, { isNotLoading: false })
+        .then(res => {
+          if (isApiResponseOk(res)) {
+            this.changeOutLineTreeNodeProto(id, {
+              start_time: timestamp,
+              due_time: timestampEnd
+            })
+            message.success('更新成功')
+            resolve(res)
+          } else {
+            message.error(res.message)
+            reject()
+          }
+        })
+        .catch(err => {
+          message.error('更新失败')
+          reject()
+        })
+    })
   }
   milestoneDetail = () => {
     this.set_miletone_detail_modal_visible()
