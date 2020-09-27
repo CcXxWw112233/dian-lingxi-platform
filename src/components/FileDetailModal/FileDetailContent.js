@@ -40,7 +40,8 @@ class FileDetailContent extends Component {
       onlyReadingShareData: {},
       file_detail_modal_visible: props.file_detail_modal_visible,
       fileType: props.fileType,
-      isOpenAttachmentFile: props.isOpenAttachmentFile
+      isOpenAttachmentFile: props.isOpenAttachmentFile,
+      fileFileUrl: ""
     }
   }
 
@@ -78,6 +79,7 @@ class FileDetailContent extends Component {
         currentPreviewFileData: data.base_info, // 当前文件的详情内容
         filePreviewIsUsable: data.preview_info.is_usable,
         filePreviewUrl: data.preview_info.url, // 文件路径
+        fileFileUrl: data.preview_info.preview_url, //文件真实路径
         filePreviewIsRealImage: data.preview_info.is_real_image, // 是否是真的图片
         filePreviewCurrentName: data.base_info.file_name, // 当前文件的名称
         fileType: getSubfixName(data.base_info.file_name), // 文件的后缀名
@@ -87,7 +89,7 @@ class FileDetailContent extends Component {
           ? data.version_list[0]['version_id']
           : '' // 保存一个当前版本ID
       }, ()=> {
-        console.log(this.state.filePreviewUrl, 'FileDetailContent')
+        // console.log(this.state.filePreviewUrl, 'FileDetailContent')
         resolve();
       })
     })

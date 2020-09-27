@@ -1465,21 +1465,23 @@ export default class PdfComment extends React.Component{
           },
           cancelText: "取消",
           onOk: ()=> {
-            let arr = Array.from(version_list);
-            this.setState({
-              version_list: arr.filter(item => item.id !== data.id)
-            })
             // 删除批注
             Action.removeVersion({id: data.id}).then(async res => {
-              message.success(res.message);
-              if(data.id === this.state.versionMsg.id){
-                // 说明删除的是当前选中的版本 则需要获取最新版本，然后更新整个文件批注
-                let v = await Action.getVersion({file_id: this.props.file_id});
+              if(res.code === "0"){
+                message.success(res.message);
+                let arr = Array.from(version_list);
                 this.setState({
-                  versionMsg: v.data
-                }, ()=> {
-                  this.getVersion2Render();
+                  version_list: arr.filter(item => item.id !== data.id)
                 })
+                if(data.id === this.state.versionMsg.id){
+                  // 说明删除的是当前选中的版本 则需要获取最新版本，然后更新整个文件批注
+                  let v = await Action.getVersion({file_id: this.props.file_id});
+                  this.setState({
+                    versionMsg: v.data
+                  }, ()=> {
+                    this.getVersion2Render();
+                  })
+                }
               }
             })
           }

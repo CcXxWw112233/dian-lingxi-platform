@@ -29,7 +29,8 @@ export default class BoardCommuicationFileDetailContainer extends Component {
     super(props)
     this.state = {
       filePreviewCurrentFileId: props.filePreviewCurrentFileId,
-      fileType: props.fileType
+      fileType: props.fileType,
+      fileFileUrl: ""
     }
   }
 
@@ -96,6 +97,7 @@ export default class BoardCommuicationFileDetailContainer extends Component {
         currentPreviewFileData: data.base_info, // 当前文件的详情内容
         filePreviewIsUsable: data.preview_info.is_usable,
         filePreviewUrl: data.preview_info.url, // 文件路径
+        fileFileUrl: data.preview_info.preview_url, //文件真实路径
         filePreviewIsRealImage: data.preview_info.is_real_image, // 是否是真的图片
         filePreviewCurrentName: data.base_info.file_name, // 当前文件的名称
         fileType: getSubfixName(data.base_info.file_name), // 文件的后缀名
