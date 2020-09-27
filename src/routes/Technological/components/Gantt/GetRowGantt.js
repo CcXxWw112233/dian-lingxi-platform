@@ -463,7 +463,7 @@ export default class GetRowGantt extends Component {
     let counter = 0
     let date = {} //月视图操作的日期数据
 
-    if (gantt_view_mode == 'month') {
+    if (gantt_view_mode == 'month' || gantt_view_mode == 'hours') {
       //月视图下定位到相符的日期
       for (let val of date_arr_one_level) {
         counter += 1
@@ -527,7 +527,7 @@ export default class GetRowGantt extends Component {
     const { timestamp, timestampEnd } = date
     const update_name =
       start_end == '1' ? 'create_start_time' : 'create_end_time'
-
+    console.log('ssssssssssss', [update_name], timestamp, timestampEnd)
     dispatch({
       type: getEffectOrReducerByName('updateDatas'),
       payload: {

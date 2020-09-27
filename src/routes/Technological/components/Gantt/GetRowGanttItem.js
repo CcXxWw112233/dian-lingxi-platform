@@ -5,7 +5,7 @@ import { isToday } from './base_utils'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import MilestoneDetail from './components/milestoneDetail'
 import { Dropdown, Menu } from 'antd'
-import { ganttIsFold } from './constants'
+import { ganttIsFold, hours_view_total } from './constants'
 import {
   caldiffDays,
   isSamDay,
@@ -697,7 +697,6 @@ export default class GetRowGanttItem extends Component {
               data-start_time={timestamp}
               data-end_time={timestampEnd}
               key={timestamp}
-              // style={{ backgroundColor: isToday(timestamp) ? 'rgb(242, 251, 255)' : ((week_day == 0 || week_day == 6) ? 'rgba(0, 0, 0, 0.04)' : 'rgba(0,0,0,.02)') }}
               style={{
                 backgroundColor:
                   week_day == 0 || week_day == 6
@@ -853,6 +852,46 @@ export default class GetRowGanttItem extends Component {
                 </>
               )}
             </div>
+          )
+        })}
+      </>
+    )
+  }
+  // 渲染时视图日期
+  renderHourView = (date_inner = []) => {
+    const { rows = 7, itemKey } = this.props
+    const {
+      ceiHeight,
+      gantt_board_id,
+      group_view_type,
+      show_board_fold,
+      group_list_area_section_height,
+      list_id,
+      gantt_view_mode,
+      ceilWidth
+    } = this.props
+    const item_height = rows * ceiHeight
+    return (
+      <>
+        {date_inner.map((value2, key2) => {
+          const { timestamp, timestampEnd } = value2
+          return (
+            <div
+              className={`${indexStyles.ganttDetailItem}`}
+              data-list_id={list_id}
+              data-start_time={timestamp}
+              data-end_time={timestampEnd}
+              key={timestamp}
+              style={{
+                borderRight:
+                  key2 == hours_view_total - 1
+                    ? '1px solid rgba(154, 159, 166, 0.15)'
+                    : 'none',
+                // borderLeft:
+                //   key2 == 0 ? '1px solid rgba(154, 159, 166, 0.15)' : 'none',
+                backgroundColor: 'rgb(245,245,245)'
+              }}
+            ></div>
           )
         })}
       </>
@@ -1338,6 +1377,8 @@ export default class GetRowGanttItem extends Component {
                   {gantt_view_mode == 'month' &&
                     this.renderMonthView(date_inner)}
                   {gantt_view_mode == 'week' && this.renderWeekView(date_inner)}
+                  {gantt_view_mode == 'hours' &&
+                    this.renderHourView(date_inner)}
                 </div>
               </div>
             )

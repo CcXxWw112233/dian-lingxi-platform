@@ -1,3 +1,5 @@
+import { hours_view_total } from './constants'
+
 const current_date = new Date()
 const current_year = current_date.getFullYear()
 const current_month = current_date.getMonth() + 1
@@ -268,6 +270,83 @@ class base_utils {
     //获取上一年
     return this.handleYeardate({ timestamp, type: 'last' })
   }
+
+  // 时视图 ----------start
+  static getHours = () => {
+    const arr = []
+    let init_oclock = 9
+    let i = 0
+    while (i < hours_view_total) {
+      arr.push(init_oclock + i)
+      ++i
+    }
+    return arr
+    // return [9, 10, 11, 12, 13, 14, 15, 16, 17]
+  }
+  // 设置一天内工作时间的处理
+  static setOneDayHours = ({ date_string, week_day_name }) => {
+    const date_inner = this.getHours().map(item => {
+      return {
+        date_string,
+        timestamp: new Date(`${date_string} ${item}:00:00`).getTime(),
+        timestampEnd: new Date(`${date_string} ${item}:59:59`).getTime(),
+        date_no: item
+      }
+    })
+    const _obj = {
+      date_top: `${this.handleDateString(date_string)} 周${week_day_name}`,
+      date_inner
+    }
+    return _obj
+  }
+  static handleDateString = date_string => {
+    const reg = new RegExp(`${current_year}/`)
+    return date_string.replace(reg, '')
+  }
+  // 获取当前视图 所需天数
+  static getHourDate = timestamp => {
+    const timestamp_trans = timestamp || current_date_timestamp
+    const { date_string, week_day_name } = this.getNeedDate(timestamp_trans)
+
+    const current_date_hour = this.setOneDayHours({
+      date_string,
+      week_day_name
+    })
+    return [].concat(
+      this.getLastHourDate(timestamp_trans),
+      [current_date_hour],
+      this.getNextHourDate(timestamp_trans)
+    )
+  }
+  // 获取上一个时间段时间列表
+  static getLastHourDate = timestamp => {
+    const timestamp_trans = timestamp || current_date_timestamp
+    const gold_arr = []
+
+    for (let i = 15; i > 0; i--) {
+      const cal_timestamp = timestamp_trans - i * 24 * 60 * 60 * 1000
+      const { date_string, week_day_name } = this.getNeedDate(cal_timestamp)
+      gold_arr.push(this.setOneDayHours({ date_string, week_day_name }))
+    }
+    return gold_arr
+  }
+  // 获取下一个时间段时间列表
+  static getNextHourDate = timestamp => {
+    const timestamp_trans = timestamp || current_date_timestamp
+    const gold_arr = []
+    for (let i = 1; i < 15; i++) {
+      const cal_timestamp = timestamp_trans + i * 24 * 60 * 60 * 1000
+      const { date_string, week_day_name } = this.getNeedDate(cal_timestamp)
+      gold_arr.push(this.setOneDayHours({ date_string, week_day_name }))
+    }
+    return gold_arr
+  }
 }
 // base_utils.getYearDateData()
 module.exports = base_utils
+// console.log('sssssssss', {
+//   next: base_utils.getNextHourDate(),
+//   last: base_utils.getLastHourDate(),
+//   current: base_utils.getHourDate(),
+//   stand: base_utils.getNextMonthDate()
+// })

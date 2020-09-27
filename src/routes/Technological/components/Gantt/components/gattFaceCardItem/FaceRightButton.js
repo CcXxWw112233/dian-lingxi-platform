@@ -35,7 +35,7 @@ export default class FaceRightButton extends Component {
     const now = new Date().getTime()
     const date = new Date().getDate()
     let toDayIndex = -1
-    if (gantt_view_mode == 'month') {
+    if (gantt_view_mode == 'month' || gantt_view_mode == 'hours') {
       toDayIndex = date_arr_one_level.findIndex(item =>
         isSamDay(item.timestamp, now)
       ) //当天所在位置index
@@ -161,6 +161,8 @@ export default class FaceRightButton extends Component {
       ceilWidth = ceil_width_year
     } else if (type == 'month') {
       ceilWidth = ceil_width
+    } else if (type == 'hours') {
+      ceilWidth = ceil_width
     } else if (type == 'week') {
       ceilWidth = ceil_width_week
     } else {
@@ -240,6 +242,13 @@ export default class FaceRightButton extends Component {
         >
           月
         </div>
+        {/* <div
+          style={{ color: gantt_view_mode == 'hours' ? '#1890FF' : '' }}
+          className={styles.card_button}
+          onClick={() => this.changeGanttViewMode('hours')}
+        >
+          时
+        </div> */}
       </div>
     )
   }
