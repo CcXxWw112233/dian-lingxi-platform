@@ -629,9 +629,9 @@ export default class HeaderContentRightMenu extends Component {
         <Menu.Item key="2" onClick={this.handleSaveAsNewVersion}>
           保存
         </Menu.Item>
-        <Menu.Item key="3" onClick={this.handleSaveAsOthersNewVersion}>
+        {/* <Menu.Item key="3" onClick={this.handleSaveAsOthersNewVersion}>
           另存为
-        </Menu.Item>
+        </Menu.Item> */}
         <Menu.Item
           key="1"
           onClick={this.handleFileDownload.bind(this, {

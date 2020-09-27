@@ -1478,7 +1478,12 @@ class ZoomPicture extends Component {
         className={pictureDisplaySegmentIndicatorWrapper}
         style={wrapperStyle}
       >
-        <img crossOrigin="anonymous" src={url} height={indicatorHeight} width={indicatorWidth} />
+        <img
+          crossOrigin="anonymous"
+          src={url}
+          height={indicatorHeight}
+          width={indicatorWidth}
+        />
         <div
           style={displaySegmentStyle}
           className={styles.pictureDisplaySegmentIndicatorDisplaySegment}
@@ -1609,7 +1614,12 @@ class ZoomPicture extends Component {
                   i.key &&
                   i.key == 'addCommit' &&
                   isShow_textArea == true ? (
-                    <span style={{ display: 'flex' }}>{i.icon}&nbsp;&nbsp;<span style={{ fontSize: '14px', width: '56px' }}>圈点评论</span></span>
+                    <span style={{ display: 'flex' }}>
+                      {i.icon}&nbsp;&nbsp;
+                      <span style={{ fontSize: '14px', width: '56px' }}>
+                        圈点评论
+                      </span>
+                    </span>
                   ) : (
                     <span>{i.icon}</span>
                   )}

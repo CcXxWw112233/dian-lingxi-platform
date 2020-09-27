@@ -48,8 +48,8 @@
   z-index: 9;
   user-select: none;
   position: absolute;
-  border: 1px solid #1890FF;
-  background: rgba(41, 150, 252, .3);
+  border: 1px solid #1890ff;
+  background: rgba(41, 150, 252, 0.3);
 }
 .commitBlockBorder {
   position: absolute;
@@ -81,14 +81,13 @@
 .commitBlockCornerLeftTop::before,
 .commitBlockCornerRightTop::before,
 .commitBlockCornerRightBottom::before,
-.commitBlockCornerLeftBottom::before
-{
+.commitBlockCornerLeftBottom::before {
   content: '';
   width: 8px;
   height: 8px;
   border-radius: 50%;
   position: absolute;
-  background-color: #1890FF;
+  background-color: #1890ff;
 }
 .commitBlockCornerLeftTop::before {
   top: -5px;
@@ -109,8 +108,7 @@
 .commitBlockCornerLeftTop::after,
 .commitBlockCornerRightTop::after,
 .commitBlockCornerRightBottom::after,
-.commitBlockCornerLeftBottom::after
-{
+.commitBlockCornerLeftBottom::after {
   content: '';
   width: 20px;
   height: 20px;
@@ -138,20 +136,20 @@
   cursor: grabbing;
 }
 .operatorBarWrapper,
-.commitModeOperatorBarWrapper{
+.commitModeOperatorBarWrapper {
   position: absolute;
   bottom: 10px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 9;
-  height:40px;
-  background:rgba(89,89,89,0.8);
-  border-radius:4px;
+  height: 40px;
+  background: rgba(89, 89, 89, 0.8);
+  border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: space-around;
   opacity: 1;
-  transition: opacity .3s, width .3s;
+  transition: opacity 0.3s, width 0.3s;
 }
 .operatorBarWrapper {
   min-width: 376px;
@@ -160,23 +158,22 @@
   min-width: 132px;
 }
 .operatorBarWrapperOpacity {
-  opacity: 0;
-  transition: opacity .3s, width .3s;
-
+  opacity: 1;
+  transition: opacity 0.3s, width 0.3s;
 }
 .operatorBarCell {
   user-select: none;
   cursor: pointer;
-  height:20px;
-  line-height:20px;
-  font-size:14px;
-  font-weight:400;
-  color:rgba(255,255,255,1);
+  height: 20px;
+  line-height: 20px;
+  font-size: 14px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 1);
   margin: 0 16px;
 }
 
 .operatorBarCell:hover {
-  color: #1890FF;
+  color: #1890ff;
 }
 
 .operatorBarCellDisabled {
@@ -188,22 +185,22 @@
 }
 .commitPopoverContentWrapper {
   min-width: 260px;
-  transition: all .3s;
+  transition: all 0.3s;
 }
 
 .commitPublishWrapper {
   margin-top: 5px;
   display: flex;
   justify-content: flex-end;
-  transition: all .3s;
+  transition: all 0.3s;
 }
 
 .commentBlockListItemWrapper {
   position: absolute;
   cursor: pointer;
   user-select: none;
-  border: 1px solid #1890FF;
-  background: rgba(41, 150, 252, .3);
+  border: 1px solid #1890ff;
+  background: rgba(41, 150, 252, 0.3);
 }
 .commentBlockListItemFlag {
   position: absolute;
@@ -263,38 +260,38 @@
 }
 
 .commentItemPopoverContentCommentListItemContentUserName {
-height:17px;
-font-size:12px;
-font-weight:400;
-color:rgba(140,140,140,1);
-line-height:17px;
+  height: 17px;
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(140, 140, 140, 1);
+  line-height: 17px;
 }
 .commentItemPopoverContentCommentListItemContentUserText {
-font-size:14px;
-font-weight:400;
-color:rgba(89,89,89,1);
-line-height:20px;
-word-wrap: break-word;
-width: 230px;
+  font-size: 14px;
+  font-weight: 400;
+  color: rgba(89, 89, 89, 1);
+  line-height: 20px;
+  word-wrap: break-word;
+  width: 230px;
 }
 
 .commentItemPopoverContentCommentListItemContentUserTimeAndDelete {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height:17px;
-  font-size:12px;
-  font-family:PingFangSC-Regular;
-  font-weight:400;
-  color:rgba(191,191,191,1);
-  line-height:17px;
+  height: 17px;
+  font-size: 12px;
+  font-family: PingFangSC-Regular;
+  font-weight: 400;
+  color: rgba(191, 191, 191, 1);
+  line-height: 17px;
 }
 .commentItemPopoverContentCommentListItemContentUserTime {
   margin-right: 20px;
 }
 .commentItemPopoverContentCommentListItemContentUserDelete {
   cursor: pointer;
-  color: #1890FF;
+  color: #1890ff;
 }
 
 .commentItemPopoverContentCommentListItemContentUserDelete:hover {
@@ -314,7 +311,7 @@ width: 230px;
 
 .pictureDisplaySegmentIndicatorWrapperOpacity {
   opacity: 0;
-  transition: opacity .3s
+  transition: opacity 0.3s;
 }
 
 .pictureDisplaySegmentIndicatorDisplaySegment {
@@ -326,11 +323,10 @@ width: 230px;
   outline: 2px solid red;
 }
 
-
 .commentMode_line {
-  width:1px;
-  height:20px;
-  color:rgba(255,255,255,0.5);
+  width: 1px;
+  height: 20px;
+  color: rgba(255, 255, 255, 0.5);
   position: absolute;
   right: 116px;
   top: 8px;
