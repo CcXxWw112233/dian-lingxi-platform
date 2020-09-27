@@ -11,7 +11,9 @@ import {
   Progress,
   Input,
   Button,
-  message
+  message,
+  Radio,
+  DatePicker
 } from 'antd'
 import ShowAddMenberModal from '../../Project/ShowAddMenberModal'
 import {
@@ -859,6 +861,60 @@ export default class DrawDetailInfo extends React.Component {
               </Tooltip>
             )}
           </div>
+          {/* 时间精度切换 */}
+          <div className={DrawDetailInfoStyle.set_time_accuracy}>
+            <div className={DrawDetailInfoStyle.set_time_item}>
+              <div className={DrawDetailInfoStyle.set_time_label}>
+                日期模式：
+              </div>
+              <div className={DrawDetailInfoStyle.set_time_content}>
+                <Radio.Group style={{ display: 'flex', width: '100%' }}>
+                  <span style={{ width: '28%' }}>
+                    <Radio>具体时间</Radio>
+                  </span>
+                  <span>
+                    <Radio>相对时间</Radio>
+                  </span>
+                </Radio.Group>
+              </div>
+            </div>
+            <div className={DrawDetailInfoStyle.set_time_item}>
+              <div className={DrawDetailInfoStyle.set_time_label}>
+                日期精度：
+              </div>
+              <div className={DrawDetailInfoStyle.set_time_content}>
+                <Radio.Group style={{ display: 'flex', width: '100%' }}>
+                  <span style={{ width: '28%' }}>
+                    <Radio>天</Radio>
+                  </span>
+                  <span>
+                    <Radio>小时/分钟</Radio>
+                  </span>
+                </Radio.Group>
+              </div>
+            </div>
+            <div className={DrawDetailInfoStyle.set_time_item}>
+              <div className={DrawDetailInfoStyle.set_time_label}>
+                {currentNounPlanFilterName(PROJECTS)}周期：
+              </div>
+              <div className={DrawDetailInfoStyle.set_time_content}>
+                <div className={DrawDetailInfoStyle.set_start_time}>
+                  <span>开始时间</span>
+                  <span>
+                    <DatePicker />
+                  </span>
+                </div>
+              </div>
+              <div className={DrawDetailInfoStyle.set_time_content}>
+                <div className={DrawDetailInfoStyle.set_start_time}>
+                  <span>结束时间</span>
+                  <span>
+                    <DatePicker />
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
           <div style={{ marginTop: '32px' }}>
             <CustomCategoriesOperate
               fields={fields}
@@ -879,8 +935,8 @@ export default class DrawDetailInfo extends React.Component {
           </CustomFields>
           {/* <div className={DrawDetailInfoStyle.dynamic}>
               <div className={ DrawDetailInfoStyle.dy_title }>
-                <div 
-                  style={{width: '100%', display: 'flex', alignItems: 'center', display: dynamic_header_sticky ? 'none' : 'block'}} 
+                <div
+                  style={{width: '100%', display: 'flex', alignItems: 'center', display: dynamic_header_sticky ? 'none' : 'block'}}
                   ref="dynamic_header"
                   className={DrawDetailInfoStyle.dynamic_header}>
                   <span className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.icon}`}>&#xe60e;</span>
@@ -902,7 +958,7 @@ export default class DrawDetailInfo extends React.Component {
                   null
                 )
               }
-             
+
             </div> */}
           <ShowAddMenberModal
             addMenbersInProject={this.addMenbersInProject}
@@ -919,8 +975,8 @@ export default class DrawDetailInfo extends React.Component {
           />
         </div>
         {/* <div style={{display: dynamic_header_sticky ? 'block' : 'none'}} className={DrawDetailInfoStyle.shadow}>
-          <div 
-            style={{width: '100%', display: 'flex', alignItems: 'center'}} 
+          <div
+            style={{width: '100%', display: 'flex', alignItems: 'center'}}
             ref="dynamic_header"
             className={DrawDetailInfoStyle.dynamic_header}>
             <span className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.icon}`}>&#xe60e;</span>
