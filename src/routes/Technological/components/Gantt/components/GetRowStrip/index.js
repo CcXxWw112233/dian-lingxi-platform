@@ -68,7 +68,7 @@ export default class GetRowStrip extends PureComponent {
   componentWillReceiveProps(nextProps) {
     this.setIsCardHasTime()
     this.setCurrentSelectedProjectMembersList()
-    this.clearDragInfo(nextProps)
+    // this.clearDragInfo(nextProps)
   }
   // 当前滑动的这一条任务是否存在时间？存在时间代表可以在面板上创建
   setIsCardHasTime = () => {
@@ -594,333 +594,6 @@ export default class GetRowStrip extends PureComponent {
   }
   //渲染里程碑设置---end
 
-  // 空条拖拽事件--------------------------------------------------------------------------start
-  setTaskIsDragging = bool => {
-    //设置任务是否在拖拽中的状态
-    this.task_is_dragging = bool
-    const target = this.refs.row_strip
-    if (!target) return
-    if (!target.style) return
-    if (bool) {
-      target.style.cursor = 'move'
-    } else {
-      target.style.cursor = 'crosshair'
-    }
-  }
-  setIsDragging = isDragging => {
-    const { dispatch } = this.props
-    this.isDragging = isDragging
-  }
-
-  // 在任务实例上点击到特定的位置，阻断，是能够不出现创建任务弹窗
-  stopPropagationEle = e => {
-    if (this.task_is_dragging) {
-      //在做单条任务拖动的时候，不能创建
-      return true
-    }
-    if (
-      e.target.dataset &&
-      e.target.className &&
-      typeof e.target.className == 'string' && //容错
-      (e.target.dataset.targetclassname == 'specific_example' ||
-        e.target.className.indexOf('authTheme') != -1 ||
-        e.target.className.indexOf('ant-avatar') != -1)
-    ) {
-      //不能滑动到某一个任务实例上
-      return true
-    }
-    return false
-  }
-  //鼠标拖拽移动
-  dashedMousedown = e => {
-    if (
-      this.stopPropagationEle(e) || //不能滑动到某一个任务实例上
-      this.isDragging ||
-      this.isMouseDown //在拖拽中，还有防止重复点击
-    ) {
-      return false
-    }
-    const { currentRectDashed = {} } = this.state
-    this.x1 = currentRectDashed.x
-    this.setIsDragging(false)
-    this.isMouseDown = true
-    this.handleCreateTask({ start_end: '1' })
-    const target = this.refs.row_strip //event.target || event.srcElement;
-    target.onmousemove = this.dashedDragMousemove.bind(this)
-    target.onmouseup = this.dashedDragMouseup.bind(this)
-  }
-  dashedDragMousemove = e => {
-    if (this.stopPropagationEle(e)) {
-      //不能滑动到某一个任务实例上
-      return false
-    }
-    this.setIsDragging(true)
-
-    const { ceilWidth, gantt_head_width } = this.props
-    const target_0 = document.getElementById('gantt_card_out')
-    const target_1 = document.getElementById('gantt_card_out_middle')
-    // 取得鼠标位置
-    const x =
-      e.pageX -
-      target_0.offsetLeft +
-      target_1.scrollLeft -
-      gantt_head_width -
-      gantt_panel_left_diff
-    //设置宽度
-    const offset_left = Math.abs(x - this.x1)
-    // 更新拖拽的最新矩形
-    let px = this.x1 //x < this.x1 ? x : this.x1 //向左向右延申
-    let width = offset_left < ceilWidth || x < this.x1 ? ceilWidth : offset_left //小于单位长度或者鼠标相对点击的起始点向左拖动都使用最小单位
-    width = Math.ceil(width / ceilWidth) * ceilWidth - 6 //向上取整 4为微调
-    const property = {
-      x: px,
-      width
-    }
-    this.setState(
-      {
-        currentRectDashed: property
-      },
-      () => {
-        this.handleCreateTask({
-          start_end: '2',
-          top: property.y,
-          not_create: true
-        })
-        this.setDragDashedRectHolidayNo()
-      }
-    )
-  }
-  dashedDragMouseup = e => {
-    if (this.stopPropagationEle(e)) {
-      //不能滑动到某一个任务实例上
-      return false
-    }
-    this.stopDragging()
-    this.handleCreateTask({ start_end: '2' })
-  }
-  stopDragging = () => {
-    const target = this.refs.row_strip
-    target.onmousemove = null
-    target.onmuseup = null
-    const that = this
-    setTimeout(function() {
-      that.isMouseDown = false
-      that.setIsDragging(false)
-    }, 1000)
-  }
-  //鼠标移动
-  dashedMouseMove = e => {
-    const { ceilWidth, gantt_head_width } = this.props
-    if (this.isMouseDown) {
-      //按下的情况不处理
-      return false
-    }
-    const { dasheRectShow } = this.state
-    if (!dasheRectShow) {
-      this.setState({
-        dasheRectShow: true
-      })
-    }
-
-    const target_0 = document.getElementById('gantt_card_out')
-    const target_1 = document.getElementById('gantt_card_out_middle')
-    // 取得鼠标位置
-    let px =
-      e.pageX -
-      target_0.offsetLeft +
-      target_1.scrollLeft -
-      gantt_head_width -
-      gantt_panel_left_diff
-
-    const molX = px % ceilWidth
-    px = px - molX
-
-    const { currentRectDashed } = this.state
-    if (currentRectDashed.x == px) {
-      return
-    }
-
-    const property = {
-      x: px,
-      width: 40
-    }
-
-    this.setState({
-      currentRectDashed: property,
-      drag_holiday_count: 0
-    })
-  }
-  dashedMouseLeave = e => {
-    if (!this.isMouseDown) {
-      this.setState({
-        dasheRectShow: false
-      })
-    }
-  }
-  //记录起始时间，做创建任务工作
-  handleCreateTask = ({ start_end, top, not_create }) => {
-    const { dispatch } = this.props
-    const { ceilWidth, date_arr_one_level = [] } = this.props
-    const { currentRectDashed = {} } = this.state
-    const { x, width } = currentRectDashed
-    let counter = 0
-    let date = {}
-    for (let val of date_arr_one_level) {
-      counter += 1
-      if (counter * ceilWidth > x + width) {
-        date = val
-        break
-      }
-    }
-    const { timestamp, timestampEnd } = date
-    const update_name =
-      start_end == '1' ? 'create_start_time' : 'create_end_time'
-    this.setState(
-      {
-        [update_name]: start_end == '1' ? timestamp : timestampEnd
-      },
-      () => {
-        if (not_create) {
-          //不创建和查看
-          return
-        }
-        if (start_end == '2') {
-          //拖拽或点击操作完成，进行生成单条任务逻辑
-          this.setSpecilTaskExample() //出现任务创建或查看任务
-        }
-      }
-    )
-  }
-  //点击某个实例,或者创建任务
-  setSpecilTaskExample = e => {
-    const {
-      dispatch,
-      gantt_board_id,
-      itemValue: { parent_card_id, parent_milestone_id }
-    } = this.props
-    if (e) {
-      e.stopPropagation()
-    }
-    if (
-      !checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE, gantt_board_id)
-    ) {
-      message.warn(NOT_HAS_PERMISION_COMFIRN)
-      return
-    }
-    // 用弹出窗口创建任务
-    // let params = {}
-    // if (parent_card_id) {
-    //     params.parent_id = parent_card_id
-    // } else if (parent_milestone_id) {
-    //     params.milestone_id = parent_milestone_id
-    // }
-    // dispatch({
-    //     type: 'gantt/updateDatas',
-    //     payload: {
-    //         panel_outline_create_card_params: params, //创建任务的参数
-    //     }
-    // })
-    // this.props.addTaskModalVisibleChange && this.props.addTaskModalVisibleChange(true)
-
-    // 大纲树左边创建任务
-    let { create_start_time, create_end_time } = this.state
-    this.addCardSetOutlineTree({
-      start_time: create_start_time,
-      due_time: create_end_time,
-      editing: true
-    })
-  }
-
-  // 拖拽任务将该任务设置映射到左边创建
-  addCardSetOutlineTree = (params = {}) => {
-    let {
-      dispatch,
-      outline_tree,
-      itemValue: { add_id }
-    } = this.props
-    const data = {
-      ...params
-      // editing: true
-    }
-    let nodeValue = OutlineTree.getTreeNodeValueByName(
-      outline_tree,
-      'add_id',
-      add_id
-    )
-    const mapSetProto = data => {
-      Object.keys(data).map(item => {
-        nodeValue[item] = data[item]
-      })
-    }
-    if (nodeValue) {
-      mapSetProto(data)
-      dispatch({
-        type: 'gantt/handleOutLineTreeData',
-        payload: {
-          data: outline_tree
-        }
-      })
-    } else {
-      console.error('OutlineTree.getTreeNodeValue:未查询到节点')
-    }
-  }
-
-  // 设置拖拽生成任务虚线框内，节假日或者公休日的时间天数
-  setDragDashedRectHolidayNo = () => {
-    let count = 0
-    const { create_start_time, create_end_time } = this.state
-    const { holiday_list = [] } = this.props
-    if (!create_start_time || !create_end_time) {
-      // return count
-      this.setState({
-        drag_holiday_count: count
-      })
-    }
-    const create_start_time_ = create_start_time / 1000
-    const create_end_time_ = create_end_time / 1000
-
-    const holidy_date_arr = holiday_list.filter(item => {
-      if (
-        create_start_time_ <= Number(item.timestamp) &&
-        create_end_time_ >= Number(item.timestamp) &&
-        (item.is_week || item.festival_status == '1') && //周末或者节假日
-        item.festival_status != '2' //不是补班（周末补班不算）
-      ) {
-        return item
-      }
-    })
-
-    this.setState({
-      drag_holiday_count: holidy_date_arr.length
-    })
-  }
-
-  clearDragInfo = nextProps => {
-    //清除掉拖拽生成任务的信息
-    const {
-      itemValue: { add_id, editing }
-    } = this.props
-    const {
-      itemValue: { editing: next_editing }
-    } = nextProps
-    if (add_id) {
-      if (editing && !next_editing) {
-        //由编辑状态转变为不是编辑状态时才重置
-        this.setState({
-          currentRectDashed: { x: 0, width: 0 }, //当前操作的矩形属性
-          drag_holiday_count: 0,
-          dasheRectShow: false,
-          create_start_time: '',
-          create_end_time: ''
-        })
-        // this.addCardSetOutlineTree({ start_time: '', due_time: '' })
-        // debugger
-      }
-    }
-  }
-
-  // /空条拖拽事件-----end
-
   targetEventProps = () => {
     const {
       itemValue: { id, add_id, editing }
@@ -945,21 +618,21 @@ export default class GetRowStrip extends PureComponent {
           if (editing) {
             return
           }
-          this.dashedMousedown(e)
+          // this.dashedMousedown(e)
         },
         onMouseMove: e => {
           e.stopPropagation()
           if (editing) {
             return
           }
-          this.dashedMouseMove(e)
+          // this.dashedMouseMove(e)
         },
         onMouseLeave: e => {
           e.stopPropagation()
           if (editing) {
             return
           }
-          this.dashedMouseLeave(e)
+          // this.dashedMouseLeave(e)
           this.stripMouseLeave(e)
         },
         onMouseOver: e => {
@@ -1296,3 +969,330 @@ function mapStateToProps({
     gantt_head_width
   }
 }
+
+// // 空条拖拽事件--------------------------------------------------------------------------start
+// setTaskIsDragging = bool => {
+//   //设置任务是否在拖拽中的状态
+//   this.task_is_dragging = bool
+//   const target = this.refs.row_strip
+//   if (!target) return
+//   if (!target.style) return
+//   if (bool) {
+//     target.style.cursor = 'move'
+//   } else {
+//     target.style.cursor = 'crosshair'
+//   }
+// }
+// setIsDragging = isDragging => {
+//   const { dispatch } = this.props
+//   this.isDragging = isDragging
+// }
+
+// // 在任务实例上点击到特定的位置，阻断，是能够不出现创建任务弹窗
+// stopPropagationEle = e => {
+//   if (this.task_is_dragging) {
+//     //在做单条任务拖动的时候，不能创建
+//     return true
+//   }
+//   if (
+//     e.target.dataset &&
+//     e.target.className &&
+//     typeof e.target.className == 'string' && //容错
+//     (e.target.dataset.targetclassname == 'specific_example' ||
+//       e.target.className.indexOf('authTheme') != -1 ||
+//       e.target.className.indexOf('ant-avatar') != -1)
+//   ) {
+//     //不能滑动到某一个任务实例上
+//     return true
+//   }
+//   return false
+// }
+// //鼠标拖拽移动
+// dashedMousedown = e => {
+//   if (
+//     this.stopPropagationEle(e) || //不能滑动到某一个任务实例上
+//     this.isDragging ||
+//     this.isMouseDown //在拖拽中，还有防止重复点击
+//   ) {
+//     return false
+//   }
+//   const { currentRectDashed = {} } = this.state
+//   this.x1 = currentRectDashed.x
+//   this.setIsDragging(false)
+//   this.isMouseDown = true
+//   this.handleCreateTask({ start_end: '1' })
+//   const target = this.refs.row_strip //event.target || event.srcElement;
+//   target.onmousemove = this.dashedDragMousemove.bind(this)
+//   target.onmouseup = this.dashedDragMouseup.bind(this)
+// }
+// dashedDragMousemove = e => {
+//   if (this.stopPropagationEle(e)) {
+//     //不能滑动到某一个任务实例上
+//     return false
+//   }
+//   this.setIsDragging(true)
+
+//   const { ceilWidth, gantt_head_width } = this.props
+//   const target_0 = document.getElementById('gantt_card_out')
+//   const target_1 = document.getElementById('gantt_card_out_middle')
+//   // 取得鼠标位置
+//   const x =
+//     e.pageX -
+//     target_0.offsetLeft +
+//     target_1.scrollLeft -
+//     gantt_head_width -
+//     gantt_panel_left_diff
+//   //设置宽度
+//   const offset_left = Math.abs(x - this.x1)
+//   // 更新拖拽的最新矩形
+//   let px = this.x1 //x < this.x1 ? x : this.x1 //向左向右延申
+//   let width = offset_left < ceilWidth || x < this.x1 ? ceilWidth : offset_left //小于单位长度或者鼠标相对点击的起始点向左拖动都使用最小单位
+//   width = Math.ceil(width / ceilWidth) * ceilWidth - 6 //向上取整 4为微调
+//   const property = {
+//     x: px,
+//     width
+//   }
+//   this.setState(
+//     {
+//       currentRectDashed: property
+//     },
+//     () => {
+//       this.handleCreateTask({
+//         start_end: '2',
+//         top: property.y,
+//         not_create: true
+//       })
+//       this.setDragDashedRectHolidayNo()
+//     }
+//   )
+// }
+// dashedDragMouseup = e => {
+//   if (this.stopPropagationEle(e)) {
+//     //不能滑动到某一个任务实例上
+//     return false
+//   }
+//   this.stopDragging()
+//   this.handleCreateTask({ start_end: '2' })
+// }
+// stopDragging = () => {
+//   const target = this.refs.row_strip
+//   target.onmousemove = null
+//   target.onmuseup = null
+//   const that = this
+//   setTimeout(function() {
+//     that.isMouseDown = false
+//     that.setIsDragging(false)
+//   }, 1000)
+// }
+// //鼠标移动
+// dashedMouseMove = e => {
+//   const { ceilWidth, gantt_head_width } = this.props
+//   if (this.isMouseDown) {
+//     //按下的情况不处理
+//     return false
+//   }
+//   const { dasheRectShow } = this.state
+//   if (!dasheRectShow) {
+//     this.setState({
+//       dasheRectShow: true
+//     })
+//   }
+
+//   const target_0 = document.getElementById('gantt_card_out')
+//   const target_1 = document.getElementById('gantt_card_out_middle')
+//   // 取得鼠标位置
+//   let px =
+//     e.pageX -
+//     target_0.offsetLeft +
+//     target_1.scrollLeft -
+//     gantt_head_width -
+//     gantt_panel_left_diff
+
+//   const molX = px % ceilWidth
+//   px = px - molX
+
+//   const { currentRectDashed } = this.state
+//   if (currentRectDashed.x == px) {
+//     return
+//   }
+
+//   const property = {
+//     x: px,
+//     width: 40
+//   }
+
+//   this.setState({
+//     currentRectDashed: property,
+//     drag_holiday_count: 0
+//   })
+// }
+// dashedMouseLeave = e => {
+//   if (!this.isMouseDown) {
+//     this.setState({
+//       dasheRectShow: false
+//     })
+//   }
+// }
+// //记录起始时间，做创建任务工作
+// handleCreateTask = ({ start_end, top, not_create }) => {
+//   const { dispatch } = this.props
+//   const { ceilWidth, date_arr_one_level = [] } = this.props
+//   const { currentRectDashed = {} } = this.state
+//   const { x, width } = currentRectDashed
+//   let counter = 0
+//   let date = {}
+//   for (let val of date_arr_one_level) {
+//     counter += 1
+//     if (counter * ceilWidth > x + width) {
+//       date = val
+//       break
+//     }
+//   }
+//   const { timestamp, timestampEnd } = date
+//   const update_name =
+//     start_end == '1' ? 'create_start_time' : 'create_end_time'
+//   this.setState(
+//     {
+//       [update_name]: start_end == '1' ? timestamp : timestampEnd
+//     },
+//     () => {
+//       if (not_create) {
+//         //不创建和查看
+//         return
+//       }
+//       if (start_end == '2') {
+//         //拖拽或点击操作完成，进行生成单条任务逻辑
+//         this.setSpecilTaskExample() //出现任务创建或查看任务
+//       }
+//     }
+//   )
+// }
+// //点击某个实例,或者创建任务
+// setSpecilTaskExample = e => {
+//   const {
+//     dispatch,
+//     gantt_board_id,
+//     itemValue: { parent_card_id, parent_milestone_id }
+//   } = this.props
+//   if (e) {
+//     e.stopPropagation()
+//   }
+//   if (
+//     !checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_CREATE, gantt_board_id)
+//   ) {
+//     message.warn(NOT_HAS_PERMISION_COMFIRN)
+//     return
+//   }
+//   // 用弹出窗口创建任务
+//   // let params = {}
+//   // if (parent_card_id) {
+//   //     params.parent_id = parent_card_id
+//   // } else if (parent_milestone_id) {
+//   //     params.milestone_id = parent_milestone_id
+//   // }
+//   // dispatch({
+//   //     type: 'gantt/updateDatas',
+//   //     payload: {
+//   //         panel_outline_create_card_params: params, //创建任务的参数
+//   //     }
+//   // })
+//   // this.props.addTaskModalVisibleChange && this.props.addTaskModalVisibleChange(true)
+
+//   // 大纲树左边创建任务
+//   let { create_start_time, create_end_time } = this.state
+//   this.addCardSetOutlineTree({
+//     start_time: create_start_time,
+//     due_time: create_end_time,
+//     editing: true
+//   })
+// }
+
+// // 拖拽任务将该任务设置映射到左边创建
+// addCardSetOutlineTree = (params = {}) => {
+//   let {
+//     dispatch,
+//     outline_tree,
+//     itemValue: { add_id }
+//   } = this.props
+//   const data = {
+//     ...params
+//     // editing: true
+//   }
+//   let nodeValue = OutlineTree.getTreeNodeValueByName(
+//     outline_tree,
+//     'add_id',
+//     add_id
+//   )
+//   const mapSetProto = data => {
+//     Object.keys(data).map(item => {
+//       nodeValue[item] = data[item]
+//     })
+//   }
+//   if (nodeValue) {
+//     mapSetProto(data)
+//     dispatch({
+//       type: 'gantt/handleOutLineTreeData',
+//       payload: {
+//         data: outline_tree
+//       }
+//     })
+//   } else {
+//     console.error('OutlineTree.getTreeNodeValue:未查询到节点')
+//   }
+// }
+
+// // 设置拖拽生成任务虚线框内，节假日或者公休日的时间天数
+// setDragDashedRectHolidayNo = () => {
+//   let count = 0
+//   const { create_start_time, create_end_time } = this.state
+//   const { holiday_list = [] } = this.props
+//   if (!create_start_time || !create_end_time) {
+//     // return count
+//     this.setState({
+//       drag_holiday_count: count
+//     })
+//   }
+//   const create_start_time_ = create_start_time / 1000
+//   const create_end_time_ = create_end_time / 1000
+
+//   const holidy_date_arr = holiday_list.filter(item => {
+//     if (
+//       create_start_time_ <= Number(item.timestamp) &&
+//       create_end_time_ >= Number(item.timestamp) &&
+//       (item.is_week || item.festival_status == '1') && //周末或者节假日
+//       item.festival_status != '2' //不是补班（周末补班不算）
+//     ) {
+//       return item
+//     }
+//   })
+
+//   this.setState({
+//     drag_holiday_count: holidy_date_arr.length
+//   })
+// }
+
+// clearDragInfo = nextProps => {
+//   //清除掉拖拽生成任务的信息
+//   const {
+//     itemValue: { add_id, editing }
+//   } = this.props
+//   const {
+//     itemValue: { editing: next_editing }
+//   } = nextProps
+//   if (add_id) {
+//     if (editing && !next_editing) {
+//       //由编辑状态转变为不是编辑状态时才重置
+//       this.setState({
+//         currentRectDashed: { x: 0, width: 0 }, //当前操作的矩形属性
+//         drag_holiday_count: 0,
+//         dasheRectShow: false,
+//         create_start_time: '',
+//         create_end_time: ''
+//       })
+//       // this.addCardSetOutlineTree({ start_time: '', due_time: '' })
+//       // debugger
+//     }
+//   }
+// }
+
+// // /空条拖拽事件-----end
