@@ -148,9 +148,9 @@ class MainContent extends Component {
 
   getIframe = src => {
     const iframe =
-      '<iframe style="height: 100%;width: 100%;border:0px;" class="multi-download"  src="' +
+      '<iframe name="123" style="height: 100%;width: 100%;border:0px;" class="multi-download"  src="' +
       src +
-      '" allow="payment"></iframe>'
+      '" allow="payment" allowpaymentrequest></iframe>'
     return iframe
   }
 

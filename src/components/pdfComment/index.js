@@ -19,6 +19,7 @@ import ColorPicker from 'react-color'
 import jsPDF from 'jspdf';
 import Action from './action';
 import { dateFormat } from '@/utils/util'
+import { reject } from 'promise-polyfill';
 // import scr from './worker'
 const DefineIcon = Icon.createFromIconfontCN({
   scriptUrl: '//at.alicdn.com/t/font_1979157_wacx5384po.js',
@@ -127,6 +128,7 @@ export default class PdfComment extends React.Component{
     ? JSON.parse(localStorage.getItem('userInfo'))
     : {};
     this.errormsg = '加载失败，请重试';
+    this.isChangeVersion = false;
   }
   async componentDidMount (){
     this.mounted = true;
@@ -135,10 +137,11 @@ export default class PdfComment extends React.Component{
       versionMsg: res.data
     })
     if(!this.mounted) return ;
-    this.InitAllData();
+    this.InitAllData(true);
   }
   // 构建版本数据加载
-  InitAllData = ()=> {
+  InitAllData = (isFirst)=> {
+    this.mounted = false;
     this.drawCanvas = [];
     this.isDoing = []; // 绘制的数据缓存
     this.unDoing = []; // 点击重绘的缓存
@@ -154,10 +157,13 @@ export default class PdfComment extends React.Component{
       loadendElement: 1,
       loadend: false,
     }, ()=> {
+      this.mounted = true;
       if(this.props.fileType === 'img'){
         this.loadImgFile();
       }else
       this.loadFile();
+
+      // console.log(this.props.fileType)
       // console.log(pdfjsLib, 'pdf')
       // 初始拖拽状态
       this.initDragEvent();
@@ -208,11 +214,12 @@ export default class PdfComment extends React.Component{
   // 加载图片数据
   loadImgFile = async ()=> {
     let url = this.props.url ;
-    let response = await this.loadFilesXHR(url, (process)=> {
+    let response = await this.loadFilesXHR(url +'&_t'+ new Date().getTime(), (process)=> {
       this.setState({
         loadProcess: process
       })
     });
+    if(!this.mounted) return ;
     this.setState({
       loadend: true,
       pdfViews: [this.defaultElementId + 1],
@@ -693,10 +700,12 @@ export default class PdfComment extends React.Component{
   // 构建绘图底层
   initFabricCanvas = async (pdfPage, index)=>{
     await this.setAwaitTime(1800);
+    if(!this.mounted) return null;
     let style = this.state.drawStyles.pen;
     pdfPage.toBlob((blob)=>{
       let url = window.URL.createObjectURL(blob);
       let canvas = new fabric.Canvas( this.defaultElementId + (index),{
+        containerClass: "fabric_defualt_container",
         isDrawingMode: this.state.isDraw,
         // 控件不能被选择，不会被操作
         selectable: false,
@@ -709,13 +718,16 @@ export default class PdfComment extends React.Component{
       canvas.freeDrawingBrush.width = style.width;
       // 添加事件
       canvas.set('page_number', index);
+      canvas.set('bg_url', url);
       if(pdfPage.isSmall){
         canvas.set('small_size', true)
       }
       this.fabricAddEvent(canvas);
-      this.loadDataToCanvas(index, canvas, url)
       canvas.setBackgroundImage(url, canvas.renderAll.bind(canvas) ,{});
       this.drawCanvas.push(canvas);
+      // 如果没切换版本，则继续请求，如果更换了版本，则不请求 -- 逻辑重新考虑
+      // if(!this.isChangeVersion)
+      this.loadDataToCanvas(index, canvas, url);
     })
   }
   // 检查是否是数字
@@ -739,86 +751,92 @@ export default class PdfComment extends React.Component{
 
   // 加载页面的数据
   loadDataToCanvas = (index, canvas, url)=> {
-    let params = {
-      file_id: this.props.file_id,
-      page_number: index,
-      version_id: this.state.versionMsg.id
-    }
-    Action.getObjects(params).then(res => {
-      // console.log(res);
-      let data = res.data;
-      if(data && data.id){
-        let records = data.records || [];
-        // console.log(records)
-        // 格式化页面需要的数据
-        records = records.map(item => {
-          let keys = Object.keys(item.detail);
-          let d = {};
-          keys.forEach(key => {
-            let obj = item.detail[key];
-            let value = obj;
-            if(key === 'path' && obj){
-              value = JSON.parse(obj);
-            }
-            if(this.checkIsNumber(obj)){
-              value = +obj;
-            }
-            let n = this.checkIsBoolen(obj);
-            if(n !== undefined){
-              value = n;
-            }
-            if(key === 'id') value = obj ;
-            if(key === 'text') value = obj.toString();
-            d[key] = value;
-          })
-          if(!d['fill']){
-            d['fill'] = null;
-          }
-          d['record_id'] = item.id;
-          d['container_size'] = item.container_size;
-          return d;
-        })
-        // console.log(records)
-        let obj = {
-          objects: records,
-          version: '4.1.0'
-        }
-        // console.log(data.data)
-        // 更新不同分辨率下，每个数据所在的位置
-        canvas.loadFromJSON(obj, null, (c, object) => {
-          let container = {
-            clientWidth: canvas.getWidth(),
-            clientHeight: canvas.getHeight()
-          } // document.querySelector('#allCanvas');
-          // 保存每次画的时候，当前的页面大小，用来计算偏移量
-          let dataContainer = object.get('container_size');
-          if(dataContainer){
-            dataContainer = dataContainer.split(',').map(item => +item);
-            let scale = container.clientWidth / dataContainer[0] ;
-            object.scaleX = object.scaleX * scale;
-            object.scaleY = object.scaleY * scale;
-            object.left = object.left * scale;
-            object.top = object.top * scale;
-            object.setCoords();
-          }
-        });
-        canvas.requestRenderAll();
-        canvas.calcOffset();
-        // 设定此页的id
-        canvas.set('_id', data.id);
-        // 更新背景图
-        canvas.setBackgroundImage(url, canvas.renderAll.bind(canvas) ,{});
-        setTimeout(()=> {
-          // 优化内存
-          window.URL.revokeObjectURL(url);
-        }, 100)
+    return new Promise((resolve, reject) => {
+      let params = {
+        file_id: this.props.file_id,
+        page_number: index,
+        version_id: this.state.versionMsg.id
       }
+      Action.getObjects(params).then(res => {
+        // console.log(res);
+        resolve(res.data);
+        let data = res.data;
+        if(data && data.id){
+          let records = data.records || [];
+          // console.log(records)
+          // 格式化页面需要的数据
+          records = records.map(item => {
+            let keys = Object.keys(item.detail);
+            let d = {};
+            keys.forEach(key => {
+              let obj = item.detail[key];
+              let value = obj;
+              if(key === 'path' && obj){
+                value = JSON.parse(obj);
+              }
+              if(this.checkIsNumber(obj)){
+                value = +obj;
+              }
+              let n = this.checkIsBoolen(obj);
+              if(n !== undefined){
+                value = n;
+              }
+              if(key === 'id') value = obj ;
+              if(key === 'text') value = obj.toString();
+              d[key] = value;
+            })
+            if(!d['fill']){
+              d['fill'] = null;
+            }
+            d['record_id'] = item.id;
+            d['container_size'] = item.container_size;
+            return d;
+          })
+          // console.log(records)
+          let obj = {
+            objects: records,
+            version: '4.1.0'
+          }
+          // console.log(data.data)
+          // 更新不同分辨率下，每个数据所在的位置
+          canvas.loadFromJSON(obj, null, (c, object) => {
+            let container = {
+              clientWidth: canvas.getWidth(),
+              clientHeight: canvas.getHeight()
+            } // document.querySelector('#allCanvas');
+            // 保存每次画的时候，当前的页面大小，用来计算偏移量
+            let dataContainer = object.get('container_size');
+            if(dataContainer){
+              dataContainer = dataContainer.split(',').map(item => +item);
+              let scale = container.clientWidth / dataContainer[0] ;
+              object.scaleX = object.scaleX * scale;
+              object.scaleY = object.scaleY * scale;
+              object.left = object.left * scale;
+              object.top = object.top * scale;
+              object.setCoords();
+            }
+          });
+          canvas.requestRenderAll();
+          canvas.calcOffset();
+          // 设定此页的id
+          canvas.set('_id', data.id);
+          // 更新背景图
+          canvas.setBackgroundImage(url, canvas.renderAll.bind(canvas) ,{});
+          // setTimeout(()=> {
+          //   // 优化内存
+          //   window.URL.revokeObjectURL(url);
+          // }, 100)
+        }
+      }).catch(err => {
+        reject()
+      })
     })
   }
   // 渲染因为浏览器把整个页面隐藏了的渲染器
   loadIsDocumentHiddenIngCanvas = ()=>{
     if(this.noloadCanvas.length){
       ( async ()=> {
+        if(!this.mounted) return ;
         for(let i = 0; i < this.noloadCanvas.length; i++){
           if(!this.mounted) break;
           if(document.hidden) continue;
@@ -851,6 +869,7 @@ export default class PdfComment extends React.Component{
     // let style = this.state.drawStyles.pen;
     // 异步循环
     ( async ()=>{
+      if(!this.mounted) return ;
       for(let i = 0; i < pdf.numPages ; i ++){
         if(!this.mounted) break;
         let { loadendElement } = this.state;
@@ -885,18 +904,16 @@ export default class PdfComment extends React.Component{
     return array;
   }
 
-  // 页面宽度变化
-
 
   // 加载文件
   loadFile = async ()=> {
     // let url = 'api/2.pdf';
-    let url = this.props.url;
+    let url = this.props.url + '&_t='+ new Date().getTime();
 
     let pdfFile = pdfjsLib.getDocument({
       url,
       httpHeaders: {
-        "Access-Control-Allow-Origin": "*",
+        // "Access-Control-Allow-Origin": "*",
       }
     });
         // console.log(pdfFile)
@@ -1042,6 +1059,8 @@ export default class PdfComment extends React.Component{
   // 删除选中对象
   removeObject = ()=>{
     let { activeObject} = this.state;
+    this.drawType = null;
+    this.changePen(false)
     if(activeObject){
       let canvas = activeObject.canvas;
       // console.log(activeObject)
@@ -1459,7 +1478,7 @@ export default class PdfComment extends React.Component{
                 this.setState({
                   versionMsg: v.data
                 }, ()=> {
-                  this.InitAllData();
+                  this.getVersion2Render();
                 })
               }
             })
@@ -1467,6 +1486,7 @@ export default class PdfComment extends React.Component{
         })
       }
     }
+
     return (
       <Dropdown
       visible={visible}
@@ -1493,14 +1513,31 @@ export default class PdfComment extends React.Component{
       </Dropdown>
     )
   }
+
+  // 切换更新版本数据 只更新已加载的，未加载的会在显示canvas的时候自动加载
+  getVersion2Render = ()=> {
+    let canvasList = this.drawCanvas;
+    ( async ()=> {
+      if(!this.mounted) return ;
+      for(let i = 0; i< canvasList.length; i++){
+        if(document.hidden) continue;
+        if(!this.mounted) break;
+        let canvas = canvasList[i];
+        await this.loadDataToCanvas(i+1, canvas, canvas.get('bg_url'));
+        await this.setAwaitTime(800);
+      }
+    })()
+  }
+
   // 切换版本
   setActioveVersion =(val = {})=> {
     if(this.state.versionMsg.id === val.id) return ;
+    this.isChangeVersion = true;
     this.setState({
       versionMsg: val
     }, () => {
       // 重新构建所有数据
-      this.InitAllData();
+      this.getVersion2Render();
     })
   }
 
@@ -1722,7 +1759,7 @@ export default class PdfComment extends React.Component{
     let { activeElement ,allPdfElement, loadendElement, drawStyles, isHistoryIn} = this.state;
     const { VersionRender } = this;
     return (
-      ReactDOM.createPortal(
+      // ReactDOM.createPortal(
         <div className={styles.pdfCanvasBox} style={{paddingLeft: isHistoryIn ? '20vw' : ""}}>
           {
             isHistoryIn && (
@@ -1881,8 +1918,8 @@ export default class PdfComment extends React.Component{
           </div>
           <BackTop target={()=> document.querySelector('#canvas_container')}/>
         </div>
-        ,document.body
-      )
+      //   ,document.body
+      // )
     )
   }
 }
