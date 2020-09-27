@@ -214,7 +214,7 @@ export default class PdfComment extends React.Component{
   // 加载图片数据
   loadImgFile = async ()=> {
     let url = this.props.url ;
-    let response = await this.loadFilesXHR(url, (process)=> {
+    let response = await this.loadFilesXHR(url +'&_t'+ new Date().getTime(), (process)=> {
       this.setState({
         loadProcess: process
       })
