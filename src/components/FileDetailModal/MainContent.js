@@ -342,7 +342,7 @@ class MainContent extends Component {
   handleToShowPdf = async (type = 'pdf')=> {
     // 转换成功之后的回调
     let canEnter = await this.handleEnterCirclePointComment();
-    const { currentPreviewFileData = {}, filePreviewUrl} = this.props;
+    const { currentPreviewFileData = {}, filePreviewUrl, fileFileUrl} = this.props;
     const {
       board_id,
       privileges = [],
@@ -352,9 +352,10 @@ class MainContent extends Component {
       folder_id
     } = currentPreviewFileData;
 
-    if(canEnter){
+    let FILE_NAME = getSubfixName(file_name);
+    if(!!canEnter){
       let obj = {
-        url: filePreviewUrl,
+        url: FILE_NAME === '.pdf' ? fileFileUrl : filePreviewUrl,
         file_id: id,
         file_name,
         fileType: type
