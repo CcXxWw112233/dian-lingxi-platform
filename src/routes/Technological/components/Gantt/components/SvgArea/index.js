@@ -36,7 +36,8 @@ const top_diff_60 = task_item_height + task_item_margin_top //位置误差微调
 const top_diff_30 = top_diff_60 / 2 + 2 //位置误差微调 ,+2由于任务间距太小，恢复可去掉
 const top_diff_20 = task_item_margin_top //位置误差微调
 const top_diff_10 = task_item_margin_top / 2 - 2 //位置误差微调, -2由于任务间距太小，恢复可去掉
-const top_diff = task_item_height / 2 + task_item_margin_top /// 2 //位置误差微调
+let top_diff = task_item_height / 2 + task_item_margin_top /// 2 //位置误差微调
+const top_diff_initial = top_diff
 
 @connect(mapStateToProps)
 export default class index extends Component {
@@ -70,6 +71,11 @@ export default class index extends Component {
     window.addEventListener('scroll', this.closeOperate, true)
   }
   componentWillReceiveProps(nextProps) {
+    if (ganttIsOutlineView({ group_view_type: nextProps.group_view_type })) {
+      top_diff = top_diff_initial + 9
+    } else {
+      top_diff = top_diff_initial
+    }
     const { rely_map = [] } = nextProps
     this.setState(
       {
