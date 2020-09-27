@@ -8,6 +8,7 @@ import AppendSubTaskItem from './AppendSubTaskItem'
 import { timestampToTimeNormal3, timestampToTimeNormal } from '@/utils/util'
 import { connect } from 'dva'
 import AvatarList from '@/components/TaskDetailModal/AvatarList'
+import moment from 'moment'
 
 @connect(
   ({
@@ -241,7 +242,10 @@ export default class AppendSubTask extends Component {
                                 : '开始时间'
                             }
                             format="YYYY/MM/DD HH:mm"
-                            showTime={{ format: 'HH:mm' }}
+                            showTime={{
+                              defaultValue: moment('00:00', 'HH:mm'),
+                              format: 'HH:mm'
+                            }}
                             style={{
                               opacity: 0,
                               width: 'auto',
@@ -279,7 +283,10 @@ export default class AppendSubTask extends Component {
                                 : '开始时间'
                             }
                             format="YYYY/MM/DD HH:mm"
-                            showTime={{ format: 'HH:mm' }}
+                            showTime={{
+                              defaultValue: moment('00:00', 'HH:mm'),
+                              format: 'HH:mm'
+                            }}
                             style={{
                               opacity: 0,
                               width: 'auto',
@@ -319,7 +326,10 @@ export default class AppendSubTask extends Component {
                                 : '截止时间'
                             }
                             format="YYYY/MM/DD HH:mm"
-                            showTime={{ format: 'HH:mm' }}
+                            showTime={{
+                              defaultValue: moment('00:00', 'HH:mm'),
+                              format: 'HH:mm'
+                            }}
                             style={{
                               opacity: 0,
                               width: 'auto',
@@ -357,7 +367,10 @@ export default class AppendSubTask extends Component {
                                 : '截止时间'
                             }
                             format="YYYY/MM/DD HH:mm"
-                            showTime={{ format: 'HH:mm' }}
+                            showTime={{
+                              defaultValue: moment('00:00', 'HH:mm'),
+                              format: 'HH:mm'
+                            }}
                             style={{
                               opacity: 0,
                               width: 'auto',

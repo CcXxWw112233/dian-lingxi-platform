@@ -29,6 +29,7 @@ import { connect } from 'dva'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import { currentNounPlanFilterName } from '../../../../../../utils/businessFunction'
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
+import moment from 'moment'
 
 const getEffectOrReducerByName = name => `milestoneDetail/${name}`
 @connect(mapStateToProps)
@@ -618,7 +619,10 @@ export default class MainContent extends React.Component {
                   // disabledDate={this.disabledDueTime.bind(this)}
                   placeholder={'截止时间'}
                   format="YYYY/MM/DD HH:mm"
-                  showTime={{ format: 'HH:mm' }}
+                  showTime={{
+                    defaultValue: moment('00:00', 'HH:mm'),
+                    format: 'HH:mm'
+                  }}
                   onChange={this.endDatePickerChange.bind(this)}
                   style={{
                     opacity: 0,

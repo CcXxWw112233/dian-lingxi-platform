@@ -41,6 +41,7 @@ import { isPaymentOrgUser } from '@/utils/businessFunction'
 import BasicFieldContainer from './BasicFieldContainer'
 import { currentNounPlanFilterName } from '../../../utils/businessFunction'
 import { TASKS } from '../../../globalset/js/constant'
+import moment from 'moment'
 
 @connect(mapStateToProps)
 export default class MainUIComponent extends Component {
@@ -941,7 +942,11 @@ export default class MainUIComponent extends Component {
                                     : '开始时间'
                                 }
                                 format="YYYY/MM/DD HH:mm"
-                                showTime={{ format: 'HH:mm' }}
+                                // showTime={{ format: 'HH:mm' }}
+                                showTime={{
+                                  defaultValue: moment('00:00', 'HH:mm'),
+                                  format: 'HH:mm'
+                                }}
                                 style={{
                                   opacity: 0,
                                   height: '100%',
@@ -1021,7 +1026,11 @@ export default class MainUIComponent extends Component {
                                     : '截止时间'
                                 }
                                 format="YYYY/MM/DD HH:mm"
-                                showTime={{ format: 'HH:mm' }}
+                                // showTime={{ format: 'HH:mm' }}
+                                showTime={{
+                                  defaultValue: moment('00:00', 'HH:mm'),
+                                  format: 'HH:mm'
+                                }}
                                 // onOk={this.endDatePickerChange.bind(this)}
                                 onChange={this.endDatePickerChange.bind(this)}
                                 style={{

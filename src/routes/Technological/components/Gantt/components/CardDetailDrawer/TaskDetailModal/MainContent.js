@@ -38,6 +38,7 @@ import {
 import BasicFieldUIComponent from './BasicFieldUIComponent'
 import BasicFieldContainer from '../../../../../../../components/TaskDetailModal/UIWithContainerComponent/BasicFieldContainer'
 import CustomCategoriesOperate from '../../../../../../../components/CustomFields/CustomCategoriesOperate'
+import moment from 'moment'
 
 @connect(mapStateToProps)
 export default class MainContent extends Component {
@@ -907,7 +908,10 @@ export default class MainContent extends Component {
                                   : '开始时间'
                               }
                               format="YYYY/MM/DD HH:mm"
-                              showTime={{ format: 'HH:mm' }}
+                              showTime={{
+                                defaultValue: moment('00:00', 'HH:mm'),
+                                format: 'HH:mm'
+                              }}
                               style={{
                                 opacity: 0,
                                 height: '100%',
@@ -986,7 +990,10 @@ export default class MainContent extends Component {
                                   : '截止时间'
                               }
                               format="YYYY/MM/DD HH:mm"
-                              showTime={{ format: 'HH:mm' }}
+                              showTime={{
+                                defaultValue: moment('00:00', 'HH:mm'),
+                                format: 'HH:mm'
+                              }}
                               onChange={this.endDatePickerChange.bind(this)}
                               style={{
                                 opacity: 0,

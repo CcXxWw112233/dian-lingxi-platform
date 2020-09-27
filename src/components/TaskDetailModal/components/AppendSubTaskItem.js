@@ -30,6 +30,7 @@ import {
   judgeFileType,
   showMemberName
 } from '../handleOperateModal'
+import moment from 'moment'
 
 @connect(
   ({
@@ -264,7 +265,10 @@ export default class AppendSubTaskItem extends Component {
                           : '开始时间'
                       }
                       format="YYYY/MM/DD HH:mm"
-                      showTime={{ format: 'HH:mm' }}
+                      showTime={{
+                        defaultValue: moment('00:00', 'HH:mm'),
+                        format: 'HH:mm'
+                      }}
                       style={{
                         opacity: 0,
                         height: '100%',
@@ -299,7 +303,10 @@ export default class AppendSubTaskItem extends Component {
                             : '开始时间'
                         }
                         format="YYYY/MM/DD HH:mm"
-                        showTime={{ format: 'HH:mm' }}
+                        showTime={{
+                          defaultValue: moment('00:00', 'HH:mm'),
+                          format: 'HH:mm'
+                        }}
                         style={{
                           opacity: 0,
                           height: '100%',
@@ -340,7 +347,10 @@ export default class AppendSubTaskItem extends Component {
                           : '截止时间'
                       }
                       format="YYYY/MM/DD HH:mm"
-                      showTime={{ format: 'HH:mm' }}
+                      showTime={{
+                        defaultValue: moment('00:00', 'HH:mm'),
+                        format: 'HH:mm'
+                      }}
                       style={{
                         opacity: 0,
                         width: 'auto',
@@ -375,7 +385,10 @@ export default class AppendSubTaskItem extends Component {
                           : '截止时间'
                       }
                       format="YYYY/MM/DD HH:mm"
-                      showTime={{ format: 'HH:mm' }}
+                      showTime={{
+                        defaultValue: moment('00:00', 'HH:mm'),
+                        format: 'HH:mm'
+                      }}
                       style={{
                         opacity: 0,
                         width: 'auto',

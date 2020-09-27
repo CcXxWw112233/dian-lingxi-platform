@@ -80,7 +80,7 @@ export default class Header extends React.Component {
     // console.log(this.props, 'sssss_milestone')
     const { milestone_detail = {}, users = [] } = this.props
     const { board_name, id, principals = [], parent_id } = milestone_detail
-    let title = parent_id == '0' ? '里程碑' : '子里程碑'
+    let title = parent_id == '0' || !parent_id ? '里程碑' : '子里程碑'
     let title_icon = parent_id == '0' ? <>&#xe633;</> : <>&#xe7b7;</>
     return (
       <div className={headerStyles.header_out}>
