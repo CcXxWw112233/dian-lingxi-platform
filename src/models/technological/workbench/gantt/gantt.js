@@ -89,7 +89,7 @@ export default {
   state: {
     datas: {
       ...gantt_effect.state,
-      gantt_view_mode: 'hours', //week / month /year/ hours '周视图，月视图，年视图,'，原来月视图定义成 ‘天视图’， 年视图则是定义成 ‘月视图’
+      gantt_view_mode: 'month', //week / month /year/ hours '周视图，月视图，年视图,'，原来月视图定义成 ‘天视图’， 年视图则是定义成 ‘月视图’
       gold_date_arr: [], //所需要的日期数据
       date_arr_one_level: [], //所有日期数据扁平成一级数组
       start_date: {}, //日期最开始的那一天
