@@ -22,7 +22,7 @@ import { dateFormat } from '@/utils/util'
 import { reject } from 'promise-polyfill';
 // import scr from './worker'
 const DefineIcon = Icon.createFromIconfontCN({
-  scriptUrl: '//at.alicdn.com/t/font_1979157_wacx5384po.js',
+  scriptUrl: '//at.alicdn.com/t/font_1979157_0tew4yx0joc.js',
 });
 
 export default class PdfComment extends React.Component{
@@ -980,7 +980,7 @@ export default class PdfComment extends React.Component{
         <div className={styles.imgCanvas} key={item}>
           <canvas key={item} id={item}></canvas>
         </div>
-        : <canvas key={item} id={item}></canvas>
+        : <canvas key={item} id={item} style={{width: "100%"}}></canvas>
         }
         </Fragment>
 
@@ -1530,7 +1530,7 @@ export default class PdfComment extends React.Component{
   }
 
   // 切换版本
-  setActioveVersion =(val = {})=> {
+  setActionVersion =(val = {})=> {
     if(this.state.versionMsg.id === val.id) return ;
     this.isChangeVersion = true;
     this.setState({
@@ -1538,6 +1538,8 @@ export default class PdfComment extends React.Component{
     }, () => {
       // 重新构建所有数据
       this.getVersion2Render();
+      if(this.state.isHistoryIn)
+      this.fetchHistory(this.state.isHistoryIn);
     })
   }
 
@@ -1549,7 +1551,7 @@ export default class PdfComment extends React.Component{
       data.map(item => {
         return (
           <div className={`${styles.version_item} ${versionMsg.id === item.id ? styles.version_active : ""}`} key={item.id}
-          onClick={this.setActioveVersion.bind(this, item)}>
+          onClick={this.setActionVersion.bind(this, item)}>
             {item.name ? item.name : dateFormat(+item.create_time + '000', 'yyyy/MM/dd HH:mm')}
             <VersionOperation data={item}/>
           </div>
@@ -1628,22 +1630,22 @@ export default class PdfComment extends React.Component{
   }
 
   // 获取历史记录
-  fetchHistory = (next = {})=> {
+  fetchHistory = (flag)=> {
     let { versionMsg, isHistoryIn} = this.state;
     let param = {
       next_id: "",
       version_id: versionMsg.id
     }
     this.setState({
-      isHistoryIn: !isHistoryIn
+      isHistoryIn: flag === undefined ? !isHistoryIn : flag
     },()=> {
       if(this.state.isHistoryIn){
         this.scrollToLoad(this.historyContainerRef);
       }
       // if(this.props.fileType !== 'img')
-      this.resize();
+      // this.resize();
     })
-    if(!isHistoryIn)
+    if(!isHistoryIn || flag)
     this.getHistory(param).then(data => {
       this.historyLast = data.next_id || "";
       this.setState({
@@ -1778,7 +1780,7 @@ export default class PdfComment extends React.Component{
           }
           <div className={styles.tools}>
             <div className={`${styles.history} ${globalStyles.authTheme}`}
-            onClick={this.fetchHistory}>
+            onClick={this.fetchHistory.bind(this, undefined)}>
               &#xe7b4;
             </div>
             <div className={`${styles.toolsItem} ${styles.pages}`}>
@@ -1886,7 +1888,7 @@ export default class PdfComment extends React.Component{
                 </div>
               </Popconfirm> */}
               <div className={styles.drawSetItem} onClick={this.exportPdf}>
-                <DefineIcon type="icon-daochu2"/>
+                <DefineIcon type="icon-download"/>
               </div>
               {this.drawTools.map(item => {
                 return (
