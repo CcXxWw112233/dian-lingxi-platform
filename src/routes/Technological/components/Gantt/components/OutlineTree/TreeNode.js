@@ -17,7 +17,7 @@ import {
   task_item_margin_top,
   ceil_height
 } from '../../constants'
-import { turn } from 'core-js/fn/array'
+import { getTreeNodeValue } from '../../../../../../models/technological/workbench/gantt/gantt_utils'
 
 @connect(mapStateToProps)
 export default class TreeNode extends Component {
@@ -437,34 +437,107 @@ export default class TreeNode extends Component {
     return <span className={`${styles.editIcon}`}>&#xe7b2;</span>
   }
 
-  recursion = (data, currentId, type) => {
-    let new_data = [...data]
-    new_data = new_data.map(item => {
-      // if (item.id == currentId)
+  updateOutLineTreeData = outline_tree => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'gantt/handleOutLineTreeData',
+      payload: {
+        data: outline_tree
+      }
     })
+  }
+
+  /**
+   * 递归遍历,修改当前操作的节点数据
+   * @param {Boolean} display_type 改变值得内容 false 隐藏 true显示
+   * @param {String} parent_id 当前操作元素的父ID
+   * @param {Object} node 当前操作的元素节点
+   * @param {Array} parent_ids 当前操作元素的父节点ID
+   * 1. 父 关 子 关
+   * 2. 父 开 子 不管
+   * 3. 子 开 父 一定开
+   * 4. 子 关 父 不管
+   */
+  recursion = ({ display_type, parent_id, node, parent_ids = [] }) => {
+    if (!parent_id) {
+      // 如果说父ID不存在, 表示点击的是最外层元素
+      if (!node) return
+      // 首先：点击某个元素 就是对当前这个元素进行状态改变
+      node.is_display = display_type
+      // 父 关 子 关
+      if (!display_type && node.children.length) {
+        node.children = node.children.map(item => {
+          // 点击某个元素 就是对当前这个元素进行状态改变
+          item.is_display = display_type
+          this.recursion({
+            id: item.id,
+            display_type,
+            parent_id: item.parent_id,
+            node: item
+          })
+          return item
+        })
+      }
+      return
+    }
+    // 父ID存在, 表示点击的是子元素了
+    // 进行判断
+    if (!node) return
+    // 表示: 子 开 父 一定开
+    if (!!parent_ids.length) {
+      this.updateParentDisplayType(parent_ids)
+    }
+    // 点击某个元素 就是对当前这个元素进行状态改变
+    node.is_display = display_type
+    if (!display_type && node.children && node.children.length) {
+      node.children = node.children.map((item, i) => {
+        // 点击某个元素 就是对当前这个元素进行状态改变
+        item.is_display = display_type
+        this.recursion({
+          id: item.id,
+          display_type,
+          parent_id: item.parent_id,
+          node: item
+        })
+        return item
+      })
+    }
+  }
+
+  /**
+   * 更新父的显示隐藏状态
+   * 表示: 子 开 父 一定开
+   * @param {*} parent_ids
+   */
+  updateParentDisplayType = (parent_ids = []) => {
+    if (!parent_ids.length) return true
+    for (let val of parent_ids) {
+      const node = getTreeNodeValue(this.props.outline_tree, val)
+      node.is_display = true
+    }
   }
 
   /**
    * 点击操作显示隐藏
    * @param {Object} e 事件对象
-   * @param {Boolean} type 选择类型 false 为隐藏 true 为显示
+   * @param {String} id 当前点击的ID
+   * @param {String} parent_id 当前点击的父ID
+   * @param {Boolean} display_type 选择类型 false 为隐藏 true 为显示
    */
-  handleOperateEyeIcon = ({ e, nodeValue = {}, type }) => {
+  handleOperateEyeIcon = ({ e, id, parent_id, display_type }) => {
     e && e.stopPropagation()
-    console.log(e)
-    const { id } = nodeValue
-    const { outline_tree = [] } = this.props
-    let outline_tree_ = JSON.parse(JSON.stringify(outline_tree))
-    if (type) {
-    } else {
-      outline_tree_ = this.recursion(outline_tree_, id, type)
-    }
-    // this.props.dispatch({
-    //   type: 'gantt/updateDatas',
-    //   payload: {
-    //     outline_tree: outline_tree_
-    //   }
-    // })
+    let { outline_tree = [] } = this.props
+    // 只考虑当期节点进行操作
+    const node = getTreeNodeValue(outline_tree, id)
+    this.recursion({
+      outline_tree_: node.children || [],
+      id,
+      parent_id,
+      parent_ids: node.parent_ids || [],
+      display_type,
+      node
+    })
+    this.updateOutLineTreeData(outline_tree)
   }
 
   renderTitle = () => {
@@ -479,7 +552,8 @@ export default class TreeNode extends Component {
       is_focus,
       editing,
       status,
-      is_display
+      is_display,
+      parent_id
     } = nodeValue
     const {
       onDataProcess,
@@ -545,12 +619,17 @@ export default class TreeNode extends Component {
             ) : title ? (
               <span>
                 {selected_hide_term &&
-                  (is_display ? (
+                  (is_display || is_display == undefined ? (
                     <span
                       title="隐藏"
-                      className={`${globalStyles.authTheme} ${styles.outline_tree_node_show_eye_icon}`}
+                      className={`${globalStyles.authTheme} ${styles.outline_tree_node_hide_eye_icon}`}
                       onClick={e => {
-                        this.handleOperateEyeIcon({ e, nodeValue, type: false })
+                        this.handleOperateEyeIcon({
+                          e,
+                          id,
+                          parent_id: parent_id,
+                          display_type: false
+                        })
                       }}
                     >
                       &#xe6f9;
@@ -559,6 +638,14 @@ export default class TreeNode extends Component {
                     <span
                       title="显示"
                       className={`${globalStyles.authTheme} ${styles.outline_tree_node_show_eye_icon}`}
+                      onClick={e => {
+                        this.handleOperateEyeIcon({
+                          e,
+                          id,
+                          parent_id: parent_id,
+                          display_type: true
+                        })
+                      }}
                     >
                       &#xe8ff;
                     </span>
@@ -743,7 +830,8 @@ export default class TreeNode extends Component {
       hoverItem = {},
       gantt_board_id,
       projectDetailInfoData = {},
-      outline_tree_round = []
+      outline_tree_round = [],
+      selected_hide_term
     } = this.props
     const isLeaf = false
     let type
@@ -770,9 +858,10 @@ export default class TreeNode extends Component {
           onMouseEnter={this.onMouseEnter}
           onMouseLeave={this.onMouseLeave}
         >
-          {(hoverItem.id && hoverItem.id == id) ||
-          (hoverItem.add_id && hoverItem.add_id == add_id) ||
-          operateVisible ? (
+          {((hoverItem.id && hoverItem.id == id) ||
+            (hoverItem.add_id && hoverItem.add_id == add_id) ||
+            operateVisible) &&
+          !selected_hide_term ? (
             <Dropdown
               overlay={this.renderOperate()}
               visible={operateVisible}
@@ -904,7 +993,8 @@ export default class TreeNode extends Component {
       hoverItem = {},
       gantt_board_id,
       projectDetailInfoData = {},
-      outline_tree_round = []
+      outline_tree_round = [],
+      selected_hide_term
     } = this.props
     let type
     if (tree_type) {
@@ -939,9 +1029,10 @@ export default class TreeNode extends Component {
                 className={`${styles.outline_tree_line_node_dot} ${this.setDotStyle[type]}`}
               ></span>
             )
-          ) : (hoverItem.id && hoverItem.id == id) ||
-            (hoverItem.add_id && hoverItem.add_id == add_id) ||
-            operateVisible ? (
+          ) : ((hoverItem.id && hoverItem.id == id) ||
+              (hoverItem.add_id && hoverItem.add_id == add_id) ||
+              operateVisible) &&
+            !selected_hide_term ? (
             <Dropdown
               overlay={this.renderOperate()}
               visible={operateVisible}

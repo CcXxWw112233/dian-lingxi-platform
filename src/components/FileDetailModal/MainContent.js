@@ -23,6 +23,7 @@ import {
 } from '@/globalset/js/constant'
 import NotSupportImg from '@/assets/projectDetail/fileDetail/not_support.png'
 import { platformNouns } from '../../globalset/clientCustorm'
+import PdfComment from '../pdfComment'
 // let this.timer
 
 @connect(mapStateToProps)
@@ -47,16 +48,21 @@ class MainContent extends Component {
         '.docx',
         '.ppt',
         '.pptx',
-        '.png',
         '.txt',
-        '.gif',
-        '.jpg',
-        '.jpeg',
         '.tif',
         '.bmp',
         '.ico'
-      ]
+      ],
+      isInPdfComment: false, // 是否进入了圈评
+      pdfCommentData: {}, // pdf圈评需要的数据
     }
+    this.dontTransferType = [
+      '.pdf',
+      '.png',
+      '.gif',
+      '.jpeg',
+      '.jpg'
+    ]
   }
 
   componentDidMount() {
@@ -144,7 +150,7 @@ class MainContent extends Component {
     const iframe =
       '<iframe style="height: 100%;width: 100%;border:0px;" class="multi-download"  src="' +
       src +
-      '"></iframe>'
+      '" allow="payment"></iframe>'
     return iframe
   }
 
@@ -171,85 +177,114 @@ class MainContent extends Component {
     clearTimeout(this.timer)
   }
 
+  // 转换pdf功能
+  // transfromFile2PDF = ({file_name, file_id, folder_id})=> {
+  //   const { supportFileTypeArray = [] } = this.state
+  //   let FILE_NAME = getSubfixName(file_name)
+  //   if (supportFileTypeArray.indexOf(FILE_NAME) != -1) {
+  //     fileConvertPdfAlsoUpdateVersion({ id: file_id }).then(res => {
+  //       if(isApiResponseOk(res)){
+  //         console.log(res);
+  //       }
+  //     })
+  //   }
+  // }
+
   // PDF圈评转换事件
   fetchConvertPdfAlsoUpdateVersion = ({ file_name, file_id, folder_id }) => {
-    const {
-      currentPreviewFileData = {},
-      isZoomPictureFullScreenMode,
-      isPdfLoaded
-    } = this.props
-    const { supportFileTypeArray = [] } = this.state
-    let FILE_NAME = getSubfixName(file_name)
-    if (supportFileTypeArray.indexOf(FILE_NAME) != -1) {
-      fileConvertPdfAlsoUpdateVersion({ id: file_id }).then(res => {
-        if (isApiResponseOk(res)) {
-          this.props.updateStateDatas &&
-            this.props.updateStateDatas({ selectedKeys: [res.data.id] })
-          let isPDF = getSubfixName(res.data.file_name) == '.pdf'
-          if (isPDF) {
-            setCurrentVersionFile({
-              id: res.data.id,
-              set_major_version: '1'
-            }).then(result => {
-              if (isApiResponseOk(result)) {
-                this.props.delayUpdatePdfDatas &&
-                  this.props.delayUpdatePdfDatas({
-                    id: res.data.id,
-                    calback: () => {
-                      this.setState({
-                        percent: 0,
-                        is_petty_loading: !isZoomPictureFullScreenMode && false,
-                        is_large_loading: isZoomPictureFullScreenMode && false
-                      })
-                    }
-                  })
-                this.props.updateStateDatas &&
-                  this.props.updateStateDatas({
-                    filePreviewCurrentFileId: res.data.id,
-                    currentPreviewFileData: {
-                      ...currentPreviewFileData,
-                      id: res.data.id
-                    },
-                    filePreviewCurrentName: res.data.file_name,
-                    fileType: getSubfixName(res.data.file_name)
-                  })
-                this.setState({
-                  is_petty_loading: !isZoomPictureFullScreenMode
-                    ? isPdfLoaded
-                      ? true
-                      : false
-                    : false,
-                  is_large_loading: isZoomPictureFullScreenMode
-                    ? isPdfLoaded
-                      ? true
-                      : false
-                    : false
-                  // percent: 0
-                })
-                // 用来保存在父元素中管理起来
-                this.props.updateStateDatas &&
-                  this.props.updateStateDatas({
-                    // is_petty_loading: !isZoomPictureFullScreenMode && !isPdfLoaded ? false : true,
-                    // is_large_loading: isZoomPictureFullScreenMode && isPdfLoaded ? true :false,
-                    selectedKeys: [res.data.id]
-                  })
-                this.props.whetherUpdateFolderListData &&
-                  this.props.whetherUpdateFolderListData({ folder_id })
-                // setTimeout(() => this.props.updateStateDatas && this.props.updateStateDatas({selectedKeys: [res.data.id]}),200)
-                // this.props.updateStateDatas && this.props.updateStateDatas({selectedKeys: [res.data.id]})
-              }
-            })
-          } else {
-            this.props.getCurrentFilePreviewData &&
-              this.props.getCurrentFilePreviewData({ id: res.data.id })
+    return new Promise((resolve, reject) => {
+      const {
+        currentPreviewFileData = {},
+        isZoomPictureFullScreenMode,
+        isPdfLoaded
+      } = this.props
+      const { supportFileTypeArray = [] } = this.state
+      let FILE_NAME = getSubfixName(file_name)
+      if (supportFileTypeArray.indexOf(FILE_NAME) != -1) {
+        fileConvertPdfAlsoUpdateVersion({ id: file_id }).then( async res => {
+          if (isApiResponseOk(res)) {
             this.props.updateStateDatas &&
               this.props.updateStateDatas({ selectedKeys: [res.data.id] })
-          }
-        } else {
-          message.warn(res.message, MESSAGE_DURATION_TIME)
-          if (res.code == 4047) {
-            // 表示转换失败
-            message.error(res.message, MESSAGE_DURATION_TIME)
+            // let isPDF = getSubfixName(res.data.file_name) == '.pdf'
+            // if (isPDF) {
+              if(this.props.getCurrentFilePreviewData){
+                let fileResp = await this.props.getCurrentFilePreviewData({ id: res.data.id });
+              }
+              setCurrentVersionFile({
+                id: res.data.id,
+                set_major_version: '1'
+              }).then( result => {
+                if (isApiResponseOk(result)) {
+                  // this.props.delayUpdatePdfDatas &&
+                  //   this.props.delayUpdatePdfDatas({
+                  //     id: res.data.id,
+                  //     calback: () => {
+                  //       this.setState({
+                  //         percent: 0,
+                  //         is_petty_loading: !isZoomPictureFullScreenMode && false,
+                  //         is_large_loading: isZoomPictureFullScreenMode && false
+                  //       })
+                  //     }
+                  //   })
+                  this.props.updateStateDatas &&
+                    this.props.updateStateDatas({
+                      filePreviewCurrentFileId: res.data.id,
+                      currentPreviewFileData: {
+                        ...currentPreviewFileData,
+                        id: res.data.id
+                      },
+                      filePreviewCurrentName: res.data.file_name,
+                      fileType: getSubfixName(res.data.file_name)
+                    })
+                  this.setState({
+                    is_petty_loading: !isZoomPictureFullScreenMode
+                      ? isPdfLoaded
+                        ? true
+                        : false
+                      : false,
+                    is_large_loading: isZoomPictureFullScreenMode
+                      ? isPdfLoaded
+                        ? true
+                        : false
+                      : false
+                    // percent: 0
+                  })
+                  // 用来保存在父元素中管理起来
+                  // this.props.updateStateDatas &&
+                  //   this.props.updateStateDatas({
+                  //     // is_petty_loading: !isZoomPictureFullScreenMode && !isPdfLoaded ? false : true,
+                  //     // is_large_loading: isZoomPictureFullScreenMode && isPdfLoaded ? true :false,
+                  //     selectedKeys: [res.data.id]
+                  //   })
+                  // this.props.whetherUpdateFolderListData &&
+                  //   this.props.whetherUpdateFolderListData({ folder_id })
+                  // setTimeout(() => this.props.updateStateDatas && this.props.updateStateDatas({selectedKeys: [res.data.id]}),200)
+                  // this.props.updateStateDatas && this.props.updateStateDatas({selectedKeys: [res.data.id]})
+                  resolve(res.data);
+                }
+                else reject(res)
+              })
+            // }
+            // this.props.updateStateDatas &&
+            //   this.props.updateStateDatas({ selectedKeys: [res.data.id] })
+          } else {
+            message.warn(res.message, MESSAGE_DURATION_TIME)
+            reject(res);
+            if (res.code == 4047) {
+              // 表示转换失败
+              message.error(res.message, MESSAGE_DURATION_TIME)
+              this.setState({
+                is_petty_loading: !isZoomPictureFullScreenMode && false,
+                is_large_loading: isZoomPictureFullScreenMode && false,
+                percent: 0
+              })
+              this.props.updateStateDatas &&
+                this.props.updateStateDatas({
+                  is_petty_loading: !isZoomPictureFullScreenMode && false,
+                  is_large_loading: isZoomPictureFullScreenMode && false,
+                  selectedKeys: []
+                })
+            }
             this.setState({
               is_petty_loading: !isZoomPictureFullScreenMode && false,
               is_large_loading: isZoomPictureFullScreenMode && false,
@@ -262,20 +297,12 @@ class MainContent extends Component {
                 selectedKeys: []
               })
           }
-          this.setState({
-            is_petty_loading: !isZoomPictureFullScreenMode && false,
-            is_large_loading: isZoomPictureFullScreenMode && false,
-            percent: 0
-          })
-          this.props.updateStateDatas &&
-            this.props.updateStateDatas({
-              is_petty_loading: !isZoomPictureFullScreenMode && false,
-              is_large_loading: isZoomPictureFullScreenMode && false,
-              selectedKeys: []
-            })
-        }
-      })
-    }
+        })
+      }
+      else if(this.dontTransferType.indexOf(FILE_NAME) !== -1){
+        resolve({})
+      }
+    })
   }
 
   // 加载进度条
@@ -301,7 +328,6 @@ class MainContent extends Component {
             isPdfLoaded: false
           })
       }
-      // this.fetchConvertPdfAlsoUpdateVersion({ file_id: id, file_name: file_name, folder_id: folder_id })
       return
     }
     this.setState({
@@ -310,6 +336,42 @@ class MainContent extends Component {
     this.timer = setTimeout(() => {
       this.updateProcessPercent()
     }, 200)
+  }
+
+  // 进入pdf圈评
+  handleToShowPdf = async (type = 'pdf')=> {
+    // 转换成功之后的回调
+    let canEnter = await this.handleEnterCirclePointComment();
+    const { currentPreviewFileData = {}, filePreviewUrl} = this.props;
+    const {
+      board_id,
+      privileges = [],
+      is_privilege,
+      id,
+      file_name,
+      folder_id
+    } = currentPreviewFileData;
+
+    if(canEnter){
+      let obj = {
+        url: filePreviewUrl,
+        file_id: id,
+        file_name,
+        fileType: type
+      }
+      this.setState({
+        pdfCommentData: obj,
+        isInPdfComment: true
+      })
+    }
+  }
+
+  // 退出pdf圈评
+  exitPdfComment = () => {
+    this.setState({
+      pdfCommentData: {},
+      isInPdfComment: false
+    })
   }
 
   // 除pdf外的其他文件进入圈评
@@ -334,20 +396,25 @@ class MainContent extends Component {
       )
     ) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      this.props.updateStateDatas({
-        isPdfLoaded: false
-      })
+      // this.props.updateStateDatas({
+      //   isPdfLoaded: false
+      // })
       return false
     }
-    await this.props.updateStateDatas({
-      isPdfLoaded: true
-    })
-    await this.updateProcessPercent()
-    await this.fetchConvertPdfAlsoUpdateVersion({
+    // await this.props.updateStateDatas({
+    //   isPdfLoaded: true
+    // })
+    // await this.updateProcessPercent()
+    // 文件转换
+    let res = await this.fetchConvertPdfAlsoUpdateVersion({
       file_id: id,
       file_name: file_name,
       folder_id: folder_id
-    })
+    }).catch(err => err)
+    if(res){
+      return true
+    }
+    return false;
     // this.setState({
     //   is_petty_loading: !isZoomPictureFullScreenMode,
     //   is_large_loading: isZoomPictureFullScreenMode,
@@ -417,7 +484,7 @@ class MainContent extends Component {
                 handleFullScreen={this.handleZoomPictureFullScreen}
                 filePreviewCurrentFileId={filePreviewCurrentFileId}
                 handleEnterCirclePointComment={
-                  this.handleEnterCirclePointComment
+                  this.handleToShowPdf.bind(this, 'img')
                 }
                 isShow_textArea={true}
                 isOpenAttachmentFile={this.props.isOpenAttachmentFile}
@@ -492,12 +559,17 @@ class MainContent extends Component {
               }}
             ></div>
             {/* {
-                  !this.props.isOpenAttachmentFile && fileType != '.pdf' && (supportFileTypeArray.indexOf(fileType) != -1) && (
-                    <div className={mainContentStyles.otherFilesOperator}>
-                      <span onClick={this.handleEnterCirclePointComment} className={mainContentStyles.operator_bar}><span className={`${globalStyles.authTheme} ${mainContentStyles.circle_icon}`}>&#xe664;</span>圈点评论</span>
-                    </div>
-                  )
-                } */}
+              !this.props.isOpenAttachmentFile && fileType != '.pdf' && (supportFileTypeArray.indexOf(fileType) != -1) && (
+                <div className={mainContentStyles.otherFilesOperator}>
+                  <span onClick={this.handleEnterCirclePointComment} className={mainContentStyles.operator_bar}><span className={`${globalStyles.authTheme} ${mainContentStyles.circle_icon}`}>&#xe664;</span>圈点评论</span>
+                </div>
+              )
+            } */}
+            {
+              <div className={mainContentStyles.otherFilesOperator}>
+                <span onClick={()=>this.handleToShowPdf('pdf')} className={mainContentStyles.operator_bar}><span className={`${globalStyles.authTheme} ${mainContentStyles.circle_icon}`}>&#xe664;</span>圈点评论</span>
+              </div>
+            }
             {!this.props.isOpenAttachmentFile && (
               <div
                 onClick={this.handleDynamicComment}
@@ -1073,7 +1145,7 @@ class MainContent extends Component {
                 handleFullScreen={this.handleZoomPictureFullScreen}
                 filePreviewCurrentFileId={filePreviewCurrentFileId}
                 handleEnterCirclePointComment={
-                  this.handleEnterCirclePointComment
+                  this.handleToShowPdf.bind(this, 'img')
                 }
                 isShow_textArea={true}
                 isOpenAttachmentFile={this.props.isOpenAttachmentFile}
@@ -1226,6 +1298,11 @@ class MainContent extends Component {
             )}
           </div>
         )}
+        {
+          this.state.isInPdfComment && (
+            <PdfComment {...this.state.pdfCommentData} onClose={this.exitPdfComment}/>
+          )
+        }
       </div>
     )
   }

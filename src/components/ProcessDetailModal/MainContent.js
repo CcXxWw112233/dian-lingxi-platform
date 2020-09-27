@@ -912,13 +912,7 @@ export default class MainContent extends Component {
       request_flows_params = {},
       templateInfo: { enable_change }
     } = this.props
-    let BOARD_ID =
-      (request_flows_params && request_flows_params.request_board_id) ||
-      board_id
-    let REAUEST_BOARD_ID =
-      getGlobalData('storageCurrentOperateBoardId') || board_id
     let res = await saveProcessTemplate({
-      // board_id: REAUEST_BOARD_ID,
       name: currentFlowInstanceName,
       description: currentFlowInstanceDescription,
       nodes: processEditDatas,
@@ -1031,9 +1025,9 @@ export default class MainContent extends Component {
           plan_start_time: start_time ? start_time : '',
           flow_template_id: id,
           board_id:
-            REAUEST_BOARD_ID != 'undefined' && REAUEST_BOARD_ID != '0'
-              ? REAUEST_BOARD_ID
-              : BOARD_ID || board_id
+            BOARD_ID != '0' && BOARD_ID != 'undefined'
+              ? BOARD_ID
+              : REAUEST_BOARD_ID
         }
       })
     ).then(res => {

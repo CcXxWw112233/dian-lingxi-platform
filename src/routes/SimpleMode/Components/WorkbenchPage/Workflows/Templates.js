@@ -111,6 +111,7 @@ export default class Templates extends Component {
     const { curr_temp_info = {} } = this.state
     const { enable_change } = curr_temp_info
     if (enable_change == '0') {
+      // 表示不经过模板启动
       this.handleOperateStartConfirmProcessOne()
     } else if (enable_change == '1') {
       this.handleStartProcess(curr_temp_info)
@@ -168,7 +169,7 @@ export default class Templates extends Component {
   // 启动流程的点击事件
   handleStartProcess = item => {
     const { dispatch } = this.props
-    const { id, board_id } = item
+    const { id } = item
     // setBoardIdStorage(board_id)
     dispatch({
       type: 'publicProcessDetailModal/getTemplateInfo',
@@ -199,15 +200,11 @@ export default class Templates extends Component {
       curr_temp_info = {},
       local_board_id
     } = this.state
-    // console.log(this.state,'sssssssssssssssss_state')
-    // return
     const { id, board_id, org_id, enable_change } = item ? item : curr_temp_info
     const { dispatch, request_flows_params = {} } = this.props
     let BOARD_ID =
       (request_flows_params && request_flows_params.request_board_id) ||
       board_id
-    let REAUEST_BOARD_ID =
-      getGlobalData('storageCurrentOperateBoardId') || board_id
     Promise.resolve(
       dispatch({
         type: 'publicProcessDetailModal/nonAwayTempleteStartPropcess',

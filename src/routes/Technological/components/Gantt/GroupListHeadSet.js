@@ -54,7 +54,8 @@ export default class GroupListHeadSet extends Component {
       payload: {
         // gantt_board_id: group_view_type_new == '3' ? gantt_board_id : '0',
         group_view_type: group_view_type_new,
-        list_group: []
+        list_group: [],
+        selected_hide_term: false
       }
     })
     // if (gantt_board_id != '0') {

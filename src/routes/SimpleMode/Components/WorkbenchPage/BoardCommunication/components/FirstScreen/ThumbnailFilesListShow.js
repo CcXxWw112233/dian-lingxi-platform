@@ -42,6 +42,7 @@ export default class ThumbnailFilesListShow extends Component {
                 {record && record.thumbnail_url ? (
                   <div className={styles.imgBox}>
                     <img
+                      crossOrigin="anonymous"
                       src={record.thumbnail_url || ''}
                       width="100px"
                       alt=""
