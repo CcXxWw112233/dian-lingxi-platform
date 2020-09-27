@@ -139,6 +139,7 @@ export default class PdfComment extends React.Component{
   }
   // 构建版本数据加载
   InitAllData = ()=> {
+    this.mounted = false;
     this.drawCanvas = [];
     this.isDoing = []; // 绘制的数据缓存
     this.unDoing = []; // 点击重绘的缓存
@@ -154,10 +155,13 @@ export default class PdfComment extends React.Component{
       loadendElement: 1,
       loadend: false,
     }, ()=> {
+      this.mounted = true;
       if(this.props.fileType === 'img'){
         this.loadImgFile();
       }else
       this.loadFile();
+
+      // console.log(this.props.fileType)
       // console.log(pdfjsLib, 'pdf')
       // 初始拖拽状态
       this.initDragEvent();
@@ -213,6 +217,7 @@ export default class PdfComment extends React.Component{
         loadProcess: process
       })
     });
+    if(!this.mounted) return ;
     this.setState({
       loadend: true,
       pdfViews: [this.defaultElementId + 1],
@@ -819,6 +824,7 @@ export default class PdfComment extends React.Component{
   loadIsDocumentHiddenIngCanvas = ()=>{
     if(this.noloadCanvas.length){
       ( async ()=> {
+        if(!this.mounted) return ;
         for(let i = 0; i < this.noloadCanvas.length; i++){
           if(!this.mounted) break;
           if(document.hidden) continue;
@@ -851,6 +857,7 @@ export default class PdfComment extends React.Component{
     // let style = this.state.drawStyles.pen;
     // 异步循环
     ( async ()=>{
+      if(!this.mounted) return ;
       for(let i = 0; i < pdf.numPages ; i ++){
         if(!this.mounted) break;
         let { loadendElement } = this.state;
