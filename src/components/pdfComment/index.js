@@ -1156,7 +1156,7 @@ export default class PdfComment extends React.Component{
     }
 
     // console.log(this.state.loadendElement)
-    if(this.state.loadendElement < this.state.allPdfElement) return notification.warning({zIndex: 10003,message:"提示", name: "加载未完成，请稍后"});
+    if(this.state.loadendElement < this.state.allPdfElement) return notification.warning({zIndex: 10003,message:"提示", description: "加载未完成，请稍后"});
     // 显示导出进度
     this.setExportProcess()
     //a4纸的尺寸[595.28,841.89]，html页面生成的canvas在pdf中图片的宽高
