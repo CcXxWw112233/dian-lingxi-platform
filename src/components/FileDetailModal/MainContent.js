@@ -347,9 +347,10 @@ class MainContent extends Component {
     } = currentPreviewFileData
 
     let FILE_NAME = getSubfixName(file_name);
+    let arr = ['.pdf', '.pptx', '.xls', '.xlsx', '.doc', '.docx']
     if(!!canEnter){
       let obj = {
-        url: FILE_NAME === '.pdf' ? fileFileUrl : filePreviewUrl,
+        url: arr.indexOf(FILE_NAME) !== -1 ? fileFileUrl : filePreviewUrl,
         file_id: id,
         file_name,
         fileType: type
