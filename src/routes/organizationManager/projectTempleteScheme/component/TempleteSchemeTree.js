@@ -1,3 +1,4 @@
+/* eslint-disable no-loop-func */
 import React, { Component } from 'react'
 import { Tree, Menu, Tooltip, Input, Button, message, Dropdown } from 'antd'
 import { MESSAGE_DURATION_TIME } from '@/globalset/js/constant'
@@ -1326,6 +1327,111 @@ export default class TempleteSchemeTree extends Component {
       }
     })
   }
+
+  getNode(outline_tree, id) {
+    let nodeValue = null
+    if (outline_tree) {
+      nodeValue = outline_tree.find(item => item.id == id)
+      if (nodeValue) {
+        return nodeValue
+      } else {
+        for (let i = 0; i < outline_tree.length; i++) {
+          let node = outline_tree[i]
+          if (node.child_content && node.child_content.length > 0) {
+            nodeValue = this.getNode(node.child_content, id)
+            if (nodeValue) {
+              return nodeValue
+            }
+          } else {
+            continue
+            // return null;
+          }
+        }
+      }
+    }
+    return nodeValue
+  }
+
+  getTreeNodeValue(outline_tree, id) {
+    if (outline_tree) {
+      for (let i = 0; i < outline_tree.length; i++) {
+        let node = outline_tree[i]
+        if (node.id == id) {
+          return node
+        } else {
+          if (node.child_content && node.child_content.length > 0) {
+            let childNode = this.getNode(node.child_content, id)
+            if (childNode) {
+              return childNode
+            }
+          } else {
+            continue
+            // return null;
+          }
+        }
+      }
+    } else {
+      return null
+    }
+  }
+
+  // onDrop = info => {
+  //   console.log(info)
+  //   const dragKey = info.dragNode.props.eventKey // 拖拽的元素 ID
+  //   // 判断length是否等于2或者是等于3，是因为树节点生成时默认一级(里程碑)为0-0，二级(任务)为0-0-0，split后length就是2或者3了。
+  //   const dropKey = info.node.props.eventKey // 目标元素 ID
+  //   const dropPos = info.node.props.pos.split('-')
+  //   const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1]) // 目标元素所在位置
+  //   const { currentTempleteListContainer = [] } = this.props
+  //   const data = JSON.parse(JSON.stringify(currentTempleteListContainer || []))
+  //   // let data = [...currentTempleteListContainer]
+  //   // 1. 找到当前操作的节点
+  //   const current_node = this.getTreeNodeValue(data, dragKey)
+  //   console.log(current_node)
+  //   // 2. 从当前节点找出父节点
+  //   const from_parent_id = current_node.parent_id
+  //   const parent_from_node = this.getTreeNodeValue(data, from_parent_id)
+  //   const parent_to_node = this.getTreeNodeValue(data, dropKey)
+  //   let dragObj
+  //   if (!info.dropToGap) {
+  //     console.log('进来了选中对准')
+  //   } else {
+  //     console.log('进来了', '线对准')
+  //     this.loop(data, dragKey, (item, index, arr) => {
+  //       arr.splice(index, 1)
+  //       dragObj = item
+  //     })
+  //     let ar
+  //     let i
+  //     this.loop(data, dropKey, (item, index, arr) => {
+  //       ar = arr
+  //       i = index
+  //     })
+  //     if (!ar) return
+  //     if (dropPosition === -1) {
+  //       //
+  //       ar.splice(i, 0, dragObj)
+  //       // debugger
+  //     } else {
+  //       ar.splice(i + 1, 0, dragObj)
+  //       // debugger
+  //     }
+  //     // if (parent_from_node) {
+  //     //   //删除该条
+  //     //   parent_from_node.child_content = parent_from_node.child_content.filter(
+  //     //     item => item.id != dragKey
+  //     //   )
+  //     // } else {
+  //     //   data = data.filter(item => item.id != dragKey)
+  //     // }
+  //     // // data.splice(dropPosition, 0, current_node)
+  //     // // data.push(current_node)
+  //     // if (parent_to_node) {
+  //     //   parent_to_node.child_content.splice(dropPosition, 0, current_node)
+  //     // }
+  //     console.log(ar)
+  //   }
+  // }
 
   // 获取拖拽后对应元素位置ID存为参数
   getDragCorrespondingElementTurnWithID = data => {
