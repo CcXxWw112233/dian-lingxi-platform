@@ -2,7 +2,16 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import { connect } from 'dva'
-import { message, Menu, Dropdown, Modal, Button, Popover, Spin } from 'antd'
+import {
+  message,
+  Menu,
+  Dropdown,
+  Modal,
+  Button,
+  Popover,
+  Spin,
+  Checkbox
+} from 'antd'
 import styles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import OutlineTree from './components/OutlineTree'
@@ -1267,6 +1276,11 @@ export default class OutLineHeadItem extends Component {
           }
         })
         break
+      case 'excel':
+        this.setState({
+          exportExcelModalVisible: true
+        })
+        break
       default:
         message.warn('功能正在开发中')
     }
@@ -1382,7 +1396,7 @@ export default class OutLineHeadItem extends Component {
       case 'export_img': // 导出图片
         this.exportToFile('image')
         break
-      case 'export_sheet': // 导出表格
+      case 'export_excel': // 导出表格
         this.exportToFile('excel')
         break
       case 'save_templete': // 保存为模板
@@ -1401,12 +1415,37 @@ export default class OutLineHeadItem extends Component {
         <SubMenu title="导出">
           <Menu.Item key="export_pdf">导出PDF</Menu.Item>
           <Menu.Item key="export_img">导出图片</Menu.Item>
-          <Menu.Item key="export_sheet">导出表格</Menu.Item>
+          <Menu.Item key="export_excel">导出表格</Menu.Item>
         </SubMenu>
         <Menu.Item key="save_templete">
           保存为{currentNounPlanFilterName(PROJECTS)}模板
         </Menu.Item>
       </Menu>
+    )
+  }
+
+  handleCancelExcelModalVisible = () => {
+    this.setState({
+      exportExcelModalVisible: false
+    })
+  }
+
+  // 渲染导出表格
+  renderExcelModal = () => {
+    const { exportExcelModalVisible } = this.state
+    const plainOptions = ['Apple', 'Pear', 'Orange']
+    return (
+      <>
+        {exportExcelModalVisible && (
+          <Modal
+            onCancel={this.handleCancelExcelModalVisible}
+            title="导出表格"
+            visible={exportExcelModalVisible}
+          >
+            <Checkbox.Group options={plainOptions} defaultValue={['Apple']} />
+          </Modal>
+        )}
+      </>
     )
   }
 
@@ -1613,6 +1652,7 @@ export default class OutLineHeadItem extends Component {
             visible={this.state.save_board_template_visible}
           />
         </>
+        <>{this.renderExcelModal()}</>
         {this.state.showLoading && (
           <IsLoading>{/* {this.state.bodyPicture} */}</IsLoading>
         )}
