@@ -11,7 +11,7 @@ import AvatarList from '@/components/avatarList'
 import NodeOperate from './NodeOperate'
 import { validatePositiveInt } from '../../../../../../utils/verify'
 import { connect } from 'dva'
-import { isSamDay } from '../../../../../../utils/util'
+import { isSamDay, dateFormat } from '../../../../../../utils/util'
 import {
   task_item_height,
   task_item_margin_top,
@@ -35,6 +35,7 @@ export default class TreeNode extends Component {
       }
     }
     this.title_click_timer = null //标题单击和双击事件冲突设置的timer
+    this.timeForMat = 'yyyy/MM/dd HH:mm'
   }
 
   componentWillReceiveProps(nextProps) {
@@ -540,6 +541,117 @@ export default class TreeNode extends Component {
     this.updateOutLineTreeData(outline_tree)
   }
 
+  // 渲染时间
+  renderTimes = () => {
+    const { nodeValue = {} } = this.state
+    const { tree_type, time_span } = nodeValue
+    return (
+      <span>
+        {this.isShowSetTimeSpan(nodeValue) && (
+          <Popover
+            {...(tree_type == '1' ? { visible: false } : {})} //里程碑不能直接设置周期
+            placement="bottom"
+            content={
+              <ManhourSet
+                onChange={this.onManHourChange}
+                nodeValue={nodeValue}
+                value={time_span}
+              />
+            }
+            title={
+              <div
+                style={{
+                  textAlign: 'center',
+                  height: '36px',
+                  lineHeight: '36px',
+                  fontWeight: '600'
+                }}
+              >
+                花费时间
+              </div>
+            }
+            trigger="click"
+          >
+            {time_span ? (
+              <span className={`${styles.editTitle}`}>{time_span}天</span>
+            ) : (
+              <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>
+                &#xe6d9;
+              </span>
+            )}
+          </Popover>
+        )}
+      </span>
+    )
+  }
+  // 渲染头像
+  renderAvatar = () => {
+    const { nodeValue = {} } = this.state
+    const { tree_type, executors = [], status } = nodeValue
+    const { gantt_board_id, projectDetailInfoData = {} } = this.props
+    let type
+    if (tree_type) {
+      type = tree_type
+    } else {
+      type = this.props.type
+    }
+    return (
+      <span>
+        {tree_type != '0' && (
+          <div onWheel={e => e.stopPropagation()}>
+            <Dropdown
+              {...(tree_type == '3' ? { visible: false } : {})}
+              overlayClassName={styles.selectExecutors}
+              trigger={['click']}
+              overlay={
+                <MenuSearchPartner
+                  // isInvitation={true}
+                  inviteOthersToBoardCalback={this.inviteOthersToBoardCalback}
+                  invitationType={tree_type == '1' ? '13' : '4'}
+                  invitationId={nodeValue.id}
+                  invitationOrg={getOrgIdByBoardId(gantt_board_id)}
+                  listData={projectDetailInfoData.data}
+                  keyCode={'user_id'}
+                  searchName={'name'}
+                  currentSelect={executors}
+                  chirldrenTaskChargeChange={this.onExecutorTaskChargeChange}
+                  board_id={gantt_board_id}
+                />
+              }
+            >
+              {tree_type == '3' ? (
+                <span style={{ color: 'rgba(0,0,0,.45)' }}>
+                  {this.renderFlowStatus(status)}
+                </span>
+              ) : executors && executors.length > 0 ? (
+                <div
+                  style={{
+                    display: 'inline-block',
+                    verticalAlign: 'text-bottom'
+                  }}
+                >
+                  <AvatarList users={executors} size={20} />
+                </div>
+              ) : (
+                // <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>
+                //     {
+                //         this.renderExecutor(projectDetailInfoData.data, executors[0])
+
+                //     }
+                // </span>
+                <span
+                  className={`${styles.editIcon} ${globalStyles.authTheme}`}
+                >
+                  &#xe7b2;
+                </span>
+              )}
+            </Dropdown>
+          </div>
+        )}
+      </span>
+    )
+  }
+
   renderTitle = () => {
     const { isTitleHover, isTitleEdit, nodeValue = {} } = this.state
     const {
@@ -622,7 +734,9 @@ export default class TreeNode extends Component {
                   (is_display || is_display == undefined ? (
                     <span
                       title="隐藏"
-                      className={`${globalStyles.authTheme} ${styles.outline_tree_node_hide_eye_icon}`}
+                      className={`${globalStyles.authTheme} ${
+                        styles.outline_tree_node_hide_eye_icon
+                      }`}
                       onClick={e => {
                         this.handleOperateEyeIcon({
                           e,
@@ -637,7 +751,9 @@ export default class TreeNode extends Component {
                   ) : (
                     <span
                       title="显示"
-                      className={`${globalStyles.authTheme} ${styles.outline_tree_node_show_eye_icon}`}
+                      className={`${globalStyles.authTheme} ${
+                        styles.outline_tree_node_show_eye_icon
+                      }`}
                       onClick={e => {
                         this.handleOperateEyeIcon({
                           e,
@@ -661,94 +777,6 @@ export default class TreeNode extends Component {
 
 
                     <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>&#xe6d9;</span> */}
-
-        {tree_type != '0' && (
-          <div onWheel={e => e.stopPropagation()}>
-            <Dropdown
-              {...(tree_type == '3' ? { visible: false } : {})}
-              overlayClassName={styles.selectExecutors}
-              trigger={['click']}
-              overlay={
-                <MenuSearchPartner
-                  // isInvitation={true}
-                  inviteOthersToBoardCalback={this.inviteOthersToBoardCalback}
-                  invitationType={tree_type == '1' ? '13' : '4'}
-                  invitationId={nodeValue.id}
-                  invitationOrg={getOrgIdByBoardId(gantt_board_id)}
-                  listData={projectDetailInfoData.data}
-                  keyCode={'user_id'}
-                  searchName={'name'}
-                  currentSelect={executors}
-                  chirldrenTaskChargeChange={this.onExecutorTaskChargeChange}
-                  board_id={gantt_board_id}
-                />
-              }
-            >
-              {tree_type == '3' ? (
-                <span style={{ color: 'rgba(0,0,0,.45)' }}>
-                  {this.renderFlowStatus(status)}
-                </span>
-              ) : executors && executors.length > 0 ? (
-                <div
-                  style={{
-                    display: 'inline-block',
-                    verticalAlign: 'text-bottom'
-                  }}
-                >
-                  <AvatarList users={executors} size={20} />
-                </div>
-              ) : (
-                // <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>
-                //     {
-                //         this.renderExecutor(projectDetailInfoData.data, executors[0])
-
-                //     }
-                // </span>
-                <span
-                  className={`${styles.editIcon} ${globalStyles.authTheme}`}
-                >
-                  &#xe7b2;
-                </span>
-              )}
-            </Dropdown>
-            {this.isShowSetTimeSpan(nodeValue) && (
-              <Popover
-                {...(tree_type == '1' ? { visible: false } : {})} //里程碑不能直接设置周期
-                placement="bottom"
-                content={
-                  <ManhourSet
-                    onChange={this.onManHourChange}
-                    nodeValue={nodeValue}
-                    value={time_span}
-                  />
-                }
-                title={
-                  <div
-                    style={{
-                      textAlign: 'center',
-                      height: '36px',
-                      lineHeight: '36px',
-                      fontWeight: '600'
-                    }}
-                  >
-                    花费时间
-                  </div>
-                }
-                trigger="click"
-              >
-                {time_span ? (
-                  <span className={`${styles.editTitle}`}>{time_span}天</span>
-                ) : (
-                  <span
-                    className={`${styles.editIcon} ${globalStyles.authTheme}`}
-                  >
-                    &#xe6d9;
-                  </span>
-                )}
-              </Popover>
-            )}
-          </div>
-        )}
       </span>
     )
   }
@@ -798,6 +826,56 @@ export default class TreeNode extends Component {
     return menu
   }
 
+  renderStartTime = key => {
+    const { nodeValue = {} } = this.props
+    let { start_time } = nodeValue
+    if (start_time) {
+      return dateFormat(start_time, this.timeForMat)
+    }
+    return (
+      <span className={styles.start_time} key={key}>
+        {' '}
+        开始{' '}
+      </span>
+    )
+  }
+
+  renderEndTime = key => {
+    const { nodeValue = {} } = this.props
+    let { due_time } = nodeValue
+    if (due_time) {
+      return dateFormat(due_time, this.timeForMat)
+    }
+    return (
+      <span className={styles.due_time} key={key}>
+        {' '}
+        结束{' '}
+      </span>
+    )
+  }
+
+  // 根据传入的字段确定显示
+  renderForColumns = t => {
+    const { defaultColumns = [] } = this.props
+    const arr = [
+      { key: 'item_start_time', component: this.renderStartTime },
+      { key: 'item_end_time', component: this.renderEndTime },
+      { key: 'item_users_avatar', component: this.renderAvatar },
+      { key: 'item_times', component: this.renderTimes }
+    ]
+    return arr.map(item => {
+      if (defaultColumns.includes(item.key)) {
+        return (
+          <div className={styles[item.key]} key={item.key}>
+            {item.component(item.key)}
+          </div>
+        )
+      } else {
+        return <span />
+      }
+    })
+  }
+
   // 渲染有子节点的
   renderHasChildNode = () => {
     const {
@@ -831,7 +909,8 @@ export default class TreeNode extends Component {
       gantt_board_id,
       projectDetailInfoData = {},
       outline_tree_round = [],
-      selected_hide_term
+      selected_hide_term,
+      defaultColumns = []
     } = this.props
     const isLeaf = false
     let type
@@ -858,40 +937,58 @@ export default class TreeNode extends Component {
           onMouseEnter={this.onMouseEnter}
           onMouseLeave={this.onMouseLeave}
         >
-          {((hoverItem.id && hoverItem.id == id) ||
-            (hoverItem.add_id && hoverItem.add_id == add_id) ||
-            operateVisible) &&
-          !selected_hide_term ? (
-            <Dropdown
-              overlay={this.renderOperate()}
-              visible={operateVisible}
-              trigger={['click']}
-              onVisibleChange={this.operateVisibleChange}
-            >
-              <div
-                className={`${styles.node_opeator} ${globalStyles.authTheme}`}
-              >
-                &#xe7fd;
-              </div>
-            </Dropdown>
-          ) : (
-            <span
-              className={`${styles.outline_tree_line_node_dot} ${this.setDotStyle[type]}`}
-            ></span>
-          )}
-          {!isLeaf && (
-            <span
-              className={`${styles.outline_tree_node_expand_icon_out}`}
-              onClick={this.onChangeExpand}
-            >
-              <span
-                className={`${styles.outline_tree_node_expand_icon} ${
-                  is_expand ? styles.expanded : ''
-                }`}
-              ></span>
-            </span>
-          )}
-          {this.renderTitle()}
+          <div
+            className={styles.flex1}
+            style={{ flex: defaultColumns.length <= 2 ? 2 : 0.7 }}
+          >
+            <div className={styles.item_icons}>
+              {((hoverItem.id && hoverItem.id == id) ||
+                (hoverItem.add_id && hoverItem.add_id == add_id) ||
+                operateVisible) &&
+              !selected_hide_term ? (
+                <Dropdown
+                  overlay={this.renderOperate()}
+                  visible={operateVisible}
+                  trigger={['click']}
+                  onVisibleChange={this.operateVisibleChange}
+                >
+                  <div
+                    className={`${styles.node_opeator} ${
+                      globalStyles.authTheme
+                    }`}
+                  >
+                    &#xe7fd;
+                  </div>
+                </Dropdown>
+              ) : (
+                <span
+                  className={`${styles.outline_tree_line_node_dot} ${
+                    this.setDotStyle[type]
+                  }`}
+                />
+              )}
+              {!isLeaf && (
+                <span
+                  className={`${styles.outline_tree_node_expand_icon_out}`}
+                  onClick={this.onChangeExpand}
+                >
+                  <span
+                    className={`${styles.outline_tree_node_expand_icon} ${
+                      is_expand ? styles.expanded : ''
+                    }`}
+                  />
+                </span>
+              )}
+            </div>
+            <div className={styles.item_title_name}>{this.renderTitle()}</div>
+          </div>
+          <div className={styles.flex2}>
+            {this.renderForColumns()}
+            {/* <div className={styles.item_users_avatar}>
+              {this.renderAvatar()}
+            </div>
+            <div className={styles.item_times}>{this.renderTimes()}</div> */}
+          </div>
         </div>
         <div
           className={styles.collapse_transition}
@@ -931,6 +1028,7 @@ export default class TreeNode extends Component {
                     gantt_board_id={gantt_board_id}
                     projectDetailInfoData={projectDetailInfoData}
                     outline_tree_round={outline_tree_round}
+                    defaultColumns={defaultColumns}
                   >
                     {child.props.children}
                   </TreeNode>
@@ -952,6 +1050,7 @@ export default class TreeNode extends Component {
                     gantt_board_id={gantt_board_id}
                     projectDetailInfoData={projectDetailInfoData}
                     outline_tree_round={outline_tree_round}
+                    defaultColumns={defaultColumns}
                   />
                 )
               }
@@ -994,7 +1093,8 @@ export default class TreeNode extends Component {
       gantt_board_id,
       projectDetailInfoData = {},
       outline_tree_round = [],
-      selected_hide_term
+      selected_hide_term,
+      defaultColumns = []
     } = this.props
     let type
     if (tree_type) {
@@ -1021,46 +1121,65 @@ export default class TreeNode extends Component {
           onMouseEnter={this.onMouseEnter}
           onMouseLeave={this.onMouseLeave}
         >
-          {add_id ? (
-            icon ? (
-              icon
-            ) : (
-              <span
-                className={`${styles.outline_tree_line_node_dot} ${this.setDotStyle[type]}`}
-              ></span>
-            )
-          ) : ((hoverItem.id && hoverItem.id == id) ||
-              (hoverItem.add_id && hoverItem.add_id == add_id) ||
-              operateVisible) &&
-            !selected_hide_term ? (
-            <Dropdown
-              overlay={this.renderOperate()}
-              visible={operateVisible}
-              trigger={['click']}
-              onVisibleChange={this.operateVisibleChange}
-            >
-              <div
-                className={`${styles.node_opeator} ${globalStyles.authTheme}`}
-              >
-                &#xe7fd;
-              </div>
-            </Dropdown>
-          ) : (
-            <span
-              className={`${styles.outline_tree_line_node_dot} ${this.setDotStyle[type]}`}
-            ></span>
-          )}
-          {!isLeaf && (
-            <span className={`${styles.outline_tree_node_expand_icon_out}`}>
-              <span
-                className={`${styles.outline_tree_node_expand_icon} ${
-                  is_expand ? styles.expanded : ''
-                }`}
-              ></span>
-            </span>
-          )}
-
-          {this.renderTitle()}
+          <div
+            className={styles.flex1}
+            style={{ flex: defaultColumns.length <= 2 ? 2 : 0.7 }}
+          >
+            <div className={styles.item_icons}>
+              {add_id ? (
+                icon ? (
+                  icon
+                ) : (
+                  <span
+                    className={`${styles.outline_tree_line_node_dot} ${
+                      this.setDotStyle[type]
+                    }`}
+                  />
+                )
+              ) : ((hoverItem.id && hoverItem.id == id) ||
+                  (hoverItem.add_id && hoverItem.add_id == add_id) ||
+                  operateVisible) &&
+                !selected_hide_term ? (
+                <Dropdown
+                  overlay={this.renderOperate()}
+                  visible={operateVisible}
+                  trigger={['click']}
+                  onVisibleChange={this.operateVisibleChange}
+                >
+                  <div
+                    className={`${styles.node_opeator} ${
+                      globalStyles.authTheme
+                    }`}
+                  >
+                    &#xe7fd;
+                  </div>
+                </Dropdown>
+              ) : (
+                <span
+                  className={`${styles.outline_tree_line_node_dot} ${
+                    this.setDotStyle[type]
+                  }`}
+                />
+              )}
+              {!isLeaf && (
+                <span className={`${styles.outline_tree_node_expand_icon_out}`}>
+                  <span
+                    className={`${styles.outline_tree_node_expand_icon} ${
+                      is_expand ? styles.expanded : ''
+                    }`}
+                  />
+                </span>
+              )}
+            </div>
+            <div className={styles.item_title_name}>{this.renderTitle()}</div>
+          </div>
+          <div className={styles.flex2}>
+            {this.renderForColumns('no')}
+            {/* <div className={styles.item_users_avatar}>
+              {this.renderAvatar()}
+            </div>
+            <div className={styles.item_times}>{this.renderTimes()}</div> */}
+          </div>
         </div>
       </>
     )

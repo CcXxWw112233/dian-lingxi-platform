@@ -13,6 +13,7 @@ import { validatePositiveInt } from '../../../../../../utils/verify'
 import { connect } from 'dva'
 import { isSamDay } from '../../../../../../utils/util'
 import TreeNode from './TreeNode'
+import NodeTreeTable from './NodeTreeTable'
 
 // @connect(({ gantt: { datas: {
 //     date_arr_one_level = [],
@@ -592,6 +593,70 @@ import TreeNode from './TreeNode'
 // }
 
 class MyOutlineTree extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      columns: [
+        {
+          key: 'item_start_time',
+          title: '开始',
+          className: 'item_start_time'
+        },
+        {
+          key: 'item_end_time',
+          title: '结束',
+          className: 'item_end_time'
+        },
+        {
+          key: 'item_users_avatar',
+          title: '负责人',
+          className: 'item_users_avatar'
+        },
+        {
+          key: 'item_times',
+          title: '工时',
+          className: 'item_times'
+        }
+      ],
+      defaultColumns: ['item_users_avatar', 'item_times']
+    }
+  }
+
+  // 更新表头
+  handleSelectionColumns = ({ key }) => {
+    let arr = Array.from(this.state.defaultColumns)
+    if (this.state.defaultColumns.includes(key)) {
+      arr = arr.filter(item => item !== key)
+    } else {
+      arr.unshift(key)
+    }
+    this.setState({
+      defaultColumns: arr
+    })
+  }
+  // 下拉菜单
+  SettingMenu = () => {
+    return (
+      <Menu onClick={this.handleSelectionColumns}>
+        {this.state.columns.map(item => {
+          return (
+            <Menu.Item key={item.key}>
+              <div className={styles.selectColumns}>
+                {item.title}
+                {this.state.defaultColumns.includes(item.key) && (
+                  <span
+                    className={`${styles.active} ${globalStyles.authTheme}`}
+                  >
+                    &#xe7fc;
+                  </span>
+                )}
+              </div>
+            </Menu.Item>
+          )
+        })}
+      </Menu>
+    )
+  }
   render() {
     const {
       onDataProcess,
@@ -607,6 +672,38 @@ class MyOutlineTree extends Component {
 
     return (
       <div className={styles.outline_tree}>
+        {/* <NodeTreeTable outline_tree_round={outline_tree_round} /> */}
+        <div className={styles.outline_header}>
+          <div
+            className={styles.flex1}
+            style={{ flex: this.state.defaultColumns.length <= 2 ? 2 : 1 }}
+          >
+            <Dropdown
+              overlayClassName={styles.settingOverlay}
+              trigger={['click']}
+              overlay={this.SettingMenu()}
+              overlayStyle={{ width: 200 }}
+            >
+              <div
+                className={`${globalStyles.authTheme} ${styles.settings_icon}`}
+              >
+                &#xe78e;
+              </div>
+            </Dropdown>
+            <div className={styles.item_title_name}>项目里程碑</div>
+          </div>
+          <div className={styles.flex2}>
+            {this.state.columns
+              .filter(c => this.state.defaultColumns.includes(c.key))
+              .map(item => {
+                return (
+                  <div className={styles[item.className]} key={item.key}>
+                    {item.title}
+                  </div>
+                )
+              })}
+          </div>
+        </div>
         {React.Children.map(this.props.children, (child, i) => {
           return (
             <TreeNode
@@ -620,6 +717,8 @@ class MyOutlineTree extends Component {
               gantt_board_id={gantt_board_id}
               projectDetailInfoData={projectDetailInfoData}
               outline_tree_round={outline_tree_round}
+              columns={this.state.columns}
+              defaultColumns={this.state.defaultColumns}
             >
               {child.props.children}
             </TreeNode>
