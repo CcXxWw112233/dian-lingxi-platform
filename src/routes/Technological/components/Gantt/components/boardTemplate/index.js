@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import styles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { date_area_height, ganttIsSingleBoardGroupView } from '../../constants'
-import { Menu, message, Tree, Icon, Spin, Button } from 'antd'
+import { Menu, message, Tree, Icon, Spin, Button, Popover, Input } from 'antd'
 import { connect } from 'dva'
 import {
   getBoardTemplateList,
@@ -910,6 +910,52 @@ export default class BoardTemplate extends Component {
     })
   }
 
+  // 获取可复制内容
+  getCopyTextValue = id => {
+    let copyBtn = document.getElementById(`templete_share_${id}`)
+    console.log(copyBtn)
+    if (!copyBtn) return
+    let copyText = copyBtn.innerText
+    return copyText
+  }
+
+  copyContentToClipTemplete = content => {
+    if (!content) {
+      message.error('没有可复制内容')
+    }
+    const input = document.createElement('input')
+    //ios 呼出虚拟键盘，造成屏幕闪烁一下
+    input.setAttribute('readonly', 'readyonly')
+    input.setAttribute('value', content)
+    document.body.appendChild(input)
+    input.setSelectionRange(0, 9999)
+    input.select()
+    if (document.execCommand('copy')) {
+      document.execCommand('copy')
+      message.success('复制成功')
+    }
+    document.body.removeChild(input)
+  }
+
+  // 一次性提取码
+  handleDisposableCode = (e, id) => {
+    e && e.stopPropagation()
+    this.setState(
+      {
+        templete_share_visible: !this.state.templete_share_visible
+      },
+      () => {
+        setTimeout(() => {
+          const { templete_share_visible } = this.state
+          if (templete_share_visible) {
+            let content = templete_share_visible && this.getCopyTextValue(id)
+            this.copyContentToClipTemplete(content)
+          }
+        }, 50)
+      }
+    )
+  }
+
   render() {
     const {
       template_origin,
@@ -1053,45 +1099,110 @@ export default class BoardTemplate extends Component {
               )}
           </>
         ) : (
-          <div style={{ height: '100%' }}>
-            {this.state.template_list && this.state.template_list.length ? (
-              this.state.template_list.map(item => {
-                const { id, name } = item
-                return (
-                  <div
-                    class={styles.boardTplItem}
-                    onClick={() => this.selectBoardTemplate(id)}
-                  >
-                    <span
-                      className={`${styles.left} ${globalStyles.global_ellipsis}`}
+          <>
+            <div className={styles.temp_middle}>
+              {this.state.template_list && this.state.template_list.length ? (
+                this.state.template_list.map(item => {
+                  const { id, name, template_type } = item
+                  return (
+                    <div
+                      class={styles.boardTplItem}
+                      onClick={() => this.selectBoardTemplate(id)}
                     >
-                      {name}
-                    </span>
-                    <span>
-                      {' '}
-                      <i className={globalStyles.authTheme}>&#xe7eb;</i>
-                    </span>
-                  </div>
-                )
-              })
-            ) : (
-              <div
-                style={{
-                  textAlign: 'center',
-                  color: 'rgba(0,0,0,0.3)',
-                  marginTop: 50
-                }}
-              >
+                      <span
+                        className={`${styles.left} ${globalStyles.global_ellipsis}`}
+                      >
+                        {name}
+                      </span>
+                      <span>
+                        {template_type == '2' && (
+                          <Popover
+                            trigger={['click']}
+                            getPopupContainer={triggerNode =>
+                              triggerNode.parentNode
+                            }
+                            placement="bottomRight"
+                            title={null}
+                            content={
+                              <div
+                                className={styles.popover_content}
+                                onClick={e => e && e.stopPropagation()}
+                              >
+                                <span className={`${styles.popover_close}`}>
+                                  <i className={`${globalStyles.authTheme}`}>
+                                    &#xe7fe;
+                                  </i>
+                                </span>
+                                <div>一次性提取码</div>
+                                <div id={`templete_share_${id}`}>ZFCTVG</div>
+                                <div>
+                                  <span>
+                                    <span className={globalStyles.authTheme}>
+                                      &#xe7fc;
+                                    </span>
+                                  </span>
+                                  已复制成功，快去分享模版吧！
+                                </div>
+                              </div>
+                            }
+                          >
+                            <i
+                              onClick={e => this.handleDisposableCode(e, id)}
+                              className={`${globalStyles.authTheme} ${styles.share_icon}`}
+                            >
+                              &#xe7e7;
+                            </i>
+                          </Popover>
+                        )}
+                        <i className={globalStyles.authTheme}>&#xe7eb;</i>
+                      </span>
+                    </div>
+                  )
+                })
+              ) : (
                 <div
-                  className={`${globalStyles.authTheme}`}
-                  style={{ fontSize: 50, textAlign: 'center' }}
+                  style={{
+                    textAlign: 'center',
+                    color: 'rgba(0,0,0,0.3)',
+                    marginTop: 50
+                  }}
                 >
-                  &#xe703;
+                  <div
+                    className={`${globalStyles.authTheme}`}
+                    style={{ fontSize: 50, textAlign: 'center' }}
+                  >
+                    &#xe703;
+                  </div>
+                  <div>暂无数据</div>
                 </div>
-                <div>暂无数据</div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+            {template_origin == '2' &&
+              !!(
+                this.state.template_list && this.state.template_list.length
+              ) && (
+                <Popover
+                  title={null}
+                  trigger={'click'}
+                  placement="top"
+                  content={
+                    <div>
+                      <div>输入提取码：</div>
+                      <div style={{ display: 'flex', marginTop: '8px' }}>
+                        <Input />
+                        <Button type="primary" style={{ marginLeft: '16px' }}>
+                          确定
+                        </Button>
+                      </div>
+                    </div>
+                  }
+                >
+                  <div className={styles.pick_templete}>
+                    <Button>提取模板</Button>
+                  </div>
+                </Popover>
+              )}
+          </>
         )}
 
         {/* <div
