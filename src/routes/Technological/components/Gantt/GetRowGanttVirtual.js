@@ -13,6 +13,7 @@ export default class GetRowGanttVirtual extends Component {
           const { milestones = {} } = lane_data
           return (
             <GetRowGanttItem
+              {...this.props}
               key={list_id}
               itemKey={key}
               list_id={list_id}

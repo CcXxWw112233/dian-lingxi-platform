@@ -527,7 +527,7 @@ export default class GetRowGantt extends Component {
     const { timestamp, timestampEnd } = date
     const update_name =
       start_end == '1' ? 'create_start_time' : 'create_end_time'
-    console.log('ssssssssssss', [update_name], timestamp, timestampEnd)
+    // console.log('ssssssssssss', [update_name], timestamp, timestampEnd)
     dispatch({
       type: getEffectOrReducerByName('updateDatas'),
       payload: {
@@ -594,7 +594,7 @@ export default class GetRowGantt extends Component {
       belong_group_row =
         (top - group_list_area_section_height[conter_key - 1]) / ceil_height + 1
     }
-    console.log('ssssssssss_top', conter_key, belong_group_row)
+    // console.log('ssssssssss_top', conter_key, belong_group_row)
     const current_list_group_id = list_group[conter_key]['list_id']
     dispatch({
       type: getEffectOrReducerByName('updateDatas'),
@@ -1155,7 +1155,12 @@ export default class GetRowGantt extends Component {
                 )
               )
             })}
-          {!ganttIsOutlineView({ group_view_type }) && <GetRowGanttVirtual />}
+          {!ganttIsOutlineView({ group_view_type }) && (
+            <GetRowGanttVirtual
+              ganttPanelDashedDrag={this.state.drag_creating}
+              setDragCreating={this.setDragCreating}
+            />
+          )}
           {/* <GetRowGanttItemElse gantt_card_height={this.props.gantt_card_height} dataAreaRealHeight={this.props.dataAreaRealHeight} /> */}
         </div>
       </>

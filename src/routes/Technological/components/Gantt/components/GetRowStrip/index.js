@@ -428,7 +428,7 @@ export default class GetRowStrip extends PureComponent {
       gantt_head_width: this.props.gantt_head_width
     })
     this.milestone_drag_point_diff = x - this.milestone_initial_left //做初始标记，由于鼠标拖拽的位置在该元素上不同，记录元素最左边和鼠标落点的差值
-    // console.log('sssssssss_00', this.milestone_drag_point_diff)
+    console.log('sssssssss_00', x, this.milestone_drag_point_diff)
   }
   milestoneDraging = e => {
     const { pageX } = getPageXY(e)

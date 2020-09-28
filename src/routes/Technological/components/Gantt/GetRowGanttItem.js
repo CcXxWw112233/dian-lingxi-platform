@@ -4,7 +4,7 @@ import indexStyles from './index.less'
 import { isToday } from './base_utils'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import MilestoneDetail from './components/milestoneDetail'
-import { Dropdown, Menu } from 'antd'
+import { Dropdown, Menu, message } from 'antd'
 import { ganttIsFold, hours_view_total } from './constants'
 import {
   caldiffDays,
@@ -13,6 +13,16 @@ import {
   transformTimestamp
 } from '../../../../utils/util'
 import { setBoardIdStorage } from '../../../../utils/businessFunction'
+import Draggable from 'react-draggable'
+import {
+  getPageXY,
+  getXYDropPosition,
+  setDateWidthPositionWeekView,
+  setDateWithPositionInYearView
+} from './ganttBusiness'
+import { isApiResponseOk } from '../../../../utils/handleResponseData'
+import { updateMilestone } from '../../../../services/technological/task'
+
 const MenuItem = Menu.Item
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
@@ -624,9 +634,11 @@ export default class GetRowGanttItem extends Component {
   // 甘特图信息变化后，实时触发甘特图渲染在甘特图上变化
   handleMiletonsChangeMountInGantt = () => {
     const { dispatch } = this.props
-    dispatch({
-      type: 'gantt/getGttMilestoneList',
-      payload: {}
+    return new Promise(resolve => {
+      dispatch({
+        type: 'gantt/getGttMilestoneList',
+        payload: {}
+      }).then(res => resolve())
     })
   }
   deleteMiletone = ({ id }) => {
@@ -663,6 +675,172 @@ export default class GetRowGanttItem extends Component {
     })
   }
 
+  // 里程碑的事件-----------start
+  target_event_bubble = {
+    onClick: e => e.stopPropagation(),
+    onMouseMove: e => e.stopPropagation(),
+    onMouseDown: e => e.stopPropagation(),
+    onMouseUp: e => e.stopPropagation(),
+    onMouseEnter: () => {
+      //在鼠标hover到任务条上，非创建任务时，将虚线框隐藏
+      const { ganttPanelDashedDrag } = this.props
+      if (!ganttPanelDashedDrag) {
+        this.props.setDasheRectShow && this.props.setDasheRectShow(false)
+      }
+    }
+  }
+  milestoneDragStart = e => {
+    this.milestone_drag_ele = e //缓存拖拽的里程碑节点
+    this.milestone_initial_left = e.target.style.left
+    const { x } = getXYDropPosition(e, {
+      gantt_head_width: this.props.gantt_head_width
+    })
+    this.milestone_drag_point_diff = x - this.milestone_initial_left //做初始标记，由于鼠标拖拽的位置在该元素上不同，记录元素最左边和鼠标落点的差值
+    this.drag_ele = e.currentTarget
+
+    // console.log('sssssssss_00', {
+    //   x,
+    //   milestone_initial_left: this.milestone_initial_left,
+    //   milestone_drag_point_diff: this.milestone_drag_point_diff,
+    //   target: e.currentTarget.style.left
+    // })
+  }
+  milestoneDraging = e => {
+    const { pageX } = getPageXY(e)
+    if (!pageX) return
+    this.milestone_drag_ele = e
+    this.milestone_dragging = true
+    this.setState({
+      dragg_milestone_err: false
+    })
+    // console.log('sssssssss_11a', this.milestone_drag_ele)
+  }
+  milestoneDragStop = async (e, { milestones = [] }) => {
+    if (!milestones.length) return
+    const {
+      gantt_view_mode,
+      date_arr_one_level,
+      ceilWidth,
+      gantt_head_width
+    } = this.props
+    setTimeout(() => {
+      this.milestone_dragging = false
+    }, 200)
+    let { x } =
+      getXYDropPosition(this.milestone_drag_ele, {
+        gantt_head_width
+      }) || {}
+    // console.log('sssssssssss_22_0', x, this.milestone_drag_point_diff)
+
+    // x = x - this.milestone_drag_point_diff + ceilWidth //校准
+    // const { x } = (await this.setCurrentRect(this.milestone_drag_ele)) || {}
+    let date = {} //具体日期
+    let counter = 0
+    if (gantt_view_mode == 'month' || gantt_view_mode == 'hours') {
+      for (let val of date_arr_one_level) {
+        counter += 1
+        if (counter * ceilWidth > x) {
+          date = val
+          break
+        }
+      }
+    } else if (gantt_view_mode == 'year') {
+      date = setDateWithPositionInYearView({
+        _position: x + ceilWidth,
+        date_arr_one_level,
+        ceilWidth,
+        width: ceilWidth,
+        x
+      })
+    } else if (gantt_view_mode == 'week') {
+      date = setDateWidthPositionWeekView({
+        position: x,
+        date_arr_one_level,
+        ceilWidth
+      })
+    } else {
+    }
+    // console.log('sssssssssss_22', x, date)
+    // debugger
+    const { timestamp, timestampEnd } = date
+    if (!timestampEnd) return
+    //回退位置
+    const resetNodeTransform = () => {
+      const elements_ = document.getElementsByClassName(
+        'react-draggable-dragged'
+      )
+      const elements = [...elements_]
+      elements.forEach(node => {
+        node.style.transform = 'translate(0px, 0px)'
+      })
+    }
+    return new Promise((resolve, reject) => {
+      updateMilestone(
+        {
+          id: milestones[0].id,
+          deadline: timestampEnd
+        },
+        { isNotLoading: false }
+      )
+        .then(async res => {
+          if (isApiResponseOk(res)) {
+            await this.handleMiletonsChangeMountInGantt()
+            message.success('更新成功')
+            resolve(res)
+          } else {
+            message.error(res.message)
+            this.setState(
+              {
+                dragg_milestone_err: true
+              },
+              () => {
+                resetNodeTransform()
+              }
+            )
+            reject()
+          }
+        })
+        .catch(err => {
+          message.error('更新失败')
+          this.setState(
+            {
+              dragg_milestone_err: true
+            },
+            () => {
+              resetNodeTransform()
+            }
+          )
+          reject()
+        })
+    })
+  }
+  // 里程碑的事件 -------------end
+
+  // 拖拽里程碑包裹
+  renderDragWrapper = (milestones = [], dom) => {
+    return milestones.length == 1 ? (
+      <Draggable
+        data-targetclassname="specific_example_milestone"
+        axis="x"
+        {...(this.state.dragg_milestone_err
+          ? { position: { x: 0, y: 0 } }
+          : {})} //拖拽错误后回归原位
+        {...this.target_event_bubble}
+        onStart={this.milestoneDragStart}
+        onDrag={this.milestoneDraging}
+        onStop={e =>
+          this.milestoneDragStop(e, {
+            milestones
+          })
+        }
+      >
+        {dom}
+      </Draggable>
+    ) : (
+      dom
+    )
+  }
+
   // 渲染月视图日期
   renderMonthView = (date_inner = []) => {
     const { rows = 7, itemKey } = this.props
@@ -683,12 +861,12 @@ export default class GetRowGanttItem extends Component {
           const { week_day, timestamp, timestampEnd } = value2
           const {
             flag: has_lcb,
-            current_date_board_miletones,
+            current_date_board_miletones = [],
             is_over_duetime,
             is_all_realized,
             is_all_child_realized,
             has_child_flag,
-            current_date_board_child_miletones
+            current_date_board_child_miletones = []
           } = this.isHasMiletoneList(Number(timestampEnd))
           return (
             <div
@@ -696,7 +874,10 @@ export default class GetRowGanttItem extends Component {
               data-list_id={list_id}
               data-start_time={timestamp}
               data-end_time={timestampEnd}
-              key={timestamp}
+              key={`${timestamp}_${
+                (current_date_board_miletones[0] || {}).id
+              }_${(current_date_board_child_miletones[0] || {}).id}`}
+              data-targetclassname="specific_example_milestone"
               style={{
                 backgroundColor:
                   week_day == 0 || week_day == 6
@@ -704,153 +885,182 @@ export default class GetRowGanttItem extends Component {
                     : 'rgb(250,250,250)'
               }}
             >
-              {/* 12为上下margin的总和 */}
-              {group_view_type == '1' && (
-                // (gantt_board_id == '0' ||
-                //   (gantt_board_id != '0' && itemKey == 0)) &&
-                <>
-                  <div style={{ position: 'relative', width: 0 }}>
-                    {has_lcb && (
-                      <>
-                        {/* 旗帜 */}
-                        <Dropdown
-                          overlay={this.renderLCBList(
-                            current_date_board_miletones,
-                            timestamp
-                          )}
-                        >
-                          <div
-                            className={`${indexStyles.board_miletiones_flag} ${globalStyles.authTheme}`}
-                            data-targetclassname="specific_example_milestone"
-                            onClick={this.seeMiletones}
-                            onMouseDown={e => e.stopPropagation()}
-                            style={{
-                              color: this.setMiletonesColor({
-                                is_over_duetime,
-                                has_lcb,
-                                is_all_realized
-                              })
-                            }}
-                          >
-                            &#xe6a0;
-                          </div>
-                        </Dropdown>
-                        {/* 渲染里程碑名称铺开 */}
-                        <Dropdown
-                          overlay={this.renderLCBList(
-                            current_date_board_miletones,
-                            timestamp
-                          )}
-                        >
-                          <div
-                            className={`${indexStyles.board_miletiones_names} ${globalStyles.global_ellipsis}`}
-                            data-targetclassname="specific_example_milestone"
-                            style={{
-                              top: this.setMiletonesNamesPostionTop(),
-                              maxWidth:
-                                this.setMiletonesNamesWidth(timestampEnd) - 30,
-                              color: this.setMiletonesColor({
-                                is_over_duetime,
-                                has_lcb,
-                                is_all_realized
-                              })
-                            }}
-                          >
-                            {this.renderMiletonesNames(
-                              current_date_board_miletones
-                            )}
-                          </div>
-                        </Dropdown>
-                      </>
-                    )}
-                    {has_child_flag && (
-                      <>
-                        <Dropdown
-                          overlay={this.renderLCBList(
-                            current_date_board_child_miletones,
-                            timestamp
-                          )}
-                        >
-                          <div
-                            data-targetclassname="specific_example_milestone"
-                            className={indexStyles.board_miletiones_flag2}
-                            style={{
-                              top: this.setMiletonesNamesPostionTop(),
-                              left: (ceilWidth - 14) / 2,
-                              backgroundColor: this.setMiletonesColor({
-                                is_over_duetime,
-                                has_lcb: has_child_flag,
-                                is_all_realized: is_all_child_realized
-                              })
-                            }}
-                          />
-                        </Dropdown>
-                        <Dropdown
-                          overlay={this.renderLCBList(
-                            current_date_board_child_miletones,
-                            timestamp
-                          )}
-                        >
-                          <div
-                            className={`${indexStyles.board_miletiones_names} ${globalStyles.global_ellipsis}`}
-                            data-targetclassname="specific_example_milestone"
-                            style={{
-                              top: this.setMiletonesNamesPostionTop(),
-                              maxWidth:
-                                this.setMiletonesNamesWidth(timestampEnd) - 30,
-                              color: this.setMiletonesColor({
-                                is_over_duetime,
-                                has_lcb: has_child_flag,
-                                is_all_realized: is_all_child_realized
-                              }),
-                              paddingTop: 2,
-                              left: (ceilWidth - 14) / 2 + 16
-                            }}
-                          >
-                            {this.renderMiletonesNames(
-                              current_date_board_child_miletones
-                            )}
-                          </div>
-                        </Dropdown>
-                      </>
-                    )}
-                  </div>
-                  {/* 旗杆 */}
-                  {has_lcb && (
+              <div
+                data-targetclassname="specific_example_milestone"
+                style={{ position: 'relative', zIndex: 3 }}
+                // {...this.target_event_bubble}
+              >
+                {/* 12为上下margin的总和 */}
+                {group_view_type == '1' && (
+                  // (gantt_board_id == '0' ||
+                  //   (gantt_board_id != '0' && itemKey == 0)) &&
+                  <>
                     <div
+                      style={{ position: 'relative', width: 0 }}
                       data-targetclassname="specific_example_milestone"
-                      className={`${indexStyles.board_miletiones_flagpole}`}
-                      style={{
-                        height:
-                          gantt_board_id != '0'
-                            ? itemKey == '0'
-                              ? group_list_area_section_height[
-                                  group_list_area_section_height.length - 1
-                                ] - 11 //在任务分组视图下
-                              : item_height - 12
-                            : ganttIsFold({
-                                gantt_board_id,
-                                group_view_type,
-                                show_board_fold,
-                                gantt_view_mode
-                              })
-                            ? 29
-                            : item_height - 12, //,
-                        //  backgroundColor: is_over_duetime ? '#FFA39E' : '#FFC069' ,
-                        background: this.setMiletonesColor({
-                          is_over_duetime,
-                          has_lcb,
-                          is_all_realized
-                        })
-                      }}
-                      onClick={this.seeMiletones}
-                      onMouseDown={e => e.stopPropagation()}
-                      onMouseOver={e => e.stopPropagation()}
-                      // onMouseMove
-                    />
-                  )}
-                </>
-              )}
+                    >
+                      {this.renderDragWrapper(
+                        current_date_board_miletones,
+                        <div
+                          style={{ position: 'relative', width: 0 }}
+                          data-targetclassname="specific_example_milestone"
+                        >
+                          {has_lcb && (
+                            <>
+                              {/* 旗帜 */}
+                              <Dropdown
+                                overlay={this.renderLCBList(
+                                  current_date_board_miletones,
+                                  timestamp
+                                )}
+                              >
+                                <div
+                                  className={`${indexStyles.board_miletiones_flag} ${globalStyles.authTheme}`}
+                                  data-targetclassname="specific_example_milestone"
+                                  onClick={this.seeMiletones}
+                                  // onMouseDown={e => e.stopPropagation()}
+                                  style={{
+                                    color: this.setMiletonesColor({
+                                      is_over_duetime,
+                                      has_lcb,
+                                      is_all_realized
+                                    })
+                                  }}
+                                >
+                                  &#xe6a0;
+                                </div>
+                              </Dropdown>
+                              {/* 渲染里程碑名称铺开 */}
+                              <Dropdown
+                                overlay={this.renderLCBList(
+                                  current_date_board_miletones,
+                                  timestamp
+                                )}
+                              >
+                                <div
+                                  className={`${indexStyles.board_miletiones_names} ${globalStyles.global_ellipsis}`}
+                                  data-targetclassname="specific_example_milestone"
+                                  style={{
+                                    top: this.setMiletonesNamesPostionTop(),
+                                    maxWidth:
+                                      this.setMiletonesNamesWidth(
+                                        timestampEnd
+                                      ) - 30,
+                                    color: this.setMiletonesColor({
+                                      is_over_duetime,
+                                      has_lcb,
+                                      is_all_realized
+                                    })
+                                  }}
+                                >
+                                  {this.renderMiletonesNames(
+                                    current_date_board_miletones
+                                  )}
+                                </div>
+                              </Dropdown>
+                              <div
+                                data-targetclassname="specific_example_milestone"
+                                className={`${indexStyles.board_miletiones_flagpole}`}
+                                style={{
+                                  height:
+                                    gantt_board_id != '0'
+                                      ? itemKey == '0'
+                                        ? group_list_area_section_height[
+                                            group_list_area_section_height.length -
+                                              1
+                                          ] - 11 //在任务分组视图下
+                                        : item_height - 12
+                                      : ganttIsFold({
+                                          gantt_board_id,
+                                          group_view_type,
+                                          show_board_fold,
+                                          gantt_view_mode
+                                        })
+                                      ? 29
+                                      : item_height - 12, //,
+                                  //  backgroundColor: is_over_duetime ? '#FFA39E' : '#FFC069' ,
+                                  background: this.setMiletonesColor({
+                                    is_over_duetime,
+                                    has_lcb,
+                                    is_all_realized
+                                  })
+                                }}
+                                onClick={this.seeMiletones}
+                                onMouseDown={e => e.stopPropagation()}
+                                onMouseOver={e => e.stopPropagation()}
+                                // onMouseMove
+                              />
+                            </>
+                          )}
+                        </div>
+                      )}
+
+                      {this.renderDragWrapper(
+                        current_date_board_child_miletones,
+                        <div
+                          style={{ position: 'relative', width: 0 }}
+                          data-targetclassname="specific_example_milestone"
+                        >
+                          {has_child_flag && (
+                            <>
+                              <Dropdown
+                                overlay={this.renderLCBList(
+                                  current_date_board_child_miletones,
+                                  timestamp
+                                )}
+                              >
+                                <div
+                                  data-targetclassname="specific_example_milestone"
+                                  className={indexStyles.board_miletiones_flag2}
+                                  style={{
+                                    top: this.setMiletonesNamesPostionTop(),
+                                    left: (ceilWidth - 14) / 2,
+                                    backgroundColor: this.setMiletonesColor({
+                                      is_over_duetime,
+                                      has_lcb: has_child_flag,
+                                      is_all_realized: is_all_child_realized
+                                    })
+                                  }}
+                                />
+                              </Dropdown>
+                              <Dropdown
+                                overlay={this.renderLCBList(
+                                  current_date_board_child_miletones,
+                                  timestamp
+                                )}
+                              >
+                                <div
+                                  className={`${indexStyles.board_miletiones_names} ${globalStyles.global_ellipsis}`}
+                                  data-targetclassname="specific_example_milestone"
+                                  style={{
+                                    top: this.setMiletonesNamesPostionTop(),
+                                    maxWidth:
+                                      this.setMiletonesNamesWidth(
+                                        timestampEnd
+                                      ) - 30,
+                                    color: this.setMiletonesColor({
+                                      is_over_duetime,
+                                      has_lcb: has_child_flag,
+                                      is_all_realized: is_all_child_realized
+                                    }),
+                                    paddingTop: 2,
+                                    left: (ceilWidth - 14) / 2 + 16
+                                  }}
+                                >
+                                  {this.renderMiletonesNames(
+                                    current_date_board_child_miletones
+                                  )}
+                                </div>
+                              </Dropdown>
+                            </>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                    {/* 旗杆 */}
+                  </>
+                )}
+              </div>
             </div>
           )
         })}
@@ -1414,7 +1624,9 @@ function mapStateToProps({
       milestoneMap,
       group_view_type,
       show_board_fold,
-      ceilWidth
+      ceilWidth,
+      date_arr_one_level,
+      gantt_head_width
     }
   }
 }) {
@@ -1429,6 +1641,8 @@ function mapStateToProps({
     group_view_type,
     show_board_fold,
     group_list_area_section_height,
-    ceilWidth
+    ceilWidth,
+    date_arr_one_level,
+    gantt_head_width
   }
 }
