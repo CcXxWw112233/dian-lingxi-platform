@@ -815,9 +815,12 @@ export default class TempleteSchemeTree extends Component {
   // 添加同级 或 子级 的确定点击事件
   handleCreateTempContainer = ({ e, is_rename }) => {
     e && e.stopPropagation()
-    const { inputValue, local_name, is_add_children } = this.state
+    const { inputValue, local_name } = this.state
     if (inputValue == local_name || inputValue == '') return
-    const { currentSelectedItemInfo = {} } = this.props
+    const {
+      currentSelectedItemInfo = {},
+      currentTempleteListContainer = []
+    } = this.props
     if (
       (currentSelectedItemInfo &&
         Object.keys(currentSelectedItemInfo) &&
@@ -825,24 +828,28 @@ export default class TempleteSchemeTree extends Component {
       !currentSelectedItemInfo
     )
       return false
-    const {
-      template_data_type,
-      template_id,
-      parent_id,
-      id,
-      name,
-      child_content = []
-    } = currentSelectedItemInfo
-    // 如果是template_data_type == '2' 子任务, 就取parent_id , 否则为 id ==> 判断是否 创建添加的是什么
-    // 如果是创建添加子任务，那么就取该 对象中的 id 否则为parent_id
-    // let PARENTID =
-    //   template_data_type == '2' ? (is_add_children ? id : parent_id) : parent_id
-    let PARENTID = !!(child_content && child_content.length)
-      ? child_content[0].parent_id
-      : parent_id
-    let TEMPLETE_DATA_TYPE = !!(child_content && child_content.length)
-      ? child_content[0].template_data_type
-      : template_data_type
+    const { template_id, id } = currentSelectedItemInfo
+    const data = JSON.parse(JSON.stringify(currentTempleteListContainer || []))
+    let rev = (data = []) => {
+      let result = null
+      if (!data) return
+      for (let val = 0; val < data.length; val++) {
+        if (result !== null) {
+          break
+        }
+        let item = data[val]
+        if (item.name == '') {
+          result = { ...item }
+          break
+        } else if (item.child_content && item.child_content.length > 0) {
+          result = rev(item.child_content)
+        }
+      }
+      return result
+    }
+    // 找到当前元素
+    const currentOperateItem = rev(data) || {}
+    const { parent_id, template_data_type } = currentOperateItem
     if (is_rename) {
       this.props.dispatch({
         type: 'organizationManager/updateTempleteContainer',
@@ -858,19 +865,8 @@ export default class TempleteSchemeTree extends Component {
         type: 'organizationManager/createTempleteContainer',
         payload: {
           name: inputValue,
-          parent_id: PARENTID,
-          // parent_id == '0' && template_data_type == '1'
-          //   ? is_add_children
-          //     ? id
-          //     : parent_id
-          //   : PARENTID,
-          template_data_type:
-            template_data_type == '3' ? '2' : TEMPLETE_DATA_TYPE,
-          // is_add_children
-          //   ? '2'
-          //   : template_data_type == '3'
-          //   ? '2'
-          //   : template_data_type,
+          parent_id: parent_id,
+          template_data_type,
           template_id: template_id,
           target_id: id
         }
@@ -1295,11 +1291,6 @@ export default class TempleteSchemeTree extends Component {
         // debugger
       }
     }
-    // setTimeout(async () => {
-    // let flow_index = this.findFlowNodePosition(data, dragKey)
-    // // debugger
-    // if (flow_index == 0) return
-    // let ar = removeEmptyArrayEle(this.reSortNodeDataWithTaskFlowPosition(data))
     let ar_1 = await this.whetherISTheSameLevelToUpdateParentID(
       removeEmptyArrayEle(data),
       dragDataRef.id,
@@ -1331,20 +1322,9 @@ export default class TempleteSchemeTree extends Component {
       parent_id: updateItem.parent_id
     }).then(res => {
       if (isApiResponseOk(res)) {
-        // _this.setState({
-        //   expandedKeys: []
-        // })
         _this.fetchSortTempleteContainer(ar)
       }
     })
-    // await this.props.dispatch({
-    //   type: 'organizationManager/updateDatas',
-    //   payload: {
-    //     currentTempleteListContainer: ar
-    //   }
-    // })
-
-    // }, 200)
   }
 
   // 获取拖拽后对应元素位置ID存为参数
