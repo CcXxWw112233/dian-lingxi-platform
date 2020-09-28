@@ -913,7 +913,6 @@ export default class BoardTemplate extends Component {
   // 获取可复制内容
   getCopyTextValue = id => {
     let copyBtn = document.getElementById(`templete_share_${id}`)
-    console.log(copyBtn)
     if (!copyBtn) return
     let copyText = copyBtn.innerText
     return copyText
@@ -954,6 +953,21 @@ export default class BoardTemplate extends Component {
         }, 50)
       }
     )
+  }
+
+  // 控制模板分享窗口显示隐藏
+  onTempleteShareVisibleChange = visible => {
+    this.setState({
+      templete_share_visible: visible
+    })
+  }
+
+  // 取消
+  onCancelTempleteShareVisble = e => {
+    e && e.stopPropagation()
+    this.setState({
+      templete_share_visible: false
+    })
   }
 
   render() {
@@ -1121,6 +1135,8 @@ export default class BoardTemplate extends Component {
                             getPopupContainer={triggerNode =>
                               triggerNode.parentNode
                             }
+                            visible={this.state.templete_share_visible}
+                            onVisibleChange={this.onTempleteShareVisibleChange}
                             placement="bottomRight"
                             title={null}
                             content={
@@ -1128,7 +1144,10 @@ export default class BoardTemplate extends Component {
                                 className={styles.popover_content}
                                 onClick={e => e && e.stopPropagation()}
                               >
-                                <span className={`${styles.popover_close}`}>
+                                <span
+                                  onClick={this.onCancelTempleteShareVisble}
+                                  className={`${styles.popover_close}`}
+                                >
                                   <i className={`${globalStyles.authTheme}`}>
                                     &#xe7fe;
                                   </i>
