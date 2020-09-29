@@ -589,8 +589,8 @@ export default {
           outline_tree_round: arr
         }
       })
-      // console.log('filnaly_outline_tree1', filnaly_outline_tree)
-      // console.log('filnaly_outline_tree2', arr)
+      console.log('filnaly_outline_tree1', filnaly_outline_tree)
+      console.log('filnaly_outline_tree2', arr)
       // console.log('filnaly_outline_tree1', filnaly_outline_tree[0].expand_length)
       // console.log('filnaly_outline_tree2', filnaly_outline_tree[1].expand_length)
       // 更新基线信息
