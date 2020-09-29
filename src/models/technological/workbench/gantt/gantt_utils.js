@@ -22,7 +22,25 @@ function getLeafCountTree(data = {}) {
     return leafCount
   }
 }
-
+// 获取里程碑下所有叶子（穿透多层）节点的任务的最早时间
+function getMilestoneLeafCardsMinTime(node) {
+  let min_time = undefined
+  function recusion(node) {
+    if (node.children.length) {
+      node.children.forEach(item => {
+        if (item.start_time && item.tree_type == '2') {
+          min_time = Math.min(
+            min_time || transformTimestamp(item.start_time),
+            transformTimestamp(item.start_time)
+          )
+        }
+        recusion(item)
+      })
+    }
+  }
+  recusion(node)
+  return min_time
+}
 export function recusionItem(
   tree,
   {
@@ -108,7 +126,7 @@ export function recusionItem(
       new_item.parent_card_id = parent_card_id
     }
     new_item.cat_no =
-      (parrent_cat_no || '') + `${parrent_cat_no ? '.' : ''}${key + 1}`
+      (parrent_cat_no || '') + `${parrent_cat_no ? '.' : ''}${key + 1}` //编号
     if (new_item_children.length) {
       new_item.children = recusionItem(
         new_item_children,
@@ -127,6 +145,11 @@ export function recusionItem(
         new_item.children = new_item.children.filter(item => item.is_display)
       }
     }
+    //所有叶子 任务的最早时间
+    if (tree_type == '1') {
+      new_item.min_leaf_card_time = getMilestoneLeafCardsMinTime(new_item)
+    }
+    //一级里程碑展开的包含高度
     if (tree_type == '1' && !parent_id) {
       new_item.expand_length = getLeafCountTree(new_item)
     }

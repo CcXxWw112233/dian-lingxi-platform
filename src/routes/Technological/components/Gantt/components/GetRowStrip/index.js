@@ -497,17 +497,30 @@ export default class GetRowStrip extends PureComponent {
   //渲染里程碑设置---start
   renderMilestoneSet = () => {
     const {
-      itemValue: { due_time }
+      itemValue: { due_time, min_leaf_left, left, parent_id },
+      ceilWidth
     } = this.props
     return !!due_time ? (
-      <Draggable
-        axis="x"
-        onStart={this.milestoneDragStart}
-        onDrag={this.milestoneDraging}
-        onStop={this.milestoneDragStop}
-      >
-        {this.renderMilestone()}
-      </Draggable>
+      <>
+        <div
+          className={styles.leaf_min_time}
+          style={{
+            left: min_leaf_left,
+            width: left - min_leaf_left + (!parent_id ? ceilWidth : 0)
+          }}
+        >
+          <div className={styles.left_triangle}></div>
+          <div className={styles.right_triangle}></div>
+        </div>
+        <Draggable
+          axis="x"
+          onStart={this.milestoneDragStart}
+          onDrag={this.milestoneDraging}
+          onStop={this.milestoneDragStop}
+        >
+          {this.renderMilestone()}
+        </Draggable>
+      </>
     ) : (
       this.renderMilestone()
     )

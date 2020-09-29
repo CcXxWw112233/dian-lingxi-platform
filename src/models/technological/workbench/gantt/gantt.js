@@ -530,6 +530,20 @@ export default {
                   max_width,
                   (time_span || 1) * ceilWidth
                 ]) //取最小可放的
+                //有截止时间的里程碑，溯源到开始时间位置
+                if (new_item.min_leaf_card_time && new_item.left) {
+                  // eslint-disable-next-line prettier/prettier
+                  new_item.min_leaf_left = Math.max(
+                    0,
+                    new_item.left -
+                      Math.floor(
+                        (new_item[cal_left_field] -
+                          new_item.min_leaf_card_time) /
+                          (24 * 60 * 60 * 1000)
+                      ) *
+                        ceilWidth
+                  )
+                }
                 time_belong_area = true
                 break
               }
@@ -557,6 +571,22 @@ export default {
                   max_width,
                   (time_span || 1) * ceilWidth
                 ]) //取最小可放的
+
+                //有截止时间的里程碑，溯源到开始时间位置
+                if (new_item.min_leaf_card_time && new_item.left) {
+                  // eslint-disable-next-line prettier/prettier
+                  new_item.min_leaf_left = Math.max(
+                    0,
+                    new_item.left -
+                      Math.floor(
+                        (new_item[cal_left_field] -
+                          new_item.min_leaf_card_time) /
+                          (24 * 60 * 60 * 1000)
+                      ) *
+                        ceilWidth
+                  )
+                }
+
                 time_belong_area = true
                 break
               }
@@ -570,6 +600,21 @@ export default {
                 new_item.left =
                   ((k + (date_day == 0 ? 1 : 0)) * 7 + date_day - 1) * ceilWidth
                 new_item.width = (time_span || 1) * ceilWidth
+
+                //有截止时间的里程碑，溯源到开始时间位置,
+                if (new_item.min_leaf_card_time && new_item.left) {
+                  // eslint-disable-next-line prettier/prettier
+                  new_item.min_leaf_left = Math.max(
+                    0,
+                    new_item.left -
+                      Math.floor(
+                        (new_item[cal_left_field] -
+                          new_item.min_leaf_card_time) /
+                          (24 * 60 * 60 * 1000)
+                      ) *
+                        ceilWidth
+                  )
+                }
                 break
               }
             } else {
