@@ -89,7 +89,7 @@ export default {
   state: {
     datas: {
       ...gantt_effect.state,
-      gantt_view_mode: 'month', //week / month /year '周视图，月视图，年视图'，原来月视图定义成 ‘天视图’， 年视图则是定义成 ‘月视图’
+      gantt_view_mode: 'month', //week / month /year/ hours '周视图，月视图，年视图,'，原来月视图定义成 ‘天视图’， 年视图则是定义成 ‘月视图’
       gold_date_arr: [], //所需要的日期数据
       date_arr_one_level: [], //所有日期数据扁平成一级数组
       start_date: {}, //日期最开始的那一天
@@ -530,6 +530,20 @@ export default {
                   max_width,
                   (time_span || 1) * ceilWidth
                 ]) //取最小可放的
+                //有截止时间的里程碑，溯源到开始时间位置
+                if (new_item.min_leaf_card_time && new_item.left) {
+                  // eslint-disable-next-line prettier/prettier
+                  new_item.min_leaf_left = Math.max(
+                    0,
+                    new_item.left -
+                      Math.floor(
+                        (new_item[cal_left_field] -
+                          new_item.min_leaf_card_time) /
+                          (24 * 60 * 60 * 1000)
+                      ) *
+                        ceilWidth
+                  )
+                }
                 time_belong_area = true
                 break
               }
@@ -557,6 +571,22 @@ export default {
                   max_width,
                   (time_span || 1) * ceilWidth
                 ]) //取最小可放的
+
+                //有截止时间的里程碑，溯源到开始时间位置
+                if (new_item.min_leaf_card_time && new_item.left) {
+                  // eslint-disable-next-line prettier/prettier
+                  new_item.min_leaf_left = Math.max(
+                    0,
+                    new_item.left -
+                      Math.floor(
+                        (new_item[cal_left_field] -
+                          new_item.min_leaf_card_time) /
+                          (24 * 60 * 60 * 1000)
+                      ) *
+                        ceilWidth
+                  )
+                }
+
                 time_belong_area = true
                 break
               }
@@ -570,6 +600,21 @@ export default {
                 new_item.left =
                   ((k + (date_day == 0 ? 1 : 0)) * 7 + date_day - 1) * ceilWidth
                 new_item.width = (time_span || 1) * ceilWidth
+
+                //有截止时间的里程碑，溯源到开始时间位置,
+                if (new_item.min_leaf_card_time && new_item.left) {
+                  // eslint-disable-next-line prettier/prettier
+                  new_item.min_leaf_left = Math.max(
+                    0,
+                    new_item.left -
+                      Math.floor(
+                        (new_item[cal_left_field] -
+                          new_item.min_leaf_card_time) /
+                          (24 * 60 * 60 * 1000)
+                      ) *
+                        ceilWidth
+                  )
+                }
                 break
               }
             } else {
@@ -589,8 +634,8 @@ export default {
           outline_tree_round: arr
         }
       })
-      // console.log('filnaly_outline_tree1', filnaly_outline_tree)
-      // console.log('filnaly_outline_tree2', arr)
+      console.log('filnaly_outline_tree1', filnaly_outline_tree)
+      console.log('filnaly_outline_tree2', arr)
       // console.log('filnaly_outline_tree1', filnaly_outline_tree[0].expand_length)
       // console.log('filnaly_outline_tree2', filnaly_outline_tree[1].expand_length)
       // 更新基线信息
@@ -869,7 +914,7 @@ export default {
                 //   item.left = k * ceilWidth
                 //   break
                 // }
-                if (gantt_view_mode == 'month') {
+                if (gantt_view_mode == 'month' || gantt_view_mode == 'hours') {
                   //月视图下遍历得到和开始时间对的上的日期
                   if (
                     isSamDay(

@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'dva'
 import indexStyles from './index.less'
 import { isToday } from './base_utils'
-import { ganttIsOutlineView } from './constants'
+import { ganttIsOutlineView, hours_view_total } from './constants'
 // 这是一个甘特图面板尾部的日期列表
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
@@ -147,6 +147,38 @@ export default class GetRowGanttItem extends Component {
       </>
     )
   }
+
+  // 渲染时视图日期
+  renderHourView = (date_inner = []) => {
+    const { rows = 7 } = this.props
+    const { ceiHeight, list_id } = this.props
+    return (
+      <>
+        {date_inner.map((value2, key2) => {
+          const { timestamp, timestampEnd } = value2
+          return (
+            <div
+              className={`${indexStyles.ganttDetailItem}`}
+              data-list_id={list_id}
+              data-start_time={timestamp}
+              data-end_time={timestampEnd}
+              key={timestamp}
+              style={{
+                borderRight:
+                  key2 == hours_view_total - 1
+                    ? '1px solid rgba(154, 159, 166, 0.15)'
+                    : 'none',
+                // borderLeft:
+                //   key2 == 0 ? '1px solid rgba(154, 159, 166, 0.15)' : 'none',
+                backgroundColor: 'rgb(245,245,245)',
+                ...this.setBorderTop()
+              }}
+            ></div>
+          )
+        })}
+      </>
+    )
+  }
   render() {
     const { gold_date_arr = [], gantt_view_mode } = this.props
     return (
@@ -164,6 +196,8 @@ export default class GetRowGanttItem extends Component {
                   {gantt_view_mode == 'week' && this.renderWeekView(date_inner)}
                   {gantt_view_mode == 'month' &&
                     this.renderMonthView(date_inner)}
+                  {gantt_view_mode == 'hours' &&
+                    this.renderHourView(date_inner)}
                 </div>
               </div>
             )

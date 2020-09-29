@@ -5,6 +5,7 @@ import {
   ceil_height
 } from '../../../../routes/Technological/components/Gantt/constants'
 import { getDateInfo } from '../../../../routes/Technological/components/Gantt/getDate'
+// 获取一级里程碑包含的高度
 function getLeafCountTree(data = {}) {
   if (!data.children) return 1
   if (data.children.length == 0) {
@@ -21,7 +22,25 @@ function getLeafCountTree(data = {}) {
     return leafCount
   }
 }
-
+// 获取里程碑下所有叶子（穿透多层）节点的任务的最早时间
+function getMilestoneLeafCardsMinTime(node) {
+  let min_time = undefined
+  function recusion(node) {
+    if (node.children.length) {
+      node.children.forEach(item => {
+        if (item.start_time && item.tree_type == '2') {
+          min_time = Math.min(
+            min_time || transformTimestamp(item.start_time),
+            transformTimestamp(item.start_time)
+          )
+        }
+        recusion(item)
+      })
+    }
+  }
+  recusion(node)
+  return min_time
+}
 export function recusionItem(
   tree,
   {
@@ -30,11 +49,12 @@ export function recusionItem(
     parent_id,
     parent_milestone_id,
     parent_card_id,
-    parent_ids = []
+    parent_ids = [],
+    parrent_cat_no = undefined
   },
   { start_date, end_date, filter_display }
 ) {
-  let arr = tree.map(item => {
+  let arr = tree.map((item, key) => {
     let new_item = { ...item, parent_expand }
     let { tree_type, children = [], is_expand, id } = item
     let new_item_children = [...children].filter(
@@ -69,6 +89,7 @@ export function recusionItem(
         .map(item => transformTimestamp(item.due_time) || 0)
         .filter(item => item)
       let child_time_arr = [].concat(child_time_arr_due, child_time_arr_start) ////全部时间的集合， [0]防止math.max 。minw
+      //里程碑总工时
       time_span = setGantTimeSpan({
         time_span: '0',
         start_time:
@@ -104,7 +125,8 @@ export function recusionItem(
     } else if (parent_type == '2') {
       new_item.parent_card_id = parent_card_id
     }
-
+    new_item.cat_no =
+      (parrent_cat_no || '') + `${parrent_cat_no ? '.' : ''}${key + 1}` //编号
     if (new_item_children.length) {
       new_item.children = recusionItem(
         new_item_children,
@@ -114,7 +136,8 @@ export function recusionItem(
           parent_id: id,
           parent_milestone_id: id,
           parent_card_id: id,
-          parent_ids: new_item.parent_ids
+          parent_ids: new_item.parent_ids,
+          parrent_cat_no: new_item.cat_no
         },
         { start_date, end_date, filter_display }
       )
@@ -122,7 +145,12 @@ export function recusionItem(
         new_item.children = new_item.children.filter(item => item.is_display)
       }
     }
+    //所有叶子 任务的最早时间
     if (tree_type == '1') {
+      new_item.min_leaf_card_time = getMilestoneLeafCardsMinTime(new_item)
+    }
+    //一级里程碑展开的包含高度
+    if (tree_type == '1' && !parent_id) {
       new_item.expand_length = getLeafCountTree(new_item)
     }
     return new_item
