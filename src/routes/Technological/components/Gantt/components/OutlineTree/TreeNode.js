@@ -697,9 +697,6 @@ export default class TreeNode extends Component {
           isTitleHover ? styles.hoverTitle : ''
         }`}
       >
-        {this.props.showNumber && (
-          <span className={styles.outline_number}>{cat_no}</span>
-        )}
         {/*<span><span>确定</span><span>取消</span></span> */}
         <Tooltip
           mouseEnterDelay={0.5}
@@ -714,6 +711,9 @@ export default class TreeNode extends Component {
             // onDoubleClick={() => this.onDoubleClickTitle(placeholder)}
             onClick={() => this.onClickTitle(placeholder)}
           >
+            {this.props.showNumber && (
+              <span className={styles.outline_number}>{cat_no}</span>
+            )}
             {editing || isTitleHover || isTitleEdit ? (
               <Input
                 defaultValue={title != '0' ? title : ''}
