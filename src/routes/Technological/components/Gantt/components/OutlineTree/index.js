@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import styles from './index.less'
-import { Input, Dropdown, message, Tooltip, Menu } from 'antd'
+import { Input, Dropdown, message, Tooltip, Menu, Switch } from 'antd'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import ManhourSet from './ManhourSet.js'
 import { Popover, Avatar } from 'antd'
@@ -591,7 +591,7 @@ import NodeTreeTable from './NodeTreeTable'
 //         }
 //     }
 // }
-
+@connect()
 class MyOutlineTree extends Component {
   constructor(props) {
     super(props)
@@ -600,61 +600,160 @@ class MyOutlineTree extends Component {
         {
           key: 'item_start_time',
           title: '开始',
-          className: 'item_start_time'
+          className: 'item_start_time',
+          dataIndex: 'is_show_start_time'
         },
         {
           key: 'item_end_time',
           title: '结束',
-          className: 'item_end_time'
+          className: 'item_end_time',
+          dataIndex: 'is_show_end_time'
         },
         {
           key: 'item_users_avatar',
           title: '负责人',
-          className: 'item_users_avatar'
+          className: 'item_users_avatar',
+          dataIndex: 'is_show_leader'
         },
         {
           key: 'item_times',
           title: '工时',
-          className: 'item_times'
+          className: 'item_times',
+          dataIndex: 'is_show_time_span'
         }
       ],
-      defaultColumns: ['item_users_avatar', 'item_times']
+      defaultColumns: ['item_users_avatar', 'item_times'],
+      isShowNumber: true
     }
   }
+  componentDidMount() {
+    this.fetchSetting()
+  }
 
-  // 更新表头
-  handleSelectionColumns = ({ key }) => {
+  // 获取设置项
+  fetchSetting = async () => {
+    const { dispatch } = this.props
+    let data = await dispatch({
+      type: 'gantt/getOutlineTableHeader'
+    })
     let arr = Array.from(this.state.defaultColumns)
+    if (data) {
+      arr = []
+      for (const key in data) {
+        if (data[key] == 1) {
+          let obj = this.state.columns.find(item => item.dataIndex === key)
+          if (obj) arr.push(obj.key)
+        }
+      }
+    }
+
+    this.setState({
+      defaultColumns: arr,
+      isShowNumber: !!+data.is_show_order
+    })
+  }
+  computedWidth = arr => {
+    if (arr.length === 3 || arr.length === 2) {
+      return 460
+    }
+    if (arr.length === 4) {
+      return 540
+    }
+    if (arr.length === 1) {
+      return 370
+    }
+  }
+  // 更新表头
+  handleSelectionColumns = val => {
+    const { key, item } = val
+    let dataIndex = item.props.item_key
+    const { dispatch } = this.props
+    let arr = Array.from(this.state.defaultColumns)
+    let show = 0
     if (this.state.defaultColumns.includes(key)) {
       arr = arr.filter(item => item !== key)
+      show = 0
     } else {
-      arr.unshift(key)
+      arr.push(key)
+      show = 1
     }
+    this.setState(
+      {
+        defaultColumns: arr
+      },
+      () => {
+        // 更新页面
+        let width = this.computedWidth(arr)
+        dispatch({
+          type: 'gantt/updateDatas',
+          payload: {
+            gantt_head_width: width
+          }
+        })
+        dispatch({
+          type: 'gantt/setOutlineTableHeader',
+          payload: {
+            [dataIndex]: show
+          }
+        })
+        // 更新缓存
+        window.localStorage.setItem('gantt_head_width', width)
+        const target = document.getElementById('gantt_header_wapper')
+        target.style.width = `${width}px`
+        // 提醒一下拖动条在哪
+        const slidebar = target.querySelector('.draggableSlidebar')
+        slidebar.classList.add(styles.slideActive_bar)
+        setTimeout(() => {
+          slidebar.classList.remove(styles.slideActive_bar)
+        }, 800)
+      }
+    )
+  }
+
+  // 切换是否显示编号
+  toogleNumber = val => {
     this.setState({
-      defaultColumns: arr
+      isShowNumber: val
+    })
+    this.props.dispatch({
+      type: 'gantt/setOutlineTableHeader',
+      payload: {
+        is_show_order: val ? 1 : 0
+      }
     })
   }
   // 下拉菜单
   SettingMenu = () => {
     return (
-      <Menu onClick={this.handleSelectionColumns}>
-        {this.state.columns.map(item => {
-          return (
-            <Menu.Item key={item.key}>
-              <div className={styles.selectColumns}>
-                {item.title}
-                {this.state.defaultColumns.includes(item.key) && (
-                  <span
-                    className={`${styles.active} ${globalStyles.authTheme}`}
-                  >
-                    &#xe7fc;
-                  </span>
-                )}
-              </div>
-            </Menu.Item>
-          )
-        })}
-      </Menu>
+      <div className={styles.overlay_toogle_menu}>
+        <Menu onClick={this.handleSelectionColumns}>
+          {this.state.columns.map(item => {
+            return (
+              <Menu.Item key={item.key} item_key={item.dataIndex}>
+                <div className={styles.selectColumns}>
+                  {item.title}
+                  {this.state.defaultColumns.includes(item.key) && (
+                    <span
+                      className={`${styles.active} ${globalStyles.authTheme}`}
+                    >
+                      &#xe7fc;
+                    </span>
+                  )}
+                </div>
+              </Menu.Item>
+            )
+          })}
+        </Menu>
+        <div className={styles.overlay_toogle_number}>
+          <span>显示编号</span>
+          <span>
+            <Switch
+              onChange={this.toogleNumber}
+              checked={this.state.isShowNumber}
+            />
+          </span>
+        </div>
+      </div>
     )
   }
   render() {
@@ -719,6 +818,7 @@ class MyOutlineTree extends Component {
               outline_tree_round={outline_tree_round}
               columns={this.state.columns}
               defaultColumns={this.state.defaultColumns}
+              showNumber={this.state.isShowNumber}
             >
               {child.props.children}
             </TreeNode>

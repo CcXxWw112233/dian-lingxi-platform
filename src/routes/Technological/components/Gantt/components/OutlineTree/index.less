@@ -83,19 +83,24 @@
 .item_times{
   min-width: 40px;
   margin-left: 5px;
+  text-align: center;
 }
 .item_title_name{
   width: 80%;
   min-width: 134px;
 }
 .item_start_time{
-  min-width: 60px;
+  min-width: 85px;
+  padding: 0 5px;
+  text-align: center;
   & > span{
     .start_time;
   }
 }
 .item_end_time{
-  min-width: 60px;
+  min-width: 85px;
+  padding: 0 5px;
+  text-align: center;
   & > span{
     .start_time;
   }
@@ -290,15 +295,38 @@
 
 //   background-color: transparent;
 // }
+.outline_number{
+  margin-right: 10px;
+}
 .titleInputFocus {
   border-style: solid;
 }
+.overlay_toogle_menu{
+  background-color: #fff;
+  border: 1px solid #e8e8e8;
+}
+.overlay_toogle_number{
+  border-top: 1px solid #e8e8e8;
+  padding: 0 16px;
+  line-height: 40px;
+  & > span:last-child{
+    float: right;
+  }
+}
+.slideActive_bar{
+  & > div{
+    display: block !important;
+    animation: startIn 0.8s linear forwards;
+  }
+}
+
 
 .title {
   display: inline-block;
   // flex         : auto;
   min-width: 134px;
   min-height: 10px;
+  max-width: 200px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -360,5 +388,13 @@
   margin-right: 5px;
   &:hover {
     color: #3585ff;
+  }
+}
+@keyframes startIn {
+  0% {
+    opacity: 1;
+  }
+  100%{
+    opacity: 0;
   }
 }

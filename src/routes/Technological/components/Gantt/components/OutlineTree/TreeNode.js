@@ -35,7 +35,7 @@ export default class TreeNode extends Component {
       }
     }
     this.title_click_timer = null //标题单击和双击事件冲突设置的timer
-    this.timeForMat = 'yyyy/MM/dd HH:mm'
+    this.timeForMat = 'yyyy/MM/dd'
   }
 
   componentWillReceiveProps(nextProps) {
@@ -665,7 +665,8 @@ export default class TreeNode extends Component {
       editing,
       status,
       is_display,
-      parent_id
+      parent_id,
+      cat_no
     } = nodeValue
     const {
       onDataProcess,
@@ -696,6 +697,9 @@ export default class TreeNode extends Component {
           isTitleHover ? styles.hoverTitle : ''
         }`}
       >
+        {this.props.showNumber && (
+          <span className={styles.outline_number}>{cat_no}</span>
+        )}
         {/*<span><span>确定</span><span>取消</span></span> */}
         <Tooltip
           mouseEnterDelay={0.5}
@@ -855,7 +859,7 @@ export default class TreeNode extends Component {
   }
 
   // 根据传入的字段确定显示
-  renderForColumns = t => {
+  renderForColumns = () => {
     const { defaultColumns = [] } = this.props
     const arr = [
       { key: 'item_start_time', component: this.renderStartTime },
@@ -1015,6 +1019,7 @@ export default class TreeNode extends Component {
                 return (
                   <TreeNode
                     {...child.props}
+                    key={i}
                     changeOutLineTreeNodeProto={changeOutLineTreeNodeProto}
                     deleteOutLineTreeNode={deleteOutLineTreeNode}
                     leve={leve + 1}
@@ -1029,6 +1034,7 @@ export default class TreeNode extends Component {
                     projectDetailInfoData={projectDetailInfoData}
                     outline_tree_round={outline_tree_round}
                     defaultColumns={defaultColumns}
+                    showNumber={this.props.showNumber}
                   >
                     {child.props.children}
                   </TreeNode>
@@ -1051,6 +1057,7 @@ export default class TreeNode extends Component {
                     projectDetailInfoData={projectDetailInfoData}
                     outline_tree_round={outline_tree_round}
                     defaultColumns={defaultColumns}
+                    showNumber={this.props.showNumber}
                   />
                 )
               }
@@ -1174,7 +1181,7 @@ export default class TreeNode extends Component {
             <div className={styles.item_title_name}>{this.renderTitle()}</div>
           </div>
           <div className={styles.flex2}>
-            {this.renderForColumns('no')}
+            {this.renderForColumns()}
             {/* <div className={styles.item_users_avatar}>
               {this.renderAvatar()}
             </div>
