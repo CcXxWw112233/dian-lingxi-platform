@@ -26,7 +26,7 @@ function getLeafCountTree(data = {}) {
 function getMilestoneLeafCardsMinTime(node) {
   let min_time = undefined
   function recusion(node) {
-    if (node.children.length) {
+    if (node.children && node.children.length) {
       node.children.forEach(item => {
         if (item.start_time && item.tree_type == '2') {
           min_time = Math.min(

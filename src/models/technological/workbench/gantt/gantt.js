@@ -455,7 +455,7 @@ export default {
         let new_item = {}
         const { tree_type, children = [], child_card_status = {} } = item //  里程碑/任务/子任务/虚拟占位 1/2/3/4
         const cal_left_field = tree_type == '1' ? 'due_time' : 'start_time' //计算起始位置的字段
-        item.top = key * ceil_height
+        item.top = key * ceil_height + 26
         const due_time = getDigit(item['due_time'])
         const start_time = getDigit(item['start_time']) || due_time //如果没有开始时间，那就取截止时间当天
 
