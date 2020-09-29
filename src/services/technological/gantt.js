@@ -231,3 +231,21 @@ export async function getGanttOutlineHideTrem(params) {
     params
   })
 }
+
+// 获取模板分享码
+export async function getBoardTempleteShareCode(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/org/template/share`,
+    method: 'POST',
+    data
+  })
+}
+
+// 通过分享码生成模板
+export async function generateTempleteWithShareCode(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/org/template/share/generate`,
+    method: 'POST',
+    data
+  })
+}

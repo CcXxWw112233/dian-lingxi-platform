@@ -8,13 +8,16 @@ import {
   getBoardTemplateList,
   getBoardTemplateInfo,
   createCardByTemplate,
-  importBoardTemplate
+  importBoardTemplate,
+  getBoardTempleteShareCode,
+  generateTempleteWithShareCode
 } from '../../../../../../services/technological/gantt'
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
 import { createMilestone } from '../../../../../../services/technological/prjectDetail'
 import {
   getGlobalData,
-  checkIsHasPermissionInBoard
+  checkIsHasPermissionInBoard,
+  getOrgIdByBoardId
 } from '../../../../../../utils/businessFunction'
 import BoardTemplateManager from '@/routes/organizationManager/projectTempleteScheme/index.js'
 import SafeConfirmModal from '../SafeConfirmModal'
@@ -51,7 +54,12 @@ export default class BoardTemplate extends Component {
       checkedKeys: [], //已选择的key
       checkedKeysObj: [], ////已选择的keyobj
       selectedTpl: {},
-      template_origin: '2' //0 || 2 平台或自有
+      template_origin: '2', //0 || 2 平台或自有
+
+      templete_share_visible: false, // 分享码显示隐藏
+      templete_share_id: '', // 当前点击的分享ID
+      share_content: '', // 分享码 code
+      inputValue: '' // 输入内容
     }
     this.drag_init_inner_html = ''
     this.current_panel = ''
@@ -82,7 +90,11 @@ export default class BoardTemplate extends Component {
       selected_template_id: '', //已选择的项目模板
       selected_template_name: '请选择模板',
       template_list: [],
-      template_data: [] //模板数据
+      template_data: [], //模板数据
+      templete_share_visible: false, // 分享码显示隐藏
+      templete_share_id: '', // 当前点击的分享ID
+      share_content: '', // 分享码 code
+      inputValue: ''
     })
   }
   componentDidMount() {
@@ -931,28 +943,31 @@ export default class BoardTemplate extends Component {
     input.select()
     if (document.execCommand('copy')) {
       document.execCommand('copy')
-      message.success('复制成功')
+      // message.success('复制成功')
     }
     document.body.removeChild(input)
   }
 
-  // 一次性提取码
-  handleDisposableCode = (e, id) => {
-    e && e.stopPropagation()
-    this.setState(
-      {
-        templete_share_visible: !this.state.templete_share_visible
-      },
-      () => {
-        setTimeout(() => {
-          const { templete_share_visible } = this.state
-          if (templete_share_visible) {
-            let content = templete_share_visible && this.getCopyTextValue(id)
-            this.copyContentToClipTemplete(content)
-          }
-        }, 50)
+  getBoardTempleteShareCode = id => {
+    getBoardTempleteShareCode({ template_id: id }).then(res => {
+      if (isApiResponseOk(res)) {
+        if (this.state.templete_share_visible) {
+          this.setState({
+            templete_share_id: id,
+            share_content: res.data
+          })
+          this.copyContentToClipTemplete(res.data)
+        }
+      } else {
+        message.warn(res.message)
       }
-    )
+    })
+  }
+
+  // 一次性提取码
+  handleDisposableCode = async (e, id) => {
+    e && e.stopPropagation()
+    await this.getBoardTempleteShareCode(id)
   }
 
   // 控制模板分享窗口显示隐藏
@@ -960,6 +975,12 @@ export default class BoardTemplate extends Component {
     this.setState({
       templete_share_visible: visible
     })
+    if (!visible) {
+      this.setState({
+        templete_share_id: '',
+        share_content: ''
+      })
+    }
   }
 
   // 取消
@@ -967,6 +988,39 @@ export default class BoardTemplate extends Component {
     e && e.stopPropagation()
     this.setState({
       templete_share_visible: false
+    })
+  }
+
+  // 输入框事件
+  handleInputChange = e => {
+    let value = e.target.value
+    console.log(value)
+    this.setState({
+      inputValue: value
+    })
+  }
+
+  // 点击确定事件
+  handlePickUpTemplete = () => {
+    const { gantt_board_id } = this.props
+    const { inputValue } = this.state
+    const ogr_id = getOrgIdByBoardId(gantt_board_id)
+    if (!ogr_id) return
+    generateTempleteWithShareCode({
+      share_code: inputValue,
+      _organization_id: ogr_id
+    }).then(res => {
+      if (isApiResponseOk(res)) {
+        this.getBoardTemplateList()
+        this.setState({
+          inputValue: ''
+        })
+      } else {
+        message.warn(res.message)
+        this.setState({
+          inputValue: ''
+        })
+      }
     })
   }
 
@@ -978,7 +1032,11 @@ export default class BoardTemplate extends Component {
       spinning,
       project_templete_scheme_visible,
       checkedKeys = [],
-      safeConfirmModalVisible
+      safeConfirmModalVisible,
+      templete_share_visible,
+      templete_share_id,
+      share_content,
+      inputValue
     } = this.state
     const {
       gantt_board_id,
@@ -988,6 +1046,7 @@ export default class BoardTemplate extends Component {
       gantt_card_height,
       gantt_view_mode
     } = this.props
+    const reg = /^[A-Za-z0-9]{6}$/
     return gantt_board_id && gantt_board_id != '0' ? (
       <div
         className={`${styles.container_init}   ${boardTemplateShow == '1' &&
@@ -1131,11 +1190,15 @@ export default class BoardTemplate extends Component {
                       <span>
                         {template_type == '2' && (
                           <Popover
+                            key={id}
                             trigger={['click']}
                             getPopupContainer={triggerNode =>
                               triggerNode.parentNode
                             }
-                            visible={this.state.templete_share_visible}
+                            visible={
+                              item.id == templete_share_id &&
+                              templete_share_visible
+                            }
                             onVisibleChange={this.onTempleteShareVisibleChange}
                             placement="bottomRight"
                             title={null}
@@ -1153,7 +1216,9 @@ export default class BoardTemplate extends Component {
                                   </i>
                                 </span>
                                 <div>一次性提取码</div>
-                                <div id={`templete_share_${id}`}>ZFCTVG</div>
+                                <div id={`templete_share_${id}`}>
+                                  {share_content}
+                                </div>
                                 <div>
                                   <span>
                                     <span className={globalStyles.authTheme}>
@@ -1208,8 +1273,16 @@ export default class BoardTemplate extends Component {
                     <div>
                       <div>输入提取码：</div>
                       <div style={{ display: 'flex', marginTop: '8px' }}>
-                        <Input />
-                        <Button type="primary" style={{ marginLeft: '16px' }}>
+                        <Input
+                          value={inputValue}
+                          onChange={this.handleInputChange}
+                        />
+                        <Button
+                          disabled={!inputValue || !reg.test(inputValue)}
+                          type="primary"
+                          style={{ marginLeft: '16px' }}
+                          onClick={this.handlePickUpTemplete}
+                        >
                           确定
                         </Button>
                       </div>
