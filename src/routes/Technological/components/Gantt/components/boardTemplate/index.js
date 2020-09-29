@@ -1024,6 +1024,14 @@ export default class BoardTemplate extends Component {
     })
   }
 
+  handlePickUpTempleteVisible = visible => {
+    if (!visible) {
+      this.setState({
+        inputValue: ''
+      })
+    }
+  }
+
   render() {
     const {
       template_origin,
@@ -1269,6 +1277,7 @@ export default class BoardTemplate extends Component {
                   title={null}
                   trigger={'click'}
                   placement="top"
+                  onVisibleChange={this.handlePickUpTempleteVisible}
                   content={
                     <div>
                       <div>输入提取码：</div>
