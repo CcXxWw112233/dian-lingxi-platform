@@ -649,7 +649,7 @@ class MyOutlineTree extends Component {
 
     this.setState({
       defaultColumns: arr,
-      isShowNumber: !!+data.is_show_order
+      isShowNumber: !!+data?.is_show_order
     })
   }
   computedWidth = arr => {
