@@ -519,20 +519,26 @@ export default {
     },
 
     *updateProject({ payload }, { select, call, put }) {
-      //
+      // 表示不需要调用接口更新数据
+      const { isNotRequestProjectDetailData } = payload
       // const { board_id } = payload
+      payload.isNotRequestProjectDetailData
+        ? delete payload.isNotRequestProjectDetailData
+        : null
       const BOARD_ID = payload && payload.board_id && payload.board_id
       let res = yield call(updateProject, payload)
       if (isApiResponseOk(res)) {
-        yield put({
-          type: 'projectDetailInfo',
-          payload: {
-            id: BOARD_ID || board_id,
-            calback: function() {
-              message.success('更新成功', MESSAGE_DURATION_TIME)
+        if (!isNotRequestProjectDetailData) {
+          yield put({
+            type: 'projectDetailInfo',
+            payload: {
+              id: BOARD_ID || board_id,
+              calback: function() {
+                message.success('更新成功', MESSAGE_DURATION_TIME)
+              }
             }
-          }
-        })
+          })
+        }
       } else {
         //失败之后重新拉回原来数据
         const projectDetailInfoData = yield select(selectProjectDetailInfoData)
