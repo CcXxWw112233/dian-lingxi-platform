@@ -249,3 +249,21 @@ export async function generateTempleteWithShareCode(data) {
     data
   })
 }
+
+// 获取导出表格字段列表
+export async function getExportExcelFieldList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/board/export/item`,
+    method: 'GET',
+    params
+  })
+}
+
+// 导出表格
+export async function exportExcelFieldList(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/board/export/excel`,
+    method: 'POST',
+    data
+  })
+}
