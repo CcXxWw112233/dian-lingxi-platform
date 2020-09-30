@@ -436,6 +436,9 @@ export default class GetRowStrip extends PureComponent {
     this.milestone_drag_ele = e
     this.milestone_dragging = true
     // console.log('sssssssss_11', this.milestone_initial_left)
+    this.setState({
+      dragg_milestone_complete: false
+    })
   }
   milestoneDragStop = async () => {
     const {
@@ -486,11 +489,23 @@ export default class GetRowStrip extends PureComponent {
     if (!timestampEnd) return
 
     this.milestoneSetClick({ timestamp, timestampEnd })
-      .then()
+      .then(res => {
+        console.log('ssssssssssss_sucess', res)
+        this.setState({
+          dragg_milestone_complete: true
+        })
+      })
       .catch(err => {
+        console.log('ssssssssssss_err', err)
+
         this.changeOutLineTreeNodeProto(itemValue.id, {
           due_time: itemValue.due_time - 1
         })
+        setTimeout(() => {
+          this.setState({
+            dragg_milestone_complete: true
+          })
+        }, 300)
       })
   }
   // 里程碑的拖拽 -----------end
@@ -513,6 +528,9 @@ export default class GetRowStrip extends PureComponent {
           <div className={styles.right_triangle}></div>
         </div>
         <Draggable
+          {...(this.state.dragg_milestone_complete
+            ? { position: { x: 0, y: 0 } }
+            : {})} //拖拽错误后回归原位
           axis="x"
           onStart={this.milestoneDragStart}
           onDrag={this.milestoneDraging}
@@ -655,6 +673,12 @@ export default class GetRowStrip extends PureComponent {
       type: 'milestoneDetail/updateDatas',
       payload: {
         milestone_id: id
+      }
+    })
+    dispatch({
+      type: 'gantt/updateDatas',
+      payload: {
+        miletone_detail_modal_visible: true
       }
     })
   }
@@ -1019,7 +1043,7 @@ export default class GetRowStrip extends PureComponent {
           )}
           {this.renderSet(tree_type)}
         </div>
-        <MilestoneDetail
+        {/* <MilestoneDetail
           handleMiletonesChange={this.handleMiletonsChangeMountInGantt}
           users={projectDetailInfoData.data || []}
           miletone_detail_modal_visible={
@@ -1030,7 +1054,7 @@ export default class GetRowStrip extends PureComponent {
           }
           deleteMiletone={this.deleteMiletone}
           deleteRelationContent={this.deleteRelationContent}
-        />
+        /> */}
       </div>
     )
   }
