@@ -33,9 +33,6 @@ export default class index extends Component {
     const { checkedValue = [] } = this.state
     const { board_id } = this.props
     if (!board_id) return
-    let url = '/api/workbenchs/board/export/excel'
-    let reqParam = { board_id, codes: checkedValue }
-    let headers = { Authorization: Cookies.get('Authorization') }
     this.props.setVisible && this.props.setVisible(false)
     this.props.updateState &&
       this.props.updateState({
@@ -59,21 +56,8 @@ export default class index extends Component {
         let respHeader = resp.headers
         let file_name = respHeader['content-disposition'] || ''
         file_name = (file_name.split('=') || [])[1] || ''
-        let decode = function({
-          str = '',
-          jinzhi = '16',
-          prefix = '\\u',
-          postfix = ';'
-        } = {}) {
-          var ret = ''
-          var splits = str.split(';')
-          for (let i = 0; i < splits.length; i++) {
-            let tmp = splits[i].replace(prefix, '')
-            ret += String.fromCharCode(parseInt(tmp, jinzhi))
-          }
-          return ret
-        }
-        console.log(decode(file_name))
+        file_name = file_name.split('.')[0]
+        file_name = decodeURIComponent(escape(file_name)) + '.xlsx'
         let blob = new Blob([resp.data], {
           type:
             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
