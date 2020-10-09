@@ -49,35 +49,44 @@ export default class index extends Component {
         board_id,
         codes: checkedValue
       },
+      responseType: 'arraybuffer',
       timeout: 0
-    }).then(resp => {
-      // console.log(resp)
-      if (resp.status < 400) {
-        let respHeader = resp.headers
-        let file_name = respHeader['content-disposition'] || ''
-        file_name = (file_name.split('=') || [])[1] || ''
-        file_name = file_name.split('.')[0]
-        file_name = decodeURIComponent(escape(file_name)) + '.xlsx'
-        let blob = new Blob([resp.data], {
-          type:
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        })
-        let a = document.createElement('a')
-        a.href = window.URL.createObjectURL(blob)
-        a.download = file_name
-        a.click()
-        // 释放内存
-        window.URL.revokeObjectURL(a.href)
-        a = null
-      } else {
-        message.warn('导出失败')
-      }
-      this.props.updateState &&
-        this.props.updateState({
-          name: 'showLoading',
-          value: false
-        })
     })
+      .then(resp => {
+        if (resp.status < 400) {
+          let respHeader = resp.headers
+          let file_name = respHeader['content-disposition'] || ''
+          file_name = (file_name.split('=') || [])[1] || ''
+          file_name = file_name.split('.')[0]
+          file_name = decodeURIComponent(escape(file_name)) + '.xlsx'
+          let blob = new Blob([resp.data], {
+            type:
+              'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+          })
+          let a = document.createElement('a')
+          a.href = window.URL.createObjectURL(blob)
+          a.download = file_name
+          a.click()
+          // 释放内存
+          window.URL.revokeObjectURL(a.href)
+          a = null
+        } else {
+          message.warn('导出失败')
+        }
+        this.props.updateState &&
+          this.props.updateState({
+            name: 'showLoading',
+            value: false
+          })
+      })
+      .catch(err => {
+        message.warn('导出失败')
+        this.props.updateState &&
+          this.props.updateState({
+            name: 'showLoading',
+            value: false
+          })
+      })
     // axios.post(url, reqParam, { headers, responseType: 'blob' }).then(resp => {
     //   let respHeader = resp.headers
     //   console.log(resp)
