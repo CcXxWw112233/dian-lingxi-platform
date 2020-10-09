@@ -210,13 +210,17 @@ class Gantt extends Component {
       group_view_type,
       panel_outline_create_card_params,
       gantt_board_list_id,
-      belong_group_row
+      belong_group_row,
+      gantt_view_mode
     } = this.props
 
     //设置截止日期最后一秒
     const create_end_time_date = new Date(create_end_time)
-    const create_end_time_final = `${create_end_time_date.getFullYear()}/${create_end_time_date.getMonth() +
-      1}/${create_end_time_date.getDate()} 23:59:59`
+    const create_end_time_final =
+      gantt_view_mode == 'hours' //时视图取精确小时，其它视图取当天的最后一分钟
+        ? create_end_time
+        : `${create_end_time_date.getFullYear()}/${create_end_time_date.getMonth() +
+            1}/${create_end_time_date.getDate()} 23:59:59`
     const create_end_time_final_timestamp = new Date(
       create_end_time_final
     ).getTime()

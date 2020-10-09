@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import MilestoneDetail from './index'
 import { connect } from 'dva'
+import { ganttIsOutlineView } from '../../constants'
 
 @connect(mapStateToProps)
 export default class GanttMilestonePublicInput extends Component {
@@ -11,12 +12,16 @@ export default class GanttMilestonePublicInput extends Component {
   }
 
   // 甘特图信息变化后，实时触发甘特图渲染在甘特图上变化
-  handleMiletonsChangeMountInGantt = () => {
-    const { dispatch } = this.props
-    dispatch({
-      type: 'gantt/getGttMilestoneList',
-      payload: {}
-    })
+  handleMiletonsChangeMountInGantt = (...arg) => {
+    const { dispatch, group_view_type } = this.props
+    if (ganttIsOutlineView({ group_view_type })) {
+      this.handleMiletonsChangeOutlineView(...arg)
+    } else {
+      dispatch({
+        type: 'gantt/getGttMilestoneList',
+        payload: {}
+      })
+    }
   }
   deleteMiletone = ({ id }) => {
     const { milestoneMap = {}, dispatch } = this.props
@@ -60,6 +65,20 @@ export default class GanttMilestonePublicInput extends Component {
       }
     })
   }
+
+  // 甘特图信息变化后，实时触发甘特图渲染在甘特图上变化
+  handleMiletonsChangeOutlineView = (id, data, data2) => {
+    let data_ = { ...data }
+    if (data_.deadline) data_.due_time = data_.deadline
+    const { dispatch } = this.props
+    dispatch({
+      type: 'gantt/updateOutLineTree',
+      payload: {
+        datas: [{ id, ...data_ }]
+      }
+    })
+  }
+
   render() {
     const { miletone_detail_modal_visible } = this.props
     return (
@@ -78,12 +97,18 @@ export default class GanttMilestonePublicInput extends Component {
 
 function mapStateToProps({
   gantt: {
-    datas: { gantt_board_id, about_user_boards, miletone_detail_modal_visible }
+    datas: {
+      gantt_board_id,
+      about_user_boards,
+      miletone_detail_modal_visible,
+      group_view_type
+    }
   }
 }) {
   return {
     gantt_board_id,
     about_user_boards,
-    miletone_detail_modal_visible
+    miletone_detail_modal_visible,
+    group_view_type
   }
 }

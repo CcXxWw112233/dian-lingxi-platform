@@ -1697,7 +1697,7 @@ export default class CardItem extends Component {
               lineHeight: `${task_item_height - 4}px`
             }}
           >
-            {name}
+            {!ganttIsOutlineView({ group_view_type }) && name}
             {is_privilege == '1' && (
               <Tooltip title="已开启访问控制" placement="top">
                 <span
@@ -1755,6 +1755,23 @@ export default class CardItem extends Component {
         {/* {
                     !ganttIsOutlineView({ group_view_type }) && !parent_card_id && 
                     ( */}
+        {ganttIsOutlineView({ group_view_type }) && (
+          <div
+            style={{
+              position: 'absolute',
+              left: '100%',
+              paddingLeft: 8,
+              marginTop: -3,
+              width: name.length * 20,
+              fontSize: 14,
+              height: 16,
+              lineHeight: '16px'
+            }}
+          >
+            {name}
+          </div>
+        )}
+
         <Dropdown
           trigger={['click']}
           getPopupContainer={() => document.getElementById(id)}

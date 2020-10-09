@@ -11,7 +11,9 @@ import {
   getBaseLineList,
   createBaseLine,
   EditBaseLine,
-  DeleteBaseLine
+  DeleteBaseLine,
+  getGanttTableItem,
+  setGanttTableItem
 } from '../../../../services/technological/gantt'
 import { isApiResponseOk } from '../../../../utils/handleResponseData'
 import { getModelSelectDatasState } from '../../../utils'
@@ -58,7 +60,8 @@ export default {
     active_baseline_data: {}, // 基线的版本详情
     show_base_line_mode: false, // 是否进入基线状态
     active_baseline: {}, // 基线版本
-    miletone_detail_modal_visible: false //显示里程碑详情弹窗
+    miletone_detail_modal_visible: false, //显示里程碑详情弹窗
+    outline_setting_msg: {} // 大纲视图设置项
   },
   effects: {
     *addCardRely({ payload = {} }, { select, call, put }) {
@@ -738,6 +741,31 @@ export default {
           active_baseline: {}
         }
       })
+    },
+
+    // 获取大纲表头设置
+    *getOutlineTableHeader({ payload = {} }, { select, call, put }) {
+      const gantt_board_id = yield select(
+        getModelSelectDatasState('gantt', 'gantt_board_id')
+      )
+      let msg = yield call(getGanttTableItem, { board_id: gantt_board_id })
+      if (isApiResponseOk(msg)) {
+        // yield put({
+        //   type: 'updateDatas',
+        //   payload: {
+        //     outline_setting_msg: msg.data
+        //   }
+        // })
+        return msg.data
+      }
+      return null
+    },
+    // 设置大纲表头
+    *setOutlineTableHeader({ payload = {} }, { select, call, put }) {
+      const gantt_board_id = yield select(
+        getModelSelectDatasState('gantt', 'gantt_board_id')
+      )
+      yield call(setGanttTableItem, { ...payload, board_id: gantt_board_id })
     }
   }
 }

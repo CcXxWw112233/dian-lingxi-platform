@@ -232,6 +232,24 @@ export async function getGanttOutlineHideTrem(params) {
   })
 }
 
+// 获取设置的表头
+export async function getGanttTableItem(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt_chart/outline/setting`,
+    method: 'GET',
+    params
+  })
+}
+
+// 设置表头
+export async function setGanttTableItem(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt_chart/outline/setting`,
+    method: 'PUT',
+    data
+  })
+}
+
 // 获取模板分享码
 export async function getBoardTempleteShareCode(data) {
   return request({

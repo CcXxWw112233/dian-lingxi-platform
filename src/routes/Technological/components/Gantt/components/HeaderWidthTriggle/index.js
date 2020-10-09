@@ -145,7 +145,7 @@ export default class index extends Component {
     const length = group_list_area_section_height.length
     return (
       <div
-        className={styles.main}
+        className={`${styles.main} draggableSlidebar`}
         style={{
           height: gantt_card_height - 20 - date_area_height,
           top: date_area_height
@@ -157,7 +157,7 @@ export default class index extends Component {
         <div
           className={styles.line}
           style={{ display: show_drag_trigger ? 'flex' : 'none' }}
-        ></div>
+        />
 
         <Draggable
           axis="x"
@@ -177,9 +177,9 @@ export default class index extends Component {
               top: rela_top
             }}
           >
-            <div></div>
-            <div></div>
-            <div></div>
+            <div />
+            <div />
+            <div />
           </div>
         </Draggable>
       </div>
@@ -189,10 +189,11 @@ export default class index extends Component {
 
 function mapStateToProps({
   gantt: {
-    datas: { group_list_area_section_height }
+    datas: { group_list_area_section_height, gantt_head_width }
   }
 }) {
   return {
-    group_list_area_section_height
+    group_list_area_section_height,
+    gantt_head_width
   }
 }

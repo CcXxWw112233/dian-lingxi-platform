@@ -552,21 +552,28 @@ export const onChangeCardHandleCardDetail = ({
     }
   }
 }
+// 获取pageX
+export const getPageXY = e => {
+  const pageX = e.pageX || (e.changedTouches && e.changedTouches[0].pageX)
+  const pageY = e.pageY || (e.changedTouches && e.changedTouches[0].pageY)
+  return { pageX, pageY }
+}
 
 // 获取鼠标下落的相对位置
 export const getXYDropPosition = (e, { gantt_head_width }) => {
   if (!e) return
   if (!e.target) return
+  const { pageX, pageY } = getPageXY(e)
   const target_0 = document.getElementById('gantt_card_out')
   const target_1 = document.getElementById('gantt_card_out_middle')
   // 取得鼠标位置
   const x =
-    e.pageX -
+    pageX -
     target_0.offsetLeft +
     target_1.scrollLeft -
     gantt_head_width -
     gantt_panel_left_diff
-  const y = e.pageY - target_0.offsetTop + target_1.scrollTop - date_area_height
+  const y = pageY - target_0.offsetTop + target_1.scrollTop - date_area_height
   return {
     x,
     y

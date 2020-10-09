@@ -463,7 +463,7 @@ export default class GetRowGantt extends Component {
     let counter = 0
     let date = {} //月视图操作的日期数据
 
-    if (gantt_view_mode == 'month') {
+    if (gantt_view_mode == 'month' || gantt_view_mode == 'hours') {
       //月视图下定位到相符的日期
       for (let val of date_arr_one_level) {
         counter += 1
@@ -527,7 +527,7 @@ export default class GetRowGantt extends Component {
     const { timestamp, timestampEnd } = date
     const update_name =
       start_end == '1' ? 'create_start_time' : 'create_end_time'
-
+    // console.log('ssssssssssss', [update_name], timestamp, timestampEnd)
     dispatch({
       type: getEffectOrReducerByName('updateDatas'),
       payload: {
@@ -594,7 +594,7 @@ export default class GetRowGantt extends Component {
       belong_group_row =
         (top - group_list_area_section_height[conter_key - 1]) / ceil_height + 1
     }
-    console.log('ssssssssss_top', conter_key, belong_group_row)
+    // console.log('ssssssssss_top', conter_key, belong_group_row)
     const current_list_group_id = list_group[conter_key]['list_id']
     dispatch({
       type: getEffectOrReducerByName('updateDatas'),
@@ -832,7 +832,7 @@ export default class GetRowGantt extends Component {
         is_has_start_time
       })
       return (
-        <React.Fragment key={`${id}_${top}`}>
+        <React.Fragment key={`${id}_${top}_${due_time}_${start_time}`}>
           <GetRowStrip
             itemValue={value2}
             list_id={list_id}
@@ -1118,14 +1118,21 @@ export default class GetRowGantt extends Component {
               // return (
               //   this.renderStripSc({ list_data, list_id, list_group_key: key })
               // )
-              const { id, top, parent_expand, is_expand, tree_type } = value
+              const {
+                id,
+                top,
+                parent_expand,
+                is_expand,
+                tree_type,
+                due_time
+              } = value
               const juge_expand =
                 tree_type == '0' || tree_type == '3'
                   ? parent_expand
                   : parent_expand && is_expand
               return (
                 parent_expand && (
-                  <React.Fragment key={`${id}_${top}`}>
+                  <React.Fragment key={`${id}_${top}_${due_time}`}>
                     {active_baseline_data[id] && (
                       <BaseLineItem
                         data={active_baseline_data[id]}
@@ -1148,7 +1155,12 @@ export default class GetRowGantt extends Component {
                 )
               )
             })}
-          {!ganttIsOutlineView({ group_view_type }) && <GetRowGanttVirtual />}
+          {!ganttIsOutlineView({ group_view_type }) && (
+            <GetRowGanttVirtual
+              ganttPanelDashedDrag={this.state.drag_creating}
+              setDragCreating={this.setDragCreating}
+            />
+          )}
           {/* <GetRowGanttItemElse gantt_card_height={this.props.gantt_card_height} dataAreaRealHeight={this.props.dataAreaRealHeight} /> */}
         </div>
       </>

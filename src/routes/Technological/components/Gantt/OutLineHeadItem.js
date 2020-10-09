@@ -1203,13 +1203,13 @@ export default class OutLineHeadItem extends Component {
           showLoading: true
         })
         // this.createLoadingDiv();
-        let urlData = await this.toExport('png', 1)
+        let urlData = await this.toExport('png', 0.8)
         let pic = new Image()
         pic.src = urlData
         pic.onload = async () => {
           let pdf = new jsPDF({
             orientation: 'l',
-            unit: 'pt',
+            unit: 'px',
             format: [pic.width, pic.height]
           })
           pdf.addImage(pic, 'JPEG', 0, 0, pic.width, pic.height, '', 'SLOW')
@@ -1230,7 +1230,7 @@ export default class OutLineHeadItem extends Component {
           showLoading: true
         })
         // svg为高清图，png和jpeg为普通清晰的图
-        let url = await this.toExport('jpeg', 2)
+        let url = await this.toExport('jpeg', 1)
         let a = document.createElement('a')
         a.href = url
         a.download =
