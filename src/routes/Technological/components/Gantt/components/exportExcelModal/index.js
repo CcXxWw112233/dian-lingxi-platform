@@ -49,7 +49,7 @@ export default class index extends Component {
         board_id,
         codes: checkedValue
       },
-      responseType: 'arraybuffer',
+      responseType: 'blob',
       timeout: 0
     })
       .then(resp => {
@@ -87,32 +87,6 @@ export default class index extends Component {
             value: false
           })
       })
-    // axios.post(url, reqParam, { headers, responseType: 'blob' }).then(resp => {
-    //   let respHeader = resp.headers
-    //   console.log(resp)
-    //   let names = respHeader['content-disposition']
-    //   // 文件名
-    //   names = names.split('=')[1]
-    //   let blob = new Blob([resp.data], {
-    //     type:
-    //       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    //   })
-    //   let a = document.createElement('a')
-    //   a.href = window.URL.createObjectURL(blob)
-    //   a.download = names
-    //   a.click()
-    //   // 释放内存
-    //   window.URL.revokeObjectURL(a.href)
-    //   a = null
-    //   // this.props.updateState({
-    //   //   showLoading: false
-    //   // })
-    // })
-    // exportExcelFieldList({ board_id, codes: checkedValue }).then(res => {
-    //   if (isApiResponseOk(res)) {
-    //     console.log(res)
-    //   }
-    // })
   }
 
   onCancel = () => {
