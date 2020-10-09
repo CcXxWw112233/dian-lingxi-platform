@@ -543,7 +543,10 @@ export default class CustomFieldCategory extends Component {
                 <Option value={'1'} label={'当前组织'}>
                   当前{`${currentNounPlanFilterName(ORGANIZATION)}`}
                 </Option>
-                <Option value={'2'} label={'项目内'}>
+                <Option
+                  value={'2'}
+                  label={`${currentNounPlanFilterName(PROJECTS)}`}
+                >
                   {`${currentNounPlanFilterName(PROJECTS)}`}内
                 </Option>
               </Select>

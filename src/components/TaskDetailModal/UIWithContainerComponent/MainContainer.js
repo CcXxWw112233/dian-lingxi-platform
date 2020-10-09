@@ -594,6 +594,14 @@ const LogicWithMainContent = {
     return Number(start_time.valueOf()) / 1000 >= newDueTime //Number(due_time).valueOf();
   },
 
+  showTimerRange: function() {
+    const { projectDetailInfoData = {} } = this.props
+    const { date_format } = projectDetailInfoData
+    let flag = false
+    flag = date_format == '1'
+    return flag
+  },
+
   // 开始时间 chg事件 S
   startDatePickerChange: function(timeString) {
     const { drawContent = {}, dispatch } = this.props

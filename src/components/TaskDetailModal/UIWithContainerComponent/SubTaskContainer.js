@@ -261,6 +261,13 @@ const SubTaskLogic = {
         due_time: null
       })
     }, 500)
+  },
+  showTimerRange: function() {
+    const { projectDetailInfoData = {} } = this.props
+    const { date_format } = projectDetailInfoData
+    let flag = false
+    flag = date_format == '1'
+    return flag
   }
 }
 
@@ -1043,6 +1050,13 @@ const SubTaskItemLogic = {
         }
       })
     }
+  },
+  showTimerRange: function() {
+    const { projectDetailInfoData = {} } = this.props
+    const { date_format } = projectDetailInfoData
+    let flag = false
+    flag = date_format == '1'
+    return flag
   }
 }
 
