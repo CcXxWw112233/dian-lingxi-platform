@@ -16,9 +16,20 @@ export default class index extends Component {
   componentDidMount() {
     getExportExcelFieldList().then(res => {
       if (isApiResponseOk(res)) {
-        this.setState({
-          export_field_list: res.data
-        })
+        let ar = []
+        let number = res.data.find(item => item.code == 'NUMBER') || {}
+        let title = res.data.find(item => item.code == 'TITLE') || {}
+        ar.push(number.code, title.code)
+        this.setState(
+          {
+            export_field_list: res.data
+          },
+          () => {
+            this.setState({
+              checkedValue: ar
+            })
+          }
+        )
       }
     })
   }
@@ -115,6 +126,7 @@ export default class index extends Component {
               alignItems: 'center',
               justifyContent: 'space-between'
             }}
+            value={checkedValue}
             onChange={this.onChange}
           >
             {!!(export_field_list && export_field_list.length) &&

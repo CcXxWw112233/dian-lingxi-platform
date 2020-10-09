@@ -144,16 +144,6 @@ export default class OutLineHeadItem extends Component {
     )
   }
 
-  rev = (data = []) => {
-    return data.filter(item => {
-      if (item.is_display == true) {
-        return item
-      } else if (item.children && item.children.length) {
-        item.children = this.rev(item.children)
-      }
-    })
-  }
-
   handleProjectMenu = ({ key }) => {
     const { dispatch, gantt_board_id } = this.props
     if (key.indexOf('importTpl') != -1) {
