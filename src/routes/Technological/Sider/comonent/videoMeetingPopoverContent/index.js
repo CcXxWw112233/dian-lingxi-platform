@@ -54,6 +54,7 @@ class VideoMeetingPopoverContent extends Component {
   constructor(props) {
     super(props)
     this.timer = null
+    this.local_timer = null
     this.videoProviderImgTimer = null
     this.state = {
       saveToProject: null, // 用来保存存入的项目
@@ -93,10 +94,12 @@ class VideoMeetingPopoverContent extends Component {
       defaultValue: '30',
       toNoticeList: [],
       remindDropdownVisible: false,
-      providerDefault: null
+      providerDefault: null,
+      isShowNowTime: true // 表示是否跟随时钟变化
     })
     stepIndex = 0
     clearTimeout(this.timer)
+    clearTimeout(this.local_timer)
   }
 
   // 获取项目列表
@@ -175,6 +178,43 @@ class VideoMeetingPopoverContent extends Component {
     this.timer = setTimeout(() => {
       this.showTime()
     }, 1000)
+  }
+
+  // 需要一个一直变化的时间来做比较
+  localShowTime = () => {
+    let nowDate = new Date().getTime()
+    let change_time = new Date(timestampToTimeNormal(nowDate, '/', true))
+    let state_time = new Date(
+      timestampToTimeNormal(this.state.meeting_start_time, '/', true)
+    )
+    if (change_time.getDate() == state_time.getDate()) {
+      // 表示还是今天
+      if (
+        change_time.getHours() == state_time.getHours() &&
+        change_time.getMinutes() == state_time.getMinutes()
+      ) {
+        this.handleChangeNowTime()
+      }
+    }
+    this.local_timer = setTimeout(() => {
+      this.localShowTime()
+    }, 1000)
+  }
+
+  handleChangeNowTime = () => {
+    const { isShowNowTime } = this.state
+    if (isShowNowTime) {
+      return false
+    }
+    this.setState(
+      {
+        isShowNowTime: true, // 显示当前时间
+        isOrderTime: false
+      },
+      () => {
+        this.showTime() // 点击现在之后开启定时器
+      }
+    )
   }
 
   // // 获取项目权限
@@ -277,7 +317,8 @@ class VideoMeetingPopoverContent extends Component {
         this.setState({
           start_time: timestampToTime(start_timeStamp),
           meeting_start_time: start_timeStamp,
-          isOrderTime: false
+          isOrderTime: true,
+          isShowNowTime: false
         })
       }
     } else if (nextOrPrevDate < currentDate) {
@@ -295,7 +336,8 @@ class VideoMeetingPopoverContent extends Component {
       this.setState({
         start_time: timestampToTime(start_timeStamp),
         meeting_start_time: start_timeStamp,
-        isOrderTime: true
+        isOrderTime: true,
+        isShowNowTime: false
       })
     }
 
@@ -577,6 +619,7 @@ class VideoMeetingPopoverContent extends Component {
     ).then(res => {
       if (res.code === '0') {
         clearTimeout(this.timer)
+        clearTimeout(this.local_timer)
         const { start_url, card_id } = res.data
         if (!isOrderTime)
           remind_time_value = parseInt(meeting_start_time / 1000)
@@ -607,7 +650,6 @@ class VideoMeetingPopoverContent extends Component {
 
   // popoverContent chg 事件
   handleVideoMeetingPopoverVisibleChange = flag => {
-    const { dispatch } = this.props
     this.setState(
       {
         videoMeetingPopoverVisible: flag
@@ -619,9 +661,12 @@ class VideoMeetingPopoverContent extends Component {
             this.getCurrentRemindUser()
           }, 50)
           clearTimeout(this.timer)
+          clearTimeout(this.local_timer)
         } else {
           // 为true的时候调用设置当前通知对象
           this.showTime()
+          // 因为需要一个一直变化的时间来做比较
+          this.localShowTime()
           // 获取项目--> 默认项目
           this.getProjectList()
           // 获取默认会议名称
