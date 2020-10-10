@@ -267,7 +267,7 @@ export default class PdfComment extends React.Component {
   }
   // 检查目前显示的是哪一页
   viewScroll = e => {
-    let children = e.target.querySelectorAll('.canvas-container')
+    let children = e.target.querySelectorAll('.fabric_defualt_container')
     let scrollTop = e.target.scrollTop + window.innerHeight / 2
     // let step = this.prevWeelY - scrollTop;
     // this.prevWeelY = scrollTop;
