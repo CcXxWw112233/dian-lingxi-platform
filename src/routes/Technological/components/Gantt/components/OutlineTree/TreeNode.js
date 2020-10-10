@@ -706,6 +706,10 @@ export default class TreeNode extends Component {
         >
           <span
             className={`${styles.title}`}
+            style={{
+              overflow:
+                editing || isTitleHover || isTitleEdit ? 'visible' : 'hidden'
+            }}
             // onMouseEnter={this.onMouseEnterTitle}
             // onMouseLeave={this.onMouseLeaveTitle}
             // onDoubleClick={() => this.onDoubleClickTitle(placeholder)}
@@ -832,8 +836,8 @@ export default class TreeNode extends Component {
 
   renderStartTime = key => {
     const { nodeValue = {} } = this.props
-    let { start_time } = nodeValue
-    if (start_time) {
+    let { start_time, is_has_start_time } = nodeValue
+    if (start_time && is_has_start_time) {
       return dateFormat(start_time, this.timeForMat)
     }
     return (
@@ -846,8 +850,8 @@ export default class TreeNode extends Component {
 
   renderEndTime = key => {
     const { nodeValue = {} } = this.props
-    let { due_time } = nodeValue
-    if (due_time) {
+    let { due_time, is_has_end_time } = nodeValue
+    if (due_time && is_has_end_time) {
       return dateFormat(due_time, this.timeForMat)
     }
     return (

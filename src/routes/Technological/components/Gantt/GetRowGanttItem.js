@@ -721,7 +721,9 @@ export default class GetRowGanttItem extends Component {
       gantt_view_mode,
       date_arr_one_level,
       ceilWidth,
-      gantt_head_width
+      gantt_head_width,
+      gantt_board_id,
+      list_id
     } = this.props
     setTimeout(() => {
       this.milestone_dragging = false
@@ -774,11 +776,17 @@ export default class GetRowGanttItem extends Component {
         node.style.transform = 'translate(0px, 0px)'
       })
     }
+    const params = {
+      id: milestones[0].id,
+      deadline: timestampEnd
+    }
+    if (gantt_board_id == '0') {
+      setBoardIdStorage(list_id)
+    }
     return new Promise((resolve, reject) => {
       updateMilestone(
         {
-          id: milestones[0].id,
-          deadline: timestampEnd
+          ...params
         },
         { isNotLoading: false }
       )

@@ -41,6 +41,7 @@ import {
   getPageXY
 } from '../../ganttBusiness'
 import Draggable from 'react-draggable'
+// import { debounce } from 'lodash'
 
 const dateAreaHeight = date_area_height //日期区域高度，作为修正
 const getEffectOrReducerByName = name => `gantt/${name}`
@@ -80,9 +81,9 @@ export default class GetRowStrip extends PureComponent {
   // 当前滑动的这一条任务是否存在时间？存在时间代表可以在面板上创建
   setIsCardHasTime = () => {
     const { itemValue = {} } = this.props
-    const { start_time, end_time, due_time } = itemValue
+    const { start_time, due_time, tree_type } = itemValue
     this.setState({
-      is_item_has_time: start_time || end_time || due_time
+      is_item_has_time: !!((tree_type == '1' ? false : start_time) || due_time)
     })
   }
 
@@ -434,7 +435,11 @@ export default class GetRowStrip extends PureComponent {
     const { pageX } = getPageXY(e)
     if (!pageX) return
     this.milestone_drag_ele = e
-    this.milestone_dragging = true
+    setTimeout(() => {
+      // console.log('ssssssssaaaa_draging', this.milestone_dragging)
+      this.milestone_dragging = true
+    }, 100)
+    // debounce(setDraging, 300)
     // console.log('sssssssss_11', this.milestone_initial_left)
     this.setState({
       dragg_milestone_complete: false
@@ -448,9 +453,11 @@ export default class GetRowStrip extends PureComponent {
       gantt_head_width,
       itemValue
     } = this.props
+    // console.log('ssssssssaaaa_drop', this.milestone_dragging)
     setTimeout(() => {
       this.milestone_dragging = false
-    }, 200)
+    }, 300)
+    if (!this.milestone_dragging) return
     let { x } =
       getXYDropPosition(this.milestone_drag_ele, {
         gantt_head_width
@@ -579,7 +586,8 @@ export default class GetRowStrip extends PureComponent {
       gantt_view_mode == 'year' ? this.calHoverDate().timestampEnd : ''
     return (
       <div
-        onClick={() => this.miletonesClick(due_time)}
+        onMouseUpCapture={() => this.miletonesClick(due_time)}
+        onTouchEndCapture={() => this.miletonesClick(due_time)}
         className={styles.will_set_item_milestone}
         ref={this.milestone_ref}
         data-left={marginLeft}
@@ -630,6 +638,7 @@ export default class GetRowStrip extends PureComponent {
     )
   }
   miletonesClick = due_time => {
+    // console.log('ssssssssaaaa_click', this.milestone_dragging)
     if (this.milestone_dragging) return //拖拽过程中不能点击
     if (due_time) {
       this.milestoneDetail()
@@ -869,13 +878,12 @@ export default class GetRowStrip extends PureComponent {
     const { itemValue = {} } = this.props
     const {
       start_time,
-      end_time,
       due_time,
       tree_type,
       left,
       width: item_width
     } = itemValue
-    if (!start_time && !end_time && !due_time) {
+    if (!start_time && !due_time) {
       // return false
       return {
         isInViewArea: false
