@@ -140,6 +140,7 @@ export default class index extends Component {
                       marginLeft: 0
                     }}
                     value={item.code}
+                    disabled={item.code == 'NUMBER' || item.code == 'TITLE'}
                   >
                     {item.title}
                   </Checkbox>

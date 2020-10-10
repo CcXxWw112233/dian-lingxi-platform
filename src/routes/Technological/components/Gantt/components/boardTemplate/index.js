@@ -1011,6 +1011,9 @@ export default class BoardTemplate extends Component {
       _organization_id: ogr_id
     }).then(res => {
       if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('提取模板成功')
+        }, 200)
         this.getBoardTemplateList()
         this.setState({
           inputValue: ''
