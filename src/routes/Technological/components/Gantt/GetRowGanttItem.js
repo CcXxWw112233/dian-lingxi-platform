@@ -972,7 +972,9 @@ export default class GetRowGanttItem extends Component {
                                 style={{
                                   height:
                                     gantt_board_id != '0'
-                                      ? itemKey == '0'
+                                      ? itemKey == '0' &&
+                                        current_date_board_miletones[0]
+                                          .list_id != list_id
                                         ? group_list_area_section_height[
                                             group_list_area_section_height.length -
                                               1
@@ -1241,7 +1243,9 @@ export default class GetRowGanttItem extends Component {
                                   style={{
                                     height:
                                       gantt_board_id != '0'
-                                        ? itemKey == '0'
+                                        ? itemKey == '0' &&
+                                          current_date_board_miletones[0]
+                                            .list_id != list_id
                                           ? group_list_area_section_height[
                                               group_list_area_section_height.length -
                                                 1
@@ -1488,7 +1492,9 @@ export default class GetRowGanttItem extends Component {
                                 style={{
                                   height:
                                     gantt_board_id != '0'
-                                      ? itemKey == '0'
+                                      ? itemKey == '0' &&
+                                        current_date_board_miletones[0]
+                                          .list_id != list_id
                                         ? group_list_area_section_height[
                                             group_list_area_section_height.length -
                                               1
