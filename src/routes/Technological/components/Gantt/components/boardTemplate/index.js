@@ -1272,40 +1272,40 @@ export default class BoardTemplate extends Component {
                 </div>
               )}
             </div>
-            {template_origin == '2' &&
-              !!(
-                this.state.template_list && this.state.template_list.length
-              ) && (
-                <Popover
-                  title={null}
-                  trigger={'click'}
-                  placement="top"
-                  onVisibleChange={this.handlePickUpTempleteVisible}
-                  content={
-                    <div>
-                      <div>输入提取码：</div>
-                      <div style={{ display: 'flex', marginTop: '8px' }}>
-                        <Input
-                          value={inputValue}
-                          onChange={this.handleInputChange}
-                        />
-                        <Button
-                          disabled={!inputValue || !reg.test(inputValue)}
-                          type="primary"
-                          style={{ marginLeft: '16px' }}
-                          onClick={this.handlePickUpTemplete}
-                        >
-                          确定
-                        </Button>
-                      </div>
+            {template_origin == '2' && (
+              // !!(
+              //   this.state.template_list && this.state.template_list.length
+              // ) &&
+              <Popover
+                title={null}
+                trigger={'click'}
+                placement="top"
+                onVisibleChange={this.handlePickUpTempleteVisible}
+                content={
+                  <div>
+                    <div>输入提取码：</div>
+                    <div style={{ display: 'flex', marginTop: '8px' }}>
+                      <Input
+                        value={inputValue}
+                        onChange={this.handleInputChange}
+                      />
+                      <Button
+                        disabled={!inputValue || !reg.test(inputValue)}
+                        type="primary"
+                        style={{ marginLeft: '16px' }}
+                        onClick={this.handlePickUpTemplete}
+                      >
+                        确定
+                      </Button>
                     </div>
-                  }
-                >
-                  <div className={styles.pick_templete}>
-                    <Button>提取模板</Button>
                   </div>
-                </Popover>
-              )}
+                }
+              >
+                <div className={styles.pick_templete}>
+                  <Button>提取模板</Button>
+                </div>
+              </Popover>
+            )}
           </>
         )}
 
