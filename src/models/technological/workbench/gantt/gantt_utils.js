@@ -34,6 +34,12 @@ function getMilestoneLeafCardsMinTime(node) {
             transformTimestamp(item.start_time)
           )
         }
+        if (item.due_time && item.tree_type == '1') {
+          min_time = Math.min(
+            min_time || transformTimestamp(item.due_time),
+            transformTimestamp(item.due_time)
+          )
+        }
         recusion(item)
       })
     }
@@ -147,7 +153,9 @@ export function recusionItem(
     }
     //所有叶子 任务的最早时间
     if (tree_type == '1') {
-      new_item.min_leaf_card_time = getMilestoneLeafCardsMinTime(new_item)
+      const min_leaf_card_time = getMilestoneLeafCardsMinTime(new_item)
+      new_item.start_time = min_leaf_card_time
+      new_item.min_leaf_card_time = min_leaf_card_time
     }
     //一级里程碑展开的包含高度
     if (tree_type == '1' && !parent_id) {

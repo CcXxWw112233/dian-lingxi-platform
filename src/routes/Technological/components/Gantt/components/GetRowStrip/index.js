@@ -80,9 +80,9 @@ export default class GetRowStrip extends PureComponent {
   // 当前滑动的这一条任务是否存在时间？存在时间代表可以在面板上创建
   setIsCardHasTime = () => {
     const { itemValue = {} } = this.props
-    const { start_time, end_time, due_time } = itemValue
+    const { start_time, due_time, tree_type } = itemValue
     this.setState({
-      is_item_has_time: start_time || end_time || due_time
+      is_item_has_time: !!((tree_type == '1' ? false : start_time) || due_time)
     })
   }
 
@@ -869,13 +869,12 @@ export default class GetRowStrip extends PureComponent {
     const { itemValue = {} } = this.props
     const {
       start_time,
-      end_time,
       due_time,
       tree_type,
       left,
       width: item_width
     } = itemValue
-    if (!start_time && !end_time && !due_time) {
+    if (!start_time && !due_time) {
       // return false
       return {
         isInViewArea: false
