@@ -29,6 +29,7 @@ import { connect } from 'dva'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import { currentNounPlanFilterName } from '../../../../../../utils/businessFunction'
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
+import moment from 'moment'
 
 const getEffectOrReducerByName = name => `milestoneDetail/${name}`
 @connect(mapStateToProps)
@@ -411,7 +412,7 @@ export default class MainContent extends React.Component {
     const {
       // users = [],
       milestone_detail = {},
-      projectDetailInfoData: { data: users = [] }
+      projectDetailInfoData: { data: users = [], date_format }
     } = this.props
     const {
       board_id,
@@ -612,13 +613,24 @@ export default class MainContent extends React.Component {
             >
               <span style={{ position: 'relative' }}>
                 {deadline
-                  ? timestampToTimeNormal(deadline, '/', true)
+                  ? date_format == '1'
+                    ? timestampToTimeNormal(deadline, '/', false)
+                    : timestampToTimeNormal(deadline, '/', true)
                   : '添加时间'}
                 <DatePicker
                   // disabledDate={this.disabledDueTime.bind(this)}
                   placeholder={'截止时间'}
-                  format="YYYY/MM/DD HH:mm"
-                  showTime={{ format: 'HH:mm' }}
+                  format={
+                    date_format == '1' ? 'YYYY/MM/DD' : 'YYYY/MM/DD HH:mm'
+                  }
+                  showTime={
+                    date_format == '1'
+                      ? null
+                      : {
+                          defaultValue: moment('00:00', 'HH:mm'),
+                          format: 'HH:mm'
+                        }
+                  }
                   onChange={this.endDatePickerChange.bind(this)}
                   style={{
                     opacity: 0,

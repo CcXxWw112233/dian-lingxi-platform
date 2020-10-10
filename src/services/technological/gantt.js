@@ -249,3 +249,39 @@ export async function setGanttTableItem(data) {
     data
   })
 }
+
+// 获取模板分享码
+export async function getBoardTempleteShareCode(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/org/template/share`,
+    method: 'POST',
+    data
+  })
+}
+
+// 通过分享码生成模板
+export async function generateTempleteWithShareCode(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/org/template/share/generate`,
+    method: 'POST',
+    data
+  })
+}
+
+// 获取导出表格字段列表
+export async function getExportExcelFieldList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/board/export/item`,
+    method: 'GET',
+    params
+  })
+}
+
+// 导出表格
+export async function exportExcelFieldList(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/board/export/excel`,
+    method: 'POST',
+    data
+  })
+}

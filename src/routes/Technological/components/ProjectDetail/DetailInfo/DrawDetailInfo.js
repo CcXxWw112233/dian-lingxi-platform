@@ -11,7 +11,9 @@ import {
   Progress,
   Input,
   Button,
-  message
+  message,
+  Radio,
+  DatePicker
 } from 'antd'
 import ShowAddMenberModal from '../../Project/ShowAddMenberModal'
 import {
@@ -40,6 +42,8 @@ import {
 import { cursorMoveEnd } from '../../../../../components/ProcessDetailModal/components/handleOperateModal'
 import CustomFields from '../../../../../components/CustomFields'
 import CustomCategoriesOperate from '../../../../../components/CustomFields/CustomCategoriesOperate'
+import moment from 'moment'
+import { timeToTimestamp } from '../../../../../utils/util'
 
 const TextArea = Input.TextArea
 
@@ -507,8 +511,92 @@ export default class DrawDetailInfo extends React.Component {
     })
   }
 
-  // 过滤字段数据
-  filterFieldsData = () => {}
+  updateDateDatas = ({ name, value }) => {
+    const {
+      projectDetailInfoData = {},
+      dispatch,
+      projectDetailInfoData: { board_id }
+    } = this.props
+    let new_projectDetailInfoData = { ...projectDetailInfoData }
+    new_projectDetailInfoData[name] = value
+    dispatch({
+      type: 'projectDetail/updateProject',
+      payload: {
+        board_id,
+        [name]: value,
+        isNotRequestProjectDetailData: true
+      }
+    }).then(res => {
+      if (isApiResponseOk(res)) {
+        dispatch({
+          type: 'projectDetail/updateDatas',
+          payload: {
+            projectDetailInfoData: new_projectDetailInfoData
+          }
+        })
+      }
+    })
+  }
+
+  // 更新日期模式
+  handleDateMode = e => {
+    let value = e.target.value
+    this.updateDateDatas({ name: 'date_mode', value })
+  }
+
+  // 更新日期格式
+  handleDateFormat = e => {
+    let value = e.target.value
+    this.updateDateDatas({ name: 'date_format', value })
+  }
+
+  // 禁用截止时间
+  disabledDueTime = due_time => {
+    const { projectDetailInfoData = {} } = this.props
+    const { start_time } = projectDetailInfoData
+    if (!start_time || !due_time) {
+      return false
+    }
+    const newStartTime =
+      start_time.toString().length > 10
+        ? Number(start_time).valueOf() / 1000
+        : Number(start_time).valueOf()
+    return Number(due_time.valueOf()) / 1000 < newStartTime
+  }
+
+  // 禁用开始时间
+  disabledStartTime = start_time => {
+    const { projectDetailInfoData = {} } = this.props
+    const { due_time } = projectDetailInfoData
+    if (!start_time || !due_time) {
+      return false
+    }
+    const newDueTime =
+      due_time.toString().length > 10
+        ? Number(due_time).valueOf() / 1000
+        : Number(due_time).valueOf()
+    return Number(start_time.valueOf()) / 1000 >= newDueTime //Number(due_time).valueOf();
+  }
+
+  startDatePickerChange = timeString => {
+    const start_timeStamp = timeToTimestamp(timeString)
+    this.updateDateDatas({ name: 'start_time', value: start_timeStamp })
+  }
+
+  endDatePickerChange = timeString => {
+    const due_timeStamp = timeToTimestamp(timeString)
+    this.updateDateDatas({ name: 'due_time', value: due_timeStamp })
+  }
+
+  timePrecision = time => {
+    time =
+      time.toString().length === 10
+        ? time.toString().length === 13
+          ? Number(time)
+          : Number(time) * 1000
+        : Number(time)
+    return time
+  }
 
   render() {
     const {
@@ -539,7 +627,11 @@ export default class DrawDetailInfo extends React.Component {
       residue_quantity,
       realize_quantity,
       org_id,
-      fields = []
+      fields = [],
+      date_mode,
+      date_format,
+      start_time,
+      due_time
     } = projectDetailInfoData //data是参与人列表
     data = data || []
     const avatarList = data.concat([1]) //[1,2,3,4,5,6,7,8,9]//长度再加一
@@ -551,7 +643,6 @@ export default class DrawDetailInfo extends React.Component {
         ? true
         : false
     // let is_show_dynamic = projectDynamicsList.length != 0 ? true : false
-
     const manImageDropdown = props => {
       const {
         role_id,
@@ -859,6 +950,124 @@ export default class DrawDetailInfo extends React.Component {
               </Tooltip>
             )}
           </div>
+          {/* 时间精度切换 */}
+          <div className={DrawDetailInfoStyle.set_time_accuracy}>
+            <div className={DrawDetailInfoStyle.set_time_item}>
+              <div className={DrawDetailInfoStyle.set_time_label}>
+                日期模式：
+              </div>
+              <div className={DrawDetailInfoStyle.set_time_content}>
+                <Radio.Group
+                  value={date_mode}
+                  style={{ display: 'flex', width: '100%' }}
+                  onChange={this.handleDateMode}
+                >
+                  <span style={{ width: '28%' }}>
+                    <Radio value="0">具体时间</Radio>
+                  </span>
+                  {/* <span>
+                    <Radio value="1">相对时间</Radio>
+                  </span> */}
+                </Radio.Group>
+              </div>
+            </div>
+            {date_mode == '1' ? (
+              ''
+            ) : (
+              <div className={DrawDetailInfoStyle.set_time_item}>
+                <div className={DrawDetailInfoStyle.set_time_label}>
+                  日期精度：
+                </div>
+                <div className={DrawDetailInfoStyle.set_time_content}>
+                  <Radio.Group
+                    onChange={this.handleDateFormat}
+                    value={date_format}
+                    style={{ display: 'flex', width: '100%' }}
+                  >
+                    <span style={{ width: '28%' }}>
+                      <Radio value="0">小时/分钟</Radio>
+                    </span>
+                    <span>
+                      <Radio value="1">天</Radio>
+                    </span>
+                  </Radio.Group>
+                </div>
+              </div>
+            )}
+            <div className={DrawDetailInfoStyle.set_time_item}>
+              <div className={DrawDetailInfoStyle.set_time_label}>
+                {currentNounPlanFilterName(PROJECTS)}周期：
+              </div>
+              <div className={DrawDetailInfoStyle.set_time_content}>
+                <div className={DrawDetailInfoStyle.set_start_time}>
+                  <span>开始时间</span>
+                  <span>
+                    {date_format == '0' ? (
+                      <DatePicker
+                        disabledDate={this.disabledStartTime}
+                        showTime={{
+                          defaultValue: moment('00:00', 'HH:mm'),
+                          format: 'HH:mm'
+                        }}
+                        format="YYYY-MM-DD HH:mm"
+                        onChange={this.startDatePickerChange}
+                        value={
+                          start_time
+                            ? moment(new Date(this.timePrecision(start_time)))
+                            : undefined
+                        }
+                      />
+                    ) : (
+                      <DatePicker
+                        format="YYYY-MM-DD"
+                        disabledDate={this.disabledStartTime}
+                        onChange={this.startDatePickerChange}
+                        value={
+                          start_time
+                            ? moment(new Date(this.timePrecision(start_time)))
+                            : undefined
+                        }
+                      />
+                    )}
+                  </span>
+                </div>
+              </div>
+              <div className={DrawDetailInfoStyle.set_time_content}>
+                <div className={DrawDetailInfoStyle.set_start_time}>
+                  <span>结束时间</span>
+                  <span>
+                    {date_format == '0' ? (
+                      <DatePicker
+                        showTime={{
+                          defaultValue: moment('23:59', 'HH:mm'),
+                          format: 'HH:mm'
+                        }}
+                        format="YYYY-MM-DD HH:mm"
+                        disabledDate={this.disabledDueTime}
+                        onChange={this.endDatePickerChange}
+                        value={
+                          due_time
+                            ? moment(new Date(this.timePrecision(due_time)))
+                            : undefined
+                        }
+                      />
+                    ) : (
+                      <DatePicker
+                        format="YYYY-MM-DD"
+                        disabledDate={this.disabledDueTime}
+                        onChange={this.endDatePickerChange}
+                        value={
+                          due_time
+                            ? moment(new Date(this.timePrecision(due_time)))
+                            : undefined
+                        }
+                      />
+                    )}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
           <div style={{ marginTop: '32px' }}>
             <CustomCategoriesOperate
               fields={fields}
@@ -879,8 +1088,8 @@ export default class DrawDetailInfo extends React.Component {
           </CustomFields>
           {/* <div className={DrawDetailInfoStyle.dynamic}>
               <div className={ DrawDetailInfoStyle.dy_title }>
-                <div 
-                  style={{width: '100%', display: 'flex', alignItems: 'center', display: dynamic_header_sticky ? 'none' : 'block'}} 
+                <div
+                  style={{width: '100%', display: 'flex', alignItems: 'center', display: dynamic_header_sticky ? 'none' : 'block'}}
                   ref="dynamic_header"
                   className={DrawDetailInfoStyle.dynamic_header}>
                   <span className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.icon}`}>&#xe60e;</span>
@@ -902,7 +1111,7 @@ export default class DrawDetailInfo extends React.Component {
                   null
                 )
               }
-             
+
             </div> */}
           <ShowAddMenberModal
             addMenbersInProject={this.addMenbersInProject}
@@ -919,8 +1128,8 @@ export default class DrawDetailInfo extends React.Component {
           />
         </div>
         {/* <div style={{display: dynamic_header_sticky ? 'block' : 'none'}} className={DrawDetailInfoStyle.shadow}>
-          <div 
-            style={{width: '100%', display: 'flex', alignItems: 'center'}} 
+          <div
+            style={{width: '100%', display: 'flex', alignItems: 'center'}}
             ref="dynamic_header"
             className={DrawDetailInfoStyle.dynamic_header}>
             <span className={`${globalsetStyles.authTheme} ${DrawDetailInfoStyle.icon}`}>&#xe60e;</span>

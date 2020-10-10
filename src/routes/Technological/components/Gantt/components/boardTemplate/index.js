@@ -2,19 +2,22 @@ import React, { Component } from 'react'
 import styles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { date_area_height, ganttIsSingleBoardGroupView } from '../../constants'
-import { Menu, message, Tree, Icon, Spin, Button } from 'antd'
+import { Menu, message, Tree, Icon, Spin, Button, Popover, Input } from 'antd'
 import { connect } from 'dva'
 import {
   getBoardTemplateList,
   getBoardTemplateInfo,
   createCardByTemplate,
-  importBoardTemplate
+  importBoardTemplate,
+  getBoardTempleteShareCode,
+  generateTempleteWithShareCode
 } from '../../../../../../services/technological/gantt'
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
 import { createMilestone } from '../../../../../../services/technological/prjectDetail'
 import {
   getGlobalData,
-  checkIsHasPermissionInBoard
+  checkIsHasPermissionInBoard,
+  getOrgIdByBoardId
 } from '../../../../../../utils/businessFunction'
 import BoardTemplateManager from '@/routes/organizationManager/projectTempleteScheme/index.js'
 import SafeConfirmModal from '../SafeConfirmModal'
@@ -51,7 +54,12 @@ export default class BoardTemplate extends Component {
       checkedKeys: [], //已选择的key
       checkedKeysObj: [], ////已选择的keyobj
       selectedTpl: {},
-      template_origin: '2' //0 || 2 平台或自有
+      template_origin: '2', //0 || 2 平台或自有
+
+      templete_share_visible: false, // 分享码显示隐藏
+      templete_share_id: '', // 当前点击的分享ID
+      share_content: '', // 分享码 code
+      inputValue: '' // 输入内容
     }
     this.drag_init_inner_html = ''
     this.current_panel = ''
@@ -82,7 +90,11 @@ export default class BoardTemplate extends Component {
       selected_template_id: '', //已选择的项目模板
       selected_template_name: '请选择模板',
       template_list: [],
-      template_data: [] //模板数据
+      template_data: [], //模板数据
+      templete_share_visible: false, // 分享码显示隐藏
+      templete_share_id: '', // 当前点击的分享ID
+      share_content: '', // 分享码 code
+      inputValue: ''
     })
   }
   componentDidMount() {
@@ -910,6 +922,116 @@ export default class BoardTemplate extends Component {
     })
   }
 
+  // 获取可复制内容
+  getCopyTextValue = id => {
+    let copyBtn = document.getElementById(`templete_share_${id}`)
+    if (!copyBtn) return
+    let copyText = copyBtn.innerText
+    return copyText
+  }
+
+  copyContentToClipTemplete = content => {
+    if (!content) {
+      message.error('没有可复制内容')
+    }
+    const input = document.createElement('input')
+    //ios 呼出虚拟键盘，造成屏幕闪烁一下
+    input.setAttribute('readonly', 'readyonly')
+    input.setAttribute('value', content)
+    document.body.appendChild(input)
+    input.setSelectionRange(0, 9999)
+    input.select()
+    if (document.execCommand('copy')) {
+      document.execCommand('copy')
+      // message.success('复制成功')
+    }
+    document.body.removeChild(input)
+  }
+
+  getBoardTempleteShareCode = id => {
+    getBoardTempleteShareCode({ template_id: id }).then(res => {
+      if (isApiResponseOk(res)) {
+        if (this.state.templete_share_visible) {
+          this.setState({
+            templete_share_id: id,
+            share_content: res.data
+          })
+          this.copyContentToClipTemplete(res.data)
+        }
+      } else {
+        message.warn(res.message)
+      }
+    })
+  }
+
+  // 一次性提取码
+  handleDisposableCode = async (e, id) => {
+    e && e.stopPropagation()
+    await this.getBoardTempleteShareCode(id)
+  }
+
+  // 控制模板分享窗口显示隐藏
+  onTempleteShareVisibleChange = visible => {
+    this.setState({
+      templete_share_visible: visible
+    })
+    if (!visible) {
+      this.setState({
+        templete_share_id: '',
+        share_content: ''
+      })
+    }
+  }
+
+  // 取消
+  onCancelTempleteShareVisble = e => {
+    e && e.stopPropagation()
+    this.setState({
+      templete_share_visible: false
+    })
+  }
+
+  // 输入框事件
+  handleInputChange = e => {
+    let value = e.target.value
+    console.log(value)
+    this.setState({
+      inputValue: value
+    })
+  }
+
+  // 点击确定事件
+  handlePickUpTemplete = () => {
+    const { gantt_board_id } = this.props
+    const { inputValue } = this.state
+    const ogr_id = getOrgIdByBoardId(gantt_board_id)
+    if (!ogr_id) return
+    generateTempleteWithShareCode({
+      share_code: inputValue,
+      _organization_id: ogr_id
+    }).then(res => {
+      if (isApiResponseOk(res)) {
+        this.getBoardTemplateList()
+        this.setState({
+          inputValue: ''
+        })
+      } else {
+        message.warn(res.message)
+        this.setState({
+          inputValue: ''
+        })
+      }
+    })
+  }
+
+  handlePickUpTempleteVisible = visible => {
+    if (!visible) {
+      this.setState({
+        inputValue: ''
+      })
+    }
+  }
+
   render() {
     const {
       template_origin,
@@ -918,7 +1040,11 @@ export default class BoardTemplate extends Component {
       spinning,
       project_templete_scheme_visible,
       checkedKeys = [],
-      safeConfirmModalVisible
+      safeConfirmModalVisible,
+      templete_share_visible,
+      templete_share_id,
+      share_content,
+      inputValue
     } = this.state
     const {
       gantt_board_id,
@@ -928,6 +1054,7 @@ export default class BoardTemplate extends Component {
       gantt_card_height,
       gantt_view_mode
     } = this.props
+    const reg = /^[A-Za-z0-9]{6}$/
     return gantt_board_id && gantt_board_id != '0' ? (
       <div
         className={`${styles.container_init}   ${boardTemplateShow == '1' &&
@@ -1053,45 +1180,130 @@ export default class BoardTemplate extends Component {
               )}
           </>
         ) : (
-          <div style={{ height: '100%' }}>
-            {this.state.template_list && this.state.template_list.length ? (
-              this.state.template_list.map(item => {
-                const { id, name } = item
-                return (
-                  <div
-                    class={styles.boardTplItem}
-                    onClick={() => this.selectBoardTemplate(id)}
-                  >
-                    <span
-                      className={`${styles.left} ${globalStyles.global_ellipsis}`}
+          <>
+            <div className={styles.temp_middle}>
+              {this.state.template_list && this.state.template_list.length ? (
+                this.state.template_list.map(item => {
+                  const { id, name, template_type } = item
+                  return (
+                    <div
+                      class={styles.boardTplItem}
+                      onClick={() => this.selectBoardTemplate(id)}
                     >
-                      {name}
-                    </span>
-                    <span>
-                      {' '}
-                      <i className={globalStyles.authTheme}>&#xe7eb;</i>
-                    </span>
-                  </div>
-                )
-              })
-            ) : (
-              <div
-                style={{
-                  textAlign: 'center',
-                  color: 'rgba(0,0,0,0.3)',
-                  marginTop: 50
-                }}
-              >
+                      <span
+                        className={`${styles.left} ${globalStyles.global_ellipsis}`}
+                      >
+                        {name}
+                      </span>
+                      <span>
+                        {template_type == '2' && (
+                          <Popover
+                            key={id}
+                            trigger={['click']}
+                            getPopupContainer={triggerNode =>
+                              triggerNode.parentNode
+                            }
+                            visible={
+                              item.id == templete_share_id &&
+                              templete_share_visible
+                            }
+                            onVisibleChange={this.onTempleteShareVisibleChange}
+                            placement="bottomRight"
+                            title={null}
+                            content={
+                              <div
+                                className={styles.popover_content}
+                                onClick={e => e && e.stopPropagation()}
+                              >
+                                <span
+                                  onClick={this.onCancelTempleteShareVisble}
+                                  className={`${styles.popover_close}`}
+                                >
+                                  <i className={`${globalStyles.authTheme}`}>
+                                    &#xe7fe;
+                                  </i>
+                                </span>
+                                <div>一次性提取码</div>
+                                <div id={`templete_share_${id}`}>
+                                  {share_content}
+                                </div>
+                                <div>
+                                  <span>
+                                    <span className={globalStyles.authTheme}>
+                                      &#xe7fc;
+                                    </span>
+                                  </span>
+                                  已复制成功，快去分享模版吧！
+                                </div>
+                              </div>
+                            }
+                          >
+                            <i
+                              onClick={e => this.handleDisposableCode(e, id)}
+                              className={`${globalStyles.authTheme} ${styles.share_icon}`}
+                            >
+                              &#xe7e7;
+                            </i>
+                          </Popover>
+                        )}
+                        <i className={globalStyles.authTheme}>&#xe7eb;</i>
+                      </span>
+                    </div>
+                  )
+                })
+              ) : (
                 <div
-                  className={`${globalStyles.authTheme}`}
-                  style={{ fontSize: 50, textAlign: 'center' }}
+                  style={{
+                    textAlign: 'center',
+                    color: 'rgba(0,0,0,0.3)',
+                    marginTop: 50
+                  }}
                 >
-                  &#xe703;
+                  <div
+                    className={`${globalStyles.authTheme}`}
+                    style={{ fontSize: 50, textAlign: 'center' }}
+                  >
+                    &#xe703;
+                  </div>
+                  <div>暂无数据</div>
                 </div>
-                <div>暂无数据</div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+            {template_origin == '2' &&
+              !!(
+                this.state.template_list && this.state.template_list.length
+              ) && (
+                <Popover
+                  title={null}
+                  trigger={'click'}
+                  placement="top"
+                  onVisibleChange={this.handlePickUpTempleteVisible}
+                  content={
+                    <div>
+                      <div>输入提取码：</div>
+                      <div style={{ display: 'flex', marginTop: '8px' }}>
+                        <Input
+                          value={inputValue}
+                          onChange={this.handleInputChange}
+                        />
+                        <Button
+                          disabled={!inputValue || !reg.test(inputValue)}
+                          type="primary"
+                          style={{ marginLeft: '16px' }}
+                          onClick={this.handlePickUpTemplete}
+                        >
+                          确定
+                        </Button>
+                      </div>
+                    </div>
+                  }
+                >
+                  <div className={styles.pick_templete}>
+                    <Button>提取模板</Button>
+                  </div>
+                </Popover>
+              )}
+          </>
         )}
 
         {/* <div

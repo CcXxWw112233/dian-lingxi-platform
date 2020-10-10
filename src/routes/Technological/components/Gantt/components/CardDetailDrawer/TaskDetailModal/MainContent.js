@@ -38,6 +38,7 @@ import {
 import BasicFieldUIComponent from './BasicFieldUIComponent'
 import BasicFieldContainer from '../../../../../../../components/TaskDetailModal/UIWithContainerComponent/BasicFieldContainer'
 import CustomCategoriesOperate from '../../../../../../../components/CustomFields/CustomCategoriesOperate'
+import moment from 'moment'
 
 @connect(mapStateToProps)
 export default class MainContent extends Component {
@@ -898,26 +899,59 @@ export default class MainContent extends Component {
                             ) : (
                               '开始时间'
                             )}
-                            <DatePicker
-                              disabledDate={this.disabledStartTime.bind(this)}
-                              onChange={this.startDatePickerChange.bind(this)}
-                              placeholder={
-                                start_time
-                                  ? timestampToTimeNormal(start_time, '/', true)
-                                  : '开始时间'
-                              }
-                              format="YYYY/MM/DD HH:mm"
-                              showTime={{ format: 'HH:mm' }}
-                              style={{
-                                opacity: 0,
-                                height: '100%',
-                                background: '#000000',
-                                position: 'absolute',
-                                left: 0,
-                                top: 0,
-                                width: 'auto'
-                              }}
-                            />
+                            {this.showTimerRange() ? (
+                              <DatePicker
+                                disabledDate={this.disabledStartTime.bind(this)}
+                                onChange={this.startDatePickerChange.bind(this)}
+                                placeholder={
+                                  start_time
+                                    ? timestampToTimeNormal(
+                                        start_time,
+                                        '/',
+                                        false
+                                      )
+                                    : '开始时间'
+                                }
+                                format="YYYY/MM/DD"
+                                style={{
+                                  opacity: 0,
+                                  height: '100%',
+                                  background: '#000000',
+                                  position: 'absolute',
+                                  left: 0,
+                                  top: 0,
+                                  width: 'auto'
+                                }}
+                              />
+                            ) : (
+                              <DatePicker
+                                disabledDate={this.disabledStartTime.bind(this)}
+                                onChange={this.startDatePickerChange.bind(this)}
+                                placeholder={
+                                  start_time
+                                    ? timestampToTimeNormal(
+                                        start_time,
+                                        '/',
+                                        true
+                                      )
+                                    : '开始时间'
+                                }
+                                format="YYYY/MM/DD HH:mm"
+                                showTime={{
+                                  defaultValue: moment('00:00', 'HH:mm'),
+                                  format: 'HH:mm'
+                                }}
+                                style={{
+                                  opacity: 0,
+                                  height: '100%',
+                                  background: '#000000',
+                                  position: 'absolute',
+                                  left: 0,
+                                  top: 0,
+                                  width: 'auto'
+                                }}
+                              />
+                            )}
                           </span>
                           <span
                             onClick={this.handleDelStartTime}
@@ -978,26 +1012,55 @@ export default class MainContent extends Component {
                             ) : (
                               '截止时间'
                             )}
-                            <DatePicker
-                              disabledDate={this.disabledDueTime.bind(this)}
-                              placeholder={
-                                due_time
-                                  ? timestampToTimeNormal(due_time, '/', true)
-                                  : '截止时间'
-                              }
-                              format="YYYY/MM/DD HH:mm"
-                              showTime={{ format: 'HH:mm' }}
-                              onChange={this.endDatePickerChange.bind(this)}
-                              style={{
-                                opacity: 0,
-                                height: '100%',
-                                background: '#000000',
-                                position: 'absolute',
-                                left: 0,
-                                top: 0,
-                                width: 'auto'
-                              }}
-                            />
+                            {this.showTimerRange() ? (
+                              <DatePicker
+                                disabledDate={this.disabledDueTime.bind(this)}
+                                placeholder={
+                                  due_time
+                                    ? timestampToTimeNormal(
+                                        due_time,
+                                        '/',
+                                        false
+                                      )
+                                    : '截止时间'
+                                }
+                                format="YYYY/MM/DD"
+                                onChange={this.endDatePickerChange.bind(this)}
+                                style={{
+                                  opacity: 0,
+                                  height: '100%',
+                                  background: '#000000',
+                                  position: 'absolute',
+                                  left: 0,
+                                  top: 0,
+                                  width: 'auto'
+                                }}
+                              />
+                            ) : (
+                              <DatePicker
+                                disabledDate={this.disabledDueTime.bind(this)}
+                                placeholder={
+                                  due_time
+                                    ? timestampToTimeNormal(due_time, '/', true)
+                                    : '截止时间'
+                                }
+                                format="YYYY/MM/DD HH:mm"
+                                showTime={{
+                                  defaultValue: moment('23:59', 'HH:mm'),
+                                  format: 'HH:mm'
+                                }}
+                                onChange={this.endDatePickerChange.bind(this)}
+                                style={{
+                                  opacity: 0,
+                                  height: '100%',
+                                  background: '#000000',
+                                  position: 'absolute',
+                                  left: 0,
+                                  top: 0,
+                                  width: 'auto'
+                                }}
+                              />
+                            )}
                           </span>
                           <span
                             onClick={this.handleDelDueTime}

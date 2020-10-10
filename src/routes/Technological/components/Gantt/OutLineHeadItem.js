@@ -2,7 +2,16 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import { connect } from 'dva'
-import { message, Menu, Dropdown, Modal, Button, Popover, Spin } from 'antd'
+import {
+  message,
+  Menu,
+  Dropdown,
+  Modal,
+  Button,
+  Popover,
+  Spin,
+  Checkbox
+} from 'antd'
 import styles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import OutlineTree from './components/OutlineTree'
@@ -57,6 +66,7 @@ import {
   saveGanttOutlineNonDisplay
 } from '../../../../services/technological/gantt'
 import { getTreeNodeValue } from '../../../../models/technological/workbench/gantt/gantt_utils'
+import ExportExcelModal from './components/exportExcelModal'
 const { SubMenu } = Menu
 // const { TreeNode } = OutlineTree;
 const { confirm } = Modal
@@ -111,6 +121,12 @@ export default class OutLineHeadItem extends Component {
     })
   }
 
+  updateState = ({ name, value }) => {
+    this.setState({
+      [name]: value
+    })
+  }
+
   // 获取隐藏视图列表
   getOutlineHideTerm = () => {
     getGanttOutlineHideTrem({ board_id: this.props.gantt_board_id }).then(
@@ -126,45 +142,6 @@ export default class OutLineHeadItem extends Component {
         }
       }
     )
-  }
-
-  // 过滤已经隐藏的数组
-  // filterAlreadyHideData = (isDisplayData = []) => {
-  //   let { outline_tree = [] } = this.props
-  //   let outline_tree_ = JSON.parse(JSON.stringify(outline_tree))
-  //   // outline_tree_ = this.rev(outline_tree_)
-  //   for (let val of isDisplayData) {
-  //     // 1. 找到当前操作的节点
-  //     const current_node = getTreeNodeValue(outline_tree_, val)
-  //     if (current_node) {
-  //       // 2. 从当前节点找出父节点
-  //       const from_parent_id = current_node.parent_id
-  //       const parent_from_node = getTreeNodeValue(outline_tree_, from_parent_id)
-  //       if (from_parent_id) {
-  //         parent_from_node.children = parent_from_node.children.filter(
-  //           item => item.id != val
-  //         )
-  //       } else {
-  //         outline_tree_ = outline_tree_.filter(item => item.id != val)
-  //       }
-  //     }
-  //   }
-  //   this.props.dispatch({
-  //     type: 'gantt/handleOutLineTreeData',
-  //     payload: {
-  //       data: outline_tree_
-  //     }
-  //   })
-  // }
-
-  rev = (data = []) => {
-    return data.filter(item => {
-      if (item.is_display == true) {
-        return item
-      } else if (item.children && item.children.length) {
-        item.children = this.rev(item.children)
-      }
-    })
   }
 
   handleProjectMenu = ({ key }) => {
@@ -1267,6 +1244,9 @@ export default class OutLineHeadItem extends Component {
           }
         })
         break
+      case 'excel':
+        this.setExportExcelModalVisible(true)
+        break
       default:
         message.warn('功能正在开发中')
     }
@@ -1382,7 +1362,7 @@ export default class OutLineHeadItem extends Component {
       case 'export_img': // 导出图片
         this.exportToFile('image')
         break
-      case 'export_sheet': // 导出表格
+      case 'export_excel': // 导出表格
         this.exportToFile('excel')
         break
       case 'save_templete': // 保存为模板
@@ -1401,13 +1381,19 @@ export default class OutLineHeadItem extends Component {
         <SubMenu title="导出">
           <Menu.Item key="export_pdf">导出PDF</Menu.Item>
           <Menu.Item key="export_img">导出图片</Menu.Item>
-          <Menu.Item key="export_sheet">导出表格</Menu.Item>
+          <Menu.Item key="export_excel">导出表格</Menu.Item>
         </SubMenu>
         <Menu.Item key="save_templete">
           保存为{currentNounPlanFilterName(PROJECTS)}模板
         </Menu.Item>
       </Menu>
     )
+  }
+
+  setExportExcelModalVisible = bool => {
+    this.setState({
+      export_excel_modal_visible: bool
+    })
   }
 
   render() {
@@ -1612,6 +1598,16 @@ export default class OutLineHeadItem extends Component {
             setVisible={this.saveBoardTemplateVisible}
             visible={this.state.save_board_template_visible}
           />
+        </>
+        <>
+          {this.state.export_excel_modal_visible && (
+            <ExportExcelModal
+              board_id={gantt_board_id}
+              updateState={this.updateState}
+              setVisible={this.setExportExcelModalVisible}
+              visible={this.state.export_excel_modal_visible}
+            />
+          )}
         </>
         {this.state.showLoading && (
           <IsLoading>{/* {this.state.bodyPicture} */}</IsLoading>

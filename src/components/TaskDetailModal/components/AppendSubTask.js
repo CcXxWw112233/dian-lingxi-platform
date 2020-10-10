@@ -9,6 +9,7 @@ import AppendSubTaskItem from './AppendSubTaskItem'
 import { timestampToTimeNormal3, timestampToTimeNormal } from '@/utils/util'
 import { connect } from 'dva'
 import { isValidAvatar } from '../handleOperateModal'
+import moment from 'moment'
 
 @connect(
   ({
@@ -218,26 +219,55 @@ export default class AppendSubTask extends Component {
                                 appendSubTaskStyles.timeDeleBtn}`}
                             ></span>
                           </div>
-                          <DatePicker
-                            disabledDate={this.disabledStartTime.bind(this)}
-                            onChange={this.startDatePickerChange.bind(this)}
-                            placeholder={
-                              start_time
-                                ? timestampToTimeNormal(start_time, '/', true)
-                                : '开始时间'
-                            }
-                            format="YYYY/MM/DD HH:mm"
-                            showTime={{ format: 'HH:mm' }}
-                            style={{
-                              opacity: 0,
-                              width: 'auto',
-                              background: '#000000',
-                              position: 'absolute',
-                              right: 0,
-                              top: '12px',
-                              zIndex: 2
-                            }}
-                          />
+                          {this.showTimerRange() ? (
+                            <DatePicker
+                              disabledDate={this.disabledStartTime.bind(this)}
+                              onChange={this.startDatePickerChange.bind(this)}
+                              placeholder={
+                                start_time
+                                  ? timestampToTimeNormal(
+                                      start_time,
+                                      '/',
+                                      false
+                                    )
+                                  : '开始时间'
+                              }
+                              format="YYYY/MM/DD"
+                              style={{
+                                opacity: 0,
+                                width: 'auto',
+                                background: '#000000',
+                                position: 'absolute',
+                                right: 0,
+                                top: '12px',
+                                zIndex: 2
+                              }}
+                            />
+                          ) : (
+                            <DatePicker
+                              disabledDate={this.disabledStartTime.bind(this)}
+                              onChange={this.startDatePickerChange.bind(this)}
+                              placeholder={
+                                start_time
+                                  ? timestampToTimeNormal(start_time, '/', true)
+                                  : '开始时间'
+                              }
+                              format="YYYY/MM/DD HH:mm"
+                              showTime={{
+                                defaultValue: moment('00:00', 'HH:mm'),
+                                format: 'HH:mm'
+                              }}
+                              style={{
+                                opacity: 0,
+                                width: 'auto',
+                                background: '#000000',
+                                position: 'absolute',
+                                right: 0,
+                                top: '12px',
+                                zIndex: 2
+                              }}
+                            />
+                          )}
                         </div>
                       ) : (
                         <div className={`${appendSubTaskStyles.add_due_time}`}>
@@ -265,7 +295,10 @@ export default class AppendSubTask extends Component {
                                 : '开始时间'
                             }
                             format="YYYY/MM/DD HH:mm"
-                            showTime={{ format: 'HH:mm' }}
+                            showTime={{
+                              defaultValue: moment('00:00', 'HH:mm'),
+                              format: 'HH:mm'
+                            }}
                             style={{
                               opacity: 0,
                               width: 'auto',
@@ -296,26 +329,51 @@ export default class AppendSubTask extends Component {
                                 appendSubTaskStyles.timeDeleBtn}`}
                             ></span>
                           </div>
-                          <DatePicker
-                            disabledDate={this.disabledDueTime.bind(this)}
-                            onChange={this.endDatePickerChange.bind(this)}
-                            placeholder={
-                              due_time
-                                ? timestampToTimeNormal(due_time, '/', true)
-                                : '截止时间'
-                            }
-                            format="YYYY/MM/DD HH:mm"
-                            showTime={{ format: 'HH:mm' }}
-                            style={{
-                              opacity: 0,
-                              width: 'auto',
-                              background: '#000000',
-                              position: 'absolute',
-                              right: 0,
-                              top: '12px',
-                              zIndex: 2
-                            }}
-                          />
+                          {this.showTimerRange() ? (
+                            <DatePicker
+                              disabledDate={this.disabledDueTime.bind(this)}
+                              onChange={this.endDatePickerChange.bind(this)}
+                              placeholder={
+                                due_time
+                                  ? timestampToTimeNormal(due_time, '/', false)
+                                  : '截止时间'
+                              }
+                              format="YYYY/MM/DD"
+                              style={{
+                                opacity: 0,
+                                width: 'auto',
+                                background: '#000000',
+                                position: 'absolute',
+                                right: 0,
+                                top: '12px',
+                                zIndex: 2
+                              }}
+                            />
+                          ) : (
+                            <DatePicker
+                              disabledDate={this.disabledDueTime.bind(this)}
+                              onChange={this.endDatePickerChange.bind(this)}
+                              placeholder={
+                                due_time
+                                  ? timestampToTimeNormal(due_time, '/', true)
+                                  : '截止时间'
+                              }
+                              format="YYYY/MM/DD HH:mm"
+                              showTime={{
+                                defaultValue: moment('23:59', 'HH:mm'),
+                                format: 'HH:mm'
+                              }}
+                              style={{
+                                opacity: 0,
+                                width: 'auto',
+                                background: '#000000',
+                                position: 'absolute',
+                                right: 0,
+                                top: '12px',
+                                zIndex: 2
+                              }}
+                            />
+                          )}
                         </div>
                       ) : (
                         <div className={`${appendSubTaskStyles.add_due_time}`}>
@@ -343,7 +401,10 @@ export default class AppendSubTask extends Component {
                                 : '截止时间'
                             }
                             format="YYYY/MM/DD HH:mm"
-                            showTime={{ format: 'HH:mm' }}
+                            showTime={{
+                              defaultValue: moment('00:00', 'HH:mm'),
+                              format: 'HH:mm'
+                            }}
                             style={{
                               opacity: 0,
                               width: 'auto',
