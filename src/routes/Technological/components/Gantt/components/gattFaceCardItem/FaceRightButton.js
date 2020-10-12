@@ -220,7 +220,13 @@ export default class FaceRightButton extends Component {
         <div className={styles.card_button} onClick={this.checkToday}>
           今天
         </div>
-
+        <div
+          style={{ color: gantt_view_mode == 'hours' ? '#1890FF' : '' }}
+          className={styles.card_button}
+          onClick={() => this.changeGanttViewMode('hours')}
+        >
+          时
+        </div>
         <div
           style={{ color: gantt_view_mode == 'month' ? '#1890FF' : '' }}
           className={styles.card_button}
@@ -242,13 +248,6 @@ export default class FaceRightButton extends Component {
         >
           月
         </div>
-        {/* <div
-          style={{ color: gantt_view_mode == 'hours' ? '#1890FF' : '' }}
-          className={styles.card_button}
-          onClick={() => this.changeGanttViewMode('hours')}
-        >
-          时
-        </div> */}
       </div>
     )
   }
