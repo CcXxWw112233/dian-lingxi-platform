@@ -9,6 +9,7 @@ import emptyBoxImageUrl from '@/assets/gantt/empty-box.png'
 import { Button } from 'antd'
 import OutlineGuideModal from './components/OutlineGuideModal'
 import { milestoneInit } from '@/services/technological/task.js'
+import ExcelRead from '../../../../components/Excel'
 @connect(mapStateToProps)
 export default class GroupListHead extends Component {
   constructor(props) {
@@ -288,6 +289,7 @@ export default class GroupListHead extends Component {
             <Button block onClick={this.openBoardTemplateDrawer}>
               使用计划模版
             </Button>
+            <ExcelRead />
           </div>
         </div>
       )
