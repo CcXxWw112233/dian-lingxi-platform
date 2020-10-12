@@ -1,4 +1,7 @@
-import { setGantTimeSpan } from '../../../../routes/Technological/components/Gantt/ganttBusiness'
+import {
+  setGantTimeSpan,
+  setHourViewCardTimeSpan
+} from '../../../../routes/Technological/components/Gantt/ganttBusiness'
 import { getDigit, transformTimestamp, isSamDay } from '../../../../utils/util'
 import {
   task_item_height,
@@ -58,7 +61,7 @@ export function recusionItem(
     parent_ids = [],
     parrent_cat_no = undefined
   },
-  { start_date, end_date, filter_display }
+  { start_date, end_date, filter_display, gantt_view_mode }
 ) {
   let arr = tree.map((item, key) => {
     let new_item = { ...item, parent_expand }
@@ -112,13 +115,17 @@ export function recusionItem(
       })
     } else {
       //其它类型就根据开始截至时间计算
-      time_span = setGantTimeSpan({
-        time_span,
-        start_time,
-        due_time,
-        start_date,
-        end_date
-      })
+      if (gantt_view_mode == 'hours') {
+        time_span = setHourViewCardTimeSpan(start_time, due_time)
+      } else {
+        time_span = setGantTimeSpan({
+          time_span,
+          start_time,
+          due_time,
+          start_date,
+          end_date
+        })
+      }
     }
     new_item.time_span = time_span
     new_item.parent_ids = []
@@ -145,7 +152,7 @@ export function recusionItem(
           parent_ids: new_item.parent_ids,
           parrent_cat_no: new_item.cat_no
         },
-        { start_date, end_date, filter_display }
+        { start_date, end_date, filter_display, gantt_view_mode }
       )
       if (filter_display) {
         new_item.children = new_item.children.filter(item => item.is_display)

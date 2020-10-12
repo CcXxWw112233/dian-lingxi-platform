@@ -423,7 +423,7 @@ export default {
       let filnaly_outline_tree = recusionItem(
         new_outline_tree,
         { parent_expand: true },
-        { start_date, end_date, filter_display }
+        { start_date, end_date, filter_display, gantt_view_mode }
       )
       // console.log('filnaly_outline_tree_0', filnaly_outline_tree)
       yield put({
@@ -620,6 +620,49 @@ export default {
                   )
                 }
                 break
+              }
+            } else if (gantt_view_mode == 'hours') {
+              if (
+                //如果重合
+                isSamHour(
+                  new_item[cal_left_field],
+                  date_arr_one_level[k]['timestamp']
+                )
+              ) {
+                new_item.left = k * ceilWidth
+                break
+              } else {
+                //如果是在同一天，开始时间不在工作时间内
+                if (
+                  isSamDay(
+                    new_item[cal_left_field],
+                    date_arr_one_level[k]['timestamp']
+                  )
+                ) {
+                  // 开始时间在工作时间之前
+                  if (
+                    new_item[cal_left_field] <
+                      date_arr_one_level[k]['timestamp'] &&
+                    date_arr_one_level[k]['date_no'] ==
+                      hours_view_start_work_oclock
+                  ) {
+                    new_item.left = k * ceilWidth
+                    break
+                  } else if (
+                    //开始时间在工作时间之后
+                    new_item[cal_left_field] >
+                      date_arr_one_level[k]['timestamp'] &&
+                    date_arr_one_level[k]['date_no'] ==
+                      hours_view_due_work_oclock - 1 &&
+                    !isSamDay(
+                      new_item[cal_left_field],
+                      new_item[cal_left_field]
+                    )
+                  ) {
+                    new_item.left = (k + 1) * ceilWidth
+                    break
+                  }
+                }
               }
             } else {
             }
