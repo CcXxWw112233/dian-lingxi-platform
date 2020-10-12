@@ -1595,8 +1595,12 @@ export default class CardItem extends Component {
       im_all_latest_unread_messages,
       gantt_view_mode,
       group_view_type,
-      gantt_board_id
+      gantt_board_id,
+      projectDetailInfoData = {}
     } = this.props
+    const {
+      board_set: { content_show_type }
+    } = projectDetailInfoData
     const {
       left,
       top,
@@ -1680,7 +1684,7 @@ export default class CardItem extends Component {
         >
           {/* <div data-targetclassname="specific_example"
                         className={`${indexStyles.card_item_status}`}
-                        //  onMouseDown={(e) => e.stopPropagation()} 
+                        //  onMouseDown={(e) => e.stopPropagation()}
                         onMouseMove={(e) => e.preventDefault()}
                     >
                         <CheckItem is_realize={is_realize} card_type={type} styles={{ color: is_realize == '1' ? 'rgba(0,0,0,.25)' : '' }} />
@@ -1697,8 +1701,11 @@ export default class CardItem extends Component {
               lineHeight: `${task_item_height - 4}px`
             }}
           >
+            {ganttIsOutlineView({ group_view_type }) && content_show_type == '1'
+              ? null
+              : name}
             {/* {!ganttIsOutlineView({ group_view_type }) && name} */}
-            {name}
+            {/* {name} */}
             {is_privilege == '1' && (
               <Tooltip title="已开启访问控制" placement="top">
                 <span
@@ -1754,9 +1761,9 @@ export default class CardItem extends Component {
                 } */}
         {/* 显示子任务 */}
         {/* {
-                    !ganttIsOutlineView({ group_view_type }) && !parent_card_id && 
+                    !ganttIsOutlineView({ group_view_type }) && !parent_card_id &&
                     ( */}
-        {/* {ganttIsOutlineView({ group_view_type }) && (
+        {ganttIsOutlineView({ group_view_type }) && content_show_type == '1' && (
           <div
             style={{
               position: 'absolute',
@@ -1771,7 +1778,7 @@ export default class CardItem extends Component {
           >
             {name}
           </div>
-        )} */}
+        )}
 
         <Dropdown
           trigger={['click']}
@@ -1888,7 +1895,10 @@ function mapStateToProps({
     }
   },
   imCooperation: { im_all_latest_unread_messages = [] },
-  publicTaskDetailModal: { card_id: card_detail_id }
+  publicTaskDetailModal: { card_id: card_detail_id },
+  projectDetail: {
+    datas: { projectDetailInfoData = {} }
+  }
 }) {
   return {
     list_group,
@@ -1905,6 +1915,7 @@ function mapStateToProps({
     outline_tree_round,
     card_detail_id,
     selected_card_visible,
-    notification_todos
+    notification_todos,
+    projectDetailInfoData
   }
 }

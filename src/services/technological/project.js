@@ -331,3 +331,12 @@ export async function archiveBoardSaveFile(data) {
     data
   })
 }
+
+// 大纲视图名称外置
+export async function setOutlineCardNameWithBoard(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/board/set`,
+    method: 'PUT',
+    data
+  })
+}
