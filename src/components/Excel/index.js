@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Modal, Table, Button, Select } from 'antd'
+import { Modal, Table, Button, Select, Row, Col } from 'antd'
 import XLSX from 'xlsx'
 
 export default class ExcelRead extends Component {
@@ -7,7 +7,6 @@ export default class ExcelRead extends Component {
     super(props)
     this.state = {
       visible: false,
-      importDataVisible: false,
       columns: [],
       data: [],
       tableDefaultKeys: [
@@ -21,8 +20,7 @@ export default class ExcelRead extends Component {
       ],
       selectedRows: [],
       selectedKey: {},
-      hasSelected: false,
-      hasLocation: []
+      hasSelected: false
     }
     this.workBook = null
   }
@@ -40,17 +38,28 @@ export default class ExcelRead extends Component {
     let { target } = val
     let file = target.files[0]
     if (file) {
+      // 创建FileReader对象，将文件内容读入内存，通过一些api接口，可以在主线程中访问本地文件
       let read = new FileReader()
+      // onload事件，当读取操作成功完成时调用
       read.onload = e => {
         let result = e.target.result
+        // 返回数组中元素的字节数
         var data = new Uint8Array(result)
         this.workBook = XLSX.read(data, { type: 'array' })
         // 转出来的数据
+        const sheet2JSONOpts = {
+          /** Default value for null/undefined values */
+          defval: '' //给defval赋值为空的字符串
+        }
+        //1、XLSX.utils.json_to_sheet(data) 接收一个对象数组并返回一个基于对象关键字自动生成的“标题”的工作表，默认的列顺序由使用Object.keys的字段的第一次出现确定
+        //2、将数据放入对象workBook的Sheets中等待输出
         let json = XLSX.utils.sheet_to_json(
-          this.workBook.Sheets[this.workBook.SheetNames[0]]
+          this.workBook.Sheets[this.workBook.SheetNames[0]],
+          sheet2JSONOpts
         )
         this.transformJson(json)
       }
+      // 方法用于启动读取指定的 Blob 或 File 内容。当读取操作完成时，readyState 变成 DONE（已完成），并触发 loadend 事件
       read.readAsArrayBuffer(file)
     }
     // console.log(target.files)
@@ -170,6 +179,17 @@ export default class ExcelRead extends Component {
     return head
   }
 
+  // 删除选择的数据
+  removeSelectValue = () => {
+    let arr = Array.from(this.state.selectedRows)
+    let datas = Array.from(this.state.data)
+    let ids = arr.map(item => item.uid)
+    let data = datas.filter(item => !ids.includes(item.uid))
+
+    // console.log(data);
+    this.setState({ data, selectedRows: [], hasSelected: false })
+  }
+
   // 选择行的回调
   onSelectRow = (record, selected, selectedRows) => {
     let arr = Array.from(this.state.selectedRows)
@@ -195,13 +215,12 @@ export default class ExcelRead extends Component {
       tableDefaultKeys,
       selectedRows: [],
       selectedKey: {},
-      visible: false,
-      importDataVisible: false
+      visible: false
     })
   }
 
   render() {
-    const { visible, columns = [], data = [] } = this.state
+    const { visible, columns = [], data = [], hasSelected } = this.state
     return (
       <div>
         <Button onClick={this.addFile} style={{ marginTop: '8px' }} block>
@@ -219,11 +238,23 @@ export default class ExcelRead extends Component {
           keyboard={false}
           destroyOnClose={true}
         >
+          <Row style={{ margin: '10px 0' }}>
+            <Col>
+              <Button
+                disabled={!hasSelected}
+                type="danger"
+                onClick={this.removeSelectValue}
+              >
+                删除
+              </Button>
+            </Col>
+          </Row>
           <Table
             bordered
             rowKey="id"
             rowSelection={{
               hideSelectAll: true,
+              columnTitle: ' ',
               onSelect: this.onSelectRow
             }}
             columns={columns}
