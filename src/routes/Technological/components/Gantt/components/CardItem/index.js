@@ -26,9 +26,14 @@ import {
   cardItemIsHasUnRead,
   setDateWithPositionInYearView,
   setDateWidthPositionWeekView,
-  onChangeCardHandleCardDetail
+  onChangeCardHandleCardDetail,
+  setHourViewCardTimeSpan
 } from '../../ganttBusiness'
-import { transformTimestamp, isSamDay } from '../../../../../../utils/util'
+import {
+  transformTimestamp,
+  isSamDay,
+  isSamHour
+} from '../../../../../../utils/util'
 import HoverEars from './HoverEars'
 import DragCard from './DragCard'
 import GroupChildCards from './GroupChildCards.js'
@@ -651,7 +656,7 @@ export default class CardItem extends Component {
     const end_time_position = local_left + local_width
     let start_date = {}
     let end_date = {}
-    if (gantt_view_mode == 'month') {
+    if (gantt_view_mode == 'month' || gantt_view_mode == 'hours') {
       const end_time_index = Math.floor((end_time_position - 6) / ceilWidth)
       const start_time_index = Math.floor(local_left / ceilWidth)
       start_date = date_arr_one_level[start_time_index] || {}
@@ -692,10 +697,15 @@ export default class CardItem extends Component {
     updateData.due_time = parseInt(end_time_timestamp)
     // console.log('date_string', updateData)
 
-    if (isSamDay(end_time, end_time_timestamp)) {
-      //向右拖动时，如果是在同一天，则不去更新
+    if (
+      (gantt_view_mode == 'hours' && isSamHour(end_time, end_time_timestamp)) ||
+      (gantt_view_mode != 'hours' && isSamDay(end_time, end_time_timestamp))
+    ) {
+      //向右拖动时，如果是在同一格子，则不去更新
       const time_span_ =
-        Math.floor((end_time - start_time) / (24 * 3600 * 1000)) + 1
+        gantt_view_mode != 'hours'
+          ? Math.floor((end_time - start_time) / (24 * 3600 * 1000)) + 1
+          : setHourViewCardTimeSpan(start_time, end_time)
       const time_width = time_span_ * ceilWidth
       this.setState(
         {
@@ -703,6 +713,7 @@ export default class CardItem extends Component {
           local_width_flag: time_width
         },
         () => {
+          console.log('ssssssss_fl', 1)
           this.excuteHandleEffectHandleParentCard(['recoveryParentCard'])
           // this.excuteHandleEffectHandleParentCard([
           //     // 'handleParentCard',
@@ -711,6 +722,7 @@ export default class CardItem extends Component {
           // ])
         }
       )
+      console.log('ssssssss_fl', 2, end_time, end_time_timestamp, time_width)
       return
     }
     const single_board_view = ganttIsSingleBoardGroupView({
@@ -718,7 +730,7 @@ export default class CardItem extends Component {
       gantt_board_id
     }) //分组视图下
     const row_param = single_board_view ? { row } : {}
-
+    console.log('ssssssss_fl', 3)
     updateTaskVTwo(
       {
         card_id: id,
@@ -857,6 +869,7 @@ export default class CardItem extends Component {
     const date_span = local_width / ceilWidth
     const start_time_index = Math.floor(local_left / ceilWidth)
     let start_date = {}
+    let end_date = {}
     if (gantt_view_mode == 'month') {
       start_date = date_arr_one_level[start_time_index] || {}
     } else if (gantt_view_mode == 'year') {
@@ -873,16 +886,24 @@ export default class CardItem extends Component {
         date_arr_one_level,
         ceilWidth
       })
+    } else if (gantt_view_mode == 'hours') {
+      const end_time_position = local_left + local_width
+      const end_time_index = Math.floor((end_time_position - 6) / ceilWidth)
+      const start_time_index = Math.floor(local_left / ceilWidth)
+      start_date = date_arr_one_level[start_time_index] || {}
+      end_date = date_arr_one_level[end_time_index]
     } else {
     }
     const start_time_timestamp = parseInt(start_date.timestamp)
     // console.log('ssssssssssaaaa', 0, start_date.timestamp)
     if (!start_time_timestamp) return
     //截至时间为起始时间 加上间隔天数的毫秒数, - 60 * 1000为一分钟的毫秒数，意为截至日期的23:59
-    const end_time_timestamp = parseInt(
+    let end_time_timestamp = parseInt(
       start_time_timestamp + 24 * 60 * 60 * 1000 * date_span - 60 * 1000
     )
-
+    if (gantt_view_mode == 'hours') {
+      end_time_timestamp = parseInt(end_date.timestamp)
+    }
     updateData.start_time = parseInt(start_time_timestamp)
     updateData.due_time = parseInt(end_time_timestamp)
     // console.log('ssssssssssaaaa', 1)
@@ -896,8 +917,11 @@ export default class CardItem extends Component {
     updateData = { ...updateData, ...row_param }
 
     if (
-      isSamDay(start_time, start_time_timestamp) &&
-      (single_board_view ? !!row && row == new_row : true) //分组模式下行高微信
+      (gantt_view_mode == 'hours' &&
+        isSamHour(start_time, start_time_timestamp)) ||
+      (gantt_view_mode != 'hours' &&
+        isSamDay(start_time, start_time_timestamp) &&
+        (single_board_view ? !!row && row == new_row : true)) //分组模式下行高微信
     ) {
       //向右拖动时，如果是在同一天, 同一行，则不去更新
       this.setState(
@@ -923,7 +947,12 @@ export default class CardItem extends Component {
       board_id: board_id || gantt_board_id,
       ...row_param
     }
-    if (isSamDay(start_time, start_time_timestamp)) {
+    if (
+      (gantt_view_mode == 'hours' &&
+        isSamHour(start_time, start_time_timestamp)) ||
+      (gantt_view_mode != 'hours' && isSamDay(start_time, start_time_timestamp))
+      // isSamDay(start_time, start_time_timestamp)
+    ) {
       //时间一样时只改变行
       delete request_param.start_time
       delete request_param.due_time
@@ -1015,6 +1044,7 @@ export default class CardItem extends Component {
     // const start_date = date_arr_one_level[start_time_index] || {}
 
     let start_date = {}
+    let end_date = {}
     if (gantt_view_mode == 'month') {
       const start_time_index = Math.floor(local_left / ceilWidth)
       start_date = date_arr_one_level[start_time_index] || {}
@@ -1032,13 +1062,23 @@ export default class CardItem extends Component {
         date_arr_one_level,
         ceilWidth
       })
+    } else if (gantt_view_mode == 'hours') {
+      const end_time_position = local_left + local_width
+      const end_time_index = Math.floor((end_time_position - 6) / ceilWidth)
+      const start_time_index = Math.floor(local_left / ceilWidth)
+      start_date = date_arr_one_level[start_time_index] || {}
+      end_date = date_arr_one_level[end_time_index]
     } else {
     }
     const start_time_timestamp = start_date.timestamp
     if (!start_time_timestamp) return
     //截至时间为起始时间 加上间隔天数的毫秒数, - 60 * 1000为一分钟的毫秒数，意为截至日期的23:59
-    const end_time_timestamp =
+    let end_time_timestamp = parseInt(
       start_time_timestamp + 24 * 60 * 60 * 1000 * date_span - 60 * 1000
+    )
+    if (gantt_view_mode == 'hours') {
+      end_time_timestamp = parseInt(end_date.timestamp)
+    }
     updateData.start_time = start_time_timestamp
     updateData.due_time = end_time_timestamp
 
@@ -1057,7 +1097,12 @@ export default class CardItem extends Component {
     // if (group_row_param.list_id == '0') {
     //     delete params.list_id
     // }
-    if (isSamDay(start_time, start_time_timestamp)) {
+    if (
+      (gantt_view_mode == 'hours' &&
+        isSamHour(start_time, start_time_timestamp)) ||
+      (gantt_view_mode != 'hours' && isSamDay(start_time, start_time_timestamp))
+      // isSamDay(start_time, start_time_timestamp)
+    ) {
       //时间一样时只改变行
       delete params.start_time
       delete params.due_time
