@@ -238,7 +238,6 @@ export default class ExcelRead extends Component {
     } else {
       obj[text] = ''
     }
-    console.log(text)
     switch (e) {
       case 'number':
         // 如果说选择了序号 那么将默认的序号列删除
@@ -249,19 +248,21 @@ export default class ExcelRead extends Component {
           // console.log(dkey, key)
           dkey.forEach(item => {
             if (key.includes(item)) {
-              delete d[item]
+              // delete d[item]
             }
           })
           return d
         })
-        columns = columns.filter(item => item.dataIndex != 'number')
+        // columns = columns.filter(item => item.dataIndex != 'number')
         columns = columns.map(item => {
           if (item.dataIndex == text) {
             let new_item = { ...item }
             new_item = {
               ...item,
               editable: true
+              // className: 'hhh'
             }
+            console.log('<<<<')
             return new_item
           } else {
             return item
@@ -288,6 +289,41 @@ export default class ExcelRead extends Component {
         this.toFilterDefaultKey()
       }
     )
+    const arr = Object.values(obj)
+    console.log(text, obj, arr, columns, 'this.state.selectedKey')
+    if (arr.includes('number')) {
+      columns = columns.map(item => {
+        if (item.dataIndex == 'number') {
+          let new_item = { ...item }
+          new_item = {
+            ...item,
+            // editable: true
+            className: styles.kkk
+          }
+          return new_item
+        } else {
+          return item
+        }
+      })
+    } else {
+      columns = columns.map(item => {
+        if (item.dataIndex == 'number') {
+          let new_item = { ...item }
+          new_item = {
+            ...item,
+            // editable: true
+            className: ''
+          }
+          return new_item
+        } else {
+          return item
+        }
+      })
+    }
+    this.setState({
+      columns
+    })
+    console.log(columns)
   }
 
   toFilterDefaultKey = () => {
@@ -307,43 +343,69 @@ export default class ExcelRead extends Component {
   }
 
   //
-  handleChangField = value => {
-    switch (value) {
-      case 'number':
-        this.handleChangeOrderField(value)
-        break
+  // handleChangField = value => {
+  //   switch (value) {
+  //     case 'number':
+  //       this.handleChangeOrderField(value)
+  //       break
 
-      default:
-        break
-    }
-  }
+  //     default:
+  //       break
+  //   }
+  // }
 
-  handleChangeOrderField = value => {
-    console.log(value)
-    const { data = [], columns = [], selectedKey = {} } = this.state
-    // console.log(data, columns, selectedKey)
+  handleChangeOrderField = (value, text) => {
+    console.log(value, text, 'texttext')
+    let { data = [], columns = [], selectedKey = {} } = this.state
+    console.log(data, columns, selectedKey)
     let key = Object.keys(selectedKey)
-    if (value == 'order_spot') {
-      // 表示以点隔开
-      let flag = false
-      // data.map(item => {
-      //   if (item[])
-      // })
-    } else if (value == 'order_line') {
-      // 表示以短横线隔开
+    for (let index = 0; index < data.length; index++) {
+      console.log(data[index][text], 'data[index][text]')
+      if (isNaN(data[index][text])) {
+        console.log('>>>>>')
+        columns = columns.map(item => {
+          if (item.dataIndex == text) {
+            let new_item = { ...item }
+            new_item = {
+              ...item,
+              editable: true,
+              className: styles.hhh
+            }
+            return new_item
+          } else {
+            return item
+          }
+        })
+        break
+      }
     }
+    this.setState({
+      columns
+    })
+    // if (value == 'order_spot') {
+    //   // 表示以点隔开
+    //   let flag = false
+    //   // data.map(item => {
+    //   //   if (item[])
+    //   // })
+    // } else if (value == 'order_line') {
+    //   // 表示以短横线隔开
+    // }
   }
 
   // 渲染不同字段对应下拉框
-  renderDiffSelectField = value => {
+  renderDiffSelectField = (text, value) => {
     let main = <></>
+    console.log(text, 'text')
     if (value.includes('number')) {
       main = (
         <Select
           size="small"
           placeholder="请选择"
           style={{ width: 100, marginTop: '5px' }}
-          onChange={this.handleChangeOrderField}
+          onChange={value => {
+            this.handleChangeOrderField(value, text)
+          }}
         >
           <Select.Option key={'order_spot'}>1.1.1.1</Select.Option>
           <Select.Option key={'order_line'}>1-1-1-1</Select.Option>
@@ -377,7 +439,8 @@ export default class ExcelRead extends Component {
             )
           })}
         </Select>
-        {selectedKey[text] == 'number' && this.renderDiffSelectField(value)}
+        {selectedKey[text] == 'number' &&
+          this.renderDiffSelectField(text, value)}
       </>
     )
     return head

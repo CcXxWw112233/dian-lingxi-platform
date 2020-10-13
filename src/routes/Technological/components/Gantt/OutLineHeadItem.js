@@ -1404,9 +1404,9 @@ export default class OutLineHeadItem extends Component {
   // 渲染底部导航
   renderOutlineFooter = () => {
     const { projectDetailInfoData = {} } = this.props
-    const {
-      board_set: { content_show_type }
-    } = projectDetailInfoData
+    // const {
+    //   board_set: { content_show_type }
+    // } = projectDetailInfoData
     return (
       <Menu onClick={this.handleOnSelect}>
         <Menu.Item>
@@ -1414,7 +1414,7 @@ export default class OutLineHeadItem extends Component {
           <span onClick={e => e.stopPropagation()}>
             <Switch
               size="small"
-              checked={content_show_type == '1'}
+              // checked={content_show_type == '1'}
               onClick={this.handleOutlayName}
             />
           </span>
