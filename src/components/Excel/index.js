@@ -11,11 +11,11 @@ export default class ExcelRead extends Component {
       data: [],
       tableDefaultKeys: [
         { value: 'none', label: '不绑定' },
-        { value: 'name', label: '名称' },
+        { value: 'number', label: '序号' },
         { value: 'type', label: '类型' },
+        { value: 'name', label: '名称' },
         { value: 'start_date', label: '开始时间' },
-        { value: 'end_date', label: '结束时间' },
-        { value: 'stage', label: '类型' },
+        { value: 'end_date', label: '截止时间' },
         { value: 'remark', label: '备注' }
       ],
       selectedRows: [],
@@ -49,7 +49,8 @@ export default class ExcelRead extends Component {
         // 转出来的数据
         const sheet2JSONOpts = {
           /** Default value for null/undefined values */
-          defval: '' //给defval赋值为空的字符串
+          defval: '', //给defval赋值为空的字符串
+          header: 'A'
         }
         //1、XLSX.utils.json_to_sheet(data) 接收一个对象数组并返回一个基于对象关键字自动生成的“标题”的工作表，默认的列顺序由使用Object.keys的字段的第一次出现确定
         //2、将数据放入对象workBook的Sheets中等待输出
@@ -68,25 +69,32 @@ export default class ExcelRead extends Component {
   // 转换表格需要用的数据
   transformJson = data => {
     if (data && data.length) {
-      data = data.map((item, index) => {
-        item.id = index + 1
-        item.uid = this.createUid()
-        return item
-      })
+      // data = data.map((item, index) => {
+      //   item.id = index + 1
+      //   item.uid = this.createUid()
+      //   return item
+      // })
       let otherkey = this.state.tableDefaultKeys.map(item => item.value)
+      // 1. 获取表格列
       let keys = Object.keys(data[0])
-      let k = []
-      let notShow = ['id', '__EMPTY', 'uid', ...otherkey]
-      keys.forEach(item => {
-        if (!notShow.includes(item)) {
-          k.push(item)
-        }
-      })
-      let arr = k.map((item, index) => {
+
+      // let k = []
+      // '__EMPTY'
+      // let notShow = ['id', 'uid', ...otherkey]
+      // keys.forEach(item => {
+      //   if (!notShow.includes(item)) {
+      //     k.push(item)
+      //   }
+      // })
+      let arr = keys.map((item, index) => {
         let obj = {
           dataIndex: item,
           title: this.tableHeader.bind(this, item),
-          key: index
+          // title: item,
+          key: index,
+          render: (text, record, index) => {
+            return text
+          }
           // width:80
         }
         return obj
@@ -154,11 +162,9 @@ export default class ExcelRead extends Component {
   tableHeader = (text, data) => {
     let head = (
       <>
-        <span>{text}</span>
-        <br />
         <Select
           size="small"
-          placeholder="字段绑定"
+          placeholder="请选择"
           style={{ width: 100 }}
           onChange={this.selectText.bind(this, text)}
         >
