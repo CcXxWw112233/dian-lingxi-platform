@@ -917,11 +917,11 @@ export default class CardItem extends Component {
     updateData = { ...updateData, ...row_param }
 
     if (
-      (gantt_view_mode == 'hours' &&
+      ((gantt_view_mode == 'hours' &&
         isSamHour(start_time, start_time_timestamp)) ||
-      (gantt_view_mode != 'hours' &&
-        isSamDay(start_time, start_time_timestamp) &&
-        (single_board_view ? !!row && row == new_row : true)) //分组模式下行高微信
+        (gantt_view_mode != 'hours' &&
+          isSamDay(start_time, start_time_timestamp))) &&
+      (single_board_view ? !!row && row == new_row : true) //分组模式下行高微信
     ) {
       //向右拖动时，如果是在同一天, 同一行，则不去更新
       this.setState(
