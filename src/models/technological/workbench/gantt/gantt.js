@@ -654,13 +654,13 @@ export default {
                     new_item[cal_left_field] >
                       date_arr_one_level[k]['timestamp'] &&
                     date_arr_one_level[k]['date_no'] ==
-                      hours_view_due_work_oclock - 1 &&
-                    !isSamDay(
-                      new_item[cal_left_field],
-                      new_item[cal_left_field]
-                    )
+                      hours_view_due_work_oclock - 1
                   ) {
-                    new_item.left = (k + 1) * ceilWidth
+                    if (new_item.tree_type == '2') {
+                      new_item.left = (k + 1) * ceilWidth
+                    } else {
+                      new_item.left = k * ceilWidth
+                    }
                     break
                   }
                 }

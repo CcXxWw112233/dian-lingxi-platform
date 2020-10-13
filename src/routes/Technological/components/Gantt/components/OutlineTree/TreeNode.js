@@ -107,11 +107,11 @@ export default class TreeNode extends Component {
       gantt_view_mode
     } = this.props
     const { start_time, due_time, tree_type } = nodeValue
-    if (!start_time) return
+    if (!start_time && !due_time) return
     const gold_time = tree_type == '1' ? due_time : start_time
     const date = new Date(gold_time).getDate()
     let toDayIndex = -1
-    if (gantt_view_mode == 'month') {
+    if (gantt_view_mode == 'month' || gantt_view_mode == 'hours') {
       toDayIndex = date_arr_one_level.findIndex(item =>
         isSamDay(item.timestamp, gold_time)
       ) //当天所在位置index
@@ -742,9 +742,7 @@ export default class TreeNode extends Component {
                   (is_display || is_display == undefined ? (
                     <span
                       title="隐藏"
-                      className={`${globalStyles.authTheme} ${
-                        styles.outline_tree_node_hide_eye_icon
-                      }`}
+                      className={`${globalStyles.authTheme} ${styles.outline_tree_node_hide_eye_icon}`}
                       onClick={e => {
                         this.handleOperateEyeIcon({
                           e,
@@ -759,9 +757,7 @@ export default class TreeNode extends Component {
                   ) : (
                     <span
                       title="显示"
-                      className={`${globalStyles.authTheme} ${
-                        styles.outline_tree_node_show_eye_icon
-                      }`}
+                      className={`${globalStyles.authTheme} ${styles.outline_tree_node_show_eye_icon}`}
                       onClick={e => {
                         this.handleOperateEyeIcon({
                           e,
@@ -961,18 +957,14 @@ export default class TreeNode extends Component {
                   onVisibleChange={this.operateVisibleChange}
                 >
                   <div
-                    className={`${styles.node_opeator} ${
-                      globalStyles.authTheme
-                    }`}
+                    className={`${styles.node_opeator} ${globalStyles.authTheme}`}
                   >
                     &#xe7fd;
                   </div>
                 </Dropdown>
               ) : (
                 <span
-                  className={`${styles.outline_tree_line_node_dot} ${
-                    this.setDotStyle[type]
-                  }`}
+                  className={`${styles.outline_tree_line_node_dot} ${this.setDotStyle[type]}`}
                 />
               )}
               {!isLeaf && (
@@ -1142,9 +1134,7 @@ export default class TreeNode extends Component {
                   icon
                 ) : (
                   <span
-                    className={`${styles.outline_tree_line_node_dot} ${
-                      this.setDotStyle[type]
-                    }`}
+                    className={`${styles.outline_tree_line_node_dot} ${this.setDotStyle[type]}`}
                   />
                 )
               ) : ((hoverItem.id && hoverItem.id == id) ||
@@ -1158,18 +1148,14 @@ export default class TreeNode extends Component {
                   onVisibleChange={this.operateVisibleChange}
                 >
                   <div
-                    className={`${styles.node_opeator} ${
-                      globalStyles.authTheme
-                    }`}
+                    className={`${styles.node_opeator} ${globalStyles.authTheme}`}
                   >
                     &#xe7fd;
                   </div>
                 </Dropdown>
               ) : (
                 <span
-                  className={`${styles.outline_tree_line_node_dot} ${
-                    this.setDotStyle[type]
-                  }`}
+                  className={`${styles.outline_tree_line_node_dot} ${this.setDotStyle[type]}`}
                 />
               )}
               {!isLeaf && (
