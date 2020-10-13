@@ -151,7 +151,7 @@ export default class GetRowGanttItem extends Component {
   // 渲染时视图日期
   renderHourView = (date_inner = []) => {
     const { rows = 7 } = this.props
-    const { ceiHeight, list_id } = this.props
+    const { ceiHeight, list_id, ceilWidth } = this.props
     return (
       <>
         {date_inner.map((value2, key2) => {
@@ -164,6 +164,7 @@ export default class GetRowGanttItem extends Component {
               data-end_time={timestampEnd}
               key={timestamp}
               style={{
+                width: ceilWidth,
                 borderRight:
                   key2 == hours_view_total - 1
                     ? '1px solid rgba(154, 159, 166, 0.15)'
