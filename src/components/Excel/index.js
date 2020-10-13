@@ -1,8 +1,99 @@
 import React, { Component } from 'react'
-import { Modal, Table, Button, Select, Row, Col } from 'antd'
+import { Modal, Table, Button, Select, Form, Row, Col, Input } from 'antd'
 import XLSX from 'xlsx'
 import { components, handleResize } from './getConst'
+import EditableTable from './text'
+import styles from './index.less'
+const EditableContext = React.createContext()
 
+const EditableRow = ({ form, index, ...props }) => (
+  <EditableContext.Provider value={form}>
+    <tr {...props} />
+  </EditableContext.Provider>
+)
+
+const EditableFormRow = Form.create()(EditableRow)
+
+class EditableCell extends React.Component {
+  state = {
+    editing: false
+  }
+
+  toggleEdit = () => {
+    const editing = !this.state.editing
+    this.setState({ editing }, () => {
+      if (editing) {
+        this.input.focus()
+      }
+    })
+  }
+
+  save = e => {
+    const { record, handleSave } = this.props
+    this.form.validateFields((error, values) => {
+      if (error && error[e.currentTarget.id]) {
+        return
+      }
+      this.toggleEdit()
+      handleSave({ ...record, ...values })
+    })
+  }
+
+  renderCell = form => {
+    this.form = form
+    const { children, dataIndex, record, title } = this.props
+    const { editing } = this.state
+    return editing ? (
+      <Form.Item style={{ margin: 0 }}>
+        {form.getFieldDecorator(dataIndex, {
+          rules: [
+            {
+              required: true,
+              message: `${title} is required.`
+            }
+          ],
+          initialValue: record[dataIndex]
+        })(
+          <Input
+            ref={node => (this.input = node)}
+            onPressEnter={this.save}
+            onBlur={this.save}
+          />
+        )}
+      </Form.Item>
+    ) : (
+      <div
+        className={styles['editable-cell-value-wrap']}
+        style={{ paddingRight: 24 }}
+        onClick={this.toggleEdit}
+      >
+        {children}
+      </div>
+    )
+  }
+
+  render() {
+    const {
+      editable,
+      dataIndex,
+      title,
+      record,
+      index,
+      handleSave,
+      children,
+      ...restProps
+    } = this.props
+    return (
+      <td {...restProps}>
+        {editable ? (
+          <EditableContext.Consumer>{this.renderCell}</EditableContext.Consumer>
+        ) : (
+          children
+        )}
+      </td>
+    )
+  }
+}
 export default class ExcelRead extends Component {
   constructor(props) {
     super(props)
@@ -141,29 +232,56 @@ export default class ExcelRead extends Component {
   selectText = (text, e) => {
     let obj = { ...this.state.selectedKey }
     let data = Array.from(this.state.data)
+    let columns = Array.from(this.state.columns)
     if (e && e !== 'none') {
       obj[text] = e
     } else {
       obj[text] = ''
     }
+    console.log(text)
+    switch (e) {
+      case 'number':
+        // 如果说选择了序号 那么将默认的序号列删除
+        data = data.map(d => {
+          // d[e] = d[text]
+          let key = Object.values(obj)
+          let dkey = this.state.tableDefaultKeys.map(item => item.value)
+          // console.log(dkey, key)
+          dkey.forEach(item => {
+            if (key.includes(item)) {
+              delete d[item]
+            }
+          })
+          return d
+        })
+        columns = columns.filter(item => item.dataIndex != 'number')
+        columns = columns.map(item => {
+          if (item.dataIndex == text) {
+            let new_item = { ...item }
+            new_item = {
+              ...item,
+              editable: true
+            }
+            return new_item
+          } else {
+            return item
+          }
+        })
+        break
+      case 'none': // 不绑定
+        break
+
+      default:
+        break
+    }
     // obj = { A : 'number' }
     // console.log(text, e, obj)
-    // 只保存自定义字段的数据
-    data = data.map(d => {
-      d[e] = d[text]
-      let key = Object.values(obj)
-      let dkey = this.state.tableDefaultKeys.map(item => item.value)
-      dkey.forEach(item => {
-        if (!key.includes(item)) {
-          delete d[item]
-        }
-      })
-      return d
-    })
+    // console.log(columns)
     // console.log(data)
     this.setState(
       {
         data,
+        columns,
         selectedKey: obj
       },
       () => {
@@ -188,7 +306,57 @@ export default class ExcelRead extends Component {
     })
   }
 
+  //
+  handleChangField = value => {
+    switch (value) {
+      case 'number':
+        this.handleChangeOrderField(value)
+        break
+
+      default:
+        break
+    }
+  }
+
+  handleChangeOrderField = value => {
+    console.log(value)
+    const { data = [], columns = [], selectedKey = {} } = this.state
+    // console.log(data, columns, selectedKey)
+    let key = Object.keys(selectedKey)
+    if (value == 'order_spot') {
+      // 表示以点隔开
+      let flag = false
+      // data.map(item => {
+      //   if (item[])
+      // })
+    } else if (value == 'order_line') {
+      // 表示以短横线隔开
+    }
+  }
+
+  // 渲染不同字段对应下拉框
+  renderDiffSelectField = value => {
+    let main = <></>
+    if (value.includes('number')) {
+      main = (
+        <Select
+          size="small"
+          placeholder="请选择"
+          style={{ width: 100, marginTop: '5px' }}
+          onChange={this.handleChangeOrderField}
+        >
+          <Select.Option key={'order_spot'}>1.1.1.1</Select.Option>
+          <Select.Option key={'order_line'}>1-1-1-1</Select.Option>
+        </Select>
+      )
+    }
+    return main
+  }
+
   tableHeader = (text, data) => {
+    const { selectedKey = {} } = this.state
+    // let key = Object.keys(selectedKey)
+    let value = Object.values(selectedKey)
     let head = (
       <>
         <Select
@@ -209,6 +377,7 @@ export default class ExcelRead extends Component {
             )
           })}
         </Select>
+        {selectedKey[text] == 'number' && this.renderDiffSelectField(value)}
       </>
     )
     return head
@@ -274,8 +443,21 @@ export default class ExcelRead extends Component {
       onHeaderCell: column => ({
         width: column.width,
         onResize: this.handleResize1(index)
+      }),
+      onCell: record => ({
+        record,
+        editable: col.editable,
+        dataIndex: col.dataIndex,
+        title: col.title,
+        handleSave: this.handleSave
       })
     }))
+    const components = {
+      body: {
+        row: EditableFormRow,
+        cell: EditableCell
+      }
+    }
     return (
       <div>
         <Button onClick={this.addFile} style={{ marginTop: '8px' }} block>
@@ -304,8 +486,9 @@ export default class ExcelRead extends Component {
               </Button>
             </Col>
           </Row>
+          {/* <EditableTable /> */}
           <Table
-            // components={components}
+            components={components}
             style={{ overflow: 'auto', maxHeight: maxHeight + 'px' }}
             bordered
             rowKey="id"
@@ -314,6 +497,7 @@ export default class ExcelRead extends Component {
               columnTitle: ' ',
               onSelect: this.onSelectRow
             }}
+            rowClassName={() => styles['editable-row']}
             columns={columns}
             dataSource={data}
           />
