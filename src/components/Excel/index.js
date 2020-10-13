@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Modal, Table, Button, Select, Row, Col } from 'antd'
 import XLSX from 'xlsx'
+import { components, handleResize } from './getConst'
 
 export default class ExcelRead extends Component {
   constructor(props) {
@@ -69,35 +70,60 @@ export default class ExcelRead extends Component {
   // 转换表格需要用的数据
   transformJson = data => {
     if (data && data.length) {
-      // data = data.map((item, index) => {
-      //   item.id = index + 1
-      //   item.uid = this.createUid()
-      //   return item
-      // })
+      data = data.map((item, index) => {
+        item.id = index + 1
+        item.uid = this.createUid()
+        item.number = index + 1
+        item.type = '任务'
+        return item
+      })
       let otherkey = this.state.tableDefaultKeys.map(item => item.value)
       // 1. 获取表格列
       let keys = Object.keys(data[0])
 
-      // let k = []
+      let k = []
       // '__EMPTY'
-      // let notShow = ['id', 'uid', ...otherkey]
-      // keys.forEach(item => {
-      //   if (!notShow.includes(item)) {
-      //     k.push(item)
-      //   }
-      // })
-      let arr = keys.map((item, index) => {
-        let obj = {
-          dataIndex: item,
-          title: this.tableHeader.bind(this, item),
-          // title: item,
-          key: index,
-          render: (text, record, index) => {
-            return text
-          }
-          // width:80
+      let notShow = ['id', 'uid', ...otherkey]
+      keys.forEach(item => {
+        if (!notShow.includes(item)) {
+          k.push(item)
         }
+      })
+      k.unshift('type')
+      k.unshift('number')
+      let arr = k.map((item, index) => {
+        let obj = {}
+        if (item == 'type' || item == 'number') {
+          obj = {
+            dataIndex: item,
+            title: null,
+            // title: item,
+            key: index,
+            render: (text, record, index) => {
+              return text
+            },
+            width: 80
+          }
+        } else {
+          obj = {
+            dataIndex: item,
+            title: this.tableHeader.bind(this, item),
+            // title: item,
+            key: index,
+            render: (text, record, index) => {
+              return text
+            },
+            width: 120
+          }
+        }
+
         return obj
+      })
+      // console.log(arr)
+      data = data.map((item, index) => {
+        item.id = index + 1
+        item.uid = this.createUid()
+        return item
       })
       this.setState({
         columns: arr,
@@ -120,6 +146,8 @@ export default class ExcelRead extends Component {
     } else {
       obj[text] = ''
     }
+    // obj = { A : 'number' }
+    // console.log(text, e, obj)
     // 只保存自定义字段的数据
     data = data.map(d => {
       d[e] = d[text]
@@ -132,6 +160,7 @@ export default class ExcelRead extends Component {
       })
       return d
     })
+    // console.log(data)
     this.setState(
       {
         data,
@@ -225,8 +254,28 @@ export default class ExcelRead extends Component {
     })
   }
 
+  handleResize1 = index => (e, { size }) => {
+    let columns = this.state.columns
+    columns = handleResize({
+      width: size.width,
+      index,
+      columns
+    })
+    this.setState({
+      columns
+    })
+  }
+
   render() {
-    const { visible, columns = [], data = [], hasSelected } = this.state
+    let { visible, columns = [], data = [], hasSelected } = this.state
+    const maxHeight = document.body.clientHeight / 2
+    columns = columns.map((col, index) => ({
+      ...col,
+      onHeaderCell: column => ({
+        width: column.width,
+        onResize: this.handleResize1(index)
+      })
+    }))
     return (
       <div>
         <Button onClick={this.addFile} style={{ marginTop: '8px' }} block>
@@ -256,6 +305,8 @@ export default class ExcelRead extends Component {
             </Col>
           </Row>
           <Table
+            // components={components}
+            style={{ overflow: 'auto', maxHeight: maxHeight + 'px' }}
             bordered
             rowKey="id"
             rowSelection={{
