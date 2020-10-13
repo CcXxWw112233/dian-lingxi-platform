@@ -403,15 +403,19 @@ export default class DateList extends Component {
               <div
                 className={`${indexStyles.dateDetailItem}`}
                 key={key2}
-                style={{ width: ceilWidth, fontSize: 12 }}
+                style={{ width: ceilWidth, fontSize: 12, padding: 0 }}
               >
                 <div
                   className={`${
                     indexStyles.dateDetailItem_date_no
                   } ${include_today && indexStyles.include_today} `}
-                  style={{ fontSize: 12 }}
+                  style={{
+                    fontSize: 10,
+                    textAlign: 'center'
+                  }}
                 >
                   {date_no}
+                  {/* {date_no % 2 != 0 ? date_no : ''} */}
                 </div>
               </div>
             </div>

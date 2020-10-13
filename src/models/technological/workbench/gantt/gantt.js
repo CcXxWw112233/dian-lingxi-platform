@@ -45,7 +45,8 @@ import {
   ganttIsSingleBoardGroupView,
   date_area_height,
   hours_view_start_work_oclock,
-  hours_view_due_work_oclock
+  hours_view_due_work_oclock,
+  ceil_width_hours
 } from '../../../../routes/Technological/components/Gantt/constants'
 import { getModelSelectDatasState } from '../../../utils'
 import { getProjectGoupList } from '../../../../services/technological/task'
@@ -101,7 +102,7 @@ export default {
       create_start_time: '', //创建任务开始时间
       create_end_time: '', //创建任务截至时间
       list_group: [], //分组列表
-      ceilWidth: ceil_width, //单元格的宽度
+      ceilWidth: ceil_width_hours, //单元格的宽度
       ceiHeight: ceil_height, //单元格高度 40 + 12的外边距
       date_total: 0, //总天数
       group_rows: [

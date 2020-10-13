@@ -6,7 +6,8 @@ import {
   ceil_height,
   ceil_width,
   ceil_width_year,
-  ceil_width_week
+  ceil_width_week,
+  ceil_width_hours
 } from '../../constants'
 import { isSamDay } from '../../../../../../utils/util'
 
@@ -162,7 +163,7 @@ export default class FaceRightButton extends Component {
     } else if (type == 'month') {
       ceilWidth = ceil_width
     } else if (type == 'hours') {
-      ceilWidth = ceil_width
+      ceilWidth = ceil_width_hours
     } else if (type == 'week') {
       ceilWidth = ceil_width_week
     } else {

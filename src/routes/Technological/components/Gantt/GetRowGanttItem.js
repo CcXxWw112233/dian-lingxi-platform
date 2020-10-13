@@ -1108,8 +1108,7 @@ export default class GetRowGanttItem extends Component {
                   key2 == hours_view_total - 1
                     ? '1px solid rgba(154, 159, 166, 0.15)'
                     : 'none',
-                // borderLeft:
-                //   key2 == 0 ? '1px solid rgba(154, 159, 166, 0.15)' : 'none',
+                width: ceilWidth,
                 backgroundColor: 'rgb(245,245,245)'
               }}
             ></div>
