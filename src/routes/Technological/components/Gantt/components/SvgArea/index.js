@@ -71,11 +71,14 @@ export default class index extends Component {
     window.addEventListener('scroll', this.closeOperate, true)
   }
   componentWillReceiveProps(nextProps) {
-    // if (ganttIsOutlineView({ group_view_type: nextProps.group_view_type })) {
-    //   top_diff = top_diff_initial + 9
-    // } else {
-    //   top_diff = top_diff_initial
-    // }
+    if (
+      ganttIsOutlineView({ group_view_type: nextProps.group_view_type }) &&
+      nextProps.card_name_outside
+    ) {
+      top_diff = top_diff_initial + 9
+    } else {
+      top_diff = top_diff_initial
+    }
     const { rely_map = [] } = nextProps
     this.setState(
       {
@@ -896,7 +899,8 @@ function mapStateToProps({
       date_total,
       ceiHeight,
       rely_map,
-      gantt_head_width
+      gantt_head_width,
+      card_name_outside
     }
   }
 }) {
@@ -910,6 +914,7 @@ function mapStateToProps({
     date_total,
     ceiHeight,
     rely_map,
-    gantt_head_width
+    gantt_head_width,
+    card_name_outside
   }
 }

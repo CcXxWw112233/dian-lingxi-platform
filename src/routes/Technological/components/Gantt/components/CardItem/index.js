@@ -1640,7 +1640,8 @@ export default class CardItem extends Component {
       im_all_latest_unread_messages,
       gantt_view_mode,
       group_view_type,
-      gantt_board_id
+      gantt_board_id,
+      card_name_outside
     } = this.props
     const {
       left,
@@ -1742,8 +1743,12 @@ export default class CardItem extends Component {
               lineHeight: `${task_item_height - 4}px`
             }}
           >
-            {/* {!ganttIsOutlineView({ group_view_type }) && name} */}
-            {name}
+            {/* 非大纲视图下一定有，大纲视图下需要开启名称外置才能在任务条内显示名称 */}
+            {(!ganttIsOutlineView({ group_view_type }) ||
+              (ganttIsOutlineView({ group_view_type }) &&
+                !card_name_outside)) &&
+              name}
+            {/* {name} */}
             {is_privilege == '1' && (
               <Tooltip title="已开启访问控制" placement="top">
                 <span
@@ -1801,7 +1806,8 @@ export default class CardItem extends Component {
         {/* {
                     !ganttIsOutlineView({ group_view_type }) && !parent_card_id && 
                     ( */}
-        {/* {ganttIsOutlineView({ group_view_type }) && (
+        {/* 大纲名称显示在最右边 */}
+        {ganttIsOutlineView({ group_view_type }) && card_name_outside && (
           <div
             style={{
               position: 'absolute',
@@ -1816,7 +1822,7 @@ export default class CardItem extends Component {
           >
             {name}
           </div>
-        )} */}
+        )}
 
         <Dropdown
           trigger={['click']}
@@ -1929,7 +1935,8 @@ function mapStateToProps({
       gantt_view_mode,
       outline_tree_round = [],
       selected_card_visible,
-      notification_todos
+      notification_todos,
+      card_name_outside
     }
   },
   imCooperation: { im_all_latest_unread_messages = [] },
@@ -1950,6 +1957,7 @@ function mapStateToProps({
     outline_tree_round,
     card_detail_id,
     selected_card_visible,
-    notification_todos
+    notification_todos,
+    card_name_outside
   }
 }
