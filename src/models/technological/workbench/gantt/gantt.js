@@ -416,7 +416,9 @@ export default {
       const gantt_view_mode = yield select(
         getModelSelectDatasState('gantt', 'gantt_view_mode')
       )
-
+      const min_start_time = date_arr_one_level[0].timestamp //最早时间
+      const max_due_time =
+        date_arr_one_level[date_arr_one_level.length - 1].timestampEnd
       let new_outline_tree = [...data]
       // const tree_arr_1 = data.filter(item => item.tree_type == '1')//.sort(jsonArrayCompareSort('due_time', transformTimestamp)) //里程碑截止时间由近及远
       // const tree_arr_2 = data.filter(item => item.tree_type != '1')//.sort(jsonArrayCompareSort('start_time', transformTimestamp))
@@ -425,7 +427,14 @@ export default {
       let filnaly_outline_tree = recusionItem(
         new_outline_tree,
         { parent_expand: true },
-        { start_date, end_date, filter_display, gantt_view_mode }
+        {
+          start_date,
+          end_date,
+          filter_display,
+          gantt_view_mode,
+          min_start_time,
+          max_due_time
+        }
       )
       // console.log('filnaly_outline_tree_0', filnaly_outline_tree)
       yield put({
@@ -714,7 +723,12 @@ export default {
         const gantt_view_mode = yield select(
           getModelSelectDatasState('gantt', 'gantt_view_mode')
         )
-
+        const date_arr_one_level = yield select(
+          getModelSelectDatasState('gantt', 'date_arr_one_level')
+        )
+        const min_start_time = date_arr_one_level[0].timestamp //最早时间
+        const max_due_time =
+          date_arr_one_level[date_arr_one_level.length - 1].timestampEnd //最晚时间
         for (let val of data) {
           const list_group_item = {
             ...val,
@@ -731,7 +745,12 @@ export default {
               let time_span = val_1['time_span']
 
               if (gantt_view_mode == 'hours') {
-                time_span = setHourViewCardTimeSpan(start_time, due_time)
+                time_span = setHourViewCardTimeSpan(
+                  start_time,
+                  due_time,
+                  min_start_time,
+                  max_due_time
+                )
               } else {
                 if (!time_span) {
                   time_span =

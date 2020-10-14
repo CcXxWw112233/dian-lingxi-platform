@@ -1,5 +1,9 @@
 import base_utils from './base_utils'
-import { caldiffDays, isSamDay } from '../../../../utils/util'
+import {
+  caldiffDays,
+  isSamDay,
+  transformTimestamp
+} from '../../../../utils/util'
 import {
   date_area_height,
   gantt_panel_left_diff,
@@ -400,15 +404,34 @@ export const setGantTimeSpan = ({
   return new_time_span
 }
 //计算任务时视图的长度跨度
-export const setHourViewCardTimeSpan = (start_time, due_time) => {
+export const setHourViewCardTimeSpan = (
+  start_time,
+  due_time,
+  min_start_time,
+  max_due_time
+) => {
+  const gold_start_time = Math.max(
+    transformTimestamp(start_time),
+    transformTimestamp(min_start_time)
+  )
+  const gold_due_time = Math.min(
+    transformTimestamp(due_time),
+    transformTimestamp(max_due_time)
+  )
+  console.log(
+    'saaaasss',
+    transformTimestamp(due_time),
+    transformTimestamp(max_due_time),
+    gold_due_time
+  )
   if (!start_time || !due_time) return 1
   const start_work_clock = hours_view_start_work_oclock //开始工作时间点
   const due_work_clock = start_work_clock + hours_view_total //下班时间点
   let diff_hour //小时差
-  const start_time_hour = new Date(start_time).getHours()
-  const due_time_hour = new Date(due_time).getHours()
+  const start_time_hour = new Date(gold_start_time).getHours()
+  const due_time_hour = new Date(gold_due_time).getHours()
 
-  if (isSamDay(start_time, due_time)) {
+  if (isSamDay(gold_start_time, gold_due_time)) {
     //如果是同一天, 取（最晚下班时间或任务截止时间最小值）  - （最早上班时间或任务开始时间最大值）
     diff_hour =
       Math.min(due_time_hour, due_work_clock) -
@@ -423,7 +446,7 @@ export const setHourViewCardTimeSpan = (start_time, due_time) => {
     }
     return diff_hour
   } else {
-    const diff_day = caldiffDays(start_time, due_time) //相差天数
+    const diff_day = caldiffDays(gold_start_time, gold_due_time) //相差天数
     let first_day_span = 0 //第一天跨度
     let finally_day_span = 0 //最后一天跨度
 
@@ -453,8 +476,12 @@ export const setHourViewCardTimeSpan = (start_time, due_time) => {
       finally_day_span,
       start_time,
       due_time,
-      moment(start_time).format('MMMM Do YYYY, h:mm:ss a'),
-      moment(due_time).format('MMMM Do YYYY, h:mm:ss a')
+      min_start_time,
+      gold_start_time,
+      max_due_time,
+      gold_due_time,
+      moment(gold_start_time).format('MMMM Do YYYY, h:mm:ss a'),
+      moment(gold_due_time).format('MMMM Do YYYY, h:mm:ss a')
     )
     //第一天跨度+中间天数 * 一天工作时长 + 最后一天宽度
     return (
