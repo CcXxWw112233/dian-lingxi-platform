@@ -1,5 +1,15 @@
 import React, { Component } from 'react'
-import { Modal, Table, Button, Select, Form, Row, Col, Input } from 'antd'
+import {
+  Modal,
+  Table,
+  Button,
+  Select,
+  Form,
+  Row,
+  Col,
+  Input,
+  DatePicker
+} from 'antd'
 import XLSX from 'xlsx'
 import { components, handleResize } from './getConst'
 import EditableTable from './text'
@@ -133,8 +143,8 @@ export default class ExcelRead extends Component {
         { value: 'number', label: '序号' },
         { value: 'type', label: '类型' },
         { value: 'name', label: '名称' },
-        { value: 'start_date', label: '开始时间' },
-        { value: 'end_date', label: '截止时间' },
+        { value: 'start_time', label: '开始时间' },
+        { value: 'end_time', label: '截止时间' },
         { value: 'remark', label: '备注' }
       ],
       selectedRows: [],
@@ -169,7 +179,8 @@ export default class ExcelRead extends Component {
         const sheet2JSONOpts = {
           /** Default value for null/undefined values */
           defval: '', //给defval赋值为空的字符串
-          header: 'A'
+          header: 'A',
+          raw: false
         }
         //1、XLSX.utils.json_to_sheet(data) 接收一个对象数组并返回一个基于对象关键字自动生成的“标题”的工作表，默认的列顺序由使用Object.keys的字段的第一次出现确定
         //2、将数据放入对象workBook的Sheets中等待输出
@@ -311,6 +322,9 @@ export default class ExcelRead extends Component {
     switch (e) {
       case 'name':
         this.handleChangName(text)
+        break
+      case 'start_time':
+        // this.handleChangStartTime(text)
         break
 
       default:
@@ -474,6 +488,71 @@ export default class ExcelRead extends Component {
     return main
   }
 
+  // 操作时间格式
+  handleChangeStartTime = (value, text) => {
+    let { data = [], columns = [], selectedKey = {} } = this.state
+    columns = columns.map(item => {
+      if (item.dataIndex == text) {
+        let new_item = { ...item }
+        new_item = {
+          ...item,
+          editable: true
+        }
+        return new_item
+      } else {
+        return item
+      }
+    })
+    data = data.map(item => {
+      let checkVal = item[text]
+      let new_item = { ...item }
+
+      if (Object.keys(new_item.is_error_key || {}).length) {
+        new_item.is_error = true
+      } else new_item.is_error = false
+      return new_item
+    })
+    this.setState({
+      data,
+      columns
+    })
+
+    switch (value) {
+      case 'YY-M-D':
+        break
+
+      default:
+        break
+    }
+  }
+
+  renderSelectStartTime = (text, value) => {
+    let main = <></>
+    if (value.includes('start_time')) {
+      main = (
+        <Select
+          style={{ width: 120, marginTop: '5px' }}
+          size="small"
+          placeholder="请选择"
+          onChange={value => {
+            this.handleChangeStartTime(value, text)
+          }}
+        >
+          <Select.Option key="YY-M-D">YY-M-D</Select.Option>
+          <Select.Option key="YYYY-M-D">YYYY-M-D</Select.Option>
+          <Select.Option key="YYYY-M-D H:m">YYYY-M-D H:m</Select.Option>
+          <Select.Option key="YY/M/D">YY/M/D</Select.Option>
+          <Select.Option key="YYYY/M/D">YYYY/M/D</Select.Option>
+          <Select.Option key="YYYY-M-D H:m">YYYY-M-D H:m</Select.Option>
+          <Select.Option key="YY.M.D">YY.M.D</Select.Option>
+          <Select.Option key="YYYY.M.D">YYYY.M.D</Select.Option>
+          <Select.Option key="YYYY.M.D H:m">YYYY.M.D H:m </Select.Option>
+        </Select>
+      )
+    }
+    return main
+  }
+
   tableHeader = (text, data) => {
     const { selectedKey = {} } = this.state
     // let key = Object.keys(selectedKey)
@@ -500,6 +579,8 @@ export default class ExcelRead extends Component {
         </Select>
         {selectedKey[text] == 'number' &&
           this.renderDiffSelectField(text, value)}
+        {selectedKey[text] == 'start_time' &&
+          this.renderSelectStartTime(text, value)}
       </>
     )
     return head
