@@ -7,7 +7,8 @@ import {
   ceil_width,
   ceil_width_year,
   ceil_width_week,
-  ceil_width_hours
+  ceil_width_hours,
+  ganttIsOutlineView
 } from '../../constants'
 import { isSamDay } from '../../../../../../utils/util'
 
@@ -153,7 +154,7 @@ export default class FaceRightButton extends Component {
   }
   // 视图切换 年/月
   changeGanttViewMode = type => {
-    const { dispatch, gantt_view_mode } = this.props
+    const { dispatch, gantt_view_mode, group_view_type } = this.props
     if (!type || gantt_view_mode == type) return
     const _now = new Date().getTime()
 
@@ -176,6 +177,19 @@ export default class FaceRightButton extends Component {
         get_gantt_data_loading_other: true
       }
     })
+    if (ganttIsOutlineView({ group_view_type })) {
+      dispatch({
+        type: 'gantt/updateDatas',
+        payload: {
+          outline_tree: [],
+          outline_tree_round: []
+        }
+      })
+      dispatch({
+        type: 'gantt/getGanttData',
+        payload: {}
+      })
+    }
     setTimeout(() => {
       this.props.setGoldDateArr({ timestamp: _now })
     }, 200)
