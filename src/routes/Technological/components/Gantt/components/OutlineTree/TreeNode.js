@@ -298,7 +298,7 @@ export default class TreeNode extends Component {
   }
 
   onManHourChange = value => {
-    const { outline_tree_round = [] } = this.props
+    const { outline_tree_round = [], gantt_view_mode } = this.props
     const { nodeValue = {} } = this.state
     if (!validatePositiveInt(value)) {
       return
@@ -311,28 +311,46 @@ export default class TreeNode extends Component {
     const newNodeValue = { ...nodeValue, time_span: new_value }
     if (newNodeValue.is_has_start_time && newNodeValue.is_has_end_time) {
       //开始时间不变，截至时间后移
-      newNodeValue.due_time = moment(newNodeValue.start_time)
-        .add(new_value - 1, 'days')
-        .hour(23)
-        .minute(59)
-        .second(59)
-        .valueOf()
-    } else {
-      if (newNodeValue.is_has_start_time) {
+      if (gantt_view_mode != 'hours') {
         newNodeValue.due_time = moment(newNodeValue.start_time)
           .add(new_value - 1, 'days')
           .hour(23)
           .minute(59)
           .second(59)
           .valueOf()
+      } else {
+        newNodeValue.due_time = moment(newNodeValue.start_time)
+          .add((new_value - 1) * 60 * 60 * 1000, 'milliseconds')
+          .valueOf()
+      }
+    } else {
+      if (newNodeValue.is_has_start_time) {
+        if (gantt_view_mode != 'hours') {
+          newNodeValue.due_time = moment(newNodeValue.start_time)
+            .add(new_value - 1, 'days')
+            .hour(23)
+            .minute(59)
+            .second(59)
+            .valueOf()
+        } else {
+          newNodeValue.due_time = moment(newNodeValue.start_time)
+            .add((new_value - 1) * 60 * 60 * 1000, 'milliseconds')
+            .valueOf()
+        }
       }
       if (newNodeValue.is_has_end_time) {
-        newNodeValue.start_time = moment(newNodeValue.start_time)
-          .add(new_value - 1, 'days')
-          .hour(0)
-          .minute(0)
-          .second(0)
-          .valueOf()
+        if (gantt_view_mode != 'hours') {
+          newNodeValue.start_time = moment(newNodeValue.start_time)
+            .add(new_value - 1, 'days')
+            .hour(0)
+            .minute(0)
+            .second(0)
+            .valueOf()
+        } else {
+          newNodeValue.start_time = moment(newNodeValue.start_time)
+            .add((new_value - 1) * 60 * 60 * 1000, 'milliseconds')
+            .valueOf()
+        }
       }
     }
 
@@ -545,42 +563,55 @@ export default class TreeNode extends Component {
   renderTimes = () => {
     const { nodeValue = {} } = this.state
     const { tree_type, time_span } = nodeValue
+    const { gantt_view_mode } = this.props
+    const wrapper = inner => {
+      return (
+        <Popover
+          {...(tree_type == '1' ? { visible: false } : {})} //里程碑不能直接设置周期
+          placement="bottom"
+          content={
+            <ManhourSet
+              tree_type={tree_type}
+              gantt_view_mode={gantt_view_mode}
+              onChange={this.onManHourChange}
+              nodeValue={nodeValue}
+              value={time_span}
+            />
+          }
+          title={
+            <div
+              style={{
+                textAlign: 'center',
+                height: '36px',
+                lineHeight: '36px',
+                fontWeight: '600'
+              }}
+            >
+              花费时间
+            </div>
+          }
+          trigger="click"
+        >
+          <>{inner}</>
+        </Popover>
+      )
+    }
+    const content = () => {
+      return time_span ? (
+        <span className={`${styles.editTitle}`}>
+          {time_span}
+          {tree_type == '1' ? '天' : gantt_view_mode == 'hours' ? '时' : '天'}
+        </span>
+      ) : (
+        <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>
+          &#xe6d9;
+        </span>
+      )
+    }
     return (
       <span>
-        {this.isShowSetTimeSpan(nodeValue) && (
-          <Popover
-            {...(tree_type == '1' ? { visible: false } : {})} //里程碑不能直接设置周期
-            placement="bottom"
-            content={
-              <ManhourSet
-                onChange={this.onManHourChange}
-                nodeValue={nodeValue}
-                value={time_span}
-              />
-            }
-            title={
-              <div
-                style={{
-                  textAlign: 'center',
-                  height: '36px',
-                  lineHeight: '36px',
-                  fontWeight: '600'
-                }}
-              >
-                花费时间
-              </div>
-            }
-            trigger="click"
-          >
-            {time_span ? (
-              <span className={`${styles.editTitle}`}>{time_span}天</span>
-            ) : (
-              <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>
-                &#xe6d9;
-              </span>
-            )}
-          </Popover>
-        )}
+        {this.isShowSetTimeSpan(nodeValue) &&
+          (gantt_view_mode == 'hours' ? content() : wrapper(content()))}
       </span>
     )
   }
