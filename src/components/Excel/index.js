@@ -43,14 +43,26 @@ class EditableCell extends React.Component {
     this.form = form
     const { children, dataIndex, record, title } = this.props
     const { editing } = this.state
-    const { is_error } = record
-    return editing && is_error ? (
+    const { is_error, is_error_key = {} } = record
+    let rulesText = ''
+    switch (title) {
+      case 'name':
+        rulesText = '名称不能为空,名称不能超过100个字'
+        break
+      case 'number':
+        rulesText = '序号格式错误'
+        break
+
+      default:
+        break
+    }
+    return editing && is_error && is_error_key.hasOwnProperty(dataIndex) ? (
       <Form.Item style={{ margin: 0 }}>
         {form.getFieldDecorator(dataIndex, {
           rules: [
             {
               required: true,
-              message: `${title} is required.`
+              message: `${rulesText}`
             }
           ],
           initialValue: record[dataIndex]
@@ -64,9 +76,15 @@ class EditableCell extends React.Component {
       </Form.Item>
     ) : (
       <div
-        className={is_error && styles['editable-cell-value-wrap']}
+        className={
+          is_error &&
+          is_error_key.hasOwnProperty(dataIndex) &&
+          styles['editable-cell-value-wrap']
+        }
         style={{ paddingRight: 24 }}
-        onClick={is_error && this.toggleEdit}
+        onClick={
+          is_error && is_error_key.hasOwnProperty(dataIndex) && this.toggleEdit
+        }
       >
         {children}
       </div>
@@ -85,7 +103,10 @@ class EditableCell extends React.Component {
       className,
       ...restProps
     } = this.props
-    let flag = record && dataIndex == record.is_error_key && record.is_error
+    let flag =
+      record &&
+      Object.keys(record.is_error_key).indexOf(dataIndex) != -1 &&
+      record.is_error
     return (
       <td
         {...restProps}
@@ -218,6 +239,7 @@ export default class ExcelRead extends Component {
       data = data.map((item, index) => {
         item.id = index + 1
         item.uuid = this.createUid()
+        item.is_error_key = {}
         return item
       })
       this.setState({
@@ -232,7 +254,11 @@ export default class ExcelRead extends Component {
     return Math.floor(Math.random() * 10000000 + 1)
   }
 
-  // 设置选择后的数组
+  /**
+   * 设置选择后的数组
+   * @param {String} text A B C D....
+   * @param {String} e number type name...
+   */
   selectText = (text, e) => {
     let obj = { ...this.state.selectedKey }
     let data = Array.from(this.state.data)
@@ -282,6 +308,60 @@ export default class ExcelRead extends Component {
     this.setState({
       columns
     })
+    switch (e) {
+      case 'name':
+        this.handleChangName(text)
+        break
+
+      default:
+        break
+    }
+  }
+
+  // 名称字段判断
+  handleChangName = text => {
+    let { data = [], columns = [], selectedKey = {} } = this.state
+    columns = columns.map(item => {
+      if (item.dataIndex == text) {
+        let new_item = { ...item }
+        new_item = {
+          ...item,
+          editable: true
+        }
+        return new_item
+      } else {
+        return item
+      }
+    })
+    data = data.map(item => {
+      let checkVal = item[text]
+      let new_item = { ...item }
+      if (checkVal == '' || String(checkVal).trimLR() == '') {
+        new_item = {
+          ...item,
+          is_error_key: {
+            ...item.is_error_key,
+            [text]: 'name'
+          }
+        }
+      } else {
+        delete item.is_error_key[text]
+        new_item = {
+          ...item,
+          is_error_key: {
+            ...item.is_error_key
+          }
+        }
+      }
+      if (Object.keys(new_item.is_error_key || {}).length) {
+        new_item.is_error = true
+      } else new_item.is_error = false
+      return new_item
+    })
+    this.setState({
+      data,
+      columns
+    })
   }
 
   toFilterDefaultKey = () => {
@@ -303,106 +383,70 @@ export default class ExcelRead extends Component {
   handleChangeOrderField = (value, text) => {
     let { data = [], columns = [], selectedKey = {} } = this.state
     let key = Object.keys(selectedKey)
-    if (value == 'order_spot') {
-      // 表示以小数点隔开
-      for (let index = 0; index < data.length; index++) {
-        let checkVal = data[index][text]
-        let reg = /^[0-9]*[1-9][0-9]*$/
-        if (checkVal && String(checkVal).indexOf('.') != -1) {
-          // 表示存在小数点
-          let len = String(checkVal).split('.')
-          if (len > 4) {
-            // 如果长度大于4, 表示错误
-            columns = columns.map(item => {
-              if (item.dataIndex == text) {
-                let new_item = { ...item }
-                new_item = {
-                  ...item,
-                  editable: true
-                  // className: styles.error_text
-                }
-                return new_item
-              } else {
-                return item
-              }
-            })
-            break
+    columns = columns.map(item => {
+      if (item.dataIndex == text) {
+        let new_item = { ...item }
+        new_item = {
+          ...item,
+          editable: true
+          // className: styles.error_text
+        }
+        return new_item
+      } else {
+        return item
+      }
+    })
+    // 校验序号数据正确性
+    let reg = /^[0-9]*[1-9][0-9]*$/
+    data = data.map(item => {
+      let checkVal = item[text]
+      let new_item = { ...item }
+      if (checkVal && String(checkVal).indexOf('.') != -1) {
+        // 表示存在小数点
+        let len = String(checkVal).split('.').length
+        if (len > 4) {
+          // 如果长度大于4, 表示错误
+          new_item = {
+            ...item,
+            is_error_key: {
+              ...item.is_error_key,
+              [text]: 'number'
+            }
           }
-          // else {
-          //   columns = columns.map(item => {
-          //     if (item.dataIndex == text) {
-          //       let new_item = { ...item }
-          //       new_item = {
-          //         ...item,
-          //         editable: false,
-          //         className: ''
-          //       }
-          //       return new_item
-          //     } else {
-          //       return item
-          //     }
-          //   })
-          // }
         } else {
-          // 表示不存在小数点, 那么必须是 1,2，3... 这种正整数结构
-          if (!isNaN(checkVal) && reg.test(checkVal)) {
-            // columns = columns.map(item => {
-            //   if (item.dataIndex == text) {
-            //     let new_item = { ...item }
-            //     new_item = {
-            //       ...item,
-            //       editable: false,
-            //       className: ''
-            //     }
-            //     return new_item
-            //   } else {
-            //     return item
-            //   }
-            // })
-          } else {
-            columns = columns.map(item => {
-              if (item.dataIndex == text) {
-                let new_item = { ...item }
-                new_item = {
-                  ...item,
-                  editable: true
-                  // className: styles.error_text
-                }
-                return new_item
-              } else {
-                return item
-              }
-            })
-            break
+          delete item.is_error_key[text]
+          new_item = {
+            ...item,
+            is_error_key: {
+              ...item.is_error_key
+            }
+          }
+        }
+      } else {
+        // 表示不存在小数点, 那么必须是 1,2，3... 这种正整数结构
+        if (!isNaN(checkVal) && reg.test(checkVal)) {
+          delete item.is_error_key[text]
+          new_item = {
+            ...item,
+            is_error_key: {
+              ...item.is_error_key
+            }
+          }
+        } else {
+          new_item = {
+            ...item,
+            is_error_key: {
+              ...item.is_error_key,
+              [text]: 'number'
+            }
           }
         }
       }
-      let reg = /^[0-9]*[1-9][0-9]*$/
-      data = data.map(item => {
-        let checkVal = item[text]
-        let new_item = { ...item }
-        if (checkVal && String(checkVal).indexOf('.') != -1) {
-          // 表示存在小数点
-          let len = String(checkVal).split('.')
-          if (len > 4) {
-            // 如果长度大于4, 表示错误
-            new_item = { ...item, is_error: true, is_error_key: text }
-          } else {
-            new_item = { ...item, is_error: false, is_error_key: text }
-          }
-        } else {
-          // 表示不存在小数点, 那么必须是 1,2，3... 这种正整数结构
-          if (!isNaN(checkVal) && reg.test(checkVal)) {
-            new_item = { ...item, is_error: false, is_error_key: text }
-          } else {
-            new_item = { ...item, is_error: true, is_error_key: text }
-          }
-        }
-        return new_item
-      })
-    } else if (value == 'order_line') {
-      // 表示以短横线隔开
-    }
+      if (Object.keys(new_item.is_error_key || {}).length) {
+        new_item.is_error = true
+      } else new_item.is_error = false
+      return new_item
+    })
     this.setState({
       columns,
       data
@@ -512,50 +556,88 @@ export default class ExcelRead extends Component {
     })
   }
 
-  handleSave = (row, key) => {
+  handleSave = (row, operateObj) => {
     const newData = [...this.state.data]
+    const { selectedKey = {} } = this.state
     const index = newData.findIndex(item => row.uuid === item.uuid)
     const item = newData[index]
-    let checkVal = Object.values(key)[0]
-    let reg = /^[0-9]*[1-9][0-9]*$/
-    if (checkVal && String(checkVal).indexOf('.') != -1) {
-      // 表示存在小数点
-      let len = String(checkVal).split('.')
-      if (len > 4) {
-        // 如果长度大于4, 表示错误
-        newData.splice(index, 1, {
-          ...item,
-          ...row
-        })
-      } else {
-        newData.splice(index, 1, {
-          ...item,
-          ...row,
-          is_error: false,
-          is_error_key: ''
-        })
-      }
-    } else {
-      // 表示不存在小数点, 那么必须是 1,2，3... 这种正整数结构
-      if (!isNaN(checkVal) && reg.test(checkVal)) {
-        newData.splice(index, 1, {
-          ...item,
-          ...row,
-          is_error: false,
-          is_error_key: ''
-        })
-      } else {
-        newData.splice(index, 1, {
-          ...item,
-          ...row
-        })
-      }
+    let checkVal = Object.values(operateObj)[0]
+    let checkKey = Object.keys(operateObj)[0]
+    let switchType = selectedKey[checkKey]
+    // console.log(row, checkKey)
+    switch (switchType) {
+      case 'number':
+        let reg = /^[0-9]*[1-9][0-9]*$/
+        if (checkVal && String(checkVal).indexOf('.') != -1) {
+          // 表示存在小数点
+          let len = String(checkVal).split('.').length
+          if (len > 4) {
+            // 如果长度大于4, 表示错误
+            newData.splice(index, 1, {
+              ...item,
+              ...row
+            })
+          } else {
+            delete item.is_error_key[checkKey]
+            newData.splice(index, 1, {
+              ...item,
+              ...row,
+              is_error_key: {
+                ...item.is_error_key
+              }
+            })
+          }
+        } else {
+          // 表示不存在小数点, 那么必须是 1,2，3... 这种正整数结构
+          if (!isNaN(checkVal) && reg.test(checkVal)) {
+            delete item.is_error_key[checkKey]
+            newData.splice(index, 1, {
+              ...item,
+              ...row,
+              is_error_key: {
+                ...item.is_error_key
+              }
+            })
+          } else {
+            newData.splice(index, 1, {
+              ...item,
+              ...row
+            })
+          }
+        }
+        break
+      case 'name':
+        if (checkVal == '' || String(checkVal).trimLR() == '') {
+          newData.splice(index, 1, {
+            ...item,
+            ...row
+          })
+        } else {
+          delete item.is_error_key[checkKey]
+          newData.splice(index, 1, {
+            ...item,
+            ...row,
+            is_error_key: {
+              ...item.is_error_key
+            }
+          })
+        }
+        break
+
+      default:
+        break
     }
     this.setState({ data: newData })
   }
 
   render() {
-    let { visible, columns = [], data = [], hasSelected } = this.state
+    let {
+      visible,
+      columns = [],
+      data = [],
+      hasSelected,
+      selectedKey = {}
+    } = this.state
     const maxHeight = document.body.clientHeight / 2
     columns = columns.map((col, index) => ({
       ...col,
@@ -567,7 +649,7 @@ export default class ExcelRead extends Component {
         record,
         editable: col.editable,
         dataIndex: col.dataIndex,
-        title: col.title,
+        title: selectedKey[col.dataIndex],
         handleSave: this.handleSave
       })
     }))
