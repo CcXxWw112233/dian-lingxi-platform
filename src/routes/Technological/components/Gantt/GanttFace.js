@@ -17,7 +17,11 @@ import {
   getLastHourDate,
   getHourDate
 } from './getDate'
-import { date_area_height, ganttIsOutlineView } from './constants'
+import {
+  date_area_height,
+  ganttIsOutlineView,
+  hours_view_total
+} from './constants'
 import GroupListHeadSet from './GroupListHeadSet.js'
 import GroupListHeadSetBottom from './GroupListHeadSetBottom'
 
@@ -219,7 +223,8 @@ export default class GanttFace extends Component {
     const rescroll_leng_to_left_wrapper = {
       month: 30,
       week: 343, //往前添加49周
-      year: 365 //往前添加一年
+      year: 365, //往前添加一年
+      hours: 15 * hours_view_total
     }
     const rescroll_leng_to_left = gantt_view_mode == 'month' ? 30 : 60 //滚动条回复位置
     const rescroll_leng_to_right = gantt_view_mode == 'month' ? 60 : 90 //滚动条回复位置
