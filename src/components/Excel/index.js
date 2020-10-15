@@ -14,13 +14,15 @@ import {
 import XLSX from 'xlsx'
 import {
   components,
+  GENRE_TYPE_REG,
   handleResize,
+  POSITIVE_INTEGER_REG,
+  ResizableTitle,
   YYYYMMDDREG,
   YYYYMMDD_HHMM_REG,
   YYYYMMDD_HHMM_REG_1,
   YYYYMMDD_REG_1
 } from './getConst'
-import EditableTable from './text'
 import styles from './index.less'
 import { importExcelWithBoardData } from '../../services/technological'
 import { isApiResponseOk } from '../../utils/handleResponseData'
@@ -287,6 +289,7 @@ export default class ExcelRead extends Component {
     } else {
       obj[text] = ''
     }
+    console.log(obj)
     this.setState(
       {
         selectedKey: obj
@@ -296,14 +299,20 @@ export default class ExcelRead extends Component {
       }
     )
     const arr = Object.values(obj)
-    if (arr.includes('number')) {
+    if (arr.includes('number') || arr.includes('type')) {
       columns = columns.map(item => {
         if (item.dataIndex == 'number' || item.dataIndex == 'type') {
           let new_item = { ...item }
           new_item = {
             ...item,
-            // editable: true
             className: styles['order_display']
+          }
+          return new_item
+        } else if (item.dataIndex == text) {
+          let new_item = { ...item }
+          new_item = {
+            ...item,
+            editable: e == 'none' ? false : true
           }
           return new_item
         } else {
@@ -319,6 +328,13 @@ export default class ExcelRead extends Component {
             className: ''
           }
           return new_item
+        } else if (item.dataIndex == text) {
+          let new_item = { ...item }
+          new_item = {
+            ...item,
+            editable: e == 'none' ? false : true
+          }
+          return new_item
         } else {
           return item
         }
@@ -327,6 +343,7 @@ export default class ExcelRead extends Component {
     this.setState({
       columns
     })
+    console.log(columns)
     switch (e) {
       case 'none':
         this.handleClearTableData(text)
@@ -335,7 +352,9 @@ export default class ExcelRead extends Component {
         this.handleChangName(text)
         break
       case 'remarks':
-        this.handleChangeRemarks(text)
+        break
+      case 'type':
+        this.handleChangeTypes(text)
         break
 
       default:
@@ -345,20 +364,7 @@ export default class ExcelRead extends Component {
 
   // 将字段绑定为none 需清除默认状态
   handleClearTableData = text => {
-    let { data = [], columns = [] } = this.state
-    columns = columns.map(item => {
-      if (item.dataIndex == text) {
-        let new_item = { ...item }
-        new_item = {
-          ...item,
-          editable: false
-        }
-        return new_item
-      } else {
-        return item
-      }
-    })
-
+    let { data = [] } = this.state
     data = data.map(item => {
       let new_item = { ...item }
       if (!!Object.keys(item.is_error_key).length) {
@@ -373,26 +379,13 @@ export default class ExcelRead extends Component {
       return new_item
     })
     this.setState({
-      data,
-      columns
+      data
     })
   }
 
   // 名称字段判断
   handleChangName = text => {
-    let { data = [], columns = [], selectedKey = {} } = this.state
-    columns = columns.map(item => {
-      if (item.dataIndex == text) {
-        let new_item = { ...item }
-        new_item = {
-          ...item,
-          editable: true
-        }
-        return new_item
-      } else {
-        return item
-      }
-    })
+    let { data = [] } = this.state
     data = data.map(item => {
       let checkVal = item[text]
       let new_item = { ...item }
@@ -423,13 +416,85 @@ export default class ExcelRead extends Component {
       return new_item
     })
     this.setState({
-      data,
-      columns
+      data
     })
   }
 
-  // 备注字段判断
-  handleChangeRemarks = () => {}
+  // 获取序号有几个点
+  getCatogaryNoStage = scrstr => {
+    var count = 0
+    while (scrstr.indexOf('.') != -1) {
+      scrstr = scrstr.replace('.', '')
+      count++
+    }
+    return count
+  }
+  //判断序号在表头第几列
+  valiNameWidthNo = (gold_no, gold_type) => {
+    const a = {
+      0: ['里程碑', '任务'],
+      1: ['子里程碑', '任务', '子任务'],
+      2: ['任务', '子任务'],
+      3: ['子任务']
+    }
+    const point_no = this.getCatogaryNoStage(gold_no)
+    return a[point_no].includes(gold_type)
+  }
+  // 一整行， A||B||C
+  valiColumn = (item, gold_type) => {
+    const { selectedKey } = this.state
+    let gold_no // A B C D E
+    // let gold_type = dictionary // A B C D E
+    for (let i in selectedKey) {
+      if (selectedKey[i] == 'number') {
+        gold_no = i
+        break
+      }
+      // if (selectedKey[i] == 'type') {
+      //   gold_type = i
+      // }
+    }
+    if (!gold_no) return true
+    return this.valiNameWidthNo(item[gold_no], item[gold_type])
+  }
+
+  // 类型格式校验
+  handleChangeTypes = text => {
+    let { data = [] } = this.state
+    data = data.map(item => {
+      let checkVal = item[text]
+      let new_item = { ...item }
+      if (
+        checkVal == '' ||
+        String(checkVal).trimLR() == '' ||
+        !GENRE_TYPE_REG.test(checkVal) ||
+        !this.valiColumn(item, text)
+      ) {
+        new_item = {
+          ...item,
+          is_error_key: {
+            ...item.is_error_key,
+            [text]: 'name'
+          }
+        }
+      } else {
+        delete item.is_error_key[text]
+        new_item = {
+          ...item,
+          is_error_key: {
+            ...item.is_error_key
+          }
+        }
+      }
+      if (Object.keys(new_item.is_error_key || {}).length) {
+        new_item.is_error = true
+      } else new_item.is_error = false
+      return new_item
+    })
+    this.setState({
+      data
+    })
+  }
 
   toFilterDefaultKey = () => {
     let arr = Array.from(this.state.tableDefaultKeys)
@@ -464,7 +529,6 @@ export default class ExcelRead extends Component {
       }
     })
     // 校验序号数据正确性
-    let reg = /^[0-9]*[1-9][0-9]*$/
     data = data.map(item => {
       let checkVal = item[text]
       let new_item = { ...item }
@@ -491,7 +555,7 @@ export default class ExcelRead extends Component {
         }
       } else {
         // 表示不存在小数点, 那么必须是 1,2，3... 这种正整数结构
-        if (!isNaN(checkVal) && reg.test(checkVal)) {
+        if (!isNaN(checkVal) && POSITIVE_INTEGER_REG.test(checkVal)) {
           delete item.is_error_key[text]
           new_item = {
             ...item,
@@ -543,19 +607,7 @@ export default class ExcelRead extends Component {
 
   // 操作时间格式
   handleChangeStartTime = (value, text) => {
-    let { data = [], columns = [], selectedKey = {} } = this.state
-    columns = columns.map(item => {
-      if (item.dataIndex == text) {
-        let new_item = { ...item }
-        new_item = {
-          ...item,
-          editable: true
-        }
-        return new_item
-      } else {
-        return item
-      }
-    })
+    let { data = [] } = this.state
     let reg = ''
     switch (value) {
       case 'YYYY-MM-DD':
@@ -601,7 +653,6 @@ export default class ExcelRead extends Component {
 
     this.setState({
       data,
-      columns,
       start_time_format: {
         ...this.state.start_time_format,
         [text]: value
@@ -744,7 +795,6 @@ export default class ExcelRead extends Component {
     let switchType = selectedKey[checkKey]
     switch (switchType) {
       case 'number':
-        let reg = /^[0-9]*[1-9][0-9]*$/
         if (checkVal && String(checkVal).indexOf('.') != -1) {
           // 表示存在小数点
           let len = String(checkVal).split('.').length
@@ -766,7 +816,7 @@ export default class ExcelRead extends Component {
           }
         } else {
           // 表示不存在小数点, 那么必须是 1,2，3... 这种正整数结构
-          if (!isNaN(checkVal) && reg.test(checkVal)) {
+          if (!isNaN(checkVal) && POSITIVE_INTEGER_REG.test(checkVal)) {
             delete item.is_error_key[checkKey]
             newData.splice(index, 1, {
               ...item,
@@ -842,6 +892,23 @@ export default class ExcelRead extends Component {
         break
       case 'remarks':
         break
+      case 'type':
+        if (GENRE_TYPE_REG.test(checkVal)) {
+          delete item.is_error_key[checkKey]
+          newData.splice(index, 1, {
+            ...item,
+            ...row,
+            is_error_key: {
+              ...item.is_error_key
+            }
+          })
+        } else {
+          newData.splice(index, 1, {
+            ...item,
+            ...row
+          })
+        }
+        break
       default:
         break
     }
@@ -859,7 +926,7 @@ export default class ExcelRead extends Component {
         let new_item = {
           uuid: '',
           name: '',
-          type: 'milestone',
+          type: 'card',
           due_time: '',
           description: '',
           parent_id: '0'
@@ -928,6 +995,9 @@ export default class ExcelRead extends Component {
       })
     }))
     const components = {
+      // header: {
+      //   cell: ResizableTitle
+      // },
       body: {
         row: EditableFormRow,
         cell: EditableCell
@@ -976,6 +1046,7 @@ export default class ExcelRead extends Component {
             rowClassName={() => styles['editable-row']}
             columns={columns}
             dataSource={data}
+            pagination={false}
           />
         </Modal>
       </div>

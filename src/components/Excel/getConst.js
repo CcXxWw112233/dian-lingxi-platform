@@ -9,7 +9,6 @@ export const APP_TAG = 'INSURANCE_APP'
 
 export const ResizableTitle = props => {
   const { onResize, width, ...restProps } = props
-  console.log(props)
 
   if (!width) {
     return <th {...restProps} style={{ position: 'relative' }} />
@@ -48,7 +47,6 @@ export const handleResize = ({ width, index, columns }) => {
     }
     return item
   })
-  console.log(res)
   return res
 }
 
@@ -67,6 +65,12 @@ export const setErrorStageOrUpdate = ({
 }) => {
   return data.map(item => {})
 }
+
+// 选择类型文字判断
+export const GENRE_TYPE_REG = /^里程碑$|^任务$|^子任务$|^子里程碑$/
+
+// 正整数
+export const POSITIVE_INTEGER_REG = /^[0-9]*[1-9][0-9]*$/
 
 /**
  * MSDN中定义的DateTime对象的有效范围是：0001-01-01 00:00:00到9999-12-31 23:59:59。
