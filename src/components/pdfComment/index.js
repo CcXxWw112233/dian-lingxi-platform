@@ -1,5 +1,6 @@
 import React, { Fragment, useState } from 'react'
 import ReactDOM from 'react-dom'
+import Cookies from 'js-cookie'
 // import { connect } from 'dva';
 import styles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
@@ -27,15 +28,26 @@ import jsPDF from 'jspdf'
 import Action from './action'
 import { dateFormat } from '@/utils/util'
 import { reject } from 'promise-polyfill'
+import ChooseColor from './component/colorChoose'
+import { NoteIcon } from './component/noteIcon'
+import axios from 'axios'
+import { setRequestHeaderBaseInfo } from '../../utils/businessFunction'
+import { REQUEST_DOMAIN_FILE } from '@/globalset/js/constant'
+import Event from '../../utils/event'
 // import scr from './worker'
 const DefineIcon = Icon.createFromIconfontCN({
-  scriptUrl: '//at.alicdn.com/t/font_1979157_0tew4yx0joc.js'
+  scriptUrl: '//at.alicdn.com/t/font_779568_41vfncsv7yu.js'
 })
+// 设定选中的样式
+fabric.Object.prototype.transparentCorners = false
+fabric.Object.prototype.cornerColor = 'blue'
+fabric.Object.prototype.cornerStyle = 'circle'
 
 export default class PdfComment extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      drawColor: '',
       pdfViews: [],
       isDoing: [],
       unDoing: [],
@@ -50,51 +62,75 @@ export default class PdfComment extends React.Component {
       version_list: [],
       // 默认的样式
       drawStyles: {
-        activeType: '',
+        activeType: 'mouse',
+        mouse: {
+          color: '#86B3FF'
+        },
         pen: {
           width: 4,
-          color: '#ff0000',
-          hexColor: '#ff0000',
-          alpha: 1
+          color: 'rgba(255, 78, 59, 1)',
+          hexColor: '#FF4E3B',
+          alpha: 1,
+          maxSize: 28,
+          minSize: 1
         },
         box: {
           width: 2,
-          color: '#ff0000',
-          hexColor: '#ff0000',
-          alpha: 1
+          color: 'rgba(255, 78, 59, 1)',
+          hexColor: '#FF4E3B',
+          alpha: 1,
+          maxSize: 10,
+          minSize: 1
         },
         ellipse: {
           width: 2,
-          color: '#ff0000',
-          hexColor: '#ff0000',
-          alpha: 1
+          color: 'rgba(255, 78, 59, 1)',
+          hexColor: '#FF4E3B',
+          alpha: 1,
+          maxSize: 10,
+          minSize: 1
         },
         arrow: {
           width: 2,
-          color: '#ff0000',
-          hexColor: '#ff0000',
-          alpha: 1
+          color: 'rgba(255, 78, 59, 1)',
+          hexColor: '#FF4E3B',
+          alpha: 1,
+          maxSize: 10,
+          minSize: 1
         },
         text: {
           size: 20,
           borderColor: '#0095ff',
-          color: '#000000',
-          hexColor: '#ff0000',
-          alpha: 1
+          color: 'rgba(255, 78, 59, 1)',
+          hexColor: '#FF4E3B',
+          alpha: 1,
+          maxSize: 46,
+          minSize: 1
         },
         select: {
-          size: 0,
+          size: 20,
           color: '#000000',
           hexColor: '#000000',
           alpha: 1,
-          width: 2
+          width: 2,
+          maxSize: 10,
+          minSize: 1
+        },
+        note: {
+          color: '#93D276'
         }
       },
       loadProcess: 0, // 加载进度
       versionMsg: {}, // 当前版本
       exportProcess: 0, //导出进度
       version_history: [], // 历史记录列表
-      isHistoryIn: false // 是否查看历史记录
+      isHistoryIn: false, // 是否查看历史记录
+      noteData: {
+        color: '',
+        description: '',
+        left: 0,
+        top: 0
+      } // 便签数据
     }
     this.isBreak = false // 是否中断导出
     this.drawCanvas = [] // 保存所有的画板
@@ -115,11 +151,14 @@ export default class PdfComment extends React.Component {
     this.defaultElementId = '_pdf_canvas_'
     this.prevWeelY = 0
     this.drawTools = [
-      { label: '画笔', key: 'pen', icon: 'icon-bi' },
-      { label: '文字', key: 'text', icon: 'icon-wenzi2' },
-      { label: '箭头', key: 'arrow', icon: 'icon-jiantouarrow504' },
+      { label: '鼠标', key: 'mouse', icon: 'icon-xuanze' },
+      // { label: '移动', key: 'move', icon: 'icon-yidong' },
+      { label: '画笔', key: 'pen', icon: 'icon-ziyouxian' },
+      { label: '文字', key: 'text', icon: 'icon-wenben1' },
       { label: '矩形', key: 'box', icon: 'icon-juxing' },
-      { label: '圆形', key: 'ellipse', icon: 'icon-weibiaoti38' }
+      { label: '圆形', key: 'ellipse', icon: 'icon-yuanxing' },
+      { label: '箭头', key: 'arrow', icon: 'icon-jiantou' },
+      { label: '便签', key: 'note', icon: 'icon-bianqianzhi' }
       // {label: "json",key:"json", icon: "icon-JSON"}
     ]
     this.loadPDF = null
@@ -136,6 +175,24 @@ export default class PdfComment extends React.Component {
       : {}
     this.errormsg = '加载失败，请重试'
     this.isChangeVersion = false
+    this.blobUrls = []
+    this.noteIconColor = null
+    this.noteColors = [
+      '#FFE566',
+      '#FF9D48',
+      '#C9DF56',
+      '#F16C7F',
+      '#93D276',
+      '#67C6C0',
+      '#BE88C7',
+      '#6CD8FA',
+      '#EA94BB',
+      '#A6CCF5',
+      '#7B92FF'
+    ]
+    this.editTimer = null
+    this.allObjects = []
+    this.pdf = null
   }
   async componentDidMount() {
     this.mounted = true
@@ -143,8 +200,17 @@ export default class PdfComment extends React.Component {
     this.setState({
       versionMsg: res.data
     })
+    // console.log(res.data, 'versionMsg')
     if (!this.mounted) return
     this.InitAllData(true)
+
+    Event.on('pdfSave', () => {
+      this.exportPdf('export')
+    })
+
+    Event.on('pdfSaveAs', () => {
+      this.exportPdf('save')
+    })
   }
   // 构建版本数据加载
   InitAllData = isFirst => {
@@ -177,8 +243,9 @@ export default class PdfComment extends React.Component {
         this.initDragEvent()
         window.removeEventListener('resize', this.setResize)
         window.addEventListener('resize', this.setResize)
-        document.removeEventListener('visibilitychange', this.documentChange)
-        document.addEventListener('visibilitychange', this.documentChange)
+        // document.removeEventListener('visibilitychange', this.documentChange)
+        document.onvisibilitychange = this.documentChange
+        // document.addEventListener('visibilitychange', this.documentChange)
       }
     )
   }
@@ -192,6 +259,11 @@ export default class PdfComment extends React.Component {
   componentWillUnmount() {
     this.mounted = false
     window.removeEventListener('resize', this.setResize)
+    document.onvisibilitychange = () => {}
+    this.blobUrls.forEach(item => {
+      window.URL.revokeObjectURL(item)
+    })
+    this.blobUrls = []
   }
 
   // 加载的进度
@@ -241,10 +313,11 @@ export default class PdfComment extends React.Component {
         let blob = response.response
         let image = new Image()
         image.src = window.URL.createObjectURL(blob)
+        this.blobUrls.push(image.src)
         image.crossOrigin = 'anonymous'
         image.onload = () => {
           this.loadImage(image)
-          window.URL.revokeObjectURL(image.src)
+          // window.URL.revokeObjectURL(image.src)
         }
       }
     )
@@ -296,10 +369,12 @@ export default class PdfComment extends React.Component {
   setDrawType = type => {
     if (this.drawType !== type) {
       this.drawType = type
-    } else this.drawType = null
+    }
+    // 重复点击，不进行处理
+    // if (type && this.drawType === type) return
 
     if (this.drawType) {
-      this.toogleHand(false)
+      // this.toogleHand(false)
     }
     this.setState({
       drawStyles: { ...this.state.drawStyles, activeType: this.drawType }
@@ -311,24 +386,27 @@ export default class PdfComment extends React.Component {
   isActiveDraw = () => {
     // if(this.drawType){
     // console.log(this.drawType)
-    this.drawCanvas.map(item => {
-      if (this.drawType) {
-        item.skipTargetFind = true
-        item.forEachObject(obj => {
-          obj.set('selectable', false)
-        })
-        item.selectable = true
-        item.discardActiveObject()
-      } else {
-        item.skipTargetFind = false
-        item.forEachObject(obj => {
-          obj.set('selectable', true)
-        })
-        item.selectable = false
+    ;(async () => {
+      for (let i = 0; i < this.drawCanvas.length; i++) {
+        await this.setAwaitTime(1)
+        let item = this.drawCanvas[i]
+        if (this.drawType) {
+          item.skipTargetFind = true
+          item.forEachObject(obj => {
+            obj.set('selectable', false)
+          })
+          item.selectable = true
+          item.discardActiveObject()
+        } else {
+          item.skipTargetFind = false
+          item.forEachObject(obj => {
+            obj.set('selectable', true)
+          })
+          item.selectable = false
+        }
+        item.requestRenderAll()
       }
-      item.requestRenderAll()
-      return item
-    })
+    })()
     // }
   }
 
@@ -440,6 +518,37 @@ export default class PdfComment extends React.Component {
       text.enterEditing()
       text.hiddenTextarea.focus()
       text.set('_newText', true)
+    }
+    // 便签
+    if (this.drawType === 'note') {
+      this.setState({
+        noteData: { description: '' }
+      })
+      let number = canvas.get('note_number') || 0
+      let color = this.state.drawStyles[this.state.drawStyles.activeType]?.color
+      let url = NoteIcon({ fillStyle: color, text: number + 1 })
+      fabric.Image.fromURL(url, img => {
+        // console.log(img)
+        img.set({
+          left: this.mouseEvent.x - 24 / 2,
+          top: this.mouseEvent.y - 24 / 2,
+          record_id: 'addImg',
+          hoverCursor: 'pointer',
+          t_type: 'note',
+          hasBorders: false,
+          hasControls: false,
+          color: color
+        })
+        this.ObjectAddEvent(img)
+        canvas.setActiveObject(img)
+        canvas.add(img)
+        this.allObjects.push(img)
+        // this.allEvent(img, 'add')
+        canvas.set('note_number', number + 1)
+        this.setState({
+          activeObject: img
+        })
+      })
     }
     if (this.drawType) {
       this.doDrawing = true
@@ -611,6 +720,7 @@ export default class PdfComment extends React.Component {
     if (object) {
       let addType
       let json = object.toJSON()
+      if (!object || !object.canvas || !object.canvas.get) return
       let canvas_id = object.canvas.get('_id')
       json.path = json.path ? JSON.stringify(json.path) : null
       json.styles = json.styles ? JSON.stringify(json.styles) : null
@@ -628,6 +738,7 @@ export default class PdfComment extends React.Component {
             let params = canvas_id
               ? {
                   file_postil_id: canvas_id,
+                  postil_type: 1,
                   container_size: [Math.round(width), Math.round(height)].join(
                     ','
                   )
@@ -641,47 +752,145 @@ export default class PdfComment extends React.Component {
                     ','
                   )
                 }
-            Action.saveObject({ ...json, ...params }).then(res => {
-              // console.log()
+            this.lockObject(object, true)
+            Action.saveObject({ ...json, ...params })
+              .then(res => {
+                // console.log()
+                addType = '1'
+                this.updateHistoryForType(
+                  addType,
+                  object.canvas.get('page_number'),
+                  res.data
+                )
+                object.set('record_id', res.data)
+                if (object.type === 'textbox') {
+                  object.set('_newText', false)
+                }
+                this.allObjects.push(object)
+                setTimeout(() => {
+                  this.lockObject(object, false)
+                })
+              })
+              .catch(_ => {
+                setTimeout(() => {
+                  this.lockObject(object, false)
+                })
+              })
+          } else if (
+            object.get('record_id') === 'addImg' &&
+            object.get('t_type') === 'note'
+          ) {
+            // console.log(object)
+            let param = {
+              postil_type: 2,
+              page_number: object.canvas.get('page_number') || 1,
+              file_id: this.props.file_id,
+              container_size: [Math.round(width), Math.round(height)].join(','),
+              version_id: this.state.versionMsg.id
+            }
+            let j = {
+              left: object.get('left'),
+              top: object.get('top'),
+              color: object.get('color'),
+              content: object.get('description')
+            }
+            Action.saveObject({ ...param, ...j }).then(res => {
               addType = '1'
-              this.updateHistoryForType(addType)
+              this.updateHistoryForType(
+                addType,
+                object.canvas.get('page_number'),
+                res.data
+              )
               object.set('record_id', res.data)
-              if (object.type === 'textbox') {
-                object.set('_newText', false)
-              }
+              this.allObjects.push(object)
+              setTimeout(() => {
+                this.lockObject(object, false)
+              })
             })
           }
           break
         case 'edit':
           // 移动的
           // console.log(object)
+          this.lockObject(object, true)
+          if (object.get('t_type') === 'note') {
+            let j = {
+              left: object.get('left'),
+              top: object.get('top'),
+              color: object.get('color'),
+              content: object.get('description')
+            }
+            json = j
+          }
           let param = {
             ...json,
             record_id: object.get('record_id')
           }
-          Action.editObject(param).then(res => {
-            addType = '2'
-            this.updateHistoryForType(addType)
-            object.set('record_id', res.data)
-            object.set('_update', false)
-          })
+          this.allObjects = this.allObjects.filter(
+            item => item.get('record_id') !== param.record_id
+          )
+          Action.editObject(param)
+            .then(res => {
+              // console.log(res)
+              if (res.code === '0') {
+                object.set('record_id', res.data)
+                addType = '2'
+                this.updateHistoryForType(
+                  addType,
+                  object.canvas.get('page_number'),
+                  res.data
+                )
+                object.set('_update', false)
+              }
+              this.allObjects.push(object)
+              setTimeout(() => {
+                this.lockObject(object, false)
+              }, 5)
+            })
+            .catch(_ => {
+              setTimeout(() => {
+                this.lockObject(object, false)
+              })
+            })
           break
         default:
       }
     }
   }
 
+  // 锁定对象
+  lockObject = (object, flag) => {
+    if (object) {
+      object.selectable = !flag
+      object.set('lockMovementX', flag)
+      object.set('lockMovementY', flag)
+      object.set('lockRotation', flag)
+      object.set('lockScalingFlip', flag)
+      object.set('lockScalingX', flag)
+      object.set('lockScalingY', flag)
+      object.set('lockSkewingX', flag)
+      object.set('lockSkewingY', flag)
+    }
+  }
   // 对象添加整体事件的方法
   ObjectAddEvent = object => {
     object.on('selection:cleared', this.addSelectEvent)
+
     object.on('deselected', () => {
-      // 如果是新增的text，则不更新
-      if (object.type === 'textbox' && object.get('_newText')) {
-        return this.allEvent(object, 'add')
-      }
-      if (object.get('_update')) {
-        this.allEvent(object, 'edit')
-      }
+      clearTimeout(this.editTimer)
+      this.editTimer = setTimeout(() => {
+        this.setState({
+          activeObject: null,
+          drawStyles: { ...this.state.drawStyles, activeType: '' }
+        })
+        // 如果是新增的text，则不更新
+        if (object.type === 'textbox' && object.get('_newText')) {
+          return this.allEvent(object, 'add')
+        }
+        if (object.get('_update')) {
+          this.allEvent(object, 'edit')
+        }
+      }, 100)
     })
   }
 
@@ -690,7 +899,7 @@ export default class PdfComment extends React.Component {
     canvas.on('object:added', v => {
       this.ObjectAddEvent(v.target)
       // this.allEvent(v.target, 'add')
-      v.target.on('selection:cleared', this.addSelectEvent)
+      // v.target.on('selection:cleared', this.addSelectEvent)
       this.setState({
         isDoing: this.state.isDoing.concat([{ canvas, object: v }])
       })
@@ -722,9 +931,14 @@ export default class PdfComment extends React.Component {
         let obj = object[object.length - 1]
         this.allEvent(obj, 'add')
       }
-      if (e.target && this.drawType) {
+      // console.log(this.drawType)
+      if (
+        canvas.getActiveObject() &&
+        this.drawType &&
+        this.drawType !== 'text'
+      ) {
         // console.log(e.target)
-        this.allEvent(e.target, 'add')
+        this.allEvent(canvas.getActiveObject(), 'add')
       }
       this.drawEnd(e, canvas)
     })
@@ -737,12 +951,15 @@ export default class PdfComment extends React.Component {
     let style = this.state.drawStyles.pen
     pdfPage.toBlob(blob => {
       let url = window.URL.createObjectURL(blob)
+      this.blobUrls.push(url)
       let canvas = new fabric.Canvas(this.defaultElementId + index, {
         containerClass: 'fabric_defualt_container',
         isDrawingMode: this.state.isDraw,
+        perPixelTargetFind: true,
         // 控件不能被选择，不会被操作
         selectable: false,
         // 是否显示选中
+        allowTouchScrolling: true,
         selection: false,
         // 元素是否不可以选中
         skipTargetFind: false
@@ -760,7 +977,11 @@ export default class PdfComment extends React.Component {
       this.drawCanvas.push(canvas)
       // 如果没切换版本，则继续请求，如果更换了版本，则不请求 -- 逻辑重新考虑
       // if(!this.isChangeVersion)
-      this.loadDataToCanvas(index, canvas, url)
+      let postil_numbners = this.state.versionMsg.postil_numbners || []
+      postil_numbners = postil_numbners.map(numb => +numb)
+      if (postil_numbners.length && postil_numbners.includes(index)) {
+        this.loadDataToCanvas(index, canvas, url)
+      }
     })
   }
   // 检查是否是数字
@@ -794,49 +1015,78 @@ export default class PdfComment extends React.Component {
         .then(res => {
           // console.log(res);
           resolve(res.data)
+          canvas.forEachObject(o => {
+            canvas.remove(o)
+          })
           let data = res.data
           if (data && data.id) {
             let records = data.records || []
             // console.log(records)
             // 格式化页面需要的数据
             records = records.map(item => {
-              let keys = Object.keys(item.detail)
-              let d = {}
-              keys.forEach(key => {
-                let obj = item.detail[key]
-                let value = obj
-                if (key === 'path' && obj) {
-                  value = JSON.parse(obj)
+              if (item.postil_type == 1) {
+                let keys = Object.keys(item.detail)
+                let d = {}
+                keys.forEach(key => {
+                  let obj = item.detail[key]
+                  let value = obj
+                  if (key === 'path' && obj) {
+                    value = JSON.parse(obj)
+                  }
+                  if (this.checkIsNumber(obj)) {
+                    value = +obj
+                  }
+                  let n = this.checkIsBoolen(obj)
+                  if (n !== undefined) {
+                    value = n
+                  }
+                  if (key === 'id') value = obj
+                  if (key === 'text') value = obj.toString()
+                  d[key] = value
+                })
+                if (!d['fill']) {
+                  d['fill'] = null
                 }
-                if (this.checkIsNumber(obj)) {
-                  value = +obj
-                }
-                let n = this.checkIsBoolen(obj)
-                if (n !== undefined) {
-                  value = n
-                }
-                if (key === 'id') value = obj
-                if (key === 'text') value = obj.toString()
-                d[key] = value
-              })
-              if (!d['fill']) {
-                d['fill'] = null
+                d['record_id'] = item.id
+                d['container_size'] = item.container_size
+                return d
               }
-              d['record_id'] = item.id
-              d['container_size'] = item.container_size
-              return d
             })
-            canvas.forEachObject(o => {
-              canvas.remove(o)
-            })
+            data.records
+              .filter(item => item.postil_type == 2)
+              .forEach((obj, index) => {
+                let src = NoteIcon({
+                  fillStyle: obj.detail.color,
+                  text: index + 1
+                })
+                fabric.Image.fromURL(src, img => {
+                  // console.log(img)
+                  img.set({
+                    left: +obj.detail.left,
+                    top: +obj.detail.top,
+                    record_id: obj.id,
+                    hoverCursor: 'pointer',
+                    t_type: 'note',
+                    hasBorders: false,
+                    hasControls: false,
+                    color: obj.detail.color,
+                    description: obj.detail.content
+                  })
+                  this.ObjectAddEvent(img)
+                  canvas.add(img)
+                  this.allObjects.push(img)
+                  canvas.set('note_number', index + 1)
+                })
+              })
             // console.log(records)
             let obj = {
-              objects: records,
+              objects: records.filter(itm => itm),
               version: '4.1.0'
             }
             // console.log(data.data)
             // 更新不同分辨率下，每个数据所在的位置
             canvas.loadFromJSON(obj, null, (c, object) => {
+              this.allObjects.push(object)
               let container = {
                 clientWidth: canvas.getWidth(),
                 clientHeight: canvas.getHeight()
@@ -991,29 +1241,94 @@ export default class PdfComment extends React.Component {
   }
   // 选中元素
   addSelectEvent = val => {
+    this.drawCanvas.forEach(item => {
+      if (item !== val.canvas) item.discardActiveObject()
+      item.requestRenderAll()
+    })
     let { drawStyles } = this.state
     let type = this.checkType(val)
     let color = ''
     let width = 2
     if (type === 'arrow' || type === 'text') {
       color = val.get('fill')
-    } else {
+    } else if (type !== 'note') {
       color = val.get('stroke')
-    }
+    } else color = val.get('color')
     width = val.get('strokeWidth') || 2
     if (type === 'text') {
       width = val.get('size')
-      drawStyles['select'].width = null
-      drawStyles['select'].size = width
-    } else {
-      drawStyles['select'].width = width
+      drawStyles[type].width = null
+      drawStyles[type].size = width
+    } else if (type !== 'note') {
+      drawStyles[type].width = width
+      drawStyles[type].size = null
     }
-    drawStyles['select'].color = color
-
+    drawStyles[type].color = color
+    if (type === 'note') {
+      this.setState({
+        noteData: {
+          ...this.state.noteData,
+          description: val.get('description')
+        }
+      })
+    }
     this.setState({
       activeObject: val,
-      drawStyles: { ...drawStyles, activeType: 'select' }
+      drawStyles: { ...drawStyles, activeType: type }
     })
+  }
+
+  setNoteDescription = val => {
+    let { activeObject } = this.state
+    let text = val.target.value.trim()
+    activeObject.set('description', text)
+    activeObject.set('_update', true)
+    this.setState({
+      noteData: {
+        ...this.state.noteData,
+        description: text
+      },
+      activeObject
+    })
+  }
+
+  // setNote = id => {
+  //   let cla = 'note_' + id
+  //   let dom = document.querySelector('.' + cla)
+  //   dom.innerHTML = this.state.activeObject.get('description')
+  // }
+  // 渲染便签内容
+  renderNoteContent = ({ id }) => {
+    let { noteData, activeObject, drawStyles } = this.state
+    let s = {}
+    if (
+      id === this.state.activeObject?.canvas?.lowerCanvasEl.id &&
+      this.state.activeObject?.get('t_type') === 'note'
+    ) {
+      s = {
+        display: 'block',
+        zIndex: 15,
+        opacity: 1,
+        left: activeObject.get('left') + 40,
+        top: activeObject.get('top') + 40,
+        backgroundColor: drawStyles[drawStyles.activeType].color
+      }
+    } else {
+      s = {}
+    }
+    return (
+      <textarea
+        className={`${styles.noteBox} ${'note_' + id}`}
+        style={s}
+        placeholder="输入文本"
+        value={noteData.description}
+        onInput={this.setNoteDescription}
+      />
+    )
+  }
+
+  fileSaveAs = () => {
+    this.exportPdf('save')
   }
   // 初始渲染所有canvas
   renderAllCanvas = () => {
@@ -1022,11 +1337,21 @@ export default class PdfComment extends React.Component {
       return (
         <Fragment key={item}>
           {this.props.fileType === 'img' ? (
-            <div className={styles.imgCanvas} key={item}>
+            <div
+              className={styles.imgCanvas}
+              key={item}
+              style={{ position: 'relative', display: 'inline-block' }}
+            >
+              <this.renderOperationDelete id={item} />
+              <this.renderNoteContent id={item} />
               <canvas key={item} id={item} />
             </div>
           ) : (
-            <canvas key={item} id={item} style={{ width: '100%' }} />
+            <div style={{ position: 'relative' }} key={item}>
+              <this.renderOperationDelete id={item} />
+              <this.renderNoteContent id={item} />
+              <canvas key={item} id={item} style={{ width: '100%' }} />
+            </div>
           )}
         </Fragment>
       )
@@ -1115,9 +1440,22 @@ export default class PdfComment extends React.Component {
       // 调用接口删除
       Action.removeObject({ record_id: activeObject.get('record_id') }).then(
         res => {
-          this.updateHistoryForType('3')
+          this.updateHistoryForType(
+            '3',
+            activeObject?.canvas?.get('page_number'),
+            activeObject.get('record_id')
+          )
+          this.allObjects = this.allObjects.filter(
+            item => item.get('record_id') !== activeObject.get('record_id')
+          )
         }
       )
+      if (activeObject.get('t_type') === 'note') {
+        activeObject.canvas.set(
+          'note_number',
+          activeObject.canvas.get('note_number') - 1
+        )
+      }
       activeObject.canvas.remove(activeObject)
       canvas.renderAll()
       this.setState({
@@ -1161,10 +1499,33 @@ export default class PdfComment extends React.Component {
       return item
     })
   }
+  // base64转file
+  dataURLtoFile = (dataurl, filename) => {
+    var arr = dataurl.split(','),
+      mime = arr[0].match(/:(.*?);/)[1],
+      bstr = atob(arr[1]),
+      n = bstr.length,
+      u8arr = new Uint8Array(n)
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n)
+    }
+    return new File([u8arr], filename, { type: mime })
+  }
   // 导出图片
-  exportImg = () => {
-    this.drawCanvas.forEach(item => {
+  exportImg = type => {
+    this.drawCanvas.forEach(async item => {
       let url = item.toDataURL()
+      if (type === 'save') {
+        let file_name = await this.confirmFileName(this.props.file_name).catch(
+          err => err
+        )
+        if (file_name) {
+          let file = this.dataURLtoFile(url, file_name)
+          this.uploadFile(file)
+        }
+
+        return
+      }
       let a = document.createElement('a')
       a.href = url
       let index = this.props.file_name.lastIndexOf('.')
@@ -1185,10 +1546,10 @@ export default class PdfComment extends React.Component {
   // 导出进度查看
   setExportProcess = () => {
     this.exportModal = Modal.success({
-      title: '导出进度',
+      title: '进度',
       zIndex: 10003,
       content: this.ExportProgress(),
-      okText: '中断导出',
+      okText: '中断',
       cancelText: '隐藏',
       okButtonProps: {
         type: 'danger'
@@ -1200,10 +1561,10 @@ export default class PdfComment extends React.Component {
   }
 
   // 导出pdf
-  exportPdf = () => {
+  exportPdf = (type = 'export') => {
     if (!this.drawCanvas.length) return
     if (this.props.fileType === 'img') {
-      return this.exportImg()
+      return this.exportImg(type)
     }
 
     // console.log(this.state.loadendElement)
@@ -1225,53 +1586,130 @@ export default class PdfComment extends React.Component {
       unit: 'pt',
       format: [fW, fH]
     })
-    setTimeout(() => {
-      ;(async () => {
-        for (let i = 0; i < this.drawCanvas.length; i++) {
-          if (this.isBreak) break
-          let item = this.drawCanvas[i]
-          let w = item.width,
-            h = item.height
-          let pixo = minWidth / w
-          let url = item.toDataURL({
-            format: pixo > 1 ? 'png' : 'jpeg',
-            quality: 1
-          })
-          let width = w * pixo
-          let height = h * pixo
-          pdf.addImage(url, 'JPEG', 0, 0, width, height, null, 'SLOW')
+    this.pdf = pdf
+    // setTimeout(() => {
+    ;(async () => {
+      for (let i = 0; i < this.drawCanvas.length; i++) {
+        if (this.isBreak) break
+        let item = this.drawCanvas[i]
+        let w = item.width,
+          h = item.height
+        let pixo = minWidth / w
+        let url = item.toDataURL({
+          format: pixo > 1 ? 'png' : 'jpeg',
+          quality: 1
+        })
+        let width = w * pixo
+        let height = h * pixo
+        pdf.addImage(url, 'JPEG', 0, 0, width, height, null, 'SLOW')
 
-          if (i < this.drawCanvas.length - 1) {
-            pdf.addPage([width, height], width > height ? 'l' : 'p')
-          }
-          let percent = Math.round((i / this.drawCanvas.length) * 100)
-          // console.log(i, percent);
-          // 更新导出进度
-          this.exportModal.update({
-            content: this.ExportProgress(percent)
-          })
-          // 添加等待时间，防止全速导出内存泄露
-          await this.setAwaitTime(100)
+        if (i < this.drawCanvas.length - 1) {
+          pdf.addPage([width, height], width > height ? 'l' : 'p')
         }
-        // console.log(pdf.__private__.out('#1123334'))
-        message.destroy()
-        if (this.isBreak) return
-        // message.success('导出成功');
-        this.exportModal.destroy()
+        let percent = Math.round((i / this.drawCanvas.length) * 100)
+        // console.log(i, percent);
+        // 更新导出进度
+        this.exportModal.update({
+          content: this.ExportProgress(percent)
+        })
+        // 添加等待时间，防止全速导出内存泄露
+        await this.setAwaitTime(100)
+      }
+      // console.log(pdf.__private__.out('#1123334'))
+      message.destroy()
+      if (this.isBreak) return
+      // message.success('导出成功');
+      this.exportModal.destroy()
+      if (type === 'export') {
         pdf.save(this.props.file_name)
-      })()
-    }, 50)
+      } else if (type === 'save') {
+        this.saveOutput(pdf.output('blob'))
+      }
+    })()
+
+    // }, 50)
+  }
+
+  uploadFile = file => {
+    let data = new FormData()
+    data.append('board_id', this.props.board_id)
+    data.append('folder_id', this.props.folder_id)
+    data.append('type', 1)
+    data.append('upload_type', 1)
+    data.append('file', file)
+    const Authorization = Cookies.get('Authorization')
+    axios
+      .post(`${REQUEST_DOMAIN_FILE}/file/upload`, data, {
+        headers: {
+          Authorization,
+          ...setRequestHeaderBaseInfo({ data, headers: {}, params: {} })
+        }
+      })
+      .then(res => {
+        // console.log(res)
+        if (res.status === 200) {
+          if (res.data.code == 0) {
+            message.success('保存成功')
+          } else {
+            message.warn(res.data.message)
+          }
+        }
+      })
+      .catch(err => message.warn('保存失败，请稍后重试'))
+  }
+
+  confirmFileName = name => {
+    return new Promise((resolve, reject) => {
+      let file_name = name
+      Modal.confirm({
+        title: '另存为',
+        content: (
+          <Input
+            placeholder="请输入文件名"
+            defaultValue={file_name}
+            onChange={val => {
+              file_name = val.target.value.trim()
+            }}
+          />
+        ),
+        okText: '确认',
+        onOk: () => {
+          if (file_name) {
+            resolve(file_name)
+          } else {
+            message.warn('文件名不能为空')
+            return Promise.reject()
+          }
+        },
+        cancelText: '取消',
+        onCancel: () => {
+          reject()
+        }
+      })
+    })
+  }
+  // 另存文件
+  saveOutput = async blob => {
+    // this.pdfFile
+    let file_name = await this.confirmFileName(this.props.file_name).catch(
+      err => err
+    )
+    if (file_name) {
+      let file = new File([blob], file_name, { type: blob.type })
+      message.success('正在保存，请稍后')
+      this.uploadFile(file)
+    }
   }
 
   // 当前第几页
   pageToElementNumber = number => {
     let id = this.defaultElementId + number
     let dom = document.querySelector('#' + id)
-    dom && dom.scrollIntoView({ behavior: 'smooth' })
+    dom && dom.scrollIntoView(/**{ behavior: 'smooth' }*/)
   }
   // 翻页
   changePage = type => {
-    let { activeElement } = this.state
+    let { activeElement, allPdfElement } = this.state
     switch (type) {
       case 'add':
         activeElement += 1
@@ -1281,6 +1719,8 @@ export default class PdfComment extends React.Component {
         break
       default:
     }
+    if (activeElement < 1 && type === 'reduce') return
+    if (activeElement > allPdfElement && type === 'add') return
     this.setState(
       {
         activeElement: activeElement
@@ -1333,11 +1773,13 @@ export default class PdfComment extends React.Component {
       case 'rect':
         return 'box'
       default:
+        return object.get('t_type')
     }
   }
 
   setActiveColor = (hex, color) => {
     let { drawStyles } = this.state
+    if (!drawStyles.activeType) return
     // let alpha = drawStyles[drawStyles.activeType].alpha;
     drawStyles[drawStyles.activeType].color = color
     drawStyles[drawStyles.activeType].hexColor = hex
@@ -1346,39 +1788,40 @@ export default class PdfComment extends React.Component {
     })
     // let c = this.transfromColor(color, alpha);
     let c = color
+    // console.log(drawStyles.activeType, c)
     if (c && drawStyles.activeType === 'pen') {
       this.setPenColor({ rgba: c })
     }
-    this.drawCanvas.map(item => {
-      let obj = item.getActiveObject()
-      if (obj) {
-        if (obj.type === 'textbox' && obj.get('__created')) {
-          obj.set('_update', true)
-        } else if (obj.type !== 'textbox') {
-          obj.set('_update', true)
-        }
-
-        let type = this.checkType(obj)
-        switch (type) {
-          case 'text':
-            obj.set('fill', c)
-            break
-          case 'pen':
-          case 'ellipse':
-          case 'box':
-            obj.set('stroke', c)
-            break
-          case 'arrow':
-            obj.set('fill', c)
-            obj.set('stroke', c)
-            break
-          default:
-        }
-        // obj.setColor(c);
-        item.requestRenderAll()
+    // this.drawCanvas.map(item => {
+    let obj = this.state.activeObject
+    if (obj) {
+      if (obj.type === 'textbox' && obj.get('__created')) {
+        obj.set('_update', true)
+      } else if (obj.type !== 'textbox') {
+        obj.set('_update', true)
       }
-      return item
-    })
+
+      let type = this.checkType(obj)
+      switch (type) {
+        case 'text':
+          obj.set('fill', c)
+          break
+        case 'pen':
+        case 'ellipse':
+        case 'box':
+          obj.set('stroke', c)
+          break
+        case 'arrow':
+          obj.set('fill', c)
+          obj.set('stroke', c)
+          break
+        default:
+      }
+      // obj.setColor(c);
+      obj?.canvas.requestRenderAll()
+    }
+    //   return item
+    // })
   }
 
   changeWidth = val => {
@@ -1387,31 +1830,35 @@ export default class PdfComment extends React.Component {
     if (active === 'pen') {
       this.setPenWidth(val)
     }
-    if (drawStyles[active].width && active !== 'text')
+    if (drawStyles[active]?.width && active !== 'text')
       drawStyles[active].width = val
-    else drawStyles[active].size = val
+    else drawStyles[active] && (drawStyles[active].size = val)
     this.setState({
       drawStyles: { ...drawStyles }
     })
-    this.drawCanvas.map(item => {
-      let obj = item.getActiveObject()
-      if (obj) {
-        if (obj.type === 'textbox' && obj.get('__created')) {
-          obj.set('_update', true)
-        } else if (obj.type !== 'textbox') {
-          obj.set('_update', true)
-        }
-        let type = this.checkType(obj)
-        if (type === 'text') {
-          obj.set('fontSize', val)
-        } else obj.set('strokeWidth', val)
+    // this.drawCanvas.map(item => {
+    let obj = this.state.activeObject
+    if (obj && obj.type) {
+      if (obj.type === 'textbox' && obj.get('__created')) {
+        obj.set('_update', true)
+      } else if (obj.type !== 'textbox') {
+        obj.set('_update', true)
       }
-      item.requestRenderAll()
-      return item
-    })
+      let type = this.checkType(obj)
+      if (type === 'text') {
+        obj.set('fontSize', val)
+      } else obj.set('strokeWidth', val)
+      obj.canvas.requestRenderAll()
+    }
+    // })
   }
 
   setActiveDraw = key => {
+    if (this.state.activeObject && this.state.drawStyles.activeType === key) {
+      // this.setDrawType(key)
+      return
+    }
+
     if (key === 'json') {
       this.drawCanvas.forEach(item => {
         console.log(JSON.stringify(item.toJSON(), null, '\t'))
@@ -1419,7 +1866,7 @@ export default class PdfComment extends React.Component {
       return
     }
     if (key === 'pen') {
-      this.changePen(key === this.drawType ? false : true, 'setActiveDraw')
+      this.changePen(true, 'setActiveDraw')
       this.setDrawType(key)
     } else {
       this.changePen(false)
@@ -1614,19 +2061,25 @@ export default class PdfComment extends React.Component {
         if (document.hidden) continue
         if (!this.mounted) break
         let canvas = canvasList[i]
-        await this.loadDataToCanvas(i + 1, canvas, canvas.get('bg_url'))
-        await this.setAwaitTime(800)
+        let postil_numbners = this.state.versionMsg.postil_numbners || []
+        postil_numbners = postil_numbners.map(numb => +numb)
+        if (postil_numbners.length && postil_numbners.includes(i + 1)) {
+          await this.loadDataToCanvas(i + 1, canvas, canvas.get('bg_url'))
+        }
+        await this.setAwaitTime(100)
       }
     })()
   }
 
   // 切换版本
-  setActionVersion = (val = {}) => {
+  setActionVersion = async (val = {}) => {
     if (this.state.versionMsg.id === val.id) return
     this.isChangeVersion = true
+    this.allObjects = []
+    let res = await Action.getVersion({ file_id: this.props.file_id })
     this.setState(
       {
-        versionMsg: val
+        versionMsg: { ...val, postil_numbners: res.data.postil_numbners }
       },
       () => {
         // 重新构建所有数据
@@ -1658,12 +2111,14 @@ export default class PdfComment extends React.Component {
     })
   }
   // 本地更新实时同步
-  updateHistoryForType = type => {
+  updateHistoryForType = (type, index, id) => {
     let addParam = {
       creator: this.user,
       opera_type: type,
-      id: Math.floor(Math.random() * 100000),
-      createTime: new Date().getTime()
+      id: id,
+      postil_record_id: id,
+      createTime: new Date().getTime(),
+      page_number: index
     }
     let arr = Array.from(this.state.version_history)
     arr.unshift(addParam)
@@ -1678,7 +2133,7 @@ export default class PdfComment extends React.Component {
       versionMsg.name ||
       dateFormat(+versionMsg.create_time + '000', 'yyyy/MM/dd HH:mm')
     let modal = Modal.confirm({
-      title: '另存为新版本',
+      title: '保存版本',
       content: (
         <Input
           defaultValue={text}
@@ -1715,6 +2170,13 @@ export default class PdfComment extends React.Component {
             // message.success(res.message);
             modal.update({
               content: '保存成功'
+            })
+            this.setState({
+              versionMsg: {
+                ...this.state.versionMsg,
+                name: text,
+                id: res.data
+              }
             })
             setTimeout(() => {
               modal.destroy()
@@ -1776,7 +2238,7 @@ export default class PdfComment extends React.Component {
       case '3':
         return '删除了一条记录'
       case '4':
-        return '另存了新版本'
+        return '保存了新的批注版本'
       default:
     }
   }
@@ -1848,18 +2310,41 @@ export default class PdfComment extends React.Component {
     }
   }
   pointerup = e => {}
+
+  // 点击历史记录
+  handleHistory = val => {
+    // console.log(val)
+    let obj = this.allObjects.find(
+      item => item.get('record_id') === val.postil_record_id
+    )
+    // console.log(obj)
+    if (obj) {
+      let id = obj.canvas.lowerCanvasEl.id
+      document.getElementById(id).scrollIntoView()
+      obj.canvas.discardActiveObject()
+      obj.canvas.setActiveObject(obj)
+      obj.canvas.requestRenderAll()
+    } else {
+      message.warn('该记录已经不存在')
+    }
+  }
   // 渲染历史记录
   renderForHistory = () => {
     let { version_history = [] } = this.state
     return version_history.map(item => {
       return (
-        <div key={item.id} className={styles.history_item}>
+        <div
+          key={item.id}
+          className={styles.history_item}
+          onClick={() => this.handleHistory(item)}
+        >
           <div>
             <Avatar src={item.creator?.avatar} />
           </div>
           <div className={styles.history_msg}>
             <div className={styles.creator_name}>
               {item.creator?.name} &nbsp;
+              <span>在第({item.page_number})页</span>{' '}
               <span className={styles.actionType}>
                 {this.transformText(item.opera_type)}
               </span>
@@ -1877,6 +2362,141 @@ export default class PdfComment extends React.Component {
       )
     })
   }
+  setObjectOpacity = val => {
+    let { activeObject } = this.state
+    // console.log(val)
+    if (activeObject) {
+      activeObject.set('opacity', val)
+      activeObject.set('_update', true)
+      this.setState({
+        activeObject
+      })
+      activeObject.canvas.requestRenderAll()
+    }
+  }
+
+  // 渲染删除按钮
+  renderOperationDelete = ({ id }) => {
+    let { activeObject } = this.state
+    let s = {}
+    if (
+      activeObject &&
+      activeObject.get &&
+      id === activeObject?.canvas?.lowerCanvasEl.id
+    ) {
+      let coor = activeObject.getCoords()[1]
+      s = {
+        opacity: 1,
+        zIndex: 10,
+        left: coor.x,
+        top: coor.y - 40 < 0 ? 10 : coor.y - 40
+      }
+    } else s = {}
+    return (
+      <div
+        className={styles.removeOperation}
+        style={s}
+        onClick={this.removeObject}
+      >
+        <DefineIcon type="icon-xiangpica" />
+      </div>
+    )
+  }
+
+  setObjectSize = val => {}
+  // 渲染颜色选择
+  renderChooseColor = ({ children }) => {
+    let { activeObject } = this.state
+    return (
+      <Popover
+        content={
+          <div className={styles.setColorAndSize}>
+            <div className={styles.operation_item}>
+              <div>透明度</div>
+              <Slider
+                min={0.1}
+                max={1}
+                step={0.05}
+                value={
+                  activeObject && activeObject.get
+                    ? activeObject.get('opacity')
+                    : 1
+                }
+                onChange={this.setObjectOpacity}
+              />
+            </div>
+            <div>
+              <div>大小</div>
+              <Slider
+                min={
+                  this.state.drawStyles[this.state.drawStyles.activeType]
+                    ?.minSize || 1
+                }
+                max={
+                  this.state.drawStyles[this.state.drawStyles.activeType]
+                    ?.maxSize || 10
+                }
+                step={1}
+                value={
+                  this.state.drawStyles[this.state.drawStyles.activeType]
+                    ?.size ||
+                  this.state.drawStyles[this.state.drawStyles.activeType]
+                    ?.width ||
+                  1
+                }
+                onChange={this.changeWidth}
+              />
+            </div>
+            <div className={styles.operation_item}>
+              <div>颜色</div>
+              <ChooseColor
+                onChange={this.setDrawColor}
+                color={
+                  this.state.drawStyles[this.state.drawStyles.activeType]?.color
+                }
+              />
+            </div>
+          </div>
+        }
+        trigger={['click']}
+      >
+        {children}
+      </Popover>
+    )
+  }
+
+  setDrawColor = (val, hex) => {
+    // console.log(val, hex)
+    this.setActiveColor(hex, val)
+  }
+  // 不操作任何绘制的时候
+  setHandActive = key => {
+    this.changePen(false)
+    this.setActiveDraw(key)
+  }
+
+  renderPageSize = () => {
+    let { activeElement, allPdfElement, loadendElement } = this.state
+    return (
+      <div className={styles.pageBox}>
+        <span onClick={() => this.changePage('reduce')}>
+          <DefineIcon type="icon-bianzu17" />
+        </span>
+        <span>{activeElement}</span> / <span>{allPdfElement}</span>{' '}
+        <span>加载中 {loadendElement - 1}</span>
+        <span onClick={() => this.changePage('add')}>
+          <DefineIcon type="icon-xiayiye" />
+        </span>
+      </div>
+    )
+  }
+
+  setNoteColor = val => {
+    let { drawStyles } = this.state
+    this.setState({
+      drawStyles: { ...drawStyles, [drawStyles.activeType]: { color: val } }
+    })
+  }
 
   render() {
     let {
@@ -1886,6 +2506,7 @@ export default class PdfComment extends React.Component {
       drawStyles,
       isHistoryIn
     } = this.state
+    const drawT = ['pen', 'text', 'box', 'ellipse', 'arrow']
     const { VersionRender } = this
     return (
       // ReactDOM.createPortal(
@@ -1906,6 +2527,126 @@ export default class PdfComment extends React.Component {
           </div>
         )}
         <div className={styles.tools}>
+          <span
+            className={`${styles.history} ${globalStyles.authTheme}`}
+            onClick={this.fetchHistory.bind(this, undefined)}
+          >
+            &#xe7b4;
+          </span>
+          <div className={styles.tools_items}>
+            {this.drawTools.map(item => {
+              if (drawT.includes(item.key)) {
+                return (
+                  <this.renderChooseColor key={item.key}>
+                    <span
+                      className={styles.tools_item}
+                      key={item.key}
+                      style={{
+                        color:
+                          item.key === this.state.drawStyles.activeType
+                            ? this.state.drawStyles[
+                                this.state.drawStyles.activeType
+                              ]?.color
+                            : ''
+                      }}
+                      onClick={() => {
+                        this.setActiveDraw(item.key)
+                      }}
+                    >
+                      <DefineIcon type={item.icon} />
+                    </span>
+                  </this.renderChooseColor>
+                )
+              }
+              if (item.key === 'note') {
+                return (
+                  <Popover
+                    trigger={['click']}
+                    content={
+                      <div>
+                        <div>颜色</div>
+                        <ChooseColor
+                          needHex={true}
+                          onChange={this.setNoteColor}
+                          color={
+                            this.state.drawStyles[
+                              this.state.drawStyles.activeType
+                            ]?.color
+                          }
+                          colors={this.noteColors}
+                        />
+                      </div>
+                    }
+                  >
+                    <span
+                      className={`${styles.tools_item}`}
+                      style={{
+                        color:
+                          this.state.drawStyles.activeType === item.key
+                            ? this.state.drawStyles[
+                                this.state.drawStyles.activeType
+                              ]?.color
+                            : ''
+                      }}
+                      key={item.key}
+                      onClick={() => this.setHandActive(item.key)}
+                    >
+                      <DefineIcon type={item.icon} />
+                    </span>
+                  </Popover>
+                )
+              }
+              return (
+                <span
+                  className={`${styles.tools_item}`}
+                  style={{
+                    color:
+                      this.state.drawStyles.activeType === item.key
+                        ? this.state.drawStyles[
+                            this.state.drawStyles.activeType
+                          ]?.color
+                        : ''
+                  }}
+                  key={item.key}
+                  onClick={() => this.setHandActive(item.key)}
+                >
+                  <DefineIcon type={item.icon} />
+                </span>
+              )
+            })}
+            <div className={styles.version}>
+              <span className={styles.version_n}>批注版本：</span>
+              <Popover
+                trigger="click"
+                placement="bottom"
+                content={<VersionRender data={this.state.version_list} />}
+                title={<span>版本</span>}
+              >
+                <a className={styles.version_v} onClick={this.getVersionList}>
+                  {this.state.versionMsg.name
+                    ? this.state.versionMsg.name
+                    : this.state.versionMsg.create_time &&
+                      dateFormat(
+                        +(this.state.versionMsg.create_time + '000'),
+                        'yyyy/MM/dd HH:mm'
+                      )}
+                </a>
+              </Popover>
+              <Button
+                size="small"
+                className={styles.saveAs}
+                onClick={this.saveVersionAs}
+                ghost
+                type="primary"
+              >
+                保存
+              </Button>
+            </div>
+            <span onClick={this.fileSaveAs}>另存</span>
+          </div>
+          {/* <span></span> */}
+        </div>
+        {/* <div className={styles.tools}>
           <div
             className={`${styles.history} ${globalStyles.authTheme}`}
             onClick={this.fetchHistory.bind(this, undefined)}
@@ -1958,15 +2699,6 @@ export default class PdfComment extends React.Component {
             </div>
           </div>
           <div className={`${styles.toolsItem} ${styles.redoUndo}`}>
-            {/* <div>
-                <DefineIcon type="icon-undo-" onClick={this.undo}/>
-              </div>
-              <div>
-                <DefineIcon type="icon-undo-" style={{transform:'scale(-1 ,1)'}} onClick={this.redo}/>
-              </div> */}
-            {/* <div onClick={()=> this.resize()}>
-                re
-              </div> */}
             <div className={styles.version}>
               <span className={styles.version_n}>批注版本：</span>
               <Popover
@@ -2067,16 +2799,6 @@ export default class PdfComment extends React.Component {
                 />
               )}
             </div>
-            {/* <Popconfirm
-              title="确定清空画布吗?"
-              trigger="click"
-              onConfirm={()=> this.clear()}
-              cancelText="取消"
-              okText="清空">
-                <div className={styles.drawSetItem}>
-                  <DefineIcon type="icon-qingkong"/>
-                </div>
-              </Popconfirm> */}
             <div className={styles.drawSetItem} onClick={this.exportPdf}>
               <DefineIcon type="icon-download" />
             </div>
@@ -2099,15 +2821,8 @@ export default class PdfComment extends React.Component {
             <div className={styles.drawSetItem} onClick={this.removeObject}>
               <DefineIcon type="icon-gantetu_shanchu" />
             </div>
-            <div
-              className={styles.drawSetItem}
-              onClick={this.onClose}
-              title="退出"
-            >
-              <DefineIcon type="icon-tuichujijian" />
-            </div>
           </div>
-        </div>
+        </div> */}
         <div
           className={styles.canvasList}
           onScroll={this.viewScroll}
@@ -2131,6 +2846,7 @@ export default class PdfComment extends React.Component {
             )}
           </div>
         </div>
+        {this.props.fileType === 'pdf' && <this.renderPageSize />}
         <BackTop target={() => document.querySelector('#canvas_container')} />
       </div>
       //   ,document.body
@@ -2143,30 +2859,34 @@ PdfComment.prototype.resize = function() {
   let dom = document.querySelector('#allCanvas')
   if (!dom) return
   let width = dom.clientWidth
-  this.drawCanvas.map(item => {
-    let bg = item.get('backgroundImage')
-    let imgW = bg.get('width')
-    let imgH = bg.get('height')
-    let cwidth = item.getWidth()
-    // 如果元素宽度小于所需屏幕宽度，则不进行重新渲染
-    if (item.get('small_size')) return item
-    let scaleMultiplier = width / cwidth
-    item.forEachObject(obj => {
-      obj.scaleX = obj.scaleX * scaleMultiplier
-      obj.scaleY = obj.scaleY * scaleMultiplier
-      obj.left = obj.left * scaleMultiplier
-      obj.top = obj.top * scaleMultiplier
-      obj.setCoords()
-    })
-    item.setWidth(cwidth * scaleMultiplier)
-    item.setHeight(item.getHeight() * scaleMultiplier)
-    bg.set({
-      scaleX: item.getWidth() / imgW,
-      scaleY: item.getHeight() / imgH
-    })
-    item.setBackgroundImage(bg, item.renderAll.bind(item))
-    item.requestRenderAll()
-    item.calcOffset()
-    return item
-  })
+  ;(async () => {
+    for (let i = 0; i < this.drawCanvas.length; i++) {
+      const item = this.drawCanvas[i]
+      await this.setAwaitTime(1)
+      let bg = item.get('backgroundImage')
+      if (!bg) return
+      let imgW = bg.get('width')
+      let imgH = bg.get('height')
+      let cwidth = item.getWidth()
+      // 如果元素宽度小于所需屏幕宽度，则不进行重新渲染
+      if (item.get('small_size')) return item
+      let scaleMultiplier = width / cwidth
+      item.forEachObject(obj => {
+        obj.scaleX = obj.scaleX * scaleMultiplier
+        obj.scaleY = obj.scaleY * scaleMultiplier
+        obj.left = obj.left * scaleMultiplier
+        obj.top = obj.top * scaleMultiplier
+        obj.setCoords()
+      })
+      item.setWidth(cwidth * scaleMultiplier)
+      item.setHeight(item.getHeight() * scaleMultiplier)
+      bg.set({
+        scaleX: item.getWidth() / imgW,
+        scaleY: item.getHeight() / imgH
+      })
+      item.setBackgroundImage(bg, item.renderAll.bind(item))
+      item.requestRenderAll()
+      item.calcOffset()
+    }
+  })()
 }

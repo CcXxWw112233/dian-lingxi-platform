@@ -50,6 +50,7 @@ import SaveAsNewVersionFile from './component/SaveAsNewVersionFile'
 import { getFolderList } from '@/services/technological/file'
 import { currentNounPlanFilterName } from '../../utils/businessFunction'
 import { FILES } from '../../globalset/js/constant'
+import Event from '../../utils/event'
 
 @connect(mapStateToProps)
 export default class HeaderContentRightMenu extends Component {
@@ -449,6 +450,8 @@ export default class HeaderContentRightMenu extends Component {
 
   // 下载文件
   handleFileDownload({ filePreviewCurrentResourceId, pdfDownLoadSrc }) {
+    Event.firEvent('pdfSave', {})
+    return
     if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
@@ -622,13 +625,20 @@ export default class HeaderContentRightMenu extends Component {
     // })
   }
 
+  handleSaveAs = () => {
+    Event.firEvent('pdfSaveAs', {})
+  }
+
   saveAsMenu = () => {
     const { filePreviewCurrentResourceId, pdfDownLoadSrc } = this.props
     return (
       <Menu>
-        <Menu.Item key="2" onClick={this.handleSaveAsNewVersion}>
-          保存
+        <Menu.Item key="3" onClick={this.handleSaveAs}>
+          另存为
         </Menu.Item>
+        {/* <Menu.Item key="2" onClick={this.handleSaveAsNewVersion}>
+          保存
+        </Menu.Item> */}
         {/* <Menu.Item key="3" onClick={this.handleSaveAsOthersNewVersion}>
           另存为
         </Menu.Item> */}
@@ -1217,7 +1227,7 @@ export default class HeaderContentRightMenu extends Component {
               zIndex: 1
             }}
             onClick={this.handleDisabledOperator}
-          ></div>
+          />
         )}
         {!isOpenAttachmentFile && (
           <>
@@ -1249,7 +1259,9 @@ export default class HeaderContentRightMenu extends Component {
                 >
                   <span
                     style={{ marginRight: '4px' }}
-                    className={`${globalStyles.authTheme} ${headerStyles.right__shareIndicator_icon}`}
+                    className={`${globalStyles.authTheme} ${
+                      headerStyles.right__shareIndicator_icon
+                    }`}
                   >
                     &#xe63b;
                   </span>
@@ -1287,7 +1299,9 @@ export default class HeaderContentRightMenu extends Component {
                         onClick={this.handleChangeOnlyReadingShareModalVisible}
                       >
                         <span
-                          className={`${globalStyles.authTheme} ${headerStyles.right__shareIndicator_icon}`}
+                          className={`${globalStyles.authTheme} ${
+                            headerStyles.right__shareIndicator_icon
+                          }`}
                         >
                           &#xe7e7;
                         </span>
@@ -1304,7 +1318,9 @@ export default class HeaderContentRightMenu extends Component {
                             onClick={
                               this.handleChangeOnlyReadingShareModalVisible
                             }
-                            className={`${globalStyles.authTheme} ${headerStyles.right__share}`}
+                            className={`${globalStyles.authTheme} ${
+                              headerStyles.right__share
+                            }`}
                             style={{ fontSize: '20px' }}
                           >
                             &#xe7e7;
