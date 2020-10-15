@@ -11,7 +11,14 @@ import {
   DatePicker
 } from 'antd'
 import XLSX from 'xlsx'
-import { components, handleResize } from './getConst'
+import {
+  components,
+  handleResize,
+  YYYYMMDDREG,
+  YYYYMMDD_HHMM_REG,
+  YYYYMMDD_HHMM_REG_1,
+  YYYYMMDD_REG_1
+} from './getConst'
 import EditableTable from './text'
 import styles from './index.less'
 const EditableContext = React.createContext()
@@ -26,7 +33,8 @@ const EditableFormRow = Form.create()(EditableRow)
 
 class EditableCell extends React.Component {
   state = {
-    editing: false
+    editing: false,
+    start_time_format: {}
   }
 
   toggleEdit = () => {
@@ -64,6 +72,7 @@ class EditableCell extends React.Component {
         break
 
       default:
+        rulesText = '该字段内容不能为空'
         break
     }
     return editing && is_error && is_error_key.hasOwnProperty(dataIndex) ? (
@@ -144,7 +153,7 @@ export default class ExcelRead extends Component {
         { value: 'type', label: '类型' },
         { value: 'name', label: '名称' },
         { value: 'start_time', label: '开始时间' },
-        { value: 'end_time', label: '截止时间' },
+        { value: 'due_time', label: '截止时间' },
         { value: 'remark', label: '备注' }
       ],
       selectedRows: [],
@@ -227,9 +236,6 @@ export default class ExcelRead extends Component {
             title: null,
             // title: item,
             key: index,
-            render: (text, record, index) => {
-              return text
-            },
             width: 80
           }
         } else {
@@ -238,9 +244,6 @@ export default class ExcelRead extends Component {
             title: this.tableHeader.bind(this, item),
             // title: item,
             key: index,
-            render: (text, record, index) => {
-              return text
-            },
             width: 120
           }
         }
@@ -503,32 +506,62 @@ export default class ExcelRead extends Component {
         return item
       }
     })
+    let reg = ''
+    switch (value) {
+      case 'YYYY-MM-DD':
+        reg = YYYYMMDDREG
+        break
+      case 'YYYY-MM-DD HH:mm':
+        reg = YYYYMMDD_HHMM_REG
+        break
+      case 'YYYY/MM/DD':
+        reg = YYYYMMDD_REG_1
+        break
+      case 'YYYY/MM/DD HH:mm':
+        reg = YYYYMMDD_HHMM_REG_1
+        break
+      default:
+        break
+    }
     data = data.map(item => {
       let checkVal = item[text]
       let new_item = { ...item }
-
+      if (!reg.test(checkVal)) {
+        new_item = {
+          ...item,
+          is_error_key: {
+            ...item.is_error_key,
+            [text]: 'start_time'
+          }
+        }
+      } else {
+        delete item.is_error_key[text]
+        new_item = {
+          ...item,
+          is_error_key: {
+            ...item.is_error_key
+          }
+        }
+      }
       if (Object.keys(new_item.is_error_key || {}).length) {
         new_item.is_error = true
       } else new_item.is_error = false
       return new_item
     })
+
     this.setState({
       data,
-      columns
+      columns,
+      start_time_format: {
+        ...this.state.start_time_format,
+        [text]: value
+      }
     })
-
-    switch (value) {
-      case 'YY-M-D':
-        break
-
-      default:
-        break
-    }
   }
 
   renderSelectStartTime = (text, value) => {
     let main = <></>
-    if (value.includes('start_time')) {
+    if (value.includes('start_time') || value.includes('due_time')) {
       main = (
         <Select
           style={{ width: 120, marginTop: '5px' }}
@@ -537,16 +570,20 @@ export default class ExcelRead extends Component {
           onChange={value => {
             this.handleChangeStartTime(value, text)
           }}
+          key={text}
         >
-          <Select.Option key="YY-M-D">YY-M-D</Select.Option>
-          <Select.Option key="YYYY-M-D">YYYY-M-D</Select.Option>
-          <Select.Option key="YYYY-M-D H:m">YYYY-M-D H:m</Select.Option>
-          <Select.Option key="YY/M/D">YY/M/D</Select.Option>
-          <Select.Option key="YYYY/M/D">YYYY/M/D</Select.Option>
-          <Select.Option key="YYYY-M-D H:m">YYYY-M-D H:m</Select.Option>
-          <Select.Option key="YY.M.D">YY.M.D</Select.Option>
-          <Select.Option key="YYYY.M.D">YYYY.M.D</Select.Option>
-          <Select.Option key="YYYY.M.D H:m">YYYY.M.D H:m </Select.Option>
+          <Select.Option title="YYYY-MM-DD" key="YYYY-MM-DD">
+            YYYY-MM-DD
+          </Select.Option>
+          <Select.Option title="YYYY-MM-DD HH:mm" key="YYYY-MM-DD HH:mm">
+            YYYY-MM-DD HH:mm
+          </Select.Option>
+          <Select.Option title="YYYY/MM/DD" key="YYYY/MM/DD">
+            YYYY/MM/DD
+          </Select.Option>
+          <Select.Option title="YYYY/MM/DD HH:mm" key="YYYY/MM/DD HH:mm">
+            YYYY/MM/DD HH:mm
+          </Select.Option>
         </Select>
       )
     }
@@ -579,7 +616,8 @@ export default class ExcelRead extends Component {
         </Select>
         {selectedKey[text] == 'number' &&
           this.renderDiffSelectField(text, value)}
-        {selectedKey[text] == 'start_time' &&
+        {(selectedKey[text] == 'start_time' ||
+          selectedKey[text] == 'due_time') &&
           this.renderSelectStartTime(text, value)}
       </>
     )
@@ -639,13 +677,12 @@ export default class ExcelRead extends Component {
 
   handleSave = (row, operateObj) => {
     const newData = [...this.state.data]
-    const { selectedKey = {} } = this.state
+    const { selectedKey = {}, start_time_format = {} } = this.state
     const index = newData.findIndex(item => row.uuid === item.uuid)
     const item = newData[index]
     let checkVal = Object.values(operateObj)[0]
     let checkKey = Object.keys(operateObj)[0]
     let switchType = selectedKey[checkKey]
-    // console.log(row, checkKey)
     switch (switchType) {
       case 'number':
         let reg = /^[0-9]*[1-9][0-9]*$/
@@ -704,7 +741,42 @@ export default class ExcelRead extends Component {
           })
         }
         break
-
+      case 'start_time':
+      case 'due_time':
+        let start_item_reg = ''
+        let time_format = start_time_format[checkKey]
+        switch (time_format) {
+          case 'YYYY-MM-DD':
+            start_item_reg = YYYYMMDDREG
+            break
+          case 'YYYY-MM-DD HH:mm':
+            start_item_reg = YYYYMMDD_HHMM_REG
+            break
+          case 'YYYY/MM/DD':
+            start_item_reg = YYYYMMDD_REG_1
+            break
+          case 'YYYY/MM/DD HH:mm':
+            start_item_reg = YYYYMMDD_HHMM_REG_1
+            break
+          default:
+            break
+        }
+        if (start_item_reg.test(checkVal)) {
+          delete item.is_error_key[checkKey]
+          newData.splice(index, 1, {
+            ...item,
+            ...row,
+            is_error_key: {
+              ...item.is_error_key
+            }
+          })
+        } else {
+          newData.splice(index, 1, {
+            ...item,
+            ...row
+          })
+        }
+        break
       default:
         break
     }
