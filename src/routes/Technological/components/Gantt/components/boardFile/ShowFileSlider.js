@@ -52,7 +52,8 @@ export default class ShowFileSlider extends Component {
     const {
       is_show_board_file_area,
       im_all_latest_unread_messages = [],
-      wil_handle_types = []
+      wil_handle_types = [],
+      gantt_head_width
     } = this.props
     // console.log('sssss', { is_show_board_file_area })
     return (
@@ -63,6 +64,7 @@ export default class ShowFileSlider extends Component {
                 ${is_show_board_file_area == '2' &&
                   styles.show_file_button_hide}`}
         onClick={this.setShowBoardFile}
+        style={{ left: gantt_head_width + 40 }}
       >
         <span
           style={{ display: 'inline-block' }}
@@ -97,13 +99,14 @@ export default class ShowFileSlider extends Component {
 
 function mapStateToProps({
   gantt: {
-    datas: { is_show_board_file_area }
+    datas: { is_show_board_file_area, gantt_head_width }
   },
   imCooperation: { im_all_latest_unread_messages = [], wil_handle_types = [] }
 }) {
   return {
     is_show_board_file_area,
     im_all_latest_unread_messages,
-    wil_handle_types
+    wil_handle_types,
+    gantt_head_width
   }
 }
