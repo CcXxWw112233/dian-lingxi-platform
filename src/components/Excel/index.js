@@ -22,6 +22,9 @@ import {
 } from './getConst'
 import EditableTable from './text'
 import styles from './index.less'
+import { importExcelWithBoardData } from '../../services/technological'
+import { isApiResponseOk } from '../../utils/handleResponseData'
+import { connect } from 'dva'
 const EditableContext = React.createContext()
 
 const EditableRow = ({ form, index, ...props }) => (
@@ -141,6 +144,7 @@ class EditableCell extends React.Component {
     )
   }
 }
+@connect()
 export default class ExcelRead extends Component {
   constructor(props) {
     super(props)
@@ -354,6 +358,7 @@ export default class ExcelRead extends Component {
         return item
       }
     })
+
     data = data.map(item => {
       let new_item = { ...item }
       if (!!Object.keys(item.is_error_key).length) {
@@ -364,8 +369,8 @@ export default class ExcelRead extends Component {
             ...item.is_error_key
           }
         }
-        return new_item
       }
+      return new_item
     })
     this.setState({
       data,
@@ -685,7 +690,6 @@ export default class ExcelRead extends Component {
 
   // 选择行的回调
   onSelectRow = (selectedRowKeys, selectedRows) => {
-    console.log(selectedRowKeys, selectedRows)
     this.setState({
       selectedRows: selectedRows,
       hasSelected: !!selectedRows.length
@@ -844,15 +848,58 @@ export default class ExcelRead extends Component {
     this.setState({ data: newData })
   }
 
+  // 设置接口数据结构
+  setDataList = () => {
+    const { data = [], selectedKey = {} } = this.state
+    let arr = Object.keys(selectedKey) || []
+    let field_value = Object.values(selectedKey)
+    let data_list = []
+    arr.map(d => {
+      data_list = data.map(item => {
+        let new_item = {
+          uuid: '',
+          name: '',
+          type: 'milestone',
+          due_time: '',
+          description: '',
+          parent_id: '0'
+        }
+        // let new_item = {}
+        new_item = {
+          ...new_item,
+          uuid: item.uuid,
+          [selectedKey[d]]: item[d]
+        }
+        return new_item
+      })
+    })
+    return data_list
+  }
+
   // 确定
   setExportExcelData = () => {
     const { data = [], selectedKey = {} } = this.state
     const { board_id } = this.props
     let selected_value = Object.values(selectedKey)
+    let data_list = this.setDataList()
     if (!selected_value.includes('name')) {
       message.error('操作失败，必须指定名称')
       return
     }
+    return
+    importExcelWithBoardData({
+      board_id,
+      data_list
+    }).then(res => {
+      if (isApiResponseOk(res)) {
+        console.log(res)
+        this.closeAll()
+        this.props.dispatch({
+          type: 'gantt/getGanttData',
+          payload: {}
+        })
+      }
+    })
     console.log(data, selectedKey)
   }
 

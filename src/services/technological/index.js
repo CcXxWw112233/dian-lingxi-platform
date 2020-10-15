@@ -165,3 +165,12 @@ export async function setUserGuide(data) {
     data
   })
 }
+
+// 通过excel导入项目数据
+export async function importExcelWithBoardData(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/comm/board/excel/import`,
+    method: 'POST',
+    data
+  })
+}
