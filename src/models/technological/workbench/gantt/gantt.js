@@ -641,6 +641,20 @@ export default {
                 )
               ) {
                 new_item.left = k * ceilWidth
+                if (new_item.min_leaf_card_time) {
+                  //左边位置 = 右边位置 - 宽度
+                  new_item.min_leaf_left =
+                    new_item.left -
+                    setHourViewCardTimeSpan(
+                      new_item.min_leaf_card_time,
+                      transformTimestamp(new_item[cal_left_field]),
+                      min_start_time,
+                      max_due_time
+                    ) *
+                      ceilWidth +
+                    ceilWidth
+                }
+
                 break
               } else {
                 //如果是在同一天，开始时间不在工作时间内
@@ -658,6 +672,19 @@ export default {
                       hours_view_start_work_oclock
                   ) {
                     new_item.left = k * ceilWidth
+                    if (new_item.min_leaf_card_time) {
+                      //左边位置 = 右边位置 - 宽度
+                      new_item.min_leaf_left =
+                        new_item.left -
+                        setHourViewCardTimeSpan(
+                          new_item.min_leaf_card_time,
+                          transformTimestamp(new_item[cal_left_field]),
+                          min_start_time,
+                          max_due_time
+                        ) *
+                          ceilWidth +
+                        ceilWidth
+                    }
                     break
                   } else if (
                     //开始时间在工作时间之后
@@ -670,6 +697,19 @@ export default {
                       new_item.left = (k + 1) * ceilWidth
                     } else {
                       new_item.left = k * ceilWidth
+                    }
+                    if (new_item.min_leaf_card_time) {
+                      // eslint-disable-next-line prettier/prettier
+                      new_item.min_leaf_left =
+                        new_item.left -
+                        setHourViewCardTimeSpan(
+                          new_item.min_leaf_card_time,
+                          transformTimestamp(new_item[cal_left_field]),
+                          min_start_time,
+                          max_due_time
+                        ) *
+                          ceilWidth +
+                        ceilWidth
                     }
                     break
                   }
