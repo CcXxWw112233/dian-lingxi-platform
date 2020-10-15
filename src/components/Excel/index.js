@@ -324,6 +324,9 @@ export default class ExcelRead extends Component {
       columns
     })
     switch (e) {
+      case 'none':
+        this.handleClearTableData(text)
+        break
       case 'name':
         this.handleChangName(text)
         break
@@ -334,6 +337,40 @@ export default class ExcelRead extends Component {
       default:
         break
     }
+  }
+
+  // 将字段绑定为none 需清除默认状态
+  handleClearTableData = text => {
+    let { data = [], columns = [] } = this.state
+    columns = columns.map(item => {
+      if (item.dataIndex == text) {
+        let new_item = { ...item }
+        new_item = {
+          ...item,
+          editable: false
+        }
+        return new_item
+      } else {
+        return item
+      }
+    })
+    data = data.map(item => {
+      let new_item = { ...item }
+      if (!!Object.keys(item.is_error_key).length) {
+        delete item.is_error_key[text]
+        new_item = {
+          ...item,
+          is_error_key: {
+            ...item.is_error_key
+          }
+        }
+        return new_item
+      }
+    })
+    this.setState({
+      data,
+      columns
+    })
   }
 
   // 名称字段判断
@@ -638,23 +675,33 @@ export default class ExcelRead extends Component {
     let datas = Array.from(this.state.data)
     let ids = arr.map(item => item.uuid)
     let data = datas.filter(item => !ids.includes(item.uuid))
-
+    data = data.map((item, index) => {
+      let new_item = { ...item }
+      new_item = { ...item, id: index + 1, number: index + 1 }
+      return new_item
+    })
     this.setState({ data, selectedRows: [], hasSelected: false })
   }
 
   // 选择行的回调
-  onSelectRow = (record, selected, selectedRows) => {
-    let arr = Array.from(this.state.selectedRows)
-
-    if (selected) {
-      arr.push(record)
-    } else {
-      arr = arr.filter(item => item.uuid !== record.uuid)
-    }
+  onSelectRow = (selectedRowKeys, selectedRows) => {
+    console.log(selectedRowKeys, selectedRows)
     this.setState({
-      selectedRows: arr,
+      selectedRows: selectedRows,
       hasSelected: !!selectedRows.length
     })
+    return
+    // let arr = Array.from(this.state.selectedRows)
+
+    // if (selected) {
+    //   arr.push(record)
+    // } else {
+    //   arr = arr.filter(item => item.uuid !== record.uuid)
+    // }
+    // this.setState({
+    //   selectedRows: arr,
+    //   hasSelected: !!selectedRows.length
+    // })
   }
 
   closeAll = () => {
@@ -815,7 +862,8 @@ export default class ExcelRead extends Component {
       columns = [],
       data = [],
       hasSelected,
-      selectedKey = {}
+      selectedKey = {},
+      selectedRows = []
     } = this.state
     const maxHeight = document.body.clientHeight / 2
     columns = columns.map((col, index) => ({
@@ -871,11 +919,12 @@ export default class ExcelRead extends Component {
             components={components}
             style={{ overflow: 'auto', maxHeight: maxHeight + 'px' }}
             bordered
-            rowKey="id"
+            rowKey="uuid"
             rowSelection={{
               hideSelectAll: true,
               columnTitle: ' ',
-              onSelect: this.onSelectRow
+              onChange: this.onSelectRow,
+              selectedRows: selectedRows
             }}
             rowClassName={() => styles['editable-row']}
             columns={columns}
