@@ -289,7 +289,7 @@ export default class GroupListHead extends Component {
             <Button block onClick={this.openBoardTemplateDrawer}>
               使用计划模版
             </Button>
-            <ExcelRead />
+            <ExcelRead board_id={gantt_board_id} />
           </div>
         </div>
       )

@@ -8,7 +8,8 @@ import {
   Row,
   Col,
   Input,
-  DatePicker
+  DatePicker,
+  message
 } from 'antd'
 import XLSX from 'xlsx'
 import {
@@ -154,7 +155,7 @@ export default class ExcelRead extends Component {
         { value: 'name', label: '名称' },
         { value: 'start_time', label: '开始时间' },
         { value: 'due_time', label: '截止时间' },
-        { value: 'remark', label: '备注' }
+        { value: 'remarks', label: '备注' }
       ],
       selectedRows: [],
       selectedKey: {},
@@ -326,8 +327,8 @@ export default class ExcelRead extends Component {
       case 'name':
         this.handleChangName(text)
         break
-      case 'start_time':
-        // this.handleChangStartTime(text)
+      case 'remarks':
+        this.handleChangeRemarks(text)
         break
 
       default:
@@ -353,7 +354,11 @@ export default class ExcelRead extends Component {
     data = data.map(item => {
       let checkVal = item[text]
       let new_item = { ...item }
-      if (checkVal == '' || String(checkVal).trimLR() == '') {
+      if (
+        checkVal == '' ||
+        String(checkVal).trimLR() == '' ||
+        String(checkVal).length > 100
+      ) {
         new_item = {
           ...item,
           is_error_key: {
@@ -380,6 +385,9 @@ export default class ExcelRead extends Component {
       columns
     })
   }
+
+  // 备注字段判断
+  handleChangeRemarks = () => {}
 
   toFilterDefaultKey = () => {
     let arr = Array.from(this.state.tableDefaultKeys)
@@ -725,7 +733,11 @@ export default class ExcelRead extends Component {
         }
         break
       case 'name':
-        if (checkVal == '' || String(checkVal).trimLR() == '') {
+        if (
+          checkVal == '' ||
+          String(checkVal).trimLR() == '' ||
+          String(checkVal).length > 100
+        ) {
           newData.splice(index, 1, {
             ...item,
             ...row
@@ -777,10 +789,24 @@ export default class ExcelRead extends Component {
           })
         }
         break
+      case 'remarks':
+        break
       default:
         break
     }
     this.setState({ data: newData })
+  }
+
+  // 确定
+  setExportExcelData = () => {
+    const { data = [], selectedKey = {} } = this.state
+    const { board_id } = this.props
+    let selected_value = Object.values(selectedKey)
+    if (!selected_value.includes('name')) {
+      message.error('操作失败，必须指定名称')
+      return
+    }
+    console.log(data, selectedKey)
   }
 
   render() {
@@ -822,7 +848,7 @@ export default class ExcelRead extends Component {
           visible={visible}
           title="导入数据"
           onCancel={() => this.closeAll()}
-          // onOk={() => this.setDataForDetail()}
+          onOk={() => this.setExportExcelData()}
           okText="确定"
           cancelText="取消"
           maskClosable={false}
@@ -859,4 +885,8 @@ export default class ExcelRead extends Component {
       </div>
     )
   }
+}
+
+ExcelRead.defaultProps = {
+  board_id: '' // 项目ID
 }
