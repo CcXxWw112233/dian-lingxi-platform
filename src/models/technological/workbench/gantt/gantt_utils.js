@@ -2,10 +2,17 @@ import {
   setGantTimeSpan,
   setHourViewCardTimeSpan
 } from '../../../../routes/Technological/components/Gantt/ganttBusiness'
-import { getDigit, transformTimestamp, isSamDay } from '../../../../utils/util'
+import {
+  getDigit,
+  transformTimestamp,
+  isSamDay,
+  isSamHour
+} from '../../../../utils/util'
 import {
   task_item_height,
-  ceil_height
+  ceil_height,
+  hours_view_start_work_oclock,
+  hours_view_due_work_oclock
 } from '../../../../routes/Technological/components/Gantt/constants'
 import { getDateInfo } from '../../../../routes/Technological/components/Gantt/getDate'
 // 获取一级里程碑包含的高度
@@ -322,6 +329,49 @@ export function formatItem(
                 ((k + (date_day == 0 ? 1 : 0)) * 7 + date_day - 1) * ceilWidth
               new_item.width = (time_span || 1) * ceilWidth
               break
+            }
+          } else if (gantt_view_mode == 'hours') {
+            if (
+              //如果重合
+              isSamHour(
+                new_item[cal_left_field],
+                date_arr_one_level[k]['timestamp']
+              )
+            ) {
+              new_item.left = k * ceilWidth
+              break
+            } else {
+              //如果是在同一天，开始时间不在工作时间内
+              if (
+                isSamDay(
+                  new_item[cal_left_field],
+                  date_arr_one_level[k]['timestamp']
+                )
+              ) {
+                // 开始时间在工作时间之前
+                if (
+                  new_item[cal_left_field] <
+                    date_arr_one_level[k]['timestamp'] &&
+                  date_arr_one_level[k]['date_no'] ==
+                    hours_view_start_work_oclock
+                ) {
+                  new_item.left = k * ceilWidth
+                  break
+                } else if (
+                  //开始时间在工作时间之后
+                  new_item[cal_left_field] >
+                    date_arr_one_level[k]['timestamp'] &&
+                  date_arr_one_level[k]['date_no'] ==
+                    hours_view_due_work_oclock - 1
+                ) {
+                  if (new_item.tree_type == '2') {
+                    new_item.left = (k + 1) * ceilWidth
+                  } else {
+                    new_item.left = k * ceilWidth
+                  }
+                  break
+                }
+              }
             }
           } else {
           }
