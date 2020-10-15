@@ -863,8 +863,9 @@ export default class TreeNode extends Component {
 
   renderStartTime = key => {
     const { nodeValue = {} } = this.props
-    let { start_time, is_has_start_time } = nodeValue
-    if (start_time && is_has_start_time) {
+    let { start_time, is_has_start_time, tree_type } = nodeValue
+    //仅在任务时需要强is_has_start_time判断
+    if (start_time && (tree_type == '2' ? is_has_start_time : true)) {
       return dateFormat(start_time, this.timeForMat)
     }
     return (
