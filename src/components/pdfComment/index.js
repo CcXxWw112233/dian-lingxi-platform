@@ -2642,7 +2642,7 @@ export default class PdfComment extends React.Component {
                 保存
               </Button>
             </div>
-            <span onClick={this.fileSaveAs}>另存</span>
+            {/* <span onClick={this.fileSaveAs}>另存</span> */}
           </div>
           {/* <span></span> */}
         </div>
