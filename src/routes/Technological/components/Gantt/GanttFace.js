@@ -558,7 +558,12 @@ export default class GanttFace extends Component {
       type: 'gantt/exitBaseLineInfoView'
     })
   }
-
+  // 鼠标事件设置滚动区域
+  onMouseOverCapture = () => {
+    const { scroll_area } = this.state
+    if (scroll_area == 'gantt_body') return
+    this.setScrollArea('gantt_body')
+  }
   render() {
     const { gantt_card_out_middle_max_height } = this.state
     const {
@@ -657,6 +662,7 @@ export default class GanttFace extends Component {
                 ref={'gantt_card_out_middle'}
                 onMouseEnter={() => this.setScrollArea('gantt_body')}
                 onTouchStart={() => this.setScrollArea('gantt_body')}
+                onMouseOverCapture={this.onMouseOverCapture}
                 onScroll={this.ganttScroll}
               >
                 {show_base_line_mode && (
