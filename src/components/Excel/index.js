@@ -13,7 +13,9 @@ import {
 } from 'antd'
 import XLSX from 'xlsx'
 import {
+  checkNameReg,
   checkNumberReg,
+  checkTimerReg,
   checkTypeReg,
   components,
   GENRE_TYPE_REG,
@@ -419,20 +421,12 @@ export default class ExcelRead extends Component {
     data = data.map(item => {
       let checkVal = item[text]
       let new_item = { ...item }
-      if (
-        checkVal == '' ||
-        String(checkVal).trimLR() == '' ||
-        String(checkVal).length > 100
-      ) {
-        new_item = {
-          ...item,
-          is_error_key: {
-            ...item.is_error_key,
-            [text]: 'name'
-          }
-        }
-      } else {
+      if (checkNameReg(checkVal)) {
         delete item.is_error_key[text]
+      } else {
+        new_item = {
+          ...item
+        }
       }
       if (Object.keys(new_item.is_error_key || {}).length) {
         new_item.is_error = true
@@ -587,27 +581,10 @@ export default class ExcelRead extends Component {
   // 操作时间格式
   handleChangeStartTime = (value, text) => {
     let { data = [] } = this.state
-    let reg = ''
-    switch (value) {
-      case 'YYYY-MM-DD':
-        reg = YYYYMMDDREG
-        break
-      case 'YYYY-MM-DD HH:mm':
-        reg = YYYYMMDD_HHMM_REG
-        break
-      case 'YYYY/MM/DD':
-        reg = YYYYMMDD_REG_1
-        break
-      case 'YYYY/MM/DD HH:mm':
-        reg = YYYYMMDD_HHMM_REG_1
-        break
-      default:
-        break
-    }
     data = data.map(item => {
       let checkVal = item[text]
       let new_item = { ...item }
-      if (!reg.test(checkVal)) {
+      if (!checkTimerReg(value).test(checkVal)) {
         new_item = {
           ...item,
           is_error_key: {
@@ -802,54 +779,23 @@ export default class ExcelRead extends Component {
         }
         break
       case 'name':
-        if (
-          checkVal == '' ||
-          String(checkVal).trimLR() == '' ||
-          String(checkVal).length > 100
-        ) {
+        if (checkNameReg(checkVal)) {
+          delete item.is_error_key[checkKey]
+        } else {
           newData.splice(index, 1, {
             ...item,
             ...row
-          })
-        } else {
-          delete item.is_error_key[checkKey]
-          newData.splice(index, 1, {
-            ...item,
-            ...row,
-            is_error_key: {
-              ...item.is_error_key
-            }
           })
         }
         break
       case 'start_time':
       case 'due_time':
-        let start_item_reg = ''
         let time_format = start_time_format[checkKey]
-        switch (time_format) {
-          case 'YYYY-MM-DD':
-            start_item_reg = YYYYMMDDREG
-            break
-          case 'YYYY-MM-DD HH:mm':
-            start_item_reg = YYYYMMDD_HHMM_REG
-            break
-          case 'YYYY/MM/DD':
-            start_item_reg = YYYYMMDD_REG_1
-            break
-          case 'YYYY/MM/DD HH:mm':
-            start_item_reg = YYYYMMDD_HHMM_REG_1
-            break
-          default:
-            break
-        }
-        if (start_item_reg.test(checkVal)) {
+        if (checkTimerReg(time_format).test(checkVal)) {
           delete item.is_error_key[checkKey]
           newData.splice(index, 1, {
             ...item,
-            ...row,
-            is_error_key: {
-              ...item.is_error_key
-            }
+            ...row
           })
         } else {
           newData.splice(index, 1, {
