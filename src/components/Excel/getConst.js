@@ -72,6 +72,153 @@ export const GENRE_TYPE_REG = /^里程碑$|^任务$|^子任务$|^子里程碑$/
 // 正整数
 export const POSITIVE_INTEGER_REG = /^[0-9]*[1-9][0-9]*$/
 
+// 获取对象中键的值
+export const gold_value = (selectedKey = {}, gold_type) => {
+  Object.keys(selectedKey).find(key => selectedKey[key] === gold_type)
+}
+// 获取序号有几个点
+export const getCatogaryNoStage = scrstr => {
+  var count = 0
+  while (scrstr.indexOf('.') != -1) {
+    scrstr = scrstr.replace('.', '')
+    count++
+  }
+  return count
+}
+/**
+ * 判断序号在表头第几列
+ * @param {String|Number} gold_no 必须是数字类型
+ * @param {String} gold_type 对应类型的值
+ */
+export const valiNameWithNo = (gold_no, gold_type) => {
+  const align_type = {
+    0: ['里程碑', '任务'],
+    1: ['子里程碑', '任务', '子任务'],
+    2: ['任务', '子任务'],
+    3: ['子任务']
+  }
+  const point_no = getCatogaryNoStage(gold_no)
+  return (align_type[point_no] || []).includes(gold_type)
+}
+/**
+ * 当前需要做比较的列
+ * @param {Object} item 当前表格中一行的数据 { A: 1, B: '任务', C: '描述' ... }
+ * @param {String} gold_type 表示当前操作的列 A,B,C
+ * @param {String} dictionary 需要比较的列 A,B,C
+ */
+export const valiColumn = ({
+  item,
+  gold_type,
+  dictionary,
+  selectedKey = {}
+}) => {
+  let gold_no // A B C D E
+  // let gold_type = dictionary // A B C D E
+  // 找出需要做比较的列
+  for (let i in selectedKey) {
+    if (selectedKey[i] == dictionary) {
+      gold_no = i
+      break
+    }
+  }
+  if (!gold_no) return true
+  return dictionary == 'type'
+    ? valiNameWithNo(item[gold_type], item[gold_no])
+    : valiNameWithNo(item[gold_no], item[gold_type])
+}
+
+/**
+ * 校验序号
+ * @param {String} symbol 表示需要校验的符号类型
+ * @param {String} val 表示需要校验的值
+ * @param {Boolean} checkType 表示是否需要校验类型
+ * @param {Object} item 当前表格中一行的数据 { A: 1, B: '任务', C: '描述' ... }
+ * @param {String} gold_type 表示当前操作的列 A,B,C
+ * @param {String} dictionary 需要比较的列 A,B,C
+ * @param {Object} selectedKey { A:number,B:type... }
+ * @returns {Boolean} true 表示验证通过
+ */
+export const checkNumberReg = ({
+  symbol = '.',
+  val,
+  checkType,
+  item,
+  gold_type,
+  dictionary,
+  selectedKey
+}) => {
+  let len = String(val).split(symbol).length
+  if (!val) return false
+  if (checkType) {
+    if (String(val).indexOf(symbol) != -1) {
+      // 表示有小数点的时候
+      if (
+        len > 4 ||
+        !valiColumn({ item, gold_type, dictionary, selectedKey })
+      ) {
+        return false
+      }
+    } else {
+      // 表示没有小数点的时候
+      if (
+        (isNaN(val) && !POSITIVE_INTEGER_REG.test(val)) ||
+        !valiColumn({ item, gold_type, dictionary, selectedKey })
+      ) {
+        return false
+      }
+    }
+  } else {
+    // 表示没有小数点的时候
+    if (String(val).indexOf(symbol) != -1) {
+      // 表示有小数点的时候
+      if (len > 4) {
+        return false
+      }
+    } else {
+      // 表示没有小数点的时候
+      if (isNaN(val) && !POSITIVE_INTEGER_REG.test(val)) {
+        return false
+      }
+    }
+  }
+  return true
+}
+
+/**
+ * 校验类型是否正确
+ * @param {String} val 需要进行校验的值
+ * @param {Boolean} checkNumer 是否需要校验序号 true表示需要
+ * @param {Object} item 当前表格中一行的数据 { A: 1, B: '任务', C: '描述' ... }
+ * @param {String} gold_type 表头 A,B,C,D....
+ * @param {String} dictionary 需要比较的列 A,B,C
+ * @param {Object} selectedKey { A:number,B:type... }
+ */
+export const checkTypeReg = ({
+  val,
+  checkNumer,
+  item,
+  gold_type,
+  dictionary,
+  selectedKey
+}) => {
+  if (!val) return false
+  if (checkNumer) {
+    if (
+      val == '' ||
+      String(val).trimLR() == '' ||
+      !GENRE_TYPE_REG.test(val) ||
+      !valiColumn({ item, gold_type, dictionary, selectedKey })
+    ) {
+      return false
+    }
+  } else {
+    if (val == '' || String(val).trimLR() == '' || !GENRE_TYPE_REG.test(val)) {
+      return false
+    }
+  }
+  return true
+}
+
 /**
  * MSDN中定义的DateTime对象的有效范围是：0001-01-01 00:00:00到9999-12-31 23:59:59。
  * UNIX时间戳的0按照ISO 8601规范为 ：1970-01-01T00:00:00Z。

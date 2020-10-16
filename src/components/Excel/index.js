@@ -13,11 +13,14 @@ import {
 } from 'antd'
 import XLSX from 'xlsx'
 import {
+  checkNumberReg,
+  checkTypeReg,
   components,
   GENRE_TYPE_REG,
   handleResize,
   POSITIVE_INTEGER_REG,
   ResizableTitle,
+  valiNameWithNo,
   YYYYMMDDREG,
   YYYYMMDD_HHMM_REG,
   YYYYMMDD_HHMM_REG_1,
@@ -132,7 +135,6 @@ class EditableCell extends React.Component {
       record &&
       Object.keys(record.is_error_key).indexOf(dataIndex) != -1 &&
       record.is_error
-    // console.log(record?.is_error_key, 'ddd')
     return (
       <td
         {...restProps}
@@ -281,9 +283,6 @@ export default class ExcelRead extends Component {
       case 'number':
         this.handleChangeOrderField('', text)
         break
-      case 'type':
-        this.handleChangeTypes(text)
-        break
       default:
     }
   }
@@ -330,8 +329,8 @@ export default class ExcelRead extends Component {
       () => {
         this.toFilterDefaultKey()
         const arr = Object.values(obj)
+        this.dispatchTextHandle(text, e)
         if (arr.includes('number') || arr.includes('type')) {
-          this.dispatchTextHandle(text, e)
           columns = columns.map(item => {
             if (item.dataIndex == 'number' || item.dataIndex == 'type') {
               let new_item = { ...item }
@@ -403,12 +402,6 @@ export default class ExcelRead extends Component {
       let new_item = { ...item }
       if (!!Object.keys(item.is_error_key).length) {
         delete new_item.is_error_key[text]
-        // new_item = {
-        //   ...item,
-        //   is_error_key: {
-        //     ...item.is_error_key
-        //   }
-        // }
       }
       if (Object.keys(new_item.is_error_key).length) {
         new_item.is_error = true
@@ -440,12 +433,6 @@ export default class ExcelRead extends Component {
         }
       } else {
         delete item.is_error_key[text]
-        new_item = {
-          ...item,
-          is_error_key: {
-            ...item.is_error_key
-          }
-        }
       }
       if (Object.keys(new_item.is_error_key || {}).length) {
         new_item.is_error = true
@@ -457,70 +444,9 @@ export default class ExcelRead extends Component {
     })
   }
 
-  // 获取序号有几个点
-  getCatogaryNoStage = scrstr => {
-    var count = 0
-    while (scrstr.indexOf('.') != -1) {
-      scrstr = scrstr.replace('.', '')
-      count++
-    }
-    return count
-  }
-  //判断序号在表头第几列
-  valiNameWithNo = (gold_no, gold_type) => {
-    const align_type = {
-      0: ['里程碑', '任务'],
-      1: ['子里程碑', '任务', '子任务'],
-      2: ['任务', '子任务'],
-      3: ['子任务']
-    }
-    const point_no = this.getCatogaryNoStage(gold_no)
-    return (align_type[point_no] || []).includes(gold_type)
-  }
-  // 一整行， A||B||C
-  valiColumn = (item, gold_type, dictionary) => {
-    const { selectedKey } = this.state
-    let gold_no // A B C D E
-    // let gold_type = dictionary // A B C D E
-    // 找出需要做比较的列
-    for (let i in selectedKey) {
-      if (selectedKey[i] == dictionary) {
-        gold_no = i
-        break
-      }
-    }
-    if (!gold_no) return true
-    return this.valiNameWithNo(item[gold_no], item[gold_type])
-  }
-
-  checkTypeReg = (val, checkNumer, data, text) => {
-    if (!val) return false
-    if (checkNumer) {
-      if (
-        val == '' ||
-        String(val).trimLR() == '' ||
-        !GENRE_TYPE_REG.test(val) ||
-        !this.valiColumn(data, text, 'number')
-      ) {
-        return false
-      }
-    } else {
-      if (
-        val == '' ||
-        String(val).trimLR() == '' ||
-        !GENRE_TYPE_REG.test(val)
-      ) {
-        return false
-      }
-    }
-    return true
-  }
   // 类型格式校验
   handleChangeTypes = text => {
     let { data = [], selectedKey = {} } = this.state
-    let gold_no = Object.keys(selectedKey).find(
-      key => selectedKey[key] === 'number'
-    )
     let arr = [],
       numberkey = '',
       param
@@ -534,7 +460,16 @@ export default class ExcelRead extends Component {
       let checkVal = item[text]
       let new_item = { ...item }
       let flag = arr.length
-      if (this.checkTypeReg(checkVal, !!flag, item, text)) {
+      if (
+        checkTypeReg({
+          val: checkVal,
+          checkNumer: flag,
+          item,
+          gold_type: text,
+          dictionary: 'number',
+          selectedKey
+        })
+      ) {
         delete new_item.is_error_key[text]
         if (flag) delete new_item.is_error_key[numberkey]
       } else {
@@ -546,36 +481,11 @@ export default class ExcelRead extends Component {
         }
         new_item.is_error_key = obj
       }
-      // if (
-      //   checkVal == '' ||
-      //   String(checkVal).trimLR() == '' ||
-      //   !GENRE_TYPE_REG.test(checkVal) ||
-      //   !this.valiColumn(item, text, 'number')
-      // ) {
-      //   new_item = {
-      //     ...item,
-      //     is_error_key: {
-      //       ...item.is_error_key,
-      //       [text]: 'type',
-      //       [gold_no]: 'number'
-      //     }
-      //   }
-      // } else {
-      //   delete item.is_error_key[text]
-      //   delete item.is_error_key[gold_no]
-      //   new_item = {
-      //     ...item,
-      //     is_error_key: {
-      //       ...item.is_error_key
-      //     }
-      //   }
-      // }
       if (Object.keys(new_item.is_error_key || {}).length) {
         new_item.is_error = true
       } else new_item.is_error = false
       return new_item
     })
-    console.log(data)
     this.setState({
       data
     })
@@ -597,41 +507,8 @@ export default class ExcelRead extends Component {
     })
   }
 
-  valiColumn1 = (item, gold_type, dictionary) => {
-    const { selectedKey } = this.state
-    let gold_no // A B C D E
-    // let gold_type = dictionary // A B C D E
-    // 找出需要做比较的列
-    for (let i in selectedKey) {
-      if (selectedKey[i] == 'type') {
-        gold_no = i
-        break
-      }
-    }
-    if (!gold_no) return true
-    return this.valiNameWithNo(item[gold_type], item[gold_no])
-  }
-
-  checkNumberReg = (reg = '.', val, checkType = false, data, text) => {
-    let len = String(val).split(reg).length
-    if (!val) return false
-    else if (checkType && val && String(val).indexOf(reg) != -1) {
-      if (len > 4 || !this.valiColumn1(data, text)) {
-        return false
-      }
-    } else if (val && String(val).indexOf(reg) != -1) {
-      if (len > 4) return false
-    } else if (isNaN(val) && !POSITIVE_INTEGER_REG.test(val)) {
-      return false
-    }
-    return true
-  }
-
   handleChangeOrderField = (value, text) => {
     let { data = [], selectedKey = {} } = this.state
-    let gold_no = Object.keys(selectedKey).find(
-      key => selectedKey[key] === 'type'
-    )
     let gold_no_param
     let arr = [],
       typekey = ''
@@ -641,13 +518,22 @@ export default class ExcelRead extends Component {
         if (selectedKey[item] === 'type') typekey = item
       }
     })
-    console.log(typekey, arr)
     // 校验序号数据正确性
     data = data.map(item => {
       let checkVal = item[text]
       let new_item = { ...item }
       let flag = arr.length > 1 ? true : false
-      if (this.checkNumberReg('.', checkVal, flag, item, text)) {
+      if (
+        checkNumberReg({
+          symbol: '.',
+          val: checkVal,
+          checkType: flag,
+          item,
+          gold_type: text,
+          dictionary: 'type',
+          selectedKey
+        })
+      ) {
         delete new_item.is_error_key[text]
         if (flag) delete new_item.is_error_key[typekey]
       } else {
@@ -665,55 +551,6 @@ export default class ExcelRead extends Component {
           is_error_key: obj
         }
       }
-      // if (checkVal && String(checkVal).indexOf('.') != -1) {
-      //   // 表示存在小数点
-      //   let len = String(checkVal).split('.').length
-      //   if (len > 4 || !this.valiColumn1(item, text) && gold_no) {
-      //     // 如果长度大于4, 表示错误
-      //     new_item = {
-      //       ...item,
-      //       is_error_key: {
-      //         ...item.is_error_key,
-      //         [text]: 'number',
-      //         ...gold_no_para
-      //       }
-      //     }
-      //   } else {
-      //     delete item.is_error_key[text]
-      //     delete item.is_error_key[gold_no]
-      //     new_item = {
-      //       ...item,
-      //       is_error_key: {
-      //         ...item.is_error_key
-      //       }
-      //     }
-      //   }
-      // } else {
-      //   // 表示不存在小数点, 那么必须是 1,2，3... 这种正整数结构
-      //   if (
-      //     !isNaN(checkVal) &&
-      //     POSITIVE_INTEGER_REG.test(checkVal) &&
-      //     this.valiColumn1(item, text)
-      //   ) {
-      //     delete item.is_error_key[text]
-      //     delete item.is_error_key[gold_no]
-      //     new_item = {
-      //       ...item,
-      //       is_error_key: {
-      //         ...item.is_error_key
-      //       }
-      //     }
-      //   } else {
-      //     new_item = {
-      //       ...item,
-      //       is_error_key: {
-      //         ...item.is_error_key,
-      //         [text]: 'number',
-      //         ...gold_no_para
-      //       }
-      //     }
-      //   }
-      // }
       if (Object.keys(new_item.is_error_key || {}).length) {
         new_item.is_error = true
       } else new_item.is_error = false
@@ -780,12 +617,6 @@ export default class ExcelRead extends Component {
         }
       } else {
         delete item.is_error_key[text]
-        new_item = {
-          ...item,
-          is_error_key: {
-            ...item.is_error_key
-          }
-        }
       }
       if (Object.keys(new_item.is_error_key || {}).length) {
         new_item.is_error = true
@@ -887,18 +718,6 @@ export default class ExcelRead extends Component {
       selectedRows: selectedRows,
       hasSelected: !!selectedRows.length
     })
-    return
-    // let arr = Array.from(this.state.selectedRows)
-
-    // if (selected) {
-    //   arr.push(record)
-    // } else {
-    //   arr = arr.filter(item => item.uuid !== record.uuid)
-    // }
-    // this.setState({
-    //   selectedRows: arr,
-    //   hasSelected: !!selectedRows.length
-    // })
   }
 
   closeAll = () => {
@@ -935,44 +754,51 @@ export default class ExcelRead extends Component {
     let checkVal = Object.values(operateObj)[0]
     let checkKey = Object.keys(operateObj)[0]
     let switchType = selectedKey[checkKey]
+
     switch (switchType) {
       case 'number':
-        if (checkVal && String(checkVal).indexOf('.') != -1) {
-          // 表示存在小数点
-          let len = String(checkVal).split('.').length
-          if (len > 4) {
-            // 如果长度大于4, 表示错误
-            newData.splice(index, 1, {
-              ...item,
-              ...row
-            })
-          } else {
-            delete item.is_error_key[checkKey]
-            newData.splice(index, 1, {
-              ...item,
-              ...row,
-              is_error_key: {
-                ...item.is_error_key
-              }
-            })
+        let gold_no_param
+        let arr = [],
+          typekey = ''
+        Object.keys(selectedKey).forEach(item => {
+          if (selectedKey[item] === 'number' || selectedKey[item] === 'type') {
+            arr.push(selectedKey[item])
+            if (selectedKey[item] === 'type') typekey = item
           }
+        })
+        let flag = arr.length > 1 ? true : false
+        if (
+          checkNumberReg({
+            symbol: '.',
+            val: checkVal,
+            checkType: flag,
+            item,
+            gold_type: checkKey,
+            dictionary: 'type',
+            selectedKey
+          })
+        ) {
+          delete item.is_error_key[checkKey]
+          newData.splice(index, 1, {
+            ...item,
+            ...row
+          })
+          if (flag) delete item.is_error_key[typekey]
         } else {
-          // 表示不存在小数点, 那么必须是 1,2，3... 这种正整数结构
-          if (!isNaN(checkVal) && POSITIVE_INTEGER_REG.test(checkVal)) {
-            delete item.is_error_key[checkKey]
-            newData.splice(index, 1, {
-              ...item,
-              ...row,
-              is_error_key: {
-                ...item.is_error_key
-              }
-            })
-          } else {
-            newData.splice(index, 1, {
-              ...item,
-              ...row
-            })
+          if (flag)
+            gold_no_param = {
+              [typekey]: 'type'
+            }
+          else gold_no_param = {}
+          let obj = {
+            [checkKey]: 'number',
+            ...gold_no_param
           }
+          newData.splice(index, 1, {
+            ...item,
+            ...row,
+            is_error_key: obj
+          })
         }
         break
       case 'name':
@@ -1035,19 +861,42 @@ export default class ExcelRead extends Component {
       case 'remarks':
         break
       case 'type':
-        if (GENRE_TYPE_REG.test(checkVal)) {
-          delete item.is_error_key[checkKey]
-          newData.splice(index, 1, {
-            ...item,
-            ...row,
-            is_error_key: {
-              ...item.is_error_key
-            }
+        arr = []
+        let numberkey = '',
+          param
+        Object.keys(selectedKey).forEach(item => {
+          if (selectedKey[item] === 'number') {
+            arr.push(selectedKey[item])
+            numberkey = item
+          }
+        })
+        if (
+          checkTypeReg({
+            val: checkVal,
+            checkNumer: flag,
+            item,
+            gold_type: checkKey,
+            dictionary: 'number',
+            selectedKey
           })
-        } else {
+        ) {
+          delete item.is_error_key[checkKey]
+          if (flag) delete item.is_error_key[numberkey]
           newData.splice(index, 1, {
             ...item,
             ...row
+          })
+        } else {
+          if (flag) param = { [numberkey]: 'number' }
+          else param = {}
+          let obj = {
+            [checkKey]: 'type',
+            ...param
+          }
+          newData.splice(index, 1, {
+            ...item,
+            ...row,
+            is_error_key: obj
           })
         }
         break
