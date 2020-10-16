@@ -562,8 +562,7 @@ export default class ExcelRead extends Component {
   handleChangeTypes = text => {
     let { data = [], selectedKey = {} } = this.state
     let arr = [],
-      numberkey = '',
-      param
+      numberkey = ''
     Object.keys(selectedKey).forEach(item => {
       if (selectedKey[item] === 'number') {
         arr.push(selectedKey[item])
@@ -574,7 +573,6 @@ export default class ExcelRead extends Component {
       let checkVal = item[text]
       let new_item = { ...item }
       new_item.typekey = text
-      // let flag = arr.length
       if (
         checkTypeReg({
           val: checkVal,
@@ -586,10 +584,7 @@ export default class ExcelRead extends Component {
         })
       ) {
         delete new_item.is_error_key[text]
-        // if (numberkey) delete new_item.is_error_key[numberkey]
       } else {
-        // if (numberkey) param = { [numberkey]: 'number' }
-        // else param = {}
         new_item.is_error_key[text] = 'type'
       }
       if (Object.keys(new_item.is_error_key || {}).length) {
@@ -713,7 +708,6 @@ export default class ExcelRead extends Component {
 
   handleChangeOrderField = (value, text) => {
     let { data = [], selectedKey = {} } = this.state
-    let gold_no_param
     let arr = [],
       typekey = ''
     Object.keys(selectedKey).forEach(item => {
@@ -739,22 +733,8 @@ export default class ExcelRead extends Component {
         })
       ) {
         delete new_item.is_error_key[text]
-        // if (flag) delete new_item.is_error_key[typekey]
       } else {
-        // if (flag)
-        //   gold_no_param = {
-        //     [typekey]: 'type'
-        //   }
-        // else gold_no_param = {}
         new_item.is_error_key[text] = 'number'
-        // let obj = {
-        //   [text]: 'number',
-        //   ...gold_no_param
-        // }
-        // new_item = {
-        //   ...item,
-        //   is_error_key: obj
-        // }
       }
       if (Object.keys(new_item.is_error_key || {}).length) {
         new_item.is_error = true
@@ -978,7 +958,7 @@ export default class ExcelRead extends Component {
 
   handleSave = (row, operateObj) => {
     let newData = [...this.state.data]
-    const { selectedKey = {}, start_time_format = {} } = this.state
+    const { selectedKey = {}, select_time_format = {} } = this.state
     const index = newData.findIndex(item => row.uuid === item.uuid)
     const item = newData[index]
     let checkVal = Object.values(operateObj)[0]
@@ -1003,50 +983,6 @@ export default class ExcelRead extends Component {
           }
         )
         return
-      // let gold_no_param
-      // let arr = [],
-      //   typekey = ''
-      // Object.keys(selectedKey).forEach(item => {
-      //   if (selectedKey[item] === 'number' || selectedKey[item] === 'type') {
-      //     arr.push(selectedKey[item])
-      //     if (selectedKey[item] === 'type') typekey = item
-      //   }
-      // })
-      // let flag = arr.length > 1 ? true : false
-      // if (
-      //   checkNumberReg({
-      //     symbol: '.',
-      //     val: checkVal,
-      //     checkType: flag,
-      //     item,
-      //     gold_type: checkKey,
-      //     dictionary: 'type',
-      //     selectedKey
-      //   })
-      // ) {
-      //   delete item.is_error_key[checkKey]
-      //   newData.splice(index, 1, {
-      //     ...item,
-      //     ...row
-      //   })
-      //   if (flag) delete item.is_error_key[typekey]
-      // } else {
-      //   if (flag)
-      //     gold_no_param = {
-      //       [typekey]: 'type'
-      //     }
-      //   else gold_no_param = {}
-      //   let obj = {
-      //     [checkKey]: 'number',
-      //     ...gold_no_param
-      //   }
-      //   newData.splice(index, 1, {
-      //     ...item,
-      //     ...row,
-      //     is_error_key: obj
-      //   })
-      // }
-      // break
       case 'name':
         if (checkNameReg(checkVal)) {
           delete item.is_error_key[checkKey]
@@ -1076,45 +1012,6 @@ export default class ExcelRead extends Component {
       case 'remarks':
         break
       case 'type':
-        // arr = []
-        // let numberkey = '',
-        //   param
-        // Object.keys(selectedKey).forEach(item => {
-        //   if (selectedKey[item] === 'number') {
-        //     arr.push(selectedKey[item])
-        //     numberkey = item
-        //   }
-        // })
-        // if (
-        //   checkTypeReg({
-        //     val: checkVal,
-        //     checkNumer: flag,
-        //     item,
-        //     gold_type: checkKey,
-        //     dictionary: 'number',
-        //     selectedKey
-        //   })
-        // ) {
-        //   delete item.is_error_key[checkKey]
-        //   if (flag) delete item.is_error_key[numberkey]
-        //   newData.splice(index, 1, {
-        //     ...item,
-        //     ...row
-        //   })
-        // } else {
-        //   if (flag) param = { [numberkey]: 'number' }
-        //   else param = {}
-        //   let obj = {
-        //     [checkKey]: 'type',
-        //     ...param
-        //   }
-        //   newData.splice(index, 1, {
-        //     ...item,
-        //     ...row,
-        //     is_error_key: obj
-        //   })
-        // }
-        // console.log(row)
         obj[checkKey] = checkVal
         newData = newData.map(item => {
           if (item.uuid === obj.uuid) {
@@ -1130,7 +1027,6 @@ export default class ExcelRead extends Component {
             this.handleChangeTypes(checkKey)
           }
         )
-
         return
         break
       default:
