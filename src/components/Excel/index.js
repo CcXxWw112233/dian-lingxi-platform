@@ -13,10 +13,14 @@ import {
 } from 'antd'
 import XLSX from 'xlsx'
 import {
+  checkNameReg,
   checkNumberReg,
+  checkTimerReg,
   checkTypeReg,
+  compareStartDueTime,
   components,
   GENRE_TYPE_REG,
+  gold_value,
   handleResize,
   POSITIVE_INTEGER_REG,
   ResizableTitle,
@@ -30,6 +34,7 @@ import styles from './index.less'
 import { importExcelWithBoardData } from '../../services/technological'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { connect } from 'dva'
+import { timeToTimestamp } from '../../utils/util'
 const EditableContext = React.createContext()
 
 const EditableRow = ({ form, index, ...props }) => (
@@ -42,8 +47,7 @@ const EditableFormRow = Form.create()(EditableRow)
 
 class EditableCell extends React.Component {
   state = {
-    editing: false,
-    start_time_format: {}
+    editing: false
   }
 
   toggleEdit = () => {
@@ -59,6 +63,7 @@ class EditableCell extends React.Component {
     const { record, handleSave } = this.props
     this.form.validateFields((error, values) => {
       if (error && error[e.currentTarget.id]) {
+        this.setState({ editing: false })
         return
       }
       this.toggleEdit()
@@ -84,7 +89,8 @@ class EditableCell extends React.Component {
         rulesText = '该字段内容不能为空'
         break
     }
-    return editing && is_error && is_error_key.hasOwnProperty(dataIndex) ? (
+    return editing ? (
+      // && is_error && is_error_key.hasOwnProperty(dataIndex)
       <Form.Item style={{ margin: 0 }}>
         {form.getFieldDecorator(dataIndex, {
           rules: [
@@ -105,13 +111,14 @@ class EditableCell extends React.Component {
     ) : (
       <div
         className={
-          is_error &&
-          is_error_key.hasOwnProperty(dataIndex) &&
+          // is_error &&
+          // is_error_key.hasOwnProperty(dataIndex) &&
           styles['editable-cell-value-wrap']
         }
         style={{ paddingRight: 24 }}
         onClick={
-          is_error && is_error_key.hasOwnProperty(dataIndex) && this.toggleEdit
+          // is_error && is_error_key.hasOwnProperty(dataIndex) &&
+          this.toggleEdit
         }
       >
         {children}
@@ -168,7 +175,8 @@ export default class ExcelRead extends Component {
       ],
       selectedRows: [],
       selectedKey: {},
-      hasSelected: false
+      hasSelected: false,
+      select_time_format: {} // 选择的时间格式 { D:'YYYY-MM-DD' }
     }
     this.workBook = null
     this.align_type = {
@@ -312,6 +320,20 @@ export default class ExcelRead extends Component {
         })
         if (flag) this.handleChangeTypes(a)
         break
+      case 'start_time':
+        this.handleChangeTimer({
+          format: 'YYYY-MM-DD',
+          select_name: 'start_time',
+          text
+        })
+        break
+      case 'due_time':
+        this.handleChangeTimer({
+          format: 'YYYY-MM-DD',
+          select_name: 'due_time',
+          text
+        })
+        break
       default:
     }
   }
@@ -332,6 +354,20 @@ export default class ExcelRead extends Component {
       }
       if (item === 'type') {
         this.handleChangeTypes(key)
+      }
+      if (item == 'start_time') {
+        this.handleChangeTimer({
+          format: this.state.select_time_format[key] || 'YYYY-MM-DD',
+          select_name: 'start_time',
+          text: key
+        })
+      }
+      if (item == 'due_time') {
+        this.handleChangeTimer({
+          format: this.state.select_time_format[key] || 'YYYY-MM-DD',
+          select_name: 'due_time',
+          text: key
+        })
       }
     }
   }
@@ -406,7 +442,11 @@ export default class ExcelRead extends Component {
         switch (e) {
           case 'none':
             this.handleClearTableData(text)
-            this.handleCheckValidKeys(['number', 'type'], obj, text)
+            this.handleCheckValidKeys(
+              ['number', 'type', 'start_time', 'due_time'],
+              obj,
+              text
+            )
             break
           case 'name':
             this.handleChangName(text)
@@ -448,20 +488,12 @@ export default class ExcelRead extends Component {
     data = data.map(item => {
       let checkVal = item[text]
       let new_item = { ...item }
-      if (
-        checkVal == '' ||
-        String(checkVal).trimLR() == '' ||
-        String(checkVal).length > 100
-      ) {
-        new_item = {
-          ...item,
-          is_error_key: {
-            ...item.is_error_key,
-            [text]: 'name'
-          }
-        }
-      } else {
+      if (checkNameReg(checkVal)) {
         delete item.is_error_key[text]
+      } else {
+        new_item = {
+          ...item
+        }
       }
       if (Object.keys(new_item.is_error_key || {}).length) {
         new_item.is_error = true
@@ -759,39 +791,54 @@ export default class ExcelRead extends Component {
     return main
   }
 
-  // 操作时间格式
-  handleChangeStartTime = (value, text) => {
-    let { data = [] } = this.state
-    let reg = ''
-    switch (value) {
-      case 'YYYY-MM-DD':
-        reg = YYYYMMDDREG
-        break
-      case 'YYYY-MM-DD HH:mm':
-        reg = YYYYMMDD_HHMM_REG
-        break
-      case 'YYYY/MM/DD':
-        reg = YYYYMMDD_REG_1
-        break
-      case 'YYYY/MM/DD HH:mm':
-        reg = YYYYMMDD_HHMM_REG_1
-        break
-      default:
-        break
-    }
+  /**
+   * 操作时间格式
+   * @param {String} format 表示选择的时间格式 'YYYY-MM-DD'
+   * @param {String} select_name 代表是开始时间还是截止时间
+   * @param {String} text 代表是选择列的表头 A,B,C...
+   */
+  handleChangeTimer = ({ format, select_name, text }) => {
+    let { data = [], selectedKey = {} } = this.state
+    let arr = [],
+      due_time_key = ''
+    // 表示如果选择的是开始时间 那么需要获取截止时间 反之亦然
+    let gold_time = select_name == 'start_time' ? 'due_time' : 'start_time'
+    Object.keys(selectedKey).forEach(item => {
+      if (selectedKey[item] === gold_time) {
+        arr.push(selectedKey[item])
+        due_time_key = item
+      }
+    })
     data = data.map(item => {
       let checkVal = item[text]
       let new_item = { ...item }
-      if (!reg.test(checkVal)) {
+      let gold_value = item[due_time_key]
+      let temp
+      // 表示当前操作并需要检测的元素
+      let checkTimeValue = checkVal ? timeToTimestamp(checkVal) : ''
+      // 表示需要比较进行判断的元素
+      let goldTimeValue = gold_value ? timeToTimestamp(gold_value) : ''
+      // 这里表示 如果当前操作的是截止时间 那么检测的就是截止时间, 所以要将开始和截止时间变量互换
+      if (select_name == 'due_time') {
+        temp = checkTimeValue
+        checkTimeValue = goldTimeValue
+        goldTimeValue = temp
+      }
+      if (
+        !checkTimerReg(format, checkVal) ||
+        (due_time_key && !compareStartDueTime(checkTimeValue, goldTimeValue))
+      ) {
         new_item = {
           ...item,
           is_error_key: {
             ...item.is_error_key,
-            [text]: 'start_time'
+            [text]: select_name,
+            [due_time_key]: gold_time
           }
         }
       } else {
         delete item.is_error_key[text]
+        if (due_time_key) delete item.is_error_key[gold_value]
       }
       if (Object.keys(new_item.is_error_key || {}).length) {
         new_item.is_error = true
@@ -801,42 +848,39 @@ export default class ExcelRead extends Component {
 
     this.setState({
       data,
-      start_time_format: {
-        ...this.state.start_time_format,
-        [text]: value
+      select_time_format: {
+        ...this.state.select_time_format,
+        [text]: format
       }
     })
   }
 
-  renderSelectStartTime = (text, value) => {
-    let main = <></>
-    if (value.includes('start_time') || value.includes('due_time')) {
-      main = (
-        <Select
-          style={{ width: 120, marginTop: '5px' }}
-          size="small"
-          placeholder="请选择"
-          onChange={value => {
-            this.handleChangeStartTime(value, text)
-          }}
-          key={text}
-        >
-          <Select.Option title="YYYY-MM-DD" key="YYYY-MM-DD">
-            YYYY-MM-DD
-          </Select.Option>
-          <Select.Option title="YYYY-MM-DD HH:mm" key="YYYY-MM-DD HH:mm">
-            YYYY-MM-DD HH:mm
-          </Select.Option>
-          <Select.Option title="YYYY/MM/DD" key="YYYY/MM/DD">
-            YYYY/MM/DD
-          </Select.Option>
-          <Select.Option title="YYYY/MM/DD HH:mm" key="YYYY/MM/DD HH:mm">
-            YYYY/MM/DD HH:mm
-          </Select.Option>
-        </Select>
-      )
-    }
-    return main
+  renderSelectTime = ({ select_name, text }) => {
+    return (
+      <Select
+        style={{ width: 120, marginTop: '5px' }}
+        size="small"
+        placeholder="请选择"
+        onChange={format => {
+          this.handleChangeTimer({ format, select_name, text })
+        }}
+        key={select_name}
+        defaultValue={'YYYY-MM-DD'}
+      >
+        <Select.Option title="YYYY-MM-DD" key="YYYY-MM-DD">
+          YYYY-MM-DD
+        </Select.Option>
+        <Select.Option title="YYYY-MM-DD HH:mm" key="YYYY-MM-DD HH:mm">
+          YYYY-MM-DD HH:mm
+        </Select.Option>
+        <Select.Option title="YYYY/MM/DD" key="YYYY/MM/DD">
+          YYYY/MM/DD
+        </Select.Option>
+        <Select.Option title="YYYY/MM/DD HH:mm" key="YYYY/MM/DD HH:mm">
+          YYYY/MM/DD HH:mm
+        </Select.Option>
+      </Select>
+    )
   }
 
   tableHeader = (text, data) => {
@@ -848,7 +892,7 @@ export default class ExcelRead extends Component {
         <Select
           size="small"
           placeholder="请选择"
-          style={{ width: 100 }}
+          style={{ width: 100, marginRight: '5px' }}
           onChange={this.selectText.bind(this, text)}
         >
           {this.state.tableDefaultKeys.map(item => {
@@ -865,9 +909,10 @@ export default class ExcelRead extends Component {
         </Select>
         {selectedKey[text] == 'number' &&
           this.renderDiffSelectField(text, value)}
-        {(selectedKey[text] == 'start_time' ||
-          selectedKey[text] == 'due_time') &&
-          this.renderSelectStartTime(text, value)}
+        {selectedKey[text] == 'start_time' &&
+          this.renderSelectTime({ select_name: 'start_time', text })}
+        {selectedKey[text] == 'due_time' &&
+          this.renderSelectTime({ select_name: 'due_time', text })}
       </>
     )
     return head
@@ -1003,54 +1048,23 @@ export default class ExcelRead extends Component {
       // }
       // break
       case 'name':
-        if (
-          checkVal == '' ||
-          String(checkVal).trimLR() == '' ||
-          String(checkVal).length > 100
-        ) {
+        if (checkNameReg(checkVal)) {
+          delete item.is_error_key[checkKey]
+        } else {
           newData.splice(index, 1, {
             ...item,
             ...row
-          })
-        } else {
-          delete item.is_error_key[checkKey]
-          newData.splice(index, 1, {
-            ...item,
-            ...row,
-            is_error_key: {
-              ...item.is_error_key
-            }
           })
         }
         break
       case 'start_time':
       case 'due_time':
-        let start_item_reg = ''
-        let time_format = start_time_format[checkKey]
-        switch (time_format) {
-          case 'YYYY-MM-DD':
-            start_item_reg = YYYYMMDDREG
-            break
-          case 'YYYY-MM-DD HH:mm':
-            start_item_reg = YYYYMMDD_HHMM_REG
-            break
-          case 'YYYY/MM/DD':
-            start_item_reg = YYYYMMDD_REG_1
-            break
-          case 'YYYY/MM/DD HH:mm':
-            start_item_reg = YYYYMMDD_HHMM_REG_1
-            break
-          default:
-            break
-        }
-        if (start_item_reg.test(checkVal)) {
+        let time_format = select_time_format[checkKey]
+        if (checkTimerReg(time_format, checkVal)) {
           delete item.is_error_key[checkKey]
           newData.splice(index, 1, {
             ...item,
-            ...row,
-            is_error_key: {
-              ...item.is_error_key
-            }
+            ...row
           })
         } else {
           newData.splice(index, 1, {

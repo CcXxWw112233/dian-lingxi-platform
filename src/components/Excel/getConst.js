@@ -148,7 +148,7 @@ export const checkNumberReg = ({
   selectedKey
 }) => {
   let len = String(val).split(symbol).length
-  if (!val) return false
+  if (!val || String(val).trimLR() == '') return false
   if (checkType) {
     if (String(val).indexOf(symbol) != -1) {
       // 表示有小数点的时候
@@ -192,6 +192,7 @@ export const checkNumberReg = ({
  * @param {String} gold_type 表头 A,B,C,D....
  * @param {String} dictionary 需要比较的列 A,B,C
  * @param {Object} selectedKey { A:number,B:type... }
+ * @returns {Boolean} true 表示校验通过
  */
 export const checkTypeReg = ({
   val,
@@ -201,7 +202,7 @@ export const checkTypeReg = ({
   dictionary,
   selectedKey
 }) => {
-  if (!val) return false
+  if (!val || String(val).trimLR() == '') return false
   if (checkNumer) {
     if (
       val == '' ||
@@ -215,6 +216,67 @@ export const checkTypeReg = ({
     if (val == '' || String(val).trimLR() == '' || !GENRE_TYPE_REG.test(val)) {
       return false
     }
+  }
+  return true
+}
+
+/**
+ * 校验名称
+ * @param {String} val 校验的value值
+ * @returns {Boolean} true 表示校验通过
+ */
+export const checkNameReg = val => {
+  if (val == '' || String(val).trimLR() == '' || String(val).length > 100) {
+    return false
+  }
+  return true
+}
+
+/**
+ * 校验时间格式
+ * @param {String} time_format 时间类型
+ * @returns {Boolean} true表示验证通过
+ */
+export const checkTimerReg = (time_format, val) => {
+  if (val == '') return true
+  let time_reg = ''
+  switch (time_format) {
+    case 'YYYY-MM-DD':
+      time_reg = YYYYMMDDREG
+      break
+    case 'YYYY-MM-DD HH:mm':
+      time_reg = YYYYMMDD_HHMM_REG
+      break
+    case 'YYYY/MM/DD':
+      time_reg = YYYYMMDD_REG_1
+      break
+    case 'YYYY/MM/DD HH:mm':
+      time_reg = YYYYMMDD_HHMM_REG_1
+      break
+    default:
+      break
+  }
+  return time_reg.test(val)
+}
+
+/**
+ * 比较开始和结束时间
+ * @param {*} start_time
+ * @param {*} due_time
+ * @returns {Boolean} true表示验证通过
+ */
+export const compareStartDueTime = (start_time, due_time) => {
+  if (!start_time || !due_time) {
+    return true
+  }
+  const newStartTime =
+    start_time.toString().length > 10
+      ? Number(start_time) / 1000
+      : Number(start_time)
+  const newDueTime =
+    due_time.toString().length > 10 ? Number(due_time) / 1000 : Number(due_time)
+  if (newStartTime >= newDueTime) {
+    return false
   }
   return true
 }
