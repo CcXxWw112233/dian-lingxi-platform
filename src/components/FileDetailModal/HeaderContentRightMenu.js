@@ -50,7 +50,7 @@ import SaveAsNewVersionFile from './component/SaveAsNewVersionFile'
 import { getFolderList } from '@/services/technological/file'
 import { currentNounPlanFilterName } from '../../utils/businessFunction'
 import { FILES } from '../../globalset/js/constant'
-import Event from '../../utils/event'
+import DEvent from '../../utils/event'
 
 @connect(mapStateToProps)
 export default class HeaderContentRightMenu extends Component {
@@ -450,7 +450,7 @@ export default class HeaderContentRightMenu extends Component {
 
   // 下载文件
   handleFileDownload({ filePreviewCurrentResourceId, pdfDownLoadSrc }) {
-    Event.firEvent('pdfSave', {})
+    DEvent.firEvent('pdfSave', {})
     return
     if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
@@ -626,7 +626,7 @@ export default class HeaderContentRightMenu extends Component {
   }
 
   handleSaveAs = () => {
-    Event.firEvent('pdfSaveAs', {})
+    DEvent.firEvent('pdfSaveAs', {})
   }
 
   saveAsMenu = () => {
