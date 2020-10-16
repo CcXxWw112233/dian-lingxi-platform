@@ -1,4 +1,4 @@
-function Event() {
+function DEvent() {
   this.events = {}
   this.listenEvent = {}
   let fireEvent = (evt, data) => {
@@ -40,5 +40,5 @@ function Event() {
     this.events[evtName] = null
   }
 }
-let evt = new Event()
+let evt = new DEvent()
 export default evt

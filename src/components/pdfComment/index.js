@@ -33,7 +33,7 @@ import { NoteIcon } from './component/noteIcon'
 import axios from 'axios'
 import { setRequestHeaderBaseInfo } from '../../utils/businessFunction'
 import { REQUEST_DOMAIN_FILE } from '@/globalset/js/constant'
-import Event from '../../utils/event'
+import DEvent from '../../utils/event'
 // import scr from './worker'
 const DefineIcon = Icon.createFromIconfontCN({
   scriptUrl: '//at.alicdn.com/t/font_779568_41vfncsv7yu.js'
@@ -204,11 +204,11 @@ export default class PdfComment extends React.Component {
     if (!this.mounted) return
     this.InitAllData(true)
 
-    Event.on('pdfSave', () => {
+    DEvent.on('pdfSave', () => {
       this.exportPdf('export')
     })
 
-    Event.on('pdfSaveAs', () => {
+    DEvent.on('pdfSaveAs', () => {
       this.exportPdf('save')
     })
   }
