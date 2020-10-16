@@ -1621,7 +1621,12 @@ export default class PdfComment extends React.Component {
       // message.success('导出成功');
       this.exportModal.destroy()
       if (type === 'export') {
-        pdf.save(this.props.file_name)
+        pdf.save(
+          this.props.file_name.substr(
+            0,
+            this.props.file_name.lastIndexOf('.')
+          ) + '.pdf'
+        )
       } else if (type === 'save') {
         this.saveOutput(pdf.output('blob'))
       }
