@@ -179,6 +179,7 @@ export const checkNumberReg = ({
       if (!val) {
         return false
       }
+      return false
     }
   }
   return true

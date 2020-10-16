@@ -531,6 +531,7 @@ export default class ExcelRead extends Component {
             let n = item[item.numberkey]
             if (n) {
               n = n.split(splitKey)
+              // 有多少个小数点
               let l = n.length - 1
               // 拿到上一级的序号，比如 1.1.1.1 拿到1.1.1
               let parent = n
@@ -780,19 +781,19 @@ export default class ExcelRead extends Component {
   handleChangeTimer = ({ format, select_name, text }) => {
     let { data = [], selectedKey = {} } = this.state
     let arr = [],
-      due_time_key = ''
+      timer_key = ''
     // 表示如果选择的是开始时间 那么需要获取截止时间 反之亦然
     let gold_time = select_name == 'start_time' ? 'due_time' : 'start_time'
     Object.keys(selectedKey).forEach(item => {
       if (selectedKey[item] === gold_time) {
         arr.push(selectedKey[item])
-        due_time_key = item
+        timer_key = item
       }
     })
     data = data.map(item => {
       let checkVal = item[text]
       let new_item = { ...item }
-      let gold_value = item[due_time_key]
+      let gold_value = item[timer_key]
       let temp
       // 表示当前操作并需要检测的元素
       let checkTimeValue = checkVal ? timeToTimestamp(checkVal) : ''
@@ -806,26 +807,25 @@ export default class ExcelRead extends Component {
       }
       if (
         !checkTimerReg(format, checkVal) ||
-        (due_time_key && !compareStartDueTime(checkTimeValue, goldTimeValue))
+        (timer_key && !compareStartDueTime(checkTimeValue, goldTimeValue))
       ) {
         new_item = {
           ...item,
           is_error_key: {
             ...item.is_error_key,
             [text]: select_name,
-            [due_time_key]: gold_time
+            [timer_key]: gold_time
           }
         }
       } else {
         delete item.is_error_key[text]
-        if (due_time_key) delete item.is_error_key[gold_value]
+        if (timer_key) delete item.is_error_key[gold_value]
       }
       if (Object.keys(new_item.is_error_key || {}).length) {
         new_item.is_error = true
       } else new_item.is_error = false
       return new_item
     })
-
     this.setState({
       data,
       select_time_format: {
@@ -994,20 +994,61 @@ export default class ExcelRead extends Component {
         }
         break
       case 'start_time':
+        obj[checkKey] = checkVal
+        newData = newData.map(item => {
+          if (item.uuid === obj.uuid) {
+            item = obj
+          }
+          return item
+        })
+        this.setState(
+          {
+            data: newData
+          },
+          () => {
+            this.handleChangeTimer({
+              format: this.state.select_time_format[checkKey] || 'YYYY-MM-DD',
+              select_name: 'start_time',
+              text: checkKey
+            })
+          }
+        )
+        return
+        break
       case 'due_time':
-        let time_format = select_time_format[checkKey]
-        if (checkTimerReg(time_format, checkVal)) {
-          delete item.is_error_key[checkKey]
-          newData.splice(index, 1, {
-            ...item,
-            ...row
-          })
-        } else {
-          newData.splice(index, 1, {
-            ...item,
-            ...row
-          })
-        }
+        obj[checkKey] = checkVal
+        newData = newData.map(item => {
+          if (item.uuid === obj.uuid) {
+            item = obj
+          }
+          return item
+        })
+        this.setState(
+          {
+            data: newData
+          },
+          () => {
+            this.handleChangeTimer({
+              format: this.state.select_time_format[checkKey] || 'YYYY-MM-DD',
+              select_name: 'due_time',
+              text: checkKey
+            })
+          }
+        )
+        return
+        // let time_format = select_time_format[checkKey]
+        // if (checkTimerReg(time_format, checkVal)) {
+        //   delete item.is_error_key[checkKey]
+        //   newData.splice(index, 1, {
+        //     ...item,
+        //     ...row
+        //   })
+        // } else {
+        //   newData.splice(index, 1, {
+        //     ...item,
+        //     ...row
+        //   })
+        // }
         break
       case 'remarks':
         break
