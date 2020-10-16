@@ -44,8 +44,7 @@ const EditableFormRow = Form.create()(EditableRow)
 
 class EditableCell extends React.Component {
   state = {
-    editing: false,
-    start_time_format: {}
+    editing: false
   }
 
   toggleEdit = () => {
@@ -61,6 +60,7 @@ class EditableCell extends React.Component {
     const { record, handleSave } = this.props
     this.form.validateFields((error, values) => {
       if (error && error[e.currentTarget.id]) {
+        this.setState({ editing: false })
         return
       }
       this.toggleEdit()
@@ -170,7 +170,8 @@ export default class ExcelRead extends Component {
       ],
       selectedRows: [],
       selectedKey: {},
-      hasSelected: false
+      hasSelected: false,
+      start_time_format: {} // 选择的时间格式 { D:'YYYY-MM-DD' }
     }
     this.workBook = null
   }
@@ -284,6 +285,10 @@ export default class ExcelRead extends Component {
     switch (type) {
       case 'number':
         this.handleChangeOrderField('', text)
+        break
+      case 'start_time':
+      case 'due_time':
+        this.handleChangeStartTime('YYYY-MM-DD', text)
         break
       default:
     }
@@ -584,7 +589,7 @@ export default class ExcelRead extends Component {
     data = data.map(item => {
       let checkVal = item[text]
       let new_item = { ...item }
-      if (!checkTimerReg(value).test(checkVal)) {
+      if (!checkTimerReg(value, checkVal)) {
         new_item = {
           ...item,
           is_error_key: {
@@ -622,6 +627,7 @@ export default class ExcelRead extends Component {
             this.handleChangeStartTime(value, text)
           }}
           key={text}
+          defaultValue={'YYYY-MM-DD'}
         >
           <Select.Option title="YYYY-MM-DD" key="YYYY-MM-DD">
             YYYY-MM-DD
@@ -791,7 +797,7 @@ export default class ExcelRead extends Component {
       case 'start_time':
       case 'due_time':
         let time_format = start_time_format[checkKey]
-        if (checkTimerReg(time_format).test(checkVal)) {
+        if (checkTimerReg(time_format, checkVal)) {
           delete item.is_error_key[checkKey]
           newData.splice(index, 1, {
             ...item,

@@ -235,9 +235,9 @@ export const checkNameReg = val => {
 /**
  * 校验时间格式
  * @param {String} time_format 时间类型
- * @returns {RegExp} 返回匹配的正则规则
+ * @returns {Boolean} true表示验证通过
  */
-export const checkTimerReg = time_format => {
+export const checkTimerReg = (time_format, val) => {
   let time_reg = ''
   switch (time_format) {
     case 'YYYY-MM-DD':
@@ -255,7 +255,7 @@ export const checkTimerReg = time_format => {
     default:
       break
   }
-  return time_reg
+  return time_reg.test(val)
 }
 
 /**
