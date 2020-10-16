@@ -171,6 +171,26 @@ export default class ExcelRead extends Component {
       hasSelected: false
     }
     this.workBook = null
+    this.align_type = {
+      0: ['里程碑', '任务'],
+      1: ['子里程碑', '任务', '子任务'],
+      2: ['任务', '子任务'],
+      3: ['子任务']
+    }
+    this.typeValid = {
+      任务: {
+        1: ['里程碑'],
+        2: ['子里程碑']
+      },
+      子里程碑: {
+        1: ['里程碑']
+      },
+      子任务: {
+        1: ['任务'],
+        2: ['任务'],
+        3: ['任务']
+      }
+    }
   }
 
   addFile = () => {
@@ -278,10 +298,19 @@ export default class ExcelRead extends Component {
     return Math.floor(Math.random() * 10000000 + 1)
   }
   // 触发第一次验证
-  dispatchTextHandle = (text, type) => {
+  dispatchTextHandle = (text, type, columns) => {
+    let flag = false
     switch (type) {
       case 'number':
         this.handleChangeOrderField('', text)
+        let a
+        Object.keys(columns).forEach(item => {
+          if (columns[item] === 'type') {
+            flag = true
+            a = item
+          }
+        })
+        if (flag) this.handleChangeTypes(a)
         break
       default:
     }
@@ -329,7 +358,7 @@ export default class ExcelRead extends Component {
       () => {
         this.toFilterDefaultKey()
         const arr = Object.values(obj)
-        this.dispatchTextHandle(text, e)
+        this.dispatchTextHandle(text, e, obj)
         if (arr.includes('number') || arr.includes('type')) {
           columns = columns.map(item => {
             if (item.dataIndex == 'number' || item.dataIndex == 'type') {
@@ -444,6 +473,59 @@ export default class ExcelRead extends Component {
     })
   }
 
+  // 校验序号与类型的组合
+  validNumberOfTypes = (data, column, splitKey) => {
+    let arr = []
+    data.forEach((item, index) => {
+      let value = item[column]
+      if (index === 0) {
+        // 第一条数据，必须是里程碑或者任务
+        if (!this.align_type[0].includes(value)) {
+          item.is_error_key[column] = 'type'
+        }
+      } else {
+        let prev = data[index - 1]
+        let prevValue = prev[column]
+        let parentKey = item.parentKey || []
+        if (item.is_error_key[column] !== 'type' && parentKey.length) {
+          // 如果本来就报错了，说明一直是有问题的，就不处理了
+          // 检查上一级是否匹配
+          // console.log(value, this.typeValid[value], prevValue)
+          if (!parentKey.includes(value)) {
+            item.is_error_key[column] = 'type'
+          } else {
+            delete item.is_error_key[column]
+            let volid = this.typeValid[value]
+            let n = item[item.numberkey]
+            if (n) {
+              n = n.split(splitKey)
+              let l = n.length - 1
+              // 拿到上一级的序号，比如 1.1.1.1 拿到1.1.1
+              let parent = n
+              parent.length = parent.length - 1
+              // 拿到上一级序号的数据
+              let obj = data.find(col => {
+                return col[col.numberkey] === parent.join(splitKey)
+              })
+              if (obj) {
+                if (volid[l] && volid[l].includes(obj[column])) {
+                  delete item.is_error_key[column]
+                } else {
+                  item.is_error_key[column] = 'type'
+                }
+              }
+            }
+          }
+        }
+      }
+      if (Object.keys(item.is_error_key || {}).length) {
+        item.is_error = true
+      } else item.is_error = false
+      arr.push(item)
+    })
+    return arr
+  }
+
   // 类型格式校验
   handleChangeTypes = text => {
     let { data = [], selectedKey = {} } = this.state
@@ -459,11 +541,12 @@ export default class ExcelRead extends Component {
     data = data.map(item => {
       let checkVal = item[text]
       let new_item = { ...item }
-      let flag = arr.length
+      new_item.typekey = text
+      // let flag = arr.length
       if (
         checkTypeReg({
           val: checkVal,
-          checkNumer: flag,
+          checkNumer: !!numberkey,
           item,
           gold_type: text,
           dictionary: 'number',
@@ -471,21 +554,21 @@ export default class ExcelRead extends Component {
         })
       ) {
         delete new_item.is_error_key[text]
-        if (flag) delete new_item.is_error_key[numberkey]
+        // if (numberkey) delete new_item.is_error_key[numberkey]
       } else {
-        if (flag) param = { [numberkey]: 'number' }
-        else param = {}
-        let obj = {
-          [text]: 'type',
-          ...param
-        }
-        new_item.is_error_key = obj
+        // if (numberkey) param = { [numberkey]: 'number' }
+        // else param = {}
+        new_item.is_error_key[text] = 'type'
       }
       if (Object.keys(new_item.is_error_key || {}).length) {
         new_item.is_error = true
       } else new_item.is_error = false
       return new_item
     })
+    // 如果存在序号字段则进行二次过滤
+    if (numberkey) {
+      data = this.validNumberOfTypes(data, text, '.')
+    }
     this.setState({
       data
     })
@@ -505,6 +588,95 @@ export default class ExcelRead extends Component {
     this.setState({
       tableDefaultKeys: arr
     })
+  }
+
+  // 检查上一个数据和当前数据是否层级合理
+  checkPrevWithNow = (prev, val, splitKey) => {
+    if (!prev || !val) return false
+    let prevSplitArr = prev.split(splitKey)
+    let splitArr = val.split(splitKey)
+    let len = prevSplitArr.length
+    let length = splitArr.length
+    let keys = {
+      2: [1, 2, 3, 4],
+      3: [2, 3],
+      4: [3, 4]
+    }
+    switch (length) {
+      case 2:
+        // 如果上一个数据满足定义的规则
+        if (keys[length].includes(len)) {
+          // 如果上一个是1.1.1.1 现在是1.2则验证通过 但是如果是1.1.1.1 - 2.1 则不通过
+          if (len > 1 && splitArr[0] !== prevSplitArr[0]) {
+            return false
+          } else return true
+        } else return false
+      case 3:
+      case 4:
+        if (keys[length].includes(len)) {
+          let flag = true
+          if (len === 3 || len === 2) {
+            flag = splitArr[1] === prevSplitArr[1]
+          }
+          if (len === 4) {
+            flag =
+              splitArr[1] === prevSplitArr[1] && splitArr[2] === prevSplitArr[2]
+          }
+          return flag
+        }
+        break
+      default:
+    }
+  }
+
+  getFloorNumber = (data, column, splitKey) => {
+    // let { data } = this.state
+    let checkInteger = 0 // 正在验证的整数
+    let arr = []
+    data.forEach((item, index) => {
+      let value = item[column]
+      let number = +value
+      // 保存序号属于哪个字段 ABC
+      item.numberkey = column
+      // 整数,整数的情况下不需要验证
+      if (!isNaN(number) && (number | 0) === number) {
+        // 添加合理的上级
+        checkInteger = number
+        // item.parentKey = this.align_type[0]
+      } else if (item.is_error_key[column] !== 'number' && value) {
+        // 判断这条数据是不是已经是错的，如果是错的，就不处理了并且不处理第一条数据
+        // 不是整数。需要验证
+        if (index > 0) {
+          if (value.indexOf(splitKey) !== -1) {
+            let splitArr = value.split(splitKey)
+            let len = splitArr.length // 截取的序号长度
+            item.parentKey = this.align_type[len - 1]
+            // 保存数据有几个点
+            item.numberlength = len - 1
+            let prev = data[index - 1] // 上一个数据 item是当前数据
+            // 判断上一个数据和这个数据是否合理, 如果检验通过
+            if (this.checkPrevWithNow(prev[column], value, splitKey)) {
+              delete item.is_error_key[column]
+            } else {
+              // 不通过
+              item.is_error_key[column] = 'number'
+            }
+            if (+splitArr[0] !== checkInteger) {
+              // 判断当前数据与整数数据抑制 例 1 下面不能出现 2.1
+              item.is_error_key[column] = 'number'
+            }
+          }
+        } else if (index === 0) {
+          // 是第一条数据，直接报错，因为不是整数
+          item.is_error_key[column] = 'number'
+        }
+      }
+      if (Object.keys(item.is_error_key).length) {
+        item.is_error = true
+      } else item.is_error = false
+      arr.push(item)
+    })
+    return arr
   }
 
   handleChangeOrderField = (value, text) => {
@@ -527,7 +699,7 @@ export default class ExcelRead extends Component {
         checkNumberReg({
           symbol: '.',
           val: checkVal,
-          checkType: flag,
+          checkType: false,
           item,
           gold_type: text,
           dictionary: 'type',
@@ -535,27 +707,30 @@ export default class ExcelRead extends Component {
         })
       ) {
         delete new_item.is_error_key[text]
-        if (flag) delete new_item.is_error_key[typekey]
+        // if (flag) delete new_item.is_error_key[typekey]
       } else {
-        if (flag)
-          gold_no_param = {
-            [typekey]: 'type'
-          }
-        else gold_no_param = {}
-        let obj = {
-          [text]: 'number',
-          ...gold_no_param
-        }
-        new_item = {
-          ...item,
-          is_error_key: obj
-        }
+        // if (flag)
+        //   gold_no_param = {
+        //     [typekey]: 'type'
+        //   }
+        // else gold_no_param = {}
+        new_item.is_error_key[text] = 'number'
+        // let obj = {
+        //   [text]: 'number',
+        //   ...gold_no_param
+        // }
+        // new_item = {
+        //   ...item,
+        //   is_error_key: obj
+        // }
       }
       if (Object.keys(new_item.is_error_key || {}).length) {
         new_item.is_error = true
       } else new_item.is_error = false
       return new_item
     })
+    // 二次过滤-验证序号是否符合要求
+    data = this.getFloorNumber(data, text, '.')
     this.setState({
       data
     })
@@ -709,7 +884,17 @@ export default class ExcelRead extends Component {
       new_item = { ...item, id: index + 1, number: index + 1 }
       return new_item
     })
-    this.setState({ data, selectedRows: [], hasSelected: false })
+    this.setState({ data, selectedRows: [], hasSelected: false }, () => {
+      let { selectedKey } = this.state
+      Object.keys(selectedKey).forEach(item => {
+        if (selectedKey[item] === 'number') {
+          this.handleChangeOrderField('', item)
+        }
+        if (selectedKey[item] === 'type') {
+          this.handleChangeTypes(item)
+        }
+      })
+    })
   }
 
   // 选择行的回调
@@ -747,60 +932,76 @@ export default class ExcelRead extends Component {
   }
 
   handleSave = (row, operateObj) => {
-    const newData = [...this.state.data]
+    let newData = [...this.state.data]
     const { selectedKey = {}, start_time_format = {} } = this.state
     const index = newData.findIndex(item => row.uuid === item.uuid)
     const item = newData[index]
     let checkVal = Object.values(operateObj)[0]
     let checkKey = Object.keys(operateObj)[0]
     let switchType = selectedKey[checkKey]
-
+    let obj = { ...row }
     switch (switchType) {
       case 'number':
-        let gold_no_param
-        let arr = [],
-          typekey = ''
-        Object.keys(selectedKey).forEach(item => {
-          if (selectedKey[item] === 'number' || selectedKey[item] === 'type') {
-            arr.push(selectedKey[item])
-            if (selectedKey[item] === 'type') typekey = item
+        obj[checkKey] = checkVal
+        newData = newData.map(item => {
+          if (item.uuid === obj.uuid) {
+            item = obj
           }
+          return item
         })
-        let flag = arr.length > 1 ? true : false
-        if (
-          checkNumberReg({
-            symbol: '.',
-            val: checkVal,
-            checkType: flag,
-            item,
-            gold_type: checkKey,
-            dictionary: 'type',
-            selectedKey
-          })
-        ) {
-          delete item.is_error_key[checkKey]
-          newData.splice(index, 1, {
-            ...item,
-            ...row
-          })
-          if (flag) delete item.is_error_key[typekey]
-        } else {
-          if (flag)
-            gold_no_param = {
-              [typekey]: 'type'
-            }
-          else gold_no_param = {}
-          let obj = {
-            [checkKey]: 'number',
-            ...gold_no_param
+        this.setState(
+          {
+            data: newData
+          },
+          () => {
+            this.handleChangeOrderField('', checkKey)
           }
-          newData.splice(index, 1, {
-            ...item,
-            ...row,
-            is_error_key: obj
-          })
-        }
-        break
+        )
+        return
+      // let gold_no_param
+      // let arr = [],
+      //   typekey = ''
+      // Object.keys(selectedKey).forEach(item => {
+      //   if (selectedKey[item] === 'number' || selectedKey[item] === 'type') {
+      //     arr.push(selectedKey[item])
+      //     if (selectedKey[item] === 'type') typekey = item
+      //   }
+      // })
+      // let flag = arr.length > 1 ? true : false
+      // if (
+      //   checkNumberReg({
+      //     symbol: '.',
+      //     val: checkVal,
+      //     checkType: flag,
+      //     item,
+      //     gold_type: checkKey,
+      //     dictionary: 'type',
+      //     selectedKey
+      //   })
+      // ) {
+      //   delete item.is_error_key[checkKey]
+      //   newData.splice(index, 1, {
+      //     ...item,
+      //     ...row
+      //   })
+      //   if (flag) delete item.is_error_key[typekey]
+      // } else {
+      //   if (flag)
+      //     gold_no_param = {
+      //       [typekey]: 'type'
+      //     }
+      //   else gold_no_param = {}
+      //   let obj = {
+      //     [checkKey]: 'number',
+      //     ...gold_no_param
+      //   }
+      //   newData.splice(index, 1, {
+      //     ...item,
+      //     ...row,
+      //     is_error_key: obj
+      //   })
+      // }
+      // break
       case 'name':
         if (
           checkVal == '' ||
@@ -861,44 +1062,62 @@ export default class ExcelRead extends Component {
       case 'remarks':
         break
       case 'type':
-        arr = []
-        let numberkey = '',
-          param
-        Object.keys(selectedKey).forEach(item => {
-          if (selectedKey[item] === 'number') {
-            arr.push(selectedKey[item])
-            numberkey = item
+        // arr = []
+        // let numberkey = '',
+        //   param
+        // Object.keys(selectedKey).forEach(item => {
+        //   if (selectedKey[item] === 'number') {
+        //     arr.push(selectedKey[item])
+        //     numberkey = item
+        //   }
+        // })
+        // if (
+        //   checkTypeReg({
+        //     val: checkVal,
+        //     checkNumer: flag,
+        //     item,
+        //     gold_type: checkKey,
+        //     dictionary: 'number',
+        //     selectedKey
+        //   })
+        // ) {
+        //   delete item.is_error_key[checkKey]
+        //   if (flag) delete item.is_error_key[numberkey]
+        //   newData.splice(index, 1, {
+        //     ...item,
+        //     ...row
+        //   })
+        // } else {
+        //   if (flag) param = { [numberkey]: 'number' }
+        //   else param = {}
+        //   let obj = {
+        //     [checkKey]: 'type',
+        //     ...param
+        //   }
+        //   newData.splice(index, 1, {
+        //     ...item,
+        //     ...row,
+        //     is_error_key: obj
+        //   })
+        // }
+        // console.log(row)
+        obj[checkKey] = checkVal
+        newData = newData.map(item => {
+          if (item.uuid === obj.uuid) {
+            item = obj
           }
+          return item
         })
-        if (
-          checkTypeReg({
-            val: checkVal,
-            checkNumer: flag,
-            item,
-            gold_type: checkKey,
-            dictionary: 'number',
-            selectedKey
-          })
-        ) {
-          delete item.is_error_key[checkKey]
-          if (flag) delete item.is_error_key[numberkey]
-          newData.splice(index, 1, {
-            ...item,
-            ...row
-          })
-        } else {
-          if (flag) param = { [numberkey]: 'number' }
-          else param = {}
-          let obj = {
-            [checkKey]: 'type',
-            ...param
+        this.setState(
+          {
+            data: newData
+          },
+          () => {
+            this.handleChangeTypes(checkKey)
           }
-          newData.splice(index, 1, {
-            ...item,
-            ...row,
-            is_error_key: obj
-          })
-        }
+        )
+
+        return
         break
       default:
         break

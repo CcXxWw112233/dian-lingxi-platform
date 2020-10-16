@@ -176,7 +176,7 @@ export const checkNumberReg = ({
       }
     } else {
       // 表示没有小数点的时候
-      if (isNaN(val) && !POSITIVE_INTEGER_REG.test(val)) {
+      if (!val) {
         return false
       }
     }
