@@ -326,6 +326,20 @@ export default class ExcelRead extends Component {
       if (item === 'type') {
         this.handleChangeTypes(key)
       }
+      if (item == 'start_time') {
+        this.handleChangeTimer({
+          format: this.state.select_time_format[key] || 'YYYY-MM-DD',
+          select_name: 'start_time',
+          text: key
+        })
+      }
+      if (item == 'due_time') {
+        this.handleChangeTimer({
+          format: this.state.select_time_format[key] || 'YYYY-MM-DD',
+          select_name: 'due_time',
+          text: key
+        })
+      }
     }
   }
 
@@ -399,7 +413,11 @@ export default class ExcelRead extends Component {
         switch (e) {
           case 'none':
             this.handleClearTableData(text)
-            this.handleCheckValidKeys(['number', 'type'], obj, text)
+            this.handleCheckValidKeys(
+              ['number', 'type', 'start_time', 'due_time'],
+              obj,
+              text
+            )
             break
           case 'name':
             this.handleChangName(text)
@@ -608,6 +626,7 @@ export default class ExcelRead extends Component {
     let { data = [], selectedKey = {} } = this.state
     let arr = [],
       due_time_key = ''
+    // 表示如果选择的是开始时间 那么需要获取截止时间 反之亦然
     let gold_time = select_name == 'start_time' ? 'due_time' : 'start_time'
     Object.keys(selectedKey).forEach(item => {
       if (selectedKey[item] === gold_time) {
@@ -620,8 +639,11 @@ export default class ExcelRead extends Component {
       let new_item = { ...item }
       let gold_value = item[due_time_key]
       let temp
+      // 表示当前操作并需要检测的元素
       let checkTimeValue = checkVal ? timeToTimestamp(checkVal) : ''
+      // 表示需要比较进行判断的元素
       let goldTimeValue = gold_value ? timeToTimestamp(gold_value) : ''
+      // 这里表示 如果当前操作的是截止时间 那么检测的就是截止时间, 所以要将开始和截止时间变量互换
       if (select_name == 'due_time') {
         temp = checkTimeValue
         checkTimeValue = goldTimeValue
