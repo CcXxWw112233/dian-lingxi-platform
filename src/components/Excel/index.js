@@ -310,14 +310,31 @@ export default class ExcelRead extends Component {
     switch (type) {
       case 'number':
         this.handleChangeOrderField('', text)
-        let a
+        let a,
+          isCheckTime = false,
+          timeKey,
+          select_name
         Object.keys(columns).forEach(item => {
           if (columns[item] === 'type') {
             flag = true
             a = item
           }
+          if (columns[item] === 'start_time' || columns[item] === 'due_time') {
+            isCheckTime = true
+            timeKey = item
+            select_name = columns[item]
+          }
         })
+
         if (flag) this.handleChangeTypes(a)
+        if (isCheckTime)
+          setTimeout(() => {
+            this.handleChangeTimer({
+              format: this.state.select_time_format[timeKey],
+              select_name,
+              text: timeKey
+            })
+          }, 1)
         break
       case 'start_time':
         this.handleChangeTimer({
@@ -468,6 +485,18 @@ export default class ExcelRead extends Component {
     let { data = [] } = this.state
     data = data.map(item => {
       let new_item = { ...item }
+      // let property = [
+      //   'numberkey',
+      //   'start_timekey',
+      //   'due_timekey',
+      //   'typekey',
+      //   'namekey'
+      // ]
+      // property.forEach(k => {
+      //   if (item[k] === text) {
+      //     delete item[k]
+      //   }
+      // })
       if (!!Object.keys(item.is_error_key).length) {
         delete new_item.is_error_key[text]
       }
@@ -749,6 +778,7 @@ export default class ExcelRead extends Component {
     this.setState({
       data
     })
+    return data
   }
 
   // 查找数据的parent
@@ -883,8 +913,9 @@ export default class ExcelRead extends Component {
    * @param {String} select_name 代表是开始时间还是截止时间
    * @param {String} text 代表是选择列的表头 A,B,C...
    */
-  handleChangeTimer = ({ format, select_name, text }) => {
+  handleChangeTimer = ({ d, format, select_name, text }) => {
     let { data = [], selectedKey = {} } = this.state
+    data = d || data
     let arr = [],
       timer_key = ''
     // 表示如果选择的是开始时间 那么需要获取截止时间 反之亦然
