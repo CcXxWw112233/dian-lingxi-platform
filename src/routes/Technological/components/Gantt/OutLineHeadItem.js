@@ -1377,48 +1377,10 @@ export default class OutLineHeadItem extends Component {
     }
   }
 
-  handleOutlayName = checked => {
-    const { projectDetailInfoData = {} } = this.props
-    let new_projectDetailInfoData = { ...projectDetailInfoData }
-    setOutlineCardNameWithBoard({
-      board_id: this.props.gantt_board_id,
-      content_show_type: checked ? '1' : '2'
-    }).then(res => {
-      if (isApiResponseOk(res)) {
-        message.success('设置成功')
-        new_projectDetailInfoData['board_set']['content_show_type'] = checked
-          ? '1'
-          : '2'
-        this.props.dispatch({
-          type: 'projectDetail/updateDatas',
-          payload: {
-            projectDetailInfoData: new_projectDetailInfoData
-          }
-        })
-      } else {
-        message.warn('设置失败')
-      }
-    })
-  }
-
   // 渲染底部导航
   renderOutlineFooter = () => {
-    const { projectDetailInfoData = {} } = this.props
-    // const {
-    //   board_set: { content_show_type }
-    // } = projectDetailInfoData
     return (
       <Menu onClick={this.handleOnSelect}>
-        <Menu.Item>
-          名称外置{' '}
-          <span onClick={e => e.stopPropagation()}>
-            <Switch
-              size="small"
-              // checked={content_show_type == '1'}
-              onClick={this.handleOutlayName}
-            />
-          </span>
-        </Menu.Item>
         <Menu.Item key="select_hide_term">选择隐藏项</Menu.Item>
         <SubMenu title="导出">
           <Menu.Item key="export_pdf">导出PDF</Menu.Item>
