@@ -758,7 +758,7 @@ export default class ExcelRead extends Component {
         <Select
           size="small"
           placeholder="请选择"
-          style={{ width: 100, marginTop: '5px' }}
+          style={{ width: '100%', marginTop: '5px' }}
           onChange={value => {
             this.handleChangeOrderField(value, text)
           }}
@@ -838,7 +838,7 @@ export default class ExcelRead extends Component {
   renderSelectTime = ({ select_name, text }) => {
     return (
       <Select
-        style={{ width: 120, marginTop: '5px' }}
+        style={{ width: '100%', marginTop: '5px' }}
         size="small"
         placeholder="请选择"
         onChange={format => {
@@ -872,7 +872,7 @@ export default class ExcelRead extends Component {
         <Select
           size="small"
           placeholder="请选择"
-          style={{ width: 100, marginRight: '5px' }}
+          style={{ width: '100%', marginRight: '5px' }}
           onChange={this.selectText.bind(this, text)}
         >
           {this.state.tableDefaultKeys.map(item => {
