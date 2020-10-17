@@ -8,7 +8,6 @@ import {
   Row,
   Col,
   Input,
-  DatePicker,
   message
 } from 'antd'
 import XLSX from 'xlsx'
@@ -17,18 +16,7 @@ import {
   checkNumberReg,
   checkTimerReg,
   checkTypeReg,
-  compareStartDueTime,
-  components,
-  GENRE_TYPE_REG,
-  gold_value,
-  handleResize,
-  POSITIVE_INTEGER_REG,
-  ResizableTitle,
-  valiNameWithNo,
-  YYYYMMDDREG,
-  YYYYMMDD_HHMM_REG,
-  YYYYMMDD_HHMM_REG_1,
-  YYYYMMDD_REG_1
+  compareStartDueTime
 } from './getConst'
 import styles from './index.less'
 import { importExcelWithBoardData } from '../../services/technological'
@@ -944,18 +932,6 @@ export default class ExcelRead extends Component {
     })
   }
 
-  handleResize1 = index => (e, { size }) => {
-    let columns = this.state.columns
-    columns = handleResize({
-      width: size.width,
-      index,
-      columns
-    })
-    this.setState({
-      columns
-    })
-  }
-
   handleSave = (row, operateObj) => {
     let newData = [...this.state.data]
     const { selectedKey = {}, select_time_format = {} } = this.state
@@ -1143,10 +1119,6 @@ export default class ExcelRead extends Component {
     const maxHeight = document.body.clientHeight / 2
     columns = columns.map((col, index) => ({
       ...col,
-      onHeaderCell: column => ({
-        width: column.width,
-        onResize: this.handleResize1(index)
-      }),
       onCell: record => ({
         record,
         editable: col.editable,
@@ -1156,9 +1128,6 @@ export default class ExcelRead extends Component {
       })
     }))
     const components = {
-      // header: {
-      //   cell: ResizableTitle
-      // },
       body: {
         row: EditableFormRow,
         cell: EditableCell
