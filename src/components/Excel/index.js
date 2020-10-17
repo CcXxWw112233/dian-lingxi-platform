@@ -1148,7 +1148,6 @@ export default class ExcelRead extends Component {
             data: newData
           },
           () => {
-            console.log('走了开始时间验证')
             this.handleChangeTimer({
               format: this.state.select_time_format[checkKey] || 'YYYY/MM/DD',
               select_name: 'start_time',
@@ -1171,7 +1170,6 @@ export default class ExcelRead extends Component {
             data: newData
           },
           () => {
-            console.log('走了终止时间验证')
             this.handleChangeTimer({
               format: this.state.select_time_format[checkKey] || 'YYYY/MM/DD',
               select_name: 'due_time',
@@ -1226,30 +1224,33 @@ export default class ExcelRead extends Component {
     let arr = Object.keys(selectedKey) || []
     let field_value = Object.values(selectedKey)
     let data_list = []
-    arr.map(d => {
-      data_list = data.map(item => {
-        let new_item = {
-          uuid: '',
-          name: '',
-          type: item.typekey
-            ? this.typeValid[item[item.typekey]]?.name
-            : 'card',
-          due_time: '',
-          description: '',
-          parent_id: '0'
-        }
-        let parent = this.getParent(data, item, '.')
-        if (parent) {
-          new_item.parent_id = parent.uuid
-        }
-        // let new_item = {}
-        new_item = {
-          ...new_item,
-          uuid: item.uuid,
-          [selectedKey[d]]: item[d]
-        }
-        return new_item
-      })
+    data.forEach(item => {
+      let new_item = {
+        uuid: '',
+        name: '',
+        type: item.typekey ? this.typeValid[item[item.typekey]]?.name : 'card',
+        start_time: '',
+        due_time: '',
+        description: '',
+        parent_id: '0'
+      }
+      for (let k in new_item) {
+        arr.forEach(d => {
+          if (
+            selectedKey[d] === 'start_time' ||
+            selectedKey[d] === 'due_time'
+          ) {
+            new_item[selectedKey[d]] = timeToTimestamp(item[d])
+          } else {
+            new_item[selectedKey[d]] = item[d]
+          }
+        })
+      }
+      let parent = this.getParent(data, item, '.')
+      if (parent) {
+        new_item.parent_id = parent.uuid
+      }
+      data_list.push(new_item)
     })
     return data_list
   }
@@ -1258,6 +1259,8 @@ export default class ExcelRead extends Component {
   setExportExcelData = () => {
     const { data = [], selectedKey = {} } = this.state
     let selected_value = Object.values(selectedKey)
+    const { board_id } = this.props
+
     if (!selected_value.includes('name')) {
       message.error('操作失败，必须指定名称')
       return
@@ -1266,9 +1269,8 @@ export default class ExcelRead extends Component {
       message.error('选择的字段中,格式存在错误')
       return
     }
-    const { board_id } = this.props
     let data_list = this.setDataList()
-    return
+    console.log(data_list)
     importExcelWithBoardData({
       board_id,
       data_list
