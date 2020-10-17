@@ -1146,14 +1146,22 @@ export default class ExcelRead extends Component {
         )
         return
       case 'name':
-        if (checkNameReg(checkVal)) {
-          delete item.is_error_key[checkKey]
-        } else {
-          newData.splice(index, 1, {
-            ...item,
-            ...row
-          })
-        }
+        obj[checkKey] = checkVal
+        newData = newData.map(item => {
+          if (item.uuid === obj.uuid) {
+            item = obj
+          }
+          return item
+        })
+        this.setState(
+          {
+            data: newData
+          },
+          () => {
+            this.handleChangName(checkKey)
+          }
+        )
+        return
         break
       case 'start_time':
         obj[checkKey] = checkVal
