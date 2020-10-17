@@ -10,7 +10,6 @@ import {
   Button,
   Popover,
   Spin,
-  Checkbox,
   Switch
 } from 'antd'
 import styles from './index.less'
@@ -1376,11 +1375,34 @@ export default class OutLineHeadItem extends Component {
         break
     }
   }
-
+  setCardNameOutside = checked => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'gantt/updateDatas',
+      payload: {
+        card_name_outside: checked
+      }
+    })
+  }
+  setCardNameOutsideBuddle = e => {
+    e.stopPropagation()
+  }
   // 渲染底部导航
   renderOutlineFooter = () => {
+    const { card_name_outside } = this.props
     return (
       <Menu onClick={this.handleOnSelect}>
+        <Menu.Item key="set_name_outside">
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div style={{ marginRight: 14 }}>名称外置</div>
+            <div onClick={e => this.setCardNameOutsideBuddle(e)}>
+              <Switch
+                checked={card_name_outside}
+                onChange={this.setCardNameOutside}
+              />
+            </div>
+          </div>
+        </Menu.Item>
         <Menu.Item key="select_hide_term">选择隐藏项</Menu.Item>
         <SubMenu title="导出">
           <Menu.Item key="export_pdf">导出PDF</Menu.Item>
@@ -1638,7 +1660,8 @@ function mapStateToProps({
       end_date,
       selected_hide_term,
       isDisplayContentIds = [],
-      outline_tree_original = []
+      outline_tree_original = [],
+      card_name_outside
     }
   },
   technological: {
@@ -1674,6 +1697,7 @@ function mapStateToProps({
     end_date,
     selected_hide_term,
     isDisplayContentIds,
-    outline_tree_original
+    outline_tree_original,
+    card_name_outside
   }
 }

@@ -1,43 +1,46 @@
-.baselineitem_box{
+.baselineitem_box {
   z-index: 4;
   pointer-events: none;
   touch-action: none;
   position: absolute;
-  .borders{
+  .borders {
     border: 2px solid rgba(0, 0, 0, 0.25);
   }
-  .task{
+  .task {
     border-radius: 50px;
     .borders;
     // background-color: rgb(235, 235, 235);
     background-color: rgba(255, 255, 255, 0.1);
     padding: 4px 6px;
   }
-  .hasLeft{
+  .hasLeft {
     margin-left: 9px;
   }
-  .month{
+  .month {
     padding-left: 32px;
   }
-  .year{
+  .year {
     padding-left: 1px;
   }
-  .week{
+  .week {
     padding-left: 10px;
   }
-  .milepost{
-    & > div{
+  .hours {
+    padding-left: 20px;
+  }
+  .milepost {
+    & > div {
       color: rgba(0, 0, 0, 0.25);
     }
-    .icons{
+    .icons {
       position: absolute;
     }
   }
-  .parentMilepost{
+  .parentMilepost {
     display: flex;
     // padding-left: 28px;
   }
-  .subMilepost{
+  .subMilepost {
     background-color: rgba(255, 255, 255, 0.1);
     width: 15px;
     height: 15px;
@@ -46,7 +49,7 @@
     transform: rotate(45deg);
     margin-top: 7px;
   }
-  .milepostLine{
+  .milepostLine {
     display: inline-block;
     box-sizing: border-box;
     width: 2px;
@@ -54,7 +57,7 @@
     margin-top: 6px;
     margin-right: 2px;
   }
-  .process{
+  .process {
     width: 26px;
     height: 26px;
     border-radius: 99px;

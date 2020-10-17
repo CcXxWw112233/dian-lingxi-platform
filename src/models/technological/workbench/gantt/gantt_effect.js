@@ -30,7 +30,10 @@ import {
   workbench_ceilWidth,
   workbench_date_arr_one_level
 } from '../selects'
-import { setGantTimeSpan } from '../../../../routes/Technological/components/Gantt/ganttBusiness'
+import {
+  setGantTimeSpan,
+  setHourViewCardTimeSpan
+} from '../../../../routes/Technological/components/Gantt/ganttBusiness'
 // import { delayInGenerator } from "../../../../utils/util"
 import { formatItem } from './gantt_utils'
 import { delayInGenerator } from '../../../../utils/util'
@@ -703,13 +706,22 @@ export default {
       data = data.map(item => {
         item.start_time = item.start_time + '000'
         item.due_time = item.due_time ? item.due_time + '000' : null
-        item.time_span = setGantTimeSpan({
-          time_span: '0',
-          start_time: item.start_time,
-          due_time: item.due_time,
-          start_date,
-          end_date
-        })
+        if (gantt_view_mode == 'hours') {
+          item.time_span = setHourViewCardTimeSpan(
+            item.start_time,
+            item.due_time,
+            start_date.timestamp,
+            end_date.timestampEnd
+          )
+        } else {
+          item.time_span = setGantTimeSpan({
+            time_span: '0',
+            start_time: item.start_time,
+            due_time: item.due_time,
+            start_date,
+            end_date
+          })
+        }
 
         return item
       })

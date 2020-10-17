@@ -493,6 +493,16 @@ export const isSamDay = (timestamp, timestamp2) => {
     new Date(new_time_a).toDateString() == new Date(new_time_b).toDateString()
   )
 }
+// 比较两个时间是否同一天同一小时
+export const isSamHour = (timestamp, timestamp2) => {
+  if (isSamDay(timestamp, timestamp2)) {
+    return (
+      new Date(transformTimestamp(timestamp)).getHours() ===
+      new Date(transformTimestamp(timestamp2)).getHours()
+    )
+  }
+  return false
+}
 
 // 设置时间过期和当天方案
 export const timeColor = timestamp => {

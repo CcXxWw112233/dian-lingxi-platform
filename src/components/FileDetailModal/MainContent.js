@@ -7,23 +7,24 @@ import CirclePreviewLoadingComponent from '@/components/CirclePreviewLoadingComp
 import { connect } from 'dva'
 import {
   fileConvertPdfAlsoUpdateVersion,
-  setCurrentVersionFile,
+  setCurrentVersionFile
 } from '@/services/technological/file'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message, Modal, Tooltip } from 'antd'
 import {
   checkIsHasPermissionInBoard,
   getSubfixName,
-  checkIsHasPermissionInVisitControl,
+  checkIsHasPermissionInVisitControl
 } from '@/utils/businessFunction'
 import {
   MESSAGE_DURATION_TIME,
   NOT_HAS_PERMISION_COMFIRN,
-  PROJECT_FILES_FILE_UPDATE,
+  PROJECT_FILES_FILE_UPDATE
 } from '@/globalset/js/constant'
 import NotSupportImg from '@/assets/projectDetail/fileDetail/not_support.png'
 import { platformNouns } from '../../globalset/clientCustorm'
 import PdfComment from '../pdfComment'
+import DEvent from '../../utils/event'
 // let this.timer
 
 @connect(mapStateToProps)
@@ -51,10 +52,10 @@ class MainContent extends Component {
         '.txt',
         '.tif',
         '.bmp',
-        '.ico',
+        '.ico'
       ],
       isInPdfComment: false, // 是否进入了圈评
-      pdfCommentData: {}, // pdf圈评需要的数据
+      pdfCommentData: {} // pdf圈评需要的数据
     }
     this.dontTransferType = ['.pdf', '.png', '.gif', '.jpeg', '.jpg']
   }
@@ -73,8 +74,35 @@ class MainContent extends Component {
       : 600 //60为文件内容组件评s论等区域宽带   50为容器padding
     this.setState({
       currentZoomPictureComponetWidth: zommPictureComponentWidth,
-      currentZoomPictureComponetHeight: zommPictureComponentHeight,
+      currentZoomPictureComponetHeight: zommPictureComponentHeight
     })
+    this.fetchToPdf()
+    DEvent.on('pdfCommentUpdate', id => {
+      this.setState({
+        isInPdfComment: false
+      })
+      setTimeout(() => {
+        this.fetchToPdf(id)
+      }, 500)
+    })
+  }
+  fetchToPdf = id => {
+    const {
+      fileType,
+      getCurrentFilePreviewData,
+      filePreviewCurrentFileId
+    } = this.props
+    getCurrentFilePreviewData({ id: id || filePreviewCurrentFileId }).then(
+      _ => {
+        if (this.dontTransferType.includes(fileType)) {
+          let type = 'img'
+          if (fileType === '.pdf') {
+            type = 'pdf'
+          }
+          this.handleToShowPdf(type).catch(err => console.log(err))
+        }
+      }
+    )
   }
 
   // 当圈子展开关闭的时候以及浏览器视图变化时, 实时获取当前的width
@@ -97,7 +125,7 @@ class MainContent extends Component {
         : 600 //60为文件内容组件评s论等区域宽带   50为容器padding
       this.setState({
         currentZoomPictureComponetWidth: zommPictureComponentWidth,
-        currentZoomPictureComponetHeight: zommPictureComponentHeight,
+        currentZoomPictureComponetHeight: zommPictureComponentHeight
       })
     } else {
       // 这里是浏览器视图变化的时候需要重新获取宽高
@@ -114,7 +142,7 @@ class MainContent extends Component {
         : 600 //60为文件内容组件评s论等区域宽带   50为容器padding
       this.setState({
         currentZoomPictureComponetWidth: zommPictureComponentWidth,
-        currentZoomPictureComponetHeight: zommPictureComponentHeight,
+        currentZoomPictureComponetHeight: zommPictureComponentHeight
       })
     }
   }
@@ -125,10 +153,10 @@ class MainContent extends Component {
     }
   }
 
-  handleDynamicComment = (e) => {
+  handleDynamicComment = e => {
     e && e.stopPropagation()
     const {
-      currentPreviewFileData: { file_name, version_id, board_id, id },
+      currentPreviewFileData: { file_name, version_id, board_id, id }
     } = this.props
     this.props.linkImWithFile &&
       this.props.linkImWithFile({
@@ -136,11 +164,11 @@ class MainContent extends Component {
         currentPreviewFileVersionId: version_id,
         board_id,
         type: 'file',
-        id,
+        id
       })
   }
 
-  getIframe = (src) => {
+  getIframe = src => {
     const iframe =
       '<iframe name="123" style="height: 100%;width: 100%;border:0px;" class="multi-download"  src="' +
       src +
@@ -161,10 +189,10 @@ class MainContent extends Component {
   }
 
   // 点击是否全屏
-  handleZoomPictureFullScreen = (flag) => {
+  handleZoomPictureFullScreen = flag => {
     this.setState({
       // isZoomPictureFullScreenMode: flag,
-      percent: 0,
+      percent: 0
     })
     this.props.updateStateDatas &&
       this.props.updateStateDatas({ isZoomPictureFullScreenMode: flag })
@@ -190,111 +218,119 @@ class MainContent extends Component {
       const {
         currentPreviewFileData = {},
         isZoomPictureFullScreenMode,
-        isPdfLoaded,
+        isPdfLoaded
       } = this.props
       const { supportFileTypeArray = [] } = this.state
       let FILE_NAME = getSubfixName(file_name)
       if (supportFileTypeArray.indexOf(FILE_NAME) != -1) {
-        fileConvertPdfAlsoUpdateVersion({ id: file_id }).then(async (res) => {
-          if (isApiResponseOk(res)) {
-            this.props.updateStateDatas &&
-              this.props.updateStateDatas({ selectedKeys: [res.data.id] })
-            // let isPDF = getSubfixName(res.data.file_name) == '.pdf'
-            // if (isPDF) {
-            if (this.props.getCurrentFilePreviewData) {
-              let fileResp = await this.props.getCurrentFilePreviewData({
+        fileConvertPdfAlsoUpdateVersion({ id: file_id })
+          .then(async res => {
+            if (isApiResponseOk(res)) {
+              this.props.updateStateDatas &&
+                this.props.updateStateDatas({ selectedKeys: [res.data.id] })
+              // let isPDF = getSubfixName(res.data.file_name) == '.pdf'
+              // if (isPDF) {
+              if (this.props.getCurrentFilePreviewData) {
+                let fileResp = await this.props
+                  .getCurrentFilePreviewData({
+                    id: res.data.id
+                  })
+                  .catch(er => er)
+              }
+              setCurrentVersionFile({
                 id: res.data.id,
+                set_major_version: '1'
               })
-            }
-            setCurrentVersionFile({
-              id: res.data.id,
-              set_major_version: '1',
-            }).then((result) => {
-              if (isApiResponseOk(result)) {
-                // this.props.delayUpdatePdfDatas &&
-                //   this.props.delayUpdatePdfDatas({
-                //     id: res.data.id,
-                //     calback: () => {
-                //       this.setState({
-                //         percent: 0,
-                //         is_petty_loading: !isZoomPictureFullScreenMode && false,
-                //         is_large_loading: isZoomPictureFullScreenMode && false
-                //       })
-                //     }
-                //   })
+                .then(result => {
+                  if (isApiResponseOk(result)) {
+                    // this.props.delayUpdatePdfDatas &&
+                    //   this.props.delayUpdatePdfDatas({
+                    //     id: res.data.id,
+                    //     calback: () => {
+                    //       this.setState({
+                    //         percent: 0,
+                    //         is_petty_loading: !isZoomPictureFullScreenMode && false,
+                    //         is_large_loading: isZoomPictureFullScreenMode && false
+                    //       })
+                    //     }
+                    //   })
+                    this.props.updateStateDatas &&
+                      this.props.updateStateDatas({
+                        filePreviewCurrentFileId: res.data.id,
+                        currentPreviewFileData: {
+                          ...currentPreviewFileData,
+                          id: res.data.id
+                        },
+                        filePreviewCurrentName: res.data.file_name,
+                        fileType: getSubfixName(res.data.file_name)
+                      })
+                    this.setState({
+                      is_petty_loading: !isZoomPictureFullScreenMode
+                        ? isPdfLoaded
+                          ? true
+                          : false
+                        : false,
+                      is_large_loading: isZoomPictureFullScreenMode
+                        ? isPdfLoaded
+                          ? true
+                          : false
+                        : false
+                      // percent: 0
+                    })
+                    // 用来保存在父元素中管理起来
+                    // this.props.updateStateDatas &&
+                    //   this.props.updateStateDatas({
+                    //     // is_petty_loading: !isZoomPictureFullScreenMode && !isPdfLoaded ? false : true,
+                    //     // is_large_loading: isZoomPictureFullScreenMode && isPdfLoaded ? true :false,
+                    //     selectedKeys: [res.data.id]
+                    //   })
+                    // this.props.whetherUpdateFolderListData &&
+                    //   this.props.whetherUpdateFolderListData({ folder_id })
+                    // setTimeout(() => this.props.updateStateDatas && this.props.updateStateDatas({selectedKeys: [res.data.id]}),200)
+                    // this.props.updateStateDatas && this.props.updateStateDatas({selectedKeys: [res.data.id]})
+                    resolve(res.data)
+                  } else reject(res)
+                })
+                .catch(er => reject())
+              // }
+              // this.props.updateStateDatas &&
+              //   this.props.updateStateDatas({ selectedKeys: [res.data.id] })
+            } else {
+              message.warn(res.message, MESSAGE_DURATION_TIME)
+              reject(res)
+              if (res.code == 4047) {
+                // 表示转换失败
+                message.error(res.message, MESSAGE_DURATION_TIME)
+                this.setState({
+                  is_petty_loading: !isZoomPictureFullScreenMode && false,
+                  is_large_loading: isZoomPictureFullScreenMode && false,
+                  percent: 0
+                })
                 this.props.updateStateDatas &&
                   this.props.updateStateDatas({
-                    filePreviewCurrentFileId: res.data.id,
-                    currentPreviewFileData: {
-                      ...currentPreviewFileData,
-                      id: res.data.id,
-                    },
-                    filePreviewCurrentName: res.data.file_name,
-                    fileType: getSubfixName(res.data.file_name),
+                    is_petty_loading: !isZoomPictureFullScreenMode && false,
+                    is_large_loading: isZoomPictureFullScreenMode && false,
+                    selectedKeys: []
                   })
-                this.setState({
-                  is_petty_loading: !isZoomPictureFullScreenMode
-                    ? isPdfLoaded
-                      ? true
-                      : false
-                    : false,
-                  is_large_loading: isZoomPictureFullScreenMode
-                    ? isPdfLoaded
-                      ? true
-                      : false
-                    : false,
-                  // percent: 0
-                })
-                // 用来保存在父元素中管理起来
-                // this.props.updateStateDatas &&
-                //   this.props.updateStateDatas({
-                //     // is_petty_loading: !isZoomPictureFullScreenMode && !isPdfLoaded ? false : true,
-                //     // is_large_loading: isZoomPictureFullScreenMode && isPdfLoaded ? true :false,
-                //     selectedKeys: [res.data.id]
-                //   })
-                // this.props.whetherUpdateFolderListData &&
-                //   this.props.whetherUpdateFolderListData({ folder_id })
-                // setTimeout(() => this.props.updateStateDatas && this.props.updateStateDatas({selectedKeys: [res.data.id]}),200)
-                // this.props.updateStateDatas && this.props.updateStateDatas({selectedKeys: [res.data.id]})
-                resolve(res.data)
-              } else reject(res)
-            })
-            // }
-            // this.props.updateStateDatas &&
-            //   this.props.updateStateDatas({ selectedKeys: [res.data.id] })
-          } else {
-            message.warn(res.message, MESSAGE_DURATION_TIME)
-            reject(res)
-            if (res.code == 4047) {
-              // 表示转换失败
-              message.error(res.message, MESSAGE_DURATION_TIME)
+              }
               this.setState({
                 is_petty_loading: !isZoomPictureFullScreenMode && false,
                 is_large_loading: isZoomPictureFullScreenMode && false,
-                percent: 0,
+                percent: 0
               })
               this.props.updateStateDatas &&
                 this.props.updateStateDatas({
                   is_petty_loading: !isZoomPictureFullScreenMode && false,
                   is_large_loading: isZoomPictureFullScreenMode && false,
-                  selectedKeys: [],
+                  selectedKeys: []
                 })
             }
-            this.setState({
-              is_petty_loading: !isZoomPictureFullScreenMode && false,
-              is_large_loading: isZoomPictureFullScreenMode && false,
-              percent: 0,
-            })
-            this.props.updateStateDatas &&
-              this.props.updateStateDatas({
-                is_petty_loading: !isZoomPictureFullScreenMode && false,
-                is_large_loading: isZoomPictureFullScreenMode && false,
-                selectedKeys: [],
-              })
-          }
-        })
+          })
+          .catch(() => reject())
       } else if (this.dontTransferType.indexOf(FILE_NAME) !== -1) {
         resolve({})
+      } else {
+        reject()
       }
     })
   }
@@ -310,22 +346,22 @@ class MainContent extends Component {
       if (isPdfLoaded) {
         // if (this.timer) clearTimeout(this.timer)
         this.setState({
-          percent: 100,
+          percent: 100
         })
       } else {
         if (this.timer) clearTimeout(this.timer)
         this.setState({
-          percent: 100,
+          percent: 100
         })
         this.props.updateStateDatas &&
           this.props.updateStateDatas({
-            isPdfLoaded: false,
+            isPdfLoaded: false
           })
       }
       return
     }
     this.setState({
-      percent,
+      percent
     })
     this.timer = setTimeout(() => {
       this.updateProcessPercent()
@@ -335,11 +371,11 @@ class MainContent extends Component {
   // 进入pdf圈评
   handleToShowPdf = async (type = 'pdf') => {
     // 转换成功之后的回调
-    let canEnter = await this.handleEnterCirclePointComment()
+    let canEnter = await this.handleEnterCirclePointComment().catch(err => err)
     const {
       currentPreviewFileData = {},
       filePreviewUrl,
-      fileFileUrl,
+      fileFileUrl
     } = this.props
     const {
       board_id,
@@ -347,7 +383,7 @@ class MainContent extends Component {
       is_privilege,
       id,
       file_name,
-      folder_id,
+      folder_id
     } = currentPreviewFileData
 
     let FILE_NAME = getSubfixName(file_name)
@@ -362,10 +398,12 @@ class MainContent extends Component {
         file_id: id,
         file_name,
         fileType: type,
+        board_id,
+        folder_id
       }
       this.setState({
         pdfCommentData: obj,
-        isInPdfComment: true,
+        isInPdfComment: true
       })
     }
   }
@@ -374,7 +412,7 @@ class MainContent extends Component {
   exitPdfComment = () => {
     this.setState({
       pdfCommentData: {},
-      isInPdfComment: false,
+      isInPdfComment: false
     })
   }
 
@@ -388,7 +426,7 @@ class MainContent extends Component {
       is_privilege,
       id,
       file_name,
-      folder_id,
+      folder_id
     } = currentPreviewFileData
     if (
       !checkIsHasPermissionInVisitControl(
@@ -413,8 +451,8 @@ class MainContent extends Component {
     let res = await this.fetchConvertPdfAlsoUpdateVersion({
       file_id: id,
       file_name: file_name,
-      folder_id: folder_id,
-    }).catch((err) => err)
+      folder_id: folder_id
+    }).catch(err => console.log(err))
     if (res) {
       return true
     }
@@ -440,13 +478,13 @@ class MainContent extends Component {
       isZoomPictureFullScreenMode,
       componentWidth,
       componentHeight,
-      isPdfLoaded,
+      isPdfLoaded
     } = this.props
     const {
       currentZoomPictureComponetWidth,
       currentZoomPictureComponetHeight,
       is_petty_loading,
-      percent,
+      percent
     } = this.state
     return (
       <>
@@ -464,7 +502,7 @@ class MainContent extends Component {
               position: 'absolute',
               transform: 'translateY(-25%)',
               display: 'block',
-              opacity: 1,
+              opacity: 1
             }}
           />
         ) : (
@@ -473,15 +511,26 @@ class MainContent extends Component {
               // minWidth: currentZoomPictureComponetWidth + 'px', minHeight: currentZoomPictureComponetHeight + 'px',
               overflow: 'auto',
               textAlign: 'center',
-              position: 'relative',
+              position: 'relative'
             }}
           >
-            {filePreviewUrl && (
-              <ZoomPicture
+            <div
+              style={{ height: currentZoomPictureComponetHeight }}
+              className={mainContentStyles.fileDetailContentLeft}
+            >
+              {filePreviewUrl && this.state.isInPdfComment && (
+                <PdfComment
+                  {...this.state.pdfCommentData}
+                  onClose={this.exitPdfComment}
+                />
+              )}
+            </div>
+
+            {/* <ZoomPicture
                 imgInfo={{ url: filePreviewUrl }}
                 componentInfo={{
                   width: currentZoomPictureComponetWidth + 'px',
-                  height: currentZoomPictureComponetHeight + 'px',
+                  height: currentZoomPictureComponetHeight + 'px'
                 }}
                 userId={this.getCurrentUserId()}
                 isFullScreenMode={isZoomPictureFullScreenMode}
@@ -493,8 +542,7 @@ class MainContent extends Component {
                 )}
                 isShow_textArea={true}
                 isOpenAttachmentFile={this.props.isOpenAttachmentFile}
-              />
-            )}
+              /> */}
             {!this.props.isOpenAttachmentFile && (
               <div
                 onClick={this.handleDynamicComment}
@@ -526,13 +574,13 @@ class MainContent extends Component {
       filePreviewUrl,
       fileType,
       componentHeight,
-      isPdfLoaded,
+      isPdfLoaded
     } = this.props
     const {
       is_petty_loading,
       percent,
       supportFileTypeArray = [],
-      currentZoomPictureComponetHeight,
+      currentZoomPictureComponetHeight
     } = this.state
 
     return (
@@ -551,18 +599,33 @@ class MainContent extends Component {
               position: 'absolute',
               transform: 'translateY(-25%)',
               display: 'block',
-              opacity: 1,
+              opacity: 1
             }}
           />
         ) : (
           <>
-            <div
-              style={{ height: currentZoomPictureComponetHeight }}
-              className={mainContentStyles.fileDetailContentLeft}
-              dangerouslySetInnerHTML={{
-                __html: this.getIframe(filePreviewUrl),
-              }}
-            ></div>
+            {this.dontTransferType.indexOf(fileType) !== -1 ? (
+              <div
+                style={{ height: currentZoomPictureComponetHeight }}
+                className={mainContentStyles.fileDetailContentLeft}
+              >
+                {this.state.isInPdfComment && (
+                  <PdfComment
+                    {...this.state.pdfCommentData}
+                    onClose={this.exitPdfComment}
+                  />
+                )}
+              </div>
+            ) : (
+              <div
+                style={{ height: currentZoomPictureComponetHeight }}
+                className={mainContentStyles.fileDetailContentLeft}
+                dangerouslySetInnerHTML={{
+                  __html: this.getIframe(filePreviewUrl)
+                }}
+              />
+            )}
+
             {/* {
               !this.props.isOpenAttachmentFile && fileType != '.pdf' && (supportFileTypeArray.indexOf(fileType) != -1) && (
                 <div className={mainContentStyles.otherFilesOperator}>
@@ -611,7 +674,7 @@ class MainContent extends Component {
 
   // 渲染不支持的文件格式
   renderNotSupport(type) {
-    let content = <div></div>
+    let content = <div />
     switch (type) {
       case '.obj':
         content = (
@@ -629,7 +692,7 @@ class MainContent extends Component {
               style={{
                 display: 'flex',
                 justifyContent: 'space-between',
-                margin: '20px auto',
+                margin: '20px auto'
               }}
             >
               <img src={NotSupportImg} style={{ margin: 'auto' }} />
@@ -641,7 +704,7 @@ class MainContent extends Component {
               style={{
                 color: '#D4D4D4',
                 fontSize: '12px',
-                fontStyle: 'normal',
+                fontStyle: 'normal'
               }}
             >
               把文件转换为pdf格式即可在{platformNouns}上圈点协作
@@ -665,7 +728,7 @@ class MainContent extends Component {
               style={{
                 display: 'flex',
                 justifyContent: 'space-between',
-                margin: '20px auto',
+                margin: '20px auto'
               }}
             >
               <img src={NotSupportImg} style={{ margin: 'auto' }} />
@@ -677,7 +740,7 @@ class MainContent extends Component {
               style={{
                 color: '#D4D4D4',
                 fontSize: '12px',
-                fontStyle: 'normal',
+                fontStyle: 'normal'
               }}
             >
               把文件转换为pdf格式即可在{platformNouns}上圈点协作
@@ -701,7 +764,7 @@ class MainContent extends Component {
               style={{
                 display: 'flex',
                 justifyContent: 'space-between',
-                margin: '20px auto',
+                margin: '20px auto'
               }}
             >
               <img src={NotSupportImg} style={{ margin: 'auto' }} />
@@ -713,7 +776,7 @@ class MainContent extends Component {
               style={{
                 color: '#D4D4D4',
                 fontSize: '12px',
-                fontStyle: 'normal',
+                fontStyle: 'normal'
               }}
             >
               把文件转换为pdf格式即可在{platformNouns}上圈点协作
@@ -737,7 +800,7 @@ class MainContent extends Component {
               style={{
                 display: 'flex',
                 justifyContent: 'space-between',
-                margin: '20px auto',
+                margin: '20px auto'
               }}
             >
               <img src={NotSupportImg} style={{ margin: 'auto' }} />
@@ -749,7 +812,7 @@ class MainContent extends Component {
               style={{
                 color: '#D4D4D4',
                 fontSize: '12px',
-                fontStyle: 'normal',
+                fontStyle: 'normal'
               }}
             >
               把文件转换为pdf格式即可在{platformNouns}上圈点协作
@@ -773,7 +836,7 @@ class MainContent extends Component {
               style={{
                 display: 'flex',
                 justifyContent: 'space-between',
-                margin: '20px auto',
+                margin: '20px auto'
               }}
             >
               <img src={NotSupportImg} style={{ margin: 'auto' }} />
@@ -785,7 +848,7 @@ class MainContent extends Component {
               style={{
                 color: '#D4D4D4',
                 fontSize: '12px',
-                fontStyle: 'normal',
+                fontStyle: 'normal'
               }}
             >
               把文件转换为pdf格式即可在{platformNouns}上圈点协作
@@ -809,7 +872,7 @@ class MainContent extends Component {
               style={{
                 display: 'flex',
                 justifyContent: 'space-between',
-                margin: '20px auto',
+                margin: '20px auto'
               }}
             >
               <img src={NotSupportImg} style={{ margin: 'auto' }} />
@@ -821,7 +884,7 @@ class MainContent extends Component {
               style={{
                 color: '#D4D4D4',
                 fontSize: '12px',
-                fontStyle: 'normal',
+                fontStyle: 'normal'
               }}
             >
               把文件转换为pdf格式即可在{platformNouns}上圈点协作
@@ -845,7 +908,7 @@ class MainContent extends Component {
               style={{
                 display: 'flex',
                 justifyContent: 'space-between',
-                margin: '20px auto',
+                margin: '20px auto'
               }}
             >
               <img src={NotSupportImg} style={{ margin: 'auto' }} />
@@ -857,7 +920,7 @@ class MainContent extends Component {
               style={{
                 color: '#D4D4D4',
                 fontSize: '12px',
-                fontStyle: 'normal',
+                fontStyle: 'normal'
               }}
             >
               把文件转换为pdf格式即可在{platformNouns}上圈点协作
@@ -881,7 +944,7 @@ class MainContent extends Component {
               style={{
                 display: 'flex',
                 justifyContent: 'space-between',
-                margin: '20px auto',
+                margin: '20px auto'
               }}
             >
               <img src={NotSupportImg} style={{ margin: 'auto' }} />
@@ -893,7 +956,7 @@ class MainContent extends Component {
               style={{
                 color: '#D4D4D4',
                 fontSize: '12px',
-                fontStyle: 'normal',
+                fontStyle: 'normal'
               }}
             >
               把文件转换为pdf格式即可在{platformNouns}上圈点协作
@@ -917,7 +980,7 @@ class MainContent extends Component {
               style={{
                 display: 'flex',
                 justifyContent: 'space-between',
-                margin: '20px auto',
+                margin: '20px auto'
               }}
             >
               <img src={NotSupportImg} style={{ margin: 'auto' }} />
@@ -929,7 +992,7 @@ class MainContent extends Component {
               style={{
                 color: '#D4D4D4',
                 fontSize: '12px',
-                fontStyle: 'normal',
+                fontStyle: 'normal'
               }}
             >
               把文件转换为pdf格式即可在{platformNouns}上圈点协作
@@ -953,7 +1016,7 @@ class MainContent extends Component {
               style={{
                 display: 'flex',
                 justifyContent: 'space-between',
-                margin: '20px auto',
+                margin: '20px auto'
               }}
             >
               <img src={NotSupportImg} style={{ margin: 'auto' }} />
@@ -965,7 +1028,7 @@ class MainContent extends Component {
               style={{
                 color: '#D4D4D4',
                 fontSize: '12px',
-                fontStyle: 'normal',
+                fontStyle: 'normal'
               }}
             >
               把文件转换为pdf格式即可在{platformNouns}上圈点协作
@@ -989,7 +1052,7 @@ class MainContent extends Component {
               style={{
                 display: 'flex',
                 justifyContent: 'space-between',
-                margin: '20px auto',
+                margin: '20px auto'
               }}
             >
               <img src={NotSupportImg} style={{ margin: 'auto' }} />
@@ -1001,7 +1064,7 @@ class MainContent extends Component {
               style={{
                 color: '#D4D4D4',
                 fontSize: '12px',
-                fontStyle: 'normal',
+                fontStyle: 'normal'
               }}
             >
               把文件转换为pdf格式即可在{platformNouns}上圈点协作
@@ -1025,7 +1088,7 @@ class MainContent extends Component {
               style={{
                 display: 'flex',
                 justifyContent: 'space-between',
-                margin: '20px auto',
+                margin: '20px auto'
               }}
             >
               <img src={NotSupportImg} style={{ margin: 'auto' }} />
@@ -1037,7 +1100,7 @@ class MainContent extends Component {
               style={{
                 color: '#D4D4D4',
                 fontSize: '12px',
-                fontStyle: 'normal',
+                fontStyle: 'normal'
               }}
             >
               把文件转换为pdf格式即可在{platformNouns}上圈点协作
@@ -1061,7 +1124,7 @@ class MainContent extends Component {
               style={{
                 display: 'flex',
                 justifyContent: 'space-between',
-                margin: '20px auto',
+                margin: '20px auto'
               }}
             >
               <img src={NotSupportImg} style={{ margin: 'auto' }} />
@@ -1073,7 +1136,7 @@ class MainContent extends Component {
               style={{
                 color: '#D4D4D4',
                 fontSize: '12px',
-                fontStyle: 'normal',
+                fontStyle: 'normal'
               }}
             >
               把文件转换为pdf格式即可在{platformNouns}上圈点协作
@@ -1096,7 +1159,7 @@ class MainContent extends Component {
     }
     this.props.updateStateDatas &&
       this.props.updateStateDatas({
-        isZoomPictureFullScreenMode: !this.props.isZoomPictureFullScreenMode,
+        isZoomPictureFullScreenMode: !this.props.isZoomPictureFullScreenMode
       })
   }
 
@@ -1108,7 +1171,7 @@ class MainContent extends Component {
       bodyClientHeight,
       bodyClientWidth,
       isZoomPictureFullScreenMode,
-      isPdfLoaded,
+      isPdfLoaded
     } = this.props
     const { is_large_loading, percent } = this.state
 
@@ -1127,7 +1190,7 @@ class MainContent extends Component {
             style={{
               height: bodyClientHeight,
               marginTop: '20px',
-              background: 'rgba(0,0,0,0.15)',
+              background: 'rgba(0,0,0,0.15)'
             }}
           >
             <CirclePreviewLoadingComponent
@@ -1142,7 +1205,7 @@ class MainContent extends Component {
                 position: 'absolute',
                 transform: 'translateY(-25%)',
                 display: 'block',
-                opacity: 1,
+                opacity: 1
               }}
             />
           </div>
@@ -1153,7 +1216,7 @@ class MainContent extends Component {
                 imgInfo={{ url: filePreviewUrl }}
                 componentInfo={{
                   width: bodyClientWidth - 100,
-                  height: bodyClientHeight - 60,
+                  height: bodyClientHeight - 60
                 }}
                 userId={this.getCurrentUserId()}
                 isFullScreenMode={isZoomPictureFullScreenMode}
@@ -1181,7 +1244,7 @@ class MainContent extends Component {
       bodyClientWidth,
       isZoomPictureFullScreenMode,
       fileType,
-      isPdfLoaded,
+      isPdfLoaded
     } = this.props
     const { is_large_loading, percent, supportFileTypeArray = [] } = this.state
     return (
@@ -1192,7 +1255,7 @@ class MainContent extends Component {
           top: 0,
           left: 0,
           minWidth: bodyClientWidth + 'px',
-          minHeight: bodyClientHeight + 'px',
+          minHeight: bodyClientHeight + 'px'
         }}
         width={bodyClientWidth}
         height={bodyClientHeight}
@@ -1210,7 +1273,7 @@ class MainContent extends Component {
             style={{
               height: bodyClientHeight,
               marginTop: '20px',
-              background: 'rgba(0,0,0,0.15)',
+              background: 'rgba(0,0,0,0.15)'
             }}
           >
             <CirclePreviewLoadingComponent
@@ -1225,7 +1288,7 @@ class MainContent extends Component {
                 position: 'absolute',
                 transform: 'translateY(-25%)',
                 display: 'block',
-                opacity: 1,
+                opacity: 1
               }}
             />
           </div>
@@ -1234,9 +1297,9 @@ class MainContent extends Component {
             <div
               style={{ height: bodyClientHeight, marginTop: '20px' }}
               dangerouslySetInnerHTML={{
-                __html: this.getIframe(filePreviewUrl),
+                __html: this.getIframe(filePreviewUrl)
               }}
-            ></div>
+            />
             {/* {
                   !this.props.isOpenAttachmentFile && fileType != '.pdf' && (supportFileTypeArray.indexOf(fileType) != -1) && (
                     <div className={mainContentStyles.otherFilesOperator} style={{ bottom: '100px' }}>
@@ -1258,14 +1321,14 @@ class MainContent extends Component {
       fileType,
       isZoomPictureFullScreenMode,
       componentHeight,
-      componentWidth,
+      componentWidth
     } = this.props
     return (
       <div
         className={mainContentStyles.fileDetailContentOut}
         ref={'fileDetailContentOut'}
         style={{
-          height: clientHeight ? clientHeight - 100 - 60 : componentHeight,
+          height: clientHeight ? clientHeight - 100 - 60 : componentHeight
         }}
       >
         <div>
@@ -1283,7 +1346,7 @@ class MainContent extends Component {
                 justifyContent: 'center',
                 alignItems: 'center',
                 fontSize: 16,
-                color: '#595959',
+                color: '#595959'
               }}
             >
               <div>{this.renderNotSupport(fileType)}</div>
@@ -1306,7 +1369,7 @@ class MainContent extends Component {
                   justifyContent: 'center',
                   alignItems: 'center',
                   fontSize: 16,
-                  color: '#595959',
+                  color: '#595959'
                 }}
               >
                 <div>{this.renderNotSupport(fileType)}</div>
@@ -1314,12 +1377,12 @@ class MainContent extends Component {
             )}
           </div>
         )}
-        {this.state.isInPdfComment && (
+        {/* {this.state.isInPdfComment && (
           <PdfComment
             {...this.state.pdfCommentData}
             onClose={this.exitPdfComment}
           />
-        )}
+        )} */}
       </div>
     )
   }
@@ -1329,14 +1392,14 @@ export default withBodyClientDimens(MainContent)
 
 function mapStateToProps({
   technological: {
-    datas: { userBoardPermissions },
+    datas: { userBoardPermissions }
   },
   simplemode: { chatImVisiable = false },
-  publicFileDetailModal: { isOpenAttachmentFile },
+  publicFileDetailModal: { isOpenAttachmentFile }
 }) {
   return {
     userBoardPermissions,
     chatImVisiable,
-    isOpenAttachmentFile,
+    isOpenAttachmentFile
   }
 }

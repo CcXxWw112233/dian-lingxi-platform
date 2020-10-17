@@ -107,11 +107,11 @@ export default class TreeNode extends Component {
       gantt_view_mode
     } = this.props
     const { start_time, due_time, tree_type } = nodeValue
-    if (!start_time) return
+    if (!start_time && !due_time) return
     const gold_time = tree_type == '1' ? due_time : start_time
     const date = new Date(gold_time).getDate()
     let toDayIndex = -1
-    if (gantt_view_mode == 'month') {
+    if (gantt_view_mode == 'month' || gantt_view_mode == 'hours') {
       toDayIndex = date_arr_one_level.findIndex(item =>
         isSamDay(item.timestamp, gold_time)
       ) //当天所在位置index
@@ -298,7 +298,7 @@ export default class TreeNode extends Component {
   }
 
   onManHourChange = value => {
-    const { outline_tree_round = [] } = this.props
+    const { outline_tree_round = [], gantt_view_mode } = this.props
     const { nodeValue = {} } = this.state
     if (!validatePositiveInt(value)) {
       return
@@ -311,28 +311,46 @@ export default class TreeNode extends Component {
     const newNodeValue = { ...nodeValue, time_span: new_value }
     if (newNodeValue.is_has_start_time && newNodeValue.is_has_end_time) {
       //开始时间不变，截至时间后移
-      newNodeValue.due_time = moment(newNodeValue.start_time)
-        .add(new_value - 1, 'days')
-        .hour(23)
-        .minute(59)
-        .second(59)
-        .valueOf()
-    } else {
-      if (newNodeValue.is_has_start_time) {
+      if (gantt_view_mode != 'hours') {
         newNodeValue.due_time = moment(newNodeValue.start_time)
           .add(new_value - 1, 'days')
           .hour(23)
           .minute(59)
           .second(59)
           .valueOf()
+      } else {
+        newNodeValue.due_time = moment(newNodeValue.start_time)
+          .add((new_value - 1) * 60 * 60 * 1000, 'milliseconds')
+          .valueOf()
+      }
+    } else {
+      if (newNodeValue.is_has_start_time) {
+        if (gantt_view_mode != 'hours') {
+          newNodeValue.due_time = moment(newNodeValue.start_time)
+            .add(new_value - 1, 'days')
+            .hour(23)
+            .minute(59)
+            .second(59)
+            .valueOf()
+        } else {
+          newNodeValue.due_time = moment(newNodeValue.start_time)
+            .add((new_value - 1) * 60 * 60 * 1000, 'milliseconds')
+            .valueOf()
+        }
       }
       if (newNodeValue.is_has_end_time) {
-        newNodeValue.start_time = moment(newNodeValue.start_time)
-          .add(new_value - 1, 'days')
-          .hour(0)
-          .minute(0)
-          .second(0)
-          .valueOf()
+        if (gantt_view_mode != 'hours') {
+          newNodeValue.start_time = moment(newNodeValue.start_time)
+            .add(new_value - 1, 'days')
+            .hour(0)
+            .minute(0)
+            .second(0)
+            .valueOf()
+        } else {
+          newNodeValue.start_time = moment(newNodeValue.start_time)
+            .add((new_value - 1) * 60 * 60 * 1000, 'milliseconds')
+            .valueOf()
+        }
       }
     }
 
@@ -545,42 +563,55 @@ export default class TreeNode extends Component {
   renderTimes = () => {
     const { nodeValue = {} } = this.state
     const { tree_type, time_span } = nodeValue
+    const { gantt_view_mode } = this.props
+    const wrapper = inner => {
+      return (
+        <Popover
+          {...(tree_type == '1' ? { visible: false } : {})} //里程碑不能直接设置周期
+          placement="bottom"
+          content={
+            <ManhourSet
+              tree_type={tree_type}
+              gantt_view_mode={gantt_view_mode}
+              onChange={this.onManHourChange}
+              nodeValue={nodeValue}
+              value={time_span}
+            />
+          }
+          title={
+            <div
+              style={{
+                textAlign: 'center',
+                height: '36px',
+                lineHeight: '36px',
+                fontWeight: '600'
+              }}
+            >
+              花费时间
+            </div>
+          }
+          trigger="click"
+        >
+          <>{inner}</>
+        </Popover>
+      )
+    }
+    const content = () => {
+      return time_span ? (
+        <span className={`${styles.editTitle}`}>
+          {time_span}
+          {tree_type == '1' ? '天' : gantt_view_mode == 'hours' ? '时' : '天'}
+        </span>
+      ) : (
+        <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>
+          &#xe6d9;
+        </span>
+      )
+    }
     return (
       <span>
-        {this.isShowSetTimeSpan(nodeValue) && (
-          <Popover
-            {...(tree_type == '1' ? { visible: false } : {})} //里程碑不能直接设置周期
-            placement="bottom"
-            content={
-              <ManhourSet
-                onChange={this.onManHourChange}
-                nodeValue={nodeValue}
-                value={time_span}
-              />
-            }
-            title={
-              <div
-                style={{
-                  textAlign: 'center',
-                  height: '36px',
-                  lineHeight: '36px',
-                  fontWeight: '600'
-                }}
-              >
-                花费时间
-              </div>
-            }
-            trigger="click"
-          >
-            {time_span ? (
-              <span className={`${styles.editTitle}`}>{time_span}天</span>
-            ) : (
-              <span className={`${styles.editIcon} ${globalStyles.authTheme}`}>
-                &#xe6d9;
-              </span>
-            )}
-          </Popover>
-        )}
+        {this.isShowSetTimeSpan(nodeValue) &&
+          (gantt_view_mode == 'hours' ? content() : wrapper(content()))}
       </span>
     )
   }
@@ -742,9 +773,7 @@ export default class TreeNode extends Component {
                   (is_display || is_display == undefined ? (
                     <span
                       title="隐藏"
-                      className={`${globalStyles.authTheme} ${
-                        styles.outline_tree_node_hide_eye_icon
-                      }`}
+                      className={`${globalStyles.authTheme} ${styles.outline_tree_node_hide_eye_icon}`}
                       onClick={e => {
                         this.handleOperateEyeIcon({
                           e,
@@ -759,9 +788,7 @@ export default class TreeNode extends Component {
                   ) : (
                     <span
                       title="显示"
-                      className={`${globalStyles.authTheme} ${
-                        styles.outline_tree_node_show_eye_icon
-                      }`}
+                      className={`${globalStyles.authTheme} ${styles.outline_tree_node_show_eye_icon}`}
                       onClick={e => {
                         this.handleOperateEyeIcon({
                           e,
@@ -836,8 +863,9 @@ export default class TreeNode extends Component {
 
   renderStartTime = key => {
     const { nodeValue = {} } = this.props
-    let { start_time, is_has_start_time } = nodeValue
-    if (start_time && is_has_start_time) {
+    let { start_time, is_has_start_time, tree_type } = nodeValue
+    //仅在任务时需要强is_has_start_time判断
+    if (start_time && (tree_type == '2' ? is_has_start_time : true)) {
       return dateFormat(start_time, this.timeForMat)
     }
     return (
@@ -961,18 +989,14 @@ export default class TreeNode extends Component {
                   onVisibleChange={this.operateVisibleChange}
                 >
                   <div
-                    className={`${styles.node_opeator} ${
-                      globalStyles.authTheme
-                    }`}
+                    className={`${styles.node_opeator} ${globalStyles.authTheme}`}
                   >
                     &#xe7fd;
                   </div>
                 </Dropdown>
               ) : (
                 <span
-                  className={`${styles.outline_tree_line_node_dot} ${
-                    this.setDotStyle[type]
-                  }`}
+                  className={`${styles.outline_tree_line_node_dot} ${this.setDotStyle[type]}`}
                 />
               )}
               {!isLeaf && (
@@ -1142,9 +1166,7 @@ export default class TreeNode extends Component {
                   icon
                 ) : (
                   <span
-                    className={`${styles.outline_tree_line_node_dot} ${
-                      this.setDotStyle[type]
-                    }`}
+                    className={`${styles.outline_tree_line_node_dot} ${this.setDotStyle[type]}`}
                   />
                 )
               ) : ((hoverItem.id && hoverItem.id == id) ||
@@ -1158,18 +1180,14 @@ export default class TreeNode extends Component {
                   onVisibleChange={this.operateVisibleChange}
                 >
                   <div
-                    className={`${styles.node_opeator} ${
-                      globalStyles.authTheme
-                    }`}
+                    className={`${styles.node_opeator} ${globalStyles.authTheme}`}
                   >
                     &#xe7fd;
                   </div>
                 </Dropdown>
               ) : (
                 <span
-                  className={`${styles.outline_tree_line_node_dot} ${
-                    this.setDotStyle[type]
-                  }`}
+                  className={`${styles.outline_tree_line_node_dot} ${this.setDotStyle[type]}`}
                 />
               )}
               {!isLeaf && (

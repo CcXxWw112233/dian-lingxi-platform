@@ -17,7 +17,11 @@ import {
   getLastHourDate,
   getHourDate
 } from './getDate'
-import { date_area_height, ganttIsOutlineView } from './constants'
+import {
+  date_area_height,
+  ganttIsOutlineView,
+  hours_view_total
+} from './constants'
 import GroupListHeadSet from './GroupListHeadSet.js'
 import GroupListHeadSetBottom from './GroupListHeadSetBottom'
 
@@ -219,7 +223,8 @@ export default class GanttFace extends Component {
     const rescroll_leng_to_left_wrapper = {
       month: 30,
       week: 343, //往前添加49周
-      year: 365 //往前添加一年
+      year: 365, //往前添加一年
+      hours: 15 * hours_view_total
     }
     const rescroll_leng_to_left = gantt_view_mode == 'month' ? 30 : 60 //滚动条回复位置
     const rescroll_leng_to_right = gantt_view_mode == 'month' ? 60 : 90 //滚动条回复位置
@@ -553,7 +558,12 @@ export default class GanttFace extends Component {
       type: 'gantt/exitBaseLineInfoView'
     })
   }
-
+  // 鼠标事件设置滚动区域
+  onMouseOverCapture = () => {
+    const { scroll_area } = this.state
+    if (scroll_area == 'gantt_body') return
+    this.setScrollArea('gantt_body')
+  }
   render() {
     const { gantt_card_out_middle_max_height } = this.state
     const {
@@ -652,6 +662,7 @@ export default class GanttFace extends Component {
                 ref={'gantt_card_out_middle'}
                 onMouseEnter={() => this.setScrollArea('gantt_body')}
                 onTouchStart={() => this.setScrollArea('gantt_body')}
+                onMouseOverCapture={this.onMouseOverCapture}
                 onScroll={this.ganttScroll}
               >
                 {show_base_line_mode && (

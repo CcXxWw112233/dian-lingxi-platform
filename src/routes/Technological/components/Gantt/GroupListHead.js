@@ -167,6 +167,12 @@ export default class GroupListHead extends Component {
     }
   }
 
+  // 鼠标事件设置滚动区域
+  onMouseOverCapture = () => {
+    const { scroll_area } = this.props
+    if (scroll_area == 'gantt_head') return
+    this.props.setScrollArea('gantt_head')
+  }
   render() {
     const {
       list_group = [],
@@ -302,6 +308,7 @@ export default class GroupListHead extends Component {
               : indexStyles.listHead
           }`}
           onScroll={this.headScroll}
+          onMouseOverCapture={this.onMouseOverCapture}
           onMouseEnter={() => this.props.setScrollArea('gantt_head')}
           onTouchStart={() => {
             this.props.setScrollArea('gantt_head')

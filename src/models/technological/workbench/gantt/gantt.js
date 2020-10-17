@@ -43,19 +43,24 @@ import {
   ceil_width_year,
   one_group_row_total,
   ganttIsSingleBoardGroupView,
-  date_area_height
+  date_area_height,
+  hours_view_start_work_oclock,
+  hours_view_due_work_oclock,
+  ceil_width_hours
 } from '../../../../routes/Technological/components/Gantt/constants'
 import { getModelSelectDatasState } from '../../../utils'
 import { getProjectGoupList } from '../../../../services/technological/task'
 import {
   handleChangeBoardViewScrollTop,
   setGantTimeSpan,
-  diffGanttTimeSpan
+  diffGanttTimeSpan,
+  setHourViewCardTimeSpan
 } from '../../../../routes/Technological/components/Gantt/ganttBusiness'
 import {
   jsonArrayCompareSort,
   transformTimestamp,
-  isSamDay
+  isSamDay,
+  isSamHour
 } from '../../../../utils/util'
 import gantt_effect from './gantt_effect'
 import { recusionItem } from './gantt_utils'
@@ -148,7 +153,8 @@ export default {
 
       selected_hide_term: false, // 表示是否选择隐藏项 true 表示是
       isDisplayContentIds: [], // 表示已经隐藏的content_ids
-      outline_tree_original: [] // 大纲视图显示隐藏快照 数据源
+      outline_tree_original: [], // 大纲视图显示隐藏快照 数据源
+      card_name_outside: false //任务名称是否外置
     }
   },
   subscriptions: {
@@ -410,7 +416,9 @@ export default {
       const gantt_view_mode = yield select(
         getModelSelectDatasState('gantt', 'gantt_view_mode')
       )
-
+      const min_start_time = date_arr_one_level[0].timestamp //最早时间
+      const max_due_time =
+        date_arr_one_level[date_arr_one_level.length - 1].timestampEnd
       let new_outline_tree = [...data]
       // const tree_arr_1 = data.filter(item => item.tree_type == '1')//.sort(jsonArrayCompareSort('due_time', transformTimestamp)) //里程碑截止时间由近及远
       // const tree_arr_2 = data.filter(item => item.tree_type != '1')//.sort(jsonArrayCompareSort('start_time', transformTimestamp))
@@ -419,7 +427,14 @@ export default {
       let filnaly_outline_tree = recusionItem(
         new_outline_tree,
         { parent_expand: true },
-        { start_date, end_date, filter_display }
+        {
+          start_date,
+          end_date,
+          filter_display,
+          gantt_view_mode,
+          min_start_time,
+          max_due_time
+        }
       )
       // console.log('filnaly_outline_tree_0', filnaly_outline_tree)
       yield put({
@@ -617,6 +632,89 @@ export default {
                 }
                 break
               }
+            } else if (gantt_view_mode == 'hours') {
+              if (
+                //如果重合
+                isSamHour(
+                  new_item[cal_left_field],
+                  date_arr_one_level[k]['timestamp']
+                )
+              ) {
+                new_item.left = k * ceilWidth
+                if (new_item.min_leaf_card_time) {
+                  //左边位置 = 右边位置 - 宽度
+                  new_item.min_leaf_left =
+                    new_item.left -
+                    setHourViewCardTimeSpan(
+                      new_item.min_leaf_card_time,
+                      transformTimestamp(new_item[cal_left_field]),
+                      min_start_time,
+                      max_due_time
+                    ) *
+                      ceilWidth +
+                    ceilWidth
+                }
+
+                break
+              } else {
+                //如果是在同一天，开始时间不在工作时间内
+                if (
+                  isSamDay(
+                    new_item[cal_left_field],
+                    date_arr_one_level[k]['timestamp']
+                  )
+                ) {
+                  // 开始时间在工作时间之前
+                  if (
+                    new_item[cal_left_field] <
+                      date_arr_one_level[k]['timestamp'] &&
+                    date_arr_one_level[k]['date_no'] ==
+                      hours_view_start_work_oclock
+                  ) {
+                    new_item.left = k * ceilWidth
+                    if (new_item.min_leaf_card_time) {
+                      //左边位置 = 右边位置 - 宽度
+                      new_item.min_leaf_left =
+                        new_item.left -
+                        setHourViewCardTimeSpan(
+                          new_item.min_leaf_card_time,
+                          transformTimestamp(new_item[cal_left_field]),
+                          min_start_time,
+                          max_due_time
+                        ) *
+                          ceilWidth +
+                        ceilWidth
+                    }
+                    break
+                  } else if (
+                    //开始时间在工作时间之后
+                    new_item[cal_left_field] >
+                      date_arr_one_level[k]['timestamp'] &&
+                    date_arr_one_level[k]['date_no'] ==
+                      hours_view_due_work_oclock - 1
+                  ) {
+                    if (new_item.tree_type == '2') {
+                      new_item.left = (k + 1) * ceilWidth
+                    } else {
+                      new_item.left = k * ceilWidth
+                    }
+                    if (new_item.min_leaf_card_time) {
+                      // eslint-disable-next-line prettier/prettier
+                      new_item.min_leaf_left =
+                        new_item.left -
+                        setHourViewCardTimeSpan(
+                          new_item.min_leaf_card_time,
+                          transformTimestamp(new_item[cal_left_field]),
+                          min_start_time,
+                          max_due_time
+                        ) *
+                          ceilWidth +
+                        ceilWidth
+                    }
+                    break
+                  }
+                }
+              }
             } else {
             }
           }
@@ -665,7 +763,12 @@ export default {
         const gantt_view_mode = yield select(
           getModelSelectDatasState('gantt', 'gantt_view_mode')
         )
-
+        const date_arr_one_level = yield select(
+          getModelSelectDatasState('gantt', 'date_arr_one_level')
+        )
+        const min_start_time = date_arr_one_level[0].timestamp //最早时间
+        const max_due_time =
+          date_arr_one_level[date_arr_one_level.length - 1].timestampEnd //最晚时间
         for (let val of data) {
           const list_group_item = {
             ...val,
@@ -680,45 +783,60 @@ export default {
               const start_time = getDigit(val_1['start_time']) || due_time //如果没有开始时间，那就取截止时间当天
               const create_time = getDigit(val_1['create_time'])
               let time_span = val_1['time_span']
-              if (!time_span) {
-                time_span =
-                  !due_time || !start_time
-                    ? 1
-                    : Math.floor((due_time - start_time) / (24 * 3600 * 1000)) +
-                      1 //正常区间内
-                if (
-                  due_time > end_date.timestamp &&
-                  start_time > start_date.timestamp
-                ) {
-                  //右区间
+
+              if (gantt_view_mode == 'hours') {
+                time_span = setHourViewCardTimeSpan(
+                  start_time,
+                  due_time,
+                  min_start_time,
+                  max_due_time
+                )
+              } else {
+                if (!time_span) {
                   time_span =
-                    Math.floor(
-                      (end_date.timestamp - start_time) / (24 * 3600 * 1000)
-                    ) + 1
-                } else if (
-                  start_time < start_date.timestamp &&
-                  due_time < end_date.timestamp
-                ) {
-                  //左区间
-                  time_span =
-                    Math.floor(
-                      (due_time - start_date.timestamp) / (24 * 3600 * 1000)
-                    ) + 1
-                } else if (
-                  due_time > end_date.timestamp &&
-                  start_time < start_date.timestamp
-                ) {
-                  //超过左右区间
-                  time_span =
-                    Math.floor(
-                      (end_date.timestamp - start_date.timestamp) /
-                        (24 * 3600 * 1000)
-                    ) + 1
+                    !due_time || !start_time
+                      ? 1
+                      : Math.floor(
+                          (due_time - start_time) / (24 * 3600 * 1000)
+                        ) + 1 //正常区间内
+                  if (
+                    due_time > end_date.timestamp &&
+                    start_time > start_date.timestamp
+                  ) {
+                    //右区间
+                    time_span =
+                      Math.floor(
+                        (end_date.timestamp - start_time) / (24 * 3600 * 1000)
+                      ) + 1
+                  } else if (
+                    start_time < start_date.timestamp &&
+                    due_time < end_date.timestamp
+                  ) {
+                    //左区间
+                    time_span =
+                      Math.floor(
+                        (due_time - start_date.timestamp) / (24 * 3600 * 1000)
+                      ) + 1
+                  } else if (
+                    due_time > end_date.timestamp &&
+                    start_time < start_date.timestamp
+                  ) {
+                    //超过左右区间
+                    time_span =
+                      Math.floor(
+                        (end_date.timestamp - start_date.timestamp) /
+                          (24 * 3600 * 1000)
+                      ) + 1
+                  }
+                  // console.log('sssssss', val_1.name, time_span)
+                  // time_span = time_span > date_arr_one_level.length?  date_arr_one_level.length: time_span
                 }
-                // console.log('sssssss', val_1.name, time_span)
-                // time_span = time_span > date_arr_one_level.length?  date_arr_one_level.length: time_span
+                time_span = diffGanttTimeSpan({
+                  time_span,
+                  start_time,
+                  due_time
+                })
               }
-              time_span = diffGanttTimeSpan({ time_span, start_time, due_time })
               let list_data_item = {
                 ...val_1,
                 start_time,
@@ -914,7 +1032,7 @@ export default {
                 //   item.left = k * ceilWidth
                 //   break
                 // }
-                if (gantt_view_mode == 'month' || gantt_view_mode == 'hours') {
+                if (gantt_view_mode == 'month') {
                   //月视图下遍历得到和开始时间对的上的日期
                   if (
                     isSamDay(
@@ -953,6 +1071,46 @@ export default {
                       ((k + (date_day == 0 ? 1 : 0)) * 7 + date_day - 1) *
                       ceilWidth
                     break
+                  }
+                } else if (gantt_view_mode == 'hours') {
+                  if (
+                    //如果重合
+                    isSamHour(
+                      item['start_time'],
+                      date_arr_one_level[k]['timestamp']
+                    )
+                  ) {
+                    item.left = k * ceilWidth
+                    break
+                  } else {
+                    //如果是在同一天，开始时间不在工作时间内
+                    if (
+                      isSamDay(
+                        item['start_time'],
+                        date_arr_one_level[k]['timestamp']
+                      )
+                    ) {
+                      // 开始时间在工作时间之前
+                      if (
+                        item['start_time'] <
+                          date_arr_one_level[k]['timestamp'] &&
+                        date_arr_one_level[k]['date_no'] ==
+                          hours_view_start_work_oclock
+                      ) {
+                        item.left = k * ceilWidth
+                        break
+                      } else if (
+                        //开始时间在工作时间之后
+                        item['start_time'] >
+                          date_arr_one_level[k]['timestamp'] &&
+                        date_arr_one_level[k]['date_no'] ==
+                          hours_view_due_work_oclock - 1 &&
+                        !isSamDay(item['start_time'], item['due_time'])
+                      ) {
+                        item.left = (k + 1) * ceilWidth
+                        break
+                      }
+                    }
                   }
                 }
               }

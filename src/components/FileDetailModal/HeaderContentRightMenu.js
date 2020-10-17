@@ -50,6 +50,7 @@ import SaveAsNewVersionFile from './component/SaveAsNewVersionFile'
 import { getFolderList } from '@/services/technological/file'
 import { currentNounPlanFilterName } from '../../utils/businessFunction'
 import { FILES } from '../../globalset/js/constant'
+import DEvent from '../../utils/event'
 
 @connect(mapStateToProps)
 export default class HeaderContentRightMenu extends Component {
@@ -58,6 +59,7 @@ export default class HeaderContentRightMenu extends Component {
     this.state = {
       // selectedKeys: []
     }
+    this.isPdfInType = ['.jpg', '.jpeg', '.png', '.gif', '.pdf']
   }
 
   // 这里是更新版本列表添加一个编辑的字段
@@ -221,14 +223,18 @@ export default class HeaderContentRightMenu extends Component {
   // pdf文件和普通文件区别时做不同地处理预览
   handleUploadPDForElesFilePreview = ({ file_name, id }) => {
     if (getSubfixName(file_name) == '.pdf') {
-      this.props.getCurrentFilePreviewData &&
-        this.props.getCurrentFilePreviewData({ id }) // 需要先获取一遍详情
       this.props.delayUpdatePdfDatas && this.props.delayUpdatePdfDatas({ id })
       this.props.updateStateDatas &&
         this.props.updateStateDatas({ fileType: getSubfixName(file_name) })
+      this.props.getCurrentFilePreviewData &&
+        this.props.getCurrentFilePreviewData({ id }).then(res => {
+          DEvent.firEvent('pdfCommentUpdate', id)
+        }) // 需要先获取一遍详情
     } else {
       this.props.getCurrentFilePreviewData &&
-        this.props.getCurrentFilePreviewData({ id })
+        this.props.getCurrentFilePreviewData({ id }).then(res => {
+          DEvent.firEvent('pdfCommentUpdate', id)
+        })
     }
   }
 
@@ -449,6 +455,10 @@ export default class HeaderContentRightMenu extends Component {
 
   // 下载文件
   handleFileDownload({ filePreviewCurrentResourceId, pdfDownLoadSrc }) {
+    if (this.isPdfInType.includes(this.props.fileType)) {
+      DEvent.firEvent('pdfSave', {})
+      return
+    }
     if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
@@ -622,13 +632,29 @@ export default class HeaderContentRightMenu extends Component {
     // })
   }
 
+  handleSaveAs = () => {
+    // console.log(this.props)
+    DEvent.firEvent('pdfSaveAs', {})
+  }
+
   saveAsMenu = () => {
-    const { filePreviewCurrentResourceId, pdfDownLoadSrc } = this.props
+    const {
+      filePreviewCurrentResourceId,
+      pdfDownLoadSrc,
+      fileType
+    } = this.props
     return (
       <Menu>
-        <Menu.Item key="2" onClick={this.handleSaveAsNewVersion}>
-          保存
-        </Menu.Item>
+        {this.isPdfInType.includes(fileType) ? (
+          <Menu.Item key="3" onClick={this.handleSaveAs}>
+            另存为
+          </Menu.Item>
+        ) : (
+          <Menu.Item key="2" onClick={this.handleSaveAsNewVersion}>
+            保存
+          </Menu.Item>
+        )}
+
         {/* <Menu.Item key="3" onClick={this.handleSaveAsOthersNewVersion}>
           另存为
         </Menu.Item> */}
@@ -1217,7 +1243,7 @@ export default class HeaderContentRightMenu extends Component {
               zIndex: 1
             }}
             onClick={this.handleDisabledOperator}
-          ></div>
+          />
         )}
         {!isOpenAttachmentFile && (
           <>

@@ -23,7 +23,11 @@ function BaseLineItem(props) {
   const gantt_view_mode = props.gantt_view_mode
   // 甘特图中对应的数据
   const ganttData = props.ganttData
-
+  //自里程碑位置调整
+  const child_milestone_margin_left = {
+    month: 9,
+    hours: 4
+  }
   return (
     <div
       className={styles.baselineitem_box}
@@ -51,9 +55,10 @@ function BaseLineItem(props) {
             </div>
           ) : (
             <div
-              className={`${styles.subMilepost} ${
-                gantt_view_mode === 'month' ? styles.hasLeft : ''
-              }`}
+              className={`${styles.subMilepost} `}
+              style={{
+                marginLeft: child_milestone_margin_left[gantt_view_mode] || 0
+              }}
             ></div>
           )}
         </div>

@@ -13,6 +13,11 @@ import {
 } from '../../../../utils/businessFunction'
 import { PROJECT_TEAM_BOARD_MILESTONE } from '@/globalset/js/constant'
 import { isApiResponseOk } from '../../../../utils/handleResponseData'
+import { isSamHour } from '../../../../utils/util'
+import {
+  hours_view_due_work_oclock,
+  hours_view_start_work_oclock
+} from './constants'
 
 const MenuItem = Menu.Item
 
@@ -205,7 +210,7 @@ export default class DateList extends Component {
     let current_date_miletones = [] //计算日期的里程碑列表
     let is_over_duetime = false //是否超出截止时间
     let is_all_realized = '1' //全部关联的任务已完成 1 / 0 =>完成 / 未完成
-    const { milestoneMap = [] } = this.props
+    const { milestoneMap = [], gantt_view_mode } = this.props
     return {
       handleMonthMode: timestamp => {
         if (!timestamp) {
@@ -219,17 +224,61 @@ export default class DateList extends Component {
           is_over_duetime = true
         }
         for (let key in milestoneMap) {
-          if (isSamDay(Number(timestamp), Number(key) * 1000)) {
-            current_date_miletones = current_date_miletones.concat(
-              milestoneMap[key]
-            )
-            if (milestoneMap[key].length) {
-              flag = true
+          if (gantt_view_mode == 'month') {
+            if (isSamDay(Number(timestamp), Number(key) * 1000)) {
+              current_date_miletones = current_date_miletones.concat(
+                milestoneMap[key]
+              )
+              if (milestoneMap[key].length) {
+                flag = true
+              }
+              for (let val of milestoneMap[key]) {
+                if (val['is_all_realized'] == '0') {
+                  is_all_realized = '0'
+                  break
+                }
+              }
             }
-            for (let val of milestoneMap[key]) {
-              if (val['is_all_realized'] == '0') {
-                is_all_realized = '0'
-                break
+          }
+
+          if (gantt_view_mode == 'hours') {
+            if (isSamHour(Number(timestamp), Number(key) * 1000)) {
+              current_date_miletones = current_date_miletones.concat(
+                milestoneMap[key]
+              )
+              if (milestoneMap[key].length) {
+                flag = true
+              }
+              for (let val of milestoneMap[key]) {
+                if (val['is_all_realized'] == '0') {
+                  is_all_realized = '0'
+                  break
+                }
+              }
+            } else {
+              if (isSamDay(Number(timestamp), Number(key) * 1000)) {
+                //如果是同一天并且时间在工作区间外，将所有放在最后一个小时
+                if (
+                  new Date(timestamp).getHours() ==
+                    hours_view_due_work_oclock - 1 &&
+                  (new Date(Number(key) * 1000).getHours() >=
+                    hours_view_due_work_oclock ||
+                    new Date(Number(key) * 1000).getHours() <
+                      hours_view_start_work_oclock)
+                ) {
+                  current_date_miletones = current_date_miletones.concat(
+                    milestoneMap[key]
+                  )
+                  if (milestoneMap[key].length) {
+                    flag = true
+                  }
+                  for (let val of milestoneMap[key]) {
+                    if (val['is_all_realized'] == '0') {
+                      is_all_realized = '0'
+                      break
+                    }
+                  }
+                }
               }
             }
           }
@@ -372,49 +421,113 @@ export default class DateList extends Component {
     })
   }
   // 渲染时视图 日期数据
+  // renderHoursViewDate = (date_inner = []) => {
+  //   const { ceilWidth, group_view_type } = this.props
+  //   return (
+  //     <div className={indexStyles.dateDetail}>
+  //       {date_inner.map((value2, key2) => {
+  //         const {
+  //           month,
+  //           last_date,
+  //           year,
+  //           timestamp,
+  //           timestampEnd,
+  //           date_no,
+  //           include_today
+  //         } = value2
+  //         const {
+  //           flag: has_lcb,
+  //           current_date_miletones,
+  //           is_over_duetime,
+  //           is_all_realized
+  //         } = this.isHasMiletoneList().handleYearMode({
+  //           year,
+  //           month,
+  //           last_date,
+  //           timestamp,
+  //           timestampEnd
+  //         })
+  //         return (
+  //           <div key={`${timestamp}`}>
+  //             <div
+  //               className={`${indexStyles.dateDetailItem}`}
+  //               key={key2}
+  //               style={{ width: ceilWidth, fontSize: 12, padding: 0 }}
+  //             >
+  //               <div
+  //                 className={`${
+  //                   indexStyles.dateDetailItem_date_no
+  //                 } ${include_today && indexStyles.include_today} `}
+  //                 style={{
+  //                   fontSize: 10,
+  //                   textAlign: 'center'
+  //                 }}
+  //               >
+  //                 {date_no}
+  //                 {/* {date_no % 2 != 0 ? date_no : ''} */}
+  //               </div>
+  //             </div>
+  //           </div>
+  //         )
+  //       })}
+  //     </div>
+  //   )
+  // }
   renderHoursViewDate = (date_inner = []) => {
-    const { ceilWidth, group_view_type } = this.props
+    const { group_view_type, ceilWidth } = this.props
     return (
       <div className={indexStyles.dateDetail}>
         {date_inner.map((value2, key2) => {
-          const {
-            month,
-            last_date,
-            year,
-            timestamp,
-            timestampEnd,
-            date_no,
-            include_today
-          } = value2
+          const { month, date_no, week_day, timestamp, timestampEnd } = value2
           const {
             flag: has_lcb,
-            current_date_miletones,
+            current_date_miletones = [],
             is_over_duetime,
             is_all_realized
-          } = this.isHasMiletoneList().handleYearMode({
-            year,
-            month,
-            last_date,
-            timestamp,
-            timestampEnd
-          })
-          return (
-            <div key={`${timestamp}`}>
+          } = this.isHasMiletoneList().handleMonthMode(Number(timestampEnd))
+          // /gantt_board_id == '0' ||
+          const isToday = isSamDay(timestamp, new Date().getTime())
+          return group_view_type != '1' ? (
+            <div key={`${month}/${date_no}`}>
               <div
                 className={`${indexStyles.dateDetailItem}`}
                 key={key2}
-                style={{ width: ceilWidth, fontSize: 12 }}
+                style={{ width: ceilWidth, fontSize: 10, padding: 0 }}
               >
-                <div
-                  className={`${
-                    indexStyles.dateDetailItem_date_no
-                  } ${include_today && indexStyles.include_today} `}
-                  style={{ fontSize: 12 }}
-                >
+                <div className={`${indexStyles.dateDetailItem_date_no}`}>
                   {date_no}
                 </div>
               </div>
             </div>
+          ) : (
+            <Dropdown
+              overlay={this.renderLCBList(current_date_miletones, {
+                timestampEnd
+              })}
+              key={`${month}/${date_no}`}
+              trigger={['click']}
+            >
+              <div>
+                <div
+                  className={`${indexStyles.dateDetailItem}`}
+                  key={key2}
+                  style={{ width: ceilWidth, fontSize: 10, padding: 0 }}
+                >
+                  <div
+                    className={`${indexStyles.dateDetailItem_date_no} `}
+                    style={{
+                      background: this.setMiletonesColor({
+                        is_over_duetime,
+                        has_lcb,
+                        is_all_realized
+                      })
+                    }}
+                  >
+                    {date_no}
+                  </div>
+                </div>
+              </div>
+            </Dropdown>
           )
         })}
       </div>

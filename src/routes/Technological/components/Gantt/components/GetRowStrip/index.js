@@ -290,7 +290,7 @@ export default class GetRowStrip extends PureComponent {
               type: 'gantt/updateOutLineTree',
               payload: {
                 datas: [
-                  { id, start_time: timestamp, due_time },
+                  // { id, start_time: timestamp, due_time },
                   ...res.data.scope_content
                 ]
               }
@@ -520,7 +520,8 @@ export default class GetRowStrip extends PureComponent {
   renderMilestoneSet = () => {
     const {
       itemValue: { due_time, min_leaf_left, left, parent_id },
-      ceilWidth
+      ceilWidth,
+      gantt_view_mode
     } = this.props
     return !!due_time ? (
       <>
@@ -528,7 +529,14 @@ export default class GetRowStrip extends PureComponent {
           className={styles.leaf_min_time}
           style={{
             left: min_leaf_left,
-            width: left - min_leaf_left + (!parent_id ? ceilWidth : 0)
+            width:
+              left -
+              min_leaf_left +
+              (!parent_id
+                ? ceilWidth
+                : ['month', 'hours'].includes(gantt_view_mode)
+                ? ceilWidth / 2
+                : 0)
           }}
         >
           <div className={styles.left_triangle}></div>

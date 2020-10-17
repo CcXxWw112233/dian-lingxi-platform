@@ -1,8 +1,18 @@
-import { setGantTimeSpan } from '../../../../routes/Technological/components/Gantt/ganttBusiness'
-import { getDigit, transformTimestamp, isSamDay } from '../../../../utils/util'
+import {
+  setGantTimeSpan,
+  setHourViewCardTimeSpan
+} from '../../../../routes/Technological/components/Gantt/ganttBusiness'
+import {
+  getDigit,
+  transformTimestamp,
+  isSamDay,
+  isSamHour
+} from '../../../../utils/util'
 import {
   task_item_height,
-  ceil_height
+  ceil_height,
+  hours_view_start_work_oclock,
+  hours_view_due_work_oclock
 } from '../../../../routes/Technological/components/Gantt/constants'
 import { getDateInfo } from '../../../../routes/Technological/components/Gantt/getDate'
 // 获取一级里程碑包含的高度
@@ -58,7 +68,14 @@ export function recusionItem(
     parent_ids = [],
     parrent_cat_no = undefined
   },
-  { start_date, end_date, filter_display }
+  {
+    start_date,
+    end_date,
+    filter_display,
+    gantt_view_mode,
+    min_start_time,
+    max_due_time
+  }
 ) {
   let arr = tree.map((item, key) => {
     let new_item = { ...item, parent_expand }
@@ -112,13 +129,22 @@ export function recusionItem(
       })
     } else {
       //其它类型就根据开始截至时间计算
-      time_span = setGantTimeSpan({
-        time_span,
-        start_time,
-        due_time,
-        start_date,
-        end_date
-      })
+      if (gantt_view_mode == 'hours') {
+        time_span = setHourViewCardTimeSpan(
+          start_time,
+          due_time,
+          min_start_time,
+          max_due_time
+        )
+      } else {
+        time_span = setGantTimeSpan({
+          time_span,
+          start_time,
+          due_time,
+          start_date,
+          end_date
+        })
+      }
     }
     new_item.time_span = time_span
     new_item.parent_ids = []
@@ -145,7 +171,14 @@ export function recusionItem(
           parent_ids: new_item.parent_ids,
           parrent_cat_no: new_item.cat_no
         },
-        { start_date, end_date, filter_display }
+        {
+          start_date,
+          end_date,
+          filter_display,
+          gantt_view_mode,
+          min_start_time,
+          max_due_time
+        }
       )
       if (filter_display) {
         new_item.children = new_item.children.filter(item => item.is_display)
@@ -296,6 +329,49 @@ export function formatItem(
                 ((k + (date_day == 0 ? 1 : 0)) * 7 + date_day - 1) * ceilWidth
               new_item.width = (time_span || 1) * ceilWidth
               break
+            }
+          } else if (gantt_view_mode == 'hours') {
+            if (
+              //如果重合
+              isSamHour(
+                new_item[cal_left_field],
+                date_arr_one_level[k]['timestamp']
+              )
+            ) {
+              new_item.left = k * ceilWidth
+              break
+            } else {
+              //如果是在同一天，开始时间不在工作时间内
+              if (
+                isSamDay(
+                  new_item[cal_left_field],
+                  date_arr_one_level[k]['timestamp']
+                )
+              ) {
+                // 开始时间在工作时间之前
+                if (
+                  new_item[cal_left_field] <
+                    date_arr_one_level[k]['timestamp'] &&
+                  date_arr_one_level[k]['date_no'] ==
+                    hours_view_start_work_oclock
+                ) {
+                  new_item.left = k * ceilWidth
+                  break
+                } else if (
+                  //开始时间在工作时间之后
+                  new_item[cal_left_field] >
+                    date_arr_one_level[k]['timestamp'] &&
+                  date_arr_one_level[k]['date_no'] ==
+                    hours_view_due_work_oclock - 1
+                ) {
+                  if (new_item.tree_type == '2') {
+                    new_item.left = (k + 1) * ceilWidth
+                  } else {
+                    new_item.left = k * ceilWidth
+                  }
+                  break
+                }
+              }
             }
           } else {
           }

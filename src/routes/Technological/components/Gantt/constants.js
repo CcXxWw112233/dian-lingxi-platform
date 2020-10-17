@@ -5,10 +5,16 @@ export const task_item_margin_top = 12 //任务条margin-top
 export const ceil_height = task_item_height + task_item_margin_top // task_item_height + task_item_margin_top 单元格高度
 export const ceil_height_fold = 24 //折叠的单元格高度
 export const hours_view_total = 9 //时视图一天的工作时常 9：00 - 17：59
+export const hours_view_start_work_oclock = 9 //时间视图开始上班几点
+export const hours_view_due_work_oclock =
+  hours_view_total + hours_view_start_work_oclock //时间视图开始上班几点
+
 export const group_rows_fold = 4 //进度汇总折叠后行数
 export const ceil_width = 34 // 默认单元格宽度 （月视图）
 export const ceil_width_year = 3 //年试图下的单元格宽度
 export const ceil_width_week = 12 //周视图单元格宽度
+export const ceil_width_hours = 22 //年试图下的单元格宽度
+
 export const one_group_row_total = 4 //默认分组行数
 export const gantt_panel_left_diff = 20 //80 //鼠标移动和拖拽的修正位置
 export const gantt_head_width_init = 280 //甘特图头部默认宽度

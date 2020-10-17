@@ -1,4 +1,4 @@
-import { hours_view_total } from './constants'
+import { hours_view_start_work_oclock, hours_view_total } from './constants'
 
 const current_date = new Date()
 const current_year = current_date.getFullYear()
@@ -274,7 +274,7 @@ class base_utils {
   // 时视图 ----------start
   static getHours = () => {
     const arr = []
-    let init_oclock = 9
+    let init_oclock = hours_view_start_work_oclock
     let i = 0
     while (i < hours_view_total) {
       arr.push(init_oclock + i)

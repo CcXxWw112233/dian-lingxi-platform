@@ -6,7 +6,9 @@ import {
   ceil_height,
   ceil_width,
   ceil_width_year,
-  ceil_width_week
+  ceil_width_week,
+  ceil_width_hours,
+  ganttIsOutlineView
 } from '../../constants'
 import { isSamDay } from '../../../../../../utils/util'
 
@@ -152,7 +154,7 @@ export default class FaceRightButton extends Component {
   }
   // 视图切换 年/月
   changeGanttViewMode = type => {
-    const { dispatch, gantt_view_mode } = this.props
+    const { dispatch, gantt_view_mode, group_view_type } = this.props
     if (!type || gantt_view_mode == type) return
     const _now = new Date().getTime()
 
@@ -162,7 +164,7 @@ export default class FaceRightButton extends Component {
     } else if (type == 'month') {
       ceilWidth = ceil_width
     } else if (type == 'hours') {
-      ceilWidth = ceil_width
+      ceilWidth = ceil_width_hours
     } else if (type == 'week') {
       ceilWidth = ceil_width_week
     } else {
@@ -175,6 +177,19 @@ export default class FaceRightButton extends Component {
         get_gantt_data_loading_other: true
       }
     })
+    if (ganttIsOutlineView({ group_view_type })) {
+      dispatch({
+        type: 'gantt/updateDatas',
+        payload: {
+          outline_tree: [],
+          outline_tree_round: []
+        }
+      })
+      dispatch({
+        type: 'gantt/getGanttData',
+        payload: {}
+      })
+    }
     setTimeout(() => {
       this.props.setGoldDateArr({ timestamp: _now })
     }, 200)
@@ -220,7 +235,13 @@ export default class FaceRightButton extends Component {
         <div className={styles.card_button} onClick={this.checkToday}>
           今天
         </div>
-
+        <div
+          style={{ color: gantt_view_mode == 'hours' ? '#1890FF' : '' }}
+          className={styles.card_button}
+          onClick={() => this.changeGanttViewMode('hours')}
+        >
+          时
+        </div>
         <div
           style={{ color: gantt_view_mode == 'month' ? '#1890FF' : '' }}
           className={styles.card_button}
@@ -242,13 +263,6 @@ export default class FaceRightButton extends Component {
         >
           月
         </div>
-        {/* <div
-          style={{ color: gantt_view_mode == 'hours' ? '#1890FF' : '' }}
-          className={styles.card_button}
-          onClick={() => this.changeGanttViewMode('hours')}
-        >
-          时
-        </div> */}
       </div>
     )
   }
