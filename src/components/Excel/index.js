@@ -23,6 +23,7 @@ import { importExcelWithBoardData } from '../../services/technological'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { connect } from 'dva'
 import { timeToTimestamp } from '../../utils/util'
+import { split } from 'lodash'
 const EditableContext = React.createContext()
 
 const EditableRow = ({ form, index, ...props }) => (
@@ -176,15 +177,21 @@ export default class ExcelRead extends Component {
     this.typeValid = {
       任务: {
         1: ['里程碑'],
-        2: ['子里程碑']
+        2: ['子里程碑'],
+        name: 'card'
+      },
+      里程碑: {
+        name: 'milestone'
       },
       子里程碑: {
-        1: ['里程碑']
+        1: ['里程碑'],
+        name: 'milestone'
       },
       子任务: {
         1: ['任务'],
         2: ['任务'],
-        3: ['任务']
+        3: ['任务'],
+        name: 'card'
       }
     }
   }
@@ -209,7 +216,11 @@ export default class ExcelRead extends Component {
         let result = e.target.result
         // 返回数组中元素的字节数
         var data = new Uint8Array(result)
-        this.workBook = XLSX.read(data, { type: 'array' })
+        this.workBook = XLSX.read(data, {
+          type: 'array',
+          dateNF: 'yyyy/mm/dd',
+          cellDates: true
+        })
         // 转出来的数据
         const sheet2JSONOpts = {
           /** Default value for null/undefined values */
@@ -310,14 +321,14 @@ export default class ExcelRead extends Component {
         break
       case 'start_time':
         this.handleChangeTimer({
-          format: 'YYYY-MM-DD',
+          format: 'YYYY/MM/DD',
           select_name: 'start_time',
           text
         })
         break
       case 'due_time':
         this.handleChangeTimer({
-          format: 'YYYY-MM-DD',
+          format: 'YYYY/MM/DD',
           select_name: 'due_time',
           text
         })
@@ -345,14 +356,14 @@ export default class ExcelRead extends Component {
       }
       if (item == 'start_time') {
         this.handleChangeTimer({
-          format: this.state.select_time_format[key] || 'YYYY-MM-DD',
+          format: this.state.select_time_format[key] || 'YYYY/MM/DD',
           select_name: 'start_time',
           text: key
         })
       }
       if (item == 'due_time') {
         this.handleChangeTimer({
-          format: this.state.select_time_format[key] || 'YYYY-MM-DD',
+          format: this.state.select_time_format[key] || 'YYYY/MM/DD',
           select_name: 'due_time',
           text: key
         })
@@ -476,6 +487,7 @@ export default class ExcelRead extends Component {
     data = data.map(item => {
       let checkVal = item[text]
       let new_item = { ...item }
+      new_item.namekey = text
       if (checkNameReg(checkVal)) {
         delete item.is_error_key[text]
       } else {
@@ -615,7 +627,7 @@ export default class ExcelRead extends Component {
     let length = splitArr.length
     let keys = {
       2: [1, 2, 3, 4],
-      3: [2, 3],
+      3: [2, 3, 4],
       4: [3, 4]
     }
     switch (length) {
@@ -638,6 +650,9 @@ export default class ExcelRead extends Component {
             flag =
               splitArr[1] === prevSplitArr[1] && splitArr[2] === prevSplitArr[2]
           }
+          if (length === 3 && len === 4) {
+            flag = splitArr[1] === prevSplitArr[1]
+          }
           return flag
         }
         break
@@ -645,6 +660,7 @@ export default class ExcelRead extends Component {
     }
   }
 
+  // 检测序号准确性
   getFloorNumber = (data, column, splitKey) => {
     // let { data } = this.state
     let checkInteger = 0 // 正在验证的整数
@@ -655,11 +671,11 @@ export default class ExcelRead extends Component {
       // 保存序号属于哪个字段 ABC
       item.numberkey = column
       // 整数,整数的情况下不需要验证
-      if (!isNaN(number) && (number | 0) === number) {
-        // 添加合理的上级
+      if (!isNaN(number) && number % 1 === 0) {
+        // 添加合理的上级,如果是整数，等于是从它开始判断下面的子集是什么
         checkInteger = number
         // item.parentKey = this.align_type[0]
-      } else if (item.is_error_key[column] !== 'number' && value) {
+      } else if (!item.is_error_key[column] && value) {
         // 判断这条数据是不是已经是错的，如果是错的，就不处理了并且不处理第一条数据
         // 不是整数。需要验证
         if (index > 0) {
@@ -687,9 +703,7 @@ export default class ExcelRead extends Component {
           item.is_error_key[column] = 'number'
         }
       }
-      if (Object.keys(item.is_error_key).length) {
-        item.is_error = true
-      } else item.is_error = false
+      item.is_error = this.dataCheckIsError(item)
       arr.push(item)
     })
     return arr
@@ -737,6 +751,30 @@ export default class ExcelRead extends Component {
     })
   }
 
+  // 查找数据的parent
+  getParent = (data, current, splitKey) => {
+    // 必须存在数据
+    if (!data) return
+    // 必须存在对比数据
+    if (!current) return
+    // 必须存在序号字段
+    if (!current.numberkey) return
+    let text = current[current.numberkey]
+    let splitArr = text.split(splitKey)
+    if (splitArr.length === 1) {
+      return undefined
+    } else {
+      // 拿到当前截取的序号
+      let parent = splitArr
+      // 拿到当前序号的父级序号
+      parent.length = splitArr.length - 1
+      // 查找当前序号的父级数据
+      let parentKey = parent.join(splitKey)
+      let obj = data.find(item => item[item.numberkey] === parentKey)
+      return obj
+    }
+  }
+
   // 渲染不同字段对应下拉框
   renderDiffSelectField = (text, value) => {
     let main = <></>
@@ -760,6 +798,85 @@ export default class ExcelRead extends Component {
     return main
   }
 
+  dataCheckIsError = val => {
+    if (val) {
+      if (Object.keys(val.is_error_key || {}).length) {
+        return true
+      } else {
+        return false
+      }
+    }
+  }
+
+  // 校验序号
+  volidTimeOfNumber = (data, select_name, column) => {
+    let arr = []
+    data.forEach(item => {
+      let startTimekey = item.start_timekey
+      let endTimekey = item.due_timekey
+      let numberkey = item.numberkey
+      if (!item.is_error_key[startTimekey] && !item.is_error_key[numberkey]) {
+        let parent = this.getParent(data, item, '.')
+        if (parent) {
+          let parentSTime = parent[startTimekey]
+          let parentETime = parent[endTimekey]
+          let nowSTime = item[startTimekey]
+          // 如果当前任务的开始时间大于父任务的开始时间并且早于父任务的结束时间，则通过验证
+          // console.log(
+          //   compareStartDueTime(
+          //     timeToTimestamp(nowSTime || 0),
+          //     timeToTimestamp(parentETime || 0)
+          //   ),
+          //   nowSTime,
+          //   parentETime
+          // )
+          if (
+            compareStartDueTime(
+              timeToTimestamp(nowSTime || 0),
+              timeToTimestamp(parentETime || 0)
+            ) &&
+            compareStartDueTime(
+              timeToTimestamp(parentSTime || 0),
+              timeToTimestamp(nowSTime || 0)
+            )
+          ) {
+            delete item.is_error_key[startTimekey]
+          } else {
+            item.is_error_key[startTimekey] = 'start_time'
+          }
+        }
+      }
+      if (!item.is_error_key[endTimekey] && !item.is_error_key[endTimekey]) {
+      }
+      item.is_error = this.dataCheckIsError(item)
+      arr.push(item)
+    })
+    return arr
+  }
+
+  // 对比时间跨度
+  volidStartAndEndTime = (data, selectedKey, select_name, text) => {
+    let arr = []
+    data.forEach(item => {
+      let startTimekey = item.start_timekey
+      let endTimekey = item.due_timekey
+      if (!item.is_error_key[startTimekey] && !item.is_error_key[endTimekey]) {
+        if (
+          !compareStartDueTime(
+            timeToTimestamp(item[startTimekey]),
+            timeToTimestamp(item[endTimekey])
+          )
+        ) {
+          item.is_error_key[text] = select_name
+        } else {
+          delete item.is_error_key[text]
+        }
+      }
+      item.is_error = this.dataCheckIsError(item)
+      arr.push(item)
+    })
+    return arr
+  }
   /**
    * 操作时间格式
    * @param {String} format 表示选择的时间格式 'YYYY-MM-DD'
@@ -772,15 +889,20 @@ export default class ExcelRead extends Component {
       timer_key = ''
     // 表示如果选择的是开始时间 那么需要获取截止时间 反之亦然
     let gold_time = select_name == 'start_time' ? 'due_time' : 'start_time'
+    let isCheckNumber = false
     Object.keys(selectedKey).forEach(item => {
       if (selectedKey[item] === gold_time) {
         arr.push(selectedKey[item])
         timer_key = item
       }
+      if (selectedKey[item] === 'number') {
+        isCheckNumber = true
+      }
     })
     data = data.map(item => {
       let checkVal = item[text]
       let new_item = { ...item }
+      new_item[select_name + 'key'] = text
       let gold_value = item[timer_key]
       let temp
       // 表示当前操作并需要检测的元素
@@ -793,27 +915,26 @@ export default class ExcelRead extends Component {
         checkTimeValue = goldTimeValue
         goldTimeValue = temp
       }
-      if (
-        !checkTimerReg(format, checkVal) ||
-        (timer_key && !compareStartDueTime(checkTimeValue, goldTimeValue))
-      ) {
-        new_item = {
-          ...item,
-          is_error_key: {
-            ...item.is_error_key,
-            [text]: select_name,
-            [timer_key]: gold_time
-          }
-        }
+      // 校验本身的逻辑
+      if (!checkTimerReg(format, checkVal)) {
+        new_item.is_error_key[text] = select_name
       } else {
         delete item.is_error_key[text]
-        if (timer_key) delete item.is_error_key[gold_value]
       }
       if (Object.keys(new_item.is_error_key || {}).length) {
         new_item.is_error = true
       } else new_item.is_error = false
       return new_item
     })
+    // 校验同时存在开始结束时间的逻辑
+    if (timer_key) {
+      data = this.volidStartAndEndTime(data, selectedKey, select_name, text)
+    }
+
+    // 需要检验序号
+    if (isCheckNumber) {
+      data = this.volidTimeOfNumber(data, select_name, text)
+    }
     this.setState({
       data,
       select_time_format: {
@@ -833,19 +954,19 @@ export default class ExcelRead extends Component {
           this.handleChangeTimer({ format, select_name, text })
         }}
         key={select_name}
-        defaultValue={'YYYY-MM-DD'}
+        defaultValue={'YYYY/MM/DD'}
       >
-        <Select.Option title="YYYY-MM-DD" key="YYYY-MM-DD">
-          YYYY-MM-DD
-        </Select.Option>
-        <Select.Option title="YYYY-MM-DD HH:mm" key="YYYY-MM-DD HH:mm">
-          YYYY-MM-DD HH:mm
-        </Select.Option>
         <Select.Option title="YYYY/MM/DD" key="YYYY/MM/DD">
           YYYY/MM/DD
         </Select.Option>
         <Select.Option title="YYYY/MM/DD HH:mm" key="YYYY/MM/DD HH:mm">
           YYYY/MM/DD HH:mm
+        </Select.Option>
+        <Select.Option title="YYYY-MM-DD" key="YYYY-MM-DD">
+          YYYY-MM-DD
+        </Select.Option>
+        <Select.Option title="YYYY-MM-DD HH:mm" key="YYYY-MM-DD HH:mm">
+          YYYY-MM-DD HH:mm
         </Select.Option>
       </Select>
     )
@@ -982,8 +1103,9 @@ export default class ExcelRead extends Component {
             data: newData
           },
           () => {
+            console.log('走了开始时间验证')
             this.handleChangeTimer({
-              format: this.state.select_time_format[checkKey] || 'YYYY-MM-DD',
+              format: this.state.select_time_format[checkKey] || 'YYYY/MM/DD',
               select_name: 'start_time',
               text: checkKey
             })
@@ -1004,8 +1126,9 @@ export default class ExcelRead extends Component {
             data: newData
           },
           () => {
+            console.log('走了终止时间验证')
             this.handleChangeTimer({
-              format: this.state.select_time_format[checkKey] || 'YYYY-MM-DD',
+              format: this.state.select_time_format[checkKey] || 'YYYY/MM/DD',
               select_name: 'due_time',
               text: checkKey
             })
@@ -1063,10 +1186,16 @@ export default class ExcelRead extends Component {
         let new_item = {
           uuid: '',
           name: '',
-          type: 'card',
+          type: item.typekey
+            ? this.typeValid[item[item.typekey]]?.name
+            : 'card',
           due_time: '',
           description: '',
           parent_id: '0'
+        }
+        let parent = this.getParent(data, item, '.')
+        if (parent) {
+          new_item.parent_id = parent.uuid
         }
         // let new_item = {}
         new_item = {
@@ -1086,6 +1215,7 @@ export default class ExcelRead extends Component {
     const { board_id } = this.props
     let selected_value = Object.values(selectedKey)
     let data_list = this.setDataList()
+    console.log(data_list)
     if (!selected_value.includes('name')) {
       message.error('操作失败，必须指定名称')
       return
