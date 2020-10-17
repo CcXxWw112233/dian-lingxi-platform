@@ -161,7 +161,7 @@ export default class ExcelRead extends Component {
         { value: 'name', label: '名称' },
         { value: 'start_time', label: '开始时间' },
         { value: 'due_time', label: '截止时间' },
-        { value: 'remarks', label: '备注' }
+        { value: 'description', label: '备注' }
       ],
       selectedRows: [],
       selectedKey: {},
@@ -466,7 +466,7 @@ export default class ExcelRead extends Component {
           case 'name':
             this.handleChangName(text)
             break
-          case 'remarks':
+          case 'description':
             break
           case 'type':
             this.handleChangeTypes(text)
@@ -1212,7 +1212,14 @@ export default class ExcelRead extends Component {
         //   })
         // }
         break
-      case 'remarks':
+      case 'description':
+        obj[checkKey] = checkVal
+        newData = newData.map(item => {
+          if (item.uuid === obj.uuid) {
+            item = obj
+          }
+          return item
+        })
         break
       case 'type':
         obj[checkKey] = checkVal
@@ -1361,6 +1368,15 @@ export default class ExcelRead extends Component {
                 disabled={!hasSelected}
                 type="danger"
                 onClick={this.removeSelectValue}
+                style={
+                  !hasSelected
+                    ? null
+                    : {
+                        color: '#fff',
+                        backgroundColor: '#ff4d4f',
+                        borderColor: '#ff4d4f'
+                      }
+                }
               >
                 删除
               </Button>
