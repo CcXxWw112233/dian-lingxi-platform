@@ -53,7 +53,7 @@ export const valiNameWithNo = (gold_no, gold_type) => {
  * 当前需要做比较的列
  * @param {Object} item 当前表格中一行的数据 { A: 1, B: '任务', C: '描述' ... }
  * @param {String} gold_type 表示当前操作的列 A,B,C
- * @param {String} dictionary 需要比较的列 A,B,C
+ * @param {String} dictionary 需要比较的列 'number' | 'type'
  */
 export const valiColumn = ({
   item,
@@ -83,7 +83,7 @@ export const valiColumn = ({
  * @param {Boolean} checkType 表示是否需要校验类型
  * @param {Object} item 当前表格中一行的数据 { A: 1, B: '任务', C: '描述' ... }
  * @param {String} gold_type 表示当前操作的列 A,B,C
- * @param {String} dictionary 需要比较的列 A,B,C
+ * @param {String} dictionary 需要比较的列 'number' | 'type'
  * @param {Object} selectedKey { A:number,B:type... }
  * @returns {Boolean} true 表示验证通过
  */
