@@ -134,6 +134,7 @@ class EditableCell extends React.Component {
       <td
         {...restProps}
         className={`${className} ${flag && styles.error_text}`}
+        title={flag && record.is_error_text[dataIndex]}
       >
         {editable ? (
           <EditableContext.Consumer>{this.renderCell}</EditableContext.Consumer>
@@ -277,9 +278,8 @@ export default class ExcelRead extends Component {
         return obj
       })
       data = data.map((item, index) => {
-        item.id = index + 1
-        item.uuid = this.createUid()
         item.is_error_key = {}
+        item.is_error_text = {}
         return item
       })
       this.setState({
@@ -459,6 +459,7 @@ export default class ExcelRead extends Component {
       let new_item = { ...item }
       if (!!Object.keys(item.is_error_key).length) {
         delete new_item.is_error_key[text]
+        delete new_item.is_error_text[text]
       }
       if (Object.keys(new_item.is_error_key).length) {
         new_item.is_error = true
@@ -478,10 +479,10 @@ export default class ExcelRead extends Component {
       let new_item = { ...item }
       if (checkNameReg(checkVal)) {
         delete item.is_error_key[text]
+        delete item.is_error_text[text]
       } else {
-        new_item = {
-          ...item
-        }
+        new_item.is_error_key[text] = 'name'
+        new_item.is_error_text[text] = '名称不能为空,名称不能超过100个字'
       }
       if (Object.keys(new_item.is_error_key || {}).length) {
         new_item.is_error = true
@@ -502,6 +503,7 @@ export default class ExcelRead extends Component {
         // 第一条数据，必须是里程碑或者任务
         if (!this.align_type[0].includes(value)) {
           item.is_error_key[column] = 'type'
+          item.is_error_text[column] = '类型格式错误'
         }
       } else {
         let prev = data[index - 1]
@@ -513,8 +515,10 @@ export default class ExcelRead extends Component {
           // console.log(value, this.typeValid[value], prevValue)
           if (!parentKey.includes(value)) {
             item.is_error_key[column] = 'type'
+            item.is_error_text[column] = '类型格式错误'
           } else {
             delete item.is_error_key[column]
+            delete item.is_error_text[column]
             let volid = this.typeValid[value]
             let n = item[item.numberkey]
             if (n) {
@@ -531,8 +535,10 @@ export default class ExcelRead extends Component {
               if (obj) {
                 if (volid[l] && volid[l].includes(obj[column])) {
                   delete item.is_error_key[column]
+                  delete item.is_error_text[column]
                 } else {
                   item.is_error_key[column] = 'type'
+                  item.is_error_text[column] = '类型格式错误'
                 }
               }
             }
@@ -573,8 +579,10 @@ export default class ExcelRead extends Component {
         })
       ) {
         delete new_item.is_error_key[text]
+        delete new_item.is_error_text[text]
       } else {
         new_item.is_error_key[text] = 'type'
+        new_item.is_error_text[text] = '类型不能为空或者类型格式错误'
       }
       if (Object.keys(new_item.is_error_key || {}).length) {
         new_item.is_error = true
@@ -673,18 +681,22 @@ export default class ExcelRead extends Component {
             // 判断上一个数据和这个数据是否合理, 如果检验通过
             if (this.checkPrevWithNow(prev[column], value, splitKey)) {
               delete item.is_error_key[column]
+              delete item.is_error_text[column]
             } else {
               // 不通过
               item.is_error_key[column] = 'number'
+              item.is_error_text[column] = '序号格式错误'
             }
             if (+splitArr[0] !== checkInteger) {
               // 判断当前数据与整数数据抑制 例 1 下面不能出现 2.1
               item.is_error_key[column] = 'number'
+              item.is_error_text[column] = '序号格式错误'
             }
           }
         } else if (index === 0) {
           // 是第一条数据，直接报错，因为不是整数
           item.is_error_key[column] = 'number'
+          item.is_error_text[column] = '序号格式错误'
         }
       }
       if (Object.keys(item.is_error_key).length) {
@@ -722,8 +734,10 @@ export default class ExcelRead extends Component {
         })
       ) {
         delete new_item.is_error_key[text]
+        delete new_item.is_error_text[text]
       } else {
         new_item.is_error_key[text] = 'number'
+        new_item.is_error_text[text] = '序号格式错误'
       }
       if (Object.keys(new_item.is_error_key || {}).length) {
         new_item.is_error = true
@@ -1083,13 +1097,17 @@ export default class ExcelRead extends Component {
   // 确定
   setExportExcelData = () => {
     const { data = [], selectedKey = {} } = this.state
-    const { board_id } = this.props
     let selected_value = Object.values(selectedKey)
-    let data_list = this.setDataList()
     if (!selected_value.includes('name')) {
       message.error('操作失败，必须指定名称')
       return
     }
+    if (data.find(item => item.is_error)) {
+      message.error('选择的字段中,格式存在错误')
+      return
+    }
+    const { board_id } = this.props
+    let data_list = this.setDataList()
     return
     importExcelWithBoardData({
       board_id,
