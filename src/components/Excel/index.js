@@ -834,7 +834,7 @@ export default class ExcelRead extends Component {
           defaultValue={defaultValue}
         >
           <Select.Option key={'order_spot'}>1.1.1.1</Select.Option>
-          <Select.Option key={'order_line'}>1-1-1-1</Select.Option>
+          {/* <Select.Option key={'order_line'}>1-1-1-1</Select.Option> */}
         </Select>
       )
     }
