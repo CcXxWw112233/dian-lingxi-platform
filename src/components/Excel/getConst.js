@@ -117,6 +117,9 @@ export const checkNumberReg = ({
       }
     }
   } else {
+    if (!isNaN(+val) && +val % 1 === 0) {
+      return true
+    }
     // 表示没有小数点的时候
     if (String(val).indexOf(symbol) != -1) {
       // 表示有小数点的时候
@@ -213,7 +216,7 @@ export const checkTimerReg = (time_format, val) => {
  * 比较开始和结束时间
  * @param {*} start_time
  * @param {*} due_time
- * @returns {Boolean} true表示验证通过
+ * @returns {Boolean} true表示验证通过表示开始时间早于结束时间
  */
 export const compareStartDueTime = (start_time, due_time) => {
   if (!start_time || !due_time) {
