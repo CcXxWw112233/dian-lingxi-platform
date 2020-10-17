@@ -569,9 +569,11 @@ export default class GetRowGanttItem extends Component {
     if (is_over_duetime) {
       if (is_all_realized == '0') {
         //存在未完成任务
-        return '#FFA39E'
+        return ''
+        // return '#FFA39E'
       } else {
         //全部任务已完成
+        return '#9EA6C2'
         return 'rgba(0,0,0,0.15)'
       }
     }
@@ -1000,6 +1002,20 @@ export default class GetRowGanttItem extends Component {
                               </Dropdown>
                               <div
                                 data-targetclassname="specific_example_milestone"
+                                className={`${indexStyles.board_miletiones_flagpole2}`}
+                                onClick={this.seeMiletones}
+                                style={{
+                                  background: this.setMiletonesColor({
+                                    is_over_duetime,
+                                    has_lcb,
+                                    is_all_realized
+                                  })
+                                }}
+                                onMouseDown={e => e.stopPropagation()}
+                                onMouseOver={e => e.stopPropagation()}
+                              />
+                              <div
+                                data-targetclassname="specific_example_milestone"
                                 className={`${indexStyles.board_miletiones_flagpole}`}
                                 style={{
                                   height:
@@ -1231,6 +1247,21 @@ export default class GetRowGanttItem extends Component {
                                   )}
                                 </div>
                               </Dropdown>
+                              <div
+                                data-targetclassname="specific_example_milestone"
+                                className={`${indexStyles.board_miletiones_flagpole2}`}
+                                onClick={this.seeMiletones}
+                                style={{
+                                  background: this.setMiletonesColor({
+                                    is_over_duetime,
+                                    has_lcb,
+                                    is_all_realized
+                                  }),
+                                  left: ceilWidth - 4
+                                }}
+                                onMouseDown={e => e.stopPropagation()}
+                                onMouseOver={e => e.stopPropagation()}
+                              />
                               <div
                                 data-targetclassname="specific_example_milestone"
                                 className={`${indexStyles.board_miletiones_flagpole}`}
@@ -1503,6 +1534,21 @@ export default class GetRowGanttItem extends Component {
                                 </Dropdown>
                                 <div
                                   data-targetclassname="specific_example_milestone"
+                                  className={`${indexStyles.board_miletiones_flagpole2}`}
+                                  onClick={this.seeMiletones}
+                                  style={{
+                                    background: this.setMiletonesColor({
+                                      is_over_duetime,
+                                      has_lcb,
+                                      is_all_realized
+                                    }),
+                                    left: ceilWidth * date
+                                  }}
+                                  onMouseDown={e => e.stopPropagation()}
+                                  onMouseOver={e => e.stopPropagation()}
+                                />
+                                <div
+                                  data-targetclassname="specific_example_milestone"
                                   className={`${indexStyles.board_miletiones_flagpole}`}
                                   style={{
                                     height:
@@ -1750,6 +1796,21 @@ export default class GetRowGanttItem extends Component {
                                   {/* </Dropdown> */}
                                 </div>
                               </Dropdown>
+                              <div
+                                data-targetclassname="specific_example_milestone"
+                                className={`${indexStyles.board_miletiones_flagpole2}`}
+                                onClick={this.seeMiletones}
+                                style={{
+                                  background: this.setMiletonesColor({
+                                    is_over_duetime,
+                                    has_lcb,
+                                    is_all_realized
+                                  }),
+                                  left: ceilWidth * day - 6 - day
+                                }}
+                                onMouseDown={e => e.stopPropagation()}
+                                onMouseOver={e => e.stopPropagation()}
+                              />
                               <div
                                 data-targetclassname="specific_example_milestone"
                                 className={`${indexStyles.board_miletiones_flagpole}`}
