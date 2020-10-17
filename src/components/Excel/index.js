@@ -402,7 +402,6 @@ export default class ExcelRead extends Component {
     } else {
       delete obj[text]
     }
-    console.log(obj)
     this.setState(
       {
         selectedKey: obj
@@ -877,8 +876,11 @@ export default class ExcelRead extends Component {
             )
           ) {
             delete item.is_error_key[startTimekey]
+            delete item.is_error_text[startTimekey]
           } else {
             item.is_error_key[startTimekey] = 'start_time'
+            item.is_error_text[startTimekey] =
+              '开始时间不能大于父级的开始时间或者不能早于父级的截止时间'
           }
         }
       }
@@ -898,8 +900,11 @@ export default class ExcelRead extends Component {
             )
           ) {
             delete item.is_error_key[endTimekey]
+            delete item.is_error_text[endTimekey]
           } else {
             item.is_error_key[endTimekey] = 'due_time'
+            item.is_error_text[endTimekey] =
+              '截止时间不能小于父级的开始时间或者不能晚于父级的截止时间'
           }
         }
       }
@@ -923,8 +928,10 @@ export default class ExcelRead extends Component {
           )
         ) {
           item.is_error_key[text] = select_name
+          item.is_error_text[text] = '开始时间不能大于截止时间'
         } else {
           delete item.is_error_key[text]
+          delete item.is_error_text[text]
         }
       }
       item.is_error = this.dataCheckIsError(item)
@@ -974,8 +981,10 @@ export default class ExcelRead extends Component {
       // 校验本身的逻辑
       if (!checkTimerReg(format, checkVal)) {
         new_item.is_error_key[text] = select_name
+        new_item.is_error_text[text] = '时间格式错误'
       } else {
         delete item.is_error_key[text]
+        delete item.is_error_text[text]
       }
       if (Object.keys(new_item.is_error_key || {}).length) {
         new_item.is_error = true
@@ -1239,7 +1248,7 @@ export default class ExcelRead extends Component {
       let new_item = {
         uuid: '',
         name: '',
-        type: item.typekey ? this.typeValid[item[item.typekey]]?.name : 'card',
+        type: '',
         start_time: '',
         due_time: '',
         description: '',
@@ -1257,6 +1266,12 @@ export default class ExcelRead extends Component {
           }
         })
       }
+
+      new_item.uuid = item.uuid
+      new_item.type = item.typekey
+        ? this.typeValid[item[item.typekey]]?.name
+        : 'card'
+      delete new_item.number
       let parent = this.getParent(data, item, '.')
       if (parent) {
         new_item.parent_id = parent.uuid
@@ -1281,21 +1296,20 @@ export default class ExcelRead extends Component {
       return
     }
     let data_list = this.setDataList()
-    console.log(data_list)
     importExcelWithBoardData({
       board_id,
       data_list
     }).then(res => {
       if (isApiResponseOk(res)) {
-        console.log(res)
         this.closeAll()
         this.props.dispatch({
           type: 'gantt/getGanttData',
           payload: {}
         })
+      } else {
+        message.warn(res.message)
       }
     })
-    console.log(data, selectedKey)
   }
 
   render() {

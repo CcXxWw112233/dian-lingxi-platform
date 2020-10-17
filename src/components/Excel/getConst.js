@@ -228,7 +228,7 @@ export const compareStartDueTime = (start_time, due_time) => {
       : Number(start_time)
   const newDueTime =
     due_time.toString().length > 10 ? Number(due_time) / 1000 : Number(due_time)
-  if (newStartTime >= newDueTime) {
+  if (newStartTime > newDueTime) {
     return false
   }
   return true
