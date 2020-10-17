@@ -485,18 +485,18 @@ export default class ExcelRead extends Component {
     let { data = [] } = this.state
     data = data.map(item => {
       let new_item = { ...item }
-      // let property = [
-      //   'numberkey',
-      //   'start_timekey',
-      //   'due_timekey',
-      //   'typekey',
-      //   'namekey'
-      // ]
-      // property.forEach(k => {
-      //   if (item[k] === text) {
-      //     delete item[k]
-      //   }
-      // })
+      let property = [
+        'numberkey',
+        'start_timekey',
+        'due_timekey',
+        'typekey',
+        'namekey'
+      ]
+      property.forEach(k => {
+        if (item[k] === text) {
+          delete item[k]
+        }
+      })
       if (!!Object.keys(item.is_error_key).length) {
         delete new_item.is_error_key[text]
         delete new_item.is_error_text[text]
@@ -859,21 +859,13 @@ export default class ExcelRead extends Component {
       let startTimekey = item.start_timekey
       let endTimekey = item.due_timekey
       let numberkey = item.numberkey
+      let parent = this.getParent(data, item, '.')
       if (!item.is_error_key[startTimekey] && !item.is_error_key[numberkey]) {
-        let parent = this.getParent(data, item, '.')
         if (parent) {
           let parentSTime = parent[startTimekey]
           let parentETime = parent[endTimekey]
           let nowSTime = item[startTimekey]
           // 如果当前任务的开始时间大于父任务的开始时间并且早于父任务的结束时间，则通过验证
-          // console.log(
-          //   compareStartDueTime(
-          //     timeToTimestamp(nowSTime || 0),
-          //     timeToTimestamp(parentETime || 0)
-          //   ),
-          //   nowSTime,
-          //   parentETime
-          // )
           if (
             compareStartDueTime(
               timeToTimestamp(nowSTime || 0),
@@ -890,7 +882,26 @@ export default class ExcelRead extends Component {
           }
         }
       }
-      if (!item.is_error_key[endTimekey] && !item.is_error_key[endTimekey]) {
+      if (!item.is_error_key[endTimekey] && !item.is_error_key[numberkey]) {
+        if (parent) {
+          let parentSTime = parent[startTimekey]
+          let parentETime = parent[endTimekey]
+          let nowETime = item[endTimekey]
+          if (
+            compareStartDueTime(
+              timeToTimestamp(parentSTime),
+              timeToTimestamp(nowETime)
+            ) &&
+            compareStartDueTime(
+              timeToTimestamp(nowETime),
+              timeToTimestamp(parentETime)
+            )
+          ) {
+            delete item.is_error_key[endTimekey]
+          } else {
+            item.is_error_key[endTimekey] = 'due_time'
+          }
+        }
       }
       item.is_error = this.dataCheckIsError(item)
       arr.push(item)
