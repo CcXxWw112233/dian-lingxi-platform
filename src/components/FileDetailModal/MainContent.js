@@ -24,6 +24,7 @@ import {
 import NotSupportImg from '@/assets/projectDetail/fileDetail/not_support.png'
 import { platformNouns } from '../../globalset/clientCustorm'
 import PdfComment from '../pdfComment'
+import DEvent from '../../utils/event'
 // let this.timer
 
 @connect(mapStateToProps)
@@ -75,20 +76,33 @@ class MainContent extends Component {
       currentZoomPictureComponetWidth: zommPictureComponentWidth,
       currentZoomPictureComponetHeight: zommPictureComponentHeight
     })
+    this.fetchToPdf()
+    DEvent.on('pdfCommentUpdate', id => {
+      this.setState({
+        isInPdfComment: false
+      })
+      setTimeout(() => {
+        this.fetchToPdf(id)
+      }, 500)
+    })
+  }
+  fetchToPdf = id => {
     const {
       fileType,
       getCurrentFilePreviewData,
       filePreviewCurrentFileId
     } = this.props
-    getCurrentFilePreviewData({ id: filePreviewCurrentFileId }).then(_ => {
-      if (this.dontTransferType.includes(fileType)) {
-        let type = 'img'
-        if (fileType === '.pdf') {
-          type = 'pdf'
+    getCurrentFilePreviewData({ id: id || filePreviewCurrentFileId }).then(
+      _ => {
+        if (this.dontTransferType.includes(fileType)) {
+          let type = 'img'
+          if (fileType === '.pdf') {
+            type = 'pdf'
+          }
+          this.handleToShowPdf(type).catch(err => console.log(err))
         }
-        this.handleToShowPdf(type).catch(err => console.log(err))
       }
-    })
+    )
   }
 
   // 当圈子展开关闭的时候以及浏览器视图变化时, 实时获取当前的width
@@ -504,13 +518,12 @@ class MainContent extends Component {
               style={{ height: currentZoomPictureComponetHeight }}
               className={mainContentStyles.fileDetailContentLeft}
             >
-              {filePreviewUrl &&
-                (this.state.isInPdfComment && (
-                  <PdfComment
-                    {...this.state.pdfCommentData}
-                    onClose={this.exitPdfComment}
-                  />
-                ))}
+              {filePreviewUrl && this.state.isInPdfComment && (
+                <PdfComment
+                  {...this.state.pdfCommentData}
+                  onClose={this.exitPdfComment}
+                />
+              )}
             </div>
 
             {/* <ZoomPicture
@@ -620,23 +633,21 @@ class MainContent extends Component {
                 </div>
               )
             } */}
-            {/* {!this.props.isOpenAttachmentFile && (
+            {!this.props.isOpenAttachmentFile && (
               <div className={mainContentStyles.otherFilesOperator}>
                 <span
                   onClick={() => this.handleToShowPdf('pdf')}
                   className={mainContentStyles.operator_bar}
                 >
                   <span
-                    className={`${globalStyles.authTheme} ${
-                      mainContentStyles.circle_icon
-                    }`}
+                    className={`${globalStyles.authTheme} ${mainContentStyles.circle_icon}`}
                   >
                     &#xe664;
                   </span>
                   圈点评论
                 </span>
               </div>
-            )} */}
+            )}
             {!this.props.isOpenAttachmentFile && (
               <div
                 onClick={this.handleDynamicComment}

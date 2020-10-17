@@ -68,7 +68,7 @@ export default class PdfComment extends React.Component {
         },
         pen: {
           width: 4,
-          color: 'rgba(255, 78, 59, 1)',
+          color: '#FF4E3B',
           hexColor: '#FF4E3B',
           alpha: 1,
           maxSize: 28,
@@ -76,7 +76,7 @@ export default class PdfComment extends React.Component {
         },
         box: {
           width: 2,
-          color: 'rgba(255, 78, 59, 1)',
+          color: '#FF4E3B',
           hexColor: '#FF4E3B',
           alpha: 1,
           maxSize: 10,
@@ -84,7 +84,7 @@ export default class PdfComment extends React.Component {
         },
         ellipse: {
           width: 2,
-          color: 'rgba(255, 78, 59, 1)',
+          color: '#FF4E3B',
           hexColor: '#FF4E3B',
           alpha: 1,
           maxSize: 10,
@@ -92,7 +92,7 @@ export default class PdfComment extends React.Component {
         },
         arrow: {
           width: 2,
-          color: 'rgba(255, 78, 59, 1)',
+          color: '#FF4E3B',
           hexColor: '#FF4E3B',
           alpha: 1,
           maxSize: 10,
@@ -101,7 +101,7 @@ export default class PdfComment extends React.Component {
         text: {
           size: 20,
           borderColor: '#0095ff',
-          color: 'rgba(255, 78, 59, 1)',
+          color: '#FF4E3B',
           hexColor: '#FF4E3B',
           alpha: 1,
           maxSize: 46,
@@ -211,6 +211,35 @@ export default class PdfComment extends React.Component {
     DEvent.on('pdfSaveAs', () => {
       this.exportPdf('save')
     })
+  }
+  // 将hex颜色转成rgb
+  hexToRgba(hex, opacity) {
+    var RGBA =
+      'rgba(' +
+      parseInt('0x' + hex.slice(1, 3)) +
+      ',' +
+      parseInt('0x' + hex.slice(3, 5)) +
+      ',' +
+      parseInt('0x' + hex.slice(5, 7)) +
+      ',' +
+      opacity +
+      ')'
+    return {
+      red: parseInt('0x' + hex.slice(1, 3)),
+      green: parseInt('0x' + hex.slice(3, 5)),
+      blue: parseInt('0x' + hex.slice(5, 7)),
+      rgba: RGBA
+    }
+  }
+  // 将rgb颜色转成hex
+  colorRGB2Hex(color) {
+    var rgb = color.split(',')
+    var r = parseInt(rgb[0].split('(')[1])
+    var g = parseInt(rgb[1])
+    var b = parseInt(rgb[2].split(')')[0])
+
+    var hex = '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)
+    return hex
   }
   // 构建版本数据加载
   InitAllData = isFirst => {
@@ -419,7 +448,9 @@ export default class PdfComment extends React.Component {
       height: 4,
       stroke: style.color,
       strokeWidth: style.width,
-      fill: 'rgba(255, 255, 255, 0)'
+      fill: 'rgba(255, 255, 255, 0)',
+      opacity: style.alpha,
+      drawType: 'box'
     })
     return rect
   }
@@ -456,7 +487,9 @@ export default class PdfComment extends React.Component {
     let arrow = new fabric.Path(path, {
       stroke: style.color,
       fill: style.color,
-      strokeWidth: style.width
+      strokeWidth: style.width,
+      opacity: style.alpha,
+      drawType: 'arrow'
     })
     return arrow
   }
@@ -474,7 +507,9 @@ export default class PdfComment extends React.Component {
       originY: 'center',
       rx: Math.abs(left - m.x) / 2,
       ry: Math.abs(top - m.y) / 2,
-      strokeWidth: style.width
+      strokeWidth: style.width,
+      opacity: style.alpha,
+      drawType: 'ellipse'
     })
   }
   // 文本
@@ -486,7 +521,9 @@ export default class PdfComment extends React.Component {
       width: 50,
       fill: style.color,
       fontSize: style.size,
-      borderColor: style.color
+      borderColor: style.color,
+      opacity: style.alpha,
+      drawType: 'text'
     })
     return text
   }
@@ -534,7 +571,7 @@ export default class PdfComment extends React.Component {
           top: this.mouseEvent.y - 24 / 2,
           record_id: 'addImg',
           hoverCursor: 'pointer',
-          t_type: 'note',
+          drawType: 'note',
           hasBorders: false,
           hasControls: false,
           color: color
@@ -549,6 +586,25 @@ export default class PdfComment extends React.Component {
           activeObject: img
         })
       })
+    }
+    if (this.drawType === 'pen') {
+      let s = this.state.drawStyles[this.state.drawStyles.activeType] || {}
+      let c = ''
+      if (s.color) {
+        if (s.color.indexOf('#') !== -1) {
+          c = this.hexToRgba(s.color, s.alpha || 1).rgba
+        }
+        if (s.color.indexOf('rgba') !== -1) {
+          var rgb = s.color.split(',')
+          var r = parseInt(rgb[0].split('(')[1])
+          var g = parseInt(rgb[1])
+          var b = parseInt(rgb[2])
+          var a = s.alpha || 1
+          c = `rgba(${r},${g},${b},${a})`
+        }
+      }
+      // console.log(canvas.freeDrawingBrush)
+      canvas.freeDrawingBrush.color = c
     }
     if (this.drawType) {
       this.doDrawing = true
@@ -724,6 +780,7 @@ export default class PdfComment extends React.Component {
       let canvas_id = object.canvas.get('_id')
       json.path = json.path ? JSON.stringify(json.path) : null
       json.styles = json.styles ? JSON.stringify(json.styles) : null
+      json.drawType = object.get('drawType') || null
       let dom = {
         clientWidth: object.canvas.getWidth(),
         clientHeight: object.canvas.getHeight()
@@ -778,7 +835,7 @@ export default class PdfComment extends React.Component {
               })
           } else if (
             object.get('record_id') === 'addImg' &&
-            object.get('t_type') === 'note'
+            object.get('drawType') === 'note'
           ) {
             // console.log(object)
             let param = {
@@ -813,7 +870,7 @@ export default class PdfComment extends React.Component {
           // 移动的
           // console.log(object)
           this.lockObject(object, true)
-          if (object.get('t_type') === 'note') {
+          if (object.get('drawType') === 'note') {
             let j = {
               left: object.get('left'),
               top: object.get('top'),
@@ -929,6 +986,7 @@ export default class PdfComment extends React.Component {
       if (canvas.isDrawingMode && !e.target) {
         let object = canvas.getObjects()
         let obj = object[object.length - 1]
+        obj.set('drawType', 'pen')
         this.allEvent(obj, 'add')
       }
       // console.log(this.drawType)
@@ -956,6 +1014,9 @@ export default class PdfComment extends React.Component {
         containerClass: 'fabric_defualt_container',
         isDrawingMode: this.state.isDraw,
         perPixelTargetFind: true,
+        prepareObjectStacking: true,
+        selectionFullyContained: true,
+        targetFindTolerance: 8,
         // 控件不能被选择，不会被操作
         selectable: false,
         // 是否显示选中
@@ -1066,7 +1127,7 @@ export default class PdfComment extends React.Component {
                     top: +obj.detail.top,
                     record_id: obj.id,
                     hoverCursor: 'pointer',
-                    t_type: 'note',
+                    drawType: 'note',
                     hasBorders: false,
                     hasControls: false,
                     color: obj.detail.color,
@@ -1239,6 +1300,11 @@ export default class PdfComment extends React.Component {
         message.warn(this.errormsg)
       })
   }
+
+  rgbaNum(rgba) {
+    let val = rgba.match(/(\d(\.\d+)?)+/g)
+    return val
+  }
   // 选中元素
   addSelectEvent = val => {
     this.drawCanvas.forEach(item => {
@@ -1247,6 +1313,13 @@ export default class PdfComment extends React.Component {
     })
     let { drawStyles } = this.state
     let type = this.checkType(val)
+    console.log(type)
+    if (!type) {
+      this.setState({
+        activeObject: val
+      })
+      return
+    }
     let color = ''
     let width = 2
     if (type === 'arrow' || type === 'text') {
@@ -1264,6 +1337,15 @@ export default class PdfComment extends React.Component {
       drawStyles[type].size = null
     }
     drawStyles[type].color = color
+    if (type === 'pen') {
+      let c = val.get('stroke')
+      let cl = this.rgbaNum(c)
+      let rgb = `rgb(${cl[0]}, ${cl[1]}, ${cl[2]})`
+      let alpha = cl[3]
+      let hex = this.colorRGB2Hex(rgb)
+      drawStyles['pen'].color = hex
+      drawStyles['pen'].alpha = +alpha
+    }
     if (type === 'note') {
       this.setState({
         noteData: {
@@ -1303,7 +1385,7 @@ export default class PdfComment extends React.Component {
     let s = {}
     if (
       id === this.state.activeObject?.canvas?.lowerCanvasEl.id &&
-      this.state.activeObject?.get('t_type') === 'note'
+      this.state.activeObject?.get('drawType') === 'note'
     ) {
       s = {
         display: 'block',
@@ -1450,7 +1532,7 @@ export default class PdfComment extends React.Component {
           )
         }
       )
-      if (activeObject.get('t_type') === 'note') {
+      if (activeObject.get('drawType') === 'note') {
         activeObject.canvas.set(
           'note_number',
           activeObject.canvas.get('note_number') - 1
@@ -1621,7 +1703,12 @@ export default class PdfComment extends React.Component {
       // message.success('导出成功');
       this.exportModal.destroy()
       if (type === 'export') {
-        pdf.save(this.props.file_name)
+        pdf.save(
+          this.props.file_name.substr(
+            0,
+            this.props.file_name.lastIndexOf('.')
+          ) + '.pdf'
+        )
       } else if (type === 'save') {
         this.saveOutput(pdf.output('blob'))
       }
@@ -1759,22 +1846,23 @@ export default class PdfComment extends React.Component {
 
   // 判断是箭头还是线段
   checkType = object => {
-    if (object.type === 'path') {
-      let { path, strokeLineCap } = object
-      if (path.length !== 7 && strokeLineCap === 'round') {
-        return 'pen'
-      } else return 'arrow'
-    }
-    switch (object.type) {
-      case 'ellipse':
-        return 'ellipse'
-      case 'textbox':
-        return 'text'
-      case 'rect':
-        return 'box'
-      default:
-        return object.get('t_type')
-    }
+    return object.get('drawType')
+    // if (object.type === 'path') {
+    //   let { path, strokeLineCap } = object
+    //   if (path.length !== 7 && strokeLineCap === 'round') {
+    //     return 'pen'
+    //   } else return 'arrow'
+    // }
+    // switch (object.type) {
+    //   case 'ellipse':
+    //     return 'ellipse'
+    //   case 'textbox':
+    //     return 'text'
+    //   case 'rect':
+    //     return 'box'
+    //   default:
+    //     return object.get('drawType')
+    // }
   }
 
   setActiveColor = (hex, color) => {
@@ -2363,16 +2451,31 @@ export default class PdfComment extends React.Component {
     })
   }
   setObjectOpacity = val => {
-    let { activeObject } = this.state
+    let { activeObject, drawStyles } = this.state
     // console.log(val)
     if (activeObject) {
-      activeObject.set('opacity', val)
+      if (drawStyles.activeType === 'pen') {
+        let color = this.hexToRgba(drawStyles['pen'].color, val)
+        activeObject.set('stroke', color.rgba)
+      } else activeObject.set('opacity', val)
       activeObject.set('_update', true)
       this.setState({
         activeObject
       })
       activeObject.canvas.requestRenderAll()
     }
+    let obj = {}
+    if (drawStyles.activeType) {
+      obj = {
+        [drawStyles.activeType]: {
+          ...drawStyles[drawStyles.activeType],
+          alpha: val
+        }
+      }
+    }
+    this.setState({
+      drawStyles: { ...drawStyles, ...obj }
+    })
   }
 
   // 渲染删除按钮
@@ -2406,7 +2509,7 @@ export default class PdfComment extends React.Component {
   setObjectSize = val => {}
   // 渲染颜色选择
   renderChooseColor = ({ children }) => {
-    let { activeObject } = this.state
+    let { activeObject, drawStyles } = this.state
     return (
       <Popover
         content={
@@ -2418,8 +2521,8 @@ export default class PdfComment extends React.Component {
                 max={1}
                 step={0.05}
                 value={
-                  activeObject && activeObject.get
-                    ? activeObject.get('opacity')
+                  drawStyles[drawStyles.activeType]
+                    ? drawStyles[drawStyles.activeType].alpha
                     : 1
                 }
                 onChange={this.setObjectOpacity}
@@ -2500,10 +2603,10 @@ export default class PdfComment extends React.Component {
 
   render() {
     let {
-      activeElement,
-      allPdfElement,
-      loadendElement,
-      drawStyles,
+      // activeElement,
+      // allPdfElement,
+      // loadendElement,
+      // drawStyles,
       isHistoryIn
     } = this.state
     const drawT = ['pen', 'text', 'box', 'ellipse', 'arrow']
