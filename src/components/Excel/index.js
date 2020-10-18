@@ -1306,6 +1306,20 @@ export default class ExcelRead extends Component {
       message.error('操作失败，必须指定名称')
       return
     }
+    if (selected_value.includes('number')) {
+      //表示如果存在序号
+      if (!selected_value.includes('type')) {
+        message.error('操作失败，必须指定类型')
+        return
+      }
+    }
+    if (selected_value.includes('type')) {
+      //表示如果存在序号
+      if (!selected_value.includes('number')) {
+        message.error('操作失败，必须指定序号')
+        return
+      }
+    }
     if (data.find(item => item.is_error)) {
       message.error('选择的字段中,格式存在错误')
       return
