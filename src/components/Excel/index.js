@@ -52,6 +52,7 @@ class EditableCell extends React.Component {
     const { record, handleSave } = this.props
     this.form.validateFields((error, values) => {
       if (error && error[e.currentTarget.id]) {
+        console.log(error, values)
         this.setState({ editing: false })
         return
       }
@@ -84,7 +85,10 @@ class EditableCell extends React.Component {
         {form.getFieldDecorator(dataIndex, {
           rules: [
             {
-              required: true,
+              required:
+                title == 'number' || title == 'type' || title == 'name'
+                  ? true
+                  : false,
               message: `${rulesText}`
             }
           ],
