@@ -53,7 +53,6 @@ export default class GanttFace extends Component {
       timer: null,
       viewModal: '2', //视图模式1周，2月，3年
       gantt_card_out_middle_max_height: 600,
-      local_gantt_board_id: '0', //当前项目id（项目tab栏）缓存在组件内，用于判断是否改变然后重新获取数据
       init_get_outline_tree: false, //大纲视图下初始化是否获取了大纲树
       scroll_area: 'gantt_body', // gantt_head/gantt_body 头部或右边 滚动事件触发的区域
       set_scroll_top_timer: null
@@ -63,12 +62,22 @@ export default class GanttFace extends Component {
   }
 
   componentDidMount() {
-    const { gantt_board_id } = this.props
-    this.setState({
-      local_gantt_board_id: gantt_board_id
-    })
-    this.setGoldDateArr({ init: true })
-    this.initSetScrollPosition()
+    const { gantt_board_id, projectDetailInfoData = {} } = this.props
+    if (projectDetailInfoData && gantt_board_id && gantt_board_id != '0') {
+      this.props.dispatch({
+        type: 'gantt/updateDatas',
+        payload: {
+          gantt_view_mode: 'relative_time'
+        }
+      })
+      setTimeout(() => {
+        this.setGoldDateArr({ init: true })
+        this.initSetScrollPosition()
+      }, 100)
+    } else {
+      this.setGoldDateArr({ init: true })
+      this.initSetScrollPosition()
+    }
     this.setGanTTCardHeight()
     this.getBoardListFeature()
     this.getProcessTemplateList()
@@ -133,12 +142,16 @@ export default class GanttFace extends Component {
 
   //  初始化设置滚动横向滚动条位置
   initSetScrollPosition() {
-    const { ceilWidth } = this.props
+    const { ceilWidth, gantt_view_mode } = this.props
     const date = new Date().getDate()
     //60为一个月长度，3为遮住的部分长度，date为当前月到今天为止的长度,1为偏差修复, 16为左边header的宽度和withCeil * n的 %值
+    const position =
+      gantt_view_mode == 'relative_time'
+        ? 0
+        : ceilWidth * (60 - 4 - 4 + date - 1) - 16
     this.setScrollPosition({
       delay: 300,
-      position: ceilWidth * (60 - 4 - 4 + date - 1) - 16
+      position
     }) //第一为左边头部宽度，第二个4为距离头部距离
   }
   //设置滚动条位置
@@ -780,6 +793,9 @@ function mapStateToProps({
   },
   technological: {
     datas: { currentUserOrganizes = [] }
+  },
+  projectDetail: {
+    datas: { projectDetailInfoData = {} }
   }
 }) {
   return {
@@ -800,7 +816,8 @@ function mapStateToProps({
     get_gantt_data_loading_other,
     currentUserOrganizes,
     show_base_line_mode,
-    active_baseline
+    active_baseline,
+    projectDetailInfoData
   }
 }
 GanttFace.defaultProps = {
