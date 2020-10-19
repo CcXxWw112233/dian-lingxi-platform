@@ -3,24 +3,22 @@ const NODE_ENV = process.env.NODE_ENV
 
 let plugins = []
 if ('production' == NODE_ENV) {
-  plugins = [
-    "transform-remove-console"
-  ]
+  plugins = ['transform-remove-console']
 }
 export default {
-  "extraBabelPlugins": [
-    ["import", { "libraryName": "antd", "libraryDirectory": "es", "style": "css" }],
+  extraBabelPlugins: [
+    ['import', { libraryName: 'antd', libraryDirectory: 'es', style: 'css' }],
     ...plugins
   ],
   alias: {
-    '@': path.resolve(__dirname, './src')
+    '@': path.resolve(__dirname, './src'),
+    src: path.resolve(__dirname, './src')
   },
-  "hash": true,
-  "manifest": {
-    "basePath": "/app/"
+  hash: true,
+  manifest: {
+    basePath: '/app/'
   },
-  "html": {
-    "template": "./src/index.ejs"
+  html: {
+    template: './src/index.ejs'
   }
 }
-
