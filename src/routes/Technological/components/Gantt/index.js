@@ -13,6 +13,15 @@ import {
   ganttIsSingleBoardGroupView
 } from './constants'
 import OutlineTree from './components/OutlineTree'
+import {
+  checkIsHasPermissionInBoard,
+  checkIsHasPermissionInVisitControlWithGroup
+} from '../../../../utils/businessFunction'
+import {
+  MESSAGE_DURATION_TIME,
+  NOT_HAS_PERMISION_COMFIRN,
+  PROJECT_TEAM_CARD_CREATE
+} from '../../../../globalset/js/constant'
 
 class Gantt extends Component {
   constructor(props) {
@@ -112,6 +121,26 @@ class Gantt extends Component {
   }
   // 添加任务 -----------start
   addTaskModalVisibleChange = flag => {
+    const {
+      list_group = [],
+      current_list_group_id,
+      gantt_board_id
+    } = this.props
+    const permissionsValue = checkIsHasPermissionInBoard(
+      PROJECT_TEAM_CARD_CREATE,
+      gantt_board_id
+    )
+    if (
+      !checkIsHasPermissionInVisitControlWithGroup({
+        code: 'read',
+        list_id: current_list_group_id,
+        list_group,
+        permissionsValue
+      })
+    ) {
+      message.warn('权限不足，操作未被许可', MESSAGE_DURATION_TIME)
+      return
+    }
     this.setAddTaskModalVisible(flag)
   }
   setAddTaskModalVisible = flag => {

@@ -403,9 +403,9 @@ class VisitControl extends Component {
     const is_privilege_key =
       isPropVisitControlKey == '0'
         ? 'unlock'
-        : isPropVisitControlKey == '1'
-        ? 'clock_edit'
         : isPropVisitControlKey == '2'
+        ? 'clock_edit'
+        : isPropVisitControlKey == '1'
         ? 'clock_read'
         : 'unlock'
     return (
@@ -452,9 +452,9 @@ class VisitControl extends Component {
     const is_privilege_text = isShowPropOtherPrivilege
       ? isPropVisitControlKey == 'unlock'
         ? '开放访问与操作'
-        : isPropVisitControlKey == '1'
-        ? '仅列表人员可操作'
         : isPropVisitControlKey == '2'
+        ? '仅列表人员可操作'
+        : isPropVisitControlKey == '1'
         ? '列表人员禁止访问'
         : '开放访问与操作'
       : !isPropVisitControl

@@ -6,7 +6,8 @@ import {
   getOrgNameWithOrgIdFilter,
   checkIsHasPermissionInBoard,
   getOrgIdByBoardId,
-  selectBoardToSeeInfo
+  selectBoardToSeeInfo,
+  checkIsHasPermissionInVisitControlWithGroup
 } from '../../../../utils/businessFunction'
 import {
   archivedProject,
@@ -884,7 +885,7 @@ export default class GroupListHeadItem extends Component {
 
   // 操作项
   renderMenuOperateListName = () => {
-    const { itemValue = {}, gantt_board_id } = this.props
+    const { itemValue = {}, gantt_board_id, list_group = [] } = this.props
     const { renderVistorContorlVisible } = this.state
     const { list_id, is_create } = itemValue
     const params_board_id = gantt_board_id == '0' ? list_id : gantt_board_id
@@ -905,6 +906,16 @@ export default class GroupListHeadItem extends Component {
           PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE,
           params_board_id
         ) &&
+          // 表示是否有分组权限
+          checkIsHasPermissionInVisitControlWithGroup({
+            code: 'read',
+            list_id: list_id,
+            list_group,
+            permissionsValue: checkIsHasPermissionInBoard(
+              PROJECT_TEAM_CARD_GROUP,
+              params_board_id
+            )
+          }) &&
           renderVistorContorlVisible && (
             <Menu.Item key={'visitorControl'}>
               <div
@@ -919,10 +930,19 @@ export default class GroupListHeadItem extends Component {
               </div>
             </Menu.Item>
           )}
-        {checkIsHasPermissionInBoard(
-          rename_permission_code,
-          params_board_id
-        ) && <Menu.Item key={'rename'}>重命名</Menu.Item>}
+        {// checkIsHasPermissionInBoard(
+        //   rename_permission_code,
+        //   params_board_id
+        // ) &&
+        checkIsHasPermissionInVisitControlWithGroup({
+          code: 'read',
+          list_id: list_id,
+          list_group,
+          permissionsValue: checkIsHasPermissionInBoard(
+            rename_permission_code,
+            params_board_id
+          )
+        }) && <Menu.Item key={'rename'}>重命名</Menu.Item>}
         {/* {
           gantt_board_id == '0' && (
             <Menu.Item key={'board_info'}>项目信息</Menu.Item>
@@ -947,10 +967,19 @@ export default class GroupListHeadItem extends Component {
             退出{currentNounPlanFilterName(PROJECTS)}
           </Menu.Item>
         )}
-        {checkIsHasPermissionInBoard(
-          PROJECT_TEAM_CARD_GROUP,
-          params_board_id
-        ) &&
+        {// checkIsHasPermissionInBoard(
+        //   PROJECT_TEAM_CARD_GROUP,
+        //   params_board_id
+        // ) &&
+        checkIsHasPermissionInVisitControlWithGroup({
+          code: 'read',
+          list_id: list_id,
+          list_group,
+          permissionsValue: checkIsHasPermissionInBoard(
+            rename_permission_code,
+            params_board_id
+          )
+        }) &&
           gantt_board_id != '0' && (
             <Menu.Item key={'delete_group'}>删除分组</Menu.Item>
           )}
@@ -1009,9 +1038,9 @@ export default class GroupListHeadItem extends Component {
     const is_open = !flag
       ? 0
       : key == 'clock_edit'
-      ? 1
-      : key == 'clock_read'
       ? 2
+      : key == 'clock_read'
+      ? 1
       : 0
     // if (flag === is_privilege_bool) {
     //   return

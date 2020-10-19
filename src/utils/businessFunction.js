@@ -163,6 +163,66 @@ export const checkIsHasPermissionInVisitControl = (
   })
   return flag
 }
+
+/**
+ * 检测根据分组访问控制来判断对应任务和里程碑的权限
+ * 任务|里程碑中的权限控制根据分组来, 如果分组是开放的 则返回项目中的权限
+ * @param {String} list_id 当前操作的分组ID
+ * @param {Array} list_group 对应的分组列表
+ * @param {String} is_privilege 分组对应的开启权限 0 表示开启访问 1 表示禁止外部人员访问 2 表示仅列表成员访问与操作, 外部人员不可操作
+ * @param {Array} privileges 分组中的权限列表 (需要包括继承的)
+ * @param {Boolean} permissionsValue 用户在项目中的权限
+ * @returns {Boolean} true 表示有权限
+ */
+export const checkIsHasPermissionInVisitControlWithGroup = ({
+  code,
+  list_id,
+  list_group = [],
+  permissionsValue
+}) => {
+  const gold_item = list_group.find(item => item.list_id == list_id) || {}
+  const { is_privilege = '0', privileges = [] } = gold_item
+  let flag = false
+  // 表示如果分组是开放的, 则以项目中的权限为主
+  if (is_privilege == '0') return (flag = permissionsValue)
+  // 1、找到当前操作的用户
+  const { user_set = {} } = localStorage.getItem('userInfo')
+    ? JSON.parse(localStorage.getItem('userInfo'))
+    : {}
+  const { user_id } = user_set
+  // 2、判断用户是否在权限列表中
+  let new_privileges = [...privileges]
+
+  // 这是需要从privileges列表中找到当前操作的用户
+  let currentUserArr = []
+  new_privileges.find(item => {
+    if (!(item && item.user_info)) return false
+    let { id } = item && item.user_info
+    if (!id) return false
+    if (user_id == id) {
+      currentUserArr.push(item)
+      return currentUserArr
+    }
+  })
+
+  if (!(currentUserArr && currentUserArr.length)) {
+    // 表示在权限列表中没有找到该操作人
+    if (is_privilege == '1') {
+      // 表示该操作人看不见该分组 那么肯定没有权限
+      return (flag = false)
+    } else if (is_privilege == '2') {
+      // 表示该分组仅列表中的成员可以操作, 那么也没有权限
+      return (flag = false)
+    }
+  }
+  // 表示已经存在在权限列表中了 那么判断当前操作人是否具有可编辑权限
+  flag = currentUserArr.find(
+    item => item.content_privilege_code == code || 'edit'
+  )
+
+  return flag
+}
+
 //在当前项目中检查是否有权限操作
 export const checkIsHasPermissionInBoard = (code, params_board_id) => {
   const userBoardPermissions =
