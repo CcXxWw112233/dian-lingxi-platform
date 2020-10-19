@@ -1261,7 +1261,8 @@ function mapStateToProps({
     boardTagList = [],
     attributesList = [],
     propertiesList = [],
-    milestoneList = []
+    milestoneList = [],
+    card_list_group = []
   },
   projectDetail: {
     datas: { projectDetailInfoData = {} }
@@ -1284,6 +1285,7 @@ function mapStateToProps({
     attributesList,
     propertiesList,
     milestoneList,
+    card_list_group,
     projectDetailInfoData,
     isInOpenFile,
     filePreviewCurrentFileId,

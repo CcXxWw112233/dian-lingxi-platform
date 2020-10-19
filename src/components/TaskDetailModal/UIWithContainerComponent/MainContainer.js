@@ -16,7 +16,8 @@ import { isApiResponseOk } from '../../../utils/handleResponseData'
 import {
   addTaskExecutor,
   removeTaskExecutor,
-  deleteTaskFile
+  deleteTaskFile,
+  getTaskGroup
 } from '../../../services/technological/task'
 import {
   checkIsHasPermissionInBoard,
@@ -34,7 +35,10 @@ import {
 } from '../handleOperateModal'
 import { rebackCreateNotify } from '../../NotificationTodos'
 import { lx_utils } from 'lingxi-im'
-import { getSubfixName } from '../../../utils/businessFunction'
+import {
+  checkIsHasPermissionInVisitControlWithGroup,
+  getSubfixName
+} from '../../../utils/businessFunction'
 
 // 逻辑组件
 const LogicWithMainContent = {
@@ -140,6 +144,20 @@ const LogicWithMainContent = {
     })
   },
 
+  getTaskGroup: function(board_id) {
+    getTaskGroup({ board_id }).then(res => {
+      console.log(res)
+      if (isApiResponseOk(res)) {
+        this.props.dispatch({
+          type: 'publicTaskDetailModal/updateDatas',
+          payload: {
+            card_list_group: res.data || []
+          }
+        })
+      }
+    })
+  },
+
   // 获取任务详情数据
   getInitCardDetailDatas: function(props) {
     const { card_id, dispatch } = props
@@ -164,6 +182,8 @@ const LogicWithMainContent = {
         ) {
           this.getProjectFolderList(res.data.board_id)
         }
+        // 获取分组详情数据
+        this.getTaskGroup(res.data.board_id)
         this.getMilestone(res.data.board_id)
         // 初始化获取字段信息 (需过滤已经存现在的字段)
         // this.filterCurrentExistenceField(res.data)
@@ -190,22 +210,35 @@ const LogicWithMainContent = {
   checkDiffCategoriesAuthoritiesIsVisible: function(code) {
     const {
       drawContent = {},
-      drawContent: { properties = [] }
+      drawContent: { properties = [] },
+      list_group = [],
+      card_list_group = []
     } = this.props
     const { data = [] } = getCurrentDrawerContentPropsModelFieldData({
       properties,
       code: 'EXECUTOR'
     })
-    const { privileges = [], board_id, is_privilege } = drawContent
+    const list_group_ = !!(list_group && list_group.length)
+      ? list_group
+      : card_list_group
+    const { privileges = [], board_id, is_privilege, list_id } = drawContent
     return {
       visit_control_edit: function() {
         // 是否是有编辑权限
-        return checkIsHasPermissionInVisitControl(
-          'edit',
-          privileges,
-          is_privilege,
-          data ? data : [],
-          checkIsHasPermissionInBoard(code, board_id)
+        return (
+          checkIsHasPermissionInVisitControl(
+            'edit',
+            privileges,
+            is_privilege,
+            data ? data : [],
+            checkIsHasPermissionInBoard(code, board_id)
+          ) &&
+          checkIsHasPermissionInVisitControlWithGroup({
+            code: 'read',
+            list_id: list_group_,
+            list_group,
+            permissionsValue: checkIsHasPermissionInBoard(code, board_id)
+          })
         )
       },
       visit_control_comment: function() {

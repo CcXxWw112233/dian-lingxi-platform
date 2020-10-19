@@ -8,6 +8,7 @@ import { Base64 } from 'js-base64'
 import moment from 'moment'
 import { validOnlyNumber } from './verify'
 import { lx_utils } from 'lingxi-im'
+import { arrayNonRepeatfy } from './util'
 
 // 权限的过滤和存储在technological下
 // 权限分为全组织和确定组织下
@@ -86,6 +87,7 @@ export const checkIsHasPermissionInVisitControl = (
   // 1. 从localstorage中获取当前操作的用户信息
   // 2. 在privileges列表中查找该用户, 如果找到了, 根据返回的code类型来判断该用户的操作权限
   // 3. 找不到, 那么就取permissionsValue中对应的权限
+  // if (is_privilege == '0') return true
   const { user_set = {} } = localStorage.getItem('userInfo')
     ? JSON.parse(localStorage.getItem('userInfo'))
     : {}
@@ -164,6 +166,35 @@ export const checkIsHasPermissionInVisitControl = (
   return flag
 }
 
+//设置获取分组中访问控制人的列表
+export const getProjectParticipant = (
+  lane_data = {},
+  privileges_extend = []
+) => {
+  const { card_no_times, cards } = lane_data
+  // 1. 这是将在每一个card_data中的存在的executors取出来,保存在一个数组中
+  const card_data = [].concat(card_no_times, cards)
+  const projectParticipant = card_data.reduce(
+    (acc, curr) =>
+      // console.log(acc, '------', curr, 'sssssss')
+      [
+        ...acc,
+        ...(curr && curr.executors && curr.executors.length
+          ? curr.executors.filter(i => !acc.find(e => e.user_id === i.user_id))
+          : [])
+      ],
+    []
+  )
+  // 2. 如果存在extend列表中的成员也要拼接进来, 然后去重
+  const extendParticipant = privileges_extend && [...privileges_extend]
+  let temp_projectParticipant = [].concat(
+    ...projectParticipant,
+    extendParticipant
+  ) // 用来保存新的负责人列表
+  let new_projectParticipant = arrayNonRepeatfy(temp_projectParticipant)
+  return new_projectParticipant
+}
+
 /**
  * 检测根据分组访问控制来判断对应任务和里程碑的权限
  * 任务|里程碑中的权限控制根据分组来, 如果分组是开放的 则返回项目中的权限
@@ -181,7 +212,13 @@ export const checkIsHasPermissionInVisitControlWithGroup = ({
   permissionsValue
 }) => {
   const gold_item = list_group.find(item => item.list_id == list_id) || {}
-  const { is_privilege = '0', privileges = [] } = gold_item
+  const {
+    is_privilege = '0',
+    privileges = [],
+    privileges_extend = [],
+    lane_data = {}
+  } = gold_item
+  const principalList = getProjectParticipant(lane_data, privileges_extend)
   let flag = false
   // 表示如果分组是开放的, 则以项目中的权限为主
   if (is_privilege == '0') return (flag = permissionsValue)
@@ -192,34 +229,51 @@ export const checkIsHasPermissionInVisitControlWithGroup = ({
   const { user_id } = user_set
   // 2、判断用户是否在权限列表中
   let new_privileges = [...privileges]
+  let new_principalList = [...principalList]
 
-  // 这是需要从privileges列表中找到当前操作的用户
-  let currentUserArr = []
-  new_privileges.find(item => {
-    if (!(item && item.user_info)) return false
-    let { id } = item && item.user_info
-    if (!id) return false
-    if (user_id == id) {
-      currentUserArr.push(item)
-      return currentUserArr
+  // 先判断分组中继承的人员中是否存在当前操作人
+  let currentPricipalListWhetherOrNotSelf = []
+  new_principalList.find(item => {
+    if (user_id == item.user_id) {
+      currentPricipalListWhetherOrNotSelf.push(item)
     }
   })
 
-  if (!(currentUserArr && currentUserArr.length)) {
-    // 表示在权限列表中没有找到该操作人
-    if (is_privilege == '1') {
-      // 表示该操作人看不见该分组 那么肯定没有权限
-      return (flag = false)
-    } else if (is_privilege == '2') {
-      // 表示该分组仅列表中的成员可以操作, 那么也没有权限
-      return (flag = false)
-    }
-  }
-  // 表示已经存在在权限列表中了 那么判断当前操作人是否具有可编辑权限
-  flag = currentUserArr.find(
-    item => item.content_privilege_code == code || 'edit'
-  )
+  if (
+    currentPricipalListWhetherOrNotSelf &&
+    currentPricipalListWhetherOrNotSelf.length
+  ) {
+    // 表示存在
+    return (flag = permissionsValue)
+  } else {
+    // 表示不再继承列表中, 那么判断是否存在权限列表中
+    // 这是需要从privileges列表中找到当前操作的用户
+    let currentUserArr = []
+    new_privileges.find(item => {
+      if (!(item && item.user_info)) return false
+      let { id } = item && item.user_info
+      if (!id) return false
+      if (user_id == id) {
+        currentUserArr.push(item)
+        return currentUserArr
+      }
+    })
 
+    if (!(currentUserArr && currentUserArr.length)) {
+      // 表示在权限列表中没有找到该操作人
+      if (is_privilege == '1') {
+        // 表示该操作人看不见该分组 那么肯定没有权限
+        return (flag = false)
+      } else if (is_privilege == '2') {
+        // 表示该分组仅列表中的成员可以操作, 那么也没有权限
+        return (flag = false)
+      }
+    }
+    // 表示已经存在在权限列表中了 那么判断当前操作人是否具有可编辑权限
+    flag = currentUserArr.find(
+      item => item.content_privilege_code == code || 'edit'
+    )
+  }
   return flag
 }
 

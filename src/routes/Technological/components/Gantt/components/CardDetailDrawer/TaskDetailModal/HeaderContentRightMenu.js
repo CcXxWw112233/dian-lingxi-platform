@@ -583,7 +583,10 @@ function mapStateToProps({
   publicTaskDetailModal: { drawContent = {}, card_id },
   projectDetail: {
     datas: { projectDetailInfoData = {} }
+  },
+  gantt: {
+    datas: { list_group = [] }
   }
 }) {
-  return { drawContent, card_id, projectDetailInfoData }
+  return { drawContent, card_id, projectDetailInfoData, list_group }
 }

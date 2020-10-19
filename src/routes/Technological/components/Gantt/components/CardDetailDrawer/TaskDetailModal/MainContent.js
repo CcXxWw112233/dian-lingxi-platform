@@ -1134,20 +1134,28 @@ export default class MainContent extends Component {
 
           {/* 渲染字段 */}
           <div className={mainContentStyles.field_content}>
-            <div
-              className={mainContentStyles.field_left}
-              style={{ display: 'flex', justifyContent: 'space-between' }}
-            >
-              <div className={mainContentStyles.field_hover}>
-                <span>字段</span>
-              </div>
+            {this.checkDiffCategoriesAuthoritiesIsVisible &&
+            this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit &&
+            !this.checkDiffCategoriesAuthoritiesIsVisible(
+              PROJECT_TEAM_CARD_EDIT
+            ).visit_control_edit() ? (
+              ''
+            ) : (
               <div
-                onClick={this.handleSetMoreField}
-                style={{ color: '#5680FA' }}
+                className={mainContentStyles.field_left}
+                style={{ display: 'flex', justifyContent: 'space-between' }}
               >
-                <span>更多 &gt;</span>
+                <div className={mainContentStyles.field_hover}>
+                  <span>字段</span>
+                </div>
+                <div
+                  onClick={this.handleSetMoreField}
+                  style={{ color: '#5680FA' }}
+                >
+                  <span>更多 &gt;</span>
+                </div>
               </div>
-            </div>
+            )}
             <div className={`${mainContentStyles.field_right}`}>
               {/* 添加字段 S */}
               <div>
@@ -1217,7 +1225,7 @@ function mapStateToProps({
     datas: { projectDetailInfoData = {} }
   },
   gantt: {
-    datas: { group_view_type, selected_card_visible }
+    datas: { group_view_type, selected_card_visible, list_group = [] }
   },
   publicFileDetailModal: {
     isInOpenFile,
@@ -1233,6 +1241,7 @@ function mapStateToProps({
   return {
     group_view_type,
     selected_card_visible,
+    list_group,
     drawerVisible,
     drawContent,
     card_id,

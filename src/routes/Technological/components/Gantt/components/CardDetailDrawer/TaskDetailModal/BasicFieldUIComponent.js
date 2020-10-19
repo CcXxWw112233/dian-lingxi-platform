@@ -652,6 +652,9 @@ function mapStateToProps({
   },
   technological: {
     datas: { userBoardPermissions }
+  },
+  gantt: {
+    datas: { list_group = [] }
   }
 }) {
   return {
@@ -661,6 +664,7 @@ function mapStateToProps({
     attributesList,
     propertiesList,
     projectDetailInfoData,
-    userBoardPermissions
+    userBoardPermissions,
+    list_group
   }
 }
