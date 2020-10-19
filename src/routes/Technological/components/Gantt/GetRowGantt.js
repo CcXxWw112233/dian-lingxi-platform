@@ -463,7 +463,7 @@ export default class GetRowGantt extends Component {
     let counter = 0
     let date = {} //月视图操作的日期数据
 
-    if (gantt_view_mode == 'month' || gantt_view_mode == 'hours') {
+    if (['month', 'hours', 'relative_time'].includes(gantt_view_mode)) {
       //月视图下定位到相符的日期
       for (let val of date_arr_one_level) {
         counter += 1

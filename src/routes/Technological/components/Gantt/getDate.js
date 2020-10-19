@@ -55,6 +55,14 @@ const _obj = {
     return base_utils.getNextHourDate(timestamp)
   },
 
+  // 相对时间轴所需要数据
+  getRelativeTime: timestamp => {
+    return base_utils.getRelativeTime(timestamp)
+  },
+  getNextRelativeTime: (timestamp, T) => {
+    return base_utils.getNextRelativeTime(timestamp, T)
+  },
+
   // 获取目标数据
   getGoldDateData: ({ timestamp, gantt_view_mode }) => {
     if ('year' == gantt_view_mode) {
@@ -65,6 +73,8 @@ const _obj = {
       return _obj.getWeekDate(timestamp)
     } else if ('hours' == gantt_view_mode) {
       return _obj.getHourDate(timestamp)
+    } else if ('relative_time' == gantt_view_mode) {
+      return _obj.getRelativeTime(timestamp)
     } else {
       return _obj.getMonthDate(timestamp)
     }

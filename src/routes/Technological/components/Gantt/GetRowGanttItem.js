@@ -1951,7 +1951,7 @@ export default class GetRowGanttItem extends Component {
                   style={{ height: item_height }}
                 >
                   {gantt_view_mode == 'year' && this.renderYearView(date_inner)}
-                  {gantt_view_mode == 'month' &&
+                  {['month', 'relative_time'].includes(gantt_view_mode) &&
                     this.renderMonthView(date_inner)}
                   {gantt_view_mode == 'week' && this.renderWeekView(date_inner)}
                   {gantt_view_mode == 'hours' &&

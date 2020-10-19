@@ -15,7 +15,8 @@ import {
   getLastWeeksDate,
   getNextHourDate,
   getLastHourDate,
-  getHourDate
+  getHourDate,
+  getNextRelativeTime
 } from './getDate'
 import {
   date_area_height,
@@ -240,6 +241,7 @@ export default class GanttFace extends Component {
       // const loadedCb = () => {
       //   this.setScrollPosition({ position: rescroll_leng_to_left_wrapper[gantt_view_mode] * ceilWidth })
       // }
+      if (gantt_view_mode == 'relative_time') return //相对时间轴不需要向左
       this.setState({
         searchTimer: setTimeout(() => {
           this.setLoading(true)
@@ -354,8 +356,22 @@ export default class GanttFace extends Component {
         date_arr = [].concat(gold_date_arr, getNextYearDate(timestamp))
       } else if (gantt_view_mode == 'hours') {
         date_arr = [].concat(gold_date_arr, getNextHourDate(timestamp))
+      } else if (gantt_view_mode == 'relative_time') {
+        gold_date_arr[0]['date_inner'] = [].concat(
+          gold_date_arr[0]['date_inner'],
+          getNextRelativeTime(
+            gold_date_arr[0]['date_inner'][0]['timestamp'],
+            gold_date_arr[0]['date_inner'].length - 1
+          )
+        )
+        console.log(
+          'sssssssssss111',
+          gold_date_arr,
+          gold_date_arr[0]['date_inner']
+        )
+        date_arr = gold_date_arr
       } else {
-        date_arr = getGoldDateData({ gantt_view_mode, timestamp })
+        // date_arr = getGoldDateData({ gantt_view_mode, timestamp })
       }
     } else if (active_trigger == 'to_left') {
       if (gantt_view_mode == 'month') {
@@ -366,8 +382,10 @@ export default class GanttFace extends Component {
         date_arr = [].concat(getLastYearDate(timestamp), gold_date_arr)
       } else if (gantt_view_mode == 'hours') {
         date_arr = [].concat(getLastHourDate(timestamp), gold_date_arr)
+      } else if (gantt_view_mode == 'relative_time') {
+        return
       } else {
-        date_arr = getGoldDateData({ gantt_view_mode, timestamp })
+        // date_arr = getGoldDateData({ gantt_view_mode, timestamp })
       }
     } else {
       date_arr = getGoldDateData({ gantt_view_mode, timestamp })
@@ -398,7 +416,7 @@ export default class GanttFace extends Component {
     // }
     let date_arr_one_level = []
     let date_total = 0
-    if (['year', 'month', 'hours'].includes(gantt_view_mode)) {
+    if (['year', 'month', 'hours', 'relative_time'].includes(gantt_view_mode)) {
       for (let val of date_arr) {
         const { date_inner = [] } = val
         for (let val2 of date_inner) {

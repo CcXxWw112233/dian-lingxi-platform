@@ -94,7 +94,7 @@ export default {
   state: {
     datas: {
       ...gantt_effect.state,
-      gantt_view_mode: 'month', //week / month /year/ hours '周视图，月视图，年视图,'，原来月视图定义成 ‘天视图’， 年视图则是定义成 ‘月视图’
+      gantt_view_mode: 'relative_time', //week / month /year/ hours /relative_time'周视图，月视图，年视图,'，原来月视图定义成 ‘天视图’， 年视图则是定义成 ‘月视图’
       gold_date_arr: [], //所需要的日期数据
       date_arr_one_level: [], //所有日期数据扁平成一级数组
       start_date: {}, //日期最开始的那一天
@@ -530,7 +530,10 @@ export default {
             //   time_belong_area = true
             //   break
             // }
-            if (gantt_view_mode == 'month') {
+            if (
+              gantt_view_mode == 'month' ||
+              gantt_view_mode == 'relative_time'
+            ) {
               //月视图下遍历得到和开始时间对的上的日期
               if (
                 isSamDay(
@@ -1032,7 +1035,10 @@ export default {
                 //   item.left = k * ceilWidth
                 //   break
                 // }
-                if (gantt_view_mode == 'month') {
+                if (
+                  gantt_view_mode == 'month' ||
+                  gantt_view_mode == 'relative_time'
+                ) {
                   //月视图下遍历得到和开始时间对的上的日期
                   if (
                     isSamDay(
@@ -1244,7 +1250,10 @@ export default {
               //   list_group[i].board_fold_data.left = k * ceilWidth
               //   break
               // }
-              if (gantt_view_mode == 'month') {
+              if (
+                gantt_view_mode == 'month' ||
+                gantt_view_mode == 'relative_time'
+              ) {
                 //月视图下遍历得到和开始时间对的上的日期
                 if (
                   isSamDay(

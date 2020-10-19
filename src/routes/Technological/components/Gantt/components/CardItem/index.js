@@ -656,7 +656,7 @@ export default class CardItem extends Component {
     const end_time_position = local_left + local_width
     let start_date = {}
     let end_date = {}
-    if (gantt_view_mode == 'month' || gantt_view_mode == 'hours') {
+    if (['month', 'relative_time', 'hours'].includes(gantt_view_mode)) {
       const end_time_index = Math.floor((end_time_position - 6) / ceilWidth)
       const start_time_index = Math.floor(local_left / ceilWidth)
       start_date = date_arr_one_level[start_time_index] || {}
@@ -870,7 +870,7 @@ export default class CardItem extends Component {
     const start_time_index = Math.floor(local_left / ceilWidth)
     let start_date = {}
     let end_date = {}
-    if (gantt_view_mode == 'month') {
+    if (['month', 'relative_time'].includes(gantt_view_mode)) {
       start_date = date_arr_one_level[start_time_index] || {}
     } else if (gantt_view_mode == 'year') {
       start_date = setDateWithPositionInYearView({
@@ -1045,7 +1045,7 @@ export default class CardItem extends Component {
 
     let start_date = {}
     let end_date = {}
-    if (gantt_view_mode == 'month') {
+    if (['month', 'relative_time'].includes(gantt_view_mode)) {
       const start_time_index = Math.floor(local_left / ceilWidth)
       start_date = date_arr_one_level[start_time_index] || {}
     } else if (gantt_view_mode == 'year') {

@@ -935,7 +935,7 @@ export default class DateList extends Component {
                 {this.renderDateTop(date_top)}
                 {gantt_view_mode == 'year' &&
                   this.renderYearViewDate(date_inner)}
-                {gantt_view_mode == 'month' &&
+                {['month', 'relative_time'].includes(gantt_view_mode) &&
                   this.renderMonthViewDate(date_inner)}
                 {gantt_view_mode == 'week' &&
                   this.renderWeekViewDate(date_inner)}

@@ -273,7 +273,10 @@ export function formatItem(
           //   time_belong_area = true
           //   break
           // }
-          if (gantt_view_mode == 'month') {
+          if (
+            gantt_view_mode == 'month' ||
+            gantt_view_mode == 'relative_time'
+          ) {
             //月视图下遍历得到和开始时间对的上的日期
             if (
               isSamDay(
