@@ -1001,19 +1001,29 @@ export default class GroupListHeadItem extends Component {
   }
 
   // 访问控制的开关切换
-  handleVisitControlChange = flag => {
+  handleVisitControlChange = (flag, key) => {
     const { itemValue = {} } = this.props
     const { list_id, is_privilege, board_id } = itemValue
     const toBool = str => !!Number(str)
     const is_privilege_bool = toBool(is_privilege)
-    if (flag === is_privilege_bool) {
+    const is_open = !flag
+      ? 0
+      : key == 'clock_edit'
+      ? 1
+      : key == 'clock_read'
+      ? 2
+      : 0
+    // if (flag === is_privilege_bool) {
+    //   return
+    // }
+    if (is_open == is_privilege) {
       return
     }
     //toggole 权限
     const data = {
       content_id: list_id,
       content_type: 'lists',
-      is_open: flag ? 1 : 0,
+      is_open: is_open,
       board_id
     }
     toggleContentPrivilege(data).then(res => {
@@ -1021,7 +1031,7 @@ export default class GroupListHeadItem extends Component {
         //更新数据
         let temp_arr = res && res.data
         this.visitControlUpdateInGanttData({
-          is_privilege: flag ? '1' : '0',
+          is_privilege: is_open,
           type: 'privilege',
           privileges: temp_arr
         })
@@ -1235,11 +1245,13 @@ export default class GroupListHeadItem extends Component {
             ? this.getProjectDetailInfoData()
             : this.getProjectParticipant()
         }
+        isPropVisitControlKey={is_privilege}
         // principalInfo='位任务列表负责人'
         otherPrivilege={privileges}
         otherPersonOperatorMenuItem={
           this.visitControlOtherPersonOperatorMenuItem
         }
+        isShowPropOtherPrivilege={true}
         removeMemberPromptText="移出后用户将不能访问此任务列表"
         handleVisitControlChange={this.handleVisitControlChange}
         handleClickedOtherPersonListOperatorItem={
@@ -1570,7 +1582,7 @@ export default class GroupListHeadItem extends Component {
                     {local_list_name}
                   </div>
                 )}
-                {is_privilege == '1' && (
+                {(is_privilege == '1' || is_privilege == '2') && (
                   <Tooltip title="已开启访问控制" placement="top">
                     <span
                       className={globalStyle.authTheme}
