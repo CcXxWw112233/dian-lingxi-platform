@@ -1223,7 +1223,10 @@ export default class GroupListHeadItem extends Component {
       ...projectParticipant,
       extendParticipant
     ) // 用来保存新的负责人列表
-    let new_projectParticipant = arrayNonRepeatfy(temp_projectParticipant)
+    let new_projectParticipant = arrayNonRepeatfy(
+      temp_projectParticipant,
+      'user_id'
+    )
     return new_projectParticipant
   }
 
@@ -1241,13 +1244,14 @@ export default class GroupListHeadItem extends Component {
         if (arr[i] == undefined) {
           arr.splice(i, 1)
           i = i - 1 // i - 1 ,因为空元素在数组下标 2 位置，删除空之后，后面的元素要向前补位，
-          // 这样才能真正去掉空元素,觉得这句可以删掉的连续为空试试，然后思考其中逻辑
+          // 这样才能真正去掉空元素
         }
       }
       return arr
     }
     let new_projectParticipant = arrayNonRepeatfy(
-      removeEmptyArrayEle(temp_projectParticipant)
+      removeEmptyArrayEle(temp_projectParticipant),
+      'user_id'
     )
     return new_projectParticipant
   }
@@ -1280,7 +1284,7 @@ export default class GroupListHeadItem extends Component {
         otherPersonOperatorMenuItem={
           this.visitControlOtherPersonOperatorMenuItem
         }
-        isShowPropOtherPrivilege={true}
+        isShowPropOtherPrivilege={gantt_board_id == '0' ? false : true}
         removeMemberPromptText="移出后用户将不能访问此任务列表"
         handleVisitControlChange={this.handleVisitControlChange}
         handleClickedOtherPersonListOperatorItem={

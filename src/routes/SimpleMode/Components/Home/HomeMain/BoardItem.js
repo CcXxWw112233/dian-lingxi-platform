@@ -166,35 +166,35 @@ export default class BoardItem extends Component {
   }
 
   // 访问控制的开关切换
-  handleVisitControlChange = flag => {
-    const { itemValue = {} } = this.props
-    const { is_privilege, board_id } = itemValue
-    const toBool = str => !!Number(str)
-    const is_privilege_bool = toBool(is_privilege)
-    if (flag === is_privilege_bool) {
-      return
-    }
-    //toggole 权限
-    const data = {
-      content_id: board_id,
-      content_type: 'board',
-      is_open: flag ? 1 : 0,
-      board_id
-    }
-    toggleContentPrivilege(data).then(res => {
-      if (res && res.code === '0') {
-        //更新数据
-        let temp_arr = res && res.data
-        this.visitControlUpdateInGanttData({
-          is_privilege: flag ? '1' : '0',
-          type: 'privilege',
-          privileges: temp_arr
-        })
-      } else {
-        message.warning(res.message)
-      }
-    })
-  }
+  // handleVisitControlChange = flag => {
+  //   const { itemValue = {} } = this.props
+  //   const { is_privilege, board_id } = itemValue
+  //   const toBool = str => !!Number(str)
+  //   const is_privilege_bool = toBool(is_privilege)
+  //   if (flag === is_privilege_bool) {
+  //     return
+  //   }
+  //   //toggole 权限
+  //   const data = {
+  //     content_id: board_id,
+  //     content_type: 'board',
+  //     is_open: flag ? 1 : 0,
+  //     board_id
+  //   }
+  //   toggleContentPrivilege(data).then(res => {
+  //     if (res && res.code === '0') {
+  //       //更新数据
+  //       let temp_arr = res && res.data
+  //       this.visitControlUpdateInGanttData({
+  //         is_privilege: flag ? '1' : '0',
+  //         type: 'privilege',
+  //         privileges: temp_arr
+  //       })
+  //     } else {
+  //       message.warning(res.message)
+  //     }
+  //   })
+  // }
 
   // 移除访问控制列表
   handleVisitControlRemoveContentPrivilege = id => {
@@ -338,7 +338,8 @@ export default class BoardItem extends Component {
       return arr
     }
     let new_projectParticipant = arrayNonRepeatfy(
-      removeEmptyArrayEle(temp_projectParticipant)
+      removeEmptyArrayEle(temp_projectParticipant),
+      'user_id'
     )
     return new_projectParticipant
   }
@@ -351,7 +352,7 @@ export default class BoardItem extends Component {
         invitationType={'2'}
         invitationId={board_id}
         board_id={board_id}
-        popoverPlacement={'rightTop'}
+        popoverPlacement={'rightBottom'}
         type={'board_list'}
         isPropVisitControl={is_privilege === '0' ? false : true}
         principalList={this.getProjectDetailInfoData()}
@@ -361,7 +362,7 @@ export default class BoardItem extends Component {
           this.visitControlOtherPersonOperatorMenuItem
         }
         removeMemberPromptText="移出后用户将不能访问此任务列表"
-        handleVisitControlChange={this.handleVisitControlChange}
+        // handleVisitControlChange={this.handleVisitControlChange}
         handleClickedOtherPersonListOperatorItem={
           this.handleClickedOtherPersonListOperatorItem
         }
@@ -388,6 +389,12 @@ export default class BoardItem extends Component {
       type: 'projectDetail/projectDetailInfo',
       payload: {
         id: board_id
+      }
+    }).then(res => {
+      if (isApiResponseOk(res)) {
+        this.setState({
+          VisitControlPopoverVisible: true
+        })
       }
     })
   }
@@ -540,20 +547,20 @@ export default class BoardItem extends Component {
         {checkIsHasPermissionInBoard(
           PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE,
           board_id
-        ) &&
-          renderVistorContorlVisible && (
-            <Menu.Item key={'visitorControl'}>
-              <div
-                // style={{ height: 60, width: 100, backgroundColor: 'red' }}
-                onClick={this.handleVisitorWrapper}
-                onMouseDown={() => {
-                  this.handleVisitorControlMouseDown(board_id)
-                }}
-              >
-                {this.renderVistorContorl()}
-              </div>
-            </Menu.Item>
-          )}
+        ) && (
+          // renderVistorContorlVisible &&
+          <Menu.Item key={'visitorControl'}>
+            <div
+              // style={{ height: 60, width: 100, backgroundColor: 'red' }}
+              onClick={this.handleVisitorWrapper}
+              onMouseDown={() => {
+                this.handleVisitorControlMouseDown(board_id)
+              }}
+            >
+              {this.renderVistorContorl()}
+            </div>
+          </Menu.Item>
+        )}
 
         {
           <Menu.Item key={'board_info'}>{`${currentNounPlanFilterName(
@@ -676,7 +683,7 @@ function mapStateToProps({
     datas: { currentUserOrganizes, currentSelectOrganize = {} }
   },
   projectDetail: {
-    datas: { getProjectDetailInfoData = {} }
+    datas: { projectDetailInfoData = {} }
   },
   organizationManager: {
     datas: { currentNounPlan }
@@ -685,7 +692,7 @@ function mapStateToProps({
   return {
     projectList,
     simplemodeCurrentProject,
-    getProjectDetailInfoData,
+    projectDetailInfoData,
     currentUserOrganizes,
     currentSelectOrganize,
     currentNounPlan
