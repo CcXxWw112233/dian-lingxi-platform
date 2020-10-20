@@ -18,6 +18,7 @@ import {
   ceil_height
 } from '../../constants'
 import { getTreeNodeValue } from '../../../../../../models/technological/workbench/gantt/gantt_utils'
+import SetNodeGroup from './SetNodeGroup'
 
 @connect(mapStateToProps)
 export default class TreeNode extends Component {
@@ -890,6 +891,11 @@ export default class TreeNode extends Component {
     )
   }
 
+  renderGroup = key => {
+    const { nodeValue } = this.state
+    return <SetNodeGroup nodeValue={nodeValue} />
+  }
+
   // 根据传入的字段确定显示
   renderForColumns = () => {
     const { defaultColumns = [] } = this.props
@@ -897,7 +903,8 @@ export default class TreeNode extends Component {
       { key: 'item_start_time', component: this.renderStartTime },
       { key: 'item_end_time', component: this.renderEndTime },
       { key: 'item_users_avatar', component: this.renderAvatar },
-      { key: 'item_times', component: this.renderTimes }
+      { key: 'item_times', component: this.renderTimes },
+      { key: 'item_group_list', component: this.renderGroup }
     ]
     return arr.map(item => {
       if (defaultColumns.includes(item.key)) {

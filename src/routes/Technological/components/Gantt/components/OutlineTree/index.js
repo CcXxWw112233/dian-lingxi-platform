@@ -620,6 +620,12 @@ class MyOutlineTree extends Component {
           title: '工时',
           className: 'item_times',
           dataIndex: 'is_show_time_span'
+        },
+        {
+          key: 'item_group_list',
+          title: '分组',
+          className: 'item_group_list',
+          dataIndex: 'is_show_list'
         }
       ],
       defaultColumns: ['item_users_avatar', 'item_times'],

@@ -24,26 +24,26 @@
 .outline_tree_node {
   position: relative;
 }
-.outline_header{
+.outline_header {
   display: flex;
   width: 100%;
   height: 26px;
   line-height: 26px;
   white-space: nowrap;
   font-weight: bold;
-  .settings_icon{
+  .settings_icon {
     width: 40px;
     margin-right: 5px;
     cursor: pointer;
     font-size: 1.2em;
   }
 }
-.settingOverlay{
-  .active{
+.settingOverlay {
+  .active {
     float: right;
-    color: #6A9AFF;
+    color: #6a9aff;
   }
-  .selectColumns{
+  .selectColumns {
     cursor: pointer;
   }
 }
@@ -73,47 +73,57 @@
   // margin-top   : 10px;
   margin-bottom: 20px;
 }
-.item_icons{
+.item_icons {
   max-width: 40px;
   white-space: nowrap;
 }
-.item_users_avatar{
+.item_users_avatar {
   min-width: 40px;
 }
-.item_times{
+.item_group_list {
+  width: 60px;
+  margin-left: 5px;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.item_times {
   min-width: 40px;
   margin-left: 5px;
   text-align: center;
 }
-.item_title_name{
+.item_title_name {
   width: 80%;
   min-width: 134px;
 }
-.item_start_time{
+.item_start_time {
   min-width: 85px;
   padding: 0 5px;
   text-align: center;
-  & > span{
+  & > span {
     .start_time;
   }
 }
-.item_end_time{
+.item_end_time {
   min-width: 85px;
   padding: 0 5px;
   text-align: center;
-  & > span{
+  & > span {
     .start_time;
   }
 }
-.flex2,.flex1{
+.flex2,
+.flex1 {
   flex: 1;
   display: flex;
 }
-.flex2{
+.flex2 {
   justify-content: flex-end;
 }
-.start_time, .end_time{
-  color: rgba(0,0,0,0.2);
+.start_time,
+.end_time {
+  color: rgba(0, 0, 0, 0.2);
 }
 
 .outline_tree_node_content.hover {
@@ -295,40 +305,39 @@
 
 //   background-color: transparent;
 // }
-.outline_number{
+.outline_number {
   margin-right: 10px;
 }
 .titleInputFocus {
   border-style: solid;
 }
-.overlay_toogle_menu{
+.overlay_toogle_menu {
   background-color: #fff;
   border: 1px solid #e8e8e8;
-  :global{
-    .ant-menu-item-selected{
+  :global {
+    .ant-menu-item-selected {
       background-color: transparent !important;
-      color: rgba(0, 0, 0, 0.65) ;
-      &:hover{
+      color: rgba(0, 0, 0, 0.65);
+      &:hover {
         color: #1890ff;
       }
     }
   }
 }
-.overlay_toogle_number{
+.overlay_toogle_number {
   border-top: 1px solid #e8e8e8;
   padding: 0 16px;
   line-height: 40px;
-  & > span:last-child{
+  & > span:last-child {
     float: right;
   }
 }
-.slideActive_bar{
-  & > div{
+.slideActive_bar {
+  & > div {
     display: block !important;
     animation: startIn 0.8s linear forwards;
   }
 }
-
 
 .title {
   display: inline-block;
@@ -403,7 +412,7 @@
   0% {
     opacity: 1;
   }
-  100%{
+  100% {
     opacity: 0;
   }
 }

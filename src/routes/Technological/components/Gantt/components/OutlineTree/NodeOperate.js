@@ -527,7 +527,7 @@ export default class NodeOperate extends Component {
     } = nodeValue
     return (
       <div className={styles.menu} onWheel={e => e.stopPropagation()}>
-        {((tree_type == '2' && parent_type != '2') || tree_type == '1') && ( //只有一级任务选择分组
+        {/* {((tree_type == '2' && parent_type != '2') || tree_type == '1') && ( //只有一级任务选择分组
           <div className={`${styles.menu_item} ${styles.submenu}`}>
             <div
               className={`${styles.menu_item_title}`}
@@ -548,7 +548,7 @@ export default class NodeOperate extends Component {
               </div>
             )}
           </div>
-        )}
+        )} */}
         <div
           className={styles.menu_item}
           onClick={() => this.menuItemClick('rename')}
