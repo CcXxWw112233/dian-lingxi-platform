@@ -965,9 +965,9 @@ export default class DrawDetailInfo extends React.Component {
                   <span style={{ width: '28%' }}>
                     <Radio value="0">具体时间</Radio>
                   </span>
-                  {/* <span>
+                  <span>
                     <Radio value="1">相对时间</Radio>
-                  </span> */}
+                  </span>
                 </Radio.Group>
               </div>
             </div>
@@ -994,79 +994,90 @@ export default class DrawDetailInfo extends React.Component {
                 </div>
               </div>
             )}
-            <div className={DrawDetailInfoStyle.set_time_item}>
-              <div className={DrawDetailInfoStyle.set_time_label}>
-                {currentNounPlanFilterName(PROJECTS)}周期：
-              </div>
-              <div className={DrawDetailInfoStyle.set_time_content}>
-                <div className={DrawDetailInfoStyle.set_start_time}>
-                  <span>开始时间</span>
-                  <span>
-                    {date_format == '0' ? (
-                      <DatePicker
-                        disabledDate={this.disabledStartTime}
-                        showTime={{
-                          defaultValue: moment('00:00', 'HH:mm'),
-                          format: 'HH:mm'
-                        }}
-                        format="YYYY-MM-DD HH:mm"
-                        onChange={this.startDatePickerChange}
-                        value={
-                          start_time && start_time != '0'
-                            ? moment(new Date(this.timePrecision(start_time)))
-                            : undefined
-                        }
-                      />
-                    ) : (
-                      <DatePicker
-                        format="YYYY-MM-DD"
-                        disabledDate={this.disabledStartTime}
-                        onChange={this.startDatePickerChange}
-                        value={
-                          start_time && start_time != '0'
-                            ? moment(new Date(this.timePrecision(start_time)))
-                            : undefined
-                        }
-                      />
-                    )}
-                  </span>
+            {date_mode == '1' ? (
+              <div className={DrawDetailInfoStyle.set_time_item}>
+                <div className={DrawDetailInfoStyle.set_time_label}>
+                  基准时间：
+                </div>
+                <div className={DrawDetailInfoStyle.set_time_content}>
+                  <DatePicker />
                 </div>
               </div>
-              <div className={DrawDetailInfoStyle.set_time_content}>
-                <div className={DrawDetailInfoStyle.set_start_time}>
-                  <span>结束时间</span>
-                  <span>
-                    {date_format == '0' ? (
-                      <DatePicker
-                        showTime={{
-                          defaultValue: moment('23:59', 'HH:mm'),
-                          format: 'HH:mm'
-                        }}
-                        format="YYYY-MM-DD HH:mm"
-                        disabledDate={this.disabledDueTime}
-                        onChange={this.endDatePickerChange}
-                        value={
-                          due_time && due_time != '0'
-                            ? moment(new Date(this.timePrecision(due_time)))
-                            : undefined
-                        }
-                      />
-                    ) : (
-                      <DatePicker
-                        format="YYYY-MM-DD"
-                        disabledDate={this.disabledDueTime}
-                        onChange={this.endDatePickerChange}
-                        value={
-                          due_time && due_time != '0'
-                            ? moment(new Date(this.timePrecision(due_time)))
-                            : undefined
-                        }
-                      />
-                    )}
-                  </span>
+            ) : (
+              <div className={DrawDetailInfoStyle.set_time_item}>
+                <div className={DrawDetailInfoStyle.set_time_label}>
+                  {currentNounPlanFilterName(PROJECTS)}周期：
+                </div>
+                <div className={DrawDetailInfoStyle.set_time_content}>
+                  <div className={DrawDetailInfoStyle.set_start_time}>
+                    <span>开始时间</span>
+                    <span>
+                      {date_format == '0' ? (
+                        <DatePicker
+                          disabledDate={this.disabledStartTime}
+                          showTime={{
+                            defaultValue: moment('00:00', 'HH:mm'),
+                            format: 'HH:mm'
+                          }}
+                          format="YYYY-MM-DD HH:mm"
+                          onChange={this.startDatePickerChange}
+                          value={
+                            start_time && start_time != '0'
+                              ? moment(new Date(this.timePrecision(start_time)))
+                              : undefined
+                          }
+                        />
+                      ) : (
+                        <DatePicker
+                          format="YYYY-MM-DD"
+                          disabledDate={this.disabledStartTime}
+                          onChange={this.startDatePickerChange}
+                          value={
+                            start_time && start_time != '0'
+                              ? moment(new Date(this.timePrecision(start_time)))
+                              : undefined
+                          }
+                        />
+                      )}
+                    </span>
+                  </div>
+                </div>
+                <div className={DrawDetailInfoStyle.set_time_content}>
+                  <div className={DrawDetailInfoStyle.set_start_time}>
+                    <span>结束时间</span>
+                    <span>
+                      {date_format == '0' ? (
+                        <DatePicker
+                          showTime={{
+                            defaultValue: moment('23:59', 'HH:mm'),
+                            format: 'HH:mm'
+                          }}
+                          format="YYYY-MM-DD HH:mm"
+                          disabledDate={this.disabledDueTime}
+                          onChange={this.endDatePickerChange}
+                          value={
+                            due_time && due_time != '0'
+                              ? moment(new Date(this.timePrecision(due_time)))
+                              : undefined
+                          }
+                        />
+                      ) : (
+                        <DatePicker
+                          format="YYYY-MM-DD"
+                          disabledDate={this.disabledDueTime}
+                          onChange={this.endDatePickerChange}
+                          value={
+                            due_time && due_time != '0'
+                              ? moment(new Date(this.timePrecision(due_time)))
+                              : undefined
+                          }
+                        />
+                      )}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
           <div style={{ marginTop: '32px' }}>
             <CustomCategoriesOperate
