@@ -1501,7 +1501,8 @@ export default class GroupListHeadItem extends Component {
       gantt_view_mode,
       show_board_fold,
       group_view_type,
-      get_gantt_data_loading
+      get_gantt_data_loading,
+      list_group = []
     } = this.props
     const {
       itemValue = {},
@@ -1676,14 +1677,32 @@ export default class GroupListHeadItem extends Component {
                     <div
                       className={`${indexStyles.list_head_body_contain} ${indexStyles.list_head_body_contain_2}`}
                     >
-                      {/* <div className={`${indexStyles.list_head_body_contain_lt} ${globalStyle.authTheme}`}>&#xe6db;</div> */}
-                      <Dropdown
-                        overlay={renderSetExcutor({
-                          board_users,
-                          selecteds: this.hanldeLaneLeader(lane_leader),
-                          selctedCallback: this.setGroupExcutor
-                        })}
-                      >
+                      {checkIsHasPermissionInVisitControlWithGroup({
+                        code: 'read',
+                        list_id,
+                        list_group,
+                        permissionsValue: checkIsHasPermissionInBoard(
+                          PROJECT_TEAM_CARD_GROUP,
+                          board_id
+                        )
+                      }) ? (
+                        <Dropdown
+                          overlay={renderSetExcutor({
+                            board_users,
+                            selecteds: this.hanldeLaneLeader(lane_leader),
+                            selctedCallback: this.setGroupExcutor
+                          })}
+                        >
+                          <div
+                            className={`${indexStyles.list_head_body_contain_rt} ${globalStyle.global_ellipsis}`}
+                          >
+                            {this.renderGroupExcutor({
+                              lane_leader,
+                              lane_member_count
+                            })}
+                          </div>
+                        </Dropdown>
+                      ) : (
                         <div
                           className={`${indexStyles.list_head_body_contain_rt} ${globalStyle.global_ellipsis}`}
                         >
@@ -1692,7 +1711,8 @@ export default class GroupListHeadItem extends Component {
                             lane_member_count
                           })}
                         </div>
-                      </Dropdown>
+                      )}
+                      {/* <div className={`${indexStyles.list_head_body_contain_lt} ${globalStyle.authTheme}`}>&#xe6db;</div> */}
                     </div>
                   </div>
                 )}
