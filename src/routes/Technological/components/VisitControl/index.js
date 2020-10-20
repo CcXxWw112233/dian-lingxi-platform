@@ -421,10 +421,10 @@ class VisitControl extends Component {
         }
       >
         <Menu.Item key="unClock">开放访问与操作</Menu.Item>
-        <Menu.Item key="clock_edit">仅列表人员可操作</Menu.Item>
         {isShowPropOtherPrivilege && (
-          <Menu.Item key="clock_read">列表外人员禁止访问</Menu.Item>
+          <Menu.Item key="clock_edit">仅列表人员可操作</Menu.Item>
         )}
+        <Menu.Item key="clock_read">列表外人员禁止访问</Menu.Item>
       </Menu>
     )
   }
@@ -459,7 +459,7 @@ class VisitControl extends Component {
         : '开放访问与操作'
       : !isPropVisitControl
       ? '开放访问与操作'
-      : '仅列表人员可操作'
+      : '列表人员禁止访问'
 
     return (
       <div

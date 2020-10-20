@@ -210,16 +210,12 @@ const LogicWithMainContent = {
     const {
       drawContent = {},
       drawContent: { properties = [] },
-      list_group = [],
       card_list_group = []
     } = this.props
     const { data = [] } = getCurrentDrawerContentPropsModelFieldData({
       properties,
       code: 'EXECUTOR'
     })
-    const list_group_ = !!(list_group && list_group.length)
-      ? list_group
-      : card_list_group
     const { privileges = [], board_id, is_privilege, list_id } = drawContent
     const is_valid_group = true
     // 表示判断是否可以编辑 先判断访问控制中是否有权限 有 则优先自己的访问控制 没有 则上升至分组权限
@@ -238,7 +234,7 @@ const LogicWithMainContent = {
           : checkIsHasPermissionInVisitControlWithGroup({
               code: 'read',
               list_id: list_id,
-              list_group: list_group_,
+              list_group: card_list_group,
               permissionsValue: checkIsHasPermissionInBoard(code, board_id)
             })
       },
@@ -1882,16 +1878,6 @@ const LogicWithMainContent = {
   /**附件下载、删除等操作 */
   attachmentItemOpera: function({ type, data = {}, card_id, code }, e) {
     e.stopPropagation()
-    if (
-      this.checkDiffCategoriesAuthoritiesIsVisible &&
-      this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit &&
-      !this.checkDiffCategoriesAuthoritiesIsVisible(
-        PROJECT_TEAM_CARD_EDIT
-      ).visit_control_edit()
-    ) {
-      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      return false
-    }
     //debugger
     const { dispatch } = this.props
     const attachment_id =
@@ -1905,6 +1891,16 @@ const LogicWithMainContent = {
       return
     }
     if (type == 'remove') {
+      if (
+        this.checkDiffCategoriesAuthoritiesIsVisible &&
+        this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit &&
+        !this.checkDiffCategoriesAuthoritiesIsVisible(
+          PROJECT_TEAM_CARD_EDIT
+        ).visit_control_edit()
+      ) {
+        message.warn('权限不足,操作未被许可', MESSAGE_DURATION_TIME)
+        return false
+      }
       this.deleteAttachmentFile({ attachment_id, card_id, code })
     } else if (type == 'download') {
       dispatch({

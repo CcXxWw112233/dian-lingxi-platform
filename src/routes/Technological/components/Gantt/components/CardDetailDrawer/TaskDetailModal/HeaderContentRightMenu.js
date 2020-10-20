@@ -493,8 +493,8 @@ export default class HeaderContentRightMenu extends Component {
   // 删除任务的操作 E
 
   // 判断是否显示访问控制
-  valid = () => {
-    const { drawContent = {}, list_group = [] } = this.props
+  validVisitControlVisible = () => {
+    const { drawContent = {}, card_list_group = [] } = this.props
     const { privileges = [], board_id, is_privilege, list_id } = drawContent
     const is_valid_group = true
     return checkIsHasPermissionInVisitControl(
@@ -512,7 +512,7 @@ export default class HeaderContentRightMenu extends Component {
       : checkIsHasPermissionInVisitControlWithGroup({
           code: 'read',
           list_id: list_id,
-          list_group: list_group,
+          list_group: card_list_group,
           permissionsValue: checkIsHasPermissionInBoard(
             PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE,
             board_id
@@ -594,7 +594,7 @@ export default class HeaderContentRightMenu extends Component {
         </span>
         {/* 访问控制 */}
         <span className={`${headerStyles.action} ${headerStyles.visit_wrap}`}>
-          {board_id && this.valid() && (
+          {board_id && this.validVisitControlVisible() && (
             <VisitControl
               board_id={board_id}
               isPropVisitControl={is_privilege === '0' ? false : true}
@@ -615,13 +615,10 @@ export default class HeaderContentRightMenu extends Component {
 
 // 只关联public弹窗内的数据
 function mapStateToProps({
-  publicTaskDetailModal: { drawContent = {}, card_id },
+  publicTaskDetailModal: { drawContent = {}, card_id, card_list_group = [] },
   projectDetail: {
     datas: { projectDetailInfoData = {} }
-  },
-  gantt: {
-    datas: { list_group = [] }
   }
 }) {
-  return { drawContent, card_id, projectDetailInfoData, list_group }
+  return { drawContent, card_id, projectDetailInfoData, card_list_group }
 }

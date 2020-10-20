@@ -486,7 +486,7 @@ export default class HeaderContentRightMenu extends Component {
   // 删除任务的操作 E
 
   // 判断是否显示访问控制
-  valid = () => {
+  validVisitControlVisible = () => {
     const { drawContent = {}, card_list_group = [] } = this.props
     const { privileges = [], board_id, is_privilege, list_id } = drawContent
     const is_valid_group = true
@@ -529,12 +529,11 @@ export default class HeaderContentRightMenu extends Component {
       properties,
       code: 'EXECUTOR'
     })
-    console.log(this.valid())
     return (
       <div className={headerStyles.detail_action_list}>
         {/* 访问控制 */}
         <span className={`${headerStyles.action} ${headerStyles.visit_wrap}`}>
-          {board_id && this.valid() && (
+          {board_id && this.validVisitControlVisible() && (
             <VisitControl
               board_id={board_id}
               isPropVisitControl={is_privilege === '0' ? false : true}

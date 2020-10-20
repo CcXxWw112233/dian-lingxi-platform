@@ -1221,13 +1221,14 @@ function mapStateToProps({
     boardTagList = [],
     attributesList = [],
     propertiesList = [],
-    milestoneList = []
+    milestoneList = [],
+    card_list_group = []
   },
   projectDetail: {
     datas: { projectDetailInfoData = {} }
   },
   gantt: {
-    datas: { group_view_type, selected_card_visible, list_group = [] }
+    datas: { group_view_type, selected_card_visible }
   },
   publicFileDetailModal: {
     isInOpenFile,
@@ -1243,7 +1244,6 @@ function mapStateToProps({
   return {
     group_view_type,
     selected_card_visible,
-    list_group,
     drawerVisible,
     drawContent,
     card_id,
@@ -1257,6 +1257,7 @@ function mapStateToProps({
     fileType,
     filePreviewCurrentName,
     simplemodeCurrentProject,
-    userBoardPermissions
+    userBoardPermissions,
+    card_list_group
   }
 }

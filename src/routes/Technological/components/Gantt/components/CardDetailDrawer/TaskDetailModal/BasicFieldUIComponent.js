@@ -645,16 +645,14 @@ function mapStateToProps({
     card_id,
     boardTagList = [],
     attributesList = [],
-    propertiesList = []
+    propertiesList = [],
+    card_list_group = []
   },
   projectDetail: {
     datas: { projectDetailInfoData = {} }
   },
   technological: {
     datas: { userBoardPermissions }
-  },
-  gantt: {
-    datas: { list_group = [] }
   }
 }) {
   return {
@@ -665,6 +663,6 @@ function mapStateToProps({
     propertiesList,
     projectDetailInfoData,
     userBoardPermissions,
-    list_group
+    card_list_group
   }
 }

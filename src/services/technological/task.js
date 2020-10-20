@@ -589,6 +589,7 @@ export async function requestDeleteMiletone(data) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/milestone/${data.id}`,
     method: 'DELETE',
+    // headers: createHeaderContentData(CONTENT_DATA_TYPE_MILESTONE, data.id),
     data
   })
 }
@@ -597,6 +598,7 @@ export async function updateMilestone(data) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/milestone`,
     method: 'PUT',
+    // headers: createHeaderContentData(CONTENT_DATA_TYPE_MILESTONE, data.id),
     data
   })
 }
@@ -606,6 +608,7 @@ export async function addMilestoneExcutos(data) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/milestone/user/add`,
     method: 'POST',
+    // headers: createHeaderContentData(CONTENT_DATA_TYPE_MILESTONE, data.id),
     data
   })
 }
@@ -614,6 +617,7 @@ export async function removeMilestoneExcutos(data) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/milestone/user/remove`,
     method: 'POST',
+    // headers: createHeaderContentData(CONTENT_DATA_TYPE_MILESTONE, data.id),
     data
   })
 }
