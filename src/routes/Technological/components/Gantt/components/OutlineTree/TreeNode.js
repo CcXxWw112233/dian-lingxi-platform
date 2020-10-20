@@ -926,6 +926,10 @@ export default class TreeNode extends Component {
   }
   renderDatePicker = (vdom, timestamp, time_type) => {
     const { ceilWidth } = this.props
+    const show_time_default = {
+      start_time: '00:00',
+      due_time: '23:59'
+    }
     return (
       <div style={{ position: 'relative' }}>
         {vdom}
@@ -940,12 +944,12 @@ export default class TreeNode extends Component {
               : undefined
           }
           placeholder={
-            timestamp ? dateFormat(timestamp, this.timeForMat) : '请选择'
+            timestamp ? dateFormat(timestamp, 'yyyy/MM/dd HH:mm') : '请选择'
           }
           format="YYYY/MM/DD HH:mm"
-          onOk={(e, a, b) => this.setNodeTime(time_type, e.valueOf(), a, b)}
+          onOk={e => this.setNodeTime(time_type, e.valueOf())}
           showTime={{
-            defaultValue: moment('00:00', 'HH:mm'),
+            defaultValue: moment(show_time_default[time_type], 'HH:mm'),
             format: 'HH:mm'
           }}
           style={{
