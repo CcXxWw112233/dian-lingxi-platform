@@ -1012,7 +1012,7 @@ export default class DrawDetailInfo extends React.Component {
                         format="YYYY-MM-DD HH:mm"
                         onChange={this.startDatePickerChange}
                         value={
-                          start_time
+                          start_time && start_time != '0'
                             ? moment(new Date(this.timePrecision(start_time)))
                             : undefined
                         }
@@ -1023,7 +1023,7 @@ export default class DrawDetailInfo extends React.Component {
                         disabledDate={this.disabledStartTime}
                         onChange={this.startDatePickerChange}
                         value={
-                          start_time
+                          start_time && start_time != '0'
                             ? moment(new Date(this.timePrecision(start_time)))
                             : undefined
                         }
@@ -1046,7 +1046,7 @@ export default class DrawDetailInfo extends React.Component {
                         disabledDate={this.disabledDueTime}
                         onChange={this.endDatePickerChange}
                         value={
-                          due_time
+                          due_time && due_time != '0'
                             ? moment(new Date(this.timePrecision(due_time)))
                             : undefined
                         }
@@ -1057,7 +1057,7 @@ export default class DrawDetailInfo extends React.Component {
                         disabledDate={this.disabledDueTime}
                         onChange={this.endDatePickerChange}
                         value={
-                          due_time
+                          due_time && due_time != '0'
                             ? moment(new Date(this.timePrecision(due_time)))
                             : undefined
                         }
