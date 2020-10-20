@@ -20,6 +20,12 @@ import { MESSAGE_DURATION_TIME, TASKS } from '@/globalset/js/constant'
 import { arrayNonRepeatfy } from '../../utils/util'
 import { getCurrentDrawerContentPropsModelFieldData } from './handleOperateModal'
 import { lx_utils } from 'lingxi-im'
+import {
+  checkIsHasPermissionInBoard,
+  checkIsHasPermissionInVisitControl,
+  checkIsHasPermissionInVisitControlWithGroup
+} from '../../utils/businessFunction'
+import { PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE } from '../../globalset/js/constant'
 
 @connect(mapStateToProps)
 export default class HeaderContentRightMenu extends Component {
@@ -479,6 +485,34 @@ export default class HeaderContentRightMenu extends Component {
 
   // 删除任务的操作 E
 
+  // 判断是否显示访问控制
+  valid = () => {
+    const { drawContent = {}, card_list_group = [] } = this.props
+    const { privileges = [], board_id, is_privilege, list_id } = drawContent
+    const is_valid_group = true
+    return checkIsHasPermissionInVisitControl(
+      'edit',
+      privileges,
+      is_privilege,
+      [],
+      checkIsHasPermissionInBoard(
+        PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE,
+        board_id
+      ),
+      is_valid_group
+    )
+      ? true
+      : checkIsHasPermissionInVisitControlWithGroup({
+          code: 'read',
+          list_id: list_id,
+          list_group: card_list_group,
+          permissionsValue: checkIsHasPermissionInBoard(
+            PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE,
+            board_id
+          )
+        })
+  }
+
   render() {
     const { drawContent = {} } = this.props
     const {
@@ -495,11 +529,12 @@ export default class HeaderContentRightMenu extends Component {
       properties,
       code: 'EXECUTOR'
     })
+    console.log(this.valid())
     return (
       <div className={headerStyles.detail_action_list}>
         {/* 访问控制 */}
         <span className={`${headerStyles.action} ${headerStyles.visit_wrap}`}>
-          {board_id && (
+          {board_id && this.valid() && (
             <VisitControl
               board_id={board_id}
               isPropVisitControl={is_privilege === '0' ? false : true}
@@ -578,10 +613,10 @@ export default class HeaderContentRightMenu extends Component {
 
 // 只关联public弹窗内的数据
 function mapStateToProps({
-  publicTaskDetailModal: { drawContent = {}, card_id },
+  publicTaskDetailModal: { drawContent = {}, card_id, card_list_group = [] },
   projectDetail: {
     datas: { projectDetailInfoData = {} }
   }
 }) {
-  return { drawContent, card_id, projectDetailInfoData }
+  return { drawContent, card_id, card_list_group, projectDetailInfoData }
 }

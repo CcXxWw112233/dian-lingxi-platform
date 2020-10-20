@@ -146,7 +146,6 @@ const LogicWithMainContent = {
 
   getTaskGroup: function(board_id) {
     getTaskGroup({ board_id }).then(res => {
-      console.log(res)
       if (isApiResponseOk(res)) {
         this.props.dispatch({
           type: 'publicTaskDetailModal/updateDatas',
@@ -222,24 +221,26 @@ const LogicWithMainContent = {
       ? list_group
       : card_list_group
     const { privileges = [], board_id, is_privilege, list_id } = drawContent
+    const is_valid_group = true
+    // 表示判断是否可以编辑 先判断访问控制中是否有权限 有 则优先自己的访问控制 没有 则上升至分组权限
     return {
       visit_control_edit: function() {
         // 是否是有编辑权限
-        return (
-          checkIsHasPermissionInVisitControl(
-            'edit',
-            privileges,
-            is_privilege,
-            data ? data : [],
-            checkIsHasPermissionInBoard(code, board_id)
-          ) &&
-          checkIsHasPermissionInVisitControlWithGroup({
-            code: 'read',
-            list_id: list_group_,
-            list_group,
-            permissionsValue: checkIsHasPermissionInBoard(code, board_id)
-          })
+        return checkIsHasPermissionInVisitControl(
+          'edit',
+          privileges,
+          is_privilege,
+          [],
+          checkIsHasPermissionInBoard(code, board_id),
+          is_valid_group
         )
+          ? true
+          : checkIsHasPermissionInVisitControlWithGroup({
+              code: 'read',
+              list_id: list_id,
+              list_group: list_group_,
+              permissionsValue: checkIsHasPermissionInBoard(code, board_id)
+            })
       },
       visit_control_comment: function() {
         return checkIsHasPermissionInVisitControl(
