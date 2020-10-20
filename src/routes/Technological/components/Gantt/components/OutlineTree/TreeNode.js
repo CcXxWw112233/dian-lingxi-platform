@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import styles from './index.less'
-import { Input, Dropdown, message, Tooltip, Menu } from 'antd'
+import { Input, Dropdown, message, Tooltip, Menu, DatePicker } from 'antd'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import ManhourSet from './ManhourSet.js'
 import { Popover, Avatar } from 'antd'
@@ -11,11 +11,17 @@ import AvatarList from '@/components/avatarList'
 import NodeOperate from './NodeOperate'
 import { validatePositiveInt } from '../../../../../../utils/verify'
 import { connect } from 'dva'
-import { isSamDay, dateFormat } from '../../../../../../utils/util'
+import {
+  isSamDay,
+  dateFormat,
+  timeToTimestamp,
+  timestampToTimeNormal
+} from '../../../../../../utils/util'
 import {
   task_item_height,
   task_item_margin_top,
-  ceil_height
+  ceil_height,
+  ceil_width
 } from '../../constants'
 import { getTreeNodeValue } from '../../../../../../models/technological/workbench/gantt/gantt_utils'
 import SetNodeGroup from './SetNodeGroup'
@@ -866,29 +872,113 @@ export default class TreeNode extends Component {
     const { nodeValue = {} } = this.props
     let { start_time, is_has_start_time, tree_type } = nodeValue
     //仅在任务时需要强is_has_start_time判断
+    let contain = ''
     if (start_time && (tree_type == '2' ? is_has_start_time : true)) {
-      return dateFormat(start_time, this.timeForMat)
+      contain = dateFormat(start_time, this.timeForMat)
+    } else {
+      contain = (
+        <span
+          className={styles.start_time}
+          key={key}
+          style={{ color: 'rgba(0,0,0,0.2)' }}
+        >
+          {' '}
+          开始{' '}
+        </span>
+      )
     }
-    return (
-      <span className={styles.start_time} key={key}>
-        {' '}
-        开始{' '}
-      </span>
-    )
+    if (tree_type == '1') return contain
+    return this.renderDatePicker(contain, start_time, 'start_time')
   }
 
   renderEndTime = key => {
     const { nodeValue = {} } = this.props
     let { due_time, is_has_end_time } = nodeValue
+    let contain = ''
     if (due_time && is_has_end_time) {
-      return dateFormat(due_time, this.timeForMat)
+      contain = dateFormat(due_time, this.timeForMat)
+    } else {
+      contain = (
+        <span
+          className={styles.due_time}
+          key={key}
+          style={{ color: 'rgba(0,0,0,0.2)' }}
+        >
+          {' '}
+          结束{' '}
+        </span>
+      )
     }
+
+    return this.renderDatePicker(contain, due_time, 'due_time')
+  }
+  disabledTime = (e, time_type) => {
+    const {
+      nodeValue: { start_time, due_time }
+    } = this.state
+    if (time_type == 'start_time') {
+      if (!start_time) return false
+      return e.valueOf() > due_time
+    } else if (time_type == 'due_time') {
+      if (!due_time) return false
+      return e.valueOf() < start_time
+    }
+  }
+  renderDatePicker = (vdom, timestamp, time_type) => {
+    const { ceilWidth } = this.props
     return (
-      <span className={styles.due_time} key={key}>
-        {' '}
-        结束{' '}
-      </span>
+      <div style={{ position: 'relative' }}>
+        {vdom}
+        <DatePicker
+          disabledDate={e => this.disabledTime(e, time_type)}
+          defaultValue={
+            timestamp
+              ? moment(
+                  dateFormat(timestamp, this.timeForMat),
+                  'YYYY/MM/DD HH:mm'
+                )
+              : undefined
+          }
+          placeholder={
+            timestamp ? dateFormat(timestamp, this.timeForMat) : '请选择'
+          }
+          format="YYYY/MM/DD HH:mm"
+          onOk={(e, a, b) => this.setNodeTime(time_type, e.valueOf(), a, b)}
+          showTime={{
+            defaultValue: moment('00:00', 'HH:mm'),
+            format: 'HH:mm'
+          }}
+          style={{
+            opacity: 0,
+            width: 'auto',
+            height: ceilWidth,
+            overflow: 'hidden',
+            position: 'absolute',
+            right: 0
+          }}
+        />
+      </div>
     )
+  }
+  setNodeTime = (key, value) => {
+    const { nodeValue } = this.state
+    const { tree_type, id } = nodeValue
+    let p_k = tree_type == '1' && key == 'due_time' ? 'deadline' : key
+    let action = 'edit_' + (tree_type == '1' ? 'milestone' : 'task')
+    if (this.props.onDataProcess) {
+      this.props.onDataProcess({
+        action,
+        param: {
+          id,
+          // tree_type: tree_type,
+          // parentId: this.props.parentId,
+          [p_k]: value
+        },
+        calback: () => {
+          nodeValue[key] = value
+        }
+      })
+    }
   }
 
   renderGroup = key => {

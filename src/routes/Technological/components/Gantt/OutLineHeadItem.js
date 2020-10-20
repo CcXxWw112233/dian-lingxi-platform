@@ -355,10 +355,10 @@ export default class OutLineHeadItem extends Component {
         break
       case 'edit_milestone':
         {
-          let updateParams = {}
+          let updateParams = { ...param }
           updateParams.id = param.id
           updateParams.name = param.name
-
+          // debugger
           updateMilestone({ ...updateParams }, { isNotLoading: false })
             .then(res => {
               if (isApiResponseOk(res)) {
@@ -366,7 +366,9 @@ export default class OutLineHeadItem extends Component {
                   outline_tree,
                   param.id
                 )
-
+                if (typeof calback == 'function') {
+                  calback()
+                }
                 if (nodeValue) {
                   nodeValue.name = param.name
                   this.updateOutLineTreeData(outline_tree)
@@ -498,6 +500,9 @@ export default class OutLineHeadItem extends Component {
           updateTaskVTwo({ ...updateParams }, { isNotLoading: false })
             .then(res => {
               if (isApiResponseOk(res)) {
+                if (typeof calback == 'function') {
+                  calback()
+                }
                 const { card_detail_id, selected_card_visible } = this.props
                 let nodeValue = OutlineTree.getTreeNodeValue(
                   outline_tree,
