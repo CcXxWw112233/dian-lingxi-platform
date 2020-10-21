@@ -455,11 +455,11 @@ class VisitControl extends Component {
         : isPropVisitControlKey == '2'
         ? '仅列表人员可操作'
         : isPropVisitControlKey == '1'
-        ? '列表人员禁止访问'
+        ? '列表外人员禁止访问'
         : '开放访问与操作'
       : !isPropVisitControl
       ? '开放访问与操作'
-      : '列表人员禁止访问'
+      : '列表外人员禁止访问'
 
     return (
       <div
