@@ -19,6 +19,6 @@ export default {
     basePath: '/app/'
   },
   html: {
-    template: './src/index.ejs'
+    template: './public/index.ejs'
   }
 }
