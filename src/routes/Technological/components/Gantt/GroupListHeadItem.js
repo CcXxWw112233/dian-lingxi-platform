@@ -1087,7 +1087,9 @@ export default class GroupListHeadItem extends Component {
     let temp_id = []
     temp_id.push(id)
     let flag = privileges.find(item => {
-      return item.user_info && item.user_info.user_id == user_id
+      return (
+        item.id == id && item.user_info && item.user_info.user_id == user_id
+      )
     })
     if (flag && Object.keys(flag).length) {
       message.warn('操作失败，开启访问控制时不能移除自己')
