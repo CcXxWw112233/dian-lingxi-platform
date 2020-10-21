@@ -921,6 +921,11 @@ export default class GetRowGanttItem extends Component {
               }_${(current_date_board_child_miletones[0] || {}).id}`}
               data-targetclassname="specific_example_milestone"
               style={{
+                borderRight:
+                  gantt_view_mode == 'relative_time' &&
+                  ![5, 6, 0].includes(week_day)
+                    ? 'none'
+                    : '',
                 backgroundColor:
                   week_day == 0 || week_day == 6
                     ? 'rgb(245,245,245)'
