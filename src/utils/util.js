@@ -992,3 +992,44 @@ export const delayInGenerator = ms =>
       resolve()
     }, ms)
   })
+
+/**
+ * 获取相对时间
+ * @param {Sring|Number} value 需要增加的天数
+ * @param {String|Number} timestamp 基准时间
+ */
+export const getRelativeTimeTamp = (value, timestamp) => {
+  let timestamp_ =
+    String(timestamp).length == 10
+      ? Number(timestamp)
+      : parseInt(timestamp / 1000)
+  return timestamp_ + value * (24 * 3600)
+}
+
+/**
+ * 计算相对时间天数 不比较小时分钟 所以是10位时间戳
+ * @param {String|Number} timestamp1 设置的基准时间
+ * @param {String|Number} timestamp2 需要比较的时间
+ */
+export const computeRelativeTimerDays = (timestamp1, timestamp2) => {
+  if (!timestamp1 || !timestamp2) return ''
+  let dateSpan, isDays
+  let timestamp1_ =
+    String(timestamp1).length == 10
+      ? Number(timestamp1)
+      : parseInt(timestamp1 / 1000)
+  let timestamp2_ =
+    String(timestamp2).length == 10
+      ? Number(timestamp2)
+      : parseInt(timestamp2 / 1000)
+  dateSpan = timestamp1_ - timestamp2_
+  dateSpan = Math.abs(dateSpan)
+  // 判断是否有余数
+  if (dateSpan % (24 * 3600) == 0) {
+    isDays = Math.floor(dateSpan / (24 * 3600))
+  } else {
+    // 只要有余数, 则需要加一天
+    isDays = Math.floor(dateSpan / (24 * 3600)) + 1
+  }
+  return isDays
+}

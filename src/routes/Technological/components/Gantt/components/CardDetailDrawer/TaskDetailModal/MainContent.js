@@ -42,6 +42,7 @@ import CustomCategoriesOperate from '../../../../../../../components/CustomField
 import moment from 'moment'
 import { currentNounPlanFilterName } from '../../../../../../../utils/businessFunction'
 import { TASKS } from '../../../../../../../globalset/js/constant'
+import { computeRelativeTimerDays } from '../../../../../../../utils/util'
 
 @connect(mapStateToProps)
 export default class MainContent extends Component {
@@ -664,7 +665,7 @@ export default class MainContent extends Component {
     const { board_set = {} } = projectDetailInfoData
     const { relative_time } = board_set
     const { start_time } = drawContent
-    const day_value = this.computeRelativeTimerDays(relative_time, start_time)
+    const day_value = computeRelativeTimerDays(relative_time, start_time)
     return this.showTimerMode() ? (
       <>
         &nbsp;

@@ -26,7 +26,7 @@ import {
 } from '@/utils/businessFunction'
 import { getFolderList } from '@/services/technological/file'
 import { getMilestoneList } from '@/services/technological/prjectDetail'
-import { arrayNonRepeatfy } from '../../../utils/util'
+import { arrayNonRepeatfy, getRelativeTimeTamp } from '../../../utils/util'
 import {
   getCurrentDrawerContentPropsModelFieldData,
   filterCurrentUpdateDatasField,
@@ -643,38 +643,18 @@ const LogicWithMainContent = {
     return flag
   },
 
-  /**
-   * 计算相对时间天数
-   * @param {String|Number} timestamp1 设置的基准时间
-   * @param {String|Number} timestamp2 需要比较的时间
-   */
-  computeRelativeTimerDays: function(timestamp1, timestamp2) {
-    if (!timestamp1 || !timestamp2) return ''
-    let dateSpan, isDays
-    let timestamp1_ =
-      String(timestamp1).length == 10 ? timestamp1 * 1000 : timestamp1
-    let timestamp2_ =
-      String(timestamp2).length == 10 ? timestamp2 * 1000 : timestamp1
-    dateSpan = timestamp1_ - timestamp2_
-    dateSpan = Math.abs(dateSpan)
-    isDays = Math.floor(dateSpan / (24 * 3600 * 1000))
-    return isDays
-  },
-
-  getRelativeTimeTamp: function(value, timestamp) {
-    let timestamp_ =
-      String(timestamp).length == 10 ? timestamp * 1000 : timestamp
-    return timestamp_ + value * (24 * 3600 * 1000)
-  },
-
   handleStartRelativeChange: function(value) {
-    console.log(value)
-    const { drawContent = {}, dispatch } = this.props
+    const {
+      drawContent = {},
+      dispatch,
+      projectDetailInfoData = {}
+    } = this.props
+    const { board_set = {} } = projectDetailInfoData
+    const { relative_time } = board_set
     const { start_time, card_id, board_id } = drawContent
     if (!isNaN(value)) {
-      return
       // 表示是数字的时候才做处理
-      let start_timeStamp = this.getRelativeTimeTamp(value, start_time)
+      let start_timeStamp = getRelativeTimeTamp(value, relative_time)
       const updateObj = {
         card_id,
         start_time: start_timeStamp,
@@ -682,7 +662,6 @@ const LogicWithMainContent = {
       }
       let new_drawContent = { ...drawContent }
       new_drawContent['start_time'] = start_timeStamp
-      console.log(updateObj)
       Promise.resolve(
         dispatch({
           type: 'publicTaskDetailModal/updateTaskVTwo',
