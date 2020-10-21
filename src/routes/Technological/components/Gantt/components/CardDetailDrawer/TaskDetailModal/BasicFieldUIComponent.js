@@ -645,7 +645,8 @@ function mapStateToProps({
     card_id,
     boardTagList = [],
     attributesList = [],
-    propertiesList = []
+    propertiesList = [],
+    card_list_group = []
   },
   projectDetail: {
     datas: { projectDetailInfoData = {} }
@@ -661,6 +662,7 @@ function mapStateToProps({
     attributesList,
     propertiesList,
     projectDetailInfoData,
-    userBoardPermissions
+    userBoardPermissions,
+    card_list_group
   }
 }

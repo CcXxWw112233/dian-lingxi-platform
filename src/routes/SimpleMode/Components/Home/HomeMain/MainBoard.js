@@ -36,7 +36,7 @@ export default class MainBoard extends Component {
     })
   }
   componentWillReceiveProps(nextProps) {
-    if (!isObjectValueEqual(nextProps.projectList, this.props.projectList)) {
+    if (!isObjectValueEqual(nextProps.projectList, this.state.projectList)) {
       // 表示不是在我负责的项目下
       if (nextProps.simplemodeCurrentProject.selected_board_term == '2') {
         this.getTheProjectListIsBelongToUserSelf(nextProps)

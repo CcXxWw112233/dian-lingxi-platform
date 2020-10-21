@@ -16,7 +16,8 @@ import { isApiResponseOk } from '../../../utils/handleResponseData'
 import {
   addTaskExecutor,
   removeTaskExecutor,
-  deleteTaskFile
+  deleteTaskFile,
+  getTaskGroup
 } from '../../../services/technological/task'
 import {
   checkIsHasPermissionInBoard,
@@ -34,7 +35,10 @@ import {
 } from '../handleOperateModal'
 import { rebackCreateNotify } from '../../NotificationTodos'
 import { lx_utils } from 'lingxi-im'
-import { getSubfixName } from '../../../utils/businessFunction'
+import {
+  checkIsHasPermissionInVisitControlWithGroup,
+  getSubfixName
+} from '../../../utils/businessFunction'
 
 // 逻辑组件
 const LogicWithMainContent = {
@@ -140,6 +144,19 @@ const LogicWithMainContent = {
     })
   },
 
+  getTaskGroup: function(board_id) {
+    getTaskGroup({ board_id }).then(res => {
+      if (isApiResponseOk(res)) {
+        this.props.dispatch({
+          type: 'publicTaskDetailModal/updateDatas',
+          payload: {
+            card_list_group: res.data || []
+          }
+        })
+      }
+    })
+  },
+
   // 获取任务详情数据
   getInitCardDetailDatas: function(props) {
     const { card_id, dispatch } = props
@@ -164,6 +181,8 @@ const LogicWithMainContent = {
         ) {
           this.getProjectFolderList(res.data.board_id)
         }
+        // 获取分组详情数据
+        this.getTaskGroup(res.data.board_id)
         this.getMilestone(res.data.board_id)
         // 初始化获取字段信息 (需过滤已经存现在的字段)
         // this.filterCurrentExistenceField(res.data)
@@ -190,13 +209,16 @@ const LogicWithMainContent = {
   checkDiffCategoriesAuthoritiesIsVisible: function(code) {
     const {
       drawContent = {},
-      drawContent: { properties = [] }
+      drawContent: { properties = [] },
+      card_list_group = []
     } = this.props
     const { data = [] } = getCurrentDrawerContentPropsModelFieldData({
       properties,
       code: 'EXECUTOR'
     })
-    const { privileges = [], board_id, is_privilege } = drawContent
+    const { privileges = [], board_id, is_privilege, list_id } = drawContent
+    const is_valid_group = true
+    // 表示判断是否可以编辑 先判断访问控制中是否有权限 有 则优先自己的访问控制 没有 则上升至分组权限
     return {
       visit_control_edit: function() {
         // 是否是有编辑权限
@@ -204,9 +226,17 @@ const LogicWithMainContent = {
           'edit',
           privileges,
           is_privilege,
-          data ? data : [],
-          checkIsHasPermissionInBoard(code, board_id)
+          [],
+          checkIsHasPermissionInBoard(code, board_id),
+          is_valid_group
         )
+          ? true
+          : checkIsHasPermissionInVisitControlWithGroup({
+              code: 'read',
+              list_id: list_id,
+              list_group: card_list_group,
+              permissionsValue: checkIsHasPermissionInBoard(code, board_id)
+            })
       },
       visit_control_comment: function() {
         return checkIsHasPermissionInVisitControl(
@@ -593,10 +623,11 @@ const LogicWithMainContent = {
         : Number(due_time).valueOf()
     return Number(start_time.valueOf()) / 1000 >= newDueTime //Number(due_time).valueOf();
   },
-
+  // 判断时间格式 为1 表示精度为 天
   showTimerRange: function() {
     const { projectDetailInfoData = {} } = this.props
-    const { date_format } = projectDetailInfoData
+    const { board_set = {} } = projectDetailInfoData
+    const { date_format } = board_set
     let flag = false
     flag = date_format == '1'
     return flag
@@ -1848,16 +1879,6 @@ const LogicWithMainContent = {
   /**附件下载、删除等操作 */
   attachmentItemOpera: function({ type, data = {}, card_id, code }, e) {
     e.stopPropagation()
-    if (
-      this.checkDiffCategoriesAuthoritiesIsVisible &&
-      this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit &&
-      !this.checkDiffCategoriesAuthoritiesIsVisible(
-        PROJECT_TEAM_CARD_EDIT
-      ).visit_control_edit()
-    ) {
-      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      return false
-    }
     //debugger
     const { dispatch } = this.props
     const attachment_id =
@@ -1871,6 +1892,16 @@ const LogicWithMainContent = {
       return
     }
     if (type == 'remove') {
+      if (
+        this.checkDiffCategoriesAuthoritiesIsVisible &&
+        this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit &&
+        !this.checkDiffCategoriesAuthoritiesIsVisible(
+          PROJECT_TEAM_CARD_EDIT
+        ).visit_control_edit()
+      ) {
+        message.warn('权限不足,操作未被许可', MESSAGE_DURATION_TIME)
+        return false
+      }
       this.deleteAttachmentFile({ attachment_id, card_id, code })
     } else if (type == 'download') {
       dispatch({

@@ -6,7 +6,8 @@ import {
   getOrgNameWithOrgIdFilter,
   checkIsHasPermissionInBoard,
   getOrgIdByBoardId,
-  selectBoardToSeeInfo
+  selectBoardToSeeInfo,
+  checkIsHasPermissionInVisitControlWithGroup
 } from '../../../../utils/businessFunction'
 import {
   archivedProject,
@@ -884,7 +885,7 @@ export default class GroupListHeadItem extends Component {
 
   // 操作项
   renderMenuOperateListName = () => {
-    const { itemValue = {}, gantt_board_id } = this.props
+    const { itemValue = {}, gantt_board_id, list_group = [] } = this.props
     const { renderVistorContorlVisible } = this.state
     const { list_id, is_create } = itemValue
     const params_board_id = gantt_board_id == '0' ? list_id : gantt_board_id
@@ -905,6 +906,16 @@ export default class GroupListHeadItem extends Component {
           PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE,
           params_board_id
         ) &&
+          // 表示是否有分组权限
+          checkIsHasPermissionInVisitControlWithGroup({
+            code: 'read',
+            list_id: list_id,
+            list_group,
+            permissionsValue: checkIsHasPermissionInBoard(
+              PROJECT_TEAM_CARD_GROUP,
+              params_board_id
+            )
+          }) &&
           renderVistorContorlVisible && (
             <Menu.Item key={'visitorControl'}>
               <div
@@ -919,10 +930,19 @@ export default class GroupListHeadItem extends Component {
               </div>
             </Menu.Item>
           )}
-        {checkIsHasPermissionInBoard(
-          rename_permission_code,
-          params_board_id
-        ) && <Menu.Item key={'rename'}>重命名</Menu.Item>}
+        {// checkIsHasPermissionInBoard(
+        //   rename_permission_code,
+        //   params_board_id
+        // ) &&
+        checkIsHasPermissionInVisitControlWithGroup({
+          code: 'read',
+          list_id: list_id,
+          list_group,
+          permissionsValue: checkIsHasPermissionInBoard(
+            rename_permission_code,
+            params_board_id
+          )
+        }) && <Menu.Item key={'rename'}>重命名</Menu.Item>}
         {/* {
           gantt_board_id == '0' && (
             <Menu.Item key={'board_info'}>项目信息</Menu.Item>
@@ -947,10 +967,19 @@ export default class GroupListHeadItem extends Component {
             退出{currentNounPlanFilterName(PROJECTS)}
           </Menu.Item>
         )}
-        {checkIsHasPermissionInBoard(
-          PROJECT_TEAM_CARD_GROUP,
-          params_board_id
-        ) &&
+        {// checkIsHasPermissionInBoard(
+        //   PROJECT_TEAM_CARD_GROUP,
+        //   params_board_id
+        // ) &&
+        checkIsHasPermissionInVisitControlWithGroup({
+          code: 'read',
+          list_id: list_id,
+          list_group,
+          permissionsValue: checkIsHasPermissionInBoard(
+            rename_permission_code,
+            params_board_id
+          )
+        }) &&
           gantt_board_id != '0' && (
             <Menu.Item key={'delete_group'}>删除分组</Menu.Item>
           )}
@@ -1001,19 +1030,29 @@ export default class GroupListHeadItem extends Component {
   }
 
   // 访问控制的开关切换
-  handleVisitControlChange = flag => {
+  handleVisitControlChange = (flag, key) => {
     const { itemValue = {} } = this.props
     const { list_id, is_privilege, board_id } = itemValue
     const toBool = str => !!Number(str)
     const is_privilege_bool = toBool(is_privilege)
-    if (flag === is_privilege_bool) {
+    const is_open = !flag
+      ? 0
+      : key == 'clock_edit'
+      ? 2
+      : key == 'clock_read'
+      ? 1
+      : 0
+    // if (flag === is_privilege_bool) {
+    //   return
+    // }
+    if (is_open == is_privilege) {
       return
     }
     //toggole 权限
     const data = {
       content_id: list_id,
       content_type: 'lists',
-      is_open: flag ? 1 : 0,
+      is_open: is_open,
       board_id
     }
     toggleContentPrivilege(data).then(res => {
@@ -1021,7 +1060,7 @@ export default class GroupListHeadItem extends Component {
         //更新数据
         let temp_arr = res && res.data
         this.visitControlUpdateInGanttData({
-          is_privilege: flag ? '1' : '0',
+          is_privilege: is_open,
           type: 'privilege',
           privileges: temp_arr
         })
@@ -1184,7 +1223,10 @@ export default class GroupListHeadItem extends Component {
       ...projectParticipant,
       extendParticipant
     ) // 用来保存新的负责人列表
-    let new_projectParticipant = arrayNonRepeatfy(temp_projectParticipant)
+    let new_projectParticipant = arrayNonRepeatfy(
+      temp_projectParticipant,
+      'user_id'
+    )
     return new_projectParticipant
   }
 
@@ -1202,13 +1244,14 @@ export default class GroupListHeadItem extends Component {
         if (arr[i] == undefined) {
           arr.splice(i, 1)
           i = i - 1 // i - 1 ,因为空元素在数组下标 2 位置，删除空之后，后面的元素要向前补位，
-          // 这样才能真正去掉空元素,觉得这句可以删掉的连续为空试试，然后思考其中逻辑
+          // 这样才能真正去掉空元素
         }
       }
       return arr
     }
     let new_projectParticipant = arrayNonRepeatfy(
-      removeEmptyArrayEle(temp_projectParticipant)
+      removeEmptyArrayEle(temp_projectParticipant),
+      'user_id'
     )
     return new_projectParticipant
   }
@@ -1235,11 +1278,13 @@ export default class GroupListHeadItem extends Component {
             ? this.getProjectDetailInfoData()
             : this.getProjectParticipant()
         }
+        isPropVisitControlKey={is_privilege}
         // principalInfo='位任务列表负责人'
         otherPrivilege={privileges}
         otherPersonOperatorMenuItem={
           this.visitControlOtherPersonOperatorMenuItem
         }
+        isShowPropOtherPrivilege={gantt_board_id == '0' ? false : true}
         removeMemberPromptText="移出后用户将不能访问此任务列表"
         handleVisitControlChange={this.handleVisitControlChange}
         handleClickedOtherPersonListOperatorItem={
@@ -1456,7 +1501,8 @@ export default class GroupListHeadItem extends Component {
       gantt_view_mode,
       show_board_fold,
       group_view_type,
-      get_gantt_data_loading
+      get_gantt_data_loading,
+      list_group = []
     } = this.props
     const {
       itemValue = {},
@@ -1570,7 +1616,7 @@ export default class GroupListHeadItem extends Component {
                     {local_list_name}
                   </div>
                 )}
-                {is_privilege == '1' && (
+                {(is_privilege == '1' || is_privilege == '2') && (
                   <Tooltip title="已开启访问控制" placement="top">
                     <span
                       className={globalStyle.authTheme}
@@ -1631,14 +1677,32 @@ export default class GroupListHeadItem extends Component {
                     <div
                       className={`${indexStyles.list_head_body_contain} ${indexStyles.list_head_body_contain_2}`}
                     >
-                      {/* <div className={`${indexStyles.list_head_body_contain_lt} ${globalStyle.authTheme}`}>&#xe6db;</div> */}
-                      <Dropdown
-                        overlay={renderSetExcutor({
-                          board_users,
-                          selecteds: this.hanldeLaneLeader(lane_leader),
-                          selctedCallback: this.setGroupExcutor
-                        })}
-                      >
+                      {checkIsHasPermissionInVisitControlWithGroup({
+                        code: 'read',
+                        list_id,
+                        list_group,
+                        permissionsValue: checkIsHasPermissionInBoard(
+                          PROJECT_TEAM_CARD_GROUP,
+                          board_id
+                        )
+                      }) ? (
+                        <Dropdown
+                          overlay={renderSetExcutor({
+                            board_users,
+                            selecteds: this.hanldeLaneLeader(lane_leader),
+                            selctedCallback: this.setGroupExcutor
+                          })}
+                        >
+                          <div
+                            className={`${indexStyles.list_head_body_contain_rt} ${globalStyle.global_ellipsis}`}
+                          >
+                            {this.renderGroupExcutor({
+                              lane_leader,
+                              lane_member_count
+                            })}
+                          </div>
+                        </Dropdown>
+                      ) : (
                         <div
                           className={`${indexStyles.list_head_body_contain_rt} ${globalStyle.global_ellipsis}`}
                         >
@@ -1647,7 +1711,8 @@ export default class GroupListHeadItem extends Component {
                             lane_member_count
                           })}
                         </div>
-                      </Dropdown>
+                      )}
+                      {/* <div className={`${indexStyles.list_head_body_contain_lt} ${globalStyle.authTheme}`}>&#xe6db;</div> */}
                     </div>
                   </div>
                 )}

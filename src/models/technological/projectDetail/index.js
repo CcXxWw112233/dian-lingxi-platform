@@ -5,7 +5,8 @@ import {
   updateProject,
   removeMenbers,
   createMilestone,
-  getMilestoneList
+  getMilestoneList,
+  setProject
 } from '../../../services/technological/prjectDetail'
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message, notification } from 'antd'
@@ -548,6 +549,19 @@ export default {
             projectDetailInfoData
           }
         })
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+      return res || {}
+    },
+
+    *setProject({ payload }, { select, call, put }) {
+      payload.isNotRequestProjectDetailData
+        ? delete payload.isNotRequestProjectDetailData
+        : null
+      let res = yield call(setProject, payload)
+      if (isApiResponseOk(res)) {
+        message.success('设置成功')
+      } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
       return res || {}

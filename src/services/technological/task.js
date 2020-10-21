@@ -9,7 +9,8 @@ import {
   CONTENT_DATA_TYPE_FOLDER,
   CONTENT_DATA_TYPE_LIST,
   REQUEST_DOMAIN_WORK_BENCH,
-  REQUEST_DOMAIN_ABOUT_PROJECT
+  REQUEST_DOMAIN_ABOUT_PROJECT,
+  CONTENT_DATA_TYPE_MILESTONE
 } from '../../globalset/js/constant'
 import request from '../../utils/requestAxios'
 import { getGlobalData } from '../../utils/businessFunction'
@@ -75,6 +76,15 @@ const getContentTypeByLinkLocal = linkLocalCode => {
     default:
   }
   return contentType
+}
+
+// 获取任务分组
+export async function getTaskGroup(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/lists`,
+    method: 'GET',
+    params
+  })
 }
 
 //新增任务分组
@@ -423,6 +433,7 @@ export async function setCardAttributes(data) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/card/property`,
     method: 'POST',
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_CARD, data.card_id),
     data
   })
 }
@@ -432,6 +443,7 @@ export async function removeCardAttributes(params) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/card/property`,
     method: 'DELETE',
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_CARD, params.card_id),
     params
   })
 }
@@ -552,6 +564,7 @@ export async function boardAppRelaMiletones(data) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/milestone/rela`,
     method: 'POST',
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_MILESTONE, data.id),
     data
   })
 }
@@ -576,6 +589,7 @@ export async function requestDeleteMiletone(data) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/milestone/${data.id}`,
     method: 'DELETE',
+    // headers: createHeaderContentData(CONTENT_DATA_TYPE_MILESTONE, data.id),
     data
   })
 }
@@ -584,6 +598,7 @@ export async function updateMilestone(data) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/milestone`,
     method: 'PUT',
+    // headers: createHeaderContentData(CONTENT_DATA_TYPE_MILESTONE, data.id),
     data
   })
 }
@@ -593,6 +608,7 @@ export async function addMilestoneExcutos(data) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/milestone/user/add`,
     method: 'POST',
+    // headers: createHeaderContentData(CONTENT_DATA_TYPE_MILESTONE, data.id),
     data
   })
 }
@@ -601,6 +617,7 @@ export async function removeMilestoneExcutos(data) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/milestone/user/remove`,
     method: 'POST',
+    // headers: createHeaderContentData(CONTENT_DATA_TYPE_MILESTONE, data.id),
     data
   })
 }

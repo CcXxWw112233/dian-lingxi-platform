@@ -25,6 +25,15 @@ export async function updateProject(data) {
   })
 }
 
+// 设置项目
+export async function setProject(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/board/set`,
+    method: 'PUT',
+    data
+  })
+}
+
 // 移出项目成员
 export async function removeMenbers(data) {
   return request({

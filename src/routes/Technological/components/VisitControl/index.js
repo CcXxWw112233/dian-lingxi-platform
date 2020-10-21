@@ -119,7 +119,7 @@ class VisitControl extends Component {
       this.setState({
         toggle_selectedKey: e.key
       })
-      handleVisitControlChange(false)
+      handleVisitControlChange(false, e.key)
     } else {
       if (
         !checkIsHasPermissionInBoard(
@@ -133,7 +133,7 @@ class VisitControl extends Component {
       this.setState({
         toggle_selectedKey: e.key
       })
-      handleVisitControlChange(true)
+      handleVisitControlChange(true, e.key)
     }
   }
 
@@ -395,22 +395,49 @@ class VisitControl extends Component {
   }
 
   toggleVisitControl = () => {
-    const { isPropVisitControl } = this.props
+    const {
+      isPropVisitControl,
+      isShowPropOtherPrivilege,
+      isPropVisitControlKey
+    } = this.props
+    const is_privilege_key =
+      isPropVisitControlKey == '0'
+        ? 'unlock'
+        : isPropVisitControlKey == '2'
+        ? 'clock_edit'
+        : isPropVisitControlKey == '1'
+        ? 'clock_read'
+        : 'unlock'
     return (
       <Menu
         getPopupContainer={triggerNode => triggerNode.parentNode}
         onClick={this.handleToggleVisitControl}
-        selectedKeys={!isPropVisitControl ? 'unClock' : 'clock'}
+        selectedKeys={
+          isShowPropOtherPrivilege
+            ? is_privilege_key
+            : !isPropVisitControl
+            ? 'unClock'
+            : 'clock_edit'
+        }
       >
-        <Menu.Item key="unClock">开放访问</Menu.Item>
-        <Menu.Item key="clock">仅列表人员访问</Menu.Item>
+        <Menu.Item key="unClock">开放访问与操作</Menu.Item>
+        {isShowPropOtherPrivilege && (
+          <Menu.Item key="clock_edit">仅列表人员可操作</Menu.Item>
+        )}
+        <Menu.Item key="clock_read">列表外人员禁止访问</Menu.Item>
       </Menu>
     )
   }
 
   // 这是popover中的内容头部标题的控制
   renderPopoverTitle = () => {
-    const { isPropVisitControl, type, onlyShowPopoverContent } = this.props
+    const {
+      isPropVisitControl,
+      isPropVisitControlKey,
+      type,
+      onlyShowPopoverContent,
+      isShowPropOtherPrivilege
+    } = this.props
     const unClockIcon = (
       <i className={`${globalStyles.authTheme} ${styles.title__text_icon}`}>
         &#xe7ca;
@@ -421,6 +448,18 @@ class VisitControl extends Component {
         &#xe86a;
       </i>
     )
+
+    const is_privilege_text = isShowPropOtherPrivilege
+      ? isPropVisitControlKey == 'unlock'
+        ? '开放访问与操作'
+        : isPropVisitControlKey == '2'
+        ? '仅列表人员可操作'
+        : isPropVisitControlKey == '1'
+        ? '列表人员禁止访问'
+        : '开放访问与操作'
+      : !isPropVisitControl
+      ? '开放访问与操作'
+      : '列表人员禁止访问'
 
     return (
       <div
@@ -453,9 +492,7 @@ class VisitControl extends Component {
                     marginRight: 0
                   }}
                 >
-                  <span>
-                    {!isPropVisitControl ? '开放访问' : '仅列表成员访问'}
-                  </span>
+                  <span>{is_privilege_text}</span>
                   <span className={`${globalStyles.authTheme}`}>&#xe7ee;</span>
                 </span>
               </Dropdown>
@@ -824,6 +861,8 @@ VisitControl.defaultProps = {
     // }
   ],
   notShowPrincipal: false, //不显示权限人列表
+  isShowPropOtherPrivilege: false, // 是否显示列表外人员禁止访问
+  isPropVisitControlKey: '0', // 表示传入的当前访问控制状态
   otherPersonOperatorMenuItem: [
     //添加人员的菜单操作映射
     {

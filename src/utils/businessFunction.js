@@ -8,6 +8,7 @@ import { Base64 } from 'js-base64'
 import moment from 'moment'
 import { validOnlyNumber } from './verify'
 import { lx_utils } from 'lingxi-im'
+import { arrayNonRepeatfy } from './util'
 
 // 权限的过滤和存储在technological下
 // 权限分为全组织和确定组织下
@@ -74,6 +75,7 @@ export const checkIsHasPermission = (code, param_org_id) => {
  * @param {Array} privileges 该用户所在的权限列表
  * @param {Array} principalList 该用户所在的执行人列表
  * @param {Boolean} permissionsValue 所有用户在项目中的权限
+ * @param {Boolean} is_valid_group 表示是否验证分组 为true时不需要执行人列表
  * @return {Boolean} 该方法返回一个布尔类型的值, 为true 表示可以行使该权限
  */
 export const checkIsHasPermissionInVisitControl = (
@@ -81,11 +83,13 @@ export const checkIsHasPermissionInVisitControl = (
   privileges,
   is_privilege,
   principalList,
-  permissionsValue
+  permissionsValue,
+  is_valid_group
 ) => {
   // 1. 从localstorage中获取当前操作的用户信息
   // 2. 在privileges列表中查找该用户, 如果找到了, 根据返回的code类型来判断该用户的操作权限
   // 3. 找不到, 那么就取permissionsValue中对应的权限
+  // if (is_privilege == '0') return true
   const { user_set = {} } = localStorage.getItem('userInfo')
     ? JSON.parse(localStorage.getItem('userInfo'))
     : {}
@@ -123,46 +127,185 @@ export const checkIsHasPermissionInVisitControl = (
     }
   })
 
-  /**
-   * 如果该用户不在权限列表中, 那么就判断在不在执行人列表中
-   */
-  if (!(currentUserArr && currentUserArr.length)) {
-    // 如果说也不在执行人列表中, 那么就返回项目中的权限列表
-    if (
-      !(
-        currentPricipalListWhetherOrNotSelf &&
-        currentPricipalListWhetherOrNotSelf.length
-      )
-    ) {
-      return (flag = permissionsValue)
+  if (is_valid_group) {
+    if (!(currentUserArr && currentUserArr.length)) {
+      // 如果说也不在执行人列表中, 那么就返回项目中的权限列表
+      return false
     } else {
-      // 否则返回true, 代表有权限
-      return (flag = true)
+      currentUserArr = currentUserArr.map(item => {
+        if (!(item && item.user_info)) return false
+        let { id } = item && item.user_info
+        if (!id) return false
+        if (user_id == id) {
+          // 判断改成员能不能在自己的权限列表中查询到
+          if (item.content_privilege_code == code) {
+            // 如果说该职员的权限状态与code匹配, 返回true, 表示有权利
+            flag = true
+          } else {
+            // 返回false,表示没有权利
+            flag = false
+          }
+        }
+        return flag
+      })
     }
+  } else {
+    /**
+     * 如果该用户不在权限列表中, 那么就判断在不在执行人列表中
+     */
+    if (!(currentUserArr && currentUserArr.length)) {
+      // 如果说也不在执行人列表中, 那么就返回项目中的权限列表
+      if (
+        !(
+          currentPricipalListWhetherOrNotSelf &&
+          currentPricipalListWhetherOrNotSelf.length
+        )
+      ) {
+        return (flag = permissionsValue)
+      } else {
+        // 否则返回true, 代表有权限
+        return (flag = true)
+      }
+    }
+
+    // 这是需要用当前用户去遍历, 只能有一个, 并且只要一种结果, 进入一个条件之后不会进入其他条件
+    currentUserArr = currentUserArr.map(item => {
+      if (!(item && item.user_info)) return false
+      let { id } = item && item.user_info
+      if (!id) return false
+      if (user_id == id) {
+        // 判断改成员能不能在自己的权限列表中查询到
+        if (item.content_privilege_code == code) {
+          // 如果说该职员的权限状态与code匹配, 返回true, 表示有权利
+          flag = true
+        } else {
+          // 返回false,表示没有权利
+          flag = false
+        }
+      } else {
+        // 找不到该成员, 那么就在对应的该项目中查找对应的权限列表
+        flag = permissionsValue // 返回对应项目权限列表中的状态
+      }
+      return flag
+    })
   }
 
-  // 这是需要用当前用户去遍历, 只能有一个, 并且只要一种结果, 进入一个条件之后不会进入其他条件
-  currentUserArr = currentUserArr.map(item => {
-    if (!(item && item.user_info)) return false
-    let { id } = item && item.user_info
-    if (!id) return false
-    if (user_id == id) {
-      // 判断改成员能不能在自己的权限列表中查询到
-      if (item.content_privilege_code == code) {
-        // 如果说该职员的权限状态与code匹配, 返回true, 表示有权利
-        flag = true
-      } else {
-        // 返回false,表示没有权利
-        flag = false
-      }
-    } else {
-      // 找不到该成员, 那么就在对应的该项目中查找对应的权限列表
-      flag = permissionsValue // 返回对应项目权限列表中的状态
-    }
-    return flag
-  })
   return flag
 }
+
+//设置获取分组中访问控制人的列表
+export const getProjectParticipant = (
+  lane_data = {},
+  privileges_extend = []
+) => {
+  const { card_no_times, cards } = lane_data
+  // 1. 这是将在每一个card_data中的存在的executors取出来,保存在一个数组中
+  const card_data = [].concat(card_no_times, cards)
+  const projectParticipant = card_data.reduce(
+    (acc, curr) =>
+      // console.log(acc, '------', curr, 'sssssss')
+      [
+        ...acc,
+        ...(curr && curr.executors && curr.executors.length
+          ? curr.executors.filter(i => !acc.find(e => e.user_id === i.user_id))
+          : [])
+      ],
+    []
+  )
+  // 2. 如果存在extend列表中的成员也要拼接进来, 然后去重
+  const extendParticipant = privileges_extend && [...privileges_extend]
+  let temp_projectParticipant = [].concat(
+    ...projectParticipant,
+    extendParticipant
+  ) // 用来保存新的负责人列表
+  let new_projectParticipant = arrayNonRepeatfy(temp_projectParticipant)
+  return new_projectParticipant
+}
+
+/**
+ * 检测根据分组访问控制来判断对应任务和里程碑的权限
+ * 任务|里程碑中的权限控制根据分组来, 如果分组是开放的 则返回项目中的权限
+ * @param {String} list_id 当前操作的分组ID
+ * @param {Array} list_group 对应的分组列表
+ * @param {String} is_privilege 分组对应的开启权限 0 表示开启访问 1 表示禁止外部人员访问 2 表示仅列表成员访问与操作, 外部人员不可操作
+ * @param {Array} privileges 分组中的权限列表 (需要包括继承的)
+ * @param {Boolean} permissionsValue 用户在项目中的权限
+ * @returns {Boolean} true 表示有权限
+ */
+export const checkIsHasPermissionInVisitControlWithGroup = ({
+  code,
+  list_id,
+  list_group = [],
+  permissionsValue
+}) => {
+  const gold_item = list_group.find(item => item.list_id == list_id) || {}
+  const {
+    is_privilege = '0',
+    privileges = [],
+    privileges_extend = [],
+    lane_data = {}
+  } = gold_item
+  // const principalList = getProjectParticipant(lane_data, privileges_extend)
+  let flag = false
+  // 表示如果分组是开放的, 则以项目中的权限为主
+  if (is_privilege == '0') return (flag = permissionsValue)
+  // 1、找到当前操作的用户
+  const { user_set = {} } = localStorage.getItem('userInfo')
+    ? JSON.parse(localStorage.getItem('userInfo'))
+    : {}
+  const { user_id } = user_set
+  // 2、判断用户是否在权限列表中
+  let new_privileges = [...privileges]
+  // let new_principalList = [...principalList]
+
+  // 先判断分组中继承的人员中是否存在当前操作人
+  let currentPricipalListWhetherOrNotSelf = []
+  // new_principalList.find(item => {
+  //   if (user_id == item.user_id) {
+  //     currentPricipalListWhetherOrNotSelf.push(item)
+  //   }
+  // })
+
+  if (
+    !!(
+      currentPricipalListWhetherOrNotSelf &&
+      currentPricipalListWhetherOrNotSelf.length
+    )
+  ) {
+    // 表示存在
+    return (flag = permissionsValue)
+  } else {
+    // 表示不再继承列表中, 那么判断是否存在权限列表中
+    // 这是需要从privileges列表中找到当前操作的用户
+    let currentUserArr = []
+    new_privileges.find(item => {
+      if (!(item && item.user_info)) return false
+      let { id } = item && item.user_info
+      if (!id) return false
+      if (user_id == id) {
+        currentUserArr.push(item)
+        return currentUserArr
+      }
+    })
+
+    if (!(currentUserArr && currentUserArr.length)) {
+      // 表示在权限列表中没有找到该操作人
+      if (is_privilege == '1') {
+        // 表示该操作人看不见该分组 那么肯定没有权限
+        return (flag = false)
+      } else if (is_privilege == '2') {
+        // 表示该分组仅列表中的成员可以操作, 那么也没有权限
+        return (flag = false)
+      }
+    }
+    // 表示已经存在在权限列表中了 那么判断当前操作人是否具有可编辑权限
+    flag = currentUserArr.find(
+      item => item.content_privilege_code == code || 'edit'
+    )
+  }
+  return flag
+}
+
 //在当前项目中检查是否有权限操作
 export const checkIsHasPermissionInBoard = (code, params_board_id) => {
   const userBoardPermissions =

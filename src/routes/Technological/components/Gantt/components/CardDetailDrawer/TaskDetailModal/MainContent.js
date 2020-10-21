@@ -39,6 +39,8 @@ import BasicFieldUIComponent from './BasicFieldUIComponent'
 import BasicFieldContainer from '../../../../../../../components/TaskDetailModal/UIWithContainerComponent/BasicFieldContainer'
 import CustomCategoriesOperate from '../../../../../../../components/CustomFields/CustomCategoriesOperate'
 import moment from 'moment'
+import { currentNounPlanFilterName } from '../../../../../../../utils/businessFunction'
+import { TASKS } from '../../../../../../../globalset/js/constant'
 
 @connect(mapStateToProps)
 export default class MainContent extends Component {
@@ -468,7 +470,7 @@ export default class MainContent extends Component {
       >
         <div className={mainContentStyles.field_left}>
           <div className={mainContentStyles.field_hover}>
-            <span>任务说明</span>
+            <span>{`${currentNounPlanFilterName(TASKS)}`}说明</span>
           </div>
           {!flag && (
             <span
@@ -488,7 +490,7 @@ export default class MainContent extends Component {
             !this.checkDiffCategoriesAuthoritiesIsVisible(
               PROJECT_TEAM_CARD_EDIT
             ).visit_control_edit() ? (
-              gold_data && gold_data == '<p></p>' ? (
+              !gold_data || gold_data == '<p></p>' ? (
                 <div className={`${mainContentStyles.pub_hover}`}>
                   <span>暂无</span>
                 </div>
@@ -1134,20 +1136,28 @@ export default class MainContent extends Component {
 
           {/* 渲染字段 */}
           <div className={mainContentStyles.field_content}>
-            <div
-              className={mainContentStyles.field_left}
-              style={{ display: 'flex', justifyContent: 'space-between' }}
-            >
-              <div className={mainContentStyles.field_hover}>
-                <span>字段</span>
-              </div>
+            {this.checkDiffCategoriesAuthoritiesIsVisible &&
+            this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit &&
+            !this.checkDiffCategoriesAuthoritiesIsVisible(
+              PROJECT_TEAM_CARD_EDIT
+            ).visit_control_edit() ? (
+              ''
+            ) : (
               <div
-                onClick={this.handleSetMoreField}
-                style={{ color: '#5680FA' }}
+                className={mainContentStyles.field_left}
+                style={{ display: 'flex', justifyContent: 'space-between' }}
               >
-                <span>更多 &gt;</span>
+                <div className={mainContentStyles.field_hover}>
+                  <span>字段</span>
+                </div>
+                <div
+                  onClick={this.handleSetMoreField}
+                  style={{ color: '#5680FA' }}
+                >
+                  <span>更多 &gt;</span>
+                </div>
               </div>
-            </div>
+            )}
             <div className={`${mainContentStyles.field_right}`}>
               {/* 添加字段 S */}
               <div>
@@ -1211,7 +1221,8 @@ function mapStateToProps({
     boardTagList = [],
     attributesList = [],
     propertiesList = [],
-    milestoneList = []
+    milestoneList = [],
+    card_list_group = []
   },
   projectDetail: {
     datas: { projectDetailInfoData = {} }
@@ -1246,6 +1257,7 @@ function mapStateToProps({
     fileType,
     filePreviewCurrentName,
     simplemodeCurrentProject,
-    userBoardPermissions
+    userBoardPermissions,
+    card_list_group
   }
 }

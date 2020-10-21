@@ -443,6 +443,7 @@ export default class MainUIComponent extends Component {
     )
   }
 
+  // 渲染备注
   renderReMarks = () => {
     const {
       drawContent = {},
@@ -669,6 +670,9 @@ export default class MainUIComponent extends Component {
       </div>
     )
   }
+
+  // 渲染开始时间
+  renderStartTime = () => {}
 
   render() {
     const {
@@ -1261,7 +1265,8 @@ function mapStateToProps({
     boardTagList = [],
     attributesList = [],
     propertiesList = [],
-    milestoneList = []
+    milestoneList = [],
+    card_list_group = []
   },
   projectDetail: {
     datas: { projectDetailInfoData = {} }
@@ -1284,6 +1289,7 @@ function mapStateToProps({
     attributesList,
     propertiesList,
     milestoneList,
+    card_list_group,
     projectDetailInfoData,
     isInOpenFile,
     filePreviewCurrentFileId,
