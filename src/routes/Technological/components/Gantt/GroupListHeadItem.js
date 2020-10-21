@@ -1077,7 +1077,7 @@ export default class GroupListHeadItem extends Component {
   // 移除访问控制列表
   handleVisitControlRemoveContentPrivilege = id => {
     const { itemValue = {}, gantt_board_id } = this.props
-    const { list_id, privileges, board_id } = itemValue
+    const { list_id, privileges, board_id, is_privilege } = itemValue
     const content_type = 'lists'
     const content_id = list_id
     const { user_set = {} } = localStorage.getItem('userInfo')
@@ -1091,7 +1091,7 @@ export default class GroupListHeadItem extends Component {
         item.id == id && item.user_info && item.user_info.user_id == user_id
       )
     })
-    if (flag && Object.keys(flag).length) {
+    if (flag && Object.keys(flag).length && !(is_privilege == '0')) {
       message.warn('操作失败，开启访问控制时不能移除自己')
       return
     }
