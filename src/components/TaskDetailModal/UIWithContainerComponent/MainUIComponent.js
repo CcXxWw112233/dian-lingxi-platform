@@ -443,6 +443,7 @@ export default class MainUIComponent extends Component {
     )
   }
 
+  // 渲染备注
   renderReMarks = () => {
     const {
       drawContent = {},
@@ -669,6 +670,9 @@ export default class MainUIComponent extends Component {
       </div>
     )
   }
+
+  // 渲染开始时间
+  renderStartTime = () => {}
 
   render() {
     const {

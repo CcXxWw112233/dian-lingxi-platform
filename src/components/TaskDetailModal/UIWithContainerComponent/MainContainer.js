@@ -623,10 +623,11 @@ const LogicWithMainContent = {
         : Number(due_time).valueOf()
     return Number(start_time.valueOf()) / 1000 >= newDueTime //Number(due_time).valueOf();
   },
-
+  // 判断时间格式 为1 表示精度为 天
   showTimerRange: function() {
     const { projectDetailInfoData = {} } = this.props
-    const { date_format } = projectDetailInfoData
+    const { board_set = {} } = projectDetailInfoData
+    const { date_format } = board_set
     let flag = false
     flag = date_format == '1'
     return flag
