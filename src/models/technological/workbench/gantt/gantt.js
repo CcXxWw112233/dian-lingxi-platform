@@ -154,7 +154,8 @@ export default {
       selected_hide_term: false, // 表示是否选择隐藏项 true 表示是
       isDisplayContentIds: [], // 表示已经隐藏的content_ids
       outline_tree_original: [], // 大纲视图显示隐藏快照 数据源
-      card_name_outside: false //任务名称是否外置
+      card_name_outside: false, //任务名称是否外置
+      base_relative_time: '' //相对时间轴的基准时间
     }
   },
   subscriptions: {

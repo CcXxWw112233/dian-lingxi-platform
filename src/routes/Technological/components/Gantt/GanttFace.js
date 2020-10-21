@@ -63,15 +63,19 @@ export default class GanttFace extends Component {
 
   componentDidMount() {
     const { gantt_board_id, projectDetailInfoData = {} } = this.props
-    if (projectDetailInfoData && gantt_board_id && gantt_board_id != '0') {
+    const { board_set = {} } = projectDetailInfoData
+    const { date_mode, relative_time } = board_set
+    //满足设置相对时间轴的条件
+    if (date_mode == '1' && gantt_board_id && gantt_board_id != '0') {
       this.props.dispatch({
         type: 'gantt/updateDatas',
         payload: {
-          gantt_view_mode: 'relative_time'
+          gantt_view_mode: 'relative_time',
+          base_relative_time: relative_time
         }
       })
       setTimeout(() => {
-        this.setGoldDateArr({ init: true })
+        this.setGoldDateArr({ init: true, timestamp: relative_time })
         this.initSetScrollPosition()
       }, 100)
     } else {
@@ -83,6 +87,59 @@ export default class GanttFace extends Component {
     this.getProcessTemplateList()
     window.addEventListener('resize', this.setGanTTCardHeight, false)
   }
+
+  componentWillReceiveProps(nextProps) {
+    const { projectDetailInfoData = {}, gantt_board_id, ceilWidth } = this.props
+    const { board_set = {} } = projectDetailInfoData
+    const { date_mode, relative_time } = board_set
+    const {
+      gantt_board_id: gantt_board_id_next,
+      projectDetailInfoData: projectDetailInfoData_next = {}
+    } = nextProps
+    const { board_set: board_set_next = {} } = projectDetailInfoData_next
+    const {
+      date_mode: date_mode_next,
+      relative_time: relative_time_next
+    } = board_set_next
+    if (date_mode_next && date_mode_next != date_mode) {
+      if (date_mode_next == '1') {
+        this.props.dispatch({
+          type: 'gantt/updateDatas',
+          payload: {
+            gantt_view_mode: 'relative_time',
+            base_relative_time: relative_time_next
+          }
+        })
+        setTimeout(() => {
+          this.setGoldDateArr({ init: true, timestamp: relative_time })
+          this.initSetScrollPosition()
+        }, 100)
+        const gantt_date_area = document.getElementById('gantt_date_area')
+        if (gantt_date_area) {
+          gantt_date_area.style.left = `0px`
+        }
+      } else {
+        this.props.dispatch({
+          type: 'gantt/updateDatas',
+          payload: {
+            gantt_view_mode: 'month',
+            base_relative_time: new Date().getTime()
+          }
+        })
+        setTimeout(() => {
+          this.setGoldDateArr({ init: true })
+          this.initSetScrollPosition()
+        }, 100)
+        const gantt_date_area = document.getElementById('gantt_date_area')
+        if (gantt_date_area) {
+          gantt_date_area.style.left = `-${ceilWidth *
+            (60 - 4 - 4 + new Date().getDate() - 1) -
+            16}px`
+        }
+      }
+    }
+  }
+
   getProcessTemplateList() {
     const { dispatch } = this.props
     dispatch({
