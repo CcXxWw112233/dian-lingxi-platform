@@ -1010,6 +1010,10 @@ export default class GroupListHeadItem extends Component {
 
     if (type == 'privilege') {
       list_group_new[group_index].is_privilege = is_privilege
+      list_group_new[group_index].privileges.push(...privileges)
+      list_group_new[group_index].privileges = arrayNonRepeatfy(
+        list_group_new[group_index].privileges
+      )
     } else if (type == 'add') {
       list_group_new[group_index].privileges = [].concat(
         list_group_new[group_index].privileges,
@@ -1076,8 +1080,21 @@ export default class GroupListHeadItem extends Component {
     const { list_id, privileges, board_id } = itemValue
     const content_type = 'lists'
     const content_id = list_id
+    const { user_set = {} } = localStorage.getItem('userInfo')
+      ? JSON.parse(localStorage.getItem('userInfo'))
+      : {}
+    const { user_id } = user_set
     let temp_id = []
     temp_id.push(id)
+    let flag = privileges.find(item => {
+      return (
+        item.id == id && item.user_info && item.user_info.user_id == user_id
+      )
+    })
+    if (flag && Object.keys(flag).length) {
+      message.warn('操作失败，开启访问控制时不能移除自己')
+      return
+    }
     removeContentPrivilege({
       id: id,
       board_id: gantt_board_id == '0' ? list_id : board_id
