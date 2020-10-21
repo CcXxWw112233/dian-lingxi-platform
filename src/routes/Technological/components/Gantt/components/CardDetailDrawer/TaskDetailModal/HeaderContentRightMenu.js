@@ -497,27 +497,41 @@ export default class HeaderContentRightMenu extends Component {
     const { drawContent = {}, card_list_group = [] } = this.props
     const { privileges = [], board_id, is_privilege, list_id } = drawContent
     const is_valid_group = true
-    return checkIsHasPermissionInVisitControl(
-      'edit',
-      privileges,
-      is_privilege,
-      [],
-      checkIsHasPermissionInBoard(
+    return checkIsHasPermissionInVisitControlWithGroup({
+      code: 'read',
+      list_id: list_id,
+      list_group: card_list_group,
+      permissionsValue: checkIsHasPermissionInBoard(
         PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE,
         board_id
-      ),
-      is_valid_group
-    )
-      ? true
-      : checkIsHasPermissionInVisitControlWithGroup({
-          code: 'read',
-          list_id: list_id,
-          list_group: card_list_group,
-          permissionsValue: checkIsHasPermissionInBoard(
+      )
+    })
+      ? checkIsHasPermissionInVisitControl(
+          'edit',
+          privileges,
+          is_privilege,
+          [],
+          checkIsHasPermissionInBoard(
             PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE,
             board_id
-          )
-        })
+          ),
+          is_valid_group
+        )
+        ? true
+        : false
+      : checkIsHasPermissionInVisitControl(
+          'edit',
+          privileges,
+          is_privilege,
+          [],
+          checkIsHasPermissionInBoard(
+            PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE,
+            board_id
+          ),
+          is_valid_group
+        )
+      ? true
+      : false
   }
 
   render() {
