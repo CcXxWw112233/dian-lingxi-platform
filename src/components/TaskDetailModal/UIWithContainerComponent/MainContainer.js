@@ -633,6 +633,86 @@ const LogicWithMainContent = {
     return flag
   },
 
+  // 判断时间模式 为1 表示相对时间
+  showTimerMode: function() {
+    const { projectDetailInfoData = {} } = this.props
+    const { board_set = {} } = projectDetailInfoData
+    const { date_mode } = board_set
+    let flag = false
+    flag = date_mode == '1'
+    return flag
+  },
+
+  /**
+   * 计算相对时间天数
+   * @param {String|Number} timestamp1 设置的基准时间
+   * @param {String|Number} timestamp2 需要比较的时间
+   */
+  computeRelativeTimerDays: function(timestamp1, timestamp2) {
+    if (!timestamp1 || !timestamp2) return ''
+    let dateSpan, isDays
+    let timestamp1_ =
+      String(timestamp1).length == 10 ? timestamp1 * 1000 : timestamp1
+    let timestamp2_ =
+      String(timestamp2).length == 10 ? timestamp2 * 1000 : timestamp1
+    dateSpan = timestamp1_ - timestamp2_
+    dateSpan = Math.abs(dateSpan)
+    isDays = Math.floor(dateSpan / (24 * 3600 * 1000))
+    return isDays
+  },
+
+  getRelativeTimeTamp: function(value, timestamp) {
+    let timestamp_ =
+      String(timestamp).length == 10 ? timestamp * 1000 : timestamp
+    return timestamp_ + value * (24 * 3600 * 1000)
+  },
+
+  handleStartRelativeChange: function(value) {
+    console.log(value)
+    const { drawContent = {}, dispatch } = this.props
+    const { start_time, card_id, board_id } = drawContent
+    if (!isNaN(value)) {
+      return
+      // 表示是数字的时候才做处理
+      let start_timeStamp = this.getRelativeTimeTamp(value, start_time)
+      const updateObj = {
+        card_id,
+        start_time: start_timeStamp,
+        board_id
+      }
+      let new_drawContent = { ...drawContent }
+      new_drawContent['start_time'] = start_timeStamp
+      console.log(updateObj)
+      Promise.resolve(
+        dispatch({
+          type: 'publicTaskDetailModal/updateTaskVTwo',
+          payload: {
+            updateObj
+          }
+        })
+      ).then(res => {
+        if (!isApiResponseOk(res)) {
+          message.warn(res.message, MESSAGE_DURATION_TIME)
+          return
+        }
+        this.updateDrawContentWithUpdateParentListDatas({
+          drawContent: new_drawContent,
+          card_id,
+          name: 'start_time',
+          value: start_timeStamp,
+          rely_card_datas: res.data
+        })
+        rebackCreateNotify.call(this, {
+          res,
+          id: card_id,
+          board_id,
+          dispatch,
+          operate_in_card_detail_panel: true
+        }) //创建撤回弹窗
+      })
+    }
+  },
+
   // 开始时间 chg事件 S
   startDatePickerChange: function(timeString) {
     const { drawContent = {}, dispatch } = this.props

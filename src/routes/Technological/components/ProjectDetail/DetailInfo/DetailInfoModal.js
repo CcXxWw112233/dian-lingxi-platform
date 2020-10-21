@@ -23,12 +23,12 @@ class DetailInfoModal extends React.Component {
 
   onCancel() {
     // const { dispatch } = this.props
-    this.props.dispatch({
-      type: 'projectDetail/updateDatas',
-      payload: {
-        projectDetailInfoData: {}
-      }
-    })
+    // this.props.dispatch({
+    //   type: 'projectDetail/updateDatas',
+    //   payload: {
+    //     projectDetailInfoData: {}
+    //   }
+    // })
     this.props.setProjectDetailInfoModalVisible &&
       this.props.setProjectDetailInfoModalVisible()
     this.setState({
