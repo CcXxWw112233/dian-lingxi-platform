@@ -218,10 +218,34 @@ const LogicWithMainContent = {
     })
     const { privileges = [], board_id, is_privilege, list_id } = drawContent
     const is_valid_group = true
-    // 表示判断是否可以编辑 先判断访问控制中是否有权限 有 则优先自己的访问控制 没有 则上升至分组权限
+    // 表示先判断分组权限 然后在判断访问控制
     return {
       visit_control_edit: function() {
         // 是否是有编辑权限
+        return checkIsHasPermissionInVisitControlWithGroup({
+          code: 'read',
+          list_id: list_id,
+          list_group: card_list_group,
+          permissionsValue: checkIsHasPermissionInBoard(code, board_id)
+        })
+          ? checkIsHasPermissionInVisitControl(
+              'edit',
+              privileges,
+              is_privilege,
+              [],
+              checkIsHasPermissionInBoard(code, board_id),
+              is_valid_group
+            )
+          : checkIsHasPermissionInVisitControl(
+              'edit',
+              privileges,
+              is_privilege,
+              [],
+              checkIsHasPermissionInBoard(code, board_id),
+              is_valid_group
+            )
+          ? false
+          : true
         return checkIsHasPermissionInVisitControl(
           'edit',
           privileges,
