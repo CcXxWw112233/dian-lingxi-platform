@@ -1347,6 +1347,9 @@ export default class OutLineHeadItem extends Component {
   handleOnSelect = e => {
     const { key } = e
     switch (key) {
+      case 'boardInfo':
+        this.setBoardInfoVisible()
+        break
       case 'select_hide_term': // 选择隐藏项
         const { outline_tree = [] } = this.props
         const outline_tree_ = JSON.parse(JSON.stringify(outline_tree))
@@ -1392,6 +1395,9 @@ export default class OutLineHeadItem extends Component {
     const { card_name_outside } = this.props
     return (
       <Menu onClick={this.handleOnSelect}>
+        <Menu.Item key="boardInfo">
+          {`${currentNounPlanFilterName(PROJECTS)}`}信息
+        </Menu.Item>
         <Menu.Item key="set_name_outside">
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <div style={{ marginRight: 14 }}>名称外置</div>
