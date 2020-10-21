@@ -218,10 +218,10 @@ const LogicWithMainContent = {
     })
     const { privileges = [], board_id, is_privilege, list_id } = drawContent
     const is_valid_group = true
-    // 先判断分组是否有访问控制 如果分组有权限操作 那么在判断自己访问控制是否有权限 有 则有权限 无 则没有权限
-    // 如果分组没有权限操作 那么判断自己访问控制是否可以操作 无 则无权限
+    // 表示先判断分组权限 然后在判断访问控制
     return {
       visit_control_edit: function() {
+        // 是否是有编辑权限
         return checkIsHasPermissionInVisitControlWithGroup({
           code: 'read',
           list_id: list_id,
@@ -236,8 +236,6 @@ const LogicWithMainContent = {
               checkIsHasPermissionInBoard(code, board_id),
               is_valid_group
             )
-            ? true
-            : false
           : checkIsHasPermissionInVisitControl(
               'edit',
               privileges,
@@ -246,8 +244,23 @@ const LogicWithMainContent = {
               checkIsHasPermissionInBoard(code, board_id),
               is_valid_group
             )
+          ? false
+          : true
+        return checkIsHasPermissionInVisitControl(
+          'edit',
+          privileges,
+          is_privilege,
+          [],
+          checkIsHasPermissionInBoard(code, board_id),
+          is_valid_group
+        )
           ? true
-          : false
+          : checkIsHasPermissionInVisitControlWithGroup({
+              code: 'read',
+              list_id: list_id,
+              list_group: card_list_group,
+              permissionsValue: checkIsHasPermissionInBoard(code, board_id)
+            })
       },
       visit_control_comment: function() {
         return checkIsHasPermissionInVisitControl(

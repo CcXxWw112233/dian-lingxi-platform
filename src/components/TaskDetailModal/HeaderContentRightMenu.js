@@ -510,8 +510,6 @@ export default class HeaderContentRightMenu extends Component {
           ),
           is_valid_group
         )
-        ? true
-        : false
       : checkIsHasPermissionInVisitControl(
           'edit',
           privileges,
@@ -523,8 +521,27 @@ export default class HeaderContentRightMenu extends Component {
           ),
           is_valid_group
         )
+    return checkIsHasPermissionInVisitControl(
+      'edit',
+      privileges,
+      is_privilege,
+      [],
+      checkIsHasPermissionInBoard(
+        PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE,
+        board_id
+      ),
+      is_valid_group
+    )
       ? true
-      : false
+      : checkIsHasPermissionInVisitControlWithGroup({
+          code: 'read',
+          list_id: list_id,
+          list_group: card_list_group,
+          permissionsValue: checkIsHasPermissionInBoard(
+            PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE,
+            board_id
+          )
+        })
   }
 
   render() {
