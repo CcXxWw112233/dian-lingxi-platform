@@ -1423,7 +1423,11 @@ export default class PdfComment extends React.Component {
             <div
               className={styles.imgCanvas}
               key={item}
-              style={{ position: 'relative', display: 'inline-block' }}
+              style={{
+                position: 'relative',
+                display: 'inline-block',
+                transform: `translateY(${ENV_ANDROID_APP ? '0' : '-50%'})`
+              }}
             >
               <this.renderOperationDelete id={item} />
               <this.renderNoteContent id={item} />
