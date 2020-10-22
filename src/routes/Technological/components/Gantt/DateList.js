@@ -554,6 +554,7 @@ export default class DateList extends Component {
           const isToday = isSamDay(timestamp, new Date().getTime())
           return group_view_type != '1' ? (
             <Tooltip
+              trigger={gantt_view_mode == 'month' ? ['hover'] : ['contextMenu']}
               key={`${month}/${date_no}`}
               title={`${
                 this.getDateNoHolidaylunar(timestamp).lunar
@@ -624,6 +625,9 @@ export default class DateList extends Component {
               trigger={['click']}
             >
               <Tooltip
+                trigger={
+                  gantt_view_mode == 'month' ? ['hover'] : ['contextMenu']
+                }
                 title={`${
                   this.getDateNoHolidaylunar(timestamp).lunar
                 } ${this.getDateNoHolidaylunar(timestamp).holiday || ' '}`}
