@@ -10,6 +10,9 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.4.3",
+    "@dicebear/avatars": "^4.2.5",
+    "@dicebear/avatars-bottts-sprites": "^4.2.5",
+    "@dicebear/avatars-gridy-sprites": "^4.2.5",
     "ali-oss": "^6.2.1",
     "antd": "^3.11.0",
     "axios": "^0.18.1",

@@ -22,8 +22,7 @@ import noDataImg from './asset/no_data_select.png'
 import { currentNounPlanFilterName } from '../../../../utils/businessFunction'
 import { PROJECTS } from '../../../../globalset/js/constant'
 import Avatars from '@dicebear/avatars'
-import SpriteBoottts from '@dicebear/avatars-bottts-sprites'
-import SpriteGridy from '@dicebear/avatars-gridy-sprites'
+import SpriteCollection from '@dicebear/avatars-bottts-sprites'
 let cx = classNames.bind(styles)
 
 const Option = Select.Option
@@ -59,6 +58,14 @@ class InviteOthers extends Component {
       isInSelectedList: false, //是否仅显示列表的
       step: 'home' //当前的步进 home || group-list || group-id || project-list ||project-id
     }
+  }
+
+  componentDidMount() {
+    console.log('进来了')
+    let options = {}
+    let avatars = new Avatars('bottts', options)
+    let svg = avatars.create('custom-seed')
+    console.log(svg)
   }
 
   // 验证手机号或者是邮箱
@@ -303,14 +310,6 @@ class InviteOthers extends Component {
   // 给用户设置的默认身份等...
   genOptionLabel = item => {
     const { avatar, user, name } = item
-    let options = {
-      radius: 24,
-      width: 24,
-      height: 24
-    }
-    let SpriteCollection = { SpriteBoottts, SpriteGridy }
-    let avatars = new Avatars(SpriteGridy, options)
-    let svg = avatars.create(user)
     //默认
     if (avatar === 'default') {
       return (
@@ -324,12 +323,7 @@ class InviteOthers extends Component {
       <p className={styles.input__select_wrapper}>
         <span className={styles.input__select_avatar_img}>
           <img
-            src={
-              this.isAvatarValid(avatar)
-                ? avatar
-                : 'data:image/svg+xml;base64,' +
-                  btoa(unescape(encodeURIComponent(svg)))
-            }
+            src={this.isAvatarValid(avatar) ? avatar : defaultUserAvatar}
             style={{ borderRadius: '50%' }}
             width="24"
             height="24"
@@ -791,6 +785,7 @@ class InviteOthers extends Component {
       currentOrgAllMembersList,
       step
     } = this.state
+    console.log(inputRet, selectedMember)
     let seize_a_seat_arr_length = 11 - selectedMember.length // 11为最多的占位符
     let seize_a_seat_arr = []
     for (let i = 0; i < seize_a_seat_arr_length; i++) {
