@@ -300,6 +300,7 @@ export default class GetRowGantt extends Component {
     }
     if (
       !drag_creating &&
+      group_view_type == '1' &&
       e.target.dataset.targetclassname == 'specific_example_milestone' //非拖拽的过程中,滑倒里程碑旗子上没问题)
     ) {
       this.setState({
