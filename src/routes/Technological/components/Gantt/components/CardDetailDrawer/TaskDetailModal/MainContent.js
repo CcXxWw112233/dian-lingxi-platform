@@ -42,7 +42,7 @@ import CustomCategoriesOperate from '../../../../../../../components/CustomField
 import moment from 'moment'
 import { currentNounPlanFilterName } from '../../../../../../../utils/businessFunction'
 import { TASKS } from '../../../../../../../globalset/js/constant'
-import { computeRelativeTimerDays } from '../../../../../../../utils/util'
+import { caldiffDays } from '../../../../../../../utils/util'
 
 @connect(mapStateToProps)
 export default class MainContent extends Component {
@@ -665,13 +665,16 @@ export default class MainContent extends Component {
     const { board_set = {} } = projectDetailInfoData
     const { relative_time } = board_set
     const { start_time } = drawContent
-    const day_value = computeRelativeTimerDays(relative_time, start_time)
+    const day_value =
+      start_time && start_time != '0'
+        ? caldiffDays(relative_time, start_time)
+        : ''
     return this.showTimerMode() ? (
       <>
         &nbsp;
         <InputNumber
           onChange={this.handleStartRelativeChange}
-          value={day_value}
+          value={day_value ? day_value : ''}
           style={{ width: '68px' }}
         />
         &nbsp;日
@@ -727,6 +730,73 @@ export default class MainContent extends Component {
     )
   }
 
+  // 渲染截止时间
+  renderDueTime = () => {
+    const { drawContent = {}, projectDetailInfoData = {} } = this.props
+    const { board_set = {} } = projectDetailInfoData
+    const { relative_time } = board_set
+    const { due_time } = drawContent
+    const day_value =
+      due_time && due_time != '0' ? caldiffDays(relative_time, due_time) : ''
+    return this.showTimerMode() ? (
+      <>
+        &nbsp;
+        <InputNumber
+          onChange={this.handleDueRelativeChange}
+          value={day_value ? day_value : ''}
+          style={{ width: '68px' }}
+        />
+        &nbsp;日
+      </>
+    ) : (
+      <>
+        {this.showTimerRange() ? (
+          <DatePicker
+            disabledDate={this.disabledDueTime.bind(this)}
+            placeholder={
+              due_time
+                ? timestampToTimeNormal(due_time, '/', false)
+                : '截止时间'
+            }
+            format="YYYY/MM/DD"
+            onChange={this.endDatePickerChange.bind(this)}
+            style={{
+              opacity: 0,
+              height: '100%',
+              background: '#000000',
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              width: 'auto'
+            }}
+          />
+        ) : (
+          <DatePicker
+            disabledDate={this.disabledDueTime.bind(this)}
+            placeholder={
+              due_time ? timestampToTimeNormal(due_time, '/', true) : '截止时间'
+            }
+            format="YYYY/MM/DD HH:mm"
+            showTime={{
+              defaultValue: moment('23:59', 'HH:mm'),
+              format: 'HH:mm'
+            }}
+            onChange={this.endDatePickerChange.bind(this)}
+            style={{
+              opacity: 0,
+              height: '100%',
+              background: '#000000',
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              width: 'auto'
+            }}
+          />
+        )}
+      </>
+    )
+  }
+
   handleSetMoreField = () => {
     this.props.dispatch({
       type: 'publicTaskDetailModal/updateDatas',
@@ -737,7 +807,13 @@ export default class MainContent extends Component {
   }
 
   render() {
-    const { drawContent = {}, milestoneList = [] } = this.props
+    const {
+      drawContent = {},
+      milestoneList = [],
+      projectDetailInfoData = {}
+    } = this.props
+    const { board_set = {} } = projectDetailInfoData
+    const { relative_time } = board_set
     const {
       card_id,
       card_name,
@@ -779,6 +855,9 @@ export default class MainContent extends Component {
         </Menu.Item>
       </Menu>
     )
+
+    const start_day_time = caldiffDays(relative_time, start_time)
+    const due_day_time = caldiffDays(relative_time, due_time)
 
     return (
       <div className={mainContentStyles.main_wrap}>
@@ -951,9 +1030,13 @@ export default class MainContent extends Component {
                           >
                             {start_time ? (
                               <span className={mainContentStyles.value_text}>
-                                {timestampToTime(
-                                  start_time,
-                                  this.showTimerRange() ? true : false
+                                {this.showTimerMode() ? (
+                                  <>T + {start_day_time} 日</>
+                                ) : (
+                                  timestampToTime(
+                                    start_time,
+                                    this.showTimerRange() ? true : false
+                                  )
                                 )}
                               </span>
                             ) : (
@@ -1031,9 +1114,13 @@ export default class MainContent extends Component {
                           >
                             {due_time ? (
                               <span className={mainContentStyles.value_text}>
-                                {timestampToTime(
-                                  due_time,
-                                  this.showTimerRange() ? true : false
+                                {this.showTimerMode() ? (
+                                  <>T + {due_day_time} 日</>
+                                ) : (
+                                  timestampToTime(
+                                    due_time,
+                                    this.showTimerRange() ? true : false
+                                  )
                                 )}
                               </span>
                             ) : (
@@ -1054,82 +1141,46 @@ export default class MainContent extends Component {
                               whiteSpace: 'nowrap'
                             }}
                           >
-                            {due_time ? (
-                              <span className={mainContentStyles.value_text}>
-                                {timestampToTime(
-                                  due_time,
-                                  this.showTimerRange() ? true : false
+                            {this.showTimerMode() ? (
+                              'T +'
+                            ) : (
+                              <>
+                                {due_time ? (
+                                  <span
+                                    className={mainContentStyles.value_text}
+                                  >
+                                    {timestampToTime(
+                                      due_time,
+                                      this.showTimerRange() ? true : false
+                                    )}
+                                  </span>
+                                ) : (
+                                  '截止时间'
                                 )}
-                              </span>
-                            ) : (
-                              '截止时间'
+                              </>
                             )}
-                            {this.showTimerRange() ? (
-                              <DatePicker
-                                disabledDate={this.disabledDueTime.bind(this)}
-                                placeholder={
-                                  due_time
-                                    ? timestampToTimeNormal(
-                                        due_time,
-                                        '/',
-                                        false
-                                      )
-                                    : '截止时间'
-                                }
-                                format="YYYY/MM/DD"
-                                onChange={this.endDatePickerChange.bind(this)}
-                                style={{
-                                  opacity: 0,
-                                  height: '100%',
-                                  background: '#000000',
-                                  position: 'absolute',
-                                  left: 0,
-                                  top: 0,
-                                  width: 'auto'
-                                }}
-                              />
-                            ) : (
-                              <DatePicker
-                                disabledDate={this.disabledDueTime.bind(this)}
-                                placeholder={
-                                  due_time
-                                    ? timestampToTimeNormal(due_time, '/', true)
-                                    : '截止时间'
-                                }
-                                format="YYYY/MM/DD HH:mm"
-                                showTime={{
-                                  defaultValue: moment('23:59', 'HH:mm'),
-                                  format: 'HH:mm'
-                                }}
-                                onChange={this.endDatePickerChange.bind(this)}
-                                style={{
-                                  opacity: 0,
-                                  height: '100%',
-                                  background: '#000000',
-                                  position: 'absolute',
-                                  left: 0,
-                                  top: 0,
-                                  width: 'auto'
-                                }}
-                              />
-                            )}
+
+                            {this.renderDueTime()}
                           </span>
-                          <span
-                            onClick={this.handleDelDueTime}
-                            className={`${
-                              mainContentStyles.userItemDeleBtn
-                            } ${due_time && mainContentStyles.timeDeleBtn}`}
-                          ></span>
+                          {!this.showTimerMode() && (
+                            <span
+                              onClick={this.handleDelDueTime}
+                              className={`${
+                                mainContentStyles.userItemDeleBtn
+                              } ${due_time && mainContentStyles.timeDeleBtn}`}
+                            ></span>
+                          )}
                         </div>
                       )}
                     </div>
                     {/* 通知提醒 */}
-                    {this.checkDiffCategoriesAuthoritiesIsVisible &&
-                    this.checkDiffCategoriesAuthoritiesIsVisible()
-                      .visit_control_edit &&
-                    !this.checkDiffCategoriesAuthoritiesIsVisible(
-                      PROJECT_TEAM_CARD_EDIT
-                    ).visit_control_edit() ? (
+                    {(this.checkDiffCategoriesAuthoritiesIsVisible &&
+                      this.checkDiffCategoriesAuthoritiesIsVisible()
+                        .visit_control_edit &&
+                      !this.checkDiffCategoriesAuthoritiesIsVisible(
+                        PROJECT_TEAM_CARD_EDIT
+                      ).visit_control_edit()) ||
+                    this.showTimerMode() ? (
                       ''
                     ) : (
                       <span style={{ position: 'relative' }}>

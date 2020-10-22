@@ -675,10 +675,13 @@ const LogicWithMainContent = {
     } = this.props
     const { board_set = {} } = projectDetailInfoData
     const { relative_time } = board_set
-    const { start_time, card_id, board_id } = drawContent
+    const { card_id, board_id } = drawContent
     if (!isNaN(value)) {
       // 表示是数字的时候才做处理
-      let start_timeStamp = getRelativeTimeTamp(value, relative_time)
+      let start_timeStamp =
+        value == '' || String(value).trimLR() == ''
+          ? '0'
+          : getRelativeTimeTamp(value, relative_time)
       const updateObj = {
         card_id,
         start_time: start_timeStamp,
@@ -703,6 +706,59 @@ const LogicWithMainContent = {
           card_id,
           name: 'start_time',
           value: start_timeStamp,
+          rely_card_datas: res.data
+        })
+        rebackCreateNotify.call(this, {
+          res,
+          id: card_id,
+          board_id,
+          dispatch,
+          operate_in_card_detail_panel: true
+        }) //创建撤回弹窗
+      })
+    } else {
+    }
+  },
+
+  handleDueRelativeChange: function(value) {
+    const {
+      drawContent = {},
+      dispatch,
+      projectDetailInfoData = {}
+    } = this.props
+    const { board_set = {} } = projectDetailInfoData
+    const { relative_time } = board_set
+    const { card_id, board_id } = drawContent
+    if (!isNaN(value)) {
+      // 表示是数字的时候才做处理
+      let due_timeStamp =
+        value == '' || String(value).trimLR() == ''
+          ? '0'
+          : getRelativeTimeTamp(value, relative_time)
+      const updateObj = {
+        card_id,
+        due_time: due_timeStamp,
+        board_id
+      }
+      let new_drawContent = { ...drawContent }
+      new_drawContent['due_time'] = due_timeStamp
+      Promise.resolve(
+        dispatch({
+          type: 'publicTaskDetailModal/updateTaskVTwo',
+          payload: {
+            updateObj
+          }
+        })
+      ).then(res => {
+        if (!isApiResponseOk(res)) {
+          message.warn(res.message, MESSAGE_DURATION_TIME)
+          return
+        }
+        this.updateDrawContentWithUpdateParentListDatas({
+          drawContent: new_drawContent,
+          card_id,
+          name: 'due_time',
+          value: due_timeStamp,
           rely_card_datas: res.data
         })
         rebackCreateNotify.call(this, {

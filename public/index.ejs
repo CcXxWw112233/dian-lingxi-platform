@@ -47,7 +47,7 @@
     <script>
       // 为了过渡加载过程缓慢
       if (window.location.hash.indexOf('#/technological/simplemode') != -1) {
-        console.log('ssssssssz', 111, window.loadLingxiComplete)
+        // console.log('ssssssssz', 111, window.loadLingxiComplete)
         if (!window.loadLingxiComplete) {
           setTimeout(function() {
             if (window.loadLingxiComplete) return //代表已经加载好了
@@ -66,7 +66,7 @@
                 return
               }
               progress_node.style.width = progress_node_width_number + 5 + '%'
-              console.log('ssssssssz2', progress_node.style.width)
+              // console.log('ssssssssz2', progress_node.style.width)
             }, 1000)
           }, 2000)
         }
@@ -89,7 +89,7 @@
       window.loadLingxiComplete = true
       // requestAnimationFrame(function() {
       let node = document.getElementById('lingxi_html_loading_page')
-      console.log('ssssssssz', 2212)
+      // console.log('ssssssssz', 2212)
       document.getElementById('lingxi_html_loading_page_progress').style.width =
         '100%'
       setTimeout(function() {
