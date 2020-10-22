@@ -366,7 +366,10 @@ export default class MainContent extends React.Component {
 
   // 渲染关联内容
   renderRelaContent = ({ content_list = [], type }) => {
-    const { milestone_detail = {} } = this.props
+    const {
+      milestone_detail = {},
+      projectDetailInfoData: { board_set = {} }
+    } = this.props
     return (
       <>
         <div className={indexStyles.contain2_item}>
@@ -391,6 +394,7 @@ export default class MainContent extends React.Component {
                   itemValue={value}
                   key={id}
                   milestone_id={milestone_detail['id']}
+                  board_set={board_set}
                   deleteRelationContent={this.props.deleteRelationContent}
                 />
               )

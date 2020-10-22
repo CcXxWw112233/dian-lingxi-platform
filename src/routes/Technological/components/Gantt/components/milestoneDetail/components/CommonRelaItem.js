@@ -1,7 +1,10 @@
 import React from 'react'
 import taskItemStyles from './taskItem.less'
-import { Icon, Input, Popconfirm } from 'antd'
-import { timestampToTimeNormal } from '../../../../../../../utils/util'
+import { Icon, Popconfirm } from 'antd'
+import {
+  caldiffDays,
+  timestampToTimeNormal
+} from '../../../../../../../utils/util'
 import globalStyles from '../../../../../../../globalset/css/globalClassName.less'
 import AvatarList from '../../../../../../../components/avatarList'
 import { connect } from 'dva'
@@ -46,7 +49,8 @@ export default class CommonRelaItem extends React.Component {
     })
   }
   render() {
-    const { itemValue = {}, type } = this.props
+    const { itemValue = {}, type, board_set = {} } = this.props
+    const { date_format, date_mode, relative_time } = board_set
     const {
       id,
       name,
@@ -85,9 +89,22 @@ export default class CommonRelaItem extends React.Component {
           <div style={{ wordWrap: 'break-word', paddingTop: 2 }}>{name}</div>
           {/*日期*/}
           {deadline && (
-            <div style={{ color: '#d5d5d5' }}>
-              {timestampToTimeNormal(deadline, '/', true)}
-            </div>
+            <>
+              {date_mode == '1' ? (
+                <span style={{ color: '#d5d5d5' }}>{`T+ ${caldiffDays(
+                  relative_time,
+                  deadline
+                )} 日 `}</span>
+              ) : (
+                <div style={{ color: '#d5d5d5' }}>
+                  {timestampToTimeNormal(
+                    deadline,
+                    '/',
+                    date_format == '1' ? false : true
+                  )}
+                </div>
+              )}
+            </>
           )}
           <div style={{ margin: '0 8px' }}>
             <AvatarList size={'small'} users={users} />
