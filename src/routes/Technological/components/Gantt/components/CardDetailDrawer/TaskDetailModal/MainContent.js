@@ -24,7 +24,6 @@ import {
   timestampFormat
 } from '@/utils/util'
 import { PROJECT_TEAM_CARD_EDIT } from '@/globalset/js/constant'
-import { isApiResponseOk } from '@/utils/handleResponseData'
 import { isPaymentOrgUser } from '@/utils/businessFunction'
 import FileListRightBarFileDetailModal from '@/routes/Technological/components/ProjectDetail/FileModule/FileListRightBarFileDetailModal'
 import {
@@ -35,7 +34,6 @@ import {
   judgeFileType,
   showMemberName
 } from '../../../../../../../components/TaskDetailModal/handleOperateModal'
-// import DragDropContentComponent from './DragDropContentComponent'
 import BasicFieldUIComponent from './BasicFieldUIComponent'
 import BasicFieldContainer from '../../../../../../../components/TaskDetailModal/UIWithContainerComponent/BasicFieldContainer'
 import CustomCategoriesOperate from '../../../../../../../components/CustomFields/CustomCategoriesOperate'
