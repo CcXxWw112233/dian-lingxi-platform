@@ -1743,7 +1743,6 @@ export default class PdfComment extends React.Component {
           a = null
         } else {
           if (window.mapAndroid) {
-            window.mapAndroid.boardImage(url, this.props.file_name)
             let file = new File([blob], this.props.file_name, {
               type: blob.type
             })
@@ -1751,11 +1750,13 @@ export default class PdfComment extends React.Component {
             data.append('file', file)
             this.axiosForSend('/api/projects/file/upload/public', data).then(
               res => {
+                message.success('正在下载')
                 // console.log(res)
                 let d = res.data.data || res.data
                 window.open(d)
               }
             )
+            window.mapAndroid.boardImage(url, this.props.file_name)
           }
         }
         window.URL.revokeObjectURL(blob)
