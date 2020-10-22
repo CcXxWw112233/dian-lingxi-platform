@@ -1420,15 +1420,7 @@ export default class PdfComment extends React.Component {
       return (
         <Fragment key={item}>
           {this.props.fileType === 'img' ? (
-            <div
-              className={styles.imgCanvas}
-              key={item}
-              style={{
-                position: 'relative',
-                display: 'inline-block',
-                transform: `translateY(${ENV_ANDROID_APP ? '0' : '-50%'})`
-              }}
-            >
+            <div className={styles.imgCanvas} key={item}>
               <this.renderOperationDelete id={item} />
               <this.renderNoteContent id={item} />
               <canvas key={item} id={item} />
@@ -2999,7 +2991,9 @@ export default class PdfComment extends React.Component {
           {/* 我是pdf */}
           <div
             id="allCanvas"
-            className={styles.canvasBox}
+            className={`${styles.canvasBox} ${
+              this.props.fileType === 'img' ? styles.isImgCanvas : ''
+            }`}
             style={{
               width: this.W,
               height: this.props.fileType === 'img' ? '100%' : 'auto'

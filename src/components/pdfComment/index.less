@@ -35,13 +35,19 @@
   position: relative;
   margin: 0 auto;
   margin-top: 10px;
+  &.isImgCanvas{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
   // height: 100%;
   /* margin-top: 55px; */
 }
 .imgCanvas{
   position: relative;
-  top: 50%;
-  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 .history_title{
   font-size: 1.2em;
