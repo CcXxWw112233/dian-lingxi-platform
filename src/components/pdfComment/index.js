@@ -1623,13 +1623,22 @@ export default class PdfComment extends React.Component {
       } else {
         if (window.mapAndroid) {
           let file = this.dataURLtoFile(url, this.props.file_name)
-          let reader = new FileReader()
-          reader.onload = () => {
-            let blobUrl = window.URL.createObjectURL(new Blob([reader.result]))
-            window.mapAndroid.boardImage(blobUrl, this.props.file_name)
-            window.URL.revokeObjectURL(blobUrl)
-          }
-          reader.readAsArrayBuffer(file)
+          let data = new FormData()
+          data.append('file', file)
+          this.axiosForSend('/api/projects/file/upload/public', data).then(
+            res => {
+              // console.log(res)
+              let d = res.data.data || res.data
+              window.open(d)
+            }
+          )
+          // let reader = new FileReader()
+          // reader.onload = () => {
+          //   let blobUrl = window.URL.createObjectURL(new Blob([reader.result]))
+          //   window.mapAndroid.boardImage(blobUrl, this.props.file_name)
+          //   window.URL.revokeObjectURL(blobUrl)
+          // }
+          // reader.readAsArrayBuffer(file)
         }
       }
     })
@@ -1731,7 +1740,19 @@ export default class PdfComment extends React.Component {
           a = null
         } else {
           if (window.mapAndroid) {
-            window.mapAndroid.boardImage(url, this.props.file_name)
+            // window.mapAndroid.boardImage(url, this.props.file_name)
+            let file = new File([blob], this.props.file_name, {
+              type: blob.type
+            })
+            let data = new FormData()
+            data.append('file', file)
+            this.axiosForSend('/api/projects/file/upload/public', data).then(
+              res => {
+                // console.log(res)
+                let d = res.data.data || res.data
+                window.open(d)
+              }
+            )
           }
         }
         window.URL.revokeObjectURL(blob)
@@ -1743,6 +1764,20 @@ export default class PdfComment extends React.Component {
     // }, 50)
   }
 
+  axiosForSend = (url, data) => {
+    const Authorization = Cookies.get('Authorization')
+    let a = axios.post(url, data, {
+      headers: {
+        Authorization,
+        ...setRequestHeaderBaseInfo({ data, headers: {}, params: {} })
+      }
+    })
+    a.onchange = e => {
+      console.log(e)
+    }
+    return a
+  }
+
   uploadFile = file => {
     let data = new FormData()
     data.append('board_id', this.props.board_id)
@@ -1750,14 +1785,7 @@ export default class PdfComment extends React.Component {
     data.append('type', 1)
     data.append('upload_type', 1)
     data.append('file', file)
-    const Authorization = Cookies.get('Authorization')
-    axios
-      .post(`${REQUEST_DOMAIN_FILE}/file/upload`, data, {
-        headers: {
-          Authorization,
-          ...setRequestHeaderBaseInfo({ data, headers: {}, params: {} })
-        }
-      })
+    this.axiosForSend(`${REQUEST_DOMAIN_FILE}/file/upload`, data)
       .then(res => {
         // console.log(res)
         if (res.status === 200) {
