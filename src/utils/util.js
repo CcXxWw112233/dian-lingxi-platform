@@ -129,55 +129,6 @@ export const timestampToTime = (timestamp, flag) => {
   // return flag ? Y + M + D + h + m : Y + M + D;
 }
 
-//时间戳转日期
-export const timestampToTimeNormal3 = (timestamp, flag, split) => {
-  if (!timestamp) {
-    return false
-  }
-  const timestampNew =
-    timestamp.toString().length === 10
-      ? Number(timestamp) * 1000
-      : Number(timestamp)
-  const splitNew = split || '-'
-  let date = new Date(timestampNew) //时间戳为10位需*1000，时间戳为13位的话不需乘1000
-  const now_year = new Date().getFullYear()
-  let Y = now_year == date.getFullYear() ? '' : date.getFullYear() + splitNew
-  let M =
-    (date.getMonth() + 1 < 10
-      ? '0' + (date.getMonth() + 1)
-      : date.getMonth() + 1) + splitNew
-  let D =
-    date.getDate() < 10 ? '0' + date.getDate() + ' ' : date.getDate() + ' '
-  let h =
-    date.getHours() < 10 ? '0' + date.getHours() + ':' : date.getHours() + ':'
-  let m = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()
-  return flag ? Y + M + D + h + m : Y + M + D
-}
-
-//时间戳转日期 需要年, 即使是今年也要显示
-export const timestampToTimeNormal4 = (timestamp, split, flag) => {
-  if (!timestamp) {
-    return false
-  }
-  const timestampNew =
-    timestamp.toString().length === 10
-      ? Number(timestamp) * 1000
-      : Number(timestamp)
-  const splitNew = split || '-'
-  let date = new Date(timestampNew) //时间戳为10位需*1000，时间戳为13位的话不需乘1000
-  let Y = date.getFullYear() + splitNew
-  let M =
-    (date.getMonth() + 1 < 10
-      ? '0' + (date.getMonth() + 1)
-      : date.getMonth() + 1) + splitNew
-  let D =
-    date.getDate() < 10 ? '0' + date.getDate() + ' ' : date.getDate() + ' '
-  let h =
-    date.getHours() < 10 ? '0' + date.getHours() + ':' : date.getHours() + ':'
-  let m = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()
-  return flag ? Y + M + D + h + m : Y + M + D
-}
-
 /**
  * 时间戳转换成自定义格式
  * @param {new Date().getTime()} val

@@ -5,21 +5,15 @@ import {
   Tooltip,
   Popconfirm,
   DatePicker,
-  message,
-  Menu,
-  Modal,
-  Breadcrumb
+  Breadcrumb,
+  InputNumber
 } from 'antd'
 import appendSubTaskStyles from './appendSubTask.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import AvatarList from '../AvatarList'
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png'
-import {
-  timestampFormat,
-  timestampToTimeNormal3,
-  timestampToTimeNormal
-} from '@/utils/util'
+import { timestampFormat, timestampToTimeNormal } from '@/utils/util'
 import { connect } from 'dva'
 import UploadAttachment from '../../UploadAttachment'
 import { currentNounPlanFilterName } from '../../../utils/businessFunction'
@@ -31,6 +25,7 @@ import {
   showMemberName
 } from '../handleOperateModal'
 import moment from 'moment'
+import { caldiffDays, timestampToTime } from '../../../utils/util'
 
 @connect(
   ({
@@ -82,6 +77,162 @@ export default class AppendSubTaskItem extends Component {
       local_card_name: card_name,
       local_executor
     })
+  }
+
+  // 渲染开始时间
+  renderStartTime = () => {
+    const { local_start_time } = this.state
+    const { childTaskItemValue = {}, projectDetailInfoData = {} } = this.props
+    const { start_time } = childTaskItemValue
+    const { board_set = {} } = projectDetailInfoData
+    const { relative_time } = board_set
+    const day_value =
+      start_time && start_time != '0'
+        ? caldiffDays(relative_time, start_time)
+        : ''
+    return (
+      <>
+        {this.showTimerMode() ? (
+          <>
+            &nbsp;
+            <InputNumber
+              min={0}
+              onChange={this.handleStartRelativeChange}
+              value={day_value ? day_value : ''}
+              style={{ width: '68px' }}
+            />
+            &nbsp;日
+          </>
+        ) : (
+          <>
+            {this.showTimerRange() ? (
+              <DatePicker
+                disabledDate={this.disabledStartTime.bind(this)}
+                // onOk={this.startDatePickerChange.bind(this)}
+                onChange={this.startDatePickerChange.bind(this)}
+                // getCalendarContainer={triggerNode => triggerNode.parentNode}
+                placeholder={
+                  local_start_time
+                    ? timestampToTimeNormal(local_start_time, '/', false)
+                    : '开始时间'
+                }
+                format="YYYY/MM/DD"
+                style={{
+                  opacity: 0,
+                  height: '100%',
+                  background: '#000000',
+                  position: 'absolute',
+                  left: 0,
+                  top: 0,
+                  width: 'auto'
+                }}
+              />
+            ) : (
+              <DatePicker
+                disabledDate={this.disabledStartTime.bind(this)}
+                // onOk={this.startDatePickerChange.bind(this)}
+                onChange={this.startDatePickerChange.bind(this)}
+                // getCalendarContainer={triggerNode => triggerNode.parentNode}
+                placeholder={
+                  local_start_time
+                    ? timestampToTimeNormal(local_start_time, '/', true)
+                    : '开始时间'
+                }
+                format="YYYY/MM/DD HH:mm"
+                showTime={{
+                  defaultValue: moment('00:00', 'HH:mm'),
+                  format: 'HH:mm'
+                }}
+                style={{
+                  opacity: 0,
+                  height: '100%',
+                  background: '#000000',
+                  position: 'absolute',
+                  left: 0,
+                  top: 0,
+                  width: 'auto'
+                }}
+              />
+            )}
+          </>
+        )}
+      </>
+    )
+  }
+
+  // 渲染截止时间
+  renderDueTime = () => {
+    const { local_due_time } = this.state
+    const { childTaskItemValue = {}, projectDetailInfoData = {} } = this.props
+    const { due_time } = childTaskItemValue
+    const { board_set = {} } = projectDetailInfoData
+    const { relative_time } = board_set
+    const day_value =
+      due_time && due_time != '0' ? caldiffDays(relative_time, due_time) : ''
+    return (
+      <>
+        {this.showTimerMode() ? (
+          <>
+            &nbsp;
+            <InputNumber
+              min={0}
+              onChange={this.handleDueRelativeChange}
+              value={day_value ? day_value : ''}
+              style={{ width: '68px' }}
+            />
+            &nbsp;日
+          </>
+        ) : (
+          <>
+            {this.showTimerRange() ? (
+              <DatePicker
+                disabledDate={this.disabledDueTime.bind(this)}
+                onChange={this.endDatePickerChange.bind(this)}
+                placeholder={
+                  local_due_time
+                    ? timestampToTimeNormal(local_due_time, '/', false)
+                    : '截止时间'
+                }
+                format="YYYY/MM/DD"
+                style={{
+                  opacity: 0,
+                  width: 'auto',
+                  background: '#000000',
+                  position: 'absolute',
+                  right: 0,
+                  top: '2px',
+                  zIndex: 2
+                }}
+              />
+            ) : (
+              <DatePicker
+                disabledDate={this.disabledDueTime.bind(this)}
+                onChange={this.endDatePickerChange.bind(this)}
+                placeholder={
+                  local_due_time
+                    ? timestampToTimeNormal(local_due_time, '/', true)
+                    : '截止时间'
+                }
+                format="YYYY/MM/DD HH:mm"
+                showTime={{
+                  defaultValue: moment('23:59', 'HH:mm'),
+                  format: 'HH:mm'
+                }}
+                style={{
+                  opacity: 0,
+                  width: 'auto',
+                  background: '#000000',
+                  position: 'absolute',
+                  right: 0,
+                  top: '2px',
+                  zIndex: 2
+                }}
+              />
+            )}
+          </>
+        )}
+      </>
+    )
   }
 
   render() {
@@ -242,46 +393,8 @@ export default class AppendSubTaskItem extends Component {
             <div style={{ display: 'flex' }}>
               {/* 开始时间 */}
               <div>
-                {local_start_time ? (
-                  <div className={appendSubTaskStyles.due_time}>
-                    <div>
-                      <span>
-                        {timestampToTimeNormal3(local_start_time, true)}
-                      </span>
-                      <span
-                        onClick={this.handleDelStartTime}
-                        className={`${local_start_time &&
-                          appendSubTaskStyles.timeDeleBtn}`}
-                      ></span>
-                    </div>
-                    <DatePicker
-                      disabledDate={this.disabledStartTime.bind(this)}
-                      // onOk={this.startDatePickerChange.bind(this)}
-                      onChange={this.startDatePickerChange.bind(this)}
-                      // getCalendarContainer={triggerNode => triggerNode.parentNode}
-                      placeholder={
-                        local_start_time
-                          ? timestampToTimeNormal(local_start_time, '/', true)
-                          : '开始时间'
-                      }
-                      format="YYYY/MM/DD HH:mm"
-                      showTime={{
-                        defaultValue: moment('00:00', 'HH:mm'),
-                        format: 'HH:mm'
-                      }}
-                      style={{
-                        opacity: 0,
-                        height: '100%',
-                        background: '#000000',
-                        position: 'absolute',
-                        left: 0,
-                        top: 0,
-                        width: 'auto'
-                      }}
-                    />
-                  </div>
-                ) : (
-                  <div className={`${appendSubTaskStyles.start_time}`}>
+                <div className={appendSubTaskStyles.due_time}>
+                  <div>
                     <span
                       style={{
                         position: 'relative',
@@ -290,132 +403,42 @@ export default class AppendSubTaskItem extends Component {
                         lineHeight: '38px',
                         padding: '0 12px',
                         display: 'inline-block',
-                        textAlign: 'center'
+                        textAlign: 'center',
+                        whiteSpace: 'nowrap'
                       }}
                     >
-                      开始时间
-                      {this.showTimerRange() ? (
-                        <DatePicker
-                          disabledDate={this.disabledStartTime.bind(this)}
-                          onChange={this.startDatePickerChange.bind(this)}
-                          placeholder={
-                            local_start_time
-                              ? timestampToTimeNormal(
-                                  local_start_time,
-                                  '/',
-                                  false
-                                )
-                              : '开始时间'
-                          }
-                          format="YYYY/MM/DD"
-                          style={{
-                            opacity: 0,
-                            height: '100%',
-                            background: '#000000',
-                            position: 'absolute',
-                            left: 0,
-                            top: 0,
-                            width: 'auto'
-                          }}
-                        />
+                      {this.showTimerMode() ? (
+                        'T +'
                       ) : (
-                        <DatePicker
-                          disabledDate={this.disabledStartTime.bind(this)}
-                          onChange={this.startDatePickerChange.bind(this)}
-                          placeholder={
-                            local_start_time
-                              ? timestampToTimeNormal(
-                                  local_start_time,
-                                  '/',
-                                  true
-                                )
-                              : '开始时间'
-                          }
-                          format="YYYY/MM/DD HH:mm"
-                          showTime={{
-                            defaultValue: moment('00:00', 'HH:mm'),
-                            format: 'HH:mm'
-                          }}
-                          style={{
-                            opacity: 0,
-                            height: '100%',
-                            background: '#000000',
-                            position: 'absolute',
-                            left: 0,
-                            top: 0,
-                            width: 'auto'
-                          }}
-                        />
+                        <>
+                          {local_start_time
+                            ? timestampToTime(
+                                local_start_time,
+                                this.showTimerRange() ? true : false
+                              )
+                            : '开始时间'}
+                        </>
                       )}
+
+                      {this.renderStartTime()}
                     </span>
+                    {!this.showTimerMode() && (
+                      <span
+                        onClick={this.handleDelStartTime}
+                        className={`${local_start_time &&
+                          appendSubTaskStyles.timeDeleBtn}`}
+                      ></span>
+                    )}
                   </div>
-                )}
+                </div>
               </div>
               &nbsp;
               <span style={{ color: '#bfbfbf' }}> ~ </span>
               &nbsp;
               {/* 截止时间 */}
               <div>
-                {local_due_time ? (
-                  <div className={appendSubTaskStyles.due_time}>
-                    <div>
-                      <span>
-                        {timestampToTimeNormal3(local_due_time, true)}
-                      </span>
-                      <span
-                        onClick={this.handleDelDueTime}
-                        className={`${local_due_time &&
-                          appendSubTaskStyles.timeDeleBtn}`}
-                      ></span>
-                    </div>
-                    {this.showTimerRange() ? (
-                      <DatePicker
-                        disabledDate={this.disabledDueTime.bind(this)}
-                        onChange={this.endDatePickerChange.bind(this)}
-                        placeholder={
-                          local_due_time
-                            ? timestampToTimeNormal(local_due_time, '/', false)
-                            : '截止时间'
-                        }
-                        format="YYYY/MM/DD"
-                        style={{
-                          opacity: 0,
-                          width: 'auto',
-                          background: '#000000',
-                          position: 'absolute',
-                          right: 0,
-                          top: '2px',
-                          zIndex: 2
-                        }}
-                      />
-                    ) : (
-                      <DatePicker
-                        disabledDate={this.disabledDueTime.bind(this)}
-                        onChange={this.endDatePickerChange.bind(this)}
-                        placeholder={
-                          local_due_time
-                            ? timestampToTimeNormal(local_due_time, '/', true)
-                            : '截止时间'
-                        }
-                        format="YYYY/MM/DD HH:mm"
-                        showTime={{
-                          defaultValue: moment('23:59', 'HH:mm'),
-                          format: 'HH:mm'
-                        }}
-                        style={{
-                          opacity: 0,
-                          width: 'auto',
-                          background: '#000000',
-                          position: 'absolute',
-                          right: 0,
-                          top: '2px',
-                          zIndex: 2
-                        }}
-                      />
-                    )}
-                  </div>
-                ) : (
-                  <div className={`${appendSubTaskStyles.add_due_time}`}>
+                <div className={appendSubTaskStyles.due_time}>
+                  <div>
                     <span
                       style={{
                         position: 'relative',
@@ -424,35 +447,33 @@ export default class AppendSubTaskItem extends Component {
                         lineHeight: '38px',
                         padding: '0 12px',
                         display: 'inline-block',
-                        textAlign: 'center'
+                        textAlign: 'center',
+                        whiteSpace: 'nowrap'
                       }}
                     >
-                      截止时间
+                      {this.showTimerMode() ? (
+                        'T +'
+                      ) : (
+                        <>
+                          {local_due_time
+                            ? timestampToTime(
+                                local_due_time,
+                                this.showTimerRange() ? true : false
+                              )
+                            : '截止时间'}
+                        </>
+                      )}
+                      {this.renderDueTime()}
                     </span>
-                    <DatePicker
-                      onChange={this.endDatePickerChange.bind(this)}
-                      placeholder={
-                        local_due_time
-                          ? timestampToTimeNormal(local_due_time, '/', true)
-                          : '截止时间'
-                      }
-                      format="YYYY/MM/DD HH:mm"
-                      showTime={{
-                        defaultValue: moment('00:00', 'HH:mm'),
-                        format: 'HH:mm'
-                      }}
-                      style={{
-                        opacity: 0,
-                        width: 'auto',
-                        background: '#000000',
-                        position: 'absolute',
-                        right: 0,
-                        top: '2px',
-                        zIndex: 2
-                      }}
-                    />
+                    {!this.showTimerMode() && (
+                      <span
+                        onClick={this.handleDelDueTime}
+                        className={`${local_due_time &&
+                          appendSubTaskStyles.timeDeleBtn}`}
+                      ></span>
+                    )}
                   </div>
-                )}
+                </div>
               </div>
             </div>
 

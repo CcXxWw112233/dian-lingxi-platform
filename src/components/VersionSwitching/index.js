@@ -11,9 +11,9 @@ import {
   Upload,
   Modal
 } from 'antd'
-import { timestampToTimeNormal3 } from '@/utils/util.js'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import indexStyles from './index.less'
+import { timestampToTimeNormal2 } from '../../utils/util'
 
 export default class VersionSwitchingComponent extends Component {
   constructor(props) {
@@ -244,7 +244,7 @@ export default class VersionSwitchingComponent extends Component {
                             上传于&nbsp;&nbsp;
                           </span>
                           <span className={indexStyles.hover_color}>
-                            {timestampToTimeNormal3(create_time, true, '/')}
+                            {timestampToTimeNormal2(create_time)}
                             &nbsp;&nbsp;
                           </span>
                           {filePreviewCurrentFileId == file_id && (

@@ -671,6 +671,7 @@ export default class MainContent extends Component {
       <>
         &nbsp;
         <InputNumber
+          min={0}
           onChange={this.handleStartRelativeChange}
           value={day_value ? day_value : ''}
           style={{ width: '68px' }}
@@ -740,6 +741,7 @@ export default class MainContent extends Component {
       <>
         &nbsp;
         <InputNumber
+          min={0}
           onChange={this.handleDueRelativeChange}
           value={day_value ? day_value : ''}
           style={{ width: '68px' }}

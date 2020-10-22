@@ -73,6 +73,7 @@ export default class AppendSubTask extends Component {
           <>
             &nbsp;
             <InputNumber
+              min={0}
               onChange={this.handleStartRelativeChange}
               style={{ width: '68px' }}
             />
@@ -140,6 +141,7 @@ export default class AppendSubTask extends Component {
           <>
             &nbsp;
             <InputNumber
+              min={0}
               onChange={this.handleDueRelativeChange}
               style={{ width: '68px' }}
             />

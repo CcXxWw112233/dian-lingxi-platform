@@ -690,6 +690,7 @@ export default class MainUIComponent extends Component {
             <>
               &nbsp;
               <InputNumber
+                min={0}
                 onChange={this.handleStartRelativeChange}
                 value={day_value ? day_value : ''}
                 style={{ width: '68px' }}
@@ -769,6 +770,7 @@ export default class MainUIComponent extends Component {
           <>
             &nbsp;
             <InputNumber
+              min={0}
               onChange={this.handleDueRelativeChange}
               value={day_value ? day_value : ''}
               style={{ width: '68px' }}
@@ -1154,7 +1156,7 @@ export default class MainUIComponent extends Component {
                               {due_time ? (
                                 <span className={mainContentStyles.value_text}>
                                   {this.showTimerMode() ? (
-                                    <>T + {start_day_time} 日</>
+                                    <>T + {due_day_time} 日</>
                                   ) : (
                                     timestampToTime(
                                       due_time,
