@@ -8,7 +8,8 @@ import {
   DatePicker,
   Tooltip,
   Button,
-  Breadcrumb
+  Breadcrumb,
+  InputNumber
 } from 'antd'
 import mainContentStyles from './MainContent.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
@@ -41,6 +42,7 @@ import CustomCategoriesOperate from '../../../../../../../components/CustomField
 import moment from 'moment'
 import { currentNounPlanFilterName } from '../../../../../../../utils/businessFunction'
 import { TASKS } from '../../../../../../../globalset/js/constant'
+import { caldiffDays } from '../../../../../../../utils/util'
 
 @connect(mapStateToProps)
 export default class MainContent extends Component {
@@ -657,6 +659,144 @@ export default class MainContent extends Component {
     )
   }
 
+  // 渲染开始时间
+  renderStartTime = () => {
+    const { drawContent = {}, projectDetailInfoData = {} } = this.props
+    const { board_set = {} } = projectDetailInfoData
+    const { relative_time } = board_set
+    const { start_time } = drawContent
+    const day_value =
+      start_time && start_time != '0'
+        ? caldiffDays(relative_time, start_time)
+        : ''
+    return this.showTimerMode() ? (
+      <>
+        &nbsp;
+        <InputNumber
+          onChange={this.handleStartRelativeChange}
+          value={day_value ? day_value : ''}
+          style={{ width: '68px' }}
+        />
+        &nbsp;日
+      </>
+    ) : (
+      <>
+        {this.showTimerRange() ? (
+          <DatePicker
+            disabledDate={this.disabledStartTime.bind(this)}
+            onChange={this.startDatePickerChange.bind(this)}
+            placeholder={
+              start_time
+                ? timestampToTimeNormal(start_time, '/', false)
+                : '开始时间'
+            }
+            format="YYYY/MM/DD"
+            style={{
+              opacity: 0,
+              height: '100%',
+              background: '#000000',
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              width: 'auto'
+            }}
+          />
+        ) : (
+          <DatePicker
+            disabledDate={this.disabledStartTime.bind(this)}
+            onChange={this.startDatePickerChange.bind(this)}
+            placeholder={
+              start_time
+                ? timestampToTimeNormal(start_time, '/', true)
+                : '开始时间'
+            }
+            format="YYYY/MM/DD HH:mm"
+            showTime={{
+              defaultValue: moment('00:00', 'HH:mm'),
+              format: 'HH:mm'
+            }}
+            style={{
+              opacity: 0,
+              height: '100%',
+              background: '#000000',
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              width: 'auto'
+            }}
+          />
+        )}
+      </>
+    )
+  }
+
+  // 渲染截止时间
+  renderDueTime = () => {
+    const { drawContent = {}, projectDetailInfoData = {} } = this.props
+    const { board_set = {} } = projectDetailInfoData
+    const { relative_time } = board_set
+    const { due_time } = drawContent
+    const day_value =
+      due_time && due_time != '0' ? caldiffDays(relative_time, due_time) : ''
+    return this.showTimerMode() ? (
+      <>
+        &nbsp;
+        <InputNumber
+          onChange={this.handleDueRelativeChange}
+          value={day_value ? day_value : ''}
+          style={{ width: '68px' }}
+        />
+        &nbsp;日
+      </>
+    ) : (
+      <>
+        {this.showTimerRange() ? (
+          <DatePicker
+            disabledDate={this.disabledDueTime.bind(this)}
+            placeholder={
+              due_time
+                ? timestampToTimeNormal(due_time, '/', false)
+                : '截止时间'
+            }
+            format="YYYY/MM/DD"
+            onChange={this.endDatePickerChange.bind(this)}
+            style={{
+              opacity: 0,
+              height: '100%',
+              background: '#000000',
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              width: 'auto'
+            }}
+          />
+        ) : (
+          <DatePicker
+            disabledDate={this.disabledDueTime.bind(this)}
+            placeholder={
+              due_time ? timestampToTimeNormal(due_time, '/', true) : '截止时间'
+            }
+            format="YYYY/MM/DD HH:mm"
+            showTime={{
+              defaultValue: moment('23:59', 'HH:mm'),
+              format: 'HH:mm'
+            }}
+            onChange={this.endDatePickerChange.bind(this)}
+            style={{
+              opacity: 0,
+              height: '100%',
+              background: '#000000',
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              width: 'auto'
+            }}
+          />
+        )}
+      </>
+    )
+  }
+
   handleSetMoreField = () => {
     this.props.dispatch({
       type: 'publicTaskDetailModal/updateDatas',
@@ -667,7 +807,13 @@ export default class MainContent extends Component {
   }
 
   render() {
-    const { drawContent = {}, milestoneList = [] } = this.props
+    const {
+      drawContent = {},
+      milestoneList = [],
+      projectDetailInfoData = {}
+    } = this.props
+    const { board_set = {} } = projectDetailInfoData
+    const { relative_time } = board_set
     const {
       card_id,
       card_name,
@@ -709,6 +855,9 @@ export default class MainContent extends Component {
         </Menu.Item>
       </Menu>
     )
+
+    const start_day_time = caldiffDays(relative_time, start_time)
+    const due_day_time = caldiffDays(relative_time, due_time)
 
     return (
       <div className={mainContentStyles.main_wrap}>
@@ -851,7 +1000,13 @@ export default class MainContent extends Component {
                 </div>
                 <div className={`${mainContentStyles.field_right}`}>
                   <div style={{ display: 'flex' }}>
-                    <div style={{ position: 'relative', marginRight: '16px' }}>
+                    <div
+                      style={{
+                        position: 'relative',
+                        marginRight: '16px',
+                        display: 'flex'
+                      }}
+                    >
                       {/* 开始时间 */}
                       {(this.checkDiffCategoriesAuthoritiesIsVisible &&
                         this.checkDiffCategoriesAuthoritiesIsVisible()
@@ -869,12 +1024,20 @@ export default class MainContent extends Component {
                               lineHeight: '38px',
                               padding: '0 12px',
                               display: 'inline-block',
-                              textAlign: 'center'
+                              textAlign: 'center',
+                              whiteSpace: 'nowrap'
                             }}
                           >
                             {start_time ? (
                               <span className={mainContentStyles.value_text}>
-                                {timestampToTime(start_time, true)}
+                                {this.showTimerMode() ? (
+                                  <>T + {start_day_time} 日</>
+                                ) : (
+                                  timestampToTime(
+                                    start_time,
+                                    this.showTimerRange() ? true : false
+                                  )
+                                )}
                               </span>
                             ) : (
                               '暂无'
@@ -891,76 +1054,38 @@ export default class MainContent extends Component {
                               lineHeight: '38px',
                               padding: '0 12px',
                               display: 'inline-block',
-                              textAlign: 'center'
+                              textAlign: 'center',
+                              whiteSpace: 'nowrap'
                             }}
                           >
-                            {start_time ? (
-                              <span className={mainContentStyles.value_text}>
-                                {timestampToTime(start_time, true)}
-                              </span>
+                            {this.showTimerMode() ? (
+                              'T +'
                             ) : (
-                              '开始时间'
+                              <>
+                                {start_time ? (
+                                  <span
+                                    className={mainContentStyles.value_text}
+                                  >
+                                    {timestampToTime(
+                                      start_time,
+                                      this.showTimerRange() ? true : false
+                                    )}
+                                  </span>
+                                ) : (
+                                  '开始时间'
+                                )}
+                              </>
                             )}
-                            {this.showTimerRange() ? (
-                              <DatePicker
-                                disabledDate={this.disabledStartTime.bind(this)}
-                                onChange={this.startDatePickerChange.bind(this)}
-                                placeholder={
-                                  start_time
-                                    ? timestampToTimeNormal(
-                                        start_time,
-                                        '/',
-                                        false
-                                      )
-                                    : '开始时间'
-                                }
-                                format="YYYY/MM/DD"
-                                style={{
-                                  opacity: 0,
-                                  height: '100%',
-                                  background: '#000000',
-                                  position: 'absolute',
-                                  left: 0,
-                                  top: 0,
-                                  width: 'auto'
-                                }}
-                              />
-                            ) : (
-                              <DatePicker
-                                disabledDate={this.disabledStartTime.bind(this)}
-                                onChange={this.startDatePickerChange.bind(this)}
-                                placeholder={
-                                  start_time
-                                    ? timestampToTimeNormal(
-                                        start_time,
-                                        '/',
-                                        true
-                                      )
-                                    : '开始时间'
-                                }
-                                format="YYYY/MM/DD HH:mm"
-                                showTime={{
-                                  defaultValue: moment('00:00', 'HH:mm'),
-                                  format: 'HH:mm'
-                                }}
-                                style={{
-                                  opacity: 0,
-                                  height: '100%',
-                                  background: '#000000',
-                                  position: 'absolute',
-                                  left: 0,
-                                  top: 0,
-                                  width: 'auto'
-                                }}
-                              />
-                            )}
+                            {this.renderStartTime()}
                           </span>
-                          <span
-                            onClick={this.handleDelStartTime}
-                            className={`${
-                              mainContentStyles.userItemDeleBtn
-                            } ${start_time && mainContentStyles.timeDeleBtn}`}
-                          ></span>
+                          {!this.showTimerMode() && (
+                            <span
+                              onClick={this.handleDelStartTime}
+                              className={`${
+                                mainContentStyles.userItemDeleBtn
+                              } ${start_time && mainContentStyles.timeDeleBtn}`}
+                            ></span>
+                          )}
                         </div>
                       )}
                       &nbsp;
@@ -983,12 +1108,20 @@ export default class MainContent extends Component {
                               lineHeight: '38px',
                               padding: '0 12px',
                               display: 'inline-block',
-                              textAlign: 'center'
+                              textAlign: 'center',
+                              whiteSpace: 'nowrap'
                             }}
                           >
                             {due_time ? (
                               <span className={mainContentStyles.value_text}>
-                                {timestampToTime(due_time, true)}
+                                {this.showTimerMode() ? (
+                                  <>T + {due_day_time} 日</>
+                                ) : (
+                                  timestampToTime(
+                                    due_time,
+                                    this.showTimerRange() ? true : false
+                                  )
+                                )}
                               </span>
                             ) : (
                               '暂无'
@@ -1004,82 +1137,50 @@ export default class MainContent extends Component {
                               lineHeight: '38px',
                               padding: '0 12px',
                               display: 'inline-block',
-                              textAlign: 'center'
+                              textAlign: 'center',
+                              whiteSpace: 'nowrap'
                             }}
                           >
-                            {due_time ? (
-                              <span className={mainContentStyles.value_text}>
-                                {timestampToTime(due_time, true)}
-                              </span>
+                            {this.showTimerMode() ? (
+                              'T +'
                             ) : (
-                              '截止时间'
+                              <>
+                                {due_time ? (
+                                  <span
+                                    className={mainContentStyles.value_text}
+                                  >
+                                    {timestampToTime(
+                                      due_time,
+                                      this.showTimerRange() ? true : false
+                                    )}
+                                  </span>
+                                ) : (
+                                  '截止时间'
+                                )}
+                              </>
                             )}
-                            {this.showTimerRange() ? (
-                              <DatePicker
-                                disabledDate={this.disabledDueTime.bind(this)}
-                                placeholder={
-                                  due_time
-                                    ? timestampToTimeNormal(
-                                        due_time,
-                                        '/',
-                                        false
-                                      )
-                                    : '截止时间'
-                                }
-                                format="YYYY/MM/DD"
-                                onChange={this.endDatePickerChange.bind(this)}
-                                style={{
-                                  opacity: 0,
-                                  height: '100%',
-                                  background: '#000000',
-                                  position: 'absolute',
-                                  left: 0,
-                                  top: 0,
-                                  width: 'auto'
-                                }}
-                              />
-                            ) : (
-                              <DatePicker
-                                disabledDate={this.disabledDueTime.bind(this)}
-                                placeholder={
-                                  due_time
-                                    ? timestampToTimeNormal(due_time, '/', true)
-                                    : '截止时间'
-                                }
-                                format="YYYY/MM/DD HH:mm"
-                                showTime={{
-                                  defaultValue: moment('23:59', 'HH:mm'),
-                                  format: 'HH:mm'
-                                }}
-                                onChange={this.endDatePickerChange.bind(this)}
-                                style={{
-                                  opacity: 0,
-                                  height: '100%',
-                                  background: '#000000',
-                                  position: 'absolute',
-                                  left: 0,
-                                  top: 0,
-                                  width: 'auto'
-                                }}
-                              />
-                            )}
+
+                            {this.renderDueTime()}
                           </span>
-                          <span
-                            onClick={this.handleDelDueTime}
-                            className={`${
-                              mainContentStyles.userItemDeleBtn
-                            } ${due_time && mainContentStyles.timeDeleBtn}`}
-                          ></span>
+                          {!this.showTimerMode() && (
+                            <span
+                              onClick={this.handleDelDueTime}
+                              className={`${
+                                mainContentStyles.userItemDeleBtn
+                              } ${due_time && mainContentStyles.timeDeleBtn}`}
+                            ></span>
+                          )}
                         </div>
                       )}
                     </div>
                     {/* 通知提醒 */}
-                    {this.checkDiffCategoriesAuthoritiesIsVisible &&
-                    this.checkDiffCategoriesAuthoritiesIsVisible()
-                      .visit_control_edit &&
-                    !this.checkDiffCategoriesAuthoritiesIsVisible(
-                      PROJECT_TEAM_CARD_EDIT
-                    ).visit_control_edit() ? (
+                    {(this.checkDiffCategoriesAuthoritiesIsVisible &&
+                      this.checkDiffCategoriesAuthoritiesIsVisible()
+                        .visit_control_edit &&
+                      !this.checkDiffCategoriesAuthoritiesIsVisible(
+                        PROJECT_TEAM_CARD_EDIT
+                      ).visit_control_edit()) ||
+                    this.showTimerMode() ? (
                       ''
                     ) : (
                       <span style={{ position: 'relative' }}>

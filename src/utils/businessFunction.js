@@ -129,8 +129,8 @@ export const checkIsHasPermissionInVisitControl = (
 
   if (is_valid_group) {
     if (!(currentUserArr && currentUserArr.length)) {
-      // 如果说也不在执行人列表中, 那么就返回项目中的权限列表
-      return false
+      // 如果说也不在权限列表中, 那么就返回项目中的权限列表
+      return (flag = permissionsValue)
     } else {
       currentUserArr = currentUserArr.map(item => {
         if (!(item && item.user_info)) return false

@@ -540,6 +540,8 @@ export default class DrawDetailInfo extends React.Component {
     }
     relative_time
       ? (obj.relative_time = relative_time)
+      : name == 'relative_time'
+      ? (obj.relative_time = value)
       : delete obj.relative_time
     dispatch({
       type: isSetDatas

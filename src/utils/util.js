@@ -19,8 +19,13 @@ export const handleTimeDetailReturn = timestamp => {
   }
 }
 
-// 计算两个日期的相差天数
+/**
+ * 计算两个日期的相差天数 不比较小时分钟
+ * @param {String|Number} timestamp1 设置的基准时间
+ * @param {String|Number} timestamp2 需要比较的时间
+ */
 export const caldiffDays = (timestamp1, timestamp2) => {
+  if (!timestamp1 || !timestamp2) return ''
   let dateSpan, tempDate, iDays
   let sDate1 = timestampToTimeNormal(timestamp1, '/')
   let sDate2 = timestampToTimeNormal(timestamp2, '/')
@@ -992,3 +997,16 @@ export const delayInGenerator = ms =>
       resolve()
     }, ms)
   })
+
+/**
+ * 获取相对时间
+ * @param {Sring|Number} value 需要增加的天数
+ * @param {String|Number} timestamp 基准时间
+ */
+export const getRelativeTimeTamp = (value, timestamp) => {
+  let timestamp_ =
+    String(timestamp).length == 10
+      ? Number(timestamp)
+      : parseInt(timestamp / 1000)
+  return timestamp_ + value * (24 * 3600)
+}

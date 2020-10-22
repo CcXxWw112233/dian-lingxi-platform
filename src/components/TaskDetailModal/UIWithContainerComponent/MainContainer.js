@@ -26,7 +26,7 @@ import {
 } from '@/utils/businessFunction'
 import { getFolderList } from '@/services/technological/file'
 import { getMilestoneList } from '@/services/technological/prjectDetail'
-import { arrayNonRepeatfy } from '../../../utils/util'
+import { arrayNonRepeatfy, getRelativeTimeTamp } from '../../../utils/util'
 import {
   getCurrentDrawerContentPropsModelFieldData,
   filterCurrentUpdateDatasField,
@@ -218,10 +218,34 @@ const LogicWithMainContent = {
     })
     const { privileges = [], board_id, is_privilege, list_id } = drawContent
     const is_valid_group = true
-    // 表示判断是否可以编辑 先判断访问控制中是否有权限 有 则优先自己的访问控制 没有 则上升至分组权限
+    // 表示先判断分组权限 然后在判断访问控制
     return {
       visit_control_edit: function() {
         // 是否是有编辑权限
+        return checkIsHasPermissionInVisitControlWithGroup({
+          code: 'read',
+          list_id: list_id,
+          list_group: card_list_group,
+          permissionsValue: checkIsHasPermissionInBoard(code, board_id)
+        })
+          ? checkIsHasPermissionInVisitControl(
+              'edit',
+              privileges,
+              is_privilege,
+              [],
+              checkIsHasPermissionInBoard(code, board_id),
+              is_valid_group
+            )
+          : checkIsHasPermissionInVisitControl(
+              'edit',
+              privileges,
+              is_privilege,
+              [],
+              checkIsHasPermissionInBoard(code, board_id),
+              is_valid_group
+            )
+          ? false
+          : true
         return checkIsHasPermissionInVisitControl(
           'edit',
           privileges,
@@ -631,6 +655,121 @@ const LogicWithMainContent = {
     let flag = false
     flag = date_format == '1'
     return flag
+  },
+
+  // 判断时间模式 为1 表示相对时间
+  showTimerMode: function() {
+    const { projectDetailInfoData = {} } = this.props
+    const { board_set = {} } = projectDetailInfoData
+    const { date_mode } = board_set
+    let flag = false
+    flag = date_mode == '1'
+    return flag
+  },
+
+  handleStartRelativeChange: function(value) {
+    const {
+      drawContent = {},
+      dispatch,
+      projectDetailInfoData = {}
+    } = this.props
+    const { board_set = {} } = projectDetailInfoData
+    const { relative_time } = board_set
+    const { card_id, board_id } = drawContent
+    if (!isNaN(value)) {
+      // 表示是数字的时候才做处理
+      let start_timeStamp =
+        value == '' || String(value).trimLR() == ''
+          ? '0'
+          : getRelativeTimeTamp(value, relative_time)
+      const updateObj = {
+        card_id,
+        start_time: start_timeStamp,
+        board_id
+      }
+      let new_drawContent = { ...drawContent }
+      new_drawContent['start_time'] = start_timeStamp
+      Promise.resolve(
+        dispatch({
+          type: 'publicTaskDetailModal/updateTaskVTwo',
+          payload: {
+            updateObj
+          }
+        })
+      ).then(res => {
+        if (!isApiResponseOk(res)) {
+          message.warn(res.message, MESSAGE_DURATION_TIME)
+          return
+        }
+        this.updateDrawContentWithUpdateParentListDatas({
+          drawContent: new_drawContent,
+          card_id,
+          name: 'start_time',
+          value: start_timeStamp,
+          rely_card_datas: res.data
+        })
+        rebackCreateNotify.call(this, {
+          res,
+          id: card_id,
+          board_id,
+          dispatch,
+          operate_in_card_detail_panel: true
+        }) //创建撤回弹窗
+      })
+    } else {
+    }
+  },
+
+  handleDueRelativeChange: function(value) {
+    const {
+      drawContent = {},
+      dispatch,
+      projectDetailInfoData = {}
+    } = this.props
+    const { board_set = {} } = projectDetailInfoData
+    const { relative_time } = board_set
+    const { card_id, board_id } = drawContent
+    if (!isNaN(value)) {
+      // 表示是数字的时候才做处理
+      let due_timeStamp =
+        value == '' || String(value).trimLR() == ''
+          ? '0'
+          : getRelativeTimeTamp(value, relative_time)
+      const updateObj = {
+        card_id,
+        due_time: due_timeStamp,
+        board_id
+      }
+      let new_drawContent = { ...drawContent }
+      new_drawContent['due_time'] = due_timeStamp
+      Promise.resolve(
+        dispatch({
+          type: 'publicTaskDetailModal/updateTaskVTwo',
+          payload: {
+            updateObj
+          }
+        })
+      ).then(res => {
+        if (!isApiResponseOk(res)) {
+          message.warn(res.message, MESSAGE_DURATION_TIME)
+          return
+        }
+        this.updateDrawContentWithUpdateParentListDatas({
+          drawContent: new_drawContent,
+          card_id,
+          name: 'due_time',
+          value: due_timeStamp,
+          rely_card_datas: res.data
+        })
+        rebackCreateNotify.call(this, {
+          res,
+          id: card_id,
+          board_id,
+          dispatch,
+          operate_in_card_detail_panel: true
+        }) //创建撤回弹窗
+      })
+    }
   },
 
   // 开始时间 chg事件 S

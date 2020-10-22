@@ -126,6 +126,8 @@ class SimpleMode extends PureComponent {
     window.addEventListener('resize', this.handleResize, false) //监听窗口大小改变
     this.setShowByUserInfo(this.props)
     this.lazyLoadBgImg(this.props)
+
+    window.set_lingxi_html_loading_true = true //整个应用的过渡页面显示
   }
 
   componentWillReceiveProps(nextProps) {
