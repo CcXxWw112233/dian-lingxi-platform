@@ -3,12 +3,12 @@ import indexStyles from './index.less'
 import NameChangeInput from '../../../../../../components/NameChangeInput'
 import {
   Dropdown,
-  Icon,
   Progress,
   Avatar,
   DatePicker,
   Button,
-  message
+  message,
+  InputNumber
 } from 'antd'
 import MeusearMutiple from '../../../Workbench/CardContent/Modal/TaskItemComponent/components/MeusearMutiple'
 import ExcutorList from '../../../Workbench/CardContent/Modal/TaskItemComponent/components/ExcutorList'
@@ -19,7 +19,9 @@ import globalStyle from '../../../../../../globalset/css/globalClassName.less'
 import {
   timestampToTimeNormal,
   timeToTimestamp,
-  compareTwoTimestamp
+  compareTwoTimestamp,
+  caldiffDays,
+  getRelativeTimeTamp
 } from '../../../../../../utils/util'
 import {
   REQUEST_DOMAIN_FILE,
@@ -399,6 +401,88 @@ export default class MainContent extends React.Component {
     )
   }
 
+  handleDueRelativeChange = value => {
+    if (!isNaN(value)) {
+      const {
+        projectDetailInfoData: { board_set = {} }
+      } = this.props
+      const { relative_time } = board_set
+      const due_timeStamp =
+        String(value).trimLR() == ''
+          ? '0'
+          : getRelativeTimeTamp(value, relative_time)
+
+      // 和关联任务的时间限制---
+
+      this.updateMilestone({ deadline: due_timeStamp }).then(res => {
+        // 父组件的操作
+        this.handleMiletonesChange({ deadline: due_timeStamp })
+      })
+    }
+  }
+
+  // 渲染截止时间
+  renderDueTime = () => {
+    const {
+      projectDetailInfoData: { board_set = {} },
+      milestone_detail = {}
+    } = this.props
+    const { date_format, date_mode, relative_time } = board_set
+    const { deadline } = milestone_detail
+    const day_value =
+      deadline && deadline != '0' ? caldiffDays(relative_time, deadline) : ''
+    return (
+      <>
+        {date_mode == '1' ? (
+          <>
+            T + &nbsp;
+            <InputNumber
+              min={0}
+              onChange={this.handleDueRelativeChange}
+              value={day_value ? day_value : ''}
+              style={{ width: '68px' }}
+            />
+            &nbsp;日
+          </>
+        ) : (
+          <>
+            {deadline
+              ? timestampToTimeNormal(
+                  deadline,
+                  '/',
+                  date_format == '1' ? false : true
+                )
+              : '添加时间'}
+            <DatePicker
+              // disabledDate={this.disabledDueTime.bind(this)}
+              placeholder={'截止时间'}
+              format={date_format == '1' ? 'YYYY/MM/DD' : 'YYYY/MM/DD HH:mm'}
+              showTime={
+                date_format == '1'
+                  ? null
+                  : {
+                      defaultValue: moment('23:59', 'HH:mm'),
+                      format: 'HH:mm'
+                    }
+              }
+              onChange={this.endDatePickerChange.bind(this)}
+              style={{
+                opacity: 0,
+                width: !deadline ? 50 : 100,
+                cursor: 'pointer',
+                height: 20,
+                background: '#000000',
+                position: 'absolute',
+                right: 0,
+                zIndex: 1
+              }}
+            />
+          </>
+        )}
+      </>
+    )
+  }
+
   render() {
     const {
       titleIsEdit,
@@ -412,8 +496,9 @@ export default class MainContent extends React.Component {
     const {
       // users = [],
       milestone_detail = {},
-      projectDetailInfoData: { data: users = [], date_format }
+      projectDetailInfoData: { data: users = [], board_set = {} }
     } = this.props
+    const { date_format } = board_set
     const {
       board_id,
       name,
@@ -612,37 +697,7 @@ export default class MainContent extends React.Component {
               className={`${indexStyles.contain2_item_right} ${indexStyles.pub_hover}`}
             >
               <span style={{ position: 'relative' }}>
-                {deadline
-                  ? date_format == '1'
-                    ? timestampToTimeNormal(deadline, '/', false)
-                    : timestampToTimeNormal(deadline, '/', true)
-                  : '添加时间'}
-                <DatePicker
-                  // disabledDate={this.disabledDueTime.bind(this)}
-                  placeholder={'截止时间'}
-                  format={
-                    date_format == '1' ? 'YYYY/MM/DD' : 'YYYY/MM/DD HH:mm'
-                  }
-                  showTime={
-                    date_format == '1'
-                      ? null
-                      : {
-                          defaultValue: moment('23:59', 'HH:mm'),
-                          format: 'HH:mm'
-                        }
-                  }
-                  onChange={this.endDatePickerChange.bind(this)}
-                  style={{
-                    opacity: 0,
-                    width: !deadline ? 50 : 100,
-                    cursor: 'pointer',
-                    height: 20,
-                    background: '#000000',
-                    position: 'absolute',
-                    right: 0,
-                    zIndex: 1
-                  }}
-                />
+                {this.renderDueTime()}
               </span>
             </div>
           </div>
