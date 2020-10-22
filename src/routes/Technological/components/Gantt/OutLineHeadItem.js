@@ -266,7 +266,7 @@ export default class OutLineHeadItem extends Component {
     })
   }
 
-  onDataProcess = ({ action, param, calback }) => {
+  onDataProcess = ({ action, param, calback, errCalback }) => {
     // console.log('大纲:onDataProcess', action, param)
     const { dispatch, gantt_board_id, group_view_type } = this.props
     let { outline_tree = [] } = this.props
@@ -376,10 +376,16 @@ export default class OutLineHeadItem extends Component {
                   console.error('OutlineTree.getTreeNodeValue:未查询到节点')
                 }
               } else {
+                if (typeof errCalback == 'function') {
+                  errCalback()
+                }
                 message.error(res.message)
               }
             })
             .catch(err => {
+              if (typeof errCalback == 'function') {
+                errCalback()
+              }
               message.error('更新失败')
             })
         }
@@ -542,10 +548,16 @@ export default class OutLineHeadItem extends Component {
                   }
                 })
               } else {
+                if (typeof errCalback == 'function') {
+                  errCalback()
+                }
                 message.error(res.message)
               }
             })
             .catch(err => {
+              if (typeof errCalback == 'function') {
+                errCalback()
+              }
               console.log('err', err)
               message.error('更新失败')
             })

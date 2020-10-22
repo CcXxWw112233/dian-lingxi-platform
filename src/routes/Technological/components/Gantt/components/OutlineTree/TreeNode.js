@@ -25,7 +25,7 @@ import {
 } from '../../constants'
 import { getTreeNodeValue } from '../../../../../../models/technological/workbench/gantt/gantt_utils'
 import SetNodeGroup from './SetNodeGroup'
-
+import TreeNodeSetRelativeTime from './TreeNodeSetRelativeTime'
 @connect(mapStateToProps)
 export default class TreeNode extends Component {
   constructor(props) {
@@ -869,8 +869,18 @@ export default class TreeNode extends Component {
   }
 
   renderStartTime = key => {
-    const { nodeValue = {} } = this.props
+    const { nodeValue = {}, gantt_view_mode } = this.props
     let { start_time, is_has_start_time, tree_type } = nodeValue
+    if (gantt_view_mode == 'relative_time') {
+      return (
+        <TreeNodeSetRelativeTime
+          value={start_time}
+          time_type={'start_time'}
+          onDataProcess={this.props.onDataProcess}
+          nodeValue={nodeValue}
+        />
+      )
+    }
     //仅在任务时需要强is_has_start_time判断
     let contain = ''
     if (start_time && (tree_type == '2' ? is_has_start_time : true)) {
@@ -892,8 +902,18 @@ export default class TreeNode extends Component {
   }
 
   renderEndTime = key => {
-    const { nodeValue = {} } = this.props
+    const { nodeValue = {}, gantt_view_mode } = this.props
     let { due_time, is_has_end_time } = nodeValue
+    if (gantt_view_mode == 'relative_time') {
+      return (
+        <TreeNodeSetRelativeTime
+          value={due_time}
+          time_type={'due_time'}
+          onDataProcess={this.props.onDataProcess}
+          nodeValue={nodeValue}
+        />
+      )
+    }
     let contain = ''
     if (due_time && is_has_end_time) {
       contain = dateFormat(due_time, this.timeForMat)
