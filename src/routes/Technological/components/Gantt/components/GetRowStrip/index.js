@@ -182,7 +182,7 @@ export default class GetRowStrip extends PureComponent {
     const { date_arr_one_level, ceilWidth } = this.props
     let counter = 0
     let date = {}
-    if (gantt_view_mode == 'month' || gantt_view_mode == 'hours') {
+    if (['month', 'hours', 'relative_time'].includes(gantt_view_mode)) {
       for (let val of date_arr_one_level) {
         counter += 1
         if (counter * ceilWidth > x) {
