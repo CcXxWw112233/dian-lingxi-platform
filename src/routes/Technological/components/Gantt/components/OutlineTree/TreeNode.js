@@ -80,7 +80,7 @@ export default class TreeNode extends Component {
   }
 
   onClickTitle = placeholder => {
-    if (placeholder == '新建里程碑') {
+    if (placeholder == '新建里程碑' || placeholder == '新建任务') {
       this.toggleTitleEdit()
       return
     }
@@ -97,7 +97,7 @@ export default class TreeNode extends Component {
     }, 300)
   }
   onDoubleClickTitle = placeholder => {
-    if (placeholder == '新建里程碑') {
+    if (placeholder == '新建里程碑' || placeholder == '新建任务') {
       return
     }
     clearTimeout(this.title_click_timer)

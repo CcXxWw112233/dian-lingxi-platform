@@ -70,6 +70,7 @@ import {
 } from '../../../../services/technological/gantt'
 import { getTreeNodeValue } from '../../../../models/technological/workbench/gantt/gantt_utils'
 import ExportExcelModal from './components/exportExcelModal'
+import AddMultipleIndex from './components/OutlineTree/AddMultiple'
 const { SubMenu } = Menu
 // const { TreeNode } = OutlineTree;
 const { confirm } = Modal
@@ -95,7 +96,8 @@ export default class OutLineHeadItem extends Component {
     save_board_template_visible: false,
     visibleExportPopover: false, // 显示隐藏导出列表
     showLoading: false, // 是否显示loading
-    bodyPicture: null // loading的背景图片
+    bodyPicture: null, // loading的背景图片
+    input_add_type: '1' //入口处新建类型 1/2 =》 里程碑/任务
   }
   componentDidMount() {
     const OrganizationId = localStorage.getItem('OrganizationId')
@@ -442,11 +444,19 @@ export default class OutLineHeadItem extends Component {
                 } else {
                   children = outline_tree
                 }
+                //当前的添加按钮
+                let addInputNodeValue = OutlineTree.getTreeNodeValueByName(
+                  outline_tree,
+                  'add_id',
+                  param.add_id
+                )
                 if (children.length > 0) {
                   const index = children.findIndex(
                     item => item.tree_type == '0'
                   )
-                  children.splice(index, 0, addNodeValue)
+                  if (addInputNodeValue) {
+                    children.splice(index, 0, addNodeValue)
+                  }
                 } else {
                   children.push(addNodeValue)
                 }
@@ -458,18 +468,16 @@ export default class OutLineHeadItem extends Component {
                 if (nodeValue) {
                   this.setCreateAfterInputFous(paraseNodeValue, outline_tree)
                 }
+                if (addInputNodeValue) {
+                  addInputNodeValue.start_time = null
+                  addInputNodeValue.due_time = null
+                  addInputNodeValue.time_span = 1
+                  addInputNodeValue.name = ''
+                  addInputNodeValue.editing = true
+                } else {
+                  outline_tree.push(addNodeValue)
+                }
 
-                //当前的添加按钮
-                let addInputNodeValue = OutlineTree.getTreeNodeValueByName(
-                  outline_tree,
-                  'add_id',
-                  param.add_id
-                )
-                addInputNodeValue.start_time = null
-                addInputNodeValue.due_time = null
-                addInputNodeValue.time_span = 1
-                addInputNodeValue.name = ''
-                addInputNodeValue.editing = true
                 this.updateOutLineTreeData(outline_tree)
                 // 保存位置
                 dispatch({
@@ -1054,26 +1062,47 @@ export default class OutLineHeadItem extends Component {
     })
   }
 
+  setInputAddType = type => {
+    this.setState({
+      input_add_type: type
+    })
+  }
   // 设置保存模板弹窗------end
   renderAddMilestone = (item, normal) => {
+    const { input_add_type } = this.state
     return (
       <TreeNode
         setScrollPosition={this.props.setScrollPosition}
         setGoldDateArr={this.props.setGoldDateArr}
-        type={'1'}
-        placeholder={'新建里程碑'}
+        type={input_add_type}
+        placeholder={input_add_type == '1' ? '新建里程碑' : '新建任务'}
         onHover={this.onHover}
-        nodeValue={
-          normal ? { add_id: 'add_milestone_out', tree_type: '0' } : item
-        } //{{ add_id: 'add_milestone', 'tree_type': '0' }}
+        nodeValue={{
+          add_id: input_add_type == '1' ? 'add_milestone_out' : 'add_card_out',
+          tree_type: '0'
+        }} // add_id: 'add_milestone'
         icon={
-          <span
-            className={`${styles.addMilestoneNode} ${globalStyles.authTheme}`}
+          <Dropdown
+            overlay={
+              <AddMultipleIndex
+                setInputAddType={this.setInputAddType}
+                input_add_type={input_add_type}
+              />
+            }
           >
-            &#xe8fe;
+            <span
+              className={`${styles.addMilestoneNode} ${globalStyles.authTheme}`}
+              style={{ color: 'rgba(0,0,0,0.45)' }}
+            >
+              &#xe8fe;
+            </span>
+          </Dropdown>
+        }
+        label={
+          <span className={styles.addMilestone}>
+            {input_add_type == '1' ? '新建里程碑' : '新建任务'}
           </span>
         }
-        label={<span className={styles.addMilestone}>新建里程碑</span>}
         key="addMilestone"
       ></TreeNode>
     )
