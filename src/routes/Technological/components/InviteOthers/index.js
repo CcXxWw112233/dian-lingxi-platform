@@ -1062,11 +1062,13 @@ class InviteOthers extends Component {
               <Button onClick={this.setWechatInviteVisible}>
                 <i
                   className={globalStyles.authTheme}
-                  style={{ color: '#46A318', marginRight: 4 }}
+                  style={{ color: '#46A318', marginRight: 4, fontSize: '24px' }}
                 >
                   &#xe634;
                 </i>
-                扫码邀请
+                <span style={{ position: 'relative', top: '-4px' }}>
+                  扫码邀请
+                </span>
               </Button>
             )}
           </div>

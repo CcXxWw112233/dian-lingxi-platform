@@ -94,7 +94,7 @@ class ShowAddMenberModal extends React.Component {
         </div>
         <div style={{ margin: '0px -24px' }}>
           <InviteOthers
-            submitText={submitText ? submitText : '邀请加入'}
+            submitText={submitText ? submitText : '确定'}
             isShowTitle={false}
             _organization_id={
               _organization_id ||
