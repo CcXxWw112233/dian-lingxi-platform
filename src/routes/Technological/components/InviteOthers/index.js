@@ -24,7 +24,6 @@ import { PROJECTS } from '../../../../globalset/js/constant'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import Avatars from '@dicebear/avatars'
 import SpriteBoottts from '@dicebear/avatars-bottts-sprites'
-import SpriteGridy from '@dicebear/avatars-gridy-sprites'
 let cx = classNames.bind(styles)
 
 const Option = Select.Option
@@ -60,7 +59,6 @@ class InviteOthers extends Component {
       isInSelectedList: false, //是否仅显示列表的
       step: 'home' //当前的步进 home || group-list || group-id || project-list ||project-id
     }
-    let SpriteCollection = { SpriteBoottts, SpriteGridy }
     this.options = {
       radius: 24,
       width: 24,
