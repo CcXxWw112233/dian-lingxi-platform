@@ -34,6 +34,7 @@ import axios from 'axios'
 import { setRequestHeaderBaseInfo } from '../../utils/businessFunction'
 import { REQUEST_DOMAIN_FILE } from '@/globalset/js/constant'
 import DEvent from '../../utils/event'
+import { ENV_ANDROID_APP } from '../../globalset/clientCustorm'
 // import scr from './worker'
 const DefineIcon = Icon.createFromIconfontCN({
   scriptUrl: '//at.alicdn.com/t/font_779568_41vfncsv7yu.js'
@@ -588,7 +589,7 @@ export default class PdfComment extends React.Component {
       })
     }
     if (this.drawType === 'pen') {
-      let s = this.state.drawStyles[this.state.drawStyles.activeType] || {}
+      let s = this.state.drawStyles[this.drawType] || {}
       let c = ''
       if (s.color) {
         if (s.color.indexOf('#') !== -1) {
@@ -1419,11 +1420,7 @@ export default class PdfComment extends React.Component {
       return (
         <Fragment key={item}>
           {this.props.fileType === 'img' ? (
-            <div
-              className={styles.imgCanvas}
-              key={item}
-              style={{ position: 'relative', display: 'inline-block' }}
-            >
+            <div className={styles.imgCanvas} key={item}>
               <this.renderOperationDelete id={item} />
               <this.renderNoteContent id={item} />
               <canvas key={item} id={item} />
@@ -1524,7 +1521,7 @@ export default class PdfComment extends React.Component {
         res => {
           this.updateHistoryForType(
             '3',
-            activeObject?.canvas?.get('page_number'),
+            canvas?.get('page_number'),
             activeObject.get('record_id')
           )
           this.allObjects = this.allObjects.filter(
@@ -1608,16 +1605,38 @@ export default class PdfComment extends React.Component {
 
         return
       }
-      let a = document.createElement('a')
-      a.href = url
-      let index = this.props.file_name.lastIndexOf('.')
-      let name = this.props.file_name
-      if (index === -1) {
-        name = name + '.png'
+      if (!ENV_ANDROID_APP) {
+        let a = document.createElement('a')
+        a.href = url
+        let index = this.props.file_name.lastIndexOf('.')
+        let name = this.props.file_name
+        if (index === -1) {
+          name = name + '.png'
+        }
+        a.download = name
+        a.click()
+        a = null
+      } else {
+        if (window.mapAndroid) {
+          let file = this.dataURLtoFile(url, this.props.file_name)
+          let data = new FormData()
+          data.append('file', file)
+          this.axiosForSend('/api/projects/file/upload/public', data).then(
+            res => {
+              // console.log(res)
+              let d = res.data.data || res.data
+              window.open(d)
+            }
+          )
+          let reader = new FileReader()
+          reader.onload = () => {
+            let blobUrl = window.URL.createObjectURL(new Blob([reader.result]))
+            window.mapAndroid.boardImage(blobUrl, this.props.file_name)
+            window.URL.revokeObjectURL(blobUrl)
+          }
+          reader.readAsArrayBuffer(file)
+        }
       }
-      a.download = name
-      a.click()
-      a = null
     })
   }
 
@@ -1644,6 +1663,7 @@ export default class PdfComment extends React.Component {
 
   // 导出pdf
   exportPdf = (type = 'export') => {
+    this.isBreak = false
     if (!this.drawCanvas.length) return
     if (this.props.fileType === 'img') {
       return this.exportImg(type)
@@ -1678,8 +1698,8 @@ export default class PdfComment extends React.Component {
           h = item.height
         let pixo = minWidth / w
         let url = item.toDataURL({
-          format: pixo > 1 ? 'png' : 'jpeg',
-          quality: 1
+          format: 'jpeg', // pixo > 1 ? 'png' : 'jpeg',
+          quality: 0.5
         })
         let width = w * pixo
         let height = h * pixo
@@ -1695,26 +1715,67 @@ export default class PdfComment extends React.Component {
           content: this.ExportProgress(percent)
         })
         // 添加等待时间，防止全速导出内存泄露
-        await this.setAwaitTime(100)
+        await this.setAwaitTime(10)
       }
       // console.log(pdf.__private__.out('#1123334'))
       message.destroy()
-      if (this.isBreak) return
+      if (this.isBreak) {
+        return
+      }
       // message.success('导出成功');
       this.exportModal.destroy()
+      let blob = pdf.output('blob')
       if (type === 'export') {
-        pdf.save(
-          this.props.file_name.substr(
-            0,
-            this.props.file_name.lastIndexOf('.')
-          ) + '.pdf'
-        )
+        let url = window.URL.createObjectURL(blob)
+        if (!ENV_ANDROID_APP) {
+          let a = document.createElement('a')
+          a.href = url
+          a.download =
+            this.props.file_name.substr(
+              0,
+              this.props.file_name.lastIndexOf('.')
+            ) + '.pdf'
+          a.click()
+          a = null
+        } else {
+          if (window.mapAndroid) {
+            let file = new File([blob], this.props.file_name, {
+              type: blob.type
+            })
+            let data = new FormData()
+            data.append('file', file)
+            this.axiosForSend('/api/projects/file/upload/public', data).then(
+              res => {
+                message.success('正在下载')
+                // console.log(res)
+                let d = res.data.data || res.data
+                window.open(d)
+              }
+            )
+            window.mapAndroid.boardImage(url, this.props.file_name)
+          }
+        }
+        window.URL.revokeObjectURL(blob)
       } else if (type === 'save') {
-        this.saveOutput(pdf.output('blob'))
+        this.saveOutput(blob)
       }
     })()
 
     // }, 50)
+  }
+
+  axiosForSend = (url, data) => {
+    const Authorization = Cookies.get('Authorization')
+    let a = axios.post(url, data, {
+      headers: {
+        Authorization,
+        ...setRequestHeaderBaseInfo({ data, headers: {}, params: {} })
+      }
+    })
+    a.onchange = e => {
+      console.log(e)
+    }
+    return a
   }
 
   uploadFile = file => {
@@ -1724,14 +1785,7 @@ export default class PdfComment extends React.Component {
     data.append('type', 1)
     data.append('upload_type', 1)
     data.append('file', file)
-    const Authorization = Cookies.get('Authorization')
-    axios
-      .post(`${REQUEST_DOMAIN_FILE}/file/upload`, data, {
-        headers: {
-          Authorization,
-          ...setRequestHeaderBaseInfo({ data, headers: {}, params: {} })
-        }
-      })
+    this.axiosForSend(`${REQUEST_DOMAIN_FILE}/file/upload`, data)
       .then(res => {
         // console.log(res)
         if (res.status === 200) {
@@ -2415,6 +2469,9 @@ export default class PdfComment extends React.Component {
     } else {
       message.warn('该记录已经不存在')
     }
+    this.setState({
+      activeObject: null
+    })
   }
   // 渲染历史记录
   renderForHistory = () => {
@@ -2934,7 +2991,9 @@ export default class PdfComment extends React.Component {
           {/* 我是pdf */}
           <div
             id="allCanvas"
-            className={styles.canvasBox}
+            className={`${styles.canvasBox} ${
+              this.props.fileType === 'img' ? styles.isImgCanvas : ''
+            }`}
             style={{
               width: this.W,
               height: this.props.fileType === 'img' ? '100%' : 'auto'

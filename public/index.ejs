@@ -53,7 +53,7 @@
             if (window.loadLingxiComplete) return //代表已经加载好了
             document.getElementById('lingxi_html_loading_page').style.display =
               'flex'
-            setInterval(function() {
+            var setLingxiPageLoadingInterVal = setInterval(function() {
               var progress_node = document.getElementById(
                 'lingxi_html_loading_page_progress'
               )

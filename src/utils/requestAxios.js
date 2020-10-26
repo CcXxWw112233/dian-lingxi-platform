@@ -101,7 +101,11 @@ export default function request(options = {}, elseSet = {}) {
               break
           }
         } else {
-          openNotification('系统繁忙，请稍后重试！')
+          if (error.response) {
+            openNotification('系统繁忙，请稍后重试！')
+          } else {
+            message.error('网络连接失败，请检查网络设置。')
+          }
           resolve({
             message: '系统繁忙，请稍后重试！'
           })
