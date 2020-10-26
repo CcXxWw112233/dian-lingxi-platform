@@ -582,8 +582,8 @@ export default class DrawDetailInfo extends React.Component {
     this.updateDateDatas({
       name: 'date_mode',
       value,
-      isSetDatas: true,
-      relative_time: value == '1' ? relative_time_ : null
+      isSetDatas: true
+      // relative_time: value == '1' ? relative_time_ : null
     })
   }
 
@@ -1096,8 +1096,33 @@ export default class DrawDetailInfo extends React.Component {
                 <div className={DrawDetailInfoStyle.set_time_content}>
                   <div className={DrawDetailInfoStyle.set_start_time}>
                     <span>开始时间</span>
-                    <span>
+                    <span
+                      style={{
+                        display: 'flex',
+                        width: '177px',
+                        paddingLeft: '12px',
+                        border: '1px solid #d9d9d9',
+                        height: '32px',
+                        lineHeight: '32px',
+                        borderRadius: '4px'
+                      }}
+                    >
                       {date_format == '0' ? (
+                        <div>
+                          {this.whetherShowCurrentYear(start_time)
+                            ? `${new Date().getFullYear()}-`
+                            : ''}
+                          {timestampToTimeNormal(start_time, '-', true)}
+                        </div>
+                      ) : (
+                        <div>
+                          {this.whetherShowCurrentYear(start_time)
+                            ? `${new Date().getFullYear()}-`
+                            : ''}
+                          {timestampToTimeNormal(start_time, '-', false)}
+                        </div>
+                      )}
+                      {/* {date_format == '0' ? (
                         <DatePicker
                           disabledDate={this.disabledStartTime}
                           showTime={{
@@ -1123,7 +1148,7 @@ export default class DrawDetailInfo extends React.Component {
                               : undefined
                           }
                         />
-                      )}
+                      )} */}
                     </span>
                   </div>
                 </div>
