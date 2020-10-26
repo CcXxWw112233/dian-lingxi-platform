@@ -1420,11 +1420,7 @@ export default class PdfComment extends React.Component {
       return (
         <Fragment key={item}>
           {this.props.fileType === 'img' ? (
-            <div
-              className={styles.imgCanvas}
-              key={item}
-              style={{ position: 'relative', display: 'inline-block' }}
-            >
+            <div className={styles.imgCanvas} key={item}>
               <this.renderOperationDelete id={item} />
               <this.renderNoteContent id={item} />
               <canvas key={item} id={item} />
@@ -1632,13 +1628,13 @@ export default class PdfComment extends React.Component {
               window.open(d)
             }
           )
-          // let reader = new FileReader()
-          // reader.onload = () => {
-          //   let blobUrl = window.URL.createObjectURL(new Blob([reader.result]))
-          //   window.mapAndroid.boardImage(blobUrl, this.props.file_name)
-          //   window.URL.revokeObjectURL(blobUrl)
-          // }
-          // reader.readAsArrayBuffer(file)
+          let reader = new FileReader()
+          reader.onload = () => {
+            let blobUrl = window.URL.createObjectURL(new Blob([reader.result]))
+            window.mapAndroid.boardImage(blobUrl, this.props.file_name)
+            window.URL.revokeObjectURL(blobUrl)
+          }
+          reader.readAsArrayBuffer(file)
         }
       }
     })
@@ -1667,6 +1663,7 @@ export default class PdfComment extends React.Component {
 
   // 导出pdf
   exportPdf = (type = 'export') => {
+    this.isBreak = false
     if (!this.drawCanvas.length) return
     if (this.props.fileType === 'img') {
       return this.exportImg(type)
@@ -1701,8 +1698,8 @@ export default class PdfComment extends React.Component {
           h = item.height
         let pixo = minWidth / w
         let url = item.toDataURL({
-          format: pixo > 1 ? 'png' : 'jpeg',
-          quality: 1
+          format: 'jpeg', // pixo > 1 ? 'png' : 'jpeg',
+          quality: 0.5
         })
         let width = w * pixo
         let height = h * pixo
@@ -1718,11 +1715,13 @@ export default class PdfComment extends React.Component {
           content: this.ExportProgress(percent)
         })
         // 添加等待时间，防止全速导出内存泄露
-        await this.setAwaitTime(100)
+        await this.setAwaitTime(10)
       }
       // console.log(pdf.__private__.out('#1123334'))
       message.destroy()
-      if (this.isBreak) return
+      if (this.isBreak) {
+        return
+      }
       // message.success('导出成功');
       this.exportModal.destroy()
       let blob = pdf.output('blob')
@@ -1740,7 +1739,6 @@ export default class PdfComment extends React.Component {
           a = null
         } else {
           if (window.mapAndroid) {
-            // window.mapAndroid.boardImage(url, this.props.file_name)
             let file = new File([blob], this.props.file_name, {
               type: blob.type
             })
@@ -1748,11 +1746,13 @@ export default class PdfComment extends React.Component {
             data.append('file', file)
             this.axiosForSend('/api/projects/file/upload/public', data).then(
               res => {
+                message.success('正在下载')
                 // console.log(res)
                 let d = res.data.data || res.data
                 window.open(d)
               }
             )
+            window.mapAndroid.boardImage(url, this.props.file_name)
           }
         }
         window.URL.revokeObjectURL(blob)
@@ -2991,7 +2991,9 @@ export default class PdfComment extends React.Component {
           {/* 我是pdf */}
           <div
             id="allCanvas"
-            className={styles.canvasBox}
+            className={`${styles.canvasBox} ${
+              this.props.fileType === 'img' ? styles.isImgCanvas : ''
+            }`}
             style={{
               width: this.W,
               height: this.props.fileType === 'img' ? '100%' : 'auto'

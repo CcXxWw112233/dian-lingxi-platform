@@ -1445,7 +1445,7 @@ export default class GetRowGanttItem extends Component {
             current_date_board_miletones = [],
             current_date_board_child_miletones,
             has_child_flag,
-            every_day_child_miletones,
+            every_day_child_miletones = [],
             is_over_duetime,
             is_all_realized,
             is_all_child_realized,
@@ -1701,7 +1701,7 @@ export default class GetRowGanttItem extends Component {
             is_over_duetime,
             is_all_realized,
             every_day_miletones = [],
-            every_day_child_miletones,
+            every_day_child_miletones = [],
             has_child_flag,
             is_all_child_realized
           } = this.isHasMilestoneListWeek({
