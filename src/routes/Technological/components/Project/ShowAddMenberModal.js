@@ -1,5 +1,5 @@
 import React from 'react'
-import { Form, Input } from 'antd'
+import { Button, Form, Input } from 'antd'
 import { PROJECTS } from '../../../../globalset/js/constant'
 import {
   currentNounPlanFilterName,
@@ -27,6 +27,8 @@ class ShowAddMenberModal extends React.Component {
   // 提交表单
   handleSubmit = usersStr => {
     // e.preventDefault();
+    console.log(usersStr)
+    return
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         values['board_id'] = this.props.board_id
@@ -77,20 +79,20 @@ class ShowAddMenberModal extends React.Component {
       board_id
     } = this.props
     const container = (
-      <Form style={{ margin: '0 auto', width: 336 }}>
+      <Form style={{ margin: '0 auto', width: '100%' }}>
         {/* <div style={{ fontSize: 20, color: '#595959', marginTop: 28, marginBottom: 28 }}> {title ? title : `邀请他人一起参加${currentNounPlanFilterName(PROJECTS)}`} </div> */}
         <div
           style={{
             fontSize: 20,
             color: '#595959',
-            marginTop: 28,
-            marginBottom: 28
+            marginTop: '-10px'
+            // marginBottom: 28
           }}
         >
           {' '}
-          {title ? title : `邀请他人一起参加`}{' '}
+          {title ? title : `邀请参与人`}{' '}
         </div>
-        <div>
+        <div style={{ margin: '0px -24px' }}>
           <InviteOthers
             submitText={submitText ? submitText : '邀请加入'}
             isShowTitle={false}
@@ -101,27 +103,40 @@ class ShowAddMenberModal extends React.Component {
             }
             handleInviteMemberReturnResult={this.handleInviteMemberReturnResult}
             isDisableSubmitWhenNoSelectItem={true}
+            show_wechat_invite={show_wechat_invite}
+            setWechatInviteVisible={this.setWechatInviteVisible}
           ></InviteOthers>
         </div>
-        {show_wechat_invite && (
-          <div
-            style={{
-              marginTop: -18,
-              marginBottom: 16,
-              color: '#1890FF',
-              cursor: 'pointer'
-            }}
-            onClick={this.setWechatInviteVisible}
-          >
-            <i
-              className={globalStyles.authTheme}
-              style={{ color: '#46A318', marginRight: 4 }}
-            >
-              &#xe634;
-            </i>
-            微信扫码邀请参与人
-          </div>
-        )}
+        {
+          // show_wechat_invite && (
+          //   <Button>
+          //     <i
+          //       className={globalStyles.authTheme}
+          //       style={{ color: '#46A318', marginRight: 4 }}
+          //     >
+          //       &#xe634;
+          //     </i>
+          //     扫码邀请
+          //   </Button>
+          // <div
+          //   style={{
+          //     marginTop: -18,
+          //     marginBottom: 16,
+          //     color: '#1890FF',
+          //     cursor: 'pointer'
+          //   }}
+          //   onClick={this.setWechatInviteVisible}
+          // >
+          //   <i
+          //     className={globalStyles.authTheme}
+          //     style={{ color: '#46A318', marginRight: 4 }}
+          //   >
+          //     &#xe634;
+          //   </i>
+          //   微信扫码邀请参与人
+          // </div>
+          // )
+        }
       </Form>
     )
     return container
@@ -143,7 +158,7 @@ class ShowAddMenberModal extends React.Component {
       <div>
         <CustormModal
           visible={modalVisible}
-          width={472}
+          width={400}
           zIndex={1100}
           maskClosable={false}
           footer={null}
@@ -151,6 +166,7 @@ class ShowAddMenberModal extends React.Component {
           style={{ textAlign: 'center' }}
           onCancel={this.onCancel}
           overInner={this.renderUsersList()}
+          bodyStyle={{ paddingTop: '24px', paddingBottom: '1px' }}
         ></CustormModal>
         {show_wechat_invite && (
           <WechatInviteToboard

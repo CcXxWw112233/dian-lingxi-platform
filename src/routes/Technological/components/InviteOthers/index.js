@@ -21,6 +21,7 @@ import { isApiResponseOk } from '../../../../utils/handleResponseData'
 import noDataImg from './asset/no_data_select.png'
 import { currentNounPlanFilterName } from '../../../../utils/businessFunction'
 import { PROJECTS } from '../../../../globalset/js/constant'
+import globalStyles from '@/globalset/css/globalClassName.less'
 import Avatars from '@dicebear/avatars'
 import SpriteBoottts from '@dicebear/avatars-bottts-sprites'
 import SpriteGridy from '@dicebear/avatars-gridy-sprites'
@@ -59,6 +60,13 @@ class InviteOthers extends Component {
       isInSelectedList: false, //是否仅显示列表的
       step: 'home' //当前的步进 home || group-list || group-id || project-list ||project-id
     }
+    let SpriteCollection = { SpriteBoottts, SpriteGridy }
+    this.options = {
+      radius: 24,
+      width: 24,
+      height: 24
+    }
+    this.avatars = new Avatars(SpriteBoottts, this.options)
   }
 
   // 验证手机号或者是邮箱
@@ -133,6 +141,24 @@ class InviteOthers extends Component {
       user,
       id: id ? id : ''
     }
+  }
+
+  dataURLtoBlob = dataurl => {
+    var arr = dataurl.split(','),
+      mime = arr[0].match(/:(.*?);/)[1],
+      bstr = atob(arr[1]),
+      n = bstr.length,
+      u8arr = new Uint8Array(n)
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n)
+    }
+    return new Blob([u8arr], { type: mime })
+  }
+
+  blobToFile = (theBlob, fileName) => {
+    theBlob.lastModifiedDate = new Date()
+    theBlob.name = fileName
+    return theBlob
   }
 
   // 进行搜索, 发送请求
@@ -214,6 +240,13 @@ class InviteOthers extends Component {
                   user,
                   name: null
                 }
+                // let svg = this.avatars.create(user)
+                // var blob = this.dataURLtoBlob(
+                //   'data:image/svg+xml;base64,' +
+                //     btoa(unescape(encodeURIComponent(svg)))
+                // )
+                // var file = this.blobToFile(blob, user)
+                // console.log(blob, file)
                 this.setState({
                   inputRet: [item],
                   fetching: false
@@ -227,6 +260,7 @@ class InviteOthers extends Component {
             }
           })
           .catch(err => {
+            console.log(err)
             this.setState({
               fetching: false
             })
@@ -242,7 +276,11 @@ class InviteOthers extends Component {
     const selectedUser = this.parseUserValueStr(value.key)
     const isHasSameMemberInSelectedMember = () =>
       selectedMember.find(item =>
-        item.id ? item.id === selectedUser.id : false
+        item.id
+          ? item.id === selectedUser.id
+          : item.user
+          ? item.user === selectedUser.user
+          : false
       )
     //如果该用户已经在被选择的列表中了
     if (isHasSameMemberInSelectedMember()) {
@@ -292,6 +330,7 @@ class InviteOthers extends Component {
     )
   }
   handleInputChange = value => {
+    console.log(value)
     //这个函数根本就不会执行？？？
     // this.setState({
     //   inputValue: value,
@@ -303,23 +342,16 @@ class InviteOthers extends Component {
   // 给用户设置的默认身份等...
   genOptionLabel = item => {
     const { avatar, user, name } = item
-    let options = {
-      radius: 24,
-      width: 24,
-      height: 24
-    }
-    let SpriteCollection = { SpriteBoottts, SpriteGridy }
-    let avatars = new Avatars(SpriteGridy, options)
-    let svg = avatars.create(user)
+    let svg = this.avatars.create(user)
     //默认
-    if (avatar === 'default') {
-      return (
-        <p className={styles.input__select_wrapper}>
-          {/* <span className={styles.input__select_default_avatar} /> */}
-          <span className={styles.input__select_user}>{user}</span>
-        </p>
-      )
-    }
+    // if (avatar === 'default') {
+    //   return (
+    //     <p className={styles.input__select_wrapper}>
+    //       {/* <span className={styles.input__select_default_avatar} /> */}
+    //       <span className={styles.input__select_user}>{user}</span>
+    //     </p>
+    //   )
+    // }
     return (
       <p className={styles.input__select_wrapper}>
         <span className={styles.input__select_avatar_img}>
@@ -652,6 +684,8 @@ class InviteOthers extends Component {
   handleSubmitSeletedMember = () => {
     const { handleInviteMemberReturnResult } = this.props
     const { selectedMember } = this.state
+    console.log(selectedMember)
+    return
     handleInviteMemberReturnResult(selectedMember)
   }
 
@@ -677,6 +711,10 @@ class InviteOthers extends Component {
       //消息推送查询
       this.getGroupList({ _organization_id })
     }
+  }
+
+  setWechatInviteVisible = () => {
+    this.props.setWechatInviteVisible && this.props.setWechatInviteVisible()
   }
 
   // 渲染没有数据的时候
@@ -779,7 +817,8 @@ class InviteOthers extends Component {
       isShowTitle,
       isShowSubmitBtn,
       children,
-      isDisableSubmitWhenNoSelectItem
+      isDisableSubmitWhenNoSelectItem,
+      show_wechat_invite
     } = this.props
     const {
       fetching,
@@ -834,12 +873,77 @@ class InviteOthers extends Component {
             dropdownStyle={{ zIndex: '9999' }}
             blur={this.handleInputBlur}
           >
-            {inputRet.map(item => (
-              <Option key={item.value}>{this.genOptionLabel(item)}</Option>
-            ))}
+            {inputRet.map(item => {
+              return (
+                <Option key={item.value}>{this.genOptionLabel(item)}</Option>
+              )
+            })}
           </Select>
+          <span className={`${globalStyles.authTheme} ${styles.search_icon}`}>
+            &#xe611;
+          </span>
         </div>
-
+        {!!(selectedMember && selectedMember.length) && (
+          <div className={styles.invite__result_wrapper}>
+            <div className={styles.invite__result_list}>
+              {selectedMember.map(item => {
+                let svg = this.avatars.create(item.user)
+                return (
+                  <div
+                    key={item.user}
+                    className={styles.invite__result_list_item}
+                  >
+                    <Tooltip
+                      overlayStyle={{ zIndex: '9999' }}
+                      title={item.type === 'other' ? item.user : item.name}
+                    >
+                      <div
+                        className={styles.invite__result_list_item_img_wrapper}
+                      >
+                        <img
+                          src={
+                            item.type === 'other'
+                              ? 'data:image/svg+xml;base64,' +
+                                btoa(unescape(encodeURIComponent(svg)))
+                              : this.isAvatarValid(item.icon)
+                              ? item.icon
+                              : 'data:image/svg+xml;base64,' +
+                                btoa(unescape(encodeURIComponent(svg)))
+                          }
+                          alt=""
+                          width="32"
+                          height="32"
+                          className={styles.invite__result_list_item_img}
+                        />
+                        <span
+                          className={styles.invite__result_list_icon}
+                          onClick={e =>
+                            this.handleClickedResultListIcon(item, e)
+                          }
+                        />
+                      </div>
+                    </Tooltip>
+                  </div>
+                )
+              })}
+              {/* 占位符 */}
+              {/* {seize_a_seat_arr.length < 11 &&
+                seize_a_seat_arr.map((item, key) => {
+                  return (
+                    <div key={key} className={styles.invite__result_list_item}>
+                      <div
+                        className={styles.invite__result_list_item_img_wrapper}
+                        style={{
+                          backgroundColor: 'rgba(0,0,0,.04)',
+                          borderRadius: 20
+                        }}
+                      ></div>
+                    </div>
+                  )
+                })} */}
+            </div>
+          </div>
+        )}
         {this.props.selectDisabled ? (
           <div className={styles.invite__select_wrapper}>
             <img
@@ -890,104 +994,62 @@ class InviteOthers extends Component {
                       />
                     )}
                   </div>
-                  {sortedMembersListToSelect.map(item => (
-                    <div
-                      key={item.id}
-                      className={styles.invite__select_member_item}
-                      onClick={e =>
-                        this.handleToggleMemberInSelectedMember(item, e)
-                      }
-                    >
-                      <span className={styles.invite__select_member_item_info}>
-                        <img
-                          className={styles.invite__select_member_item_avatar}
-                          width="20"
-                          height="20"
-                          src={
-                            this.isAvatarValid(item.avatar)
-                              ? item.avatar
-                              : defaultUserAvatar
-                          }
-                          alt=""
-                        />
-                        <span
-                          className={styles.invite__select_member_item_title}
-                        >
-                          {item.full_name || item.name}
-                        </span>
-                      </span>
-                      <span
-                        className={styles.invite__select_member_item_operator}
+                  {sortedMembersListToSelect.map(item => {
+                    let svg = this.avatars.create(item.name)
+                    return (
+                      <div
+                        key={item.id}
+                        className={styles.invite__select_member_item}
+                        onClick={e =>
+                          this.handleToggleMemberInSelectedMember(item, e)
+                        }
                       >
-                        {this.checkMemberInSelectedMember(item) ? (
-                          <span
-                            className={
-                              styles.invite__select_member_item_operator_selected
+                        <span
+                          className={styles.invite__select_member_item_info}
+                        >
+                          <img
+                            className={styles.invite__select_member_item_avatar}
+                            width="20"
+                            height="20"
+                            src={
+                              this.isAvatarValid(item.avatar)
+                                ? item.avatar
+                                : 'data:image/svg+xml;base64,' +
+                                  btoa(unescape(encodeURIComponent(svg)))
                             }
+                            alt=""
                           />
-                        ) : (
                           <span
-                            className={
-                              styles.invite__select_member_item_operator_unselected
-                            }
-                          />
-                        )}
-                      </span>
-                    </div>
-                  ))}
+                            className={styles.invite__select_member_item_title}
+                          >
+                            {item.full_name || item.name}
+                          </span>
+                        </span>
+                        <span
+                          className={styles.invite__select_member_item_operator}
+                        >
+                          {this.checkMemberInSelectedMember(item) ? (
+                            <span
+                              className={
+                                styles.invite__select_member_item_operator_selected
+                              }
+                            />
+                          ) : (
+                            <span
+                              className={
+                                styles.invite__select_member_item_operator_unselected
+                              }
+                            />
+                          )}
+                        </span>
+                      </div>
+                    )
+                  })}
                 </div>
               )}
             </div>
           </div>
         )}
-
-        <div className={styles.invite__result_wrapper}>
-          <div className={styles.invite__result_list}>
-            {selectedMember.map(item => (
-              <div key={item.user} className={styles.invite__result_list_item}>
-                <Tooltip
-                  overlayStyle={{ zIndex: '9999' }}
-                  title={item.type === 'other' ? item.user : item.name}
-                >
-                  <div className={styles.invite__result_list_item_img_wrapper}>
-                    <img
-                      src={
-                        item.type === 'other'
-                          ? defaultUserAvatar
-                          : this.isAvatarValid(item.icon)
-                          ? item.icon
-                          : defaultUserAvatar
-                      }
-                      alt=""
-                      width="24"
-                      height="24"
-                      className={styles.invite__result_list_item_img}
-                    />
-                    <span
-                      className={styles.invite__result_list_icon}
-                      onClick={e => this.handleClickedResultListIcon(item, e)}
-                    />
-                  </div>
-                </Tooltip>
-              </div>
-            ))}
-            {/* 占位符 */}
-            {seize_a_seat_arr.length < 11 &&
-              seize_a_seat_arr.map((item, key) => {
-                return (
-                  <div key={key} className={styles.invite__result_list_item}>
-                    <div
-                      className={styles.invite__result_list_item_img_wrapper}
-                      style={{
-                        backgroundColor: 'rgba(0,0,0,.04)',
-                        borderRadius: 20
-                      }}
-                    ></div>
-                  </div>
-                )
-              })}
-          </div>
-        </div>
 
         {isShowSubmitBtn && (
           <div className={styles.invite__submit_wrapper}>
@@ -998,9 +1060,19 @@ class InviteOthers extends Component {
             >
               {submitText}
             </Button>
+            {show_wechat_invite && (
+              <Button onClick={this.setWechatInviteVisible}>
+                <i
+                  className={globalStyles.authTheme}
+                  style={{ color: '#46A318', marginRight: 4 }}
+                >
+                  &#xe634;
+                </i>
+                扫码邀请
+              </Button>
+            )}
           </div>
         )}
-        {children && children}
       </div>
     )
   }
