@@ -894,6 +894,7 @@ class InviteOthers extends Component {
                     <Tooltip
                       overlayStyle={{ zIndex: '9999' }}
                       title={item.type === 'other' ? item.user : item.name}
+                      getPopupContainer={triggerNode => triggerNode.parentNode}
                     >
                       <div
                         className={styles.invite__result_list_item_img_wrapper}
