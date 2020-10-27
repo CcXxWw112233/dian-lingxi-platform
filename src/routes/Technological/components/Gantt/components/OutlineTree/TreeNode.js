@@ -869,7 +869,16 @@ export default class TreeNode extends Component {
   }
 
   renderStartTime = key => {
-    const { nodeValue = {}, gantt_view_mode } = this.props
+    const {
+      nodeValue = {},
+      gantt_view_mode,
+      projectDetailInfoData = {}
+    } = this.props
+    const date_format = projectDetailInfoData?.board_set?.date_format //项目信息里面拿到的格式化信息
+    const format_type = {
+      '0': 'yyyy-MM-dd HH:mm',
+      '1': 'yyyy-MM-dd'
+    }
     let { start_time, is_has_start_time, tree_type } = nodeValue
     if (gantt_view_mode == 'relative_time') {
       return (
@@ -884,7 +893,7 @@ export default class TreeNode extends Component {
     //仅在任务时需要强is_has_start_time判断
     let contain = ''
     if (start_time && (tree_type == '2' ? is_has_start_time : true)) {
-      contain = dateFormat(start_time, this.timeForMat)
+      contain = dateFormat(start_time, format_type[date_format])
     } else {
       contain = (
         <span
@@ -902,7 +911,11 @@ export default class TreeNode extends Component {
   }
 
   renderEndTime = key => {
-    const { nodeValue = {}, gantt_view_mode } = this.props
+    const {
+      nodeValue = {},
+      gantt_view_mode,
+      projectDetailInfoData = {}
+    } = this.props
     let { due_time, is_has_end_time } = nodeValue
     if (gantt_view_mode == 'relative_time') {
       return (
@@ -914,9 +927,14 @@ export default class TreeNode extends Component {
         />
       )
     }
+    const date_format = projectDetailInfoData?.board_set?.date_format //项目信息里面拿到的格式化信息
+    const format_type = {
+      '0': 'yyyy-MM-dd HH:mm',
+      '1': 'yyyy-MM-dd'
+    }
     let contain = ''
     if (due_time && is_has_end_time) {
-      contain = dateFormat(due_time, this.timeForMat)
+      contain = dateFormat(due_time, format_type[date_format])
     } else {
       contain = (
         <span
@@ -945,10 +963,15 @@ export default class TreeNode extends Component {
     }
   }
   renderDatePicker = (vdom, timestamp, time_type) => {
-    const { ceilWidth } = this.props
+    const { ceilWidth, projectDetailInfoData = {} } = this.props
     const show_time_default = {
       start_time: '00:00',
       due_time: '23:59'
+    }
+    const date_format = projectDetailInfoData?.board_set?.date_format //项目信息里面拿到的格式化信息
+    const format_type = {
+      '0': 'YYYY/MM/DD HH:mm',
+      '1': 'YYYY/MM/DD'
     }
     return (
       <div style={{ position: 'relative' }}>
@@ -958,20 +981,26 @@ export default class TreeNode extends Component {
           defaultValue={
             timestamp
               ? moment(
-                  dateFormat(timestamp, this.timeForMat),
+                  dateFormat(timestamp, 'yyyy-MM-dd HH:mm'),
                   'YYYY/MM/DD HH:mm'
                 )
               : undefined
           }
           placeholder={
-            timestamp ? dateFormat(timestamp, 'yyyy/MM/dd HH:mm') : '请选择'
+            timestamp
+              ? dateFormat(timestamp, format_type[date_format])
+              : '请选择'
           }
           format="YYYY/MM/DD HH:mm"
           onOk={e => this.setNodeTime(time_type, e.valueOf())}
-          showTime={{
-            defaultValue: moment(show_time_default[time_type], 'HH:mm'),
-            format: 'HH:mm'
-          }}
+          showTime={
+            date_format == '1'
+              ? false
+              : {
+                  defaultValue: moment(show_time_default[time_type], 'HH:mm'),
+                  format: 'HH:mm'
+                }
+          }
           style={{
             opacity: 0,
             width: 'auto',
