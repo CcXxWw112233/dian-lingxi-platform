@@ -22,7 +22,7 @@ const { id } = localStorage.getItem('userInfo')
   ? JSON.parse(localStorage.getItem('userInfo'))
   : ''
 export const initWsFun = calback => {
-  const queryString = `uid=${id}&token=${Authorization}`
+  const queryString = `uid=${id}&token=${Authorization}&t=lingxiweb`
   const param = null
   const tiows = new tio.ws(
     ws_url,
