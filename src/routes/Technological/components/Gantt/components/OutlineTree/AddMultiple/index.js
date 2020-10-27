@@ -1,17 +1,20 @@
 import React, { Component } from 'react'
-import { Menu, Dropdown } from 'antd'
+import { Menu, Modal, Button } from 'antd'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import TreeNode from '../TreeNode.js'
 
 export default class AddMultipleIndex extends Component {
   constructor(props) {
     super(props)
-    this.state = {}
+    this.state = {
+      add_mutiple_visible: false
+    }
   }
   handleSelected = ({ key }) => {
     console.log('sssssaaa', key)
-    const { setInputAddType } = this.props
+    const { setInputAddType, setAddMultipleVisible } = this.props
     setInputAddType(key)
+    setAddMultipleVisible(true)
   }
   renderMenu = () => {
     const { input_add_type } = this.props
@@ -27,7 +30,8 @@ export default class AddMultipleIndex extends Component {
       </div>
     )
   }
+
   render() {
-    return this.renderMenu()
+    return <>{this.renderMenu()}</>
   }
 }

@@ -71,6 +71,7 @@ import {
 import { getTreeNodeValue } from '../../../../models/technological/workbench/gantt/gantt_utils'
 import ExportExcelModal from './components/exportExcelModal'
 import AddMultipleIndex from './components/OutlineTree/AddMultiple'
+import AddMultiplePomp from './components/OutlineTree/AddMultiple/AddMultiplePomp'
 const { SubMenu } = Menu
 // const { TreeNode } = OutlineTree;
 const { confirm } = Modal
@@ -97,7 +98,8 @@ export default class OutLineHeadItem extends Component {
     visibleExportPopover: false, // 显示隐藏导出列表
     showLoading: false, // 是否显示loading
     bodyPicture: null, // loading的背景图片
-    input_add_type: '1' //入口处新建类型 1/2 =》 里程碑/任务
+    input_add_type: '1', //入口处新建类型 1/2 =》 里程碑/任务
+    add_mutiple_visible: false //添加多条任务下拉框是否显示
   }
   componentDidMount() {
     const OrganizationId = localStorage.getItem('OrganizationId')
@@ -1062,14 +1064,20 @@ export default class OutLineHeadItem extends Component {
     })
   }
 
+  // 设置默认入口处新建类型
   setInputAddType = type => {
     this.setState({
       input_add_type: type
     })
   }
+  setAddMultipleVisible = bool => {
+    this.setState({
+      add_mutiple_visible: bool
+    })
+  }
   // 设置保存模板弹窗------end
   renderAddMilestone = (item, normal) => {
-    const { input_add_type } = this.state
+    const { input_add_type, add_mutiple_visible } = this.state
     return (
       <TreeNode
         setScrollPosition={this.props.setScrollPosition}
@@ -1083,9 +1091,11 @@ export default class OutLineHeadItem extends Component {
         }} // add_id: 'add_milestone'
         icon={
           <Dropdown
+            trigger={['click']}
             overlay={
               <AddMultipleIndex
                 setInputAddType={this.setInputAddType}
+                setAddMultipleVisible={this.setAddMultipleVisible}
                 input_add_type={input_add_type}
               />
             }
@@ -1099,9 +1109,19 @@ export default class OutLineHeadItem extends Component {
           </Dropdown>
         }
         label={
-          <span className={styles.addMilestone}>
-            {input_add_type == '1' ? '新建里程碑' : '新建任务'}
-          </span>
+          <Dropdown
+            visible={add_mutiple_visible}
+            overlay={
+              <AddMultiplePomp
+                input_add_type={input_add_type}
+                setAddMultipleVisible={this.setAddMultipleVisible}
+              />
+            }
+          >
+            <span className={styles.addMilestone}>
+              {input_add_type == '1' ? '新建里程碑' : '新建任务'}
+            </span>
+          </Dropdown>
         }
         key="addMilestone"
       ></TreeNode>
