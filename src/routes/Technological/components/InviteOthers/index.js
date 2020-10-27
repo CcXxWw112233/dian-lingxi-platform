@@ -60,9 +60,9 @@ class InviteOthers extends Component {
       step: 'home' //当前的步进 home || group-list || group-id || project-list ||project-id
     }
     this.options = {
-      radius: 24,
-      width: 24,
-      height: 24
+      radius: 32,
+      width: 32,
+      height: 32
     }
     this.avatars = new Avatars(SpriteBoottts, this.options)
   }
@@ -1008,8 +1008,8 @@ class InviteOthers extends Component {
                         >
                           <img
                             className={styles.invite__select_member_item_avatar}
-                            width="20"
-                            height="20"
+                            width="24"
+                            height="24"
                             src={
                               this.isAvatarValid(item.avatar)
                                 ? item.avatar
@@ -1052,13 +1052,6 @@ class InviteOthers extends Component {
 
         {isShowSubmitBtn && (
           <div className={styles.invite__submit_wrapper}>
-            <Button
-              disabled={isDisableSubmitWhenNoSelectItem && !isHasSelectedItem}
-              onClick={this.handleSubmitSeletedMember}
-              type="primary"
-            >
-              {submitText}
-            </Button>
             {show_wechat_invite && (
               <Button onClick={this.setWechatInviteVisible}>
                 <i
@@ -1072,6 +1065,13 @@ class InviteOthers extends Component {
                 </span>
               </Button>
             )}
+            <Button
+              disabled={isDisableSubmitWhenNoSelectItem && !isHasSelectedItem}
+              onClick={this.handleSubmitSeletedMember}
+              type="primary"
+            >
+              {submitText}
+            </Button>
           </div>
         )}
       </div>
