@@ -24,8 +24,8 @@ export default class GetRowGanttVirtual extends Component {
               style={{
                 height: group_rows[key] * ceiHeight,
                 width: date_total * ceilWidth,
-                backgroundColor: 'rgb(245,245,245)', //color[key % 3]
-                borderBottom: '1px solid #e5e5e5'
+                backgroundColor: '#ffffff' //'rgb(245,245,245)', //color[key % 3]
+                // borderBottom: '1px solid rgba(154,159,166,0.15)'
               }}
             ></div>
             // <GetRowGanttItem

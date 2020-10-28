@@ -44,6 +44,8 @@ import {
   timestampToTime
 } from '../../../../utils/util'
 import SvgArea from './components/SvgArea'
+import GroupCanvas from './components/GroupCanvas'
+
 import BaseLineItem from './components/CardItem/BaseLineItem'
 const clientWidth = document.documentElement.clientWidth //获取页面可见高度
 const dateAreaHeight = date_area_height //日期区域高度，作为修正
@@ -992,6 +994,7 @@ export default class GetRowGantt extends Component {
           id={'gantt_operate_area_panel'}
           ref={'gantt_operate_area_panel'}
         >
+          <GroupCanvas></GroupCanvas>
           <SvgArea></SvgArea>
           {this.renderDashedRect()}
           {/* 非大纲视图下渲染任务和或者进度 */}
