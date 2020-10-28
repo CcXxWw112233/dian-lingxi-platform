@@ -13,8 +13,17 @@ export default class AddMultipleIndex extends Component {
   handleSelected = ({ key }) => {
     console.log('sssssaaa', key)
     const { setInputAddType, setAddMultipleVisible } = this.props
-    setInputAddType(key)
-    setAddMultipleVisible(true)
+    if (['1', '2'].includes(key)) {
+      setInputAddType(key)
+    }
+    if (['3', '4'].includes(key)) {
+      if (key == '3') {
+        setInputAddType('1')
+      } else if (key == '4') {
+        setInputAddType('2')
+      }
+      setAddMultipleVisible(true)
+    }
   }
   renderMenu = () => {
     const { input_add_type } = this.props
@@ -24,8 +33,14 @@ export default class AddMultipleIndex extends Component {
           onClick={this.handleSelected}
           defaultSelectedKeys={[input_add_type]}
         >
-          <Menu.Item key={'1'}>新建里程碑</Menu.Item>
-          <Menu.Item key={'2'}>新建任务</Menu.Item>
+          {input_add_type == '1' && <Menu.Item key={'2'}>新建任务</Menu.Item>}
+          {input_add_type == '1' && (
+            <Menu.Item key={'3'}>批量创建里程碑</Menu.Item>
+          )}
+          {input_add_type == '2' && <Menu.Item key={'1'}>新建里程碑</Menu.Item>}
+          {input_add_type == '2' && (
+            <Menu.Item key={'4'}>批量创建任务</Menu.Item>
+          )}
         </Menu>
       </div>
     )
