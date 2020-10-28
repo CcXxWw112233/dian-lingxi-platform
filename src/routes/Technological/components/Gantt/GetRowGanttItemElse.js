@@ -187,11 +187,24 @@ export default class GetRowGanttItem extends Component {
     )
   }
   render() {
-    const { gold_date_arr = [], gantt_view_mode } = this.props
+    const {
+      gold_date_arr = [],
+      gantt_view_mode,
+      date_total,
+      ceilWidth,
+      ceiHeight
+    } = this.props
     return (
       <div className={indexStyles.ganttAreaOut}>
-        <div className={indexStyles.ganttArea}>
-          {gold_date_arr.map((value, key) => {
+        <div
+          className={indexStyles.ganttArea}
+          style={{
+            height: this.filterHeight(),
+            backgroundColor: 'black',
+            width: ceilWidth * date_total
+          }}
+        >
+          {/* {gold_date_arr.map((value, key) => {
             const { date_inner = [] } = value
             return (
               <div className={indexStyles.ganttAreaItem} key={key}>
@@ -208,7 +221,7 @@ export default class GetRowGanttItem extends Component {
                 </div>
               </div>
             )
-          })}
+          })} */}
         </div>
       </div>
     )
@@ -226,7 +239,8 @@ function mapStateToProps({
       outline_tree_round,
       ceiHeight,
       group_rows = [],
-      list_group = []
+      list_group = [],
+      date_total
     }
   }
 }) {
@@ -239,6 +253,7 @@ function mapStateToProps({
     list_group,
     group_view_type,
     outline_tree_round,
-    gantt_board_id
+    gantt_board_id,
+    date_total
   }
 }

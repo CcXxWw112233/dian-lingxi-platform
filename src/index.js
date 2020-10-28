@@ -11,7 +11,7 @@ import './object_expand.js'
 import { diffClientInitToken } from './globalset/clientCustorm'
 import Cookies from 'js-cookie'
 
-// import FastClick from 'fastclick'
+import FastClick from 'fastclick'
 //兼容ie10及以下
 Object.setPrototypeOf = require('setprototypeof')
 // var browser=navigator.appName
@@ -46,7 +46,7 @@ const app = dva({
   }
 })
 
-// FastClick.attach(document.body)
+FastClick.attach(document.body)
 // 2. Plugins
 // app.use({});
 
