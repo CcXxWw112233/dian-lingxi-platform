@@ -25,14 +25,13 @@ class ShowAddMenberModal extends React.Component {
     this.props.setShowAddMenberModalVisibile()
   }
   // 提交表单
-  handleSubmit = usersStr => {
+  handleSubmit = (selectedMember, members) => {
     // e.preventDefault();
-    console.log(usersStr)
-    return
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         values['board_id'] = this.props.board_id
-        values['users'] = usersStr
+        values['users'] = selectedMember
+        values['members'] = members
         this.props.setShowAddMenberModalVisibile()
         this.props.addMenbersInProject
           ? this.props.addMenbersInProject(values)
@@ -57,10 +56,11 @@ class ShowAddMenberModal extends React.Component {
       }
     }, '')
   }
-  handleInviteMemberReturnResult = (selectedMember = []) => {
-    this.props.new_handleInviteMemberReturnResult &&
-      this.props.new_handleInviteMemberReturnResult(selectedMember)
-    this.handleSubmit(this.handleUsersToUsersStr(selectedMember))
+  handleInviteMemberReturnResult = ({ selectedMember = [], members = [] }) => {
+    // this.props.new_handleInviteMemberReturnResult &&
+    //   this.props.new_handleInviteMemberReturnResult(selectedMember)
+    this.handleSubmit(selectedMember, members)
+    // this.handleSubmit(this.handleUsersToUsersStr(selectedMember))
   }
 
   setWechatInviteVisible = () => {

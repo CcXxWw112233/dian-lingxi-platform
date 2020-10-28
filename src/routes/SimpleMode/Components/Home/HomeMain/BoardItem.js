@@ -32,6 +32,7 @@ import DetailInfo from '@/routes/Technological/components/ProjectDetail/DetailIn
 import ShowAddMenberModal from '@/routes/Technological/components/Project/ShowAddMenberModal'
 import { isApiResponseOk } from '../../../../../utils/handleResponseData'
 import { arrayNonRepeatfy } from '../../../../../utils/util'
+import { inviteMembersInWebJoin } from '../../../../../utils/inviteMembersInWebJoin'
 
 @connect(mapStateToProps)
 export default class BoardItem extends Component {
@@ -438,6 +439,25 @@ export default class BoardItem extends Component {
   }
   addMenbersInProject = values => {
     const { dispatch } = this.props
+    const {
+      itemValue: { org_id, board_id }
+    } = this.props
+    inviteMembersInWebJoin({
+      dispatch,
+      invitationType: '1',
+      board_id,
+      org_id,
+      values,
+      calback: () => {
+        setTimeout(() => {
+          dispatch({
+            type: 'gantt/getAboutUsersBoards',
+            payload: {}
+          })
+        }, 1000)
+      }
+    })
+    return
     addMenbersInProject({ ...values }).then(res => {
       if (isApiResponseOk(res)) {
         message.success('已成功添加项目成员')

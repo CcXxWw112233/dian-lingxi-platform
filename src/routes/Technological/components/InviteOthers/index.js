@@ -19,11 +19,17 @@ import {
 } from './../../../../services/technological/organizationMember'
 import { isApiResponseOk } from '../../../../utils/handleResponseData'
 import noDataImg from './asset/no_data_select.png'
-import { currentNounPlanFilterName } from '../../../../utils/businessFunction'
-import { PROJECTS } from '../../../../globalset/js/constant'
+import {
+  currentNounPlanFilterName,
+  setRequestHeaderBaseInfo
+} from '../../../../utils/businessFunction'
+import { PROJECTS, REQUEST_DOMAIN } from '../../../../globalset/js/constant'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import Avatars from '@dicebear/avatars'
 import SpriteBoottts from '@dicebear/avatars-bottts-sprites'
+import Cookies from 'js-cookie'
+import axios from 'axios'
+import { reject, resolve } from 'promise-polyfill'
 let cx = classNames.bind(styles)
 
 const Option = Select.Option
@@ -141,7 +147,8 @@ class InviteOthers extends Component {
     }
   }
 
-  dataURLtoBlob = dataurl => {
+  // base64转文件
+  dataURLtoFile = (dataurl, filename) => {
     var arr = dataurl.split(','),
       mime = arr[0].match(/:(.*?);/)[1],
       bstr = atob(arr[1]),
@@ -150,13 +157,7 @@ class InviteOthers extends Component {
     while (n--) {
       u8arr[n] = bstr.charCodeAt(n)
     }
-    return new Blob([u8arr], { type: mime })
-  }
-
-  blobToFile = (theBlob, fileName) => {
-    theBlob.lastModifiedDate = new Date()
-    theBlob.name = fileName
-    return theBlob
+    return new File([u8arr], filename, { type: mime })
   }
 
   // 进行搜索, 发送请求
@@ -238,13 +239,6 @@ class InviteOthers extends Component {
                   user,
                   name: null
                 }
-                // let svg = this.avatars.create(user)
-                // var blob = this.dataURLtoBlob(
-                //   'data:image/svg+xml;base64,' +
-                //     btoa(unescape(encodeURIComponent(svg)))
-                // )
-                // var file = this.blobToFile(blob, user)
-                // console.log(blob, file)
                 this.setState({
                   inputRet: [item],
                   fetching: false
@@ -254,15 +248,14 @@ class InviteOthers extends Component {
               this.setState({
                 fetching: false
               })
-              message.error('获取联想用户失败')
+              // message.error('获取联想用户失败')
             }
           })
           .catch(err => {
-            console.log(err)
             this.setState({
               fetching: false
             })
-            message.error('获取联想用户失败')
+            // message.error('获取联想用户失败')
           })
       }
     )
@@ -308,7 +301,7 @@ class InviteOthers extends Component {
   handleReturnResultWhenNotShowSubmitBtn = () => {
     const { handleInviteMemberReturnResult, isShowSubmitBtn } = this.props
     if (isShowSubmitBtn) return
-    const { selectedMember } = this.state
+    const { selectedMember = [] } = this.state
     handleInviteMemberReturnResult(selectedMember)
   }
 
@@ -328,7 +321,6 @@ class InviteOthers extends Component {
     )
   }
   handleInputChange = value => {
-    console.log(value)
     //这个函数根本就不会执行？？？
     // this.setState({
     //   inputValue: value,
@@ -342,24 +334,33 @@ class InviteOthers extends Component {
     const { avatar, user, name } = item
     let svg = this.avatars.create(user)
     //默认
-    // if (avatar === 'default') {
-    //   return (
-    //     <p className={styles.input__select_wrapper}>
-    //       {/* <span className={styles.input__select_default_avatar} /> */}
-    //       <span className={styles.input__select_user}>{user}</span>
-    //     </p>
-    //   )
-    // }
+    if (avatar === 'default') {
+      return (
+        <p className={styles.input__select_wrapper}>
+          <span className={styles.input__select_avatar_img}>
+            <img
+              src={
+                'data:image/svg+xml;base64,' +
+                btoa(unescape(encodeURIComponent(svg)))
+              }
+              style={{ borderRadius: '50%' }}
+              width="24"
+              height="24"
+              alt=""
+            />
+          </span>
+          <span className={styles.input__select_user}>{user}</span>
+          <span className={styles.input__select_name}>
+            ({name ? name : '匿名用户'})
+          </span>
+        </p>
+      )
+    }
     return (
       <p className={styles.input__select_wrapper}>
         <span className={styles.input__select_avatar_img}>
           <img
-            src={
-              this.isAvatarValid(avatar)
-                ? avatar
-                : 'data:image/svg+xml;base64,' +
-                  btoa(unescape(encodeURIComponent(svg)))
-            }
+            src={this.isAvatarValid(avatar) ? avatar : defaultUserAvatar}
             style={{ borderRadius: '50%' }}
             width="24"
             height="24"
@@ -678,13 +679,106 @@ class InviteOthers extends Component {
     return srcRegExp.test(srcStr)
   }
 
+  axiosForSend = (url, data) => {
+    const Authorization = Cookies.get('Authorization')
+    return new Promise((resolve, reject) => {
+      axios
+        .post(url, data, {
+          headers: {
+            Authorization,
+            ...setRequestHeaderBaseInfo({ data, headers: {}, params: {} })
+          }
+        })
+        .then(res => {
+          resolve(res.data)
+        })
+        .catch(err => {
+          reject(err)
+        })
+    })
+  }
+
+  getUsersAvatar = user => {
+    let svg = this.avatars.create(user)
+    let file = this.dataURLtoFile(
+      'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg))),
+      user + '.svg'
+    )
+    let data = new FormData()
+    data.append('file', file)
+    return new Promise((resolve, reject) => {
+      this.axiosForSend(`${REQUEST_DOMAIN}/user/avatar/upload`, data)
+        .then(res => {
+          // console.log(res)
+          if (isApiResponseOk(res)) {
+            resolve(res.data.avatar_icon)
+          } else {
+            reject({})
+          }
+        })
+        .catch(err => {
+          message.warn('上传头像失败，请稍后重试')
+        })
+    })
+  }
+
+  getRequestParams = () => {
+    const { selectedMember = [] } = this.state
+    const result = selectedMember.reduce((acc, curr) => {
+      const isCurrentUserFromPlatform = () =>
+        curr.type === 'platform' && curr.id
+      if (isCurrentUserFromPlatform()) {
+        if (acc) {
+          acc.push({
+            user_id: curr.id
+          })
+          return acc
+        }
+      } else {
+        if (acc) {
+          // let avatar_icon =
+          if (validateEmail(curr.user)) {
+            acc.push({
+              email: curr.user,
+              avatar_icon: ''
+            })
+          } else if (validateTel(curr.user)) {
+            acc.push({
+              mobile: curr.user,
+              avatar_icon: ''
+            })
+          }
+          return acc
+        }
+      }
+    }, [])
+    return result
+  }
+
+  getIcons = async () => {
+    let users = this.getRequestParams()
+    for (let i = 0; i < users.length; i++) {
+      if (!users[i].user_id) {
+        const avatar_icon = await this.getUsersAvatar(
+          users[i].mobile ? users[i].mobile : users[i].email
+        )
+        users[i].avatar_icon = avatar_icon
+      }
+    }
+    return users
+  }
+
   // 提交选择的用户回调
   handleSubmitSeletedMember = () => {
     const { handleInviteMemberReturnResult } = this.props
     const { selectedMember } = this.state
-    console.log(selectedMember)
-    return
-    handleInviteMemberReturnResult(selectedMember)
+    this.getIcons().then(res => {
+      handleInviteMemberReturnResult({
+        selectedMember: res,
+        members: selectedMember
+      })
+    })
+    // handleInviteMemberReturnResult(new_selectedMember)
   }
 
   componentDidMount() {
@@ -823,7 +917,7 @@ class InviteOthers extends Component {
       inputRet,
       inputValue,
       selectedMember = [],
-      membersListToSelect,
+      membersListToSelect = [],
       isInSelectedList,
       currentOrgAllMembersList,
       step
@@ -906,8 +1000,7 @@ class InviteOthers extends Component {
                                 btoa(unescape(encodeURIComponent(svg)))
                               : this.isAvatarValid(item.icon)
                               ? item.icon
-                              : 'data:image/svg+xml;base64,' +
-                                btoa(unescape(encodeURIComponent(svg)))
+                              : defaultUserAvatar
                           }
                           alt=""
                           width="32"
@@ -1013,15 +1106,14 @@ class InviteOthers extends Component {
                             src={
                               this.isAvatarValid(item.avatar)
                                 ? item.avatar
-                                : 'data:image/svg+xml;base64,' +
-                                  btoa(unescape(encodeURIComponent(svg)))
+                                : defaultUserAvatar
                             }
                             alt=""
                           />
                           <span
                             className={styles.invite__select_member_item_title}
                           >
-                            {item.full_name || item.name}
+                            {item.name || item.full_name}
                           </span>
                         </span>
                         <span
