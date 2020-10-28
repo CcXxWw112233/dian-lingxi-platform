@@ -83,16 +83,15 @@ class VisitControl extends Component {
     let users_arr = res.data
     return Promise.resolve(users_arr)
   }
-  handleInviteMemberReturnResult = values => {
-    const { members } = values
-    this.handleGetAddNewMember(members)
+  handleInviteMemberReturnResult = selectedMember => {
+    this.handleGetAddNewMember(selectedMember)
 
     this.setState({
       addMemberModalVisible: false,
       ShowAddMenberModalVisibile: false
     })
   }
-  addMenbersInProject = values => {
+  addMenbersInProject = (values, selectedMember) => {
     const { invitationType, board_id } = this.props
     const org_id = getOrgIdByBoardId(board_id)
     inviteMembersInWebJoin({
@@ -100,6 +99,7 @@ class VisitControl extends Component {
       board_id,
       org_id,
       values,
+      selectedMember,
       calback: this.handleInviteMemberReturnResult
     })
   }

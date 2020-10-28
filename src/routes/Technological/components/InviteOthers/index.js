@@ -23,7 +23,11 @@ import {
   currentNounPlanFilterName,
   setRequestHeaderBaseInfo
 } from '../../../../utils/businessFunction'
-import { PROJECTS, REQUEST_DOMAIN } from '../../../../globalset/js/constant'
+import {
+  PROJECTS,
+  REQUEST_DOMAIN,
+  REQUEST_INTERGFACE_VERSIONN
+} from '../../../../globalset/js/constant'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import Avatars from '@dicebear/avatars'
 import SpriteBoottts from '@dicebear/avatars-bottts-sprites'
@@ -698,7 +702,8 @@ class InviteOthers extends Component {
     })
   }
 
-  getUsersAvatar = user => {
+  // 注册用户并生成头像
+  getEnrollUsers = user => {
     let svg = this.avatars.create(user)
     let file = this.dataURLtoFile(
       'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg))),
@@ -707,11 +712,14 @@ class InviteOthers extends Component {
     let data = new FormData()
     data.append('file', file)
     return new Promise((resolve, reject) => {
-      this.axiosForSend(`${REQUEST_DOMAIN}/user/avatar/upload`, data)
+      this.axiosForSend(
+        `${REQUEST_DOMAIN}${REQUEST_INTERGFACE_VERSIONN}/user/invite?invitee_account=${user}`,
+        data
+      )
         .then(res => {
           // console.log(res)
           if (isApiResponseOk(res)) {
-            resolve(res.data.avatar_icon)
+            resolve(res.data.id)
           } else {
             reject({})
           }
@@ -755,14 +763,15 @@ class InviteOthers extends Component {
     return result
   }
 
-  getIcons = async () => {
-    let users = this.getRequestParams()
+  getIcons = async (users = []) => {
+    // let users = this.getRequestParams()
     for (let i = 0; i < users.length; i++) {
-      if (!users[i].user_id) {
-        const avatar_icon = await this.getUsersAvatar(
-          users[i].mobile ? users[i].mobile : users[i].email
-        )
-        users[i].avatar_icon = avatar_icon
+      if (!users[i].id) {
+        // const avatar_icon = await this.getUsersAvatar(
+        //   users[i].mobile ? users[i].mobile : users[i].email
+        // )
+        const user_id = await this.getEnrollUsers(users[i].user)
+        users[i].id = user_id
       }
     }
     return users
@@ -772,11 +781,8 @@ class InviteOthers extends Component {
   handleSubmitSeletedMember = () => {
     const { handleInviteMemberReturnResult } = this.props
     const { selectedMember } = this.state
-    this.getIcons().then(res => {
-      handleInviteMemberReturnResult({
-        selectedMember: res,
-        members: selectedMember
-      })
+    this.getIcons(selectedMember).then(users => {
+      handleInviteMemberReturnResult(users)
     })
     // handleInviteMemberReturnResult(new_selectedMember)
   }

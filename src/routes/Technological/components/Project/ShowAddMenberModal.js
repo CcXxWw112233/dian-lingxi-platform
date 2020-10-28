@@ -25,16 +25,15 @@ class ShowAddMenberModal extends React.Component {
     this.props.setShowAddMenberModalVisibile()
   }
   // 提交表单
-  handleSubmit = (selectedMember, members) => {
+  handleSubmit = ({ userStr, selectedMember }) => {
     // e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         values['board_id'] = this.props.board_id
-        values['users'] = selectedMember
-        values['members'] = members
+        values['users'] = userStr
         this.props.setShowAddMenberModalVisibile()
         this.props.addMenbersInProject
-          ? this.props.addMenbersInProject(values)
+          ? this.props.addMenbersInProject(values, selectedMember)
           : false
       }
     })
@@ -43,24 +42,30 @@ class ShowAddMenberModal extends React.Component {
     return users.reduce((acc, curr) => {
       const isCurrentUserFromPlatform = () =>
         curr.type === 'platform' && curr.id
-      if (isCurrentUserFromPlatform()) {
-        if (acc) {
-          return acc + ',' + curr.id
-        }
-        return curr.id
-      } else {
-        if (acc) {
-          return acc + ',' + curr.user
-        }
-        return curr.user
+      if (acc) {
+        return acc + ',' + curr.id
       }
+      return curr.id
+      // if (isCurrentUserFromPlatform()) {
+      //   if (acc) {
+      //     return acc + ',' + curr.id
+      //   }
+      //   return curr.id
+      // } else {
+      //   if (acc) {
+      //     return acc + ',' + curr.user
+      //   }
+      //   return curr.user
+      // }
     }, '')
   }
-  handleInviteMemberReturnResult = ({ selectedMember = [], members = [] }) => {
+  handleInviteMemberReturnResult = (selectedMember = []) => {
     // this.props.new_handleInviteMemberReturnResult &&
     //   this.props.new_handleInviteMemberReturnResult(selectedMember)
-    this.handleSubmit(selectedMember, members)
-    // this.handleSubmit(this.handleUsersToUsersStr(selectedMember))
+    this.handleSubmit({
+      userStr: this.handleUsersToUsersStr(selectedMember),
+      selectedMember
+    })
   }
 
   setWechatInviteVisible = () => {
