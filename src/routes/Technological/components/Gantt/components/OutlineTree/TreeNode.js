@@ -902,7 +902,7 @@ export default class TreeNode extends Component {
           style={{ color: 'rgba(0,0,0,0.2)' }}
         >
           {' '}
-          开始{' '}
+          {tree_type == '1' ? '--' : '开始'}{' '}
         </span>
       )
     }
@@ -916,7 +916,7 @@ export default class TreeNode extends Component {
       gantt_view_mode,
       projectDetailInfoData = {}
     } = this.props
-    let { due_time, is_has_end_time } = nodeValue
+    let { due_time, is_has_end_time, tree_type } = nodeValue
     if (gantt_view_mode == 'relative_time') {
       return (
         <TreeNodeSetRelativeTime
@@ -943,19 +943,22 @@ export default class TreeNode extends Component {
           style={{ color: 'rgba(0,0,0,0.2)' }}
         >
           {' '}
-          结束{' '}
+          {tree_type == '3' ? '--' : '结束'}{' '}
         </span>
       )
     }
-
+    if (tree_type == '3') return contain
     return this.renderDatePicker(contain, due_time, 'due_time')
   }
   disabledTime = (e, time_type) => {
     const {
-      nodeValue: { start_time, due_time }
+      nodeValue: { start_time, due_time, tree_type }
     } = this.state
     if (time_type == 'start_time') {
       if (!start_time) return false
+      if (tree_type == '3') {
+        return e.valueOf() > new Date().getTime()
+      }
       return e.valueOf() > due_time
     } else if (time_type == 'due_time') {
       if (!due_time) return false
@@ -993,6 +996,9 @@ export default class TreeNode extends Component {
           }
           format="YYYY/MM/DD HH:mm"
           onOk={e => this.setNodeTime(time_type, e.valueOf())}
+          onChange={e =>
+            date_format == '1' && this.setNodeTime(time_type, e.valueOf())
+          }
           showTime={
             date_format == '1'
               ? false
@@ -1001,6 +1007,7 @@ export default class TreeNode extends Component {
                   format: 'HH:mm'
                 }
           }
+          showToday={date_format == '1'}
           style={{
             opacity: 0,
             width: 'auto',
@@ -1016,8 +1023,22 @@ export default class TreeNode extends Component {
   setNodeTime = (key, value) => {
     const { nodeValue } = this.state
     const { tree_type, id } = nodeValue
-    let p_k = tree_type == '1' && key == 'due_time' ? 'deadline' : key
-    let action = 'edit_' + (tree_type == '1' ? 'milestone' : 'task')
+    // let p_k = tree_type == '1' && key == 'due_time' ? 'deadline' : key
+    // p_k = tree_type == '3' && key == 'start_time' ? 'deadline' : key
+    let p_k = key
+    if (tree_type == '1' && key == 'due_time') {
+      p_k = 'deadline'
+    } else if (tree_type == '3' && key == 'start_time') {
+      p_k = 'plan_start_time'
+    } else {
+    }
+
+    const actions = {
+      '1': 'milestone',
+      '2': 'task',
+      '3': 'work_flow'
+    }
+    const action = 'edit_' + actions[tree_type]
     if (this.props.onDataProcess) {
       this.props.onDataProcess({
         action,
