@@ -49,8 +49,13 @@ export default class CommonRelaItem extends React.Component {
     })
   }
   render() {
-    const { itemValue = {}, type, board_set = {} } = this.props
-    const { date_format, date_mode, relative_time } = board_set
+    const {
+      itemValue = {},
+      type,
+      board_set = {},
+      base_relative_time: relative_time
+    } = this.props
+    const { date_format, date_mode } = board_set
     const {
       id,
       name,

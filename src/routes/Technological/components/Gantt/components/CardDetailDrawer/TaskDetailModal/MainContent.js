@@ -659,9 +659,13 @@ export default class MainContent extends Component {
 
   // 渲染开始时间
   renderStartTime = () => {
-    const { drawContent = {}, projectDetailInfoData = {} } = this.props
-    const { board_set = {} } = projectDetailInfoData
-    const { relative_time } = board_set
+    const {
+      drawContent = {},
+      projectDetailInfoData = {},
+      base_relative_time: relative_time
+    } = this.props
+    // const { board_set = {} } = projectDetailInfoData
+    // const { relative_time } = board_set
     const { start_time } = drawContent
     const day_value =
       start_time && start_time != '0'
@@ -673,7 +677,7 @@ export default class MainContent extends Component {
         <InputNumber
           min={0}
           onChange={this.handleStartRelativeChange}
-          value={day_value ? day_value : ''}
+          value={day_value ? day_value : 0}
           style={{ width: '68px' }}
         />
         &nbsp;日
@@ -731,9 +735,13 @@ export default class MainContent extends Component {
 
   // 渲染截止时间
   renderDueTime = () => {
-    const { drawContent = {}, projectDetailInfoData = {} } = this.props
-    const { board_set = {} } = projectDetailInfoData
-    const { relative_time } = board_set
+    const {
+      drawContent = {},
+      projectDetailInfoData = {},
+      base_relative_time: relative_time
+    } = this.props
+    // const { board_set = {} } = projectDetailInfoData
+    // const { relative_time } = board_set
     const { due_time } = drawContent
     const day_value =
       due_time && due_time != '0' ? caldiffDays(relative_time, due_time) : ''
@@ -743,7 +751,7 @@ export default class MainContent extends Component {
         <InputNumber
           min={0}
           onChange={this.handleDueRelativeChange}
-          value={day_value ? day_value : ''}
+          value={day_value ? day_value : 0}
           style={{ width: '68px' }}
         />
         &nbsp;日
@@ -810,10 +818,11 @@ export default class MainContent extends Component {
     const {
       drawContent = {},
       milestoneList = [],
-      projectDetailInfoData = {}
+      projectDetailInfoData = {},
+      base_relative_time: relative_time
     } = this.props
-    const { board_set = {} } = projectDetailInfoData
-    const { relative_time } = board_set
+    // const { board_set = {} } = projectDetailInfoData
+    // const { relative_time } = board_set
     const {
       card_id,
       card_name,
@@ -1329,7 +1338,7 @@ function mapStateToProps({
     datas: { projectDetailInfoData = {} }
   },
   gantt: {
-    datas: { group_view_type, selected_card_visible }
+    datas: { group_view_type, selected_card_visible, base_relative_time }
   },
   publicFileDetailModal: {
     isInOpenFile,
@@ -1359,6 +1368,7 @@ function mapStateToProps({
     filePreviewCurrentName,
     simplemodeCurrentProject,
     userBoardPermissions,
-    card_list_group
+    card_list_group,
+    base_relative_time
   }
 }
