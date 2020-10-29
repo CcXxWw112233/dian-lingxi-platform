@@ -381,7 +381,7 @@ class InviteOthers extends Component {
       state => {
         const { selectedMember } = state
         return {
-          selectedMember: selectedMember.filter(i => i.user !== item.user)
+          selectedMember: selectedMember.filter(i => i.id !== item.id)
         }
       },
       () => {
@@ -394,9 +394,8 @@ class InviteOthers extends Component {
   addMemberToSelectedMember = item => {
     const { selectedMember } = this.state
     const isMemberHasInSelectedMember = () =>
-      selectedMember.find(each => each.user === item.user)
+      selectedMember.find(each => each.id === item.id)
     if (isMemberHasInSelectedMember()) return
-
     this.setState(
       {
         selectedMember: [item, ...selectedMember]
@@ -417,11 +416,9 @@ class InviteOthers extends Component {
   handleToggleMemberInSelectedMember = (item, e) => {
     if (e) e.stopPropagation()
     const { selectedMember } = this.state
-
     const member = this.genUserToDefinedMember(item)
-
     const isMemberHasInSelectedMember = () =>
-      selectedMember.find(each => each.user === member.user)
+      selectedMember.find(each => each.id === member.id)
     if (isMemberHasInSelectedMember()) {
       return this.delFromSelectedMember(member)
     }
@@ -438,7 +435,7 @@ class InviteOthers extends Component {
     const { selectedMember } = this.state
     const mobileOrEmail = item.mobile ? item.mobile : item.email
     return selectedMember.find(
-      each => each.type === 'platform' && each.user === mobileOrEmail
+      each => each.type === 'platform' && each.id == item.id
     )
   }
 
