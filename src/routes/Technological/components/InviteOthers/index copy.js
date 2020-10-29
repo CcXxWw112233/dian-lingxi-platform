@@ -22,7 +22,6 @@ import noDataImg from './asset/no_data_select.png'
 import { currentNounPlanFilterName } from '../../../../utils/businessFunction'
 import { PROJECTS } from '../../../../globalset/js/constant'
 import Avatars from '@dicebear/avatars'
-import SpriteCollection from '@dicebear/avatars-bottts-sprites'
 let cx = classNames.bind(styles)
 
 const Option = Select.Option
