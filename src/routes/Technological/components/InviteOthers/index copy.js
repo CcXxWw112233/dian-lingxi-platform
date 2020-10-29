@@ -21,7 +21,6 @@ import { isApiResponseOk } from '../../../../utils/handleResponseData'
 import noDataImg from './asset/no_data_select.png'
 import { currentNounPlanFilterName } from '../../../../utils/businessFunction'
 import { PROJECTS } from '../../../../globalset/js/constant'
-import Avatars from '@dicebear/avatars'
 let cx = classNames.bind(styles)
 
 const Option = Select.Option
@@ -57,14 +56,6 @@ class InviteOthers extends Component {
       isInSelectedList: false, //是否仅显示列表的
       step: 'home' //当前的步进 home || group-list || group-id || project-list ||project-id
     }
-  }
-
-  componentDidMount() {
-    console.log('进来了')
-    let options = {}
-    let avatars = new Avatars('bottts', options)
-    let svg = avatars.create('custom-seed')
-    console.log(svg)
   }
 
   // 验证手机号或者是邮箱
