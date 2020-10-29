@@ -1070,6 +1070,10 @@ export default class TreeNode extends Component {
   // 根据传入的字段确定显示
   renderForColumns = () => {
     const { defaultColumns = [] } = this.props
+    const {
+      nodeValue: { add_id }
+    } = this.state
+
     const arr = [
       { key: 'item_start_time', component: this.renderStartTime },
       { key: 'item_end_time', component: this.renderEndTime },
@@ -1081,7 +1085,7 @@ export default class TreeNode extends Component {
       if (defaultColumns.includes(item.key)) {
         return (
           <div className={styles[item.key]} key={item.key}>
-            {item.component(item.key)}
+            {!add_id && item.component(item.key)}
           </div>
         )
       } else {
