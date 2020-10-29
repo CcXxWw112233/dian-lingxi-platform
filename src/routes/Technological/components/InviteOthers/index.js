@@ -29,8 +29,8 @@ import {
   REQUEST_INTERGFACE_VERSIONN
 } from '../../../../globalset/js/constant'
 import globalStyles from '@/globalset/css/globalClassName.less'
-import Avatars from '@dicebear/avatars'
-import SpriteBoottts from '@dicebear/avatars-bottts-sprites'
+// import Avatars from '@dicebear/avatars'
+// import SpriteBoottts from '@dicebear/avatars-bottts-sprites'
 import Cookies from 'js-cookie'
 import axios from 'axios'
 let cx = classNames.bind(styles)
@@ -73,7 +73,7 @@ class InviteOthers extends Component {
       width: 32,
       height: 32
     }
-    this.avatars = new Avatars(SpriteBoottts, this.options)
+    this.avatars = {}
   }
 
   // 验证手机号或者是邮箱
@@ -335,17 +335,14 @@ class InviteOthers extends Component {
   // 给用户设置的默认身份等...
   genOptionLabel = item => {
     const { avatar, user, name } = item
-    let svg = this.avatars.create(user)
+    // let svg = this.avatars.create(user)
     //默认
     if (avatar === 'default') {
       return (
         <p className={styles.input__select_wrapper}>
           <span className={styles.input__select_avatar_img}>
             <img
-              src={
-                'data:image/svg+xml;base64,' +
-                btoa(unescape(encodeURIComponent(svg)))
-              }
+              src={defaultUserAvatar}
               style={{ borderRadius: '50%' }}
               width="24"
               height="24"
@@ -702,32 +699,32 @@ class InviteOthers extends Component {
   }
 
   // 注册用户并生成头像
-  getEnrollUsers = user => {
-    let svg = this.avatars.create(user)
-    let file = this.dataURLtoFile(
-      'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg))),
-      user + '.svg'
-    )
-    let data = new FormData()
-    data.append('file', file)
-    return new Promise((resolve, reject) => {
-      this.axiosForSend(
-        `${REQUEST_DOMAIN}${REQUEST_INTERGFACE_VERSIONN}/user/invite?invitee_account=${user}`,
-        data
-      )
-        .then(res => {
-          // console.log(res)
-          if (isApiResponseOk(res)) {
-            resolve(res.data.id)
-          } else {
-            reject({})
-          }
-        })
-        .catch(err => {
-          message.warn('上传头像失败，请稍后重试')
-        })
-    })
-  }
+  // getEnrollUsers = user => {
+  //   let svg = this.avatars.create(user)
+  //   let file = this.dataURLtoFile(
+  //     'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg))),
+  //     user + '.svg'
+  //   )
+  //   let data = new FormData()
+  //   data.append('file', file)
+  //   return new Promise((resolve, reject) => {
+  //     this.axiosForSend(
+  //       `${REQUEST_DOMAIN}${REQUEST_INTERGFACE_VERSIONN}/user/invite?invitee_account=${user}`,
+  //       data
+  //     )
+  //       .then(res => {
+  //         // console.log(res)
+  //         if (isApiResponseOk(res)) {
+  //           resolve(res.data.id)
+  //         } else {
+  //           reject({})
+  //         }
+  //       })
+  //       .catch(err => {
+  //         message.warn('上传头像失败，请稍后重试')
+  //       })
+  //   })
+  // }
 
   getRequestParams = () => {
     const { selectedMember = [] } = this.state
@@ -780,10 +777,10 @@ class InviteOthers extends Component {
   handleSubmitSeletedMember = () => {
     const { handleInviteMemberReturnResult } = this.props
     const { selectedMember } = this.state
-    this.getIcons(selectedMember).then(users => {
-      handleInviteMemberReturnResult(users)
-    })
-    // handleInviteMemberReturnResult(new_selectedMember)
+    // this.getIcons(selectedMember).then(users => {
+    //   handleInviteMemberReturnResult(users)
+    // })
+    handleInviteMemberReturnResult(selectedMember)
   }
 
   componentDidMount() {
@@ -984,7 +981,7 @@ class InviteOthers extends Component {
           <div className={styles.invite__result_wrapper}>
             <div className={styles.invite__result_list}>
               {selectedMember.map(item => {
-                let svg = this.avatars.create(item.user)
+                // let svg = this.avatars.create(item.user)
                 return (
                   <div
                     key={item.user}
@@ -1001,8 +998,7 @@ class InviteOthers extends Component {
                         <img
                           src={
                             item.type === 'other'
-                              ? 'data:image/svg+xml;base64,' +
-                                btoa(unescape(encodeURIComponent(svg)))
+                              ? defaultUserAvatar
                               : this.isAvatarValid(item.icon)
                               ? item.icon
                               : defaultUserAvatar
@@ -1092,7 +1088,6 @@ class InviteOthers extends Component {
                     )}
                   </div>
                   {sortedMembersListToSelect.map(item => {
-                    let svg = this.avatars.create(item.name)
                     return (
                       <div
                         key={item.id}

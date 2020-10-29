@@ -6,8 +6,9 @@ import {
 import { getOrgIdByBoardId, setRequestHeaderBaseInfo } from './businessFunction'
 import { isApiResponseOk } from './handleResponseData'
 
-import Avatars from '@dicebear/avatars'
-import SpriteBoottts from '@dicebear/avatars-bottts-sprites'
+// import Avatars from '@dicebear/avatars'
+// import SpriteBoottts from '@dicebear/avatars-bottts-sprites'
+// import SpriteMale from '@dicebear/avatars-male-sprites'
 import {
   REQUEST_DOMAIN,
   REQUEST_INTERGFACE_VERSIONN
@@ -19,7 +20,8 @@ const options = {
   width: 32,
   height: 32
 }
-const avatars = new Avatars(SpriteBoottts, options)
+// const avatars = new Avatars(SpriteMale, options)
+const avatars = { create: () => {} }
 
 /**
  * 邀请成员 进组织和项目

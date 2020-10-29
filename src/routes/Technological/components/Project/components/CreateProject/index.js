@@ -552,6 +552,19 @@ class CreateProject extends React.Component {
         board_id: select_project_id,
         ...copy_value
       }
+      const params = {
+        apps,
+        users: this.handleUsersToUsersStr(users),
+        _organization_id: _organization_id || OrganizationId,
+        board_name,
+        copy: JSON.stringify(copy_obj),
+        template_id: selected_board_template_id
+      }
+      this.props.addNewProject ? this.props.addNewProject(params) : false
+      this.props.setAddProjectModalVisible &&
+        this.props.setAddProjectModalVisible({ visible: false })
+      this.initData()
+      return
       getIcons(users).then(users => {
         const params = {
           apps,
@@ -567,6 +580,19 @@ class CreateProject extends React.Component {
         this.initData()
       })
     } else {
+      let apps = appsList.map(item => item.id).join(',')
+      const params = {
+        apps,
+        users: this.handleUsersToUsersStr(users),
+        _organization_id: _organization_id || OrganizationId,
+        board_name,
+        template_id: selected_board_template_id
+      }
+      this.props.addNewProject ? this.props.addNewProject(params) : false
+      this.props.setAddProjectModalVisible &&
+        this.props.setAddProjectModalVisible({ visible: false })
+      this.initData()
+      return
       getIcons(users).then(users => {
         let apps = appsList.map(item => item.id).join(',')
         const params = {
