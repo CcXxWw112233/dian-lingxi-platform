@@ -979,7 +979,8 @@ export default class GetRowGantt extends Component {
       show_board_fold,
       outline_tree_round,
       gantt_view_mode,
-      active_baseline_data
+      active_baseline_data,
+      date_arr_one_level
     } = this.props
     return (
       <>
@@ -1037,10 +1038,15 @@ export default class GetRowGantt extends Component {
                   : parent_expand && is_expand
               if (
                 !parent_expand ||
-                !left ||
+                // !left ||
                 (gantt_view_mode == 'year' && !!parent_card_id)
               ) {
                 return <></>
+              }
+              if (!left) {
+                if (!isSamDay(date_arr_one_level[0].timestamp, start_time)) {
+                  return <></>
+                }
               }
               if (tree_type == '2') {
                 return (

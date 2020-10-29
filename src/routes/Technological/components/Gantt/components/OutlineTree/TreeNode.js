@@ -118,7 +118,7 @@ export default class TreeNode extends Component {
     const gold_time = tree_type == '1' ? due_time : start_time
     const date = new Date(gold_time).getDate()
     let toDayIndex = -1
-    if (gantt_view_mode == 'month' || gantt_view_mode == 'hours') {
+    if (['month', 'hours', 'relative_time'].includes(gantt_view_mode)) {
       toDayIndex = date_arr_one_level.findIndex(item =>
         isSamDay(item.timestamp, gold_time)
       ) //当天所在位置index
@@ -633,6 +633,13 @@ export default class TreeNode extends Component {
     } else {
       type = this.props.type
     }
+    if (tree_type == '3') {
+      return (
+        <div style={{ color: 'rgba(0,0,0,.25)', textAlign: 'center' }}>
+          <span>--</span>
+        </div>
+      )
+    }
     return (
       <span>
         {tree_type != '0' && (
@@ -1063,6 +1070,10 @@ export default class TreeNode extends Component {
   // 根据传入的字段确定显示
   renderForColumns = () => {
     const { defaultColumns = [] } = this.props
+    const {
+      nodeValue: { add_id }
+    } = this.state
+
     const arr = [
       { key: 'item_start_time', component: this.renderStartTime },
       { key: 'item_end_time', component: this.renderEndTime },
@@ -1074,7 +1085,7 @@ export default class TreeNode extends Component {
       if (defaultColumns.includes(item.key)) {
         return (
           <div className={styles[item.key]} key={item.key}>
-            {item.component(item.key)}
+            {!add_id && item.component(item.key)}
           </div>
         )
       } else {
