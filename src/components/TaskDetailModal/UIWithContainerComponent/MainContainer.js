@@ -199,6 +199,14 @@ const LogicWithMainContent = {
               drawerVisible: false
             }
           })
+          if (this.props.selected_card_visible) {
+            dispatch({
+              type: 'gantt/updateDatas',
+              payload: {
+                selected_card_visible: false
+              }
+            })
+          }
           this.linkImWithCard(null)
         }, 500)
       }
