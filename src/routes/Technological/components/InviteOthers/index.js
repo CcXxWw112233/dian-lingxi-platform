@@ -33,7 +33,6 @@ import Avatars from '@dicebear/avatars'
 import SpriteBoottts from '@dicebear/avatars-bottts-sprites'
 import Cookies from 'js-cookie'
 import axios from 'axios'
-import { reject, resolve } from 'promise-polyfill'
 let cx = classNames.bind(styles)
 
 const Option = Select.Option
