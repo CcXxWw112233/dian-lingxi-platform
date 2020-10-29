@@ -1296,7 +1296,7 @@ export default class HeaderContentRightMenu extends Component {
             </div>
 
             {/* 分享协作 */}
-            <div className={headerStyles.share_wrapper}>
+            {/* <div className={headerStyles.share_wrapper}>
               {file_id && (
                 <div
                   style={{
@@ -1305,7 +1305,6 @@ export default class HeaderContentRightMenu extends Component {
                     marginRight: '10px'
                   }}
                 >
-                  {/* 分享协作 */}
                   <span>
                     {is_shared === '1' ? (
                       <span
@@ -1353,7 +1352,7 @@ export default class HeaderContentRightMenu extends Component {
                   </span>
                 </div>
               )}
-            </div>
+            </div> */}
 
             {/* 访问控制 */}
             <div className={headerStyles.margin_right10}>
