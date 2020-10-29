@@ -20,6 +20,5 @@ export default {
   },
   html: {
     template: './public/index.ejs'
-  },
-  es5ImcompatibleVersions: true
+  }
 }
