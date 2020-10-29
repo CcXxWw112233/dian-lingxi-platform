@@ -31,7 +31,10 @@ export default class AddMultiplePomp extends Component {
   }
   onChange = ({ target: { value } }) => {
     const text_rows = value.split(/\n/) || []
-    const names = text_rows.filter(item => item)
+    const names = text_rows.filter(item => item.replace(/\s/gim, ''))
+    console.log('sssatext_rows_1', text_rows)
+    console.log('sssatext_rows_2', names)
+
     this.setState({
       text_value: value,
       create_total: names.length,

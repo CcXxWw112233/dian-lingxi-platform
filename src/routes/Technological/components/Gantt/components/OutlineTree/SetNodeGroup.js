@@ -227,10 +227,20 @@ export default class SetNodeGroup extends Component {
     let {
       nodeValue: { id },
       outline_tree = [],
-      dispatch
+      dispatch,
+      nodeValue: { tree_type }
     } = this.props
     let node = OutlineTree.getTreeNodeValue(outline_tree, id)
     node.list_id = list_id
+    // 父任务下所有子任务的分组和父任务一致
+    if (tree_type == '2') {
+      if (node.children) {
+        node.children = node.children.map(item => {
+          item.list_id = list_id
+          return item
+        })
+      }
+    }
     dispatch({
       type: 'gantt/handleOutLineTreeData',
       payload: {
@@ -247,7 +257,7 @@ export default class SetNodeGroup extends Component {
     const groups = this.getCardGroups()
     return groups.find(item => item.list_id == selected_list_id)?.list_name
   }
-  render() {
+  renderDrop = () => {
     const { create_group_visible, group_value } = this.state
     return (
       <Dropdown
@@ -267,6 +277,34 @@ export default class SetNodeGroup extends Component {
         </div>
       </Dropdown>
     )
+  }
+  renderTarget = () => {
+    const {
+      nodeValue: { tree_type, parent_card_id }
+    } = this.props
+    let vdom = ''
+    if (tree_type == '3') {
+      vdom = (
+        <div>
+          <span style={{ color: 'rgba(0,0,0,.25)' }}>--</span>
+        </div>
+      )
+    } else if (tree_type == '2' && !!parent_card_id) {
+      vdom = (
+        <div>
+          {this.renderName() || (
+            <span style={{ color: 'rgba(0,0,0,.25)' }}>--</span>
+          )}
+        </div>
+      )
+    } else {
+      vdom = this.renderDrop()
+    }
+    return vdom
+  }
+  render() {
+    // 子任务和流程没有分组，子任务分组跟随父类任务
+    return this.renderTarget()
   }
 }
 

@@ -21,7 +21,6 @@ import {
 } from '@/utils/businessFunction.js'
 import { message } from 'antd'
 import { Im, lx_utils } from 'lingxi-im'
-import { resolve } from 'promise-polyfill'
 
 @connect(mapStateToProps)
 export default class BoardCommuicationFileDetailContainer extends Component {
@@ -30,7 +29,7 @@ export default class BoardCommuicationFileDetailContainer extends Component {
     this.state = {
       filePreviewCurrentFileId: props.filePreviewCurrentFileId,
       fileType: props.fileType,
-      fileFileUrl: ""
+      fileFileUrl: ''
     }
   }
 
@@ -92,25 +91,27 @@ export default class BoardCommuicationFileDetailContainer extends Component {
 
   initStateDatas = ({ data }) => {
     return new Promise(resolve => {
-      this.setState({
-        filePreviewCurrentResourceId: data.base_info.file_resource_id, // 需要保存源文件ID
-        currentPreviewFileData: data.base_info, // 当前文件的详情内容
-        filePreviewIsUsable: data.preview_info.is_usable,
-        filePreviewUrl: data.preview_info.url, // 文件路径
-        fileFileUrl: data.preview_info.preview_url, //文件真实路径
-        filePreviewIsRealImage: data.preview_info.is_real_image, // 是否是真的图片
-        filePreviewCurrentName: data.base_info.file_name, // 当前文件的名称
-        fileType: getSubfixName(data.base_info.file_name), // 文件的后缀名
-        targetFilePath: data.target_path, // 当前文件路径
-        filePreviewCurrentVersionList: data.version_list, // 文件的版本列表
-        filePreviewCurrentVersionId: data.version_list.length
-          ? data.version_list[0]['version_id']
-          : '' // 保存一个当前版本ID
-      }, ()=> {
-        resolve()
-      })
+      this.setState(
+        {
+          filePreviewCurrentResourceId: data.base_info.file_resource_id, // 需要保存源文件ID
+          currentPreviewFileData: data.base_info, // 当前文件的详情内容
+          filePreviewIsUsable: data.preview_info.is_usable,
+          filePreviewUrl: data.preview_info.url, // 文件路径
+          fileFileUrl: data.preview_info.preview_url, //文件真实路径
+          filePreviewIsRealImage: data.preview_info.is_real_image, // 是否是真的图片
+          filePreviewCurrentName: data.base_info.file_name, // 当前文件的名称
+          fileType: getSubfixName(data.base_info.file_name), // 文件的后缀名
+          targetFilePath: data.target_path, // 当前文件路径
+          filePreviewCurrentVersionList: data.version_list, // 文件的版本列表
+          filePreviewCurrentVersionId: data.version_list.length
+            ? data.version_list[0]['version_id']
+            : '' // 保存一个当前版本ID
+        },
+        () => {
+          resolve()
+        }
+      )
     })
-
   }
 
   linkImWithFile = data => {
@@ -201,17 +202,18 @@ export default class BoardCommuicationFileDetailContainer extends Component {
       fileInfoByUrl({ id }).then(res => {
         // 获取详情的接口
         if (isApiResponseOk(res)) {
-          this.initStateDatas({ data: res.data }).then( _ => {
-            resolve(res.data);
+          this.initStateDatas({ data: res.data }).then(_ => {
+            resolve(res.data)
           })
 
           // this.linkImWithFile({name: res.data.base_info.file_name, type: 'file', board_id: res.data.base_info.board_id, id: res.data.base_info.id, currentPreviewFileVersionId: res.data.base_info.version_id})
         } else {
-          reject(res);
+          reject(res)
           message.warn(res.message)
           let currentPreviewFileVersionId = this.getCurrentFilePreviewVersionId()
           setTimeout(() => {
-            this.props.hideUpdatedFileDetail && this.props.hideUpdatedFileDetail()
+            this.props.hideUpdatedFileDetail &&
+              this.props.hideUpdatedFileDetail()
             lx_utils &&
               lx_utils.setCommentData(currentPreviewFileVersionId || id || null)
           }, 500)

@@ -32,6 +32,7 @@ import { connect } from 'dva'
 import { getAppsList } from '../../../../../../services/technological/project'
 import { getBoardTemplateList } from '../../../../../../services/technological/gantt'
 import globalStyles from '@/globalset/css/globalClassName.less'
+import { getIcons } from '../../../../../../utils/inviteMembersInWebJoin'
 
 const FormItem = Form.Item
 const TextArea = Input.TextArea
@@ -203,19 +204,23 @@ class CreateProject extends React.Component {
 
   handleUsersToUsersStr = (users = []) => {
     return users.reduce((acc, curr) => {
-      const isCurrentUserFromPlatform = () =>
-        curr.type === 'platform' && curr.id
-      if (isCurrentUserFromPlatform()) {
-        if (acc) {
-          return acc + ',' + curr.id
-        }
-        return curr.id
-      } else {
-        if (acc) {
-          return acc + ',' + curr.user
-        }
-        return curr.user
+      if (acc) {
+        return acc + ',' + curr.id
       }
+      return curr.id
+      // const isCurrentUserFromPlatform = () =>
+      //   curr.type === 'platform' && curr.id
+      // if (isCurrentUserFromPlatform()) {
+      //   if (acc) {
+      //     return acc + ',' + curr.id
+      //   }
+      //   return curr.id
+      // } else {
+      //   if (acc) {
+      //     return acc + ',' + curr.user
+      //   }
+      //   return curr.user
+      // }
     }, '')
   }
   handleInviteMemberReturnResult = selectedMember => {
@@ -556,8 +561,25 @@ class CreateProject extends React.Component {
         template_id: selected_board_template_id
       }
       this.props.addNewProject ? this.props.addNewProject(params) : false
+      this.props.setAddProjectModalVisible &&
+        this.props.setAddProjectModalVisible({ visible: false })
+      this.initData()
+      return
+      getIcons(users).then(users => {
+        const params = {
+          apps,
+          users: this.handleUsersToUsersStr(users),
+          _organization_id: _organization_id || OrganizationId,
+          board_name,
+          copy: JSON.stringify(copy_obj),
+          template_id: selected_board_template_id
+        }
+        this.props.addNewProject ? this.props.addNewProject(params) : false
+        this.props.setAddProjectModalVisible &&
+          this.props.setAddProjectModalVisible({ visible: false })
+        this.initData()
+      })
     } else {
-      // let apps = appsList.filter(item => 'Tasks' == item.code || 'Files' == item.code).map(item => item.id).join(',')
       let apps = appsList.map(item => item.id).join(',')
       const params = {
         apps,
@@ -567,6 +589,25 @@ class CreateProject extends React.Component {
         template_id: selected_board_template_id
       }
       this.props.addNewProject ? this.props.addNewProject(params) : false
+      this.props.setAddProjectModalVisible &&
+        this.props.setAddProjectModalVisible({ visible: false })
+      this.initData()
+      return
+      getIcons(users).then(users => {
+        let apps = appsList.map(item => item.id).join(',')
+        const params = {
+          apps,
+          users: this.handleUsersToUsersStr(users),
+          _organization_id: _organization_id || OrganizationId,
+          board_name,
+          template_id: selected_board_template_id
+        }
+        this.props.addNewProject ? this.props.addNewProject(params) : false
+        this.props.setAddProjectModalVisible &&
+          this.props.setAddProjectModalVisible({ visible: false })
+        this.initData()
+      })
+      // let apps = appsList.filter(item => 'Tasks' == item.code || 'Files' == item.code).map(item => item.id).join(',')
     }
     // const apps = appsList.filter(item => 'Tasks' == item.code || 'Files' == item.code).map(item => item.id).join(',')
     // // copy: "{"board_id":"1206490600661192704","flows":{"is_copy_flow_template":true}}
@@ -578,9 +619,9 @@ class CreateProject extends React.Component {
 
     // }
     // this.props.addNewProject ? this.props.addNewProject(params) : false
-    this.props.setAddProjectModalVisible &&
-      this.props.setAddProjectModalVisible({ visible: false })
-    this.initData()
+    // this.props.setAddProjectModalVisible &&
+    //   this.props.setAddProjectModalVisible({ visible: false })
+    // this.initData()
   }
   render() {
     const { addProjectModalVisible } = this.props

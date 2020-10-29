@@ -19,20 +19,8 @@ import {
 } from './../../../../services/technological/organizationMember'
 import { isApiResponseOk } from '../../../../utils/handleResponseData'
 import noDataImg from './asset/no_data_select.png'
-import {
-  currentNounPlanFilterName,
-  setRequestHeaderBaseInfo
-} from '../../../../utils/businessFunction'
-import {
-  PROJECTS,
-  REQUEST_DOMAIN,
-  REQUEST_INTERGFACE_VERSIONN
-} from '../../../../globalset/js/constant'
-import globalStyles from '@/globalset/css/globalClassName.less'
-// import Avatars from '@dicebear/avatars'
-// import SpriteBoottts from '@dicebear/avatars-bottts-sprites'
-import Cookies from 'js-cookie'
-import axios from 'axios'
+import { currentNounPlanFilterName } from '../../../../utils/businessFunction'
+import { PROJECTS } from '../../../../globalset/js/constant'
 let cx = classNames.bind(styles)
 
 const Option = Select.Option
@@ -68,12 +56,6 @@ class InviteOthers extends Component {
       isInSelectedList: false, //是否仅显示列表的
       step: 'home' //当前的步进 home || group-list || group-id || project-list ||project-id
     }
-    this.options = {
-      radius: 32,
-      width: 32,
-      height: 32
-    }
-    this.avatars = {}
   }
 
   // 验证手机号或者是邮箱
@@ -148,19 +130,6 @@ class InviteOthers extends Component {
       user,
       id: id ? id : ''
     }
-  }
-
-  // base64转文件
-  dataURLtoFile = (dataurl, filename) => {
-    var arr = dataurl.split(','),
-      mime = arr[0].match(/:(.*?);/)[1],
-      bstr = atob(arr[1]),
-      n = bstr.length,
-      u8arr = new Uint8Array(n)
-    while (n--) {
-      u8arr[n] = bstr.charCodeAt(n)
-    }
-    return new File([u8arr], filename, { type: mime })
   }
 
   // 进行搜索, 发送请求
@@ -251,14 +220,14 @@ class InviteOthers extends Component {
               this.setState({
                 fetching: false
               })
-              // message.error('获取联想用户失败')
+              message.error('获取联想用户失败')
             }
           })
           .catch(err => {
             this.setState({
               fetching: false
             })
-            // message.error('获取联想用户失败')
+            message.error('获取联想用户失败')
           })
       }
     )
@@ -270,11 +239,7 @@ class InviteOthers extends Component {
     const selectedUser = this.parseUserValueStr(value.key)
     const isHasSameMemberInSelectedMember = () =>
       selectedMember.find(item =>
-        item.id
-          ? item.id === selectedUser.id
-          : item.user
-          ? item.user === selectedUser.user
-          : false
+        item.id ? item.id === selectedUser.id : false
       )
     //如果该用户已经在被选择的列表中了
     if (isHasSameMemberInSelectedMember()) {
@@ -304,7 +269,7 @@ class InviteOthers extends Component {
   handleReturnResultWhenNotShowSubmitBtn = () => {
     const { handleInviteMemberReturnResult, isShowSubmitBtn } = this.props
     if (isShowSubmitBtn) return
-    const { selectedMember = [] } = this.state
+    const { selectedMember } = this.state
     handleInviteMemberReturnResult(selectedMember)
   }
 
@@ -335,24 +300,12 @@ class InviteOthers extends Component {
   // 给用户设置的默认身份等...
   genOptionLabel = item => {
     const { avatar, user, name } = item
-    // let svg = this.avatars.create(user)
     //默认
     if (avatar === 'default') {
       return (
         <p className={styles.input__select_wrapper}>
-          <span className={styles.input__select_avatar_img}>
-            <img
-              src={defaultUserAvatar}
-              style={{ borderRadius: '50%' }}
-              width="24"
-              height="24"
-              alt=""
-            />
-          </span>
+          {/* <span className={styles.input__select_default_avatar} /> */}
           <span className={styles.input__select_user}>{user}</span>
-          <span className={styles.input__select_name}>
-            ({name ? name : '匿名用户'})
-          </span>
         </p>
       )
     }
@@ -381,9 +334,7 @@ class InviteOthers extends Component {
       state => {
         const { selectedMember } = state
         return {
-          selectedMember: selectedMember.filter(
-            i => i.id !== (item.id || item.user_id)
-          )
+          selectedMember: selectedMember.filter(i => i.user !== item.user)
         }
       },
       () => {
@@ -396,8 +347,9 @@ class InviteOthers extends Component {
   addMemberToSelectedMember = item => {
     const { selectedMember } = this.state
     const isMemberHasInSelectedMember = () =>
-      selectedMember.find(each => each.id === (item.id || item.user_id))
+      selectedMember.find(each => each.user === item.user)
     if (isMemberHasInSelectedMember()) return
+
     this.setState(
       {
         selectedMember: [item, ...selectedMember]
@@ -418,9 +370,11 @@ class InviteOthers extends Component {
   handleToggleMemberInSelectedMember = (item, e) => {
     if (e) e.stopPropagation()
     const { selectedMember } = this.state
+
     const member = this.genUserToDefinedMember(item)
+
     const isMemberHasInSelectedMember = () =>
-      selectedMember.find(each => each.id === (member.id || member.user_id))
+      selectedMember.find(each => each.user === member.user)
     if (isMemberHasInSelectedMember()) {
       return this.delFromSelectedMember(member)
     }
@@ -437,7 +391,7 @@ class InviteOthers extends Component {
     const { selectedMember } = this.state
     const mobileOrEmail = item.mobile ? item.mobile : item.email
     return selectedMember.find(
-      each => each.type === 'platform' && each.id == (item.id || item.user_id)
+      each => each.type === 'platform' && each.user === mobileOrEmail
     )
   }
 
@@ -502,14 +456,9 @@ class InviteOthers extends Component {
     fetchProjectList()
   }
 
-  /**
-   * 从具体的项目列表中选择一个项目
-   * @param {String} id 当前选择的项目ID
-   * @param {Object} e 事件对象
-   */
+  // 从项目列表中邀请
   handleClickedInviteFromProjectList = (id, e) => {
     if (e) e.stopPropagation()
-    // 获取当前点击项目的成员
     const getProjectMembers = () => {
       const { projectUserList } = this.state
       const findProject = projectUserList.find(item => item.board_id === id)
@@ -530,14 +479,9 @@ class InviteOthers extends Component {
     })
   }
 
-  /**
-   * 从分组列表中选择具体分组
-   * @param {String} id 表示当前点击的分组ID
-   * @param {Object} e 事件对象
-   */
+  // 从分组列表中邀请
   handleClickedInviteFromGroupList = (id, e) => {
     if (e) e.stopPropagation()
-    // 获取当前点击该分组的成员
     const getGroupMembers = () => {
       const { groupList = [] } = this.state
       const findGroup = groupList.find(item => item.id === id)
@@ -546,11 +490,9 @@ class InviteOthers extends Component {
         : false
       return isGroupWithMembers ? findGroup.members : []
     }
-    // 并为获取的成员添加full_name
     const nameToFullname = getGroupMembers().map(item =>
       Object.assign({}, item, { full_name: item.name })
     )
-    // 然后更新当前进行的步骤
     this.setPageStep(false, `group-${id}`, nameToFullname)
   }
 
@@ -690,74 +632,10 @@ class InviteOthers extends Component {
     return srcRegExp.test(srcStr)
   }
 
-  // axiosForSend = (url, data) => {
-  //   const Authorization = Cookies.get('Authorization')
-  //   return new Promise((resolve, reject) => {
-  //     axios
-  //       .post(url, data, {
-  //         headers: {
-  //           Authorization,
-  //           ...setRequestHeaderBaseInfo({ data, headers: {}, params: {} })
-  //         }
-  //       })
-  //       .then(res => {
-  //         resolve(res.data)
-  //       })
-  //       .catch(err => {
-  //         reject(err)
-  //       })
-  //   })
-  // }
-
-  // 注册用户并生成头像
-  // getEnrollUsers = user => {
-  //   let svg = this.avatars.create(user)
-  //   let file = this.dataURLtoFile(
-  //     'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg))),
-  //     user + '.svg'
-  //   )
-  //   let data = new FormData()
-  //   data.append('file', file)
-  //   return new Promise((resolve, reject) => {
-  //     this.axiosForSend(
-  //       `${REQUEST_DOMAIN}${REQUEST_INTERGFACE_VERSIONN}/user/invite?invitee_account=${user}`,
-  //       data
-  //     )
-  //       .then(res => {
-  //         // console.log(res)
-  //         if (isApiResponseOk(res)) {
-  //           resolve(res.data.id)
-  //         } else {
-  //           reject({})
-  //         }
-  //       })
-  //       .catch(err => {
-  //         message.warn('上传头像失败，请稍后重试')
-  //       })
-  //   })
-  // }
-
-  // getIcons = async (users = []) => {
-  //   // let users = this.getRequestParams()
-  //   for (let i = 0; i < users.length; i++) {
-  //     if (!users[i].id) {
-  //       // const avatar_icon = await this.getUsersAvatar(
-  //       //   users[i].mobile ? users[i].mobile : users[i].email
-  //       // )
-  //       const user_id = await this.getEnrollUsers(users[i].user)
-  //       users[i].id = user_id
-  //     }
-  //   }
-  //   return users
-  // }
-
   // 提交选择的用户回调
   handleSubmitSeletedMember = () => {
     const { handleInviteMemberReturnResult } = this.props
     const { selectedMember } = this.state
-    // this.getIcons(selectedMember).then(users => {
-    //   handleInviteMemberReturnResult(users)
-    // })
     handleInviteMemberReturnResult(selectedMember)
   }
 
@@ -783,11 +661,6 @@ class InviteOthers extends Component {
       //消息推送查询
       this.getGroupList({ _organization_id })
     }
-  }
-
-  // 控制微信扫码显示隐藏
-  setWechatInviteVisible = () => {
-    this.props.setWechatInviteVisible && this.props.setWechatInviteVisible()
   }
 
   // 渲染没有数据的时候
@@ -890,19 +763,19 @@ class InviteOthers extends Component {
       isShowTitle,
       isShowSubmitBtn,
       children,
-      isDisableSubmitWhenNoSelectItem,
-      show_wechat_invite
+      isDisableSubmitWhenNoSelectItem
     } = this.props
     const {
       fetching,
       inputRet,
       inputValue,
       selectedMember = [],
-      membersListToSelect = [],
+      membersListToSelect,
       isInSelectedList,
       currentOrgAllMembersList,
       step
     } = this.state
+    console.log(inputRet, selectedMember)
     let seize_a_seat_arr_length = 11 - selectedMember.length // 11为最多的占位符
     let seize_a_seat_arr = []
     for (let i = 0; i < seize_a_seat_arr_length; i++) {
@@ -946,76 +819,12 @@ class InviteOthers extends Component {
             dropdownStyle={{ zIndex: '9999' }}
             blur={this.handleInputBlur}
           >
-            {inputRet.map(item => {
-              return (
-                <Option key={item.value}>{this.genOptionLabel(item)}</Option>
-              )
-            })}
+            {inputRet.map(item => (
+              <Option key={item.value}>{this.genOptionLabel(item)}</Option>
+            ))}
           </Select>
-          <span className={`${globalStyles.authTheme} ${styles.search_icon}`}>
-            &#xe611;
-          </span>
         </div>
-        {!!(selectedMember && selectedMember.length) && (
-          <div className={styles.invite__result_wrapper}>
-            <div className={styles.invite__result_list}>
-              {selectedMember.map(item => {
-                // let svg = this.avatars.create(item.user)
-                return (
-                  <div
-                    key={item.user}
-                    className={styles.invite__result_list_item}
-                  >
-                    <Tooltip
-                      overlayStyle={{ zIndex: '9999' }}
-                      title={item.type === 'other' ? item.user : item.name}
-                      getPopupContainer={triggerNode => triggerNode.parentNode}
-                    >
-                      <div
-                        className={styles.invite__result_list_item_img_wrapper}
-                      >
-                        <img
-                          src={
-                            item.type === 'other'
-                              ? defaultUserAvatar
-                              : this.isAvatarValid(item.icon)
-                              ? item.icon
-                              : defaultUserAvatar
-                          }
-                          alt=""
-                          width="32"
-                          height="32"
-                          className={styles.invite__result_list_item_img}
-                        />
-                        <span
-                          className={styles.invite__result_list_icon}
-                          onClick={e =>
-                            this.handleClickedResultListIcon(item, e)
-                          }
-                        />
-                      </div>
-                    </Tooltip>
-                  </div>
-                )
-              })}
-              {/* 占位符 */}
-              {/* {seize_a_seat_arr.length < 11 &&
-                seize_a_seat_arr.map((item, key) => {
-                  return (
-                    <div key={key} className={styles.invite__result_list_item}>
-                      <div
-                        className={styles.invite__result_list_item_img_wrapper}
-                        style={{
-                          backgroundColor: 'rgba(0,0,0,.04)',
-                          borderRadius: 20
-                        }}
-                      ></div>
-                    </div>
-                  )
-                })} */}
-            </div>
-          </div>
-        )}
+
         {this.props.selectDisabled ? (
           <div className={styles.invite__select_wrapper}>
             <img
@@ -1066,76 +875,107 @@ class InviteOthers extends Component {
                       />
                     )}
                   </div>
-                  {sortedMembersListToSelect.map(item => {
-                    return (
-                      <div
-                        key={item.id}
-                        className={styles.invite__select_member_item}
-                        onClick={e =>
-                          this.handleToggleMemberInSelectedMember(item, e)
-                        }
+                  {sortedMembersListToSelect.map(item => (
+                    <div
+                      key={item.id}
+                      className={styles.invite__select_member_item}
+                      onClick={e =>
+                        this.handleToggleMemberInSelectedMember(item, e)
+                      }
+                    >
+                      <span className={styles.invite__select_member_item_info}>
+                        <img
+                          className={styles.invite__select_member_item_avatar}
+                          width="20"
+                          height="20"
+                          src={
+                            this.isAvatarValid(item.avatar)
+                              ? item.avatar
+                              : defaultUserAvatar
+                          }
+                          alt=""
+                        />
+                        <span
+                          className={styles.invite__select_member_item_title}
+                        >
+                          {item.full_name || item.name}
+                        </span>
+                      </span>
+                      <span
+                        className={styles.invite__select_member_item_operator}
                       >
-                        <span
-                          className={styles.invite__select_member_item_info}
-                        >
-                          <img
-                            className={styles.invite__select_member_item_avatar}
-                            width="24"
-                            height="24"
-                            src={
-                              this.isAvatarValid(item.avatar)
-                                ? item.avatar
-                                : defaultUserAvatar
-                            }
-                            alt=""
-                          />
+                        {this.checkMemberInSelectedMember(item) ? (
                           <span
-                            className={styles.invite__select_member_item_title}
-                          >
-                            {item.name || item.full_name}
-                          </span>
-                        </span>
-                        <span
-                          className={styles.invite__select_member_item_operator}
-                        >
-                          {this.checkMemberInSelectedMember(item) ? (
-                            <span
-                              className={
-                                styles.invite__select_member_item_operator_selected
-                              }
-                            />
-                          ) : (
-                            <span
-                              className={
-                                styles.invite__select_member_item_operator_unselected
-                              }
-                            />
-                          )}
-                        </span>
-                      </div>
-                    )
-                  })}
+                            className={
+                              styles.invite__select_member_item_operator_selected
+                            }
+                          />
+                        ) : (
+                          <span
+                            className={
+                              styles.invite__select_member_item_operator_unselected
+                            }
+                          />
+                        )}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
           </div>
         )}
 
+        <div className={styles.invite__result_wrapper}>
+          <div className={styles.invite__result_list}>
+            {selectedMember.map(item => (
+              <div key={item.user} className={styles.invite__result_list_item}>
+                <Tooltip
+                  overlayStyle={{ zIndex: '9999' }}
+                  title={item.type === 'other' ? item.user : item.name}
+                >
+                  <div className={styles.invite__result_list_item_img_wrapper}>
+                    <img
+                      src={
+                        item.type === 'other'
+                          ? defaultUserAvatar
+                          : this.isAvatarValid(item.icon)
+                          ? item.icon
+                          : defaultUserAvatar
+                      }
+                      alt=""
+                      width="24"
+                      height="24"
+                      className={styles.invite__result_list_item_img}
+                    />
+                    <span
+                      className={styles.invite__result_list_icon}
+                      onClick={e => this.handleClickedResultListIcon(item, e)}
+                    />
+                  </div>
+                </Tooltip>
+              </div>
+            ))}
+            {/* 占位符 */}
+            {seize_a_seat_arr.length < 11 &&
+              seize_a_seat_arr.map((item, key) => {
+                return (
+                  <div key={key} className={styles.invite__result_list_item}>
+                    <div
+                      className={styles.invite__result_list_item_img_wrapper}
+                      style={{
+                        backgroundColor: 'rgba(0,0,0,.04)',
+                        borderRadius: 20
+                      }}
+                    ></div>
+                  </div>
+                )
+              })}
+          </div>
+        </div>
+
         {isShowSubmitBtn && (
           <div className={styles.invite__submit_wrapper}>
-            {show_wechat_invite && (
-              <Button onClick={this.setWechatInviteVisible}>
-                <i
-                  className={globalStyles.authTheme}
-                  style={{ color: '#46A318', marginRight: 4, fontSize: '24px' }}
-                >
-                  &#xe634;
-                </i>
-                <span style={{ position: 'relative', top: '-4px' }}>
-                  扫码邀请
-                </span>
-              </Button>
-            )}
             <Button
               disabled={isDisableSubmitWhenNoSelectItem && !isHasSelectedItem}
               onClick={this.handleSubmitSeletedMember}
@@ -1145,6 +985,7 @@ class InviteOthers extends Component {
             </Button>
           </div>
         )}
+        {children && children}
       </div>
     )
   }

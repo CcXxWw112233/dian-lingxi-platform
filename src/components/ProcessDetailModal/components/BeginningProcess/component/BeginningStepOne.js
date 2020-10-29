@@ -44,7 +44,6 @@ import DifferenceDeadlineType from '../../DifferenceDeadlineType'
 import BeginningStepOne_six from './BeginningStepOne_six'
 import { saveOnlineExcelWithProcess } from '../../../../../services/technological/workFlow'
 import { isApiResponseOk } from '../../../../../utils/handleResponseData'
-import { resolve } from 'promise-polyfill'
 
 @connect(mapStateToProps)
 export default class BeginningStepOne extends Component {

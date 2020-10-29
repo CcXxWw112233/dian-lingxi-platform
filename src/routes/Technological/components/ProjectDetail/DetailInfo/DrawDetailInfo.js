@@ -43,7 +43,10 @@ import { cursorMoveEnd } from '../../../../../components/ProcessDetailModal/comp
 import CustomFields from '../../../../../components/CustomFields'
 import CustomCategoriesOperate from '../../../../../components/CustomFields/CustomCategoriesOperate'
 import moment from 'moment'
-import { timeToTimestamp } from '../../../../../utils/util'
+import {
+  timestampToTimeNormal,
+  timeToTimestamp
+} from '../../../../../utils/util'
 
 const TextArea = Input.TextArea
 
@@ -515,6 +518,7 @@ export default class DrawDetailInfo extends React.Component {
       projectDetailInfoData = {},
       projectDetailInfoData: { board_id, board_set = {} }
     } = this.props
+    const { relative_time: relative_time_ } = board_set
     const { dispatch } = this.props
     let new_projectDetailInfoData = { ...projectDetailInfoData }
     if (isSetDatas) {
@@ -522,7 +526,7 @@ export default class DrawDetailInfo extends React.Component {
         new_projectDetailInfoData['board_set'] = {
           ...board_set,
           [name]: value,
-          relative_time: relative_time
+          relative_time: relative_time_ ? relative_time_ : relative_time
         }
       } else {
         new_projectDetailInfoData['board_set'] = {
@@ -574,12 +578,12 @@ export default class DrawDetailInfo extends React.Component {
   // 更新日期模式
   handleDateMode = e => {
     let value = e.target.value
-    const relative_time = this.setRelativeTime()
+    const relative_time_ = this.setRelativeTime()
     this.updateDateDatas({
       name: 'date_mode',
       value,
-      isSetDatas: true,
-      relative_time: value == '1' ? relative_time : null
+      isSetDatas: true
+      // relative_time: value == '1' ? relative_time_ : null
     })
   }
 
@@ -614,8 +618,10 @@ export default class DrawDetailInfo extends React.Component {
 
   // 禁用开始时间
   disabledStartTime = start_time => {
-    const { projectDetailInfoData = {} } = this.props
-    const { due_time } = projectDetailInfoData
+    const {
+      projectDetailInfoData: { board_set = {} }
+    } = this.props
+    const { due_time } = board_set
     if (!start_time || !due_time) {
       return false
     }
@@ -652,6 +658,16 @@ export default class DrawDetailInfo extends React.Component {
           : Number(time) * 1000
         : Number(time)
     return time
+  }
+
+  // 是否显示当前年份 true 表示是今年
+  whetherShowCurrentYear = timestamp => {
+    const timestampNew =
+      String(timestamp).length === 10
+        ? Number(timestamp) * 1000
+        : Number(timestamp)
+    let date = new Date(timestampNew)
+    return date.getFullYear() == new Date().getFullYear()
   }
 
   render() {
@@ -1059,16 +1075,24 @@ export default class DrawDetailInfo extends React.Component {
                   基准时间：
                 </div>
                 <div className={DrawDetailInfoStyle.set_time_content}>
-                  <DatePicker
-                    format="YYYY-MM-DD"
-                    value={
-                      relative_time
-                        ? moment(new Date(this.timePrecision(relative_time)))
-                        : null
-                    }
-                    onChange={this.handleRelativeChange}
-                    allowClear={false}
-                  />
+                  <span
+                    style={{
+                      display: 'flex',
+                      width: '177px',
+                      paddingLeft: '12px',
+                      border: '1px solid #d9d9d9',
+                      height: '32px',
+                      lineHeight: '32px',
+                      borderRadius: '4px'
+                    }}
+                  >
+                    <div>
+                      {this.whetherShowCurrentYear(relative_time)
+                        ? `${new Date().getFullYear()}-`
+                        : ''}
+                      {timestampToTimeNormal(relative_time, '-', false)}
+                    </div>
+                  </span>
                 </div>
               </div>
             ) : (
@@ -1079,8 +1103,33 @@ export default class DrawDetailInfo extends React.Component {
                 <div className={DrawDetailInfoStyle.set_time_content}>
                   <div className={DrawDetailInfoStyle.set_start_time}>
                     <span>开始时间</span>
-                    <span>
+                    <span
+                      style={{
+                        display: 'flex',
+                        width: '177px',
+                        paddingLeft: '12px',
+                        border: '1px solid #d9d9d9',
+                        height: '32px',
+                        lineHeight: '32px',
+                        borderRadius: '4px'
+                      }}
+                    >
                       {date_format == '0' ? (
+                        <div>
+                          {this.whetherShowCurrentYear(start_time)
+                            ? `${new Date().getFullYear()}-`
+                            : ''}
+                          {timestampToTimeNormal(start_time, '-', true)}
+                        </div>
+                      ) : (
+                        <div>
+                          {this.whetherShowCurrentYear(start_time)
+                            ? `${new Date().getFullYear()}-`
+                            : ''}
+                          {timestampToTimeNormal(start_time, '-', false)}
+                        </div>
+                      )}
+                      {/* {date_format == '0' ? (
                         <DatePicker
                           disabledDate={this.disabledStartTime}
                           showTime={{
@@ -1106,15 +1155,40 @@ export default class DrawDetailInfo extends React.Component {
                               : undefined
                           }
                         />
-                      )}
+                      )} */}
                     </span>
                   </div>
                 </div>
                 <div className={DrawDetailInfoStyle.set_time_content}>
                   <div className={DrawDetailInfoStyle.set_start_time}>
                     <span>结束时间</span>
-                    <span>
+                    <span
+                      style={{
+                        display: 'flex',
+                        width: '177px',
+                        paddingLeft: '12px',
+                        border: '1px solid #d9d9d9',
+                        height: '32px',
+                        lineHeight: '32px',
+                        borderRadius: '4px'
+                      }}
+                    >
                       {date_format == '0' ? (
+                        <div>
+                          {this.whetherShowCurrentYear(due_time)
+                            ? `${new Date().getFullYear()}-`
+                            : ''}
+                          {timestampToTimeNormal(due_time, '-', true)}
+                        </div>
+                      ) : (
+                        <div>
+                          {this.whetherShowCurrentYear(due_time)
+                            ? `${new Date().getFullYear()}-`
+                            : ''}
+                          {timestampToTimeNormal(due_time, '-', false)}
+                        </div>
+                      )}
+                      {/* {date_format == '0' ? (
                         <DatePicker
                           showTime={{
                             defaultValue: moment('23:59', 'HH:mm'),
@@ -1140,7 +1214,7 @@ export default class DrawDetailInfo extends React.Component {
                               : undefined
                           }
                         />
-                      )}
+                      )} */}
                     </span>
                   </div>
                 </div>

@@ -22,6 +22,8 @@ import {
   organizationInviteWebJoin,
   commInviteWebJoin
 } from './../../../../services/technological/index'
+import { getOrgIdByBoardId } from '../../../../utils/businessFunction'
+import { inviteMembersInWebJoin } from '../../../../utils/inviteMembersInWebJoin'
 
 let cx = classNames.bind(styles)
 @connect(({ technological }) => ({
@@ -59,7 +61,7 @@ class VisitControl extends Component {
   isValidAvatar = (avatarUrl = '') =>
     avatarUrl.includes('http://') || avatarUrl.includes('https://')
 
-  // 获取添加成员的回调
+  // // 获取添加成员的回调
   handleGetAddNewMember = members => {
     const { handleAddNewMember } = this.props
     const filterPlatformUsersId = users =>
@@ -81,12 +83,26 @@ class VisitControl extends Component {
     let users_arr = res.data
     return Promise.resolve(users_arr)
   }
-  handleInviteMemberReturnResult = members => {
-    this.handleGetAddNewMember(members)
+  handleInviteMemberReturnResult = selectedMember => {
+    this.handleGetAddNewMember(selectedMember)
 
     this.setState({
       addMemberModalVisible: false,
       ShowAddMenberModalVisibile: false
+    })
+  }
+  addMenbersInProject = (values, selectedMember) => {
+    this.handleInviteMemberReturnResult(selectedMember)
+    return
+    const { invitationType, board_id } = this.props
+    const org_id = getOrgIdByBoardId(board_id)
+    inviteMembersInWebJoin({
+      invitationType,
+      board_id,
+      org_id,
+      values,
+      selectedMember,
+      calback: this.handleInviteMemberReturnResult
     })
   }
 
@@ -816,9 +832,9 @@ class VisitControl extends Component {
           submitText="确定"
           show_wechat_invite={false}
           board_id={board_id}
-          new_handleInviteMemberReturnResult={
-            this.handleInviteMemberReturnResult
-          }
+          // new_handleInviteMemberReturnResult={
+          //   this.handleInviteMemberReturnResult
+          // }
           modalVisible={this.state.ShowAddMenberModalVisibile}
           setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(
             this

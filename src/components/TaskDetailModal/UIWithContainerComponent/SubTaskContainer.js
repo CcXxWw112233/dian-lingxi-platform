@@ -8,11 +8,12 @@ import {
 } from '@/utils/util'
 import {
   getCurrentDrawerContentPropsModelFieldData,
-  filterCurrentUpdateDatasField
+  filterCurrentUpdateDatasField,
+  compareStartDueTime
 } from '../handleOperateModal'
 import { isApiResponseOk } from '@/utils/handleResponseData'
 import { MESSAGE_DURATION_TIME } from '@/globalset/js/constant'
-import { arrayNonRepeatfy } from '../../../utils/util'
+import { arrayNonRepeatfy, getRelativeTimeTamp } from '../../../utils/util'
 import { deleteTaskFile } from '../../../services/technological/task'
 import { getSubfixName } from '@/utils/businessFunction'
 import { rebackCreateNotify } from '../../NotificationTodos'
@@ -48,6 +49,10 @@ const SubTaskLogic = {
       }
     )
     const { inputValue, sub_executors, due_time, start_time } = this.state
+    if (!compareStartDueTime(start_time, due_time)) {
+      message.warn('开始时间不能大于截止时间')
+      return
+    }
     const { data = [] } = drawContent['properties'].filter(
       item => item.code == 'SUBTASK'
     )[0]
@@ -78,6 +83,7 @@ const SubTaskLogic = {
     ).then(res => {
       if (!isApiResponseOk(res)) {
         message.warn(res.message, MESSAGE_DURATION_TIME)
+        this.initState()
         return
       }
       let { card_info = {}, dependencys = [] } = res.data
@@ -268,6 +274,39 @@ const SubTaskLogic = {
     let flag = false
     flag = date_format == '1'
     return flag
+  },
+  // 判断时间模式 为1 表示相对时间
+  showTimerMode: function() {
+    const { projectDetailInfoData = {} } = this.props
+    const { board_set = {} } = projectDetailInfoData
+    const { date_mode } = board_set
+    let flag = false
+    flag = date_mode == '1'
+    return flag
+  },
+  handleStartRelativeChange: function(value) {
+    const { projectDetailInfoData = {} } = this.props
+    const { board_set = {} } = projectDetailInfoData
+    const { relative_time } = board_set
+    let start_timeStamp =
+      value == '' || String(value).trimLR() == ''
+        ? '0'
+        : getRelativeTimeTamp(value, relative_time)
+    this.setState({
+      start_time: start_timeStamp
+    })
+  },
+  handleDueRelativeChange: function(value) {
+    const { projectDetailInfoData = {} } = this.props
+    const { board_set = {} } = projectDetailInfoData
+    const { relative_time } = board_set
+    let due_timeStamp =
+      value == '' || String(value).trimLR() == ''
+        ? '0'
+        : getRelativeTimeTamp(value, relative_time)
+    this.setState({
+      due_time: due_timeStamp
+    })
   }
 }
 
@@ -1051,12 +1090,137 @@ const SubTaskItemLogic = {
       })
     }
   },
+  // 判断时间格式 为1 表示精度为 天
   showTimerRange: function() {
     const { projectDetailInfoData = {} } = this.props
-    const { date_format } = projectDetailInfoData
+    const { board_set = {} } = projectDetailInfoData
+    const { date_format } = board_set
     let flag = false
     flag = date_format == '1'
     return flag
+  },
+  // 判断时间模式 为1 表示相对时间
+  showTimerMode: function() {
+    const { projectDetailInfoData = {} } = this.props
+    const { board_set = {} } = projectDetailInfoData
+    const { date_mode } = board_set
+    let flag = false
+    flag = date_mode == '1'
+    return flag
+  },
+  handleStartRelativeChange: function(value) {
+    const {
+      childTaskItemValue = {},
+      dispatch,
+      projectDetailInfoData = {},
+      drawContent: { card_id: parent_card_id }
+    } = this.props
+    const { board_set = {} } = projectDetailInfoData
+    const { relative_time } = board_set
+    const { card_id, board_id } = childTaskItemValue
+    if (!isNaN(value)) {
+      // 表示是数字的时候才做处理
+      let start_timeStamp =
+        value == '' || String(value).trimLR() == ''
+          ? '0'
+          : getRelativeTimeTamp(value, relative_time)
+      const updateObj = {
+        card_id,
+        start_time: start_timeStamp,
+        board_id
+      }
+      Promise.resolve(
+        dispatch({
+          type: 'publicTaskDetailModal/updateTaskVTwo',
+          payload: {
+            updateObj
+          }
+        })
+      ).then(res => {
+        if (!isApiResponseOk(res)) {
+          message.warn(res.message, MESSAGE_DURATION_TIME)
+          return
+        }
+        this.setState({
+          local_start_time: start_timeStamp
+        })
+        let new_data = []
+        if (!(res.data.scope_content instanceof Array)) {
+          new_data = []
+        } else {
+          new_data = [...res.data.scope_content]
+        }
+        new_data = new_data.filter(item => item.id == parent_card_id) || []
+        this.setChildTaskIndrawContent(
+          { name: 'start_time', value: start_timeStamp },
+          card_id,
+          res.data.scope_content,
+          res
+        )
+        this.props.whetherUpdateParentTaskTime &&
+          this.props.whetherUpdateParentTaskTime(new_data)
+        this.props.updateRelyOnRationList &&
+          this.props.updateRelyOnRationList(res.data.scope_content)
+      })
+    } else {
+    }
+  },
+  handleDueRelativeChange: function(value) {
+    const {
+      childTaskItemValue = {},
+      dispatch,
+      projectDetailInfoData = {},
+      drawContent: { card_id: parent_card_id }
+    } = this.props
+    const { board_set = {} } = projectDetailInfoData
+    const { relative_time } = board_set
+    const { card_id, board_id } = childTaskItemValue
+    if (!isNaN(value)) {
+      // 表示是数字的时候才做处理
+      let due_timeStamp =
+        value == '' || String(value).trimLR() == ''
+          ? '0'
+          : getRelativeTimeTamp(value, relative_time)
+      const updateObj = {
+        card_id,
+        due_time: due_timeStamp,
+        board_id
+      }
+      Promise.resolve(
+        dispatch({
+          type: 'publicTaskDetailModal/updateTaskVTwo',
+          payload: {
+            updateObj
+          }
+        })
+      ).then(res => {
+        if (!isApiResponseOk(res)) {
+          message.warn(res.message, MESSAGE_DURATION_TIME)
+          return
+        }
+        this.setState({
+          local_due_time: due_timeStamp
+        })
+        let new_data = []
+        if (!(res.data.scope_content instanceof Array)) {
+          new_data = []
+        } else {
+          new_data = [...res.data.scope_content]
+        }
+        new_data = new_data.filter(item => item.id == parent_card_id) || []
+        this.setChildTaskIndrawContent(
+          { name: 'due_time', value: due_timeStamp },
+          card_id,
+          res.data.scope_content,
+          res
+        )
+        this.props.whetherUpdateParentTaskTime &&
+          this.props.whetherUpdateParentTaskTime(new_data)
+        this.props.updateRelyOnRationList &&
+          this.props.updateRelyOnRationList(res.data.scope_content)
+      })
+    } else {
+    }
   }
 }
 

@@ -19,24 +19,6 @@ export const handleTimeDetailReturn = timestamp => {
   }
 }
 
-/**
- * 计算两个日期的相差天数 不比较小时分钟
- * @param {String|Number} timestamp1 设置的基准时间
- * @param {String|Number} timestamp2 需要比较的时间
- */
-export const caldiffDays = (timestamp1, timestamp2) => {
-  if (!timestamp1 || !timestamp2) return ''
-  let dateSpan, tempDate, iDays
-  let sDate1 = timestampToTimeNormal(timestamp1, '/')
-  let sDate2 = timestampToTimeNormal(timestamp2, '/')
-  sDate1 = Date.parse(sDate1)
-  sDate2 = Date.parse(sDate2)
-  dateSpan = sDate2 - sDate1
-  dateSpan = Math.abs(dateSpan)
-  iDays = Math.floor(dateSpan / (24 * 3600 * 1000))
-  return iDays
-}
-
 //是否同一周。以周一开始
 export const isSameWeek = (oldTimestamp, nowTimestamp) => {
   var oneDayTime = 1000 * 60 * 60 * 24
@@ -127,55 +109,6 @@ export const timestampToTime = (timestamp, flag) => {
     date.getFullYear() == new Date().getFullYear() ? M + D : Y + M + D
   return !flag ? date_ + h + m : date_
   // return flag ? Y + M + D + h + m : Y + M + D;
-}
-
-//时间戳转日期
-export const timestampToTimeNormal3 = (timestamp, flag, split) => {
-  if (!timestamp) {
-    return false
-  }
-  const timestampNew =
-    timestamp.toString().length === 10
-      ? Number(timestamp) * 1000
-      : Number(timestamp)
-  const splitNew = split || '-'
-  let date = new Date(timestampNew) //时间戳为10位需*1000，时间戳为13位的话不需乘1000
-  const now_year = new Date().getFullYear()
-  let Y = now_year == date.getFullYear() ? '' : date.getFullYear() + splitNew
-  let M =
-    (date.getMonth() + 1 < 10
-      ? '0' + (date.getMonth() + 1)
-      : date.getMonth() + 1) + splitNew
-  let D =
-    date.getDate() < 10 ? '0' + date.getDate() + ' ' : date.getDate() + ' '
-  let h =
-    date.getHours() < 10 ? '0' + date.getHours() + ':' : date.getHours() + ':'
-  let m = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()
-  return flag ? Y + M + D + h + m : Y + M + D
-}
-
-//时间戳转日期 需要年, 即使是今年也要显示
-export const timestampToTimeNormal4 = (timestamp, split, flag) => {
-  if (!timestamp) {
-    return false
-  }
-  const timestampNew =
-    timestamp.toString().length === 10
-      ? Number(timestamp) * 1000
-      : Number(timestamp)
-  const splitNew = split || '-'
-  let date = new Date(timestampNew) //时间戳为10位需*1000，时间戳为13位的话不需乘1000
-  let Y = date.getFullYear() + splitNew
-  let M =
-    (date.getMonth() + 1 < 10
-      ? '0' + (date.getMonth() + 1)
-      : date.getMonth() + 1) + splitNew
-  let D =
-    date.getDate() < 10 ? '0' + date.getDate() + ' ' : date.getDate() + ' '
-  let h =
-    date.getHours() < 10 ? '0' + date.getHours() + ':' : date.getHours() + ':'
-  let m = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()
-  return flag ? Y + M + D + h + m : Y + M + D
 }
 
 /**
@@ -1009,4 +942,22 @@ export const getRelativeTimeTamp = (value, timestamp) => {
       ? Number(timestamp)
       : parseInt(timestamp / 1000)
   return timestamp_ + value * (24 * 3600)
+}
+
+/**
+ * 计算两个日期的相差天数 不比较小时分钟
+ * @param {String|Number} timestamp1 设置的基准时间
+ * @param {String|Number} timestamp2 需要比较的时间
+ */
+export const caldiffDays = (timestamp1, timestamp2) => {
+  if (!timestamp1 || !timestamp2) return ''
+  let dateSpan, tempDate, iDays
+  let sDate1 = dateFormat(timestamp1, 'yyyy-MM-dd') //timestampToTimeNormal(timestamp1, '/')
+  let sDate2 = dateFormat(timestamp2, 'yyyy-MM-dd') //timestampToTimeNormal(timestamp2, '/')
+  sDate1 = Date.parse(sDate1)
+  sDate2 = Date.parse(sDate2)
+  dateSpan = sDate2 - sDate1
+  dateSpan = Math.abs(dateSpan)
+  iDays = Math.floor(dateSpan / (24 * 3600 * 1000))
+  return iDays
 }
