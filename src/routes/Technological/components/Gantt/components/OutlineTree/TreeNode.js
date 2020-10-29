@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import styles from './index.less'
-import { Input, Dropdown, message, Tooltip, Menu } from 'antd'
+import { Input, Dropdown, message, Tooltip, Menu, DatePicker } from 'antd'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import ManhourSet from './ManhourSet.js'
 import { Popover, Avatar } from 'antd'
@@ -11,14 +11,21 @@ import AvatarList from '@/components/avatarList'
 import NodeOperate from './NodeOperate'
 import { validatePositiveInt } from '../../../../../../utils/verify'
 import { connect } from 'dva'
-import { isSamDay, dateFormat } from '../../../../../../utils/util'
+import {
+  isSamDay,
+  dateFormat,
+  timeToTimestamp,
+  timestampToTimeNormal
+} from '../../../../../../utils/util'
 import {
   task_item_height,
   task_item_margin_top,
-  ceil_height
+  ceil_height,
+  ceil_width
 } from '../../constants'
 import { getTreeNodeValue } from '../../../../../../models/technological/workbench/gantt/gantt_utils'
-
+import SetNodeGroup from './SetNodeGroup'
+import TreeNodeSetRelativeTime from './TreeNodeSetRelativeTime'
 @connect(mapStateToProps)
 export default class TreeNode extends Component {
   constructor(props) {
@@ -73,7 +80,7 @@ export default class TreeNode extends Component {
   }
 
   onClickTitle = placeholder => {
-    if (placeholder == '新建里程碑') {
+    if (placeholder == '新建里程碑' || placeholder == '新建任务') {
       this.toggleTitleEdit()
       return
     }
@@ -90,7 +97,7 @@ export default class TreeNode extends Component {
     }, 300)
   }
   onDoubleClickTitle = placeholder => {
-    if (placeholder == '新建里程碑') {
+    if (placeholder == '新建里程碑' || placeholder == '新建任务') {
       return
     }
     clearTimeout(this.title_click_timer)
@@ -862,32 +869,174 @@ export default class TreeNode extends Component {
   }
 
   renderStartTime = key => {
-    const { nodeValue = {} } = this.props
-    let { start_time, is_has_start_time, tree_type } = nodeValue
-    //仅在任务时需要强is_has_start_time判断
-    if (start_time && (tree_type == '2' ? is_has_start_time : true)) {
-      return dateFormat(start_time, this.timeForMat)
+    const {
+      nodeValue = {},
+      gantt_view_mode,
+      projectDetailInfoData = {}
+    } = this.props
+    const date_format = projectDetailInfoData?.board_set?.date_format //项目信息里面拿到的格式化信息
+    const format_type = {
+      '0': 'yyyy-MM-dd HH:mm',
+      '1': 'yyyy-MM-dd'
     }
-    return (
-      <span className={styles.start_time} key={key}>
-        {' '}
-        开始{' '}
-      </span>
-    )
+    let { start_time, is_has_start_time, tree_type } = nodeValue
+    if (gantt_view_mode == 'relative_time') {
+      return (
+        <TreeNodeSetRelativeTime
+          value={start_time}
+          time_type={'start_time'}
+          onDataProcess={this.props.onDataProcess}
+          nodeValue={nodeValue}
+        />
+      )
+    }
+    //仅在任务时需要强is_has_start_time判断
+    let contain = ''
+    if (start_time && (tree_type == '2' ? is_has_start_time : true)) {
+      contain = dateFormat(start_time, format_type[date_format])
+    } else {
+      contain = (
+        <span
+          className={styles.start_time}
+          key={key}
+          style={{ color: 'rgba(0,0,0,0.2)' }}
+        >
+          {' '}
+          开始{' '}
+        </span>
+      )
+    }
+    if (tree_type == '1') return contain
+    return this.renderDatePicker(contain, start_time, 'start_time')
   }
 
   renderEndTime = key => {
-    const { nodeValue = {} } = this.props
+    const {
+      nodeValue = {},
+      gantt_view_mode,
+      projectDetailInfoData = {}
+    } = this.props
     let { due_time, is_has_end_time } = nodeValue
+    if (gantt_view_mode == 'relative_time') {
+      return (
+        <TreeNodeSetRelativeTime
+          value={due_time}
+          time_type={'due_time'}
+          onDataProcess={this.props.onDataProcess}
+          nodeValue={nodeValue}
+        />
+      )
+    }
+    const date_format = projectDetailInfoData?.board_set?.date_format //项目信息里面拿到的格式化信息
+    const format_type = {
+      '0': 'yyyy-MM-dd HH:mm',
+      '1': 'yyyy-MM-dd'
+    }
+    let contain = ''
     if (due_time && is_has_end_time) {
-      return dateFormat(due_time, this.timeForMat)
+      contain = dateFormat(due_time, format_type[date_format])
+    } else {
+      contain = (
+        <span
+          className={styles.due_time}
+          key={key}
+          style={{ color: 'rgba(0,0,0,0.2)' }}
+        >
+          {' '}
+          结束{' '}
+        </span>
+      )
+    }
+
+    return this.renderDatePicker(contain, due_time, 'due_time')
+  }
+  disabledTime = (e, time_type) => {
+    const {
+      nodeValue: { start_time, due_time }
+    } = this.state
+    if (time_type == 'start_time') {
+      if (!start_time) return false
+      return e.valueOf() > due_time
+    } else if (time_type == 'due_time') {
+      if (!due_time) return false
+      return e.valueOf() < start_time
+    }
+  }
+  renderDatePicker = (vdom, timestamp, time_type) => {
+    const { ceilWidth, projectDetailInfoData = {} } = this.props
+    const show_time_default = {
+      start_time: '00:00',
+      due_time: '23:59'
+    }
+    const date_format = projectDetailInfoData?.board_set?.date_format //项目信息里面拿到的格式化信息
+    const format_type = {
+      '0': 'YYYY/MM/DD HH:mm',
+      '1': 'YYYY/MM/DD'
     }
     return (
-      <span className={styles.due_time} key={key}>
-        {' '}
-        结束{' '}
-      </span>
+      <div style={{ position: 'relative' }}>
+        {vdom}
+        <DatePicker
+          disabledDate={e => this.disabledTime(e, time_type)}
+          defaultValue={
+            timestamp
+              ? moment(
+                  dateFormat(timestamp, 'yyyy-MM-dd HH:mm'),
+                  'YYYY/MM/DD HH:mm'
+                )
+              : undefined
+          }
+          placeholder={
+            timestamp
+              ? dateFormat(timestamp, format_type[date_format])
+              : '请选择'
+          }
+          format="YYYY/MM/DD HH:mm"
+          onOk={e => this.setNodeTime(time_type, e.valueOf())}
+          showTime={
+            date_format == '1'
+              ? false
+              : {
+                  defaultValue: moment(show_time_default[time_type], 'HH:mm'),
+                  format: 'HH:mm'
+                }
+          }
+          style={{
+            opacity: 0,
+            width: 'auto',
+            height: ceilWidth,
+            overflow: 'hidden',
+            position: 'absolute',
+            right: 0
+          }}
+        />
+      </div>
     )
+  }
+  setNodeTime = (key, value) => {
+    const { nodeValue } = this.state
+    const { tree_type, id } = nodeValue
+    let p_k = tree_type == '1' && key == 'due_time' ? 'deadline' : key
+    let action = 'edit_' + (tree_type == '1' ? 'milestone' : 'task')
+    if (this.props.onDataProcess) {
+      this.props.onDataProcess({
+        action,
+        param: {
+          id,
+          // tree_type: tree_type,
+          // parentId: this.props.parentId,
+          [p_k]: value
+        },
+        calback: () => {
+          nodeValue[key] = value
+        }
+      })
+    }
+  }
+
+  renderGroup = key => {
+    const { nodeValue } = this.state
+    return <SetNodeGroup nodeValue={nodeValue} />
   }
 
   // 根据传入的字段确定显示
@@ -897,7 +1046,8 @@ export default class TreeNode extends Component {
       { key: 'item_start_time', component: this.renderStartTime },
       { key: 'item_end_time', component: this.renderEndTime },
       { key: 'item_users_avatar', component: this.renderAvatar },
-      { key: 'item_times', component: this.renderTimes }
+      { key: 'item_times', component: this.renderTimes },
+      { key: 'item_group_list', component: this.renderGroup }
     ]
     return arr.map(item => {
       if (defaultColumns.includes(item.key)) {

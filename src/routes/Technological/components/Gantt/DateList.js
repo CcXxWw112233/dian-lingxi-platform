@@ -188,7 +188,7 @@ export default class DateList extends Component {
   // 设置创建里程碑的时间
   setCreateLcbTime = ({ timestamp, timestampEnd }) => {
     const { gantt_view_mode } = this.props
-    if (gantt_view_mode == 'month') {
+    if (gantt_view_mode == 'month' || gantt_view_mode == 'relative_time') {
       this.setState({
         create_lcb_time: timestampEnd
       })
@@ -535,7 +535,7 @@ export default class DateList extends Component {
   }
   // 渲染月视图日期数据
   renderMonthViewDate = (date_inner = []) => {
-    const { group_view_type } = this.props
+    const { group_view_type, gantt_view_mode } = this.props
     return (
       <div className={indexStyles.dateDetail}>
         {date_inner.map((value2, key2) => {
@@ -554,6 +554,7 @@ export default class DateList extends Component {
           const isToday = isSamDay(timestamp, new Date().getTime())
           return group_view_type != '1' ? (
             <Tooltip
+              trigger={gantt_view_mode == 'month' ? ['hover'] : ['contextMenu']}
               key={`${month}/${date_no}`}
               title={`${
                 this.getDateNoHolidaylunar(timestamp).lunar
@@ -568,7 +569,10 @@ export default class DateList extends Component {
                                     ${this.getDateNoHolidaylunar(timestamp)
                                       .festival_status == '1' &&
                                       indexStyles.holiday_date_no}`}
-                    style={{ background: isToday ? '#1890FF' : '' }}
+                    style={{
+                      background:
+                        isToday && gantt_view_mode == 'month' ? '#1890FF' : ''
+                    }}
                   >
                     {this.getDateNoHolidaylunar(timestamp).holiday && (
                       <div
@@ -585,7 +589,7 @@ export default class DateList extends Component {
                         {this.getDateNoHolidaylunar(timestamp).holiday}
                       </div>
                     )}
-                    {isToday ? (
+                    {isToday && gantt_view_mode == 'month' ? (
                       <span
                         style={{
                           color: '#ffffff',
@@ -596,7 +600,17 @@ export default class DateList extends Component {
                         今天
                       </span>
                     ) : (
-                      date_no
+                      <span
+                        style={{
+                          fontSize: 10,
+                          transform:
+                            gantt_view_mode == 'month'
+                              ? 'scale(0.8)'
+                              : 'scale(0.5)'
+                        }}
+                      >
+                        {date_no}
+                      </span>
                     )}
                   </div>
                 </div>
@@ -611,6 +625,9 @@ export default class DateList extends Component {
               trigger={['click']}
             >
               <Tooltip
+                trigger={
+                  gantt_view_mode == 'month' ? ['hover'] : ['contextMenu']
+                }
                 title={`${
                   this.getDateNoHolidaylunar(timestamp).lunar
                 } ${this.getDateNoHolidaylunar(timestamp).holiday || ' '}`}
@@ -628,13 +645,14 @@ export default class DateList extends Component {
                                     ${has_lcb &&
                                       indexStyles.has_moletones_date_no}`}
                       style={{
-                        background: isToday
-                          ? '#1890FF'
-                          : this.setMiletonesColor({
-                              is_over_duetime,
-                              has_lcb,
-                              is_all_realized
-                            })
+                        background:
+                          isToday && gantt_view_mode == 'month'
+                            ? '#1890FF'
+                            : this.setMiletonesColor({
+                                is_over_duetime,
+                                has_lcb,
+                                is_all_realized
+                              })
                       }}
                       // style={{ background: is_over_duetime && has_lcb ? '#FF7875' : '' }}
                     >
@@ -653,7 +671,7 @@ export default class DateList extends Component {
                           {this.getDateNoHolidaylunar(timestamp).holiday}
                         </div>
                       )}
-                      {isToday ? (
+                      {isToday && gantt_view_mode == 'month' ? (
                         <span
                           style={{
                             color: '#ffffff',
@@ -665,7 +683,17 @@ export default class DateList extends Component {
                           今天
                         </span>
                       ) : (
-                        date_no
+                        <span
+                          style={{
+                            fontSize: 10,
+                            transform:
+                              gantt_view_mode == 'month'
+                                ? 'scale(0.8)'
+                                : 'scale(0.5)'
+                          }}
+                        >
+                          {date_no}
+                        </span>
                       )}
                     </div>
                   </div>
@@ -863,7 +891,10 @@ export default class DateList extends Component {
       contain = (
         <div
           className={indexStyles.dateTitle_2}
-          style={{ textAlign: gantt_view_mode == 'year' ? 'center' : 'left' }}
+          style={{
+            textAlign: gantt_view_mode == 'year' ? 'center' : 'left',
+            color: gantt_view_mode == 'relative_time' ? '#ffffff' : ''
+          }}
         >
           {date_top}
         </div>
@@ -935,7 +966,7 @@ export default class DateList extends Component {
                 {this.renderDateTop(date_top)}
                 {gantt_view_mode == 'year' &&
                   this.renderYearViewDate(date_inner)}
-                {gantt_view_mode == 'month' &&
+                {['month', 'relative_time'].includes(gantt_view_mode) &&
                   this.renderMonthViewDate(date_inner)}
                 {gantt_view_mode == 'week' &&
                   this.renderWeekViewDate(date_inner)}

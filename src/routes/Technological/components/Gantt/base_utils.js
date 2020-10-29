@@ -1,3 +1,4 @@
+import { dateFormat, timestampToTimeNormal } from '../../../../utils/util'
 import { hours_view_start_work_oclock, hours_view_total } from './constants'
 
 const current_date = new Date()
@@ -341,12 +342,66 @@ class base_utils {
     }
     return gold_arr
   }
+
+  // 相对时间轴----------start
+  /**
+   @param string timestamp '2020-02-02 0:0:0' =>时间戳
+   */
+  static getRelativeTime = (timestamp = new Date().getTime()) => {
+    const trans_timestamp = new Date(
+      `${dateFormat(timestamp, 'yyyy/MM/dd')} 0:0:0`
+    ).getTime() //转化到0：0：0
+    const date_inner = []
+    const obj = {
+      date_no: 'T',
+      timestamp: trans_timestamp, //0:0:0
+      timestampEnd: trans_timestamp + 24 * 60 * 60 * 1000 - 1000, //23:59:59
+      week_day: new Date(trans_timestamp).getDay()
+    }
+    date_inner[0] = obj
+    for (let i = 1; i < 150; i++) {
+      const timestamp_start = trans_timestamp + i * 24 * 60 * 60 * 1000
+      const obj = {
+        date_no: '+' + i,
+        timestamp: timestamp_start, //0:0:0
+        timestampEnd: trans_timestamp + (i + 1) * 24 * 60 * 60 * 1000 - 1000, //23:59:59
+        week_day: new Date(timestamp_start).getDay()
+      }
+      date_inner.push(obj)
+    }
+    return [
+      {
+        // date_top: '',
+        date_top: timestampToTimeNormal(timestamp),
+        date_inner: date_inner
+      }
+    ]
+  }
+  /**
+   @param String timestamp '2020-02-02 0:0:0' =>时间戳
+   @param Number T 最新的相对时间n+T天
+   @return []
+   */
+  static getNextRelativeTime = (timestamp, T) => {
+    if (!timestamp || !T) return []
+    let date_inner = []
+    for (let i = 1; i < 30; i++) {
+      const timestamp_start = timestamp + (T + i) * 24 * 60 * 60 * 1000 //0:0:0
+      const obj = {
+        date_no: '+' + (T + i),
+        timestamp: timestamp_start,
+        timestampEnd: timestamp + (T + i + 1) * 24 * 60 * 60 * 1000 - 1000, //23:59:59
+        week_day: new Date(timestamp_start).getDay()
+      }
+      date_inner.push(obj)
+    }
+    return date_inner
+  }
 }
 // base_utils.getYearDateData()
 module.exports = base_utils
-// console.log('sssssssss', {
-//   next: base_utils.getNextHourDate(),
-//   last: base_utils.getLastHourDate(),
-//   current: base_utils.getHourDate(),
-//   stand: base_utils.getNextMonthDate()
-// })
+console.log('sssssssss', {
+  // next: base_utils.getNextRelativeTime(),
+  current: base_utils.getRelativeTime(),
+  stand: base_utils.getNextMonthDate()
+})

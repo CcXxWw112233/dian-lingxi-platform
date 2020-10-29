@@ -692,3 +692,21 @@ export async function revokeCardDo(data) {
     data
   })
 }
+
+//创建多条里程碑
+export async function addMultipleMilestone(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_ABOUT_PROJECT}/milestone/multiple`,
+    method: 'POST',
+    data
+  })
+}
+
+//创建多条任务
+export async function addMultipleCard(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_ABOUT_PROJECT}/${REQUEST_INTERGFACE_VERSIONN}/card/multiple`,
+    method: 'POST',
+    data
+  })
+}

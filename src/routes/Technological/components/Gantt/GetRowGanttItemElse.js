@@ -69,6 +69,7 @@ export default class GetRowGanttItem extends Component {
   }
 
   renderMonthView = (date_inner = []) => {
+    const { gantt_view_mode } = this.props
     return (
       <>
         {date_inner.map((value2, key2) => {
@@ -78,6 +79,11 @@ export default class GetRowGanttItem extends Component {
               className={`${indexStyles.ganttDetailItem}`}
               key={key2}
               style={{
+                borderRight:
+                  gantt_view_mode == 'relative_time' &&
+                  ![5, 6, 0].includes(week_day)
+                    ? 'none'
+                    : '',
                 backgroundColor:
                   week_day == 0 || week_day == 6
                     ? 'rgb(245,245,245)'
@@ -195,7 +201,7 @@ export default class GetRowGanttItem extends Component {
                 >
                   {gantt_view_mode == 'year' && this.renderYearView(date_inner)}
                   {gantt_view_mode == 'week' && this.renderWeekView(date_inner)}
-                  {gantt_view_mode == 'month' &&
+                  {['month', 'relative_time'].includes(gantt_view_mode) &&
                     this.renderMonthView(date_inner)}
                   {gantt_view_mode == 'hours' &&
                     this.renderHourView(date_inner)}

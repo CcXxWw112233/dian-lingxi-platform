@@ -94,7 +94,7 @@ export default {
   state: {
     datas: {
       ...gantt_effect.state,
-      gantt_view_mode: 'month', //week / month /year/ hours '周视图，月视图，年视图,'，原来月视图定义成 ‘天视图’， 年视图则是定义成 ‘月视图’
+      gantt_view_mode: 'month', //week / month /year/ hours /relative_time'周视图，月视图，年视图,'，原来月视图定义成 ‘天视图’， 年视图则是定义成 ‘月视图’
       gold_date_arr: [], //所需要的日期数据
       date_arr_one_level: [], //所有日期数据扁平成一级数组
       start_date: {}, //日期最开始的那一天
@@ -154,7 +154,8 @@ export default {
       selected_hide_term: false, // 表示是否选择隐藏项 true 表示是
       isDisplayContentIds: [], // 表示已经隐藏的content_ids
       outline_tree_original: [], // 大纲视图显示隐藏快照 数据源
-      card_name_outside: false //任务名称是否外置
+      card_name_outside: false, //任务名称是否外置
+      base_relative_time: '' //相对时间轴的基准时间
     }
   },
   subscriptions: {
@@ -465,7 +466,7 @@ export default {
       // console.log('filnaly_outline_tree_0_1', filnaly_outline_tree)
 
       arr = arr.filter(item => item.parent_expand)
-      arr.push({ ...visual_add_item, add_id: 'add_milestone_out' }) //默认有个新建里程碑，占位
+      // arr.push({ ...visual_add_item, add_id: 'add_milestone_out' }) //默认有个新建里程碑，占位
       arr = arr.map((item, key) => {
         let new_item = {}
         const { tree_type, children = [], child_card_status = {} } = item //  里程碑/任务/子任务/虚拟占位 1/2/3/4
@@ -530,7 +531,10 @@ export default {
             //   time_belong_area = true
             //   break
             // }
-            if (gantt_view_mode == 'month') {
+            if (
+              gantt_view_mode == 'month' ||
+              gantt_view_mode == 'relative_time'
+            ) {
               //月视图下遍历得到和开始时间对的上的日期
               if (
                 isSamDay(
@@ -1032,7 +1036,10 @@ export default {
                 //   item.left = k * ceilWidth
                 //   break
                 // }
-                if (gantt_view_mode == 'month') {
+                if (
+                  gantt_view_mode == 'month' ||
+                  gantt_view_mode == 'relative_time'
+                ) {
                   //月视图下遍历得到和开始时间对的上的日期
                   if (
                     isSamDay(
@@ -1244,7 +1251,10 @@ export default {
               //   list_group[i].board_fold_data.left = k * ceilWidth
               //   break
               // }
-              if (gantt_view_mode == 'month') {
+              if (
+                gantt_view_mode == 'month' ||
+                gantt_view_mode == 'relative_time'
+              ) {
                 //月视图下遍历得到和开始时间对的上的日期
                 if (
                   isSamDay(

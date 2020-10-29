@@ -15,7 +15,8 @@ import {
   getLastWeeksDate,
   getNextHourDate,
   getLastHourDate,
-  getHourDate
+  getHourDate,
+  getNextRelativeTime
 } from './getDate'
 import {
   date_area_height,
@@ -52,7 +53,6 @@ export default class GanttFace extends Component {
       timer: null,
       viewModal: '2', //视图模式1周，2月，3年
       gantt_card_out_middle_max_height: 600,
-      local_gantt_board_id: '0', //当前项目id（项目tab栏）缓存在组件内，用于判断是否改变然后重新获取数据
       init_get_outline_tree: false, //大纲视图下初始化是否获取了大纲树
       scroll_area: 'gantt_body', // gantt_head/gantt_body 头部或右边 滚动事件触发的区域
       set_scroll_top_timer: null
@@ -62,17 +62,84 @@ export default class GanttFace extends Component {
   }
 
   componentDidMount() {
-    const { gantt_board_id } = this.props
-    this.setState({
-      local_gantt_board_id: gantt_board_id
-    })
-    this.setGoldDateArr({ init: true })
-    this.initSetScrollPosition()
+    const { gantt_board_id, projectDetailInfoData = {} } = this.props
+    const { board_set = {} } = projectDetailInfoData
+    const { date_mode, relative_time } = board_set
+    //满足设置相对时间轴的条件
+    if (date_mode == '1' && gantt_board_id && gantt_board_id != '0') {
+      this.props.dispatch({
+        type: 'gantt/updateDatas',
+        payload: {
+          gantt_view_mode: 'relative_time',
+          base_relative_time: relative_time
+        }
+      })
+      setTimeout(() => {
+        this.setGoldDateArr({ init: true, timestamp: relative_time })
+        this.initSetScrollPosition()
+      }, 100)
+    } else {
+      this.setGoldDateArr({ init: true })
+      this.initSetScrollPosition()
+    }
     this.setGanTTCardHeight()
     this.getBoardListFeature()
     this.getProcessTemplateList()
     window.addEventListener('resize', this.setGanTTCardHeight, false)
   }
+
+  componentWillReceiveProps(nextProps) {
+    const { projectDetailInfoData = {}, gantt_board_id, ceilWidth } = this.props
+    const { board_set = {} } = projectDetailInfoData
+    const { date_mode, relative_time } = board_set
+    const {
+      gantt_board_id: gantt_board_id_next,
+      projectDetailInfoData: projectDetailInfoData_next = {}
+    } = nextProps
+    const { board_set: board_set_next = {} } = projectDetailInfoData_next
+    const {
+      date_mode: date_mode_next,
+      relative_time: relative_time_next
+    } = board_set_next
+    if (date_mode_next && date_mode_next != date_mode) {
+      if (date_mode_next == '1') {
+        this.props.dispatch({
+          type: 'gantt/updateDatas',
+          payload: {
+            gantt_view_mode: 'relative_time',
+            base_relative_time: relative_time_next
+          }
+        })
+        setTimeout(() => {
+          this.setGoldDateArr({ init: true, timestamp: relative_time })
+          this.initSetScrollPosition()
+        }, 100)
+        const gantt_date_area = document.getElementById('gantt_date_area')
+        if (gantt_date_area) {
+          gantt_date_area.style.left = `0px`
+        }
+      } else {
+        this.props.dispatch({
+          type: 'gantt/updateDatas',
+          payload: {
+            gantt_view_mode: 'month',
+            base_relative_time: new Date().getTime()
+          }
+        })
+        setTimeout(() => {
+          this.setGoldDateArr({ init: true })
+          this.initSetScrollPosition()
+        }, 100)
+        const gantt_date_area = document.getElementById('gantt_date_area')
+        if (gantt_date_area) {
+          gantt_date_area.style.left = `-${ceilWidth *
+            (60 - 4 - 4 + new Date().getDate() - 1) -
+            16}px`
+        }
+      }
+    }
+  }
+
   getProcessTemplateList() {
     const { dispatch } = this.props
     dispatch({
@@ -132,12 +199,16 @@ export default class GanttFace extends Component {
 
   //  初始化设置滚动横向滚动条位置
   initSetScrollPosition() {
-    const { ceilWidth } = this.props
+    const { ceilWidth, gantt_view_mode } = this.props
     const date = new Date().getDate()
     //60为一个月长度，3为遮住的部分长度，date为当前月到今天为止的长度,1为偏差修复, 16为左边header的宽度和withCeil * n的 %值
+    const position =
+      gantt_view_mode == 'relative_time'
+        ? 0
+        : ceilWidth * (60 - 4 - 4 + date - 1) - 16
     this.setScrollPosition({
       delay: 300,
-      position: ceilWidth * (60 - 4 - 4 + date - 1) - 16
+      position
     }) //第一为左边头部宽度，第二个4为距离头部距离
   }
   //设置滚动条位置
@@ -240,6 +311,7 @@ export default class GanttFace extends Component {
       // const loadedCb = () => {
       //   this.setScrollPosition({ position: rescroll_leng_to_left_wrapper[gantt_view_mode] * ceilWidth })
       // }
+      if (gantt_view_mode == 'relative_time') return //相对时间轴不需要向左
       this.setState({
         searchTimer: setTimeout(() => {
           this.setLoading(true)
@@ -354,8 +426,22 @@ export default class GanttFace extends Component {
         date_arr = [].concat(gold_date_arr, getNextYearDate(timestamp))
       } else if (gantt_view_mode == 'hours') {
         date_arr = [].concat(gold_date_arr, getNextHourDate(timestamp))
+      } else if (gantt_view_mode == 'relative_time') {
+        gold_date_arr[0]['date_inner'] = [].concat(
+          gold_date_arr[0]['date_inner'],
+          getNextRelativeTime(
+            gold_date_arr[0]['date_inner'][0]['timestamp'],
+            gold_date_arr[0]['date_inner'].length - 1
+          )
+        )
+        console.log(
+          'sssssssssss111',
+          gold_date_arr,
+          gold_date_arr[0]['date_inner']
+        )
+        date_arr = gold_date_arr
       } else {
-        date_arr = getGoldDateData({ gantt_view_mode, timestamp })
+        // date_arr = getGoldDateData({ gantt_view_mode, timestamp })
       }
     } else if (active_trigger == 'to_left') {
       if (gantt_view_mode == 'month') {
@@ -366,8 +452,10 @@ export default class GanttFace extends Component {
         date_arr = [].concat(getLastYearDate(timestamp), gold_date_arr)
       } else if (gantt_view_mode == 'hours') {
         date_arr = [].concat(getLastHourDate(timestamp), gold_date_arr)
+      } else if (gantt_view_mode == 'relative_time') {
+        return
       } else {
-        date_arr = getGoldDateData({ gantt_view_mode, timestamp })
+        // date_arr = getGoldDateData({ gantt_view_mode, timestamp })
       }
     } else {
       date_arr = getGoldDateData({ gantt_view_mode, timestamp })
@@ -398,7 +486,7 @@ export default class GanttFace extends Component {
     // }
     let date_arr_one_level = []
     let date_total = 0
-    if (['year', 'month', 'hours'].includes(gantt_view_mode)) {
+    if (['year', 'month', 'hours', 'relative_time'].includes(gantt_view_mode)) {
       for (let val of date_arr) {
         const { date_inner = [] } = val
         for (let val2 of date_inner) {
@@ -762,6 +850,9 @@ function mapStateToProps({
   },
   technological: {
     datas: { currentUserOrganizes = [] }
+  },
+  projectDetail: {
+    datas: { projectDetailInfoData = {} }
   }
 }) {
   return {
@@ -782,7 +873,8 @@ function mapStateToProps({
     get_gantt_data_loading_other,
     currentUserOrganizes,
     show_base_line_mode,
-    active_baseline
+    active_baseline,
+    projectDetailInfoData
   }
 }
 GanttFace.defaultProps = {

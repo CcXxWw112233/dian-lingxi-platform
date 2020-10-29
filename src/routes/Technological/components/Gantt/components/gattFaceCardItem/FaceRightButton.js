@@ -232,9 +232,7 @@ export default class FaceRightButton extends Component {
                         </div>
                     )
                 } */}
-        <div className={styles.card_button} onClick={this.checkToday}>
-          今天
-        </div>
+
         {/* <div
           style={{ color: gantt_view_mode == 'hours' ? '#1890FF' : '' }}
           className={styles.card_button}
@@ -263,36 +261,43 @@ export default class FaceRightButton extends Component {
         >
           月
         </div> */}
-        <div className={`${styles.time_mode_wrapper} `}>
-          <div
-            className={`${styles.time_mode_selector} ${gantt_view_mode ==
-              'hours' && styles.time_mode_selected}`}
-            onClick={() => this.changeGanttViewMode('hours')}
-          >
-            时
-          </div>
-          <div
-            className={`${styles.time_mode_selector} ${gantt_view_mode ==
-              'month' && styles.time_mode_selected}`}
-            onClick={() => this.changeGanttViewMode('month')}
-          >
-            日
-          </div>
-          <div
-            className={`${styles.time_mode_selector} ${gantt_view_mode ==
-              'week' && styles.time_mode_selected}`}
-            onClick={() => this.changeGanttViewMode('week')}
-          >
-            周
-          </div>
-          <div
-            className={`${styles.time_mode_selector} ${gantt_view_mode ==
-              'year' && styles.time_mode_selected}`}
-            onClick={() => this.changeGanttViewMode('year')}
-          >
-            月
-          </div>
-        </div>
+        {gantt_view_mode != 'relative_time' && (
+          <>
+            <div className={styles.card_button} onClick={this.checkToday}>
+              今天
+            </div>
+            <div className={`${styles.time_mode_wrapper} `}>
+              <div
+                className={`${styles.time_mode_selector} ${gantt_view_mode ==
+                  'hours' && styles.time_mode_selected}`}
+                onClick={() => this.changeGanttViewMode('hours')}
+              >
+                时
+              </div>
+              <div
+                className={`${styles.time_mode_selector} ${gantt_view_mode ==
+                  'month' && styles.time_mode_selected}`}
+                onClick={() => this.changeGanttViewMode('month')}
+              >
+                日
+              </div>
+              <div
+                className={`${styles.time_mode_selector} ${gantt_view_mode ==
+                  'week' && styles.time_mode_selected}`}
+                onClick={() => this.changeGanttViewMode('week')}
+              >
+                周
+              </div>
+              <div
+                className={`${styles.time_mode_selector} ${gantt_view_mode ==
+                  'year' && styles.time_mode_selected}`}
+                onClick={() => this.changeGanttViewMode('year')}
+              >
+                月
+              </div>
+            </div>
+          </>
+        )}
       </div>
     )
   }

@@ -226,6 +226,7 @@ class SimpleMode extends PureComponent {
   }
   render() {
     const { setWapperCenter } = this.props
+    const { show } = this.state
     return (
       <div
         className={`${indexStyles.wapper} ${indexStyles.wapperBg} ${
@@ -237,7 +238,7 @@ class SimpleMode extends PureComponent {
         {/* {simpleHeaderVisiable && <SimpleHeader />}
         {show && this.renderRoutes()} */}
         <SimpleHeader />
-        {this.renderRoutes()}
+        {show && this.renderRoutes()}
       </div>
     )
   }

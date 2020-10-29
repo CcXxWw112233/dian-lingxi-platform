@@ -921,6 +921,11 @@ export default class GetRowGanttItem extends Component {
               }_${(current_date_board_child_miletones[0] || {}).id}`}
               data-targetclassname="specific_example_milestone"
               style={{
+                borderRight:
+                  gantt_view_mode == 'relative_time' &&
+                  ![5, 6, 0].includes(week_day)
+                    ? 'none'
+                    : '',
                 backgroundColor:
                   week_day == 0 || week_day == 6
                     ? 'rgb(245,245,245)'
@@ -1951,7 +1956,7 @@ export default class GetRowGanttItem extends Component {
                   style={{ height: item_height }}
                 >
                   {gantt_view_mode == 'year' && this.renderYearView(date_inner)}
-                  {gantt_view_mode == 'month' &&
+                  {['month', 'relative_time'].includes(gantt_view_mode) &&
                     this.renderMonthView(date_inner)}
                   {gantt_view_mode == 'week' && this.renderWeekView(date_inner)}
                   {gantt_view_mode == 'hours' &&
