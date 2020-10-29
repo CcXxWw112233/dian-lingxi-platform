@@ -118,7 +118,7 @@ export default class TreeNode extends Component {
     const gold_time = tree_type == '1' ? due_time : start_time
     const date = new Date(gold_time).getDate()
     let toDayIndex = -1
-    if (gantt_view_mode == 'month' || gantt_view_mode == 'hours') {
+    if (['month', 'hours', 'relative_time'].includes(gantt_view_mode)) {
       toDayIndex = date_arr_one_level.findIndex(item =>
         isSamDay(item.timestamp, gold_time)
       ) //当天所在位置index
@@ -632,6 +632,13 @@ export default class TreeNode extends Component {
       type = tree_type
     } else {
       type = this.props.type
+    }
+    if (tree_type == '3') {
+      return (
+        <div style={{ color: 'rgba(0,0,0,.25)', textAlign: 'center' }}>
+          <span>--</span>
+        </div>
+      )
     }
     return (
       <span>
