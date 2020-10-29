@@ -96,10 +96,11 @@ export default class index extends Component {
     for (let val of data) {
       const { id, next = [] } = val
       const card_detail = cards_one_level.find(item => item.id == id) || {}
-      const { left, width, top } = card_detail
+      const { left, width, top, start_time } = card_detail
       val.left = left
       val.top = top
       val.right = left + width
+      val.start_time = start_time
       if (next.length) {
         this.recusionSetMap(next, cards_one_level)
       }
@@ -751,6 +752,8 @@ export default class index extends Component {
   }
   renderPaths = () => {
     const { rely_map = [] } = this.state
+    const { date_arr_one_level = [] } = this.props
+    console.log('rely_map', rely_map)
     return (
       <>
         {rely_map.map(move_item => {
@@ -759,7 +762,8 @@ export default class index extends Component {
             right: move_right,
             top: move_top,
             next = [],
-            id: move_id
+            id: move_id,
+            start_time: move_start_time
           } = move_item
           return next.map(line_item => {
             let {
@@ -768,7 +772,8 @@ export default class index extends Component {
               top: line_top,
               relation,
               id: line_id,
-              color_mark = '24,144,255'
+              color_mark = '24,144,255',
+              start_time: line_start_time
             } = line_item
             if (!color_mark) {
               color_mark = '24,144,255'
@@ -783,7 +788,26 @@ export default class index extends Component {
               relation
             }
             // console.log('ssssssssssss', params)
-            if (move_left == 0 || line_left == 0) return ''
+            if (move_left == 0) {
+              if (
+                !move_start_time ||
+                move_start_time < date_arr_one_level[0].timestamp ||
+                move_start_time >
+                  date_arr_one_level[date_arr_one_level.length - 1].timestampEnd
+              ) {
+                return ''
+              }
+            }
+            if (line_left == 0) {
+              if (
+                !line_start_time ||
+                line_start_time < date_arr_one_level[0].timestamp ||
+                line_start_time >
+                  date_arr_one_level[date_arr_one_level.length - 1].timestampEnd
+              ) {
+                return ''
+              }
+            }
             if (!this.checkInvalid(params)) return ''
             const { Move_Line, Arrow } = this.calPath({ ...params })
             return (
@@ -900,7 +924,9 @@ function mapStateToProps({
       ceiHeight,
       rely_map,
       gantt_head_width,
-      card_name_outside
+      card_name_outside,
+      date_arr_one_level,
+      outline_tree
     }
   }
 }) {
@@ -915,6 +941,8 @@ function mapStateToProps({
     ceiHeight,
     rely_map,
     gantt_head_width,
-    card_name_outside
+    card_name_outside,
+    date_arr_one_level,
+    outline_tree
   }
 }
