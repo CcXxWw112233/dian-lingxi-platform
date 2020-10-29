@@ -502,9 +502,14 @@ class InviteOthers extends Component {
     fetchProjectList()
   }
 
-  // 从项目列表中邀请
+  /**
+   * 从具体的项目列表中选择一个项目
+   * @param {String} id 当前选择的项目ID
+   * @param {Object} e 事件对象
+   */
   handleClickedInviteFromProjectList = (id, e) => {
     if (e) e.stopPropagation()
+    // 获取当前点击项目的成员
     const getProjectMembers = () => {
       const { projectUserList } = this.state
       const findProject = projectUserList.find(item => item.board_id === id)
@@ -525,9 +530,14 @@ class InviteOthers extends Component {
     })
   }
 
-  // 从分组列表中邀请
+  /**
+   * 从分组列表中选择具体分组
+   * @param {String} id 表示当前点击的分组ID
+   * @param {Object} e 事件对象
+   */
   handleClickedInviteFromGroupList = (id, e) => {
     if (e) e.stopPropagation()
+    // 获取当前点击该分组的成员
     const getGroupMembers = () => {
       const { groupList = [] } = this.state
       const findGroup = groupList.find(item => item.id === id)
@@ -536,9 +546,11 @@ class InviteOthers extends Component {
         : false
       return isGroupWithMembers ? findGroup.members : []
     }
+    // 并为获取的成员添加full_name
     const nameToFullname = getGroupMembers().map(item =>
       Object.assign({}, item, { full_name: item.name })
     )
+    // 然后更新当前进行的步骤
     this.setPageStep(false, `group-${id}`, nameToFullname)
   }
 
@@ -678,24 +690,24 @@ class InviteOthers extends Component {
     return srcRegExp.test(srcStr)
   }
 
-  axiosForSend = (url, data) => {
-    const Authorization = Cookies.get('Authorization')
-    return new Promise((resolve, reject) => {
-      axios
-        .post(url, data, {
-          headers: {
-            Authorization,
-            ...setRequestHeaderBaseInfo({ data, headers: {}, params: {} })
-          }
-        })
-        .then(res => {
-          resolve(res.data)
-        })
-        .catch(err => {
-          reject(err)
-        })
-    })
-  }
+  // axiosForSend = (url, data) => {
+  //   const Authorization = Cookies.get('Authorization')
+  //   return new Promise((resolve, reject) => {
+  //     axios
+  //       .post(url, data, {
+  //         headers: {
+  //           Authorization,
+  //           ...setRequestHeaderBaseInfo({ data, headers: {}, params: {} })
+  //         }
+  //       })
+  //       .then(res => {
+  //         resolve(res.data)
+  //       })
+  //       .catch(err => {
+  //         reject(err)
+  //       })
+  //   })
+  // }
 
   // 注册用户并生成头像
   // getEnrollUsers = user => {
@@ -725,52 +737,19 @@ class InviteOthers extends Component {
   //   })
   // }
 
-  getRequestParams = () => {
-    const { selectedMember = [] } = this.state
-    const result = selectedMember.reduce((acc, curr) => {
-      const isCurrentUserFromPlatform = () =>
-        curr.type === 'platform' && curr.id
-      if (isCurrentUserFromPlatform()) {
-        if (acc) {
-          acc.push({
-            user_id: curr.id
-          })
-          return acc
-        }
-      } else {
-        if (acc) {
-          // let avatar_icon =
-          if (validateEmail(curr.user)) {
-            acc.push({
-              email: curr.user,
-              avatar_icon: ''
-            })
-          } else if (validateTel(curr.user)) {
-            acc.push({
-              mobile: curr.user,
-              avatar_icon: ''
-            })
-          }
-          return acc
-        }
-      }
-    }, [])
-    return result
-  }
-
-  getIcons = async (users = []) => {
-    // let users = this.getRequestParams()
-    for (let i = 0; i < users.length; i++) {
-      if (!users[i].id) {
-        // const avatar_icon = await this.getUsersAvatar(
-        //   users[i].mobile ? users[i].mobile : users[i].email
-        // )
-        const user_id = await this.getEnrollUsers(users[i].user)
-        users[i].id = user_id
-      }
-    }
-    return users
-  }
+  // getIcons = async (users = []) => {
+  //   // let users = this.getRequestParams()
+  //   for (let i = 0; i < users.length; i++) {
+  //     if (!users[i].id) {
+  //       // const avatar_icon = await this.getUsersAvatar(
+  //       //   users[i].mobile ? users[i].mobile : users[i].email
+  //       // )
+  //       const user_id = await this.getEnrollUsers(users[i].user)
+  //       users[i].id = user_id
+  //     }
+  //   }
+  //   return users
+  // }
 
   // 提交选择的用户回调
   handleSubmitSeletedMember = () => {
@@ -806,6 +785,7 @@ class InviteOthers extends Component {
     }
   }
 
+  // 控制微信扫码显示隐藏
   setWechatInviteVisible = () => {
     this.props.setWechatInviteVisible && this.props.setWechatInviteVisible()
   }

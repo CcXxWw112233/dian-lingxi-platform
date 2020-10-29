@@ -1070,25 +1070,32 @@ export default class DrawDetailInfo extends React.Component {
               </div>
             )}
             {date_mode == '1' ? (
-              ''
+              <div className={DrawDetailInfoStyle.set_time_item}>
+                <div className={DrawDetailInfoStyle.set_time_label}>
+                  基准时间：
+                </div>
+                <div className={DrawDetailInfoStyle.set_time_content}>
+                  <span
+                    style={{
+                      display: 'flex',
+                      width: '177px',
+                      paddingLeft: '12px',
+                      border: '1px solid #d9d9d9',
+                      height: '32px',
+                      lineHeight: '32px',
+                      borderRadius: '4px'
+                    }}
+                  >
+                    <div>
+                      {this.whetherShowCurrentYear(relative_time)
+                        ? `${new Date().getFullYear()}-`
+                        : ''}
+                      {timestampToTimeNormal(relative_time, '-', false)}
+                    </div>
+                  </span>
+                </div>
+              </div>
             ) : (
-              // <div className={DrawDetailInfoStyle.set_time_item}>
-              //   <div className={DrawDetailInfoStyle.set_time_label}>
-              //     基准时间：
-              //   </div>
-              //   <div className={DrawDetailInfoStyle.set_time_content}>
-              //     <DatePicker
-              //       format="YYYY-MM-DD"
-              //       value={
-              //         relative_time
-              //           ? moment(new Date(this.timePrecision(relative_time)))
-              //           : null
-              //       }
-              //       onChange={this.handleRelativeChange}
-              //       allowClear={false}
-              //     />
-              //   </div>
-              // </div>
               <div className={DrawDetailInfoStyle.set_time_item}>
                 <div className={DrawDetailInfoStyle.set_time_label}>
                   {currentNounPlanFilterName(PROJECTS)}周期：
