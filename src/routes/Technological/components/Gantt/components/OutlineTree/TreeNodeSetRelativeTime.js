@@ -68,9 +68,21 @@ export default class TreeNodeSetRelativeTime extends Component {
         23 * 60 * 60 * 1000 +
         59 * 60 * 100
     }
-    let p_k =
-      tree_type == '1' && time_type == 'due_time' ? 'deadline' : time_type
-    let action = 'edit_' + (tree_type == '1' ? 'milestone' : 'task')
+
+    let p_k = time_type
+    if (tree_type == '1' && time_type == 'due_time') {
+      p_k = 'deadline'
+    } else if (tree_type == '3' && time_type == 'start_time') {
+      p_k = 'plan_start_time'
+    } else {
+    }
+    const actions = {
+      '1': 'milestone',
+      '2': 'task',
+      '3': 'work_flow'
+    }
+    const action = 'edit_' + actions[tree_type]
+
     if (this.props.onDataProcess) {
       this.props.onDataProcess({
         action,
