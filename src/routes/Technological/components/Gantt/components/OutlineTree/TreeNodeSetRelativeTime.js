@@ -103,6 +103,7 @@ export default class TreeNodeSetRelativeTime extends Component {
           value={input_value}
           size="small"
           min={0}
+          onClick={e => e.stopPropagation()}
           onChange={this.onChange}
           style={{ width: 50 }}
         />
@@ -110,10 +111,21 @@ export default class TreeNodeSetRelativeTime extends Component {
     )
   }
   render() {
-    const { value, time_type } = this.props
+    const {
+      value,
+      time_type,
+      nodeValue: { tree_type }
+    } = this.props
     const description = {
       start_time: '开始',
       due_time: '结束'
+    }
+    if (tree_type == '3' && time_type == 'due_time') {
+      return (
+        <div>
+          <span style={{ color: 'rgba(0,0,0,.25)' }}>--</span>
+        </div>
+      )
     }
     return (
       <div>
