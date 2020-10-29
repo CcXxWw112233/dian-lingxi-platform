@@ -1,6 +1,6 @@
 import { connect } from 'dva'
 import React, { Component } from 'react'
-import { ganttIsOutlineView } from '../../constants'
+import { ganttIsOutlineView, hours_view_total } from '../../constants'
 
 @connect(mapStateToProps)
 export default class index extends Component {
@@ -25,7 +25,7 @@ export default class index extends Component {
         canvas_width: this.setCanvasWidth(this.props)
       },
       () => {
-        this.drawMonth(this.props)
+        this.draw(this.props)
       }
     )
   }
@@ -37,7 +37,7 @@ export default class index extends Component {
         canvas_width: this.setCanvasWidth(nextProps)
       },
       () => {
-        this.drawMonth(nextProps)
+        this.draw(nextProps)
       }
     )
   }
@@ -72,12 +72,27 @@ export default class index extends Component {
       ]
     }
   }
+  draw = props => {
+    const { gantt_view_mode } = props
+    const operators = {
+      month: this.drawMonths,
+      relative_time: this.drawMonths,
+      week: this.drawWeeks,
+      year: this.drawYears,
+      hours: this.drawHours
+    }
+    if (operators.hasOwnProperty(gantt_view_mode)) {
+      const { canvas_width, canvas_height } = this.state
+      this.ctx.clearRect(0, 0, canvas_width, canvas_height)
+      this.ctx.fillStyle = this.line_color
+      operators[gantt_view_mode](props)
+      this.draGroup(props)
+    }
+  }
   // 绘制月视图
-  drawMonth = props => {
+  drawMonths = props => {
     const { date_arr_one_level = [], ceilWidth } = props
-    const { canvas_width, canvas_height } = this.state
-    this.ctx.clearRect(0, 0, canvas_width, canvas_height)
-
+    const { canvas_height } = this.state
     let i
     for (i = 0; i < date_arr_one_level.length; i++) {
       const { week_day } = date_arr_one_level[i]
@@ -92,15 +107,44 @@ export default class index extends Component {
         this.ctx.fillRect(ceilWidth * (i + 1), 0, 1, canvas_height)
       }
     }
-    this.draGroup(props)
+  }
+  // 绘制时间视图
+  drawHours = props => {
+    const { gold_date_arr = [], ceilWidth } = props
+    const { canvas_height } = this.state
+    let i
+    for (i = 0; i < gold_date_arr.length; i++) {
+      this.ctx.fillRect(ceilWidth * (i * hours_view_total), 0, 1, canvas_height)
+    }
+  }
+  // 绘制年视图
+  drawYears = props => {
+    const { date_arr_one_level = [], ceilWidth } = props
+    const { canvas_height } = this.state
+    let i
+    let cal_pos = 0
+    for (i = 0; i < date_arr_one_level.length; i++) {
+      const { last_date } = date_arr_one_level[i]
+      cal_pos += ceilWidth * last_date
+      this.ctx.fillRect(cal_pos, 0, 1, canvas_height)
+    }
+  }
+  // 绘制周视图
+  drawWeeks = props => {
+    const { date_arr_one_level = [], ceilWidth } = props
+    const { canvas_height } = this.state
+    let i
+    for (i = 0; i < date_arr_one_level.length; i++) {
+      this.ctx.fillRect(ceilWidth * (i * 7), 0, 1, canvas_height)
+    }
   }
   // 绘制分组线条
   draGroup = props => {
     const { group_list_area_section_height = [] } = props
     const { canvas_width } = this.state
     let i = 0
-    for (i = 0; i < group_list_area_section_height.length; i++) {
-      this.ctx.fillStyle = this.line_color
+    this.ctx.fillRect(0, 0, canvas_width, 1)
+    for (i = 0; i < group_list_area_section_height.length - 1; i++) {
       this.ctx.fillRect(0, group_list_area_section_height[i], canvas_width, 1)
     }
   }
@@ -141,7 +185,9 @@ function mapStateToProps({
       group_list_area_section_height,
       group_view_type,
       outline_tree_round = [],
-      date_arr_one_level
+      date_arr_one_level,
+      gold_date_arr,
+      gantt_view_mode
     }
   }
 }) {
@@ -152,6 +198,8 @@ function mapStateToProps({
     group_list_area_section_height,
     group_view_type,
     outline_tree_round,
-    date_arr_one_level
+    date_arr_one_level,
+    gold_date_arr,
+    gantt_view_mode
   }
 }
