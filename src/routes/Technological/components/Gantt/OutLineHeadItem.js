@@ -53,7 +53,10 @@ import {
 } from '@/globalset/js/constant'
 import ShowAddMenberModal from '../../../../routes/Technological/components/Project/ShowAddMenberModal'
 import SafeConfirmModal from './components/SafeConfirmModal'
-import { updateFlowInstanceNameOrDescription } from '../../../../services/technological/workFlow'
+import {
+  updateFlowInstanceNameOrDescription,
+  workflowUpdateTime
+} from '../../../../services/technological/workFlow'
 import SaveBoardTemplate from './components/Modal/SaveBoardTemplate'
 import { task_item_margin_top } from './constants'
 import { currentNounPlanFilterName } from '../../../../utils/businessFunction'
@@ -804,6 +807,41 @@ export default class OutLineHeadItem extends Component {
           .catch(err => {
             message.error('更新失败')
           })
+        break
+      case 'edit_work_flow':
+        {
+          let updateParams = { ...param }
+          updateParams.id = param.id
+          // debugger
+          workflowUpdateTime({ ...updateParams }, { isNotLoading: false })
+            .then(res => {
+              if (isApiResponseOk(res)) {
+                let nodeValue = OutlineTree.getTreeNodeValue(
+                  outline_tree,
+                  param.id
+                )
+                if (typeof calback == 'function') {
+                  calback()
+                }
+                if (nodeValue) {
+                  this.updateOutLineTreeData(outline_tree)
+                } else {
+                  console.error('OutlineTree.getTreeNodeValue:未查询到节点')
+                }
+              } else {
+                if (typeof errCalback == 'function') {
+                  errCalback()
+                }
+                message.error(res.message)
+              }
+            })
+            .catch(err => {
+              if (typeof errCalback == 'function') {
+                errCalback()
+              }
+              message.error('更新失败')
+            })
+        }
         break
       default:
         break
