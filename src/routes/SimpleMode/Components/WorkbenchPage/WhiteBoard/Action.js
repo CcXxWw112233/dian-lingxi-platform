@@ -266,10 +266,9 @@ class Action {
   openWS = () => {
     this.whiteboard_ws = new WS()
     this.whiteboard_ws.open(
-      `${window.location.origin.replace(
-        /^(https?)/,
-        'ws'
-      )}/ws/websocket?t=wp&uid=${this.room_id}&token=${this.Authorization}`
+      `${window.location.origin.replace('http', 'ws')}/websocket?t=wp&uid=${
+        this.room_id
+      }&token=${this.Authorization}`
     )
     WEvent.on('ws:open', ({ ws }) => {
       ws.send('ping')
