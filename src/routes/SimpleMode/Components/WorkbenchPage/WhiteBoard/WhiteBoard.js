@@ -46,7 +46,7 @@ export default class WhiteBoardRoom extends React.Component {
     Action.init(WB_lx, this.state.page_number, this.props.room_id)
     // 获取组织成员，去除自己的数据
     getCurrentOrgAccessibleAllMembers({
-      _organization_id: this.props.org_id
+      _organization_id: this.props.room.org_id
     }).then(res => {
       // console.log(res)
       this.setState({
