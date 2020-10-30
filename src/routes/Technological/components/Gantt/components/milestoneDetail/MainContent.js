@@ -447,7 +447,7 @@ export default class MainContent extends React.Component {
             <InputNumber
               min={0}
               onChange={this.handleDueRelativeChange}
-              value={day_value ? day_value : 0}
+              value={day_value ? day_value : ''}
               style={{ width: '68px' }}
             />
             &nbsp;日
