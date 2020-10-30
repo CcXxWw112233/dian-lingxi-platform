@@ -33,6 +33,8 @@ class Action {
   wsKeys = {}
   wsTimer = null
   editTimer = null
+  isDisconnect = false
+  reConnectWS = null
   constructor() {
     WEvent.on('drawend:feature', ({ feature, type }) => {
       feature.set('creator', this.user)
@@ -88,15 +90,23 @@ class Action {
         }
       }, 100)
     })
+    WEvent.on('ws:open', () => {
+      console.log('open')
+      this.isDisconnect = false
+      clearTimeout(this.reConnectWS)
+    })
     WEvent.on('ws:message', ({ ws, message }) => {
       // console.log(message)
+      clearTimeout(this.reConnectWS)
       if (message === 'pong') {
         clearTimeout(this.wsTimer)
         this.wsTimer = setTimeout(() => {
           ws.send('ping')
-        }, 10 * 1000)
+        }, 3 * 1000)
       }
       if (message && message !== 'pong') {
+        this.isDisconnect = false
+
         let msg = JSON.parse(message)
         if (msg.detail) {
           let code = msg.detail.messageCode
@@ -106,10 +116,31 @@ class Action {
       }
     })
     WEvent.on('ws:close', () => {
+      console.log('close')
+      this.isDisconnect = true
       message.warn('连接已断开')
+      this.toReconnect()
+    })
+    WEvent.on('ws:error', () => {
+      this.toReconnect()
+    })
+    window.document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        if (this.isDisconnect) {
+          // 重连
+          this.openWS()
+        }
+      }
     })
   }
 
+  //重连机制
+  toReconnect = () => {
+    clearTimeout(this.reConnectWS)
+    this.reConnectWS = setTimeout(() => {
+      this.openWS()
+    }, 5000)
+  }
   /**
    * 添加用户
    */
