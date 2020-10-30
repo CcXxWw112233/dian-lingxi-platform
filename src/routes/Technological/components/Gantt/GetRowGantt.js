@@ -982,7 +982,8 @@ export default class GetRowGantt extends Component {
       outline_tree_round,
       gantt_view_mode,
       active_baseline_data,
-      date_arr_one_level
+      date_arr_one_level,
+      gantt_card_height
     } = this.props
     return (
       <>
@@ -995,7 +996,7 @@ export default class GetRowGantt extends Component {
           id={'gantt_operate_area_panel'}
           ref={'gantt_operate_area_panel'}
         >
-          <GroupCanvas></GroupCanvas>
+          <GroupCanvas gantt_card_height={gantt_card_height}></GroupCanvas>
           <SvgArea></SvgArea>
           {this.renderDashedRect()}
           {/* 非大纲视图下渲染任务和或者进度 */}

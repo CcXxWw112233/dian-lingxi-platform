@@ -1,6 +1,10 @@
 import { connect } from 'dva'
 import React, { Component } from 'react'
-import { ganttIsOutlineView, hours_view_total } from '../../constants'
+import {
+  date_area_height,
+  ganttIsOutlineView,
+  hours_view_total
+} from '../../constants'
 
 @connect(mapStateToProps)
 export default class index extends Component {
@@ -50,26 +54,56 @@ export default class index extends Component {
     const { date_total, ceilWidth } = props
     return date_total * ceilWidth
   }
-  setCanvasHeight = props => {
-    const rows = 7
+  // setCanvasHeight = props => {
+  //   const rows = 7
+  //   const {
+  //     ceiHeight,
+  //     group_view_type,
+  //     outline_tree_round = [],
+  //     group_list_area_section_height
+  //   } = props
+  //   // return '100%'
+  //   if (ganttIsOutlineView({ group_view_type })) {
+  //     const outline_tree_round_length = outline_tree_round.length
+  //     if (outline_tree_round_length > rows) {
+  //       return (outline_tree_round_length + 8) * ceiHeight
+  //     } else {
+  //       return (rows + 5) * ceiHeight
+  //     }
+  //   } else {
+  //     return group_list_area_section_height[
+  //       group_list_area_section_height.length - 1
+  //     ]
+  //   }
+  // }
+  setCanvasHeight = () => {
     const {
+      gantt_card_height,
+      group_list_area_section_height,
       ceiHeight,
       group_view_type,
-      outline_tree_round = [],
-      group_list_area_section_height
-    } = props
-    // return '100%'
+      outline_tree_round
+    } = this.props
+    const outline_tree_round_length = outline_tree_round.length
+    const gantt_area_height = gantt_card_height - date_area_height - 30
+
+    console.log('sssssssssaaaa', {
+      大纲条数: outline_tree_round_length * ceiHeight,
+      分组高度:
+        group_list_area_section_height[
+          group_list_area_section_height.length - 1
+        ],
+      卡片高度: gantt_area_height
+    })
     if (ganttIsOutlineView({ group_view_type })) {
-      const outline_tree_round_length = outline_tree_round.length
-      if (outline_tree_round_length > rows) {
-        return (outline_tree_round_length + 8) * ceiHeight
-      } else {
-        return (rows + 5) * ceiHeight
-      }
+      return Math.max(outline_tree_round_length * ceiHeight, gantt_area_height)
     } else {
-      return group_list_area_section_height[
-        group_list_area_section_height.length - 1
-      ]
+      return Math.max(
+        group_list_area_section_height[
+          group_list_area_section_height.length - 1
+        ],
+        gantt_area_height
+      )
     }
   }
   draw = props => {
