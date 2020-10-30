@@ -21,6 +21,7 @@ const XczNews = lazy(() => import('./XczNews/index'))
 const Zhichengshe = lazy(() => import('./Zhichengshe/index'))
 const Workglows = lazy(() => import('./Workflows'))
 const StatisticalReport = lazy(() => import('./StatisticalReport'))
+const WhiteBoardRooms = lazy(() => import('./WhiteBoard'))
 
 class WorkbenchPage extends Component {
   constructor(props) {
@@ -202,6 +203,11 @@ class WorkbenchPage extends Component {
               {isPaymentUser && 'report' == select_box_code && (
                 <StatisticalReport
                   workbenchBoxContent_height={workbenchBoxContent_height}
+                />
+              )}
+              {isPaymentOrgUser && 'whiteboard' === select_box_code && (
+                <WhiteBoardRooms
+                  org_id={this.props.simplemodeCurrentProject.org_id}
                 />
               )}
             </div>

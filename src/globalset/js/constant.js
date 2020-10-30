@@ -8,6 +8,7 @@ export const REQUEST_DOMAIN_FLOWS = PROJECTS_API //接口域名
 export const REQUEST_DOMAIN_ABOUT_PROJECT = PROJECTS_API //项目相关接口域名前缀
 export const REQUEST_INTERGFACE_VERSIONN = '/v2' //接口版本
 export const REQUEST_PDF = '/api/pdf' // pdf圈评接口域名
+export const REQUEST_WHITEBOARD = 'api/pdf'
 // 晓策志接口
 // export const REQUEST_COMMON = '/api'
 
