@@ -1126,10 +1126,15 @@ export default class OutLineHeadItem extends Component {
         type={input_add_type}
         placeholder={input_add_type == '1' ? '新建里程碑' : '新建任务'}
         onHover={this.onHover}
-        nodeValue={{
-          add_id: input_add_type == '1' ? 'add_milestone_out' : 'add_card_out',
-          tree_type: '0'
-        }} // add_id: 'add_milestone'
+        nodeValue={
+          normal
+            ? {
+                add_id:
+                  input_add_type == '1' ? 'add_milestone_out' : 'add_card_out',
+                tree_type: '0'
+              }
+            : item
+        } // add_id: 'add_milestone'
         icon={
           <Dropdown
             trigger={['click']}
