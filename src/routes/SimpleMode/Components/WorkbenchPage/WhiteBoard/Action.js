@@ -35,6 +35,7 @@ class Action {
   editTimer = null
   isDisconnect = false
   reConnectWS = null
+  isLogOut = false
   constructor() {
     WEvent.on('drawend:feature', ({ feature, type }) => {
       feature.set('creator', this.user)
@@ -118,6 +119,7 @@ class Action {
     WEvent.on('ws:close', () => {
       console.log('close')
       this.isDisconnect = true
+      if (this.isLogOut) return
       message.warn('连接已断开')
       this.toReconnect()
     })
@@ -126,7 +128,7 @@ class Action {
     })
     window.document.addEventListener('visibilitychange', () => {
       if (!document.hidden) {
-        if (this.isDisconnect) {
+        if (this.isDisconnect && !this.isLogOut) {
           // 重连
           this.openWS()
         }
@@ -277,6 +279,7 @@ class Action {
    * 关闭websocket
    */
   closeWS = () => {
+    this.isLogOut = true
     this.whiteboard_ws.disconnect()
     clearTimeout(this.wsTimer)
   }
@@ -311,6 +314,7 @@ class Action {
       })
       updateData(wb, arr)
     })
+    this.isLogOut = false
   }
   /**
    * 保存修改
