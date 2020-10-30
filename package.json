@@ -27,7 +27,7 @@
     "echarts": "^4.8.0",
     "emoji-mart": "^2.8.1",
     "exceljs": "^4.1.1",
-    "fabric": "^4.1.0",
+    "fabric": "^4.2.0",
     "fastclick": "^1.0.6",
     "js-base64": "^2.5.1",
     "js-cookie": "^2.2.0",
@@ -47,6 +47,7 @@
     "react-draggable": "^4.4.3",
     "react-virtualized": "^9.21.2",
     "spark-md5": "^3.0.0",
+    "whiteboard-lingxi": "^1.0.14",
     "xlsx": "^0.16.8"
   },
   "devDependencies": {
