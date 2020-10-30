@@ -35,7 +35,7 @@ import {
   ({
     publicTaskDetailModal: { drawContent = {} },
     gantt: {
-      datas: { group_view_type }
+      datas: { group_view_type, base_relative_time }
     },
     projectDetail: {
       datas: { projectDetailInfoData = {} }
@@ -43,7 +43,8 @@ import {
   }) => ({
     group_view_type,
     drawContent,
-    projectDetailInfoData
+    projectDetailInfoData,
+    base_relative_time
   })
 )
 export default class AppendSubTaskItem extends Component {
@@ -95,13 +96,19 @@ export default class AppendSubTaskItem extends Component {
   // 渲染开始时间
   renderStartTime = () => {
     const { local_start_time } = this.state
-    const { childTaskItemValue = {}, projectDetailInfoData = {} } = this.props
+    const {
+      childTaskItemValue = {},
+      projectDetailInfoData = {},
+      base_relative_time: relative_time
+    } = this.props
     const { start_time } = childTaskItemValue
-    const { board_set = {} } = projectDetailInfoData
-    const { relative_time } = board_set
+    // const { board_set = {} } = projectDetailInfoData
+    // const { relative_time } = board_set
     const day_value =
       start_time && start_time != '0'
         ? caldiffDays(relative_time, start_time)
+        : start_time == relative_time
+        ? 0
         : ''
     return (
       <>
@@ -111,7 +118,7 @@ export default class AppendSubTaskItem extends Component {
             <InputNumber
               min={0}
               onChange={this.handleStartRelativeChange}
-              value={day_value ? day_value : ''}
+              value={day_value ? day_value : day_value === 0 ? 0 : ''}
               style={{ width: '68px' }}
             />
             &nbsp;日
@@ -176,12 +183,20 @@ export default class AppendSubTaskItem extends Component {
   // 渲染截止时间
   renderDueTime = () => {
     const { local_due_time } = this.state
-    const { childTaskItemValue = {}, projectDetailInfoData = {} } = this.props
+    const {
+      childTaskItemValue = {},
+      projectDetailInfoData = {},
+      base_relative_time: relative_time
+    } = this.props
     const { due_time } = childTaskItemValue
-    const { board_set = {} } = projectDetailInfoData
-    const { relative_time } = board_set
+    // const { board_set = {} } = projectDetailInfoData
+    // const { relative_time } = board_set
     const day_value =
-      due_time && due_time != '0' ? caldiffDays(relative_time, due_time) : ''
+      due_time && due_time != '0'
+        ? caldiffDays(relative_time, due_time)
+        : due_time == relative_time
+        ? 0
+        : ''
     return (
       <>
         {this.showTimerMode() ? (
@@ -190,7 +205,7 @@ export default class AppendSubTaskItem extends Component {
             <InputNumber
               min={0}
               onChange={this.handleDueRelativeChange}
-              value={day_value ? day_value : ''}
+              value={day_value ? day_value : day_value === 0 ? 0 : ''}
               style={{ width: '68px' }}
             />
             &nbsp;日

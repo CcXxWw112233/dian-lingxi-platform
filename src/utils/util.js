@@ -19,24 +19,6 @@ export const handleTimeDetailReturn = timestamp => {
   }
 }
 
-/**
- * 计算两个日期的相差天数 不比较小时分钟
- * @param {String|Number} timestamp1 设置的基准时间
- * @param {String|Number} timestamp2 需要比较的时间
- */
-export const caldiffDays = (timestamp1, timestamp2) => {
-  if (!timestamp1 || !timestamp2) return ''
-  let dateSpan, tempDate, iDays
-  let sDate1 = timestampToTimeNormal(timestamp1, '/')
-  let sDate2 = timestampToTimeNormal(timestamp2, '/')
-  sDate1 = Date.parse(sDate1)
-  sDate2 = Date.parse(sDate2)
-  dateSpan = sDate2 - sDate1
-  dateSpan = Math.abs(dateSpan)
-  iDays = Math.floor(dateSpan / (24 * 3600 * 1000))
-  return iDays
-}
-
 //是否同一周。以周一开始
 export const isSameWeek = (oldTimestamp, nowTimestamp) => {
   var oneDayTime = 1000 * 60 * 60 * 24
@@ -960,4 +942,30 @@ export const getRelativeTimeTamp = (value, timestamp) => {
       ? Number(timestamp)
       : parseInt(timestamp / 1000)
   return timestamp_ + value * (24 * 3600)
+}
+
+/**
+ * 计算两个日期的相差天数 不比较小时分钟
+ * @param {String|Number} timestamp1 设置的基准时间
+ * @param {String|Number} timestamp2 需要比较的时间
+ */
+export const caldiffDays = (timestamp1, timestamp2) => {
+  if (!timestamp1 || !timestamp2) return ''
+  let dateSpan, tempDate, iDays
+  let timestamp1_ =
+    String(timestamp1).length == 10
+      ? Number(timestamp1) * 1000
+      : Number(timestamp1)
+  let timestamp2_ =
+    String(timestamp2).length == 10
+      ? Number(timestamp2) * 1000
+      : Number(timestamp2)
+  let sDate1 = dateFormat(timestamp1_, 'yyyy-MM-dd') //timestampToTimeNormal(timestamp1, '/')
+  let sDate2 = dateFormat(timestamp2_, 'yyyy-MM-dd') //timestampToTimeNormal(timestamp2, '/')
+  sDate1 = Date.parse(sDate1)
+  sDate2 = Date.parse(sDate2)
+  dateSpan = sDate2 - sDate1
+  dateSpan = Math.abs(dateSpan)
+  iDays = Math.floor(dateSpan / (24 * 3600 * 1000))
+  return iDays
 }

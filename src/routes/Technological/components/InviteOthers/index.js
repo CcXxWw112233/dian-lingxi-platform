@@ -29,8 +29,8 @@ import {
   REQUEST_INTERGFACE_VERSIONN
 } from '../../../../globalset/js/constant'
 import globalStyles from '@/globalset/css/globalClassName.less'
-import Avatars from '@dicebear/avatars'
-import SpriteBoottts from '@dicebear/avatars-bottts-sprites'
+// import Avatars from '@dicebear/avatars'
+// import SpriteBoottts from '@dicebear/avatars-bottts-sprites'
 import Cookies from 'js-cookie'
 import axios from 'axios'
 let cx = classNames.bind(styles)
@@ -73,7 +73,7 @@ class InviteOthers extends Component {
       width: 32,
       height: 32
     }
-    this.avatars = new Avatars(SpriteBoottts, this.options)
+    this.avatars = {}
   }
 
   // 验证手机号或者是邮箱
@@ -335,17 +335,14 @@ class InviteOthers extends Component {
   // 给用户设置的默认身份等...
   genOptionLabel = item => {
     const { avatar, user, name } = item
-    let svg = this.avatars.create(user)
+    // let svg = this.avatars.create(user)
     //默认
     if (avatar === 'default') {
       return (
         <p className={styles.input__select_wrapper}>
           <span className={styles.input__select_avatar_img}>
             <img
-              src={
-                'data:image/svg+xml;base64,' +
-                btoa(unescape(encodeURIComponent(svg)))
-              }
+              src={defaultUserAvatar}
               style={{ borderRadius: '50%' }}
               width="24"
               height="24"
@@ -384,7 +381,9 @@ class InviteOthers extends Component {
       state => {
         const { selectedMember } = state
         return {
-          selectedMember: selectedMember.filter(i => i.user !== item.user)
+          selectedMember: selectedMember.filter(
+            i => i.id !== (item.id || item.user_id)
+          )
         }
       },
       () => {
@@ -397,9 +396,8 @@ class InviteOthers extends Component {
   addMemberToSelectedMember = item => {
     const { selectedMember } = this.state
     const isMemberHasInSelectedMember = () =>
-      selectedMember.find(each => each.user === item.user)
+      selectedMember.find(each => each.id === (item.id || item.user_id))
     if (isMemberHasInSelectedMember()) return
-
     this.setState(
       {
         selectedMember: [item, ...selectedMember]
@@ -420,11 +418,9 @@ class InviteOthers extends Component {
   handleToggleMemberInSelectedMember = (item, e) => {
     if (e) e.stopPropagation()
     const { selectedMember } = this.state
-
     const member = this.genUserToDefinedMember(item)
-
     const isMemberHasInSelectedMember = () =>
-      selectedMember.find(each => each.user === member.user)
+      selectedMember.find(each => each.id === (member.id || member.user_id))
     if (isMemberHasInSelectedMember()) {
       return this.delFromSelectedMember(member)
     }
@@ -441,7 +437,7 @@ class InviteOthers extends Component {
     const { selectedMember } = this.state
     const mobileOrEmail = item.mobile ? item.mobile : item.email
     return selectedMember.find(
-      each => each.type === 'platform' && each.user === mobileOrEmail
+      each => each.type === 'platform' && each.id == (item.id || item.user_id)
     )
   }
 
@@ -506,9 +502,14 @@ class InviteOthers extends Component {
     fetchProjectList()
   }
 
-  // 从项目列表中邀请
+  /**
+   * 从具体的项目列表中选择一个项目
+   * @param {String} id 当前选择的项目ID
+   * @param {Object} e 事件对象
+   */
   handleClickedInviteFromProjectList = (id, e) => {
     if (e) e.stopPropagation()
+    // 获取当前点击项目的成员
     const getProjectMembers = () => {
       const { projectUserList } = this.state
       const findProject = projectUserList.find(item => item.board_id === id)
@@ -529,9 +530,14 @@ class InviteOthers extends Component {
     })
   }
 
-  // 从分组列表中邀请
+  /**
+   * 从分组列表中选择具体分组
+   * @param {String} id 表示当前点击的分组ID
+   * @param {Object} e 事件对象
+   */
   handleClickedInviteFromGroupList = (id, e) => {
     if (e) e.stopPropagation()
+    // 获取当前点击该分组的成员
     const getGroupMembers = () => {
       const { groupList = [] } = this.state
       const findGroup = groupList.find(item => item.id === id)
@@ -540,9 +546,11 @@ class InviteOthers extends Component {
         : false
       return isGroupWithMembers ? findGroup.members : []
     }
+    // 并为获取的成员添加full_name
     const nameToFullname = getGroupMembers().map(item =>
       Object.assign({}, item, { full_name: item.name })
     )
+    // 然后更新当前进行的步骤
     this.setPageStep(false, `group-${id}`, nameToFullname)
   }
 
@@ -682,108 +690,75 @@ class InviteOthers extends Component {
     return srcRegExp.test(srcStr)
   }
 
-  axiosForSend = (url, data) => {
-    const Authorization = Cookies.get('Authorization')
-    return new Promise((resolve, reject) => {
-      axios
-        .post(url, data, {
-          headers: {
-            Authorization,
-            ...setRequestHeaderBaseInfo({ data, headers: {}, params: {} })
-          }
-        })
-        .then(res => {
-          resolve(res.data)
-        })
-        .catch(err => {
-          reject(err)
-        })
-    })
-  }
+  // axiosForSend = (url, data) => {
+  //   const Authorization = Cookies.get('Authorization')
+  //   return new Promise((resolve, reject) => {
+  //     axios
+  //       .post(url, data, {
+  //         headers: {
+  //           Authorization,
+  //           ...setRequestHeaderBaseInfo({ data, headers: {}, params: {} })
+  //         }
+  //       })
+  //       .then(res => {
+  //         resolve(res.data)
+  //       })
+  //       .catch(err => {
+  //         reject(err)
+  //       })
+  //   })
+  // }
 
   // 注册用户并生成头像
-  getEnrollUsers = user => {
-    let svg = this.avatars.create(user)
-    let file = this.dataURLtoFile(
-      'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg))),
-      user + '.svg'
-    )
-    let data = new FormData()
-    data.append('file', file)
-    return new Promise((resolve, reject) => {
-      this.axiosForSend(
-        `${REQUEST_DOMAIN}${REQUEST_INTERGFACE_VERSIONN}/user/invite?invitee_account=${user}`,
-        data
-      )
-        .then(res => {
-          // console.log(res)
-          if (isApiResponseOk(res)) {
-            resolve(res.data.id)
-          } else {
-            reject({})
-          }
-        })
-        .catch(err => {
-          message.warn('上传头像失败，请稍后重试')
-        })
-    })
-  }
+  // getEnrollUsers = user => {
+  //   let svg = this.avatars.create(user)
+  //   let file = this.dataURLtoFile(
+  //     'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg))),
+  //     user + '.svg'
+  //   )
+  //   let data = new FormData()
+  //   data.append('file', file)
+  //   return new Promise((resolve, reject) => {
+  //     this.axiosForSend(
+  //       `${REQUEST_DOMAIN}${REQUEST_INTERGFACE_VERSIONN}/user/invite?invitee_account=${user}`,
+  //       data
+  //     )
+  //       .then(res => {
+  //         // console.log(res)
+  //         if (isApiResponseOk(res)) {
+  //           resolve(res.data.id)
+  //         } else {
+  //           reject({})
+  //         }
+  //       })
+  //       .catch(err => {
+  //         message.warn('上传头像失败，请稍后重试')
+  //       })
+  //   })
+  // }
 
-  getRequestParams = () => {
-    const { selectedMember = [] } = this.state
-    const result = selectedMember.reduce((acc, curr) => {
-      const isCurrentUserFromPlatform = () =>
-        curr.type === 'platform' && curr.id
-      if (isCurrentUserFromPlatform()) {
-        if (acc) {
-          acc.push({
-            user_id: curr.id
-          })
-          return acc
-        }
-      } else {
-        if (acc) {
-          // let avatar_icon =
-          if (validateEmail(curr.user)) {
-            acc.push({
-              email: curr.user,
-              avatar_icon: ''
-            })
-          } else if (validateTel(curr.user)) {
-            acc.push({
-              mobile: curr.user,
-              avatar_icon: ''
-            })
-          }
-          return acc
-        }
-      }
-    }, [])
-    return result
-  }
-
-  getIcons = async (users = []) => {
-    // let users = this.getRequestParams()
-    for (let i = 0; i < users.length; i++) {
-      if (!users[i].id) {
-        // const avatar_icon = await this.getUsersAvatar(
-        //   users[i].mobile ? users[i].mobile : users[i].email
-        // )
-        const user_id = await this.getEnrollUsers(users[i].user)
-        users[i].id = user_id
-      }
-    }
-    return users
-  }
+  // getIcons = async (users = []) => {
+  //   // let users = this.getRequestParams()
+  //   for (let i = 0; i < users.length; i++) {
+  //     if (!users[i].id) {
+  //       // const avatar_icon = await this.getUsersAvatar(
+  //       //   users[i].mobile ? users[i].mobile : users[i].email
+  //       // )
+  //       const user_id = await this.getEnrollUsers(users[i].user)
+  //       users[i].id = user_id
+  //     }
+  //   }
+  //   return users
+  // }
 
   // 提交选择的用户回调
   handleSubmitSeletedMember = () => {
     const { handleInviteMemberReturnResult } = this.props
     const { selectedMember } = this.state
-    this.getIcons(selectedMember).then(users => {
-      handleInviteMemberReturnResult(users)
-    })
-    // handleInviteMemberReturnResult(new_selectedMember)
+    // this.getIcons(selectedMember).then(users => {
+    //   handleInviteMemberReturnResult(users)
+    // })
+    handleInviteMemberReturnResult(selectedMember)
   }
 
   componentDidMount() {
@@ -810,6 +785,7 @@ class InviteOthers extends Component {
     }
   }
 
+  // 控制微信扫码显示隐藏
   setWechatInviteVisible = () => {
     this.props.setWechatInviteVisible && this.props.setWechatInviteVisible()
   }
@@ -984,7 +960,7 @@ class InviteOthers extends Component {
           <div className={styles.invite__result_wrapper}>
             <div className={styles.invite__result_list}>
               {selectedMember.map(item => {
-                let svg = this.avatars.create(item.user)
+                // let svg = this.avatars.create(item.user)
                 return (
                   <div
                     key={item.user}
@@ -1001,8 +977,7 @@ class InviteOthers extends Component {
                         <img
                           src={
                             item.type === 'other'
-                              ? 'data:image/svg+xml;base64,' +
-                                btoa(unescape(encodeURIComponent(svg)))
+                              ? defaultUserAvatar
                               : this.isAvatarValid(item.icon)
                               ? item.icon
                               : defaultUserAvatar
@@ -1092,7 +1067,6 @@ class InviteOthers extends Component {
                     )}
                   </div>
                   {sortedMembersListToSelect.map(item => {
-                    let svg = this.avatars.create(item.name)
                     return (
                       <div
                         key={item.id}

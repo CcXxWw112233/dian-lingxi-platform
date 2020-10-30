@@ -42,21 +42,21 @@ class ShowAddMenberModal extends React.Component {
     return users.reduce((acc, curr) => {
       const isCurrentUserFromPlatform = () =>
         curr.type === 'platform' && curr.id
-      if (acc) {
-        return acc + ',' + curr.id
-      }
-      return curr.id
-      // if (isCurrentUserFromPlatform()) {
-      //   if (acc) {
-      //     return acc + ',' + curr.id
-      //   }
-      //   return curr.id
-      // } else {
-      //   if (acc) {
-      //     return acc + ',' + curr.user
-      //   }
-      //   return curr.user
+      // if (acc) {
+      //   return acc + ',' + curr.id
       // }
+      // return curr.id
+      if (isCurrentUserFromPlatform()) {
+        if (acc) {
+          return acc + ',' + curr.id
+        }
+        return curr.id
+      } else {
+        if (acc) {
+          return acc + ',' + curr.user
+        }
+        return curr.user
+      }
     }, '')
   }
   handleInviteMemberReturnResult = (selectedMember = []) => {

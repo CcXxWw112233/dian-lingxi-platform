@@ -579,7 +579,7 @@ export default class HeaderContentRightMenu extends Component {
           )}
         </span>
         {/* 分享协作 */}
-        <span className={`${headerStyles.action} `}>
+        {/* <span className={`${headerStyles.action} `}>
           {is_shared === '1' ? (
             <span
               className={headerStyles.right__shareIndicator}
@@ -620,7 +620,7 @@ export default class HeaderContentRightMenu extends Component {
               this.handleOnlyReadingShareExpChangeOrStopShare
             }
           />
-        </span>
+        </span> */}
         {/* 删除 */}
         <span className={`${headerStyles.action}`}>
           <Tooltip title="删除">

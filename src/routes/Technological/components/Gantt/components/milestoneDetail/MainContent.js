@@ -368,7 +368,8 @@ export default class MainContent extends React.Component {
   renderRelaContent = ({ content_list = [], type }) => {
     const {
       milestone_detail = {},
-      projectDetailInfoData: { board_set = {} }
+      projectDetailInfoData: { board_set = {} },
+      base_relative_time
     } = this.props
     return (
       <>
@@ -395,6 +396,7 @@ export default class MainContent extends React.Component {
                   key={id}
                   milestone_id={milestone_detail['id']}
                   board_set={board_set}
+                  base_relative_time={base_relative_time}
                   deleteRelationContent={this.props.deleteRelationContent}
                 />
               )
@@ -408,11 +410,14 @@ export default class MainContent extends React.Component {
   handleDueRelativeChange = value => {
     if (!isNaN(value)) {
       const {
-        projectDetailInfoData: { board_set = {} }
+        projectDetailInfoData: { board_set = {} },
+        base_relative_time: relative_time
       } = this.props
-      const { relative_time } = board_set
+      // const { relative_time } = board_set
       const due_timeStamp =
-        String(value).trimLR() == ''
+        value === 0
+          ? relative_time
+          : String(value).trimLR() == ''
           ? '0'
           : getRelativeTimeTamp(value, relative_time)
 
@@ -429,12 +434,19 @@ export default class MainContent extends React.Component {
   renderDueTime = () => {
     const {
       projectDetailInfoData: { board_set = {} },
-      milestone_detail = {}
+      milestone_detail = {},
+      base_relative_time: relative_time
     } = this.props
-    const { date_format, date_mode, relative_time } = board_set
+    const { date_format, date_mode } = board_set
     const { deadline } = milestone_detail
     const day_value =
-      deadline && deadline != '0' ? caldiffDays(relative_time, deadline) : ''
+      deadline && deadline != '0'
+        ? caldiffDays(relative_time, deadline)
+        : (String(deadline).length == 10
+          ? Number(deadline) * 1000
+          : Number(deadline) == relative_time)
+        ? 0
+        : ''
     return (
       <>
         {date_mode == '1' ? (
@@ -443,7 +455,7 @@ export default class MainContent extends React.Component {
             <InputNumber
               min={0}
               onChange={this.handleDueRelativeChange}
-              value={day_value ? day_value : ''}
+              value={day_value ? day_value : day_value === 0 ? 0 : ''}
               style={{ width: '68px' }}
             />
             &nbsp;日
@@ -794,9 +806,12 @@ function mapStateToProps({
   milestoneDetail: { milestone_detail = {} },
   projectDetail: {
     datas: { projectDetailInfoData = {} }
+  },
+  gantt: {
+    datas: { base_relative_time }
   }
 }) {
-  return { milestone_detail, projectDetailInfoData }
+  return { milestone_detail, projectDetailInfoData, base_relative_time }
 }
 
 // const executors = [

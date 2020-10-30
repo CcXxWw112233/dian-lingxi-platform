@@ -92,6 +92,8 @@ class VisitControl extends Component {
     })
   }
   addMenbersInProject = (values, selectedMember) => {
+    this.handleInviteMemberReturnResult(selectedMember)
+    return
     const { invitationType, board_id } = this.props
     const org_id = getOrgIdByBoardId(board_id)
     inviteMembersInWebJoin({

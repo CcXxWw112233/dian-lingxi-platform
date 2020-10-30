@@ -115,14 +115,27 @@ export default class GetRowStrip extends PureComponent {
       }
     })
   }
-  stripMouseLeave = e => {
-    const { dispatch } = this.props
+  stripMouseEnter = e => {
+    const { itemValue = {}, dispatch } = this.props
+    const { tree_type, id, add_id } = itemValue
     dispatch({
       type: 'gantt/updateDatas',
       payload: {
-        outline_hover_obj: {}
+        outline_hover_obj: tree_type == '0' ? { add_id } : { id } //创建那一栏不需要效果
       }
     })
+  }
+  stripMouseLeave = e => {
+    const row_srip = e.target?.dataset?.row_srip
+    if (!row_srip) {
+      const { dispatch } = this.props
+      dispatch({
+        type: 'gantt/updateDatas',
+        payload: {
+          outline_hover_obj: {}
+        }
+      })
+    }
     // this.addCardSetOutlineTree({ start_time: 0, due_time: 0, editing: false })
   }
   stripMouseMove = e => {
@@ -765,14 +778,16 @@ export default class GetRowStrip extends PureComponent {
     if (!!id) {
       //真正上的里程碑或者任务 或者创建里程碑的虚拟节点
       return {
-        onMouseOver: this.stripMouseOver,
+        // onMouseOver: this.stripMouseOver,
+        onMouseEnter: this.stripMouseEnter,
         onMouseLeave: this.stripMouseLeave,
         onMouseMove: this.stripMouseMove
       }
     } else {
       if (add_id == 'add_milestone') {
         return {
-          onMouseOver: this.stripMouseOver,
+          // onMouseOver: this.stripMouseOver,
+          onMouseEnter: this.stripMouseEnter,
           onMouseLeave: this.stripMouseLeave
         }
       }
@@ -799,11 +814,17 @@ export default class GetRowStrip extends PureComponent {
           // this.dashedMouseLeave(e)
           this.stripMouseLeave(e)
         },
-        onMouseOver: e => {
+        // onMouseOver: e => {
+        //   if (editing) {
+        //     return
+        //   }
+        //   this.stripMouseOver(e)
+        // },
+        onMouseEnter: e => {
           if (editing) {
             return
           }
-          this.stripMouseOver(e)
+          this.stripMouseEnter(e)
         }
       }
     }
@@ -1009,6 +1030,7 @@ export default class GetRowStrip extends PureComponent {
         <div
           className={`${styles.row_srip} ${this.onHoverState() &&
             styles.row_srip_on_hover}`}
+          data-row_srip={true}
           ref={'row_strip'}
           {...this.targetEventProps()}
           // onMouseMove={this.stripMouseMove}
