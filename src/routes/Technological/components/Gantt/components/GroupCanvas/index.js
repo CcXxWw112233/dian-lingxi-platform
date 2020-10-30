@@ -54,60 +54,35 @@ export default class index extends Component {
     const { date_total, ceilWidth } = props
     return date_total * ceilWidth
   }
-  // setCanvasHeight = props => {
-  //   const rows = 7
-  //   const {
-  //     ceiHeight,
-  //     group_view_type,
-  //     outline_tree_round = [],
-  //     group_list_area_section_height
-  //   } = props
-  //   // return '100%'
-  //   if (ganttIsOutlineView({ group_view_type })) {
-  //     const outline_tree_round_length = outline_tree_round.length
-  //     if (outline_tree_round_length > rows) {
-  //       return (outline_tree_round_length + 8) * ceiHeight
-  //     } else {
-  //       return (rows + 5) * ceiHeight
-  //     }
-  //   } else {
-  //     return group_list_area_section_height[
-  //       group_list_area_section_height.length - 1
-  //     ]
-  //   }
-  // }
-  setCanvasHeight = () => {
+  setCanvasHeight = props => {
     const {
       gantt_card_height,
-      group_list_area_section_height,
+      group_list_area_section_height = [],
       ceiHeight,
       group_view_type,
-      outline_tree_round
-    } = this.props
+      outline_tree_round = [],
+      list_group_length
+    } = props
     const outline_tree_round_length = outline_tree_round.length
-    const gantt_area_height = gantt_card_height - date_area_height - 30
-
-    console.log('sssssssssaaaa', {
-      大纲条数: outline_tree_round_length * ceiHeight,
-      分组高度:
-        group_list_area_section_height[
-          group_list_area_section_height.length - 1
-        ],
-      卡片高度: gantt_area_height
-    })
+    const gantt_area_height = gantt_card_height - date_area_height - 30 //视图区域高度
+    const latest_group_height =
+      group_list_area_section_height[list_group_length - 1] //最后一个分组的位置，即为最高
+    let _finally_height = gantt_area_height
     if (ganttIsOutlineView({ group_view_type })) {
-      return Math.max(outline_tree_round_length * ceiHeight, gantt_area_height)
+      _finally_height = Math.max(
+        outline_tree_round_length * ceiHeight + date_area_height + 20, //在大纲头部渲染那里，添加利一个高度为date_area_height的div,加上未知的差异24
+        gantt_area_height
+      )
     } else {
-      return Math.max(
-        group_list_area_section_height[
-          group_list_area_section_height.length - 1
-        ],
+      _finally_height = Math.max(
+        latest_group_height || gantt_area_height,
         gantt_area_height
       )
     }
+    return _finally_height
   }
   draw = props => {
-    const { gantt_view_mode } = props
+    const { gantt_view_mode, group_view_type } = props
     const operators = {
       month: this.drawMonths,
       relative_time: this.drawMonths,
@@ -120,7 +95,9 @@ export default class index extends Component {
       this.ctx.clearRect(0, 0, canvas_width, canvas_height)
       this.ctx.fillStyle = this.line_color
       operators[gantt_view_mode](props)
-      this.draGroup(props)
+      if (!ganttIsOutlineView({ group_view_type })) {
+        this.draGroup(props)
+      }
     }
   }
   // 绘制月视图
@@ -178,7 +155,7 @@ export default class index extends Component {
     const { canvas_width } = this.state
     let i = 0
     this.ctx.fillRect(0, 0, canvas_width, 1)
-    for (i = 0; i < group_list_area_section_height.length - 1; i++) {
+    for (i = 0; i < group_list_area_section_height.length; i++) {
       this.ctx.fillRect(0, group_list_area_section_height[i], canvas_width, 1)
     }
   }
@@ -197,7 +174,8 @@ export default class index extends Component {
           style={{
             position: 'absolute',
             zIndex: 0,
-            left: 0
+            left: 0,
+            backgroundColor: '#fff'
           }}
           ref={this.canvas_ref}
           //   width={3000}
@@ -221,7 +199,8 @@ function mapStateToProps({
       outline_tree_round = [],
       date_arr_one_level,
       gold_date_arr,
-      gantt_view_mode
+      gantt_view_mode,
+      list_group
     }
   }
 }) {
@@ -234,6 +213,7 @@ function mapStateToProps({
     outline_tree_round,
     date_arr_one_level,
     gold_date_arr,
-    gantt_view_mode
+    gantt_view_mode,
+    list_group_length: list_group.length
   }
 }

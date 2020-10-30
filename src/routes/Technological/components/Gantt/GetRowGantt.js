@@ -997,7 +997,7 @@ export default class GetRowGantt extends Component {
           ref={'gantt_operate_area_panel'}
         >
           <GroupCanvas gantt_card_height={gantt_card_height}></GroupCanvas>
-          <SvgArea></SvgArea>
+          <SvgArea gantt_card_height={gantt_card_height}></SvgArea>
           {this.renderDashedRect()}
           {/* 非大纲视图下渲染任务和或者进度 */}
           {!ganttIsOutlineView({ group_view_type }) &&
