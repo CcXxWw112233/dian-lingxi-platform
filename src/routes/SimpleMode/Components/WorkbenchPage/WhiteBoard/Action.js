@@ -19,6 +19,8 @@ import { WhiteBoardMain } from 'whiteboard-lingxi'
 import WS from './websocket_wb'
 import Cookies from 'js-cookie'
 import { Avatar, message, notification } from 'antd'
+import { uploadFileForAxios } from '../../../../../utils/requestAxios'
+import { REQUEST_WHITEBOARD } from '../../../../../globalset/js/constant'
 class Action {
   room_id
   whiteboard_ws
@@ -31,6 +33,8 @@ class Action {
   wsKeys = {}
   wsTimer = null
   editTimer = null
+  isDisconnect = false
+  reConnectWS = null
   constructor() {
     WEvent.on('drawend:feature', ({ feature, type }) => {
       feature.set('creator', this.user)
@@ -58,7 +62,19 @@ class Action {
           return
         }
       }
-      RemoveFeature({ record_id: record_id })
+      if (record_id) RemoveFeature({ record_id: record_id })
+    })
+    // 有图片上传
+    WEvent.on('drawend:img', ({ img, type, file }) => {
+      this.uploadFile({ file }).then(res => {
+        // console.log(res)
+        let resp = res.data
+        if (isApiResponseOk(resp)) {
+          let data = resp.data
+          img.set('send_src', data.path)
+          this.addJSON(img, type, { src: data.path })
+        }
+      })
     })
     // 有编辑数据
     WEvent.on('object:edit', obj => {
@@ -74,15 +90,23 @@ class Action {
         }
       }, 100)
     })
+    WEvent.on('ws:open', () => {
+      console.log('open')
+      this.isDisconnect = false
+      clearTimeout(this.reConnectWS)
+    })
     WEvent.on('ws:message', ({ ws, message }) => {
       // console.log(message)
+      clearTimeout(this.reConnectWS)
       if (message === 'pong') {
         clearTimeout(this.wsTimer)
         this.wsTimer = setTimeout(() => {
           ws.send('ping')
-        }, 10 * 1000)
+        }, 3 * 1000)
       }
       if (message && message !== 'pong') {
+        this.isDisconnect = false
+
         let msg = JSON.parse(message)
         if (msg.detail) {
           let code = msg.detail.messageCode
@@ -92,10 +116,31 @@ class Action {
       }
     })
     WEvent.on('ws:close', () => {
+      console.log('close')
+      this.isDisconnect = true
       message.warn('连接已断开')
+      this.toReconnect()
+    })
+    WEvent.on('ws:error', () => {
+      this.toReconnect()
+    })
+    window.document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        if (this.isDisconnect) {
+          // 重连
+          this.openWS()
+        }
+      }
     })
   }
 
+  //重连机制
+  toReconnect = () => {
+    clearTimeout(this.reConnectWS)
+    this.reConnectWS = setTimeout(() => {
+      this.openWS()
+    }, 5000)
+  }
   /**
    * 添加用户
    */
@@ -248,7 +293,7 @@ class Action {
       let data = (res.data.records || []).map(item => {
         if (item.create_by != this.user.id) {
           item.detail.disabled = 'true'
-        } else {
+        } else if (item.detail) {
           item.detail.disabled = 'false'
         }
         return item
@@ -258,6 +303,9 @@ class Action {
       arr = arr.map(item => {
         if (item.disabled) {
           item.selectable = false
+        }
+        if (item.type === 'image') {
+          item.crossOrigin = 'anonymous'
         }
         return item
       })
@@ -279,6 +327,14 @@ class Action {
     delete json.creator
     json.record_id = record_id
     json.container_size = size
+    if (obj.type === 'image') {
+      if (obj.get('send_src')) {
+        json.src = obj.get('send_src')
+      }
+      delete json.filters
+      let k = 'whiteboard/'
+      json.src = k + json.src.split(k)[1]
+    }
     EditFeature(json).then(res => {
       obj.set('record_id', res.data)
       obj.set('creator', this.user)
@@ -290,12 +346,16 @@ class Action {
    * @param {*} val 主要对象
    * @param {*} type 添加对象类型
    */
-  addJSON = (val, type) => {
+  addJSON = (val, type, addParam = {}) => {
     let json = this.toTransformJson(val.toJSON(), type)
     let containerSize = this.domContainer()
     let size = [containerSize.width, containerSize.height].join(',')
     json.container_size = size
-    addFeature(json).then(res => {
+    if (val.type === 'image') {
+      delete json.filters
+      json.crossOrigin = 'anonymous'
+    }
+    addFeature({ ...json, ...addParam }).then(res => {
       val.set('record_id', res.data)
     })
   }
@@ -375,6 +435,17 @@ class Action {
       return res
     }
     return Promise.reject()
+  }
+  /**
+   * 上传文件不使用antd
+   */
+  uploadFile = data => {
+    let formdata = new FormData()
+    for (let key in data) {
+      formdata.append(key, data[key])
+    }
+    let url = `${REQUEST_WHITEBOARD}/whiteboard/room/file`
+    return uploadFileForAxios(url, formdata)
   }
 }
 
