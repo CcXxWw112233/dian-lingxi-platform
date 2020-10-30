@@ -126,11 +126,15 @@ export default class TreeNodeSetRelativeTime extends Component {
     const {
       value,
       time_type,
-      nodeValue: { tree_type }
+      nodeValue: { tree_type, is_has_start_time, is_has_end_time }
     } = this.props
     const description = {
       start_time: '开始',
       due_time: '结束'
+    }
+    const really_has_time = {
+      start_time: is_has_start_time,
+      due_time: is_has_end_time
     }
     if (tree_type == '3' && time_type == 'due_time') {
       return (
@@ -141,7 +145,11 @@ export default class TreeNodeSetRelativeTime extends Component {
     }
     return (
       <div>
-        {!!value ? (
+        {(tree_type == '2' ? (
+          really_has_time[time_type]
+        ) : (
+          !!value
+        )) ? ( //当类型为任务的时候必须要有真正的值，而非转化的值
           this.renderInput()
         ) : (
           <Dropdown
