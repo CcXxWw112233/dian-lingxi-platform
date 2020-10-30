@@ -107,6 +107,8 @@ export default class AppendSubTaskItem extends Component {
     const day_value =
       start_time && start_time != '0'
         ? caldiffDays(relative_time, start_time)
+        : start_time == relative_time
+        ? 0
         : ''
     return (
       <>
@@ -116,7 +118,7 @@ export default class AppendSubTaskItem extends Component {
             <InputNumber
               min={0}
               onChange={this.handleStartRelativeChange}
-              value={day_value ? day_value : ''}
+              value={day_value ? day_value : day_value === 0 ? 0 : ''}
               style={{ width: '68px' }}
             />
             &nbsp;日
@@ -190,7 +192,11 @@ export default class AppendSubTaskItem extends Component {
     // const { board_set = {} } = projectDetailInfoData
     // const { relative_time } = board_set
     const day_value =
-      due_time && due_time != '0' ? caldiffDays(relative_time, due_time) : ''
+      due_time && due_time != '0'
+        ? caldiffDays(relative_time, due_time)
+        : due_time == relative_time
+        ? 0
+        : ''
     return (
       <>
         {this.showTimerMode() ? (
@@ -199,7 +205,7 @@ export default class AppendSubTaskItem extends Component {
             <InputNumber
               min={0}
               onChange={this.handleDueRelativeChange}
-              value={day_value ? day_value : ''}
+              value={day_value ? day_value : day_value === 0 ? 0 : ''}
               style={{ width: '68px' }}
             />
             &nbsp;日

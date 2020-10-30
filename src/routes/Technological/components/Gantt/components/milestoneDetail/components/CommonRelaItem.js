@@ -96,10 +96,10 @@ export default class CommonRelaItem extends React.Component {
           {deadline && (
             <>
               {date_mode == '1' ? (
-                <span style={{ color: '#d5d5d5' }}>{`T+ ${caldiffDays(
-                  relative_time,
-                  deadline
-                )} 日 `}</span>
+                <span style={{ color: '#d5d5d5' }}>
+                  {caldiffDays(relative_time, deadline) &&
+                    `T+ ${caldiffDays(relative_time, deadline)} 日 `}
+                </span>
               ) : (
                 <div style={{ color: '#d5d5d5' }}>
                   {timestampToTimeNormal(

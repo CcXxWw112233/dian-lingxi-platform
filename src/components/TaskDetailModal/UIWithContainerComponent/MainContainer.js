@@ -687,7 +687,9 @@ const LogicWithMainContent = {
     if (!isNaN(value)) {
       // 表示是数字的时候才做处理
       let start_timeStamp =
-        value == '' || String(value).trimLR() == ''
+        value === 0
+          ? relative_time
+          : value == '' || String(value).trimLR() == ''
           ? '0'
           : getRelativeTimeTamp(value, relative_time)
       const updateObj = {
@@ -740,7 +742,9 @@ const LogicWithMainContent = {
     if (!isNaN(value)) {
       // 表示是数字的时候才做处理
       let due_timeStamp =
-        value == '' || String(value).trimLR() == ''
+        value === 0
+          ? relative_time
+          : value == '' || String(value).trimLR() == ''
           ? '0'
           : getRelativeTimeTamp(value, relative_time)
       const updateObj = {
