@@ -55,6 +55,9 @@ export default class TreeNodeSetRelativeTime extends Component {
     const new_value = Number(value)
     if (new_value > 999) {
       message.warn('设置天数最大支持999天')
+      this.setState({
+        input_value: last_input_value
+      })
       return
     }
     const { tree_type, id } = nodeValue
