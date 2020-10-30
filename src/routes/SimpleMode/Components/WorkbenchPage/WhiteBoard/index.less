@@ -21,6 +21,20 @@
     display: flex;
     flex-wrap: wrap;
   }
+  .room_icon{
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    width: 60px;
+    height: 60px;
+    font-size: 2.2em;
+    line-height: 60px;
+    background-color: rgba(158, 166, 194, 0.3);
+    color: #fff;
+    border-radius: 8px;
+    text-align: center;
+  }
   .room_list_item{
     cursor: pointer;
     width: 25%;
@@ -75,7 +89,7 @@
     overflow: hidden;
     width: 80%;
     height: 80%;
-    box-shadow: 0 6px 16px rgba(134, 140, 164, 0.2);
+    box-shadow: 0 6px 16px rgba(134, 140, 164, 0.2), 0 -6px 16px rgba(134, 140, 164, 0.2);
     // border: 1px solid red;
   }
   .reLoadBtn{

@@ -1,7 +1,7 @@
 import React from 'react'
 import styles from './index.less'
 import Action from './Action'
-import { Modal, Input, Button, message, Select } from 'antd'
+import { Modal, Input, Button, message, Select, Avatar } from 'antd'
 import globalStyles from '../../../../../globalset/css/globalClassName.less'
 
 export default class RoomList extends React.PureComponent {
@@ -184,6 +184,11 @@ export default class RoomList extends React.PureComponent {
                     className={styles.room_list_item_detail}
                     onClick={() => this.handleRoom(item)}
                   >
+                    <div
+                      className={`${globalStyles.authTheme} ${styles.room_icon}`}
+                    >
+                      &#xe7fb;
+                    </div>
                     <div className={styles.room_msg}>
                       <span className={styles.room_msg_title}>
                         {item.name}{' '}
@@ -193,6 +198,17 @@ export default class RoomList extends React.PureComponent {
                           {this.translateStatus(item.status)})
                         </span>
                       </span>
+                      <div className={styles.room_msg_users}>
+                        {(item.users || []).map(user => {
+                          return (
+                            <Avatar
+                              src={user.avatar}
+                              size={18}
+                              style={{ marginRight: 5 }}
+                            />
+                          )
+                        })}
+                      </div>
                     </div>
                   </div>
                 </div>
