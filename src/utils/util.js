@@ -969,3 +969,20 @@ export const caldiffDays = (timestamp1, timestamp2) => {
   iDays = Math.floor(dateSpan / (24 * 3600 * 1000))
   return iDays
 }
+
+/**
+ * base64转file
+ * @param {string} dataurl base64的字符串
+ * @param {string} filename 文件名称
+ */
+export const dataURLtoFile = (dataurl, filename) => {
+  var arr = dataurl.split(','),
+    mime = arr[0].match(/:(.*?);/)[1],
+    bstr = atob(arr[1]),
+    n = bstr.length,
+    u8arr = new Uint8Array(n)
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n)
+  }
+  return new File([u8arr], filename, { type: mime })
+}
