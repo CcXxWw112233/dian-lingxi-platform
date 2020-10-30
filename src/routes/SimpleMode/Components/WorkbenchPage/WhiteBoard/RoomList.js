@@ -86,7 +86,7 @@ export default class RoomList extends React.PureComponent {
     }).then(res => {
       if (res) {
         this.setState({
-          list: this.state.list.concat([res.data]),
+          list: this.state.list.concat([{ ...res.data, status: 1 }]),
           addRoomModal: false,
           roomName: ''
         })

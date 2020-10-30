@@ -117,10 +117,10 @@ class Action {
       }
     })
     WEvent.on('ws:close', () => {
-      console.log('close')
+      // console.log('close')
       this.isDisconnect = true
       if (this.isLogOut) return
-      message.warn('连接已断开')
+      // message.warn('连接已断开')
       this.toReconnect()
     })
     WEvent.on('ws:error', () => {
@@ -227,7 +227,6 @@ class Action {
     // 添加了
     let c = content.detail.content
     let record = c.record
-    // console.log(record, '添加了数据')
     if (
       !this.checkIsOwn(content?.detail?.creator) &&
       c.pageNumber === this.page_number
