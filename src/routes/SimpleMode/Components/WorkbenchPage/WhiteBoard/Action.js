@@ -126,26 +126,27 @@ class Action {
   userRemove = val => {
     if (!this.checkIsOwn(val.detail?.creator)) {
       let content = val.detail?.content
-      notification.info({
-        message: '移除成员',
-        description: (
-          <div>
-            <Avatar src={content?.avatar} />
-            <span
-              style={{ marginLeft: 10, fontSize: '1.1em', fontWeight: 'bold' }}
-            >
-              {content.name}
-            </span>{' '}
-            离开了房间
-          </div>
-        ),
-        placement: 'bottomRight'
-      })
+      // notification.info({
+      //   message: '移除成员',
+      //   description: (
+      //     <div>
+      //       <Avatar src={content?.avatar} />
+      //       <span
+      //         style={{ marginLeft: 10, fontSize: '1.1em', fontWeight: 'bold' }}
+      //       >
+      //         {content.name}
+      //       </span>{' '}
+      //       离开了房间
+      //     </div>
+      //   ),
+      //   placement: 'bottomRight'
+      // })
       /**
        * 退出房间，强制离开
        */
       if (
-        (content.id || content.user_id) === (this.user.user_id || this.user.id)
+        (content || content.id || content.user_id) ===
+        (this.user.user_id || this.user.id)
       )
         WEvent.dispatchDEvent('exit:room', 'KickOut')
     }
