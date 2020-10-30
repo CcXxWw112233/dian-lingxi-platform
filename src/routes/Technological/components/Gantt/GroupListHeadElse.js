@@ -163,7 +163,7 @@ export default class GroupListHeadElse extends Component {
     return (
       <div
         style={{ height: this.filterHeight() }}
-        className={`${indexStyles.listHeadItem}`}
+        className={`${indexStyles.listHeadItem} ${indexStyles.listHeadItemElse}`}
       >
         {/* {
           group_view_type == '1' && !add_new_board_group && gantt_board_id != '0' && (
