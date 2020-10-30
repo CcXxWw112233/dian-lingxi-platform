@@ -88,28 +88,29 @@ export default class WhiteBoardRoom extends React.Component {
           &#xe7ce;
         </div>
         <div className={`${styles.settings} ${globalStyles.authTheme}`}>
-          {this.props.room.create_by === Action.user.id && (
-            <Dropdown
-              trigger="click"
-              overlay={
-                <SelectMembers
-                  keyCode="user_id"
-                  HideInvitationOther={true}
-                  listData={this.state.users}
-                  chirldrenTaskChargeChange={this.handleChangeMember}
-                  searchName="name"
-                  currentSelect={this.state.intheRoomUsers}
-                />
-              }
-            >
-              <div className={styles.invitation}>
-                <span>&#xe7db;</span>
-              </div>
-            </Dropdown>
-          )}
+          {this.props.room.create_by === Action.user.id &&
+            this.props.room.status == 1 && (
+              <Dropdown
+                trigger="click"
+                overlay={
+                  <SelectMembers
+                    keyCode="user_id"
+                    HideInvitationOther={true}
+                    listData={this.state.users}
+                    chirldrenTaskChargeChange={this.handleChangeMember}
+                    searchName="name"
+                    currentSelect={this.state.intheRoomUsers}
+                  />
+                }
+              >
+                <div className={styles.invitation}>
+                  <span>&#xe7db;</span>
+                </div>
+              </Dropdown>
+            )}
         </div>
         <WhiteBoard onLoad={this.WhiteBoardLoad} RoomId={this.props.room_id}>
-          <WTools />
+          {this.props.room.status == 1 && <WTools />}
           <Controller />
         </WhiteBoard>
       </div>
