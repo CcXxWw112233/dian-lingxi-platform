@@ -952,12 +952,37 @@ export const getRelativeTimeTamp = (value, timestamp) => {
 export const caldiffDays = (timestamp1, timestamp2) => {
   if (!timestamp1 || !timestamp2) return ''
   let dateSpan, tempDate, iDays
-  let sDate1 = dateFormat(timestamp1, 'yyyy-MM-dd') //timestampToTimeNormal(timestamp1, '/')
-  let sDate2 = dateFormat(timestamp2, 'yyyy-MM-dd') //timestampToTimeNormal(timestamp2, '/')
+  let timestamp1_ =
+    String(timestamp1).length == 10
+      ? Number(timestamp1) * 1000
+      : Number(timestamp1)
+  let timestamp2_ =
+    String(timestamp2).length == 10
+      ? Number(timestamp2) * 1000
+      : Number(timestamp2)
+  let sDate1 = dateFormat(timestamp1_, 'yyyy-MM-dd') //timestampToTimeNormal(timestamp1, '/')
+  let sDate2 = dateFormat(timestamp2_, 'yyyy-MM-dd') //timestampToTimeNormal(timestamp2, '/')
   sDate1 = Date.parse(sDate1)
   sDate2 = Date.parse(sDate2)
   dateSpan = sDate2 - sDate1
   dateSpan = Math.abs(dateSpan)
   iDays = Math.floor(dateSpan / (24 * 3600 * 1000))
   return iDays
+}
+
+/**
+ * base64转file
+ * @param {string} dataurl base64的字符串
+ * @param {string} filename 文件名称
+ */
+export const dataURLtoFile = (dataurl, filename) => {
+  var arr = dataurl.split(','),
+    mime = arr[0].match(/:(.*?);/)[1],
+    bstr = atob(arr[1]),
+    n = bstr.length,
+    u8arr = new Uint8Array(n)
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n)
+  }
+  return new File([u8arr], filename, { type: mime })
 }

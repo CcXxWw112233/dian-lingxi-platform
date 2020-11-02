@@ -43,6 +43,7 @@ export default class MenuSearchPartner extends React.Component {
     const { keyWord } = this.state
     let selectedKeys = []
     const { listData = [], searchName, currentSelect = [] } = props
+    console.log(currentSelect)
     if (!Array.isArray(currentSelect)) return false
     for (let val of currentSelect) {
       selectedKeys.push(val['user_id'])
@@ -404,7 +405,7 @@ export default class MenuSearchPartner extends React.Component {
             className={globalStyles.global_vertical_scrollbar}
             style={{ maxHeight: '248px', overflowY: 'auto' }}
           >
-            {!isInvitation && (
+            {!isInvitation && !this.props.HideInvitationOther && (
               <div
                 style={{
                   padding: 0,
@@ -608,6 +609,7 @@ MenuSearchPartner.deafultProps = {
   invitationType: '', //
   invitationId: '',
   invitationOrg: '',
+  HideInvitationOther: false, // 是否显示邀请他人参与 默认false
   listData: [],
   keyCode: '', //关键的属性（user_id）
   searchName: '', //检索的名称

@@ -113,3 +113,19 @@ export default function request(options = {}, elseSet = {}) {
       })
   })
 }
+
+/**
+ * 不使用antd的upload上传
+ * @param {url} url 上传的地址
+ * @param {formate} data 参数
+ */
+export const uploadFileForAxios = (url, data) => {
+  const Authorization = Cookies.get('Authorization')
+  let a = axios.post(url, data, {
+    headers: {
+      Authorization,
+      ...setRequestHeaderBaseInfo({ data, headers: {}, params: {} })
+    }
+  })
+  return a
+}

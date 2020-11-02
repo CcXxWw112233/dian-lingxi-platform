@@ -161,7 +161,7 @@ export default class WorkFlowItem extends Component {
     const updateData = {}
     const start_time_index = Math.floor(local_left / ceilWidth)
     let start_date = {}
-    if (gantt_view_mode == 'month') {
+    if (gantt_view_mode == 'month' || gantt_view_mode == 'relative_time') {
       start_date = date_arr_one_level[start_time_index] || {}
     } else if (gantt_view_mode == 'year') {
       start_date = setDateWithPositionInYearView({

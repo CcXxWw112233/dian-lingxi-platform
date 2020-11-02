@@ -303,6 +303,10 @@ export default class CardItem extends Component {
     //计算移动后的左偏移量和顶部的偏移量
     const nl = nx - (this.x - this.l)
     const nt = ny - (this.y - this.t)
+    const { gantt_view_mode } = this.props
+    if (gantt_view_mode == 'relative_time') {
+      if (nl <= 0) return
+    }
     this.setState(
       {
         // local_top: nt,

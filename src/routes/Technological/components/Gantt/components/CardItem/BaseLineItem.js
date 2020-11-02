@@ -28,12 +28,25 @@ function BaseLineItem(props) {
     month: 9,
     hours: 4
   }
+  let diff_left_obj = 0 //不同视图位置差异的微调
+  if (gantt_view_mode == 'relative_time') {
+    //里程碑
+    if (props.type == '1') {
+      // 父里程碑
+      if (!ganttData.parent_id) {
+        diff_left_obj = 32
+      } else {
+        //子里程碑
+        diff_left_obj = 9
+      }
+    }
+  }
   return (
     <div
       className={styles.baselineitem_box}
       style={{
         top: itemStyle.top,
-        left: itemStyle.left,
+        left: itemStyle.left + diff_left_obj,
         marginTop: itemStyle.marginTop
       }}
     >

@@ -2488,7 +2488,9 @@ export default class PdfComment extends React.Component {
           <div className={styles.history_msg}>
             <div className={styles.creator_name}>
               {item.creator?.name} &nbsp;
-              <span>在第({item.page_number})页</span>{' '}
+              {item.opera_type !== '4' && (
+                <span>在第({item.page_number})页</span>
+              )}{' '}
               <span className={styles.actionType}>
                 {this.transformText(item.opera_type)}
               </span>
