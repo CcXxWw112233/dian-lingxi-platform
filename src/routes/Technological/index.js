@@ -32,9 +32,12 @@ let net = null
 @connect(mapStateToProps)
 export default class Technological extends React.Component {
   componentDidMount() {
-    this.historyListenSet()
+    // this.historyListenSet()
     this.connectWsToModel()
     this.checkListeninger()
+  }
+  componentWillMount() {
+    this.historyListenSet()
   }
   componentWillUnmount() {
     // console.log('netnet-ummount', net)
