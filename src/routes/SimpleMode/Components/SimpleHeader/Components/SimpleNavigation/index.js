@@ -718,7 +718,7 @@ export default class SimpleNavigation extends Component {
             <Menu.Item key="subInfoSet">
               <span>通知设置</span>
             </Menu.Item>
-            {isPaymentOrgUser() &&
+            {/* {isPaymentOrgUser() &&
               CUSTOMIZATION_ORGNIZATIONS.includes(
                 this.props.currentSelectOrganize.id
               ) &&
@@ -726,7 +726,7 @@ export default class SimpleNavigation extends Component {
                 <Menu.Item key="subShowSimple">
                   <span>切换普通模式</span>
                 </Menu.Item>
-              )}
+              )} */}
           </SubMenu>
 
           <Menu.Item key="10">

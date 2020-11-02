@@ -143,7 +143,7 @@ const Routers = function({ history, app }) {
       component: () => import('./routes/RetrievePassword/')
     },
     {
-      path: '/technological/:path/:path?/:path?/:path?',
+      path: '/technological/simplemode/:path?/:path?/:path?',
       // models: () => [
       //   // import('./models/technological'),
       //   // import('./models/technological/cooperationPush'),
