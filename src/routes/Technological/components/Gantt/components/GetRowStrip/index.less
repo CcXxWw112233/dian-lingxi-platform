@@ -152,6 +152,54 @@
     right: 2px;
   }
 }
+// 父里程碑显示时间进度样式
+.leaf_min_time_color {
+  background-color: #ffccbf;
+  .left_triangle {
+    border-top-color: #ffccbf;
+    &::after {
+      border-color: #ffccbf transparent transparent transparent;
+    }
+  }
+  .right_triangle {
+    border-top-color: #ffccbf;
+    &::after {
+      border-color: #ffccbf transparent transparent transparent;
+    }
+  }
+}
+// 存在百分比时的进度条样式
+.leaf_percent_time {
+  background-color: #ff8f72;
+  .left_triangle {
+    border-top-color: #ff8f72;
+    &::after {
+      border-color: #ff8f72 transparent transparent transparent;
+    }
+  }
+  .right_triangle {
+    border-top-color: #ff8f72;
+    &::after {
+      border-color: #ff8f72 transparent transparent transparent;
+    }
+  }
+}
+// 存在百分比后进度条子里程碑的样式
+.leaf_percent_child_time {
+  background-color: #ffba67;
+  .left_triangle {
+    border-top-color: #ffba67;
+    &::after {
+      border-color: #ffba67 transparent transparent transparent;
+    }
+  }
+  .right_triangle {
+    border-top-color: #ffba67;
+    &::after {
+      border-color: #ffba67 transparent transparent transparent;
+    }
+  }
+}
 .dasheRect {
   position: absolute;
   border: 2px dashed #e8e8e8;

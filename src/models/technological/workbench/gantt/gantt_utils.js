@@ -57,6 +57,28 @@ function getMilestoneLeafCardsMinTime(node) {
   recusion(node)
   return min_time
 }
+// 获取里程碑下所有叶子 (穿透多层) 节点的完成时间以及总时间茶值
+function getMilestoneLeafWithCompleteCardsTimesPercentage(node) {
+  let complete_time_diff = 0 // 已完成时间差总数
+  let all_time_diff = 0 // 所有时间差总数
+  function recusion(node) {
+    if (node.children && node.children.length) {
+      node.children.forEach(item => {
+        // 只存在开始和结束时间的任务
+        if (item.tree_type == '2' && !!item.start_time && !!item.due_time) {
+          if (item.is_realize == '1') {
+            complete_time_diff =
+              item.due_time - item.start_time + complete_time_diff
+          }
+          all_time_diff = item.due_time - item.start_time + all_time_diff
+        }
+        recusion(item)
+      })
+    }
+  }
+  recusion(node)
+  return { complete_time_diff, all_time_diff }
+}
 export function recusionItem(
   tree,
   {
@@ -187,8 +209,15 @@ export function recusionItem(
     //所有叶子 任务的最早时间
     if (tree_type == '1') {
       const min_leaf_card_time = getMilestoneLeafCardsMinTime(new_item)
+      const {
+        complete_time_diff,
+        all_time_diff
+      } = getMilestoneLeafWithCompleteCardsTimesPercentage(new_item)
       new_item.start_time = min_leaf_card_time
       new_item.min_leaf_card_time = min_leaf_card_time
+      new_item.percent_card_non = (
+        parseFloat(complete_time_diff / all_time_diff) * 100
+      ).toFixed(2)
     }
     //一级里程碑展开的包含高度
     if (tree_type == '1' && !parent_id) {
