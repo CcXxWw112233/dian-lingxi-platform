@@ -1721,6 +1721,15 @@ export default class CardItem extends Component {
       this.computeCardsTimePercentageWithChildren(itemValue) ||
       progress_percent ||
       0
+    //大纲视图下才显示任务进度 存在开始、结束时间的任务 并且是未完成的父任务 并且进度占比存在的时候
+    const is_show_progress_percent =
+      ganttIsOutlineView({ group_view_type }) &&
+      is_has_start_time &&
+      is_has_end_time &&
+      is_realize == '0' &&
+      !parent_card_id &&
+      !!percent_card_non &&
+      !!parseInt(percent_card_non)
     return (
       <div
         className={`${'gantt_card_flag_special'} ${
@@ -1747,35 +1756,28 @@ export default class CardItem extends Component {
         }}
         {...this.handleObj()}
       >
-        {/* 大纲视图下才显示任务进度 存在开始、结束时间的任务 并且是未完成的父任务 并且进度占比存在的时候 */}
-        {ganttIsOutlineView({ group_view_type }) &&
-          is_has_start_time &&
-          is_has_end_time &&
-          is_realize == '0' &&
-          !parent_card_id &&
-          !!percent_card_non &&
-          !!parseInt(percent_card_non) && (
-            <div
-              data-targetclassname="specific_example"
-              className={`${indexStyles.gatt_card_percentage_prop}`}
-              style={{
-                // backgroundColor: '#cbddf7',
-                backgroundColor: is_realize == '1' ? 'transparent' : '#1f5af0',
-                width:
-                  ((local_width || 6) -
-                    (gantt_view_mode == 'year' ? 0 : card_width_diff)) *
-                    (percent_card_non / 100) -
-                  4,
-                borderRadius: '40px',
-                borderTopRightRadius:
-                  Number(percent_card_non) >= 100 ? '40px' : '0px',
-                borderBottomRightRadius:
-                  Number(percent_card_non) >= 100 ? '40px' : '0px',
-                height: task_item_height - 4,
-                lineHeight: `${task_item_height - 4}px`
-              }}
-            ></div>
-          )}
+        {is_show_progress_percent && (
+          <div
+            data-targetclassname="specific_example"
+            className={`${indexStyles.gatt_card_percentage_prop}`}
+            style={{
+              // backgroundColor: '#cbddf7',
+              backgroundColor: is_realize == '1' ? 'transparent' : '#1f5af0',
+              width:
+                ((local_width || 6) -
+                  (gantt_view_mode == 'year' ? 0 : card_width_diff)) *
+                  (percent_card_non / 100) -
+                4,
+              borderRadius: '40px',
+              borderTopRightRadius:
+                Number(percent_card_non) >= 100 ? '40px' : '0px',
+              borderBottomRightRadius:
+                Number(percent_card_non) >= 100 ? '40px' : '0px',
+              height: task_item_height - 4,
+              lineHeight: `${task_item_height - 4}px`
+            }}
+          ></div>
+        )}
         <div
           data-targetclassname="specific_example"
           className={`${
@@ -1926,7 +1928,10 @@ export default class CardItem extends Component {
           (gantt_view_mode != 'month' ? time_span > 6 : true) && (
             <>
               <div
-                className={indexStyles.left_triangle}
+                className={`${
+                  indexStyles.left_triangle
+                } ${is_show_progress_percent &&
+                  indexStyles.lr_triangle_pro_color}`}
                 style={{
                   borderColor: `${this.setTriangleTreeColor(
                     label_data,
@@ -1946,7 +1951,11 @@ export default class CardItem extends Component {
               ></div>
 
               <div
-                className={indexStyles.right_triangle}
+                className={`${
+                  indexStyles.right_triangle
+                } ${is_show_progress_percent &&
+                  Number(percent_card_non) >= 100 &&
+                  indexStyles.lr_triangle_pro_color}`}
                 style={{
                   borderColor: `${this.setTriangleTreeColor(
                     label_data,

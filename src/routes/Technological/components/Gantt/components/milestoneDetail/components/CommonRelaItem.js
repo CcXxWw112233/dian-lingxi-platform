@@ -84,14 +84,22 @@ export default class CommonRelaItem extends React.Component {
             </div>
           )}
 
-          {type == '4' && (
+          {type == '4' && !!result_process && (
             <div style={{ marginRight: '6px', color: 'rgba(0,0,0,0.45)' }}>
               {result_process || '0'} %
             </div>
           )}
 
           {/*名称*/}
-          <div style={{ wordWrap: 'break-word', paddingTop: 2 }}>{name}</div>
+          <div
+            style={{
+              wordWrap: 'break-word',
+              paddingTop: 2,
+              marginRight: '6px'
+            }}
+          >
+            {name}
+          </div>
           {/*日期*/}
           {deadline && (
             <>
