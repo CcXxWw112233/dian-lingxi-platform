@@ -1713,6 +1713,20 @@ export default class CardItem extends Component {
         }}
         {...this.handleObj()}
       >
+        {is_has_start_time && is_has_end_time && (
+          <div
+            data-targetclassname="specific_example"
+            className={`${indexStyles.gatt_card_percentage_prop}`}
+            style={{
+              // backgroundColor: '#cbddf7',
+              backgroundColor: is_realize == '1' ? 'transparent' : '#1f5af0',
+              width: '50%',
+              borderRadius: '40px',
+              height: task_item_height - 4,
+              lineHeight: `${task_item_height - 4}px`
+            }}
+          ></div>
+        )}
         <div
           data-targetclassname="specific_example"
           className={`${
@@ -1725,7 +1739,10 @@ export default class CardItem extends Component {
           style={{
             // opacity: 1,
             backgroundColor: is_realize == '1' ? '#9EA6C2' : '#cbddf7',
-            padding: gantt_view_mode != 'month' && time_span < 6 ? '0' : '0 8px'
+            // backgroundColor: is_realize == '1' ? '#9EA6C2' : '#5A86F5',
+            padding:
+              gantt_view_mode != 'month' && time_span < 6 ? '0' : '0 8px',
+            zIndex: 1
           }}
         >
           {/* <div data-targetclassname="specific_example"
@@ -1786,6 +1803,7 @@ export default class CardItem extends Component {
             />
           </div>
         </div>
+
         {/* 存在未读 */}
         {cardItemIsHasUnRead({
           relaDataId: id,

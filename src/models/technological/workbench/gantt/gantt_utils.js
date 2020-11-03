@@ -57,7 +57,7 @@ function getMilestoneLeafCardsMinTime(node) {
   recusion(node)
   return min_time
 }
-// 获取里程碑下所有叶子 (穿透多层) 节点的完成时间以及总时间茶值
+// 获取里程碑下所有叶子 (穿透多层) 节点的完成时间以及总时间差值 不统计子任务
 function getMilestoneLeafWithCompleteCardsTimesPercentage(node) {
   let complete_time_diff = 0 // 已完成时间差总数
   let all_time_diff = 0 // 所有时间差总数
@@ -65,7 +65,12 @@ function getMilestoneLeafWithCompleteCardsTimesPercentage(node) {
     if (node.children && node.children.length) {
       node.children.forEach(item => {
         // 只存在开始和结束时间的任务
-        if (item.tree_type == '2' && !!item.start_time && !!item.due_time) {
+        if (
+          item.tree_type == '2' &&
+          !!item.start_time &&
+          !!item.due_time &&
+          !item.parent_card_id
+        ) {
           if (item.is_realize == '1') {
             complete_time_diff =
               item.due_time - item.start_time + complete_time_diff
