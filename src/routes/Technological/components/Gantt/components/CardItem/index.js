@@ -1638,6 +1638,35 @@ export default class CardItem extends Component {
     })
   }
 
+  // 计算父任务中子任务时间占比
+  computeCardsTimePercentageWithChildren = node => {
+    let complete_time_diff = 0 // 已完成时间差总数
+    let all_time_diff = 0 // 所有时间差总数
+    function recusion(node) {
+      if (node.children && node.children.length) {
+        node.children.forEach(item => {
+          // 只存在开始和结束时间的任务
+          if (!!item.start_time && !!item.due_time) {
+            if (item.is_realize == '1') {
+              complete_time_diff =
+                item.due_time - item.start_time + complete_time_diff
+            }
+            all_time_diff = item.due_time - item.start_time + all_time_diff
+          }
+          recusion(item)
+        })
+      }
+    }
+    recusion(node)
+    let percent_card_non
+    if (complete_time_diff || all_time_diff) {
+      percent_card_non = (
+        parseFloat(complete_time_diff / all_time_diff) * 100
+      ).toFixed(2)
+    }
+    return percent_card_non
+  }
+
   render() {
     const {
       itemValue = {},
@@ -1666,7 +1695,8 @@ export default class CardItem extends Component {
       is_privilege,
       parent_card_id,
       time_span,
-      child_card_status = {}
+      child_card_status = {},
+      progress_percent
     } = itemValue
     const {
       has_child,
@@ -1687,6 +1717,10 @@ export default class CardItem extends Component {
       is_has_end_time,
       is_has_start_time
     })
+    const percent_card_non =
+      this.computeCardsTimePercentageWithChildren(itemValue) ||
+      progress_percent ||
+      0
     return (
       <div
         className={`${'gantt_card_flag_special'} ${
@@ -1713,20 +1747,35 @@ export default class CardItem extends Component {
         }}
         {...this.handleObj()}
       >
-        {is_has_start_time && is_has_end_time && (
-          <div
-            data-targetclassname="specific_example"
-            className={`${indexStyles.gatt_card_percentage_prop}`}
-            style={{
-              // backgroundColor: '#cbddf7',
-              backgroundColor: is_realize == '1' ? 'transparent' : '#1f5af0',
-              width: '50%',
-              borderRadius: '40px',
-              height: task_item_height - 4,
-              lineHeight: `${task_item_height - 4}px`
-            }}
-          ></div>
-        )}
+        {/* 大纲视图下才显示任务进度 存在开始、结束时间的任务 并且是未完成的父任务 并且进度占比存在的时候 */}
+        {ganttIsOutlineView({ group_view_type }) &&
+          is_has_start_time &&
+          is_has_end_time &&
+          is_realize == '0' &&
+          !parent_card_id &&
+          !!percent_card_non &&
+          !!parseInt(percent_card_non) && (
+            <div
+              data-targetclassname="specific_example"
+              className={`${indexStyles.gatt_card_percentage_prop}`}
+              style={{
+                // backgroundColor: '#cbddf7',
+                backgroundColor: is_realize == '1' ? 'transparent' : '#1f5af0',
+                width:
+                  ((local_width || 6) -
+                    (gantt_view_mode == 'year' ? 0 : card_width_diff)) *
+                    (percent_card_non / 100) -
+                  4,
+                borderRadius: '40px',
+                borderTopRightRadius:
+                  Number(percent_card_non) >= 100 ? '40px' : '0px',
+                borderBottomRightRadius:
+                  Number(percent_card_non) >= 100 ? '40px' : '0px',
+                height: task_item_height - 4,
+                lineHeight: `${task_item_height - 4}px`
+              }}
+            ></div>
+          )}
         <div
           data-targetclassname="specific_example"
           className={`${
