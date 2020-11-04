@@ -15,9 +15,9 @@ export default class GetRowGanttVirtual extends Component {
     } = this.props
     const color = ['yellow', 'blue', 'red']
     return (
-      <div style={{ position: 'absolute', zIndex: 0 }}>
+      <div>
         <GroupMilestones></GroupMilestones>
-        {list_group.map((value, key) => {
+        {/* {list_group.map((value, key) => {
           const { lane_data, list_id, list_data = [] } = value
           const { milestones = {} } = lane_data
           return (
@@ -50,7 +50,7 @@ export default class GetRowGanttVirtual extends Component {
             //   milestones={milestones}
             // />
           )
-        })}
+        })} */}
       </div>
     )
   }
