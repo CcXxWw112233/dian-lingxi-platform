@@ -600,13 +600,22 @@ export default class MainUIComponent extends Component {
                                 }}
                               ></span>
                             </div>
-                            <div style={{ flex: 1 }}>
-                              <div
+                            <div
+                              style={{
+                                flex: 1,
+                                marginRight: '32px',
+                                width: 0,
+                                overflow: 'hidden',
+                                whiteSpace: 'nowrap',
+                                textOverflow: 'ellipsis'
+                              }}
+                            >
+                              <span
                                 title={file_name}
                                 className={mainContentStyles.pay_file_name}
                               >
                                 {file_name}
-                              </div>
+                              </span>
                             </div>
                             <div className={mainContentStyles.file_info}>
                               {showMemberName(fileInfo.create_by, data)} 上传于{' '}

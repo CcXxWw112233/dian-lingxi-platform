@@ -140,7 +140,7 @@ export default class Index extends Component {
     const { relations_fields: old_relations_fields = [] } = this.props
     const { relations_fields = [], org_id } = nextProps
     if (isArrayEqual(relations_fields, old_relations_fields)) return
-    if (relations_fields.length == 0) return
+    // if (relations_fields.length == 0) return
     this.getCustomFieldList({ relations_fields, org_id })
   }
 
@@ -341,7 +341,7 @@ export default class Index extends Component {
   }
 
   componentWillUnmount() {
-    // console.log('进来了', 'sssssssssssssunmount');
+    this.initeState()
   }
 
   render() {

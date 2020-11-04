@@ -577,20 +577,20 @@ export default class AppendSubTaskItem extends Component {
                       <div
                         style={{
                           flex: 1,
-                          marginRight: '10px',
-                          display: 'flex',
-                          flexWrap: 'nowrap',
+                          marginRight: '32px',
+                          width: 0,
                           overflow: 'hidden',
-                          whiteSpace: 'nowrap'
+                          whiteSpace: 'nowrap',
+                          textOverflow: 'ellipsis'
                         }}
                       >
-                        <div
+                        <span
                           onClick={e => this.openFileDetailModal(e, fileInfo)}
                           title={file_name}
                           className={appendSubTaskStyles.file_name}
                         >
                           {file_name}
-                        </div>
+                        </span>
                       </div>
                       <div className={appendSubTaskStyles.file_info}>
                         {showMemberName(fileInfo.create_by, data)} 上传于{' '}
