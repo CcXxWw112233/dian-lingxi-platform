@@ -12,14 +12,9 @@ import {
 } from '../../constants'
 import indexStyles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
-var numbers = [{ a: 65 }, { a: 44 }, { a: 12 }, { a: 4 }]
-
-function getSum(total, num) {
-  console.log('aaaaa_0', total, num)
-  return total + num.a
-}
-var aa = numbers.reduce(getSum, 0)
-console.log('aaaaa', aa)
+import { Menu, Dropdown } from 'antd'
+import { setBoardIdStorage } from '../../../../../../utils/businessFunction'
+const MenuItem = Menu.Item
 @connect(mapStateToProps)
 export default class GroupMilestones extends Component {
   constructor(props) {
@@ -204,7 +199,7 @@ export default class GroupMilestones extends Component {
           return item.list_id == val.belong_group_id
         }
       })
-      val.top = group_list_area_section_height[top_index - 1] || 0 + 16 //在所属分组的顶层
+      val.top = group_list_area_section_height[top_index - 1] || 0 //在所属分组的顶层
     }
     this.setState({
       render_milestones_data: milestones
@@ -260,81 +255,131 @@ export default class GroupMilestones extends Component {
             className={indexStyles.milestone_wrapper}
             style={{ top, left: left + ceilWidth }}
           >
-            {/* 旗帜 */}
-            <div
-              className={`${indexStyles.board_miletiones_flag} ${globalStyles.authTheme}`}
-              data-targetclassname="specific_example_milestone"
-              // onClick={this.seeMiletones}
+            <Dropdown
+              overlay={this.renderLCBList(one_levels, timestamp, {
+                marginTop: -10
+              })}
             >
-              &#xe6a0;
-            </div>
-            {/* 渲染里程碑名称铺开 */}
-            <div
-              className={`${indexStyles.board_miletiones_names} ${globalStyles.global_ellipsis}`}
-              data-targetclassname="specific_example_milestone"
-              style={{ maxWidth: this.setMiletonesNamesWidth(timestamp) }}
-            >
-              {this.renderMiletonesNames(one_levels)}
-            </div>
+              <div>
+                {/* 旗帜 */}
+                <div
+                  className={`${indexStyles.board_miletiones_flag} ${globalStyles.authTheme}`}
+                  data-targetclassname="specific_example_milestone"
+                >
+                  &#xe6a0;
+                </div>
+                {/* 渲染里程碑名称铺开 */}
+                <div
+                  className={`${indexStyles.board_miletiones_names} ${globalStyles.global_ellipsis}`}
+                  data-targetclassname="specific_example_milestone"
+                  style={{ maxWidth: this.setMiletonesNamesWidth(timestamp) }}
+                >
+                  {this.renderMiletonesNames(one_levels)}
+                </div>
+                {/* 旗杆 */}
+                <div
+                  data-targetclassname="specific_example_milestone"
+                  className={`${indexStyles.board_miletiones_flagpole2}`}
+                  style={{}}
+                  onMouseDown={e => e.stopPropagation()}
+                  onMouseOver={e => e.stopPropagation()}
+                />
+              </div>
+            </Dropdown>
             {/* 很长的线 */}
-            <div
-              data-targetclassname="specific_example_milestone"
-              className={`${indexStyles.board_miletiones_flagpole2}`}
-              // onClick={this.seeMiletones}
-              style={{}}
-              onMouseDown={e => e.stopPropagation()}
-              onMouseOver={e => e.stopPropagation()}
-            />
-            {/* 旗杆 */}
             <div
               data-targetclassname="specific_example_milestone"
               className={`${indexStyles.board_miletiones_flagpole}`}
               style={{}}
-              // onClick={this.seeMiletones}
               onMouseDown={e => e.stopPropagation()}
               onMouseOver={e => e.stopPropagation()}
             />
           </div>
         )}
         {!!two_levels.length && (
-          <div
-            data-targetclassname="specific_example_milestone"
-            className={indexStyles.milestone_wrapper}
-            style={{ top, left: left + ceilWidth / 2 - 7 }} //移动一半的距离，并且中心位于中间
-          >
+          <Dropdown overlay={this.renderLCBList(two_levels, timestamp)}>
             <div
               data-targetclassname="specific_example_milestone"
-              className={indexStyles.board_miletiones_flag2}
-            />
-            <div
-              className={`${indexStyles.board_miletiones_names} ${globalStyles.global_ellipsis}`}
-              data-targetclassname="specific_example_milestone"
-              style={{ maxWidth: this.setMiletonesNamesWidth(timestamp) }}
+              className={indexStyles.milestone_wrapper}
+              style={{ top, left: left + ceilWidth / 2 - 7 }} //移动一半的距离，并且中心位于中间
             >
-              {this.renderMiletonesNames(two_levels)}
+              <div
+                data-targetclassname="specific_example_milestone"
+                className={indexStyles.board_miletiones_flag2}
+              />
+              <div
+                className={`${indexStyles.board_miletiones_names} ${globalStyles.global_ellipsis}`}
+                data-targetclassname="specific_example_milestone"
+                style={{ maxWidth: this.setMiletonesNamesWidth(timestamp) }}
+              >
+                {this.renderMiletonesNames(two_levels)}
+              </div>
             </div>
-          </div>
+          </Dropdown>
         )}
       </>
     )
   }
+  // 选择里程碑
+  selectLCB = (e, timestamp) => {
+    e.domEvent.stopPropagation()
+    const idarr = e.key.split('__')
+    const id = idarr[1]
+    const board_id = idarr[0]
 
-  handlesStyleDiff = () => {
-    const { ceilWidth } = this.props
-    const _obj = {
-      month: { left: ceilWidth },
-      relative_time: { left: ceilWidth },
-      week: { left: ceilWidth },
-      year: { left: ceilWidth },
-      hours: { left: ceilWidth }
-    }
+    //更新里程碑id,在里程碑的生命周期会监听到id改变，发生请求
+    const { dispatch } = this.props
+    setBoardIdStorage(board_id)
+
+    dispatch({
+      type: 'milestoneDetail/updateDatas',
+      payload: {
+        milestone_id: id
+      }
+    })
+    dispatch({
+      type: 'gantt/updateDatas',
+      payload: {
+        miletone_detail_modal_visible: true
+      }
+    })
+    dispatch({
+      type: 'projectDetail/projectDetailInfo',
+      payload: {
+        id: board_id
+      }
+    })
   }
-
+  // 里程碑详情和列表
+  renderLCBList = (miletones, timestamp, style = {}) => {
+    return (
+      <Menu
+        onMouseDown={e => e.stopPropagation()}
+        onMouseUp={e => e.stopPropagation()}
+        onClick={e => this.selectLCB(e, timestamp)}
+        style={{ width: 216, ...style }}
+        data-targetclassname="specific_example_milestone"
+      >
+        {miletones.map((value, key) => {
+          const { id, name, board_id } = value
+          return (
+            <MenuItem
+              data-targetclassname="specific_example_milestone"
+              className={globalStyles.global_ellipsis}
+              style={{ width: 216 }}
+              key={`${board_id}__${id}`}
+            >
+              {name}
+            </MenuItem>
+          )
+        })}
+      </Menu>
+    )
+  }
   render() {
     const { render_milestones_data = [] } = this.state
     return (
       <div
-        id="sssaa"
         style={{
           position: 'absolute',
           zIndex: 2,
