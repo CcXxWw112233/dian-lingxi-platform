@@ -491,6 +491,19 @@ export default class OutLineHeadItem extends Component {
                     outline_tree
                   }
                 })
+                // 创建子任务时需要更新侧边详情数据
+                if (
+                  this.props.selected_card_visible &&
+                  param.parent_id &&
+                  param.parent_type == '2'
+                ) {
+                  onChangeCardHandleCardDetail({
+                    card_detail_id: param.parent_id, //来自任务详情的id
+                    selected_card_visible: this.props.selected_card_visible, //任务详情弹窗是否弹开
+                    dispatch,
+                    operate_id: param.parent_id //当前操作的id
+                  })
+                }
                 if (typeof calback == 'function') {
                   calback()
                 }
