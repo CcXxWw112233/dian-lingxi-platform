@@ -1054,7 +1054,8 @@ export default class TreeNode extends Component {
           id,
           // tree_type: tree_type,
           // parentId: this.props.parentId,
-          [p_k]: value
+          [p_k]: value,
+          name: nodeValue.name
         },
         calback: () => {
           nodeValue[key] = value
