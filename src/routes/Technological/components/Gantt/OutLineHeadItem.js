@@ -377,7 +377,9 @@ export default class OutLineHeadItem extends Component {
                   calback()
                 }
                 if (nodeValue) {
-                  nodeValue.name = param.name
+                  if (!!param.name) {
+                    nodeValue.name = param.name
+                  }
                   this.updateOutLineTreeData(outline_tree)
                 } else {
                   console.error('OutlineTree.getTreeNodeValue:未查询到节点')
