@@ -43,6 +43,30 @@
     opacity: 0.4;
     z-index: 2;
   }
+  // 表示计划与实际时间对比
+  .gatt_card_compare_prop {
+    overflow: hidden;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: absolute;
+    left: 2px;
+    z-index: 2;
+    background-image: -webkit-gradient(
+      linear,
+      0 0,
+      100% 100%,
+      color-stop(0.25, rgba(255, 255, 255, 0.2)),
+      color-stop(0.25, rgba(0, 0, 0, 0.45)),
+      color-stop(0.5, rgba(0, 0, 0, 0.45)),
+      color-stop(0.5, rgba(255, 255, 255, 0.2)),
+      color-stop(0.75, rgba(255, 255, 255, 0.2)),
+      color-stop(0.75, rgba(0, 0, 0, 0.45)),
+      to(rgba(0, 0, 0, 0.45))
+    );
+    opacity: 0.4;
+    background-size: 8px 8px;
+  }
 
   .specific_example_content {
     overflow: hidden;

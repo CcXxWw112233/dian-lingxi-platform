@@ -1667,6 +1667,9 @@ export default class CardItem extends Component {
     return percent_card_non
   }
 
+  // 当前任务完成时间与计划时间对比
+  compareCardsRealPlanTimer = () => {}
+
   render() {
     const {
       itemValue = {},
@@ -1696,7 +1699,8 @@ export default class CardItem extends Component {
       parent_card_id,
       time_span,
       child_card_status = {},
-      progress_percent
+      progress_percent,
+      tree_type
     } = itemValue
     const {
       has_child,
@@ -1730,6 +1734,12 @@ export default class CardItem extends Component {
       !parent_card_id &&
       !!percent_card_non &&
       !!parseInt(percent_card_non)
+    // 计划时间与完成时间对比
+    const is_show_compare_real_plan_timer =
+      ganttIsOutlineView({ group_view_type }) &&
+      (is_has_start_time || is_has_end_time) &&
+      is_realize == '1' &&
+      tree_type == '2'
     return (
       <div
         className={`${'gantt_card_flag_special'} ${
@@ -1778,6 +1788,23 @@ export default class CardItem extends Component {
             }}
           ></div>
         )}
+        {is_show_compare_real_plan_timer && (
+          <div
+            data-targetclassname="specific_example"
+            className={`${
+              indexStyles.gatt_card_compare_prop
+            } ${!is_has_start_time &&
+              indexStyles.specific_example_no_start_time} ${!is_has_end_time &&
+              indexStyles.specific_example_no_due_time}`}
+            style={{
+              // backgroundColor: '#cbddf7',
+              borderRadius: is_has_start_time && is_has_end_time && '40px',
+              width: '50%',
+              height: task_item_height - 4,
+              lineHeight: `${task_item_height - 4}px`
+            }}
+          ></div>
+        )}
         <div
           data-targetclassname="specific_example"
           className={`${
@@ -1810,7 +1837,12 @@ export default class CardItem extends Component {
             onMouseMove={e => e.preventDefault()}
             style={{
               display: 'flex',
-              color: is_realize == '1' ? 'rgba(0,0,0,.25)' : '',
+              color:
+                is_realize == '1'
+                  ? is_show_compare_real_plan_timer
+                    ? 'rgba(0,0,0,0.65)'
+                    : 'rgba(0,0,0,.25)'
+                  : '',
               height: task_item_height - 4,
               lineHeight: `${task_item_height - 4}px`
             }}
