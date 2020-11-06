@@ -5,7 +5,6 @@ import dva from 'dva'
 // 防止样式冲突lingxiIm的样式要比全局配置样式先引入，降低优先级
 import 'lingxi-im/dist/main.min.css'
 import './index.css'
-import { Modal } from 'antd'
 import './global_constants' //项目全局属性
 import './object_expand.js'
 import { diffClientInitToken } from './globalset/clientCustorm'

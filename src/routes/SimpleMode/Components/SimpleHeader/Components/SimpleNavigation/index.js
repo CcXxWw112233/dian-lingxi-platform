@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, lazy, Suspense } from 'react'
 import indexStyles from './index.less'
 import { Tooltip, Modal, Menu, Switch, Icon } from 'antd'
 import linxiLogo from '@/assets/library/lingxi_logo.png'
@@ -27,15 +27,39 @@ import { color_4 } from '@/globalset/js/styles'
 import { message } from 'antd/lib/index'
 import { getUsersNoticeSettingList } from '@/services/technological/notificationSetting'
 import { isApiResponseOk } from '@/utils/handleResponseData'
-import CreateOrganizationModal from '@/routes/Technological/components/HeaderNav/CreateOrganizationModal'
-import ShowAddMenberModal from '@/routes/Technological/components/OrganizationMember/ShowAddMenberModal'
-import NotificationSettingsModal from '@/routes/Technological/Sider/comonent/notificationSettings/NotificationSettingsModal'
-import AccountSet from '@/routes/Technological/components/AccountSet'
-import OrganizationMember from '@/routes/Technological/components/OrganizationMember'
-import Organization from '@/routes/organizationManager'
+// import CreateOrganizationModal from '@/routes/Technological/components/HeaderNav/CreateOrganizationModal'
+// import ShowAddMenberModal from '@/routes/Technological/components/OrganizationMember/ShowAddMenberModal'
+// import NotificationSettingsModal from '@/routes/Technological/Sider/comonent/notificationSettings/NotificationSettingsModal'
+// import AccountSet from '@/routes/Technological/components/AccountSet'
+// import OrganizationMember from '@/routes/Technological/components/OrganizationMember'
+// import Organization from '@/routes/organizationManager'
 import queryString from 'query-string'
-import PayUpgrade from '@/routes/Technological/components/PayUpgrade/index'
-import { CUSTOMIZATION_ORGNIZATIONS } from '../../../../../../globalset/js/constant'
+// import PayUpgrade from '@/routes/Technological/components/PayUpgrade/index'
+
+const CreateOrganizationModal = lazy(() =>
+  import('@/routes/Technological/components/HeaderNav/CreateOrganizationModal')
+)
+const ShowAddMenberModal = lazy(() =>
+  import(
+    '@/routes/Technological/components/OrganizationMember/ShowAddMenberModal'
+  )
+)
+const NotificationSettingsModal = lazy(() =>
+  import(
+    '@/routes/Technological/Sider/comonent/notificationSettings/NotificationSettingsModal'
+  )
+)
+const AccountSet = lazy(() =>
+  import('@/routes/Technological/components/AccountSet')
+)
+const OrganizationMember = lazy(() =>
+  import('@/routes/Technological/components/OrganizationMember')
+)
+const Organization = lazy(() => import('@/routes/organizationManager'))
+const PayUpgrade = lazy(() =>
+  import('@/routes/Technological/components/PayUpgrade/index')
+)
+
 const { SubMenu } = Menu
 // let timer;
 @connect(mapStateToProps)
@@ -847,44 +871,45 @@ export default class SimpleNavigation extends Component {
             )
           })}
         </Menu>
-
-        {/** 功能组件引入 */}
-        <CreateOrganizationModal
-          dispatch={this.props.dispatch}
-          createOrganizationVisable={this.state.createOrganizationVisable}
-          setCreateOrgnizationOModalVisable={this.setCreateOrgnizationOModalVisable.bind(
-            this
-          )}
-        />
-
-        <ShowAddMenberModal
-          invitationId={localStorage.getItem('OrganizationId')}
-          invitationType="11"
-          invitationOrg={localStorage.getItem('OrganizationId')}
-          dispatch={this.props.dispatch}
-          addMembers={this.addMembers.bind(this)}
-          modalVisible={this.state.ShowAddMenberModalVisibile}
-          setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(
-            this
-          )}
-        />
-
-        {this.state.NotificationSettingsModalVisible && (
-          <NotificationSettingsModal
-            notificationSettingsModalVisible={
-              this.state.NotificationSettingsModalVisible
-            }
-            setNotificationSettingsModalVisible={this.setNotificationSettingsModalVisible.bind(
+        <Suspense fallback={''}>
+          {/** 功能组件引入 */}
+          <CreateOrganizationModal
+            dispatch={this.props.dispatch}
+            createOrganizationVisable={this.state.createOrganizationVisable}
+            setCreateOrgnizationOModalVisable={this.setCreateOrgnizationOModalVisable.bind(
               this
             )}
           />
-        )}
 
-        {this.state.payUpgradeModalVisible && (
-          <PayUpgrade
-            setPayUpgradeModalVisible={this.setPayUpgradeModalVisible}
+          <ShowAddMenberModal
+            invitationId={localStorage.getItem('OrganizationId')}
+            invitationType="11"
+            invitationOrg={localStorage.getItem('OrganizationId')}
+            dispatch={this.props.dispatch}
+            addMembers={this.addMembers.bind(this)}
+            modalVisible={this.state.ShowAddMenberModalVisibile}
+            setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(
+              this
+            )}
           />
-        )}
+
+          {this.state.NotificationSettingsModalVisible && (
+            <NotificationSettingsModal
+              notificationSettingsModalVisible={
+                this.state.NotificationSettingsModalVisible
+              }
+              setNotificationSettingsModalVisible={this.setNotificationSettingsModalVisible.bind(
+                this
+              )}
+            />
+          )}
+
+          {this.state.payUpgradeModalVisible && (
+            <PayUpgrade
+              setPayUpgradeModalVisible={this.setPayUpgradeModalVisible}
+            />
+          )}
+        </Suspense>
       </div>
     )
   }

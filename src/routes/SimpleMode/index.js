@@ -3,14 +3,14 @@ import { connect } from 'dva/index'
 import { Route, Switch } from 'dva/router'
 import indexStyles from './index.less'
 import { isColor } from '@/utils/util'
-import defaultWallpaperSrc from '@/assets/simplemode/acd42051256454f9b070300b8121eae2.png'
+// import defaultWallpaperSrc from '@/assets/simplemode/acd42051256454f9b070300b8121eae2.png'
 import {
   setBoardIdStorage,
   currentNounPlanFilterName
 } from '../../utils/businessFunction'
 import { PROJECTS } from '../../globalset/js/constant'
 import SimpleHeader from './Components/SimpleHeader/index'
-
+const defaultWallpaperSrc = ''
 // import WorkbenchPage from './Components/WorkbenchPage'
 // import Home from './Components/Home'
 

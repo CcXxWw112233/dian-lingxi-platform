@@ -5,10 +5,10 @@ import styles from './index.less'
 import MainBoard from './MainBoard'
 import FeatureBox from './FeatureBox'
 import BoardFeatures from './BoardFeatures'
-import defaultWallpaperSrc from '@/assets/simplemode/acd42051256454f9b070300b8121eae2.png'
+// import defaultWallpaperSrc from '@/assets/simplemode/acd42051256454f9b070300b8121eae2.png'
 import { isColor } from '../../../../../utils/util'
 import { connect } from 'dva'
-
+const defaultWallpaperSrc = ''
 @connect(mapStateToProps)
 export default class index extends Component {
   constructor(props) {

@@ -1,10 +1,10 @@
-import React, { Component } from 'react'
+import React, { Component, lazy, Suspense } from 'react'
 import { connect } from 'dva'
 import BoardFeaturesItem from './BoardFeaturesItem'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import styles from './featurebox.less'
-import TaskDetailModal from '@/components/TaskDetailModal'
-import ProcessDetailModal from '@/components/ProcessDetailModal'
+// import TaskDetailModal from '@/components/TaskDetailModal'
+// import ProcessDetailModal from '@/components/ProcessDetailModal'
 import BoardFeaturesProcessItem from './BoardFeaturesProcessItem'
 import {
   jsonArrayCompareSort,
@@ -21,6 +21,9 @@ import { PROJECTS } from '../../../../../globalset/js/constant'
 import { Dropdown, Menu } from 'antd'
 import UserRemoteSelect from './UserRemoteSelect'
 import { platformNouns } from '../../../../../globalset/clientCustorm'
+
+const TaskDetailModal = lazy(() => import('@/components/TaskDetailModal'))
+const ProcessDetailModal = lazy(() => import('@/components/ProcessDetailModal'))
 
 @connect(mapStateToProps)
 export default class BoardFeatures extends Component {
@@ -492,21 +495,23 @@ export default class BoardFeatures extends Component {
           className={styles.feature_item}
           style={{ display: board_card_todo_list.length ? 'block' : 'none' }}
         ></div>
-        <TaskDetailModal
-          task_detail_modal_visible={drawerVisible}
-          setTaskDetailModalVisible={this.setTaskDetailModalVisible} //关闭任务弹窗回调
-          handleTaskDetailChange={this.handleCard}
-          handleDeleteCard={this.handleDeleteCard}
-        />
-        {process_detail_modal_visible && whetherShowProcessDetailModal && (
-          <ProcessDetailModal
-            process_detail_modal_visible={process_detail_modal_visible}
-            setProcessDetailModalVisibile={this.setProcessDetailModalVisibile}
-            whetherUpdateWorkbenchPorcessListData={
-              this.whetherUpdateWorkbenchPorcessListData
-            }
+        <Suspense fallback={''}>
+          <TaskDetailModal
+            task_detail_modal_visible={drawerVisible}
+            setTaskDetailModalVisible={this.setTaskDetailModalVisible} //关闭任务弹窗回调
+            handleTaskDetailChange={this.handleCard}
+            handleDeleteCard={this.handleDeleteCard}
           />
-        )}
+          {process_detail_modal_visible && whetherShowProcessDetailModal && (
+            <ProcessDetailModal
+              process_detail_modal_visible={process_detail_modal_visible}
+              setProcessDetailModalVisibile={this.setProcessDetailModalVisibile}
+              whetherUpdateWorkbenchPorcessListData={
+                this.whetherUpdateWorkbenchPorcessListData
+              }
+            />
+          )}
+        </Suspense>
       </div>
     )
   }
