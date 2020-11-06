@@ -32,7 +32,8 @@ import {
 import {
   transformTimestamp,
   isSamDay,
-  isSamHour
+  isSamHour,
+  caldiffDays
 } from '../../../../../../utils/util'
 import HoverEars from './HoverEars'
 import DragCard from './DragCard'
@@ -1668,7 +1669,85 @@ export default class CardItem extends Component {
   }
 
   // 当前任务完成时间与计划时间对比
-  compareCardsRealPlanTimer = () => {}
+  compareCardsRealPlanTimer = node => {
+    const { local_width } = this.state
+    const { gantt_view_mode } = this.props
+    let compare_width = 0
+    const default_width =
+      (local_width || 6) - (gantt_view_mode == 'year' ? 0 : card_width_diff)
+    // 状态标识
+    let status_label = ''
+    // 定义一个被除数
+    let dividend = ''
+    let finish_time_ =
+      !!node.finish_time &&
+      (String(node.finish_time).length == 10
+        ? node.finish_time * 1000
+        : node.finish_time)
+    // 表示是 已完成的任务 并且存在完成时间 并且存在开始、结束时间
+    //注：同一天创建的任务 截止时间为当天的23:59 所以即使在当天完成 时间戳也会比截止时间小 所以不能用时间戳来比较大小
+    if (
+      node.tree_type == '2' &&
+      node.is_realize == '1' &&
+      !!finish_time_ &&
+      (node.start_time || node.due_time)
+    ) {
+      // 表示存在开始和结束时间
+      if (!!node.due_time && !!node.start_time) {
+        if (caldiffDays(finish_time_, node.due_time) == 0) {
+          // 表示刚好完成
+          compare_width = default_width
+          status_label = 'on_time'
+        } else if (finish_time_ > node.due_time) {
+          // 表示逾期完成
+          dividend =
+            node.due_time == node.start_time
+              ? node.start_time
+              : node.due_time - node.start_time
+          // 表示逾期完成
+          status_label = 'overdue_time'
+          console.log(
+            node.name,
+            caldiffDays(finish_time_, node.due_time),
+            default_width,
+            local_width,
+            'dividend'
+          )
+          compare_width =
+            caldiffDays(finish_time_, node.due_time) * this.props.ceilWidth +
+            default_width
+          // node.due_time == node.start_time
+          //   ? caldiffDays(finish_time_, node.due_time) * 34 + default_width
+          //   : parseFloat((finish_time_ - node.start_time) / dividend).toFixed(
+          //       2
+          //     ) *
+          //       default_width +
+          //     10
+        } else if (finish_time_ < node.start_time) {
+          // 表示提前完成
+          compare_width = default_width
+          status_label = 'ahead_time'
+        } else if (
+          finish_time_ >= node.start_time &&
+          finish_time_ < node.due_time
+        ) {
+          dividend =
+            node.due_time == node.start_time
+              ? node.start_time
+              : node.due_time - node.start_time
+          compare_width =
+            parseFloat((finish_time_ - node.start_time) / dividend).toFixed(2) *
+              default_width +
+            10
+          status_label = 'ahead_time_middle'
+        }
+      } else if (!!node.start_time && !node.due_time) {
+        // 表示只存在开始时间 不管是什么状态都是完成 只有当是结束时间时才有状态
+        compare_width = default_width
+      }
+    }
+    return { compare_width, status_label }
+  }
 
   render() {
     const {
@@ -1740,6 +1819,9 @@ export default class CardItem extends Component {
       (is_has_start_time || is_has_end_time) &&
       is_realize == '1' &&
       tree_type == '2'
+    const { status_label, compare_width } = this.compareCardsRealPlanTimer(
+      itemValue
+    )
     return (
       <div
         className={`${'gantt_card_flag_special'} ${
@@ -1799,9 +1881,24 @@ export default class CardItem extends Component {
             style={{
               // backgroundColor: '#cbddf7',
               borderRadius: is_has_start_time && is_has_end_time && '40px',
-              width: '50%',
+              width: compare_width,
               height: task_item_height - 4,
-              lineHeight: `${task_item_height - 4}px`
+              lineHeight: `${task_item_height - 4}px`,
+              backgroundColor:
+                status_label == 'overdue_time' && 'rgba(255,32,32,0.5)',
+              zIndex:
+                status_label == 'overdue_time'
+                  ? 1
+                  : status_label == 'ahead_time_middle'
+                  ? 2
+                  : 1,
+              backgroundImage:
+                status_label == 'overdue_time'
+                  ? '-webkit-gradient(linear,0 0,100% 100%,color-stop(0.25, rgba(255, 255, 255, 0.2)),color-stop(0.25, rgba(255,32,32,0.01)),color-stop(0.5, rgba(255,32,32,0.01)),color-stop(0.5, rgba(255, 255, 255, 0.2)),color-stop(0.75, rgba(255, 255, 255, 0.2)),color-stop(0.75, rgba(255,32,32,0.01)),to(rgba(255,32,32,0.01)))'
+                  : status_label == 'ahead_time_middle'
+                  ? '-webkit-gradient(linear,0 0,100% 100%,color-stop(0.25, rgba(255, 255, 255, 0.2)),color-stop(0.25, rgba(158, 166, 194, 0.8)),color-stop(0.5, rgba(158, 166, 194, 0.8)),color-stop(0.5, rgba(255, 255, 255, 0.2)),color-stop(0.75, rgba(255, 255, 255, 0.2)),color-stop(0.75, rgba(158, 166, 194, 0.8)),to(rgba(158, 166, 194, 0.8)))'
+                  : '',
+              opacity: status_label == 'ahead_time_middle' && 0.8
             }}
           ></div>
         )}
@@ -1820,7 +1917,17 @@ export default class CardItem extends Component {
             // backgroundColor: is_realize == '1' ? '#9EA6C2' : '#5A86F5',
             padding:
               gantt_view_mode != 'month' && time_span < 6 ? '0' : '0 8px',
-            zIndex: 1
+            zIndex: 1,
+            backgroundImage:
+              // status_label == 'overdue_time' &&
+              is_show_compare_real_plan_timer &&
+              status_label != 'ahead_time_middle' &&
+              '-webkit-gradient(linear,0 0,100% 100%,color-stop(0.25, rgba(255, 255, 255, 0.2)),color-stop(0.25, rgba(158,166,194,0.8)),color-stop(0.5, rgba(158,166,194,0.8)),color-stop(0.5, rgba(255, 255, 255, 0.2)),color-stop(0.75, rgba(255, 255, 255, 0.2)),color-stop(0.75, rgba(158,166,194,0.8)),to(rgba(158,166,194,0.8)))',
+            //status_label == 'overdue_time' &&
+            backgroundSize:
+              is_show_compare_real_plan_timer &&
+              status_label != 'ahead_time_middle' &&
+              '8px 8px'
           }}
         >
           {/* <div data-targetclassname="specific_example"
