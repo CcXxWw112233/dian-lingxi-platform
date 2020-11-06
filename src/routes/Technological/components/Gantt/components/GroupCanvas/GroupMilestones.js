@@ -7,13 +7,24 @@ import {
   transformTimestamp
 } from '../../../../../../utils/util'
 import {
+  ganttIsFold,
   hours_view_due_work_oclock,
   hours_view_start_work_oclock
 } from '../../constants'
 import indexStyles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
-import { Menu, Dropdown } from 'antd'
+import { Menu, Dropdown, message } from 'antd'
 import { setBoardIdStorage } from '../../../../../../utils/businessFunction'
+import Draggable from 'react-draggable'
+import {
+  getPageXY,
+  getXYDropPosition,
+  setDateWidthPositionWeekView,
+  setDateWithPositionInYearView
+} from '../../ganttBusiness'
+import { updateMilestone } from '../../../../../../services/technological/task'
+import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
+
 const MenuItem = Menu.Item
 @connect(mapStateToProps)
 export default class GroupMilestones extends Component {
@@ -160,7 +171,7 @@ export default class GroupMilestones extends Component {
           }
           return false
         })
-        console.log('index_hours', left_index)
+        // console.log('index_hours', left_index)
         if (left_index == -1) continue
         val.left = ceilWidth * left_index
       } else if ('year' == gantt_view_mode) {
@@ -177,14 +188,14 @@ export default class GroupMilestones extends Component {
           0
         )
         val.left = ceilWidth * day_total + val.date * ceilWidth
-        console.log('index_year', left_index, day_total)
+        // console.log('index_year', left_index, day_total)
       } else if ('week' == gantt_view_mode) {
         left_index = date_arr_one_level.findIndex(
           item =>
             item.timestamp <= val.timestamp &&
             item.timestampEnd >= val.timestamp
         )
-        console.log('index_week', left_index)
+        // console.log('index_week', left_index)
         if (left_index == -1) continue
         val.left =
           ceilWidth * left_index * 7 + ((val.week_day || 7) - 1) * ceilWidth //周数 + 所属周的周几。 val.week_day || 7=》周日是0，但是用7标识
@@ -204,7 +215,7 @@ export default class GroupMilestones extends Component {
     this.setState({
       render_milestones_data: milestones
     })
-    console.log('finally_milestones_2', milestones)
+    // console.log('finally_milestones_2', milestones)
   }
   // 渲染里程碑的名字列表
   renderMiletonesNames = (list = []) => {
@@ -235,6 +246,78 @@ export default class GroupMilestones extends Component {
     }
     return caldiffDays(timestamp, next_miletones_time) * ceilWidth
   }
+  // 里程碑是否过期的颜色设置
+  setMiletonesColor = ({ is_over_duetime, has_lcb, is_all_realized }) => {
+    // if (!has_lcb) {
+    //   return ''
+    // }
+    if (is_over_duetime) {
+      if (is_all_realized == '0') {
+        //存在未完成任务
+        return ''
+        // return '#FFA39E'
+      } else {
+        //全部任务已完成
+        return '#9EA6C2'
+      }
+    }
+    // if (is_all_realized == '0') { //存在未完成任务
+    //   if (is_over_duetime) {
+    //     return '#FFA39E'
+    //   }
+    // } else { //全部任务已完成
+    //   return 'rgba(0,0,0,0.15)'
+    // }
+
+    return ''
+  }
+  // 很长一条线的高度
+  setThroughLineHeight = ({ belong_group_id, one_levels = [] }) => {
+    const {
+      list_group = [],
+      gantt_board_id,
+      show_board_fold,
+      gantt_view_mode,
+      group_view_type,
+      group_list_area,
+      group_list_area_section_height
+    } = this.props
+    let height = 0
+    const first_group_id = (list_group[0] || {}).list_id
+    if (
+      ganttIsFold(
+        gantt_board_id,
+        group_view_type,
+        show_board_fold,
+        gantt_view_mode
+      )
+    ) {
+      return 0
+    }
+    const index = list_group.findIndex(item => item.list_id == belong_group_id) //所属分组索引
+    //如果是归到分组1，（分组和未分组的都归到分组1）
+    // console.log('one_levels', one_levels)
+    if (first_group_id == belong_group_id) {
+      if (
+        one_levels.findIndex(item => ['0', undefined].includes(item.list_id)) !=
+        -1 // 如果分组1中存在未分组的
+      ) {
+        height =
+          group_list_area_section_height[
+            group_list_area_section_height.length - 1
+          ] - 30
+        // console.log('one_levels_1', index, height, group_list_area)
+      } else {
+        height = group_list_area[index] - 11
+        // console.log('one_levels_2', index, height, group_list_area)
+      }
+    } else {
+      height = group_list_area[index] - 12
+      // console.log('one_levels_3', index, height, group_list_area)
+    }
+    // console.log('one_levels_4', first_group_id, belong_group_id)
+    return height
+  }
   renderView = (value = {}) => {
     const { ceilWidth } = this.props
     const {
@@ -245,78 +328,123 @@ export default class GroupMilestones extends Component {
       two_levels_completed,
       is_over_duetime,
       two_levels,
-      timestamp
+      timestamp,
+      belong_group_id
     } = value
     return (
       <>
-        {!!one_levels.length && (
-          <div
-            data-targetclassname="specific_example_milestone"
-            className={indexStyles.milestone_wrapper}
-            style={{ top, left: left + ceilWidth }}
-          >
-            <Dropdown
-              overlay={this.renderLCBList(one_levels, timestamp, {
-                marginTop: -10
-              })}
-            >
-              <div>
-                {/* 旗帜 */}
-                <div
-                  className={`${indexStyles.board_miletiones_flag} ${globalStyles.authTheme}`}
-                  data-targetclassname="specific_example_milestone"
-                >
-                  &#xe6a0;
-                </div>
-                {/* 渲染里程碑名称铺开 */}
-                <div
-                  className={`${indexStyles.board_miletiones_names} ${globalStyles.global_ellipsis}`}
-                  data-targetclassname="specific_example_milestone"
-                  style={{ maxWidth: this.setMiletonesNamesWidth(timestamp) }}
-                >
-                  {this.renderMiletonesNames(one_levels)}
-                </div>
-                {/* 旗杆 */}
-                <div
-                  data-targetclassname="specific_example_milestone"
-                  className={`${indexStyles.board_miletiones_flagpole2}`}
-                  style={{}}
-                  onMouseDown={e => e.stopPropagation()}
-                  onMouseOver={e => e.stopPropagation()}
-                />
-              </div>
-            </Dropdown>
-            {/* 很长的线 */}
+        {!!one_levels.length &&
+          this.renderDragWrapper(
+            one_levels,
             <div
               data-targetclassname="specific_example_milestone"
-              className={`${indexStyles.board_miletiones_flagpole}`}
-              style={{}}
-              onMouseDown={e => e.stopPropagation()}
-              onMouseOver={e => e.stopPropagation()}
-            />
-          </div>
-        )}
-        {!!two_levels.length && (
-          <Dropdown overlay={this.renderLCBList(two_levels, timestamp)}>
+              className={indexStyles.milestone_wrapper}
+              style={{ top, left: left + ceilWidth }}
+            >
+              <Dropdown
+                overlay={this.renderLCBList(one_levels, timestamp, {
+                  marginTop: -10
+                })}
+              >
+                <div>
+                  {/* 旗帜 */}
+                  <div
+                    className={`${indexStyles.board_miletiones_flag} ${globalStyles.authTheme}`}
+                    data-targetclassname="specific_example_milestone"
+                    style={{
+                      color: this.setMiletonesColor({
+                        is_over_duetime,
+                        is_all_realized: one_levels_completed
+                      })
+                    }}
+                  >
+                    &#xe6a0;
+                  </div>
+                  {/* 渲染里程碑名称铺开 */}
+                  <div
+                    className={`${indexStyles.board_miletiones_names} ${globalStyles.global_ellipsis}`}
+                    data-targetclassname="specific_example_milestone"
+                    style={{
+                      maxWidth: this.setMiletonesNamesWidth(timestamp),
+                      color: this.setMiletonesColor({
+                        is_over_duetime,
+                        is_all_realized: one_levels_completed
+                      })
+                    }}
+                  >
+                    {this.renderMiletonesNames(one_levels)}
+                  </div>
+                  {/* 旗杆 */}
+                  <div
+                    data-targetclassname="specific_example_milestone"
+                    className={`${indexStyles.board_miletiones_flagpole2}`}
+                    style={{
+                      background: this.setMiletonesColor({
+                        is_over_duetime,
+                        is_all_realized: one_levels_completed
+                      })
+                    }}
+                    onMouseDown={e => e.stopPropagation()}
+                    onMouseOver={e => e.stopPropagation()}
+                  />
+                </div>
+              </Dropdown>
+              {/* 很长的线 */}
+              <div
+                data-targetclassname="specific_example_milestone"
+                className={`${indexStyles.board_miletiones_flagpole}`}
+                style={{
+                  height: this.setThroughLineHeight({
+                    belong_group_id,
+                    one_levels
+                  }),
+                  background: this.setMiletonesColor({
+                    is_over_duetime,
+                    is_all_realized: one_levels_completed
+                  })
+                }}
+                onMouseDown={e => e.stopPropagation()}
+                onMouseOver={e => e.stopPropagation()}
+              />
+            </div>
+          )}
+        {!!two_levels.length &&
+          this.renderDragWrapper(
+            two_levels,
             <div
               data-targetclassname="specific_example_milestone"
               className={indexStyles.milestone_wrapper}
               style={{ top, left: left + ceilWidth / 2 - 7 }} //移动一半的距离，并且中心位于中间
             >
-              <div
-                data-targetclassname="specific_example_milestone"
-                className={indexStyles.board_miletiones_flag2}
-              />
-              <div
-                className={`${indexStyles.board_miletiones_names} ${globalStyles.global_ellipsis}`}
-                data-targetclassname="specific_example_milestone"
-                style={{ maxWidth: this.setMiletonesNamesWidth(timestamp) }}
-              >
-                {this.renderMiletonesNames(two_levels)}
-              </div>
+              <Dropdown overlay={this.renderLCBList(two_levels, timestamp)}>
+                <div>
+                  <div
+                    data-targetclassname="specific_example_milestone"
+                    className={indexStyles.board_miletiones_flag2}
+                    style={{
+                      background: this.setMiletonesColor({
+                        is_over_duetime,
+                        is_all_realized: two_levels_completed
+                      })
+                    }}
+                  />
+                  <div
+                    className={`${indexStyles.board_miletiones_names} ${globalStyles.global_ellipsis}`}
+                    data-targetclassname="specific_example_milestone"
+                    style={{
+                      maxWidth: this.setMiletonesNamesWidth(timestamp),
+                      color: this.setMiletonesColor({
+                        is_over_duetime,
+                        is_all_realized: two_levels_completed
+                      })
+                    }}
+                  >
+                    {this.renderMiletonesNames(two_levels)}
+                  </div>
+                </div>
+              </Dropdown>
             </div>
-          </Dropdown>
-        )}
+          )}
       </>
     )
   }
@@ -376,6 +504,191 @@ export default class GroupMilestones extends Component {
       </Menu>
     )
   }
+
+  // 里程碑的事件-----------start
+  target_event_bubble = {
+    onClick: e => e.stopPropagation(),
+    onMouseMove: e => e.stopPropagation(),
+    onMouseDown: e => e.stopPropagation(),
+    onMouseUp: e => e.stopPropagation(),
+    onMouseEnter: () => {
+      //在鼠标hover到任务条上，非创建任务时，将虚线框隐藏
+      const { ganttPanelDashedDrag } = this.props
+      if (!ganttPanelDashedDrag) {
+        this.props.setDasheRectShow && this.props.setDasheRectShow(false)
+      }
+    }
+  }
+  milestoneDragStart = e => {
+    this.milestone_drag_ele = e //缓存拖拽的里程碑节点
+    this.milestone_initial_left = e.target.style.left
+    const { x } = getXYDropPosition(e, {
+      gantt_head_width: this.props.gantt_head_width
+    })
+    this.milestone_drag_point_diff = x - this.milestone_initial_left //做初始标记，由于鼠标拖拽的位置在该元素上不同，记录元素最左边和鼠标落点的差值
+    this.drag_ele = e.currentTarget
+
+    // console.log('sssssssss_00', {
+    //   x,
+    //   milestone_initial_left: this.milestone_initial_left,
+    //   milestone_drag_point_diff: this.milestone_drag_point_diff,
+    //   target: e.currentTarget.style.left
+    // })
+  }
+  milestoneDraging = e => {
+    const { pageX } = getPageXY(e)
+    if (!pageX) return
+    this.milestone_drag_ele = e
+    this.milestone_dragging = true
+    this.setState({
+      dragg_milestone_err: false
+    })
+    // console.log('sssssssss_11a', this.milestone_drag_ele)
+  }
+  // 甘特图信息变化后，实时触发甘特图渲染在甘特图上变化
+  handleMiletonsChangeMountInGantt = () => {
+    const { dispatch } = this.props
+    return new Promise(resolve => {
+      dispatch({
+        type: 'gantt/getGttMilestoneList',
+        payload: {}
+      }).then(res => resolve())
+    })
+  }
+  milestoneDragStop = async (e, { milestones = [] }) => {
+    if (!milestones.length) return
+    const {
+      gantt_view_mode,
+      date_arr_one_level,
+      ceilWidth,
+      gantt_head_width,
+      gantt_board_id,
+      list_id
+    } = this.props
+    setTimeout(() => {
+      this.milestone_dragging = false
+    }, 200)
+    let { x } =
+      getXYDropPosition(this.milestone_drag_ele, {
+        gantt_head_width
+      }) || {}
+    // console.log('sssssssssss_22_0', x, this.milestone_drag_point_diff)
+
+    // x = x - this.milestone_drag_point_diff + ceilWidth //校准
+    // const { x } = (await this.setCurrentRect(this.milestone_drag_ele)) || {}
+    let date = {} //具体日期
+    let counter = 0
+    if (gantt_view_mode == 'month' || gantt_view_mode == 'hours') {
+      for (let val of date_arr_one_level) {
+        counter += 1
+        if (counter * ceilWidth > x) {
+          date = val
+          break
+        }
+      }
+    } else if (gantt_view_mode == 'year') {
+      date = setDateWithPositionInYearView({
+        _position: x + ceilWidth,
+        date_arr_one_level,
+        ceilWidth,
+        width: ceilWidth,
+        x
+      })
+    } else if (gantt_view_mode == 'week') {
+      date = setDateWidthPositionWeekView({
+        position: x,
+        date_arr_one_level,
+        ceilWidth
+      })
+    } else {
+    }
+    // console.log('sssssssssss_22', x, date)
+    // debugger
+    const { timestamp, timestampEnd } = date
+    if (!timestampEnd) return
+    //回退位置
+    const resetNodeTransform = () => {
+      const elements_ = document.getElementsByClassName(
+        'react-draggable-dragged'
+      )
+      const elements = [...elements_]
+      elements.forEach(node => {
+        node.style.transform = 'translate(0px, 0px)'
+      })
+    }
+    const params = {
+      id: milestones[0].id,
+      deadline: timestampEnd
+    }
+    if (gantt_board_id == '0') {
+      setBoardIdStorage(list_id)
+    }
+    return new Promise((resolve, reject) => {
+      updateMilestone(
+        {
+          ...params
+        },
+        { isNotLoading: false }
+      )
+        .then(async res => {
+          if (isApiResponseOk(res)) {
+            await this.handleMiletonsChangeMountInGantt()
+            message.success('更新成功')
+            resolve(res)
+          } else {
+            message.error(res.message)
+            this.setState(
+              {
+                dragg_milestone_err: true
+              },
+              () => {
+                resetNodeTransform()
+              }
+            )
+            reject()
+          }
+        })
+        .catch(err => {
+          message.error('更新失败')
+          this.setState(
+            {
+              dragg_milestone_err: true
+            },
+            () => {
+              resetNodeTransform()
+            }
+          )
+          reject()
+        })
+    })
+  }
+  // 里程碑的事件 -------------end
+
+  // 拖拽里程碑包裹
+  renderDragWrapper = (milestones = [], dom) => {
+    return milestones.length == 1 ? (
+      <Draggable
+        data-targetclassname="specific_example_milestone"
+        axis="x"
+        {...(this.state.dragg_milestone_err
+          ? { position: { x: 0, y: 0 } }
+          : {})} //拖拽错误后回归原位
+        {...this.target_event_bubble}
+        onStart={this.milestoneDragStart}
+        onDrag={this.milestoneDraging}
+        onStop={e =>
+          this.milestoneDragStop(e, {
+            milestones
+          })
+        }
+      >
+        {dom}
+      </Draggable>
+    ) : (
+      dom
+    )
+  }
+
   render() {
     const { render_milestones_data = [] } = this.state
     return (
@@ -415,7 +728,8 @@ function mapStateToProps({
       date_arr_one_level,
       gantt_head_width,
       date_total,
-      list_group
+      list_group,
+      group_list_area
     }
   }
 }) {
@@ -433,6 +747,7 @@ function mapStateToProps({
     date_arr_one_level,
     gantt_head_width,
     date_total,
-    list_group
+    list_group,
+    group_list_area
   }
 }
