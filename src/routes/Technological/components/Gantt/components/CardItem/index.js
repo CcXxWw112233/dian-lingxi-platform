@@ -1888,10 +1888,10 @@ export default class CardItem extends Component {
                 status_label == 'overdue_time' && 'rgba(255,32,32,0.5)',
               zIndex:
                 status_label == 'overdue_time'
-                  ? 1
+                  ? 0
                   : status_label == 'ahead_time_middle'
                   ? 2
-                  : 1,
+                  : 0,
               backgroundImage:
                 status_label == 'overdue_time'
                   ? '-webkit-gradient(linear,0 0,100% 100%,color-stop(0.25, rgba(255, 255, 255, 0.2)),color-stop(0.25, rgba(255,32,32,0.01)),color-stop(0.5, rgba(255,32,32,0.01)),color-stop(0.5, rgba(255, 255, 255, 0.2)),color-stop(0.75, rgba(255, 255, 255, 0.2)),color-stop(0.75, rgba(255,32,32,0.01)),to(rgba(255,32,32,0.01)))'
