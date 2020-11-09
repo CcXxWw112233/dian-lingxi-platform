@@ -520,7 +520,16 @@ export default class BasicFieldUIComponent extends Component {
                                 }}
                               ></span>
                             </div>
-                            <div style={{ flex: 1 }}>
+                            <div
+                              style={{
+                                flex: 1,
+                                marginRight: '32px',
+                                width: 0,
+                                overflow: 'hidden',
+                                whiteSpace: 'nowrap',
+                                textOverflow: 'ellipsis'
+                              }}
+                            >
                               <div
                                 title={file_name}
                                 className={mainContentStyles.file_name}

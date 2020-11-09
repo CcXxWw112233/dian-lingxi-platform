@@ -612,7 +612,7 @@ export default class MainUIComponent extends Component {
                             >
                               <span
                                 title={file_name}
-                                className={mainContentStyles.pay_file_name}
+                                className={mainContentStyles.file_name}
                               >
                                 {file_name}
                               </span>
