@@ -11,10 +11,6 @@ const AccountSet = lazy(() =>
 )
 
 export default class SimpleDrawer extends Component {
-  state = {
-    visible: true
-  }
-
   onClose = e => {
     this.props.closeDrawer()
   }
