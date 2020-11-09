@@ -1,10 +1,14 @@
-import React, { Component } from 'react'
-
-import { Drawer } from 'antd'
-import { connect } from 'dva'
-import OrganizationMember from '../../../../../Technological/components/OrganizationMember'
-import Organization from '../../../../../organizationManager/index'
-import AccountSet from '../../../../../Technological/components/AccountSet'
+import React, { Component, lazy, Suspense } from 'react'
+import { Drawer, Spin } from 'antd'
+const OrganizationMember = lazy(() =>
+  import('../../../../../Technological/components/OrganizationMember')
+)
+const Organization = lazy(() =>
+  import('../../../../../organizationManager/index')
+)
+const AccountSet = lazy(() =>
+  import('../../../../../Technological/components/AccountSet')
+)
 
 export default class SimpleDrawer extends Component {
   state = {
@@ -63,7 +67,22 @@ export default class SimpleDrawer extends Component {
           document.getElementById('technologicalLayoutWrapper')
         }
       >
-        {this.renderSimpleDrawerContent(simpleDrawerContentKey)}
+        <Suspense
+          fallback={
+            <div
+              style={{
+                background: 'rgba(245, 245, 245, 1)',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}
+            >
+              <Spin></Spin>
+            </div>
+          }
+        >
+          {this.renderSimpleDrawerContent(simpleDrawerContentKey)}
+        </Suspense>
       </Drawer>
     )
   }

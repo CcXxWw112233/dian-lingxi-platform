@@ -48,13 +48,13 @@ const NotificationSettingsModal = lazy(() =>
     '@/routes/Technological/Sider/comonent/notificationSettings/NotificationSettingsModal'
   )
 )
-const AccountSet = lazy(() =>
-  import('@/routes/Technological/components/AccountSet')
-)
-const OrganizationMember = lazy(() =>
-  import('@/routes/Technological/components/OrganizationMember')
-)
-const Organization = lazy(() => import('@/routes/organizationManager'))
+// const AccountSet = lazy(() =>
+//   import('@/routes/Technological/components/AccountSet')
+// )
+// const OrganizationMember = lazy(() =>
+//   import('@/routes/Technological/components/OrganizationMember')
+// )
+// const Organization = lazy(() => import('@/routes/organizationManager'))
 const PayUpgrade = lazy(() =>
   import('@/routes/Technological/components/PayUpgrade/index')
 )
@@ -300,6 +300,12 @@ export default class SimpleNavigation extends Component {
           type: 'organizationManager/getRolePermissions',
           payload: {
             type: '1'
+          }
+        })
+        dispatch({
+          type: 'organizationManager/getRolePermissions',
+          payload: {
+            type: '2'
           }
         })
         dispatch({

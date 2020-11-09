@@ -29,7 +29,7 @@ const VideoMeeting = lazy(() =>
 //   import('./Components/SimpleNavigation/index')
 // )
 const SimpleDrawer = lazy(() => import('./Components/SimpleDrawer/index'))
-const Organization = lazy(() => import('@/routes/organizationManager'))
+// const Organization = lazy(() => import('@/routes/organizationManager'))
 const TaskDetailModal = lazy(() => import('@/components/TaskDetailModal'))
 const FileDetailModal = lazy(() => import('@/components/FileDetailModal'))
 const ProcessDetailModal = lazy(() => import('@/components/ProcessDetailModal'))
@@ -39,7 +39,7 @@ class SimpleHeader extends Component {
   state = {
     leftNavigationVisible: false,
     simpleDrawerVisible: false,
-    simpleDrawerContent: null,
+    // simpleDrawerContent: null,
     simpleDrawerTitle: '',
     whetherShowTaskDetailModalVisible: false, // 控制引用的任务弹窗多次渲染
     whetherShowFileDetailModalVisible: false,
@@ -596,12 +596,12 @@ class SimpleHeader extends Component {
     }
     this.updateStates({
       simpleDrawerVisible: true,
-      simpleDrawerContent: (
-        <Suspense fallback={''}>
-          {' '}
-          <Organization showBackBtn={false} />
-        </Suspense>
-      ),
+      // simpleDrawerContent: (
+      //   <Suspense fallback={''}>
+      //     {' '}
+      //     <Organization showBackBtn={false} />
+      //   </Suspense>
+      // ),
       simpleDrawerTitle: '后台管理'
     })
     this.handleVisibleChange(false)
@@ -635,7 +635,7 @@ class SimpleHeader extends Component {
     } = this.props
     const {
       simpleDrawerVisible,
-      simpleDrawerContent,
+      // simpleDrawerContent,
       leftNavigationVisible,
       simpleDrawerTitle,
       guideImgSrc,
@@ -756,6 +756,7 @@ class SimpleHeader extends Component {
               // simpleDrawerContent={simpleDrawerContent}
               simpleDrawerContentKey={simpleDrawerContentKey}
               drawerTitle={simpleDrawerTitle}
+              visible={simpleDrawerVisible}
             />
           )}
           {drawerVisible && this.state.whetherShowTaskDetailModalVisible && (
