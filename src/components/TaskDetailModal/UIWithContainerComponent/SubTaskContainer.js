@@ -1060,6 +1060,10 @@ const SubTaskItemLogic = {
         filePreviewCurrentName: file_name
       }
     })
+    this.updatePrivateVariablesWithOpenFile &&
+      this.updatePrivateVariablesWithOpenFile()
+    this.props.updatePrivateVariablesWithOpenFile &&
+      this.props.updatePrivateVariablesWithOpenFile()
   },
 
   // 上传文件 事件 S

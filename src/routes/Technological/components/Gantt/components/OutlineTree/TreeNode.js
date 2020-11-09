@@ -960,16 +960,16 @@ export default class TreeNode extends Component {
   }
   disabledTime = (e, time_type) => {
     const {
-      nodeValue: { start_time, due_time, tree_type }
+      nodeValue: { start_time, due_time, tree_type, is_has_start_time }
     } = this.state
     if (time_type == 'start_time') {
-      if (!start_time) return false
+      if (!start_time || !due_time) return false
       if (tree_type == '3') {
         return e.valueOf() > new Date().getTime()
       }
       return e.valueOf() > due_time
     } else if (time_type == 'due_time') {
-      if (!due_time) return false
+      if (!due_time || !is_has_start_time) return false
       return e.valueOf() < start_time
     }
   }
