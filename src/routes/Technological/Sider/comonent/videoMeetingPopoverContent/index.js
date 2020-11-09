@@ -1096,15 +1096,16 @@ class VideoMeetingPopoverContent extends Component {
                     }}
                     className={`${indexStyles.video_arrow} ${indexStyles.video_arrow_left}`}
                   >
-                    <span className={globalStyles.authTheme}>&#xe7ec;</span>
+                    <span className={globalStyles.authTheme}>&#xe687;</span>
                   </div>
                 )}
               <span>{platformNouns}推荐使用以下方式开展远程会议: </span>
               <div
                 style={{
                   position: 'relative',
-                  width: '278px',
-                  overflow: 'hidden'
+                  width: '282px',
+                  overflow: 'hidden',
+                  left: '10px'
                 }}
               >
                 <div
@@ -1165,7 +1166,7 @@ class VideoMeetingPopoverContent extends Component {
                     }}
                     className={`${indexStyles.video_arrow} ${indexStyles.video_arrow_right}`}
                   >
-                    <span className={globalStyles.authTheme}>&#xe7eb;</span>
+                    <span className={globalStyles.authTheme}>&#xe689;</span>
                   </div>
                 )}
             </div>
