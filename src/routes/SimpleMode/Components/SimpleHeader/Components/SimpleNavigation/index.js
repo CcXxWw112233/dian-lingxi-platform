@@ -874,11 +874,11 @@ export default class SimpleNavigation extends Component {
             />
           )}
 
-          {this.state.payUpgradeModalVisible && (
+          {/* {this.state.payUpgradeModalVisible && (
             <PayUpgrade
               setPayUpgradeModalVisible={this.setPayUpgradeModalVisible}
             />
-          )}
+          )} */}
         </Suspense>
       </div>
     )
