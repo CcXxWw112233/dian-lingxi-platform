@@ -953,7 +953,8 @@ export default class DateList extends Component {
           className={indexStyles.dateArea}
           id={'gantt_date_area'}
           style={{
-            visibility: get_gantt_data_loading_other ? 'hidden' : 'visible'
+            visibility: get_gantt_data_loading_other ? 'hidden' : 'visible',
+            borderBottom: '1px solid rgba(154,159,166,0.15)'
           }}
           // style={{ left: -target_scrollLeft, }}
         >

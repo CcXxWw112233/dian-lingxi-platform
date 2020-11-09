@@ -1,21 +1,21 @@
 import React, { Suspense, lazy } from 'react'
 import { connect } from 'dva'
-import QueueAnim from 'rc-queue-anim'
+// import QueueAnim from 'rc-queue-anim'
 import globalClassNmae from '../../globalset/css/globalClassName.less'
-import { Route, Router, Switch, Link } from 'dva/router'
-import dynamic from 'dva/dynamic'
+import { Route } from 'dva/router'
+// import dynamic from 'dva/dynamic'
 import dva from 'dva/index'
-import { LocaleProvider, Icon, Layout, Menu } from 'antd'
+import { LocaleProvider, Layout } from 'antd'
 import zh_CN from 'antd/lib/locale-provider/zh_CN'
 import 'moment/locale/zh-cn'
-import SiderLeft from './Sider/SiderLeft'
-import SiderRight from './Sider/SiderRight'
-import GlobalSearch from './GlobalSearch'
+// import SiderLeft from './Sider/SiderLeft'
+// import SiderRight from './Sider/SiderRight'
+// import GlobalSearch from './GlobalSearch'
 import QueryString from 'querystring'
 import { initWsFun } from '../../components/WsNewsDynamic'
-import Cookies from 'js-cookie'
-import { isPaymentOrgUser } from '@/utils/businessFunction'
-import { routerRedux } from 'dva/router'
+// import Cookies from 'js-cookie'
+// import { isPaymentOrgUser } from '@/utils/businessFunction'
+// import { routerRedux } from 'dva/router'
 import { CUSTOMIZATION_ORGNIZATIONS } from '../../globalset/js/constant'
 import logoImg from '../../assets/library/lingxi_logo.png'
 
@@ -32,9 +32,12 @@ let net = null
 @connect(mapStateToProps)
 export default class Technological extends React.Component {
   componentDidMount() {
-    this.historyListenSet()
+    // this.historyListenSet()
     this.connectWsToModel()
     this.checkListeninger()
+  }
+  componentWillMount() {
+    this.historyListenSet()
   }
   componentWillUnmount() {
     // console.log('netnet-ummount', net)
@@ -234,45 +237,45 @@ export default class Technological extends React.Component {
     const app = dva()
     const routes = [
       {
-        path: '/technological/accoutSet',
-        component: lazy(() => import('./components/AccountSet'))
-      },
-      {
-        path: '/technological/project',
-        component: lazy(() => import('./components/Project'))
-      },
-      {
-        path: '/technological/projectDetail/:id?',
-        component: lazy(() => import('./components/ProjectDetail'))
-      },
-      {
-        path: '/technological/newsDynamic',
-        component: lazy(() => import('./components/NewsDynamic'))
-      },
-      {
-        path: '/technological/workbench',
-        component: lazy(() => import('./components/Workbench'))
-      },
-      {
-        path: '/technological/organizationMember',
-        component: lazy(() => import('./components/OrganizationMember'))
-      },
-      {
-        path: '/technological/teamShow',
-        component: lazy(() => import('../TeamShow/index'))
-      },
-      {
-        path: '/technological/xczNews',
-        component: lazy(() => import('./components/XczNews'))
-      },
-      {
         path: '/technological/simplemode',
         component: SimpleMode //lazy(() => import('../SimpleMode/index')),
-      },
-      {
-        path: '/technological/investmentMap',
-        component: lazy(() => import('./components/InvestmentMap'))
       }
+      // {
+      //   path: '/technological/accoutSet',
+      //   component: lazy(() => import('./components/AccountSet'))
+      // },
+      // {
+      //   path: '/technological/project',
+      //   component: lazy(() => import('./components/Project'))
+      // },
+      // {
+      //   path: '/technological/projectDetail/:id?',
+      //   component: lazy(() => import('./components/ProjectDetail'))
+      // },
+      // {
+      //   path: '/technological/newsDynamic',
+      //   component: lazy(() => import('./components/NewsDynamic'))
+      // },
+      // {
+      //   path: '/technological/workbench',
+      //   component: lazy(() => import('./components/Workbench'))
+      // },
+      // {
+      //   path: '/technological/organizationMember',
+      //   component: lazy(() => import('./components/OrganizationMember'))
+      // },
+      // {
+      //   path: '/technological/teamShow',
+      //   component: lazy(() => import('../TeamShow/index'))
+      // },
+      // {
+      //   path: '/technological/xczNews',
+      //   component: lazy(() => import('./components/XczNews'))
+      // },
+      // {
+      //   path: '/technological/investmentMap',
+      //   component: lazy(() => import('./components/InvestmentMap'))
+      // }
     ]
     return (
       <Suspense fallback={<div></div>}>
@@ -290,33 +293,33 @@ export default class Technological extends React.Component {
     )
   }
   renderRouters = () => {
-    const { page_load_type } = this.props
+    // const { page_load_type } = this.props
 
-    const defaultLayout = (
-      <Layout
-        id="technologicalLayoutWrapper"
-        className={globalClassNmae.technologicalLayoutWrapper}
-      >
-        <Sider collapsedWidth={64} theme={'light'} collapsed={true} />
-        <SiderLeft />
-        <Layout style={{ backgroundColor: 'rgba(245,245,245,1)' }}>
-          <Content
-            style={{
-              margin: '0 16px'
-            }}
-          >
-            <div
-              className={`${globalClassNmae.page_style_3} ${globalClassNmae.global_vertical_scrollbar}`}
-              id={'technologicalOut'}
-            >
-              {this.renderRoutersRoute()}
-            </div>
-          </Content>
-        </Layout>
-        <SiderRight />
-        <GlobalSearch />
-      </Layout>
-    )
+    // const defaultLayout = (
+    //   <Layout
+    //     id="technologicalLayoutWrapper"
+    //     className={globalClassNmae.technologicalLayoutWrapper}
+    //   >
+    //     <Sider collapsedWidth={64} theme={'light'} collapsed={true} />
+    //     <SiderLeft />
+    //     <Layout style={{ backgroundColor: 'rgba(245,245,245,1)' }}>
+    //       <Content
+    //         style={{
+    //           margin: '0 16px'
+    //         }}
+    //       >
+    //         <div
+    //           className={`${globalClassNmae.page_style_3} ${globalClassNmae.global_vertical_scrollbar}`}
+    //           id={'technologicalOut'}
+    //         >
+    //           {this.renderRoutersRoute()}
+    //         </div>
+    //       </Content>
+    //     </Layout>
+    //     <SiderRight />
+    //     <GlobalSearch />
+    //   </Layout>
+    // )
 
     const simpleLayout = (
       <Layout
@@ -336,21 +339,21 @@ export default class Technological extends React.Component {
       </Layout>
     )
 
-    let layout = <div></div>
-    switch (page_load_type) {
-      case 0:
-        layout = '<div></div>'
-        break
-      case 1:
-        layout = simpleLayout
-        break
-      case 2:
-        layout = defaultLayout
-        break
-      default:
-        break
-    }
-    return layout
+    // let layout = <div></div>
+    // switch (page_load_type) {
+    //   case 0:
+    //     layout = '<div></div>'
+    //     break
+    //   case 1:
+    //     layout = simpleLayout
+    //     break
+    //   case 2:
+    //     layout = defaultLayout
+    //     break
+    //   default:
+    //     break
+    // }
+    return simpleLayout
   }
   render() {
     let warining = localStorage.getItem('lingxi.skip_mobile_warning')

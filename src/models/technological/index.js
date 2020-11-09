@@ -118,6 +118,17 @@ export default {
   effects: {
     // 初始化请求数据
     *initGetTechnologicalDatas({ payload }, { select, call, put }) {
+      //仅仅为了阻塞
+      const Aa = yield put({
+        type: 'getUSerInfo',
+        payload: {}
+      })
+      const getUSerInfoSync = () =>
+        new Promise(resolve => {
+          resolve(Aa.then())
+        })
+      yield call(getUSerInfoSync)
+
       // 如果获取不到组织id就默认存储0
       if (!localStorage.getItem('OrganizationId')) {
         setOrganizationIdStorage('0')
@@ -145,17 +156,6 @@ export default {
       //   type: 'getUSerInfo',
       //   payload: {}
       // })
-
-      //仅仅为了阻塞
-      const Aa = yield put({
-        type: 'getUSerInfo',
-        payload: {}
-      })
-      const getUSerInfoSync = () =>
-        new Promise(resolve => {
-          resolve(Aa.then())
-        })
-      yield call(getUSerInfoSync)
 
       yield put({
         //  获取当前成员在组织中的权限列表
@@ -209,6 +209,7 @@ export default {
           JSON.stringify(current_org)
         )
         localStorage.setItem('userInfo', JSON.stringify(res.data))
+        setOrganizationIdStorage(res.data?.user_set?.current_org || '0')
         return res
       } else {
         return {}
@@ -234,12 +235,12 @@ export default {
           current_org &&
           current_org != localStorage.getItem('OrganizationId')
         ) {
-          yield put({
-            type: 'changeCurrentOrg',
-            payload: {
-              org_id: current_org
-            }
-          })
+          // yield put({
+          //   type: 'changeCurrentOrg',
+          //   payload: {
+          //     org_id: current_org
+          //   }
+          // })
           return
         } else {
           yield put({

@@ -50,17 +50,17 @@ export default {
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen(location => {
-        if (location.pathname.indexOf('/technological/simplemode') !== -1) {
-          const initData = () => {
-            Promise.all([
-              dispatch({
-                type: 'initSimplemodeCommData',
-                payload: {}
-              })
-            ])
-          }
-          initData()
-        }
+        // if (location.pathname.indexOf('/technological/simplemode') !== -1) {
+        //   const initData = () => {
+        //     Promise.all([
+        //       dispatch({
+        //         type: 'initSimplemodeCommData',
+        //         payload: {}
+        //       })
+        //     ])
+        //   }
+        //   initData()
+        // }
       })
     }
   },

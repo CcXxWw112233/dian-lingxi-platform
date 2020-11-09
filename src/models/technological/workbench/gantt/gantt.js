@@ -466,7 +466,7 @@ export default {
       // console.log('filnaly_outline_tree_0_1', filnaly_outline_tree)
 
       arr = arr.filter(item => item.parent_expand)
-      // arr.push({ ...visual_add_item, add_id: 'add_milestone_out' }) //默认有个新建里程碑，占位
+      arr.push({ ...visual_add_item, add_id: 'add_milestone_out' }) //默认有个新建里程碑，占位
       arr = arr.map((item, key) => {
         let new_item = {}
         const { tree_type, children = [], child_card_status = {} } = item //  里程碑/任务/子任务/虚拟占位 1/2/3/4
