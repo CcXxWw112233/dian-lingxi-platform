@@ -225,7 +225,6 @@ function mapStateToProps({
     myWorkbenchBoxList,
     currentSelectedWorkbenchBox,
     chatImVisiable,
-    leftMainNavIconVisible,
     simplemodeCurrentProject
   }
 }) {
@@ -234,7 +233,6 @@ function mapStateToProps({
     myWorkbenchBoxList,
     currentSelectedWorkbenchBox,
     chatImVisiable,
-    leftMainNavIconVisible,
     simplemodeCurrentProject
   }
 }

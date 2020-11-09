@@ -18,7 +18,6 @@ import {
   getUserAllOrgsBoardList,
   getFilterAllOrgsWhetherItIsFilesAppsBoardList
 } from '@/services/technological/index'
-import { useLayoutEffect } from 'react'
 export default {
   namespace: 'simplemode',
   state: {
@@ -27,7 +26,6 @@ export default {
     setWapperCenter: false, //显示隐藏用
     wallpaperSelectModalVisiable: false, //显示隐藏用
     leftMainNavIconVisible: true,
-    leftMainNavVisible: false,
     chatImVisiable: false, //显示隐藏用
     guideModalVisiable: false, //显示隐藏用
 

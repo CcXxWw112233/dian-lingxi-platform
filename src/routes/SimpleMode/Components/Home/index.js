@@ -126,6 +126,4 @@ class Home extends Component {
   }
 }
 
-export default connect(({ simplemode: { leftMainNavIconVisible } }) => ({
-  leftMainNavIconVisible
-}))(Home)
+export default connect()(Home)
