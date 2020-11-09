@@ -1,8 +1,8 @@
 import React, { Component, lazy, Suspense } from 'react'
-import { connect } from 'dva/index'
+import { connect } from 'dva'
 import indexStyles from './index.less'
 import { isPaymentOrgUser } from '@/utils/businessFunction'
-
+import { Spin } from 'antd'
 // import MiniBoxNavigations from '../MiniBoxNavigations/index'
 // import BoardCommunication from './BoardCommunication/index'
 // import BoardArchives from './BoardArchives/index'
@@ -150,9 +150,14 @@ class WorkbenchPage extends Component {
               style={{
                 background: special_backgroud.includes(select_box_code)
                   ? 'rgba(245, 245, 245, 1)'
-                  : ''
+                  : '',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
               }}
-            />
+            >
+              <Spin size={'large'}></Spin>
+            </div>
           }
         >
           <div
