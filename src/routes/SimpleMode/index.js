@@ -3,14 +3,14 @@ import { connect } from 'dva/index'
 import { Route, Switch } from 'dva/router'
 import indexStyles from './index.less'
 import { isColor } from '@/utils/util'
-import defaultWallpaperSrc from '@/assets/simplemode/acd42051256454f9b070300b8121eae2.png'
+// import defaultWallpaperSrc from '@/assets/simplemode/acd42051256454f9b070300b8121eae2.png'
 import {
   setBoardIdStorage,
   currentNounPlanFilterName
 } from '../../utils/businessFunction'
 import { PROJECTS } from '../../globalset/js/constant'
 import SimpleHeader from './Components/SimpleHeader/index'
-
+const defaultWallpaperSrc = ''
 // import WorkbenchPage from './Components/WorkbenchPage'
 // import Home from './Components/Home'
 
@@ -117,6 +117,10 @@ class SimpleMode extends PureComponent {
       type: 'simplemode/getAllBoxs',
       payload: {}
     })
+    dispatch({
+      type: 'simplemode/initSimplemodeCommData',
+      payload: {}
+    })
   }
 
   componentDidMount() {
@@ -126,8 +130,6 @@ class SimpleMode extends PureComponent {
     window.addEventListener('resize', this.handleResize, false) //监听窗口大小改变
     this.setShowByUserInfo(this.props)
     this.lazyLoadBgImg(this.props)
-
-    window.set_lingxi_html_loading_true = true //整个应用的过渡页面显示
   }
 
   componentWillReceiveProps(nextProps) {

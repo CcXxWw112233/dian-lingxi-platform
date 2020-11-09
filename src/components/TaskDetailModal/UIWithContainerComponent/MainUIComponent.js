@@ -558,12 +558,18 @@ export default class MainUIComponent extends Component {
                       >
                         <span className={mainContentStyles.add_sub_upload}>
                           <span
-                            style={{ fontSize: '16px' }}
+                            style={{
+                              fontSize: '16px',
+                              marginRight: '4px',
+                              verticalAlign: 'middle'
+                            }}
                             className={globalStyles.authTheme}
                           >
                             &#xe7fa;
                           </span>
-                          <span>上传说明资料</span>
+                          <span style={{ verticalAlign: 'middle' }}>
+                            上传说明资料
+                          </span>
                         </span>
                       </UploadAttachment>
                     </div>
@@ -594,13 +600,22 @@ export default class MainUIComponent extends Component {
                                 }}
                               ></span>
                             </div>
-                            <div style={{ flex: 1 }}>
-                              <div
+                            <div
+                              style={{
+                                flex: 1,
+                                marginRight: '32px',
+                                width: 0,
+                                overflow: 'hidden',
+                                whiteSpace: 'nowrap',
+                                textOverflow: 'ellipsis'
+                              }}
+                            >
+                              <span
                                 title={file_name}
                                 className={mainContentStyles.pay_file_name}
                               >
                                 {file_name}
-                              </div>
+                              </span>
                             </div>
                             <div className={mainContentStyles.file_info}>
                               {showMemberName(fileInfo.create_by, data)} 上传于{' '}
@@ -1045,7 +1060,7 @@ export default class MainUIComponent extends Component {
                   <div className={mainContentStyles.field_left}>
                     <div className={mainContentStyles.field_hover}>
                       <span
-                        style={{ fontWeight: 500 }}
+                        style={{ fontWeight: 500, color: '#000' }}
                         className={globalStyles.authTheme}
                       >
                         &#xe686;

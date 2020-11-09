@@ -143,7 +143,7 @@ const Routers = function({ history, app }) {
       component: () => import('./routes/RetrievePassword/')
     },
     {
-      path: '/technological/:path/:path?/:path?/:path?',
+      path: '/technological/simplemode/:path?/:path?/:path?',
       // models: () => [
       //   // import('./models/technological'),
       //   // import('./models/technological/cooperationPush'),
@@ -190,7 +190,7 @@ const Routers = function({ history, app }) {
       path: '/emailRedirect',
       // models: () => [import('./models/emailRedirect')],
       component: () => import('./routes/EmailRedirect/')
-    },
+    }
     //  {
     //   path: '/organizationManager',
     //   // models: () => [import('./models/organizationManager')],
@@ -220,11 +220,11 @@ const Routers = function({ history, app }) {
     //   path: '/iframeOut',
     //   component: () => import('./routes/IframeOut'),
     // },
-    {
-      path: '/readonly_share/:id',
-      component: () =>
-        import('./routes/Technological/ReadonlyShare/AccessInterface/index')
-    }
+    // {
+    //   path: '/readonly_share/:id',
+    //   component: () =>
+    //     import('./routes/Technological/ReadonlyShare/AccessInterface/index')
+    // }
     //  {
     //   path: '/share_detailed',
     //   models: () => [

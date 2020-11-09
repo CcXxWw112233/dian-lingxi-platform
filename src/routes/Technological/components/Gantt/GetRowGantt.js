@@ -44,6 +44,8 @@ import {
   timestampToTime
 } from '../../../../utils/util'
 import SvgArea from './components/SvgArea'
+import GroupCanvas from './components/GroupCanvas'
+
 import BaseLineItem from './components/CardItem/BaseLineItem'
 const clientWidth = document.documentElement.clientWidth //获取页面可见高度
 const dateAreaHeight = date_area_height //日期区域高度，作为修正
@@ -980,7 +982,8 @@ export default class GetRowGantt extends Component {
       outline_tree_round,
       gantt_view_mode,
       active_baseline_data,
-      date_arr_one_level
+      date_arr_one_level,
+      gantt_card_height
     } = this.props
     return (
       <>
@@ -993,7 +996,8 @@ export default class GetRowGantt extends Component {
           id={'gantt_operate_area_panel'}
           ref={'gantt_operate_area_panel'}
         >
-          <SvgArea></SvgArea>
+          <GroupCanvas gantt_card_height={gantt_card_height}></GroupCanvas>
+          <SvgArea gantt_card_height={gantt_card_height}></SvgArea>
           {this.renderDashedRect()}
           {/* 非大纲视图下渲染任务和或者进度 */}
           {!ganttIsOutlineView({ group_view_type }) &&

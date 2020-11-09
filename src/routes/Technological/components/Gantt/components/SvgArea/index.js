@@ -723,22 +723,48 @@ export default class index extends Component {
     }
   }
 
-  setSVGHeight = () => {
-    const rows = 7
-    const { ceiHeight, group_view_type, outline_tree_round = [] } = this.props
-    // return '100%'
+  // setSVGHeight = () => {
+  //   const rows = 7
+  //   const { ceiHeight, group_view_type, outline_tree_round = [] } = this.props
+  //   // return '100%'
+  //   if (ganttIsOutlineView({ group_view_type })) {
+  //     const outline_tree_round_length = outline_tree_round.length
+  //     if (outline_tree_round_length > rows) {
+  //       return (outline_tree_round_length + 8) * ceiHeight
+  //     } else {
+  //       return (rows + 5) * ceiHeight
+  //     }
+  //   } else {
+  //     return '100%'
+  //   }
+  // }
+  setSVGHeight = props => {
+    const {
+      gantt_card_height,
+      group_list_area_section_height = [],
+      ceiHeight,
+      group_view_type,
+      outline_tree_round = [],
+      list_group
+    } = this.props
+    const outline_tree_round_length = outline_tree_round.length
+    const gantt_area_height = gantt_card_height - date_area_height - 30 //视图区域高度
+    const latest_group_height =
+      group_list_area_section_height[list_group.length - 1] //最后一个分组的位置，即为最高
+    let _finally_height = gantt_area_height
     if (ganttIsOutlineView({ group_view_type })) {
-      const outline_tree_round_length = outline_tree_round.length
-      if (outline_tree_round_length > rows) {
-        return (outline_tree_round_length + 8) * ceiHeight
-      } else {
-        return (rows + 5) * ceiHeight
-      }
+      _finally_height = Math.max(
+        outline_tree_round_length * ceiHeight + date_area_height + 20, //在大纲头部渲染那里，添加利一个高度为date_area_height的div,加上未知的差异24
+        gantt_area_height
+      )
     } else {
-      return '100%'
+      _finally_height = Math.max(
+        latest_group_height || gantt_area_height,
+        gantt_area_height
+      )
     }
+    return _finally_height
   }
-
   checkInvalid = obj => {
     let flag = true
     for (let [, value] of Object.entries(obj)) {
@@ -926,7 +952,8 @@ function mapStateToProps({
       gantt_head_width,
       card_name_outside,
       date_arr_one_level,
-      outline_tree
+      outline_tree,
+      group_list_area_section_height
     }
   }
 }) {
@@ -943,6 +970,7 @@ function mapStateToProps({
     gantt_head_width,
     card_name_outside,
     date_arr_one_level,
-    outline_tree
+    outline_tree,
+    group_list_area_section_height
   }
 }

@@ -4,7 +4,7 @@ import indexStyles from './index.less'
 import GroupListHeadItem from './GroupListHeadItem'
 import GroupListHeadElse from './GroupListHeadElse'
 import OutLineHeadItem from './OutLineHeadItem'
-import { ganttIsOutlineView } from './constants'
+import { date_area_height, ganttIsOutlineView } from './constants'
 import emptyBoxImageUrl from '@/assets/gantt/empty-box.png'
 import { Button } from 'antd'
 import OutlineGuideModal from './components/OutlineGuideModal'
@@ -333,10 +333,11 @@ export default class GroupListHead extends Component {
                   }
                   deleteOutLineTreeNode={this.props.deleteOutLineTreeNode}
                 />
-                <GroupListHeadElse
+                {/* <GroupListHeadElse
                   gantt_card_height={this.props.gantt_card_height}
                   dataAreaRealHeight={this.props.dataAreaRealHeight}
-                />
+                /> */}
+                <div style={{ height: date_area_height }}></div>
                 {
                   // startPlanType == 1 &&
                   <OutlineGuideModal handleClose={this.guideModalHandleClose} />
@@ -361,10 +362,10 @@ export default class GroupListHead extends Component {
                     </div>
                   )
                 })}
-                <GroupListHeadElse
+                {/* <GroupListHeadElse
                   gantt_card_height={this.props.gantt_card_height}
                   dataAreaRealHeight={this.props.dataAreaRealHeight}
-                />
+                /> */}
               </>
             )}
           </div>

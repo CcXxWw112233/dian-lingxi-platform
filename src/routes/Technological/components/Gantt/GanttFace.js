@@ -803,10 +803,10 @@ export default class GanttFace extends Component {
                   {/* 查看更多字段 */}
                   <CustomFieldDetailDrawer />
                 </div>
-                <GetRowGanttItemElse
+                {/* <GetRowGanttItemElse
                   gantt_card_height={gantt_card_height}
                   dataAreaRealHeight={dataAreaRealHeight}
-                />
+                /> */}
               </div>
             </div>
           </div>

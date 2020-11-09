@@ -549,7 +549,10 @@ export default class BasicFieldUIComponent extends Component {
                           }}
                         >
                           {!!!(deliverables && deliverables.length) && (
-                            <div className={mainContentStyles.add_sub_btn}>
+                            <div
+                              className={mainContentStyles.add_sub_btn}
+                              style={{ width: '100%' }}
+                            >
                               <span
                                 className={`${globalStyles.authTheme}`}
                                 style={{ fontSize: '16px' }}
@@ -574,12 +577,18 @@ export default class BasicFieldUIComponent extends Component {
                                     className={mainContentStyles.add_sub_upload}
                                   >
                                     <span
-                                      style={{ fontSize: '16px' }}
+                                      style={{
+                                        fontSize: '16px',
+                                        marginRight: '4px',
+                                        verticalAlign: 'middle'
+                                      }}
                                       className={globalStyles.authTheme}
                                     >
                                       &#xe7fa;
                                     </span>
-                                    <span>上传交付物</span>
+                                    <span style={{ verticalAlign: 'middle' }}>
+                                      上传交付物
+                                    </span>
                                   </span>
                                 </UploadAttachment>
                               </div>

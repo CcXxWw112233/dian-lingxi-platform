@@ -1,8 +1,8 @@
 import React, { Component, lazy, Suspense } from 'react'
-import { connect } from 'dva/index'
+import { connect } from 'dva'
 import indexStyles from './index.less'
 import { isPaymentOrgUser } from '@/utils/businessFunction'
-
+import { Spin } from 'antd'
 // import MiniBoxNavigations from '../MiniBoxNavigations/index'
 // import BoardCommunication from './BoardCommunication/index'
 // import BoardArchives from './BoardArchives/index'
@@ -22,6 +22,7 @@ const Zhichengshe = lazy(() => import('./Zhichengshe/index'))
 const Workglows = lazy(() => import('./Workflows'))
 const StatisticalReport = lazy(() => import('./StatisticalReport'))
 const WhiteBoardRooms = lazy(() => import('./WhiteBoard'))
+const MeetingManage = lazy(() => import('./MeetingManage'))
 
 class WorkbenchPage extends Component {
   constructor(props) {
@@ -149,9 +150,14 @@ class WorkbenchPage extends Component {
               style={{
                 background: special_backgroud.includes(select_box_code)
                   ? 'rgba(245, 245, 245, 1)'
-                  : ''
+                  : '',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
               }}
-            />
+            >
+              <Spin size={'large'}></Spin>
+            </div>
           }
         >
           <div
@@ -206,9 +212,10 @@ class WorkbenchPage extends Component {
                 />
               )}
               {isPaymentOrgUser && 'whiteboard' === select_box_code && (
-                <WhiteBoardRooms
-                  org_id={this.props.simplemodeCurrentProject.org_id}
-                />
+                <WhiteBoardRooms org_id={this.props.OrganizationId} />
+              )}
+              {isPaymentOrgUser && 'meetingmanage' === select_box_code && (
+                <MeetingManage org_id={this.props.OrganizationId} />
               )}
             </div>
           </div>
@@ -226,6 +233,9 @@ function mapStateToProps({
     currentSelectedWorkbenchBox,
     chatImVisiable,
     simplemodeCurrentProject
+  },
+  technological: {
+    datas: { OrganizationId }
   }
 }) {
   return {
@@ -233,7 +243,8 @@ function mapStateToProps({
     myWorkbenchBoxList,
     currentSelectedWorkbenchBox,
     chatImVisiable,
-    simplemodeCurrentProject
+    simplemodeCurrentProject,
+    OrganizationId
   }
 }
 export default connect(mapStateToProps)(WorkbenchPage)

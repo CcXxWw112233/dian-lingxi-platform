@@ -425,7 +425,7 @@ export const setHourViewCardTimeSpan = (
   //   gold_due_time
   // )
   if (!start_time || !due_time) return 1
-  // if (start_time == due_time) return 1
+  if (start_time == due_time) return 1
   const start_work_clock = hours_view_start_work_oclock //开始工作时间点
   const due_work_clock = start_work_clock + hours_view_total //下班时间点
   let diff_hour //小时差

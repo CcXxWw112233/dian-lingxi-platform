@@ -3,7 +3,7 @@ import { message } from 'antd'
 import { connect } from 'dva/index'
 import GanttFace from './GanttFace'
 // import TaskDetailModal from '../Workbench/CardContent/Modal/TaskDetailModal';
-import TaskDetailModal from '@/components/TaskDetailModal'
+// import TaskDetailModal from '@/components/TaskDetailModal'
 import AddTaskModal from './components/AddTaskModal'
 import {
   ganttIsFold,

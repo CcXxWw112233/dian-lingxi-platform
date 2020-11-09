@@ -345,6 +345,7 @@ const LogicWithMainContent = {
       }
       let new_drawContent = { ...drawContent }
       new_drawContent['is_realize'] = is_realize === '1' ? '0' : '1'
+      new_drawContent['finish_time'] = res.data.finish_time
       this.updateDrawContentWithUpdateParentListDatas({
         drawContent: new_drawContent,
         card_id,

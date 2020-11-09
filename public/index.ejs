@@ -78,12 +78,12 @@
       style="position: relative; z-index: 100000"
     ></div>
   </body>
-  <script src="./luckysheet/plugins/js/plugin.min.js" defer="defer"></script>
-  <script src="./luckysheet/main.min.js" defer="defer"></script>
-  <script src="./pdf/build/pdf.js"></script>
-  <script>
+  <!-- <script src="./luckysheet/plugins/js/plugin.min.js" defer="defer"></script>
+  <script src="./luckysheet/main.min.js" defer="defer"></script> -->
+  <!-- <script src="./pdf/build/pdf.js"></script> -->
+  <!-- <script>
     pdfjsLib.GlobalWorkerOptions.workerSrc = './pdf/build/pdf.worker.js'
-  </script>
+  </script> -->
   <script>
     window.onload = function() {
       window.loadLingxiComplete = true
@@ -98,7 +98,27 @@
           node.style.display = 'none'
         }, 300)
       }, 300)
+      setTimeout(function() {
+        var secScript2 = document.createElement('script')
+        secScript2.setAttribute('type', 'text/javascript')
+        secScript2.setAttribute('src', './luckysheet/plugins/js/plugin.min.js')
+        document.body.insertBefore(secScript2, document.body.lastChild)
+
+        var secScript3 = document.createElement('script')
+        secScript3.setAttribute('type', 'text/javascript')
+        secScript3.setAttribute('src', './luckysheet/main.min.js')
+        document.body.insertBefore(secScript3, document.body.lastChild)
+
+        var secScript = document.createElement('script')
+        secScript.setAttribute('type', 'text/javascript')
+        secScript.setAttribute('src', './pdf/build/pdf.js')
+        document.body.insertBefore(secScript, document.body.lastChild)
+        pdfjsLib.GlobalWorkerOptions.workerSrc = './pdf/build/pdf.worker.js'
+
+      }, 3000)
+
       // })
     }
   </script>
+
 </html>

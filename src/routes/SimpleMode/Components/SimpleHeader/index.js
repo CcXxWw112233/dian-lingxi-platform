@@ -1,25 +1,39 @@
-import React, { Component } from 'react'
+import React, { Component, lazy, Suspense } from 'react'
 import dva, { connect } from 'dva'
 import indexStyles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
-import SiderLeft from '@/routes/Technological/Sider/SiderLeft'
-import VideoMeeting from '@/routes/Technological/Sider/comonent/videoMeetingPopoverContent/index'
+// import VideoMeeting from '@/routes/Technological/Sider/comonent/videoMeetingPopoverContent/index'
 import { Tooltip, Dropdown, Modal } from 'antd'
 import Cookies from 'js-cookie'
 import SimpleNavigation from './Components/SimpleNavigation/index'
-import SimpleDrawer from './Components/SimpleDrawer/index'
-import TaskDetailModal from '@/components/TaskDetailModal'
+// import SimpleDrawer from './Components/SimpleDrawer/index'
+// import TaskDetailModal from '@/components/TaskDetailModal'
 import {
   setBoardIdStorage,
   getSubfixName,
   currentNounPlanFilterName
 } from '../../../../utils/businessFunction'
-import Organization from '@/routes/organizationManager'
-import FileDetailModal from '@/components/FileDetailModal'
-import ProcessDetailModal from '@/components/ProcessDetailModal'
-import Guide from '../Guide/index'
+// import Organization from '@/routes/organizationManager'
+// import FileDetailModal from '@/components/FileDetailModal'
+// import ProcessDetailModal from '@/components/ProcessDetailModal'
+// import Guide from '../Guide/index'
 import { PROJECTS } from '../../../../globalset/js/constant'
 import LingxiIm, { lx_utils, Im } from 'lingxi-im'
+
+const VideoMeeting = lazy(() =>
+  import(
+    '@/routes/Technological/Sider/comonent/videoMeetingPopoverContent/index'
+  )
+)
+// const SimpleNavigation = lazy(() =>
+//   import('./Components/SimpleNavigation/index')
+// )
+const SimpleDrawer = lazy(() => import('./Components/SimpleDrawer/index'))
+const Organization = lazy(() => import('@/routes/organizationManager'))
+const TaskDetailModal = lazy(() => import('@/components/TaskDetailModal'))
+const FileDetailModal = lazy(() => import('@/components/FileDetailModal'))
+const ProcessDetailModal = lazy(() => import('@/components/ProcessDetailModal'))
+const Guide = lazy(() => import('../Guide/index'))
 
 class SimpleHeader extends Component {
   state = {
@@ -582,7 +596,12 @@ class SimpleHeader extends Component {
     }
     this.updateStates({
       simpleDrawerVisible: true,
-      simpleDrawerContent: <Organization showBackBtn={false} />,
+      simpleDrawerContent: (
+        <Suspense fallback={''}>
+          {' '}
+          <Organization showBackBtn={false} />
+        </Suspense>
+      ),
       simpleDrawerTitle: '后台管理'
     })
     this.handleVisibleChange(false)
@@ -679,7 +698,9 @@ class SimpleHeader extends Component {
             </i>
           </div>
         </Tooltip>
-        <VideoMeeting />
+        <Suspense fallback={''}>
+          <VideoMeeting />
+        </Suspense>
         <Tooltip
           title={`${currentNounPlanFilterName(
             PROJECTS,
@@ -726,44 +747,43 @@ class SimpleHeader extends Component {
             <VideoMeeting />
           </div> */}
         </div>
-
-        {simpleDrawerVisible && (
-          <SimpleDrawer
-            visible={simpleDrawerVisible}
-            style={{ height: 'auto' }}
-            updateState={this.updateStates}
-            closeDrawer={this.closeDrawer}
-            // simpleDrawerContent={simpleDrawerContent}
-            simpleDrawerContentKey={simpleDrawerContentKey}
-            drawerTitle={simpleDrawerTitle}
-          />
-        )}
-        {drawerVisible && this.state.whetherShowTaskDetailModalVisible && (
-          <TaskDetailModal
-            task_detail_modal_visible={drawerVisible}
-            // setTaskDetailModalVisible={this.setTaskDetailModalVisible}
-            // handleTaskDetailChange={this.handleChangeCard}
-            // handleDeleteCard={this.handleDeleteCard}
-          />
-        )}
-        {isInOpenFile && this.state.whetherShowFileDetailModalVisible && (
-          <FileDetailModal
-            setPreviewFileModalVisibile={this.setPreviewFileModalVisibile}
-            fileType={fileType}
-            filePreviewCurrentFileId={filePreviewCurrentFileId}
-            file_detail_modal_visible={isInOpenFile}
-          />
-        )}
-        {process_detail_modal_visible &&
-          this.state.whetherShowProcessDetailModalVisible && (
-            <ProcessDetailModal
-              process_detail_modal_visible={process_detail_modal_visible}
+        <Suspense fallback={''}>
+          {simpleDrawerVisible && (
+            <SimpleDrawer
+              style={{ height: 'auto' }}
+              updateState={this.updateStates}
+              closeDrawer={this.closeDrawer}
+              // simpleDrawerContent={simpleDrawerContent}
+              simpleDrawerContentKey={simpleDrawerContentKey}
+              drawerTitle={simpleDrawerTitle}
             />
           )}
-        {guideModalVisiable && (
-          <Guide opGuiImage={this.opGuiImage.bind(this)} />
-        )}
-
+          {drawerVisible && this.state.whetherShowTaskDetailModalVisible && (
+            <TaskDetailModal
+              task_detail_modal_visible={drawerVisible}
+              // setTaskDetailModalVisible={this.setTaskDetailModalVisible}
+              // handleTaskDetailChange={this.handleChangeCard}
+              // handleDeleteCard={this.handleDeleteCard}
+            />
+          )}
+          {isInOpenFile && this.state.whetherShowFileDetailModalVisible && (
+            <FileDetailModal
+              setPreviewFileModalVisibile={this.setPreviewFileModalVisibile}
+              fileType={fileType}
+              filePreviewCurrentFileId={filePreviewCurrentFileId}
+              file_detail_modal_visible={isInOpenFile}
+            />
+          )}
+          {process_detail_modal_visible &&
+            this.state.whetherShowProcessDetailModalVisible && (
+              <ProcessDetailModal
+                process_detail_modal_visible={process_detail_modal_visible}
+              />
+            )}
+          {guideModalVisiable && (
+            <Guide opGuiImage={this.opGuiImage.bind(this)} />
+          )}
+        </Suspense>
         <Modal
           visible={this.state.guideImageMoadlVisible}
           closable={false}
