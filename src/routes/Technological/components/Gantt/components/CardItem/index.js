@@ -1706,13 +1706,6 @@ export default class CardItem extends Component {
               : node.due_time - node.start_time
           // 表示逾期完成
           status_label = 'overdue_time'
-          console.log(
-            node.name,
-            caldiffDays(finish_time_, node.due_time),
-            default_width,
-            local_width,
-            'dividend'
-          )
           compare_width =
             caldiffDays(finish_time_, node.due_time) * this.props.ceilWidth +
             default_width
@@ -1731,14 +1724,11 @@ export default class CardItem extends Component {
           finish_time_ >= node.start_time &&
           finish_time_ < node.due_time
         ) {
-          dividend =
-            node.due_time == node.start_time
-              ? node.start_time
-              : node.due_time - node.start_time
           compare_width =
-            parseFloat((finish_time_ - node.start_time) / dividend).toFixed(2) *
-              default_width +
-            10
+            caldiffDays(finish_time_, node.start_time) == 0
+              ? this.props.ceilWidth
+              : caldiffDays(finish_time_, node.start_time) *
+                this.props.ceilWidth
           status_label = 'ahead_time_middle'
         }
       } else if (!!node.start_time && !node.due_time) {
