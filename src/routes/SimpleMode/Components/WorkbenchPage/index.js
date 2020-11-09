@@ -22,6 +22,7 @@ const Zhichengshe = lazy(() => import('./Zhichengshe/index'))
 const Workglows = lazy(() => import('./Workflows'))
 const StatisticalReport = lazy(() => import('./StatisticalReport'))
 const WhiteBoardRooms = lazy(() => import('./WhiteBoard'))
+const MeetingManage = lazy(() => import('./MeetingManage'))
 
 class WorkbenchPage extends Component {
   constructor(props) {
@@ -206,9 +207,10 @@ class WorkbenchPage extends Component {
                 />
               )}
               {isPaymentOrgUser && 'whiteboard' === select_box_code && (
-                <WhiteBoardRooms
-                  org_id={this.props.simplemodeCurrentProject.org_id}
-                />
+                <WhiteBoardRooms org_id={this.props.OrganizationId} />
+              )}
+              {isPaymentOrgUser && 'meetingmanage' === select_box_code && (
+                <MeetingManage org_id={this.props.OrganizationId} />
               )}
             </div>
           </div>
@@ -227,6 +229,9 @@ function mapStateToProps({
     chatImVisiable,
     leftMainNavIconVisible,
     simplemodeCurrentProject
+  },
+  technological: {
+    datas: { OrganizationId }
   }
 }) {
   return {
@@ -235,7 +240,8 @@ function mapStateToProps({
     currentSelectedWorkbenchBox,
     chatImVisiable,
     leftMainNavIconVisible,
-    simplemodeCurrentProject
+    simplemodeCurrentProject,
+    OrganizationId
   }
 }
 export default connect(mapStateToProps)(WorkbenchPage)
