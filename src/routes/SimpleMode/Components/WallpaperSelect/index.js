@@ -198,22 +198,22 @@ class WallpaperSelect extends Component {
             <div className={indexStyles.wallpaperBoxs}>
               {allWallpaperList.map((wallpaperItem, index) => {
                 let bgStyle = {}
-                // if (isColor(wallpaperItem.content)) {
-                //   bgStyle = { backgroundColor: wallpaperItem.content }
-                // } else {
-                //   bgStyle = {
-                //     backgroundImage: `url(${wallpaperItem.content.replace(
-                //       '/wallpapers/',
-                //       '/wallpapers/thumbs/'
-                //     )})`
-                //   }
-                // }
+                if (isColor(wallpaperItem.content)) {
+                  bgStyle = { backgroundColor: wallpaperItem.content }
+                } else {
+                  bgStyle = {
+                    backgroundImage: `url(${wallpaperItem.content.replace(
+                      '/wallpapers/',
+                      '/wallpapers/thumbs/'
+                    )})`
+                  }
+                }
                 return (
                   <div
                     id={wallpaperItem.id}
                     key={wallpaperItem.id}
                     className={`${indexStyles.wallpaperItem}`}
-                    // style={bgStyle}
+                    style={bgStyle}
                     onClick={e =>
                       this.selectMyWallpaper(
                         wallpaperItem.id,

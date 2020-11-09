@@ -129,12 +129,12 @@ class SimpleMode extends PureComponent {
     window.addEventListener('scroll', this.handleScroll, false) //监听滚动
     window.addEventListener('resize', this.handleResize, false) //监听窗口大小改变
     this.setShowByUserInfo(this.props)
-    // this.lazyLoadBgImg(this.props)
+    this.lazyLoadBgImg(this.props)
   }
 
   componentWillReceiveProps(nextProps) {
     this.setShowByUserInfo(nextProps)
-    // this.lazyLoadBgImg(nextProps)
+    this.lazyLoadBgImg(nextProps)
   }
 
   componentWillUnmount() {
@@ -235,7 +235,7 @@ class SimpleMode extends PureComponent {
           setWapperCenter ? indexStyles.wapper_center : ''
         }`}
         onClick={this.handleHiddenNav}
-        // style={this.state.bgStyle}
+        style={this.state.bgStyle}
       >
         {/* {simpleHeaderVisiable && <SimpleHeader />}
         {show && this.renderRoutes()} */}

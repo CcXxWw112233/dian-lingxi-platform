@@ -53,11 +53,11 @@ const WorkbenchBoxSelect = props => {
     ? currentUserWallpaperContent
     : wallpaper
   let bgStyle = {}
-  // if (isColor(wallpaperContent)) {
-  //   bgStyle = { backgroundColor: wallpaperContent }
-  // } else {
-  //   bgStyle = { backgroundImage: `url(${wallpaperContent})` }
-  // }
+  if (isColor(wallpaperContent)) {
+    bgStyle = { backgroundColor: wallpaperContent }
+  } else {
+    bgStyle = { backgroundImage: `url(${wallpaperContent})` }
+  }
   // 渲染svg
   const renderIconSVG = code => {
     let contain = ''
@@ -477,7 +477,7 @@ const WorkbenchBoxSelect = props => {
     >
       <div
         className={indexStyles.selectWorkbenchBoxWapperModalBg}
-        // style={bgStyle}
+        style={bgStyle}
       ></div>
       <div className={indexStyles.selectWorkbenchBoxWapperModal}>
         <div style={{ paddingLeft: '96px', paddingTop: '44px' }}>

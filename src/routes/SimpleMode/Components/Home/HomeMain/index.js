@@ -21,10 +21,10 @@ export default class index extends Component {
     prop: PropTypes
   }
   componentDidMount() {
-    // this.lazyLoadBgImg(this.props)
+    this.lazyLoadBgImg(this.props)
   }
   componentWillReceiveProps(nextProps) {
-    // this.lazyLoadBgImg(nextProps)
+    this.lazyLoadBgImg(nextProps)
   }
   lazyLoadBgImg = (nextProps = {}) => {
     const { currentUserWallpaperContent, userInfo = {} } = nextProps
@@ -84,10 +84,10 @@ export default class index extends Component {
         </div>
         <div
           className={`${styles.main_wapper_after}`}
-          // style={{
-          //   ...this.state.bgStyle
-          //   //  ...this.setBgImg()
-          // }}
+          style={{
+            ...this.state.bgStyle
+            //  ...this.setBgImg()
+          }}
         ></div>
       </div>
     )
