@@ -1,5 +1,6 @@
 import { connect } from 'dva'
-import React, { Component } from 'react'
+import React, { Component, PureComponent } from 'react'
+import { isArrayEqual } from '../../../../../../utils/util'
 import {
   date_area_height,
   ganttIsOutlineView,
@@ -7,7 +8,7 @@ import {
 } from '../../constants'
 
 @connect(mapStateToProps)
-export default class index extends Component {
+export default class index extends PureComponent {
   constructor(props) {
     super(props)
     this.state = {
@@ -19,7 +20,7 @@ export default class index extends Component {
     this.ctx = null
     this.setCanvasHeight = this.setCanvasHeight.bind(this)
     this.setCanvasWidth = this.setCanvasWidth.bind(this)
-    this.line_color = 'rgba(154,159,166,0.15)'
+    this.line_color = 'rgba(208,211,226,0.3)'
   }
   componentDidMount() {
     this.initCanvas()
@@ -34,6 +35,7 @@ export default class index extends Component {
     )
   }
   componentWillReceiveProps(nextProps) {
+    if (!this.propsChangeValid(nextProps)) return
     this.initCanvas()
     this.setState(
       {
@@ -45,6 +47,32 @@ export default class index extends Component {
       }
     )
   }
+
+  propsChangeValid = nextProps => {
+    let flag = false
+    for (let key in nextProps) {
+      if (key != 'group_list_area_section_height') {
+        if (nextProps[key] != this.props[key]) {
+          flag = true
+          break
+        }
+      }
+    }
+    if (!flag) {
+      if (
+        isArrayEqual(
+          this.props.group_list_area_section_height,
+          nextProps.group_list_area_section_height
+        )
+      ) {
+        flag = false
+      } else {
+        flag = true
+      }
+    }
+    return flag
+  }
+
   initCanvas = () => {
     this.canvas = this.canvas_ref.current
     this.ctx = this.canvas.getContext('2d')
@@ -109,7 +137,7 @@ export default class index extends Component {
       const { week_day } = date_arr_one_level[i]
       //绘制背景
       if ([5, 6].includes(week_day)) {
-        this.ctx.fillStyle = '#FBFBFD'
+        this.ctx.fillStyle = 'rgba(245,247,250, 0.2)'
         this.ctx.fillRect(ceilWidth * (i + 1), 0, ceilWidth, canvas_height)
       }
       //绘制线条
@@ -154,18 +182,12 @@ export default class index extends Component {
     const { group_list_area_section_height = [] } = props
     const { canvas_width } = this.state
     let i = 0
-    this.ctx.fillRect(0, 0, canvas_width, 1)
+    // this.ctx.fillRect(0, 0, canvas_width, 1)
     for (i = 0; i < group_list_area_section_height.length; i++) {
       this.ctx.fillRect(0, group_list_area_section_height[i], canvas_width, 1)
     }
   }
   render() {
-    const {
-      date_total,
-      ceiHeight,
-      ceilWidth,
-      group_list_area_section_height
-    } = this.props
     const { canvas_height, canvas_width } = this.state
     return (
       <div>
