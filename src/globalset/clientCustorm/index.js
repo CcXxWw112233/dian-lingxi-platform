@@ -1,5 +1,6 @@
 // （android || ios）
 export const ENV_ANDROID_APP = !!window.mapAndroid //是否在安卓环境中
+export const ENV_BROWSER_APP = !window.mapAndroid //是否在普通web环境中
 export const diffClientGetIdentification = () => {
   //不同客户端获取身份标识
   if (!ENV_ANDROID_APP) return

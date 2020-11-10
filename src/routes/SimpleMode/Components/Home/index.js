@@ -4,6 +4,7 @@ import { connect } from 'dva/index'
 // import WallpaperSelect from '../WallpaperSelect/index'
 // import WorkbenchBoxSelect from '../WorkbenchBoxSelect/index'
 import HomeMain from './HomeMain'
+import { ENV_BROWSER_APP } from '../../../../globalset/clientCustorm'
 
 // const HomeMain = lazy(() => import('./HomeMain'))
 const WallpaperSelect = lazy(() => import('../WallpaperSelect/index'))
@@ -107,7 +108,7 @@ class Home extends Component {
           <div></div>
           {/* {myWorkbenchBoxsVisiable && <MyWorkbenchBoxs {...this.state} setHomeVisible={this.setHomeVisible} />} */}
 
-          {wallpaperSelectVisiable && (
+          {wallpaperSelectVisiable && ENV_BROWSER_APP && (
             <WallpaperSelect
               {...this.state}
               setHomeVisible={this.setHomeVisible}

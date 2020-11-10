@@ -10,6 +10,7 @@ import {
 } from '../../utils/businessFunction'
 import { PROJECTS } from '../../globalset/js/constant'
 import SimpleHeader from './Components/SimpleHeader/index'
+import { ENV_BROWSER_APP } from '../../globalset/clientCustorm'
 const defaultWallpaperSrc = ''
 // import WorkbenchPage from './Components/WorkbenchPage'
 // import Home from './Components/Home'
@@ -196,6 +197,12 @@ class SimpleMode extends PureComponent {
     )
   }
   lazyLoadBgImg = (nextProps = {}) => {
+    if (!ENV_BROWSER_APP) {
+      this.setState({
+        bgStyle: {}
+      })
+      return
+    }
     const { currentUserWallpaperContent, userInfo = {} } = nextProps
     if (
       currentUserWallpaperContent == this.props.currentUserWallpaperContent &&
@@ -233,7 +240,7 @@ class SimpleMode extends PureComponent {
       <div
         className={`${indexStyles.wapper} ${indexStyles.wapperBg} ${
           setWapperCenter ? indexStyles.wapper_center : ''
-        }`}
+        } ${!ENV_BROWSER_APP && indexStyles.index_bg}`}
         onClick={this.handleHiddenNav}
         style={this.state.bgStyle}
       >

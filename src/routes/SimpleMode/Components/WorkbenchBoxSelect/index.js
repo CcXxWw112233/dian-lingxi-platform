@@ -11,7 +11,8 @@ import {
   BOARD_FILES
 } from '../../../../globalset/js/constant'
 import { currentNounPlanFilterName } from '../../../../utils/businessFunction'
-
+import { ENV_BROWSER_APP } from '../../../../globalset/clientCustorm'
+import bgStylels from '../../index.less'
 const WorkbenchBoxSelect = props => {
   const { dispatch, workbenchBoxList = [], myWorkbenchBoxList = [] } = props
   const closeBoxManage = () => {
@@ -57,6 +58,9 @@ const WorkbenchBoxSelect = props => {
     bgStyle = { backgroundColor: wallpaperContent }
   } else {
     bgStyle = { backgroundImage: `url(${wallpaperContent})` }
+  }
+  if (!ENV_BROWSER_APP) {
+    bgStyle = {}
   }
   // 渲染svg
   const renderIconSVG = code => {
@@ -476,7 +480,9 @@ const WorkbenchBoxSelect = props => {
       }}
     >
       <div
-        className={indexStyles.selectWorkbenchBoxWapperModalBg}
+        className={`${
+          indexStyles.selectWorkbenchBoxWapperModalBg
+        } ${!ENV_BROWSER_APP && bgStylels.index_bg}`}
         style={bgStyle}
       ></div>
       <div className={indexStyles.selectWorkbenchBoxWapperModal}>
