@@ -1707,8 +1707,11 @@ export default class CardItem extends Component {
           // 表示逾期完成
           status_label = 'overdue_time'
           compare_width =
-            caldiffDays(finish_time_, node.due_time) * this.props.ceilWidth +
-            default_width
+            gantt_view_mode == 'hours'
+              ? caldiffDays(finish_time_, node.due_time) * 198 + default_width
+              : caldiffDays(finish_time_, node.due_time) *
+                  this.props.ceilWidth +
+                default_width
           // node.due_time == node.start_time
           //   ? caldiffDays(finish_time_, node.due_time) * 34 + default_width
           //   : parseFloat((finish_time_ - node.start_time) / dividend).toFixed(
@@ -1727,17 +1730,20 @@ export default class CardItem extends Component {
           compare_width =
             caldiffDays(finish_time_, node.start_time) == 0
               ? this.props.ceilWidth
+              : gantt_view_mode == 'hours'
+              ? caldiffDays(finish_time_, node.start_time) * 198
               : caldiffDays(finish_time_, node.start_time) *
                 this.props.ceilWidth
           status_label = 'ahead_time_middle'
         }
       } else if (!!node.start_time && !node.due_time) {
-        // 表示只存在开始时间 不管是什么状态都是完成 只有当是结束时间时才有状态
         compare_width =
           caldiffDays(finish_time_, node.start_time) == 0
             ? this.props.ceilWidth
             : finish_time_ < node.start_time
             ? 0
+            : gantt_view_mode == 'hours'
+            ? caldiffDays(finish_time_, node.start_time) * 198
             : caldiffDays(finish_time_, node.start_time) * this.props.ceilWidth
         status_label =
           caldiffDays(finish_time_, node.start_time) == 0
