@@ -532,14 +532,15 @@ export default class GetRowStrip extends PureComponent {
   //渲染里程碑设置---start
   renderMilestoneSet = () => {
     const {
-      itemValue: { due_time, min_leaf_left, left, parent_id },
+      itemValue: { due_time, min_leaf_left, left, parent_id, percent_card_non },
       ceilWidth,
       gantt_view_mode
     } = this.props
     return !!due_time ? (
       <>
         <div
-          className={styles.leaf_min_time}
+          className={`${styles.leaf_min_time} ${!parent_id &&
+            styles.leaf_min_time_color}`}
           style={{
             left: min_leaf_left,
             width:
@@ -555,6 +556,32 @@ export default class GetRowStrip extends PureComponent {
           <div className={styles.left_triangle}></div>
           <div className={styles.right_triangle}></div>
         </div>
+        {!!parseInt(percent_card_non) && (
+          <div
+            className={`${styles.leaf_min_time} ${
+              styles.leaf_percent_time
+            } ${!!parent_id && styles.leaf_percent_child_time}`}
+            style={{
+              left: min_leaf_left,
+              width:
+                (left -
+                  min_leaf_left +
+                  (!parent_id
+                    ? ceilWidth
+                    : ['month', 'hours'].includes(gantt_view_mode)
+                    ? ceilWidth / 2
+                    : 0)) *
+                (percent_card_non / 100)
+            }}
+          >
+            <div className={styles.left_triangle}></div>
+            <div
+              className={
+                Number(percent_card_non) >= 100 && styles.right_triangle
+              }
+            ></div>
+          </div>
+        )}
         <Draggable
           {...(this.state.dragg_milestone_complete
             ? { position: { x: 0, y: 0 } }

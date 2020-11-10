@@ -32,7 +32,8 @@ import {
 import {
   transformTimestamp,
   isSamDay,
-  isSamHour
+  isSamHour,
+  caldiffDays
 } from '../../../../../../utils/util'
 import HoverEars from './HoverEars'
 import DragCard from './DragCard'
@@ -128,7 +129,7 @@ export default class CardItem extends Component {
 
       b = `linear-gradient(to right${bgColor})`
     } else {
-      b = is_realize == '1' ? '#9EA6C2' : '#cbddf7'
+      b = is_realize == '1' ? '#CDD1DF' : '#cbddf7'
     }
     return b
   }
@@ -1638,6 +1639,117 @@ export default class CardItem extends Component {
     })
   }
 
+  // 计算父任务中子任务时间占比
+  computeCardsTimePercentageWithChildren = node => {
+    let complete_time_diff = 0 // 已完成时间差总数
+    let all_time_diff = 0 // 所有时间差总数
+    function recusion(node) {
+      if (node.children && node.children.length) {
+        node.children.forEach(item => {
+          // 只存在开始和结束时间的任务
+          if (!!item.start_time && !!item.due_time) {
+            if (item.is_realize == '1') {
+              complete_time_diff =
+                item.due_time - item.start_time + complete_time_diff
+            }
+            all_time_diff = item.due_time - item.start_time + all_time_diff
+          }
+          recusion(item)
+        })
+      }
+    }
+    recusion(node)
+    let percent_card_non
+    if (complete_time_diff || all_time_diff) {
+      percent_card_non = (
+        parseFloat(complete_time_diff / all_time_diff) * 100
+      ).toFixed(2)
+    }
+    return percent_card_non
+  }
+
+  // 当前任务完成时间与计划时间对比
+  compareCardsRealPlanTimer = node => {
+    const { local_width } = this.state
+    const { gantt_view_mode } = this.props
+    let compare_width = 0
+    const default_width =
+      (local_width || 6) - (gantt_view_mode == 'year' ? 0 : card_width_diff)
+    // 状态标识
+    let status_label = ''
+    // 定义一个被除数
+    let dividend = ''
+    let finish_time_ =
+      !!node.finish_time &&
+      (String(node.finish_time).length == 10
+        ? node.finish_time * 1000
+        : node.finish_time)
+    // 表示是 已完成的任务 并且存在完成时间 并且存在开始、结束时间
+    //注：同一天创建的任务 截止时间为当天的23:59 所以即使在当天完成 时间戳也会比截止时间小 所以不能用时间戳来比较大小
+    if (
+      node.tree_type == '2' &&
+      node.is_realize == '1' &&
+      !!finish_time_ &&
+      (node.start_time || node.due_time)
+    ) {
+      // 表示存在开始和结束时间
+      if (!!node.due_time && !!node.start_time) {
+        if (caldiffDays(finish_time_, node.due_time) == 0) {
+          // 表示刚好完成
+          compare_width = default_width
+          status_label = 'on_time'
+        } else if (finish_time_ > node.due_time) {
+          // 表示逾期完成
+          dividend =
+            node.due_time == node.start_time
+              ? node.start_time
+              : node.due_time - node.start_time
+          // 表示逾期完成
+          status_label = 'overdue_time'
+          compare_width =
+            caldiffDays(finish_time_, node.due_time) * this.props.ceilWidth +
+            default_width
+          // node.due_time == node.start_time
+          //   ? caldiffDays(finish_time_, node.due_time) * 34 + default_width
+          //   : parseFloat((finish_time_ - node.start_time) / dividend).toFixed(
+          //       2
+          //     ) *
+          //       default_width +
+          //     10
+        } else if (finish_time_ < node.start_time) {
+          // 表示提前完成
+          compare_width = default_width
+          status_label = 'ahead_time'
+        } else if (
+          finish_time_ >= node.start_time &&
+          finish_time_ < node.due_time
+        ) {
+          compare_width =
+            caldiffDays(finish_time_, node.start_time) == 0
+              ? this.props.ceilWidth
+              : caldiffDays(finish_time_, node.start_time) *
+                this.props.ceilWidth
+          status_label = 'ahead_time_middle'
+        }
+      } else if (!!node.start_time && !node.due_time) {
+        // 表示只存在开始时间 不管是什么状态都是完成 只有当是结束时间时才有状态
+        compare_width =
+          caldiffDays(finish_time_, node.start_time) == 0
+            ? this.props.ceilWidth
+            : finish_time_ < node.start_time
+            ? 0
+            : caldiffDays(finish_time_, node.start_time) * this.props.ceilWidth
+        status_label =
+          caldiffDays(finish_time_, node.start_time) == 0
+            ? 'on_time'
+            : finish_time_ < node.start_time
+            ? 'ahead_time'
+            : 'overdue_time'
+      }
+    }
+    return { compare_width, status_label }
+  }
+
   render() {
     const {
       itemValue = {},
@@ -1666,7 +1778,9 @@ export default class CardItem extends Component {
       is_privilege,
       parent_card_id,
       time_span,
-      child_card_status = {}
+      child_card_status = {},
+      progress_percent,
+      tree_type
     } = itemValue
     const {
       has_child,
@@ -1687,6 +1801,28 @@ export default class CardItem extends Component {
       is_has_end_time,
       is_has_start_time
     })
+    const percent_card_non =
+      this.computeCardsTimePercentageWithChildren(itemValue) ||
+      progress_percent ||
+      0
+    //大纲视图下才显示任务进度 存在开始、结束时间的任务 并且是未完成的父任务 并且进度占比存在的时候
+    const is_show_progress_percent =
+      ganttIsOutlineView({ group_view_type }) &&
+      is_has_start_time &&
+      is_has_end_time &&
+      is_realize == '0' &&
+      !parent_card_id &&
+      !!percent_card_non &&
+      !!parseInt(percent_card_non)
+    // 计划时间与完成时间对比
+    const is_show_compare_real_plan_timer =
+      ganttIsOutlineView({ group_view_type }) &&
+      (is_has_start_time || is_has_end_time) &&
+      is_realize == '1' &&
+      tree_type == '2'
+    const { status_label, compare_width } = this.compareCardsRealPlanTimer(
+      itemValue
+    )
     return (
       <div
         className={`${'gantt_card_flag_special'} ${
@@ -1713,6 +1849,62 @@ export default class CardItem extends Component {
         }}
         {...this.handleObj()}
       >
+        {is_show_progress_percent && (
+          <div
+            data-targetclassname="specific_example"
+            className={`${indexStyles.gatt_card_percentage_prop}`}
+            style={{
+              // backgroundColor: '#cbddf7',
+              backgroundColor: is_realize == '1' ? 'transparent' : '#1f5af0',
+              width:
+                ((local_width || 6) -
+                  (gantt_view_mode == 'year' ? 0 : card_width_diff)) *
+                  (percent_card_non / 100) -
+                4,
+              borderRadius: '40px',
+              borderTopRightRadius:
+                Number(percent_card_non) >= 100 ? '40px' : '0px',
+              borderBottomRightRadius:
+                Number(percent_card_non) >= 100 ? '40px' : '0px',
+              height: task_item_height - 4,
+              lineHeight: `${task_item_height - 4}px`
+            }}
+          ></div>
+        )}
+        {is_show_compare_real_plan_timer && (
+          <div
+            data-targetclassname="specific_example"
+            className={`${
+              indexStyles.gatt_card_compare_prop
+            } ${!is_has_start_time &&
+              indexStyles.specific_example_no_start_time} ${!is_has_end_time &&
+              indexStyles.specific_example_no_due_time}`}
+            style={{
+              // backgroundColor: '#cbddf7',
+              borderRadius:
+                ((is_has_start_time && is_has_end_time) || !is_has_end_time) &&
+                '40px',
+              width: compare_width,
+              height: task_item_height - 4,
+              lineHeight: `${task_item_height - 4}px`,
+              backgroundColor:
+                status_label == 'overdue_time' && 'rgba(255,32,32,0.5)',
+              zIndex:
+                status_label == 'overdue_time'
+                  ? 0
+                  : status_label == 'ahead_time_middle'
+                  ? 2
+                  : 0,
+              backgroundImage:
+                status_label == 'overdue_time'
+                  ? '-webkit-gradient(linear,left top, right bottom,color-stop(0.25, rgba(255, 255, 255, 0.2)),color-stop(0.25, rgba(255,32,32,0.01)),color-stop(0.5, rgba(255,32,32,0.01)),color-stop(0.5, rgba(255, 255, 255, 0.2)),color-stop(0.75, rgba(255, 255, 255, 0.2)),color-stop(0.75, rgba(255,32,32,0.01)),to(rgba(255,32,32,0.01)))'
+                  : status_label == 'ahead_time_middle'
+                  ? '-webkit-gradient(linear,left top, right bottom,color-stop(0.25, rgba(255, 255, 255, 0.2)),color-stop(0.25, rgba(158, 166, 194, 0.8)),color-stop(0.5, rgba(158, 166, 194, 0.8)),color-stop(0.5, rgba(255, 255, 255, 0.2)),color-stop(0.75, rgba(255, 255, 255, 0.2)),color-stop(0.75, rgba(158, 166, 194, 0.8)),to(rgba(158, 166, 194, 0.8)))'
+                  : '',
+              opacity: status_label == 'ahead_time_middle' && 0.8
+            }}
+          ></div>
+        )}
         <div
           data-targetclassname="specific_example"
           className={`${
@@ -1724,8 +1916,21 @@ export default class CardItem extends Component {
           onMouseMove={e => e.preventDefault()}
           style={{
             // opacity: 1,
-            backgroundColor: is_realize == '1' ? '#9EA6C2' : '#cbddf7',
-            padding: gantt_view_mode != 'month' && time_span < 6 ? '0' : '0 8px'
+            backgroundColor: is_realize == '1' ? '#CDD1DF' : '#cbddf7',
+            // backgroundColor: is_realize == '1' ? '#9EA6C2' : '#5A86F5',
+            padding:
+              gantt_view_mode != 'month' && time_span < 6 ? '0' : '0 8px',
+            zIndex: 1,
+            backgroundImage:
+              // status_label == 'overdue_time' &&
+              is_show_compare_real_plan_timer &&
+              status_label != 'ahead_time_middle' &&
+              '-webkit-gradient(linear,left top, right bottom,color-stop(0.25, rgba(255, 255, 255, 0.2)),color-stop(0.25, rgba(158,166,194,0.8)),color-stop(0.5, rgba(158,166,194,0.8)),color-stop(0.5, rgba(255, 255, 255, 0.2)),color-stop(0.75, rgba(255, 255, 255, 0.2)),color-stop(0.75, rgba(158,166,194,0.8)),to(rgba(158,166,194,0.8)))',
+            //status_label == 'overdue_time' &&
+            backgroundSize:
+              is_show_compare_real_plan_timer &&
+              status_label != 'ahead_time_middle' &&
+              '8px 8px'
           }}
         >
           {/* <div data-targetclassname="specific_example"
@@ -1742,7 +1947,12 @@ export default class CardItem extends Component {
             onMouseMove={e => e.preventDefault()}
             style={{
               display: 'flex',
-              color: is_realize == '1' ? 'rgba(0,0,0,.25)' : '',
+              color:
+                is_realize == '1'
+                  ? is_show_compare_real_plan_timer
+                    ? 'rgba(0,0,0,0.65)'
+                    : 'rgba(0,0,0,.25)'
+                  : '',
               height: task_item_height - 4,
               lineHeight: `${task_item_height - 4}px`
             }}
@@ -1786,6 +1996,7 @@ export default class CardItem extends Component {
             />
           </div>
         </div>
+
         {/* 存在未读 */}
         {cardItemIsHasUnRead({
           relaDataId: id,
@@ -1859,7 +2070,10 @@ export default class CardItem extends Component {
           (gantt_view_mode != 'month' ? time_span > 6 : true) && (
             <>
               <div
-                className={indexStyles.left_triangle}
+                className={`${
+                  indexStyles.left_triangle
+                } ${is_show_progress_percent &&
+                  indexStyles.lr_triangle_pro_color}`}
                 style={{
                   borderColor: `${this.setTriangleTreeColor(
                     label_data,
@@ -1879,7 +2093,11 @@ export default class CardItem extends Component {
               ></div>
 
               <div
-                className={indexStyles.right_triangle}
+                className={`${
+                  indexStyles.right_triangle
+                } ${is_show_progress_percent &&
+                  Number(percent_card_non) >= 100 &&
+                  indexStyles.lr_triangle_pro_color}`}
                 style={{
                   borderColor: `${this.setTriangleTreeColor(
                     label_data,

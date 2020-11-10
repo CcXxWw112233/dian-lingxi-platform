@@ -1,22 +1,50 @@
-import React, { Component } from 'react'
-
-import { Drawer } from 'antd'
-import { connect } from 'dva'
+import React, { Component, lazy, Suspense } from 'react'
+import { Drawer, Spin } from 'antd'
+const OrganizationMember = lazy(() =>
+  import('../../../../../Technological/components/OrganizationMember')
+)
+const Organization = lazy(() =>
+  import('../../../../../organizationManager/index')
+)
+const AccountSet = lazy(() =>
+  import('../../../../../Technological/components/AccountSet')
+)
 
 export default class SimpleDrawer extends Component {
-  state = {
-    visible: true
-  }
-
   onClose = e => {
     this.props.closeDrawer()
   }
 
+  renderSimpleDrawerContent = key => {
+    let simpleDrawerContent = <></>
+    switch (key) {
+      case '24': // 团队成员
+        simpleDrawerContent = <OrganizationMember />
+        break
+      case '23': // 组织管理后台
+        simpleDrawerContent = <Organization />
+        break
+      case '20':
+        simpleDrawerContent = <AccountSet />
+        break
+      default:
+        break
+    }
+    return simpleDrawerContent
+  }
+
   render() {
     const drawerHeight = document.body.scrollHeight
-    const { simpleDrawerContent = null, drawerTitle = '', style } = this.props
+    const {
+      simpleDrawerContent = null,
+      simpleDrawerContentKey,
+      drawerTitle = '',
+      style,
+      visible
+    } = this.props
     return (
       <Drawer
+        visible={visible}
         title={drawerTitle}
         placement="right"
         closable={true}
@@ -26,7 +54,6 @@ export default class SimpleDrawer extends Component {
         }}
         width={'80%'}
         onClose={this.onClose}
-        visible={true}
         keyboard={true}
         style={{
           background: 'rgb(245, 245, 245)',
@@ -36,7 +63,22 @@ export default class SimpleDrawer extends Component {
           document.getElementById('technologicalLayoutWrapper')
         }
       >
-        {simpleDrawerContent}
+        <Suspense
+          fallback={
+            <div
+              style={{
+                background: 'rgba(245, 245, 245, 1)',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}
+            >
+              <Spin></Spin>
+            </div>
+          }
+        >
+          {this.renderSimpleDrawerContent(simpleDrawerContentKey)}
+        </Suspense>
       </Drawer>
     )
   }

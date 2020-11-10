@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'dva/index'
-import { Icon, Tabs, message, Menu } from 'antd'
+import { Tabs, Menu } from 'antd'
 import indexStyles from './index.less'
-import { color_4 } from '../../globalset/js/styles'
 import ProjectRole from './ProjectRole'
 import OrgnizationRole from './OrgnizationRole'
 import BaseInfo from './BaseInfo'
@@ -483,12 +482,12 @@ class Organization extends Component {
     return (
       <div id={'organizationOut'} className={indexStyles.organizationOut}>
         <div className={indexStyles.main}>
-          {showBackBtn && (
+          {/* {showBackBtn && (
             <div className={indexStyles.back} onClick={this.historyGoBack}>
               <Icon type="left" theme="outlined" />
               返回
             </div>
-          )}
+          )} */}
           <div className={indexStyles.orgManagementWrapper}>
             {/* 左边导航 */}
             <div

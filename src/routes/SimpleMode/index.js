@@ -174,13 +174,13 @@ class SimpleMode extends PureComponent {
   }
 
   handleHiddenNav = () => {
-    const { dispatch, leftMainNavVisible } = this.props
-    dispatch({
-      type: 'simplemode/updateDatas',
-      payload: {
-        leftMainNavVisible: false
-      }
-    })
+    // const { dispatch } = this.props
+    // dispatch({
+    //   type: 'simplemode/updateDatas',
+    //   payload: {
+    //     leftMainNavVisible: false
+    //   }
+    // })
   }
 
   renderRoutes = () => {
@@ -259,7 +259,6 @@ export default connect(
       simpleHeaderVisiable,
       setWapperCenter,
       chatImVisiable,
-      leftMainNavVisible,
       currentUserWallpaperContent
     },
     technological: {
@@ -272,7 +271,6 @@ export default connect(
     simpleHeaderVisiable,
     setWapperCenter,
     chatImVisiable,
-    leftMainNavVisible,
     currentUserWallpaperContent,
     userInfo,
     currentNounPlan,

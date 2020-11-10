@@ -23,7 +23,6 @@ import {
   MESSAGE_DURATION_TIME,
   NOT_HAS_PERMISION_COMFIRN
 } from '@/globalset/js/constant'
-import { color_4 } from '@/globalset/js/styles'
 import { message } from 'antd/lib/index'
 import { getUsersNoticeSettingList } from '@/services/technological/notificationSetting'
 import { isApiResponseOk } from '@/utils/handleResponseData'
@@ -49,13 +48,13 @@ const NotificationSettingsModal = lazy(() =>
     '@/routes/Technological/Sider/comonent/notificationSettings/NotificationSettingsModal'
   )
 )
-const AccountSet = lazy(() =>
-  import('@/routes/Technological/components/AccountSet')
-)
-const OrganizationMember = lazy(() =>
-  import('@/routes/Technological/components/OrganizationMember')
-)
-const Organization = lazy(() => import('@/routes/organizationManager'))
+// const AccountSet = lazy(() =>
+//   import('@/routes/Technological/components/AccountSet')
+// )
+// const OrganizationMember = lazy(() =>
+//   import('@/routes/Technological/components/OrganizationMember')
+// )
+// const Organization = lazy(() => import('@/routes/organizationManager'))
 const PayUpgrade = lazy(() =>
   import('@/routes/Technological/components/PayUpgrade/index')
 )
@@ -86,7 +85,7 @@ export default class SimpleNavigation extends Component {
         is_all_org: localStorage.getItem('OrganizationId') == '0'
       }
     })
-    this.getInitList()
+    // this.getInitList()
   }
 
   // 获取通知设置的列表
@@ -246,38 +245,12 @@ export default class SimpleNavigation extends Component {
             menuSearchSingleSpinning: false //获取分组负责人转转转
           }
         })
-        if (
-          checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_QUERY) &&
-          localStorage.getItem('OrganizationId') != '0'
-        ) {
-          //获取分组列表
-          dispatch({
-            type: 'organizationMember/getGroupList',
-            payload: {}
-          })
-          // 获取分组树状列表
-          dispatch({
-            type: 'organizationMember/getGroupTreeList',
-            payload: {}
-          })
-          //查询当前角色
-          dispatch({
-            type: 'organizationMember/getCurrentOrgRole',
-            payload: {
-              type: '1'
-            }
-          })
-        } else {
-          dispatch({
-            type: 'noLookPermissionsHandle'
-          })
-        }
         this.props.updateStates({
           simpleDrawerVisible: true,
-          simpleDrawerContent: <OrganizationMember />,
+          // simpleDrawerContent: <OrganizationMember />,
+          simpleDrawerContentKey: '24',
           simpleDrawerTitle: '团队成员'
         })
-        break
         break
       case '23': // 匹配成员管理后台
         //isHasManagerBack() && this.routingJump(`/organizationManager?nextpath=${window.location.hash.replace('#', '')}`)
@@ -339,10 +312,6 @@ export default class SimpleNavigation extends Component {
           type: 'organizationManager/getNounList',
           payload: {}
         })
-        dispatch({
-          type: 'organizationManager/getNounList',
-          payload: {}
-        })
         const OrganizationId = localStorage.getItem('OrganizationId')
         if (OrganizationId !== '0') {
           dispatch({
@@ -352,11 +321,11 @@ export default class SimpleNavigation extends Component {
         }
         this.props.updateStates({
           simpleDrawerVisible: true,
-          simpleDrawerContent: <Organization showBackBtn={false} />,
+          // simpleDrawerContent: <Organization showBackBtn={false} />,
+          simpleDrawerContentKey: '23',
           simpleDrawerTitle: '后台管理'
         })
         this.props.dropdownHandleVisibleChange(false)
-
         break
       case '22': // 匹配邀请成员加入弹框显示
         checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD) &&
@@ -378,7 +347,8 @@ export default class SimpleNavigation extends Component {
         })
         this.props.updateStates({
           simpleDrawerVisible: true,
-          simpleDrawerContent: <AccountSet />,
+          // simpleDrawerContent: <AccountSet />,
+          simpleDrawerContentKey: '20',
           simpleDrawerTitle: '账号设置'
         })
         break
@@ -904,11 +874,11 @@ export default class SimpleNavigation extends Component {
             />
           )}
 
-          {this.state.payUpgradeModalVisible && (
+          {/* {this.state.payUpgradeModalVisible && (
             <PayUpgrade
               setPayUpgradeModalVisible={this.setPayUpgradeModalVisible}
             />
-          )}
+          )} */}
         </Suspense>
       </div>
     )

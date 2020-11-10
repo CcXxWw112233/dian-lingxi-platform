@@ -1060,6 +1060,10 @@ const SubTaskItemLogic = {
         filePreviewCurrentName: file_name
       }
     })
+    this.updatePrivateVariablesWithOpenFile &&
+      this.updatePrivateVariablesWithOpenFile()
+    this.props.updatePrivateVariablesWithOpenFile &&
+      this.props.updatePrivateVariablesWithOpenFile()
   },
 
   // 上传文件 事件 S
@@ -1088,6 +1092,10 @@ const SubTaskItemLogic = {
           drawContent: new_drawContent
         }
       })
+      const { folder_path = {} } = data[0]
+      const { id: folder_id } = folder_path
+      if (typeof this.props.handleRelyUploading == 'function' && folder_id)
+        this.props.handleRelyUploading({ folder_id })
     }
   },
   // 判断时间格式 为1 表示精度为 天

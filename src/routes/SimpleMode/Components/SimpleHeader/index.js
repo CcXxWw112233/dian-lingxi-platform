@@ -29,7 +29,7 @@ const VideoMeeting = lazy(() =>
 //   import('./Components/SimpleNavigation/index')
 // )
 const SimpleDrawer = lazy(() => import('./Components/SimpleDrawer/index'))
-const Organization = lazy(() => import('@/routes/organizationManager'))
+// const Organization = lazy(() => import('@/routes/organizationManager'))
 const TaskDetailModal = lazy(() => import('@/components/TaskDetailModal'))
 const FileDetailModal = lazy(() => import('@/components/FileDetailModal'))
 const ProcessDetailModal = lazy(() => import('@/components/ProcessDetailModal'))
@@ -39,7 +39,7 @@ class SimpleHeader extends Component {
   state = {
     leftNavigationVisible: false,
     simpleDrawerVisible: false,
-    simpleDrawerContent: null,
+    // simpleDrawerContent: null,
     simpleDrawerTitle: '',
     whetherShowTaskDetailModalVisible: false, // 控制引用的任务弹窗多次渲染
     whetherShowFileDetailModalVisible: false,
@@ -126,7 +126,7 @@ class SimpleHeader extends Component {
   }
   componentDidMount() {
     this.imInitOption()
-    this.openDrawDefault()
+    // this.openDrawDefault()
   }
 
   //圈子
@@ -521,7 +521,7 @@ class SimpleHeader extends Component {
     const session_name = 'simplemode_home_open_key'
     const open_draw_name = window.sessionStorage.getItem(session_name)
     if (!open_draw_name) return
-    this.openOrgManagerDraw()
+    // this.openOrgManagerDraw()
     window.sessionStorage.removeItem(session_name)
   }
   openOrgManagerDraw = () => {
@@ -596,12 +596,12 @@ class SimpleHeader extends Component {
     }
     this.updateStates({
       simpleDrawerVisible: true,
-      simpleDrawerContent: (
-        <Suspense fallback={''}>
-          {' '}
-          <Organization showBackBtn={false} />
-        </Suspense>
-      ),
+      // simpleDrawerContent: (
+      //   <Suspense fallback={''}>
+      //     {' '}
+      //     <Organization showBackBtn={false} />
+      //   </Suspense>
+      // ),
       simpleDrawerTitle: '后台管理'
     })
     this.handleVisibleChange(false)
@@ -623,7 +623,6 @@ class SimpleHeader extends Component {
   render() {
     const {
       chatImVisiable = false,
-      leftMainNavVisible = false,
       leftMainNavIconVisible,
       drawerVisible,
       isInOpenFile,
@@ -636,14 +635,15 @@ class SimpleHeader extends Component {
     } = this.props
     const {
       simpleDrawerVisible,
-      simpleDrawerContent,
+      // simpleDrawerContent,
       leftNavigationVisible,
       simpleDrawerTitle,
-      guideImgSrc
+      guideImgSrc,
+      simpleDrawerContentKey
     } = this.state
     return (
       <div className={indexStyles.headerWapper}>
-        {false && (
+        {/* {false && (
           <Tooltip placement="bottom" title={'退出极简模式'}>
             <div
               className={indexStyles.miniNavigation}
@@ -657,7 +657,7 @@ class SimpleHeader extends Component {
               </i>
             </div>
           </Tooltip>
-        )}
+        )} */}
         {leftMainNavIconVisible && (
           <Dropdown
             trigger={['click']}
@@ -726,10 +726,6 @@ class SimpleHeader extends Component {
           </div>
         </Tooltip>
 
-        {/* {leftMainNavVisible &&
-                        <SiderLeft is_simplemode={true} collapsed={false} />
-                    } */}
-
         <div
           className={indexStyles.chatWapper}
           style={{ display: `${chatImVisiable ? '' : 'none'}` }}
@@ -757,8 +753,10 @@ class SimpleHeader extends Component {
               style={{ height: 'auto' }}
               updateState={this.updateStates}
               closeDrawer={this.closeDrawer}
-              simpleDrawerContent={simpleDrawerContent}
+              // simpleDrawerContent={simpleDrawerContent}
+              simpleDrawerContentKey={simpleDrawerContentKey}
               drawerTitle={simpleDrawerTitle}
+              visible={simpleDrawerVisible}
             />
           )}
           {drawerVisible && this.state.whetherShowTaskDetailModalVisible && (
@@ -810,12 +808,7 @@ class SimpleHeader extends Component {
 }
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({
-  simplemode: {
-    chatImVisiable,
-    leftMainNavVisible,
-    leftMainNavIconVisible,
-    guideModalVisiable
-  },
+  simplemode: { chatImVisiable, leftMainNavIconVisible, guideModalVisiable },
   modal,
   loading,
   publicTaskDetailModal: { drawerVisible, card_id },
@@ -833,7 +826,6 @@ function mapStateToProps({
     currentNounPlan,
     OrganizationId,
     chatImVisiable,
-    leftMainNavVisible,
     guideModalVisiable,
     leftMainNavIconVisible,
     modal,

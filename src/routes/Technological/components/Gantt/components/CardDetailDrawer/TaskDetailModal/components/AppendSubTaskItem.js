@@ -591,7 +591,16 @@ export default class AppendSubTaskItem extends Component {
                           }}
                         ></span>
                       </div>
-                      <div style={{ flex: 1 }}>
+                      <div
+                        style={{
+                          flex: 1,
+                          marginRight: '32px',
+                          width: 0,
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                          textOverflow: 'ellipsis'
+                        }}
+                      >
                         <div
                           onClick={e => this.openFileDetailModal(e, fileInfo)}
                           title={file_name}

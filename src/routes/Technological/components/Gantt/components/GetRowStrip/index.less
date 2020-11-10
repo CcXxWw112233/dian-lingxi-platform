@@ -90,7 +90,7 @@
   .board_miletiones_flag2 {
     width: 12px;
     height: 12px;
-    background-color: #ffba67;
+    background-color: #ff8a00;
     transform: rotate(45deg);
     margin-right: 4px;
     margin-top: 8px;
@@ -106,7 +106,7 @@
     position: absolute;
     height: 13px;
     width: 15px;
-    bottom: -9px;
+    bottom: -8px;
     z-index: -3;
   }
 
@@ -150,6 +150,54 @@
     position: absolute;
     bottom: 5px;
     right: 2px;
+  }
+}
+// 父里程碑显示时间进度样式
+.leaf_min_time_color {
+  background-color: #ffccbf;
+  .left_triangle {
+    border-top-color: #ffccbf;
+    &::after {
+      border-color: #ffccbf transparent transparent transparent;
+    }
+  }
+  .right_triangle {
+    border-top-color: #ffccbf;
+    &::after {
+      border-color: #ffccbf transparent transparent transparent;
+    }
+  }
+}
+// 存在百分比时的进度条样式
+.leaf_percent_time {
+  background-color: #ff8f72;
+  .left_triangle {
+    border-top-color: #ff8f72;
+    &::after {
+      border-color: #ff8f72 transparent transparent transparent;
+    }
+  }
+  .right_triangle {
+    border-top-color: #ff8f72;
+    &::after {
+      border-color: #ff8f72 transparent transparent transparent;
+    }
+  }
+}
+// 存在百分比后进度条子里程碑的样式
+.leaf_percent_child_time {
+  background-color: #ffba67;
+  .left_triangle {
+    border-top-color: #ffba67;
+    &::after {
+      border-color: #ffba67 transparent transparent transparent;
+    }
+  }
+  .right_triangle {
+    border-top-color: #ffba67;
+    &::after {
+      border-color: #ffba67 transparent transparent transparent;
+    }
   }
 }
 .dasheRect {

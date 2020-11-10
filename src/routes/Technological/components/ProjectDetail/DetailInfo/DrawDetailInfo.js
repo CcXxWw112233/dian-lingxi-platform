@@ -906,7 +906,7 @@ export default class DrawDetailInfo extends React.Component {
       '<br />'
     )
     return (
-      <div ref="detail_wrapper" style={{ marginLeft: '-24px' }}>
+      <div ref="detail_wrapper" style={{ marginLeft: '-20px' }}>
         <div
           id={'detailInfoOut'}
           style={{ paddingLeft: '24px' }}
