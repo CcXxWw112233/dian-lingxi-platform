@@ -8,6 +8,9 @@ import BoardFeatures from './BoardFeatures'
 // import defaultWallpaperSrc from '@/assets/simplemode/acd42051256454f9b070300b8121eae2.png'
 import { isColor } from '../../../../../utils/util'
 import { connect } from 'dva'
+import { ENV_BROWSER_APP } from '../../../../../globalset/clientCustorm'
+import bgStylels from '../../../index.less'
+
 const defaultWallpaperSrc = ''
 @connect(mapStateToProps)
 export default class index extends Component {
@@ -27,6 +30,12 @@ export default class index extends Component {
     this.lazyLoadBgImg(nextProps)
   }
   lazyLoadBgImg = (nextProps = {}) => {
+    if (!ENV_BROWSER_APP) {
+      this.setState({
+        bgStyle: {}
+      })
+      return
+    }
     const { currentUserWallpaperContent, userInfo = {} } = nextProps
     if (
       currentUserWallpaperContent == this.props.currentUserWallpaperContent &&
@@ -83,7 +92,8 @@ export default class index extends Component {
           <BoardFeatures />
         </div>
         <div
-          className={`${styles.main_wapper_after}`}
+          className={`${styles.main_wapper_after} ${!ENV_BROWSER_APP &&
+            bgStylels.index_bg}`}
           style={{
             ...this.state.bgStyle
             //  ...this.setBgImg()
