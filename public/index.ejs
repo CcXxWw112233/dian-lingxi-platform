@@ -14,62 +14,46 @@
     <link rel="stylesheet" href="./luckysheet/css/main.min.css" />
     <link rel="stylesheet" href="./luckysheet/plugins/plugins.min.css" />
     <link rel="stylesheet" href="./luckysheet/plugins/css/pluginsCss.min.css" />
-    <!-- <script>
-      // 为了过渡加载过程缓慢
-      var set_lingxi_html_loading = setInterval(function() {
-        if (window.set_lingxi_html_loading_true) {
-          console.log('sssssssssaaaas', 11)
-          clearInterval(set_lingxi_html_loading)
-          window.set_lingxi_html_loading_true = null
-          document.getElementById('lingxi_html_loading').style.display = 'none'
-        }
-        console.log('sssssssssaaaas', 22)
-      }, 500)
-    </script> -->
   </head>
+  <script>
+    // alert(1)
+  </script>
   <body>
-    <div id="lingxi_html_loading_page">
-      <div class="lingxi_html_loading_page_content">
-        <div class="lingxi_html_loading_page_logo">
-          <img src="static/lingxi_logo.png" alt="" />
+    <div
+      class="skeleton_home_wrapper bg_img"
+      id="skeleton_home_wrapper"
+      style="display: none;"
+    >
+      <div class="skeleton_home_content">
+        <div class="skeleton_home_content_lf">
+          <div class="skeleton_home_content_lf_top"></div>
+          <div class="skeleton_home_content_lf_item"></div>
+          <div class="skeleton_home_content_lf_item"></div>
+          <div class="skeleton_home_content_lf_item"></div>
         </div>
-        <div class="lingxi_html_loading_page_dec">连接共生 协同共享</div>
-        <div class="lingxi_html_loading_page_progress_wrapper">
-          <div
-            id="lingxi_html_loading_page_progress"
-            class="lingxi_html_loading_page_progress"
-            style="width: 0%; height: 16px;background: linear-gradient(45deg, #5ba7ff 0%, #b5f9ff 100%);"
-          ></div>
+        <div class="skeleton_home_content_rt">
+          <div class="skeleton_home_content_rt_box"></div>
+          <div class="skeleton_home_content_rt_box"></div>
+          <div class="skeleton_home_content_rt_box"></div>
         </div>
-        <div class="lingxi_html_loading_page_tip">Loading…</div>
       </div>
     </div>
+    <!-- <div class="skeleton_workbench_wrapper"></div>
+
+    <div></div> -->
     <script>
-      // 为了过渡加载过程缓慢
-      if (window.location.hash.indexOf('#/technological/simplemode') != -1) {
-        // console.log('ssssssssz', 111, window.loadLingxiComplete)
-        if (!window.loadLingxiComplete) {
-          setTimeout(function() {
-            if (window.loadLingxiComplete) return //代表已经加载好了
-            document.getElementById('lingxi_html_loading_page').style.display =
-              'flex'
-            var setLingxiPageLoadingInterVal = setInterval(function() {
-              var progress_node = document.getElementById(
-                'lingxi_html_loading_page_progress'
-              )
-              let progress_node_width = progress_node.style.width
-              let progress_node_width_number = Number(
-                progress_node_width.replace('%', '')
-              )
-              if (progress_node_width_number > 90) {
-                clearInterval(setLingxiPageLoadingInterVal)
-                return
-              }
-              progress_node.style.width = progress_node_width_number + 5 + '%'
-              // console.log('ssssssssz2', progress_node.style.width)
-            }, 1000)
-          }, 2000)
+      // 为了过渡加载过程缓慢,骨架屏
+      if (
+        window.location.hash.indexOf('#/technological/simplemode/home') != -1
+      ) {
+        if (!!window.mapAndroid) {
+          document.getElementById('skeleton_home_wrapper').style.display =
+            'block'
         }
+      } else if (
+        window.location.hash.indexOf('#/technological/simplemode/workbench') !=
+        -1
+      ) {
       }
     </script>
     <div id="root"></div>
@@ -78,25 +62,13 @@
       style="position: relative; z-index: 100000"
     ></div>
   </body>
-  <!-- <script src="./luckysheet/plugins/js/plugin.min.js" defer="defer"></script>
-  <script src="./luckysheet/main.min.js" defer="defer"></script> -->
-  <!-- <script src="./pdf/build/pdf.js"></script> -->
-  <!-- <script>
-    pdfjsLib.GlobalWorkerOptions.workerSrc = './pdf/build/pdf.worker.js'
-  </script> -->
   <script>
     window.onload = function() {
-      window.loadLingxiComplete = true
-      // requestAnimationFrame(function() {
-      let node = document.getElementById('lingxi_html_loading_page')
-      // console.log('ssssssssz', 2212)
-      document.getElementById('lingxi_html_loading_page_progress').style.width =
-        '100%'
       setTimeout(function() {
-        node.setAttribute('class', 'lingxi_html_loading_page_hide')
-        setTimeout(function() {
-          node.style.display = 'none'
-        }, 300)
+        if (!!window.mapAndroid) {
+          document.getElementById('skeleton_home_wrapper').style.display =
+            'none'
+        }
       }, 300)
       setTimeout(function() {
         var secScript2 = document.createElement('script')
@@ -114,11 +86,7 @@
         secScript.setAttribute('src', './pdf/build/pdf.js')
         document.body.insertBefore(secScript, document.body.lastChild)
         pdfjsLib.GlobalWorkerOptions.workerSrc = './pdf/build/pdf.worker.js'
-
       }, 3000)
-
-      // })
     }
   </script>
-
 </html>
