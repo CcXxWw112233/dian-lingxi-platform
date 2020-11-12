@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="./luckysheet/plugins/css/pluginsCss.min.css" />
   </head>
   <script>
-    // alert(1)
+    // alert('head')
   </script>
   <body>
     <div
@@ -42,6 +42,7 @@
 
     <div></div> -->
     <script>
+      // alert('body')
       // 为了过渡加载过程缓慢,骨架屏
       if (
         window.location.hash.indexOf('#/technological/simplemode/home') != -1
@@ -64,6 +65,7 @@
   </body>
   <script>
     window.onload = function() {
+      // alert('loaded')
       setTimeout(function() {
         if (!!window.mapAndroid) {
           document.getElementById('skeleton_home_wrapper').style.display =

@@ -1919,6 +1919,7 @@ export default class CardItem extends Component {
           } ${!is_has_start_time &&
             indexStyles.specific_example_no_start_time} ${!is_has_end_time &&
             indexStyles.specific_example_no_due_time}`}
+          data-rely_top={id}
           // onMouseDown={(e) => e.stopPropagation()}
           onMouseMove={e => e.preventDefault()}
           style={{
@@ -1949,6 +1950,7 @@ export default class CardItem extends Component {
                     </div> */}
           <div
             data-targetclassname="specific_example"
+            data-rely_top={id}
             className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`}
             // onMouseDown={(e) => e.stopPropagation()}
             onMouseMove={e => e.preventDefault()}

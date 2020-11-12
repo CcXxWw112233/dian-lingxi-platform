@@ -622,6 +622,13 @@ export default class GetRowGantt extends Component {
         this.props.setTaskDetailModalVisibile &&
           this.props.setTaskDetailModalVisibile()
         dispatch({
+          type: 'gantt/updateDatas',
+          payload: {
+            selected_card_visible: true
+          }
+        })
+        // setTimeout(() => {
+        dispatch({
           type: 'publicTaskDetailModal/updateDatas',
           payload: {
             // drawerVisible: true,
@@ -629,11 +636,13 @@ export default class GetRowGantt extends Component {
           }
         })
         dispatch({
-          type: 'gantt/updateDatas',
+          type: 'workbenchPublicDatas/updateDatas',
           payload: {
-            selected_card_visible: true
+            board_id
           }
         })
+        // }, 300)
+
         // dispatch({
         //   type: 'workbenchTaskDetail/getCardDetail',
         //   payload: {
@@ -655,12 +664,6 @@ export default class GetRowGantt extends Component {
         //     id: id
         //   }
         // })
-        dispatch({
-          type: 'workbenchPublicDatas/updateDatas',
-          payload: {
-            board_id
-          }
-        })
       } else {
         const { current_list_group_id } = res
         const { group_view_type } = this.props
