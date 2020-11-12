@@ -1671,10 +1671,11 @@ export default class CardItem extends Component {
   // 当前任务完成时间与计划时间对比
   compareCardsRealPlanTimer = node => {
     const { local_width } = this.state
-    const { gantt_view_mode } = this.props
+    const { gantt_view_mode, itemValue = {} } = this.props
+    const { width } = itemValue
     let compare_width = 0
     const default_width =
-      (local_width || 6) - (gantt_view_mode == 'year' ? 0 : card_width_diff)
+      (width || 6) - (gantt_view_mode == 'year' ? 0 : card_width_diff)
     // 状态标识
     let status_label = ''
     // 定义一个被除数
