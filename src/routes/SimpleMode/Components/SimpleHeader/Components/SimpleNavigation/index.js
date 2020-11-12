@@ -251,6 +251,7 @@ export default class SimpleNavigation extends Component {
           simpleDrawerContentKey: '24',
           simpleDrawerTitle: '团队成员'
         })
+        this.props.dropdownHandleVisibleChange(false)
         break
       case '23': // 匹配成员管理后台
         //isHasManagerBack() && this.routingJump(`/organizationManager?nextpath=${window.location.hash.replace('#', '')}`)
@@ -351,6 +352,7 @@ export default class SimpleNavigation extends Component {
           simpleDrawerContentKey: '20',
           simpleDrawerTitle: '账号设置'
         })
+        this.props.dropdownHandleVisibleChange(false)
         break
       case 'subShowOrgName':
         // console.log('sss', 2222)
@@ -370,6 +372,7 @@ export default class SimpleNavigation extends Component {
         break
       case '10': // 创建或加入新组织
         this.setCreateOrgnizationOModalVisable()
+        this.props.dropdownHandleVisibleChange(false)
         break
       case '0': // 匹配全部组织
         this.setState({
@@ -412,6 +415,7 @@ export default class SimpleNavigation extends Component {
         break
       case '-1': //退出
         this.logout(e)
+        this.props.dropdownHandleVisibleChange(false)
         break
 
       default:
