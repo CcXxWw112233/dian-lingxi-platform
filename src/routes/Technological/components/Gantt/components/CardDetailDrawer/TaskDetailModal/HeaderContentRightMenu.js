@@ -19,7 +19,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import { currentNounPlanFilterName } from '@/utils/businessFunction'
 import { MESSAGE_DURATION_TIME, TASKS } from '@/globalset/js/constant'
 import { arrayNonRepeatfy } from '@/utils/util'
-import { lx_utils } from 'lingxi-im'
+// import { lx_utils } from 'lingxi-im'
 import {
   checkIsHasPermissionInBoard,
   checkIsHasPermissionInVisitControl,
@@ -477,10 +477,10 @@ export default class HeaderContentRightMenu extends Component {
               })
               that.props.closeDrawer && that.props.closeDrawer()
               // 删除卡片也需要调用圈子关闭联动
-              setTimeout(
-                () => lx_utils && lx_utils.setCommentData(card_id || null),
-                200
-              )
+              // setTimeout(
+              //   () => lx_utils && lx_utils.setCommentData(card_id || null),
+              //   200
+              // )
               that.props.handleDeleteCard &&
                 that.props.handleDeleteCard({ card_id: card_id })
             }

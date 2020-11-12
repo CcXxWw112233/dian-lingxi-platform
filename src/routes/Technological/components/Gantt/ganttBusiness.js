@@ -11,7 +11,7 @@ import {
   hours_view_total,
   hours_view_start_work_oclock
 } from './constants'
-import { lx_utils } from 'lingxi-im'
+// import { lx_utils } from 'lingxi-im'
 import moment from 'moment'
 
 export const afterCreateBoardUpdateGantt = dispatch => {
@@ -86,7 +86,7 @@ export const handleChangeBoardViewScrollTop = ({
 }
 // 在删除项目后做的操作
 export const deleteBoardFollow = () => {
-  lx_utils.updateUserList()
+  // lx_utils.updateUserList()
 }
 
 // 计算时间跨度

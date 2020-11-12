@@ -19,13 +19,14 @@ import { currentNounPlanFilterName } from '@/utils/businessFunction'
 import { MESSAGE_DURATION_TIME, TASKS } from '@/globalset/js/constant'
 import { arrayNonRepeatfy } from '../../utils/util'
 import { getCurrentDrawerContentPropsModelFieldData } from './handleOperateModal'
-import { lx_utils } from 'lingxi-im'
+// import { lx_utils } from 'lingxi-im'
 import {
   checkIsHasPermissionInBoard,
   checkIsHasPermissionInVisitControl,
   checkIsHasPermissionInVisitControlWithGroup
 } from '../../utils/businessFunction'
 import { PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE } from '../../globalset/js/constant'
+const lx_utils = undefined
 
 @connect(mapStateToProps)
 export default class HeaderContentRightMenu extends Component {

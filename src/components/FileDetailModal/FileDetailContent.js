@@ -23,8 +23,8 @@ import { compareACoupleOfObjects } from '@/utils/util'
 import QueryString from 'querystring'
 import NonsupportPreviewFileContent from './NonsupportPreviewFileContent'
 import NonsupportPreviewFileHeader from './NonsupportPreviewFileHeader'
-import { lx_utils } from 'lingxi-im'
-
+// import { lx_utils } from 'lingxi-im'
+const lx_utils = undefined
 let board_id = null
 let appsSelectKey = null
 let file_id = null

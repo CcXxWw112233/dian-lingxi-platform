@@ -60,7 +60,7 @@ import {
   cancleToofTopBoardCardGroup
 } from '../../../../services/technological/gantt'
 import GroupListHeadDragNoTimeDataItem from './GroupListHeadDragNoTimeDataItem'
-import { lx_utils } from 'lingxi-im'
+// import { lx_utils } from 'lingxi-im'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 
 @connect(mapStateToProps)
@@ -612,7 +612,7 @@ export default class GroupListHeadItem extends Component {
         this.setLocalListName(this.state.edit_input_value)
         // debugger
         message.success('已成功更新项目名称')
-        lx_utils.editBoardName({ board_id: data.board_id, name: data.name }) //更新圈子
+        // lx_utils.editBoardName({ board_id: data.board_id, name: data.name }) //更新圈子
         this.updateBoardFiles(data)
         this.updateBoardsName()
         this.updateProjectList(data)

@@ -38,7 +38,8 @@ import {
 import { cursorMoveEnd } from './components/handleOperateModal'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import ProcessFile from './ProcessFile'
-import { lx_utils } from 'lingxi-im'
+// import { lx_utils } from 'lingxi-im'
+const lx_utils = undefined
 
 @connect(mapStateToProps)
 export default class MainContent extends Component {

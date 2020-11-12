@@ -24,7 +24,7 @@ import {
   FILE_TYPE_UPLOAD_WHITELISTED
 } from '@/globalset/js/constant'
 import { openImChatBoard } from '../../../../../utils/businessFunction'
-import { lx_utils, Im } from 'lingxi-im'
+// import { lx_utils, Im } from 'lingxi-im'
 
 const { TreeNode, DirectoryTree } = Tree
 
@@ -67,10 +67,10 @@ class BoardCommunication extends Component {
   constructor(props) {
     super(props)
     const { dispatch } = this.props
-    Im.addEventListener('visible', val => {
-      // 获取圈子显示隐藏状态
-      // this.setState({ isShowlingxiIm: val});
-    })
+    // Im.addEventListener('visible', val => {
+    //   // 获取圈子显示隐藏状态
+    //   // this.setState({ isShowlingxiIm: val});
+    // })
   }
 
   componentWillReceiveProps(nextProps) {
@@ -1271,7 +1271,7 @@ class BoardCommunication extends Component {
         filePreviewCurrentName: ''
       }
     })
-    lx_utils && lx_utils.setCommentData(null)
+    // lx_utils && lx_utils.setCommentData(null)
   }
 
   // 设置折叠面板keys

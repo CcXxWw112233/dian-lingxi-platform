@@ -3,7 +3,8 @@ import PublicDetailModal from '@/components/PublicDetailModal'
 import MainContent from './MainContent'
 import HeaderContent from './HeaderContent'
 import { connect } from 'dva'
-import { lx_utils } from 'lingxi-im'
+// import { lx_utils } from 'lingxi-im'
+const lx_utils = undefined
 
 @connect(mapStateToProps)
 export default class ProcessDetailModal extends Component {

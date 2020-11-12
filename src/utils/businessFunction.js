@@ -7,7 +7,7 @@ import { get } from 'https'
 import { Base64 } from 'js-base64'
 import moment from 'moment'
 import { validOnlyNumber } from './verify'
-import { lx_utils } from 'lingxi-im'
+// import { lx_utils } from 'lingxi-im'
 import { arrayNonRepeatfy } from './util'
 
 // 权限的过滤和存储在technological下
@@ -721,7 +721,7 @@ export const selectBoardToSeeInfo = ({
   openImChatBoard({ board_id, autoOpenIm })
 }
 export const openImChatBoard = ({ board_id, autoOpenIm }) => {
-  lx_utils.openChat({ boardId: board_id == '0' ? '' : board_id, autoOpenIm })
+  // lx_utils.openChat({ boardId: board_id == '0' ? '' : board_id, autoOpenIm })
 }
 
 // 清除圈子登录信息

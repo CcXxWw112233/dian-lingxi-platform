@@ -20,8 +20,9 @@ import {
   getSubfixName
 } from '@/utils/businessFunction.js'
 import { message } from 'antd'
-import { Im, lx_utils } from 'lingxi-im'
-
+// import { Im, lx_utils } from 'lingxi-im'
+const lx_utils = undefined
+const Im = undefined
 @connect(mapStateToProps)
 export default class BoardCommuicationFileDetailContainer extends Component {
   constructor(props) {
@@ -243,13 +244,13 @@ export default class BoardCommuicationFileDetailContainer extends Component {
       }
       this.getCurrentFilePreviewData({ id: filePreviewCurrentFileId })
       let that = this
-      if (Im) {
-        Im.on('fileCancel', function({ id }) {
-          if (id == that.props.filePreviewCurrentFileId) {
-            that.onCancel()
-          }
-        })
-      }
+      // if (Im) {
+      //   Im.on('fileCancel', function({ id }) {
+      //     if (id == that.props.filePreviewCurrentFileId) {
+      //       that.onCancel()
+      //     }
+      //   })
+      // }
       // this.linkImWithFile({name: filePreviewCurrentName, type: 'file', board_id: board_id, id: filePreviewCurrentFileId})
     }
   }

@@ -34,11 +34,12 @@ import {
   compareStartDueTime
 } from '../handleOperateModal'
 import { rebackCreateNotify } from '../../NotificationTodos'
-import { lx_utils } from 'lingxi-im'
+// import { lx_utils } from 'lingxi-im'
 import {
   checkIsHasPermissionInVisitControlWithGroup,
   getSubfixName
 } from '../../../utils/businessFunction'
+const lx_utils = undefined
 
 // 逻辑组件
 const LogicWithMainContent = {

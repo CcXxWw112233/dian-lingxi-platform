@@ -6,7 +6,8 @@ import { routerRedux } from 'dva/router'
 import queryString from 'query-string'
 import { getModelSelectDatasState, getModelSelectState } from '../../utils'
 import { getGanttBoardsFiles } from '../../../services/technological/gantt'
-import { Im } from 'lingxi-im'
+// import { Im } from 'lingxi-im'
+const Im = undefined
 
 // 该model是圈子推送已读未读的内容
 export default {
