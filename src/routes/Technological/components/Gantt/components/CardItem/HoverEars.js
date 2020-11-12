@@ -150,6 +150,7 @@ class HoverEars extends Component {
     } = this.props
     const target = e.target
     const { rely_top, rely_right, rely_left, rely_type } = e.target.dataset
+    console.log('sssaasdd', e.target.dataset)
     if (!rely_top && !rely_right && !rely_left) return
     let line_to
     const line_id = rely_top || rely_right || rely_left
