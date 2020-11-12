@@ -89,7 +89,9 @@ export default class GanttFace extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    // 针对改变项目相对时间和实际时间改变
     const { projectDetailInfoData = {}, gantt_board_id, ceilWidth } = this.props
+    if (gantt_board_id == '0') return
     const { board_set = {} } = projectDetailInfoData
     const { date_mode, relative_time } = board_set
     const {
