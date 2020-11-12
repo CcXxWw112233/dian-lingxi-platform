@@ -425,7 +425,11 @@ const SubTaskItemLogic = {
         return
       }
       this.setChildTaskIndrawContent(
-        { name: 'is_realize', value: is_realize === '1' ? '0' : '1' },
+        {
+          name: 'is_realize',
+          value: is_realize === '1' ? '0' : '1',
+          finish_time: res.data && res.data.finish_time
+        },
         card_id
       )
     })
@@ -496,7 +500,7 @@ const SubTaskItemLogic = {
 
   // 子任务更新弹窗数据 rely_card_datas,更新后返回的相关依赖的更新任务列表
   setChildTaskIndrawContent: function(
-    { name, value, operate_properties_code },
+    { name, value, operate_properties_code, finish_time },
     card_id,
     rely_card_datas,
     res
@@ -509,6 +513,9 @@ const SubTaskItemLogic = {
     )[0]
     let new_data = [...data]
     new_data[childDataIndex][name] = value
+    if (finish_time) {
+      new_data[childDataIndex]['finish_time'] = finish_time
+    }
     new_drawContent['properties'] = filterCurrentUpdateDatasField({
       properties: new_drawContent['properties'],
       code: 'SUBTASK',

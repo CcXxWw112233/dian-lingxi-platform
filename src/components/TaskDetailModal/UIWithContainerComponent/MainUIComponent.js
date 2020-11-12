@@ -753,7 +753,7 @@ export default class MainUIComponent extends Component {
                 format="YYYY/MM/DD HH:mm"
                 // showTime={{ format: 'HH:mm' }}
                 showTime={{
-                  defaultValue: moment('00:00', 'HH:mm'),
+                  defaultValue: moment('09:00', 'HH:mm'),
                   format: 'HH:mm'
                 }}
                 style={{
@@ -835,7 +835,7 @@ export default class MainUIComponent extends Component {
                 format="YYYY/MM/DD HH:mm"
                 // showTime={{ format: 'HH:mm' }}
                 showTime={{
-                  defaultValue: moment('23:59', 'HH:mm'),
+                  defaultValue: moment('17:59', 'HH:mm'),
                   format: 'HH:mm'
                 }}
                 // onOk={this.endDatePickerChange.bind(this)}
