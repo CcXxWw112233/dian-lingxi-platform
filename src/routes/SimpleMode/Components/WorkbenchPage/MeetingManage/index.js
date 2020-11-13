@@ -13,7 +13,8 @@ import {
   Checkbox,
   message,
   Popconfirm,
-  InputNumber
+  InputNumber,
+  notification
   // Upload,
   // Icon
 } from 'antd'
@@ -284,6 +285,12 @@ class MeetingManage extends React.Component {
    * 更新会议室列表
    */
   getList = isFirst => {
+    if (this.props.org_id == '0')
+      return notification.warn({
+        message: '提示',
+        description: <div>全组织模式下不允许使用会议管理,请选择组织</div>,
+        placement: 'topRight'
+      })
     Action.fetchList({ org_id: this.props.org_id }).then(data => {
       this.setState(
         {
