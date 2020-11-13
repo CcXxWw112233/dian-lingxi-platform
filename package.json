@@ -6,8 +6,7 @@
     "lintfix": "eslint --fix --ext .js src",
     "lint": "eslint --ext  .js src",
     "test": "eslint --ext .js src test",
-    "lint-staged": "lint-staged",
-    "analyz": "cross-env  npm_config_report=true npm run build"
+    "lint-staged": "lint-staged"
   },
   "dependencies": {
     "@babel/polyfill": "^7.4.3",
