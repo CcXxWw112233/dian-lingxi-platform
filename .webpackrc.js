@@ -39,7 +39,8 @@ export default {
   ],
   alias: {
     '@': path.resolve(__dirname, './src'),
-    src: path.resolve(__dirname, './src')
+    src: path.resolve(__dirname, './src'),
+    '@ant-design/icons/lib/dist$': path.resolve(__dirname, './src/ant_icons.js')
   },
   hash: true,
   manifest: {
