@@ -497,6 +497,7 @@ class MeetingManage extends React.Component {
         .then(res => {
           form.resetFields()
           message.success('更新成功')
+          this.getList()
           this.setState({
             loadingModal: false,
             modal: false
