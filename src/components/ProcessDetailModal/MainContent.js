@@ -479,8 +479,8 @@ export default class MainContent extends Component {
 
     const { processPageFlagStep } = this.props
     if (processPageFlagStep == '4') {
-      let dynamic_ele = document.getElementById('dynamic_comment')
-      dynamic_ele.style.bottom = 40 - scrollTop + 'px'
+      // let dynamic_ele = document.getElementById('dynamic_comment')
+      // dynamic_ele.style.bottom = 40 - scrollTop + 'px'
     }
     // -------------------- 关于资料收集节点定位  ----------------------------
     // 关于资料收集节点的定位
@@ -1925,7 +1925,7 @@ export default class MainContent extends Component {
             </div>
           </div>
         </div>
-        {processPageFlagStep == '4' && (
+        {/* {processPageFlagStep == '4' && (
           <div
             onClick={this.handleDynamicComment}
             id="dynamic_comment"
@@ -1942,7 +1942,7 @@ export default class MainContent extends Component {
               <span className={globalStyles.authTheme}>&#xe8e8;</span>
             </Tooltip>
           </div>
-        )}
+        )} */}
         {processPageFlagStep == '4' && <ProcessFile />}
       </div>
     )
