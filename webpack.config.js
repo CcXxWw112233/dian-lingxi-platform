@@ -5,7 +5,7 @@ const webpack = require('webpack')
 let plugins = []
 if ('production' == NODE_ENV) {
   plugins = [
-    new BundleAnalyzerPlugin({ analyzerPort: 8333 }),
+    // new BundleAnalyzerPlugin({ analyzerPort: 8333 }),
     new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /en-gb|zh-cn/)
   ]
 }
