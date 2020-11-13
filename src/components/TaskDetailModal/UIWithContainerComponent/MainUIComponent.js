@@ -1333,7 +1333,7 @@ export default class MainUIComponent extends Component {
           </div>
           {/* 添加字段 E */}
         </div>
-        <div
+        {/* <div
           onClick={this.handleDynamicComment}
           id="dynamic_comment"
           className={mainContentStyles.dynamic_comment}
@@ -1346,7 +1346,7 @@ export default class MainUIComponent extends Component {
           >
             <span className={globalStyles.authTheme}>&#xe8e8;</span>
           </Tooltip>
-        </div>
+        </div> */}
         {/*查看任务附件*/}
         <div>
           {this.props.isInOpenFile && (

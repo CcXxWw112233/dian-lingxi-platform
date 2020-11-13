@@ -543,7 +543,7 @@ class MainContent extends Component {
                 isShow_textArea={true}
                 isOpenAttachmentFile={this.props.isOpenAttachmentFile}
               /> */}
-            {!this.props.isOpenAttachmentFile && (
+            {/* {!this.props.isOpenAttachmentFile && (
               <div
                 onClick={this.handleDynamicComment}
                 id="dynamic_comment"
@@ -560,7 +560,7 @@ class MainContent extends Component {
                   <span className={globalStyles.authTheme}>&#xe8e8;</span>
                 </Tooltip>
               </div>
-            )}
+            )} */}
           </div>
         )}
       </>
@@ -648,7 +648,7 @@ class MainContent extends Component {
                 </span>
               </div>
             )}
-            {!this.props.isOpenAttachmentFile && (
+            {/* {!this.props.isOpenAttachmentFile && (
               <div
                 onClick={this.handleDynamicComment}
                 id="dynamic_comment"
@@ -665,7 +665,7 @@ class MainContent extends Component {
                   <span className={globalStyles.authTheme}>&#xe8e8;</span>
                 </Tooltip>
               </div>
-            )}
+            )} */}
           </>
         )}
       </>
