@@ -36,7 +36,6 @@ export default class UserRemoteSelect extends React.Component {
   }
 
   fetchUser = (value = '') => {
-    // console.log('fetching user', value);
     const { simplemodeCurrentProject = {} } = this.props
     const { board_id, org_id } = simplemodeCurrentProject
     let params_orgId = org_id
@@ -132,7 +131,7 @@ export default class UserRemoteSelect extends React.Component {
         >
           {!!(data && data.length) &&
             data.map(d => (
-              <Option title={d.value} key={d.value}>
+              <Option title={d.value} key={d.value} value={d.value}>
                 {d.text}
               </Option>
             ))}
