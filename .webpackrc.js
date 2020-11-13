@@ -15,12 +15,12 @@ export default {
       'react-router',
       'moment',
       'js-cookie',
-      'rc-queue-anim',
-      'react-beautiful-dnd',
+      // 'rc-queue-anim',
+      // 'react-beautiful-dnd',
       'lodash'
-    ],
+    ]
     // lingxi_im: ['lingxi-im'],
-    antd: ['antd']
+    // antd: ['antd']
     // components: [
     //   /*组件*/
     //   './src/components'
@@ -29,7 +29,7 @@ export default {
   },
   commons: [
     {
-      names: ['vendor', 'antd'],
+      names: ['vendor'],
       minChunks: Infinity
     }
   ],
@@ -39,7 +39,8 @@ export default {
   ],
   alias: {
     '@': path.resolve(__dirname, './src'),
-    src: path.resolve(__dirname, './src')
+    src: path.resolve(__dirname, './src'),
+    '@ant-design/icons/lib/dist$': path.resolve(__dirname, './src/ant_icons.js')
   },
   hash: true,
   manifest: {

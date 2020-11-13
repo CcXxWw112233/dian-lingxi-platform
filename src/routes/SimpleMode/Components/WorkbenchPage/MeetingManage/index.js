@@ -63,7 +63,9 @@ class MeetingManage extends React.Component {
         { time: '18.5', disabled: false, noState: false },
         { time: '19', disabled: false, noState: false },
         { time: '19.5', disabled: false, noState: false },
-        { time: '20', disabled: false, noState: false }
+        { time: '20', disabled: false, noState: false },
+        { time: '20.5', disabled: false, noState: false },
+        { time: '21', disabled: false, noState: false }
       ],
       // 是否显示时间线
       showTimeLine: false,
@@ -84,14 +86,18 @@ class MeetingManage extends React.Component {
         {
           key: 'device',
           title: '会议设备',
-          dataIndex: 'device'
+          render: record => {
+            let { room_devices = [] } = record || {}
+            return room_devices.map(item => item.name).join(' / ')
+          }
         },
         {
           key: 'status',
           title: '当前状态',
-          dataIndex: 'status',
-          render: () => {
-            const text = 'enable'
+          // dataIndex: 'status',
+          render: record => {
+            let statusArr = ['disabled', 'enable']
+            const text = statusArr[+record.room_status]
             const status = props.config || this.defaultConfig
             return (
               <div>
@@ -106,7 +112,7 @@ class MeetingManage extends React.Component {
         },
         {
           key: 'time',
-          width: 540,
+          width: 620,
           className: styles.time_step,
           title: val => {
             const arr = this.state.times.map((item, index) => {
@@ -129,19 +135,25 @@ class MeetingManage extends React.Component {
               </div>
             )
           },
-          render: () => {
+          render: record => {
             const text = 'enable'
             const status = props.config || this.defaultConfig
             return (
               <div className={styles.time_box}>
                 {this.state.times.map(item => {
+                  let isHasPlan = (record.times_plan || []).includes(+item.time)
                   return (
                     <div
                       key={item.time}
                       className={`${styles.time_box_item} ${
                         item.noState ? styles.noStateColor : ''
                       }`}
-                      style={{ background: status[text]?.color }}
+                      title={Action.forMatTime({ time: +item.time })}
+                      style={{
+                        background: isHasPlan
+                          ? status['disabled']?.color
+                          : status[text]?.color
+                      }}
                     ></div>
                   )
                 })}
@@ -239,6 +251,35 @@ class MeetingManage extends React.Component {
     })
   }
 
+  // 设置是否禁用的时间段
+  setHasPlanTime = () => {
+    let { data } = this.state
+    let arr = data.map(item => {
+      if (item.meeting_plans) {
+        let plantimes = []
+        item.meeting_plans.forEach(plan => {
+          let start_time = Action.getHours(+(plan.start_time + '000'))
+          let end_time = Action.getHours(+(plan.end_time + '000'))
+          let times = (() => {
+            let arr = []
+            for (let i = start_time; i <= end_time; ) {
+              arr.push(i)
+              i += 0.5
+            }
+            return arr
+          })()
+          // 将计算出来的整合
+          plantimes = plantimes.concat(times)
+        })
+
+        item = Object.assign({}, item, { times_plan: plantimes })
+      }
+      return { ...item }
+    })
+    this.setState({
+      data: arr
+    })
+  }
   /**
    * 更新会议室列表
    */
@@ -252,6 +293,7 @@ class MeetingManage extends React.Component {
           if (data.length) {
             this.setTimeLine()
             this.setUpdate()
+            this.setHasPlanTime()
           } else {
             clearInterval(this.timer)
             this.removeTimeline()
@@ -575,6 +617,9 @@ class MeetingManage extends React.Component {
               </div>
             </Col>
             <Col span={4} style={{ textAlign: 'right' }}>
+              <Button onClick={this.getList} style={{ marginRight: 10 }}>
+                更新
+              </Button>
               <Button type="primary" onClick={this.addMeetingRoom}>
                 录入新会议室
               </Button>

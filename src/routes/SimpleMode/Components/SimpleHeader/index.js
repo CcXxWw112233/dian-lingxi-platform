@@ -701,7 +701,8 @@ class SimpleHeader extends Component {
         <Suspense fallback={''}>
           <VideoMeeting />
         </Suspense>
-        <Tooltip
+        {/* 项目圈 */}
+        {/* <Tooltip
           title={`${currentNounPlanFilterName(
             PROJECTS,
             this.props.currentNounPlan
@@ -724,7 +725,7 @@ class SimpleHeader extends Component {
               &#xe6df;
             </i>
           </div>
-        </Tooltip>
+        </Tooltip> */}
 
         <div
           className={indexStyles.chatWapper}

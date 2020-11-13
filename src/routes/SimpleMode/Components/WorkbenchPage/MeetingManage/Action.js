@@ -135,6 +135,25 @@ class Action {
       return res.data
     } else return Promise.reject()
   }
+
+  getHours = time => {
+    let t = new Date(time)
+    let h = t.getHours()
+    let m = t.getMinutes()
+    h += m >= 30 ? 0.5 : 0
+    return h
+  }
+
+  forMatTime = val => {
+    let text = ''
+    let H = Math.floor(val.time)
+    if (val.time - H) {
+      let minut = val.time - H
+      minut = minut * 60
+      text = H + ':' + minut
+    } else text = H + ':' + '00'
+    return text
+  }
 }
 
 export default new Action()
