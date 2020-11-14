@@ -635,6 +635,11 @@ class MeetingManage extends React.Component {
 
           <div className={styles.tableRender}>
             <Table
+              onChange={() =>
+                setTimeout(() => {
+                  this.setTimeLine()
+                }, 100)
+              }
               rowKey="id"
               dataSource={this.state.data}
               columns={this.state.columns}
