@@ -119,7 +119,7 @@ class Action {
     })
     if (isApiResponseOk(res)) {
       return res
-    } else return Promise.reject()
+    } else return Promise.reject(res)
   }
 
   /**
