@@ -45,3 +45,8 @@ export { default as FormOutline } from '@ant-design/icons/lib/outline/FormOutlin
 export { default as FlagOutline } from '@ant-design/icons/lib/outline/FlagOutline'
 export { default as EditOutline } from '@ant-design/icons/lib/outline/EditOutline'
 export { default as CloseCircleOutline } from '@ant-design/icons/lib/outline/CloseCircleOutline'
+export { default as CheckCircleFill } from '@ant-design/icons/lib/fill/CheckCircleFill'
+export { default as CloseCircleFill } from '@ant-design/icons/lib/fill/CloseCircleFill'
+export { default as ExclamationCircleFill } from '@ant-design/icons/lib/fill/ExclamationCircleFill'
+
+// export { default as CloseCircleOutline } from '@ant-design/icons/lib/circle/checkCircle'

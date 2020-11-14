@@ -1880,6 +1880,7 @@ export default class CardItem extends Component {
         )}
         {is_show_compare_real_plan_timer && (
           <div
+            data-rely_top={id}
             data-targetclassname="specific_example"
             className={`${
               indexStyles.gatt_card_compare_prop
