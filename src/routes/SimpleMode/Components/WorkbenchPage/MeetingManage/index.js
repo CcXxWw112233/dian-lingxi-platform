@@ -564,7 +564,7 @@ class MeetingManage extends React.Component {
       previewCode.push({ file_key: res.data.file_key, id: id })
       previewSrc.push({
         preview_url: res.data.preview_url,
-        id: 1,
+        id: id,
         noteupload: true
       })
       this.setState({
