@@ -458,8 +458,8 @@ class MeetingManage extends React.Component {
           bind_code: obj.large_device.code,
           device_type_id: 1
         }).catch(err => err)
-        if (!check) {
-          message.warn('触控大屏的绑定码有误,请检查后重新输入')
+        if (check.code !== '0') {
+          message.warn('触控大屏:' + check.message)
           this.setState({
             loadingModal: false
           })
@@ -475,9 +475,8 @@ class MeetingManage extends React.Component {
           bind_code: obj.tablet_device.code,
           device_type_id: 2
         }).catch(err => err)
-        // console.log(check)
-        if (!check) {
-          message.warn('会议门牌的绑定码有误,请检查后重新输入')
+        if (check.code !== '0') {
+          message.warn('会议门牌:' + check.message)
           this.setState({
             loadingModal: false
           })
