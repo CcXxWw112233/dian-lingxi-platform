@@ -44,17 +44,19 @@
     <script>
       // alert('body')
       // 为了过渡加载过程缓慢,骨架屏
-      if (
-        window.location.hash.indexOf('#/technological/simplemode/home') != -1
-      ) {
-        if (!!window.mapAndroid) {
+      if (!!window.mapAndroid) {
+        if (
+          window.location.hash.indexOf('#/technological/simplemode/home') != -1 || 
+          window.location.hash.indexOf('#/login') != -1
+        ) {
           document.getElementById('skeleton_home_wrapper').style.display =
             'block'
+        } else if (
+          window.location.hash.indexOf(
+            '#/technological/simplemode/workbench'
+          ) != -1
+        ) {
         }
-      } else if (
-        window.location.hash.indexOf('#/technological/simplemode/workbench') !=
-        -1
-      ) {
       }
     </script>
     <div id="root"></div>
