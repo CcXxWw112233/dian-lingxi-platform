@@ -1,9 +1,10 @@
-import React, { Component } from 'react'
+import React, { Component, lazy, Suspense } from 'react'
 import { message } from 'antd'
 import { connect } from 'dva/index'
 import GanttFace from './GanttFace'
 // import TaskDetailModal from '../Workbench/CardContent/Modal/TaskDetailModal';
 // import TaskDetailModal from '@/components/TaskDetailModal'
+// import ProcessDetailModal from '../../../../../src/components/ProcessDetailModal'
 import AddTaskModal from './components/AddTaskModal'
 import {
   ganttIsFold,
@@ -22,6 +23,8 @@ import {
   NOT_HAS_PERMISION_COMFIRN,
   PROJECT_TEAM_CARD_CREATE
 } from '../../../../globalset/js/constant'
+
+const ProcessDetailModal = lazy(() => import('@/components/ProcessDetailModal'))
 
 class Gantt extends Component {
   constructor(props) {
@@ -936,6 +939,63 @@ class Gantt extends Component {
       }
     })
   }
+  // 控制流程弹窗显示隐藏
+  setProcessDetailModalVisible = () => {
+    this.setState({
+      isPreviewProcessModalVisible: !this.state.isPreviewProcessModalVisible
+    })
+  }
+
+  // 修改弹窗后更新回调
+  handleProcessDetailChange = ({
+    flow_instance_id,
+    flow_node_instance_id,
+    parentStatus,
+    name,
+    value,
+    type
+  }) => {
+    const { outline_tree = [], outline_tree_round = [] } = this.props
+    let outline_tree_ = [...outline_tree]
+    let outline_tree_round_ = [...outline_tree_round]
+    const gold_item =
+      outline_tree_.find(item => item.id == flow_instance_id) || {}
+    const gold_item_ =
+      outline_tree_round_.find(item => item.id == flow_instance_id) || {}
+    const gold_item_index = outline_tree_.findIndex(
+      item => item.id == flow_instance_id
+    )
+    const gold_item_index_ = outline_tree_round_.findIndex(
+      item => item.id == flow_instance_id
+    )
+    if (
+      !!(gold_item && Object.keys(gold_item).length) &&
+      !!(gold_item_ && Object.keys(gold_item_).length)
+    ) {
+      if (parentStatus) {
+        // 表示更新父的状态内容
+        if (type == 'deleteProcess') {
+          outline_tree_ = outline_tree_.filter(
+            item => item.id != flow_instance_id
+          )
+          outline_tree_round_ = outline_tree_round_.filter(
+            item => item.id != flow_instance_id
+          )
+        } else {
+          outline_tree_[gold_item_index][name] = value
+          outline_tree_round_[gold_item_index_][name] = value
+        }
+      }
+    }
+    this.props.dispatch({
+      type: 'gantt/updateDatas',
+      payload: {
+        outline_tree: outline_tree_,
+        outline_tree_round: outline_tree_round_
+      }
+    })
+  }
+
   render() {
     const { addTaskModalVisible } = this.state
     const { outline_tree_round } = this.props
@@ -978,6 +1038,7 @@ class Gantt extends Component {
             handleChildTaskChange: this.handleChildTaskChange,
             handleRelyUploading: this.handleRelyUploading
           }}
+          setProcessDetailModalVisible={this.setProcessDetailModalVisible}
         />
         {/* <TaskDetailModal
           task_detail_modal_visible={drawerVisible}
@@ -986,6 +1047,20 @@ class Gantt extends Component {
           handleDeleteCard={this.handleDeleteCard}
           handleChildTaskChange={this.handleChildTaskChange}
         /> */}
+        <Suspense fallback={''}>
+          {this.state.isPreviewProcessModalVisible &&
+            this.props.process_detail_modal_visible && (
+              <ProcessDetailModal
+                process_detail_modal_visible={
+                  this.props.process_detail_modal_visible
+                }
+                setProcessDetailModalVisibile={
+                  this.setProcessDetailModalVisible
+                }
+                handleProcessDetailChange={this.handleProcessDetailChange}
+              />
+            )}
+        </Suspense>
 
         {addTaskModalVisible && (
           <AddTaskModal
@@ -1040,7 +1115,8 @@ function mapStateToProps({
   technological: {
     datas: { page_load_type }
   },
-  publicTaskDetailModal: { drawerVisible }
+  publicTaskDetailModal: { drawerVisible },
+  publicProcessDetailModal: { process_detail_modal_visible }
 }) {
   return {
     list_group,
@@ -1060,7 +1136,8 @@ function mapStateToProps({
     outline_tree_round,
     gantt_board_list_id,
     gantt_view_mode,
-    belong_group_row
+    belong_group_row,
+    process_detail_modal_visible
   }
 }
 

@@ -147,6 +147,12 @@ export default class WorkFlowItem extends Component {
       })
       this.props.setTaskIsDragging && this.props.setTaskIsDragging(false, 4) //当拖动完成后，释放创建任务的锁，让可以正常创建任务
     }, 300)
+    const {
+      itemValue: { id, status }
+    } = this.props
+    if (this.state.is_moved) return
+    this.props.setSpecilTaskExample &&
+      this.props.setSpecilTaskExample({ flow_id: id })
   }
 
   // 不在项目分组内，左右移动
@@ -291,7 +297,9 @@ export default class WorkFlowItem extends Component {
         {...this.handleObj()}
       >
         <div
-          className={`${indexStyles.flow_log} ${globalStyles.authTheme}`}
+          className={`${indexStyles.flow_log} ${
+            globalStyles.authTheme
+          } ${status == '3' && indexStyles.flow_log_done}`}
           data-rely_top={id}
           data-rely_type={'flow'}
         >

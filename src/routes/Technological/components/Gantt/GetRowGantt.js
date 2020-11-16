@@ -611,10 +611,31 @@ export default class GetRowGantt extends Component {
   }
 
   //点击某个实例,或者创建任务
-  setSpecilTaskExample = ({ id, board_id, top }, e) => {
+  setSpecilTaskExample = ({ id, board_id, top, flow_id }, e) => {
     const { dispatch, gantt_board_id } = this.props
     if (e) {
       e.stopPropagation()
+    }
+    if (flow_id) {
+      dispatch({
+        type: 'publicProcessDetailModal/getProcessInfo',
+        payload: {
+          id: flow_id,
+          calback: () => {
+            dispatch({
+              type: 'publicProcessDetailModal/updateDatas',
+              payload: {
+                process_detail_modal_visible: true,
+                currentProcessInstanceId: flow_id,
+                processPageFlagStep: '4'
+              }
+            })
+            this.props.setProcessDetailModalVisible &&
+              this.props.setProcessDetailModalVisible()
+          }
+        }
+      })
+      return
     }
     this.getCurrentGroup({ top }).then(res => {
       if (id) {
@@ -1037,7 +1058,9 @@ export default class GetRowGantt extends Component {
                 tree_type,
                 parent_expand,
                 is_expand,
-                parent_card_id
+                parent_card_id,
+                status,
+                name
               } = value
               const juge_expand =
                 tree_type == '0' || tree_type == '3'
@@ -1101,7 +1124,7 @@ export default class GetRowGantt extends Component {
                       />
                     )}
                     <WorkFlow
-                      key={`${id}_${start_time}_${end_time}_${left}_${top}`}
+                      key={`${id}_${start_time}_${end_time}_${left}_${top}_${status}_${name}`}
                       itemValue={value}
                       setSpecilTaskExample={this.setSpecilTaskExample}
                       ganttPanelDashedDrag={this.state.drag_creating}
