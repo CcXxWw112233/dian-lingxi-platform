@@ -1,5 +1,6 @@
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
 //   .BundleAnalyzerPlugin
+// "webpack-bundle-analyzer": "^4.1.0"
 const NODE_ENV = process.env.NODE_ENV
 const webpack = require('webpack')
 let plugins = []
