@@ -214,7 +214,7 @@ export default class GroupListHeadSet extends Component {
             {gantt_board_id != '0' && group_view_type != '2' && (
               <div
                 onClick={this.backClick}
-                className={`${indexStyles.group_back_to_board} ${globalStyles.authTheme}`}
+                className={`${indexStyles.group_back_to_board} ${globalStyles.authTheme} ${globalStyles.normal_icon_mouse_event_bg_2}`}
               >
                 &#xe7ec;
               </div>
@@ -231,7 +231,7 @@ export default class GroupListHeadSet extends Component {
                     globalStyles.authTheme
                   } ${ganttIsOutlineView({ group_view_type }) && selected} ${
                     gantt_board_id == '0' ? indexStyles.disabled : ''
-                  }`}
+                  }  ${globalStyles.normal_icon_mouse_event_bg_2}`}
                   style={{ display: gantt_board_id == '0' ? 'none' : 'block' }}
                 >
                   &#xe680;
@@ -256,7 +256,10 @@ export default class GroupListHeadSet extends Component {
                   }
                                     ${(group_view_type == '1' ||
                                       group_view_type == '5') &&
-                                      selected}`}
+                                      selected}
+                                      ${
+                                        globalStyles.normal_icon_mouse_event_bg_2
+                                      }`}
                 >
                   {gantt_board_id == '0' ? (
                     !single_select_user.id ? (
@@ -274,7 +277,9 @@ export default class GroupListHeadSet extends Component {
                   onClick={() => this.setGroupViewType('2')}
                   className={`${indexStyles.set_content_left_right} ${
                     globalStyles.authTheme
-                  }  ${group_view_type == '2' && selected}`}
+                  }  ${group_view_type == '2' && selected} ${
+                    globalStyles.normal_icon_mouse_event_bg_2
+                  }`}
                   style={{ display: gantt_board_id == '0' ? 'block' : 'none' }}
                 >
                   &#xe693;

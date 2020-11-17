@@ -320,7 +320,8 @@ export default class GroupListHeadItem extends Component {
       single_select_user
     } = this.props
     const { list_id, list_name } = itemValue
-    const { local_list_name } = this.state
+    const { local_list_name, show_edit_input } = this.state
+    if (show_edit_input) return
     if (group_view_type == '2') {
       dispatch({
         type: 'gantt/updateDatas',
@@ -1566,7 +1567,14 @@ export default class GroupListHeadItem extends Component {
         >
           <div className={`${indexStyles.list_head_top}`}>
             <div className={`${indexStyles.list_head_top_top}`}>
-              <div className={`${indexStyles.list_head_top_left}`}>
+              <div
+                onClick={this.listNameClick}
+                className={`${
+                  indexStyles.list_head_top_left
+                } ${group_view_type == '1' &&
+                  !show_edit_input &&
+                  globalStyles.normal_icon_mouse_event_bg_2}`}
+              >
                 {(group_view_type == '2' ||
                   (group_view_type == '5' && list_id != '0')) &&
                   !get_gantt_data_loading && (
@@ -1589,6 +1597,7 @@ export default class GroupListHeadItem extends Component {
                         lineHeight: '24px',
                         marginRight: 4
                       }}
+                      // onClick={this.listNameClick}
                     >
                       &#xe68a;
                     </div>
@@ -1600,8 +1609,10 @@ export default class GroupListHeadItem extends Component {
                           fontSize: 16,
                           color: '#1890FF',
                           lineHeight: '24px',
-                          marginRight: 4
+                          marginRight: 4,
+                          marginTop: -2
                         }}
+                        // onClick={this.listNameClick}
                       >
                         &#xe688;
                       </div>
@@ -1628,7 +1639,7 @@ export default class GroupListHeadItem extends Component {
                     }}
                     title={local_list_name}
                     className={`${indexStyles.list_name} ${globalStyle.global_ellipsis}`}
-                    onClick={this.listNameClick}
+                    // onClick={this.listNameClick}
                   >
                     {local_list_name}
                   </div>
@@ -1711,7 +1722,7 @@ export default class GroupListHeadItem extends Component {
                           })}
                         >
                           <div
-                            className={`${indexStyles.list_head_body_contain_rt} ${globalStyle.global_ellipsis}`}
+                            className={`${indexStyles.list_head_body_contain_rt} ${globalStyle.global_ellipsis} ${globalStyles.normal_icon_mouse_event_bg_2}`}
                           >
                             {this.renderGroupExcutor({
                               lane_leader,
@@ -1721,7 +1732,7 @@ export default class GroupListHeadItem extends Component {
                         </Dropdown>
                       ) : (
                         <div
-                          className={`${indexStyles.list_head_body_contain_rt} ${globalStyle.global_ellipsis}`}
+                          className={`${indexStyles.list_head_body_contain_rt} ${globalStyle.global_ellipsis} ${globalStyles.normal_icon_mouse_event_bg_2}`}
                         >
                           {this.renderGroupExcutor({
                             lane_leader,
