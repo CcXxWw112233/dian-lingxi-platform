@@ -27,19 +27,16 @@ export default class GetRowSummary extends Component {
     } = this.props
     if (lane_todo_count == 0 || !lane_todo_count) {
       //全部完成
-      // time_bg_color = '#E9ECF2'
-      time_bg_color = '#CDD1DF'
+      time_bg_color = '#E9ECF2'
       percent_class = styles.board_fold_complete
     } else {
       if (lane_overdue_count == 0) {
         //正在进行的项目（任务按期完成）
-        // time_bg_color = '#91D5FF'
-        time_bg_color = '#5A86F5'
+        time_bg_color = '#91D5FF'
         percent_class = styles.board_fold_ding
       } else {
         //正在进行的项目(存在逾期任务)
-        // time_bg_color = '#ffccc7'
-        time_bg_color = '#5A86F5'
+        time_bg_color = '#FFCCC7'
         percent_class = styles.board_fold_due
         is_due = true
       }
@@ -180,76 +177,45 @@ export default class GetRowSummary extends Component {
     } = this.props
 
     const left_map = this.hanldListGroupMap()
-    console.log(left_map, 'left_map')
     // if (!this.setBgSpecific().is_due) {
     //     return <React.Fragment></React.Fragment>
     // }
 
     return left_map.map((item, key) => {
       const { list = [], left } = item
-      // console.log(this.pointHasDueCard({ list }))
       // const realize_arr = list.filter(item => item.is_realize != '1')
       return (
-        <>
-          {this.pointHasDueCard({ list }) && (
-            <Popover
-              getPopupContainer={triggerNode => triggerNode.parentNode}
-              trigger={['click']}
-              placement="bottom"
-              content={
-                <SummaryCards
-                  list_id={list_id}
-                  dispatch={this.props.dispatch}
-                  list={list}
-                />
-              }
-              key={key}
-            >
-              <div
-                key={left}
-                style={{
-                  width: 20,
-                  height: 20,
-                  borderRadius: 20,
-                  fontSize: '20px',
-                  backgroundColor: this.pointHasDueCard({ list }) && '#FF7365',
-                  // color: this.pointHasDueCard({ list }) && '#FF7875',
-                  position: 'absolute',
-                  cursor: 'pointer',
-                  left: left + ceilWidth / 2,
-                  // top: top + (ceil_height_fold - 6) / 2,
-                  top: top + 2,
-                  zIndex: 1,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}
-              >
-                <div
-                  style={{ color: '#fff' }}
-                  className={globalStyles.authTheme}
-                >
-                  &#xe814;
-                </div>
-              </div>
-              {/* <div
-                key={left}
-                style={{
-                  width: 6,
-                  height: 6,
-                  borderRadius: 6,
-                  backgroundColor: this.pointHasDueCard({ list }) && '#FF7365',
-                  color: '#FF7875',
-                  position: 'absolute',
-                  cursor: 'pointer',
-                  left: left + ceilWidth / 2,
-                  top: top + (ceil_height_fold - 6) / 2,
-                  zIndex: 1
-                }}
-              ></div> */}
-            </Popover>
-          )}
-        </>
+        <Popover
+          getPopupContainer={triggerNode => triggerNode.parentNode}
+          trigger={['click']}
+          placement="bottom"
+          content={
+            <SummaryCards
+              list_id={list_id}
+              dispatch={this.props.dispatch}
+              list={list}
+            />
+          }
+          key={key}
+        >
+          <div
+            key={left}
+            style={{
+              width: 6,
+              height: 6,
+              borderRadius: 6,
+              backgroundColor: this.pointHasDueCard({ list })
+                ? '#FF7365'
+                : '#ffffff',
+              color: '#FF7875',
+              position: 'absolute',
+              cursor: 'pointer',
+              left: left + ceilWidth / 2,
+              top: top + (ceil_height_fold - 6) / 2,
+              zIndex: 1
+            }}
+          ></div>
+        </Popover>
       )
     })
   }
@@ -278,7 +244,7 @@ export default class GetRowSummary extends Component {
         data-targetclassname="specific_example"
         onMouseMove={e => e.stopPropagation()}
       >
-        {/* <div
+        <div
           data-targetclassname="specific_example"
           onMouseMove={e => e.stopPropagation()}
           style={{
@@ -289,7 +255,7 @@ export default class GetRowSummary extends Component {
             left: left - 10,
             top: top
           }}
-        ></div> */}
+        ></div>
         <div
           onMouseMove={e => e.stopPropagation()}
           // onClick={this.gotoBoard}
@@ -299,18 +265,16 @@ export default class GetRowSummary extends Component {
             left: left,
             top: top,
             width: (width || 6) + 6,
-            height: task_item_height_fold,
+            height: task_item_height_fold
             // // background: this.setBgSpecific().time_bg_color,
             // padding: 0,
             // zIndex: 0,
-            backgroundColor: '#86B3FF'
           }}
         >
           {/* 进度填充 */}
           <div
             data-targetclassname="specific_example"
-            className={` ${percent_class}
-            ${
+            className={`${percent_class} ${
               percent == 1
                 ? styles.summary_item_left_full
                 : styles.summary_item_left
@@ -322,7 +286,7 @@ export default class GetRowSummary extends Component {
               display: percent == 0 ? 'none' : 'block'
             }}
           ></div>
-          {/* <div
+          <div
             data-targetclassname="specific_example"
             className={`${styles.summary_item_right} ${percent == 0 &&
               styles.summary_item_right_full}`}
@@ -331,9 +295,9 @@ export default class GetRowSummary extends Component {
               height: task_item_height_fold,
               display: percent == 1 ? 'none' : 'block'
             }}
-          ></div> */}
+          ></div>
         </div>
-        {/* <div
+        <div
           data-targetclassname="specific_example"
           onMouseMove={e => e.stopPropagation()}
           style={{
@@ -344,7 +308,7 @@ export default class GetRowSummary extends Component {
             left: left + time_span * ceilWidth - 6,
             top: top
           }}
-        ></div> */}
+        ></div>
         {this.renderDueList()}
       </div>
     )
