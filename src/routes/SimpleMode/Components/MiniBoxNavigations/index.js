@@ -553,7 +553,7 @@ const MiniBoxNavigations = props => {
           <Tooltip
             placement="bottom"
             title="首页"
-            className={`${indexStyles.nav} ${indexStyles.home}`}
+            className={`${indexStyles.nav} ${indexStyles.home} ${globalStyles.normal_icon_mouse_event_bg}`}
             onClick={goHome}
           >
             <i
@@ -567,7 +567,10 @@ const MiniBoxNavigations = props => {
               &#xe66e;
             </i>
           </Tooltip>
-          <div style={{ color: '#fff' }}>
+          <div
+            style={{ color: '#fff' }}
+            className={`${globalStyles.normal_icon_mouse_event}`}
+          >
             <BoardDropdownSelect iconVisible={false} />
           </div>
           <Divider className={indexStyles.divider} type="vertical" />
@@ -587,7 +590,7 @@ const MiniBoxNavigations = props => {
                       currentSelectedWorkbenchBox.code == item.code
                         ? indexStyles.selected
                         : ''
-                    }`}
+                    } ${globalStyles.normal_icon_mouse_event_bg}`}
                     disabled={isDisableds}
                     key={key}
                   >

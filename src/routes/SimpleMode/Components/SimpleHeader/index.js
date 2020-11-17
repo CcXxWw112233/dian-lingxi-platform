@@ -674,10 +674,12 @@ class SimpleHeader extends Component {
               document.getElementById('technologicalLayoutWrapper')
             }
           >
-            <div className={indexStyles.miniNavigation}>
+            <div
+              className={`${indexStyles.miniNavigation} ${globalStyles.normal_icon_mouse_event}`}
+            >
               <i
                 className={`${globalStyles.authTheme}`}
-                style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '32px' }}
+                style={{ fontSize: '32px' }}
               >
                 &#xe69f;
               </i>
@@ -687,12 +689,12 @@ class SimpleHeader extends Component {
 
         <Tooltip title="操作指引">
           <div
-            className={indexStyles.guideButton}
+            className={`${indexStyles.guideButton} ${globalStyles.normal_icon_mouse_event}`}
             onClick={this.openGuideModal}
           >
             <i
               className={`${globalStyles.authTheme}`}
-              style={{ color: 'rgba(255, 255, 255, 1)', fontSize: '26px' }}
+              style={{ fontSize: '26px' }}
             >
               &#xe845;
             </i>

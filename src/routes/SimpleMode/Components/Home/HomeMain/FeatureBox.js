@@ -700,7 +700,7 @@ class FeatureBox extends Component {
         ) : (
           <div
             key={item.id}
-            className={indexStyles.myWorkbenchBox}
+            className={`${indexStyles.myWorkbenchBox} ${indexStyles.myWorkbenchBox_enabled}`}
             onClick={e => this.goWorkbenchBox(item, isDisabled, tipTitle)}
             disabled={isDisabled}
           >

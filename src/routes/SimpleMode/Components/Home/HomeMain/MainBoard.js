@@ -376,7 +376,9 @@ export default class MainBoard extends Component {
             overlay={this.renderBoardSelectedTerm()}
             trigger={['click']}
           >
-            <div className={styles.board_area_top_lf}>
+            <div
+              className={`${styles.board_area_top_lf} ${globalStyles.normal_icon_mouse_event}`}
+            >
               {selected_board_term == '0' || !selected_board_term
                 ? `我参与的${currentNounPlanFilterName(
                     PROJECTS,
@@ -388,10 +390,10 @@ export default class MainBoard extends Component {
                     this.props.currentNounPlan
                   )}`
                 : ''}{' '}
-              <span className={globalStyles.authTheme}>&#xe7ee;</span>
+              <span className={`${globalStyles.authTheme}`}>&#xe7ee;</span>
             </div>
           </Dropdown>
-          <div className={styles.board_area_top_rt}>
+          <div className={`${styles.board_area_top_rt} `}>
             <Checkbox
               checked={
                 (simplemodeCurrentProject.board_id == '0' ||
@@ -399,9 +401,8 @@ export default class MainBoard extends Component {
                 !local_selected_board.board_id
               }
               onChange={this.checkBoxChange}
-              style={{ color: '#fff' }}
             >
-              全选
+              <span className={`${styles.checkbox} `}>全选</span>
             </Checkbox>
           </div>
         </div>
