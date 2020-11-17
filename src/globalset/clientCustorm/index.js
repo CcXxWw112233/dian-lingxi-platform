@@ -26,3 +26,6 @@ export const diffClientRedirect = token => {
 
 // 区分会协宝与聆悉
 export const platformNouns = ENV_ANDROID_APP ? '聆悉会协宝' : '聆悉'
+
+// 点击事件延迟
+export const clickDelay = ENV_ANDROID_APP ? 300 : 0

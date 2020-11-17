@@ -10,7 +10,7 @@ import './object_expand.js'
 import { diffClientInitToken } from './globalset/clientCustorm'
 import Cookies from 'js-cookie'
 
-import FastClick from 'fastclick'
+// import FastClick from 'fastclick'
 //兼容ie10及以下
 Object.setPrototypeOf = require('setprototypeof')
 // var browser=navigator.appName
@@ -48,8 +48,8 @@ const app = dva({
 function shield() {
   return false
 }
-document.addEventListener('touchstart', shield, false) //取消浏览器的所有事件，使得active的样式在手机上正常生效
-FastClick.attach(document.body)
+// document.addEventListener('touchstart', shield, false) //取消浏览器的所有事件，使得active的样式在手机上正常生效
+// FastClick.attach(document.body)
 // 2. Plugins
 // app.use({});
 

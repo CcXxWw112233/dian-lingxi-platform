@@ -18,6 +18,7 @@ import {
 } from '../../../../globalset/js/constant'
 import { ganttIsOutlineView } from './constants'
 import BaseLine from './components/BaseLine'
+import { clickDelay } from '../../../../globalset/clientCustorm'
 
 @connect(mapStateToProps)
 export default class GroupListHeadSet extends Component {
@@ -49,26 +50,28 @@ export default class GroupListHeadSet extends Component {
     }
     const { gantt_board_id = '0' } = this.props
 
-    dispatch({
-      type: 'gantt/updateDatas',
-      payload: {
-        // gantt_board_id: group_view_type_new == '3' ? gantt_board_id : '0',
-        group_view_type: group_view_type_new,
-        list_group: [],
-        selected_hide_term: false
-      }
-    })
-    // if (gantt_board_id != '0') {
-    //     const { simplemodeCurrentProject } = this.props;
-    //     selectBoardToSeeInfo({ board_id: gantt_board_id, board_name: simplemodeCurrentProject.board_name, dispatch, group_view_type: group_view_type_new });
-    // } else {
-    //     selectBoardToSeeInfo({ board_id: '0', dispatch, group_view_type: group_view_type_new })
-    // }
+    setTimeout(() => {
+      dispatch({
+        type: 'gantt/updateDatas',
+        payload: {
+          // gantt_board_id: group_view_type_new == '3' ? gantt_board_id : '0',
+          group_view_type: group_view_type_new,
+          list_group: [],
+          selected_hide_term: false
+        }
+      })
+      // if (gantt_board_id != '0') {
+      //     const { simplemodeCurrentProject } = this.props;
+      //     selectBoardToSeeInfo({ board_id: gantt_board_id, board_name: simplemodeCurrentProject.board_name, dispatch, group_view_type: group_view_type_new });
+      // } else {
+      //     selectBoardToSeeInfo({ board_id: '0', dispatch, group_view_type: group_view_type_new })
+      // }
 
-    dispatch({
-      type: 'gantt/getGanttData',
-      payload: {}
-    })
+      dispatch({
+        type: 'gantt/getGanttData',
+        payload: {}
+      })
+    }, clickDelay)
   }
   onVisibleChange = bool => {
     this.setDropdownVisible(bool)
@@ -81,29 +84,31 @@ export default class GroupListHeadSet extends Component {
   //返回
   backClick = () => {
     const { dispatch, group_view_type } = this.props
-    if (group_view_type == '5') {
-      dispatch({
-        type: 'gantt/updateDatas',
-        payload: {
-          group_view_type: '1',
-          list_group: []
-        }
-      })
-      dispatch({
-        type: 'gantt/getGanttData',
-        payload: {}
-      })
-    } else {
-      dispatch({
-        type: 'gantt/updateDatas',
-        payload: {
-          gantt_board_id: '0',
-          group_view_type: '1',
-          list_group: []
-        }
-      })
-      selectBoardToSeeInfo({ board_id: '0', dispatch })
-    }
+    setTimeout(() => {
+      if (group_view_type == '5') {
+        dispatch({
+          type: 'gantt/updateDatas',
+          payload: {
+            group_view_type: '1',
+            list_group: []
+          }
+        })
+        dispatch({
+          type: 'gantt/getGanttData',
+          payload: {}
+        })
+      } else {
+        dispatch({
+          type: 'gantt/updateDatas',
+          payload: {
+            gantt_board_id: '0',
+            group_view_type: '1',
+            list_group: []
+          }
+        })
+        selectBoardToSeeInfo({ board_id: '0', dispatch })
+      }
+    }, clickDelay)
   }
   // 添加项目
   setAddProjectModalVisible = data => {
