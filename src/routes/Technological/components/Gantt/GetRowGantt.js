@@ -611,11 +611,12 @@ export default class GetRowGantt extends Component {
   }
 
   //点击某个实例,或者创建任务
-  setSpecilTaskExample = ({ id, board_id, top, flow_id }, e) => {
+  setSpecilTaskExample = ({ id, board_id, top, flow_id, calback }, e) => {
     const { dispatch, gantt_board_id } = this.props
     if (e) {
       e.stopPropagation()
     }
+    // 表示处理流程
     if (flow_id) {
       dispatch({
         type: 'publicProcessDetailModal/getProcessInfo',
@@ -632,6 +633,7 @@ export default class GetRowGantt extends Component {
             })
             this.props.setProcessDetailModalVisible &&
               this.props.setProcessDetailModalVisible()
+            if (calback && typeof calback == 'function') calback()
           }
         }
       })

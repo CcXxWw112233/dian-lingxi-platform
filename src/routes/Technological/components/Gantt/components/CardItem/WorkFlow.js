@@ -150,9 +150,22 @@ export default class WorkFlowItem extends Component {
     const {
       itemValue: { id, status }
     } = this.props
-    if (this.state.is_moved || this.props.process_detail_modal_visible) return
+    // 添加私有状态控制多次触发点击
+    if (this.state.is_moved || this.state.hand_lock) return
+    this.setState({
+      hand_lock: true
+    })
     this.props.setSpecilTaskExample &&
-      this.props.setSpecilTaskExample({ flow_id: id })
+      this.props.setSpecilTaskExample({
+        flow_id: id,
+        calback: () => {
+          setTimeout(() => {
+            this.setState({
+              hand_lock: false
+            })
+          }, 200)
+        }
+      })
   }
 
   // 不在项目分组内，左右移动
