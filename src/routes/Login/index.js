@@ -179,7 +179,7 @@ class Login extends React.Component {
                       color: '#D9D9D9'
                     }}
                   >
-                    使用微信二维码登陆
+                    使用微信二维码登录
                   </div>
                   <div
                     style={{
@@ -318,7 +318,7 @@ class Login extends React.Component {
                   style={{
                     margin: '8px auto 100px',
                     width: '266px',
-                    height: '20px',
+                    // height: '20px',
                     fontSize: '14px',
                     fontFamily: 'PingFangSC-Regular',
                     fontWeight: 400,
@@ -340,6 +340,18 @@ class Login extends React.Component {
                     >
                       注册账户并绑定微信
                     </span>
+                  </div>
+                  <div
+                    style={{
+                      marginTop: 16,
+                      clear: 'both',
+                      height: 30,
+                      lineHeight: '30px',
+                      cursor: 'pointer'
+                    }}
+                    onClick={() => this.setLoginType()}
+                  >
+                    返回普通登录
                   </div>
                 </div>
               </div>
