@@ -121,7 +121,7 @@ export default class BoardContent extends React.Component {
   }
 
   setActiveImgToDraw = val => {
-    const { room = {} } = this.props
+    const { room = {}, onSelectImg } = this.props
     // console.log(val)
     this.setState({
       activeId: val.file_id
@@ -129,6 +129,7 @@ export default class BoardContent extends React.Component {
     if (room.status !== '1') {
       return message.warn('房间已过期，不能进行操作')
     }
+    onSelectImg && onSelectImg(val)
     Action.addImageFromBoard(val.thumbnail_url)
   }
 
