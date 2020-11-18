@@ -82,7 +82,8 @@ export default class ProcessDetailModal extends Component {
       updateParentProcessTempleteList,
       handleProcessDetailChange,
       request_flows_params = {},
-      getContainer
+      getContainer,
+      notburningProcessFile
     } = this.props
     return (
       <div>
@@ -97,6 +98,7 @@ export default class ProcessDetailModal extends Component {
               onCancel={this.onCancel}
               updateParentProcessTempleteList={updateParentProcessTempleteList}
               handleProcessDetailChange={handleProcessDetailChange}
+              notburningProcessFile={notburningProcessFile}
             />
           }
           headerContent={
@@ -124,7 +126,8 @@ ProcessDetailModal.defaultProps = {
   updateParentProcessTempleteList: function() {}, // 内部数据修改后用来更新外部数据的回调
   request_flows_params: {}, // 接收的外部参数
   setProcessDetailModalVisibile: function() {}, // 关闭弹窗的回调
-  handleProcessDetailChange: function() {} // 更新外部数据
+  handleProcessDetailChange: function() {}, // 更新外部数据
+  notburningProcessFile: false // 表示不销毁流程文件
 }
 
 //  只关联public中弹窗内的数据

@@ -1969,7 +1969,11 @@ export default class MainContent extends Component {
             </Tooltip>
           </div>
         )} */}
-        {processPageFlagStep == '4' && <ProcessFile />}
+        {processPageFlagStep == '4' && (
+          <ProcessFile
+            notburningProcessFile={this.props.notburningProcessFile}
+          />
+        )}
       </div>
     )
   }

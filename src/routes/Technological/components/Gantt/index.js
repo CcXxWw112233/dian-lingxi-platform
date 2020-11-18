@@ -1092,6 +1092,7 @@ class Gantt extends Component {
                   this.setProcessDetailModalVisible
                 }
                 handleProcessDetailChange={this.handleProcessDetailChange}
+                notburningProcessFile={true}
               />
             )}
         </Suspense>
