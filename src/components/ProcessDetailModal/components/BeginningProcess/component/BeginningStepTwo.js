@@ -216,6 +216,10 @@ export default class BeginningStepTwo extends Component {
             rejectMessage: '',
             isPassNodesIng: false
           })
+          this.props.handleProcessDetailChange &&
+            this.props.handleProcessDetailChange({
+              flow_instance_id
+            })
           this.props.dispatch({
             type: 'publicProcessDetailModal/getProcessListByType',
             payload: {
@@ -298,6 +302,10 @@ export default class BeginningStepTwo extends Component {
             rejectMessage: '',
             isRejectNodesIng: false
           })
+          this.props.handleProcessDetailChange &&
+            this.props.handleProcessDetailChange({
+              flow_instance_id
+            })
           this.props.dispatch({
             type: 'publicProcessDetailModal/getProcessListByType',
             payload: {

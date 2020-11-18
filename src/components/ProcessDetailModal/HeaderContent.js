@@ -70,6 +70,7 @@ export default class HeaderContent extends Component {
             whetherUpdateWorkbenchPorcessListData={
               this.props.whetherUpdateWorkbenchPorcessListData
             }
+            handleProcessDetailChange={this.props.handleProcessDetailChange}
           />
         </div>
       </div>
