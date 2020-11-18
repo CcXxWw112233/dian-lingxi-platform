@@ -60,7 +60,10 @@ class Action {
       // 人员添加
       'whiteboard:room:user:add': this.userAdd,
       // 人员删除
-      'whiteboard:room:user:del': this.userRemove
+      'whiteboard:room:user:del': this.userRemove,
+      // 删除了
+      'whiteboard:room:page:del': this.removePageFromWS,
+      'whiteboard:room:page:add': this.PageAddFromWS
     }
     // 画一个图
     WEvent.on('object:remove', obj => {
@@ -150,6 +153,23 @@ class Action {
         this.WhiteBoard.remove(obj)
       })
     }
+  }
+
+  /**
+   * 删除页数
+   * @param {*} val 参数
+   */
+  removePageFromWS = val => {
+    if (this.checkIsOwn(val?.detail?.creator)) return
+    let page = val.detail.content
+    WEvent.dispatchDEvent('page_remove', page)
+  }
+
+  PageAddFromWS = val => {
+    if (this.checkIsOwn(val?.detail?.creator)) return
+    let content = val.detail.content || {}
+    let page = content.pageNumber
+    WEvent.dispatchDEvent('page_add', page)
   }
 
   /**

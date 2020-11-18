@@ -3,35 +3,7 @@ import styles from './index.less'
 import globalStyles from '../../../../../../../globalset/css/globalClassName.less'
 
 export default class WhiteBoardPages extends React.Component {
-  state = {
-    pages: [
-      {
-        url:
-          'http://newdi-test-public.oss-cn-beijing.aliyuncs.com/thumbnail/2020-11-18/f6e7b495d6b540839de3ce1534723dbd.jpg',
-        index: 1
-      },
-      {
-        url:
-          'http://newdi-test-public.oss-cn-beijing.aliyuncs.com/thumbnail/2020-11-18/f6e7b495d6b540839de3ce1534723dbd.jpg',
-        index: 2
-      },
-      {
-        url:
-          'http://newdi-test-public.oss-cn-beijing.aliyuncs.com/thumbnail/2020-11-18/f6e7b495d6b540839de3ce1534723dbd.jpg',
-        index: 3
-      },
-      {
-        url:
-          'http://newdi-test-public.oss-cn-beijing.aliyuncs.com/thumbnail/2020-11-18/f6e7b495d6b540839de3ce1534723dbd.jpg',
-        index: 4
-      },
-      {
-        url:
-          'http://newdi-test-public.oss-cn-beijing.aliyuncs.com/thumbnail/2020-11-18/f6e7b495d6b540839de3ce1534723dbd.jpg',
-        index: 5
-      }
-    ]
-  }
+  state = {}
 
   /**
    * 更新第几页
@@ -61,7 +33,7 @@ export default class WhiteBoardPages extends React.Component {
             return (
               <div
                 className={`${styles.page_item} ${
-                  this.props.pageNumber === item.index ? styles.active : ''
+                  +this.props.pageNumber === +item.index ? styles.active : ''
                 }`}
                 key={item.index}
                 onClick={() => this.setActivePage(item)}
