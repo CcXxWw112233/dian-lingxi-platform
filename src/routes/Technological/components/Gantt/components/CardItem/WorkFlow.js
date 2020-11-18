@@ -208,7 +208,9 @@ export default class WorkFlowItem extends Component {
           dispatch({
             type: 'gantt/updateOutLineTree',
             payload: {
-              datas: [{ id, ...updateData, status }]
+              datas: [
+                { id, ...updateData, status, nodes: res.data.nodes || [] }
+              ]
             }
           })
         } else {
