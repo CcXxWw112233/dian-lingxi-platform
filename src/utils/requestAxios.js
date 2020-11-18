@@ -119,12 +119,13 @@ export default function request(options = {}, elseSet = {}) {
  * @param {url} url 上传的地址
  * @param {formate} data 参数
  */
-export const uploadFileForAxios = (url, data) => {
+export const uploadFileForAxios = (url, data, headers = {}) => {
   const Authorization = Cookies.get('Authorization')
   let a = axios.post(url, data, {
     headers: {
       Authorization,
-      ...setRequestHeaderBaseInfo({ data, headers: {}, params: {} })
+      ...setRequestHeaderBaseInfo({ data, headers: {}, params: {} }),
+      ...headers
     }
   })
   return a

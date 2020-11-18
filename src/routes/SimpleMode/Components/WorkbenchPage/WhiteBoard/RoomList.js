@@ -9,7 +9,6 @@ export default class RoomList extends React.PureComponent {
   constructor(props) {
     super(props)
     this.state = {
-      list: [],
       addRoomModal: false,
       roomName: '',
       timeMsg: {
@@ -23,7 +22,6 @@ export default class RoomList extends React.PureComponent {
     this.timeTimer = null
   }
   componentDidMount() {
-    this.fetchList()
     this.updateTimes()
     this.setTime()
   }
@@ -53,16 +51,6 @@ export default class RoomList extends React.PureComponent {
   componentWillUnmount() {
     clearInterval(this.timeTimer)
   }
-  fetchList = () => {
-    this.setTime()
-    // 获取房间列表
-    Action.fetchList({ _organization_id: this.props.org_id }).then(res => {
-      if (res)
-        this.setState({
-          list: res.data
-        })
-    })
-  }
   addRoom = () => {
     let param = {
       addRoomModal: true
@@ -74,6 +62,7 @@ export default class RoomList extends React.PureComponent {
   }
 
   toAddRoom = () => {
+    const { onUpdate } = this.props
     if (!this.state.roomName.trim()) {
       return message.warn('房间名称不能为空')
     }
@@ -84,9 +73,10 @@ export default class RoomList extends React.PureComponent {
       name: this.state.roomName.trim(),
       _organization_id: this.state.org
     }).then(res => {
+      onUpdate && onUpdate()
       if (res) {
         this.setState({
-          list: this.state.list.concat([{ ...res.data, status: 1 }]),
+          // list: this.state.list.concat([{ ...res.data, status: 1 }]),
           addRoomModal: false,
           roomName: ''
         })
@@ -116,6 +106,11 @@ export default class RoomList extends React.PureComponent {
     })
   }
 
+  updateList = () => {
+    const { onUpdate } = this.props
+    onUpdate && onUpdate()
+  }
+
   translateOrgName = orgid => {
     if (orgid === '0') {
       return '全组织'
@@ -126,13 +121,14 @@ export default class RoomList extends React.PureComponent {
     } else return '未知组织'
   }
   render() {
-    const { list, timeMsg } = this.state
+    const { timeMsg } = this.state
+    const { list } = this.props
     return (
       <div className={styles.room_list}>
         <div
           className={`${globalStyles.authTheme} ${styles.reLoadBtn}`}
           title="更新房间列表"
-          onClick={this.fetchList}
+          onClick={this.updateList}
         >
           &#xe6c3;
         </div>
@@ -184,11 +180,17 @@ export default class RoomList extends React.PureComponent {
                     className={styles.room_list_item_detail}
                     onClick={() => this.handleRoom(item)}
                   >
-                    <div
-                      className={`${globalStyles.authTheme} ${styles.room_icon}`}
-                    >
-                      &#xe7fb;
-                    </div>
+                    {item.thumbnail_url ? (
+                      <div>
+                        <img src={item.thumbnail_url} alt="" width="100%" />
+                      </div>
+                    ) : (
+                      <div
+                        className={`${globalStyles.authTheme} ${styles.room_icon}`}
+                      >
+                        &#xe7fb;
+                      </div>
+                    )}
                     <div className={styles.room_msg}>
                       <span className={styles.room_msg_title}>
                         {item.name}{' '}
@@ -202,6 +204,7 @@ export default class RoomList extends React.PureComponent {
                         {(item.users || []).map(user => {
                           return (
                             <Avatar
+                              key={user.user_id || user.id}
                               src={user.avatar}
                               size={18}
                               style={{ marginRight: 5 }}

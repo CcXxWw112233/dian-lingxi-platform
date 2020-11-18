@@ -53,7 +53,7 @@ export async function getBoardFileList(params) {
     url: `${REQUEST_DOMAIN_FILE}/file/list`,
     method: 'GET',
     headers: params.folder_id
-      ? createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.folder_id)
+      ? { ...createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.folder_id) }
       : {},
     params
   })
@@ -158,6 +158,15 @@ export async function fileUpload(data) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/file/upload`,
     method: 'PUT',
+    data
+  })
+}
+
+// 文件上传POST
+export async function fileToUpload(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/file/upload`,
+    method: 'POST',
     data
   })
 }
