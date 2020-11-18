@@ -13,7 +13,7 @@ import {
   ceil_height_fold
 } from '../../constants'
 import { selectBoardToSeeInfo } from '../../../../../../utils/businessFunction'
-import { transformTimestamp } from '../../../../../../utils/util'
+import { isSamDay, transformTimestamp } from '../../../../../../utils/util'
 
 @connect(mapStateToProps)
 export default class GetRowSummary extends Component {
@@ -155,6 +155,53 @@ export default class GetRowSummary extends Component {
     left_map = left_map.filter(item => item.list.length > 0)
     return left_map
   }
+
+  hanldListGroupMap1 = () => {
+    const {
+      list_data = [],
+      ceilWidth,
+      itemValue: {
+        start_time: board_start_time,
+        end_time: board_end_time,
+        left: board_left,
+        width
+      }
+    } = this.props
+    const interval_timer = this.getIntervalTimer()
+    let left_arr = Object.keys(interval_timer || {}) || []
+    // let left_arr = list_data.map(item =>
+    //   String(new Date(item.end_time).getMonth() + 1).length <= 1
+    //     ? '0' + (new Date(item.end_time).getMonth() + 1)
+    //     : String(new Date(item.end_time).getMonth() + 1)
+    // )
+    // console.log(left_arr, 'left_arr111')
+    // left_arr = Array.from(new Set(left_arr))
+    let left_map = left_arr.map((item, index) => {
+      let list = []
+      let left
+      for (let val of list_data) {
+        if (new Date(val.end_time).getMonth() + 1 == item) {
+          list.push(val)
+        }
+      }
+      left = interval_timer.hasOwnProperty(item)
+        ? // index == 0
+          //   ? board_left
+          //   : index == left_arr.length - 1
+          //   ? board_left + width - 10
+          //   :
+          interval_timer[item].left + 46.5 - 10
+        : null
+      return {
+        date: item,
+        list,
+        left
+      }
+    })
+    left_map = left_map.filter(item => item.list.length > 0)
+    return left_map
+  }
+
   // 某个点存在逾期的任务
   pointHasDueCard = ({ list = [] }) => {
     let has_due = false
@@ -172,15 +219,84 @@ export default class GetRowSummary extends Component {
     return has_due
   }
 
+  /**
+   * 获取当前项目跨度时间区间
+   *  {
+   *    10: { start_time: '', due_time: '', left: '' }
+   *  }
+   *
+   */
+  getIntervalTimer = () => {
+    const {
+      date_arr_one_level = [],
+      itemValue: { start_time, end_time, width },
+      ceilWidth
+    } = this.props
+    if (!start_time || !end_time) return
+    // 获取两个日期之间的月份
+    const month = this.getDiffDate(start_time, end_time)
+    let time_obj = {}
+    month.map(item => {
+      let Y = item.split('-')[0]
+      let M = item.split('-')[1]
+      const gold_item =
+        date_arr_one_level.find(item => item.year == Y && item.month == M) || {}
+      const gold_item_index = date_arr_one_level.findIndex(
+        item => item.year == Y && item.month == M
+      )
+      time_obj[M] = {
+        start_time: gold_item.timestamp,
+        end_time: gold_item.timestampEnd
+      }
+      if (gold_item && Object.keys(gold_item).length) {
+        // 该月之前所有日期的长度总和
+        const date_length = date_arr_one_level
+          .slice(0, gold_item_index)
+          .map(item => item.last_date)
+          .reduce((total, num) => total + num)
+        // 获取是几号开始 (如果说长度在一个月之内 那么不需要计算从几号开始)
+        const date_no =
+          Object.keys(month).length == 1 || new Date(start_time).getDate() != 1
+            ? 0
+            : new Date(start_time).getDate()
+        const origin_left = (date_length + date_no - 1) * ceilWidth
+        time_obj[M]['left'] = origin_left
+      }
+    })
+    return time_obj
+  }
+
+  // 获取两个日期之间的月份 ["2020-10", "2020-11", "2020-12", "2021-01"]
+  getDiffDate = (minDate, maxDate) => {
+    let startDate = new Date(minDate)
+    let endDate = new Date(maxDate)
+    let months = []
+    //把时间的天数都设置成当前月第一天
+    startDate.setDate(1)
+    endDate.setDate(1)
+    // new Date(yyyy-MM-dd) 不知为何有时候小时是 08 有时候是00
+    endDate.setHours(0)
+    startDate.setHours(0)
+    while (endDate.getTime() >= startDate.getTime()) {
+      let year = startDate.getFullYear()
+      let month = startDate.getMonth() + 1
+      //加一个月
+      startDate.setMonth(month)
+      if (month.toString().length == 1) {
+        month = '0' + month
+      }
+      months.push(year + '-' + month)
+    }
+    return months
+  }
+
   // 渲染已过期的
   renderDueList = () => {
     const { list_data = [], ceilWidth, list_id } = this.props
     const {
       itemValue: { top }
     } = this.props
-
-    const left_map = this.hanldListGroupMap()
-    console.log(left_map, 'left_map')
+    const left_map = this.hanldListGroupMap1()
     // if (!this.setBgSpecific().is_due) {
     //     return <React.Fragment></React.Fragment>
     // }
@@ -354,12 +470,18 @@ export default class GetRowSummary extends Component {
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({
   gantt: {
-    datas: { group_list_area_section_height, ceilWidth, gantt_board_id }
+    datas: {
+      group_list_area_section_height,
+      ceilWidth,
+      gantt_board_id,
+      date_arr_one_level = []
+    }
   }
 }) {
   return {
     group_list_area_section_height,
     ceilWidth,
-    gantt_board_id
+    gantt_board_id,
+    date_arr_one_level
   }
 }
