@@ -6,14 +6,19 @@ import {
   EditFeature,
   fetchList,
   InvitationUser,
-  KickOutUser
+  KickOutUser,
+  EditWhiteBoardRoom,
+  AddPageForRoom,
+  RemovePageForRoom
 } from '../../../../../services/whiteBoard'
+import { fabric } from 'fabric'
 import { isApiResponseOk } from '../../../../../utils/handleResponseData'
 import WEvent from 'whiteboard-lingxi/lib/utils/whiteBoardEvent'
 import {
   updateData,
   TransformRecords,
-  TranslateRecord
+  TranslateRecord,
+  reSize
 } from 'whiteboard-lingxi/lib/utils'
 import { WhiteBoardMain } from 'whiteboard-lingxi'
 import WS from './websocket_wb'
@@ -21,6 +26,7 @@ import Cookies from 'js-cookie'
 import { Avatar, message, notification } from 'antd'
 import { uploadFileForAxios } from '../../../../../utils/requestAxios'
 import { REQUEST_WHITEBOARD } from '../../../../../globalset/js/constant'
+import { dataURLtoFile } from '../../../../../utils/util'
 class Action {
   room_id
   whiteboard_ws
@@ -36,6 +42,8 @@ class Action {
   isDisconnect = false
   reConnectWS = null
   isLogOut = false
+  hasUpdate = false // 是否有数据更新，用来判定是不是要更新缩略图
+  maxImgW = 500 // 图片最大宽度
   constructor() {
     WEvent.on('drawend:feature', ({ feature, type }) => {
       feature.set('creator', this.user)
@@ -64,6 +72,7 @@ class Action {
         }
       }
       if (record_id) RemoveFeature({ record_id: record_id })
+      this.hasUpdate = true
     })
     // 有图片上传
     WEvent.on('drawend:img', ({ img, type, file }) => {
@@ -134,6 +143,46 @@ class Action {
         }
       }
     })
+  }
+  clear = () => {
+    if (this.WhiteBoard) {
+      this.WhiteBoard.forEachObject(obj => {
+        this.WhiteBoard.remove(obj)
+      })
+    }
+  }
+
+  /**
+   * 从右侧项目列表中添加图片
+   * @param {} url 图片地址
+   */
+  addImageFromBoard = url => {
+    let activeObject = this.WhiteBoard.getActiveObject()
+    if (
+      activeObject &&
+      activeObject.get('add_from') === 'board' &&
+      activeObject.type === 'image'
+    ) {
+      let id = activeObject.get('record_id')
+      if (id) RemoveFeature({ record_id: id })
+      this.WhiteBoard.remove(activeObject)
+    }
+    this.createImage(url).then(img => {
+      let key = 'thumbnail/'
+      let path = url.split(key)[1]
+      img.set('send_src', key + path)
+      img.set('add_from', 'board')
+      img.selectable = false
+      this.addJSON(img, 'image', { src: key + path })
+      this.WhiteBoard.add(img).setActiveObject(img)
+      img.on('deselected', () => {
+        img.set('add_from', '')
+      })
+    })
+  }
+
+  resize = () => {
+    reSize(this.WhiteBoard, WhiteBoardMain.id)
   }
 
   //重连机制
@@ -240,6 +289,7 @@ class Action {
       rc.selectable = false
       rc.disabled = true
       rc.container_size = record.containerSize || ''
+      this.hasUpdate = true
       WhiteBoardMain.AddObject(rc)
     }
   }
@@ -251,6 +301,7 @@ class Action {
   featureRemove = content => {
     let con = content.detail.content
     let r_id = con
+    this.hasUpdate = true
     if (!this.checkIsOwn(content?.detail?.creator))
       this.WhiteBoard.forEachObject(item => {
         if (item.get('record_id') == r_id) {
@@ -287,32 +338,44 @@ class Action {
    * @param {*} page_number 白板页数
    * @param {*} room_id 房间id
    */
-  init = (wb, page_number, room_id) => {
-    fetchList({ page_number, room_id }).then(res => {
-      this.WhiteBoard = wb
-      // 更新禁用状态
-      let data = (res.data.records || []).map(item => {
-        if (item.create_by != this.user.id) {
-          item.detail.disabled = 'true'
-        } else if (item.detail) {
-          item.detail.disabled = 'false'
-        }
-        return item
-      })
-      let arr = TransformRecords(data)
-      // 将禁用的数据设置为不可选
-      arr = arr.map(item => {
-        if (item.disabled) {
-          item.selectable = false
-        }
-        if (item.type === 'image') {
-          item.crossOrigin = 'anonymous'
-        }
-        return item
-      })
-      updateData(wb, arr)
-    })
+  init = async (wb, page_number, room_id) => {
     this.isLogOut = false
+    this.WhiteBoard = wb
+    return await this.getRoomMsg(room_id, page_number)
+  }
+
+  //根据页数获取数据
+  getRoomMsg = (room_id, page_number) => {
+    return new Promise((resolve, reject) => {
+      fetchList({ page_number, room_id })
+        .then(res => {
+          resolve(res)
+          // 更新禁用状态
+          let data = (res.data.records || []).map(item => {
+            if (item.create_by != this.user.id) {
+              item.detail.disabled = 'true'
+            } else if (item.detail) {
+              item.detail.disabled = 'false'
+            }
+            return item
+          })
+          let arr = TransformRecords(data)
+          // 将禁用的数据设置为不可选
+          arr = arr.map(item => {
+            if (item.disabled) {
+              item.selectable = false
+            }
+            if (item.type === 'image') {
+              item.crossOrigin = 'anonymous'
+            }
+            return item
+          })
+          updateData(this.WhiteBoard, arr)
+        })
+        .catch(err => {
+          reject(err)
+        })
+    })
   }
   /**
    * 保存修改
@@ -334,12 +397,14 @@ class Action {
         json.src = obj.get('send_src')
       }
       delete json.filters
-      let k = 'whiteboard/'
+      let k =
+        json.src.indexOf('whiteboard/') !== -1 ? 'whiteboard/' : 'thumbnail/'
       json.src = k + json.src.split(k)[1]
     }
     EditFeature(json).then(res => {
       obj.set('record_id', res.data)
       obj.set('creator', this.user)
+      this.hasUpdate = true
     })
   }
 
@@ -359,6 +424,9 @@ class Action {
     }
     addFeature({ ...json, ...addParam }).then(res => {
       val.set('record_id', res.data)
+      val.selectable = true
+      this.hasUpdate = true
+      val.canvas.requestRenderAll()
     })
   }
   /**
@@ -372,7 +440,7 @@ class Action {
     obj.path = obj.path ? JSON.stringify(obj.path) : null
     obj.postil_type = 1
     obj.room_id = this.room_id
-    obj.page_number = 1
+    obj.page_number = this.page_number
     if (type) obj.drawType = type
     return obj
   }
@@ -448,6 +516,87 @@ class Action {
     }
     let url = `${REQUEST_WHITEBOARD}/whiteboard/room/file`
     return uploadFileForAxios(url, formdata)
+  }
+
+  /**
+   * 添加一页
+   * @param {*} data
+   */
+  addPage = async data => {
+    const res = await AddPageForRoom(data)
+    if (isApiResponseOk(res)) {
+      return res
+    }
+    return Promise.reject()
+  }
+
+  /**
+   * 删除一页
+   * @param {} data roomid
+   * @param page_number
+   */
+  removePage = async data => {
+    const res = await RemovePageForRoom(data)
+    if (isApiResponseOk(res)) {
+      return res
+    }
+    return Promise.reject()
+  }
+
+  /**
+   * 保存白板房间的缩略图
+   */
+  saveWhiteBoardPic = (room = {}) => {
+    if (!this.hasUpdate) return Promise.reject()
+    return new Promise((resolve, reject) => {
+      let dataUrl = this.WhiteBoard.toDataURL()
+      let file = dataURLtoFile(dataUrl, 'wb' + new Date().getTime() + '.png')
+      this.hasUpdate = false
+      // 先上传，再更新
+      this.uploadFile({ file }).then(res => {
+        let data = res.data
+        EditWhiteBoardRoom({
+          id: room.id,
+          name: room.name,
+          thumbnail_url: data.data.path
+        })
+          .then(resp => {
+            resolve(data)
+          })
+          .catch(err => reject(err))
+      })
+    })
+  }
+
+  /**
+   * 创建一个本地图片
+   */
+  createImage = url => {
+    return new Promise(resolve => {
+      fabric.Image.fromURL(
+        url,
+        img => {
+          let center = WhiteBoardMain.getDomCenter()
+          let radio = 1
+          if ((img.width || 0) > this.maxImgW) {
+            radio = this.maxImgW / (img.width || 0)
+          }
+          let w = (img.width || 0) * radio
+          let h = (img.height || 0) * radio
+          img.set({
+            left: center.x - w / 2,
+            top: center.y - h / 2,
+            width: w,
+            height: h,
+            scaleX: radio,
+            scaleY: radio,
+            crossOrigin: 'anonymous'
+          })
+          resolve(img)
+        },
+        { crossOrigin: 'anonymous' }
+      )
+    })
   }
 }
 
