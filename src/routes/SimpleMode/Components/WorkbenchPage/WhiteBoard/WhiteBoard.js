@@ -54,6 +54,12 @@ export default class WhiteBoardRoom extends React.Component {
         content: '您已被管理员移出房间,如有疑问,请联系管理员'
       })
     })
+    WEvent.on('page_remove', page_number => {
+      this.removePage(page_number, 'ws')
+    })
+    WEvent.on('page_add', page_number => {
+      this.addPageFromWS(page_number)
+    })
   }
   WB_lx = ''
   componentDidMount() {
@@ -94,9 +100,10 @@ export default class WhiteBoardRoom extends React.Component {
       // 创建图层
       let arr = this.createPages(data.pages || [])
       this.setState({
-        page_number: data.page_number,
+        page_number: +data.page_number,
         pages: arr
       })
+      Action.page_number = +data.page_number
     }
     // 获取组织成员，去除自己的数据
     getCurrentOrgAccessibleAllMembers({
@@ -270,30 +277,34 @@ export default class WhiteBoardRoom extends React.Component {
   // 更新页码
   changePage = async val => {
     this.setState({
-      page_number: val.index
+      page_number: +val.index
     })
-    Action.page_number = val.index
+    Action.page_number = +val.index
     Action.clear()
     this.toogleSpin(true)
     await Action.getRoomMsg(this.props.room.id, val.index)
     this.toogleSpin(false)
   }
   // 删除页码
-  removePage = async index => {
+  removePage = async (index, from = 'btn') => {
     // console.log(val)
     if (this.state.pages.length === 1) {
       return message.warn('最后一页无法删除')
     }
+    let arr = Array.from(this.state.pages)
+    arr = arr.filter(item => +item.index !== +index)
     if (index === this.state.page_number) {
       Action.clear()
+      await this.changePage(arr[arr.length - 1])
     }
-    let arr = Array.from(this.state.pages)
-    arr = arr.filter(item => item.index !== index)
     this.setState({
       pages: arr
     })
-    await Action.removePage({ page_number: index, room_id: this.props.room.id })
-    await this.changePage(arr[arr.length - 1])
+    if (from === 'btn')
+      await Action.removePage({
+        page_number: index,
+        room_id: this.props.room.id
+      })
   }
   toogleSpin = flag => {
     const { dispatch } = this.props
@@ -305,11 +316,19 @@ export default class WhiteBoardRoom extends React.Component {
     })
   }
 
+  //通过ws添加的
+  addPageFromWS = index => {
+    let arr = Array.from(this.state.pages).sort((a, b) => a.index - b.index)
+    arr.push({ url: '', index: index })
+    this.setState({
+      pages: arr
+    })
+  }
   // 添加一页
   onPageAdd = async () => {
     let arr = Array.from(this.state.pages).sort((a, b) => a.index - b.index)
     let index = arr[arr.length - 1]?.index || 1
-    let page_number = index + 1
+    let page_number = +index + 1
     arr.push({ url: '', index: page_number })
     this.setState({
       pages: arr,

@@ -63,6 +63,7 @@ export default class WhiteBoardRooms extends React.Component {
       room: {}
     })
     Action.room_id = ''
+    this.fetchList()
   }
 
   fetchList = () => {
