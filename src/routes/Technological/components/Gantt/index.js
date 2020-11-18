@@ -23,6 +23,8 @@ import {
   NOT_HAS_PERMISION_COMFIRN,
   PROJECT_TEAM_CARD_CREATE
 } from '../../../../globalset/js/constant'
+import { getProcessInfo } from '../../../../services/technological/workFlow'
+import { isApiResponseOk } from '../../../../utils/handleResponseData'
 
 const ProcessDetailModal = lazy(() => import('@/components/ProcessDetailModal'))
 
@@ -946,10 +948,17 @@ class Gantt extends Component {
     })
   }
 
-  // 修改弹窗后更新回调
+  /**
+   * 修改流程弹窗后更新回调
+   * @param {String} flow_instance_id 流程实例ID
+   * @param {Boolean} parentStatus 表示是否修改父状态
+   * @param {String} name 需要修改的内容
+   * @param {any} value 需要修改的内容
+   * @param {String} type 需要修改的类型
+   * 因为节点的状态 无法捕捉到 可能是自动流转 所以需要调用接口完成
+   */
   handleProcessDetailChange = ({
     flow_instance_id,
-    flow_node_instance_id,
     parentStatus,
     name,
     value,
@@ -968,12 +977,12 @@ class Gantt extends Component {
     const gold_item_index_ = outline_tree_round_.findIndex(
       item => item.id == flow_instance_id
     )
+
     if (
       !!(gold_item && Object.keys(gold_item).length) &&
       !!(gold_item_ && Object.keys(gold_item_).length)
     ) {
       if (parentStatus) {
-        // 表示更新父的状态内容
         if (type == 'deleteProcess') {
           outline_tree_ = outline_tree_.filter(
             item => item.id != flow_instance_id
@@ -985,15 +994,40 @@ class Gantt extends Component {
           outline_tree_[gold_item_index][name] = value
           outline_tree_round_[gold_item_index_][name] = value
         }
+        this.props.dispatch({
+          type: 'gantt/updateDatas',
+          payload: {
+            outline_tree: outline_tree_,
+            outline_tree_round: outline_tree_round_
+          }
+        })
+      } else {
+        getProcessInfo({ id: flow_instance_id }).then(res => {
+          if (isApiResponseOk(res)) {
+            let new_nodes = res.data.nodes
+            let new_nodes_ = res.data.nodes
+            outline_tree_[gold_item_index] = {
+              ...gold_item_,
+              ...res.data,
+              nodes: new_nodes
+            }
+            outline_tree_round_[gold_item_index_] = {
+              ...gold_item_,
+              ...res.data,
+              nodes: new_nodes_
+            }
+            this.props.dispatch({
+              type: 'gantt/updateDatas',
+              payload: {
+                outline_tree: outline_tree_,
+                outline_tree_round: outline_tree_round_
+              }
+            })
+            return
+          }
+        })
       }
     }
-    this.props.dispatch({
-      type: 'gantt/updateDatas',
-      payload: {
-        outline_tree: outline_tree_,
-        outline_tree_round: outline_tree_round_
-      }
-    })
   }
 
   render() {

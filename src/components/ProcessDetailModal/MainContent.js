@@ -1336,6 +1336,7 @@ export default class MainContent extends Component {
             request_flows_params={this.props.request_flows_params}
             itemKey={key}
             itemValue={value}
+            handleProcessDetailChange={this.props.handleProcessDetailChange}
           />
         )
         break

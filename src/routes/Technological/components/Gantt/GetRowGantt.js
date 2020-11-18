@@ -1060,8 +1060,10 @@ export default class GetRowGantt extends Component {
                 is_expand,
                 parent_card_id,
                 status,
-                name
+                name,
+                nodes = []
               } = value
+              const nodes_status = nodes.findIndex(item => item.status == '1')
               const juge_expand =
                 tree_type == '0' || tree_type == '3'
                   ? parent_expand
@@ -1124,7 +1126,7 @@ export default class GetRowGantt extends Component {
                       />
                     )}
                     <WorkFlow
-                      key={`${id}_${start_time}_${end_time}_${left}_${top}_${status}_${name}`}
+                      key={`${id}_${start_time}_${end_time}_${left}_${top}_${status}_${name}_${nodes_status}`}
                       itemValue={value}
                       setSpecilTaskExample={this.setSpecilTaskExample}
                       ganttPanelDashedDrag={this.state.drag_creating}

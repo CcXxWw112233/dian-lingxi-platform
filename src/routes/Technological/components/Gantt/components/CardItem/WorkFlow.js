@@ -150,7 +150,7 @@ export default class WorkFlowItem extends Component {
     const {
       itemValue: { id, status }
     } = this.props
-    if (this.state.is_moved) return
+    if (this.state.is_moved || this.props.process_detail_modal_visible) return
     this.props.setSpecilTaskExample &&
       this.props.setSpecilTaskExample({ flow_id: id })
   }
@@ -273,9 +273,22 @@ export default class WorkFlowItem extends Component {
     return obj[status]
   }
 
+  // 渲染节点步骤
+  renderFlowNodesStep = (nodes = []) => {
+    let curr_step = 0
+    const total_step = nodes.length
+    const is_every = nodes.every(item => item.status == '2')
+    if (is_every) {
+      curr_step = nodes.length
+    } else {
+      curr_step = nodes.findIndex(item => item.status == '1') + 1
+    }
+    return `${curr_step}/${total_step}`
+  }
+
   render() {
     const { itemValue = {}, gantt_view_mode } = this.props
-    const { height, name, id, status } = itemValue
+    const { height, name, id, status, nodes = [] } = itemValue
     const { local_left, local_top, rely_down } = this.state
     return (
       <div
@@ -317,7 +330,10 @@ export default class WorkFlowItem extends Component {
           data-rely_top={id}
           data-rely_type={'flow'}
         >
-          （{this.renderFlowStatus(status)}）
+          （{this.renderFlowStatus(status)}
+          {''}
+          {''}
+          {status == '1' && this.renderFlowNodesStep(nodes)}）
         </div>
       </div>
     )
@@ -332,13 +348,15 @@ function mapStateToProps({
       group_view_type,
       gantt_view_mode
     }
-  }
+  },
+  publicProcessDetailModal: { process_detail_modal_visible }
 }) {
   return {
     date_arr_one_level,
     ceilWidth,
     gantt_board_id,
     group_view_type,
-    gantt_view_mode
+    gantt_view_mode,
+    process_detail_modal_visible
   }
 }
