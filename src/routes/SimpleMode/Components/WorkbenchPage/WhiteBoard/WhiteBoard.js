@@ -62,9 +62,11 @@ export default class WhiteBoardRoom extends React.Component {
     })
   }
   WB_lx = ''
+  whiteboard_tools = React.createRef()
   componentDidMount() {
     // 打开websocket
     Action.openWS()
+    Action.clear()
   }
   // 点击退出白板
   exitWhiteboard = () => {
@@ -100,10 +102,10 @@ export default class WhiteBoardRoom extends React.Component {
       // 创建图层
       let arr = this.createPages(data.pages || [])
       this.setState({
-        page_number: +data.page_number,
+        page_number: +(data.page_number || 1),
         pages: arr
       })
-      Action.page_number = +data.page_number
+      Action.page_number = +(data.page_number || 1)
     }
     // 获取组织成员，去除自己的数据
     getCurrentOrgAccessibleAllMembers({
@@ -231,6 +233,10 @@ export default class WhiteBoardRoom extends React.Component {
   saveFile = () => {
     // const { room } = this.props
     const { saveParam } = this.state
+    this.WB_lx.setBackgroundColor(
+      '#ffffff',
+      this.WB_lx.renderAll.bind(this.WB_lx)
+    )
     let dataUrl = this.WB_lx.toDataURL()
     let file = dataURLtoFile(dataUrl, this.state.saveParam.fileName + '.png')
 
@@ -250,14 +256,14 @@ export default class WhiteBoardRoom extends React.Component {
     })
     uploadFileForAxios(`${REQUEST_DOMAIN_FILE}/file/upload`, data, headers)
       .then(res => {
-        // console.log(res.data)
-        if (res.data.code === '0') message.success('保存成功')
-
         WEvent.dispatchDEvent('saveSuccess', res.data)
         this.setState({
           show: false
         })
         this.toogleSpin(false)
+        setTimeout(() => {
+          if (res.data.code === '0') message.success('保存成功')
+        }, 10)
       })
       .catch(err => {
         this.setState({
@@ -341,6 +347,13 @@ export default class WhiteBoardRoom extends React.Component {
     this.toogleSpin(false)
   }
 
+  handleImgForBoard = val => {
+    // console.log(val)
+    const { current } = this.whiteboard_tools
+    if (current) {
+      current.setActiveByParent && current.setActiveByParent('hand')
+    }
+  }
   render() {
     const { show } = this.state
     return (
@@ -394,7 +407,9 @@ export default class WhiteBoardRoom extends React.Component {
               )}
           </div>
           <WhiteBoard onLoad={this.WhiteBoardLoad} RoomId={this.props.room_id}>
-            {this.props.room.status == 1 && <WTools />}
+            {this.props.room.status == 1 && (
+              <WTools ref={this.whiteboard_tools} />
+            )}
             <Controller />
           </WhiteBoard>
 
@@ -464,6 +479,7 @@ export default class WhiteBoardRoom extends React.Component {
           )}
         </div>
         <RightContent
+          onSelectImg={this.handleImgForBoard}
           onChangePage={this.changePage}
           onDelete={this.removePage}
           onChangeOpen={this.changeRightContent}

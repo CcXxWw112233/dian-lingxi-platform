@@ -18,7 +18,10 @@ import {
   updateData,
   TransformRecords,
   TranslateRecord,
-  reSize
+  reSize,
+  REDOLIST,
+  UNDOLIST,
+  RESET
 } from 'whiteboard-lingxi/lib/utils'
 import { WhiteBoardMain } from 'whiteboard-lingxi'
 import WS from './websocket_wb'
@@ -153,6 +156,7 @@ class Action {
         this.WhiteBoard.remove(obj)
       })
     }
+    RESET()
   }
 
   /**
@@ -195,6 +199,7 @@ class Action {
       img.selectable = false
       this.addJSON(img, 'image', { src: key + path })
       this.WhiteBoard.add(img).setActiveObject(img)
+      REDOLIST.push(img)
       img.on('deselected', () => {
         img.set('add_from', '')
       })
@@ -438,7 +443,14 @@ class Action {
     let containerSize = this.domContainer()
     let size = [containerSize.width, containerSize.height].join(',')
     json.container_size = size
+    json.page_number = this.page_number
     if (val.type === 'image') {
+      if (val.get('send_src')) {
+        json.src = val.get('send_src')
+      }
+      let k =
+        json.src.indexOf('whiteboard/') !== -1 ? 'whiteboard/' : 'thumbnail/'
+      json.src = k + json.src.split(k)[1]
       delete json.filters
       json.crossOrigin = 'anonymous'
     }
