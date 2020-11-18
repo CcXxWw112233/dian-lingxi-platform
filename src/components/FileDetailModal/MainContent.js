@@ -1145,11 +1145,70 @@ class MainContent extends Component {
         )
         break
       default:
+        content = (
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '14px', color: '#D4D4D4', marginTop: 200 }}>
+              暂不支持该格式预览, 点击上方保存按钮保存到本地预览
+            </div>
+          </div>
+        )
         break
     }
     return content
   }
 
+  //不支持大小预览
+  renderNotSupportFileSize = () => {
+    return (
+      <div
+        className={mainContentStyles.fileDetailContentLeft}
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          fontSize: 16,
+          color: '#595959'
+        }}
+      >
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '14px', color: '#D4D4D4', marginTop: 200 }}>
+            该文件过大, 不支持在线预览, 请保存到本地预览
+          </div>
+        </div>
+      </div>
+    )
+  }
+  renderNotSupportFileSizeModal = () => {
+    const {
+      bodyClientHeight,
+      bodyClientWidth,
+      isZoomPictureFullScreenMode
+    } = this.props
+    const { is_large_loading, percent } = this.state
+    return (
+      <Modal
+        wrapClassName={mainContentStyles.overlay_iframBigDom}
+        zIndex={1010}
+        style={{
+          top: 0,
+          left: 0,
+          minWidth: bodyClientWidth + 'px',
+          minHeight: bodyClientHeight + 'px',
+          height: '100%'
+        }}
+        width={bodyClientWidth}
+        height={bodyClientHeight}
+        footer={null}
+        title={null}
+        visible={isZoomPictureFullScreenMode}
+        onCancel={this.cancelZoomFrame}
+      >
+        <div style={{ height: bodyClientHeight }}>
+          {this.renderNotSupportFileSize()}
+        </div>
+      </Modal>
+    )
+  }
   // 全屏的取消事件
   cancelZoomFrame = () => {
     const { is_petty_loading, is_large_loading } = this.props
@@ -1321,7 +1380,9 @@ class MainContent extends Component {
       fileType,
       isZoomPictureFullScreenMode,
       componentHeight,
-      componentWidth
+      componentWidth,
+      filePreviewSizeExceed,
+      filePreviewUrl
     } = this.props
     return (
       <div
@@ -1331,49 +1392,63 @@ class MainContent extends Component {
           height: clientHeight ? clientHeight - 100 - 60 : componentHeight
         }}
       >
-        <div>
-          {filePreviewIsUsable ? (
-            filePreviewIsRealImage ? (
-              this.renderPunctuateDom()
+        {!!filePreviewUrl && (
+          <div>
+            {filePreviewSizeExceed ? (
+              <>{this.renderNotSupportFileSize()}</>
             ) : (
-              this.renderIframeDom()
-            )
-          ) : (
-            <div
-              className={mainContentStyles.fileDetailContentLeft}
-              style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                fontSize: 16,
-                color: '#595959'
-              }}
-            >
-              <div>{this.renderNotSupport(fileType)}</div>
-            </div>
-          )}
-        </div>
+              <>
+                {filePreviewIsUsable ? (
+                  filePreviewIsRealImage ? (
+                    this.renderPunctuateDom()
+                  ) : (
+                    this.renderIframeDom()
+                  )
+                ) : (
+                  <div
+                    className={mainContentStyles.fileDetailContentLeft}
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      fontSize: 16,
+                      color: '#595959'
+                    }}
+                  >
+                    <div>{this.renderNotSupport(fileType)}</div>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        )}
         {isZoomPictureFullScreenMode && (
           <div>
-            {filePreviewIsUsable ? (
-              filePreviewIsRealImage ? (
-                this.renderFullScreenModePunctuateDom()
-              ) : (
-                this.renderFullScreenModeIframeDom()
-              )
+            {filePreviewSizeExceed ? (
+              <>{this.renderNotSupportFileSizeModal()}</>
             ) : (
-              <div
-                className={mainContentStyles.fileDetailContentLeft}
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  fontSize: 16,
-                  color: '#595959'
-                }}
-              >
-                <div>{this.renderNotSupport(fileType)}</div>
-              </div>
+              <>
+                {filePreviewIsUsable ? (
+                  filePreviewIsRealImage ? (
+                    this.renderFullScreenModePunctuateDom()
+                  ) : (
+                    this.renderFullScreenModeIframeDom()
+                  )
+                ) : (
+                  <div
+                    className={mainContentStyles.fileDetailContentLeft}
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      fontSize: 16,
+                      color: '#595959'
+                    }}
+                  >
+                    <div>{this.renderNotSupport(fileType)}</div>
+                  </div>
+                )}
+              </>
             )}
           </div>
         )}
