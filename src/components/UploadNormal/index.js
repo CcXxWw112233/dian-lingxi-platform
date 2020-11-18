@@ -1,10 +1,7 @@
 import React, { Component } from 'react'
 import UploadNotification from '../UploadNotification'
 import { Upload, message } from 'antd'
-import {
-  REQUEST_DOMAIN_FILE,
-  UPLOAD_FILE_SIZE
-} from '../../globalset/js/constant'
+import { FILE_UPLOAD_ACCEPT_TYPE } from '../../globalset/js/constant'
 import Cookies from 'js-cookie'
 import { setUploadHeaderBaseInfo } from '../../utils/businessFunction'
 import axios from 'axios'
@@ -129,6 +126,7 @@ export default class UploadNormal extends Component {
       withCredentials: true,
       multiple: true,
       // fileList: uploading_file_list,
+      accept: FILE_UPLOAD_ACCEPT_TYPE,
       showUploadList: false,
       headers: {
         Authorization: Cookies.get('Authorization'),

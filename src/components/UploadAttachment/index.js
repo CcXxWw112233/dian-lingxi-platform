@@ -31,6 +31,7 @@ import {
   UPLOAD_FILE_SIZE
 } from '@/globalset/js/constant'
 import _ from 'lodash'
+import { FILE_UPLOAD_ACCEPT_TYPE } from '../../globalset/js/constant'
 const { TreeNode } = TreeSelect
 let uploadMaxFileSize = []
 /**上传附件组件 */
@@ -103,6 +104,7 @@ export default class UploadAttachment extends Component {
       headers: {
         authorization: 'authorization-text'
       },
+      accept: FILE_UPLOAD_ACCEPT_TYPE,
       fileList: fileList,
       withCredentials: true,
       multiple: true,
