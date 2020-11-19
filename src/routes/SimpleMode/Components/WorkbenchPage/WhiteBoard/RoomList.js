@@ -73,6 +73,7 @@ export default class RoomList extends React.PureComponent {
       name: this.state.roomName.trim(),
       _organization_id: this.state.org
     }).then(res => {
+      // console.log(res)
       onUpdate && onUpdate()
       if (res) {
         this.setState({
@@ -81,6 +82,11 @@ export default class RoomList extends React.PureComponent {
           roomName: ''
         })
         message.success('创建房间成功')
+        let data = res.data
+        if (data) {
+          data.status = '1'
+          this.handleRoom(data)
+        }
       }
     })
   }
