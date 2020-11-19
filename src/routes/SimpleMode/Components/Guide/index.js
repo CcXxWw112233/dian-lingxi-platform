@@ -119,6 +119,7 @@ class Guide extends Component {
                     return (
                       <TabPane tab={title} key={id}>
                         <div
+                          style={{ height: 350, overflow: 'scroll' }}
                           className={indexStyles.tab_content_style}
                           dangerouslySetInnerHTML={{ __html: content }}
                           onClick={this.onClickBlowUpImage.bind(this, content)}
