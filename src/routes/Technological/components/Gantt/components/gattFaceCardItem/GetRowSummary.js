@@ -127,34 +127,34 @@ export default class GetRowSummary extends Component {
     // })
   }
 
-  hanldListGroupMap = () => {
-    const { list_data = [], ceilWidth } = this.props
-    let left_arr = list_data.map(
-      item => item.left + (item.time_span - 1) * ceilWidth
-    ) //取到截止日期应该处的位置
-    left_arr = Array.from(new Set(left_arr))
-    const now = new Date().getTime()
-    let left_map = left_arr.map(item => {
-      let list = []
-      for (let val of list_data) {
-        if (
-          val.left + (val.time_span - 1) * ceilWidth ==
-          item //位置对应上
-          // && val.is_realize != '1' //未完成
-          // && val.end_time < now //过期
-          // && val.is_has_end_time //存在实际的截止时间
-        ) {
-          list.push(val)
-        }
-      }
-      return {
-        left: item,
-        list
-      }
-    })
-    left_map = left_map.filter(item => item.list.length > 0)
-    return left_map
-  }
+  // hanldListGroupMap = () => {
+  //   const { list_data = [], ceilWidth } = this.props
+  //   let left_arr = list_data.map(
+  //     item => item.left + (item.time_span - 1) * ceilWidth
+  //   ) //取到截止日期应该处的位置
+  //   left_arr = Array.from(new Set(left_arr))
+  //   const now = new Date().getTime()
+  //   let left_map = left_arr.map(item => {
+  //     let list = []
+  //     for (let val of list_data) {
+  //       if (
+  //         val.left + (val.time_span - 1) * ceilWidth ==
+  //         item //位置对应上
+  //         // && val.is_realize != '1' //未完成
+  //         // && val.end_time < now //过期
+  //         // && val.is_has_end_time //存在实际的截止时间
+  //       ) {
+  //         list.push(val)
+  //       }
+  //     }
+  //     return {
+  //       left: item,
+  //       list
+  //     }
+  //   })
+  //   left_map = left_map.filter(item => item.list.length > 0)
+  //   return left_map
+  // }
 
   hanldListGroupMap1 = () => {
     const {
@@ -169,13 +169,6 @@ export default class GetRowSummary extends Component {
     } = this.props
     const interval_timer = this.getIntervalTimer()
     let left_arr = Object.keys(interval_timer || {}) || []
-    // let left_arr = list_data.map(item =>
-    //   String(new Date(item.end_time).getMonth() + 1).length <= 1
-    //     ? '0' + (new Date(item.end_time).getMonth() + 1)
-    //     : String(new Date(item.end_time).getMonth() + 1)
-    // )
-    // console.log(left_arr, 'left_arr111')
-    // left_arr = Array.from(new Set(left_arr))
     let left_map = left_arr.map((item, index) => {
       let list = []
       let left
@@ -184,13 +177,17 @@ export default class GetRowSummary extends Component {
           list.push(val)
         }
       }
+      const { start_date, end_date } = interval_timer[item]
+      // 对 头和尾 进行判断 如果是头部 那么就是从项目开始时间开始并且需要判断是否是从项目开始计算
+      // 如果是尾部 那么就从截止时间放置并判断是否满月
       left = interval_timer.hasOwnProperty(item)
-        ? // index == 0
-          //   ? board_left
-          //   : index == left_arr.length - 1
-          //   ? board_left + width - 10
-          //   :
-          interval_timer[item].left + 46.5 - 10
+        ? start_date == item &&
+          !isSamDay(interval_timer[item].start_time, board_start_time)
+          ? board_left - 10
+          : end_date == item &&
+            !isSamDay(interval_timer[item].end_time, board_end_time)
+          ? board_left + width - 10
+          : interval_timer[item].left + 46.5 - 10
         : null
       return {
         date: item,
@@ -237,6 +234,8 @@ export default class GetRowSummary extends Component {
     const month = this.getDiffDate(start_time, end_time)
     let time_obj = {}
     month.map(item => {
+      let start_date = month[0].split('-')[1]
+      let end_date = month[month.length - 1].split('-')[1]
       let Y = item.split('-')[0]
       let M = item.split('-')[1]
       const gold_item =
@@ -261,6 +260,11 @@ export default class GetRowSummary extends Component {
             : new Date(start_time).getDate()
         const origin_left = (date_length + date_no - 1) * ceilWidth
         time_obj[M]['left'] = origin_left
+        if (Object.keys(month).length > 1) {
+          // 需要添加一个开始日期和截止日期 因为对象的添加是无序排列的
+          time_obj[M]['start_date'] = start_date
+          time_obj[M]['end_date'] = end_date
+        }
       }
     })
     return time_obj
@@ -419,7 +423,7 @@ export default class GetRowSummary extends Component {
             // // background: this.setBgSpecific().time_bg_color,
             // padding: 0,
             // zIndex: 0,
-            backgroundColor: '#86B3FF'
+            backgroundColor: percent == '1' ? 'transparent' : '#86B3FF'
           }}
         >
           {/* 进度填充 */}
