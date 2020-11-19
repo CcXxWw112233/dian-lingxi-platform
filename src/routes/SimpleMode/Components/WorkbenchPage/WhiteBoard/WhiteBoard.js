@@ -479,6 +479,7 @@ export default class WhiteBoardRoom extends React.Component {
           )}
         </div>
         <RightContent
+          {...this.props}
           onSelectImg={this.handleImgForBoard}
           onChangePage={this.changePage}
           onDelete={this.removePage}

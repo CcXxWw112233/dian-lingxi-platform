@@ -9,7 +9,8 @@ import {
   KickOutUser,
   EditWhiteBoardRoom,
   AddPageForRoom,
-  RemovePageForRoom
+  RemovePageForRoom,
+  NetWorkFile
 } from '../../../../../services/whiteBoard'
 import { fabric } from 'fabric'
 import { isApiResponseOk } from '../../../../../utils/handleResponseData'
@@ -192,12 +193,13 @@ class Action {
       this.WhiteBoard.remove(activeObject)
     }
     this.createImage(url).then(img => {
-      let key = 'thumbnail/'
+      // let key = 'thumbnail/'
+      let key = '.com/'
       let path = url.split(key)[1]
-      img.set('send_src', key + path)
+      img.set('send_src', path)
       img.set('add_from', 'board')
       img.selectable = false
-      this.addJSON(img, 'image', { src: key + path })
+      this.addJSON(img, 'image', { src: path })
       this.WhiteBoard.add(img).setActiveObject(img)
       REDOLIST.push(img)
       img.on('deselected', () => {
@@ -382,6 +384,7 @@ class Action {
             } else if (item.detail) {
               item.detail.disabled = 'false'
             }
+            if (!item.detail) item.detail = {}
             return item
           })
           let arr = TransformRecords(data)
@@ -422,9 +425,11 @@ class Action {
         json.src = obj.get('send_src')
       }
       delete json.filters
-      let k =
-        json.src.indexOf('whiteboard/') !== -1 ? 'whiteboard/' : 'thumbnail/'
-      json.src = k + json.src.split(k)[1]
+      let k = '.com/'
+      if (json.src && json.src.indexOf('.com/') !== -1) {
+        json.src = json.src.split(k)[1]
+      }
+      // json.src.indexOf('whiteboard/') !== -1 ? 'whiteboard/' : 'thumbnail/'
     }
     EditFeature(json).then(res => {
       obj.set('record_id', res.data)
@@ -448,9 +453,11 @@ class Action {
       if (val.get('send_src')) {
         json.src = val.get('send_src')
       }
-      let k =
-        json.src.indexOf('whiteboard/') !== -1 ? 'whiteboard/' : 'thumbnail/'
-      json.src = k + json.src.split(k)[1]
+      let k = '.com/'
+      if (json.src && json.src.indexOf('.com/') !== -1) {
+        json.src = json.src.split(k)[1]
+      }
+      // json.src.indexOf('whiteboard/') !== -1 ? 'whiteboard/' : 'thumbnail/'
       delete json.filters
       json.crossOrigin = 'anonymous'
     }
@@ -576,6 +583,18 @@ class Action {
   }
 
   /**
+   * 在白板中上传网络图片
+   * @param {*} data file_name and url
+   */
+  addNetWorkFile = async data => {
+    const res = await NetWorkFile(data)
+    if (isApiResponseOk(res)) {
+      return res
+    }
+    return Promise.reject()
+  }
+
+  /**
    * 保存白板房间的缩略图
    */
   saveWhiteBoardPic = (room = {}) => {
@@ -618,8 +637,6 @@ class Action {
           img.set({
             left: center.x - w / 2,
             top: center.y - h / 2,
-            width: w,
-            height: h,
             scaleX: radio,
             scaleY: radio,
             crossOrigin: 'anonymous'
