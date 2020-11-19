@@ -78,7 +78,8 @@ export default {
       userInfo: {}, //用户信息
       userOrgPermissions: [],
       userBoardPermissions: [],
-      userGuide: {} //用户引导存储的值
+      userGuide: {}, //用户引导存储的值
+      visibleWhiteboardSpin: false // 显示白板内容遮罩层
     }
   },
   subscriptions: {

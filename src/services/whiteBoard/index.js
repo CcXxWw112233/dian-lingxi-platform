@@ -30,6 +30,15 @@ export const addWhiteBoardRoom = data => {
   })
 }
 
+// 编辑房间
+export const EditWhiteBoardRoom = data => {
+  return request({
+    url: `${REQUEST_WHITEBOARD}/whiteboard/room`,
+    method: 'PUT',
+    data
+  })
+}
+
 export const addFeature = async data => {
   const resp = await request(
     {
@@ -88,5 +97,31 @@ export const KickOutUser = data => {
     url: `${REQUEST_WHITEBOARD}/whiteboard/room/user`,
     method: 'DELETE',
     data
+  })
+}
+
+/**
+ * 添加一页
+ * @param data.room_id 房间id
+ * @param data.page_number 页码
+ */
+export const AddPageForRoom = data => {
+  return request({
+    url: `${REQUEST_WHITEBOARD}/whiteboard/postil/page`,
+    method: 'POST',
+    data
+  })
+}
+
+/**
+ * 删除一页
+ * @param page_number 页码
+ * @param room_id 房间id
+ */
+export const RemovePageForRoom = data => {
+  return request({
+    url: `${REQUEST_WHITEBOARD}/whiteboard/postil/page`,
+    method: 'DELETE',
+    params: data
   })
 }

@@ -1,0 +1,186 @@
+.container{
+  width: 20%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background-color: #fff;
+  box-shadow: -8px 0px 16px 0px rgba(87, 92, 118, 0.2);
+  transition: width 0.1s ease-out;
+  &.hideContainer{
+    width: 0%;
+  }
+  // overflow: hidden;
+  .container_header_content{
+    height: 160px;
+    flex: none;
+    background: linear-gradient(180deg, #86B3FF 0%, #7CA6FF 100%);
+    position: relative;
+    .board_message{
+      width: 100%;
+      position: absolute;
+      bottom: 10px;
+      left: 0;
+      color: #fff;
+      padding: 0 20px;
+      line-height: 30px;
+      .whiteboards_name{
+        width: 99%;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        // font-weight: bold;
+        font-size: 1.1rem;
+      }
+    }
+  }
+  .WhiteBoardRoom_close{
+    // position: absolute;
+    // right: 10px;
+    // top: 10px;
+    font-size: 1.6em;
+    z-index: 10;
+    cursor: pointer;
+  }
+  .closeBtn{
+    position: absolute;
+    width: 20px;
+    left: -20px;
+    top: 50%;
+    height: 60px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: translateY(-50%);
+    background-color: rgba(158, 166, 194, 1);
+    color: #fff;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    cursor: pointer;
+  }
+  .tabbarContainer{
+    height: 100%;
+    display:  flex;
+    flex-direction: column;
+    :global{
+      .ant-select-selection{
+        border: none;
+        border-bottom: 1px solid rgba(208, 211, 226, 0.3);
+        font-weight: bold;
+        &:focus{
+          border-color: transparent !important;
+          box-shadow: none;
+        }
+      }
+    }
+    .board_panel{
+      padding-top: 32px;
+      flex: 1;
+      overflow-y: auto;
+      position: relative;
+      .folder_path{
+        background-color: #F5F7FB;
+        line-height: 32px;
+        position: absolute;
+        border-bottom: 1px solid rgba(208, 211, 226, 0.3);
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding-left: 10px;
+        color: rgba(0,0,0,0.65);
+        font-size: 12px;
+        .file_path_item{
+          cursor: pointer;
+          margin-left: 5px;
+          color: rgba(0,0,0,0.35);
+          &.active{
+            color: #7CA6FF;
+          }
+          &:hover{
+            color: #7CA6FF;
+          }
+        }
+      }
+    }
+    .files_content{
+      display: flex;
+      flex-wrap: wrap;
+      & > .file_item{
+        width: 33.33%;
+        padding: 5px 15px;
+        margin-bottom: 10px;
+        .file_center_detail{
+          cursor: pointer;
+          .file_detail_name{
+            width: 100%;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            text-align: center;
+          }
+          .file_theme{
+            border: 3px solid transparent
+          }
+          img{
+            width: 100%;
+          }
+          &.active{
+            .file_theme{
+              border-color:rgba(106, 154, 255, 1);
+            }
+          }
+          color: rgba(158, 166, 194, 1);
+        }
+      }
+    }
+    .folders_content{
+      .folder_item{
+        line-height: 26px;
+        border-bottom: 1px solid rgba(208, 211, 226, 0.3);
+        padding: 8px 20px;
+        color: rgba(106, 113, 145, 1);
+        cursor: pointer;
+      }
+    }
+  }
+  .tabbar{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    :global{
+      .ant-tabs-bar{
+        flex: none;
+        margin-bottom: 5px;
+      }
+      .ant-tabs-content{
+        flex: 1;
+      }
+    }
+    :global(.ant-tabs-nav){
+      width: 100%;
+      & > div{
+        display:  flex;
+        &> div{
+          flex: 1;
+          padding-left: 40px;
+          padding-right: 40px;
+          text-align: center;
+        }
+      }
+    }
+  }
+  .headers{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 20px;
+    position: relative;
+    color: #fff;
+  }
+
+  .container_board_content{
+    flex: 1;
+  }
+}

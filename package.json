@@ -45,7 +45,7 @@
     "react-draggable": "^4.4.3",
     "react-virtualized": "^9.21.2",
     "spark-md5": "^3.0.0",
-    "whiteboard-lingxi": "^1.0.28",
+    "whiteboard-lingxi": "^1.0.36",
     "xlsx": "^0.16.8"
   },
   "devDependencies": {
@@ -67,8 +67,7 @@
     "husky": "^4.3.0",
     "lint-staged": "^10.4.0",
     "redbox-react": "^1.4.3",
-    "roadhog": "^2.5.0-beta.4",
-    "webpack-bundle-analyzer": "^4.1.0"
+    "roadhog": "^2.5.0-beta.4"
   },
   "browserslist": [
     "defaults"
