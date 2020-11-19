@@ -31,7 +31,7 @@ export async function checkAccountRestered(data) {
     }
   })
 }
-//注册绑定微信并且登陆
+//注册绑定微信并且登录
 export async function wechatSignupBindLogin(data) {
   return request({
     url: `${REQUEST_DOMAIN}/user/wechat/signup/bind`,

@@ -222,7 +222,7 @@ class Login extends React.Component {
                       style={{ cursor: 'pointer' }}
                       onClick={this.passwordLogin.bind(this)}
                     >
-                      密码登陆
+                      密码登录
                     </span>
                   </div>
                 </div>
@@ -294,7 +294,7 @@ class Login extends React.Component {
                   <div className={indexStyles.bottomWholeRight}>
                     <p>
                       <span onClick={this.setLoginType.bind(this)}>
-                        {loginType === 'password' ? '验证码登录' : '密码登陆'}
+                        {loginType === 'password' ? '验证码登录' : '密码登录'}
                       </span>
                       <span>|</span>
                       <span onClick={routingJump.bind(null, '/register')}>
@@ -445,7 +445,7 @@ class Login extends React.Component {
                   <div className={indexStyles.bottomWholeRight}>
                     <p>
                       <span onClick={this.setLoginType.bind(this)}>
-                        {loginType === 'password' ? '验证码登录' : '密码登陆'}
+                        {loginType === 'password' ? '验证码登录' : '密码登录'}
                       </span>
                       <span>|</span>
                       <span onClick={routingJump.bind(null, '/register')}>
