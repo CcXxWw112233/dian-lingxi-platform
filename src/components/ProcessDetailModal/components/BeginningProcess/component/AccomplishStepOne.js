@@ -146,6 +146,10 @@ export default class AccomplishStepOne extends Component {
               _organization_id: request_flows_params._organization_id
             }
           })
+          this.props.handleProcessDetailChange &&
+            this.props.handleProcessDetailChange({
+              flow_instance_id
+            })
         }
       }
     })

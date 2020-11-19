@@ -23,6 +23,10 @@ import {
 // 获取项目列表
 // _organization_id 组织id--  0 全组织
 // contain_type  0或不传 只查询项目信息， 1 返回分组列表 2 返回项目用户信息列表 3 返回app信息列表
+/**
+ * 获取项目列表
+ * @param {*} params _organization_id :string
+ */
 export async function getProjectList(params) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}${REQUEST_INTERGFACE_VERSIONN}/board/list`,

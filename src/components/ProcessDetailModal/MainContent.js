@@ -575,7 +575,18 @@ export default class MainContent extends Component {
             })
           }, 200)
           processInfo[key] = value
-          if (currentFlowTabsStatus == '1') {
+          this.props.handleProcessDetailChange &&
+            this.props.handleProcessDetailChange({
+              flow_instance_id: id,
+              parentStatus: true,
+              name: 'name',
+              value: value
+            })
+          if (
+            currentFlowTabsStatus == '1' &&
+            currentListItemPosition &&
+            currentListItemPosition != -1
+          ) {
             newProcessDoingList[currentListItemPosition]['name'] = value
             dispatch({
               type: 'publicProcessDetailModal/updateDatas',
@@ -583,7 +594,11 @@ export default class MainContent extends Component {
                 processDoingList: newProcessDoingList
               }
             })
-          } else if (currentFlowTabsStatus == '0') {
+          } else if (
+            currentFlowTabsStatus == '0' &&
+            currentListItemPosition &&
+            currentListItemPosition != -1
+          ) {
             newProcessNotBeginningList[currentListItemPosition]['name'] = value
             dispatch({
               type: 'publicProcessDetailModal/updateDatas',
@@ -1321,6 +1336,7 @@ export default class MainContent extends Component {
             request_flows_params={this.props.request_flows_params}
             itemKey={key}
             itemValue={value}
+            handleProcessDetailChange={this.props.handleProcessDetailChange}
           />
         )
         break
@@ -1499,7 +1515,7 @@ export default class MainContent extends Component {
       isEditCurrentFlowInstanceDescription,
       processEditDatas = [],
       processPageFlagStep,
-      processInfo: { status, create_time },
+      processInfo: { status, create_time, plan_start_time },
       templateInfo: { enable_change },
       is_show_board_file_area
     } = this.props
@@ -1663,7 +1679,12 @@ export default class MainContent extends Component {
                           fontSize: '14px'
                         }}
                       >
-                        {timestampToTimeNormal(create_time, '/', true)} 开始
+                        {timestampToTimeNormal(
+                          plan_start_time ? plan_start_time : create_time,
+                          '/',
+                          true
+                        )}{' '}
+                        开始
                       </span>
                     )}
                   </div>
@@ -1910,7 +1931,12 @@ export default class MainContent extends Component {
               </span>
               {processPageFlagStep == '4' && (
                 <span style={{ flexShrink: 0, color: 'rgba(0,0,0,0.45)' }}>
-                  {timestampToTimeNormal(create_time, '/', true)} 开始
+                  {timestampToTimeNormal(
+                    plan_start_time ? plan_start_time : create_time,
+                    '/',
+                    true
+                  )}{' '}
+                  开始
                 </span>
               )}
             </div>
@@ -1943,7 +1969,11 @@ export default class MainContent extends Component {
             </Tooltip>
           </div>
         )} */}
-        {processPageFlagStep == '4' && <ProcessFile />}
+        {processPageFlagStep == '4' && (
+          <ProcessFile
+            notburningProcessFile={this.props.notburningProcessFile}
+          />
+        )}
       </div>
     )
   }

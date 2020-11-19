@@ -307,6 +307,10 @@ export default class BeginningStepThree extends Component {
             successfulMessage: '',
             isPassNodesIng: false
           })
+          this.props.handleProcessDetailChange &&
+            this.props.handleProcessDetailChange({
+              flow_instance_id
+            })
           this.props.dispatch({
             type: 'publicProcessDetailModal/getProcessListByType',
             payload: {
@@ -338,6 +342,10 @@ export default class BeginningStepThree extends Component {
         flow_instance_id,
         board_id,
         calback: () => {
+          this.props.handleProcessDetailChange &&
+            this.props.handleProcessDetailChange({
+              flow_instance_id
+            })
           dispatch({
             type: 'publicProcessDetailModal/getProcessListByType',
             payload: {

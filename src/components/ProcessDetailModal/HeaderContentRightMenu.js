@@ -409,6 +409,14 @@ export default class HeaderContentRightMenu extends Component {
             that.props.whetherUpdateWorkbenchPorcessListData({
               type: 'workflowEnd'
             })
+          that.props.handleProcessDetailChange &&
+            that.props.handleProcessDetailChange({
+              flow_instance_id: id,
+              parentStatus: true,
+              type: 'workflowEnd',
+              name: 'status',
+              value: '2'
+            })
           that.props.onCancel && that.props.onCancel()
         }
       }
@@ -479,6 +487,12 @@ export default class HeaderContentRightMenu extends Component {
                 that.props.whetherUpdateWorkbenchPorcessListData({
                   type: 'deleteProcess'
                 })
+              that.props.handleProcessDetailChange &&
+                that.props.handleProcessDetailChange({
+                  flow_instance_id: id,
+                  parentStatus: true,
+                  type: 'deleteProcess'
+                })
               that.props.onCancel && that.props.onCancel()
               let { id: storage_id } = localStorage.getItem(
                 'userProcessWithNodesStatusStorage'
@@ -532,6 +546,14 @@ export default class HeaderContentRightMenu extends Component {
               _organization_id: request_flows_params._organization_id || org_id
             }
           })
+          that.props.handleProcessDetailChange &&
+            that.props.handleProcessDetailChange({
+              flow_instance_id: id,
+              parentStatus: true,
+              name: 'status',
+              value: '1',
+              type: 'reStartProcess'
+            })
           this.props.onCancel && this.props.onCancel()
         }
       }

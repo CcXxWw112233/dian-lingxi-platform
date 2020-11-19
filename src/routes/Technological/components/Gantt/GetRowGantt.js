@@ -611,10 +611,33 @@ export default class GetRowGantt extends Component {
   }
 
   //点击某个实例,或者创建任务
-  setSpecilTaskExample = ({ id, board_id, top }, e) => {
+  setSpecilTaskExample = ({ id, board_id, top, flow_id, calback }, e) => {
     const { dispatch, gantt_board_id } = this.props
     if (e) {
       e.stopPropagation()
+    }
+    // 表示处理流程
+    if (flow_id) {
+      dispatch({
+        type: 'publicProcessDetailModal/getProcessInfo',
+        payload: {
+          id: flow_id,
+          calback: () => {
+            dispatch({
+              type: 'publicProcessDetailModal/updateDatas',
+              payload: {
+                process_detail_modal_visible: true,
+                currentProcessInstanceId: flow_id,
+                processPageFlagStep: '4'
+              }
+            })
+            this.props.setProcessDetailModalVisible &&
+              this.props.setProcessDetailModalVisible()
+            if (calback && typeof calback == 'function') calback()
+          }
+        }
+      })
+      return
     }
     this.getCurrentGroup({ top }).then(res => {
       if (id) {
@@ -1037,8 +1060,12 @@ export default class GetRowGantt extends Component {
                 tree_type,
                 parent_expand,
                 is_expand,
-                parent_card_id
+                parent_card_id,
+                status,
+                name,
+                nodes = []
               } = value
+              const nodes_status = nodes.findIndex(item => item.status == '1')
               const juge_expand =
                 tree_type == '0' || tree_type == '3'
                   ? parent_expand
@@ -1101,7 +1128,7 @@ export default class GetRowGantt extends Component {
                       />
                     )}
                     <WorkFlow
-                      key={`${id}_${start_time}_${end_time}_${left}_${top}`}
+                      key={`${id}_${start_time}_${end_time}_${left}_${top}_${status}_${name}_${nodes_status}`}
                       itemValue={value}
                       setSpecilTaskExample={this.setSpecilTaskExample}
                       ganttPanelDashedDrag={this.state.drag_creating}

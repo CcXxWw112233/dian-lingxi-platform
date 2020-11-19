@@ -18,6 +18,7 @@ export default class BeginningProcess extends Component {
               request_flows_params={this.props.request_flows_params}
               itemKey={key}
               itemValue={value}
+              handleProcessDetailChange={this.props.handleProcessDetailChange}
             />
           )
         } else {
@@ -26,6 +27,7 @@ export default class BeginningProcess extends Component {
               request_flows_params={this.props.request_flows_params}
               itemKey={key}
               itemValue={value}
+              handleProcessDetailChange={this.props.handleProcessDetailChange}
             />
           )
         }
@@ -36,6 +38,7 @@ export default class BeginningProcess extends Component {
             request_flows_params={this.props.request_flows_params}
             itemKey={key}
             itemValue={value}
+            handleProcessDetailChange={this.props.handleProcessDetailChange}
           />
         )
         break
@@ -45,6 +48,7 @@ export default class BeginningProcess extends Component {
             request_flows_params={this.props.request_flows_params}
             itemKey={key}
             itemValue={value}
+            handleProcessDetailChange={this.props.handleProcessDetailChange}
           />
         )
         break
