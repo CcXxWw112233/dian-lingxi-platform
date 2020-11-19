@@ -187,7 +187,7 @@ export default class GetRowSummary extends Component {
           : end_date == item &&
             !isSamDay(interval_timer[item].end_time, board_end_time)
           ? board_left + width - 10
-          : interval_timer[item].left + 46.5 - 10
+          : interval_timer[item].left + 93 / 2 - 10
         : null
       return {
         date: item,
@@ -270,6 +270,93 @@ export default class GetRowSummary extends Component {
     return time_obj
   }
 
+  // 处理周视图下时间间隔
+  getWeekIntervalTimer = () => {
+    const {
+      date_arr_one_level = [],
+      itemValue: { start_time, end_time, width },
+      ceilWidth
+    } = this.props
+    if (!start_time || !end_time) return
+    const month = this.getDiffDate(start_time, end_time)
+    let arr = []
+    month.map(item => {
+      let Y = item.split('-')[0]
+      let M = item.split('-')[1]
+      date_arr_one_level.map(val => {
+        if (val.year == Y && val.month == M) {
+          arr.push(val)
+        }
+      })
+      // arr.slice()
+    })
+    const s_index = arr.findIndex(
+      item => start_time >= item.timestamp && start_time <= item.timestampEnd
+    )
+    const e_index = arr.findIndex(
+      item => end_time >= item.timestamp && end_time <= item.timestampEnd
+    )
+    const e_item =
+      arr.find(
+        item => end_time >= item.timestamp && end_time <= item.timestampEnd
+      ) || {}
+    if (s_index && e_index && s_index != -1 && e_index != -1) {
+      if (s_index == e_index) {
+        arr = [arr[s_index]]
+      } else {
+        arr = arr.slice(s_index, e_index)
+        arr.push(e_item)
+      }
+    }
+
+    return arr
+  }
+
+  hanldListGroupMap2 = () => {
+    const {
+      list_data = [],
+      ceilWidth,
+      itemValue: {
+        start_time: board_start_time,
+        end_time: board_end_time,
+        left: board_left,
+        width
+      },
+      gantt_view_mode
+    } = this.props
+    const left_arr = this.getWeekIntervalTimer()
+    // 表示第一段日期长度
+    const f_len =
+      ((left_arr[0].timestampEnd - board_start_time) * 83) /
+      (left_arr[0].timestampEnd - left_arr[0].timestamp).toFixed(1)
+
+    let left_map = left_arr.map((item, index) => {
+      let list = []
+      let left
+      for (const val of list_data) {
+        if (
+          val.end_time > item.timestamp &&
+          val.end_time <= item.timestampEnd
+        ) {
+          list.push(val)
+        }
+      }
+
+      left =
+        index == 0
+          ? board_left - 10
+          : index == left_arr.length - 1
+          ? board_left + width - 10
+          : board_left + index * 83 - 41.5 + f_len - 10
+      return {
+        left,
+        list
+      }
+    })
+    left_map = left_map.filter(item => item.list.length > 0)
+    return left_map
+  }
+
   // 获取两个日期之间的月份 ["2020-10", "2020-11", "2020-12", "2021-01"]
   getDiffDate = (minDate, maxDate) => {
     let startDate = new Date(minDate)
@@ -296,18 +383,22 @@ export default class GetRowSummary extends Component {
 
   // 渲染已过期的
   renderDueList = () => {
-    const { list_data = [], ceilWidth, list_id } = this.props
+    const { list_data = [], ceilWidth, list_id, gantt_view_mode } = this.props
     const {
-      itemValue: { top }
+      itemValue: { top, start_time, end_time }
     } = this.props
-    const left_map = this.hanldListGroupMap1()
+    const left_map =
+      gantt_view_mode == 'year'
+        ? this.hanldListGroupMap1()
+        : gantt_view_mode == 'week'
+        ? this.hanldListGroupMap2()
+        : []
     // if (!this.setBgSpecific().is_due) {
     //     return <React.Fragment></React.Fragment>
     // }
 
     return left_map.map((item, key) => {
       const { list = [], left } = item
-      // console.log(this.pointHasDueCard({ list }))
       // const realize_arr = list.filter(item => item.is_realize != '1')
       return (
         <>
@@ -478,7 +569,8 @@ function mapStateToProps({
       group_list_area_section_height,
       ceilWidth,
       gantt_board_id,
-      date_arr_one_level = []
+      date_arr_one_level = [],
+      gantt_view_mode
     }
   }
 }) {
@@ -486,6 +578,7 @@ function mapStateToProps({
     group_list_area_section_height,
     ceilWidth,
     gantt_board_id,
-    date_arr_one_level
+    date_arr_one_level,
+    gantt_view_mode
   }
 }
