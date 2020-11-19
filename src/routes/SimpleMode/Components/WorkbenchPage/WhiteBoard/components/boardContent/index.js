@@ -65,11 +65,6 @@ export default class BoardContent extends React.Component {
       }
     )
   }
-  // 点击退出白板
-  exitWhiteboard = () => {
-    const { onClose } = this.props
-    onClose && onClose()
-  }
 
   /**
    * 获取项目列表
@@ -252,12 +247,6 @@ export default class BoardContent extends React.Component {
             <div>
               <Avatar src={user.avatar} size={30} style={{ marginRight: 10 }} />
               {user.name}
-            </div>
-            <div
-              className={`${globalStyles.authTheme} ${styles.WhiteBoardRoom_close}`}
-              onClick={this.exitWhiteboard}
-            >
-              &#xe7ce;
             </div>
           </div>
           <div className={styles.board_message}>

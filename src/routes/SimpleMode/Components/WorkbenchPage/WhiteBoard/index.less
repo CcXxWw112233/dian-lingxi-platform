@@ -89,6 +89,10 @@
     white-space: nowrap;
   }
   .room_msg{
+    &.disabled_item{
+      background-color: rgba(106, 113, 145, 0.4);
+      color: rgba(255,255,255,0.65);
+    }
     position: absolute;
     bottom: 0;
     left: 0;
@@ -211,8 +215,8 @@
   position: relative;
   .whiteboard_rightOperation{
     position: absolute;
-    right: 10px;
-    top: 10px;
+    right: 55px;
+    top: 8px;
     z-index: 10;
     cursor: pointer;
     padding: 5px 15px;
@@ -220,15 +224,18 @@
     background-color: rgba(158, 166, 194, 1);
     border-radius: 50px;
   }
-  .WhiteBoardRoom_close{
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    font-size: 1.6em;
+}
+.WhiteBoardRoom_close{
+  position: absolute;
+  right: 20px;
+  top: 5px;
+  color: #fff;
+  font-size: 1.6em;
+  z-index: 10;
+  // padding: 10px;
+  cursor: pointer;
+  &.hideFiles{
     color: rgba(0,0,0,0.6);
-    z-index: 10;
-    padding: 10px;
-    cursor: pointer;
   }
 }
 .addRoomContent{
