@@ -15,6 +15,7 @@ import {
   BOARD_FILES
 } from '../../../../globalset/js/constant'
 import { currentNounPlanFilterName } from '../../../../utils/businessFunction'
+import { clickDelay } from '../../../../globalset/clientCustorm'
 
 const MiniBoxNavigations = props => {
   const {
@@ -83,12 +84,14 @@ const MiniBoxNavigations = props => {
   }
 
   const goHome = () => {
-    dispatch({
-      type: 'simplemode/routingJump',
-      payload: {
-        route: '/technological/simplemode/home'
-      }
-    })
+    setTimeout(() => {
+      dispatch({
+        type: 'simplemode/routingJump',
+        payload: {
+          route: '/technological/simplemode/home'
+        }
+      })
+    }, clickDelay)
     // selectBoardToSeeInfo({ board_id: '0', dispatch })
     // dispatch({
     //     type: 'technological/updateDatas',
@@ -112,17 +115,22 @@ const MiniBoxNavigations = props => {
     } else {
       if (box.code === 'regulations') {
         const { dispatch } = props
-        dispatch(
-          routerRedux.push('/technological/simplemode/workbench/xczNews/hot')
-        )
+        setTimeout(() => {
+          dispatch(
+            routerRedux.push('/technological/simplemode/workbench/xczNews/hot')
+          )
+        }, clickDelay)
       }
     }
-    dispatch({
-      type: 'simplemode/updateDatas',
-      payload: {
-        currentSelectedWorkbenchBox: box
-      }
-    })
+    setTimeout(() => {
+      dispatch({
+        type: 'simplemode/updateDatas',
+        payload: {
+          currentSelectedWorkbenchBox: box
+        }
+      })
+    }, clickDelay)
+
     // 存储当前会话盒子
     window.sessionStorage.setItem(
       'session_currentSelectedWorkbenchBox',
@@ -553,7 +561,7 @@ const MiniBoxNavigations = props => {
           <Tooltip
             placement="bottom"
             title="首页"
-            className={`${indexStyles.nav} ${indexStyles.home}`}
+            className={`${indexStyles.nav} ${indexStyles.home} ${globalStyles.normal_icon_mouse_event_bg}`}
             onClick={goHome}
           >
             <i
@@ -567,7 +575,10 @@ const MiniBoxNavigations = props => {
               &#xe66e;
             </i>
           </Tooltip>
-          <div style={{ color: '#fff' }}>
+          <div
+            style={{ color: '#fff' }}
+            className={`${globalStyles.normal_icon_mouse_event}`}
+          >
             <BoardDropdownSelect iconVisible={false} />
           </div>
           <Divider className={indexStyles.divider} type="vertical" />
@@ -587,7 +598,7 @@ const MiniBoxNavigations = props => {
                       currentSelectedWorkbenchBox.code == item.code
                         ? indexStyles.selected
                         : ''
-                    }`}
+                    } ${globalStyles.normal_icon_mouse_event_bg}`}
                     disabled={isDisableds}
                     key={key}
                   >

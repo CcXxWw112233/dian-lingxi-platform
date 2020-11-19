@@ -18,6 +18,7 @@ import {
   getUserAllOrgsBoardList,
   getFilterAllOrgsWhetherItIsFilesAppsBoardList
 } from '@/services/technological/index'
+import { ENV_ANDROID_APP } from '../../globalset/clientCustorm'
 export default {
   namespace: 'simplemode',
   state: {
@@ -245,7 +246,8 @@ export default {
       }
     },
     *getGuideCategoryList({ payload }, { call, put, select }) {
-      let res = yield call(getGuideCategoryList, payload)
+      const app_name = ENV_ANDROID_APP ? 'huixiebao' : 'lingxi'
+      let res = yield call(getGuideCategoryList, { app: app_name })
       if (isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',

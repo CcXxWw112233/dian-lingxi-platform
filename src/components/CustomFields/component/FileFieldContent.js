@@ -27,7 +27,10 @@ import {
 } from '../../../utils/businessFunction'
 import Cookies from 'js-cookie'
 import axios from 'axios'
-import { UPLOAD_FILE_SIZE } from '../../../globalset/js/constant'
+import {
+  FILE_UPLOAD_ACCEPT_TYPE,
+  UPLOAD_FILE_SIZE
+} from '../../../globalset/js/constant'
 import FileListRightBarFileDetailModal from '../../../routes/Technological/components/ProjectDetail/FileModule/FileListRightBarFileDetailModal'
 import { fileDelete } from '../../../services/technological/file'
 import { set } from 'core-js/fn/dict'
@@ -238,10 +241,10 @@ export default class FileFieldContent extends Component {
     return {
       name: 'file',
       action: '/api/projects/file/upload/common',
+      accept: FILE_UPLOAD_ACCEPT_TYPE,
       headers: {
         Authorization: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
-
         ...setUploadHeaderBaseInfo({
           orgId: org_id,
           boardId: board_id,

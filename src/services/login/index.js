@@ -45,3 +45,12 @@ export const changePicVerifySrc = params => {
     params
   })
 }
+
+//模拟用户扫码登录测试
+export const mockUserScanQrCodeLogin = params => {
+  return request({
+    url: `${REQUEST_DOMAIN}/wechat/collBack/test`,
+    method: 'GET',
+    params
+  })
+}

@@ -1600,7 +1600,7 @@ export default {
           const current_org_id = current_org['id']
           if (current_org_id == remove_org_id && remove_user_id == user_id) {
             message.error(
-              '您已被当前组织移除访客身份，即将跳转到登陆界面。',
+              '您已被当前组织移除访客身份，即将跳转到登录界面。',
               MESSAGE_DURATION_TIME
             )
             const delay = ms =>
@@ -1694,7 +1694,7 @@ export default {
           const current_org_id = current_org['id']
           if (current_org_id == remove_org_id && remove_user_id == user_id) {
             message.error(
-              '您已被当前组织移除访客身份，即将跳转到登陆界面。',
+              '您已被当前组织移除访客身份，即将跳转到登录界面。',
               MESSAGE_DURATION_TIME
             )
             const delay = ms =>
