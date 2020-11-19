@@ -125,3 +125,15 @@ export const RemovePageForRoom = data => {
     params: data
   })
 }
+
+/**
+ * 上传网络图片
+ * @param data file_name and url
+ */
+export const NetWorkFile = data => {
+  return request({
+    url: `${REQUEST_WHITEBOARD}/whiteboard/room/network/file`,
+    method: 'POST',
+    data
+  })
+}
