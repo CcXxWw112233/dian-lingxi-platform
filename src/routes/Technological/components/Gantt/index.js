@@ -964,66 +964,29 @@ class Gantt extends Component {
     value,
     type
   }) => {
-    const { outline_tree = [], outline_tree_round = [] } = this.props
-    let outline_tree_ = [...outline_tree]
-    let outline_tree_round_ = [...outline_tree_round]
-    const gold_item =
-      outline_tree_.find(item => item.id == flow_instance_id) || {}
-    const gold_item_ =
-      outline_tree_round_.find(item => item.id == flow_instance_id) || {}
-    const gold_item_index = outline_tree_.findIndex(
-      item => item.id == flow_instance_id
-    )
-    const gold_item_index_ = outline_tree_round_.findIndex(
-      item => item.id == flow_instance_id
-    )
-
-    if (
-      !!(gold_item && Object.keys(gold_item).length) &&
-      !!(gold_item_ && Object.keys(gold_item_).length)
-    ) {
+    const { outline_tree = [] } = this.props
+    const node = OutlineTree.getTreeNodeValue(outline_tree, flow_instance_id)
+    if (node) {
       if (parentStatus) {
         if (type == 'deleteProcess') {
-          outline_tree_ = outline_tree_.filter(
-            item => item.id != flow_instance_id
-          )
-          outline_tree_round_ = outline_tree_round_.filter(
-            item => item.id != flow_instance_id
-          )
+          this.deleteOutLineTreeNode(flow_instance_id)
         } else {
-          outline_tree_[gold_item_index][name] = value
-          outline_tree_round_[gold_item_index_][name] = value
+          this.changeOutLineTreeNodeProto(flow_instance_id, {
+            ...node,
+            [name]: value
+          })
         }
-        this.props.dispatch({
-          type: 'gantt/updateDatas',
-          payload: {
-            outline_tree: outline_tree_,
-            outline_tree_round: outline_tree_round_
-          }
-        })
       } else {
         getProcessInfo({ id: flow_instance_id }).then(res => {
           if (isApiResponseOk(res)) {
-            let new_nodes = res.data.nodes
-            let new_nodes_ = res.data.nodes
-            outline_tree_[gold_item_index] = {
-              ...gold_item_,
-              ...res.data,
-              nodes: new_nodes
-            }
-            outline_tree_round_[gold_item_index_] = {
-              ...gold_item_,
-              ...res.data,
-              nodes: new_nodes_
-            }
-            this.props.dispatch({
-              type: 'gantt/updateDatas',
-              payload: {
-                outline_tree: outline_tree_,
-                outline_tree_round: outline_tree_round_
-              }
+            const node = OutlineTree.getTreeNodeValue(
+              outline_tree,
+              flow_instance_id
+            )
+            this.changeOutLineTreeNodeProto(flow_instance_id, {
+              ...node,
+              ...res.data
             })
-            return
           }
         })
       }
