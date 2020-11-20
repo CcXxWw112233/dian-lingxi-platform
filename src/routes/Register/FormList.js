@@ -226,8 +226,8 @@ class FormList extends React.Component {
       validateTel(mobile) &&
       verifycode &&
       validatePassword(password) &&
-      checkBoxChecked
-      // && reg.test(invitation_code)
+      checkBoxChecked &&
+      (!ENV_ANDROID_APP ? reg.test(invitation_code) : true)
     ) {
       submitButtonDisabledLocal = false
     }
@@ -352,8 +352,10 @@ class FormList extends React.Component {
               onChange={this.setFormFieldsState.bind(this, 'invitation_code')}
               style={{ height: '40px', fontSize: 16 }}
               maxLength={12}
-              placeholder="邀请码(选填)"
-              // onBlur={this.verifyByBlur.bind(null, 'invitation_code')}
+              placeholder={`邀请码(${ENV_ANDROID_APP ? '选' : '必'}填)`}
+              onBlur={() =>
+                !ENV_ANDROID_APP && this.verifyByBlur('invitation_code')
+              }
             />
           )}
         </FormItem>
