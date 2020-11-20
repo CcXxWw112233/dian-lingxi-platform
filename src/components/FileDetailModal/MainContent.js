@@ -1401,7 +1401,7 @@ class MainContent extends Component {
       >
         {/* {!!filePreviewUrl && ( */}
         <div>
-          {true ? (
+          {filePreviewSizeExceed ? (
             <>{this.renderNotSupportFileSize()}</>
           ) : (
             <>
@@ -1422,7 +1422,9 @@ class MainContent extends Component {
                     color: '#595959'
                   }}
                 >
-                  <div>{this.renderNotSupport(fileType)}</div>
+                  {filePreviewUrl && (
+                    <div>{this.renderNotSupport(fileType)}</div>
+                  )}
                 </div>
               )}
             </>
