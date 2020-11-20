@@ -103,6 +103,7 @@ export default class GroupListHeadSet extends Component {
         dispatch({
           type: 'gantt/updateDatas',
           payload: {
+            milestoneMap: {},
             gantt_board_id: '0',
             group_view_type: '1',
             list_group: []
