@@ -14,7 +14,8 @@ import {
   message,
   Popconfirm,
   InputNumber,
-  notification
+  notification,
+  Popover
   // Upload,
   // Icon
 } from 'antd'
@@ -34,6 +35,26 @@ class MeetingManage extends React.Component {
       text: ''
     }
   }
+
+  // 客户端下载连接
+  pakageLink = [
+    {
+      label: '智屏安卓版',
+      value:
+        'https://dian-lingxi-public.oss-cn-beijing.aliyuncs.com/apps/meeting-manage/meeting-manage-tv.apk'
+    },
+    {
+      label: '门牌安卓版',
+      value:
+        'https://dian-lingxi-public.oss-cn-beijing.aliyuncs.com/apps/meeting-manage/meeting-manage.apk'
+    },
+    {
+      label: '门牌Windows版',
+      value:
+        'https://dian-lingxi-public.oss-cn-beijing.aliyuncs.com/apps/meeting-manage/meeting-manage.exe'
+    }
+  ]
+  tdHeight = 0
   constructor(props) {
     super(props)
     this.timeBox = React.createRef()
@@ -77,12 +98,14 @@ class MeetingManage extends React.Component {
         {
           key: 'name',
           title: '会议室名称',
-          dataIndex: 'name'
+          dataIndex: 'name',
+          ellipsis: true
         },
         {
           key: 'address',
           title: '会议室地址',
-          dataIndex: 'address'
+          dataIndex: 'address',
+          ellipsis: true
         },
         {
           key: 'device',
@@ -90,12 +113,14 @@ class MeetingManage extends React.Component {
           render: record => {
             let { room_devices = [] } = record || {}
             return room_devices.map(item => item.name).join(' / ')
-          }
+          },
+          ellipsis: true
         },
         {
           key: 'status',
           title: '当前状态',
           // dataIndex: 'status',
+          ellipsis: true,
           render: record => {
             let statusArr = ['disabled', 'enable']
             const text = statusArr[+record.room_status]
@@ -139,15 +164,24 @@ class MeetingManage extends React.Component {
           render: record => {
             const text = 'enable'
             const status = props.config || this.defaultConfig
+            let index = 0
+            let notStatelength = this.state.times.filter(item => !item.noState)
+              .length
             return (
               <div className={styles.time_box}>
-                {this.state.times.map(item => {
+                {this.state.times.map((item, i) => {
                   let isHasPlan = (record.times_plan || []).includes(+item.time)
+                  if (item.noState) index++
                   return (
                     <div
                       key={item.time}
                       className={`${styles.time_box_item} ${
-                        item.noState ? styles.noStateColor : ''
+                        item.noState
+                          ? styles.noStateColor
+                          : 'normalTime_' +
+                            Math.abs(
+                              this.state.times.length - notStatelength - i - 1
+                            )
                       }`}
                       title={Action.forMatTime({ time: +item.time })}
                       style={{
@@ -339,6 +373,15 @@ class MeetingManage extends React.Component {
       line.parentNode.removeChild(line)
     }
   }
+  getOffsetTop(elm) {
+    var mOffsetTop = elm.offsetTop
+    var mOffsetParent = elm.offsetParent
+    while (mOffsetParent) {
+      mOffsetTop += mOffsetParent.offsetTop
+      mOffsetParent = mOffsetParent.offsetParent
+    }
+    return mOffsetTop
+  }
   // 设置时间线
   setTimeLine = () => {
     let t = new Date()
@@ -350,22 +393,27 @@ class MeetingManage extends React.Component {
     let index = this.state.times.findIndex(
       item => item.time === hours.toString()
     )
-    this.removeTimeline()
+    // this.removeTimeline()
     if (index !== -1) {
-      let td = document.querySelector('.' + styles.time_step)
-      let height = 0
-      let table = document.querySelector('.meeting_table')
-      if (table) {
-        height = table.querySelector('.ant-table-body')?.clientHeight || 0
-      }
-      if (td) {
-        let span = document.createElement('span')
-        span.id = 'time_line'
-        span.style.left = 20 * index + 11 + 'px'
-        span.innerHTML = `<i style="height:${Math.abs(height - 58)}px;" />`
-        span.className = styles.time_line
-        td.appendChild(span)
-      }
+      // let td = document.querySelector('.' + styles.time_step)
+      // let tdTop = this.getOffsetTop(td)
+      // let height = 0
+      // let table = document.querySelector('.meeting_table')
+      // if (table) {
+      //   height = table.querySelector('.ant-table-body')?.clientHeight || 0
+      // }
+      // if (td) {
+      //   this.tdHeight = td.clientHeight
+      //   let span = document.createElement('span')
+      //   span.id = 'time_line'
+      //   span.style.left = 20 * index + 11 + 'px'
+      //   span.innerHTML = `<i style="height:${Math.abs(height)}px;" />`
+      //   span.className = styles.time_line
+      //   // span.style.top = tdTop + 'px'
+      //   td.appendChild(span)
+
+      // document.body.appendChild(span)
+      // }
       // 更新过期时间的颜色
       this.updateTimesColor(index)
     }
@@ -597,16 +645,44 @@ class MeetingManage extends React.Component {
     }
   }
 
+  // 下载安装包
+  downloadPakage = val => {
+    window.open(val.value)
+  }
+
   render() {
-    const { getFieldDecorator } = this.props.form
+    const {
+      getFieldDecorator,
+      workbenchBoxContent_height = 700
+    } = this.props.form
     const { config } = this.props
     const colors = config || this.defaultConfig
+    const scrollHeight = workbenchBoxContent_height - 220 - (this.tdHeight || 0)
     return (
       <div className={styles.meeting_container}>
-        <div className={styles.meeting_container_title}>会议管理系统</div>
+        <div className={styles.meeting_container_title}>
+          会议管理系统
+          <Popover
+            trigger="click"
+            title={null}
+            placement="leftTop"
+            content={this.pakageLink.map(item => {
+              return (
+                <div
+                  className={styles.pakage_item}
+                  onClick={() => this.downloadPakage(item)}
+                >
+                  {item.label}
+                </div>
+              )
+            })}
+          >
+            <Button className={styles.downloadPakage}>下载客户端</Button>
+          </Popover>
+        </div>
         <div className={styles.meeting_container_content}>
           <Row gutter={8} type="flex" align="middle">
-            <Col span={16}>会议室列表</Col>
+            <Col span={14}>会议室列表</Col>
             <Col span={4} className={styles.status_list}>
               <div>
                 <span
@@ -623,7 +699,7 @@ class MeetingManage extends React.Component {
                 <span>{colors?.disabled?.text}</span>
               </div>
             </Col>
-            <Col span={4} style={{ textAlign: 'right' }}>
+            <Col span={6} style={{ textAlign: 'right' }}>
               <Button onClick={this.getList} style={{ marginRight: 10 }}>
                 更新
               </Button>
@@ -635,6 +711,7 @@ class MeetingManage extends React.Component {
 
           <div className={styles.tableRender}>
             <Table
+              scroll={{ y: scrollHeight }}
               onChange={() =>
                 setTimeout(() => {
                   this.setTimeLine()

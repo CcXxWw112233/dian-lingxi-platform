@@ -145,12 +145,14 @@ export default class AddGroupSection extends Component {
           )}
         {add_new_board_group && (
           <Input
-            style={{ marginTop: 10 }}
+            // style={{ marginTop: 10 }}
             autoFocus
             value={add_new_board_group_value}
             onChange={this.inputOnchange}
             onPressEnter={this.inputOnPressEnter}
-            onBlur={this.inputOnBlur}
+            // onBlur={this.inputOnBlur}
+            onBlur={this.inputOnPressEnter}
+            size={'small'}
           />
         )}
       </div>
