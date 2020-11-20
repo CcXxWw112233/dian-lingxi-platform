@@ -83,7 +83,7 @@ const Register = options => {
               style={{
                 maxWidth: 472,
                 margin: '0 auto',
-                width: '100%',
+                width: 472,
                 background: '#FFFFFF',
                 border: '1px solid rgba(217,217,217,1)',
                 borderRadius: '4px'
@@ -126,7 +126,7 @@ const Register = options => {
               style={{
                 maxWidth: 472,
                 margin: '0 auto',
-                width: '100%',
+                width: 472,
                 background: '#FFFFFF',
                 border: '1px solid rgba(217,217,217,1)',
                 borderRadius: '4px'
