@@ -30,7 +30,7 @@ const RegisterSuccess = options => {
     <div className={globalClassNmae.page_style_1}>
       <QueueAnim type="top">
         <div key={'one'}>
-          <div style={{ maxWidth: 472, margin: '0 auto', width: '100%' }}>
+          <div style={{ maxWidth: 472, margin: '0 auto', width: 472 }}>
             {/* <TopContentTwo /> */}
             <div style={{ textAlign: 'center' }}>
               <img src={Img} />
