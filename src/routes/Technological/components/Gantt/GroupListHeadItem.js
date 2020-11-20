@@ -323,6 +323,7 @@ export default class GroupListHeadItem extends Component {
       } = this.props
       const { list_id, list_name } = itemValue
       const { local_list_name, show_edit_input } = this.state
+      if (list_id == '0') return
       if (show_edit_input) return
       if (group_view_type == '2') {
         dispatch({
