@@ -14,7 +14,8 @@ import {
   message,
   Popconfirm,
   InputNumber,
-  notification
+  notification,
+  Popover
   // Upload,
   // Icon
 } from 'antd'
@@ -34,6 +35,25 @@ class MeetingManage extends React.Component {
       text: ''
     }
   }
+
+  // 客户端下载连接
+  pakageLink = [
+    {
+      label: '智屏安卓版',
+      value:
+        'https://dian-lingxi-public.oss-cn-beijing.aliyuncs.com/apps/meeting-manage/meeting-manage-tv.apk'
+    },
+    {
+      label: '门牌安卓版',
+      value:
+        'https://dian-lingxi-public.oss-cn-beijing.aliyuncs.com/apps/meeting-manage/meeting-manage.apk'
+    },
+    {
+      label: '门牌Windows版',
+      value:
+        'https://dian-lingxi-public.oss-cn-beijing.aliyuncs.com/apps/meeting-manage/meeting-manage.exe'
+    }
+  ]
   constructor(props) {
     super(props)
     this.timeBox = React.createRef()
@@ -597,16 +617,40 @@ class MeetingManage extends React.Component {
     }
   }
 
+  // 下载安装包
+  downloadPakage = val => {
+    window.open(val.value)
+  }
+
   render() {
     const { getFieldDecorator } = this.props.form
     const { config } = this.props
     const colors = config || this.defaultConfig
     return (
       <div className={styles.meeting_container}>
-        <div className={styles.meeting_container_title}>会议管理系统</div>
+        <div className={styles.meeting_container_title}>
+          会议管理系统
+          <Popover
+            trigger="click"
+            title={null}
+            placement="leftTop"
+            content={this.pakageLink.map(item => {
+              return (
+                <div
+                  className={styles.pakage_item}
+                  onClick={() => this.downloadPakage(item)}
+                >
+                  {item.label}
+                </div>
+              )
+            })}
+          >
+            <Button className={styles.downloadPakage}>下载客户端</Button>
+          </Popover>
+        </div>
         <div className={styles.meeting_container_content}>
           <Row gutter={8} type="flex" align="middle">
-            <Col span={16}>会议室列表</Col>
+            <Col span={14}>会议室列表</Col>
             <Col span={4} className={styles.status_list}>
               <div>
                 <span
@@ -623,7 +667,7 @@ class MeetingManage extends React.Component {
                 <span>{colors?.disabled?.text}</span>
               </div>
             </Col>
-            <Col span={4} style={{ textAlign: 'right' }}>
+            <Col span={6} style={{ textAlign: 'right' }}>
               <Button onClick={this.getList} style={{ marginRight: 10 }}>
                 更新
               </Button>
@@ -635,6 +679,7 @@ class MeetingManage extends React.Component {
 
           <div className={styles.tableRender}>
             <Table
+              scroll={{ y: 240 }}
               onChange={() =>
                 setTimeout(() => {
                   this.setTimeLine()

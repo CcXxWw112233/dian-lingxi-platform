@@ -1,4 +1,17 @@
+.pakage_item{
+  line-height: 30px;
+  text-align: left;
+  cursor: pointer;
+  &:hover{
+    color: #1890ff;
+  }
+}
 .meeting_container{
+  .downloadPakage{
+    float: right;
+  }
+  display: flex;
+  flex-direction: column;
   position: relative;
   border-radius: 5px;
   overflow: hidden;
@@ -7,8 +20,10 @@
     padding: 20px;
     background-color: #F5F7FA;
     box-shadow: 0 1px 1px #D0D3E2;
+    flex: none;
   }
   .meeting_container_content{
+    flex: 1;
     padding: 20px;
   }
   .status_list{
