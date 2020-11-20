@@ -639,7 +639,7 @@ const MiniBoxNavigations = props => {
                   className={`${indexStyles.nav} ${indexStyles.menu} ${indexStyles.disabled}`}
                   key={key}
                 >
-                  <div
+                  {/* <div
                     dangerouslySetInnerHTML={{ __html: item.icon }}
                     className={`${globalStyles.authTheme}`}
                     style={{
@@ -647,7 +647,7 @@ const MiniBoxNavigations = props => {
                       fontSize: '24px',
                       textShadow: '1px 2px 0px rgba(0,0,0,0.15)'
                     }}
-                  ></div>
+                  ></div> */}
                   <div className={indexStyles.nav_svg}>
                     {renderIconSVG(item.code)}
                   </div>
