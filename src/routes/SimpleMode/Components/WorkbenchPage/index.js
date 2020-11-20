@@ -253,10 +253,16 @@ class WorkbenchPage extends Component {
                 />
               )}
               {isPaymentOrgUser && 'whiteboard' === select_box_code && (
-                <WhiteBoardRooms org_id={this.props.OrganizationId} />
+                <WhiteBoardRooms
+                  org_id={this.props.OrganizationId}
+                  workbenchBoxContent_height={workbenchBoxContent_height}
+                />
               )}
               {isPaymentOrgUser && 'meetingmanage' === select_box_code && (
-                <MeetingManage org_id={this.props.OrganizationId} />
+                <MeetingManage
+                  org_id={this.props.OrganizationId}
+                  workbenchBoxContent_height={workbenchBoxContent_height}
+                />
               )}
             </div>
           </div>
