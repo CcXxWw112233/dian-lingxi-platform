@@ -391,7 +391,12 @@ export default class GetRowStrip extends PureComponent {
               type: 'gantt/updateOutLineTree',
               payload: {
                 datas: [
-                  { id, start_time: timestamp, status },
+                  {
+                    id,
+                    start_time: timestamp,
+                    status,
+                    nodes: res.data.nodes || []
+                  },
                   ...res.data.scope_content
                 ]
               }
