@@ -50,9 +50,9 @@
         }
     }
 
-    .myWorkbenchBox:hover {
-        background: rgba(255, 255, 255, 0.25);
-    }
+    // .myWorkbenchBox:hover {
+    //     background: rgba(255, 255, 255, 0.25);
+    // }
 
     .myWorkbenchBox:nth-child(5n) {
         margin-right: 0
@@ -74,9 +74,18 @@
         background: none !important;
     }
 
+    .myWorkbenchBox_enabled {
+        touch-action: manipulation;
+    }
     .myWorkbenchBox2[disabled]:hover {
         background: none !important;
     }
+    .myWorkbenchBox_enabled:hover {
+        background: rgba(255, 255, 255, 0.25);
+      }
+      .myWorkbenchBox_enabled:active {
+        background-color: rgba(0, 0, 0, 0.25);
+      }
 }
 
 .feature_item,
@@ -139,7 +148,10 @@
 .feature_item2:hover {
     background-color: rgba(255, 255, 255, 0.1);
 }
-
+.feature_item:active,
+.feature_item2:active {
+    background-color: rgba(0, 0, 0, 0.45);
+}
 .feature_item2 {
     height     : 56px;
     align-items: flex-start;

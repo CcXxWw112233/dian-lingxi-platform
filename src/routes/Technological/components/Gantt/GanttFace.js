@@ -783,6 +783,9 @@ export default class GanttFace extends Component {
                     }
                     setGoldDateArr={this.setGoldDateArr}
                     setScrollPosition={this.setScrollPosition}
+                    setProcessDetailModalVisible={
+                      this.props.setProcessDetailModalVisible
+                    }
                   />
                   <div
                     style={{

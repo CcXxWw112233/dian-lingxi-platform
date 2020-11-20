@@ -8,6 +8,7 @@ import globalClassNmae from '../../globalset/css/globalClassName.less'
 import TopContent from '../../components/TopContent'
 import BottomContent from '../../components/BottomContent'
 import Copyright from '../../components/Copyright'
+import { routerRedux } from 'dva/router'
 const getEffectOrReducerByName = name => `resetPassword/${name}`
 
 const ResetPassword = options => {
@@ -47,7 +48,7 @@ const ResetPassword = options => {
             style={{
               maxWidth: 472,
               margin: '0 auto',
-              width: '100%',
+              width: 472,
               background: '#FFFFFF',
               border: '1px solid rgba(217,217,217,1)',
               borderRadius: '4px'
@@ -55,6 +56,25 @@ const ResetPassword = options => {
           >
             <TopContent text={'重置密码'} hidenDescription={true} />
             <FormList {...formListProps} />
+            <div
+              style={{
+                marginTop: 16,
+                clear: 'both',
+                height: 30,
+                lineHeight: '30px',
+                cursor: 'pointer',
+                textAlign: 'right',
+                margin: '8px auto 50px',
+                width: '266px',
+                fontSize: '14px',
+                fontFamily: 'PingFangSC-Regular',
+                fontWeight: 400,
+                color: '#1890FF'
+              }}
+              onClick={() => dispatch(routerRedux.replace('/login'))}
+            >
+              返回登录
+            </div>
             <div style={{ height: 40 }}></div>
             {/*<BottomContent type={'register'}/>*/}
           </div>

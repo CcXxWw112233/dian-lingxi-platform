@@ -44,10 +44,11 @@ export async function getWallpaperList(data) {
   })
 }
 
-export async function getGuideCategoryList(data) {
+export async function getGuideCategoryList(params) {
   return request({
     url: `${REQUEST_DOMAIN_ARTICLE}/api/guide/category`,
-    method: 'GET'
+    method: 'GET',
+    params
   })
 }
 

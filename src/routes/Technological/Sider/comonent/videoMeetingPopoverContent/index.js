@@ -74,7 +74,8 @@ class VideoMeetingPopoverContent extends Component {
       ], // 持续结束时间
       defaultValue: '30', // 当前选择的持续时间
       providerDefault: null, // 默认选中的提供商
-      remindDropdownVisible: false
+      remindDropdownVisible: false,
+      emitMeettingStatus: false //是否发送会议
     }
   }
 
@@ -570,9 +571,15 @@ class VideoMeetingPopoverContent extends Component {
       })
     }
   }
-
+  // 是否发送会议
+  setEmitMeettingStatus = bool => {
+    this.setState({
+      emitMeettingStatus: bool
+    })
+  }
   // 发起会议
   handleVideoMeetingSubmit = () => {
+    this.setEmitMeettingStatus(true)
     const { dispatch, videoConferenceProviderList = [] } = this.props
     const {
       saveToProject,
@@ -616,36 +623,41 @@ class VideoMeetingPopoverContent extends Component {
           : 'technological/appointmentVideoMeeting',
         payload: data
       })
-    ).then(res => {
-      if (res.code === '0') {
-        clearTimeout(this.timer)
-        clearTimeout(this.local_timer)
-        const { start_url, card_id } = res.data
-        if (!isOrderTime)
-          remind_time_value = parseInt(meeting_start_time / 1000)
-        this.inviteMemberJoin({ card_id, userIds, user_phone, start_url })
-      } else if (res.code === '1') {
-        message.error(res.message)
-        this.setState(
-          {
-            videoMeetingPopoverVisible: false
-          },
-          () => {
-            this.initVideoMeetingPopover()
-          }
-        )
-      } else {
-        message.error(isShowNowTime ? '发起会议失败' : '预约会议失败')
-        this.setState(
-          {
-            videoMeetingPopoverVisible: false
-          },
-          () => {
-            this.initVideoMeetingPopover()
-          }
-        )
-      }
-    })
+    )
+      .then(res => {
+        if (res.code === '0') {
+          clearTimeout(this.timer)
+          clearTimeout(this.local_timer)
+          const { start_url, card_id } = res.data
+          if (!isOrderTime)
+            remind_time_value = parseInt(meeting_start_time / 1000)
+          this.inviteMemberJoin({ card_id, userIds, user_phone, start_url })
+        } else if (res.code === '1') {
+          message.error(res.message)
+          this.setState(
+            {
+              videoMeetingPopoverVisible: false
+            },
+            () => {
+              this.initVideoMeetingPopover()
+            }
+          )
+        } else {
+          message.error(isShowNowTime ? '发起会议失败' : '预约会议失败')
+          this.setState(
+            {
+              videoMeetingPopoverVisible: false
+            },
+            () => {
+              this.initVideoMeetingPopover()
+            }
+          )
+        }
+        this.setEmitMeettingStatus(false)
+      })
+      .catch(err => {
+        this.setEmitMeettingStatus(false)
+      })
   }
 
   // popoverContent chg 事件
@@ -1175,7 +1187,8 @@ class VideoMeetingPopoverContent extends Component {
                 disabled={
                   !saveToProject ||
                   meetingTitle == '' ||
-                  !(newToNoticeList && newToNoticeList.length)
+                  !(newToNoticeList && newToNoticeList.length) ||
+                  this.state.emitMeettingStatus //发送会议过程
                 }
                 type="primary"
                 onClick={this.handleVideoMeetingSubmit}
@@ -1241,8 +1254,8 @@ class VideoMeetingPopoverContent extends Component {
         }
       >
         <div
-          title="视频会议"
-          className={`${indexStyles.videoMeeting__icon} ${globalStyles.authTheme}`}
+          title="视频会a议"
+          className={`${indexStyles.videoMeeting__icon} ${globalStyles.authTheme} ${globalStyles.normal_icon_mouse_event}`}
         >
           &#xe865;
         </div>

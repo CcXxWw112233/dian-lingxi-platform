@@ -12,7 +12,10 @@ import {
   BOARD_FILES
 } from '../../../../../globalset/js/constant'
 import { currentNounPlanFilterName } from '../../../../../utils/businessFunction'
-import { platformNouns } from '../../../../../globalset/clientCustorm'
+import {
+  clickDelay,
+  platformNouns
+} from '../../../../../globalset/clientCustorm'
 class FeatureBox extends Component {
   constructor(props) {
     super(props)
@@ -136,12 +139,14 @@ class FeatureBox extends Component {
     )
 
     if (code !== 'regulations') {
-      dispatch({
-        type: 'simplemode/routingJump',
-        payload: {
-          route: '/technological/simplemode/workbench'
-        }
-      })
+      setTimeout(() => {
+        dispatch({
+          type: 'simplemode/routingJump',
+          payload: {
+            route: '/technological/simplemode/workbench'
+          }
+        })
+      }, clickDelay)
     }
   }
 
@@ -700,7 +705,7 @@ class FeatureBox extends Component {
         ) : (
           <div
             key={item.id}
-            className={indexStyles.myWorkbenchBox}
+            className={`${indexStyles.myWorkbenchBox} ${indexStyles.myWorkbenchBox_enabled}`}
             onClick={e => this.goWorkbenchBox(item, isDisabled, tipTitle)}
             disabled={isDisabled}
           >

@@ -147,6 +147,25 @@ export default class WorkFlowItem extends Component {
       })
       this.props.setTaskIsDragging && this.props.setTaskIsDragging(false, 4) //当拖动完成后，释放创建任务的锁，让可以正常创建任务
     }, 300)
+    const {
+      itemValue: { id, status }
+    } = this.props
+    // 添加私有状态控制多次触发点击
+    if (this.state.is_moved || this.state.hand_lock) return
+    this.setState({
+      hand_lock: true
+    })
+    this.props.setSpecilTaskExample &&
+      this.props.setSpecilTaskExample({
+        flow_id: id,
+        calback: () => {
+          setTimeout(() => {
+            this.setState({
+              hand_lock: false
+            })
+          }, 200)
+        }
+      })
   }
 
   // 不在项目分组内，左右移动
@@ -202,7 +221,9 @@ export default class WorkFlowItem extends Component {
           dispatch({
             type: 'gantt/updateOutLineTree',
             payload: {
-              datas: [{ id, ...updateData, status }]
+              datas: [
+                { id, ...updateData, status, nodes: res.data.nodes || [] }
+              ]
             }
           })
         } else {
@@ -267,9 +288,22 @@ export default class WorkFlowItem extends Component {
     return obj[status]
   }
 
+  // 渲染节点步骤
+  renderFlowNodesStep = (nodes = []) => {
+    let curr_step = 0
+    const total_step = nodes.length
+    const is_every = nodes.every(item => item.status == '2')
+    if (is_every) {
+      curr_step = nodes.length
+    } else {
+      curr_step = nodes.findIndex(item => item.status == '1') + 1
+    }
+    return `${curr_step}/${total_step}`
+  }
+
   render() {
     const { itemValue = {}, gantt_view_mode } = this.props
-    const { height, name, id, status } = itemValue
+    const { height, name, id, status, nodes = [] } = itemValue
     const { local_left, local_top, rely_down } = this.state
     return (
       <div
@@ -291,7 +325,9 @@ export default class WorkFlowItem extends Component {
         {...this.handleObj()}
       >
         <div
-          className={`${indexStyles.flow_log} ${globalStyles.authTheme}`}
+          className={`${indexStyles.flow_log} ${
+            globalStyles.authTheme
+          } ${status == '3' && indexStyles.flow_log_done}`}
           data-rely_top={id}
           data-rely_type={'flow'}
         >
@@ -309,7 +345,10 @@ export default class WorkFlowItem extends Component {
           data-rely_top={id}
           data-rely_type={'flow'}
         >
-          （{this.renderFlowStatus(status)}）
+          （{this.renderFlowStatus(status)}
+          {''}
+          {''}
+          {status == '1' && this.renderFlowNodesStep(nodes)}）
         </div>
       </div>
     )
@@ -324,13 +363,15 @@ function mapStateToProps({
       group_view_type,
       gantt_view_mode
     }
-  }
+  },
+  publicProcessDetailModal: { process_detail_modal_visible }
 }) {
   return {
     date_arr_one_level,
     ceilWidth,
     gantt_board_id,
     group_view_type,
-    gantt_view_mode
+    gantt_view_mode,
+    process_detail_modal_visible
   }
 }

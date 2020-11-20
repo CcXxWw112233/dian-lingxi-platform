@@ -4,6 +4,7 @@ import QueueAnim from 'rc-queue-anim'
 import { Row, Col, Tooltip, Card } from 'antd'
 import { NODE_ENV } from '../../globalset/js/constant'
 import src from '../../assets/wechatCode.html'
+import src2 from '../../assets/wechatLoginRedirect.html' //有用，请勿注释
 import FormList from './FormList'
 import FormListBind from './FormListBind'
 import globalClassName from '../../globalset/css/globalClassName.less'
@@ -12,6 +13,7 @@ import BottomContent from '../../components/BottomContent'
 import Copyright from '../../components/Copyright'
 import indexStyles from './index.less'
 import { platformNouns } from '../../globalset/clientCustorm'
+import { mockUserScanQrCodeLogin } from '../../services/login'
 
 const juge = localStorage.getItem('bindType')
   ? localStorage.getItem('bindType')
@@ -21,7 +23,8 @@ class Login extends React.Component {
   state = {
     loginType: 'password', //登录方式,验证码登录
     bindType: 'verifycode',
-    bindKey: ''
+    bindKey: '',
+    weChatIframeSrc: ''
   }
   componentDidMount() {
     if (juge === 'wechat') {
@@ -29,6 +32,9 @@ class Login extends React.Component {
         loginType: 'wechatBind'
       })
     }
+    this.setState({
+      weChatIframeSrc: src
+    })
     window.onmessage = e => {
       if (e.data.isBindWecaht === '0') {
         this.setState({
@@ -90,6 +96,20 @@ class Login extends React.Component {
     })
     localStorage.setItem('wechat', 'wechatRegister')
   }
+
+  mockUserScanQrCodeLogin = () => {
+    mockUserScanQrCodeLogin().then(res => {
+      const isBindWecaht = '1'
+      const token =
+        'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MDYzMDIxOTgsInVzZXJJZCI6IjExOTI3NTMxNzk1NzAzNDM5MzYifQ.0aF6ExWXwwU-uQXJVPtb_egmXh6fNQoCM0G-m0qXoIY'
+      setTimeout(() => {
+        this.setState({
+          weChatIframeSrc: `http://dev.lingxi.new-di.com/wechatLoginRedirect.html?isBindWecaht=${isBindWecaht}&&isBindWecaht=1&token=${token}`
+        })
+      }, 1000)
+    })
+  }
+
   render() {
     const { dispatch, login = {} } = this.props
     const { loginType, bindKey } = this.state
@@ -149,7 +169,8 @@ class Login extends React.Component {
                 style={{
                   maxWidth: 472,
                   margin: '0 auto',
-                  width: '100%',
+                  // width: '100%',
+                  width: 472,
                   background: '#FFFFFF',
                   border: '1px solid rgba(217,217,217,1)',
                   borderRadius: '4px'
@@ -164,8 +185,9 @@ class Login extends React.Component {
                   <iframe
                     id="wechatCode"
                     frameBorder="0"
-                    src={src}
-                    height="212px"
+                    // src={src}
+                    src={this.state.weChatIframeSrc}
+                    height="280px"
                   ></iframe>
                   <div
                     style={{
@@ -178,8 +200,9 @@ class Login extends React.Component {
                       fontWeight: 400,
                       color: '#D9D9D9'
                     }}
+                    // onClick={() => this.mockUserScanQrCodeLogin()}
                   >
-                    使用微信二维码登陆
+                    使用微信二维码登录
                   </div>
                   <div
                     style={{
@@ -200,7 +223,7 @@ class Login extends React.Component {
                       style={{ cursor: 'pointer' }}
                       onClick={this.passwordLogin.bind(this)}
                     >
-                      密码登陆
+                      密码登录
                     </span>
                   </div>
                 </div>
@@ -219,7 +242,8 @@ class Login extends React.Component {
                 style={{
                   maxWidth: 472,
                   margin: '0 auto',
-                  width: '100%',
+                  // width: '100%',
+                  width: 472,
                   background: '#FFFFFF',
                   border: '1px solid rgba(217,217,217,1)',
                   borderRadius: '4px'
@@ -272,7 +296,7 @@ class Login extends React.Component {
                   <div className={indexStyles.bottomWholeRight}>
                     <p>
                       <span onClick={this.setLoginType.bind(this)}>
-                        {loginType === 'password' ? '验证码登录' : '密码登陆'}
+                        {loginType === 'password' ? '验证码登录' : '密码登录'}
                       </span>
                       <span>|</span>
                       <span onClick={routingJump.bind(null, '/register')}>
@@ -297,7 +321,8 @@ class Login extends React.Component {
                 style={{
                   maxWidth: 472,
                   margin: '0 auto',
-                  width: '100%',
+                  // width: '100%',
+                  width: 472,
                   background: '#FFFFFF',
                   border: '1px solid rgba(217,217,217,1)',
                   borderRadius: '4px'
@@ -318,7 +343,7 @@ class Login extends React.Component {
                   style={{
                     margin: '8px auto 100px',
                     width: '266px',
-                    height: '20px',
+                    // height: '20px',
                     fontSize: '14px',
                     fontFamily: 'PingFangSC-Regular',
                     fontWeight: 400,
@@ -341,6 +366,18 @@ class Login extends React.Component {
                       注册账户并绑定微信
                     </span>
                   </div>
+                  <div
+                    style={{
+                      marginTop: 16,
+                      clear: 'both',
+                      height: 30,
+                      lineHeight: '30px',
+                      cursor: 'pointer'
+                    }}
+                    onClick={() => this.setLoginType()}
+                  >
+                    返回普通登录
+                  </div>
                 </div>
               </div>
               <Copyright />
@@ -357,7 +394,8 @@ class Login extends React.Component {
                 style={{
                   maxWidth: 472,
                   margin: '0 auto',
-                  width: '100%',
+                  // width: '100%',
+                  width: 472,
                   background: '#FFFFFF',
                   border: '1px solid rgba(217,217,217,1)',
                   borderRadius: '4px'
@@ -411,7 +449,7 @@ class Login extends React.Component {
                   <div className={indexStyles.bottomWholeRight}>
                     <p>
                       <span onClick={this.setLoginType.bind(this)}>
-                        {loginType === 'password' ? '验证码登录' : '密码登陆'}
+                        {loginType === 'password' ? '验证码登录' : '密码登录'}
                       </span>
                       <span>|</span>
                       <span onClick={routingJump.bind(null, '/register')}>

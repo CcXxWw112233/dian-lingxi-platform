@@ -195,7 +195,7 @@ export default {
       }
     },
     *wechatLogin({ payload }, { select, call, put }) {
-      //微信扫码登陆
+      //微信扫码登录
       // const tokenArray = payload.token.split('__')
       // Cookies.set('Authorization', tokenArray[0], {expires: 30, path: ''})
       // Cookies.set('refreshToken', tokenArray[1], {expires: 30, path: ''})

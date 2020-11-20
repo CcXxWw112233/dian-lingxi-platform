@@ -209,3 +209,6 @@ export const CUSTOMIZATION_ORGNIZATIONS = [
   '1238304382282502144',
   '1238304382282502144'
 ]
+
+export const FILE_UPLOAD_ACCEPT_TYPE =
+  '.3dm, .iges, .obj, .ma, .mb, .skp, .dwg, .psd, .pdf, .doc, .xls, .ppt, .docx, .xlsx, .pptx, .key, .jpg,.jpeg, .png, .gif, .mp4, .mp3, .txt, .rar, .zip, .7z, .gz, .bmp'

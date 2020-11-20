@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
 import UploadNotification from '../UploadNotification'
 import { Upload, message } from 'antd'
-import {
-  REQUEST_DOMAIN_FILE,
-  UPLOAD_FILE_SIZE
-} from '../../globalset/js/constant'
+import { FILE_UPLOAD_ACCEPT_TYPE } from '../../globalset/js/constant'
 import Cookies from 'js-cookie'
-import { setUploadHeaderBaseInfo } from '../../utils/businessFunction'
+import {
+  getSubfixName,
+  setUploadHeaderBaseInfo
+} from '../../utils/businessFunction'
 import axios from 'axios'
 // import BMF from 'browser-md5-file';
 import {
@@ -129,6 +129,7 @@ export default class UploadNormal extends Component {
       withCredentials: true,
       multiple: true,
       // fileList: uploading_file_list,
+      accept: FILE_UPLOAD_ACCEPT_TYPE,
       showUploadList: false,
       headers: {
         Authorization: Cookies.get('Authorization'),
@@ -139,10 +140,14 @@ export default class UploadNormal extends Component {
       transformFile: this.transformFile,
       beforeUpload: e => {
         if (e.size == 0) {
-          message.error(`不能上传空文件`)
+          message.warn(`不能上传空文件`)
           return false
         } else if (e.size > max_size) {
-          message.error(`上传文件不能文件超过2GB`)
+          message.warn(`上传文件不能文件超过2GB`)
+          return false
+        }
+        if (FILE_UPLOAD_ACCEPT_TYPE.indexOf(getSubfixName(e.name)) == -1) {
+          message.warn(`当前格式不支持`)
           return false
         }
         if (is_need_parent_notification) {

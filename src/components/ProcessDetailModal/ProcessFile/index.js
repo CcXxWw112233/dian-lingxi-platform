@@ -69,6 +69,15 @@ export default class index extends Component {
     }
   }
 
+  componentWillMount() {
+    this.props.dispatch({
+      type: 'gantt/updateDatas',
+      payload: {
+        is_show_board_file_area: '0'
+      }
+    })
+  }
+
   componentDidMount() {
     this.handleAutoResize(this.props)
     window.addEventListener('resize', this.resizeTTY)
@@ -103,13 +112,23 @@ export default class index extends Component {
   }
 
   componentWillUnmount() {
-    this.props.dispatch({
-      type: 'gantt/updateDatas',
-      payload: {
-        boards_flies: [],
-        is_show_board_file_area: '0'
-      }
-    })
+    if (this.props.notburningProcessFile) {
+      this.props.dispatch({
+        type: 'gantt/updateDatas',
+        payload: {
+          is_show_board_file_area: '0'
+        }
+      })
+    } else {
+      this.props.dispatch({
+        type: 'gantt/updateDatas',
+        payload: {
+          boards_flies: [],
+          is_show_board_file_area: '0'
+        }
+      })
+    }
+
     window.removeEventListener('resize', this.resizeTTY)
   }
 

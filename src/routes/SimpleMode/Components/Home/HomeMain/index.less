@@ -76,6 +76,7 @@
                 .board_area_top_rt {
                     // flex       : 1;
                     line-height: 48px;
+                    color: #ffffff;
 
                     :global {
                         .ant-checkbox-inner {
@@ -85,6 +86,29 @@
                     }
 
                     text-align: right;
+                    .checkbox{
+                        color: #ffffff;
+                    }
+                }
+                .board_area_top_rt:hover {
+                    :global {
+                        .ant-checkbox-inner {
+                            border    : 1px solid #E6E8F1;
+                        }
+                    }
+                    .checkbox{
+                        color: #E6E8F1;
+                    }
+                }
+                .board_area_top_rt:active {
+                    :global {
+                        .ant-checkbox-inner {
+                            border    : 1px solid #BCC2D6;
+                        }
+                    }
+                    .checkbox{
+                        color: #BCC2D6;
+                    }
                 }
             }
 
