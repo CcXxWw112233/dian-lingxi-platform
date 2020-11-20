@@ -657,7 +657,7 @@ class MeetingManage extends React.Component {
     } = this.props.form
     const { config } = this.props
     const colors = config || this.defaultConfig
-    const scrollHeight = workbenchBoxContent_height - 220 - (this.tdHeight || 0)
+    const scrollHeight = workbenchBoxContent_height - 290 - (this.tdHeight || 0)
     return (
       <div className={styles.meeting_container}>
         <div className={styles.meeting_container_title}>
