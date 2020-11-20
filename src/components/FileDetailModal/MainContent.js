@@ -1172,7 +1172,7 @@ class MainContent extends Component {
       >
         <div style={{ textAlign: 'center' }}>
           <div style={{ fontSize: '14px', color: '#D4D4D4', marginTop: 200 }}>
-            该文件过大, 不支持在线预览, 请保存到本地预览
+            该文件过大, 不支持在线预览, 请下载到本地预览
           </div>
         </div>
       </div>
@@ -1392,36 +1392,36 @@ class MainContent extends Component {
           height: clientHeight ? clientHeight - 100 - 60 : componentHeight
         }}
       >
-        {!!filePreviewUrl && (
-          <div>
-            {filePreviewSizeExceed ? (
-              <>{this.renderNotSupportFileSize()}</>
-            ) : (
-              <>
-                {filePreviewIsUsable ? (
-                  filePreviewIsRealImage ? (
-                    this.renderPunctuateDom()
-                  ) : (
-                    this.renderIframeDom()
-                  )
+        {/* {!!filePreviewUrl && ( */}
+        <div>
+          {filePreviewSizeExceed ? (
+            <>{this.renderNotSupportFileSize()}</>
+          ) : (
+            <>
+              {filePreviewIsUsable ? (
+                filePreviewIsRealImage ? (
+                  this.renderPunctuateDom()
                 ) : (
-                  <div
-                    className={mainContentStyles.fileDetailContentLeft}
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      fontSize: 16,
-                      color: '#595959'
-                    }}
-                  >
-                    <div>{this.renderNotSupport(fileType)}</div>
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-        )}
+                  this.renderIframeDom()
+                )
+              ) : (
+                <div
+                  className={mainContentStyles.fileDetailContentLeft}
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    fontSize: 16,
+                    color: '#595959'
+                  }}
+                >
+                  <div>{this.renderNotSupport(fileType)}</div>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+        {/* )} */}
         {isZoomPictureFullScreenMode && (
           <div>
             {filePreviewSizeExceed ? (
