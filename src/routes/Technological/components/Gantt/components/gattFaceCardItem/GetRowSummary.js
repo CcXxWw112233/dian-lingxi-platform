@@ -277,11 +277,15 @@ export default class GetRowSummary extends Component {
       },
       gantt_view_mode
     } = this.props
-    const left_arr = this.getWeekIntervalTimer()
+    const left_arr = this.getWeekIntervalTimer() || []
     // 表示第一段日期长度
-    const f_len =
-      ((left_arr[0].timestampEnd - board_start_time) * 83) /
-      (left_arr[0].timestampEnd - left_arr[0].timestamp).toFixed(1)
+    let f_len = 0
+
+    if (!(!board_start_time || !board_end_time)) {
+      f_len =
+        ((left_arr[0].timestampEnd - board_start_time) * 83) /
+        (left_arr[0].timestampEnd - left_arr[0].timestamp).toFixed(1)
+    }
 
     let left_map = left_arr.map((item, index) => {
       let list = []
