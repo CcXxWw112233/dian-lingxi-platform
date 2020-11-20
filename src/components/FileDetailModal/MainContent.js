@@ -1167,12 +1167,19 @@ class MainContent extends Component {
           justifyContent: 'center',
           alignItems: 'center',
           fontSize: 16,
-          color: '#595959'
+          color: '#595959',
+          height: '100%'
         }}
       >
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '14px', color: '#D4D4D4', marginTop: 200 }}>
-            该文件过大, 不支持在线预览, 请下载到本地预览
+        <div style={{ textAlign: 'center', marginTop: 200 }}>
+          <div
+            className={`${globalStyles.authTheme}`}
+            style={{ fontSize: 60, color: '#BCC2D6' }}
+          >
+            &#xe817;
+          </div>
+          <div style={{ fontSize: '14px', color: '#D4D4D4' }}>
+            文件过大，不支持在线预览，请下载到本地
           </div>
         </div>
       </div>
@@ -1394,7 +1401,7 @@ class MainContent extends Component {
       >
         {/* {!!filePreviewUrl && ( */}
         <div>
-          {filePreviewSizeExceed ? (
+          {true ? (
             <>{this.renderNotSupportFileSize()}</>
           ) : (
             <>

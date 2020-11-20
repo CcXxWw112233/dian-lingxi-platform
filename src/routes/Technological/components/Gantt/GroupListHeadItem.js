@@ -328,6 +328,7 @@ export default class GroupListHeadItem extends Component {
         dispatch({
           type: 'gantt/updateDatas',
           payload: {
+            milestoneMap: {},
             group_view_type: '1',
             single_select_user: { id: list_id, name: list_name },
             list_group: []
@@ -353,6 +354,7 @@ export default class GroupListHeadItem extends Component {
         dispatch({
           type: 'gantt/updateDatas',
           payload: {
+            milestoneMap: {},
             gantt_board_id: list_id,
             list_group: []
           }
@@ -366,6 +368,7 @@ export default class GroupListHeadItem extends Component {
         dispatch({
           type: 'gantt/updateDatas',
           payload: {
+            milestoneMap: {},
             group_view_type: '5',
             gantt_board_list_id: list_id,
             list_group: []

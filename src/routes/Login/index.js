@@ -189,7 +189,7 @@ class Login extends React.Component {
                     src={this.state.weChatIframeSrc}
                     height="280px"
                   ></iframe>
-                  <div
+                  {/* <div
                     style={{
                       margin: '8px auto 16px',
                       width: '212px',
@@ -203,7 +203,7 @@ class Login extends React.Component {
                     // onClick={() => this.mockUserScanQrCodeLogin()}
                   >
                     使用微信二维码登录
-                  </div>
+                  </div> */}
                   <div
                     style={{
                       margin: '0 auto',
