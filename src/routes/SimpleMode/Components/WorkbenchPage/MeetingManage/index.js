@@ -651,15 +651,15 @@ class MeetingManage extends React.Component {
   }
 
   render() {
-    const {
-      getFieldDecorator,
-      workbenchBoxContent_height = 700
-    } = this.props.form
-    const { config } = this.props
+    const { getFieldDecorator } = this.props.form
+    const { config, workbenchBoxContent_height = 700 } = this.props
     const colors = config || this.defaultConfig
     const scrollHeight = workbenchBoxContent_height - 290 - (this.tdHeight || 0)
     return (
-      <div className={styles.meeting_container}>
+      <div
+        className={styles.meeting_container}
+        style={{ height: workbenchBoxContent_height }}
+      >
         <div className={styles.meeting_container_title}>
           会议管理系统
           <Popover
