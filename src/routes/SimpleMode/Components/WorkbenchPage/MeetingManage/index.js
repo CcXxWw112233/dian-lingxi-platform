@@ -98,12 +98,14 @@ class MeetingManage extends React.Component {
         {
           key: 'name',
           title: '会议室名称',
-          dataIndex: 'name'
+          dataIndex: 'name',
+          ellipsis: true
         },
         {
           key: 'address',
           title: '会议室地址',
-          dataIndex: 'address'
+          dataIndex: 'address',
+          ellipsis: true
         },
         {
           key: 'device',
@@ -111,12 +113,14 @@ class MeetingManage extends React.Component {
           render: record => {
             let { room_devices = [] } = record || {}
             return room_devices.map(item => item.name).join(' / ')
-          }
+          },
+          ellipsis: true
         },
         {
           key: 'status',
           title: '当前状态',
           // dataIndex: 'status',
+          ellipsis: true,
           render: record => {
             let statusArr = ['disabled', 'enable']
             const text = statusArr[+record.room_status]
