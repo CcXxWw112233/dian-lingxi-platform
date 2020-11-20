@@ -986,3 +986,27 @@ export const dataURLtoFile = (dataurl, filename) => {
   }
   return new File([u8arr], filename, { type: mime })
 }
+
+// 获取两个日期之间的月份 ["2020-10", "2020-11", "2020-12", "2021-01"]
+export const getDiffDate = (minDate, maxDate) => {
+  let startDate = new Date(minDate)
+  let endDate = new Date(maxDate)
+  let months = []
+  //把时间的天数都设置成当前月第一天
+  startDate.setDate(1)
+  endDate.setDate(1)
+  // new Date(yyyy-MM-dd) 不知为何有时候小时是 08 有时候是00
+  endDate.setHours(0)
+  startDate.setHours(0)
+  while (endDate.getTime() >= startDate.getTime()) {
+    let year = startDate.getFullYear()
+    let month = startDate.getMonth() + 1
+    //加一个月
+    startDate.setMonth(month)
+    if (month.toString().length == 1) {
+      month = '0' + month
+    }
+    months.push(year + '-' + month)
+  }
+  return months
+}

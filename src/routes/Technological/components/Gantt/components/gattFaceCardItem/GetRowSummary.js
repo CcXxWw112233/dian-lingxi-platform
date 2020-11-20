@@ -13,7 +13,11 @@ import {
   ceil_height_fold
 } from '../../constants'
 import { selectBoardToSeeInfo } from '../../../../../../utils/businessFunction'
-import { isSamDay, transformTimestamp } from '../../../../../../utils/util'
+import {
+  getDiffDate,
+  isSamDay,
+  transformTimestamp
+} from '../../../../../../utils/util'
 
 @connect(mapStateToProps)
 export default class GetRowSummary extends Component {
@@ -44,20 +48,6 @@ export default class GetRowSummary extends Component {
         is_due = true
       }
     }
-    // const percent = `${((lane_schedule_count - lane_overdue_count) / lane_schedule_count) * 100}%`
-    // if (lane_status == '1') { //完成
-    //     time_bg_color = '#E9ECF2'
-    //     percent_class = styles.board_fold_complete
-    // } else if (lane_status == '2') { //正在进行的项目（任务按期完成）
-    //     time_bg_color = '#91D5FF'
-    //     percent_class = styles.board_fold_ding
-    // } else if (lane_status == '3') { //正在进行的项目(存在逾期任务)
-    //     time_bg_color = '#FFCCC7'
-    //     percent_class = styles.board_fold_due
-    //     is_due = true
-    // } else {
-
-    // }
 
     return {
       time_bg_color,
@@ -65,37 +55,6 @@ export default class GetRowSummary extends Component {
       is_due
     }
   }
-  // setBgSpecific = () => {
-  //     let time_bg_color = ''
-  //     let percent_class = ''
-  //     let is_due = false
-  //     const { itemValue: { end_time }, list_data = [] } = this.props
-  //     const now = new Date().getTime()
-  //     const total = list_data.length
-  //     const realize_count = list_data.filter(item => item.is_realize == '1').length
-  //     const due_not_realize_count = list_data.filter(item => item.is_realize == '0' && item.end_time < end_time).length //逾期未完成个数
-
-  //     if (realize_count == total) { //完成
-  //         time_bg_color = '#BFBFBF'
-  //         percent_class = styles.board_fold_complete
-  //     } else {
-  //         if (due_not_realize_count > 0) { //项目汇总时间在当前之前, 逾期
-  //             time_bg_color = '#FFCCC7'
-  //             percent_class = styles.board_fold_due
-  //             is_due = true
-  //         } else {
-  //             time_bg_color = '#91D5FF'
-  //             percent_class = styles.board_fold_ding
-  //         }
-  //     }
-
-  //     return {
-  //         percent: `${(realize_count / total) * 100}%`,
-  //         time_bg_color,
-  //         percent_class,
-  //         is_due
-  //     }
-  // }
 
   gotoBoard = e => {
     e.stopPropagation()
@@ -119,12 +78,6 @@ export default class GetRowSummary extends Component {
       dispatch,
       group_view_type: '1'
     })
-    // dispatch({
-    //     type: 'gantt/getGanttData',
-    //     payload: {
-
-    //     }
-    // })
   }
 
   // hanldListGroupMap = () => {
@@ -167,7 +120,7 @@ export default class GetRowSummary extends Component {
         width
       }
     } = this.props
-    const interval_timer = this.getIntervalTimer()
+    const interval_timer = this.getMonthIntervalTimer()
     let left_arr = Object.keys(interval_timer || {}) || []
     let left_map = left_arr.map((item, index) => {
       let list = []
@@ -217,13 +170,13 @@ export default class GetRowSummary extends Component {
   }
 
   /**
-   * 获取当前项目跨度时间区间
+   * 获取月视图下项目跨度时间区间
    *  {
    *    10: { start_time: '', due_time: '', left: '' }
    *  }
    *
    */
-  getIntervalTimer = () => {
+  getMonthIntervalTimer = () => {
     const {
       date_arr_one_level = [],
       itemValue: { start_time, end_time, width },
@@ -231,7 +184,7 @@ export default class GetRowSummary extends Component {
     } = this.props
     if (!start_time || !end_time) return
     // 获取两个日期之间的月份
-    const month = this.getDiffDate(start_time, end_time)
+    const month = getDiffDate(start_time, end_time)
     let time_obj = {}
     month.map(item => {
       let start_date = month[0].split('-')[1]
@@ -278,7 +231,7 @@ export default class GetRowSummary extends Component {
       ceilWidth
     } = this.props
     if (!start_time || !end_time) return
-    const month = this.getDiffDate(start_time, end_time)
+    const month = getDiffDate(start_time, end_time)
     let arr = []
     month.map(item => {
       let Y = item.split('-')[0]
@@ -341,13 +294,15 @@ export default class GetRowSummary extends Component {
           list.push(val)
         }
       }
-
+      // 1、头(0)：表示从项目起始点开始 - 自身的一半(10)
+      // 2、尾(length-1)：表示从项目起始点开始 + 进度宽度 - 自身的一半(10)
+      // 3、其他(都是满月的情况)：起始点 + 第一段的长度 + index(表示在第几个位置) * 格子宽度 - 格子一半 - 自身的一半 -----放置在中间
       left =
         index == 0
           ? board_left - 10
           : index == left_arr.length - 1
           ? board_left + width - 10
-          : board_left + index * 83 - 41.5 + f_len - 10
+          : board_left + f_len + index * 83 - 41.5 - 10
       return {
         left,
         list
@@ -355,30 +310,6 @@ export default class GetRowSummary extends Component {
     })
     left_map = left_map.filter(item => item.list.length > 0)
     return left_map
-  }
-
-  // 获取两个日期之间的月份 ["2020-10", "2020-11", "2020-12", "2021-01"]
-  getDiffDate = (minDate, maxDate) => {
-    let startDate = new Date(minDate)
-    let endDate = new Date(maxDate)
-    let months = []
-    //把时间的天数都设置成当前月第一天
-    startDate.setDate(1)
-    endDate.setDate(1)
-    // new Date(yyyy-MM-dd) 不知为何有时候小时是 08 有时候是00
-    endDate.setHours(0)
-    startDate.setHours(0)
-    while (endDate.getTime() >= startDate.getTime()) {
-      let year = startDate.getFullYear()
-      let month = startDate.getMonth() + 1
-      //加一个月
-      startDate.setMonth(month)
-      if (month.toString().length == 1) {
-        month = '0' + month
-      }
-      months.push(year + '-' + month)
-    }
-    return months
   }
 
   // 渲染已过期的
@@ -393,9 +324,6 @@ export default class GetRowSummary extends Component {
         : gantt_view_mode == 'week'
         ? this.hanldListGroupMap2()
         : []
-    // if (!this.setBgSpecific().is_due) {
-    //     return <React.Fragment></React.Fragment>
-    // }
 
     return left_map.map((item, key) => {
       const { list = [], left } = item
@@ -443,21 +371,6 @@ export default class GetRowSummary extends Component {
                   &#xe814;
                 </div>
               </div>
-              {/* <div
-                key={left}
-                style={{
-                  width: 6,
-                  height: 6,
-                  borderRadius: 6,
-                  backgroundColor: this.pointHasDueCard({ list }) && '#FF7365',
-                  color: '#FF7875',
-                  position: 'absolute',
-                  cursor: 'pointer',
-                  left: left + ceilWidth / 2,
-                  top: top + (ceil_height_fold - 6) / 2,
-                  zIndex: 1
-                }}
-              ></div> */}
             </Popover>
           )}
         </>
@@ -511,9 +424,6 @@ export default class GetRowSummary extends Component {
             top: top,
             width: (width || 6) + 6,
             height: task_item_height_fold,
-            // // background: this.setBgSpecific().time_bg_color,
-            // padding: 0,
-            // zIndex: 0,
             backgroundColor: percent == '1' ? 'transparent' : '#86B3FF'
           }}
         >
