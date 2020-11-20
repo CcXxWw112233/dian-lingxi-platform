@@ -20,7 +20,10 @@ import {
 } from '@/globalset/js/constant'
 import _ from 'lodash'
 import { currentNounPlanFilterName } from '../../../../../utils/businessFunction'
-import { FILES } from '../../../../../globalset/js/constant'
+import {
+  FILES,
+  FILE_UPLOAD_ACCEPT_TYPE
+} from '../../../../../globalset/js/constant'
 import FileListRightBarFileDetailModal from '../../../../../routes/Technological/components/ProjectDetail/FileModule/FileListRightBarFileDetailModal'
 import { updateUserStorage } from '../../handleOperateModal'
 
@@ -114,6 +117,10 @@ export default class BeginningStepOne_five extends Component {
       message.warn(`上传文件总数不能超过${limit_file_num}个`)
       return false
     }
+    if (FILE_UPLOAD_ACCEPT_TYPE.indexOf(getSubfixName(file.name)) == -1) {
+      message.warn(`当前格式不支持`)
+      return false
+    }
   }
 
   handleChange = ({ file, fileList, event }) => {
@@ -201,6 +208,7 @@ export default class BeginningStepOne_five extends Component {
     return {
       name: 'file',
       action: '/api/projects/v2/flow/task/upload',
+      accept: FILE_UPLOAD_ACCEPT_TYPE,
       headers: {
         Authorization: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),

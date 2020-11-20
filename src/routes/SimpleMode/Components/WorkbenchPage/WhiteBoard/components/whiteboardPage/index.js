@@ -1,6 +1,7 @@
 import React from 'react'
 import styles from './index.less'
 import globalStyles from '../../../../../../../globalset/css/globalClassName.less'
+import { message } from 'antd'
 
 export default class WhiteBoardPages extends React.Component {
   state = {}
@@ -15,11 +16,17 @@ export default class WhiteBoardPages extends React.Component {
   }
 
   removePage = val => {
+    if (this.props.room.status !== '1') {
+      return message.warn('房间已过期，无法进行操作')
+    }
     const { onDelete } = this.props
     onDelete && onDelete(val)
   }
 
   addPage = () => {
+    if (this.props.room.status !== '1') {
+      return message.warn('房间已过期，无法进行操作')
+    }
     const { onAddPage } = this.props
     onAddPage && onAddPage()
   }

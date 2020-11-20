@@ -44,7 +44,11 @@ const app = dva({
     return newState
   }
 })
-
+// 空函数
+function shield() {
+  return false
+}
+// document.addEventListener('touchstart', shield, false) //取消浏览器的所有事件，使得active的样式在手机上正常生效
 // FastClick.attach(document.body)
 // 2. Plugins
 // app.use({});

@@ -3,6 +3,7 @@ import { connect } from 'dva'
 import indexStyles from './index.less'
 import { isPaymentOrgUser } from '@/utils/businessFunction'
 import { Spin } from 'antd'
+import { platformNouns } from '../../../../globalset/clientCustorm'
 // import MiniBoxNavigations from '../MiniBoxNavigations/index'
 // import BoardCommunication from './BoardCommunication/index'
 // import BoardArchives from './BoardArchives/index'
@@ -67,6 +68,7 @@ class WorkbenchPage extends Component {
     this.setWorkbenchVisible(currentSelectedWorkbenchBox)
     this.setWorkbenchBoxContentHeight()
     window.addEventListener('resize', this.setWorkbenchBoxContentHeight, true)
+    this.setDocumentTitle(this.props)
   }
   componentWillReceiveProps(nextProps) {
     const { currentSelectedWorkbenchBox } = this.props
@@ -78,6 +80,45 @@ class WorkbenchPage extends Component {
       currentSelectedWorkbenchBox.id != newCurrentSelectedWorkbenchBox.id
     ) {
       this.setWorkbenchVisible(newCurrentSelectedWorkbenchBox)
+    }
+    this.setDocumentTitle(nextProps)
+  }
+  setDocumentTitle = props => {
+    const { currentSelectedWorkbenchBox = {} } = props
+    const { code } = currentSelectedWorkbenchBox
+    switch (code) {
+      case 'board:plans':
+        document.title = platformNouns + '-项目计划'
+        break
+      case 'board:chat':
+        document.title = platformNouns + '-项目交流'
+        break
+      case 'board:files':
+        document.title = platformNouns + '-项目档案'
+        break
+      case 'cases':
+        document.title = platformNouns + '-优秀案例'
+        break
+      case 'regulations':
+        document.title = platformNouns + '-政策法规'
+        break
+      case 'maps':
+        document.title = platformNouns + '-投资地图'
+        break
+      case 'mine:flows':
+        document.title = platformNouns + '-工作流'
+        break
+      case 'report':
+        document.title = platformNouns + '-统计报表'
+        break
+      case 'whiteboard':
+        document.title = platformNouns + '-白板协作'
+        break
+      case 'meetingmanage':
+        document.title = platformNouns + '-会议资源管理'
+        break
+      default:
+        break
     }
   }
   // 保存区域高度

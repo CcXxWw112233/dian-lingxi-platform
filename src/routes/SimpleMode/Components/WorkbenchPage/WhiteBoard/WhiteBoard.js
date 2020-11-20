@@ -322,6 +322,12 @@ export default class WhiteBoardRoom extends React.Component {
     })
   }
 
+  // 点击退出白板
+  exitWhiteboard = () => {
+    const { onClose } = this.props
+    onClose && onClose()
+  }
+
   //通过ws添加的
   addPageFromWS = index => {
     let arr = Array.from(this.state.pages).sort((a, b) => a.index - b.index)
@@ -479,6 +485,7 @@ export default class WhiteBoardRoom extends React.Component {
           )}
         </div>
         <RightContent
+          {...this.props}
           onSelectImg={this.handleImgForBoard}
           onChangePage={this.changePage}
           onDelete={this.removePage}
@@ -490,6 +497,14 @@ export default class WhiteBoardRoom extends React.Component {
           pages={this.state.pages}
           onAddPage={this.onPageAdd}
         />
+        <div
+          className={`${globalStyles.authTheme} ${
+            styles.WhiteBoardRoom_close
+          } ${this.state.rightContentVisible ? '' : styles.hideFiles}`}
+          onClick={this.exitWhiteboard}
+        >
+          &#xe7ce;
+        </div>
       </Fragment>
     )
   }

@@ -97,6 +97,7 @@ export default class BoardCommuicationFileDetailContainer extends Component {
           filePreviewCurrentResourceId: data.base_info.file_resource_id, // 需要保存源文件ID
           currentPreviewFileData: data.base_info, // 当前文件的详情内容
           filePreviewIsUsable: data.preview_info.is_usable,
+          filePreviewSizeExceed: data.preview_info.preview_size_limit_exceeded, //文件大小是否超出预览范围
           filePreviewUrl: data.preview_info.url, // 文件路径
           fileFileUrl: data.preview_info.preview_url, //文件真实路径
           filePreviewIsRealImage: data.preview_info.is_real_image, // 是否是真的图片

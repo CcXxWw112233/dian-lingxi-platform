@@ -27,7 +27,10 @@ import {
 } from '../../../utils/businessFunction'
 import Cookies from 'js-cookie'
 import axios from 'axios'
-import { UPLOAD_FILE_SIZE } from '../../../globalset/js/constant'
+import {
+  FILE_UPLOAD_ACCEPT_TYPE,
+  UPLOAD_FILE_SIZE
+} from '../../../globalset/js/constant'
 import FileListRightBarFileDetailModal from '../../../routes/Technological/components/ProjectDetail/FileModule/FileListRightBarFileDetailModal'
 import { fileDelete } from '../../../services/technological/file'
 import { set } from 'core-js/fn/dict'
@@ -130,6 +133,10 @@ export default class FileFieldContent extends Component {
       file.errorMsg = `上传文件不能超过${UPLOAD_FILE_SIZE}MB`
       return false
     } else {
+      if (FILE_UPLOAD_ACCEPT_TYPE.indexOf(getSubfixName(file.name)) == -1) {
+        message.warn(`当前格式不支持`)
+        return false
+      }
     }
   }
 
@@ -238,10 +245,10 @@ export default class FileFieldContent extends Component {
     return {
       name: 'file',
       action: '/api/projects/file/upload/common',
+      accept: FILE_UPLOAD_ACCEPT_TYPE,
       headers: {
         Authorization: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
-
         ...setUploadHeaderBaseInfo({
           orgId: org_id,
           boardId: board_id,

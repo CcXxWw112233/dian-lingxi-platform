@@ -38,6 +38,9 @@ const { ConnectedRouter } = routerRedux
 const Routers = function({ history, app }) {
   history.listen(location => {
     switch (location.pathname) {
+      case '/technological/simplemode/home':
+        document.title = `${platformNouns}-首页`
+        break
       case '/login':
         document.title = `${platformNouns}-登录`
         break

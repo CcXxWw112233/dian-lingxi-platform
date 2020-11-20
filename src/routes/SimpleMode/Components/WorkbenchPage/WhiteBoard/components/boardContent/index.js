@@ -3,7 +3,10 @@ import styles from './index.less'
 import globalStyles from '../../../../../../../globalset/css/globalClassName.less'
 import { Avatar, Select, Tabs, Icon, message } from 'antd'
 import { getProjectList } from '../../../../../../../services/technological/projectCommunication'
-import { getBoardFileList } from '../../../../../../../services/technological/file'
+import {
+  getBoardFileList,
+  fileInfoByUrl
+} from '../../../../../../../services/technological/file'
 import Action from '../../Action'
 import { WEvent } from 'whiteboard-lingxi/lib/utils'
 import WhiteBoardPage from '../whiteboardPage'
@@ -62,11 +65,6 @@ export default class BoardContent extends React.Component {
       }
     )
   }
-  // 点击退出白板
-  exitWhiteboard = () => {
-    const { onClose } = this.props
-    onClose && onClose()
-  }
 
   /**
    * 获取项目列表
@@ -120,7 +118,18 @@ export default class BoardContent extends React.Component {
     } else return 'word'
   }
 
-  setActiveImgToDraw = val => {
+  // 开启loading状态
+  toogleSpin = flag => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'technological/updateDatas',
+      payload: {
+        visibleWhiteboardSpin: flag
+      }
+    })
+  }
+
+  setActiveImgToDraw = async val => {
     const { room = {}, onSelectImg } = this.props
     // console.log(val)
     this.setState({
@@ -129,8 +138,28 @@ export default class BoardContent extends React.Component {
     if (room.status !== '1') {
       return message.warn('房间已过期，不能进行操作')
     }
+    this.toogleSpin(true)
+    let res = await fileInfoByUrl({ id: val.file_id })
+    // 缩略图
+    let src = val.thumbnail_url
+    // 高清图
+    if (res.code === '0') {
+      let preview_info = res.data.preview_info || {}
+      let url = preview_info.url
+      if (url) {
+        src = url
+      }
+    }
+    let msg = await Action.addNetWorkFile({
+      file_name: val.file_name,
+      url: src
+    })
+    if (msg.code === '0') {
+      src = msg.data.url
+    }
     onSelectImg && onSelectImg(val)
-    Action.addImageFromBoard(val.thumbnail_url)
+    Action.addImageFromBoard(src)
+    this.toogleSpin(false)
   }
 
   setActiveFolder = val => {
@@ -218,12 +247,6 @@ export default class BoardContent extends React.Component {
             <div>
               <Avatar src={user.avatar} size={30} style={{ marginRight: 10 }} />
               {user.name}
-            </div>
-            <div
-              className={`${globalStyles.authTheme} ${styles.WhiteBoardRoom_close}`}
-              onClick={this.exitWhiteboard}
-            >
-              &#xe7ce;
             </div>
           </div>
           <div className={styles.board_message}>

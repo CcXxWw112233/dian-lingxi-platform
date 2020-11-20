@@ -62,6 +62,7 @@ import {
 import GroupListHeadDragNoTimeDataItem from './GroupListHeadDragNoTimeDataItem'
 // import { lx_utils } from 'lingxi-im'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
+import { clickDelay } from '../../../../globalset/clientCustorm'
 
 @connect(mapStateToProps)
 export default class GroupListHeadItem extends Component {
@@ -312,68 +313,70 @@ export default class GroupListHeadItem extends Component {
   }
   //分组名点击
   listNameClick = () => {
-    const {
-      itemValue,
-      gantt_board_id,
-      dispatch,
-      group_view_type,
-      single_select_user
-    } = this.props
-    const { list_id, list_name } = itemValue
-    const { local_list_name } = this.state
-    if (group_view_type == '2') {
-      dispatch({
-        type: 'gantt/updateDatas',
-        payload: {
-          group_view_type: '1',
-          single_select_user: { id: list_id, name: list_name },
-          list_group: []
-        }
-      })
-      dispatch({
-        type: 'gantt/getGanttData',
-        payload: {}
-      })
-      return
-    }
-    if (group_view_type != '1') {
-      //必须要在项目视图 或项目分组才能看
-      return
-    } else {
-      if (single_select_user.id) {
-        //点击成员视图切换到项目视图，同时带有只查看某用户的信息
-        // message.warn('已锁定查看成员项目，请先')
+    setTimeout(() => {
+      const {
+        itemValue,
+        gantt_board_id,
+        dispatch,
+        group_view_type,
+        single_select_user
+      } = this.props
+      const { list_id, list_name } = itemValue
+      const { local_list_name, show_edit_input } = this.state
+      if (show_edit_input) return
+      if (group_view_type == '2') {
+        dispatch({
+          type: 'gantt/updateDatas',
+          payload: {
+            group_view_type: '1',
+            single_select_user: { id: list_id, name: list_name },
+            list_group: []
+          }
+        })
+        dispatch({
+          type: 'gantt/getGanttData',
+          payload: {}
+        })
         return
       }
-    }
-    if (gantt_board_id == '0') {
-      dispatch({
-        type: 'gantt/updateDatas',
-        payload: {
-          gantt_board_id: list_id,
-          list_group: []
+      if (group_view_type != '1') {
+        //必须要在项目视图 或项目分组才能看
+        return
+      } else {
+        if (single_select_user.id) {
+          //点击成员视图切换到项目视图，同时带有只查看某用户的信息
+          // message.warn('已锁定查看成员项目，请先')
+          return
         }
-      })
-      selectBoardToSeeInfo({
-        board_id: list_id,
-        board_name: local_list_name,
-        dispatch
-      })
-    } else {
-      dispatch({
-        type: 'gantt/updateDatas',
-        payload: {
-          group_view_type: '5',
-          gantt_board_list_id: list_id,
-          list_group: []
-        }
-      })
-      dispatch({
-        type: 'gantt/getGanttData',
-        payload: {}
-      })
-    }
-
+      }
+      if (gantt_board_id == '0') {
+        dispatch({
+          type: 'gantt/updateDatas',
+          payload: {
+            gantt_board_id: list_id,
+            list_group: []
+          }
+        })
+        selectBoardToSeeInfo({
+          board_id: list_id,
+          board_name: local_list_name,
+          dispatch
+        })
+      } else {
+        dispatch({
+          type: 'gantt/updateDatas',
+          payload: {
+            group_view_type: '5',
+            gantt_board_list_id: list_id,
+            list_group: []
+          }
+        })
+        dispatch({
+          type: 'gantt/getGanttData',
+          payload: {}
+        })
+      }
+    }, clickDelay)
     // dispatch({
     //   type: 'gantt/getGanttData',
     //   payload: {
@@ -1566,7 +1569,14 @@ export default class GroupListHeadItem extends Component {
         >
           <div className={`${indexStyles.list_head_top}`}>
             <div className={`${indexStyles.list_head_top_top}`}>
-              <div className={`${indexStyles.list_head_top_left}`}>
+              <div
+                onClick={this.listNameClick}
+                className={`${
+                  indexStyles.list_head_top_left
+                } ${group_view_type == '1' &&
+                  !show_edit_input &&
+                  globalStyles.normal_icon_mouse_event_bg_2}`}
+              >
                 {(group_view_type == '2' ||
                   (group_view_type == '5' && list_id != '0')) &&
                   !get_gantt_data_loading && (
@@ -1589,6 +1599,7 @@ export default class GroupListHeadItem extends Component {
                         lineHeight: '24px',
                         marginRight: 4
                       }}
+                      // onClick={this.listNameClick}
                     >
                       &#xe68a;
                     </div>
@@ -1600,8 +1611,10 @@ export default class GroupListHeadItem extends Component {
                           fontSize: 16,
                           color: '#1890FF',
                           lineHeight: '24px',
-                          marginRight: 4
+                          marginRight: 4,
+                          marginTop: -2
                         }}
+                        // onClick={this.listNameClick}
                       >
                         &#xe688;
                       </div>
@@ -1628,7 +1641,7 @@ export default class GroupListHeadItem extends Component {
                     }}
                     title={local_list_name}
                     className={`${indexStyles.list_name} ${globalStyle.global_ellipsis}`}
-                    onClick={this.listNameClick}
+                    // onClick={this.listNameClick}
                   >
                     {local_list_name}
                   </div>
@@ -1711,7 +1724,7 @@ export default class GroupListHeadItem extends Component {
                           })}
                         >
                           <div
-                            className={`${indexStyles.list_head_body_contain_rt} ${globalStyle.global_ellipsis}`}
+                            className={`${indexStyles.list_head_body_contain_rt} ${globalStyle.global_ellipsis} ${globalStyles.normal_icon_mouse_event_bg_2}`}
                           >
                             {this.renderGroupExcutor({
                               lane_leader,
@@ -1721,7 +1734,7 @@ export default class GroupListHeadItem extends Component {
                         </Dropdown>
                       ) : (
                         <div
-                          className={`${indexStyles.list_head_body_contain_rt} ${globalStyle.global_ellipsis}`}
+                          className={`${indexStyles.list_head_body_contain_rt} ${globalStyle.global_ellipsis} ${globalStyles.normal_icon_mouse_event_bg_2}`}
                         >
                           {this.renderGroupExcutor({
                             lane_leader,
