@@ -691,6 +691,7 @@ export default class GroupMilestones extends Component {
 
   render() {
     const { render_milestones_data = [] } = this.state
+    const { group_view_type, list_group = [] } = this.props
     return (
       <div
         style={{
@@ -700,13 +701,15 @@ export default class GroupMilestones extends Component {
           width: '100%'
         }}
       >
-        {render_milestones_data.map(item => {
-          return (
-            <React.Fragment key={item.timestamp}>
-              {this.renderView(item)}
-            </React.Fragment>
-          )
-        })}
+        {group_view_type == '1' &&
+          !!list_group.length &&
+          render_milestones_data.map(item => {
+            return (
+              <React.Fragment key={item.timestamp}>
+                {this.renderView(item)}
+              </React.Fragment>
+            )
+          })}
       </div>
     )
   }

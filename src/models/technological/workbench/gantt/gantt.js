@@ -340,6 +340,13 @@ export default {
             get_gantt_data_loaded: false
           }
         })
+
+        const res = yield call(getGanttData, params)
+        clearTimeout(timer)
+        yield put({
+          type: 'getCardRelys',
+          payload: {}
+        })
         // 查询文件列表
         yield put({
           type: 'getGanttBoardsFiles',
@@ -348,17 +355,6 @@ export default {
             board_id: gantt_board_id == '0' ? '' : gantt_board_id
           }
         })
-        yield put({
-          type: 'getGttMilestoneList',
-          payload: {}
-        })
-        yield put({
-          type: 'getCardRelys',
-          payload: {}
-        })
-
-        const res = yield call(getGanttData, params)
-        clearTimeout(timer)
         yield put({
           type: 'updateDatas',
           payload: {
@@ -1327,6 +1323,10 @@ export default {
             list_group,
             group_list_area_section_height
           }
+        })
+        yield put({
+          type: 'getGttMilestoneList',
+          payload: {}
         })
       } catch (err) {
         console.log('ssss_err_2', err)

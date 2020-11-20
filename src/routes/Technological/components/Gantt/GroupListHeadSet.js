@@ -55,6 +55,7 @@ export default class GroupListHeadSet extends Component {
         type: 'gantt/updateDatas',
         payload: {
           // gantt_board_id: group_view_type_new == '3' ? gantt_board_id : '0',
+          milestoneMap: {},
           group_view_type: group_view_type_new,
           list_group: [],
           selected_hide_term: false
@@ -89,6 +90,7 @@ export default class GroupListHeadSet extends Component {
         dispatch({
           type: 'gantt/updateDatas',
           payload: {
+            milestoneMap: {},
             group_view_type: '1',
             list_group: []
           }

@@ -56,7 +56,7 @@ const RetrievePassword = options => {
               }}
               onClick={() => dispatch(routerRedux.replace('/login'))}
             >
-              返回普通登录
+              返回登录
             </div>
 
             <div
