@@ -1,4 +1,37 @@
+.pakage_item{
+  line-height: 30px;
+  text-align: left;
+  cursor: pointer;
+  &:hover{
+    color: #1890ff;
+  }
+}
+.time_line{
+  position: absolute;
+  transition: left 0.3s linear;
+  left: 11px;
+  bottom: -5px;
+  width: 10px;
+  height: 10px;
+  border-radius: 99px;
+  z-index: 10;
+  background-color: #FF7676;
+  i{
+    position: absolute;
+    left: 5px;
+    z-index: 10;
+    top: 100%;
+    width: 1px;
+    background-color: #FF7676;
+  }
+}
 .meeting_container{
+  height: 100%;
+  .downloadPakage{
+    float: right;
+  }
+  display: flex;
+  flex-direction: column;
   position: relative;
   border-radius: 5px;
   overflow: hidden;
@@ -7,8 +40,10 @@
     padding: 20px;
     background-color: #F5F7FA;
     box-shadow: 0 1px 1px #D0D3E2;
+    flex: none;
   }
   .meeting_container_content{
+    // flex: 1;
     padding: 20px;
   }
   .status_list{
@@ -33,25 +68,6 @@
     position: relative;
     & > div{
       height: 100%;
-    }
-  }
-  .time_line{
-    position: absolute;
-    transition: left 0.3s linear;
-    left: 11px;
-    bottom: -5px;
-    width: 10px;
-    height: 10px;
-    border-radius: 99px;
-    z-index: 10;
-    background-color: #FF7676;
-    i{
-      position: absolute;
-      left: 5px;
-      z-index: 10;
-      top: 100%;
-      width: 1px;
-      background-color: #FF7676;
     }
   }
   .time_box{
@@ -88,7 +104,32 @@
     vertical-align: middle;
   }
   .tableRender{
+    height: 100%;
     margin-top: 15px;
+    :global{
+      .normalTime_1{
+        position: relative;
+        &::before {
+          content: "";
+          position: absolute;
+          left: -1px ;
+          top: -15px;
+          height: 80px;
+          background-color: #FF7676;
+          width: 1px;
+        }
+      }
+      .ant-spin-nested-loading{
+        height: 100%;
+      }
+      .ant-spin-container{
+        height: 100%;
+      }
+      .meeting_table{
+        height: 100%;
+      }
+    }
+
   }
 }
 .defineUpload{
