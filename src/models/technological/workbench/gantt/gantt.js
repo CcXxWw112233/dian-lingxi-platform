@@ -1219,6 +1219,7 @@ export default {
               group_rows[i]
             ]) //group_rows[i] +30
           }
+          group_list_area[i] = group_rows[i] * ceiHeight
           // 设置项目汇总的top和left,width
           if (
             ganttIsFold({
@@ -1299,9 +1300,8 @@ export default {
                 }
               }
             }
+            group_list_area[i] = group_rows[i] * ceil_height_fold
           }
-
-          group_list_area[i] = group_rows[i] * ceiHeight
         }
 
         const group_list_area_section_height = group_list_area.map(
