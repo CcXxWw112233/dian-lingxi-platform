@@ -779,7 +779,7 @@ export default class index extends Component {
   renderPaths = () => {
     const { rely_map = [] } = this.state
     const { date_arr_one_level = [] } = this.props
-    console.log('rely_map', rely_map)
+    // console.log('rely_map', rely_map)
     return (
       <>
         {rely_map.map(move_item => {

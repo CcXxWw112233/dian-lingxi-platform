@@ -1009,7 +1009,8 @@ export default class GetRowGantt extends Component {
       gantt_view_mode,
       active_baseline_data,
       date_arr_one_level,
-      gantt_card_height
+      gantt_card_height,
+      group_list_area_fold_section = []
     } = this.props
     return (
       <>
@@ -1029,12 +1030,18 @@ export default class GetRowGantt extends Component {
           {!ganttIsOutlineView({ group_view_type }) &&
             list_group.map((value, key) => {
               const { list_data = [], list_id, board_fold_data } = value
+              const is_group_folded = (
+                group_list_area_fold_section.find(
+                  item => item.list_id == list_id
+                ) || {}
+              ).is_group_folded
               if (
                 ganttIsFold({
                   gantt_board_id,
                   group_view_type,
                   show_board_fold,
-                  gantt_view_mode
+                  gantt_view_mode,
+                  group_folded: is_group_folded
                 })
               ) {
                 return this.renderFoldTaskSummary({
@@ -1229,7 +1236,8 @@ function mapStateToProps({
       outline_tree_round,
       gantt_view_mode,
       gantt_head_width,
-      active_baseline_data
+      active_baseline_data,
+      group_list_area_fold_section = []
     }
   },
   technological: {
@@ -1255,6 +1263,7 @@ function mapStateToProps({
     outline_tree_round,
     gantt_view_mode,
     gantt_head_width,
-    active_baseline_data
+    active_baseline_data,
+    group_list_area_fold_section
   }
 }

@@ -400,8 +400,8 @@ class base_utils {
 }
 // base_utils.getYearDateData()
 module.exports = base_utils
-console.log('sssssssss', {
-  // next: base_utils.getNextRelativeTime(),
-  current: base_utils.getRelativeTime(),
-  stand: base_utils.getNextMonthDate()
-})
+// console.log('sssssssss', {
+//   // next: base_utils.getNextRelativeTime(),
+//   current: base_utils.getRelativeTime(),
+//   stand: base_utils.getNextMonthDate()
+// })

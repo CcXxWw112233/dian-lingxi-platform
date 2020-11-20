@@ -560,6 +560,41 @@
 
       .list_head_top_top {
         display: flex;
+        align-items: center;
+        .spin_fold_tip {
+          font-size: 18px;
+          margin-right: 10px;
+          color: rgba(0, 0, 0, 0.45);
+          &:hover {
+            color: rgba(0, 0, 0, 0.65);
+          }
+        }
+        @keyframes spin_fold_show {
+          from {
+            transform: rotate(0deg);
+          }
+
+          to {
+            transform: rotate(90);
+          }
+        }
+        @keyframes spin_fold_hide {
+          from {
+            transform: rotate(90deg);
+          }
+
+          to {
+            transform: rotate(0);
+          }
+        }
+        .spin_fold_show {
+          animation: spin_fold_show 300ms ease;
+          transform: rotate(90deg);
+        }
+        .spin_fold_hide {
+          animation: spin_fold_hide 300ms ease;
+          transform: rotate(0deg);
+        }
 
         .list_head_top_left {
           .list_name {
@@ -627,7 +662,7 @@
               text-overflow: ellipsis;
               white-space: nowrap;
               display: flex;
-              border-radius: 4px ;
+              border-radius: 4px;
               .excutors {
                 max-width: 100px;
               }
@@ -736,6 +771,7 @@
       .list_head_footer_tip {
         font-size: 18px;
         margin-right: 6px;
+        color: #d0d3e2;
       }
 
       .list_head_footer_dec {

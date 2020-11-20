@@ -1514,6 +1514,40 @@ export default class GroupListHeadItem extends Component {
     return new_val
   }
 
+  // 分组折叠切换
+  handleToggleGroupFolded = e => {
+    e && e.stopPropagation()
+    const {
+      itemValue: { list_id },
+      group_list_area_fold_section = [],
+      list_group = [],
+      dispatch
+    } = this.props
+    let new_ = [...group_list_area_fold_section]
+    new_ = new_.map(item => {
+      if (item.list_id == list_id) {
+        let new_item = { ...item }
+        new_item.is_group_folded = !item.is_group_folded
+        return new_item
+      } else {
+        return item
+      }
+    })
+
+    dispatch({
+      type: 'gantt/updateDatas',
+      payload: {
+        group_list_area_fold_section: new_
+      }
+    })
+    dispatch({
+      type: 'gantt/handleListGroup',
+      payload: {
+        data: list_group
+      }
+    })
+  }
+
   render() {
     const {
       currentUserOrganizes = [],
@@ -1530,7 +1564,8 @@ export default class GroupListHeadItem extends Component {
     } = this.props
     const {
       itemValue = {},
-      projectDetailInfoData: { data: board_users }
+      projectDetailInfoData: { data: board_users },
+      group_list_area_fold_section = []
     } = this.props
     const {
       is_star,
@@ -1561,7 +1596,9 @@ export default class GroupListHeadItem extends Component {
       arhcived_modal_visible
     } = this.state
     const board_create_user = create_by.name || create_by.user_name
-
+    const is_group_folded = (
+      group_list_area_fold_section.find(item => item.list_id == list_id) || {}
+    ).is_group_folded
     return (
       <div>
         <div
@@ -1573,6 +1610,22 @@ export default class GroupListHeadItem extends Component {
         >
           <div className={`${indexStyles.list_head_top}`}>
             <div className={`${indexStyles.list_head_top_top}`}>
+              {group_view_type == '1' &&
+                gantt_board_id != '0' &&
+                list_id != '0' && (
+                  <div
+                    className={`${globalStyles.authTheme} ${
+                      indexStyles.spin_fold_tip
+                    } ${
+                      is_group_folded
+                        ? indexStyles.spin_fold_hide
+                        : indexStyles.spin_fold_show
+                    }`}
+                    onClick={this.handleToggleGroupFolded}
+                  >
+                    &#xe61f;
+                  </div>
+                )}
               <div
                 onClick={this.listNameClick}
                 className={`${
@@ -1934,7 +1987,8 @@ function mapStateToProps({
       group_view_type,
       get_gantt_data_loading,
       list_group,
-      show_board_fold
+      show_board_fold,
+      group_list_area_fold_section = []
     }
   },
   technological: {
@@ -1969,7 +2023,8 @@ function mapStateToProps({
     get_gantt_data_loading,
     show_board_fold,
     projectDetailInfoData,
-    userBoardPermissions
+    userBoardPermissions,
+    group_list_area_fold_section
   }
 }
 

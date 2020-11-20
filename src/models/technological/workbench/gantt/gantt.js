@@ -113,6 +113,7 @@ export default {
       group_rows_lock: [0, 0, 0], //group_rows的锁，当 key对应的值为正整数时， 优先
       group_list_area: [], //分组高度区域 [组一行数 * ceiHeight，组二行数 * ceiHeight]
       group_list_area_section_height: [], //分组高度区域总高度 [组一行数 * ceiHeight，(组一行数 + 组二行数) * ceiHeight， ...]
+      group_list_area_fold_section: [], // 控制分组是否折叠 [{list_id:'',is_group_folded: false}]
       isDragging: false, //甘特图是否在拖拽中
       target_scrollLeft: 0, //总体滚动条向左滑动位置
       target_scrollTop: 0, //总体滚动条偏离顶部滑动位置
@@ -732,8 +733,8 @@ export default {
           outline_tree_round: arr
         }
       })
-      console.log('filnaly_outline_tree1', filnaly_outline_tree)
-      console.log('filnaly_outline_tree2', arr)
+      // console.log('filnaly_outline_tree1', filnaly_outline_tree)
+      // console.log('filnaly_outline_tree2', arr)
       // console.log('filnaly_outline_tree1', filnaly_outline_tree[0].expand_length)
       // console.log('filnaly_outline_tree2', filnaly_outline_tree[1].expand_length)
       // 更新基线信息
@@ -766,6 +767,9 @@ export default {
         const date_arr_one_level = yield select(
           getModelSelectDatasState('gantt', 'date_arr_one_level')
         )
+        const show_group_flod = yield select(
+          getModelSelectDatasState('gantt', 'group_list_area_fold_section')
+        )
         const min_start_time = date_arr_one_level[0].timestamp //最早时间
         const max_due_time =
           date_arr_one_level[date_arr_one_level.length - 1].timestampEnd //最晚时间
@@ -777,6 +781,9 @@ export default {
             list_data: [],
             list_no_time_data: val['lane_data']['card_no_times'] || []
           }
+          const group_folded = (
+            show_group_flod.find(item => item.list_id == val['lane_id']) || {}
+          ).is_group_folded
           if (val['lane_data']['cards']) {
             for (let val_1 of val['lane_data']['cards']) {
               const due_time = getDigit(val_1['due_time'])
@@ -854,7 +861,8 @@ export default {
               gantt_board_id,
               group_view_type,
               show_board_fold,
-              gantt_view_mode
+              gantt_view_mode,
+              group_folded
             })
           ) {
             //全项目视图下，收缩，取特定某一条做基准，再进行时间汇总
@@ -990,13 +998,19 @@ export default {
         const group_rows_lock = yield select(
           getModelSelectDatasState('gantt', 'group_rows_lock')
         )
-
+        const show_group_flod = yield select(
+          getModelSelectDatasState('gantt', 'group_list_area_fold_section')
+        )
         const group_list_area = [] //分组高度区域
 
         //设置分组区域高度, 并为每一个任务新增一条
         for (let i = 0; i < list_group.length; i++) {
           let list_data = list_group[i]['list_data']
-
+          const group_folded = (
+            show_group_flod.find(
+              item => item.list_id == list_group[i].list_id
+            ) || {}
+          ).is_group_folded
           if (!ganttIsOutlineView({ group_view_type })) {
             //在非大纲视图下才会有排序
             list_data = list_data.sort((a, b) => {
@@ -1206,11 +1220,11 @@ export default {
                   return total + current
                 })
             }
-            console.log(
-              'before_group_row',
-              before_group_row,
-              Math.floor(wapper_height / ceiHeight)
-            )
+            // console.log(
+            //   'before_group_row',
+            //   before_group_row,
+            //   Math.floor(wapper_height / ceiHeight)
+            // )
             const fix_row =
               Math.ceil(wapper_height / ceiHeight) - before_group_row //+ 2
             group_rows[i] = Math.max.apply(null, [
@@ -1226,7 +1240,8 @@ export default {
               gantt_board_id,
               group_view_type,
               show_board_fold,
-              gantt_view_mode
+              gantt_view_mode,
+              group_folded
             })
           ) {
             // 全项目视图下，为收缩状态
@@ -1314,6 +1329,15 @@ export default {
             return height
           }
         )
+        // 定义一个折叠分组的数据
+        const group_list_area_fold_section = list_group.map(item => {
+          return {
+            list_id: item.list_id,
+            is_group_folded: !!(
+              show_group_flod.find(val => val.list_id == item.list_id) || {}
+            ).is_group_folded
+          }
+        })
         // console.log('sssss', 's3', group_list_area_section_height)
         yield put({
           type: 'updateDatas',
@@ -1321,7 +1345,8 @@ export default {
             group_list_area,
             group_rows,
             list_group,
-            group_list_area_section_height
+            group_list_area_section_height,
+            group_list_area_fold_section
           }
         })
         yield put({

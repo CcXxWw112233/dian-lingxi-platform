@@ -390,12 +390,14 @@ export default class GetRowSummary extends Component {
       width,
       time_span,
       lane_schedule_count,
-      lane_todo_count
+      lane_todo_count,
+      lane_progress_percent
     } = itemValue
     const { percent_class, time_bg_color } = this.setBgSpecific()
     const percent =
+      lane_progress_percent ||
       Number(lane_schedule_count - lane_todo_count) /
-      Number(lane_schedule_count)
+        Number(lane_schedule_count)
     const percent_else = 1 - percent
     if (!lane_schedule_count) {
       return <></>

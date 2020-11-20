@@ -76,7 +76,7 @@ export default class index extends PureComponent {
   initCanvas = () => {
     this.canvas = this.canvas_ref.current
     this.ctx = this.canvas.getContext('2d')
-    console.log('ssssssssaaa_ctx', this.ctx)
+    // console.log('ssssssssaaa_ctx', this.ctx)
   }
   setCanvasWidth = (props, origin) => {
     const { date_total, ceilWidth } = props

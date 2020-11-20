@@ -23,14 +23,16 @@ export const ganttIsFold = ({
   group_view_type,
   gantt_board_id,
   show_board_fold,
-  gantt_view_mode
+  gantt_view_mode,
+  group_folded
 }) => {
   //gantt是否折叠
 
   if (
-    gantt_board_id == '0' &&
-    (gantt_view_mode == 'year' || gantt_view_mode == 'week') &&
-    group_view_type == '1'
+    (gantt_board_id == '0' &&
+      (gantt_view_mode == 'year' || gantt_view_mode == 'week') &&
+      group_view_type == '1') ||
+    (group_view_type == '1' && group_folded)
   ) {
     return true
   }
