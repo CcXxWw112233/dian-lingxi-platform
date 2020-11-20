@@ -73,7 +73,7 @@ const ResetPassword = options => {
               }}
               onClick={() => dispatch(routerRedux.replace('/login'))}
             >
-              返回普通登录
+              返回登录
             </div>
             <div style={{ height: 40 }}></div>
             {/*<BottomContent type={'register'}/>*/}

@@ -133,6 +133,10 @@ export default class FileFieldContent extends Component {
       file.errorMsg = `上传文件不能超过${UPLOAD_FILE_SIZE}MB`
       return false
     } else {
+      if (FILE_UPLOAD_ACCEPT_TYPE.indexOf(getSubfixName(file.name)) == -1) {
+        message.warn(`当前格式不支持`)
+        return false
+      }
     }
   }
 

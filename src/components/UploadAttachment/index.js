@@ -285,6 +285,10 @@ export default class UploadAttachment extends Component {
       this.setState(state => ({
         fileList: [...state.fileList, file]
       }))
+      if (FILE_UPLOAD_ACCEPT_TYPE.indexOf(getSubfixName(file.name)) == -1) {
+        message.warn(`当前格式不支持`)
+        return false
+      }
       this.setUploadFileVisible(true)
       return false
     }
