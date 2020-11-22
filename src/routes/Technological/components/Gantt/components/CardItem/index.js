@@ -1896,7 +1896,11 @@ export default class CardItem extends Component {
               height: task_item_height - 4,
               lineHeight: `${task_item_height - 4}px`,
               backgroundColor:
-                status_label == 'overdue_time' && 'rgba(255,32,32,0.4)',
+                status_label == 'overdue_time'
+                  ? 'rgba(255,32,32,0.4)'
+                  : status_label == 'ahead_time_middle'
+                  ? '#CDD1DF'
+                  : '',
               zIndex:
                 status_label == 'overdue_time'
                   ? 0
@@ -1905,11 +1909,11 @@ export default class CardItem extends Component {
                   : 0,
               backgroundImage:
                 status_label == 'overdue_time'
-                  ? '-webkit-gradient(linear,left top, right bottom,color-stop(0.25, rgba(255, 255, 255, 0.2)),color-stop(0.25, rgba(255,32,32,0.01)),color-stop(0.5, rgba(255,32,32,0.01)),color-stop(0.5, rgba(255, 255, 255, 0.2)),color-stop(0.75, rgba(255, 255, 255, 0.2)),color-stop(0.75, rgba(255,32,32,0.01)),to(rgba(255,32,32,0.01)))'
+                  ? '' //'-webkit-gradient(linear,left top, right bottom,color-stop(0.25, rgba(255, 255, 255, 0.2)),color-stop(0.25, rgba(255,32,32,0.01)),color-stop(0.5, rgba(255,32,32,0.01)),color-stop(0.5, rgba(255, 255, 255, 0.2)),color-stop(0.75, rgba(255, 255, 255, 0.2)),color-stop(0.75, rgba(255,32,32,0.01)),to(rgba(255,32,32,0.01)))'
                   : status_label == 'ahead_time_middle'
-                  ? '-webkit-gradient(linear,left top, right bottom,color-stop(0.25, rgba(255, 255, 255, 0.2)),color-stop(0.25, rgba(158, 166, 194, 0.4)),color-stop(0.5, rgba(158, 166, 194, 0.4)),color-stop(0.5, rgba(255, 255, 255, 0.2)),color-stop(0.75, rgba(255, 255, 255, 0.2)),color-stop(0.75, rgba(158, 166, 194, 0.4)),to(rgba(158, 166, 194, 0.4)))'
-                  : ''
-              // opacity: status_label == 'ahead_time_middle' && 0.8
+                  ? '#CDD1DF' //'-webkit-gradient(linear,left top, right bottom,color-stop(0.25, rgba(255, 255, 255, 0.2)),color-stop(0.25, rgba(158, 166, 194, 0.4)),color-stop(0.5, rgba(158, 166, 194, 0.4)),color-stop(0.5, rgba(255, 255, 255, 0.2)),color-stop(0.75, rgba(255, 255, 255, 0.2)),color-stop(0.75, rgba(158, 166, 194, 0.4)),to(rgba(158, 166, 194, 0.4)))'
+                  : '',
+              opacity: status_label == 'ahead_time_middle' && 0.5
             }}
           ></div>
         )}
@@ -1925,21 +1929,26 @@ export default class CardItem extends Component {
           onMouseMove={e => e.preventDefault()}
           style={{
             // opacity: 1,
-            backgroundColor: is_realize == '1' ? '#CDD1DF' : '#cbddf7',
+            backgroundColor:
+              is_realize == '1'
+                ? status_label == 'ahead_time_middle'
+                  ? '#5BB48F'
+                  : '#CDD1DF'
+                : '#cbddf7',
             // backgroundColor: is_realize == '1' ? '#9EA6C2' : '#5A86F5',
             padding:
               gantt_view_mode != 'month' && time_span < 6 ? '0' : '0 8px',
-            zIndex: 1,
-            backgroundImage:
-              // status_label == 'overdue_time' &&
-              is_show_compare_real_plan_timer &&
-              status_label != 'ahead_time_middle' &&
-              '-webkit-gradient(linear,left top, right bottom,color-stop(0.25, rgba(255, 255, 255, 0.2)),color-stop(0.25, rgba(158,166,194,0.4)),color-stop(0.5, rgba(158,166,194,0.4)),color-stop(0.5, rgba(255, 255, 255, 0.2)),color-stop(0.75, rgba(255, 255, 255, 0.2)),color-stop(0.75, rgba(158,166,194,0.4)),to(rgba(158,166,194,0.4)))',
-            //status_label == 'overdue_time' &&
-            backgroundSize:
-              is_show_compare_real_plan_timer &&
-              status_label != 'ahead_time_middle' &&
-              '6px 6px'
+            zIndex: 1
+            // backgroundImage:
+            //   // status_label == 'overdue_time' &&
+            //   is_show_compare_real_plan_timer &&
+            //   status_label != 'ahead_time_middle' &&
+            //   '-webkit-gradient(linear,left top, right bottom,color-stop(0.25, rgba(255, 255, 255, 0.2)),color-stop(0.25, rgba(158,166,194,0.4)),color-stop(0.5, rgba(158,166,194,0.4)),color-stop(0.5, rgba(255, 255, 255, 0.2)),color-stop(0.75, rgba(255, 255, 255, 0.2)),color-stop(0.75, rgba(158,166,194,0.4)),to(rgba(158,166,194,0.4)))',
+            // //status_label == 'overdue_time' &&
+            // backgroundSize:
+            //   is_show_compare_real_plan_timer &&
+            //   status_label != 'ahead_time_middle' &&
+            //   '6px 6px'
           }}
         >
           {/* <div data-targetclassname="specific_example"
@@ -1960,7 +1969,9 @@ export default class CardItem extends Component {
               color:
                 is_realize == '1'
                   ? is_show_compare_real_plan_timer
-                    ? 'rgba(0,0,0,0.65)'
+                    ? status_label == 'ahead_time_middle'
+                      ? '#000'
+                      : 'rgba(0,0,0,0.45)'
                     : 'rgba(0,0,0,.25)'
                   : '',
               height: task_item_height - 4,
