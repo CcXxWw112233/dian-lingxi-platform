@@ -1852,7 +1852,8 @@ export default class CardItem extends Component {
             (gantt_view_mode == 'year' ? 0 : card_width_diff),
           height: height || task_item_height,
           marginTop: task_item_margin_top,
-          background: this.setLableColor(label_data, is_realize) // 'linear-gradient(to right,rgba(250,84,28, 1) 25%,rgba(90,90,90, 1) 25%,rgba(160,217,17, 1) 25%,rgba(250,140,22, 1) 25%)',//'linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)',
+          background: this.setLableColor(label_data, is_realize), // 'linear-gradient(to right,rgba(250,84,28, 1) 25%,rgba(90,90,90, 1) 25%,rgba(160,217,17, 1) 25%,rgba(250,140,22, 1) 25%)',//'linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)',
+          boxShadow: is_realize == '1' && 'none'
         }}
         {...this.handleObj()}
       >
