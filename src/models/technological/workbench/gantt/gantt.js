@@ -1315,7 +1315,10 @@ export default {
                 }
               }
             }
-            group_list_area[i] = group_rows[i] * ceil_height_fold
+            // 分组的折叠高度需要窄一点
+            group_list_area[i] = group_folded
+              ? group_rows[i] * ceil_height_fold - 38
+              : group_rows[i] * ceil_height_fold
           }
         }
 

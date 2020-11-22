@@ -127,7 +127,7 @@
   // background: url('../../asset/board_fold_complete.png') 0 0 repeat-x;
   // background-color: #E9ECF2;
   // background-color: #91d5ff;
-  background-color: #cdd1df;
+  background-color: #5a86f5;
 }
 
 .board_fold_due {
@@ -167,4 +167,71 @@
   background-color: #6294ff !important;
   color: #ffffff !important;
   border-radius: 16px;
+}
+
+.ears_left_triangle,
+.ears_right_triangle {
+  position: absolute;
+  height: 13px;
+  width: 15px;
+  bottom: -9px;
+  top: 15px;
+}
+
+.ears_left_triangle {
+  left: 1;
+  width: 0;
+  height: 0;
+  border-top: 13px solid #86b3ff;
+  border-right: 15px solid transparent;
+}
+
+.ears_left_triangle:after {
+  content: '';
+  left: 0;
+  width: 0;
+  height: 0;
+  border-top: 13px solid #86b3ff;
+  border-right: 15px solid transparent;
+  border-color: #86b3ff transparent transparent transparent;
+  position: absolute;
+  bottom: 5px;
+  left: 0px;
+  top: -6px;
+}
+
+.ears_right_triangle {
+  right: 0;
+  width: 0;
+  height: 0;
+  border-top: 13px solid #86b3ff;
+  border-left: 15px solid transparent;
+}
+
+.ears_right_triangle:after {
+  content: '';
+  width: 0;
+  height: 0;
+  border-top: 13px solid#86B3FF;
+  border-left: 15px solid transparent;
+  border-color: #86b3ff transparent transparent transparent;
+  position: absolute;
+  bottom: -7px;
+  right: 0px;
+}
+
+.l_triangle_percent {
+  border-top: 13px solid#5A86F5;
+  &::after {
+    border-top: 13px solid #5a86f5;
+    border-color: #5a86f5 transparent transparent transparent;
+  }
+}
+
+.r_triangle_percent {
+  border-top: 13px solid#5A86F5;
+  &::after {
+    border-top: 13px solid#5A86F5;
+    border-color: #5a86f5 transparent transparent transparent;
+  }
 }

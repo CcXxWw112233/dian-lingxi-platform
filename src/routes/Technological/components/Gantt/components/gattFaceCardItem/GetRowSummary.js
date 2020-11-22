@@ -32,7 +32,7 @@ export default class GetRowSummary extends Component {
     if (lane_todo_count == 0 || !lane_todo_count) {
       //全部完成
       // time_bg_color = '#E9ECF2'
-      time_bg_color = '#CDD1DF'
+      time_bg_color = '#5A86F5'
       percent_class = styles.board_fold_complete
     } else {
       if (lane_overdue_count == 0) {
@@ -383,7 +383,7 @@ export default class GetRowSummary extends Component {
   }
 
   render() {
-    const { itemValue = {}, ceilWidth } = this.props
+    const { itemValue = {}, ceilWidth, is_group_folded } = this.props
     const {
       left,
       top,
@@ -395,7 +395,7 @@ export default class GetRowSummary extends Component {
     } = itemValue
     const { percent_class, time_bg_color } = this.setBgSpecific()
     const percent =
-      lane_progress_percent ||
+      lane_progress_percent / 100 ||
       Number(lane_schedule_count - lane_todo_count) /
         Number(lane_schedule_count)
     const percent_else = 1 - percent
@@ -423,14 +423,17 @@ export default class GetRowSummary extends Component {
         <div
           onMouseMove={e => e.stopPropagation()}
           // onClick={this.gotoBoard}
-          className={`${indexStyles.specific_example} ${styles.summary_item}`}
+          className={`${indexStyles.specific_example} ${
+            styles.summary_item
+          } ${is_group_folded && styles.rates_ears}`}
           data-targetclassname="specific_example"
           style={{
             left: left,
-            top: top,
+            top: is_group_folded ? top - 16 : top,
             width: (width || 6) + 6,
             height: task_item_height_fold,
-            backgroundColor: percent == '1' ? 'transparent' : '#86B3FF'
+            backgroundColor: percent == '1' ? 'transparent' : '#86B3FF',
+            overflow: is_group_folded && 'visible'
           }}
         >
           {/* 进度填充 */}
@@ -449,6 +452,19 @@ export default class GetRowSummary extends Component {
               display: percent == 0 ? 'none' : 'block'
             }}
           ></div>
+          {is_group_folded && (
+            <>
+              <div
+                className={`${styles.ears_left_triangle} ${percent &&
+                  percent != 0 &&
+                  styles.l_triangle_percent}`}
+              ></div>
+              <div
+                className={`${styles.ears_right_triangle} ${percent == 1 &&
+                  styles.r_triangle_percent}`}
+              ></div>
+            </>
+          )}
           {/* <div
             data-targetclassname="specific_example"
             className={`${styles.summary_item_right} ${percent == 0 &&
@@ -472,7 +488,7 @@ export default class GetRowSummary extends Component {
             top: top
           }}
         ></div> */}
-        {this.renderDueList()}
+        {!is_group_folded && this.renderDueList()}
       </div>
     )
   }

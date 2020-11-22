@@ -1604,8 +1604,9 @@ export default class GroupListHeadItem extends Component {
         <div
           className={indexStyles.listHeadItem}
           style={{
-            height: rows * ceiHeight,
-            display: ganttIsOutlineView({ group_view_type }) ? 'none' : 'flex'
+            height: is_group_folded ? rows * ceiHeight - 38 : rows * ceiHeight,
+            display: ganttIsOutlineView({ group_view_type }) ? 'none' : 'flex',
+            overflow: is_group_folded && 'hidden'
           }}
         >
           <div className={`${indexStyles.list_head_top}`}>
@@ -1761,25 +1762,36 @@ export default class GroupListHeadItem extends Component {
                         </div>
                       )
                     } */}
-                    <div
-                      className={`${indexStyles.list_head_body_contain} ${indexStyles.list_head_body_contain_2}`}
-                    >
-                      {checkIsHasPermissionInVisitControlWithGroup({
-                        code: 'read',
-                        list_id,
-                        list_group,
-                        permissionsValue: checkIsHasPermissionInBoard(
-                          PROJECT_TEAM_CARD_GROUP,
-                          board_id
-                        )
-                      }) ? (
-                        <Dropdown
-                          overlay={renderSetExcutor({
-                            board_users,
-                            selecteds: this.hanldeLaneLeader(lane_leader),
-                            selctedCallback: this.setGroupExcutor
-                          })}
-                        >
+                    {!is_group_folded && (
+                      <div
+                        className={`${indexStyles.list_head_body_contain} ${indexStyles.list_head_body_contain_2}`}
+                      >
+                        {checkIsHasPermissionInVisitControlWithGroup({
+                          code: 'read',
+                          list_id,
+                          list_group,
+                          permissionsValue: checkIsHasPermissionInBoard(
+                            PROJECT_TEAM_CARD_GROUP,
+                            board_id
+                          )
+                        }) ? (
+                          <Dropdown
+                            overlay={renderSetExcutor({
+                              board_users,
+                              selecteds: this.hanldeLaneLeader(lane_leader),
+                              selctedCallback: this.setGroupExcutor
+                            })}
+                          >
+                            <div
+                              className={`${indexStyles.list_head_body_contain_rt} ${globalStyle.global_ellipsis} ${globalStyles.normal_icon_mouse_event_bg_2}`}
+                            >
+                              {this.renderGroupExcutor({
+                                lane_leader,
+                                lane_member_count
+                              })}
+                            </div>
+                          </Dropdown>
+                        ) : (
                           <div
                             className={`${indexStyles.list_head_body_contain_rt} ${globalStyle.global_ellipsis} ${globalStyles.normal_icon_mouse_event_bg_2}`}
                           >
@@ -1788,131 +1800,127 @@ export default class GroupListHeadItem extends Component {
                               lane_member_count
                             })}
                           </div>
-                        </Dropdown>
-                      ) : (
-                        <div
-                          className={`${indexStyles.list_head_body_contain_rt} ${globalStyle.global_ellipsis} ${globalStyles.normal_icon_mouse_event_bg_2}`}
-                        >
-                          {this.renderGroupExcutor({
-                            lane_leader,
-                            lane_member_count
-                          })}
-                        </div>
-                      )}
-                      {/* <div className={`${indexStyles.list_head_body_contain_lt} ${globalStyle.authTheme}`}>&#xe6db;</div> */}
-                    </div>
+                        )}
+                        {/* <div className={`${indexStyles.list_head_body_contain_lt} ${globalStyle.authTheme}`}>&#xe6db;</div> */}
+                      </div>
+                    )}
                   </div>
                 )}
             </div>
           </div>
 
           {/* 底部ui，是否折叠情况 */}
-          <div className={indexStyles.list_head_footer}>
-            <div
-              style={{
-                visibility: list_no_time_data.length ? 'visible' : 'hidden',
-                display:
-                  gantt_board_id == '0' && group_view_type == '1'
-                    ? 'none'
-                    : 'flex'
-              }}
-              onClick={this.setIsShowBottDetail}
-            >
+          {!is_group_folded && (
+            <div className={indexStyles.list_head_footer}>
               <div
-                className={`${globalStyles.authTheme} ${
-                  indexStyles.list_head_footer_tip
-                } ${isShowBottDetail == '2' &&
-                  indexStyles.spin_hide} ${isShowBottDetail == '1' &&
-                  indexStyles.spin_show}`}
+                style={{
+                  visibility: list_no_time_data.length ? 'visible' : 'hidden',
+                  display:
+                    gantt_board_id == '0' && group_view_type == '1'
+                      ? 'none'
+                      : 'flex'
+                }}
+                onClick={this.setIsShowBottDetail}
               >
-                &#xe61f;
+                <div
+                  className={`${globalStyles.authTheme} ${
+                    indexStyles.list_head_footer_tip
+                  } ${isShowBottDetail == '2' &&
+                    indexStyles.spin_hide} ${isShowBottDetail == '1' &&
+                    indexStyles.spin_show}`}
+                >
+                  &#xe61f;
+                </div>
+                <div
+                  className={`${indexStyles.list_head_footer_dec} ${globalStyles.global_ellipsis}`}
+                >
+                  未排期的事项 {list_no_time_data.length}条
+                </div>
               </div>
-              <div
-                className={`${indexStyles.list_head_footer_dec} ${globalStyles.global_ellipsis}`}
-              >
-                未排期的事项 {list_no_time_data.length}条
-              </div>
-            </div>
 
-            {/* 操作项 */}
-            <div className={indexStyles.operatorWapper}>
-              {/* 置顶 */}
-              {group_view_type == '1' &&
-                list_id != '0' &&
-                !show_edit_input &&
-                (is_star == '0' ? (
-                  <div
-                    className={globalStyle.authTheme}
-                    title={'置顶'}
-                    onClick={() => this.roofTop('1')}
-                    style={{
-                      marginLeft: 10,
-                      fontSize: 16,
-                      color: 'rgb(255, 169, 64)'
-                    }}
-                  >
-                    &#xe7e3;
-                  </div>
-                ) : (
-                  <div
-                    className={globalStyle.authTheme}
-                    title={'取消置顶'}
-                    onClick={() => this.roofTop('0')}
-                    style={{
-                      marginLeft: 10,
-                      fontSize: 16,
-                      color: 'rgb(255, 169, 64)'
-                    }}
-                  >
-                    &#xe86e;
-                  </div>
-                ))}
-              {// 只有在项目视图下，且如果在分组id == 0（未分组的情况下不能显示）
-              group_view_type == '1' &&
-                list_id != '0' &&
-                (gantt_board_id != '0'
-                  ? this.checkIsHasPermissionInGroup(gantt_board_id)
-                  : true) && (
-                  <Dropdown
-                    onVisibleChange={this.dropdwonVisibleChange}
-                    overlay={
-                      group_view_type == '1' && menu_oprate_visible ? (
-                        this.renderMenuOperateListName()
-                      ) : (
-                        <span></span>
-                      )
-                    }
-                    trigger={['click']}
-                  >
-                    <span
-                      className={`${globalStyles.authTheme} ${indexStyles.operator}`}
+              {/* 操作项 */}
+              <div className={indexStyles.operatorWapper}>
+                {/* 置顶 */}
+                {group_view_type == '1' &&
+                  list_id != '0' &&
+                  !show_edit_input &&
+                  (is_star == '0' ? (
+                    <div
+                      className={globalStyle.authTheme}
+                      title={'置顶'}
+                      onClick={() => this.roofTop('1')}
+                      style={{
+                        marginLeft: 10,
+                        fontSize: 16,
+                        color: 'rgb(255, 169, 64)'
+                      }}
                     >
-                      &#xe7fd;
-                    </span>
-                  </Dropdown>
-                )}
-            </div>
-            {/* 项目视图显示组织和负责人 */}
-            {gantt_board_id == '0' && group_view_type == '1' && (
-              <div className={indexStyles.info_detail}>
-                <div
-                  className={globalStyle.global_ellipsis}
-                  style={{ maxWidth: 80, marginRight: 6 }}
-                  title={getOrgNameWithOrgIdFilter(
-                    org_id,
-                    currentUserOrganizes
+                      &#xe7e3;
+                    </div>
+                  ) : (
+                    <div
+                      className={globalStyle.authTheme}
+                      title={'取消置顶'}
+                      onClick={() => this.roofTop('0')}
+                      style={{
+                        marginLeft: 10,
+                        fontSize: 16,
+                        color: 'rgb(255, 169, 64)'
+                      }}
+                    >
+                      &#xe86e;
+                    </div>
+                  ))}
+                {// 只有在项目视图下，且如果在分组id == 0（未分组的情况下不能显示）
+                group_view_type == '1' &&
+                  list_id != '0' &&
+                  (gantt_board_id != '0'
+                    ? this.checkIsHasPermissionInGroup(gantt_board_id)
+                    : true) && (
+                    <Dropdown
+                      onVisibleChange={this.dropdwonVisibleChange}
+                      overlay={
+                        group_view_type == '1' && menu_oprate_visible ? (
+                          this.renderMenuOperateListName()
+                        ) : (
+                          <span></span>
+                        )
+                      }
+                      trigger={['click']}
+                    >
+                      <span
+                        className={`${globalStyles.authTheme} ${indexStyles.operator}`}
+                      >
+                        &#xe7fd;
+                      </span>
+                    </Dropdown>
                   )}
-                >
-                  #{getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}
-                </div>
-                <div
-                  className={`${globalStyle.global_ellipsis} ${indexStyles.lane_leader_wrapper}`}
-                >
-                  {this.renderGroupExcutor({ lane_leader, lane_member_count })}
-                </div>
               </div>
-            )}
-          </div>
+              {/* 项目视图显示组织和负责人 */}
+              {gantt_board_id == '0' && group_view_type == '1' && (
+                <div className={indexStyles.info_detail}>
+                  <div
+                    className={globalStyle.global_ellipsis}
+                    style={{ maxWidth: 80, marginRight: 6 }}
+                    title={getOrgNameWithOrgIdFilter(
+                      org_id,
+                      currentUserOrganizes
+                    )}
+                  >
+                    #{getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}
+                  </div>
+                  <div
+                    className={`${globalStyle.global_ellipsis} ${indexStyles.lane_leader_wrapper}`}
+                  >
+                    {this.renderGroupExcutor({
+                      lane_leader,
+                      lane_member_count
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* 非项目视图下 */}
           {!(gantt_board_id == '0' && group_view_type == '1') && (

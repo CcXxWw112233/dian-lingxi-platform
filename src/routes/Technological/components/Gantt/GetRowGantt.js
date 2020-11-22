@@ -820,7 +820,8 @@ export default class GetRowGantt extends Component {
     list_id,
     list_data,
     board_fold_data = {},
-    group_index
+    group_index,
+    is_group_folded
   }) => {
     return (
       <GetRowSummary
@@ -829,6 +830,7 @@ export default class GetRowGantt extends Component {
         list_id={list_id}
         key={list_id}
         group_index={group_index}
+        is_group_folded={is_group_folded}
       />
     )
   }
@@ -1048,7 +1050,8 @@ export default class GetRowGantt extends Component {
                   list_id,
                   list_data,
                   board_fold_data,
-                  group_index: key
+                  group_index: key,
+                  is_group_folded
                 })
               } else {
                 return this.renderNormalTaskList({ list_id, list_data })
