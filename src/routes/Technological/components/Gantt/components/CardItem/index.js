@@ -129,7 +129,7 @@ export default class CardItem extends Component {
 
       b = `linear-gradient(to right${bgColor})`
     } else {
-      b = is_realize == '1' ? '#CDD1DF' : '#cbddf7'
+      b = is_realize == '1' ? 'transparent' : '#cbddf7'
     }
     return b
   }
@@ -1933,8 +1933,8 @@ export default class CardItem extends Component {
             backgroundColor:
               is_realize == '1'
                 ? status_label == 'ahead_time_middle'
-                  ? 'rgb(128 208 175)'
-                  : '#CDD1DF'
+                  ? 'rgb(175 241 213)'
+                  : 'rgb(212 216 228)'
                 : '#cbddf7',
             // backgroundColor: is_realize == '1' ? '#9EA6C2' : '#5A86F5',
             padding:
@@ -1972,7 +1972,7 @@ export default class CardItem extends Component {
                   ? is_show_compare_real_plan_timer
                     ? status_label == 'ahead_time_middle'
                       ? '#000'
-                      : 'rgba(0,0,0,0.45)'
+                      : 'rgba(0,0,0,0.35)'
                     : 'rgba(0,0,0,.25)'
                   : '',
               height: task_item_height - 4,
