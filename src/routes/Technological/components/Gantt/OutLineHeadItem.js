@@ -365,6 +365,7 @@ export default class OutLineHeadItem extends Component {
           let updateParams = { ...param }
           updateParams.id = param.id
           updateParams.name = param.name
+          delete updateParams.parentId
           // debugger
           updateMilestone({ ...updateParams }, { isNotLoading: false })
             .then(res => {
@@ -465,7 +466,7 @@ export default class OutLineHeadItem extends Component {
                     children.splice(index, 0, addNodeValue)
                   }
                 } else {
-                  children.push(addNodeValue)
+                  // children.push(addNodeValue)
                 }
                 if (nodeValue) {
                   nodeValue.children = children
