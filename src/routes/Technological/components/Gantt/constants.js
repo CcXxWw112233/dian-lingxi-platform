@@ -33,7 +33,7 @@ export const ganttIsFold = ({
     (gantt_board_id == '0' &&
       (gantt_view_mode == 'year' || gantt_view_mode == 'week') &&
       group_view_type == '1') ||
-    (group_view_type == '1' && group_folded)
+    (group_view_type == '1' && gantt_view_mode != 'hours' && group_folded)
   ) {
     return true
   }

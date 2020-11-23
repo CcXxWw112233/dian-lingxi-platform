@@ -301,7 +301,8 @@ export default class GroupListHeadSet extends Component {
       gantt_board_id = '0',
       group_view_filter_boards,
       group_view_filter_users,
-      list_group = []
+      list_group = [],
+      gantt_view_mode
     } = this.props
     const selected = `${indexStyles.button_nomal_background} ${indexStyles.type_select}`
     const is_group_folded = (list_group.find(item => item.list_id != '0') || {})
@@ -426,6 +427,7 @@ export default class GroupListHeadSet extends Component {
               />
             )}
             {gantt_board_id != '0' &&
+              gantt_view_mode != 'hours' &&
               group_view_type == '1' &&
               is_group_folded && (
                 <Tooltip
@@ -504,7 +506,8 @@ function mapStateToProps({
       group_view_filter_boards,
       group_view_filter_users,
       group_list_area_fold_section = [],
-      list_group = []
+      list_group = [],
+      gantt_view_mode
     }
   },
   simplemode: { simplemodeCurrentProject }
@@ -520,6 +523,7 @@ function mapStateToProps({
     group_view_filter_users,
     simplemodeCurrentProject,
     group_list_area_fold_section,
-    list_group
+    list_group,
+    gantt_view_mode
   }
 }

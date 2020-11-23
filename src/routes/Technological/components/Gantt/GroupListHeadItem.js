@@ -1612,6 +1612,7 @@ export default class GroupListHeadItem extends Component {
           <div className={`${indexStyles.list_head_top}`}>
             <div className={`${indexStyles.list_head_top_top}`}>
               {group_view_type == '1' &&
+                gantt_view_mode != 'hours' &&
                 gantt_board_id != '0' &&
                 list_id != '0' && (
                   <div
