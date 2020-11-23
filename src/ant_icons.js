@@ -1,5 +1,6 @@
 export { default as AppstoreOutline } from '@ant-design/icons/lib/outline/AppstoreOutline'
 export { default as CaretDownOutline } from '@ant-design/icons/lib/outline/CaretDownOutline'
+export { default as CaretDownFill } from '@ant-design/icons/lib/fill/CaretDownFill'
 export { default as TeamOutline } from '@ant-design/icons/lib/outline/TeamOutline'
 export { default as UserOutline } from '@ant-design/icons/lib/outline/UserOutline'
 export { default as EllipsisOutline } from '@ant-design/icons/lib/outline/EllipsisOutline'
