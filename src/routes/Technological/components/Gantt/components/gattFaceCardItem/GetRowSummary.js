@@ -394,10 +394,10 @@ export default class GetRowSummary extends Component {
       lane_progress_percent
     } = itemValue
     const { percent_class, time_bg_color } = this.setBgSpecific()
-    const percent =
-      lane_progress_percent / 100 ||
-      Number(lane_schedule_count - lane_todo_count) /
-        Number(lane_schedule_count)
+    const percent = lane_progress_percent / 100
+    // ||
+    // Number(lane_schedule_count - lane_todo_count) /
+    //   Number(lane_schedule_count)
     const percent_else = 1 - percent
     if (!lane_schedule_count) {
       return <></>
@@ -431,7 +431,7 @@ export default class GetRowSummary extends Component {
             left: left,
             top: is_group_folded ? top - 16 : top,
             width: (width || 6) + 6,
-            height: task_item_height_fold,
+            height: is_group_folded ? 12 : task_item_height_fold,
             backgroundColor: percent == '1' ? 'transparent' : '#86B3FF',
             overflow: is_group_folded && 'visible'
           }}
@@ -447,7 +447,7 @@ export default class GetRowSummary extends Component {
             }`}
             style={{
               width: `${percent * 100}%`,
-              height: task_item_height_fold,
+              height: is_group_folded ? 12 : task_item_height_fold,
               border: `1px solid ${time_bg_color}`,
               display: percent == 0 ? 'none' : 'block'
             }}
