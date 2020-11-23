@@ -1914,7 +1914,7 @@ export default class CardItem extends Component {
                   : status_label == 'ahead_time_middle'
                   ? '#CDD1DF' //'-webkit-gradient(linear,left top, right bottom,color-stop(0.25, rgba(255, 255, 255, 0.2)),color-stop(0.25, rgba(158, 166, 194, 0.4)),color-stop(0.5, rgba(158, 166, 194, 0.4)),color-stop(0.5, rgba(255, 255, 255, 0.2)),color-stop(0.75, rgba(255, 255, 255, 0.2)),color-stop(0.75, rgba(158, 166, 194, 0.4)),to(rgba(158, 166, 194, 0.4)))'
                   : '',
-              opacity: status_label == 'ahead_time_middle' && 0.5
+              opacity: status_label == 'ahead_time_middle' && 0.7
             }}
           ></div>
         )}
@@ -1933,7 +1933,7 @@ export default class CardItem extends Component {
             backgroundColor:
               is_realize == '1'
                 ? status_label == 'ahead_time_middle'
-                  ? '#5BB48F'
+                  ? 'rgb(128 208 175)'
                   : '#CDD1DF'
                 : '#cbddf7',
             // backgroundColor: is_realize == '1' ? '#9EA6C2' : '#5A86F5',
