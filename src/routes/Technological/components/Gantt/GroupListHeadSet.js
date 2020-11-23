@@ -26,7 +26,8 @@ export default class GroupListHeadSet extends Component {
     super(props)
     this.state = {
       dropdownVisible: false,
-      addProjectModalVisible: false
+      addProjectModalVisible: false,
+      is_full_folded: false // 表示是否一键折叠
     }
   }
 
@@ -43,6 +44,38 @@ export default class GroupListHeadSet extends Component {
   //     }, 5000)
   // }
 
+  componentWillReceiveProps(nextProps) {
+    const {
+      simplemodeCurrentProject = {},
+      group_list_area_fold_section = []
+    } = nextProps
+    const {
+      simplemodeCurrentProject: old_simplemodeCurrentProject = {}
+    } = this.props
+    // 切换不同项目时需要清空state状态
+    if (
+      simplemodeCurrentProject.board_id != old_simplemodeCurrentProject.board_id
+    ) {
+      this.setState({
+        is_full_folded: false
+      })
+    } else {
+      // 如果分组都折叠了 那么需要更新状态
+      let flag = group_list_area_fold_section
+        .filter(item => item.list_id != '0')
+        .every(item => item.is_group_folded)
+      if (flag) {
+        this.setState({
+          is_full_folded: true
+        })
+      } else {
+        this.setState({
+          is_full_folded: false
+        })
+      }
+    }
+  }
+
   setGroupViewType = group_view_type_new => {
     const { dispatch, group_view_type } = this.props
     if (group_view_type == group_view_type_new) {
@@ -58,8 +91,12 @@ export default class GroupListHeadSet extends Component {
           milestoneMap: {},
           group_view_type: group_view_type_new,
           list_group: [],
-          selected_hide_term: false
+          selected_hide_term: false,
+          group_list_area_fold_section: []
         }
+      })
+      this.setState({
+        is_full_folded: false
       })
       // if (gantt_board_id != '0') {
       //     const { simplemodeCurrentProject } = this.props;
@@ -92,8 +129,12 @@ export default class GroupListHeadSet extends Component {
           payload: {
             milestoneMap: {},
             group_view_type: '1',
-            list_group: []
+            list_group: [],
+            group_list_area_fold_section: []
           }
+        })
+        this.setState({
+          is_full_folded: false
         })
         dispatch({
           type: 'gantt/getGanttData',
@@ -106,8 +147,12 @@ export default class GroupListHeadSet extends Component {
             milestoneMap: {},
             gantt_board_id: '0',
             group_view_type: '1',
-            list_group: []
+            list_group: [],
+            group_list_area_fold_section: []
           }
+        })
+        this.setState({
+          is_full_folded: false
         })
         selectBoardToSeeInfo({ board_id: '0', dispatch })
       }
@@ -200,6 +245,52 @@ export default class GroupListHeadSet extends Component {
       payload: {}
     })
   }
+  // 点击是否一键折叠
+  handleSpreadGroupFolded = type => {
+    let {
+      group_list_area_fold_section = [],
+      list_group = [],
+      dispatch
+    } = this.props
+    let new_arr = [...group_list_area_fold_section]
+
+    if (type == 'fold') {
+      // 表示一键折叠
+      new_arr = new_arr.map(item => {
+        if (item.list_id == '0') return item
+        let new_item = { ...item }
+        new_item = { ...item, is_group_folded: true }
+        return new_item
+      })
+      this.setState({
+        is_full_folded: true
+      })
+    } else if (type == 'spread') {
+      //表示展开
+      new_arr = new_arr.map(item => {
+        if (item.list_id == '0') return item
+        let new_item = { ...item }
+        new_item = { ...item, is_group_folded: false }
+        return new_item
+      })
+      this.setState({
+        is_full_folded: false
+      })
+    }
+    dispatch({
+      type: 'gantt/updateDatas',
+      payload: {
+        group_list_area_fold_section: new_arr
+      }
+    })
+    dispatch({
+      type: 'gantt/handleListGroup',
+      payload: {
+        data: list_group
+      }
+    })
+  }
+
   render() {
     const { dropdownVisible, addProjectModalVisible } = this.state
     const {
@@ -209,9 +300,12 @@ export default class GroupListHeadSet extends Component {
       group_view_type = '1',
       gantt_board_id = '0',
       group_view_filter_boards,
-      group_view_filter_users
+      group_view_filter_users,
+      list_group = []
     } = this.props
     const selected = `${indexStyles.button_nomal_background} ${indexStyles.type_select}`
+    const is_group_folded = (list_group.find(item => item.list_id != '0') || {})
+      .list_id
     return (
       <div
         className={indexStyles.groupHeadSet}
@@ -331,6 +425,31 @@ export default class GroupListHeadSet extends Component {
                 group_view_type={group_view_type}
               />
             )}
+            {gantt_board_id != '0' &&
+              group_view_type == '1' &&
+              is_group_folded && (
+                <Tooltip
+                  title={this.state.is_full_folded ? '展开全部' : '收起全部'}
+                >
+                  <div
+                    title={this.state.is_full_folded ? '展开全部' : '收起全部'}
+                    className={indexStyles.set_content_right_spread}
+                    onClick={() =>
+                      this.handleSpreadGroupFolded(
+                        this.state.is_full_folded ? 'spread' : 'fold'
+                      )
+                    }
+                  >
+                    <span className={`${globalStyles.authTheme}`}>
+                      {this.state.is_full_folded ? (
+                        <>&#xe7bb;</>
+                      ) : (
+                        <>&#xe7ba;</>
+                      )}
+                    </span>
+                  </div>
+                </Tooltip>
+              )}
             {!ganttIsOutlineView({ group_view_type }) && (
               <Tooltip title={'内容过滤'}>
                 <Dropdown
@@ -383,7 +502,9 @@ function mapStateToProps({
       group_view_type,
       gantt_board_id,
       group_view_filter_boards,
-      group_view_filter_users
+      group_view_filter_users,
+      group_list_area_fold_section = [],
+      list_group = []
     }
   },
   simplemode: { simplemodeCurrentProject }
@@ -397,6 +518,8 @@ function mapStateToProps({
     gantt_board_id,
     group_view_filter_boards,
     group_view_filter_users,
-    simplemodeCurrentProject
+    simplemodeCurrentProject,
+    group_list_area_fold_section,
+    list_group
   }
 }
