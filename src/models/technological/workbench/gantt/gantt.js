@@ -46,7 +46,8 @@ import {
   date_area_height,
   hours_view_start_work_oclock,
   hours_view_due_work_oclock,
-  ceil_width_hours
+  ceil_width_hours,
+  group_rows_fold_1
 } from '../../../../routes/Technological/components/Gantt/constants'
 import { getModelSelectDatasState } from '../../../utils'
 import { getProjectGoupList } from '../../../../services/technological/task'
@@ -1245,7 +1246,7 @@ export default {
             })
           ) {
             // 全项目视图下，为收缩状态
-            group_rows[i] = group_rows_fold
+            group_rows[i] = group_folded ? group_rows_fold_1 : group_rows_fold
             if (
               list_group[i].list_id == '0' &&
               gantt_view_mode == 'year' &&
@@ -1316,9 +1317,7 @@ export default {
               }
             }
             // 分组的折叠高度需要窄一点
-            group_list_area[i] = group_folded
-              ? group_rows[i] * ceil_height_fold - 38
-              : group_rows[i] * ceil_height_fold
+            group_list_area[i] = group_rows[i] * ceil_height_fold
           }
         }
 

@@ -1604,7 +1604,7 @@ export default class GroupListHeadItem extends Component {
         <div
           className={indexStyles.listHeadItem}
           style={{
-            height: is_group_folded ? rows * ceiHeight - 38 : rows * ceiHeight,
+            height: rows * ceiHeight,
             display: ganttIsOutlineView({ group_view_type }) ? 'none' : 'flex',
             overflow: is_group_folded && 'hidden'
           }}

@@ -10,6 +10,7 @@ export const hours_view_due_work_oclock =
   hours_view_total + hours_view_start_work_oclock //时间视图开始上班几点
 
 export const group_rows_fold = 3 //进度汇总折叠后行数
+export const group_rows_fold_1 = 2 // 表示分组下折叠后行数
 export const ceil_width = 34 // 默认单元格宽度 （月视图）
 export const ceil_width_year = 3 //年试图下的单元格宽度
 export const ceil_width_week = 12 //周视图单元格宽度
