@@ -1504,16 +1504,20 @@ export default class CardItem extends Component {
   }
 
   // 获取大纲视图父任务的截止和开始位置的三角形边框颜色
-  setTriangleTreeColor = (label_data = [], index) => {
+  setTriangleTreeColor = (label_data = [], index, is_realize) => {
     let label_color = '#cbddf7'
     const length = label_data.length
     if (index == 'start') {
       label_color = label_data[0]
         ? `rgb(${label_data[0].label_color})`
+        : is_realize == '1'
+        ? 'rgb(212, 216, 228)'
         : '#cbddf7'
     } else if (index == 'end') {
       label_color = label_data[length - 1]
         ? `rgb(${label_data[length - 1].label_color})`
+        : is_realize == '1'
+        ? 'rgb(212, 216, 228)'
         : '#cbddf7'
     } else {
     }
@@ -1933,8 +1937,8 @@ export default class CardItem extends Component {
             backgroundColor:
               is_realize == '1'
                 ? status_label == 'ahead_time_middle'
-                  ? 'rgb(175 241 213)'
-                  : 'rgb(212 216 228)'
+                  ? 'rgb(175,241,213)'
+                  : 'rgb(212,216,228)'
                 : '#cbddf7',
             // backgroundColor: is_realize == '1' ? '#9EA6C2' : '#5A86F5',
             padding:
@@ -2091,16 +2095,25 @@ export default class CardItem extends Component {
           (child_max_due_time || child_min_start_time) &&
           (gantt_view_mode != 'month' ? time_span > 6 : true) && (
             <>
+              {/* 因为完成后 去除了任务条的阴影 所以变小了 那么触角位置需要调整 */}
               <div
                 className={`${
                   indexStyles.left_triangle
                 } ${is_show_progress_percent &&
-                  indexStyles.lr_triangle_pro_color}`}
+                  indexStyles.lr_triangle_pro_color}
+                  ${is_show_compare_real_plan_timer &&
+                    indexStyles.lr_triangle_com_color}
+                  `}
                 style={{
                   borderColor: `${this.setTriangleTreeColor(
                     label_data,
-                    'start'
-                  )} transparent transparent transparent`
+                    'start',
+                    is_realize
+                  )} transparent transparent transparent`,
+                  left:
+                    is_show_compare_real_plan_timer &&
+                    !label_data.length &&
+                    '2px'
                 }}
               ></div>
               <div className={indexStyles.left_triangle_mask}></div>
@@ -2109,8 +2122,13 @@ export default class CardItem extends Component {
                 style={{
                   backgroundColor: this.setTriangleTreeColor(
                     label_data,
-                    'start'
-                  )
+                    'start',
+                    is_realize
+                  ),
+                  left:
+                    is_show_compare_real_plan_timer &&
+                    !label_data.length &&
+                    '2px'
                 }}
               ></div>
 
@@ -2119,19 +2137,33 @@ export default class CardItem extends Component {
                   indexStyles.right_triangle
                 } ${is_show_progress_percent &&
                   Number(percent_card_non) >= 100 &&
-                  indexStyles.lr_triangle_pro_color}`}
+                  indexStyles.lr_triangle_pro_color} ${is_show_compare_real_plan_timer &&
+                  indexStyles.lr_triangle_com_color}`}
                 style={{
                   borderColor: `${this.setTriangleTreeColor(
                     label_data,
-                    'end'
-                  )} transparent transparent transparent`
+                    'end',
+                    is_realize
+                  )} transparent transparent transparent`,
+                  right:
+                    is_show_compare_real_plan_timer &&
+                    !label_data.length &&
+                    '2px'
                 }}
               ></div>
               <div className={indexStyles.right_triangle_mask}></div>
               <div
                 className={indexStyles.right_triangle_mask2}
                 style={{
-                  backgroundColor: this.setTriangleTreeColor(label_data, 'end')
+                  backgroundColor: this.setTriangleTreeColor(
+                    label_data,
+                    'end',
+                    is_realize
+                  ),
+                  right:
+                    is_show_compare_real_plan_timer &&
+                    !label_data.length &&
+                    '2px'
                 }}
               ></div>
             </>
