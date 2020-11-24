@@ -200,7 +200,7 @@ export default class GetRowSummary extends Component {
         start_time: gold_item.timestamp,
         end_time: gold_item.timestampEnd
       }
-      if (gold_item && Object.keys(gold_item).length) {
+      if (gold_item && !!Object.keys(gold_item).length) {
         // 该月之前所有日期的长度总和
         const date_length = date_arr_one_level
           .slice(0, gold_item_index)
