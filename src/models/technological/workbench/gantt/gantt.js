@@ -157,7 +157,9 @@ export default {
       isDisplayContentIds: [], // 表示已经隐藏的content_ids
       outline_tree_original: [], // 大纲视图显示隐藏快照 数据源
       card_name_outside: false, //任务名称是否外置
-      base_relative_time: '' //相对时间轴的基准时间
+      base_relative_time: '', //相对时间轴的基准时间
+
+      folded_rely_card_arr: [] // 表示分组折叠后 存在有依赖关系的任务
     }
   },
   subscriptions: {

@@ -778,11 +778,16 @@ export default class index extends Component {
   }
   renderPaths = () => {
     const { rely_map = [] } = this.state
-    const { date_arr_one_level = [] } = this.props
+    const { date_arr_one_level = [], folded_rely_card_arr = [] } = this.props
     // console.log('rely_map', rely_map)
+    // 当分组折叠时 过滤存在依赖关系的任务
+    let rely_map_ =
+      rely_map.filter(item => !folded_rely_card_arr.includes(item.id)) ||
+      rely_map ||
+      []
     return (
       <>
-        {rely_map.map(move_item => {
+        {rely_map_.map(move_item => {
           const {
             left: move_left,
             right: move_right,
@@ -953,7 +958,8 @@ function mapStateToProps({
       card_name_outside,
       date_arr_one_level,
       outline_tree,
-      group_list_area_section_height
+      group_list_area_section_height,
+      folded_rely_card_arr = []
     }
   }
 }) {
@@ -971,6 +977,7 @@ function mapStateToProps({
     card_name_outside,
     date_arr_one_level,
     outline_tree,
-    group_list_area_section_height
+    group_list_area_section_height,
+    folded_rely_card_arr
   }
 }
