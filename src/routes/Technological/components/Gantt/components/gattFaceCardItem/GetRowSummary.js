@@ -302,9 +302,13 @@ export default class GetRowSummary extends Component {
       // 2、尾(length-1)：表示从项目起始点开始 + 进度宽度 - 自身的一半(10)
       // 3、其他(都是满月的情况)：起始点 + 第一段的长度 + index(表示在第几个位置) * 格子宽度 - 格子一半 - 自身的一半 -----放置在中间
       left =
-        index == 0
+        index == 0 && !isSamDay(left_arr[0].timestamp, board_start_time)
           ? board_left - 10
-          : index == left_arr.length - 1
+          : index == left_arr.length - 1 &&
+            !isSamDay(
+              left_arr[left_arr.length - 1].timestampEnd,
+              board_end_time
+            )
           ? board_left + width - 10
           : board_left + f_len + index * 83 - 41.5 - 10
       return {
@@ -334,7 +338,7 @@ export default class GetRowSummary extends Component {
       // const realize_arr = list.filter(item => item.is_realize != '1')
       return (
         <>
-          {this.pointHasDueCard({ list }) && (
+          {this.pointHasDueCard({ list }) ? (
             <Popover
               getPopupContainer={triggerNode => triggerNode.parentNode}
               trigger={['click']}
@@ -376,6 +380,8 @@ export default class GetRowSummary extends Component {
                 </div>
               </div>
             </Popover>
+          ) : (
+            <></>
           )}
         </>
       )
