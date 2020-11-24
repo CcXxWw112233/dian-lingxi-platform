@@ -776,15 +776,16 @@ export default class index extends Component {
     }
     return flag
   }
+  recursionRelyMap = (arr = []) => {
+    const { folded_rely_card_arr = [] } = this.props
+    return arr.filter(item => !folded_rely_card_arr.includes(item.id)) || []
+  }
   renderPaths = () => {
     const { rely_map = [] } = this.state
     const { date_arr_one_level = [], folded_rely_card_arr = [] } = this.props
     // console.log('rely_map', rely_map)
     // 当分组折叠时 过滤存在依赖关系的任务
-    let rely_map_ =
-      rely_map.filter(item => !folded_rely_card_arr.includes(item.id)) ||
-      rely_map ||
-      []
+    const rely_map_ = this.recursionRelyMap(rely_map)
     return (
       <>
         {rely_map_.map(move_item => {
@@ -796,7 +797,8 @@ export default class index extends Component {
             id: move_id,
             start_time: move_start_time
           } = move_item
-          return next.map(line_item => {
+          const next_ = this.recursionRelyMap(next)
+          return next_.map(line_item => {
             let {
               left: line_left,
               right: line_right,
