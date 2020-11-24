@@ -281,7 +281,7 @@ export default class GetRowSummary extends Component {
     // 表示第一段日期长度
     let f_len = 0
 
-    if (!(!board_start_time || !board_end_time)) {
+    if (!(!board_start_time || !board_end_time) && !!left_arr.length) {
       f_len =
         ((left_arr[0].timestampEnd - board_start_time) * 83) /
         (left_arr[0].timestampEnd - left_arr[0].timestamp).toFixed(1)
