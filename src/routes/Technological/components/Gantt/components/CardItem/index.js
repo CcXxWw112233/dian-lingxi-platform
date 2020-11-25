@@ -85,7 +85,6 @@ export default class CardItem extends Component {
   }
 
   componentDidMount() {
-    this.excuteTodos()
     this.initSetPosition(this.props)
     this.handleEffectParentCard('getParentCard') //大纲模式下获取父级任务实例
   }
@@ -254,13 +253,7 @@ export default class CardItem extends Component {
       this.props.setDasheRectShow && this.props.setDasheRectShow(false)
     }
   }
-  // 触屏是否可以滚动
-  touchCanScroll = style_attr => {
-    const ele = document.getElementById('gantt_card_out_middle')
-    if (ele) {
-      ele.style.overflow = style_attr
-    }
-  }
+
   // 延展左边
   extentionLeft = e => {
     const nx = e.clientX || e.changedTouches[0].clientX
@@ -432,170 +425,6 @@ export default class CardItem extends Component {
     }, 300)
   }
 
-  // 拖拽完成后的事件处理-----start--------
-  // 拖拽后有其他影响提示
-  // 处理代办弹窗所需要的参数
-  handleNotifiParams = ({ code, data = [], message }) => {
-    const {
-      itemValue: { id }
-    } = this.props
-    const {
-      scope_content = [],
-      undo_id,
-      scope_number,
-      scope_user,
-      scope_day
-    } = data
-    const length = scope_content.filter(item => item.id != id).length
-    let operate_code = code
-    let comfirm_message = `${message}。`
-    if (code == '0') {
-      //成功的时候存在依赖影响
-      if (length) {
-        //当存在影响其它任务的时候 需要warn
-        operate_code = '1'
-        comfirm_message = `当前操作偏离原计划${scope_day}天，将影响${scope_user}个人，${scope_number}条任务。`
-      }
-    } else {
-      operate_code = '2'
-    }
-    return {
-      code: operate_code,
-      message: comfirm_message,
-      undo_id
-    }
-  }
-  addNotificationTodos = ({ code, message, undo_id }) => {
-    //如果改变时间了，则该组件会销毁重新渲染，需要添加进redux代办，在重新渲染时执行
-    const {
-      itemValue: { id },
-      notification_todos = {},
-      dispatch
-    } = this.props
-    const notification_todos_ = { ...notification_todos }
-    notification_todos_[id] = { code, message, undo_id }
-    dispatch({
-      type: 'gantt/updateDatas',
-      payload: {
-        notification_todos: notification_todos_
-      }
-    })
-  }
-  // 拖拽后弹出提示窗
-  notificationEffect = ({ code, message, undo_id }) => {
-    if (['0', '2'].includes(code)) return
-    const {
-      itemValue: { id, board_id }
-    } = this.props
-    const type_obj = {
-      '0': {
-        action: 'success',
-        title: '已变更'
-      },
-      '1': {
-        action: 'warning',
-        title: '确认编排范围'
-      },
-      '2': {
-        action: 'error',
-        title: '变更失败'
-      }
-    }
-    const operator = type_obj[code] || {}
-    const { action = 'config', title = '提示' } = operator
-
-    const reBack = () => {
-      revokeCardDo({ undo_id, board_id }).then(res => {
-        if (isApiResponseOk(res)) {
-          this.updateGanttData(res.data)
-        } else {
-          message.warn(res.message)
-        }
-      })
-    }
-    const renderBtn = notification_duration => (
-      <Button
-        type="primary"
-        size="small"
-        onClick={() => {
-          clearTimer()
-          notification.close(id)
-          reBack()
-        }}
-      >
-        撤销
-      </Button>
-    )
-    const openNoti = notification_duration => {
-      const countdown_message = notification_duration
-        ? `${notification_duration}秒后关闭`
-        : ''
-      notification[action]({
-        placement: 'bottomRight',
-        bottom: 50,
-        duration: 5,
-        message: title,
-        description: `${message}${countdown_message}`,
-        btn: code == '1' ? renderBtn(notification_duration) : '',
-        key: id,
-        onClose: () => {
-          clearTimer()
-          notification.close(id)
-        }
-      })
-    }
-
-    const clearTimer = () => {
-      clearInterval(this.notification_timer)
-      this.notification_timer = null
-    }
-    const setTimer = () => {
-      let { notification_duration } = this.state
-      this.notification_timer = setInterval(() => {
-        this.setState(
-          {
-            notification_duration: notification_duration--
-          },
-          () => {
-            let { notification_duration } = this.state
-            if (notification_duration == 0) {
-              this.setState({
-                notification_duration: 5
-              })
-              clearTimer()
-              this.notification_timer = null
-              // return
-            }
-            openNoti(notification_duration)
-          }
-        )
-      }, 1000)
-    }
-    clearTimer()
-    notification.close(id) //先关掉旧的
-    setTimer()
-  }
-  // 代表列表主动执行
-  excuteTodos = () => {
-    const {
-      notification_todos = {},
-      itemValue: { id },
-      dispatch
-    } = this.props
-    if (notification_todos.hasOwnProperty(id)) {
-      //执行代办，清除id
-      const notification_todos_ = { ...notification_todos }
-      const { message, code, undo_id } = notification_todos_[id]
-      this.notificationEffect({ message, code, undo_id })
-      delete notification_todos_[id]
-      dispatch({
-        type: 'gantt/updateDatas',
-        payload: {
-          notification_todos: notification_todos_
-        }
-      })
-    }
-  }
   // 批量更新甘特图数据
   updateGanttData = (datas = []) => {
     const { group_view_type, dispatch } = this.props
@@ -720,11 +549,6 @@ export default class CardItem extends Component {
         () => {
           console.log('ssssssss_fl', 1)
           this.excuteHandleEffectHandleParentCard(['recoveryParentCard'])
-          // this.excuteHandleEffectHandleParentCard([
-          //     // 'handleParentCard',
-          //     // 'updateParentCard'
-          //     { action: 'updateParentCard', payload: { ...updateData } }
-          // ])
         }
       )
       console.log('ssssssss_fl', 2, end_time, end_time_timestamp, time_width)
@@ -757,36 +581,11 @@ export default class CardItem extends Component {
             card_detail_id,
             selected_card_visible
           })
-          // if (this.handleNotifiParams(res).code == '0') {
-          //     message.success('变更成功')
-          // } else {
-          //     if (!this.notify) {
-          //         this.notify = new EnequeueNotifyTodos({ id, board_id, group_view_type, dispatch })
-          //     }
-          //     this.notify.addTodos({ ...handleReBackNotiParams({ ...res, id }) })
-          //     this.notify = null
-          //     // 添加弹窗提示代办
-          //     // this.addNotificationTodos(this.handleNotifiParams(res))
-          // }
-
           // 更新甘特图数据
           this.updateGanttData([
             { id, ...updateData },
             ...res.data.scope_content.filter(item => item.id != id)
           ])
-          // if (ganttIsOutlineView({ group_view_type })) {
-          //     dispatch({
-          //         type: 'gantt/updateOutLineTree',
-          //         payload: {
-          //             datas: [{ id, ...updateData }, ...res.data.scope_content.filter(item => item.id != id)]
-          //         }
-          //     })
-          // } else {
-          //     this.handleHasScheduleCard({
-          //         card_id: id,
-          //         updateData
-          //     })
-          // }
           // 当任务弹窗弹出来时，右边要做实时控制
           this.onChangeTimeHandleCardDetail()
         } else {
@@ -798,12 +597,6 @@ export default class CardItem extends Component {
             },
             () => {
               this.excuteHandleEffectHandleParentCard(['recoveryParentCard'])
-              // const payload = res.data || { ...updateData }
-              // this.excuteHandleEffectHandleParentCard([
-              //     // 'handleParentCard',
-              //     // 'updateParentCard'
-              //     { action: 'updateParentCard', payload }
-              // ])
             }
           )
           message.warn(res.message)
@@ -936,11 +729,6 @@ export default class CardItem extends Component {
         },
         () => {
           this.excuteHandleEffectHandleParentCard(['recoveryParentCard'])
-          // this.excuteHandleEffectHandleParentCard([
-          //     // 'handleParentCard',
-          //     // 'updateParentCard'
-          //     { action: 'updateParentCard', payload: { ...updateData } }
-          // ])
         }
       )
       return
@@ -976,30 +764,6 @@ export default class CardItem extends Component {
             card_detail_id,
             selected_card_visible
           })
-          // if (this.handleNotifiParams(res).code == '0') {
-          //     message.success('变更成功')
-          // } else {
-          //     if (!this.notify) {
-          //         this.notify = new EnequeueNotifyTodos({ id, board_id, group_view_type, dispatch })
-          //     }
-          //     this.notify.addTodos({ ...handleReBackNotiParams({ ...res, id }) })
-          //     this.notify = null
-          //     // 添加弹窗提示代办
-          //     // this.addNotificationTodos(this.handleNotifiParams(res))
-          // }
-          // if (ganttIsOutlineView({ group_view_type })) {
-          //     dispatch({
-          //         type: 'gantt/updateOutLineTree',
-          //         payload: {
-          //             datas: [{ id, ...updateData }, ...res.data.scope_content.filter(item => item.id != id)]
-          //         }
-          //     });
-          // } else {
-          //     this.handleHasScheduleCard({
-          //         card_id: id,
-          //         updateData
-          //     })
-          // }
           this.updateGanttData([
             { id, ...updateData },
             ...res.data.scope_content.filter(item => item.id != id)
@@ -1125,17 +889,6 @@ export default class CardItem extends Component {
             card_detail_id,
             selected_card_visible
           })
-          // if (this.handleNotifiParams(res).code == '0') {
-          //     message.success('变更成功')
-          // } else {
-          //     if (!this.notify) {
-          //         this.notify = new EnequeueNotifyTodos({ id, board_id, group_view_type, dispatch })
-          //     }
-          //     this.notify.addTodos({ ...handleReBackNotiParams({ ...res, id }) })
-          //     this.notify = null
-          //     // 添加弹窗提示代办
-          //     // this.addNotificationTodos(this.handleNotifiParams(res))
-          // }
           this.changeCardBelongGroup({
             card_id: id,
             new_list_id: group_row_param.list_id,
@@ -1182,17 +935,6 @@ export default class CardItem extends Component {
       operate_id: id, //当前操作的id
       operate_parent_card_id: parent_card_id //当前操作的任务的父任务id
     })
-    // if (selected_card_visible) {
-    //     //当当前打开的任务是该任务或者是该任务父任务，则做查询更新
-    //     if (card_detail_id == id || parent_card_id == card_detail_id) {
-    //         dispatch({
-    //             type: 'publicTaskDetailModal/getCardWithAttributesDetail',
-    //             payload: {
-    //                 id: card_detail_id,
-    //             }
-    //         })
-    //     }
-    // }
   }
 
   // 改变任务分组
@@ -1238,13 +980,6 @@ export default class CardItem extends Component {
         origin_list_group: list_group_new
       }
     })
-    // dispatch({
-    //     type: 'gantt/handleListGroup',
-    //     payload: {
-    //         data: list_group_new,
-    //         not_set_scroll_top: true
-    //     }
-    // })
   }
   // 修改有排期的任务
   handleHasScheduleCard = ({ card_id, updateData = {} }) => {
@@ -1413,12 +1148,6 @@ export default class CardItem extends Component {
               min_left -
               (is_year_view ? 0 : card_width_diff)}px`
             return resolve()
-            // _self.setState({
-            //     parent_card_max_right: max_right,
-            //     parent_card_min_left: min_left
-            // }, () => {
-            //     return resolve()
-            // })
           } else {
             reject()
           }
