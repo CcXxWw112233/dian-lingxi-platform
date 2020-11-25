@@ -1,5 +1,5 @@
 export const NODE_ENV = process.env.NODE_ENV
-export const REQUEST_PREFIX = '/dian_lingxi'
+export const REQUEST_PREFIX = '/api'
 
 export const REQUEST_DOMAIN = `${REQUEST_PREFIX}/upms` //用户信息接口域名
 export const REQUEST_DOMAIN_BOARD = `${REQUEST_PREFIX}/projects` //项目接口域名

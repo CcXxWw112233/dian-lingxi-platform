@@ -93,7 +93,7 @@ class FormList extends React.Component {
         }
         if (!validatePassword(values['password'])) {
           message.warn(
-            '密码至少为包含字母与数字的6位数字符串。',
+            '密码为字母与数字组合，长度至少6位。',
             MESSAGE_DURATION_TIME
           )
           return false
@@ -135,7 +135,7 @@ class FormList extends React.Component {
         if (!validatePassword(values[name])) {
           //
           message.warn(
-            '密码至少为包含字母与数字的6位数字符串',
+            '密码为字母与数字组合，长度至少6位。',
             MESSAGE_DURATION_TIME
           )
           this.setState({

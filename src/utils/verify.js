@@ -12,7 +12,7 @@ export const validateEmailSuffix = value => {
 }
 // 验证密码 正则匹配用户密码8-32位数字和字母的组合
 export const validatePassword = value => {
-  return /^(?![0-9]+$)(?![a-zA-Z]+$)[a-zA-Z0-9]{6,32}/.test(value)
+  return /^(?![0-9]+$)(?![a-zA-Z]+$)[a-zA-Z0-9]{6,32}$/.test(value)
 }
 
 //固定电话

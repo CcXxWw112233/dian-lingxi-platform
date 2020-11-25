@@ -45,11 +45,8 @@ class FormList extends React.Component {
           return false
         }
         if (loginType === 'password') {
-          if (!validatePassword(values['password'])) {
-            message.warn(
-              '密码至少为包含字母与数字的6位数字符串。',
-              MESSAGE_DURATION_TIME
-            )
+          if (!values['password']) {
+            message.warn('请输入密码', MESSAGE_DURATION_TIME)
             return false
           }
         } else {
