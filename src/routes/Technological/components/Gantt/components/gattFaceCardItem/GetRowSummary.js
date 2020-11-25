@@ -244,10 +244,11 @@ export default class GetRowSummary extends Component {
       let Y = item.split('-')[0]
       let M = item.split('-')[1]
       date_arr_one_level.map(val => {
-        const split =
-          val.monthText.indexOf('/') != -1
+        const split = val.monthText
+          ? val.monthText.indexOf('/') != -1
             ? val.monthText.split('/').indexOf(M) != -1
             : Number(val.monthText) == Number(M)
+          : false
         if ((val.year == Y && val.month == M) || split) {
           arr.push(val)
         }
