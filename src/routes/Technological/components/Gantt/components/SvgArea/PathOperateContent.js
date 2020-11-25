@@ -26,7 +26,7 @@ export default class PathOperateContent extends Component {
     const {
       operator: { move_id, line_id }
     } = this.props
-    const { dispatch } = this.props
+    const { dispatch, card_id } = this.props
     Modal.confirm({
       title: '确认删除该依赖？',
       onOk: () => {
@@ -45,7 +45,7 @@ export default class PathOperateContent extends Component {
               card_detail_id: move_id,
               selected_card_visible,
               parent_card_id: '',
-              operate_id: move_id,
+              operate_id: card_id,
               dispatch
             })
           }
@@ -142,7 +142,8 @@ function mapStateToProps({
       rely_map,
       selected_card_visible
     }
-  }
+  },
+  publicTaskDetailModal: { card_id }
 }) {
   return {
     ceilWidth,
@@ -154,6 +155,7 @@ function mapStateToProps({
     date_total,
     ceiHeight,
     rely_map,
-    selected_card_visible
+    selected_card_visible,
+    card_id
   }
 }

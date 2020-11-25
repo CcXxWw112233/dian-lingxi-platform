@@ -1023,7 +1023,13 @@ export default class MainContent extends Component {
                   </div>
                 </div>
                 <div className={`${mainContentStyles.field_right}`}>
-                  <div style={{ display: 'flex' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      flexWrap: 'wrap'
+                    }}
+                  >
                     <div
                       style={{
                         position: 'relative',
