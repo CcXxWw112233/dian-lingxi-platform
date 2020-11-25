@@ -261,6 +261,7 @@ class WorkbenchPage extends Component {
               {isPaymentOrgUser && 'meetingmanage' === select_box_code && (
                 <MeetingManage
                   org_id={this.props.OrganizationId}
+                  currentSelectOrganize={this.props.currentSelectOrganize}
                   workbenchBoxContent_height={workbenchBoxContent_height}
                 />
               )}
@@ -282,7 +283,7 @@ function mapStateToProps({
     simplemodeCurrentProject
   },
   technological: {
-    datas: { OrganizationId }
+    datas: { OrganizationId, currentSelectOrganize }
   }
 }) {
   return {
@@ -291,7 +292,8 @@ function mapStateToProps({
     currentSelectedWorkbenchBox,
     chatImVisiable,
     simplemodeCurrentProject,
-    OrganizationId
+    OrganizationId,
+    currentSelectOrganize
   }
 }
 export default connect(mapStateToProps)(WorkbenchPage)

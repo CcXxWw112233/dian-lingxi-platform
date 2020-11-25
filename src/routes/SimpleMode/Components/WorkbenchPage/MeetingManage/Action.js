@@ -124,6 +124,93 @@ class Action {
   }
 
   /**
+   * 获取授权组织列表
+   * @param {org_id} data 组织id org_id
+   */
+  getRoomAuthList = async data => {
+    const res = await request({
+      method: 'GET',
+      url: `${REQUEST_ROOM_URL}/room/auth`,
+      data,
+      params: data
+    })
+    if (isApiResponseOk(res)) {
+      return res
+    } else return Promise.reject(res)
+  }
+
+  /**
+   * 获取会议室列表
+   * @param {org_id} data 组织id org_id
+   */
+  getRoomList = async data => {
+    const res = await request({
+      method: 'GET',
+      url: `${REQUEST_ROOM_URL}/room/list`,
+      params: data
+    })
+    if (isApiResponseOk(res)) {
+      return res
+    } else return Promise.reject(res)
+  }
+
+  /**
+   * 授权组织接口
+   * @param {*} data 授权传参
+   */
+  addAuthOrg = async data => {
+    const res = await request({
+      method: 'POST',
+      url: `${REQUEST_ROOM_URL}/room/auth`,
+      data
+    })
+    if (isApiResponseOk(res)) return res
+    return Promise.reject(res)
+  }
+
+  /**
+   * 保存修改授权的参数
+   * @param {*} data
+   */
+  SaveEditRoom = async data => {
+    const res = await request({
+      method: 'PUT',
+      url: `${REQUEST_ROOM_URL}/room/auth/${data.id}`,
+      data
+    })
+    if (isApiResponseOk(res)) return res
+    return Promise.reject(res)
+  }
+
+  /**
+   * 删除授权项
+   * @param {*} data
+   */
+  DelRoomOrg = async data => {
+    const res = await request({
+      method: 'DELETE',
+      url: `${REQUEST_ROOM_URL}/room/auth/${data.id}`,
+      data
+    })
+    if (isApiResponseOk(res)) return res
+    return Promise.reject(res)
+  }
+
+  /**
+   * 修改定价
+   * @param {*} data
+   */
+  ChangePrice = async data => {
+    const res = await request({
+      method: 'PUT',
+      url: `${REQUEST_ROOM_URL}/room/cost`,
+      data
+    })
+    if (isApiResponseOk(res)) return res
+    return Promise.reject(res)
+  }
+
+  /**
    * 传图片
    * @param {formData} data {file: file}
    */
@@ -134,7 +221,7 @@ class Action {
     )
     if (isApiResponseOk(res.data)) {
       return res.data
-    } else return Promise.reject()
+    } else return Promise.reject(res.data)
   }
 
   getHours = time => {

@@ -26,9 +26,21 @@
   }
 }
 .meeting_container{
+  .price_text{
+    width: 60px;
+    display: inline-block;
+    text-align: center;
+  }
+  .editPrice{
+    display: inline-block;
+    margin-left: 10px;
+  }
   height: 100%;
   .downloadPakage{
     float: right;
+  }
+  .operation_btns a{
+    margin-left: 15px;
   }
   display: flex;
   flex-direction: column;
@@ -63,6 +75,9 @@
   .title_time{
     display: inline-block;
     width: 80px;
+    &:last-child{
+      width: auto;
+    }
   }
   .time_step{
     position: relative;
