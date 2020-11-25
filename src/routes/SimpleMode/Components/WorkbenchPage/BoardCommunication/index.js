@@ -21,7 +21,7 @@ import { isApiResponseOk } from '@/utils/handleResponseData'
 import { getBoardFileList } from '@/services/technological/file'
 import {
   UPLOAD_FILE_SIZE,
-  FILE_TYPE_UPLOAD_WHITELISTED
+  FILE_UPLOAD_ACCEPT_TYPE
 } from '@/globalset/js/constant'
 import { openImChatBoard } from '../../../../../utils/businessFunction'
 // import { lx_utils, Im } from 'lingxi-im'
@@ -580,10 +580,9 @@ class BoardCommunication extends Component {
     //console.log(file.name.substr(lastIndex) + 1);
     if (
       !file.name ||
-      FILE_TYPE_UPLOAD_WHITELISTED.indexOf(file.name.substr(lastIndex + 1)) ==
-        -1
+      FILE_UPLOAD_ACCEPT_TYPE.indexOf(getSubfixName(file.name)) == -1
     ) {
-      message.error('暂不支持该文件格式上传')
+      message.warn(`当前格式不支持`)
       return false
     }
     this.setState(state => ({

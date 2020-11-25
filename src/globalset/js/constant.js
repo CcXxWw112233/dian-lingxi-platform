@@ -23,33 +23,13 @@ export const WE_APP_ID = appType => {
 
 // 晓策志接口
 export const REQUEST_KNOW_POLICY = `${REQUEST_DOMAIN_ARTICLE}/api`
-//   (function (NODE_ENV, location) {
-//   let api = ''
-//   if (NODE_ENV == 'development') {
-//     // api = 'http://192.168.1.39:8092'
-//     api = REQUEST_DOMAIN_ARTICLE
-//   } else {
-//     // if(location.href.indexOf('lingxi.di-an.com') != -1){ //生产环境
-//     //   api = REQUEST_DOMAIN_ARTICLE
-//     // }else {
-//     //   api = REQUEST_DOMAIN_ARTICLE
-//     // }
-//     api = REQUEST_DOMAIN_ARTICLE
-//   }
-//   return `${api}/api`
-// })(NODE_ENV, window.location)
 
-//export const WEBSOCKET_URL = 'wss://lingxi.di-an.com/websocket' //'47.93.53.149'//'192.168.0.14'  //WS链接地址dsfsd
-// export const WEBSOCKET_URL = 'ws://www.new-di.com/websocket'
-// export const WEBSOCKET_URL = NODE_ENV == 'development'?'ws://192.168.1.16:9326': window.location.host.indexOf('lingxi') != -1 ? 'wss://lingxi.di-an.com/websocket' : 'ws://www.new-di.com/websocket'//'47.93.53.149'//'192.168.0.14'  //WS链接地址dsfsd
 export const WEBSOCKET_URL = (function(NODE_ENV, location) {
   if (NODE_ENV == 'development') {
     // return 'ws://test.lingxi.new-di.com/websocket'
-    // return 'ws://https://knowapi.new-di.com/api/common/hotspot'
-    //'ws://prerelease.lingxi.new-di.com/websocket'
+    // return 'ws://prerelease.lingxi.new-di.com/websocket'
     // return 'ws://192.168.1.68/websocket'
     return 'ws://dev.lingxi.new-di.com/websocket' //开发环境
-    return 'wss://lingxi.di-an.com/websocket'
   } else {
     const protocol = location.protocol == 'http:' ? 'ws:' : 'wss:'
     return `${protocol}//${location.host}/websocket`
@@ -178,9 +158,6 @@ export const CONTENT_DATA_TYPE_CARD = 'card'
 export const CONTENT_DATA_TYPE_FILE = 'file'
 export const CONTENT_DATA_TYPE_FOLDER = 'folder'
 export const CONTENT_DATA_TYPE_FLOW = 'flow'
-
-export const FILE_TYPE_UPLOAD_WHITELISTED =
-  '3dm,iges,obj,ma,mb,skp,dwg,psd,pdf,doc,xls,ppt,docx,xlsx,pptx,key,jpg,png,gif,mp4,mp3,txt'
 
 // 针对性定制化开发的组织
 export const CUSTOMIZATION_ORGNIZATIONS = [
