@@ -249,7 +249,7 @@ export default class GetRowSummary extends Component {
             ? val.monthText.split('/').indexOf(M) != -1
             : Number(val.monthText) == Number(M)
           : false
-        if ((val.year == Y && val.month == M) || split) {
+        if ((val.year == Y && val.month == M) || (val.year == Y && split)) {
           arr.push(val)
         }
       })
