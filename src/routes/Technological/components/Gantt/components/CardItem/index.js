@@ -129,7 +129,7 @@ export default class CardItem extends Component {
 
       b = `linear-gradient(to right${bgColor})`
     } else {
-      b = is_realize == '1' ? 'transparent' : '#cbddf7'
+      b = is_realize == '1' ? 'rgb(212, 216, 228)' : '#cbddf7'
     }
     return b
   }
@@ -2109,11 +2109,11 @@ export default class CardItem extends Component {
                     label_data,
                     'start',
                     is_realize
-                  )} transparent transparent transparent`,
-                  left:
-                    is_show_compare_real_plan_timer &&
-                    !label_data.length &&
-                    '2px'
+                  )} transparent transparent transparent`
+                  // left:
+                  //   is_show_compare_real_plan_timer &&
+                  //   !label_data.length &&
+                  //   '2px'
                 }}
               ></div>
               <div className={indexStyles.left_triangle_mask}></div>
@@ -2124,11 +2124,11 @@ export default class CardItem extends Component {
                     label_data,
                     'start',
                     is_realize
-                  ),
-                  left:
-                    is_show_compare_real_plan_timer &&
-                    !label_data.length &&
-                    '2px'
+                  )
+                  // left:
+                  //   is_show_compare_real_plan_timer &&
+                  //   !label_data.length &&
+                  //   '2px'
                 }}
               ></div>
 
@@ -2144,11 +2144,11 @@ export default class CardItem extends Component {
                     label_data,
                     'end',
                     is_realize
-                  )} transparent transparent transparent`,
-                  right:
-                    is_show_compare_real_plan_timer &&
-                    !label_data.length &&
-                    '2px'
+                  )} transparent transparent transparent`
+                  // right:
+                  //   is_show_compare_real_plan_timer &&
+                  //   !label_data.length &&
+                  //   '2px'
                 }}
               ></div>
               <div className={indexStyles.right_triangle_mask}></div>
@@ -2159,11 +2159,11 @@ export default class CardItem extends Component {
                     label_data,
                     'end',
                     is_realize
-                  ),
-                  right:
-                    is_show_compare_real_plan_timer &&
-                    !label_data.length &&
-                    '2px'
+                  )
+                  // right:
+                  //   is_show_compare_real_plan_timer &&
+                  //   !label_data.length &&
+                  //   '2px'
                 }}
               ></div>
             </>
