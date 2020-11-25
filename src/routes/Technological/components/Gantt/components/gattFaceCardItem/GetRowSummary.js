@@ -16,6 +16,7 @@ import { selectBoardToSeeInfo } from '../../../../../../utils/businessFunction'
 import {
   getDiffDate,
   isSamDay,
+  removeEmptyArrayEle,
   transformTimestamp
 } from '../../../../../../utils/util'
 
@@ -202,10 +203,16 @@ export default class GetRowSummary extends Component {
       }
       if (gold_item && !!Object.keys(gold_item).length) {
         // 该月之前所有日期的长度总和
-        const date_length = date_arr_one_level
-          .slice(0, gold_item_index)
-          .map(item => item.last_date)
-          .reduce((total, num) => total + num)
+        const date_length = !!removeEmptyArrayEle(
+          date_arr_one_level
+            .slice(0, gold_item_index)
+            .map(item => item.last_date)
+        ).length
+          ? date_arr_one_level
+              .slice(0, gold_item_index)
+              .map(item => item.last_date)
+              .reduce((total, num) => total + num)
+          : 0
         // 获取是几号开始 (如果说长度在一个月之内 那么不需要计算从几号开始)
         const date_no =
           Object.keys(month).length == 1 || new Date(start_time).getDate() != 1
@@ -237,7 +244,11 @@ export default class GetRowSummary extends Component {
       let Y = item.split('-')[0]
       let M = item.split('-')[1]
       date_arr_one_level.map(val => {
-        if (val.year == Y && val.month == M) {
+        const split =
+          val.monthText.indexOf('/') != -1
+            ? val.monthText.split('/').indexOf(M) != -1
+            : Number(val.monthText) == Number(M)
+        if ((val.year == Y && val.month == M) || split) {
           arr.push(val)
         }
       })
@@ -466,8 +477,22 @@ export default class GetRowSummary extends Component {
                   styles.l_triangle_percent}`}
               ></div>
               <div
+                style={{
+                  left: '0px',
+                  backgroundColor: percent && percent != 0 && '#5A86F5'
+                }}
+                className={`${styles.ears_left_triangle_mask}`}
+              ></div>
+              <div
                 className={`${styles.ears_right_triangle} ${percent == 1 &&
                   styles.r_triangle_percent}`}
+              ></div>
+              <div
+                style={{
+                  right: '0px',
+                  backgroundColor: percent == 1 && '#5A86F5'
+                }}
+                className={`${styles.ears_right_triangle_mask}`}
               ></div>
             </>
           )}

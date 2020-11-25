@@ -42,10 +42,10 @@ export default class PathOperateContent extends Component {
             // 甘特图删除依赖后更新任务弹窗依赖数据
             const { selected_card_visible, dispatch } = this.props
             onChangeCardHandleCardDetail({
-              card_detail_id: move_id,
+              card_detail_id: card_id,
               selected_card_visible,
               parent_card_id: '',
-              operate_id: card_id,
+              operate_id: move_id,
               dispatch
             })
           }

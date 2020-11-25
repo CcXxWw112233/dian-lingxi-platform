@@ -129,7 +129,7 @@ export default class CardItem extends Component {
 
       b = `linear-gradient(to right${bgColor})`
     } else {
-      b = is_realize == '1' ? 'transparent' : 'transparent' //'#cbddf7'
+      b = is_realize == '1' ? 'transparent' : '#cbddf7'
     }
     return b
   }
