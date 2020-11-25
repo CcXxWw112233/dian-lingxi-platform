@@ -273,7 +273,7 @@ export default class GetRowSummary extends Component {
         arr.push(e_item)
       }
     }
-
+    arr = Array.from(new Set(arr))
     return arr
   }
 
@@ -304,7 +304,7 @@ export default class GetRowSummary extends Component {
       let left
       for (const val of list_data) {
         if (
-          val.end_time > item.timestamp &&
+          val.end_time >= item.timestamp &&
           val.end_time <= item.timestampEnd
         ) {
           list.push(val)
