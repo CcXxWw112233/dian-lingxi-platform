@@ -38,7 +38,8 @@ import {
   setDateWithPositionInYearView,
   setDateWidthPositionWeekView,
   getXYDropPosition,
-  getPageXY
+  getPageXY,
+  onChangeCardHandleCardDetail
 } from '../../ganttBusiness'
 import Draggable from 'react-draggable'
 // import { debounce } from 'lodash'
@@ -270,7 +271,9 @@ export default class GetRowStrip extends PureComponent {
       itemValue = {},
       gantt_board_id,
       dispatch,
-      gantt_view_mode
+      gantt_view_mode,
+      card_detail_id,
+      selected_card_visible
     } = this.props
     if (!checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT, gantt_board_id)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN)
@@ -308,6 +311,14 @@ export default class GetRowStrip extends PureComponent {
                 ]
               }
             })
+            if (selected_card_visible) {
+              onChangeCardHandleCardDetail({
+                card_detail_id,
+                operate_parent_card_id: parent_card_id || itemValue.parent_id,
+                dispatch,
+                selected_card_visible
+              })
+            }
           }
           // this.changeOutLineTreeNodeProto(id, { start_time: timestamp, due_time })
           // if (parent_card_id) { //如果该任务是子任务，更新完成后更新父任务
@@ -515,7 +526,7 @@ export default class GetRowStrip extends PureComponent {
 
     this.milestoneSetClick({ timestamp, timestampEnd })
       .then(res => {
-        console.log('ssssssssssss_sucess', res)
+        // console.log('ssssssssssss_sucess', res)
         this.setState({
           dragg_milestone_complete: true
         })
@@ -1153,13 +1164,15 @@ function mapStateToProps({
       target_scrollLeft,
       date_total,
       gantt_view_mode,
-      gantt_head_width
+      gantt_head_width,
+      selected_card_visible
     }
   },
   milestoneDetail: { milestone_detail = {} },
   projectDetail: {
     datas: { projectDetailInfoData = {} }
-  }
+  },
+  publicTaskDetailModal: { card_id: card_detail_id }
 }) {
   return {
     date_arr_one_level,
@@ -1183,7 +1196,9 @@ function mapStateToProps({
     target_scrollLeft,
     date_total,
     gantt_view_mode,
-    gantt_head_width
+    gantt_head_width,
+    card_detail_id,
+    selected_card_visible
   }
 }
 
