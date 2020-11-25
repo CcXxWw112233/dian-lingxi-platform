@@ -244,11 +244,12 @@ export default class GetRowSummary extends Component {
       let Y = item.split('-')[0]
       let M = item.split('-')[1]
       date_arr_one_level.map(val => {
-        const split =
-          val.monthText.indexOf('/') != -1
+        const split = val.monthText
+          ? val.monthText.indexOf('/') != -1
             ? val.monthText.split('/').indexOf(M) != -1
             : Number(val.monthText) == Number(M)
-        if ((val.year == Y && val.month == M) || split) {
+          : false
+        if ((val.year == Y && val.month == M) || (val.year == Y && split)) {
           arr.push(val)
         }
       })
@@ -272,7 +273,7 @@ export default class GetRowSummary extends Component {
         arr.push(e_item)
       }
     }
-
+    arr = Array.from(new Set(arr))
     return arr
   }
 
@@ -303,7 +304,7 @@ export default class GetRowSummary extends Component {
       let left
       for (const val of list_data) {
         if (
-          val.end_time > item.timestamp &&
+          val.end_time >= item.timestamp &&
           val.end_time <= item.timestampEnd
         ) {
           list.push(val)

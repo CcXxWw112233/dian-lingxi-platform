@@ -127,8 +127,8 @@ export default class GroupListHeadItem extends Component {
 
   setIsShowBottDetail = () => {
     const { gantt_view_mode } = this.props
-    if (gantt_view_mode == 'year') {
-      message.info('请在日视图或周视图下查看')
+    if (gantt_view_mode == 'year' || gantt_view_mode == 'week') {
+      message.info('请在日视图下查看')
       return
     }
     const { isShowBottDetail } = this.state
