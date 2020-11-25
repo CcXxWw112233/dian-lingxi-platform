@@ -22,7 +22,8 @@ import _ from 'lodash'
 import { currentNounPlanFilterName } from '../../../../../utils/businessFunction'
 import {
   FILES,
-  FILE_UPLOAD_ACCEPT_TYPE
+  FILE_UPLOAD_ACCEPT_TYPE,
+  REQUEST_DOMAIN_BOARD
 } from '../../../../../globalset/js/constant'
 import FileListRightBarFileDetailModal from '../../../../../routes/Technological/components/ProjectDetail/FileModule/FileListRightBarFileDetailModal'
 import { updateUserStorage } from '../../handleOperateModal'
@@ -207,7 +208,7 @@ export default class BeginningStepOne_five extends Component {
     const { id: field_id } = itemValue
     return {
       name: 'file',
-      action: '/api/projects/v2/flow/task/upload',
+      action: `${REQUEST_DOMAIN_BOARD}/v2/flow/task/upload`,
       accept: FILE_UPLOAD_ACCEPT_TYPE,
       headers: {
         Authorization: Cookies.get('Authorization'),

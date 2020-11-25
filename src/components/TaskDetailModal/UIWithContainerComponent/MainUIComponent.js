@@ -41,7 +41,7 @@ import { PROJECT_TEAM_CARD_EDIT } from '@/globalset/js/constant'
 import { isPaymentOrgUser } from '@/utils/businessFunction'
 import BasicFieldContainer from './BasicFieldContainer'
 import { currentNounPlanFilterName } from '../../../utils/businessFunction'
-import { TASKS } from '../../../globalset/js/constant'
+import { TASKS, REQUEST_DOMAIN_BOARD } from '../../../globalset/js/constant'
 import moment from 'moment'
 import { caldiffDays } from '../../../utils/util'
 
@@ -553,7 +553,7 @@ export default class MainUIComponent extends Component {
                         title={`任务说明资料设置`}
                         listDescribe={'说明资料列表'}
                         isNotShowNoticeList={true}
-                        url={'/api/projects/card/desc/attachment/upload'}
+                        url={`${REQUEST_DOMAIN_BOARD}/card/desc/attachment/upload`}
                         onFileListChange={this.onUploadDescFileListChange}
                       >
                         <span className={mainContentStyles.add_sub_upload}>

@@ -7,6 +7,7 @@ import {
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
 import axios from 'axios'
 import Cookies from 'js-cookie'
+import { REQUEST_DOMAIN_WORK_BENCH } from '../../../../../../globalset/js/constant'
 
 export default class index extends Component {
   state = {
@@ -51,7 +52,7 @@ export default class index extends Component {
         value: true
       })
     axios({
-      url: '/api/workbenchs/board/export/excel',
+      url: `${REQUEST_DOMAIN_WORK_BENCH}/board/export/excel`,
       method: 'post',
       headers: {
         Authorization: Cookies.get('Authorization')

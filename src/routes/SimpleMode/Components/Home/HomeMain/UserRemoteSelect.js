@@ -6,6 +6,7 @@ import { setUploadHeaderBaseInfo } from '../../../../../utils/businessFunction'
 import Cookies from 'js-cookie'
 import { connect } from 'dva'
 import { isObjectValueEqual } from '../../../../../utils/util'
+import { REQUEST_DOMAIN_BOARD } from '../../../../../globalset/js/constant'
 // import { getPinyin } from '../../../../../utils/pinyin';
 
 const { Option } = Select
@@ -46,7 +47,7 @@ export default class UserRemoteSelect extends React.Component {
     const fetchId = this.lastFetchId
     this.setState({ data: [], fetching: true })
     axios({
-      url: `/api/projects/milestone/fuzzy`,
+      url: `${REQUEST_DOMAIN_BOARD}/milestone/fuzzy`,
       method: 'get',
       headers: {
         Authorization: Cookies.get('Authorization'),

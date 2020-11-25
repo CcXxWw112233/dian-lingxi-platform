@@ -9,7 +9,6 @@ import {
   CONTENT_DATA_TYPE_FOLDER,
   CONTENT_DATA_TYPE_LIST,
   REQUEST_DOMAIN_WORK_BENCH,
-  REQUEST_DOMAIN_ABOUT_PROJECT,
   CONTENT_DATA_TYPE_MILESTONE
 } from '../../globalset/js/constant'
 import request from '../../utils/requestAxios'
@@ -687,7 +686,7 @@ export async function getCardChildCards(params) {
 //撤销任务操作
 export async function revokeCardDo(data) {
   return request({
-    url: `${REQUEST_DOMAIN_ABOUT_PROJECT}/${REQUEST_INTERGFACE_VERSIONN}/card/undo`,
+    url: `${REQUEST_DOMAIN_BOARD}/${REQUEST_INTERGFACE_VERSIONN}/card/undo`,
     method: 'PUT',
     data
   })
@@ -696,7 +695,7 @@ export async function revokeCardDo(data) {
 //创建多条里程碑
 export async function addMultipleMilestone(data) {
   return request({
-    url: `${REQUEST_DOMAIN_ABOUT_PROJECT}/milestone/multiple`,
+    url: `${REQUEST_DOMAIN_BOARD}/milestone/multiple`,
     method: 'POST',
     data
   })
@@ -705,7 +704,7 @@ export async function addMultipleMilestone(data) {
 //创建多条任务
 export async function addMultipleCard(data) {
   return request({
-    url: `${REQUEST_DOMAIN_ABOUT_PROJECT}/${REQUEST_INTERGFACE_VERSIONN}/card/multiple`,
+    url: `${REQUEST_DOMAIN_BOARD}/${REQUEST_INTERGFACE_VERSIONN}/card/multiple`,
     method: 'POST',
     data
   })

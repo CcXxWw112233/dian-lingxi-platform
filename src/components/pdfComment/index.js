@@ -34,6 +34,7 @@ import { setRequestHeaderBaseInfo } from '../../utils/businessFunction'
 import { REQUEST_DOMAIN_FILE } from '@/globalset/js/constant'
 import DEvent from '../../utils/event'
 import { ENV_ANDROID_APP } from '../../globalset/clientCustorm'
+import { REQUEST_DOMAIN_BOARD } from '../../globalset/js/constant'
 // import scr from './worker'
 const DefineIcon = Icon.createFromIconfontCN({
   scriptUrl: '//at.alicdn.com/t/font_779568_41vfncsv7yu.js'
@@ -1620,13 +1621,14 @@ export default class PdfComment extends React.Component {
           let file = this.dataURLtoFile(url, this.props.file_name)
           let data = new FormData()
           data.append('file', file)
-          this.axiosForSend('/api/projects/file/upload/public', data).then(
-            res => {
-              // console.log(res)
-              let d = res.data.data || res.data
-              window.open(d)
-            }
-          )
+          this.axiosForSend(
+            `${REQUEST_DOMAIN_BOARD}/file/upload/public`,
+            data
+          ).then(res => {
+            // console.log(res)
+            let d = res.data.data || res.data
+            window.open(d)
+          })
           let reader = new FileReader()
           reader.onload = () => {
             let blobUrl = window.URL.createObjectURL(new Blob([reader.result]))
@@ -1743,14 +1745,15 @@ export default class PdfComment extends React.Component {
             })
             let data = new FormData()
             data.append('file', file)
-            this.axiosForSend('/api/projects/file/upload/public', data).then(
-              res => {
-                message.success('正在下载')
-                // console.log(res)
-                let d = res.data.data || res.data
-                window.open(d)
-              }
-            )
+            this.axiosForSend(
+              `${REQUEST_DOMAIN_BOARD}/file/upload/public`,
+              data
+            ).then(res => {
+              message.success('正在下载')
+              // console.log(res)
+              let d = res.data.data || res.data
+              window.open(d)
+            })
             window.mapAndroid.boardImage(url, this.props.file_name)
           }
         }

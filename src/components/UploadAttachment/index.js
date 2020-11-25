@@ -31,7 +31,10 @@ import {
   UPLOAD_FILE_SIZE
 } from '@/globalset/js/constant'
 import _ from 'lodash'
-import { FILE_UPLOAD_ACCEPT_TYPE } from '../../globalset/js/constant'
+import {
+  FILE_UPLOAD_ACCEPT_TYPE,
+  REQUEST_DOMAIN_BOARD
+} from '../../globalset/js/constant'
 const { TreeNode } = TreeSelect
 let uploadMaxFileSize = []
 /**上传附件组件 */
@@ -163,7 +166,7 @@ export default class UploadAttachment extends Component {
           notify_user_ids: notify_user_ids.join(',')
         }
     axios({
-      url: url ? url : `/api/projects/v2/card/attachment/upload`,
+      url: url ? url : `${REQUEST_DOMAIN_BOARD}/v2/card/attachment/upload`,
       method: 'post',
       //processData: false,
       data: formData,

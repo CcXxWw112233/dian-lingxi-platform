@@ -29,6 +29,7 @@ import Cookies from 'js-cookie'
 import axios from 'axios'
 import {
   FILE_UPLOAD_ACCEPT_TYPE,
+  REQUEST_DOMAIN_BOARD,
   UPLOAD_FILE_SIZE
 } from '../../../globalset/js/constant'
 import FileListRightBarFileDetailModal from '../../../routes/Technological/components/ProjectDetail/FileModule/FileListRightBarFileDetailModal'
@@ -244,7 +245,7 @@ export default class FileFieldContent extends Component {
     } = this.props
     return {
       name: 'file',
-      action: '/api/projects/file/upload/common',
+      action: `${REQUEST_DOMAIN_BOARD}/file/upload/common`,
       accept: FILE_UPLOAD_ACCEPT_TYPE,
       headers: {
         Authorization: Cookies.get('Authorization'),

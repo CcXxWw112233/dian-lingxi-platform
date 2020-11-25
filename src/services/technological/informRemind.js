@@ -1,13 +1,13 @@
 // 通知提醒的请求接口
 import request from '@/utils/requestAxios'
-import { REQUEST_DOMAIN_ABOUT_PROJECT } from '@/globalset/js/constant'
+import { REQUEST_DOMAIN_BOARD } from '@/globalset/js/constant'
 
 /**
  * 获取通知提醒的成员列表
  */
 export async function getUserInfoRemind(params) {
   return request({
-    url: `${REQUEST_DOMAIN_ABOUT_PROJECT}/comm/remind/user/list`,
+    url: `${REQUEST_DOMAIN_BOARD}/comm/remind/user/list`,
     method: 'GET',
     params
   })
@@ -19,7 +19,7 @@ export async function getUserInfoRemind(params) {
  */
 export async function getTriggerList(rela_type) {
   return request({
-    url: `${REQUEST_DOMAIN_ABOUT_PROJECT}/remind/trigger/list/${rela_type}`,
+    url: `${REQUEST_DOMAIN_BOARD}/remind/trigger/list/${rela_type}`,
     method: 'GET'
   })
 }
@@ -30,7 +30,7 @@ export async function getTriggerList(rela_type) {
  */
 export async function getTriggerHistory(id) {
   return request({
-    url: `${REQUEST_DOMAIN_ABOUT_PROJECT}/remind/list/${id}`,
+    url: `${REQUEST_DOMAIN_BOARD}/remind/list/${id}`,
     method: 'GET'
   })
 }
@@ -41,7 +41,7 @@ export async function getTriggerHistory(id) {
  */
 export async function setRemindInformation(data) {
   return request({
-    url: `${REQUEST_DOMAIN_ABOUT_PROJECT}/remind`,
+    url: `${REQUEST_DOMAIN_BOARD}/remind`,
     method: 'POST',
     data
   })
@@ -53,7 +53,7 @@ export async function setRemindInformation(data) {
  */
 export async function updateRemindInformation(data) {
   return request({
-    url: `${REQUEST_DOMAIN_ABOUT_PROJECT}/remind`,
+    url: `${REQUEST_DOMAIN_BOARD}/remind`,
     method: 'PUT',
     data
   })
@@ -65,7 +65,7 @@ export async function updateRemindInformation(data) {
  */
 export async function delRemindInformation(id) {
   return request({
-    url: `${REQUEST_DOMAIN_ABOUT_PROJECT}/remind/${id}`,
+    url: `${REQUEST_DOMAIN_BOARD}/remind/${id}`,
     method: 'DELETE'
   })
 }

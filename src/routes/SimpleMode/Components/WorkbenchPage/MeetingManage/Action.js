@@ -1,7 +1,8 @@
 import request from '@/utils/requestAxios'
+import { REQUEST_PREFIX } from '../../../../../globalset/js/constant'
 import { isApiResponseOk } from '../../../../../utils/handleResponseData'
 import { uploadFileForAxios } from '../../../../../utils/requestAxios'
-const REQUEST_ROOM_URL = '/api/meeting'
+const REQUEST_ROOM_URL = `${REQUEST_PREFIX}/meeting`
 
 class Action {
   /**

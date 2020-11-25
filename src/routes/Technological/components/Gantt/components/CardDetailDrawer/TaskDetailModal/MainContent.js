@@ -39,7 +39,10 @@ import BasicFieldContainer from '../../../../../../../components/TaskDetailModal
 import CustomCategoriesOperate from '../../../../../../../components/CustomFields/CustomCategoriesOperate'
 import moment from 'moment'
 import { currentNounPlanFilterName } from '../../../../../../../utils/businessFunction'
-import { TASKS } from '../../../../../../../globalset/js/constant'
+import {
+  TASKS,
+  REQUEST_DOMAIN_BOARD
+} from '../../../../../../../globalset/js/constant'
 import { caldiffDays } from '../../../../../../../utils/util'
 
 @connect(mapStateToProps)
@@ -524,7 +527,7 @@ export default class MainContent extends Component {
                           title={`任务说明资料设置`}
                           listDescribe={'说明资料列表'}
                           isNotShowNoticeList={true}
-                          url={'/api/projects/card/desc/attachment/upload'}
+                          url={`${REQUEST_DOMAIN_BOARD}/card/desc/attachment/upload`}
                           onFileListChange={this.onUploadDescFileListChange}
                         >
                           <span className={mainContentStyles.add_sub_upload}>

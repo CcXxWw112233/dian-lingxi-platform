@@ -1,22 +1,18 @@
 export const NODE_ENV = process.env.NODE_ENV
+export const REQUEST_PREFIX = '/dian_lingxi'
 
-const PROJECTS_API = '/api/projects'
-export const REQUEST_DOMAIN = '/api/upms' //接口域名
-export const REQUEST_DOMAIN_BOARD = PROJECTS_API //接口域名
-export const REQUEST_DOMAIN_FILE = PROJECTS_API //接口域名
-export const REQUEST_DOMAIN_FLOWS = PROJECTS_API //接口域名
-export const REQUEST_DOMAIN_ABOUT_PROJECT = PROJECTS_API //项目相关接口域名前缀
+export const REQUEST_DOMAIN = `${REQUEST_PREFIX}/upms` //用户信息接口域名
+export const REQUEST_DOMAIN_BOARD = `${REQUEST_PREFIX}/projects` //项目接口域名
+export const REQUEST_DOMAIN_FILE = REQUEST_DOMAIN_BOARD //文件接口域名
+export const REQUEST_DOMAIN_FLOWS = REQUEST_DOMAIN_BOARD //流程接口域名
+export const REQUEST_DOMAIN_CARD = REQUEST_DOMAIN_BOARD //任务接口域名前缀
 export const REQUEST_INTERGFACE_VERSIONN = '/v2' //接口版本
-export const REQUEST_PDF = '/api/pdf' // pdf圈评接口域名
-export const REQUEST_WHITEBOARD = 'api/pdf'
-// 晓策志接口
-// export const REQUEST_COMMON = '/api'
-
-export const REQUEST_DOMAIN_WORK_BENCH = '/api/workbenchs'
-export const REQUEST_DOMAIN_TEAM_SHOW = '/api/more'
+export const REQUEST_PDF = `${REQUEST_PREFIX}/pdf` // pdf圈评接口域名
+export const REQUEST_WHITEBOARD = `${REQUEST_PREFIX}/pdf`
+export const REQUEST_DOMAIN_WORK_BENCH = `${REQUEST_PREFIX}/workbenchs`
+export const REQUEST_DOMAIN_TEAM_SHOW = `${REQUEST_PREFIX}/more`
 
 export const REQUEST_DOMAIN_ARTICLE = 'https://knowapi.new-di.com' //微信小程序后台文章列表
-// export const REQUEST_DOMAIN_ARTICLE = 'http://fongjx.uicp.cn:40883' //微信小程序后台文章列表
 
 export const WE_APP_TYPE_KNOW_CITY = '1' //知城社
 export const WE_APP_TYPE_KNOW_POLICY = '2' //晓策志
@@ -26,21 +22,22 @@ export const WE_APP_ID = appType => {
 }
 
 // 晓策志接口
-export const REQUEST_COMMON = (function(NODE_ENV, location) {
-  let api = ''
-  if (NODE_ENV == 'development') {
-    // api = 'http://192.168.1.39:8092'
-    api = REQUEST_DOMAIN_ARTICLE
-  } else {
-    // if(location.href.indexOf('lingxi.di-an.com') != -1){ //生产环境
-    //   api = REQUEST_DOMAIN_ARTICLE
-    // }else {
-    //   api = REQUEST_DOMAIN_ARTICLE
-    // }
-    api = REQUEST_DOMAIN_ARTICLE
-  }
-  return `${api}/api`
-})(NODE_ENV, window.location)
+export const REQUEST_KNOW_POLICY = `${REQUEST_DOMAIN_ARTICLE}/api`
+//   (function (NODE_ENV, location) {
+//   let api = ''
+//   if (NODE_ENV == 'development') {
+//     // api = 'http://192.168.1.39:8092'
+//     api = REQUEST_DOMAIN_ARTICLE
+//   } else {
+//     // if(location.href.indexOf('lingxi.di-an.com') != -1){ //生产环境
+//     //   api = REQUEST_DOMAIN_ARTICLE
+//     // }else {
+//     //   api = REQUEST_DOMAIN_ARTICLE
+//     // }
+//     api = REQUEST_DOMAIN_ARTICLE
+//   }
+//   return `${api}/api`
+// })(NODE_ENV, window.location)
 
 //export const WEBSOCKET_URL = 'wss://lingxi.di-an.com/websocket' //'47.93.53.149'//'192.168.0.14'  //WS链接地址dsfsd
 // export const WEBSOCKET_URL = 'ws://www.new-di.com/websocket'

@@ -1,11 +1,11 @@
 import request from '@/utils/requestAxios'
-import { REQUEST_COMMON, REQUEST_DOMAIN } from '@/globalset/js/constant'
+import { REQUEST_KNOW_POLICY, REQUEST_DOMAIN } from '@/globalset/js/constant'
 
 // 获取热点 tabs 的数据
 export async function getHotTabs(params) {
   // console.log(params, '---------------------')
   return request({
-    url: `${REQUEST_COMMON}/common/hotspot`,
+    url: `${REQUEST_KNOW_POLICY}/common/hotspot`,
     method: 'GET',
     params
   })
@@ -14,7 +14,7 @@ export async function getHotTabs(params) {
 // 获取热点文章的数据
 export async function getHotArticles(params) {
   return request({
-    url: `${REQUEST_COMMON}/articles/hotspot`,
+    url: `${REQUEST_KNOW_POLICY}/articles/hotspot`,
     method: 'GET',
     params
   })
@@ -23,7 +23,7 @@ export async function getHotArticles(params) {
 // 获取高层文章的数据
 export async function getHighRiseArticles(params) {
   return request({
-    url: `${REQUEST_COMMON}/articles/top_leader`,
+    url: `${REQUEST_KNOW_POLICY}/articles/top_leader`,
     method: 'GET',
     params
   })
@@ -32,7 +32,7 @@ export async function getHighRiseArticles(params) {
 // 获取权威文章的数据
 export async function getAuthorityArticles(params) {
   return request({
-    url: `${REQUEST_COMMON}/articles/authority`,
+    url: `${REQUEST_KNOW_POLICY}/articles/authority`,
     method: 'GET',
     params
   })
@@ -41,7 +41,7 @@ export async function getAuthorityArticles(params) {
 // 获取资料库的数据
 export async function getDataBase(params) {
   return request({
-    url: `${REQUEST_COMMON}/articles/store`,
+    url: `${REQUEST_KNOW_POLICY}/articles/store`,
     method: 'GET',
     params
   })
@@ -50,7 +50,7 @@ export async function getDataBase(params) {
 // 获取地区的数据
 export async function getAreas(params) {
   return request({
-    url: `${REQUEST_COMMON}/common/areas`,
+    url: `${REQUEST_KNOW_POLICY}/common/areas`,
     method: 'GET',
     params
   })
@@ -59,7 +59,7 @@ export async function getAreas(params) {
 // 点击某地区的时候文章的接口
 export async function getAreasArticles(params) {
   return request({
-    url: `${REQUEST_COMMON}/articles/areas`,
+    url: `${REQUEST_KNOW_POLICY}/articles/areas`,
     method: 'GET',
     params
   })
@@ -68,7 +68,7 @@ export async function getAreasArticles(params) {
 // 地区内容的搜索
 export async function getAreasSearch(params) {
   return request({
-    url: `${REQUEST_COMMON}/common/areas/search`,
+    url: `${REQUEST_KNOW_POLICY}/common/areas/search`,
     method: 'GET',
     params
   })
@@ -77,7 +77,7 @@ export async function getAreasSearch(params) {
 // 获取地区定位的ip
 export async function getAreasLocation(params) {
   return request({
-    url: `${REQUEST_COMMON}/common/areas/ip`,
+    url: `${REQUEST_KNOW_POLICY}/common/areas/ip`,
     method: 'GET',
     params
   })
@@ -86,7 +86,7 @@ export async function getAreasLocation(params) {
 // 顶部的全局搜索
 export async function getHeaderSearch(params) {
   return request({
-    url: `${REQUEST_COMMON}/articles/more`,
+    url: `${REQUEST_KNOW_POLICY}/articles/more`,
     method: 'GET',
     params
   })
@@ -95,7 +95,7 @@ export async function getHeaderSearch(params) {
 // 获取全局文章的列表
 export async function getCommonArticlesList(params) {
   return request({
-    url: `${REQUEST_COMMON}/articles/more`,
+    url: `${REQUEST_KNOW_POLICY}/articles/more`,
     method: 'GET',
     params
   })
