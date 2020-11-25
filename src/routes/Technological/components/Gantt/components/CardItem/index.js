@@ -191,11 +191,13 @@ export default class CardItem extends Component {
     const { getCurrentGroup } = this.props
     getCurrentGroup({ top: local_top }) //设置当前操作的list_id
 
-    window.onmousemove = this.onMouseMove.bind(this)
-    window.onmouseup = this.onMouseUp.bind(this)
+    // window.onmousemove = this.onMouseMove.bind(this)
+    // window.onmouseup = this.onMouseUp.bind(this)
 
-    document.addEventListener('ontouchmove', this.onTouchMove, false)
-    document.addEventListener('ontouchend', this.onTouchEnd, false)
+    document.addEventListener('mousemove', this.onMouseMove, false)
+    document.addEventListener('mouseup', this.onMouseUp, false)
+    document.addEventListener('touchmove', this.onTouchMove, false)
+    document.addEventListener('touchend', this.onTouchEnd, false)
     setTimeout(() => {
       this.props.setTaskIsDragging && this.props.setTaskIsDragging(true, 3) //当拖动时，有可能会捕获到创建任务的动作，阻断
     }, 300)
@@ -205,6 +207,7 @@ export default class CardItem extends Component {
   onMouseMove = e => {
     e.stopPropagation()
     this.handleMouseMove(e) //设置flag依赖
+    // console.log('s_event', 'onTouchMove2', this.is_down)
     if (this.is_down == false) {
       return
     }
@@ -212,6 +215,7 @@ export default class CardItem extends Component {
       is_moved: true
     })
     const { drag_type } = this.state
+    // console.log('s_event', 'onTouchMove3', drag_type)
     if ('position' == drag_type) {
       this.changePosition(e)
     } else if ('left' == drag_type) {
@@ -412,11 +416,12 @@ export default class CardItem extends Component {
     this.setState({
       local_width_flag: this.state.local_width
     })
-    window.onmousemove = null
-    window.onmouseup = null
-
-    document.removeEventListener('ontouchmove', this.onTouchMove, false)
-    document.removeEventListener('ontouchend', this.onTouchEnd, false)
+    // window.onmousemove = null
+    // window.onmouseup = null
+    document.removeEventListener('mousemove', this.onMouseMove, false)
+    document.removeEventListener('mouseup', this.onMouseUp, false)
+    document.removeEventListener('touchmove', this.onTouchMove, false)
+    document.removeEventListener('touchend', this.onTouchEnd, false)
     setTimeout(() => {
       this.setState({
         is_moved: false
@@ -1286,6 +1291,7 @@ export default class CardItem extends Component {
     const { top, id, board_id, parent_card_id } = itemValue
     return {
       onClick: e => {
+        // console.log('s_event', 'onClick')
         if ('specific_example' != e.target.dataset.targetclassname) return //必须在任务条上点击
         if (!drag_lock) {
           this.props.setTaskIsDragging && this.props.setTaskIsDragging(true) //当拖动时，有可能会捕获到创建任务的动作，阻断
@@ -1300,6 +1306,7 @@ export default class CardItem extends Component {
       },
       // 拖拽
       onMouseDown: e => {
+        // console.log('s_event', 'onMouseDown')
         if (!drag_lock) {
           this.props.setTaskIsDragging && this.props.setTaskIsDragging(true) //当拖动时，有可能会捕获到创建任务的动作，阻断
           // setTimeout(() => {
@@ -1313,11 +1320,13 @@ export default class CardItem extends Component {
         this.onMouseDown(e)
       },
       onMouseMove: e => {
+        // console.log('s_event', 'onMouseMove')
         if (card_rely_draging || !drag_lock) return
         if (!this.couldChangeCard()) return
         this.onMouseMove(e)
       },
       onMouseUp: () => {
+        // console.log('s_event', 'onMouseUp')
         setTimeout(() => {
           this.setState({
             drag_else_over_in: false
@@ -1328,6 +1337,7 @@ export default class CardItem extends Component {
       }, //查看子任务是查看父任务
 
       onTouchStart: e => {
+        // console.log('s_event', 'onTouchStart')
         if (!drag_lock) {
           this.props.setTaskIsDragging && this.props.setTaskIsDragging(true) //当拖动时，有可能会捕获到创建任务的动作，阻断
           // setTimeout(() => {
@@ -1341,18 +1351,29 @@ export default class CardItem extends Component {
         this.onTouchStart(e)
       },
       onTouchMove: e => {
+        // console.log('s_event', 'onTouchMove')
         if (!this.couldChangeCard() || !drag_lock) return
         this.onTouchMove(e)
       },
       onTouchEnd: e => {
-        if (!drag_lock) return
-        this.onTouchEnd(e)
+        // console.log('s_event', 'onTouchEnd')
+        // if (!drag_lock) return
+        // this.onTouchEnd(e)
+        setTimeout(() => {
+          this.setState({
+            drag_else_over_in: false
+          })
+        }, 200)
+        if (card_rely_draging || !drag_lock) return
+        this.setSpecilTaskExample({ id: parent_card_id || id, top, board_id })
       }, //查看子任务是查看父任务
       onMouseEnter: () => {
+        // console.log('s_event', 'onMouseEnter')
         this.onMouseEnter()
         this.set_drag_else_over_in(true)
       },
       onMouseLeave: () => {
+        // console.log('s_event', 'onMouseLeave')
         this.set_drag_else_over_in(false)
       },
       onBlur: () => {
