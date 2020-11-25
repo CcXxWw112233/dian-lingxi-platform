@@ -1,5 +1,6 @@
 import React from 'react'
 import styles from './index.less'
+import globalStyles from '../../../../../globalset/css/globalClassName.less'
 import Action from './Action'
 import {
   Table,
@@ -15,11 +16,15 @@ import {
   Popconfirm,
   InputNumber,
   notification,
-  Popover
+  Popover,
+  Select,
+  DatePicker
   // Upload,
   // Icon
 } from 'antd'
+import moment from 'moment'
 import upimg from './ud.svg'
+import Authorized from './components/Authorized'
 class MeetingManage extends React.Component {
   defaultConfig = {
     enable: {
@@ -40,16 +45,19 @@ class MeetingManage extends React.Component {
   pakageLink = [
     {
       label: '智屏安卓版',
+      key: '1',
       value:
         'https://dian-lingxi-public.oss-cn-beijing.aliyuncs.com/apps/meeting-manage/meeting-manage-tv.apk'
     },
     {
       label: '门牌安卓版',
+      key: '2',
       value:
         'https://dian-lingxi-public.oss-cn-beijing.aliyuncs.com/apps/meeting-manage/meeting-manage.apk'
     },
     {
       label: '门牌Windows版',
+      key: '3',
       value:
         'https://dian-lingxi-public.oss-cn-beijing.aliyuncs.com/apps/meeting-manage/meeting-manage.exe'
     }
@@ -61,6 +69,10 @@ class MeetingManage extends React.Component {
     this.timer = null
     this.createLineTimer = null
     this.state = {
+      query_param: {
+        query_time: new Date().getTime()
+      },
+      managePage: true,
       // 时间表
       times: [
         { time: '9', disabled: false, noState: false },
@@ -99,17 +111,20 @@ class MeetingManage extends React.Component {
           key: 'name',
           title: '会议室名称',
           dataIndex: 'name',
-          ellipsis: true
+          ellipsis: true,
+          width: 200
         },
         {
           key: 'address',
           title: '会议室地址',
           dataIndex: 'address',
-          ellipsis: true
+          ellipsis: true,
+          width: 200
         },
         {
           key: 'device',
           title: '会议设备',
+          width: 400,
           render: record => {
             let { room_devices = [] } = record || {}
             return room_devices.map(item => item.name).join(' / ')
@@ -120,6 +135,7 @@ class MeetingManage extends React.Component {
           key: 'status',
           title: '当前状态',
           // dataIndex: 'status',
+          width: 100,
           ellipsis: true,
           render: record => {
             let statusArr = ['disabled', 'enable']
@@ -138,7 +154,7 @@ class MeetingManage extends React.Component {
         },
         {
           key: 'time',
-          width: 620,
+          width: 550,
           className: styles.time_step,
           title: val => {
             const arr = this.state.times.map((item, index) => {
@@ -197,6 +213,48 @@ class MeetingManage extends React.Component {
           }
         },
         {
+          title: '定价',
+          dataIndex: 'hourly_cost',
+          key: 'hourly_cost',
+          render: (text, record) => {
+            let number = text
+            return (
+              <div>
+                {record._edit ? (
+                  <InputNumber
+                    autoFocus
+                    defaultValue={text}
+                    onChange={val => {
+                      number = val
+                    }}
+                    style={{ width: 60 }}
+                  />
+                ) : (
+                  <span className={styles.price_text}>{text}</span>
+                )}
+                <span>元/小时</span>
+                {record._edit ? (
+                  <Button
+                    type="primary"
+                    size="small"
+                    style={{ marginLeft: 8 }}
+                    onClick={() => this.savePrice(number, record)}
+                  >
+                    确定
+                  </Button>
+                ) : (
+                  <a
+                    className={styles.editPrice}
+                    onClick={() => this.setEditProps(record)}
+                  >
+                    <span className={globalStyles.authTheme}>&#xe791;</span>
+                  </a>
+                )}
+              </div>
+            )
+          }
+        },
+        {
           title: '操作',
           key: 'operation',
           width: 150,
@@ -238,6 +296,44 @@ class MeetingManage extends React.Component {
   componentDidMount() {
     // 获取会议室列表
     this.getList(true)
+  }
+
+  // 修改状态
+  setEditProps = record => {
+    let { data } = this.state
+    data = data.map(item => {
+      if (item.id === record.id) {
+        item._edit = true
+      }
+      return item
+    })
+    this.setState({
+      data
+    })
+  }
+
+  savePrice = (price, record) => {
+    let { data } = this.state
+    if (record.hourly_cost.toString() === price.toString()) {
+      return
+    }
+    Action.ChangePrice({ room_id: record.id, hourly_cost: price })
+      .then(res => {
+        data = data.map(item => {
+          if (item.id === record.id) {
+            item._edit = false
+            item.hourly_cost = price
+          }
+          return item
+        })
+        this.setState({
+          data
+        })
+        message.success('修改成功')
+      })
+      .catch(err => {
+        message.warn(err.message)
+      })
   }
 
   /**
@@ -325,7 +421,10 @@ class MeetingManage extends React.Component {
         description: <div>全组织模式下不允许使用会议管理,请选择组织</div>,
         placement: 'topRight'
       })
-    Action.fetchList({ org_id: this.props.org_id }).then(data => {
+    Action.fetchList({
+      org_id: this.props.org_id,
+      ...this.state.query_param
+    }).then(data => {
       this.setState(
         {
           data
@@ -474,6 +573,9 @@ class MeetingManage extends React.Component {
       }
       let obj = {}
       let keys = ['address', 'name', 'max_hold', 'device_type_ids']
+      keys.forEach(item => {
+        obj[item] = values[item]
+      })
       if (values.large_device) {
         obj.large_device = {
           code: values.large_device,
@@ -490,9 +592,6 @@ class MeetingManage extends React.Component {
         obj.room_images = this.state.previewCode
       }
       obj.org_id = this.props.org_id
-      keys.forEach(item => {
-        obj[item] = values[item]
-      })
       // console.log(obj)
       this.setState({
         loadingModal: true
@@ -607,19 +706,24 @@ class MeetingManage extends React.Component {
     let file = files[0]
     let data = new FormData()
     data.append('file', file)
-    Action.uploadFile(data).then(res => {
-      let id = Math.random() * 1e15 + 1
-      previewCode.push({ file_key: res.data.file_key, id: id })
-      previewSrc.push({
-        preview_url: res.data.preview_url,
-        id: id,
-        noteupload: true
+    Action.uploadFile(data)
+      .then(res => {
+        let id = Math.random() * 1e15 + 1
+        previewCode.push({ file_key: res.data.file_key, id: id })
+        previewSrc.push({
+          preview_url: res.data.preview_url,
+          id: id,
+          noteupload: true
+        })
+        this.setState({
+          previewSrc,
+          previewCode
+        })
       })
-      this.setState({
-        previewSrc,
-        previewCode
+      .catch(err => {
+        // console.log(err)
+        message.error(err?.message)
       })
-    })
   }
   chooseFile = () => {
     let input = document.createElement('input')
@@ -650,6 +754,31 @@ class MeetingManage extends React.Component {
     window.open(val.value)
   }
 
+  // 使用授权
+  setAuthorized = () => {
+    if (this.props.org_id == '0') {
+      return message.warn('全组织下禁止使用此功能')
+    }
+    this.setState({
+      managePage: false
+    })
+  }
+
+  onGoBack = () => {
+    this.setState({
+      managePage: true
+    })
+  }
+
+  setSearchTime = (val, dateString) => {
+    console.log(val.valueOf(), dateString)
+    this.setState({
+      query_param: {
+        query_time: val.valueOf()
+      }
+    })
+  }
+
   render() {
     const { getFieldDecorator } = this.props.form
     const { config, workbenchBoxContent_height = 700 } = this.props
@@ -671,6 +800,7 @@ class MeetingManage extends React.Component {
                 <div
                   className={styles.pakage_item}
                   onClick={() => this.downloadPakage(item)}
+                  key={item.key}
                 >
                   {item.label}
                 </div>
@@ -680,50 +810,73 @@ class MeetingManage extends React.Component {
             <Button className={styles.downloadPakage}>下载客户端</Button>
           </Popover>
         </div>
-        <div className={styles.meeting_container_content}>
-          <Row gutter={8} type="flex" align="middle">
-            <Col span={14}>会议室列表</Col>
-            <Col span={4} className={styles.status_list}>
-              <div>
-                <span
-                  className={`${styles.status_item} ${styles.enable}`}
-                  style={{ background: colors?.enable?.color }}
-                ></span>
-                <span>{colors?.enable?.text}</span>
-              </div>
-              <div>
-                <span
-                  className={`${styles.status_item} ${styles.disabled}`}
-                  style={{ background: colors?.disabled?.color }}
-                ></span>
-                <span>{colors?.disabled?.text}</span>
-              </div>
-            </Col>
-            <Col span={6} style={{ textAlign: 'right' }}>
-              <Button onClick={this.getList} style={{ marginRight: 10 }}>
-                更新
-              </Button>
-              <Button type="primary" onClick={this.addMeetingRoom}>
-                录入新会议室
-              </Button>
-            </Col>
-          </Row>
+        {this.state.managePage ? (
+          <div className={styles.meeting_container_content}>
+            <Row gutter={8} type="flex" align="middle">
+              <Col span={14}>
+                <Row gutter={4} type="flex" align="middle">
+                  <Col span={6}>
+                    <DatePicker
+                      onChange={this.setSearchTime}
+                      defaultValue={moment(new Date(), 'YYYY-MM-DD')}
+                      style={{ width: '100%' }}
+                    />
+                  </Col>
+                  <Col span={18} className={styles.operation_btns}>
+                    <a onClick={this.getList}>查询</a>
+                    {/* <a>清空</a> */}
+                  </Col>
+                </Row>
+              </Col>
+              <Col span={4} className={styles.status_list}>
+                <div>
+                  <span
+                    className={`${styles.status_item} ${styles.enable}`}
+                    style={{ background: colors?.enable?.color }}
+                  ></span>
+                  <span>{colors?.enable?.text}</span>
+                </div>
+                <div>
+                  <span
+                    className={`${styles.status_item} ${styles.disabled}`}
+                    style={{ background: colors?.disabled?.color }}
+                  ></span>
+                  <span>{colors?.disabled?.text}</span>
+                </div>
+              </Col>
+              <Col span={6} style={{ textAlign: 'right' }}>
+                <Button
+                  type="primary"
+                  onClick={this.setAuthorized}
+                  style={{ marginRight: 10 }}
+                >
+                  使用授权
+                </Button>
+                <Button type="primary" onClick={this.addMeetingRoom}>
+                  录入新会议室
+                </Button>
+              </Col>
+            </Row>
 
-          <div className={styles.tableRender}>
-            <Table
-              scroll={{ y: scrollHeight }}
-              onChange={() =>
-                setTimeout(() => {
-                  this.setTimeLine()
-                }, 100)
-              }
-              rowKey="id"
-              dataSource={this.state.data}
-              columns={this.state.columns}
-              className="meeting_table"
-            />
+            <div className={styles.tableRender}>
+              <Table
+                scroll={{ y: scrollHeight }}
+                bordered
+                onChange={() =>
+                  setTimeout(() => {
+                    this.setTimeLine()
+                  }, 100)
+                }
+                rowKey="id"
+                dataSource={this.state.data}
+                columns={this.state.columns}
+                className="meeting_table"
+              />
+            </div>
           </div>
-        </div>
+        ) : (
+          <Authorized {...this.props} onGoBack={this.onGoBack} />
+        )}
         <Modal
           closable={false}
           title="编辑会议室"
