@@ -200,7 +200,8 @@ export default class AppendSubTask extends Component {
       handleChildTaskChange,
       whetherUpdateParentTaskTime,
       updateRelyOnRationList,
-      boardFolderTreeData
+      boardFolderTreeData,
+      updatePrivateVariablesWithOpenFile
     } = this.props
     const { board_id } = drawContent
     const { data: child_data = [] } = drawContent['properties'].filter(
@@ -480,6 +481,9 @@ export default class AppendSubTask extends Component {
                 key={`${card_id}-${card_name}-${user_id}-${due_time}-${start_time}-${deliverables}`}
                 childDataIndex={key}
                 updateRelyOnRationList={updateRelyOnRationList}
+                updatePrivateVariablesWithOpenFile={
+                  updatePrivateVariablesWithOpenFile
+                }
               />
             )
           })}

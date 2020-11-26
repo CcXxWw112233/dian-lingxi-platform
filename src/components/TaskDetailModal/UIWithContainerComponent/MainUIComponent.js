@@ -1349,11 +1349,13 @@ export default class MainUIComponent extends Component {
         </div> */}
         {/*查看任务附件*/}
         <div>
-          {this.props.isInOpenFile && (
+          {this.props.isInOpenFile && this.state.whetherIsOpenFileVisible && (
             <FileListRightBarFileDetailModal
               filePreviewCurrentFileId={this.props.filePreviewCurrentFileId}
               fileType={this.props.fileType}
-              file_detail_modal_visible={this.props.isInOpenFile}
+              file_detail_modal_visible={
+                this.props.isInOpenFile && this.state.whetherIsOpenFileVisible
+              }
               filePreviewCurrentName={this.props.filePreviewCurrentName}
               setPreviewFileModalVisibile={this.setPreviewFileModalVisibile}
             />
