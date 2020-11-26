@@ -594,11 +594,21 @@ class MeetingManage extends React.Component {
           code: values.large_device,
           name: values.large_device_name
         }
+      } else {
+        obj.large_device = {
+          code: '',
+          name: values.large_device_name || ''
+        }
       }
       if (values.tablet_device) {
         obj.tablet_device = {
           code: values.tablet_device,
           name: values.tablet_device_name
+        }
+      } else {
+        obj.tablet_device = {
+          code: '',
+          name: values.tablet_device_name || ''
         }
       }
       if (this.state.previewCode.length) {
