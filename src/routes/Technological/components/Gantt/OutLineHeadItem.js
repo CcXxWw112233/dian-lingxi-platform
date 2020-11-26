@@ -899,20 +899,40 @@ export default class OutLineHeadItem extends Component {
           </TreeNode>
         )
       } else {
+        // 不是某一条实例，虚构的用来当作添加的item
         if (item.tree_type == 0) {
           if (item.add_id.indexOf('add_milestone') != -1) {
-            return this.renderAddMilestone(item)
-            // <TreeNode
-            //     setScrollPosition={this.props.setScrollPosition}
-            //     setGoldDateArr={this.props.setGoldDateArr}
-            //     type={'1'}
-            //     level={level}
-            //     placeholder={'新建里程碑'}
-            //     onHover={this.onHover}
-            //     nodeValue={item}//{{ add_id: 'add_milestone', 'tree_type': '0' }}
-            //     icon={<span className={`${styles.addMilestoneNode} ${globalStyles.authTheme}`}  >&#xe8fe;</span>}
-            //     label={<span className={styles.addMilestone}>新建里程碑</span>} key="addMilestone">
-            // </TreeNode>
+            // return this.renderAddMilestone(item)
+            return (
+              <TreeNode
+                setScrollPosition={this.props.setScrollPosition}
+                setGoldDateArr={this.props.setGoldDateArr}
+                level={level}
+                nodeValue={item}
+                type={'1'}
+                onHover={this.onHover}
+                placeholder={
+                  parentNode && parentNode.tree_type == '1'
+                    ? `新建子里程碑`
+                    : `新建里程碑`
+                }
+                icon={
+                  <span
+                    className={`${styles.addMilestoneNode} ${globalStyles.authTheme}`}
+                  >
+                    &#xe8fe;
+                  </span>
+                }
+                label={
+                  <span className={styles.addTask}>
+                    {parentNode && parentNode.tree_type == '1'
+                      ? `新建子里程碑`
+                      : `新建里程碑`}
+                  </span>
+                }
+                key={`addMilestone_${item.index}`}
+              ></TreeNode>
+            )
           } else {
             return (
               <TreeNode
