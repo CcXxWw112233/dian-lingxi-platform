@@ -35,7 +35,8 @@ export default class BeginningStepOne_five extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      fileList: []
+      fileList: [],
+      previewFileModalVisible: false
     }
     // const { itemValue = {} } = props
     // let { files: fileList } = itemValue
