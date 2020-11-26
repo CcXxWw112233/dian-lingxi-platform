@@ -378,7 +378,7 @@ export default class GetRowSummary extends Component {
                   left: left + ceilWidth / 2,
                   // top: top + (ceil_height_fold - 6) / 2,
                   top: top + 2,
-                  zIndex: 1,
+                  zIndex: 3,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center'

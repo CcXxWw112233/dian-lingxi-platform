@@ -1514,27 +1514,6 @@ export default class GroupListHeadItem extends Component {
     return new_val
   }
 
-  // 控制折叠后依赖关系显示
-  handleControlRelyMapVisible = (fold_arr = []) => {
-    const { list_group = [], dispatch } = this.props
-    let folded_rely_card_arr = [] // 被折叠的任务
-    for (let i = 0; i < list_group.length; i++) {
-      const gold_item =
-        fold_arr.find(item => item.list_id == list_group[i].list_id) || {}
-      if (!!Object.keys(gold_item).length && gold_item.is_group_folded) {
-        let arr =
-          (list_group[i]['lane_data']['cards'] || []).map(k => k.id) || []
-        folded_rely_card_arr.push(...arr)
-      }
-    }
-    dispatch({
-      type: 'gantt/updateDatas',
-      payload: {
-        folded_rely_card_arr
-      }
-    })
-  }
-
   // 分组折叠切换
   handleToggleGroupFolded = e => {
     e && e.stopPropagation()
@@ -1554,7 +1533,6 @@ export default class GroupListHeadItem extends Component {
         return item
       }
     })
-    this.handleControlRelyMapVisible(new_)
 
     dispatch({
       type: 'gantt/updateDatas',

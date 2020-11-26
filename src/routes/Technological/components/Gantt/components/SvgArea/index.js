@@ -777,12 +777,12 @@ export default class index extends Component {
     return flag
   }
   recursionRelyMap = (arr = []) => {
-    const { folded_rely_card_arr = [] } = this.props
-    return arr.filter(item => !folded_rely_card_arr.includes(item.id)) || []
+    const { group_folded_rely_card = [] } = this.props
+    return arr.filter(item => !group_folded_rely_card.includes(item.id)) || []
   }
   renderPaths = () => {
     const { rely_map = [] } = this.state
-    const { date_arr_one_level = [], folded_rely_card_arr = [] } = this.props
+    const { date_arr_one_level = [] } = this.props
     // console.log('rely_map', rely_map)
     // 当分组折叠时 过滤存在依赖关系的任务
     const rely_map_ = this.recursionRelyMap(rely_map)
@@ -961,7 +961,7 @@ function mapStateToProps({
       date_arr_one_level,
       outline_tree,
       group_list_area_section_height,
-      folded_rely_card_arr = []
+      group_folded_rely_card = []
     }
   }
 }) {
@@ -980,6 +980,6 @@ function mapStateToProps({
     date_arr_one_level,
     outline_tree,
     group_list_area_section_height,
-    folded_rely_card_arr
+    group_folded_rely_card
   }
 }

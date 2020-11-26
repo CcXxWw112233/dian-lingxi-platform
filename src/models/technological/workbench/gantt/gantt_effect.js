@@ -336,6 +336,30 @@ export default {
         }
       })
     },
+    // 更新折叠分组后对应依赖任务数据
+    *updateGroupFoldedRelyCard({ payload = {} }, { select, put }) {
+      const { fold_arr = [] } = payload
+      const list_group = yield select(
+        getModelSelectDatasState('gantt', 'list_group')
+      )
+      let group_folded_rely_card = [] // 被折叠的任务
+      for (let i = 0; i < list_group.length; i++) {
+        const gold_item =
+          fold_arr.find(item => item.list_id == list_group[i].list_id) || {}
+        if (!!Object.keys(gold_item).length && gold_item.is_group_folded) {
+          let arr =
+            (list_group[i]['lane_data']['cards'] || []).map(k => k.id) || []
+          group_folded_rely_card.push(...arr)
+        }
+      }
+      yield put({
+        type: 'gantt/updateDatas',
+        payload: {
+          group_folded_rely_card
+        }
+      })
+    },
+
     // // 分组视图下跟新任务
     // * updateListGroup({ payload = {} }, { select, call, put }) {
     //     // return
