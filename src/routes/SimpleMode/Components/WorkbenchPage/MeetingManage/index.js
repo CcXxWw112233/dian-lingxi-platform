@@ -270,7 +270,7 @@ class MeetingManage extends React.Component {
                     onConfirm={() => this.removeRoom(record)}
                     okButtonProps={{ type: 'danger' }}
                   >
-                    <a>删除</a>
+                    <a style={{ color: '#F5222D' }}>删除</a>
                   </Popconfirm>
                 </Col>
               </Row>
@@ -300,10 +300,15 @@ class MeetingManage extends React.Component {
 
   // 修改状态
   setEditProps = record => {
+    this.setEditStatus(record, true)
+  }
+
+  setEditStatus = (record, flag) => {
     let { data } = this.state
+    // 先更新不可编辑状态
     data = data.map(item => {
       if (item.id === record.id) {
-        item._edit = true
+        item._edit = flag
       }
       return item
     })
@@ -314,10 +319,13 @@ class MeetingManage extends React.Component {
 
   savePrice = (price, record) => {
     let { data } = this.state
+    this.setEditStatus(record, false)
+    // 判定哪些可保存
+    if (price < 0) return message.warn('价格不能为负数')
     if (record.hourly_cost.toString() === price.toString()) {
       return
     }
-    Action.ChangePrice({ room_id: record.id, hourly_cost: price })
+    Action.ChangePrice({ hourly_cost: price, room_id: record.id })
       .then(res => {
         data = data.map(item => {
           if (item.id === record.id) {
@@ -342,24 +350,29 @@ class MeetingManage extends React.Component {
    */
   removeRoom = val => {
     let { data } = this.state
-    data = data.filter(item => item.id !== val.id)
-    this.setState(
-      {
-        data
-      },
-      () => {
-        if (!data.length) {
-          clearInterval(this.timer)
-          this.timer = null
-          this.removeTimeline()
-        } else {
-          this.setTimeLine()
-        }
-      }
-    )
-    Action.removeMeetingRoom({ id: val.id }).then(res => {
-      message.success('删除会议室成功')
-    })
+
+    Action.removeMeetingRoom({ id: val.id })
+      .then(res => {
+        message.success('删除会议室成功')
+        data = data.filter(item => item.id !== val.id)
+        this.setState(
+          {
+            data
+          },
+          () => {
+            if (!data.length) {
+              clearInterval(this.timer)
+              this.timer = null
+              this.removeTimeline()
+            } else {
+              this.setTimeLine()
+            }
+          }
+        )
+      })
+      .catch(err => {
+        message.warn(err.message)
+      })
   }
   toEdit = async val => {
     // console.log(val)

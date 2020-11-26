@@ -159,6 +159,14 @@ export default class Authorized extends React.PureComponent {
     let arr = Array.from(this.state.data)
     if (record.isAdd) {
       arr = arr.filter(item => item.id !== record.id)
+      this.setState(
+        {
+          data: arr
+        },
+        () => {
+          this.setDisabledSelection()
+        }
+      )
     } else {
       Action.DelRoomOrg({ id: record.id })
         .then(res => {
@@ -224,7 +232,8 @@ export default class Authorized extends React.PureComponent {
     let obj = {
       auth_room_ids: record.auth_room_ids,
       auth_org_id: record.auth_org.key,
-      org_id: this.props.org_id
+      org_id: this.props.org_id,
+      auth_status: '1'
     }
     let arr = Array.from(this.state.data)
     // console.log(record)
@@ -233,7 +242,10 @@ export default class Authorized extends React.PureComponent {
         message.success('授权成功')
         arr = arr.map(item => {
           if (item.id === record.id) {
-            if (res.data) item.id = res.data.id
+            if (res.data) {
+              item.id = res.data.id
+              item.auth_status = res.data.auth_status
+            }
             item.isAdd = false
           }
           return item

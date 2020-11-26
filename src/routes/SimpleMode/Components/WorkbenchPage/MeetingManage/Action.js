@@ -2,6 +2,7 @@ import request from '@/utils/requestAxios'
 import { REQUEST_PREFIX } from '../../../../../globalset/js/constant'
 import { isApiResponseOk } from '../../../../../utils/handleResponseData'
 import { uploadFileForAxios } from '../../../../../utils/requestAxios'
+import sha256 from 'js-sha256'
 const REQUEST_ROOM_URL = `${REQUEST_PREFIX}/meeting`
 
 class Action {
@@ -104,7 +105,7 @@ class Action {
     })
     if (isApiResponseOk(res)) {
       return res.data
-    } else return Promise.reject()
+    } else return Promise.reject(res)
   }
 
   /**
@@ -197,14 +198,42 @@ class Action {
   }
 
   /**
-   * 修改定价
+   * 修改定价 价格需要进行加密处理
    * @param {*} data
    */
   ChangePrice = async data => {
+    let headers = { Signature: '' }
+    function getHashString(length = 15) {
+      let str1 = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
+      let str2 = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+      let str = ''
+      for (let i = 0; i < length; i++) {
+        let stringIndex = Math.round(Math.random() * 1)
+        let item = [str1, str2][stringIndex]
+        let index = Math.round(Math.random() * (item.length - 1))
+        let text = item[index]
+        str += text
+      }
+      return str
+    }
+    let param = {
+      app: 'huixiebao',
+      time: parseInt(new Date().getTime() / 1000, 10),
+      nonce: getHashString(),
+      sign: ''
+    }
+    let hashString = `${param.app}\n${param.time}\n${
+      param.nonce
+    }\n${JSON.stringify({ ...data })}`
+    param.sign = sha256(hashString)
+
+    headers.Signature = window.btoa(JSON.stringify(param))
+    console.log(param, hashString)
     const res = await request({
       method: 'PUT',
       url: `${REQUEST_ROOM_URL}/room/cost`,
-      data
+      data,
+      headers
     })
     if (isApiResponseOk(res)) return res
     return Promise.reject(res)
