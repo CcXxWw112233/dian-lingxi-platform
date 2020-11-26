@@ -270,7 +270,7 @@ class MeetingManage extends React.Component {
                     onConfirm={() => this.removeRoom(record)}
                     okButtonProps={{ type: 'danger' }}
                   >
-                    <a>删除</a>
+                    <a style={{ color: '#F5222D' }}>删除</a>
                   </Popconfirm>
                 </Col>
               </Row>
