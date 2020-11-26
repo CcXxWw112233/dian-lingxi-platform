@@ -6,6 +6,7 @@ import {
   ganttIsOutlineView,
   hours_view_total
 } from '../../constants'
+import _ from 'lodash'
 
 @connect(mapStateToProps)
 export default class index extends PureComponent {
@@ -109,7 +110,7 @@ export default class index extends PureComponent {
     }
     return _finally_height
   }
-  draw = props => {
+  draw = _.debounce(props => {
     const { gantt_view_mode, group_view_type } = props
     const operators = {
       month: this.drawMonths,
@@ -127,7 +128,7 @@ export default class index extends PureComponent {
         this.draGroup(props)
       }
     }
-  }
+  }, 100)
   // 绘制月视图
   drawMonths = props => {
     const { date_arr_one_level = [], ceilWidth } = props

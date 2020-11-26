@@ -19,6 +19,7 @@ import {
   getNextRelativeTime
 } from './getDate'
 import {
+  ceil_width,
   date_area_height,
   ganttIsOutlineView,
   hours_view_total
@@ -90,7 +91,12 @@ export default class GanttFace extends Component {
 
   componentWillReceiveProps(nextProps) {
     // 针对改变项目相对时间和实际时间改变
-    const { projectDetailInfoData = {}, gantt_board_id, ceilWidth } = this.props
+    const {
+      projectDetailInfoData = {},
+      gantt_board_id,
+      ceilWidth,
+      gantt_view_mode
+    } = this.props
     if (gantt_board_id == '0') return
     const { board_set = {} } = projectDetailInfoData
     const { date_mode, relative_time } = board_set
@@ -109,9 +115,19 @@ export default class GanttFace extends Component {
           type: 'gantt/updateDatas',
           payload: {
             gantt_view_mode: 'relative_time',
-            base_relative_time: relative_time_next
+            base_relative_time: relative_time_next,
+            ceilWidth: ceil_width,
+            get_gantt_data_loading_other: true
           }
         })
+        setTimeout(() => {
+          this.props.dispatch({
+            type: 'gantt/updateDatas',
+            payload: {
+              get_gantt_data_loading_other: false
+            }
+          })
+        }, 1000)
         setTimeout(() => {
           this.setGoldDateArr({ init: true, timestamp: relative_time })
           this.initSetScrollPosition()
@@ -121,6 +137,7 @@ export default class GanttFace extends Component {
           gantt_date_area.style.left = `0px`
         }
       } else {
+        if (gantt_view_mode != 'relative_time') return //如果不是相对视图就算了
         this.props.dispatch({
           type: 'gantt/updateDatas',
           payload: {
@@ -713,7 +730,10 @@ export default class GanttFace extends Component {
               id={'gantt_header_wapper'}
               style={{ height: gantt_card_height - 20 }}
             >
-              <GroupListHeadSet />
+              <GroupListHeadSet
+                setGoldDateArr={this.setGoldDateArr}
+                setScrollPosition={this.setScrollPosition}
+              />
               {/*  //撑住DateList相同高度的底部 */}
               <GroupListHead
                 setScrollArea={this.setScrollArea}

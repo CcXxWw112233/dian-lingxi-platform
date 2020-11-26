@@ -121,7 +121,7 @@ export default class GroupListHeadSet extends Component {
   }
   //返回
   backClick = () => {
-    const { dispatch, group_view_type } = this.props
+    const { dispatch, group_view_type, gantt_view_mode } = this.props
     setTimeout(() => {
       if (group_view_type == '5') {
         dispatch({
@@ -151,6 +151,19 @@ export default class GroupListHeadSet extends Component {
             group_list_area_fold_section: []
           }
         })
+        //返回项目列表的情况下，如果是相对时间视图，则要处理回到月是图
+        if (gantt_view_mode == 'relative_time') {
+          dispatch({
+            type: 'gantt/updateDatas',
+            payload: {
+              gantt_view_mode: 'month'
+            }
+          })
+          setTimeout(() => {
+            this.props.setGoldDateArr({})
+            this.props.setScrollPosition({})
+          }, 200)
+        }
         this.setState({
           is_full_folded: false
         })
