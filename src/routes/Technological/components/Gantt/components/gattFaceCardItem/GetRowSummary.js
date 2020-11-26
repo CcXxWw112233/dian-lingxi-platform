@@ -10,10 +10,12 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import {
   task_item_height_fold,
   task_item_height,
-  ceil_height_fold
+  ceil_height_fold,
+  ceil_width_week
 } from '../../constants'
 import { selectBoardToSeeInfo } from '../../../../../../utils/businessFunction'
 import {
+  dateFormat,
   getDiffDate,
   isSamDay,
   removeEmptyArrayEle,
@@ -127,7 +129,8 @@ export default class GetRowSummary extends Component {
       let list = []
       let left
       for (let val of list_data) {
-        if (new Date(val.end_time).getMonth() + 1 == item) {
+        const change_time = dateFormat(val.end_time, 'yyyy-MM')
+        if (change_time == item) {
           list.push(val)
         }
       }
@@ -141,7 +144,7 @@ export default class GetRowSummary extends Component {
           : end_date == item &&
             !isSamDay(interval_timer[item].end_time, board_end_time)
           ? board_left + width - 10
-          : interval_timer[item].left + 93 / 2 - 10
+          : interval_timer[item].left + 94 / 2 - 10
         : null
       return {
         date: item,
@@ -188,16 +191,24 @@ export default class GetRowSummary extends Component {
     const month = getDiffDate(start_time, end_time)
     let time_obj = {}
     month.map(item => {
-      let start_date = month[0].split('-')[1]
-      let end_date = month[month.length - 1].split('-')[1]
+      let start_date = month[0]
+      let end_date = month[month.length - 1]
       let Y = item.split('-')[0]
       let M = item.split('-')[1]
       const gold_item =
-        date_arr_one_level.find(item => item.year == Y && item.month == M) || {}
-      const gold_item_index = date_arr_one_level.findIndex(
-        item => item.year == Y && item.month == M
-      )
-      time_obj[M] = {
+        date_arr_one_level.find(item => {
+          let month_ = item.month < 10 ? '0' + item.month : item.month
+          if (item.year == Y && month_ == M) {
+            return true
+          }
+        }) || {}
+      const gold_item_index = date_arr_one_level.findIndex(item => {
+        let month_ = item.month < 10 ? '0' + item.month : item.month
+        if (item.year == Y && month_ == M) {
+          return true
+        }
+      })
+      time_obj[`${Y}-${M}`] = {
         start_time: gold_item.timestamp,
         end_time: gold_item.timestampEnd
       }
@@ -219,14 +230,19 @@ export default class GetRowSummary extends Component {
             ? 0
             : new Date(start_time).getDate()
         const origin_left = (date_length + date_no - 1) * ceilWidth
-        time_obj[M]['left'] = origin_left
+        time_obj[`${Y}-${M}`]['left'] = origin_left
         if (Object.keys(month).length > 1) {
           // 需要添加一个开始日期和截止日期 因为对象的添加是无序排列的
-          time_obj[M]['start_date'] = start_date
-          time_obj[M]['end_date'] = end_date
+          time_obj[`${Y}-${M}`]['start_date'] = start_date
+          time_obj[`${Y}-${M}`]['end_date'] = end_date
         }
       }
     })
+    for (let key in time_obj) {
+      if (!time_obj[key]['start_time']) {
+        delete time_obj[key]
+      }
+    }
     return time_obj
   }
 
@@ -289,13 +305,18 @@ export default class GetRowSummary extends Component {
       },
       gantt_view_mode
     } = this.props
+    // 理想实现方案：
+    // 1先把逾期的任务找到
+    // 2将逾期的任务归类=》同一周的任务组
+    // 3 逾期的 任务组 的所属周的位置
     const left_arr = this.getWeekIntervalTimer() || []
     // 表示第一段日期长度
     let f_len = 0
 
     if (!(!board_start_time || !board_end_time) && !!left_arr.length) {
       f_len =
-        ((left_arr[0].timestampEnd - board_start_time) * 83) /
+        ((left_arr[0].timestampEnd - board_start_time) *
+          (ceil_width_week * 7)) /
         (left_arr[0].timestampEnd - left_arr[0].timestamp).toFixed(1)
     }
 
@@ -313,16 +334,26 @@ export default class GetRowSummary extends Component {
       // 1、头(0)：表示从项目起始点开始 - 自身的一半(10)
       // 2、尾(length-1)：表示从项目起始点开始 + 进度宽度 - 自身的一半(10)
       // 3、其他(都是满月的情况)：起始点 + 第一段的长度 + index(表示在第几个位置) * 格子宽度 - 格子一半 - 自身的一半 -----放置在中间
-      left =
-        index == 0 && !isSamDay(left_arr[0].timestamp, board_start_time)
-          ? board_left - 10
-          : index == left_arr.length - 1 &&
-            !isSamDay(
-              left_arr[left_arr.length - 1].timestampEnd,
-              board_end_time
-            )
-          ? board_left + width - 10
-          : board_left + f_len + index * 83 - 41.5 - 10
+      // left =
+      //   index == 0 && !isSamDay(left_arr[0].timestamp, board_start_time)
+      //     ? board_left - 10
+      //     : index == left_arr.length - 1 &&
+      //       !isSamDay(
+      //         left_arr[left_arr.length - 1].timestampEnd,
+      //         board_end_time
+      //       )
+      //     ? board_left + width - 10
+      //     : board_left + f_len + index * 83 - 41.5 - 10
+      if (index == 0 && !isSamDay(left_arr[0].timestamp, board_start_time)) {
+        left = board_left - 10
+      } else if (
+        index == left_arr.length - 1 &&
+        !isSamDay(left_arr[left_arr.length - 1].timestampEnd, board_end_time)
+      ) {
+        left = board_left + width - 10
+      } else {
+        left = board_left + f_len + index * 84 - 42 - 10
+      }
       return {
         left,
         list
@@ -344,7 +375,6 @@ export default class GetRowSummary extends Component {
         : gantt_view_mode == 'week'
         ? this.hanldListGroupMap2()
         : []
-
     return left_map.map((item, key) => {
       const { list = [], left } = item
       // const realize_arr = list.filter(item => item.is_realize != '1')
