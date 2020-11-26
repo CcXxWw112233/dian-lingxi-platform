@@ -159,7 +159,7 @@ export default {
       card_name_outside: false, //任务名称是否外置
       base_relative_time: '', //相对时间轴的基准时间
 
-      folded_rely_card_arr: [] // 表示分组折叠后 存在有依赖关系的任务
+      group_folded_rely_card: [] // 表示分组折叠后 存在有依赖关系的任务
     }
   },
   subscriptions: {
@@ -1356,6 +1356,12 @@ export default {
         yield put({
           type: 'getGttMilestoneList',
           payload: {}
+        })
+        yield put({
+          type: 'updateGroupFoldedRelyCard',
+          payload: {
+            fold_arr: group_list_area_fold_section
+          }
         })
       } catch (err) {
         console.log('ssss_err_2', err)
