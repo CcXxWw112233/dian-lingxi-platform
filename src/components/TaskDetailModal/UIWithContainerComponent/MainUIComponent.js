@@ -916,7 +916,6 @@ export default class MainUIComponent extends Component {
 
     const start_day_time = caldiffDays(relative_time, start_time)
     const due_day_time = caldiffDays(relative_time, due_time)
-
     return (
       <div className={mainContentStyles.main_wrap}>
         {/* <RelyOnRelationship relationshipList={dependencies} updateRelyOnRationList={this.updateRelyOnRationList} /> */}
@@ -1283,6 +1282,9 @@ export default class MainUIComponent extends Component {
               handleTaskDetailChange={handleTaskDetailChange}
               updateParentPropertiesList={this.updateParentPropertiesList}
               handleRelyUploading={this.props.handleRelyUploading}
+              updatePrivateVariablesWithOpenFile={
+                this.updatePrivateVariablesWithOpenFile
+              }
             />
           </div>
           {/* 不同字段的渲染 E */}
@@ -1349,11 +1351,13 @@ export default class MainUIComponent extends Component {
         </div> */}
         {/*查看任务附件*/}
         <div>
-          {this.props.isInOpenFile && (
+          {this.props.isInOpenFile && this.state.whetherIsOpenFileVisible && (
             <FileListRightBarFileDetailModal
               filePreviewCurrentFileId={this.props.filePreviewCurrentFileId}
               fileType={this.props.fileType}
-              file_detail_modal_visible={this.props.isInOpenFile}
+              file_detail_modal_visible={
+                this.props.isInOpenFile && this.state.whetherIsOpenFileVisible
+              }
               filePreviewCurrentName={this.props.filePreviewCurrentName}
               setPreviewFileModalVisibile={this.setPreviewFileModalVisibile}
             />

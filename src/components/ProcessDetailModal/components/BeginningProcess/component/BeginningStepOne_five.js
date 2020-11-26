@@ -178,6 +178,9 @@ export default class BeginningStepOne_five extends Component {
         isOpenAttachmentFile: true
       }
     })
+    this.setState({
+      previewFileModalVisible: true
+    })
   }
 
   setPreviewFileModalVisibile = () => {
@@ -192,6 +195,9 @@ export default class BeginningStepOne_five extends Component {
         filePreviewCurrentName: '',
         filePreviewCurrentFileResourceId: ''
       }
+    })
+    this.setState({
+      previewFileModalVisible: false
     })
   }
 
@@ -532,12 +538,14 @@ export default class BeginningStepOne_five extends Component {
           fileList.map(item => {
             return this.renderFileList(item)
           })}
-        {isInOpenFile && (
+        {isInOpenFile && this.state.previewFileModalVisible && (
           <FileListRightBarFileDetailModal
             filePreviewCurrentFileId={filePreviewCurrentFileId}
             fileType={fileType}
             filePreviewCurrentName={filePreviewCurrentName}
-            file_detail_modal_visible={isInOpenFile}
+            file_detail_modal_visible={
+              isInOpenFile && this.state.previewFileModalVisible
+            }
             setPreviewFileModalVisibile={this.setPreviewFileModalVisibile}
           />
         )}

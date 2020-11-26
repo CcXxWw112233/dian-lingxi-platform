@@ -541,6 +541,9 @@ export default class BasicFieldUIComponent extends Component {
                       updateRelyOnRationList={updateRelyOnRationList}
                       boardFolderTreeData={boardFolderTreeData}
                       handleRelyUploading={this.props.handleRelyUploading}
+                      updatePrivateVariablesWithOpenFile={
+                        this.props.updatePrivateVariablesWithOpenFile
+                      }
                       children={
                         <div
                           style={{

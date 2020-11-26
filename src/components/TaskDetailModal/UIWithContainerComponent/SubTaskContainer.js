@@ -1279,6 +1279,9 @@ export default class SubTaskContainer extends Component {
             updateRelyOnRationList={updateRelyOnRationList}
             boardFolderTreeData={boardFolderTreeData}
             children={children}
+            updatePrivateVariablesWithOpenFile={
+              updatePrivateVariablesWithOpenFile
+            }
           />
         )}
       </>
