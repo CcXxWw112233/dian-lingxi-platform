@@ -138,6 +138,7 @@ export default class BoardContent extends React.Component {
     if (room.status !== '1') {
       return message.warn('房间已过期，不能进行操作')
     }
+    if (!val.thumbnail_url) return message.warn('此文件没有图片数据，无法使用')
     this.toogleSpin(true)
     let res = await fileInfoByUrl({ id: val.file_id })
     // 缩略图
