@@ -10,7 +10,7 @@ import {
   Checkbox,
   Popconfirm
 } from 'antd'
-import React from 'react'
+import React, { Fragment } from 'react'
 import styles from './index.less'
 import Action from '../../Action'
 import { getSearchOrganizationList } from '../../../../../../../services/technological/organizationMember'
@@ -28,7 +28,8 @@ export default class Authorized extends React.PureComponent {
     rooms: [],
     fetching: false,
     org_list: [],
-    selectedOrg: []
+    selectedOrg: [],
+    isLoading: false
   }
 
   columns = [
@@ -77,7 +78,7 @@ export default class Authorized extends React.PureComponent {
             placeholder="添加会议室"
             mode="multiple"
             style={{ width: '60%' }}
-            maxTagCount={4}
+            // maxTagCount={4}
             showArrow
             value={record.auth_room_ids || []}
             onSelect={val => this.setSelectRoom(val, record)}
@@ -121,29 +122,37 @@ export default class Authorized extends React.PureComponent {
       width: 200,
       render: record => {
         return (
-          <div className={styles.operation_items}>
-            {record.auth_status === '1' ? (
-              <Popconfirm
-                title="确定取消授权吗?"
-                onConfirm={() => this.changeAuthStatus(record)}
-              >
-                <a>取消授权</a>
-              </Popconfirm>
+          <Fragment>
+            {record._unsave ? (
+              <Button size="small" onClick={() => this.saveOrgAuth(record)}>
+                保存
+              </Button>
             ) : (
-              <Popconfirm
-                title="确定授权吗?"
-                onConfirm={() => this.saveOrgAuth(record)}
-              >
-                <a>授权</a>
-              </Popconfirm>
+              <div className={styles.operation_items}>
+                {record.auth_status === '1' ? (
+                  <Popconfirm
+                    title="确定取消授权吗?"
+                    onConfirm={() => this.changeAuthStatus(record)}
+                  >
+                    <a>取消授权</a>
+                  </Popconfirm>
+                ) : (
+                  <Popconfirm
+                    title="确定授权吗?"
+                    onConfirm={() => this.saveOrgAuth(record)}
+                  >
+                    <a>授权</a>
+                  </Popconfirm>
+                )}
+                <Popconfirm
+                  title="确定删除此授权信息吗?"
+                  onConfirm={() => this.delOrgItem(record)}
+                >
+                  <span>删除</span>
+                </Popconfirm>
+              </div>
             )}
-            <Popconfirm
-              title="确定删除此授权信息吗?"
-              onConfirm={() => this.delOrgItem(record)}
-            >
-              <span>删除</span>
-            </Popconfirm>
-          </div>
+          </Fragment>
         )
       }
     }
@@ -189,7 +198,11 @@ export default class Authorized extends React.PureComponent {
   changeAuthStatus = record => {
     let obj = {
       id: record.id,
-      auth_status: record.auth_status === '1' ? '0' : '1',
+      auth_status: record._unsave
+        ? record.auth_status
+        : record.auth_status === '1'
+        ? '0'
+        : '1',
       auth_room_ids: record.auth_room_ids
     }
     if (!obj.auth_room_ids) {
@@ -202,6 +215,7 @@ export default class Authorized extends React.PureComponent {
         message.success('修改成功')
         arr = arr.map(item => {
           if (item.id === record.id) {
+            item._unsave = false
             item.auth_status = item.auth_status === '1' ? '0' : '1'
           }
           return item
@@ -232,7 +246,7 @@ export default class Authorized extends React.PureComponent {
       auth_room_ids: record.auth_room_ids,
       auth_org_id: record.auth_org.key,
       org_id: this.props.org_id,
-      auth_status: '1'
+      auth_status: record.auth_status || '0'
     }
     let arr = Array.from(this.state.data)
     // console.log(record)
@@ -245,6 +259,7 @@ export default class Authorized extends React.PureComponent {
               item.id = res.data.id
               item.auth_status = res.data.auth_status
             }
+            item._unsave = false
             item.isAdd = false
           }
           return item
@@ -259,10 +274,10 @@ export default class Authorized extends React.PureComponent {
   }
   // 选择了房间
   setSelectRoom = (val, record) => {
-    if (record.auth_status === '1') return message.warn('已授权，不允许修改')
     let arr = [...this.state.data]
     arr = arr.map(item => {
       if (record.id === item.id) {
+        item._unsave = true
         if (!item.auth_room_ids) item.auth_room_ids = []
         item.auth_room_ids.push(val)
         if (item.auth_room_ids.length === this.state.rooms.length) {
@@ -277,10 +292,10 @@ export default class Authorized extends React.PureComponent {
   }
   // 取消选择了房间
   deSelectRoom = (val, record) => {
-    if (record.auth_status === '1') return message.warn('已授权，不允许修改')
     let arr = [...this.state.data]
     arr = arr.map(item => {
       if (item.id === record.id) {
+        item._unsave = true
         item.auth_room_ids = item.auth_room_ids.filter(room => room !== val)
       }
       return item
@@ -308,11 +323,11 @@ export default class Authorized extends React.PureComponent {
   }
 
   setAllCheck = (val, record) => {
-    if (record.auth_status === '1') return message.warn('已授权，不允许修改')
     let flag = val.target.checked
     let arr = [...this.state.data]
     arr = arr.map(item => {
       if (item.id === record.id) {
+        item._unsave = true
         if (!flag) {
           item.auth_room_ids = []
           item.checkAll = false
@@ -346,6 +361,9 @@ export default class Authorized extends React.PureComponent {
   }
 
   getAuthOrgList = () => {
+    this.setState({
+      isLoading: true
+    })
     Action.getRoomAuthList({ org_id: this.props.org_id })
       .then(res => {
         this.setState(
@@ -359,7 +377,8 @@ export default class Authorized extends React.PureComponent {
                 }
               }
               return item
-            })
+            }),
+            isLoading: false
           },
           () => {
             let orgs = this.setDisabledSelection()
@@ -422,7 +441,8 @@ export default class Authorized extends React.PureComponent {
       id: Math.random() * 1e10 + 1,
       name: '',
       auth_room_ids: [],
-      isAdd: true
+      isAdd: true,
+      _unsave: true
     }
     let arr = Array.from(this.state.data)
     arr.push(obj)
@@ -458,6 +478,7 @@ export default class Authorized extends React.PureComponent {
         </div>
         <div className={styles.authorized_table}>
           <Table
+            loading={this.state.isLoading}
             scroll={{ y: scrollHeight }}
             bordered
             dataSource={this.state.data}
