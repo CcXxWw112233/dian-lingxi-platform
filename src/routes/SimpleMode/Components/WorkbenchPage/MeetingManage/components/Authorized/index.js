@@ -86,7 +86,7 @@ export default class Authorized extends React.PureComponent {
             mode="multiple"
             style={{ width: '60%' }}
             onFocus={this.getRoomList}
-            // maxTagCount={4}
+            maxTagCount={4}
             showArrow
             value={record.auth_room_ids || []}
             onSelect={val => this.setSelectRoom(val, record)}

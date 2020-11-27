@@ -112,14 +112,28 @@ class MeetingManage extends React.Component {
           title: '会议室名称',
           dataIndex: 'name',
           ellipsis: true,
-          width: 200
+          width: 200,
+          render: text => {
+            return (
+              <span className={styles.ellipsis} style={{ width: 160 }}>
+                {text}
+              </span>
+            )
+          }
         },
         {
           key: 'address',
           title: '会议室地址',
           dataIndex: 'address',
           ellipsis: true,
-          width: 200
+          width: 200,
+          render: (text, record) => {
+            return (
+              <span className={styles.ellipsis} style={{ width: 160 }}>
+                {text}
+              </span>
+            )
+          }
         },
         {
           key: 'device',
@@ -127,7 +141,16 @@ class MeetingManage extends React.Component {
           width: 400,
           render: record => {
             let { room_devices = [] } = record || {}
-            return room_devices.map(item => item.name).join(' / ')
+            let text = room_devices.map(item => item.name).join(' / ')
+            return (
+              <span
+                className={styles.ellipsis}
+                style={{ width: 360 }}
+                title={text}
+              >
+                {text}
+              </span>
+            )
           },
           ellipsis: true
         },
@@ -883,7 +906,7 @@ class MeetingManage extends React.Component {
 
             <div className={styles.tableRender}>
               <Table
-                scroll={{ y: scrollHeight }}
+                scroll={{ y: scrollHeight, x: 1800 }}
                 bordered
                 onChange={() =>
                   setTimeout(() => {
