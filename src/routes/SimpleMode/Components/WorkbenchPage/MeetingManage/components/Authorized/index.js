@@ -84,7 +84,7 @@ export default class Authorized extends React.PureComponent {
           <Select
             placeholder="添加会议室"
             mode="multiple"
-            style={{ width: '60%' }}
+            style={{ width: '90%' }}
             onFocus={this.getRoomList}
             maxTagCount={4}
             showArrow
