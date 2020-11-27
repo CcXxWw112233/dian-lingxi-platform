@@ -41,30 +41,36 @@ export default class Authorized extends React.PureComponent {
       render: (text, record) => {
         const { org_list, fetching } = this.state
         return (
-          <Select
-            placeholder="搜索添加组织"
-            style={{ width: '60%' }}
-            labelInValue
-            disabled={!record.isAdd}
-            defaultValue={record.auth_org}
-            notFoundContent={fetching ? <Spin size="small" /> : null}
-            onSearch={this.getOrgList}
-            onSelect={val => this.handleChangeOrg(val, record)}
-            filterOption={false}
-            showSearch
-          >
-            {org_list.map(item => {
-              return (
-                <Select.Option
-                  value={item.id}
-                  key={item.id}
-                  disabled={item.disabled}
-                >
-                  {item.name}
-                </Select.Option>
-              )
-            })}
-          </Select>
+          <Fragment>
+            {!record.isAdd ? (
+              <span>{record.auth_org?.name || record.auth_org?.label}</span>
+            ) : (
+              <Select
+                placeholder="搜索添加组织"
+                style={{ width: '60%' }}
+                labelInValue
+                disabled={!record.isAdd}
+                defaultValue={record.auth_org}
+                notFoundContent={fetching ? <Spin size="small" /> : null}
+                onSearch={this.getOrgList}
+                onSelect={val => this.handleChangeOrg(val, record)}
+                filterOption={false}
+                showSearch
+              >
+                {org_list.map(item => {
+                  return (
+                    <Select.Option
+                      value={item.id}
+                      key={item.id}
+                      disabled={item.disabled}
+                    >
+                      {item.name}
+                    </Select.Option>
+                  )
+                })}
+              </Select>
+            )}
+          </Fragment>
         )
       }
     },
@@ -380,13 +386,13 @@ export default class Authorized extends React.PureComponent {
               return item
             }),
             isLoading: false
-          },
-          () => {
-            let orgs = this.setDisabledSelection()
-            this.setState({
-              org_list: orgs
-            })
           }
+          // () => {
+          //   let orgs = this.setDisabledSelection()
+          //   this.setState({
+          //     org_list: orgs
+          //   })
+          // }
         )
       })
       .catch(err => {
