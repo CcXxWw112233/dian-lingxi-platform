@@ -29,7 +29,8 @@ export default class Authorized extends React.PureComponent {
     fetching: false,
     org_list: [],
     selectedOrg: [],
-    isLoading: false
+    isLoading: false,
+    tablePages: { current: 1, pageSize: 10 }
   }
 
   columns = [
@@ -437,6 +438,7 @@ export default class Authorized extends React.PureComponent {
   }
 
   setAddAuthOrg = () => {
+    const { tablePages } = this.state
     let obj = {
       id: Math.random() * 1e10 + 1,
       name: '',
@@ -445,7 +447,10 @@ export default class Authorized extends React.PureComponent {
       _unsave: true
     }
     let arr = Array.from(this.state.data)
-    arr.push(obj)
+    if (tablePages.current === 1) {
+      arr.unshift(obj)
+    } else arr.splice(tablePages.current * tablePages.pageSize, 0, obj)
+
     this.setState({
       data: arr
     })
@@ -484,6 +489,7 @@ export default class Authorized extends React.PureComponent {
             dataSource={this.state.data}
             columns={this.columns}
             rowKey="id"
+            onChange={val => this.setState({ tablePages: val })}
           />
         </div>
       </div>
