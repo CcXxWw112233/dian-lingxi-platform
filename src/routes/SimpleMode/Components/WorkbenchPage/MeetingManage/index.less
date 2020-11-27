@@ -6,6 +6,12 @@
     color: #1890ff;
   }
 }
+.ellipsis{
+  display: inline-block;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
 .time_line{
   position: absolute;
   transition: left 0.3s linear;
@@ -26,6 +32,11 @@
   }
 }
 .meeting_container{
+  :global{
+    .ant-table-fixed-left table, .ant-table-fixed-right table{
+      width: min-content;
+    }
+  }
   .price_text{
     width: 60px;
     display: inline-block;
