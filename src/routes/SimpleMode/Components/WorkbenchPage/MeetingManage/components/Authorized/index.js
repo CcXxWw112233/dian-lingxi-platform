@@ -80,7 +80,6 @@ export default class Authorized extends React.PureComponent {
             maxTagCount={4}
             showArrow
             value={record.auth_room_ids || []}
-            disabled={record.auth_status === '1'}
             onSelect={val => this.setSelectRoom(val, record)}
             onDeselect={val => this.deSelectRoom(val, record)}
             dropdownRender={menu => (
@@ -260,6 +259,7 @@ export default class Authorized extends React.PureComponent {
   }
   // 选择了房间
   setSelectRoom = (val, record) => {
+    if (record.auth_status === '1') return message.warn('已授权，不允许修改')
     let arr = [...this.state.data]
     arr = arr.map(item => {
       if (record.id === item.id) {
@@ -277,6 +277,7 @@ export default class Authorized extends React.PureComponent {
   }
   // 取消选择了房间
   deSelectRoom = (val, record) => {
+    if (record.auth_status === '1') return message.warn('已授权，不允许修改')
     let arr = [...this.state.data]
     arr = arr.map(item => {
       if (item.id === record.id) {
@@ -307,15 +308,18 @@ export default class Authorized extends React.PureComponent {
   }
 
   setAllCheck = (val, record) => {
+    if (record.auth_status === '1') return message.warn('已授权，不允许修改')
     let flag = val.target.checked
     let arr = [...this.state.data]
     arr = arr.map(item => {
-      if (!flag) {
-        item.auth_room_ids = []
-        item.checkAll = false
-      } else {
-        item.auth_room_ids = this.state.rooms.map(room => room.id)
-        item.checkAll = true
+      if (item.id === record.id) {
+        if (!flag) {
+          item.auth_room_ids = []
+          item.checkAll = false
+        } else {
+          item.auth_room_ids = this.state.rooms.map(room => room.id)
+          item.checkAll = true
+        }
       }
 
       return item
