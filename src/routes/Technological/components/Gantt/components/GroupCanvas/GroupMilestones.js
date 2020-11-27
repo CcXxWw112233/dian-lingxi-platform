@@ -339,7 +339,7 @@ export default class GroupMilestones extends Component {
             <div
               data-targetclassname="specific_example_milestone"
               className={indexStyles.milestone_wrapper}
-              style={{ top, left: left + ceilWidth }}
+              style={{ top, left: left + ceilWidth, height: 20 }}
             >
               <Dropdown
                 overlay={this.renderLCBList(one_levels, timestamp, {
@@ -621,7 +621,7 @@ export default class GroupMilestones extends Component {
       deadline: timestampEnd
     }
     if (gantt_board_id == '0') {
-      setBoardIdStorage(list_id)
+      setBoardIdStorage(milestones[0].board_id)
     }
     return new Promise((resolve, reject) => {
       updateMilestone(
