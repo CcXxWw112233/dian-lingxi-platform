@@ -85,6 +85,7 @@ export default class Authorized extends React.PureComponent {
             placeholder="添加会议室"
             mode="multiple"
             style={{ width: '60%' }}
+            onFocus={this.getRoomList}
             // maxTagCount={4}
             showArrow
             value={record.auth_room_ids || []}
@@ -354,7 +355,6 @@ export default class Authorized extends React.PureComponent {
   getOrgList = val => {
     this.setState({ fetching: true })
     getSearchOrganizationList({ name: val }).then(res => {
-      console.log(this.state.selectedOrg)
       this.setState({
         fetching: false,
         org_list: (res.data || []).map(item => {
@@ -431,7 +431,14 @@ export default class Authorized extends React.PureComponent {
     Action.getRoomList({ org_id: this.props.org_id })
       .then(res => {
         this.setState({
-          rooms: res.data
+          rooms: res.data,
+          data: (this.state.data || []).map(item => {
+            if (item.auth_room_ids.length === res.data.length) {
+              item.checkAll = true
+            } else item.checkAll = false
+
+            return item
+          })
         })
       })
       .catch(err => {
