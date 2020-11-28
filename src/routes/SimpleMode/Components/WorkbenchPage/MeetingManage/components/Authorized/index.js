@@ -38,6 +38,7 @@ export default class Authorized extends React.PureComponent {
       title: '授予组织',
       key: 'name',
       dataIndex: 'name',
+      width: 200,
       render: (text, record) => {
         const { org_list, fetching } = this.state
         return (
