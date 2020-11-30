@@ -159,7 +159,8 @@ export default {
       card_name_outside: false, //任务名称是否外置
       base_relative_time: '', //相对时间轴的基准时间
 
-      group_folded_rely_card: [] // 表示分组折叠后 存在有依赖关系的任务
+      group_folded_rely_card: [], // 表示分组折叠后 存在有依赖关系的任务
+      gantt_card_date_no_section: {} // 表示选中任务时对应显示日期内容
     }
   },
   subscriptions: {

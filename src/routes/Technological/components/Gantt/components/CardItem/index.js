@@ -1288,7 +1288,16 @@ export default class CardItem extends Component {
   handleObj = () => {
     const { itemValue = {}, card_rely_draging } = this.props
     const { drag_lock } = this.state
-    const { top, id, board_id, parent_card_id } = itemValue
+    const {
+      top,
+      id,
+      board_id,
+      parent_card_id,
+      start_time,
+      end_time,
+      width,
+      left
+    } = itemValue
     return {
       onClick: e => {
         // console.log('s_event', 'onClick')
@@ -1296,9 +1305,26 @@ export default class CardItem extends Component {
         if (!drag_lock) {
           this.props.setTaskIsDragging && this.props.setTaskIsDragging(true) //当拖动时，有可能会捕获到创建任务的动作，阻断
           setTimeout(() => {
-            this.setState({
-              drag_lock: true
-            })
+            this.setState(
+              {
+                drag_lock: true
+              },
+              () => {
+                this.props.dispatch({
+                  type: 'gantt/updateDatas',
+                  payload: {
+                    gantt_card_date_no_section: {
+                      id,
+                      parent_card_id,
+                      start_time,
+                      end_time,
+                      width,
+                      left
+                    }
+                  }
+                })
+              }
+            )
           }, 200)
           return
         }
@@ -1378,9 +1404,19 @@ export default class CardItem extends Component {
       },
       onBlur: () => {
         this.props.setTaskIsDragging && this.props.setTaskIsDragging(false) //当拖动时，有可能会捕获到创建任务的动作，阻断
-        this.setState({
-          drag_lock: false
-        })
+        this.setState(
+          {
+            drag_lock: false
+          },
+          () => {
+            this.props.dispatch({
+              type: 'gantt/updateDatas',
+              payload: {
+                gantt_card_date_no_section: {}
+              }
+            })
+          }
+        )
       }
     }
   }
