@@ -1052,6 +1052,7 @@ export default class DateList extends Component {
         key={parent_card_id || id}
         className={indexStyles.gantt_card_date_no_section}
         style={{ left: left, width: width }}
+        title={this.renderDateNoContent(start_time, end_time)}
       >
         <div className={indexStyles.gantt_card_date_no_section_left}></div>
         <div className={indexStyles.gantt_card_date_no_section_right}></div>
