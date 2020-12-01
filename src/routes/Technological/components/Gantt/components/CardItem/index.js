@@ -1243,22 +1243,39 @@ export default class CardItem extends Component {
   }
 
   // 获取大纲视图父任务的截止和开始位置的三角形边框颜色
-  setTriangleTreeColor = (label_data = [], index, is_realize) => {
+  setTriangleTreeColor = (
+    label_data = [],
+    index,
+    is_realize,
+    is_show_progress_percent
+  ) => {
     let label_color = '#cbddf7'
     const length = label_data.length
-    if (index == 'start') {
-      label_color = label_data[0]
-        ? `rgb(${label_data[0].label_color})`
-        : is_realize == '1'
-        ? 'rgb(212, 216, 228)'
-        : '#cbddf7'
-    } else if (index == 'end') {
-      label_color = label_data[length - 1]
-        ? `rgb(${label_data[length - 1].label_color})`
-        : is_realize == '1'
-        ? 'rgb(212, 216, 228)'
-        : '#cbddf7'
+    if (length == 0) {
+      label_color =
+        is_realize == '1'
+          ? 'rgb(212, 216, 228)'
+          : is_show_progress_percent
+          ? '#5A86F5'
+          : '#cbddf7'
     } else {
+      if (index == 'start') {
+        label_color = label_data[0]
+          ? `rgb(${label_data[0].label_color})`
+          : is_realize == '1'
+          ? 'rgb(212, 216, 228)'
+          : is_show_progress_percent
+          ? '#5A86F5'
+          : '#cbddf7'
+      } else if (index == 'end') {
+        label_color = label_data[length - 1]
+          ? `rgb(${label_data[length - 1].label_color})`
+          : is_realize == '1'
+          ? 'rgb(212, 216, 228)'
+          : is_show_progress_percent
+          ? '#5A86F5'
+          : '#cbddf7'
+      }
     }
     return label_color
   }
@@ -1667,7 +1684,7 @@ export default class CardItem extends Component {
               indexStyles.specific_example_no_start_time} ${!is_has_end_time &&
               indexStyles.specific_example_no_due_time}`}
             style={{
-              left: 0,
+              left: '1px',
               borderRadius:
                 ((is_has_start_time && is_has_end_time) || !is_has_end_time) &&
                 '40px',
@@ -1786,6 +1803,38 @@ export default class CardItem extends Component {
                   }}
                 ></div>
               )}
+            {/* 这里放置进行中父任务进度 */}
+            {is_show_progress_percent && (
+              <div
+                data-targetclassname="specific_example"
+                className={`${indexStyles.gatt_card_percentage_prop}`}
+                style={{
+                  // backgroundColor: '#cbddf7',
+                  backgroundColor: '#5A86F5',
+                  width: !label_data.length
+                    ? ((local_width || 6) -
+                        (gantt_view_mode == 'year' ? 0 : card_width_diff)) *
+                      (percent_card_non / 100)
+                    : ((local_width || 6) -
+                        (gantt_view_mode == 'year' ? 0 : card_width_diff)) *
+                        (percent_card_non / 100) -
+                      4,
+                  // width: !label_data.length ? '100%' : '98%',
+                  borderRadius: '40px',
+                  borderTopRightRadius:
+                    Number(percent_card_non) >= 100 ? '40px' : '0px',
+                  borderBottomRightRadius:
+                    Number(percent_card_non) >= 100 ? '40px' : '0px',
+                  height: !label_data.length
+                    ? task_item_height
+                    : task_item_height - 4,
+                  lineHeight: `${
+                    !label_data.length ? task_item_height : task_item_height - 4
+                  }px`,
+                  left: !label_data.length && 0
+                }}
+              ></div>
+            )}
             <div
               data-targetclassname="specific_example"
               data-rely_top={id}
@@ -1802,8 +1851,9 @@ export default class CardItem extends Component {
                 height: task_item_height - 4,
                 lineHeight: `${task_item_height - 4}px`,
                 zIndex:
-                  is_show_compare_real_plan_timer &&
-                  status_label == 'ahead_time_middle' &&
+                  ((is_show_compare_real_plan_timer &&
+                    status_label == 'ahead_time_middle') ||
+                    is_show_progress_percent) &&
                   3
               }}
             >
@@ -1918,7 +1968,8 @@ export default class CardItem extends Component {
                   borderColor: `${this.setTriangleTreeColor(
                     label_data,
                     'start',
-                    is_realize
+                    is_realize,
+                    is_show_progress_percent
                   )} transparent transparent transparent`
                 }}
               ></div>
@@ -1926,11 +1977,15 @@ export default class CardItem extends Component {
               <div
                 className={indexStyles.left_triangle_mask2}
                 style={{
-                  backgroundColor: this.setTriangleTreeColor(
-                    label_data,
-                    'start',
-                    is_realize
-                  )
+                  backgroundColor:
+                    is_show_progress_percent && !label_data.length
+                      ? '#5A86F5'
+                      : this.setTriangleTreeColor(
+                          label_data,
+                          'start',
+                          is_realize,
+                          is_show_progress_percent
+                        )
                 }}
               ></div>
 
@@ -1945,19 +2000,31 @@ export default class CardItem extends Component {
                   borderColor: `${this.setTriangleTreeColor(
                     label_data,
                     'end',
-                    is_realize
-                  )} transparent transparent transparent`
+                    is_realize,
+                    is_show_progress_percent && Number(percent_card_non) >= 100
+                  )} transparent transparent transparent`,
+                  zIndex:
+                    (is_show_progress_percent ||
+                      is_show_compare_real_plan_timer) &&
+                    0
                 }}
               ></div>
               <div className={indexStyles.right_triangle_mask}></div>
               <div
                 className={indexStyles.right_triangle_mask2}
                 style={{
-                  backgroundColor: this.setTriangleTreeColor(
-                    label_data,
-                    'end',
-                    is_realize
-                  )
+                  backgroundColor:
+                    is_show_progress_percent &&
+                    Number(percent_card_non) >= 100 &&
+                    !label_data.length
+                      ? '#5A86F5'
+                      : this.setTriangleTreeColor(
+                          label_data,
+                          'end',
+                          is_realize,
+                          is_show_progress_percent &&
+                            Number(percent_card_non) >= 100
+                        )
                 }}
               ></div>
             </>
