@@ -4,6 +4,7 @@ import { isApiResponseOk } from '../../../../../utils/handleResponseData'
 import { uploadFileForAxios } from '../../../../../utils/requestAxios'
 import sha256 from 'js-sha256'
 const REQUEST_ROOM_URL = `${REQUEST_PREFIX}/meeting`
+// const REQUEST_ROOM_URL = 'api/meeting'
 
 class Action {
   /**
@@ -228,12 +229,40 @@ class Action {
     param.sign = sha256(hashString)
 
     headers.Signature = window.btoa(JSON.stringify(param))
-    console.log(param, hashString)
     const res = await request({
       method: 'PUT',
       url: `${REQUEST_ROOM_URL}/room/cost`,
       data,
       headers
+    })
+    if (isApiResponseOk(res)) return res
+    return Promise.reject(res)
+  }
+
+  /**
+   * 获取历史记录中的组织列表
+   * @param {*} data org_id: orgid
+   */
+  getHistoryOrgList = async data => {
+    const res = await request({
+      method: 'GET',
+      url: `${REQUEST_ROOM_URL}/plan/order/org`,
+      data,
+      params: data
+    })
+    if (isApiResponseOk(res)) return res
+    return Promise.reject(res)
+  }
+
+  /**
+   * 获取使用记录列表
+   * @param {*} data
+   */
+  getHistoryUseList = async data => {
+    const res = await request({
+      method: 'POST',
+      url: `${REQUEST_ROOM_URL}/plan/order/list`,
+      data
     })
     if (isApiResponseOk(res)) return res
     return Promise.reject(res)
