@@ -767,6 +767,7 @@ export default class GanttFace extends Component {
               {/* <GroupListHeadSetBottom /> */}
             </div>
             <div
+              id={'gantt_body_wapper'}
               className={indexStyles.board_body}
               style={{ height: gantt_card_height - 20 }}
             >
