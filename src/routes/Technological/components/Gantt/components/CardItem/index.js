@@ -1639,6 +1639,9 @@ export default class CardItem extends Component {
           indexStyles.specific_example_no_due_time}`}
         data-targetclassname="specific_example"
         id={id} //大纲视图需要获取该id作为父级id来实现子任务拖拽影响父任务位置
+        ref={this.out_ref}
+        tabindex="0"
+        data-rely_top={id}
         style={{
           left: local_left + (gantt_view_mode == 'year' ? 0 : card_left_diff),
           top: local_top,
@@ -1647,7 +1650,8 @@ export default class CardItem extends Component {
             (gantt_view_mode == 'year' ? 0 : card_width_diff),
           height: height || task_item_height,
           marginTop: task_item_margin_top,
-          boxShadow: 'none'
+          boxShadow: 'none',
+          zIndex: rely_down || this.is_down || drag_lock ? 2 : 1
         }}
         {...this.handleObj()}
       >
@@ -1655,6 +1659,8 @@ export default class CardItem extends Component {
         {is_show_compare_real_plan_timer && status_label == 'overdue_time' && (
           <div
             data-targetclassname="specific_example"
+            // data-rely_top={id}
+            onMouseMove={e => e.preventDefault()}
             className={`${
               indexStyles.gatt_card_compare_prop
             } ${!is_has_start_time &&
@@ -1670,9 +1676,35 @@ export default class CardItem extends Component {
               lineHeight: `${height || task_item_height}px`,
               backgroundColor: '#FF5A5A', //'rgba(255,32,32,0.4)'
               zIndex: 0,
-              boxShadow: 'none'
+              boxShadow: 'none',
+              overflow:
+                ganttIsOutlineView({ group_view_type }) &&
+                card_name_outside &&
+                is_show_compare_real_plan_timer &&
+                status_label == 'overdue_time' &&
+                'visible'
             }}
-          ></div>
+          >
+            {ganttIsOutlineView({ group_view_type }) &&
+              card_name_outside &&
+              is_show_compare_real_plan_timer &&
+              status_label == 'overdue_time' && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: '100%',
+                    paddingLeft: 8,
+                    marginTop: -3,
+                    width: name.length * 20,
+                    fontSize: 14,
+                    height: 16,
+                    lineHeight: '16px'
+                  }}
+                >
+                  {name}
+                </div>
+              )}
+          </div>
         )}
         <div
           className={`${'gantt_card_flag_special'} ${
@@ -1682,8 +1714,7 @@ export default class CardItem extends Component {
             indexStyles.specific_example_no_due_time}`}
           data-targetclassname="specific_example"
           id={id} //大纲视图需要获取该id作为父级id来实现子任务拖拽影响父任务位置
-          ref={this.out_ref}
-          tabindex="0"
+          // data-rely_top={id}
           title={name}
           style={{
             touchAction: 'none',
@@ -1729,6 +1760,7 @@ export default class CardItem extends Component {
               status_label == 'ahead_time_middle' && (
                 <div
                   data-targetclassname="specific_example"
+                  onMouseMove={e => e.preventDefault()}
                   className={`${
                     indexStyles.gatt_card_compare_prop
                   } ${!is_has_start_time &&
@@ -1824,22 +1856,24 @@ export default class CardItem extends Component {
             style={{}}
           ></div>
         )}
-        {ganttIsOutlineView({ group_view_type }) && card_name_outside && (
-          <div
-            style={{
-              position: 'absolute',
-              left: '100%',
-              paddingLeft: 8,
-              marginTop: -3,
-              width: name.length * 20,
-              fontSize: 14,
-              height: 16,
-              lineHeight: '16px'
-            }}
-          >
-            {name}
-          </div>
-        )}
+        {ganttIsOutlineView({ group_view_type }) &&
+          card_name_outside &&
+          status_label != 'overdue_time' && (
+            <div
+              style={{
+                position: 'absolute',
+                left: '100%',
+                paddingLeft: 8,
+                marginTop: -3,
+                width: name.length * 20,
+                fontSize: 14,
+                height: 16,
+                lineHeight: '16px'
+              }}
+            >
+              {name}
+            </div>
+          )}
 
         <Dropdown
           trigger={['click']}
