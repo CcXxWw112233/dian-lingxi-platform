@@ -232,10 +232,17 @@ export default class GanttFace extends Component {
     const { ceilWidth, gantt_view_mode } = this.props
     const date = new Date().getDate()
     //60为一个月长度，3为遮住的部分长度，date为当前月到今天为止的长度,1为偏差修复, 16为左边header的宽度和withCeil * n的 %值
-    const position =
-      gantt_view_mode == 'relative_time'
-        ? 0
-        : ceilWidth * (60 - 4 - 4 + date - 1) - 16
+    let position = ceilWidth * (60 - 4 - 4 + date - 1) - 16
+    if (gantt_view_mode == 'relative_time') {
+      position = 0
+    } else if (gantt_view_mode == 'hours') {
+      position = 17 * 7 * ceilWidth
+    }
+
+    // const position =
+    //   gantt_view_mode == 'relative_time'
+    //     ? 0
+    //     : ceilWidth * (60 - 4 - 4 + date - 1) - 16
     this.setScrollPosition({
       delay: 300,
       position
