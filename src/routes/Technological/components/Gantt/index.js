@@ -25,6 +25,10 @@ import {
 } from '../../../../globalset/js/constant'
 import { getProcessInfo } from '../../../../services/technological/workFlow'
 import { isApiResponseOk } from '../../../../utils/handleResponseData'
+import {
+  diffClientDefaultCeilWidth,
+  diffClientDefaultViewMode
+} from './ganttBusiness'
 
 const ProcessDetailModal = lazy(() => import('@/components/ProcessDetailModal'))
 
@@ -56,8 +60,8 @@ class Gantt extends Component {
         group_view_filter_users: [],
         boards_flies: [],
         outline_tree: [],
-        gantt_view_mode: 'month',
-        ceilWidth: ceil_width,
+        gantt_view_mode: diffClientDefaultViewMode('month'),
+        ceilWidth: diffClientDefaultCeilWidth(ceil_width),
         list_group: [],
         date_arr_one_level: [],
         gold_date_arr: [],
