@@ -1,4 +1,4 @@
-import { Button, Col, Row, DatePicker, message, Table } from 'antd'
+import { Button, Col, Row, DatePicker, message, Table, Select } from 'antd'
 import React from 'react'
 import styles from './index.less'
 import Action from '../../Action'
@@ -17,6 +17,8 @@ export default class UseRoomHistory extends React.Component {
     org_ids: []
   }
   state = {
+    selectedOrgs: [],
+    selectedRooms: [],
     data: [],
     orgs: [],
     rooms: [],
@@ -92,6 +94,10 @@ export default class UseRoomHistory extends React.Component {
       let { orgs, rooms } = this.state
       this.query_params.room_ids = rooms.map(item => item.id)
       this.query_params.org_ids = orgs.map(item => item.id)
+      this.setState({
+        selectedOrgs: this.query_params.org_ids,
+        selectedRooms: this.query_params.room_ids
+      })
       this.getList()
     })
   }
@@ -165,10 +171,26 @@ export default class UseRoomHistory extends React.Component {
   }
 
   // 生成账单按钮
-  setOrderPayment = () => {}
+  setOrderPayment = () => {
+    // 使用方组织id
+    let lessee_org_id = this.query_params.org_ids[0]
+    // 资源方组织id
+    let lessor_org_id = this.props.org_id
+    let param = {
+      room_ids: this.query_params.room_ids,
+      lessor_org_id,
+      lessee_org_id,
+      query_start_time: this.query_params.query_start_time,
+      query_end_time: this.query_params.query_end_time,
+      query_status: 'finish'
+    }
+    Action.setGenerate(param).then(res => {
+      console.log(res)
+    })
+  }
 
   render() {
-    const { orgs, rooms, status_list } = this.state
+    const { orgs, rooms, status_list, selectedOrgs, selectedRooms } = this.state
     const { workbenchBoxContent_height = 700 } = this.props
     const scrollHeight = workbenchBoxContent_height - 290
     return (
@@ -183,39 +205,10 @@ export default class UseRoomHistory extends React.Component {
                   onFocus={this.getOrgList}
                   valueKey="id"
                   labelKey="name"
+                  selectedArray={selectedOrgs}
                   showCheckAll
                   onChange={val => this.setQueryParam(val, 'org_ids')}
                 />
-                {/* <Select
-                  placeholder="选择组织"
-                  style={{ width: '100%' }}
-                  onFocus={this.getOrgList}
-                  onChange={val => this.setQueryParam(val, 'org_ids')}
-                  mode="multiple"
-                  dropdownRender={menu => (
-                    <div>
-                      {menu}
-                      <Divider style={{ margin: '2px 0' }} />
-                      <div
-                        style={{
-                          padding: '4px 8px 8px 8px',
-                          cursor: 'pointer'
-                        }}
-                        onMouseDown={e => e.preventDefault()}
-                      >
-                        <Checkbox>所有组织</Checkbox>
-                      </div>
-                    </div>
-                  )}
-                >
-                  {orgs.map(item => {
-                    return (
-                      <Select.Option key={item.id} value={item.id}>
-                        {item.name}
-                      </Select.Option>
-                    )
-                  })}
-                </Select> */}
               </Col>
               <Col span={6}>
                 <MultipleSelect
@@ -224,29 +217,44 @@ export default class UseRoomHistory extends React.Component {
                   valueKey="id"
                   onFocus={this.getAllRooms}
                   labelKey="name"
+                  selectedArray={selectedRooms}
                   showCheckAll
                   onChange={val => this.setQueryParam(val, 'room_ids')}
                 />
               </Col>
               <Col span={4}>
-                <MultipleSelect
-                  placeholder="选择状态"
-                  options={status_list}
-                  showCheckAll
+                <Select
+                  style={{ width: '100%' }}
+                  defaultValue=""
                   onChange={val => this.setQueryParam(val, 'query_status')}
-                />
+                >
+                  <Select.Option value="">所有状态</Select.Option>
+                  {status_list.map(item => {
+                    return (
+                      <Select.Option key={item.value} value={item.value}>
+                        {item.label}
+                      </Select.Option>
+                    )
+                  })}
+                </Select>
               </Col>
               <Col span={6}>
                 <RangePicker onChange={this.setQueryTime} />
               </Col>
               <Col span={2} className={styles.textBtn}>
                 <a onClick={this.getList}>查询</a>
-                <a>清空</a>
+                {/* <a>清空</a> */}
               </Col>
             </Row>
           </Col>
           <Col span={6} style={{ textAlign: 'right' }}>
-            <Button type="primary" onClick={this.setOrderPayment}>
+            <Button
+              type="primary"
+              onClick={this.setOrderPayment}
+              disabled={
+                selectedRooms.length != 1 && !this.state.data?.list?.length
+              }
+            >
               生成账单
             </Button>
           </Col>

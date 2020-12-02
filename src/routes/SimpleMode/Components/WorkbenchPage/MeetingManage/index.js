@@ -27,7 +27,7 @@ export default class ManageMain extends React.Component {
     }
   ]
   state = {
-    activeKey: 'history',
+    activeKey: 'inOrder',
     tabs: [
       { label: '会议资源', key: 'manage' },
       { label: '使用记录', key: 'history' },

@@ -269,6 +269,64 @@ class Action {
   }
 
   /**
+   * 获取应收账单列表 传入org_id和分页参数
+   * @param {*} data
+   */
+  getReceivable = async data => {
+    const res = await request({
+      method: 'GET',
+      url: `${REQUEST_ROOM_URL}/bill/receivable/list`,
+      data,
+      params: data
+    })
+    if (isApiResponseOk(res)) return res
+    return Promise.reject(res)
+  }
+
+  /**
+   * 获取应付账单 传入 org_id 和分页参数
+   * @param {*} data
+   */
+  getPayable = async data => {
+    const res = await request({
+      method: 'GET',
+      url: `${REQUEST_ROOM_URL}/bill/payable/list`,
+      data,
+      params: data
+    })
+    if (isApiResponseOk(res)) return res
+    return Promise.reject(res)
+  }
+
+  /**
+   * 获取订单明细 传入订单id，跟随url
+   * @param {*} data
+   */
+  getOrderDetail = async data => {
+    const res = await request({
+      method: 'GET',
+      url: `${REQUEST_ROOM_URL}/bill/detail/${data.id}`,
+      data
+    })
+    if (isApiResponseOk(res)) return res
+    return Promise.reject(res)
+  }
+
+  /**
+   * 生成账单
+   * @param {*} data
+   */
+  setGenerate = async data => {
+    const res = await request({
+      method: 'POST',
+      url: `${REQUEST_ROOM_URL}/bill/generate`,
+      data
+    })
+    if (isApiResponseOk(res)) return res
+    return Promise.reject(res)
+  }
+
+  /**
    * 传图片
    * @param {formData} data {file: file}
    */

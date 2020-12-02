@@ -7,6 +7,27 @@ export default class MultipleSelect extends React.Component {
     checkAll: false,
     checked: []
   }
+  static getDerivedStateFromProps(props, state) {
+    if (props.selectedArray && props.selectedArray.length) {
+      let arr = props.selectedArray
+        .map(item => {
+          if (
+            props.options.findIndex(val => val[props.valueKey] === item) !== -1
+          ) {
+            return item
+          }
+        })
+        .filter(item => item)
+      if (!state.init) {
+        return {
+          checked: arr,
+          checkAll: props.options.length === arr.length,
+          init: true
+        }
+      }
+    }
+    return null
+  }
   // 多选操作
   setOption = val => {
     const { options = [], onChange } = this.props

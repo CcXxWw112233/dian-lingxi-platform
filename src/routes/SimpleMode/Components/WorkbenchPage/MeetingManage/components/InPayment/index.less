@@ -1,20 +1,14 @@
 .container{
-  height: 100%;
-  padding: 20px 15px;
+  padding: 15px 20px;
   .headers{
-    padding: 0 15px;
-    position: relative;
-  }
-  .org_title{
-    text-align: center;
+    font-size: 1.1rem;
     font-weight: bold;
-    & > div{
-      font-size: 1.1rem;
-    }
+    margin-bottom: 15px;
   }
-  .gobackBtn{
-    position: absolute;
-    right: 0;
-    top: 0;
+  .ellipsis{
+    display: inline-block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
   }
 }
