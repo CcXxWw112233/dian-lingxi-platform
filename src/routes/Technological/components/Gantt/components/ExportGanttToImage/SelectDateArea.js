@@ -30,6 +30,7 @@ export default class SelectDateArea extends Component {
         },
         () => {
           this.setPoitionArea()
+          this.setTimeArea()
         }
       )
     }
@@ -58,6 +59,7 @@ export default class SelectDateArea extends Component {
       },
       () => {
         this.setPoitionArea()
+        this.setTimeArea()
       }
     )
   }
@@ -126,6 +128,11 @@ export default class SelectDateArea extends Component {
     }
 
     setPoitionArea({ start_position, due_position })
+  }
+  setTimeArea = () => {
+    const { start_time, due_time } = this.state
+    const { setTimeArea } = this.props
+    typeof setTimeArea == 'function' && setTimeArea({ start_time, due_time })
   }
   render() {
     const { start_time, due_time } = this.state

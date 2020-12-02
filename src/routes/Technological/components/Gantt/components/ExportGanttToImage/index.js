@@ -4,12 +4,15 @@ import jsPDF from 'jspdf'
 import { message, Modal } from 'antd'
 import { connect } from 'dva'
 import SelectDateArea from './SelectDateArea.js'
+import { dateFormat } from '../../../../../../utils/util.js'
 @connect(mapStateToProps)
 export default class ExportGanttToImage extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      start_position: 0,
+      start_time: 0, //截图区间时间
+      due_time: 0,
+      start_position: 0, //截图区间
       due_position: 600
     }
   }
@@ -252,32 +255,14 @@ export default class ExportGanttToImage extends Component {
   }
   // 获取导出的文件时间
   getExportFileName = () => {
-    const { start_date, end_date } = this.props
-    let flag = start_date.year === end_date.year
-    if (flag)
-      return (
-        start_date.date_top +
-        start_date.date_no +
-        '日 至 ' +
-        end_date.date_top +
-        end_date.date_no +
-        '日'
-      )
-    else
-      return (
-        start_date.year.toString().substr(-2) +
-        '年' +
-        start_date.month +
-        '月' +
-        start_date.date_no +
-        '日 至 ' +
-        end_date.year.toString().substr(-2) +
-        '年' +
-        end_date.month +
-        '月' +
-        end_date.date_no +
-        '日'
-      )
+    const { start_time, due_time } = this.state
+    const a = dateFormat(start_time, 'yyyy年MM月dd日')
+    debugger
+    return (
+      dateFormat(start_time, 'yyyy年MM月dd日') +
+      '-' +
+      dateFormat(due_time, 'yyyy年MM月dd日')
+    )
   }
 
   // 导出的文件类型
@@ -347,6 +332,9 @@ export default class ExportGanttToImage extends Component {
       due_position
     })
   }
+  setTimeArea = ({ start_time, due_time }) => {
+    this.setState({ start_time, due_time })
+  }
 
   handleOk = () => {
     const { action_type } = this.props
@@ -369,7 +357,10 @@ export default class ExportGanttToImage extends Component {
           onOk={this.handleOk}
           onCancel={this.handleCancel}
         >
-          <SelectDateArea setPoitionArea={this.setPoitionArea} />
+          <SelectDateArea
+            setPoitionArea={this.setPoitionArea}
+            setTimeArea={this.setTimeArea}
+          />
         </Modal>
       </div>
     )
