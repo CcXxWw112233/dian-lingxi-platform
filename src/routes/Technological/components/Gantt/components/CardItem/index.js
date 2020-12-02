@@ -1247,14 +1247,17 @@ export default class CardItem extends Component {
     label_data = [],
     index,
     is_realize,
-    is_show_progress_percent
+    is_show_progress_percent,
+    status_label
   ) => {
     let label_color = '#cbddf7'
     const length = label_data.length
     if (length == 0) {
       label_color =
         is_realize == '1'
-          ? 'rgb(212, 216, 228)'
+          ? status_label == 'ahead_time_middle' && index == 'end'
+            ? 'rgb(91, 180, 143)'
+            : 'rgb(212, 216, 228)'
           : is_show_progress_percent
           ? '#5A86F5'
           : '#cbddf7'
@@ -1973,6 +1976,29 @@ export default class CardItem extends Component {
                   )} transparent transparent transparent`
                 }}
               ></div>
+              {/* 一点点弧度覆盖 */}
+              <div
+                style={{
+                  backgroundColor:
+                    is_realize == '0'
+                      ? is_show_progress_percent
+                        ? '#5a86f5'
+                        : '#cbddf7'
+                      : 'rgb(205, 209, 223)'
+                }}
+                className={indexStyles.left_radian_mask}
+              ></div>
+              <div
+                style={{
+                  backgroundColor:
+                    is_realize == '0'
+                      ? is_show_progress_percent
+                        ? '#5a86f5'
+                        : '#cbddf7'
+                      : 'rgb(205, 209, 223)'
+                }}
+                className={indexStyles.left_radian_mask2}
+              ></div>
               <div className={indexStyles.left_triangle_mask}></div>
               <div
                 className={indexStyles.left_triangle_mask2}
@@ -1995,13 +2021,16 @@ export default class CardItem extends Component {
                 } ${is_show_progress_percent &&
                   Number(percent_card_non) >= 100 &&
                   indexStyles.lr_triangle_pro_color} ${is_show_compare_real_plan_timer &&
-                  indexStyles.lr_triangle_com_color}`}
+                  indexStyles.lr_triangle_com_color} ${is_show_compare_real_plan_timer &&
+                  status_label == 'ahead_time_middle' &&
+                  indexStyles.right_triangle_com_color}`}
                 style={{
                   borderColor: `${this.setTriangleTreeColor(
                     label_data,
                     'end',
                     is_realize,
-                    is_show_progress_percent && Number(percent_card_non) >= 100
+                    is_show_progress_percent && Number(percent_card_non) >= 100,
+                    status_label
                   )} transparent transparent transparent`,
                   zIndex:
                     (is_show_progress_percent ||
@@ -2023,9 +2052,38 @@ export default class CardItem extends Component {
                           'end',
                           is_realize,
                           is_show_progress_percent &&
-                            Number(percent_card_non) >= 100
+                            Number(percent_card_non) >= 100,
+                          status_label
                         )
                 }}
+              ></div>
+              <div
+                style={{
+                  backgroundColor:
+                    is_realize == '0'
+                      ? is_show_progress_percent &&
+                        Number(percent_card_non) >= 100
+                        ? '#5a86f5'
+                        : '#cbddf7'
+                      : status_label == 'ahead_time_middle'
+                      ? '#5BB48F'
+                      : 'rgb(205, 209, 223)'
+                }}
+                className={indexStyles.right_radian_mask}
+              ></div>
+              <div
+                style={{
+                  backgroundColor:
+                    is_realize == '0'
+                      ? is_show_progress_percent &&
+                        Number(percent_card_non) >= 100
+                        ? '#5a86f5'
+                        : '#cbddf7'
+                      : status_label == 'ahead_time_middle'
+                      ? '#5BB48F'
+                      : 'rgb(205, 209, 223)'
+                }}
+                className={indexStyles.right_radian_mask2}
               ></div>
             </>
           )}

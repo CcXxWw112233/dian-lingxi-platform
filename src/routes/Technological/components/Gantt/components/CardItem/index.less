@@ -129,6 +129,29 @@
     left: 2px;
   }
 
+  .left_radian_mask {
+    position: absolute;
+    left: 3px;
+    z-index: 3;
+    bottom: 0px;
+    transform: rotate(-45deg);
+    background-color: #cbddf7;
+    border-radius: 40px 0px 0px 40px;
+    height: 9px;
+    line-height: 22px;
+    width: 5px;
+  }
+
+  .left_radian_mask2 {
+    position: absolute;
+    width: 2px;
+    left: 2px;
+    height: 8px;
+    bottom: 4px;
+    background: #cbddf7;
+    z-index: 3;
+  }
+
   .left_triangle_mask {
     position: absolute;
     width: 10px;
@@ -186,6 +209,29 @@
     // background-color: red;
   }
 
+  .right_radian_mask {
+    position: absolute;
+    right: 3px;
+    z-index: 3;
+    bottom: 0px;
+    transform: rotate(45deg);
+    background-color: #cbddf7;
+    border-radius: 0 40px 40px 0;
+    height: 9px;
+    line-height: 22px;
+    width: 5px;
+  }
+
+  .right_radian_mask2 {
+    position: absolute;
+    width: 2px;
+    right: 2px;
+    height: 8px;
+    bottom: 4px;
+    background-color: #cbddf7;
+    z-index: 3;
+  }
+
   .lr_triangle_pro_color {
     // border-color: rgb(31, 90, 240) transparent transparent transparent;
     &::after {
@@ -194,7 +240,12 @@
   }
   .lr_triangle_com_color {
     &::after {
-      border-color: rgb(212, 216, 228) transparent transparent transparent;
+      border-color: rgb(205, 209, 223) transparent transparent transparent;
+    }
+  }
+  .right_triangle_com_color {
+    &::after {
+      border-color: rgb(91, 180, 143) transparent transparent transparent;
     }
   }
 
@@ -361,7 +412,11 @@
   .left_triangle_mask2,
   .right_triangle,
   .right_triangle_mask,
-  .right_triangle_mask2 {
+  .right_triangle_mask2,
+  .left_radian_mask,
+  .left_radian_mask2,
+  .right_radian_mask,
+  .right_radian_mask2 {
     display: none;
   }
 
