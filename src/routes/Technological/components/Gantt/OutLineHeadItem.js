@@ -75,6 +75,7 @@ import { getTreeNodeValue } from '../../../../models/technological/workbench/gan
 import ExportExcelModal from './components/exportExcelModal'
 import AddMultipleIndex from './components/OutlineTree/AddMultiple'
 import AddMultiplePomp from './components/OutlineTree/AddMultiple/AddMultiplePomp'
+import ExportGanttToImage from './components/ExportGanttToImage/index'
 const { SubMenu } = Menu
 // const { TreeNode } = OutlineTree;
 const { confirm } = Modal
@@ -1545,6 +1546,19 @@ export default class OutLineHeadItem extends Component {
     }
   }
 
+  // 导出图片设置日期弹窗
+  setExportImgModalVisible = visible => {
+    this.setState({
+      exoprt_img_visible: visible
+    })
+  }
+  // 导出图片类型
+  setExportImgOperateAction = action_type => {
+    this.setState({
+      export_img_action_type: action_type
+    })
+  }
+
   // 点击显示全部
   handleShowHideTerm = () => {
     const { gantt_board_id } = this.props
@@ -1653,13 +1667,18 @@ export default class OutLineHeadItem extends Component {
         })
         break
       case 'export_pdf': // 导出pdf
-        this.exportToFile('pdf')
+        // this.exportToFile('pdf')
+        this.setExportImgModalVisible(true)
+        this.setExportImgOperateAction('pdf')
         break
       case 'export_img': // 导出图片
-        this.exportToFile('image')
+        // this.exportToFile('image')
+        this.setExportImgModalVisible(true)
+        this.setExportImgOperateAction('image')
         break
       case 'export_excel': // 导出表格
-        this.exportToFile('excel')
+        // this.exportToFile('excel')
+        this.setExportExcelModalVisible(true)
         break
       case 'save_templete': // 保存为模板
         this.saveBoardTemplateVisible(true)
@@ -1934,6 +1953,14 @@ export default class OutLineHeadItem extends Component {
         {this.state.showLoading && (
           <IsLoading>{/* {this.state.bodyPicture} */}</IsLoading>
         )}
+        <ExportGanttToImage
+          setExportImgModalVisible={this.setExportImgModalVisible}
+          setShowLoading={bool => {
+            this.setState({ showLoading: bool })
+          }}
+          visible={this.state.exoprt_img_visible}
+          action_type={this.state.export_img_action_type}
+        />
       </div>
     )
   }
