@@ -867,6 +867,10 @@ class MeetingManage extends React.Component {
                     this.setTimeLine()
                   }, 100)
                 }
+                pagination={{
+                  showTotal: (total, range) =>
+                    `第 ${range[0]}-${range[1]} 条/共 ${total} 条`
+                }}
                 rowKey="id"
                 dataSource={this.state.data}
                 columns={this.state.columns}

@@ -1,4 +1,13 @@
-import { Button, Col, Row, DatePicker, message, Table, Select } from 'antd'
+import {
+  Button,
+  Col,
+  Row,
+  DatePicker,
+  message,
+  Table,
+  Select,
+  notification
+} from 'antd'
 import React from 'react'
 import styles from './index.less'
 import Action from '../../Action'
@@ -22,6 +31,7 @@ export default class UseRoomHistory extends React.Component {
     data: [],
     orgs: [],
     rooms: [],
+    createOrderLoading: false,
     status_list: [
       { label: '取消', value: 'cancel' },
       { label: '未使用', value: 'unused' },
@@ -184,9 +194,32 @@ export default class UseRoomHistory extends React.Component {
       query_end_time: this.query_params.query_end_time,
       query_status: 'finish'
     }
-    Action.setGenerate(param).then(res => {
-      console.log(res)
+    this.setState({
+      createOrderLoading: true
     })
+    Action.setGenerate(param)
+      .then(res => {
+        // console.log(res)
+        notification.success({
+          message: '成功',
+          description: (
+            <span>
+              账单生成成功，您可以到应收账单查看
+              <br />
+              <a>点击跳转</a>
+            </span>
+          )
+        })
+        this.setState({
+          createOrderLoading: false
+        })
+      })
+      .catch(err => {
+        message.warn(err.message)
+        this.setState({
+          createOrderLoading: false
+        })
+      })
   }
 
   render() {
@@ -251,6 +284,7 @@ export default class UseRoomHistory extends React.Component {
             <Button
               type="primary"
               onClick={this.setOrderPayment}
+              loading={this.state.createOrderLoading}
               disabled={
                 selectedRooms.length != 1 && !this.state.data?.list?.length
               }
@@ -269,7 +303,9 @@ export default class UseRoomHistory extends React.Component {
             pagination={{
               current: this.query_params.current_page,
               pageSize: this.query_params.page_size,
-              total: this.state.data?.total_count
+              total: this.state.data?.total_count,
+              showTotal: (total, range) =>
+                `第 ${range[0]}-${range[1]} 条/共 ${total} 条`
             }}
           />
         </div>

@@ -1,7 +1,8 @@
 import { message, Table } from 'antd'
-import React from 'react'
+import React, { Fragment } from 'react'
 import styles from './index.less'
 import Action from '../../Action'
+import OrderDetail from '../OrderDetail'
 import { dateFormat } from '../../../../../../../utils/util'
 
 export default class PaymentInOrder extends React.PureComponent {
@@ -10,6 +11,8 @@ export default class PaymentInOrder extends React.PureComponent {
       current_page: 1,
       page_size: 10
     },
+    inDetail: false,
+    detailData: {},
     data: [],
     columns: [
       {
@@ -53,7 +56,7 @@ export default class PaymentInOrder extends React.PureComponent {
         title: '操作',
         key: 'operation',
         render: record => {
-          return <a>明细</a>
+          return <a onClick={() => this.setDetailData(record)}>明细</a>
         }
       }
     ]
@@ -61,6 +64,17 @@ export default class PaymentInOrder extends React.PureComponent {
 
   componentDidMount() {
     this.getList()
+  }
+
+  /**
+   * 设置详情数据
+   * @param {*} record
+   */
+  setDetailData = record => {
+    this.setState({
+      detailData: record,
+      inDetail: true
+    })
   }
 
   getList = () => {
@@ -78,19 +92,62 @@ export default class PaymentInOrder extends React.PureComponent {
         message.warn(err.message)
       })
   }
+  /**
+   * 分页
+   */
+  setPageLoad = val => {
+    let { current, pageSize } = val
+    this.setState(
+      {
+        query_param: {
+          current_page: current,
+          page_size: pageSize
+        }
+      },
+      () => {
+        this.getList()
+      }
+    )
+  }
+
+  onBack = () => {
+    this.setState({
+      inDetail: false
+    })
+    this.getList()
+  }
+
   render() {
     return (
-      <div className={styles.container}>
-        <div className={styles.headers}>账单列表</div>
-        <div className={styles.inpayment_table}>
-          <Table
-            bordered
-            dataSource={this.state.data?.list}
-            columns={this.state.columns}
-            rowKey="bill_id"
+      <Fragment>
+        {this.state.inDetail ? (
+          <OrderDetail
+            onBack={this.onBack}
+            hideInput={false}
+            data={this.state.detailData}
           />
-        </div>
-      </div>
+        ) : (
+          <div className={styles.container}>
+            <div className={styles.headers}>账单列表</div>
+            <div className={styles.inpayment_table}>
+              <Table
+                onChange={this.setPageLoad}
+                pagination={{
+                  pageSize: this.state.query_param.page_size,
+                  current: this.state.query_param.current_page,
+                  total: this.state.data.total,
+                  showTotal: (total, range) =>
+                    `第 ${range[0]}-${range[1]} 条/共 ${total} 条`
+                }}
+                bordered
+                dataSource={this.state.data?.list}
+                columns={this.state.columns}
+                rowKey="bill_id"
+              />
+            </div>
+          </div>
+        )}
+      </Fragment>
     )
   }
 }

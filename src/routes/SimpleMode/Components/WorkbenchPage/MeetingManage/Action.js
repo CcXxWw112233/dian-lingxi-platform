@@ -198,29 +198,29 @@ class Action {
     return Promise.reject(res)
   }
 
+  getHashString(length = 15) {
+    let str1 = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
+    let str2 = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    let str = ''
+    for (let i = 0; i < length; i++) {
+      let stringIndex = Math.round(Math.random() * 1)
+      let item = [str1, str2][stringIndex]
+      let index = Math.round(Math.random() * (item.length - 1))
+      let text = item[index]
+      str += text
+    }
+    return str
+  }
   /**
    * 修改定价 价格需要进行加密处理
    * @param {*} data
    */
   ChangePrice = async data => {
     let headers = { Signature: '' }
-    function getHashString(length = 15) {
-      let str1 = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
-      let str2 = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-      let str = ''
-      for (let i = 0; i < length; i++) {
-        let stringIndex = Math.round(Math.random() * 1)
-        let item = [str1, str2][stringIndex]
-        let index = Math.round(Math.random() * (item.length - 1))
-        let text = item[index]
-        str += text
-      }
-      return str
-    }
     let param = {
       app: 'huixiebao',
       time: parseInt(new Date().getTime() / 1000, 10),
-      nonce: getHashString(),
+      nonce: this.getHashString(),
       sign: ''
     }
     let hashString = `${param.app}\n${param.time}\n${
@@ -321,6 +321,36 @@ class Action {
       method: 'POST',
       url: `${REQUEST_ROOM_URL}/bill/generate`,
       data
+    })
+    if (isApiResponseOk(res)) return res
+    return Promise.reject(res)
+  }
+
+  /**
+   * 设置优惠金额
+   * @param {*} data bill_id, discount_cost
+   */
+  setBillDiscount = async data => {
+    let headers = {
+      Signature: ''
+    }
+    let param = {
+      app: 'huixiebao',
+      time: parseInt(new Date().getTime() / 1000, 10),
+      nonce: this.getHashString(),
+      sign: ''
+    }
+    let hashString = `${param.app}\n${param.time}\n${
+      param.nonce
+    }\n${JSON.stringify({ ...data })}`
+    param.sign = sha256(hashString)
+
+    headers.Signature = window.btoa(JSON.stringify(param))
+    const res = await request({
+      method: 'PUT',
+      url: `${REQUEST_ROOM_URL}/bill/discount`,
+      data,
+      headers
     })
     if (isApiResponseOk(res)) return res
     return Promise.reject(res)

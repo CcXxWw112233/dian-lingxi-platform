@@ -1,6 +1,8 @@
 .container{
   height: 100%;
   padding: 20px 15px;
+  position: relative;
+  padding-bottom: 80px;
   .headers{
     padding: 0 15px;
     position: relative;
@@ -17,10 +19,37 @@
     right: 0;
     top: 0;
   }
+  .order_table{
+    margin-top: 15px;
+  }
   .params_propertys{
     margin-top: 20px;
     & > div{
       margin-top: 15px;
     }
+  }
+  .footerContent{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    .toggleStatus{
+      // float: right;
+      position: absolute;
+      right: 20px;
+    }
+  }
+  .notBill{
+    background-color: rgba(255, 129, 129, 1) !important;
+    border-color: transparent !important;
+    color: #fff;
+  }
+  .hasBill{
+    background-color: rgba(70, 164, 125, 1) !important;
+    border-color: transparent !important;
+    color: #fff;
   }
 }
