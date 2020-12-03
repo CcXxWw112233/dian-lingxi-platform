@@ -44,6 +44,11 @@ import { isApiResponseOk } from '../../../../utils/handleResponseData'
 import _ from 'lodash'
 import HeaderWidthTriggle from './components/HeaderWidthTriggle'
 import GanttMilestonePublicInput from './components/milestoneDetail/GanttMilestonePublicInput'
+import {
+  diffClientDefaultCeilWidth,
+  diffClientDefaultViewMode
+} from './ganttBusiness'
+import { ENV_ANDROID_APP } from '../../../../globalset/clientCustorm'
 
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
@@ -71,12 +76,15 @@ export default class GanttFace extends Component {
       this.props.dispatch({
         type: 'gantt/updateDatas',
         payload: {
-          gantt_view_mode: 'relative_time',
+          gantt_view_mode: diffClientDefaultViewMode('relative_time'),
           base_relative_time: relative_time
         }
       })
       setTimeout(() => {
-        this.setGoldDateArr({ init: true, timestamp: relative_time })
+        this.setGoldDateArr({
+          init: true,
+          timestamp: ENV_ANDROID_APP ? undefined : relative_time
+        })
         this.initSetScrollPosition()
       }, 100)
     } else {
@@ -114,9 +122,9 @@ export default class GanttFace extends Component {
         this.props.dispatch({
           type: 'gantt/updateDatas',
           payload: {
-            gantt_view_mode: 'relative_time',
+            gantt_view_mode: diffClientDefaultViewMode('relative_time'),
             base_relative_time: relative_time_next,
-            ceilWidth: ceil_width,
+            ceilWidth: diffClientDefaultCeilWidth(ceil_width),
             get_gantt_data_loading_other: true
           }
         })
@@ -129,7 +137,10 @@ export default class GanttFace extends Component {
           })
         }, 1000)
         setTimeout(() => {
-          this.setGoldDateArr({ init: true, timestamp: relative_time })
+          this.setGoldDateArr({
+            init: true,
+            timestamp: ENV_ANDROID_APP ? undefined : relative_time
+          })
           this.initSetScrollPosition()
         }, 100)
         const gantt_date_area = document.getElementById('gantt_date_area')
@@ -141,8 +152,8 @@ export default class GanttFace extends Component {
         this.props.dispatch({
           type: 'gantt/updateDatas',
           payload: {
-            gantt_view_mode: 'month',
-            base_relative_time: new Date().getTime()
+            gantt_view_mode: diffClientDefaultViewMode('month'),
+            ceilWidth: diffClientDefaultCeilWidth(ceil_width)
           }
         })
         setTimeout(() => {
@@ -221,10 +232,17 @@ export default class GanttFace extends Component {
     const { ceilWidth, gantt_view_mode } = this.props
     const date = new Date().getDate()
     //60为一个月长度，3为遮住的部分长度，date为当前月到今天为止的长度,1为偏差修复, 16为左边header的宽度和withCeil * n的 %值
-    const position =
-      gantt_view_mode == 'relative_time'
-        ? 0
-        : ceilWidth * (60 - 4 - 4 + date - 1) - 16
+    let position = ceilWidth * (60 - 4 - 4 + date - 1) - 16
+    if (gantt_view_mode == 'relative_time') {
+      position = 0
+    } else if (gantt_view_mode == 'hours') {
+      position = 17 * 7 * ceilWidth
+    }
+
+    // const position =
+    //   gantt_view_mode == 'relative_time'
+    //     ? 0
+    //     : ceilWidth * (60 - 4 - 4 + date - 1) - 16
     this.setScrollPosition({
       delay: 300,
       position
