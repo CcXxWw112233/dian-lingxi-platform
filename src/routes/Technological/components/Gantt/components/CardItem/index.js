@@ -1688,9 +1688,9 @@ export default class CardItem extends Component {
               indexStyles.specific_example_no_due_time}`}
             style={{
               left: '1px',
-              borderRadius:
-                ((is_has_start_time && is_has_end_time) || !is_has_end_time) &&
-                '40px',
+              // borderRadius:
+              //   ((is_has_start_time && is_has_end_time) || !is_has_end_time) &&
+              //   '40px',
               width: compare_width,
               height: height || task_item_height,
               lineHeight: `${height || task_item_height}px`,
@@ -1788,10 +1788,10 @@ export default class CardItem extends Component {
                     indexStyles.specific_example_no_due_time}`}
                   style={{
                     left: !label_data.length ? 0 : '2px',
-                    borderRadius:
-                      ((is_has_start_time && is_has_end_time) ||
-                        !is_has_end_time) &&
-                      '40px',
+                    // borderRadius:
+                    //   ((is_has_start_time && is_has_end_time) ||
+                    //     !is_has_end_time) &&
+                    //   '40px',
                     width: compare_width,
                     height: !label_data.length
                       ? height || task_item_height
