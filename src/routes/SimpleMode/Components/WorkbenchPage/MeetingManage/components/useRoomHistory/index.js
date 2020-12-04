@@ -100,17 +100,19 @@ export default class UseRoomHistory extends React.Component {
   }
   componentDidMount() {
     // this.getList()
-    Promise.all([this.getAllRooms(), this.getOrgList()]).then(res => {
-      // console.log(res)
-      let { orgs, rooms } = this.state
-      this.query_params.room_ids = rooms.map(item => item.id)
-      this.query_params.org_ids = orgs.map(item => item.id)
-      this.setState({
-        selectedOrgs: this.query_params.org_ids,
-        selectedRooms: this.query_params.room_ids
+    setTimeout(() => {
+      Promise.all([this.getAllRooms(), this.getOrgList()]).then(res => {
+        // console.log(res)
+        let { orgs, rooms } = this.state
+        this.query_params.room_ids = rooms.map(item => item.id)
+        this.query_params.org_ids = orgs.map(item => item.id)
+        this.setState({
+          selectedOrgs: this.query_params.org_ids,
+          selectedRooms: this.query_params.room_ids
+        })
+        this.getList()
       })
-      this.getList()
-    })
+    }, 10)
   }
   // 获取组织列表
   getOrgList = () => {
@@ -234,6 +236,7 @@ export default class UseRoomHistory extends React.Component {
   }
   /**跳转到应收账单 */
   tabToPayment = () => {
+    console.log('跳转了')
     const { onJump } = this.props
     onJump && onJump()
   }
@@ -314,6 +317,7 @@ export default class UseRoomHistory extends React.Component {
         </Row>
         <div className={styles.historyTable}>
           <Table
+            rowKey="booking_id"
             bordered
             onChange={this.paginationChange}
             columns={this.state.columns}
@@ -322,7 +326,7 @@ export default class UseRoomHistory extends React.Component {
             pagination={{
               current: this.query_params.current_page,
               pageSize: this.query_params.page_size,
-              total: this.state.data?.total_count,
+              total: +(this.state.data?.total_count || 0),
               showSizeChanger: true,
               pageSizeOptions: ['10', '15', '20', '25', '30', '35', '40'],
               showTotal: (total, range) =>

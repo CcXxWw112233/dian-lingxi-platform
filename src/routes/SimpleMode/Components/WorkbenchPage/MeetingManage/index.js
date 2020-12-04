@@ -29,7 +29,7 @@ export default class ManageMain extends React.Component {
     }
   ]
   state = {
-    activeKey: 'outOrder',
+    activeKey: 'manage',
     tabs: [
       { label: '会议资源', key: 'manage' },
       { label: '使用记录', key: 'history' },
@@ -90,7 +90,7 @@ export default class ManageMain extends React.Component {
         {this.state.activeKey === 'history' && (
           <UseRoomHistory
             {...this.props}
-            onJump={this.setState({ activeKey: 'inOrder' })}
+            onJump={() => this.setState({ activeKey: 'inOrder' })}
           />
         )}
         {this.state.activeKey === 'inOrder' && <InPayment {...this.props} />}

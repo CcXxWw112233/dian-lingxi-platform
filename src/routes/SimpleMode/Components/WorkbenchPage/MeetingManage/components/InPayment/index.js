@@ -146,7 +146,7 @@ export default class PaymentInOrder extends React.PureComponent {
                 pagination={{
                   pageSize: this.state.query_param.page_size,
                   current: this.state.query_param.current_page,
-                  total: this.state.data.total,
+                  total: +(this.state.data.total || 0),
                   showTotal: (total, range) =>
                     `第 ${range[0]}-${range[1]} 条/共 ${total} 条`
                 }}
