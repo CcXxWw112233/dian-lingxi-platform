@@ -1,12 +1,11 @@
-import { message, Table, Button } from 'antd'
+import { Button, message, Table } from 'antd'
 import React, { Fragment } from 'react'
 import styles from './index.less'
 import Action from '../../Action'
 import OrderDetail from '../OrderDetail'
 import { dateFormat } from '../../../../../../../utils/util'
-import PrintPage from '../PrintPage'
 
-export default class PaymentInOrder extends React.PureComponent {
+export default class PaymentOrder extends React.PureComponent {
   state = {
     query_param: {
       current_page: 1,
@@ -79,7 +78,7 @@ export default class PaymentInOrder extends React.PureComponent {
   }
 
   getList = pageNumber => {
-    Action.getReceivable({
+    Action.getPayable({
       org_id: this.props.org_id,
       ...this.state.query_param,
       current_page: pageNumber || this.state.query_param.current_page
@@ -125,13 +124,13 @@ export default class PaymentInOrder extends React.PureComponent {
         {this.state.inDetail ? (
           <OrderDetail
             onBack={this.onBack}
-            hideInput={false}
+            hideInput={true}
             data={this.state.detailData}
           />
         ) : (
           <div className={styles.container}>
             <div className={styles.headers}>
-              账单列表
+              应付款账单
               <Button
                 className={styles.updateBtn}
                 type="primary"

@@ -356,6 +356,16 @@ class Action {
     return Promise.reject(res)
   }
 
+  setStatusBill = async data => {
+    const res = await request({
+      method: 'PUT',
+      url: `${REQUEST_ROOM_URL}/bill/status`,
+      data
+    })
+    if (isApiResponseOk(res)) return res
+    return Promise.reject(res)
+  }
+
   /**
    * 传图片
    * @param {formData} data {file: file}

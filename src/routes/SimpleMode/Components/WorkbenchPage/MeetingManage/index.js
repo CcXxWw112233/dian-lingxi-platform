@@ -1,9 +1,11 @@
 import React from 'react'
 import styles from './index.less'
-import Manage from './components/manage'
-import UseRoomHistory from './components/useRoomHistory'
-import InPayment from './components/InPayment'
 import { Popover, Button } from 'antd'
+
+const OutPayment = React.lazy(() => import('./components/OutPayment'))
+const InPayment = React.lazy(() => import('./components/InPayment'))
+const Manage = React.lazy(() => import('./components/manage'))
+const UseRoomHistory = React.lazy(() => import('./components/useRoomHistory'))
 
 export default class ManageMain extends React.Component {
   pakageLink = [
@@ -27,7 +29,7 @@ export default class ManageMain extends React.Component {
     }
   ]
   state = {
-    activeKey: 'inOrder',
+    activeKey: 'outOrder',
     tabs: [
       { label: '会议资源', key: 'manage' },
       { label: '使用记录', key: 'history' },
@@ -86,9 +88,13 @@ export default class ManageMain extends React.Component {
         </div>
         {this.state.activeKey === 'manage' && <Manage {...this.props} />}
         {this.state.activeKey === 'history' && (
-          <UseRoomHistory {...this.props} />
+          <UseRoomHistory
+            {...this.props}
+            onJump={this.setState({ activeKey: 'inOrder' })}
+          />
         )}
         {this.state.activeKey === 'inOrder' && <InPayment {...this.props} />}
+        {this.state.activeKey === 'outOrder' && <OutPayment {...this.props} />}
       </div>
     )
   }

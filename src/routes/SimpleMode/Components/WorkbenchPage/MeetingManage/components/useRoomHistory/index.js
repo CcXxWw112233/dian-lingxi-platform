@@ -13,6 +13,7 @@ import styles from './index.less'
 import Action from '../../Action'
 import MultipleSelect from '../MultipleSelect'
 import { dateFormat } from '../../../../../../../utils/util'
+import moment from 'moment'
 
 const { RangePicker } = DatePicker
 
@@ -162,10 +163,15 @@ export default class UseRoomHistory extends React.Component {
     this.query_params[property] = val
   }
 
-  getList = () => {
-    Action.getHistoryUseList(this.query_params)
+  getList = pageNumber => {
+    Action.getHistoryUseList({
+      ...this.query_params,
+      current_page: pageNumber || this.query_params.current_page
+    })
       .then(res => {
         // console.log(res)
+        this.query_params.current_page =
+          pageNumber || this.query_params.current_page
         this.setState({
           data: res.data || []
         })
@@ -177,7 +183,12 @@ export default class UseRoomHistory extends React.Component {
 
   paginationChange = val => {
     this.query_params.current_page = val.current
+    this.query_params.page_size = val.pageSize
     this.getList()
+  }
+
+  sizeChange = val => {
+    // console.log(val)
   }
 
   // 生成账单按钮
@@ -206,7 +217,7 @@ export default class UseRoomHistory extends React.Component {
             <span>
               账单生成成功，您可以到应收账单查看
               <br />
-              <a>点击跳转</a>
+              <a onClick={this.tabToPayment}>点击跳转</a>
             </span>
           )
         })
@@ -220,6 +231,11 @@ export default class UseRoomHistory extends React.Component {
           createOrderLoading: false
         })
       })
+  }
+  /**跳转到应收账单 */
+  tabToPayment = () => {
+    const { onJump } = this.props
+    onJump && onJump()
   }
 
   render() {
@@ -272,10 +288,13 @@ export default class UseRoomHistory extends React.Component {
                 </Select>
               </Col>
               <Col span={6}>
-                <RangePicker onChange={this.setQueryTime} />
+                <RangePicker
+                  onChange={this.setQueryTime}
+                  defaultValue={[moment(), moment()]}
+                />
               </Col>
               <Col span={2} className={styles.textBtn}>
-                <a onClick={this.getList}>查询</a>
+                <a onClick={() => this.getList(1)}>查询</a>
                 {/* <a>清空</a> */}
               </Col>
             </Row>
@@ -304,6 +323,8 @@ export default class UseRoomHistory extends React.Component {
               current: this.query_params.current_page,
               pageSize: this.query_params.page_size,
               total: this.state.data?.total_count,
+              showSizeChanger: true,
+              pageSizeOptions: ['10', '15', '20', '25', '30', '35', '40'],
               showTotal: (total, range) =>
                 `第 ${range[0]}-${range[1]} 条/共 ${total} 条`
             }}
