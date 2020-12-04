@@ -133,7 +133,7 @@ export default class CardItem extends Component {
           ? active_compare_height
             ? '#5BB48F'
             : '#CDD1DF'
-          : '#cbddf7' //'rgb(212, 216, 228)' : '#cbddf7'
+          : '#B3D0FF' //'rgb(212, 216, 228)' : '#cbddf7'
     }
     return b
   }
@@ -1250,7 +1250,7 @@ export default class CardItem extends Component {
     is_show_progress_percent,
     status_label
   ) => {
-    let label_color = '#cbddf7'
+    let label_color = '#B3D0FF'
     const length = label_data.length
     if (length == 0) {
       label_color =
@@ -1260,7 +1260,7 @@ export default class CardItem extends Component {
             : 'rgb(212, 216, 228)'
           : is_show_progress_percent
           ? '#5A86F5'
-          : '#cbddf7'
+          : '#B3D0FF'
     } else {
       if (index == 'start') {
         label_color = label_data[0]
@@ -1269,7 +1269,7 @@ export default class CardItem extends Component {
           ? 'rgb(212, 216, 228)'
           : is_show_progress_percent
           ? '#5A86F5'
-          : '#cbddf7'
+          : '#B3D0FF'
       } else if (index == 'end') {
         label_color = label_data[length - 1]
           ? `rgb(${label_data[length - 1].label_color})`
@@ -1277,7 +1277,7 @@ export default class CardItem extends Component {
           ? 'rgb(212, 216, 228)'
           : is_show_progress_percent
           ? '#5A86F5'
-          : '#cbddf7'
+          : '#B3D0FF'
       }
     }
     return label_color
@@ -1768,7 +1768,7 @@ export default class CardItem extends Component {
                   ? status_label == 'ahead_time_middle'
                     ? '#5BB48F' //'rgb(175,241,213)'
                     : '#CDD1DF' //'rgb(212,216,228)'
-                  : '#cbddf7',
+                  : '#B3D0FF',
               padding:
                 gantt_view_mode != 'month' && time_span < 6 ? '0' : '0 8px',
               zIndex: 1,
@@ -1850,6 +1850,8 @@ export default class CardItem extends Component {
                     ? is_show_compare_real_plan_timer
                       ? 'rgba(0,0,0,0.45)'
                       : 'rgba(0,0,0,.25)'
+                    : is_show_progress_percent
+                    ? '#fff'
                     : '',
                 height: task_item_height - 4,
                 lineHeight: `${task_item_height - 4}px`,
@@ -1983,7 +1985,7 @@ export default class CardItem extends Component {
                     is_realize == '0'
                       ? is_show_progress_percent
                         ? '#5a86f5'
-                        : '#cbddf7'
+                        : '#B3D0FF'
                       : 'rgb(205, 209, 223)'
                 }}
                 className={indexStyles.left_radian_mask}
@@ -1994,7 +1996,7 @@ export default class CardItem extends Component {
                     is_realize == '0'
                       ? is_show_progress_percent
                         ? '#5a86f5'
-                        : '#cbddf7'
+                        : '#B3D0FF'
                       : 'rgb(205, 209, 223)'
                 }}
                 className={indexStyles.left_radian_mask2}
@@ -2064,7 +2066,7 @@ export default class CardItem extends Component {
                       ? is_show_progress_percent &&
                         Number(percent_card_non) >= 100
                         ? '#5a86f5'
-                        : '#cbddf7'
+                        : '#B3D0FF'
                       : status_label == 'ahead_time_middle'
                       ? '#5BB48F'
                       : 'rgb(205, 209, 223)'
@@ -2078,7 +2080,7 @@ export default class CardItem extends Component {
                       ? is_show_progress_percent &&
                         Number(percent_card_non) >= 100
                         ? '#5a86f5'
-                        : '#cbddf7'
+                        : '#B3D0FF'
                       : status_label == 'ahead_time_middle'
                       ? '#5BB48F'
                       : 'rgb(205, 209, 223)'

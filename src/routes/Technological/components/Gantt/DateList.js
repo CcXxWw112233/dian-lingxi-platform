@@ -1018,10 +1018,17 @@ export default class DateList extends Component {
         break
       case 'year':
         if (is_year) {
-          date_dec = `${dateFormat(s_time, 'MM.dd')} - ${dateFormat(
-            e_time,
-            'MM.dd'
-          )}`
+          if (is_month) {
+            date_dec = `${dateFormat(s_time, 'dd')} - ${dateFormat(
+              e_time,
+              'dd'
+            )}`
+          } else {
+            date_dec = `${dateFormat(s_time, 'MM.dd')} - ${dateFormat(
+              e_time,
+              'MM.dd'
+            )}`
+          }
         } else {
           date_dec = `${dateFormat(s_time, s_format)} - ${dateFormat(
             e_time,
