@@ -1254,7 +1254,7 @@ class VideoMeetingPopoverContent extends Component {
         }
       >
         <div
-          title="视频会a议"
+          title="视频会议"
           className={`${indexStyles.videoMeeting__icon} ${globalStyles.authTheme} ${globalStyles.normal_icon_mouse_event}`}
         >
           &#xe865;
