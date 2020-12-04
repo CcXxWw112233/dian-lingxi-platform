@@ -785,6 +785,13 @@ export default class CardItem extends Component {
             { id, ...updateData },
             ...res.data.scope_content.filter(item => item.id != id)
           ])
+          // 拖动完成需要清除对应选中日期数据
+          this.props.dispatch({
+            type: 'gantt/updateDatas',
+            payload: {
+              gantt_card_date_no_section: {}
+            }
+          })
           this.onChangeTimeHandleCardDetail()
         } else {
           // this.notificationEffect(this.handleNotifiParams(res))
@@ -914,6 +921,13 @@ export default class CardItem extends Component {
               { id, ...updateData },
               ...res.data.scope_content.filter(item => item.id != id)
             ]
+          })
+          // 拖动完成需要清除对应选中日期数据
+          this.props.dispatch({
+            type: 'gantt/updateDatas',
+            payload: {
+              gantt_card_date_no_section: {}
+            }
           })
           this.onChangeTimeHandleCardDetail()
         } else {
