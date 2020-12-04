@@ -1253,12 +1253,19 @@ class VideoMeetingPopoverContent extends Component {
           document.getElementById('technologicalLayoutWrapper')
         }
       >
-        <div
+        <Tooltip
           title="视频会议"
-          className={`${indexStyles.videoMeeting__icon} ${globalStyles.authTheme} ${globalStyles.normal_icon_mouse_event}`}
+          getPopupContainer={() =>
+            document.getElementById('technologicalLayoutWrapper')
+          }
         >
-          &#xe865;
-        </div>
+          <div
+            // title="视频会议"
+            className={`${indexStyles.videoMeeting__icon} ${globalStyles.authTheme} ${globalStyles.normal_icon_mouse_event}`}
+          >
+            &#xe865;
+          </div>
+        </Tooltip>
       </Popover>
     )
   }
