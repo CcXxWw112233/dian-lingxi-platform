@@ -206,7 +206,7 @@ export default class InPayment extends React.Component {
           <Skeleton loading={this.state.skintonLoading} active>
             <div className={styles.params_propertys}>
               <Row>
-                <Col span={6}>名称: {lessee_org.name}</Col>
+                <Col span={6}>名称: {billDetail.contact_name}</Col>
                 <Col span={6}>
                   查询时段:{' '}
                   {dateFormat(

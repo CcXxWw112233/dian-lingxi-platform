@@ -430,7 +430,6 @@ class MeetingManage extends React.Component {
     this.setState({
       data: arr
     })
-    console.log(arr)
   }
   /**
    * 更新会议室列表
