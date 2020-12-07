@@ -225,6 +225,7 @@ export default class UseRoomHistory extends React.Component {
 
   // 生成账单按钮
   setOrderPayment = () => {
+    if (!this.setOrderDisabledType()) return
     // 使用方组织id
     let lessee_org_id = this.state.query_params.org_ids[0]
     // 资源方组织id
@@ -273,14 +274,22 @@ export default class UseRoomHistory extends React.Component {
   setOrderDisabledType = () => {
     const { data, query_params, searchEnd } = this.state
     if (query_params.org_ids.length !== 1) {
-      return true
+      message.warn('只能选择一个组织生成账单')
+      return false
     }
     if (!data.list.length) {
-      return true
+      message.warn('没有获取到记录数据')
+      return false
     }
-    if (!searchEnd) return true
-    if (query_params.query_status !== 'finish') return true
-    return false
+    if (query_params.query_status !== 'finish') {
+      message.warn('只允许已使用状态生成账单')
+      return false
+    }
+    if (!searchEnd) {
+      message.warn('未执行查询结果,请点击查询')
+      return false
+    }
+    return true
   }
 
   render() {
@@ -349,7 +358,6 @@ export default class UseRoomHistory extends React.Component {
               type="primary"
               onClick={this.setOrderPayment}
               loading={this.state.createOrderLoading}
-              disabled={this.setOrderDisabledType()}
             >
               生成账单
             </Button>
