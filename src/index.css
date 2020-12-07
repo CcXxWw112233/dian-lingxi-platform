@@ -19,4 +19,8 @@ body,
 body {
   background-color: rgba(245, 245, 245, 1);
 }
+*{
+  break-inside: auto !important;
+  page-break-inside: auto !important;
+}
 
