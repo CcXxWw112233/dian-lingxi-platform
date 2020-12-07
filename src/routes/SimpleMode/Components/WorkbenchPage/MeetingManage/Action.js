@@ -4,6 +4,7 @@ import { isApiResponseOk } from '../../../../../utils/handleResponseData'
 import { uploadFileForAxios } from '../../../../../utils/requestAxios'
 import sha256 from 'js-sha256'
 const REQUEST_ROOM_URL = `${REQUEST_PREFIX}/meeting`
+// const REQUEST_ROOM_URL = 'api/meeting'
 
 class Action {
   /**
@@ -197,29 +198,29 @@ class Action {
     return Promise.reject(res)
   }
 
+  getHashString(length = 15) {
+    let str1 = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
+    let str2 = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    let str = ''
+    for (let i = 0; i < length; i++) {
+      let stringIndex = Math.round(Math.random() * 1)
+      let item = [str1, str2][stringIndex]
+      let index = Math.round(Math.random() * (item.length - 1))
+      let text = item[index]
+      str += text
+    }
+    return str
+  }
   /**
    * 修改定价 价格需要进行加密处理
    * @param {*} data
    */
   ChangePrice = async data => {
     let headers = { Signature: '' }
-    function getHashString(length = 15) {
-      let str1 = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
-      let str2 = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-      let str = ''
-      for (let i = 0; i < length; i++) {
-        let stringIndex = Math.round(Math.random() * 1)
-        let item = [str1, str2][stringIndex]
-        let index = Math.round(Math.random() * (item.length - 1))
-        let text = item[index]
-        str += text
-      }
-      return str
-    }
     let param = {
       app: 'huixiebao',
       time: parseInt(new Date().getTime() / 1000, 10),
-      nonce: getHashString(),
+      nonce: this.getHashString(),
       sign: ''
     }
     let hashString = `${param.app}\n${param.time}\n${
@@ -228,12 +229,138 @@ class Action {
     param.sign = sha256(hashString)
 
     headers.Signature = window.btoa(JSON.stringify(param))
-    console.log(param, hashString)
     const res = await request({
       method: 'PUT',
       url: `${REQUEST_ROOM_URL}/room/cost`,
       data,
       headers
+    })
+    if (isApiResponseOk(res)) return res
+    return Promise.reject(res)
+  }
+
+  /**
+   * 获取历史记录中的组织列表
+   * @param {*} data org_id: orgid
+   */
+  getHistoryOrgList = async data => {
+    const res = await request({
+      method: 'GET',
+      url: `${REQUEST_ROOM_URL}/plan/order/org`,
+      data,
+      params: data
+    })
+    if (isApiResponseOk(res)) return res
+    return Promise.reject(res)
+  }
+
+  /**
+   * 获取使用记录列表
+   * @param {*} data
+   */
+  getHistoryUseList = async data => {
+    const res = await request({
+      method: 'POST',
+      url: `${REQUEST_ROOM_URL}/plan/order/list`,
+      data
+    })
+    if (isApiResponseOk(res)) return res
+    return Promise.reject(res)
+  }
+
+  /**
+   * 获取应收账单列表 传入org_id和分页参数
+   * @param {*} data
+   */
+  getReceivable = async data => {
+    const res = await request({
+      method: 'GET',
+      url: `${REQUEST_ROOM_URL}/bill/receivable/list`,
+      data,
+      params: data
+    })
+    if (isApiResponseOk(res)) return res
+    return Promise.reject(res)
+  }
+
+  /**
+   * 获取应付账单 传入 org_id 和分页参数
+   * @param {*} data
+   */
+  getPayable = async data => {
+    const res = await request({
+      method: 'GET',
+      url: `${REQUEST_ROOM_URL}/bill/payable/list`,
+      data,
+      params: data
+    })
+    if (isApiResponseOk(res)) return res
+    return Promise.reject(res)
+  }
+
+  /**
+   * 获取订单明细 传入订单id，跟随url
+   * @param {*} data
+   */
+  getOrderDetail = async data => {
+    const res = await request({
+      method: 'GET',
+      url: `${REQUEST_ROOM_URL}/bill/detail/${data.id}`,
+      data
+    })
+    if (isApiResponseOk(res)) return res
+    return Promise.reject(res)
+  }
+
+  /**
+   * 生成账单
+   * @param {*} data
+   */
+  setGenerate = async data => {
+    const res = await request({
+      method: 'POST',
+      url: `${REQUEST_ROOM_URL}/bill/generate`,
+      data
+    })
+    if (isApiResponseOk(res)) return res
+    return Promise.reject(res)
+  }
+
+  /**
+   * 设置优惠金额
+   * @param {*} data bill_id, discount_cost
+   */
+  setBillDiscount = async data => {
+    let headers = {
+      Signature: ''
+    }
+    let param = {
+      app: 'huixiebao',
+      time: parseInt(new Date().getTime() / 1000, 10),
+      nonce: this.getHashString(),
+      sign: ''
+    }
+    let hashString = `${param.app}\n${param.time}\n${
+      param.nonce
+    }\n${JSON.stringify({ ...data })}`
+    param.sign = sha256(hashString)
+
+    headers.Signature = window.btoa(JSON.stringify(param))
+    const res = await request({
+      method: 'PUT',
+      url: `${REQUEST_ROOM_URL}/bill/discount`,
+      data,
+      headers
+    })
+    if (isApiResponseOk(res)) return res
+    return Promise.reject(res)
+  }
+
+  setStatusBill = async data => {
+    const res = await request({
+      method: 'PUT',
+      url: `${REQUEST_ROOM_URL}/bill/status`,
+      data
     })
     if (isApiResponseOk(res)) return res
     return Promise.reject(res)

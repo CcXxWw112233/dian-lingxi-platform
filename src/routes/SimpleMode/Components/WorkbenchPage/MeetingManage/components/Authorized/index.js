@@ -220,12 +220,13 @@ export default class Authorized extends React.PureComponent {
     let arr = Array.from(this.state.data)
     Action.SaveEditRoom(obj)
       .then(res => {
-        // console.log(res)
         message.success('修改成功')
         arr = arr.map(item => {
           if (item.id === record.id) {
+            if (item._unsave) {
+              item.auth_status = item.auth_status
+            } else item.auth_status = item.auth_status === '1' ? '0' : '1'
             item._unsave = false
-            item.auth_status = item.auth_status === '1' ? '0' : '1'
           }
           return item
         })

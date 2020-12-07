@@ -1,54 +1,24 @@
-.pakage_item{
-  line-height: 30px;
-  text-align: left;
-  cursor: pointer;
-  &:hover{
-    color: #1890ff;
-  }
-}
-.ellipsis{
-  display: inline-block;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-}
-.time_line{
-  position: absolute;
-  transition: left 0.3s linear;
-  left: 11px;
-  bottom: -5px;
-  width: 10px;
-  height: 10px;
-  border-radius: 99px;
-  z-index: 10;
-  background-color: #FF7676;
-  i{
-    position: absolute;
-    left: 5px;
-    z-index: 10;
-    top: 100%;
-    width: 1px;
-    background-color: #FF7676;
-  }
-}
 .meeting_container{
   :global{
     .ant-table-fixed-left table, .ant-table-fixed-right table{
       width: min-content;
     }
   }
-  .price_text{
-    width: 60px;
-    display: inline-block;
+  .manageTabs{
+    display:  inline-flex;
     text-align: center;
-  }
-  .editPrice{
-    display: inline-block;
-    margin-left: 10px;
+    & > div{
+      padding: 10px 15px;
+      cursor: pointer;
+      &.active{
+        border-bottom: 2px solid rgba(90, 134, 245, 1);
+      }
+    }
   }
   height: 100%;
   .downloadPakage{
     float: right;
+    margin-top: 5px;
   }
   .operation_btns a{
     margin-left: 15px;
@@ -60,135 +30,9 @@
   overflow: hidden;
   .meeting_container_title{
     color: #474A5B;
-    padding: 20px;
+    padding: 0px 20px;
     background-color: #F5F7FA;
     box-shadow: 0 1px 1px #D0D3E2;
     flex: none;
-  }
-  .meeting_container_content{
-    // flex: 1;
-    padding: 20px;
-  }
-  .status_list{
-    display: flex;
-    & > div{
-      margin-right: 15px;
-    }
-  }
-  .status_item{
-    margin-right: 5px;
-    display: inline-block;
-    vertical-align: middle;
-    width: 12px;
-    height: 12px;
-    border-radius: 99px;
-  }
-  .title_time{
-    display: inline-block;
-    width: 80px;
-    &:last-child{
-      width: auto;
-    }
-  }
-  .time_step{
-    position: relative;
-    overflow: hidden;
-    & > div{
-      height: 100%;
-    }
-  }
-  .time_box{
-    display: flex;
-    div:nth-child(odd){
-      position: relative;
-      left: 1px;
-    }
-    .time_box_item{
-      display: flex;
-      width: 18px;
-      height: 35px;
-      margin-right: 2px;
-      box-sizing: border-box;
-      border-radius: 0px;
-      transition: background 0.2s linear;
-      span{
-        flex: 1;
-      }
-      span:first-child{
-        border-right: 1px solid #fff;
-      }
-      // cursor: pointer;
-    }
-    div.noStateColor{
-      // span{
-        // background-color: #F5F7FA ;
-        opacity: 0.3;
-      // }
-    }
-  }
-  .status_item + span{
-    display: inline-block;
-    vertical-align: middle;
-  }
-  .tableRender{
-    height: 100%;
-    margin-top: 15px;
-    :global{
-      .normalTime_1{
-        position: relative;
-        &::before {
-          content: "";
-          position: absolute;
-          left: -1px ;
-          top: -100px;
-          height: 200px;
-          background-color: #FF7676;
-          width: 1px;
-        }
-      }
-      .ant-spin-nested-loading{
-        height: 100%;
-      }
-      .ant-spin-container{
-        height: 100%;
-      }
-      .meeting_table{
-        height: 100%;
-      }
-    }
-
-  }
-}
-.defineUpload{
-  cursor: pointer;
-  width: 200px;
-  height: 110px;
-  background: rgba(0, 0, 0, 0.04);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  .preview_img{
-    position: relative;
-    width: 100%;
-    height: 100%;
-    .preview_img_delete{
-      svg{
-        top: 3px;
-        position: absolute;
-        left: 0;
-        width: 100%;
-      }
-      position: absolute;
-      right: -5px;
-      top: -5px;
-      font-weight: bold;
-      font-size: 1.5rem;
-      width: 18px;
-      height: 18px;
-      border-radius: 99px;
-      color: #fff;
-      background-color: #FF8181;
-    }
   }
 }
