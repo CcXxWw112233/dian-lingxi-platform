@@ -41,7 +41,13 @@ export default class PaymentInOrder extends React.PureComponent {
         key: 'time',
         render: record => {
           let start_time = record.create_time + '000'
-          return <span>{dateFormat(+start_time, 'yyyy-MM-dd HH:mm:ss')}</span>
+          return (
+            <span
+              style={{ color: record.bill_status === '1' ? '#FF8181' : '' }}
+            >
+              {dateFormat(+start_time, 'yyyy-MM-dd HH:mm:ss')}
+            </span>
+          )
         }
       },
       {
@@ -49,7 +55,13 @@ export default class PaymentInOrder extends React.PureComponent {
         dataIndex: 'bill_status',
         render: text => {
           let string =
-            text === '1' ? '未结算' : text === '2' ? '已结算' : '未知状态'
+            text === '1' ? (
+              <span style={{ color: '#FF8181' }}>待结算</span>
+            ) : text === '2' ? (
+              <span>已结算</span>
+            ) : (
+              '未知状态'
+            )
           return <span>{string}</span>
         }
       },

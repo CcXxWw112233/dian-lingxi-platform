@@ -221,7 +221,7 @@ export default class InPayment extends React.Component {
                 </Col>
                 <Col span={6}>
                   优惠金额:{' '}
-                  {hideInput ? (
+                  {hideInput || billDetail.bill_status === '2' ? (
                     <span style={{ margin: '0 10px' }}>
                       {billDetail.discount_cost}
                     </span>
