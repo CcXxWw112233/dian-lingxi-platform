@@ -33,8 +33,19 @@ export default class PaymentInOrder extends React.PureComponent {
         }
       },
       {
-        title: '费用(元)',
+        title: '总费用(元)',
         dataIndex: 'total_cost'
+        // width: 100
+      },
+      {
+        title: '优惠金额(元)',
+        dataIndex: 'discount_cost'
+        // width: 100
+      },
+      {
+        title: '应收费用(元)',
+        dataIndex: 'payment_cost'
+        // width: 100
       },
       {
         title: '生成时间',
