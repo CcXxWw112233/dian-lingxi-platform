@@ -44,9 +44,11 @@ let stepIndex = 0
     technological: {
       datas: { videoConferenceProviderList = [] }
     }
+    // simplemode: { simplemodeCurrentProject = {} }
   }) => {
     return {
       videoConferenceProviderList
+      // simplemodeCurrentProject
     }
   }
 )
@@ -72,7 +74,7 @@ class VideoMeetingPopoverContent extends Component {
         { remind_time_type: 'm', txtVal: '30' },
         { remind_time_type: 'm', txtVal: '45' }
       ], // 持续结束时间
-      defaultValue: '30', // 当前选择的持续时间
+      defaultValue: '45', // 当前选择的持续时间
       providerDefault: null, // 默认选中的提供商
       remindDropdownVisible: false,
       emitMeettingStatus: false //是否发送会议
@@ -92,7 +94,7 @@ class VideoMeetingPopoverContent extends Component {
       userIds: [],
       user_phone: [],
       isOrderTime: false,
-      defaultValue: '30',
+      defaultValue: '45',
       toNoticeList: [],
       remindDropdownVisible: false,
       providerDefault: null,
@@ -266,7 +268,7 @@ class VideoMeetingPopoverContent extends Component {
       othersPeople: [],
       user_phone: [],
       selectedKeys: null,
-      defaultValue: '30'
+      defaultValue: '45'
     })
     this.getProjectUsers({ projectId: value })
   }
@@ -367,25 +369,30 @@ class VideoMeetingPopoverContent extends Component {
 
   // 获取当前用户并且设置为第一个通知对象
   getCurrentRemindUser = () => {
-    const currentUser = this.getInfoFromLocalStorage('userInfo')
-    const {
+    // const currentUser = this.getInfoFromLocalStorage('userInfo')
+    let {
       currentSelectedProjectMembersList = [],
       toNoticeList = []
     } = this.state
-    let new_currentSelectedProjectMembersList = [
-      ...currentSelectedProjectMembersList
-    ]
-    const gold_item =
-      new_currentSelectedProjectMembersList.find(
-        item => item.id == currentUser.id
-      ) || {}
-    if (Object.keys(gold_item).length) {
-      toNoticeList.push(gold_item)
-    }
-    let nonRepeatArr = arrayNonRepeatfy(toNoticeList, 'user_id')
+    // let new_currentSelectedProjectMembersList = [
+    //   ...currentSelectedProjectMembersList
+    // ]
+    // const gold_item =
+    //   new_currentSelectedProjectMembersList.find(
+    //     item => item.id == currentUser.id
+    //   ) || {}
+    // if (Object.keys(gold_item).length) {
+    //   toNoticeList.push(gold_item)
+    // }
+    toNoticeList = [...currentSelectedProjectMembersList]
+    let userIds = []
+    let nonRepeatArr = arrayNonRepeatfy(toNoticeList, 'user_id') || []
+    nonRepeatArr.map(item => {
+      userIds.push(item.user_id || item.id)
+    })
     this.setState({
       toNoticeList: nonRepeatArr,
-      userIds: [gold_item.user_id]
+      userIds: userIds || []
     })
   }
 
@@ -411,7 +418,7 @@ class VideoMeetingPopoverContent extends Component {
   // 移除执行人的回调 S
   handleRemoveExecutors = (e, shouldDeleteItem) => {
     e && e.stopPropagation()
-    const {
+    let {
       toNoticeList = [],
       othersPeople = [],
       user_phone = [],
@@ -591,7 +598,8 @@ class VideoMeetingPopoverContent extends Component {
       isShowNowTime = true,
       isOrderTime,
       providerDefault,
-      due_time
+      due_time,
+      defaultValue
     } = this.state
     let gold_provider_id =
       (videoConferenceProviderList &&
@@ -601,8 +609,8 @@ class VideoMeetingPopoverContent extends Component {
           )[0] || []
         ).id) ||
       ''
-    // 默认30分钟 + 开始时间
-    const default_due_time = 30 * 60 * 1000 + meeting_start_time
+    // 默认45分钟 + 开始时间
+    const default_due_time = defaultValue * 60 * 1000 + meeting_start_time
     const data = {
       _organization_id: org_id,
       board_id: saveToProject,
