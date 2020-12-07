@@ -200,7 +200,9 @@ class MeetingManage extends React.Component {
                               this.state.times.length - notStatelength - i - 1
                             )
                       }`}
-                      title={Action.forMatTime({ time: +item.time })}
+                      title={`${Action.forMatTime({
+                        time: +item.time
+                      })} - ${Action.forMatTime({ time: +item.time + 0.5 })}`}
                       style={{
                         background: isHasPlan
                           ? status['disabled']?.color
@@ -407,9 +409,13 @@ class MeetingManage extends React.Component {
           let end_time = Action.getHours(+(plan.end_time + '000'))
           let times = (() => {
             let arr = []
-            for (let i = start_time; i <= end_time; ) {
-              arr.push(i)
-              i += 0.5
+            if (start_time < end_time)
+              for (let i = start_time; i < end_time; ) {
+                arr.push(i)
+                i += 0.5
+              }
+            else if (start_time === end_time) {
+              arr.push(start_time)
             }
             return arr
           })()
@@ -424,6 +430,7 @@ class MeetingManage extends React.Component {
     this.setState({
       data: arr
     })
+    console.log(arr)
   }
   /**
    * 更新会议室列表

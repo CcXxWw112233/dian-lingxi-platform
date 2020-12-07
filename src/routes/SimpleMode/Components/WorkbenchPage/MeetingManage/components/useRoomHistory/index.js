@@ -18,18 +18,22 @@ import moment from 'moment'
 const { RangePicker } = DatePicker
 
 export default class UseRoomHistory extends React.Component {
-  query_params = {
-    query_start_time: new Date().getTime(),
-    query_end_time: new Date().getTime(),
-    current_page: 1,
-    page_size: 10,
-    room_ids: [],
-    org_ids: []
-  }
   state = {
+    searchEnd: false,
+    query_params: {
+      query_start_time: new Date().getTime(),
+      query_end_time: new Date().getTime(),
+      current_page: 1,
+      page_size: 10,
+      room_ids: [],
+      org_ids: []
+    },
+    selectMode: '',
     selectedOrgs: [],
     selectedRooms: [],
-    data: [],
+    data: {
+      list: []
+    },
     orgs: [],
     rooms: [],
     createOrderLoading: false,
@@ -104,11 +108,12 @@ export default class UseRoomHistory extends React.Component {
       Promise.all([this.getAllRooms(), this.getOrgList()]).then(res => {
         // console.log(res)
         let { orgs, rooms } = this.state
-        this.query_params.room_ids = rooms.map(item => item.id)
-        this.query_params.org_ids = orgs.map(item => item.id)
+        let room_ids = rooms.map(item => item.id)
+        let org_ids = orgs.map(item => item.id)
         this.setState({
-          selectedOrgs: this.query_params.org_ids,
-          selectedRooms: this.query_params.room_ids
+          query_params: { ...this.state.query_params, room_ids, org_ids },
+          selectedOrgs: org_ids,
+          selectedRooms: room_ids
         })
         this.getList()
       })
@@ -151,31 +156,47 @@ export default class UseRoomHistory extends React.Component {
   // 设置查询时间
   setQueryTime = val => {
     if (!val.length) {
-      this.query_params.query_start_time = new Date().getTime()
-      this.query_params.query_end_time = new Date().getTime()
+      this.setState({
+        query_params: {
+          ...this.state.query_params,
+          query_start_time: new Date().getTime(),
+          query_end_time: new Date().getTime()
+        }
+      })
       return
     }
     let start_time = val[0].valueOf()
     let endt_time = val[1].valueOf()
-    this.query_params.query_start_time = start_time
-    this.query_params.query_end_time = endt_time
+    this.setState({
+      query_params: {
+        ...this.state.query_params,
+        query_start_time: start_time,
+        query_end_time: endt_time
+      }
+    })
   }
 
   setQueryParam = (val, property) => {
-    this.query_params[property] = val
+    this.setState({
+      searchEnd: false,
+      query_params: { ...this.state.query_params, [property]: val }
+    })
   }
 
   getList = pageNumber => {
     Action.getHistoryUseList({
-      ...this.query_params,
-      current_page: pageNumber || this.query_params.current_page
+      ...this.state.query_params,
+      current_page: pageNumber || this.state.query_params.current_page
     })
       .then(res => {
         // console.log(res)
-        this.query_params.current_page =
-          pageNumber || this.query_params.current_page
         this.setState({
-          data: res.data || []
+          searchEnd: true,
+          data: res.data || [],
+          query_params: {
+            ...this.state.query_params,
+            current_page: pageNumber || this.state.query_params.current_page
+          }
         })
       })
       .catch(err => {
@@ -184,9 +205,18 @@ export default class UseRoomHistory extends React.Component {
   }
 
   paginationChange = val => {
-    this.query_params.current_page = val.current
-    this.query_params.page_size = val.pageSize
-    this.getList()
+    this.setState(
+      {
+        query_params: {
+          ...this.state.query_params,
+          current_page: val.current,
+          page_size: val.pageSize
+        }
+      },
+      () => {
+        this.getList()
+      }
+    )
   }
 
   sizeChange = val => {
@@ -196,15 +226,15 @@ export default class UseRoomHistory extends React.Component {
   // 生成账单按钮
   setOrderPayment = () => {
     // 使用方组织id
-    let lessee_org_id = this.query_params.org_ids[0]
+    let lessee_org_id = this.state.query_params.org_ids[0]
     // 资源方组织id
     let lessor_org_id = this.props.org_id
     let param = {
-      room_ids: this.query_params.room_ids,
+      room_ids: this.state.query_params.room_ids,
       lessor_org_id,
       lessee_org_id,
-      query_start_time: this.query_params.query_start_time,
-      query_end_time: this.query_params.query_end_time,
+      query_start_time: this.state.query_params.query_start_time,
+      query_end_time: this.state.query_params.query_end_time,
       query_status: 'finish'
     }
     this.setState({
@@ -236,9 +266,21 @@ export default class UseRoomHistory extends React.Component {
   }
   /**跳转到应收账单 */
   tabToPayment = () => {
-    console.log('跳转了')
     const { onJump } = this.props
     onJump && onJump()
+  }
+
+  setOrderDisabledType = () => {
+    const { data, query_params, searchEnd } = this.state
+    if (query_params.org_ids.length !== 1) {
+      return true
+    }
+    if (!data.list.length) {
+      return true
+    }
+    if (!searchEnd) return true
+    if (query_params.query_status !== 'finish') return true
+    return false
   }
 
   render() {
@@ -307,9 +349,7 @@ export default class UseRoomHistory extends React.Component {
               type="primary"
               onClick={this.setOrderPayment}
               loading={this.state.createOrderLoading}
-              disabled={
-                selectedRooms.length != 1 && !this.state.data?.list?.length
-              }
+              disabled={this.setOrderDisabledType()}
             >
               生成账单
             </Button>
@@ -324,8 +364,8 @@ export default class UseRoomHistory extends React.Component {
             scroll={{ y: scrollHeight }}
             dataSource={this.state.data?.list || []}
             pagination={{
-              current: this.query_params.current_page,
-              pageSize: this.query_params.page_size,
+              current: this.state.query_params.current_page,
+              pageSize: this.state.query_params.page_size,
               total: +(this.state.data?.total_count || 0),
               showSizeChanger: true,
               pageSizeOptions: ['10', '15', '20', '25', '30', '35', '40'],
