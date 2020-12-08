@@ -732,7 +732,7 @@ export default class GanttFace extends Component {
         <div className={indexStyles.cardDetail_left}></div>
         <div
           className={indexStyles.cardDetail_middle}
-          // id={'gantt_card_out_middle'}
+          id={'gantt_card_out_middle_wrapper'}
           // ref={'gantt_card_out_middle'}
           // onScroll={this.ganttScroll}
           style={{ maxHeight: gantt_card_out_middle_max_height }}
@@ -774,6 +774,7 @@ export default class GanttFace extends Component {
               {/* <GroupListHeadSetBottom /> */}
             </div>
             <div
+              id={'gantt_body_wapper'}
               className={indexStyles.board_body}
               style={{ height: gantt_card_height - 20 }}
             >
