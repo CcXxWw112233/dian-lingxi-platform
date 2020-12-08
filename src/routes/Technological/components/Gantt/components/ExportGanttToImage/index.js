@@ -257,7 +257,7 @@ export default class ExportGanttToImage extends Component {
   getExportFileName = () => {
     const { start_time, due_time } = this.state
     const a = dateFormat(start_time, 'yyyy年MM月dd日')
-    debugger
+    // debugger
     return (
       dateFormat(start_time, 'yyyy年MM月dd日') +
       '-' +
