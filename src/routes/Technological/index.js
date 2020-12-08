@@ -18,13 +18,14 @@ import { initWsFun } from '../../components/WsNewsDynamic'
 // import { routerRedux } from 'dva/router'
 import { CUSTOMIZATION_ORGNIZATIONS } from '../../globalset/js/constant'
 import logoImg from '../../assets/library/lingxi_logo.png'
+import { ENV_BROWSER_APP } from '../../globalset/clientCustorm'
 
 // import UpdateLog from './components/Workbench/UpdateLog/index'
-import SimpleMode from '../SimpleMode/index'
+// import SimpleMode from '../SimpleMode/index'
 // import UploadNotification from '@/components/UploadNotification'
 
 const UpdateLog = lazy(() => import('./components/Workbench/UpdateLog/index'))
-// const SimpleMode = lazy(() => import('../SimpleMode/index'));
+const SimpleMode = lazy(() => import('../SimpleMode/index'))
 const UploadNotification = lazy(() => import('@/components/UploadNotification'))
 
 const { Sider, Content } = Layout
@@ -278,7 +279,26 @@ export default class Technological extends React.Component {
       // }
     ]
     return (
-      <Suspense fallback={<div></div>}>
+      <Suspense
+        fallback={
+          !ENV_BROWSER_APP ? (
+            <div
+              // className={`${bgStylels.index_bg}`}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: '100%',
+                backgroundColor: '#43aabc'
+              }}
+            >
+              {/* <Spin size={'large'} tip="页面加载中..."></Spin> */}
+            </div>
+          ) : (
+            ''
+          )
+        }
+      >
         {routes.map(({ path, component }, key) => {
           return (
             <Route
