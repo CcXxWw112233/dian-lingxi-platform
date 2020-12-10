@@ -54,6 +54,7 @@ import DEvent from '../../utils/event'
 
 @connect(mapStateToProps)
 export default class HeaderContentRightMenu extends Component {
+  isFull = false
   constructor(props) {
     super(props)
     this.state = {
@@ -1095,11 +1096,28 @@ export default class HeaderContentRightMenu extends Component {
 
   /* 点击圈屏右上脚icon-是否全屏显示 */
   zoomFrame = () => {
+    const { onFullScreen } = this.props
+    this.isFull = !this.isFull
+    onFullScreen && onFullScreen(this.isFull)
+    if (document.createEvent) {
+      var event = document.createEvent('HTMLEvents')
+      event.initEvent('resize', true, true)
+      window.dispatchEvent(event)
+    } else if (document.createEventObject) {
+      window.fireEvent('onresize')
+    }
+    return
     this.props.updateStateDatas &&
       this.props.updateStateDatas({
         isZoomPictureFullScreenMode: !this.props.isZoomPictureFullScreenMode,
         percent: 0
       })
+  }
+
+  componentWillUnmount() {
+    const { onFullScreen } = this.props
+    this.isFull = !this.isFull
+    onFullScreen && onFullScreen(false)
   }
 
   //header

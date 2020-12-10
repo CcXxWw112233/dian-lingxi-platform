@@ -10,8 +10,15 @@ class FileListRightBarFileDetailModal extends React.Component {
       // currentZoomPictureComponetWidth: null,
       // currentZoomPictureComponetHeight: null,
       filePreviewCurrentFileId: props.filePreviewCurrentFileId,
-      fileType: props.fileType
+      fileType: props.fileType,
+      full: false
     }
+  }
+
+  setFull = flag => {
+    this.setState({
+      full: flag
+    })
   }
 
   render() {
@@ -19,13 +26,26 @@ class FileListRightBarFileDetailModal extends React.Component {
     const {
       projectDetailInfoData: { board_id }
     } = this.props
-
+    const { full } = this.state
+    const fullStyle = full
+      ? {
+          position: 'fixed',
+          width: '100vw',
+          height: '100vh',
+          background: '#fff',
+          left: 0,
+          top: 0,
+          zIndex: 1003
+        }
+      : {}
     return (
       <div
         id="container_FileListRightBarFileDetailModal"
         className={styles.fileListRightBarFileDetailModal}
+        style={fullStyle}
       >
         <BoardCommuicationFileDetailContainer
+          onFull={this.setFull}
           filePreviewCurrentFileId={this.props.filePreviewCurrentFileId}
           file_detail_modal_visible={this.props.file_detail_modal_visible}
           fileType={this.props.fileType}
