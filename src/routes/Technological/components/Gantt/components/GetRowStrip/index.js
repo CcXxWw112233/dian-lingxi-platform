@@ -556,7 +556,9 @@ export default class GetRowStrip extends PureComponent {
       <>
         <div
           className={`${styles.leaf_min_time} ${!parent_id &&
-            styles.leaf_min_time_color}`}
+            styles.leaf_min_time_color} ${!parent_id &&
+            parseInt(percent_card_non) >= 100 &&
+            styles.leaf_min_time_complete_color}`}
           style={{
             left: min_leaf_left,
             width:
@@ -576,7 +578,9 @@ export default class GetRowStrip extends PureComponent {
           <div
             className={`${styles.leaf_min_time} ${
               styles.leaf_percent_time
-            } ${!!parent_id && styles.leaf_percent_child_time}`}
+            } ${!!parent_id && styles.leaf_percent_child_time} ${parseInt(
+              percent_card_non
+            ) >= 100 && styles.leaf_min_time_complete_color}`}
             style={{
               left: min_leaf_left,
               width:
@@ -622,7 +626,15 @@ export default class GetRowStrip extends PureComponent {
       ceilWidth,
       gantt_view_mode
     } = this.props
-    const { id, name, due_time, left, expand_length, parent_id } = itemValue
+    const {
+      id,
+      name,
+      due_time,
+      left,
+      expand_length,
+      parent_id,
+      percent_card_non
+    } = itemValue
     const { is_item_has_time, currentRect = {} } = this.state
     let display = 'none'
     let marginLeft = currentRect.x
@@ -670,17 +682,28 @@ export default class GetRowStrip extends PureComponent {
               <div style={{ width: 10, height: '100%', marginLeft: -6 }}></div>
             )}
             {!!parent_id ? (
-              <div className={styles.board_miletiones_flag2}></div>
+              <div
+                className={`${styles.board_miletiones_flag2}`}
+                style={{
+                  backgroundColor:
+                    parseInt(percent_card_non) >= 100 && '#9EA6C2'
+                }}
+              ></div>
             ) : (
               <>
                 <div
                   style={{
-                    height: (expand_length - 0.5) * ceil_height
+                    height: (expand_length - 0.5) * ceil_height,
+                    backgroundColor:
+                      parseInt(percent_card_non) >= 100 && '#9EA6C2'
                   }}
                   className={styles.board_miletiones_flagpole}
                 ></div>
                 <div
                   className={`${styles.board_miletiones_flag} ${globalStyles.authTheme}`}
+                  style={{
+                    color: parseInt(percent_card_non) >= 100 && '#9EA6C2'
+                  }}
                 >
                   &#xe6a0;
                 </div>

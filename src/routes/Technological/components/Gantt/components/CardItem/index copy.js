@@ -109,12 +109,12 @@ export default class CardItem extends Component {
   }
 
   // 标签的颜色
-  setLableColor = (label_data, is_realize, active_compare_height) => {
+  setLableColor = (label_data, is_realize) => {
     let bgColor = ''
     let b = ''
     if (label_data && label_data.length) {
       const color_arr = label_data.map(item => {
-        return `rgb(${item.label_color}${is_realize == '1' ? ',1' : ''})`
+        return `rgb(${item.label_color}${is_realize == '1' ? ',0.5' : ''})`
       })
       const color_arr_length = color_arr.length
       const color_percent_arr = color_arr.map((item, index) => {
@@ -128,12 +128,7 @@ export default class CardItem extends Component {
 
       b = `linear-gradient(to right${bgColor})`
     } else {
-      b =
-        is_realize == '1'
-          ? active_compare_height
-            ? '#5BB48F'
-            : '#CDD1DF'
-          : '#B3D0FF' //'rgb(212, 216, 228)' : '#cbddf7'
+      b = is_realize == '1' ? 'rgb(212, 216, 228)' : '#cbddf7'
     }
     return b
   }
@@ -596,13 +591,6 @@ export default class CardItem extends Component {
             { id, ...updateData },
             ...res.data.scope_content.filter(item => item.id != id)
           ])
-          // 拖动完成需要清除对应选中日期数据
-          this.props.dispatch({
-            type: 'gantt/updateDatas',
-            payload: {
-              gantt_card_date_no_section: {}
-            }
-          })
           // 当任务弹窗弹出来时，右边要做实时控制
           this.onChangeTimeHandleCardDetail()
         } else {
@@ -785,13 +773,6 @@ export default class CardItem extends Component {
             { id, ...updateData },
             ...res.data.scope_content.filter(item => item.id != id)
           ])
-          // 拖动完成需要清除对应选中日期数据
-          this.props.dispatch({
-            type: 'gantt/updateDatas',
-            payload: {
-              gantt_card_date_no_section: {}
-            }
-          })
           this.onChangeTimeHandleCardDetail()
         } else {
           // this.notificationEffect(this.handleNotifiParams(res))
@@ -921,13 +902,6 @@ export default class CardItem extends Component {
               { id, ...updateData },
               ...res.data.scope_content.filter(item => item.id != id)
             ]
-          })
-          // 拖动完成需要清除对应选中日期数据
-          this.props.dispatch({
-            type: 'gantt/updateDatas',
-            payload: {
-              gantt_card_date_no_section: {}
-            }
           })
           this.onChangeTimeHandleCardDetail()
         } else {
@@ -1264,42 +1238,22 @@ export default class CardItem extends Component {
   }
 
   // 获取大纲视图父任务的截止和开始位置的三角形边框颜色
-  setTriangleTreeColor = (
-    label_data = [],
-    index,
-    is_realize,
-    is_show_progress_percent,
-    status_label
-  ) => {
-    let label_color = '#B3D0FF'
+  setTriangleTreeColor = (label_data = [], index, is_realize) => {
+    let label_color = '#cbddf7'
     const length = label_data.length
-    if (length == 0) {
-      label_color =
-        is_realize == '1'
-          ? status_label == 'ahead_time_middle' && index == 'end'
-            ? 'rgb(91, 180, 143)'
-            : 'rgb(212, 216, 228)'
-          : is_show_progress_percent
-          ? '#5A86F5'
-          : '#B3D0FF'
+    if (index == 'start') {
+      label_color = label_data[0]
+        ? `rgb(${label_data[0].label_color})`
+        : is_realize == '1'
+        ? 'rgb(212, 216, 228)'
+        : '#cbddf7'
+    } else if (index == 'end') {
+      label_color = label_data[length - 1]
+        ? `rgb(${label_data[length - 1].label_color})`
+        : is_realize == '1'
+        ? 'rgb(212, 216, 228)'
+        : '#cbddf7'
     } else {
-      if (index == 'start') {
-        label_color = label_data[0]
-          ? `rgb(${label_data[0].label_color})`
-          : is_realize == '1'
-          ? 'rgb(212, 216, 228)'
-          : is_show_progress_percent
-          ? '#5A86F5'
-          : '#B3D0FF'
-      } else if (index == 'end') {
-        label_color = label_data[length - 1]
-          ? `rgb(${label_data[length - 1].label_color})`
-          : is_realize == '1'
-          ? 'rgb(212, 216, 228)'
-          : is_show_progress_percent
-          ? '#5A86F5'
-          : '#B3D0FF'
-      }
     }
     return label_color
   }
@@ -1666,11 +1620,6 @@ export default class CardItem extends Component {
     const { status_label, compare_width } = this.compareCardsRealPlanTimer(
       itemValue
     )
-    const active_compare_height =
-      ganttIsOutlineView({ group_view_type }) &&
-      is_show_compare_real_plan_timer &&
-      status_label == 'ahead_time_middle' &&
-      !label_data.length
     return (
       <div
         className={`${'gantt_card_flag_special'} ${
@@ -1682,8 +1631,10 @@ export default class CardItem extends Component {
         id={id} //大纲视图需要获取该id作为父级id来实现子任务拖拽影响父任务位置
         ref={this.out_ref}
         tabindex="0"
-        data-rely_top={id}
+        title={name}
         style={{
+          touchAction: 'none',
+          zIndex: rely_down || this.is_down || drag_lock ? 2 : 1,
           left: local_left + (gantt_view_mode == 'year' ? 0 : card_left_diff),
           top: local_top,
           width:
@@ -1691,236 +1642,173 @@ export default class CardItem extends Component {
             (gantt_view_mode == 'year' ? 0 : card_width_diff),
           height: height || task_item_height,
           marginTop: task_item_margin_top,
-          boxShadow: 'none',
-          zIndex: rely_down || this.is_down || drag_lock ? 2 : 1
+          background: this.setLableColor(label_data, is_realize), // 'linear-gradient(to right,rgba(250,84,28, 1) 25%,rgba(90,90,90, 1) 25%,rgba(160,217,17, 1) 25%,rgba(250,140,22, 1) 25%)',//'linear-gradient(to right, #f00 20%, #00f 20%, #00f 40%, #0f0 40%, #0f0 100%)',
+          boxShadow: !label_data.length && 'none'
         }}
         {...this.handleObj()}
       >
-        {/* 这里放 完成时 逾期的进度 */}
-        {is_show_compare_real_plan_timer && status_label == 'overdue_time' && (
+        {is_show_progress_percent && (
           <div
             data-targetclassname="specific_example"
-            // data-rely_top={id}
-            onMouseMove={e => e.preventDefault()}
+            className={`${indexStyles.gatt_card_percentage_prop}`}
+            style={{
+              // backgroundColor: '#cbddf7',
+              backgroundColor: is_realize == '1' ? 'transparent' : '#1f5af0',
+              width:
+                ((local_width || 6) -
+                  (gantt_view_mode == 'year' ? 0 : card_width_diff)) *
+                  (percent_card_non / 100) -
+                4,
+              borderRadius: '40px',
+              borderTopRightRadius:
+                Number(percent_card_non) >= 100 ? '40px' : '0px',
+              borderBottomRightRadius:
+                Number(percent_card_non) >= 100 ? '40px' : '0px',
+              height: task_item_height - 4,
+              lineHeight: `${task_item_height - 4}px`
+            }}
+          ></div>
+        )}
+        {is_show_compare_real_plan_timer && (
+          <div
+            data-rely_top={id}
+            data-targetclassname="specific_example"
             className={`${
               indexStyles.gatt_card_compare_prop
             } ${!is_has_start_time &&
               indexStyles.specific_example_no_start_time} ${!is_has_end_time &&
               indexStyles.specific_example_no_due_time}`}
             style={{
-              left: '1px',
-              // borderRadius:
-              //   ((is_has_start_time && is_has_end_time) || !is_has_end_time) &&
-              //   '40px',
+              // backgroundColor: '#cbddf7',
+              borderRadius:
+                ((is_has_start_time && is_has_end_time) || !is_has_end_time) &&
+                '40px',
               width: compare_width,
-              height: height || task_item_height,
-              lineHeight: `${height || task_item_height}px`,
-              backgroundColor: '#FF5A5A', //'rgba(255,32,32,0.4)'
-              zIndex: 0,
-              boxShadow: 'none',
-              overflow:
-                ganttIsOutlineView({ group_view_type }) &&
-                card_name_outside &&
-                is_show_compare_real_plan_timer &&
-                status_label == 'overdue_time' &&
-                'visible'
+              height: task_item_height - 4,
+              lineHeight: `${task_item_height - 4}px`,
+              backgroundColor:
+                status_label == 'overdue_time'
+                  ? 'rgba(255,32,32,0.4)'
+                  : status_label == 'ahead_time_middle'
+                  ? '#CDD1DF'
+                  : '',
+              zIndex:
+                status_label == 'overdue_time'
+                  ? 0
+                  : status_label == 'ahead_time_middle'
+                  ? 2
+                  : 0,
+              backgroundImage:
+                status_label == 'overdue_time'
+                  ? '' //'-webkit-gradient(linear,left top, right bottom,color-stop(0.25, rgba(255, 255, 255, 0.2)),color-stop(0.25, rgba(255,32,32,0.01)),color-stop(0.5, rgba(255,32,32,0.01)),color-stop(0.5, rgba(255, 255, 255, 0.2)),color-stop(0.75, rgba(255, 255, 255, 0.2)),color-stop(0.75, rgba(255,32,32,0.01)),to(rgba(255,32,32,0.01)))'
+                  : status_label == 'ahead_time_middle'
+                  ? '#CDD1DF' //'-webkit-gradient(linear,left top, right bottom,color-stop(0.25, rgba(255, 255, 255, 0.2)),color-stop(0.25, rgba(158, 166, 194, 0.4)),color-stop(0.5, rgba(158, 166, 194, 0.4)),color-stop(0.5, rgba(255, 255, 255, 0.2)),color-stop(0.75, rgba(255, 255, 255, 0.2)),color-stop(0.75, rgba(158, 166, 194, 0.4)),to(rgba(158, 166, 194, 0.4)))'
+                  : '',
+              opacity: status_label == 'ahead_time_middle' && 0.7
             }}
-          >
-            {ganttIsOutlineView({ group_view_type }) &&
-              card_name_outside &&
-              is_show_compare_real_plan_timer &&
-              status_label == 'overdue_time' && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    left: '100%',
-                    paddingLeft: 8,
-                    marginTop: -3,
-                    width: name.length * 20,
-                    fontSize: 14,
-                    height: 16,
-                    lineHeight: '16px'
-                  }}
-                >
-                  {name}
-                </div>
-              )}
-          </div>
+          ></div>
         )}
         <div
-          className={`${'gantt_card_flag_special'} ${
-            indexStyles.specific_example
+          data-targetclassname="specific_example"
+          className={`${
+            indexStyles.specific_example_content
           } ${!is_has_start_time &&
             indexStyles.specific_example_no_start_time} ${!is_has_end_time &&
             indexStyles.specific_example_no_due_time}`}
-          data-targetclassname="specific_example"
-          id={id} //大纲视图需要获取该id作为父级id来实现子任务拖拽影响父任务位置
-          // data-rely_top={id}
-          title={name}
+          data-rely_top={id}
+          // onMouseDown={(e) => e.stopPropagation()}
+          onMouseMove={e => e.preventDefault()}
           style={{
-            touchAction: 'none',
-            left: 0,
-            top: 0,
-            zIndex: 2,
-            width:
-              (local_width || 6) -
-              (gantt_view_mode == 'year' ? 0 : card_width_diff),
-            height: height || task_item_height,
-            background: this.setLableColor(
-              label_data,
-              is_realize,
-              active_compare_height
-            ),
-            boxShadow: 'none'
+            // opacity: 1,
+            backgroundColor:
+              is_realize == '1'
+                ? status_label == 'ahead_time_middle'
+                  ? 'rgb(175,241,213)'
+                  : 'rgb(212,216,228)'
+                : '#cbddf7',
+            // backgroundColor: is_realize == '1' ? '#9EA6C2' : '#5A86F5',
+            padding:
+              gantt_view_mode != 'month' && time_span < 6 ? '0' : '0 8px',
+            zIndex: 1
+            // backgroundImage:
+            //   // status_label == 'overdue_time' &&
+            //   is_show_compare_real_plan_timer &&
+            //   status_label != 'ahead_time_middle' &&
+            //   '-webkit-gradient(linear,left top, right bottom,color-stop(0.25, rgba(255, 255, 255, 0.2)),color-stop(0.25, rgba(158,166,194,0.4)),color-stop(0.5, rgba(158,166,194,0.4)),color-stop(0.5, rgba(255, 255, 255, 0.2)),color-stop(0.75, rgba(255, 255, 255, 0.2)),color-stop(0.75, rgba(158,166,194,0.4)),to(rgba(158,166,194,0.4)))',
+            // //status_label == 'overdue_time' &&
+            // backgroundSize:
+            //   is_show_compare_real_plan_timer &&
+            //   status_label != 'ahead_time_middle' &&
+            //   '6px 6px'
           }}
         >
+          {/* <div data-targetclassname="specific_example"
+                        className={`${indexStyles.card_item_status}`}
+                        //  onMouseDown={(e) => e.stopPropagation()}
+                        onMouseMove={(e) => e.preventDefault()}
+                    >
+                        <CheckItem is_realize={is_realize} card_type={type} styles={{ color: is_realize == '1' ? 'rgba(0,0,0,.25)' : '' }} />
+                    </div> */}
           <div
             data-targetclassname="specific_example"
-            className={`${
-              indexStyles.specific_example_content
-            } ${!is_has_start_time &&
-              indexStyles.specific_example_no_start_time} ${!is_has_end_time &&
-              indexStyles.specific_example_no_due_time}`}
             data-rely_top={id}
+            className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`}
+            // onMouseDown={(e) => e.stopPropagation()}
             onMouseMove={e => e.preventDefault()}
             style={{
-              backgroundColor:
+              display: 'flex',
+              color:
                 is_realize == '1'
-                  ? status_label == 'ahead_time_middle'
-                    ? '#5BB48F' //'rgb(175,241,213)'
-                    : '#CDD1DF' //'rgb(212,216,228)'
-                  : '#B3D0FF',
-              padding:
-                gantt_view_mode != 'month' && time_span < 6 ? '0' : '0 8px',
-              zIndex: 1,
-              height: active_compare_height && (height || task_item_height)
+                  ? is_show_compare_real_plan_timer
+                    ? status_label == 'ahead_time_middle'
+                      ? '#000'
+                      : 'rgba(0,0,0,0.35)'
+                    : 'rgba(0,0,0,.25)'
+                  : '',
+              height: task_item_height - 4,
+              lineHeight: `${task_item_height - 4}px`
             }}
           >
-            {/* 这里放提前完成时 进度对比 */}
-            {is_show_compare_real_plan_timer &&
-              status_label == 'ahead_time_middle' && (
-                <div
+            {/* 非大纲视图下一定有，大纲视图下需要开启名称外置才能在任务条内显示名称 */}
+            {(!ganttIsOutlineView({ group_view_type }) ||
+              (ganttIsOutlineView({ group_view_type }) &&
+                !card_name_outside)) &&
+              name}
+            {/* {name} */}
+            {is_privilege == '1' && (
+              <Tooltip title="已开启访问控制" placement="top">
+                <span
+                  className={`${globalStyles.authTheme}`}
+                  style={{ color: 'rgba(0,0,0,0.50)', marginLeft: '5px' }}
                   data-targetclassname="specific_example"
-                  onMouseMove={e => e.preventDefault()}
-                  className={`${
-                    indexStyles.gatt_card_compare_prop
-                  } ${!is_has_start_time &&
-                    indexStyles.specific_example_no_start_time} ${!is_has_end_time &&
-                    indexStyles.specific_example_no_due_time}`}
-                  style={{
-                    left: !label_data.length ? 0 : '2px',
-                    // borderRadius:
-                    //   ((is_has_start_time && is_has_end_time) ||
-                    //     !is_has_end_time) &&
-                    //   '40px',
-                    width: compare_width,
-                    height: !label_data.length
-                      ? height || task_item_height
-                      : (height || task_item_height) - 4,
-                    lineHeight: `${
-                      !label_data.length
-                        ? height || task_item_height
-                        : (height || task_item_height) - 4
-                    }px`,
-                    backgroundColor: '#CDD1DF', //'rgba(255,32,32,0.4)'
-                    zIndex: 0
-                  }}
-                ></div>
-              )}
-            {/* 这里放置进行中父任务进度 */}
-            {is_show_progress_percent && (
-              <div
-                data-targetclassname="specific_example"
-                className={`${indexStyles.gatt_card_percentage_prop}`}
-                style={{
-                  // backgroundColor: '#cbddf7',
-                  backgroundColor: '#5A86F5',
-                  width: !label_data.length
-                    ? ((local_width || 6) -
-                        (gantt_view_mode == 'year' ? 0 : card_width_diff)) *
-                      (percent_card_non / 100)
-                    : ((local_width || 6) -
-                        (gantt_view_mode == 'year' ? 0 : card_width_diff)) *
-                        (percent_card_non / 100) -
-                      4,
-                  // width: !label_data.length ? '100%' : '98%',
-                  borderRadius: '40px',
-                  borderTopRightRadius:
-                    Number(percent_card_non) >= 100 ? '40px' : '0px',
-                  borderBottomRightRadius:
-                    Number(percent_card_non) >= 100 ? '40px' : '0px',
-                  height: !label_data.length
-                    ? task_item_height
-                    : task_item_height - 4,
-                  lineHeight: `${
-                    !label_data.length ? task_item_height : task_item_height - 4
-                  }px`,
-                  left: !label_data.length && 0
-                }}
-              ></div>
+                >
+                  &#xe7ca;
+                </span>
+              </Tooltip>
             )}
-            <div
+            <span
+              className={indexStyles.due_time_description}
               data-targetclassname="specific_example"
-              data-rely_top={id}
-              className={`${indexStyles.card_item_name} ${globalStyles.global_ellipsis}`}
-              onMouseMove={e => e.preventDefault()}
-              style={{
-                display: 'flex',
-                color:
-                  is_realize == '1'
-                    ? is_show_compare_real_plan_timer
-                      ? 'rgba(0,0,0,0.45)'
-                      : 'rgba(0,0,0,.25)'
-                    : is_show_progress_percent
-                    ? '#fff'
-                    : '',
-                height: task_item_height - 4,
-                lineHeight: `${task_item_height - 4}px`,
-                zIndex:
-                  ((is_show_compare_real_plan_timer &&
-                    status_label == 'ahead_time_middle') ||
-                    is_show_progress_percent) &&
-                  3
-              }}
             >
-              {/* 非大纲视图下一定有，大纲视图下需要开启名称外置才能在任务条内显示名称 */}
-              {(!ganttIsOutlineView({ group_view_type }) ||
-                (ganttIsOutlineView({ group_view_type }) &&
-                  !card_name_outside)) &&
-                name}
-              {is_privilege == '1' && (
-                <Tooltip title="已开启访问控制" placement="top">
-                  <span
-                    className={`${globalStyles.authTheme}`}
-                    style={{ color: 'rgba(0,0,0,0.50)', marginLeft: '5px' }}
-                    data-targetclassname="specific_example"
-                  >
-                    &#xe7ca;
-                  </span>
-                </Tooltip>
-              )}
-              <span
-                className={indexStyles.due_time_description}
-                data-targetclassname="specific_example"
-              >
-                {is_overdue && is_realize != '1' && due_description}
-              </span>
-            </div>
-            <div
-              data-targetclassname="specific_example"
-              onMouseMove={e => e.preventDefault()}
-              style={{
-                opacity: is_realize == '1' ? 0.5 : 1
-              }}
-            >
-              <AvatarList
-                users={executors}
-                size={21}
-                targetclassname={'specific_example'}
-              />
-            </div>
+              {is_overdue && is_realize != '1' && due_description}
+            </span>
+          </div>
+          <div
+            data-targetclassname="specific_example"
+            // onMouseDown={(e) => e.stopPropagation()}
+            onMouseMove={e => e.preventDefault()}
+            style={{
+              opacity: is_realize == '1' ? 0.5 : 1
+            }}
+          >
+            <AvatarList
+              users={executors}
+              size={21}
+              targetclassname={'specific_example'}
+            />
           </div>
         </div>
+
         {/* 存在未读 */}
         {cardItemIsHasUnRead({
           relaDataId: id,
@@ -1932,24 +1820,36 @@ export default class CardItem extends Component {
             style={{}}
           ></div>
         )}
-        {ganttIsOutlineView({ group_view_type }) &&
-          card_name_outside &&
-          status_label != 'overdue_time' && (
-            <div
-              style={{
-                position: 'absolute',
-                left: '100%',
-                paddingLeft: 8,
-                marginTop: -3,
-                width: name.length * 20,
-                fontSize: 14,
-                height: 16,
-                lineHeight: '16px'
-              }}
-            >
-              {name}
-            </div>
-          )}
+        {/* {
+                    !this.is_down && (
+                        <Popover
+                            getPopupContainer={() => document.getElementById('gantt_card_out_middle')}
+                            placement="bottom" content={<CardDropDetail list={[{ ...itemValue }]} />} key={id}>
+                            <div data-targetclassname="specific_example" style={{ position: 'absolute', width: '100%', height: '100%' }} data-rely_top={id}></div>
+                        </Popover>
+                    )
+                } */}
+        {/* 显示子任务 */}
+        {/* {
+                    !ganttIsOutlineView({ group_view_type }) && !parent_card_id &&
+                    ( */}
+        {/* 大纲名称显示在最右边 */}
+        {ganttIsOutlineView({ group_view_type }) && card_name_outside && (
+          <div
+            style={{
+              position: 'absolute',
+              left: '100%',
+              paddingLeft: 8,
+              marginTop: -3,
+              width: name.length * 20,
+              fontSize: 14,
+              height: 16,
+              lineHeight: '16px'
+            }}
+          >
+            {name}
+          </div>
+        )}
 
         <Dropdown
           trigger={['click']}
@@ -1994,47 +1894,27 @@ export default class CardItem extends Component {
                   borderColor: `${this.setTriangleTreeColor(
                     label_data,
                     'start',
-                    is_realize,
-                    is_show_progress_percent
+                    is_realize
                   )} transparent transparent transparent`
+                  // left:
+                  //   is_show_compare_real_plan_timer &&
+                  //   !label_data.length &&
+                  //   '2px'
                 }}
-              ></div>
-              {/* 一点点弧度覆盖 */}
-              <div
-                style={{
-                  backgroundColor:
-                    is_realize == '0'
-                      ? is_show_progress_percent
-                        ? '#5a86f5'
-                        : '#B3D0FF'
-                      : 'rgb(205, 209, 223)'
-                }}
-                className={indexStyles.left_radian_mask}
-              ></div>
-              <div
-                style={{
-                  backgroundColor:
-                    is_realize == '0'
-                      ? is_show_progress_percent
-                        ? '#5a86f5'
-                        : '#B3D0FF'
-                      : 'rgb(205, 209, 223)'
-                }}
-                className={indexStyles.left_radian_mask2}
               ></div>
               <div className={indexStyles.left_triangle_mask}></div>
               <div
                 className={indexStyles.left_triangle_mask2}
                 style={{
-                  backgroundColor:
-                    is_show_progress_percent && !label_data.length
-                      ? '#5A86F5'
-                      : this.setTriangleTreeColor(
-                          label_data,
-                          'start',
-                          is_realize,
-                          is_show_progress_percent
-                        )
+                  backgroundColor: this.setTriangleTreeColor(
+                    label_data,
+                    'start',
+                    is_realize
+                  )
+                  // left:
+                  //   is_show_compare_real_plan_timer &&
+                  //   !label_data.length &&
+                  //   '2px'
                 }}
               ></div>
 
@@ -2044,69 +1924,33 @@ export default class CardItem extends Component {
                 } ${is_show_progress_percent &&
                   Number(percent_card_non) >= 100 &&
                   indexStyles.lr_triangle_pro_color} ${is_show_compare_real_plan_timer &&
-                  indexStyles.lr_triangle_com_color} ${is_show_compare_real_plan_timer &&
-                  status_label == 'ahead_time_middle' &&
-                  indexStyles.right_triangle_com_color}`}
+                  indexStyles.lr_triangle_com_color}`}
                 style={{
                   borderColor: `${this.setTriangleTreeColor(
                     label_data,
                     'end',
-                    is_realize,
-                    is_show_progress_percent && Number(percent_card_non) >= 100,
-                    status_label
-                  )} transparent transparent transparent`,
-                  zIndex:
-                    (is_show_progress_percent ||
-                      is_show_compare_real_plan_timer) &&
-                    0
+                    is_realize
+                  )} transparent transparent transparent`
+                  // right:
+                  //   is_show_compare_real_plan_timer &&
+                  //   !label_data.length &&
+                  //   '2px'
                 }}
               ></div>
               <div className={indexStyles.right_triangle_mask}></div>
               <div
                 className={indexStyles.right_triangle_mask2}
                 style={{
-                  backgroundColor:
-                    is_show_progress_percent &&
-                    Number(percent_card_non) >= 100 &&
-                    !label_data.length
-                      ? '#5A86F5'
-                      : this.setTriangleTreeColor(
-                          label_data,
-                          'end',
-                          is_realize,
-                          is_show_progress_percent &&
-                            Number(percent_card_non) >= 100,
-                          status_label
-                        )
+                  backgroundColor: this.setTriangleTreeColor(
+                    label_data,
+                    'end',
+                    is_realize
+                  )
+                  // right:
+                  //   is_show_compare_real_plan_timer &&
+                  //   !label_data.length &&
+                  //   '2px'
                 }}
-              ></div>
-              <div
-                style={{
-                  backgroundColor:
-                    is_realize == '0'
-                      ? is_show_progress_percent &&
-                        Number(percent_card_non) >= 100
-                        ? '#5a86f5'
-                        : '#B3D0FF'
-                      : status_label == 'ahead_time_middle'
-                      ? '#5BB48F'
-                      : 'rgb(205, 209, 223)'
-                }}
-                className={indexStyles.right_radian_mask}
-              ></div>
-              <div
-                style={{
-                  backgroundColor:
-                    is_realize == '0'
-                      ? is_show_progress_percent &&
-                        Number(percent_card_non) >= 100
-                        ? '#5a86f5'
-                        : '#B3D0FF'
-                      : status_label == 'ahead_time_middle'
-                      ? '#5BB48F'
-                      : 'rgb(205, 209, 223)'
-                }}
-                className={indexStyles.right_radian_mask2}
               ></div>
             </>
           )}

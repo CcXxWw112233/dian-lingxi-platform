@@ -13,7 +13,7 @@ import {
 } from '../../../../utils/businessFunction'
 import { PROJECT_TEAM_BOARD_MILESTONE } from '@/globalset/js/constant'
 import { isApiResponseOk } from '../../../../utils/handleResponseData'
-import { isSamHour } from '../../../../utils/util'
+import { dateFormat, isSamHour } from '../../../../utils/util'
 import {
   hours_view_due_work_oclock,
   hours_view_start_work_oclock
@@ -563,9 +563,9 @@ export default class DateList extends Component {
               <div key={`${month}/${date_no}`}>
                 <div className={`${indexStyles.dateDetailItem}`} key={key2}>
                   <div
-                    className={`${indexStyles.dateDetailItem_date_no} 
+                    className={`${indexStyles.dateDetailItem_date_no}
                                     ${(week_day == 0 || week_day == 6) &&
-                                      indexStyles.weekly_date_no} 
+                                      indexStyles.weekly_date_no}
                                     ${this.getDateNoHolidaylunar(timestamp)
                                       .festival_status == '1' &&
                                       indexStyles.holiday_date_no}`}
@@ -635,10 +635,10 @@ export default class DateList extends Component {
                 <div>
                   <div className={`${indexStyles.dateDetailItem}`} key={key2}>
                     <div
-                      className={`${indexStyles.dateDetailItem_date_no} 
+                      className={`${indexStyles.dateDetailItem_date_no}
                                     ${indexStyles.nomal_date_no}
                                     ${(week_day == 0 || week_day == 6) &&
-                                      indexStyles.weekly_date_no} 
+                                      indexStyles.weekly_date_no}
                                     ${this.getDateNoHolidaylunar(timestamp)
                                       .festival_status == '1' &&
                                       indexStyles.holiday_date_no}
@@ -766,7 +766,7 @@ export default class DateList extends Component {
                   style={{ width: ceilWidth * 7, fontSize: 12 }}
                 >
                   <div
-                    className={`${indexStyles.dateDetailItem_date_no} 
+                    className={`${indexStyles.dateDetailItem_date_no}
                                     ${indexStyles.nomal_date_no}
                                     ${has_lcb &&
                                       indexStyles.has_moletones_date_no}
@@ -853,7 +853,7 @@ export default class DateList extends Component {
                   style={{ width: ceilWidth * last_date }}
                 >
                   <div
-                    className={`${indexStyles.dateDetailItem_date_no} 
+                    className={`${indexStyles.dateDetailItem_date_no}
                                     ${indexStyles.nomal_date_no}
                                     ${has_lcb &&
                                       indexStyles.has_moletones_date_no}
@@ -930,13 +930,153 @@ export default class DateList extends Component {
       </div>
     )
   }
+  // 获取不同视图下对应日期位置
+
+  // 渲染不同视图下日期显示内容
+  renderDateNoContent = (s_time, e_time) => {
+    const { gantt_view_mode } = this.props
+    // 是否同年
+    const is_year =
+      new Date(s_time).getFullYear() == new Date(e_time).getFullYear()
+    // 是否同月
+    const is_month =
+      new Date(s_time).getMonth() + 1 == new Date(e_time).getMonth() + 1
+    let date_dec = ''
+    let s_format = '' // 开始日期格式
+    let e_format = '' // 截止日期格式
+    s_format =
+      new Date(s_time).getFullYear() == new Date().getFullYear()
+        ? 'MM.dd'
+        : 'yyyy.MM.dd'
+    e_format =
+      new Date(e_time).getFullYear() == new Date().getFullYear()
+        ? 'MM.dd'
+        : 'yyyy.MM.dd'
+    switch (gantt_view_mode) {
+      case 'month':
+        // 如果同年同月 就显示日期就好
+        if (is_year && is_month) {
+          if (isSamDay(s_time, e_time)) {
+            // 同月同天
+            date_dec = `${dateFormat(e_time, 'dd')}`
+          } else {
+            date_dec = `${dateFormat(s_time, 'dd')} - ${dateFormat(
+              e_time,
+              'dd'
+            )}`
+          }
+        } else {
+          date_dec = `${dateFormat(s_time, s_format)} - ${dateFormat(
+            e_time,
+            e_format
+          )}`
+        }
+        break
+      case 'hours':
+        if (is_year && is_month && isSamDay(s_time, e_time)) {
+          date_dec = `${dateFormat(s_time, 'HH:mm')} - ${dateFormat(
+            e_time,
+            'HH:mm'
+          )}`
+        } else {
+          s_format =
+            new Date(s_time).getFullYear() == new Date().getFullYear()
+              ? 'MM.dd HH:mm'
+              : 'yyyy.MM.dd HH:mm'
+          e_format =
+            new Date(e_time).getFullYear() == new Date().getFullYear()
+              ? 'MM.dd HH:mm'
+              : 'yyyy.MM.dd HH:mm'
+          date_dec = `${dateFormat(s_time, s_format)} - ${dateFormat(
+            e_time,
+            e_format
+          )}`
+        }
+        break
+      case 'week':
+        // 同年
+        if (is_year) {
+          // 同月
+          if (is_month) {
+            date_dec = `${dateFormat(s_time, 'dd')} - ${dateFormat(
+              e_time,
+              'dd'
+            )}`
+          } else {
+            date_dec = `${dateFormat(s_time, 'MM.dd')} - ${dateFormat(
+              e_time,
+              'MM.dd'
+            )}`
+          }
+        } else {
+          date_dec = `${dateFormat(s_time, s_format)} - ${dateFormat(
+            e_time,
+            e_format
+          )}`
+        }
+
+        break
+      case 'year':
+        if (is_year) {
+          if (is_month) {
+            date_dec = `${dateFormat(s_time, 'dd')} - ${dateFormat(
+              e_time,
+              'dd'
+            )}`
+          } else {
+            date_dec = `${dateFormat(s_time, 'MM.dd')} - ${dateFormat(
+              e_time,
+              'MM.dd'
+            )}`
+          }
+        } else {
+          date_dec = `${dateFormat(s_time, s_format)} - ${dateFormat(
+            e_time,
+            e_format
+          )}`
+        }
+
+        break
+
+      default:
+        break
+    }
+    return date_dec
+  }
+  // 渲染选中任务后日期内容
+  renderGanttCardDateNoSection = () => {
+    const { gantt_card_date_no_section = {} } = this.props
+    const {
+      width,
+      start_time,
+      end_time,
+      id,
+      parent_card_id,
+      left
+    } = gantt_card_date_no_section
+    return (
+      <div
+        key={parent_card_id || id}
+        className={indexStyles.gantt_card_date_no_section}
+        style={{ left: left, width: width }}
+        title={this.renderDateNoContent(start_time, end_time)}
+      >
+        <div className={indexStyles.gantt_card_date_no_section_left}></div>
+        <div className={indexStyles.gantt_card_date_no_section_right}></div>
+        <div style={{ color: '#113696' }}>
+          {this.renderDateNoContent(start_time, end_time)}
+        </div>
+      </div>
+    )
+  }
   render() {
     const {
       gold_date_arr = [],
       gantt_board_id,
       gantt_view_mode,
       about_user_boards,
-      get_gantt_data_loading_other
+      get_gantt_data_loading_other,
+      gantt_card_date_no_section = {}
     } = this.props
 
     const { create_lcb_time_arr = [] } = this.state
@@ -959,6 +1099,9 @@ export default class DateList extends Component {
           // style={{ left: -target_scrollLeft, }}
         >
           {this.renderFixedDateTop()}
+          {gantt_card_date_no_section &&
+            !!Object.keys(gantt_card_date_no_section).length &&
+            this.renderGanttCardDateNoSection()}
           {gold_date_arr.map((value, key) => {
             const { date_top, date_inner = [] } = value
             return (
@@ -1060,9 +1203,9 @@ class DropMilestone extends React.Component {
           <div>
             <div className={`${indexStyles.dateDetailItem}`} key={key2}>
               <div
-                className={`${indexStyles.dateDetailItem_date_no} 
+                className={`${indexStyles.dateDetailItem_date_no}
               ${indexStyles.nomal_date_no}
-              ${(week_day == 0 || week_day == 6) && indexStyles.weekly_date_no} 
+              ${(week_day == 0 || week_day == 6) && indexStyles.weekly_date_no}
               ${getDateNoHolidaylunar(timestamp).festival_status == '1' &&
                 indexStyles.holiday_date_no}
               ${has_lcb && indexStyles.has_moletones_date_no}`}
@@ -1116,7 +1259,8 @@ function mapStateToProps({
       gantt_view_mode,
       ceilWidth,
       get_gantt_data_loading_other,
-      selected_card_visible
+      selected_card_visible,
+      gantt_card_date_no_section = {}
     }
   },
   technological: {
@@ -1137,6 +1281,7 @@ function mapStateToProps({
     gantt_view_mode,
     ceilWidth,
     get_gantt_data_loading_other,
-    selected_card_visible
+    selected_card_visible,
+    gantt_card_date_no_section
   }
 }

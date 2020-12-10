@@ -9,10 +9,12 @@ import {
   gantt_panel_left_diff,
   ceil_height,
   hours_view_total,
-  hours_view_start_work_oclock
+  hours_view_start_work_oclock,
+  ceil_width_hours,
+  ceil_width
 } from './constants'
 // import { lx_utils } from 'lingxi-im'
-import moment from 'moment'
+import { ENV_ANDROID_APP } from 'src/globalset/clientCustorm/index.js'
 
 export const afterCreateBoardUpdateGantt = dispatch => {
   afterClearGanttData({ dispatch })
@@ -723,4 +725,21 @@ export const getDropListPosition = ({
       1
   }
   return { group_list_index, belong_group_row: Math.round(belong_group_row) }
+}
+
+//设置不同的客户端默认视图
+export const diffClientDefaultViewMode = gantt_view_mode => {
+  if (ENV_ANDROID_APP) {
+    return 'hours'
+  } else {
+    return gantt_view_mode
+  }
+}
+//设置不同的客户端默认视图对应的单位宽度
+export const diffClientDefaultCeilWidth = ceilWidth => {
+  if (ENV_ANDROID_APP) {
+    return ceil_width_hours
+  } else {
+    return ceilWidth
+  }
 }

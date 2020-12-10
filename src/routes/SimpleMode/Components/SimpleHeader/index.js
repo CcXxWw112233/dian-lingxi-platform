@@ -18,7 +18,7 @@ import {
 // import ProcessDetailModal from '@/components/ProcessDetailModal'
 // import Guide from '../Guide/index'
 import { PROJECTS } from '../../../../globalset/js/constant'
-// import LingxiIm, { lx_utils, Im } from 'lingxi-im'
+import LingxiIm, { lx_utils, Im } from 'lingxi-im'
 
 const VideoMeeting = lazy(() =>
   import(
@@ -68,7 +68,7 @@ class SimpleHeader extends Component {
       : { width: '100%' }
     // console.log(workbenchBoxContentWapperModalStyle)
     if (flag) {
-      // LingxiIm.show()
+      LingxiIm.show()
     }
     dispatch({
       type: 'simplemode/updateDatas',
@@ -121,7 +121,7 @@ class SimpleHeader extends Component {
     const { OrganizationId: lastOrg } = this.props
     if (nextOrg != lastOrg) {
       const filterId = nextOrg == '0' ? '' : nextOrg
-      // lx_utils.filterUserList(filterId)
+      lx_utils.filterUserList(filterId)
     }
   }
   componentDidMount() {
@@ -136,12 +136,12 @@ class SimpleHeader extends Component {
     const { dispatch, OrganizationId } = this.props
     const filterId = OrganizationId == '0' ? '' : OrganizationId
 
-    // lx_utils.filterUserList(filterId)
-    // Im.option({
-    //   baseUrl: `${protocol}//${host}/`
-    //   // APPKEY: 'ab3db8f71133efc21085a278db04e7e7',//'6b5d044ca33c559b9b91f02e29573f79',//ceshi//"ab3db8f71133efc21085a278db04e7e7", //
-    //   // APPKEY: "18268e20ae05c4ac49e4c23644aa38c8"
-    // })
+    lx_utils.filterUserList(filterId)
+    Im.option({
+      baseUrl: `${protocol}//${host}/`
+      // APPKEY: 'ab3db8f71133efc21085a278db04e7e7',//'6b5d044ca33c559b9b91f02e29573f79',//ceshi//"ab3db8f71133efc21085a278db04e7e7", //
+      // APPKEY: "18268e20ae05c4ac49e4c23644aa38c8"
+    })
     const clickDynamicFunc = data => {
       // 需要延时打开，因为IM先调用关闭，在打开的，而关闭比打开的走的慢
       setTimeout(() => this.imClickDynamic(data), 100)
@@ -151,101 +151,101 @@ class SimpleHeader extends Component {
         this.openOrCloseImChatModal(false)
       }
     }
-    // if (Im) {
-    //   Im.on('visible', visibleFunc)
-    //   Im.on('clickDynamic', clickDynamicFunc)
-    //   Im.on('hasNewImMsg', ({ data, unread }) => {
-    //     //最新一条未读消息推送过来
-    //     if (!data.hasOwnProperty('action')) {
-    //       //首次进入不处理
-    //       // console.log('ssss_初始化首次', unread)
-    //       dispatch({
-    //         type: 'imCooperation/getImUnReadAllMessages',
-    //         payload: {
-    //           messages: unread
-    //         }
-    //       })
-    //       return
-    //     }
-    //     dispatch({
-    //       type: 'imCooperation/listenImUnReadLatestMessage',
-    //       payload: {
-    //         message_item: data
-    //       }
-    //     })
-    //     // console.log('ssss_最新未读', data)
-    //   })
-    //   Im.on('readImMsg', data => {
-    //     //最新已读消息推送过来
-    //     dispatch({
-    //       type: 'imCooperation/listenImLatestAreadyReadMessages',
-    //       payload: {
-    //         messages: data
-    //       }
-    //     })
-    //     // console.log('ssss_最新已读', data)
-    //   })
-    //   Im.on('updateImUnread', function(number) {
-    //     dispatch({
-    //       type: 'imCooperation/updateDatas',
-    //       payload: {
-    //         im_alarm_no_reads_total: number
-    //       }
-    //     })
-    //   })
-    //   Im.on('fileCancel', ({ id }) => {
-    //     if (id == this.props.card_id) {
-    //       dispatch({
-    //         type: 'publicTaskDetailModal/updateDatas',
-    //         payload: {
-    //           drawerVisible: false,
-    //           drawContent: {},
-    //           card_id: '',
-    //           boardTagList: []
-    //         }
-    //       })
-    //     }
-    //     if (id == this.props.filePreviewCurrentFileId) {
-    //       dispatch({
-    //         type: 'publicFileDetailModal/updateDatas',
-    //         payload: {
-    //           filePreviewCurrentFileId: '',
-    //           fileType: '',
-    //           isInOpenFile: false,
-    //           filePreviewCurrentName: ''
-    //         }
-    //       })
-    //     }
-    //     if (id == this.props.processInfo.id) {
-    //       dispatch({
-    //         type: 'publicProcessDetailModal/updateDatas',
-    //         payload: {
-    //           process_detail_modal_visible: false,
-    //           currentFlowInstanceName: '', // 当前流程实例的名称
-    //           currentFlowInstanceDescription: '', // 当前的实例描述内容
-    //           isEditCurrentFlowInstanceName: true, // 是否正在编辑当前实例的名称
-    //           isEditCurrentFlowInstanceDescription: false, // 是否正在编辑当前实例的描述
-    //           processPageFlagStep: '1', // "1", "2", "3", "4" 分别对应 新建， 编辑， 启动
-    //           processEditDatas: [],
-    //           node_type: '1', // 当前的节点类型
-    //           processCurrentEditStep: 0, // 当前的编辑步骤 第几步
-    //           processCurrentCompleteStep: 0, // 当前处于的操作步骤
-    //           templateInfo: {}, // 模板信息
-    //           processInfo: {}, // 流程实例信息
-    //           currentProcessInstanceId: '', // 当前查看的流程实例名称
-    //           currentTempleteIdentifyId: '', // 当前查看的模板ID
-    //           not_show_create_node_guide: '1', // 添加节点步骤的引导
-    //           not_show_create_form_guide: '1', // 配置表项的引导
-    //           not_show_create_rating_guide: '0', // 配置评分节点的引导
-    //           currentOrgAllMembers: [] // 组织成员
-    //         }
-    //       })
-    //     }
-    //   })
-    //   this.setState({
-    //     whetherShowTaskDetailModalVisible: false
-    //   })
-    // }
+    if (Im) {
+      Im.on('visible', visibleFunc)
+      Im.on('clickDynamic', clickDynamicFunc)
+      Im.on('hasNewImMsg', ({ data, unread }) => {
+        //最新一条未读消息推送过来
+        if (!data.hasOwnProperty('action')) {
+          //首次进入不处理
+          // console.log('ssss_初始化首次', unread)
+          dispatch({
+            type: 'imCooperation/getImUnReadAllMessages',
+            payload: {
+              messages: unread
+            }
+          })
+          return
+        }
+        dispatch({
+          type: 'imCooperation/listenImUnReadLatestMessage',
+          payload: {
+            message_item: data
+          }
+        })
+        // console.log('ssss_最新未读', data)
+      })
+      Im.on('readImMsg', data => {
+        //最新已读消息推送过来
+        dispatch({
+          type: 'imCooperation/listenImLatestAreadyReadMessages',
+          payload: {
+            messages: data
+          }
+        })
+        // console.log('ssss_最新已读', data)
+      })
+      Im.on('updateImUnread', function(number) {
+        dispatch({
+          type: 'imCooperation/updateDatas',
+          payload: {
+            im_alarm_no_reads_total: number
+          }
+        })
+      })
+      Im.on('fileCancel', ({ id }) => {
+        if (id == this.props.card_id) {
+          dispatch({
+            type: 'publicTaskDetailModal/updateDatas',
+            payload: {
+              drawerVisible: false,
+              drawContent: {},
+              card_id: '',
+              boardTagList: []
+            }
+          })
+        }
+        if (id == this.props.filePreviewCurrentFileId) {
+          dispatch({
+            type: 'publicFileDetailModal/updateDatas',
+            payload: {
+              filePreviewCurrentFileId: '',
+              fileType: '',
+              isInOpenFile: false,
+              filePreviewCurrentName: ''
+            }
+          })
+        }
+        if (id == this.props.processInfo.id) {
+          dispatch({
+            type: 'publicProcessDetailModal/updateDatas',
+            payload: {
+              process_detail_modal_visible: false,
+              currentFlowInstanceName: '', // 当前流程实例的名称
+              currentFlowInstanceDescription: '', // 当前的实例描述内容
+              isEditCurrentFlowInstanceName: true, // 是否正在编辑当前实例的名称
+              isEditCurrentFlowInstanceDescription: false, // 是否正在编辑当前实例的描述
+              processPageFlagStep: '1', // "1", "2", "3", "4" 分别对应 新建， 编辑， 启动
+              processEditDatas: [],
+              node_type: '1', // 当前的节点类型
+              processCurrentEditStep: 0, // 当前的编辑步骤 第几步
+              processCurrentCompleteStep: 0, // 当前处于的操作步骤
+              templateInfo: {}, // 模板信息
+              processInfo: {}, // 流程实例信息
+              currentProcessInstanceId: '', // 当前查看的流程实例名称
+              currentTempleteIdentifyId: '', // 当前查看的模板ID
+              not_show_create_node_guide: '1', // 添加节点步骤的引导
+              not_show_create_form_guide: '1', // 配置表项的引导
+              not_show_create_rating_guide: '0', // 配置评分节点的引导
+              currentOrgAllMembers: [] // 组织成员
+            }
+          })
+        }
+      })
+      this.setState({
+        whetherShowTaskDetailModalVisible: false
+      })
+    }
   }
   // 圈子点击
   imClickDynamic = (data = {}) => {
@@ -704,7 +704,7 @@ class SimpleHeader extends Component {
           <VideoMeeting />
         </Suspense>
         {/* 项目圈 */}
-        {/* <Tooltip
+        <Tooltip
           title={`${currentNounPlanFilterName(
             PROJECTS,
             this.props.currentNounPlan
@@ -727,7 +727,7 @@ class SimpleHeader extends Component {
               &#xe6df;
             </i>
           </div>
-        </Tooltip> */}
+        </Tooltip>
 
         <div
           className={indexStyles.chatWapper}
@@ -744,7 +744,7 @@ class SimpleHeader extends Component {
                     <div className={indexStyles.videoMeetingWapper}>
                         <VideoMeeting />
                     </div> */}
-          {/* <LingxiIm token={Cookies.get('Authorization')} width="400px" /> */}
+          <LingxiIm token={Cookies.get('Authorization')} width="400px" />
 
           {/* <div className={indexStyles.videoMeetingWapper}>
             <VideoMeeting />

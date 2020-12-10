@@ -55,7 +55,9 @@ import {
   handleChangeBoardViewScrollTop,
   setGantTimeSpan,
   diffGanttTimeSpan,
-  setHourViewCardTimeSpan
+  setHourViewCardTimeSpan,
+  diffClientDefaultViewMode,
+  diffClientDefaultCeilWidth
 } from '../../../../routes/Technological/components/Gantt/ganttBusiness'
 import {
   jsonArrayCompareSort,
@@ -95,7 +97,7 @@ export default {
   state: {
     datas: {
       ...gantt_effect.state,
-      gantt_view_mode: 'month', //week / month /year/ hours /relative_time'周视图，月视图，年视图,'，原来月视图定义成 ‘天视图’， 年视图则是定义成 ‘月视图’
+      gantt_view_mode: diffClientDefaultViewMode('month'), //week / month /year/ hours /relative_time'周视图，月视图，年视图,'，原来月视图定义成 ‘天视图’， 年视图则是定义成 ‘月视图’
       gold_date_arr: [], //所需要的日期数据
       date_arr_one_level: [], //所有日期数据扁平成一级数组
       start_date: {}, //日期最开始的那一天
@@ -103,7 +105,7 @@ export default {
       create_start_time: '', //创建任务开始时间
       create_end_time: '', //创建任务截至时间
       list_group: [], //分组列表
-      ceilWidth: ceil_width, //单元格的宽度
+      ceilWidth: diffClientDefaultCeilWidth(ceil_width), //单元格的宽度
       ceiHeight: ceil_height, //单元格高度 40 + 12的外边距
       date_total: 0, //总天数
       group_rows: [
@@ -159,7 +161,8 @@ export default {
       card_name_outside: false, //任务名称是否外置
       base_relative_time: '', //相对时间轴的基准时间
 
-      group_folded_rely_card: [] // 表示分组折叠后 存在有依赖关系的任务
+      group_folded_rely_card: [], // 表示分组折叠后 存在有依赖关系的任务
+      gantt_card_date_no_section: {} // 表示选中任务时对应显示日期内容
     }
   },
   subscriptions: {
