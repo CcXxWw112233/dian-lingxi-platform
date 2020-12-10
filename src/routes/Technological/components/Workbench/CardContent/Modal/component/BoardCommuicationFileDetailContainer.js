@@ -10,14 +10,14 @@ import { isApiResponseOk } from '@/utils/handleResponseData'
 import {
   FILES,
   MESSAGE_DURATION_TIME,
-  PROJECT_FILES_FILE_UPDATE
+  PROJECT_FILES_FILE_UPDATE,
 } from '@/globalset/js/constant'
 import {
   currentNounPlanFilterName,
   getOrgNameWithOrgIdFilter,
   checkIsHasPermissionInBoard,
   checkIsHasPermissionInVisitControl,
-  getSubfixName
+  getSubfixName,
 } from '@/utils/businessFunction.js'
 import { message } from 'antd'
 // import { Im, lx_utils } from 'lingxi-im'
@@ -30,7 +30,7 @@ export default class BoardCommuicationFileDetailContainer extends Component {
     this.state = {
       filePreviewCurrentFileId: props.filePreviewCurrentFileId,
       fileType: props.fileType,
-      fileFileUrl: ''
+      fileFileUrl: '',
     }
   }
 
@@ -39,7 +39,7 @@ export default class BoardCommuicationFileDetailContainer extends Component {
     const { filePreviewCurrentVersionList = [] } = this.state
     let Ids = []
     let new_filePreviewCurrentVersionList = [...filePreviewCurrentVersionList]
-    new_filePreviewCurrentVersionList.map(item => {
+    new_filePreviewCurrentVersionList.map((item) => {
       Ids.push(item.id)
     })
     return Ids
@@ -49,11 +49,11 @@ export default class BoardCommuicationFileDetailContainer extends Component {
   getCurrentFilePreviewVersionId = () => {
     const {
       filePreviewCurrentVersionList = [],
-      filePreviewCurrentFileId
+      filePreviewCurrentFileId,
     } = this.state
     let versionId = ''
     let new_filePreviewCurrentVersionList = [...filePreviewCurrentVersionList]
-    new_filePreviewCurrentVersionList.map(item => {
+    new_filePreviewCurrentVersionList.map((item) => {
       if (item.id == filePreviewCurrentFileId) {
         versionId = item.version_id
       }
@@ -84,14 +84,14 @@ export default class BoardCommuicationFileDetailContainer extends Component {
       type: 'simplemode/updateDatas',
       payload: {
         chatImVisiable: false,
-        workbenchBoxContentWapperModalStyle: workbenchBoxContentWapperModalStyle
-      }
+        workbenchBoxContentWapperModalStyle: workbenchBoxContentWapperModalStyle,
+      },
     })
     this.props.hideUpdatedFileDetail && this.props.hideUpdatedFileDetail()
   }
 
   initStateDatas = ({ data }) => {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       this.setState(
         {
           filePreviewCurrentResourceId: data.base_info.file_resource_id, // 需要保存源文件ID
@@ -107,7 +107,7 @@ export default class BoardCommuicationFileDetailContainer extends Component {
           filePreviewCurrentVersionList: data.version_list, // 文件的版本列表
           filePreviewCurrentVersionId: data.version_list.length
             ? data.version_list[0]['version_id']
-            : '' // 保存一个当前版本ID
+            : '', // 保存一个当前版本ID
         },
         () => {
           resolve()
@@ -116,7 +116,7 @@ export default class BoardCommuicationFileDetailContainer extends Component {
     })
   }
 
-  linkImWithFile = data => {
+  linkImWithFile = (data) => {
     const { user_set = {} } = localStorage.getItem('userInfo')
       ? JSON.parse(localStorage.getItem('userInfo'))
       : {}
@@ -133,8 +133,8 @@ export default class BoardCommuicationFileDetailContainer extends Component {
         type: 'simplemode/updateDatas',
         payload: {
           chatImVisiable: true,
-          workbenchBoxContentWapperModalStyle: workbenchBoxContentWapperModalStyle
-        }
+          workbenchBoxContentWapperModalStyle: workbenchBoxContentWapperModalStyle,
+        },
       })
     }
   }
@@ -173,7 +173,7 @@ export default class BoardCommuicationFileDetailContainer extends Component {
   getFilePDFInfo = ({ id, calback }) => {
     const { currentPreviewFileData = {} } = this.state
     let currentPreviewFileVersionId = this.getCurrentFilePreviewVersionId()
-    getFilePDFInfo({ id }).then(res => {
+    getFilePDFInfo({ id }).then((res) => {
       if (isApiResponseOk(res)) {
         this.updateStateDatas({
           filePreviewIsUsable: true,
@@ -183,7 +183,7 @@ export default class BoardCommuicationFileDetailContainer extends Component {
           currentPreviewFileData: { ...currentPreviewFileData, id: id },
           isPdfLoaded: false,
           is_petty_loading: false,
-          is_large_loading: false
+          is_large_loading: false,
         })
         if (calback && typeof calback == 'function') calback()
         // this.linkImWithFile({name: this.props.filePreviewCurrentName, type: 'file', board_id: this.props.board_id, id: this.props.filePreviewCurrentFileId, currentPreviewFileVersionId: currentPreviewFileVersionId})
@@ -201,10 +201,10 @@ export default class BoardCommuicationFileDetailContainer extends Component {
   // 更新详情数据
   getCurrentFilePreviewData = ({ id }) => {
     return new Promise((resolve, reject) => {
-      fileInfoByUrl({ id }).then(res => {
+      fileInfoByUrl({ id }).then((res) => {
         // 获取详情的接口
         if (isApiResponseOk(res)) {
-          this.initStateDatas({ data: res.data }).then(_ => {
+          this.initStateDatas({ data: res.data }).then((_) => {
             resolve(res.data)
           })
 
@@ -225,7 +225,7 @@ export default class BoardCommuicationFileDetailContainer extends Component {
   }
 
   // 更新该组件中的数据
-  updateStateDatas = datas => {
+  updateStateDatas = (datas) => {
     this.setState({ ...datas })
   }
 
@@ -235,7 +235,7 @@ export default class BoardCommuicationFileDetailContainer extends Component {
       fileType,
       file_detail_modal_visible,
       filePreviewCurrentName,
-      board_id
+      board_id,
     } = this.props
     if (filePreviewCurrentFileId && file_detail_modal_visible) {
       if (fileType == '.pdf') {
@@ -281,8 +281,8 @@ export default class BoardCommuicationFileDetailContainer extends Component {
       type: 'simplemode/updateDatas',
       payload: {
         chatImVisiable: false,
-        workbenchBoxContentWapperModalStyle: { width: '100%' }
-      }
+        workbenchBoxContentWapperModalStyle: { width: '100%' },
+      },
     })
   }
 
@@ -301,6 +301,7 @@ export default class BoardCommuicationFileDetailContainer extends Component {
               updateStateDatas={this.updateStateDatas}
               filePreviewCurrentFileId={filePreviewCurrentFileId}
               fileType={fileType}
+              onFullScreen={this.props.onFull}
               whetherUpdateFolderListData={
                 this.props.whetherUpdateFolderListData
               }
@@ -333,17 +334,17 @@ function mapStateToProps({
   publicFileDetailModal: {
     // filePreviewCurrentFileId,
     // fileType,
-    isInOpenFile
+    isInOpenFile,
   },
   technological: {
-    datas: { userOrgPermissions, userBoardPermissions }
-  }
+    datas: { userOrgPermissions, userBoardPermissions },
+  },
 }) {
   return {
     // filePreviewCurrentFileId,
     // fileType,
     isInOpenFile,
     userOrgPermissions,
-    userBoardPermissions
+    userBoardPermissions,
   }
 }
