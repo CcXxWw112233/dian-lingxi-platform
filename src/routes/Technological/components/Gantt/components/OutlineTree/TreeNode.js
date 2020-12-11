@@ -158,21 +158,21 @@ export default class TreeNode extends Component {
     } else {
       this.props.setGoldDateArr &&
         this.props.setGoldDateArr({ timestamp: gold_time })
-      setTimeout(() => {
-        if (gantt_view_mode == 'week') {
-          this.props.setScrollPosition &&
-            this.props.setScrollPosition({
-              delay: 300,
-              position: (date_arr_one_level.length / 2 - 2) * 7 * ceilWidth
-            })
-        } else {
-          this.props.setScrollPosition &&
-            this.props.setScrollPosition({
-              delay: 300,
-              position: ceilWidth * (60 - 4 + date - 1) - 16
-            })
-        }
-      }, 300)
+      // setTimeout(() => {
+      //   if (gantt_view_mode == 'week') {
+      //     this.props.setScrollPosition &&
+      //       this.props.setScrollPosition({
+      //         delay: 300,
+      //         position: (date_arr_one_level.length / 2 - 2) * 7 * ceilWidth
+      //       })
+      //   } else {
+      //     this.props.setScrollPosition &&
+      //       this.props.setScrollPosition({
+      //         delay: 300,
+      //         position: ceilWidth * (60 - 4 + date - 1) - 16
+      //       })
+      //   }
+      // }, 300)
     }
   }
   //设置滚动条位置
