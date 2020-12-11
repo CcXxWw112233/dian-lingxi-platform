@@ -137,10 +137,13 @@ class SimpleHeader extends Component {
     const filterId = OrganizationId == '0' ? '' : OrganizationId
 
     lx_utils.filterUserList(filterId)
+    let ImOptions = { baseUrl: `${protocol}//${host}/` }
+    if (window.location.host.indexOf('test.lingxi.new-di.com') != -1) {
+      ImOptions.APPKEY = '3a4464b3ff2767d3e9bf76e77de762c7'
+    }
     Im.option({
-      baseUrl: `${protocol}//${host}/`
+      ...ImOptions
       // APPKEY: 'ab3db8f71133efc21085a278db04e7e7',//'6b5d044ca33c559b9b91f02e29573f79',//ceshi//"ab3db8f71133efc21085a278db04e7e7", //
-      // APPKEY: "18268e20ae05c4ac49e4c23644aa38c8"
     })
     const clickDynamicFunc = data => {
       // 需要延时打开，因为IM先调用关闭，在打开的，而关闭比打开的走的慢

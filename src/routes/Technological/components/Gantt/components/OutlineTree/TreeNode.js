@@ -1165,10 +1165,14 @@ export default class TreeNode extends Component {
                 (hoverItem.add_id && hoverItem.add_id == add_id) ||
                 operateVisible) &&
               !selected_hide_term ? (
-                <Dropdown
-                  overlay={this.renderOperate()}
+                <Popover
+                  content={this.renderOperate()}
+                  getPopupContainer={() =>
+                    document.getElementById('gantt_group_head')
+                  }
                   visible={operateVisible}
                   trigger={['click']}
+                  placement={'right'}
                   onVisibleChange={this.operateVisibleChange}
                 >
                   <div
@@ -1176,7 +1180,7 @@ export default class TreeNode extends Component {
                   >
                     &#xe7fd;
                   </div>
-                </Dropdown>
+                </Popover>
               ) : (
                 <span
                   className={`${styles.outline_tree_line_node_dot} ${this.setDotStyle[type]}`}
