@@ -58,6 +58,7 @@ export default class HeaderContentRightMenu extends Component {
   constructor(props) {
     super(props)
     this.state = {
+      full: false
       // selectedKeys: []
     }
     this.isPdfInType = ['.jpg', '.jpeg', '.png', '.gif', '.pdf']
@@ -1106,6 +1107,9 @@ export default class HeaderContentRightMenu extends Component {
     } else if (document.createEventObject) {
       window.fireEvent('onresize')
     }
+    this.setState({
+      full: this.isFull
+    })
     return
     this.props.updateStateDatas &&
       this.props.updateStateDatas({
@@ -1422,7 +1426,9 @@ export default class HeaderContentRightMenu extends Component {
             onClick={this.zoomFrame}
             className={`${globalStyles.authTheme}`}
           >
-            <span style={{ fontSize: '22px' }}>&#xe7f3;</span>
+            <span style={{ fontSize: '22px' }}>
+              {this.state.full ? <span>&#xe7f7;</span> : <span>&#xe7f3;</span>}
+            </span>
           </div>
         </div>
 
