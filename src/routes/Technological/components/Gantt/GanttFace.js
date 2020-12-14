@@ -402,7 +402,7 @@ export default class GanttFace extends Component {
     //     target_scrollLeft: scrollLeft
     //   }
     // })
-    // this.setScrollLeft(scrollLeft)
+    this.setScrollLeft(scrollLeft)
   }
   setScrollLeft = _.throttle(function(scrollLeft) {
     const { dispatch } = this.props
@@ -412,7 +412,7 @@ export default class GanttFace extends Component {
         target_scrollLeft: scrollLeft
       }
     })
-  }, 5000)
+  }, 0)
   // 打开loading
   setLoading = bool => {
     const { dispatch, get_gantt_data_loading } = this.props
