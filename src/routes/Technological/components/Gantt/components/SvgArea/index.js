@@ -805,11 +805,11 @@ export default class index extends Component {
               top: line_top,
               relation,
               id: line_id,
-              color_mark = '24,144,255',
+              color_mark = '209,213,228',
               start_time: line_start_time
             } = line_item
             if (!color_mark) {
-              color_mark = '24,144,255'
+              color_mark = '209,213,228'
             }
             const params = {
               move_left,
