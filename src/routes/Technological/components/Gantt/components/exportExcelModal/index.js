@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Modal, Checkbox, message } from 'antd'
+import { Modal, Checkbox, message, Radio } from 'antd'
 import {
   getExportExcelFieldList,
   exportExcelFieldList
@@ -8,10 +8,11 @@ import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
 import axios from 'axios'
 import Cookies from 'js-cookie'
 import { REQUEST_DOMAIN_WORK_BENCH } from '../../../../../../globalset/js/constant'
-
+import imgsrc from 'src/assets/gantt/export_excel_progress.png'
 export default class index extends Component {
   state = {
-    export_field_list: []
+    export_field_list: [],
+    select_mode: '0' //0默认选择字段导出， 1填充导出
   }
 
   componentDidMount() {
@@ -42,7 +43,7 @@ export default class index extends Component {
   }
 
   onOk = () => {
-    const { checkedValue = [] } = this.state
+    const { checkedValue = [], select_mode = '0' } = this.state
     const { board_id } = this.props
     if (!board_id) return
     this.props.setVisible && this.props.setVisible(false)
@@ -51,8 +52,10 @@ export default class index extends Component {
         name: 'showLoading',
         value: true
       })
-    axios({
-      url: `${REQUEST_DOMAIN_WORK_BENCH}/board/export/excel`,
+    const url =
+      select_mode == '0' ? '/board/export/excel' : '/board/export/outline'
+    const options = {
+      url: `${REQUEST_DOMAIN_WORK_BENCH}${url}`,
       method: 'post',
       headers: {
         Authorization: Cookies.get('Authorization')
@@ -63,6 +66,12 @@ export default class index extends Component {
       },
       responseType: 'blob',
       timeout: 0
+    }
+    if (select_mode == '1') {
+      options.data = { board_id }
+    }
+    axios({
+      ...options
     })
       .then(resp => {
         if (resp.status < 400) {
@@ -104,10 +113,19 @@ export default class index extends Component {
   onCancel = () => {
     this.props.setVisible && this.props.setVisible(false)
   }
-
+  setSelectMode = e => {
+    const value = e.target.value
+    this.setState({
+      select_mode: value
+    })
+  }
   render() {
     const { visible } = this.props
-    const { export_field_list = [], checkedValue = [] } = this.state
+    const {
+      export_field_list = [],
+      checkedValue = [],
+      select_mode
+    } = this.state
     return (
       <div>
         <Modal
@@ -119,35 +137,58 @@ export default class index extends Component {
           onOk={this.onOk}
           okButtonProps={{ disabled: !(checkedValue && checkedValue.length) }}
         >
-          <div style={{ marginBottom: '16px' }}>选择导出字段</div>
-          <Checkbox.Group
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              alignItems: 'center',
-              justifyContent: 'space-between'
-            }}
-            value={checkedValue}
-            onChange={this.onChange}
-          >
-            {!!(export_field_list && export_field_list.length) &&
-              export_field_list.map(item => {
-                return (
-                  <Checkbox
-                    style={{
-                      // width: '33.3%',
-                      marginRight: '16px',
-                      marginBottom: '16px',
-                      marginLeft: 0
-                    }}
-                    value={item.code}
-                    disabled={item.code == 'NUMBER' || item.code == 'TITLE'}
-                  >
-                    {item.title}
-                  </Checkbox>
-                )
-              })}
-          </Checkbox.Group>
+          <div style={{ marginBottom: '16px' }}>
+            <Radio.Group
+              style={{ display: 'flex', justifyContent: 'space-between' }}
+              onChange={this.setSelectMode}
+              value={select_mode}
+            >
+              <Radio value={'0'}>按字段导出</Radio>
+              <Radio value={'1'}>按填充进度导出</Radio>
+            </Radio.Group>
+          </div>
+          <div style={{ display: select_mode == '0' ? 'block' : 'none' }}>
+            <div
+              style={{
+                marginBottom: '16px',
+                color: 'rgba(0,0,0,.65)',
+                fontWeight: 'bold'
+              }}
+            >
+              选择导出字段
+            </div>
+            <Checkbox.Group
+              style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                alignItems: 'center',
+                justifyContent: 'space-between'
+              }}
+              value={checkedValue}
+              onChange={this.onChange}
+            >
+              {!!(export_field_list && export_field_list.length) &&
+                export_field_list.map(item => {
+                  return (
+                    <Checkbox
+                      style={{
+                        // width: '33.3%',
+                        marginRight: '16px',
+                        marginBottom: '16px',
+                        marginLeft: 0
+                      }}
+                      value={item.code}
+                      disabled={item.code == 'NUMBER' || item.code == 'TITLE'}
+                    >
+                      {item.title}
+                    </Checkbox>
+                  )
+                })}
+            </Checkbox.Group>
+          </div>
+          <div style={{ display: select_mode == '1' ? 'block' : 'none' }}>
+            <img src={imgsrc} style={{ width: 332 }}></img>
+          </div>
         </Modal>
       </div>
     )
