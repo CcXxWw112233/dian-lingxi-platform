@@ -49,6 +49,7 @@ import {
   diffClientDefaultViewMode
 } from './ganttBusiness'
 import { ENV_ANDROID_APP } from '../../../../globalset/clientCustorm'
+import { isSamDay } from '../../../../utils/util'
 
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
@@ -89,7 +90,10 @@ export default class GanttFace extends Component {
       }, 100)
     } else {
       this.setGoldDateArr({ init: true })
-      this.initSetScrollPosition()
+      setTimeout(() => {
+        this.initSetScrollPosition()
+      }, 0)
+      // this.initSetScrollPosition()
     }
     this.setGanTTCardHeight()
     this.getBoardListFeature()
@@ -227,12 +231,36 @@ export default class GanttFace extends Component {
     }
   }
 
+  // 初始化设置滚动条横向位置
+  setInitScrollLeft = () => {
+    const { date_arr_one_level = [], ceilWidth, gantt_view_mode } = this.props
+    let current_index
+    const wapper_width = document.getElementById('gantt_body_wapper')
+      .clientWidth
+    const now = new Date().getTime()
+    if (gantt_view_mode == 'month') {
+      current_index = date_arr_one_level.findIndex(item =>
+        isSamDay(item.timestamp, now)
+      )
+      return current_index * ceilWidth - wapper_width / 2 + ceil_width / 2
+    } else if (gantt_view_mode == 'week') {
+      current_index = date_arr_one_level.findIndex(
+        item => now > item.timestamp && now < item.timestampEnd
+      )
+      return (
+        current_index * 7 * ceilWidth - wapper_width / 2 + (7 / 2) * ceilWidth
+      )
+    }
+
+    // 居中
+  }
+
   //  初始化设置滚动横向滚动条位置
-  initSetScrollPosition() {
+  initSetScrollPosition = () => {
     const { ceilWidth, gantt_view_mode } = this.props
     const date = new Date().getDate()
-    //60为一个月长度，3为遮住的部分长度，date为当前月到今天为止的长度,1为偏差修复, 16为左边header的宽度和withCeil * n的 %值
-    let position = ceilWidth * (60 - 4 - 4 + date - 1) - 16
+    // 今天居中在滚动条中间
+    let position = this.setInitScrollLeft()
     if (gantt_view_mode == 'relative_time') {
       position = 0
     } else if (gantt_view_mode == 'hours') {
@@ -889,7 +917,8 @@ function mapStateToProps({
       gantt_view_mode,
       get_gantt_data_loading_other,
       show_base_line_mode,
-      active_baseline
+      active_baseline,
+      date_arr_one_level = []
     }
   },
   technological: {
@@ -918,7 +947,8 @@ function mapStateToProps({
     currentUserOrganizes,
     show_base_line_mode,
     active_baseline,
-    projectDetailInfoData
+    projectDetailInfoData,
+    date_arr_one_level
   }
 }
 GanttFace.defaultProps = {
