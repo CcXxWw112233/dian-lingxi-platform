@@ -11,6 +11,7 @@ import {
 import { PROJECTS } from '../../globalset/js/constant'
 import SimpleHeader from './Components/SimpleHeader/index'
 import { ENV_BROWSER_APP } from '../../globalset/clientCustorm'
+import { ceil_width_week } from '../Technological/components/Gantt/constants'
 const defaultWallpaperSrc = ''
 // import WorkbenchPage from './Components/WorkbenchPage'
 // import Home from './Components/Home'
@@ -97,7 +98,9 @@ class SimpleMode extends PureComponent {
           type: 'gantt/updateDatas',
           payload: {
             gantt_board_id: '0',
-            group_view_type: '1'
+            group_view_type: '1',
+            gantt_view_mode: 'week', //全项目默认进周视图
+            ceilWidth: ceil_width_week
           }
         })
         this.setState({

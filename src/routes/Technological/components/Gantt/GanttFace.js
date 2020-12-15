@@ -20,6 +20,7 @@ import {
 } from './getDate'
 import {
   ceil_width,
+  ceil_width_week,
   date_area_height,
   ganttIsOutlineView,
   hours_view_total
@@ -109,6 +110,7 @@ export default class GanttFace extends Component {
       ceilWidth,
       gantt_view_mode
     } = this.props
+    this.handleChangeBoardAll(nextProps.gantt_board_id)
     if (gantt_board_id == '0') return
     const { board_set = {} } = projectDetailInfoData
     const { date_mode, relative_time } = board_set
@@ -171,6 +173,38 @@ export default class GanttFace extends Component {
             16}px`
         }
       }
+    }
+  }
+
+  // 处理项目id变化（全项目）
+  handleChangeBoardAll = next_gantt_board_id => {
+    const { gantt_board_id, dispatch } = this.props
+    if (gantt_board_id != next_gantt_board_id && next_gantt_board_id == '0') {
+      dispatch({
+        type: 'gantt/updateDatas',
+        payload: {
+          gantt_view_mode: 'week',
+          ceilWidth: ceil_width_week
+        }
+      })
+
+      setTimeout(() => {
+        this.setGoldDateArr({ init: true })
+        setTimeout(() => {
+          this.initSetScrollPosition()
+          const wapper_width = document.getElementById('gantt_body_wapper')
+            .clientWidth
+          const current_index = 49
+          const gantt_date_area = document.getElementById('gantt_date_area')
+          const set_left =
+            current_index * 7 * ceil_width_week -
+            wapper_width / 2 +
+            (7 / 2) * ceil_width_week
+          if (gantt_date_area) {
+            gantt_date_area.style.left = `${-set_left}px`
+          }
+        }, 100)
+      })
     }
   }
 
