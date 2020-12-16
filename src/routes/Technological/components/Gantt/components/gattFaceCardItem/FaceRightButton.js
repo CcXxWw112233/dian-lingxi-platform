@@ -8,7 +8,8 @@ import {
   ceil_width_year,
   ceil_width_week,
   ceil_width_hours,
-  ganttIsOutlineView
+  ganttIsOutlineView,
+  hours_view_total
 } from '../../constants'
 import { isSamDay } from '../../../../../../utils/util'
 
@@ -51,20 +52,31 @@ export default class FaceRightButton extends Component {
       ) //当天所在哪个周
     } else {
     }
-
+    const wapper_width = document.getElementById('gantt_body_wapper')
+      .clientWidth
     const target = document.getElementById('gantt_card_out_middle')
 
     if (toDayIndex != -1) {
       //如果今天在当前日期面板内
-      let nomal_position = toDayIndex * ceilWidth - 248 + 16 //248为左边面板宽度,16为左边header的宽度和withCeil * n的 %值
+      let nomal_position
       if (gantt_view_mode == 'year') {
         const date_position = date_arr_one_level
           .slice(0, toDayIndex)
           .map(item => item.last_date)
           .reduce((total, num) => total + num) //索引月份总天数
-        nomal_position = date_position * ceilWidth - 248 + 16 //当天所在位置index
+        nomal_position =
+          date_position * ceilWidth - wapper_width / 2 + 15 * ceilWidth //当天所在位置index
       } else if (gantt_view_mode == 'week') {
-        nomal_position = (toDayIndex - 1) * 7 * ceilWidth //当天所在位置index
+        nomal_position =
+          toDayIndex * 7 * ceilWidth - wapper_width / 2 + (7 / 2) * ceilWidth
+      } else if (gantt_view_mode == 'hours') {
+        nomal_position =
+          toDayIndex * ceilWidth -
+          wapper_width / 2 +
+          (hours_view_total / 2) * ceilWidth
+      } else if (gantt_view_mode == 'month') {
+        nomal_position =
+          toDayIndex * ceilWidth - wapper_width / 2 + ceil_width / 2
       }
       const max_position =
         target.scrollWidth - target.clientWidth - 2 * ceilWidth //最大值,保持在这个值的范围内，滚动条才能不滚动到触发更新的区域

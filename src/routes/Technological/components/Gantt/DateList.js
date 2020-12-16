@@ -18,6 +18,7 @@ import {
   hours_view_due_work_oclock,
   hours_view_start_work_oclock
 } from './constants'
+import FixedDateTop from './components/FixedDateTop'
 
 const MenuItem = Menu.Item
 
@@ -902,34 +903,6 @@ export default class DateList extends Component {
     }
     return contain
   }
-  renderFixedDateTop = () => {
-    const {
-      target_scrollLeft,
-      gold_date_arr,
-      gantt_view_mode,
-      width_area_section = []
-    } = this.props
-    if (gantt_view_mode != 'month') return <></>
-    const index = width_area_section.findIndex(item => target_scrollLeft < item)
-    const title = (gold_date_arr[index] || {}).date_top
-    return (
-      <div
-        id={'gantt_date_buoy'}
-        style={{
-          position: 'absolute',
-          // left: target_scrollLeft,
-          top: 9,
-          fontWeight: 'bold',
-          backgroundColor: '#fff',
-          zIndex: 0,
-          paddingLeft: 6,
-          color: 'rgba(0, 0, 0, .45)'
-        }}
-      >
-        {title}
-      </div>
-    )
-  }
   // 获取不同视图下对应日期位置
 
   // 渲染不同视图下日期显示内容
@@ -1096,9 +1069,8 @@ export default class DateList extends Component {
             visibility: get_gantt_data_loading_other ? 'hidden' : 'visible',
             borderBottom: '1px solid rgba(154,159,166,0.15)'
           }}
-          // style={{ left: -target_scrollLeft, }}
         >
-          {this.renderFixedDateTop()}
+          <FixedDateTop />
           {gantt_card_date_no_section &&
             !!Object.keys(gantt_card_date_no_section).length &&
             this.renderGanttCardDateNoSection()}
@@ -1247,7 +1219,6 @@ class DropMilestone extends React.Component {
 function mapStateToProps({
   gantt: {
     datas: {
-      target_scrollLeft,
       width_area_section = [],
       gold_date_arr = [],
       about_user_boards = [],
@@ -1268,7 +1239,6 @@ function mapStateToProps({
   }
 }) {
   return {
-    target_scrollLeft,
     width_area_section,
     gold_date_arr,
     target_scrollTop,

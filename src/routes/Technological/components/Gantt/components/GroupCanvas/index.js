@@ -21,7 +21,7 @@ export default class index extends PureComponent {
     this.ctx = null
     this.setCanvasHeight = this.setCanvasHeight.bind(this)
     this.setCanvasWidth = this.setCanvasWidth.bind(this)
-    this.line_color = 'rgba(208,211,226,0.3)'
+    this.line_color = 'rgb(242,244,248)'
   }
   componentDidMount() {
     this.initCanvas()
