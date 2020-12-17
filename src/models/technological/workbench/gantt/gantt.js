@@ -1437,7 +1437,12 @@ export default {
     },
     *getGttMilestoneList({ payload }, { select, call, put }) {
       //
-
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          milestoneMap: {}
+        }
+      })
       const Aa = yield put({
         type: 'returnContentFilterFinalParams'
       })

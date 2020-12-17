@@ -550,8 +550,10 @@ export default class GetRowStrip extends PureComponent {
     const {
       itemValue: { due_time, min_leaf_left, left, parent_id, percent_card_non },
       ceilWidth,
-      gantt_view_mode
+      gantt_view_mode,
+      date_arr_one_level
     } = this.props
+    if (date_arr_one_level[0].timestamp > due_time) return <></> //不在时间范围内
     return !!due_time ? (
       <>
         <div

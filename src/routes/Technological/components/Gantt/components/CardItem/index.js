@@ -360,6 +360,12 @@ export default class CardItem extends Component {
     const offsetLeft = this.getX(oDiv)
     const rela_left = clientX - offsetLeft - 2 + target_1.scrollLeft //鼠标在该任务内的相对位置
     const rela_pos = clientWidth - rela_left
+    // console.log('s_event', rela_pos, rela_pos >= -21 && rela_pos <= -3)
+    const { drag_type } = this.state
+    if (isNaN(rela_pos)) {
+      this.setTargetDragTypeCursor(drag_type)
+      return
+    }
     if (rela_pos >= -21 && rela_pos <= -3) {
       //滑动到右边 //clientWidth - rela_left <= 6
       this.setTargetDragTypeCursor('right')
@@ -1900,6 +1906,7 @@ export default class CardItem extends Component {
                 </Tooltip>
               )}
               <span
+                data-rely_top={id}
                 className={indexStyles.due_time_description}
                 data-targetclassname="specific_example"
               >
