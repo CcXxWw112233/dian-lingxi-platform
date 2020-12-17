@@ -16,7 +16,7 @@ import {
   ORG_TEAM_BOARD_CREATE,
   PROJECTS
 } from '../../../../globalset/js/constant'
-import { ganttIsOutlineView } from './constants'
+import { ceil_width_week, ganttIsOutlineView } from './constants'
 import BaseLine from './components/BaseLine'
 import { clickDelay } from '../../../../globalset/clientCustorm'
 
@@ -148,22 +148,34 @@ export default class GroupListHeadSet extends Component {
             gantt_board_id: '0',
             group_view_type: '1',
             list_group: [],
-            group_list_area_fold_section: []
+            group_list_area_fold_section: [],
+            gantt_view_mode: 'week',
+            ceilWidth: ceil_width_week
           }
         })
+        dispatch({
+          type: 'projectDetail/updateDatas',
+          payload: {
+            projectDetailInfoData: {}
+          }
+        })
+        setTimeout(() => {
+          this.props.setGoldDateArr({})
+          this.props.setScrollPosition({})
+        }, 200)
         //返回项目列表的情况下，如果是相对时间视图，则要处理回到月是图
-        if (gantt_view_mode == 'relative_time') {
-          dispatch({
-            type: 'gantt/updateDatas',
-            payload: {
-              gantt_view_mode: 'month'
-            }
-          })
-          setTimeout(() => {
-            this.props.setGoldDateArr({})
-            this.props.setScrollPosition({})
-          }, 200)
-        }
+        // if (gantt_view_mode == 'relative_time') {
+        //   dispatch({
+        //     type: 'gantt/updateDatas',
+        //     payload: {
+        //       gantt_view_mode: 'month'
+        //     }
+        //   })
+        //   setTimeout(() => {
+        //     this.props.setGoldDateArr({})
+        //     this.props.setScrollPosition({})
+        //   }, 200)
+        // }
         this.setState({
           is_full_folded: false
         })
