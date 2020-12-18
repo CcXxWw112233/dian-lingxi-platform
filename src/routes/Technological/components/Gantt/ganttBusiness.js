@@ -383,9 +383,12 @@ export const setGantTimeSpan = ({
   if (!!!due_time && !!!start_time) {
     return Number(time_span) || 0 //1 //0//
   } else {
-    if (!!due_time && !!start_time) {
-      new_time_span =
-        Math.floor((due_time - start_time) / (24 * 3600 * 1000)) + 1
+    if ((!!due_time && !!start_time) || (due_time == 0 && !!start_time)) {
+      // 定义除数 因为当没有开始时间 会把开始时间设置为截止时间 所以可以进来 而相减之后为0
+      // 所以 如果没有截止时间 那么截止时间(due_time)为0 所以不能进来 所以增加判断 (due_time == 0 && !!start_time)
+      // 所以 当没有截止时间 而存在开始时间时 那么也是跨度为1天 所以 除数为0
+      const divisor = due_time == 0 && !!start_time ? 0 : due_time - start_time
+      new_time_span = Math.floor(divisor / (24 * 3600 * 1000)) + 1
       new_time_span = diffGanttTimeSpan({
         time_span: new_time_span,
         start_time,
