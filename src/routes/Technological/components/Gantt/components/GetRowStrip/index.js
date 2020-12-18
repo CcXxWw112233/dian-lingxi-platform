@@ -553,7 +553,7 @@ export default class GetRowStrip extends PureComponent {
       gantt_view_mode,
       date_arr_one_level
     } = this.props
-    if (date_arr_one_level[0].timestamp > due_time) return <></> //不在时间范围内
+    if (due_time && date_arr_one_level[0].timestamp > due_time) return <></> //不在时间范围内
     return !!due_time ? (
       <>
         <div
