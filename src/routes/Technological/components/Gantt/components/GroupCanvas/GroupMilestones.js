@@ -691,14 +691,19 @@ export default class GroupMilestones extends Component {
 
   render() {
     const { render_milestones_data = [] } = this.state
-    const { group_view_type, list_group = [] } = this.props
+    const {
+      group_view_type,
+      list_group = [],
+      get_milestone_loading
+    } = this.props
     return (
       <div
         style={{
           position: 'absolute',
           zIndex: 2,
           height: '100%',
-          width: '100%'
+          width: '100%',
+          display: !get_milestone_loading ? 'block' : 'none'
         }}
       >
         {group_view_type == '1' &&
@@ -732,7 +737,8 @@ function mapStateToProps({
       gantt_head_width,
       date_total,
       list_group,
-      group_list_area
+      group_list_area,
+      get_milestone_loading
     }
   }
 }) {
@@ -751,6 +757,7 @@ function mapStateToProps({
     gantt_head_width,
     date_total,
     list_group,
-    group_list_area
+    group_list_area,
+    get_milestone_loading
   }
 }

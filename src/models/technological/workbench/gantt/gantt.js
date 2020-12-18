@@ -141,6 +141,7 @@ export default {
       get_gantt_data_loading: false, //是否在请求甘特图数据状态
       get_gantt_data_loading_other: false, //为其它操作想要阻断页面做loading(应用于难以解决的切换显示延迟)
       get_gantt_data_loaded: false,
+      get_milestone_loading: false, //获取里程碑接口状态
       is_show_board_file_area: '0', //显示文件区域 0默认不显示 1滑入 2滑出
       boards_flies: [], //带根目录文件列表的项目列表
       show_board_fold: false, //是否显示项目汇总视图
@@ -1440,7 +1441,7 @@ export default {
       yield put({
         type: 'updateDatas',
         payload: {
-          milestoneMap: {}
+          get_milestone_loading: true
         }
       })
       const Aa = yield put({
@@ -1484,6 +1485,12 @@ export default {
       } else {
         message.error(res.message)
       }
+      yield put({
+        type: 'updateDatas',
+        payload: {
+          get_milestone_loading: false
+        }
+      })
     },
     *getContentFiterBoardTree({ payload }, { select, call, put }) {
       const res = yield call(getContentFiterBoardTree, {})
