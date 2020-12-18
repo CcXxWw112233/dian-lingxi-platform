@@ -378,7 +378,7 @@ class MainContent extends Component {
   // 进入pdf圈评
   handleToShowPdf = async (type = 'pdf') => {
     // 转换成功之后的回调
-    let canEnter = await this.handleEnterCirclePointComment().catch(err => err)
+    let canEnter = false
     const {
       currentPreviewFileData = {},
       filePreviewUrl,
@@ -400,6 +400,7 @@ class MainContent extends Component {
       message.warn('暂不支持的圈评格式')
       return
     }
+    canEnter = await this.handleEnterCirclePointComment().catch(err => err)
     if (!!canEnter) {
       let obj = {
         url: arr.indexOf(FILE_NAME) !== -1 ? fileFileUrl : filePreviewUrl,
