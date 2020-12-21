@@ -18,6 +18,7 @@ import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner
 import RichTextEditor from '@/components/RichTextEditor'
 import UploadAttachment from '@/components/UploadAttachment'
 import InformRemind from '@/components/InformRemind'
+import EarlyWarning from '@/components/EarlyWarning'
 import {
   timestampToTime,
   timestampToTimeNormal,
@@ -1231,6 +1232,7 @@ export default class MainContent extends Component {
                         />
                       </span>
                     )}
+                    {!!start_time && !!due_time && <EarlyWarning />}
                   </div>
                 </div>
               </div>
