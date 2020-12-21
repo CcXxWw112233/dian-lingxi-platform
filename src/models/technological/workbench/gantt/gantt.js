@@ -158,6 +158,13 @@ export default {
 
       selected_hide_term: false, // 表示是否选择隐藏项 true 表示是
       isDisplayContentIds: [], // 表示已经隐藏的content_ids
+      outline_tree_filter_type: {
+        //大纲过滤掉的选项
+        is_due: false,
+        is_alarm: false,
+        is_doing: false,
+        is_realize: false
+      },
       outline_tree_original: [], // 大纲视图显示隐藏快照 数据源
       card_name_outside: false, //任务名称是否外置
       base_relative_time: '', //相对时间轴的基准时间
@@ -421,6 +428,9 @@ export default {
       const gantt_view_mode = yield select(
         getModelSelectDatasState('gantt', 'gantt_view_mode')
       )
+      const outline_tree_filter_type = yield select(
+        getModelSelectDatasState('gantt', 'outline_tree_filter_type')
+      )
       const min_start_time = date_arr_one_level[0].timestamp //最早时间
       const max_due_time =
         date_arr_one_level[date_arr_one_level.length - 1].timestampEnd
@@ -438,7 +448,8 @@ export default {
           filter_display,
           gantt_view_mode,
           min_start_time,
-          max_due_time
+          max_due_time,
+          outline_tree_filter_type
         }
       )
       // console.log('filnaly_outline_tree_0', filnaly_outline_tree)

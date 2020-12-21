@@ -285,3 +285,20 @@ export async function exportExcelFieldList(data) {
     data
   })
 }
+
+// 获取大纲隐藏的信息
+export async function getOutlineFilterType(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt_chart/outline/nondisplay`,
+    method: 'GET',
+    params
+  })
+}
+// 设置大纲隐藏的信息
+export async function setOutlineFilterType(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/org/template/share`,
+    method: 'POST',
+    data
+  })
+}

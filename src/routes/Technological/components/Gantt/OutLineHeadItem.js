@@ -69,7 +69,9 @@ import jsPDF from 'jspdf'
 import { LoadingOutlined } from '@ant-design/icons'
 import {
   getGanttOutlineHideTrem,
-  saveGanttOutlineNonDisplay
+  getOutlineFilterType,
+  saveGanttOutlineNonDisplay,
+  setOutlineFilterType
 } from '../../../../services/technological/gantt'
 import { getTreeNodeValue } from '../../../../models/technological/workbench/gantt/gantt_utils'
 import ExportExcelModal from './components/exportExcelModal'
@@ -110,6 +112,8 @@ export default class OutLineHeadItem extends Component {
     const aboutBoardOrganizationId = getGlobalData('aboutBoardOrganizationId')
     // 获取已隐藏的元素
     this.getOutlineHideTerm()
+    // 获取设置的隐藏项
+    this.getOutlineTreeFilterType()
     if (
       !OrganizationId ||
       (OrganizationId == '0' &&
@@ -1576,7 +1580,14 @@ export default class OutLineHeadItem extends Component {
         this.props.dispatch({
           type: 'gantt/updateDatas',
           payload: {
-            isDisplayContentIds: []
+            isDisplayContentIds: [],
+            outline_tree_filter_type: {
+              //大纲过滤掉的选项
+              is_due: false,
+              is_alarm: false,
+              is_doing: false,
+              is_realize: false
+            }
           }
         })
       }
@@ -1699,6 +1710,71 @@ export default class OutLineHeadItem extends Component {
   setCardNameOutsideBuddle = e => {
     e.stopPropagation()
   }
+  // -----------隐藏项start
+  // 设置隐藏
+  setOutlineTreeFilterType = async (code, e) => {
+    e.stopPropagation()
+    const { outline_tree_filter_type = {}, dispatch, outline_tree } = this.props
+    const res = await setOutlineFilterType()
+    if (outline_tree_filter_type[code]) return
+    if (isApiResponseOk(res) || true) {
+      message.success('隐藏成功')
+      dispatch({
+        type: 'gantt/updateDatas',
+        payload: {
+          outline_tree_filter_type: {
+            ...outline_tree_filter_type,
+            [code]: true
+          }
+        }
+      })
+      setTimeout(() => {
+        dispatch({
+          type: 'gantt/handleOutLineTreeData',
+          payload: {
+            data: outline_tree
+          }
+        })
+      }, 100)
+    }
+  }
+  getOutlineTreeFilterType = async () => {
+    const { gantt_board_id } = this.props
+    const res = await getOutlineFilterType({ board_id: gantt_board_id })
+    const { dispatch } = this.props
+    if (isApiResponseOk(res)) {
+      dispatch({
+        type: 'gantt/updateDatas',
+        payload: {
+          outline_tree_filter_type: {
+            is_due: false,
+            is_alarm: false,
+            is_doing: false,
+            is_realize: false
+          }
+        }
+      })
+    }
+  }
+  // 是否存在设置隐藏项
+  isHasFilterHide = () => {
+    const { outline_tree_filter_type = {} } = this.props
+    let flag = false
+    for (let key in outline_tree_filter_type) {
+      if (outline_tree_filter_type[key]) {
+        flag = true
+        break
+      }
+    }
+    return flag
+  }
+  setFilterTypeStyle = code => {
+    const { outline_tree_filter_type } = this.props
+    if (outline_tree_filter_type[code]) return 'rgba(0,0,0,0.35)'
+    return '#75A4FF'
+  }
+  // -----------隐藏项end
+
   // 渲染底部导航
   renderOutlineFooter = () => {
     const { card_name_outside } = this.props
@@ -1718,7 +1794,58 @@ export default class OutLineHeadItem extends Component {
             </div>
           </div>
         </Menu.Item>
-        <Menu.Item key="select_hide_term">选择隐藏项</Menu.Item>
+        <SubMenu title={'选择隐藏项'}>
+          <Menu.Item>
+            <div className={styles.hide_sub_menu}>
+              <div>逾期的任务</div>
+              <div
+                className={globalStyles.link_mouse}
+                style={{ color: this.setFilterTypeStyle('is_due') }}
+                onClick={e => this.setOutlineTreeFilterType('is_due', e)}
+              >
+                隐藏
+              </div>
+            </div>
+          </Menu.Item>
+          <Menu.Item>
+            <div className={styles.hide_sub_menu}>
+              <div>预警的任务</div>
+              <div
+                className={globalStyles.link_mouse}
+                style={{ color: this.setFilterTypeStyle('is_alarm') }}
+                onClick={e => this.setOutlineTreeFilterType('is_alarm', e)}
+              >
+                隐藏
+              </div>
+            </div>
+          </Menu.Item>
+          <Menu.Item>
+            <div className={styles.hide_sub_menu}>
+              <div>正在进行的任务</div>
+              <div
+                className={globalStyles.link_mouse}
+                style={{ color: this.setFilterTypeStyle('is_doing') }}
+                onClick={e => this.setOutlineTreeFilterType('is_doing', e)}
+              >
+                隐藏
+              </div>
+            </div>
+          </Menu.Item>
+          <Menu.Item>
+            <div className={styles.hide_sub_menu}>
+              <div>已完成的任务</div>
+              <div
+                className={globalStyles.link_mouse}
+                style={{ color: this.setFilterTypeStyle('is_realize') }}
+                onClick={e => this.setOutlineTreeFilterType('is_realize', e)}
+              >
+                隐藏
+              </div>
+            </div>
+          </Menu.Item>
+          <Menu.Divider />
+          <Menu.Item key="select_hide_term">自定义</Menu.Item>
+        </SubMenu>
         <SubMenu title="导出">
           <Menu.Item key="export_pdf">导出PDF</Menu.Item>
           <Menu.Item key="export_img">导出图片</Menu.Item>
@@ -1755,7 +1882,8 @@ export default class OutLineHeadItem extends Component {
       start_date,
       end_date,
       selected_hide_term,
-      isDisplayContentIds = []
+      isDisplayContentIds = [],
+      outline_tree_filter_type = {}
     } = this.props
     // console.log("刷新了数据", outline_tree);
     return (
@@ -1785,20 +1913,22 @@ export default class OutLineHeadItem extends Component {
           style={{
             justifyContent:
               selected_hide_term ||
-              !!(isDisplayContentIds && isDisplayContentIds.length)
+              !!(isDisplayContentIds && isDisplayContentIds.length) ||
+              this.isHasFilterHide()
                 ? 'space-between'
                 : 'flex-end'
           }}
         >
-          {!!(isDisplayContentIds && isDisplayContentIds.length) &&
-            !selected_hide_term && (
-              <div
-                onClick={this.handleShowHideTerm}
-                style={{ color: '#6294FF' }}
-              >
-                显示全部
-              </div>
-            )}
+          {(!!(
+            isDisplayContentIds &&
+            isDisplayContentIds.length &&
+            !selected_hide_term
+          ) ||
+            this.isHasFilterHide()) && (
+            <div onClick={this.handleShowHideTerm} style={{ color: '#6294FF' }}>
+              显示全部
+            </div>
+          )}
           {selected_hide_term && (
             <div>
               <Button
@@ -1984,7 +2114,8 @@ function mapStateToProps({
       selected_hide_term,
       isDisplayContentIds = [],
       outline_tree_original = [],
-      card_name_outside
+      card_name_outside,
+      outline_tree_filter_type
     }
   },
   technological: {
@@ -2021,6 +2152,7 @@ function mapStateToProps({
     selected_hide_term,
     isDisplayContentIds,
     outline_tree_original,
-    card_name_outside
+    card_name_outside,
+    outline_tree_filter_type
   }
 }
