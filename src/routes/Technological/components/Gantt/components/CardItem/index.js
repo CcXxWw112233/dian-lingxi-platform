@@ -104,7 +104,7 @@ export default class CardItem extends Component {
     label_data,
     is_realize,
     active_compare_height,
-    early_warning
+    is_show_warning_time: early_warning
   }) => {
     let bgColor = ''
     let b = ''
@@ -1653,6 +1653,30 @@ export default class CardItem extends Component {
     return { compare_width, status_label }
   }
 
+  // 获取预警时间
+  getCardsWarningTime = ({ time_warning, start_time, due_time }) => {
+    // 23:59:00
+    let ahead_timestamp = time_warning * (24 * 60 * 60 * 1000)
+    let warning_timer = due_time - Number(ahead_timestamp)
+    const today = new Date()
+    const today_timestamp = today.getTime()
+    const today_year = today.getFullYear()
+    const today_month = today.getMonth()
+    const today_day = today.getDate()
+    const today_start_time = new Date(
+      today_year,
+      today_month,
+      today_day,
+      '00',
+      '00',
+      '00'
+    ).getTime()
+    return (
+      (warning_timer <= today_start_time && warning_timer <= due_time) ||
+      caldiffDays(warning_timer, today_timestamp) == 0
+    )
+  }
+
   render() {
     const {
       itemValue = {},
@@ -1685,7 +1709,7 @@ export default class CardItem extends Component {
       child_card_status = {},
       progress_percent,
       tree_type,
-      early_warning
+      time_warning
     } = itemValue
     const {
       has_child,
@@ -1733,7 +1757,18 @@ export default class CardItem extends Component {
       is_show_compare_real_plan_timer &&
       status_label == 'ahead_time_middle' &&
       !label_data.length
-    const early_warning_position = 1 * ceilWidth
+    // 定义预警位置
+    const early_warning_position =
+      gantt_view_mode == 'hours'
+        ? time_warning * 9 * ceilWidth
+        : time_warning * ceilWidth
+    // 选择的预警日期
+    let ahead_timestamp = time_warning * (24 * 60 * 60 * 1000)
+    let warning_timer_day = new Date(
+      due_time - Number(ahead_timestamp)
+    ).getDate()
+    warning_timer_day =
+      warning_timer_day >= 10 ? warning_timer_day : '0' + warning_timer_day
     // 判断是否是今天之前
     const is_overdue_task = isOverdueTime(due_time)
     // 显示预警
@@ -1743,8 +1778,11 @@ export default class CardItem extends Component {
       is_realize == '0' &&
       is_has_end_time &&
       is_has_start_time &&
+      start_time != due_time &&
       !is_overdue_task &&
-      early_warning
+      !!time_warning &&
+      time_warning != '0' &&
+      this.getCardsWarningTime({ time_warning, start_time, due_time })
     // 定义左边触角样式
     const card_left_triangle = cx({
       left_triangle: true,
@@ -1855,7 +1893,7 @@ export default class CardItem extends Component {
             indexStyles.specific_example_no_start_time} ${!is_has_end_time &&
             indexStyles.specific_example_no_due_time}`}
           data-targetclassname="specific_example"
-          id={id} //大纲视图需要获取该id作为父级id来实现子任务拖拽影响父任务位置
+          // id={id} //大纲视图需要获取该id作为父级id来实现子任务拖拽影响父任务位置
           // data-rely_top={id}
           title={name}
           style={{
@@ -1863,15 +1901,13 @@ export default class CardItem extends Component {
             left: 0,
             top: 0,
             zIndex: 2,
-            width:
-              (local_width || 6) -
-              (gantt_view_mode == 'year' ? 0 : card_width_diff),
+            width: '100%',
             height: height || task_item_height,
             background: this.setLableColor({
               label_data,
               is_realize,
               active_compare_height,
-              early_warning
+              is_show_warning_time
             }),
             boxShadow: 'none'
           }}
@@ -1891,7 +1927,7 @@ export default class CardItem extends Component {
                   ? status_label == 'ahead_time_middle'
                     ? '#5BB48F' //'rgb(175,241,213)'
                     : '#CDD1DF' //'rgb(212,216,228)'
-                  : early_warning
+                  : is_show_warning_time
                   ? '#FFA000'
                   : '#B3D0FF',
               padding:
@@ -2245,6 +2281,7 @@ export default class CardItem extends Component {
           <div
             style={{ right: early_warning_position - 12 }}
             className={indexStyles.early_warning}
+            title={`预警时间为：${warning_timer_day}号`}
           >
             <span className={globalStyles.authTheme}>&#xe61f;</span>
           </div>

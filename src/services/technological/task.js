@@ -709,3 +709,23 @@ export async function addMultipleCard(data) {
     data
   })
 }
+
+// 修改任务
+export async function updateTaskVTwo_2(data) {
+  const { card_id, board_id } = data
+  // delete data.card_id
+  delete data.board_id
+  const { BaseInfo = {} } = createHeaderContentDataByCardId(card_id)
+  if (board_id) {
+    BaseInfo.boardId = board_id
+  } else {
+    delete BaseInfo.boardId
+  }
+  console.log(card_id)
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/board/card`,
+    method: 'PUT',
+    headers: { BaseInfo },
+    data
+  })
+}

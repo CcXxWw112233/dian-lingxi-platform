@@ -1,11 +1,13 @@
 import React, { Component } from 'react'
 import { connect } from 'dva'
-import { Modal, Select, Button } from 'antd'
+import { Modal, Select, Button, message } from 'antd'
 import { currentNounPlanFilterName } from '../../utils/businessFunction'
-import { TASKS } from '../../globalset/js/constant'
+import { MESSAGE_DURATION_TIME, TASKS } from '../../globalset/js/constant'
 import globalStyles from '../../globalset/css/globalClassName.less'
 import indexStyles from './index.less'
 import { caldiffDays } from '../../utils/util'
+import { updateTaskVTwo_2 } from '../../services/technological/task'
+import { isApiResponseOk } from '../../utils/handleResponseData'
 
 @connect(mapStateToProps)
 export default class index extends Component {
@@ -36,8 +38,12 @@ export default class index extends Component {
   }
 
   setEarlyWarningVisible = () => {
+    const {
+      drawContent: { time_warning }
+    } = this.props
     this.setState({
-      visible: !this.state.visible
+      visible: !this.state.visible,
+      selectedValue: time_warning
     })
   }
 
@@ -47,17 +53,27 @@ export default class index extends Component {
       drawContent = {},
       drawContent: { card_id }
     } = this.props
-    drawContent['early_warning'] = selectedValue
-    this.props.updateDrawContentWithUpdateParentListDatas &&
-      this.props.updateDrawContentWithUpdateParentListDatas({
-        drawContent,
-        name: 'early_warning',
-        value: selectedValue,
-        card_id
-      })
-    setTimeout(() => {
-      this.setEarlyWarningVisible()
-    }, 200)
+    drawContent['time_warning'] = selectedValue
+    updateTaskVTwo_2({ card_id, time_warning: selectedValue }).then(res => {
+      if (isApiResponseOk(res)) {
+        this.props.updateDrawContentWithUpdateParentListDatas &&
+          this.props.updateDrawContentWithUpdateParentListDatas({
+            drawContent,
+            name: 'time_warning',
+            value: selectedValue,
+            card_id
+          })
+        message.success('设置成功', MESSAGE_DURATION_TIME)
+        setTimeout(() => {
+          this.setEarlyWarningVisible()
+        }, 200)
+      } else {
+        setTimeout(() => {
+          this.setEarlyWarningVisible()
+        }, 200)
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    })
   }
 
   // 禁用选项
@@ -80,9 +96,9 @@ export default class index extends Component {
 
   // 渲染预警内容
   renderContent = () => {
-    const { optionsList = [] } = this.state
+    const { optionsList = [], selectedValue } = this.state
     const {
-      drawContent: { start_time, due_time }
+      drawContent: { start_time, due_time, time_warning }
     } = this.props
     let temp_dec = this.disabledSelectedOption({ start_time, due_time })
 
@@ -94,6 +110,7 @@ export default class index extends Component {
             defaultValue="无预警"
             style={{ width: '180px', letterSpacing: '1px' }}
             onChange={this.handleSelectedValue}
+            value={selectedValue || '0'}
           >
             <Select.Option label="无预警" value="0">
               无预警
