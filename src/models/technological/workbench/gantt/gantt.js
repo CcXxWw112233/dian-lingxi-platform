@@ -12,7 +12,10 @@ import {
 } from '../../../../services/technological/workbench'
 import { isApiResponseOk } from '../../../../utils/handleResponseData'
 import { message } from 'antd'
-import { MESSAGE_DURATION_TIME } from '../../../../globalset/js/constant'
+import {
+  BOOLEAN_TRUE_CODE,
+  MESSAGE_DURATION_TIME
+} from '../../../../globalset/js/constant'
 import { routerRedux } from 'dva/router'
 import queryString from 'query-string'
 import { getDateInfo } from '../../../../routes/Technological/components/Gantt/getDate'
@@ -159,11 +162,11 @@ export default {
       selected_hide_term: false, // 表示是否选择隐藏项 true 表示是
       isDisplayContentIds: [], // 表示已经隐藏的content_ids
       outline_tree_filter_type: {
-        //大纲过滤掉的选项
-        is_due: false,
-        is_alarm: false,
-        is_doing: false,
-        is_realize: false
+        //大纲过滤掉的选项, 1代表显示 0 代表隐藏
+        is_show_due: BOOLEAN_TRUE_CODE,
+        is_show_warning: BOOLEAN_TRUE_CODE,
+        is_show_doing: BOOLEAN_TRUE_CODE,
+        is_show_realize: BOOLEAN_TRUE_CODE
       },
       outline_tree_original: [], // 大纲视图显示隐藏快照 数据源
       card_name_outside: false, //任务名称是否外置

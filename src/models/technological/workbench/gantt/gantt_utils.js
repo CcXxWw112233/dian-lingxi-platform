@@ -15,6 +15,10 @@ import {
   hours_view_due_work_oclock
 } from '../../../../routes/Technological/components/Gantt/constants'
 import { getDateInfo } from '../../../../routes/Technological/components/Gantt/getDate'
+import {
+  BOOLEAN_FALSE_CODE,
+  BOOLEAN_TRUE_CODE
+} from '../../../../globalset/js/constant'
 // 获取一级里程碑包含的高度
 function getLeafCountTree(data = {}) {
   if (!data.children) return 1
@@ -87,11 +91,17 @@ function getMilestoneLeafWithCompleteCardsTimesPercentage(node) {
 
 // 过滤大纲的隐藏项
 const filterOutlineData = ({ outline_tree_filter_type = {}, arr }) => {
-  const { is_due, is_alarm, is_doing, is_realize } = outline_tree_filter_type
+  const {
+    is_show_due = BOOLEAN_TRUE_CODE,
+    is_show_warning = BOOLEAN_TRUE_CODE,
+    is_show_doing = BOOLEAN_TRUE_CODE,
+    is_show_realize = BOOLEAN_TRUE_CODE
+  } = outline_tree_filter_type
   arr = arr.filter(item => {
     if (item.tree_type == '1') return true
     let flag = true
-    if (is_due) {
+    //过滤逾期
+    if (is_show_due == BOOLEAN_FALSE_CODE) {
       if (
         item.due_time &&
         item.due_time < new Date().getTime() &&
@@ -100,20 +110,26 @@ const filterOutlineData = ({ outline_tree_filter_type = {}, arr }) => {
         flag = false
       }
     }
-    if (is_alarm && item.is_alarm) {
+    //过滤预警
+    if (
+      is_show_warning == BOOLEAN_FALSE_CODE &&
+      item.time_warning &&
+      item.time_warning != BOOLEAN_FALSE_CODE
+    ) {
       flag = false
     }
-    if (is_realize) {
-      if (item.is_realize == '1') {
+    //过滤完成
+    if (is_show_realize == BOOLEAN_FALSE_CODE) {
+      if (item.is_realize == BOOLEAN_TRUE_CODE) {
         flag = false
       }
     }
-    if (is_doing) {
-      //正常进行，是非正常情况的非
+    //正常进行，是非正常情况的非
+    if (is_show_doing == BOOLEAN_FALSE_CODE) {
       if (
-        (item.due_time ? item.due_time > new Date().getTime() : true) &&
-        !item.is_alarm &&
-        item.is_realize == '0'
+        (item.due_time ? item.due_time > new Date().getTime() : true) && //未逾期
+        (!item.time_warning || item.time_warning == BOOLEAN_FALSE_CODE) && //未预警
+        item.is_realize == BOOLEAN_FALSE_CODE //未完成
       ) {
         flag = false
       }

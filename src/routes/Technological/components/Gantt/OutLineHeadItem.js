@@ -60,7 +60,12 @@ import {
 import SaveBoardTemplate from './components/Modal/SaveBoardTemplate'
 import { task_item_margin_top } from './constants'
 import { currentNounPlanFilterName } from '../../../../utils/businessFunction'
-import { PROJECTS, TASKS } from '../../../../globalset/js/constant'
+import {
+  BOOLEAN_FALSE_CODE,
+  BOOLEAN_TRUE_CODE,
+  PROJECTS,
+  TASKS
+} from '../../../../globalset/js/constant'
 import { closeFeature } from '../../../../utils/temporary'
 import { onChangeCardHandleCardDetail } from './ganttBusiness'
 import { rebackCreateNotify } from '../../../../components/NotificationTodos'
@@ -69,9 +74,9 @@ import jsPDF from 'jspdf'
 import { LoadingOutlined } from '@ant-design/icons'
 import {
   getGanttOutlineHideTrem,
-  getOutlineFilterType,
+  getGanttUserCustorm,
   saveGanttOutlineNonDisplay,
-  setOutlineFilterType
+  setGanttUserCustorm
 } from '../../../../services/technological/gantt'
 import { getTreeNodeValue } from '../../../../models/technological/workbench/gantt/gantt_utils'
 import ExportExcelModal from './components/exportExcelModal'
@@ -1564,8 +1569,44 @@ export default class OutLineHeadItem extends Component {
   }
 
   // 点击显示全部
-  handleShowHideTerm = () => {
-    const { gantt_board_id } = this.props
+  handleShowHideTerm = async () => {
+    const { gantt_board_id, dispatch } = this.props
+    const [res1, res2] = await Promise.all([
+      saveGanttOutlineNonDisplay({
+        board_id: gantt_board_id,
+        content_ids: []
+      }),
+      setGanttUserCustorm({
+        board_id: gantt_board_id,
+        is_show_due: BOOLEAN_TRUE_CODE,
+        is_show_warning: BOOLEAN_TRUE_CODE,
+        is_show_doing: BOOLEAN_TRUE_CODE,
+        is_show_realize: BOOLEAN_TRUE_CODE
+      })
+    ])
+    if (isApiResponseOk(res1) && isApiResponseOk(res2)) {
+      message.success('保存成功')
+      dispatch({
+        type: 'gantt/getGanttData',
+        payload: {}
+      })
+      dispatch({
+        type: 'gantt/updateDatas',
+        payload: {
+          isDisplayContentIds: [],
+          outline_tree_filter_type: {
+            //大纲过滤掉的选项
+            is_show_due: BOOLEAN_TRUE_CODE,
+            is_show_warning: BOOLEAN_TRUE_CODE,
+            is_show_doing: BOOLEAN_TRUE_CODE,
+            is_show_realize: BOOLEAN_TRUE_CODE
+          }
+        }
+      })
+    } else {
+      message.error('保存失败')
+    }
+    return
     saveGanttOutlineNonDisplay({
       board_id: gantt_board_id,
       content_ids: []
@@ -1583,10 +1624,10 @@ export default class OutLineHeadItem extends Component {
             isDisplayContentIds: [],
             outline_tree_filter_type: {
               //大纲过滤掉的选项
-              is_due: false,
-              is_alarm: false,
-              is_doing: false,
-              is_realize: false
+              is_show_due: BOOLEAN_TRUE_CODE,
+              is_show_warning: BOOLEAN_TRUE_CODE,
+              is_show_doing: BOOLEAN_TRUE_CODE,
+              is_show_realize: BOOLEAN_TRUE_CODE
             }
           }
         })
@@ -1714,9 +1755,17 @@ export default class OutLineHeadItem extends Component {
   // 设置隐藏
   setOutlineTreeFilterType = async (code, e) => {
     e.stopPropagation()
-    const { outline_tree_filter_type = {}, dispatch, outline_tree } = this.props
-    const res = await setOutlineFilterType()
-    if (outline_tree_filter_type[code]) return
+    const {
+      outline_tree_filter_type = {},
+      dispatch,
+      outline_tree,
+      gantt_board_id
+    } = this.props
+    if (outline_tree_filter_type[code] == BOOLEAN_FALSE_CODE) return
+    const res = await setGanttUserCustorm({
+      board_id: gantt_board_id,
+      [code]: BOOLEAN_FALSE_CODE
+    })
     if (isApiResponseOk(res) || true) {
       message.success('隐藏成功')
       dispatch({
@@ -1724,7 +1773,7 @@ export default class OutLineHeadItem extends Component {
         payload: {
           outline_tree_filter_type: {
             ...outline_tree_filter_type,
-            [code]: true
+            [code]: BOOLEAN_FALSE_CODE
           }
         }
       })
@@ -1740,17 +1789,20 @@ export default class OutLineHeadItem extends Component {
   }
   getOutlineTreeFilterType = async () => {
     const { gantt_board_id } = this.props
-    const res = await getOutlineFilterType({ board_id: gantt_board_id })
+    const res = await getGanttUserCustorm({ board_id: gantt_board_id })
     const { dispatch } = this.props
     if (isApiResponseOk(res)) {
+      const {
+        data: { is_show_doing, is_show_due, is_show_realize, is_show_warning }
+      } = res
       dispatch({
         type: 'gantt/updateDatas',
         payload: {
           outline_tree_filter_type: {
-            is_due: false,
-            is_alarm: false,
-            is_doing: false,
-            is_realize: false
+            is_show_due: is_show_due || BOOLEAN_TRUE_CODE,
+            is_show_warning: is_show_warning || BOOLEAN_TRUE_CODE,
+            is_show_doing: is_show_doing || BOOLEAN_TRUE_CODE,
+            is_show_realize: is_show_realize || BOOLEAN_TRUE_CODE
           }
         }
       })
@@ -1761,7 +1813,7 @@ export default class OutLineHeadItem extends Component {
     const { outline_tree_filter_type = {} } = this.props
     let flag = false
     for (let key in outline_tree_filter_type) {
-      if (outline_tree_filter_type[key]) {
+      if (outline_tree_filter_type[key] == BOOLEAN_FALSE_CODE) {
         flag = true
         break
       }
@@ -1770,7 +1822,8 @@ export default class OutLineHeadItem extends Component {
   }
   setFilterTypeStyle = code => {
     const { outline_tree_filter_type } = this.props
-    if (outline_tree_filter_type[code]) return 'rgba(0,0,0,0.35)'
+    if (outline_tree_filter_type[code] == BOOLEAN_FALSE_CODE)
+      return 'rgba(0,0,0,0.35)'
     return '#75A4FF'
   }
   // -----------隐藏项end
@@ -1800,8 +1853,8 @@ export default class OutLineHeadItem extends Component {
               <div>逾期的任务</div>
               <div
                 className={globalStyles.link_mouse}
-                style={{ color: this.setFilterTypeStyle('is_due') }}
-                onClick={e => this.setOutlineTreeFilterType('is_due', e)}
+                style={{ color: this.setFilterTypeStyle('is_show_due') }}
+                onClick={e => this.setOutlineTreeFilterType('is_show_due', e)}
               >
                 隐藏
               </div>
@@ -1812,8 +1865,10 @@ export default class OutLineHeadItem extends Component {
               <div>预警的任务</div>
               <div
                 className={globalStyles.link_mouse}
-                style={{ color: this.setFilterTypeStyle('is_alarm') }}
-                onClick={e => this.setOutlineTreeFilterType('is_alarm', e)}
+                style={{ color: this.setFilterTypeStyle('is_show_warning') }}
+                onClick={e =>
+                  this.setOutlineTreeFilterType('is_show_warning', e)
+                }
               >
                 隐藏
               </div>
@@ -1824,8 +1879,8 @@ export default class OutLineHeadItem extends Component {
               <div>正在进行的任务</div>
               <div
                 className={globalStyles.link_mouse}
-                style={{ color: this.setFilterTypeStyle('is_doing') }}
-                onClick={e => this.setOutlineTreeFilterType('is_doing', e)}
+                style={{ color: this.setFilterTypeStyle('is_show_doing') }}
+                onClick={e => this.setOutlineTreeFilterType('is_show_doing', e)}
               >
                 隐藏
               </div>
@@ -1836,8 +1891,10 @@ export default class OutLineHeadItem extends Component {
               <div>已完成的任务</div>
               <div
                 className={globalStyles.link_mouse}
-                style={{ color: this.setFilterTypeStyle('is_realize') }}
-                onClick={e => this.setOutlineTreeFilterType('is_realize', e)}
+                style={{ color: this.setFilterTypeStyle('is_show_realize') }}
+                onClick={e =>
+                  this.setOutlineTreeFilterType('is_show_realize', e)
+                }
               >
                 隐藏
               </div>
@@ -1882,8 +1939,7 @@ export default class OutLineHeadItem extends Component {
       start_date,
       end_date,
       selected_hide_term,
-      isDisplayContentIds = [],
-      outline_tree_filter_type = {}
+      isDisplayContentIds = []
     } = this.props
     // console.log("刷新了数据", outline_tree);
     return (
