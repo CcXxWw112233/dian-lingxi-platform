@@ -42,7 +42,22 @@ export default class index extends Component {
   }
 
   handleConfirm = () => {
-    this.setEarlyWarningVisible()
+    const { selectedValue } = this.state
+    const {
+      drawContent = {},
+      drawContent: { card_id }
+    } = this.props
+    drawContent['early_warning'] = selectedValue
+    this.props.updateDrawContentWithUpdateParentListDatas &&
+      this.props.updateDrawContentWithUpdateParentListDatas({
+        drawContent,
+        name: 'early_warning',
+        value: selectedValue,
+        card_id
+      })
+    setTimeout(() => {
+      this.setEarlyWarningVisible()
+    }, 200)
   }
 
   // 禁用选项
@@ -53,6 +68,14 @@ export default class index extends Component {
       temp_dec = caldiffDays(start_time, due_time)
     }
     return temp_dec
+  }
+
+  // 选择
+  handleSelectedValue = value => {
+    // console.log(value)
+    this.setState({
+      selectedValue: value
+    })
   }
 
   // 渲染预警内容
@@ -70,8 +93,9 @@ export default class index extends Component {
             optionLabelProp="label"
             defaultValue="无预警"
             style={{ width: '180px', letterSpacing: '1px' }}
+            onChange={this.handleSelectedValue}
           >
-            <Select.Option label="无预警" value="none">
+            <Select.Option label="无预警" value="0">
               无预警
             </Select.Option>
             {optionsList.map(item => {

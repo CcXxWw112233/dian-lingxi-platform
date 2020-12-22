@@ -44,7 +44,7 @@ import {
   TASKS,
   REQUEST_DOMAIN_BOARD
 } from '../../../../../../../globalset/js/constant'
-import { caldiffDays } from '../../../../../../../utils/util'
+import { caldiffDays, isOverdueTime } from '../../../../../../../utils/util'
 
 @connect(mapStateToProps)
 export default class MainContent extends Component {
@@ -1232,7 +1232,14 @@ export default class MainContent extends Component {
                         />
                       </span>
                     )}
-                    {!!start_time && !!due_time && <EarlyWarning />}
+                    {/* 表示只有开始和截止时间存在并且在今天之后 */}
+                    {!!start_time && !!due_time && !isOverdueTime(due_time) && (
+                      <EarlyWarning
+                        updateDrawContentWithUpdateParentListDatas={
+                          this.updateDrawContentWithUpdateParentListDatas
+                        }
+                      />
+                    )}
                   </div>
                 </div>
               </div>
