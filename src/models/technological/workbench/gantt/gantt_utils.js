@@ -95,7 +95,8 @@ const filterOutlineData = ({ outline_tree_filter_type = {}, arr }) => {
     is_show_due = BOOLEAN_TRUE_CODE,
     is_show_warning = BOOLEAN_TRUE_CODE,
     is_show_doing = BOOLEAN_TRUE_CODE,
-    is_show_realize = BOOLEAN_TRUE_CODE
+    is_show_realize = BOOLEAN_TRUE_CODE,
+    is_show_not_start = BOOLEAN_TRUE_CODE
   } = outline_tree_filter_type
   arr = arr.filter(item => {
     if (item.tree_type == '1') return true
@@ -121,6 +122,15 @@ const filterOutlineData = ({ outline_tree_filter_type = {}, arr }) => {
     //过滤完成
     if (is_show_realize == BOOLEAN_FALSE_CODE) {
       if (item.is_realize == BOOLEAN_TRUE_CODE) {
+        flag = false
+      }
+    }
+    // 未开始和未排期
+    if (is_show_not_start == BOOLEAN_FALSE_CODE) {
+      if (
+        item.start_time > new Date().getTime() ||
+        (!item.start_time && !item.due_time)
+      ) {
         flag = false
       }
     }

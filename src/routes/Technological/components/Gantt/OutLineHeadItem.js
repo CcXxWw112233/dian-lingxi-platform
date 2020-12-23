@@ -1570,7 +1570,8 @@ export default class OutLineHeadItem extends Component {
         is_show_due: BOOLEAN_TRUE_CODE,
         is_show_warning: BOOLEAN_TRUE_CODE,
         is_show_doing: BOOLEAN_TRUE_CODE,
-        is_show_realize: BOOLEAN_TRUE_CODE
+        is_show_realize: BOOLEAN_TRUE_CODE,
+        is_show_not_start: BOOLEAN_TRUE_CODE
       })
     ])
     if (isApiResponseOk(res1) && isApiResponseOk(res2)) {
@@ -1588,7 +1589,8 @@ export default class OutLineHeadItem extends Component {
             is_show_due: BOOLEAN_TRUE_CODE,
             is_show_warning: BOOLEAN_TRUE_CODE,
             is_show_doing: BOOLEAN_TRUE_CODE,
-            is_show_realize: BOOLEAN_TRUE_CODE
+            is_show_realize: BOOLEAN_TRUE_CODE,
+            is_show_not_start: BOOLEAN_TRUE_CODE
           }
         }
       })
@@ -1782,7 +1784,13 @@ export default class OutLineHeadItem extends Component {
     const { dispatch } = this.props
     if (isApiResponseOk(res)) {
       const {
-        data: { is_show_doing, is_show_due, is_show_realize, is_show_warning }
+        data: {
+          is_show_doing,
+          is_show_due,
+          is_show_realize,
+          is_show_warning,
+          is_show_not_start
+        }
       } = res
       dispatch({
         type: 'gantt/updateDatas',
@@ -1791,7 +1799,8 @@ export default class OutLineHeadItem extends Component {
             is_show_due: is_show_due || BOOLEAN_TRUE_CODE,
             is_show_warning: is_show_warning || BOOLEAN_TRUE_CODE,
             is_show_doing: is_show_doing || BOOLEAN_TRUE_CODE,
-            is_show_realize: is_show_realize || BOOLEAN_TRUE_CODE
+            is_show_realize: is_show_realize || BOOLEAN_TRUE_CODE,
+            is_show_not_start: is_show_not_start || BOOLEAN_TRUE_CODE
           }
         }
       })
@@ -1870,6 +1879,20 @@ export default class OutLineHeadItem extends Component {
                 className={globalStyles.link_mouse}
                 style={{ color: this.setFilterTypeStyle('is_show_doing') }}
                 onClick={e => this.setOutlineTreeFilterType('is_show_doing', e)}
+              >
+                隐藏
+              </div>
+            </div>
+          </Menu.Item>
+          <Menu.Item>
+            <div className={styles.hide_sub_menu}>
+              <div>未开始的任务</div>
+              <div
+                className={globalStyles.link_mouse}
+                style={{ color: this.setFilterTypeStyle('is_show_not_start') }}
+                onClick={e =>
+                  this.setOutlineTreeFilterType('is_show_not_start', e)
+                }
               >
                 隐藏
               </div>
