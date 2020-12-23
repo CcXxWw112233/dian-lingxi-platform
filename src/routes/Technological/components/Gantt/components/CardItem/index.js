@@ -32,6 +32,7 @@ import HoverEars from './HoverEars'
 import DragCard from './DragCard'
 import GroupChildCards from './GroupChildCards.js'
 import { rebackCreateNotify } from '../../../../../../components/NotificationTodos'
+import { getCardsWarningTimeScope } from '../../../../../../models/technological/workbench/gantt/gantt_utils'
 
 const cx = classNames.bind(indexStyles)
 
@@ -1692,33 +1693,6 @@ export default class CardItem extends Component {
     return { compare_width, status_label }
   }
 
-  // 获取预警时间
-  getCardsWarningTimeScope = ({ time_warning, start_time, due_time }) => {
-    // 23:59:00
-    let ahead_timestamp = time_warning * (24 * 60 * 60 * 1000)
-    let warning_timer = due_time - Number(ahead_timestamp)
-    const today = new Date()
-    const today_timestamp = today.getTime()
-    const today_year = today.getFullYear()
-    const today_month = today.getMonth()
-    const today_day = today.getDate()
-    const today_start_time = new Date(
-      today_year,
-      today_month,
-      today_day,
-      '00',
-      '00',
-      '00'
-    ).getTime()
-    // 在开始和截止范围内 并且 预警时间需要在今天之前 或者等于今天
-    return (
-      (start_time <= warning_timer &&
-        warning_timer <= today_start_time &&
-        warning_timer <= due_time) ||
-      caldiffDays(warning_timer, today_timestamp) == 0
-    )
-  }
-
   render() {
     const {
       itemValue = {},
@@ -1825,7 +1799,7 @@ export default class CardItem extends Component {
       !is_overdue_task &&
       !!time_warning &&
       time_warning != '0'
-    const WARNING_TIME_SCOPE = this.getCardsWarningTimeScope({
+    const WARNING_TIME_SCOPE = getCardsWarningTimeScope({
       time_warning,
       start_time,
       due_time

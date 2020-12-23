@@ -6,7 +6,8 @@ import {
   getDigit,
   transformTimestamp,
   isSamDay,
-  isSamHour
+  isSamHour,
+  caldiffDays
 } from '../../../../utils/util'
 import {
   task_item_height,
@@ -238,6 +239,20 @@ export function recusionItem(
           start_date,
           end_date
         })
+        // 是否显示预警其他条件 存在开始和截止时间 并且设置了预警 并且 是未完成任务 并且是父任务
+        let IS_SHOW_WARNING_OTHER_TERM =
+          !!new_item.time_warning &&
+          new_item.time_warning != '0' &&
+          !!start_time &&
+          !!due_time &&
+          !new_item.parent_card_id &&
+          new_item.is_realize == '0'
+        new_item.is_early_warned =
+          getCardsWarningTimeScope({
+            time_warning: new_item.time_warning,
+            start_time,
+            due_time
+          }) && IS_SHOW_WARNING_OTHER_TERM
       }
     }
     new_item.time_span = time_span
@@ -546,4 +561,40 @@ export function getTreeNodeValue(outline_tree, id) {
   } else {
     return null
   }
+}
+
+/**
+ * 获取预警时间范围
+ * @param {String} time_warning 设置的预警相对天数 0.5|1|2|7
+ * @param {String|Number} start_time 开始时间时间戳
+ * @param {String|Number} due_time 截止时间时间戳
+ */
+export function getCardsWarningTimeScope({
+  time_warning,
+  start_time,
+  due_time
+}) {
+  // 23:59:00
+  let ahead_timestamp = time_warning * (24 * 60 * 60 * 1000)
+  let warning_timestamp = due_time - Number(ahead_timestamp)
+  const today = new Date()
+  const today_timestamp = today.getTime()
+  const today_year = today.getFullYear()
+  const today_month = today.getMonth()
+  const today_day = today.getDate()
+  const today_start_time = new Date(
+    today_year,
+    today_month,
+    today_day,
+    '00',
+    '00',
+    '00'
+  ).getTime()
+  // 在开始和截止范围内 并且 预警时间需要在今天之前 或者等于今天
+  return (
+    (start_time <= warning_timestamp &&
+      warning_timestamp <= today_start_time &&
+      warning_timestamp <= due_time) ||
+    caldiffDays(warning_timestamp, today_timestamp) == 0
+  )
 }
