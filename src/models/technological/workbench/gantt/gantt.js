@@ -166,7 +166,8 @@ export default {
         is_show_due: BOOLEAN_TRUE_CODE,
         is_show_warning: BOOLEAN_TRUE_CODE,
         is_show_doing: BOOLEAN_TRUE_CODE,
-        is_show_realize: BOOLEAN_TRUE_CODE
+        is_show_realize: BOOLEAN_TRUE_CODE,
+        is_show_not_start: BOOLEAN_TRUE_CODE
       },
       outline_tree_original: [], // 大纲视图显示隐藏快照 数据源
       card_name_outside: false, //任务名称是否外置
