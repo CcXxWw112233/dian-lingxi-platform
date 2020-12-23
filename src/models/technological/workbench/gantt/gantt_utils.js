@@ -139,7 +139,9 @@ const filterOutlineData = ({ outline_tree_filter_type = {}, arr }) => {
       if (
         (item.due_time ? item.due_time > new Date().getTime() : true) && //未逾期
         (!item.time_warning || item.time_warning == BOOLEAN_FALSE_CODE) && //未预警
-        item.is_realize == BOOLEAN_FALSE_CODE //未完成
+        item.is_realize == BOOLEAN_FALSE_CODE && //未完成
+        item.start_time <= new Date().getTime() && //开始了
+        (!!item.start_time || !!item.due_time) //排期了
       ) {
         flag = false
       }
