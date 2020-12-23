@@ -297,7 +297,6 @@ export default class GetRowStrip extends PureComponent {
       { isNotLoading: false }
     )
       .then(res => {
-        debugger
         if (isApiResponseOk(res)) {
           if (
             Object.prototype.toString.call(res.data.scope_content) ==

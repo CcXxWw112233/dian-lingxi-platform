@@ -261,11 +261,36 @@ export default class CardItem extends Component {
   }
 
   onMouseEnter = () => {
+    const { itemValue } = this.props
+    const {
+      top,
+      id,
+      board_id,
+      parent_card_id,
+      start_time,
+      end_time,
+      width,
+      left
+    } = itemValue
     //在鼠标hover到任务条上，非创建任务时，将虚线框隐藏
     const { ganttPanelDashedDrag } = this.props
     if (!ganttPanelDashedDrag) {
       this.props.setDasheRectShow && this.props.setDasheRectShow(false)
     }
+    // 鼠标移入 触发显示日期
+    this.props.dispatch({
+      type: 'gantt/updateDatas',
+      payload: {
+        gantt_card_date_no_section: {
+          id,
+          parent_card_id,
+          start_time,
+          end_time,
+          width,
+          left
+        }
+      }
+    })
   }
 
   // 延展左边
@@ -1414,22 +1439,22 @@ export default class CardItem extends Component {
             this.setState(
               {
                 drag_lock: true
-              },
-              () => {
-                this.props.dispatch({
-                  type: 'gantt/updateDatas',
-                  payload: {
-                    gantt_card_date_no_section: {
-                      id,
-                      parent_card_id,
-                      start_time,
-                      end_time,
-                      width,
-                      left
-                    }
-                  }
-                })
               }
+              // () => {
+              //   this.props.dispatch({
+              //     type: 'gantt/updateDatas',
+              //     payload: {
+              //       gantt_card_date_no_section: {
+              //         id,
+              //         parent_card_id,
+              //         start_time,
+              //         end_time,
+              //         width,
+              //         left
+              //       }
+              //     }
+              //   })
+              // }
             )
           }, 200)
           return
@@ -1507,21 +1532,28 @@ export default class CardItem extends Component {
       onMouseLeave: () => {
         // console.log('s_event', 'onMouseLeave')
         this.set_drag_else_over_in(false)
+        // 清除显示日期选中
+        this.props.dispatch({
+          type: 'gantt/updateDatas',
+          payload: {
+            gantt_card_date_no_section: {}
+          }
+        })
       },
       onBlur: () => {
         this.props.setTaskIsDragging && this.props.setTaskIsDragging(false) //当拖动时，有可能会捕获到创建任务的动作，阻断
         this.setState(
           {
             drag_lock: false
-          },
-          () => {
-            this.props.dispatch({
-              type: 'gantt/updateDatas',
-              payload: {
-                gantt_card_date_no_section: {}
-              }
-            })
           }
+          // () => {
+          //   this.props.dispatch({
+          //     type: 'gantt/updateDatas',
+          //     payload: {
+          //       gantt_card_date_no_section: {}
+          //     }
+          //   })
+          // }
         )
       }
     }
@@ -1671,8 +1703,11 @@ export default class CardItem extends Component {
       '00',
       '00'
     ).getTime()
+    // 在开始和截止范围内 并且 预警时间需要在今天之前 或者等于今天
     return (
-      (warning_timer <= today_start_time && warning_timer <= due_time) ||
+      (start_time <= warning_timer &&
+        warning_timer <= today_start_time &&
+        warning_timer <= due_time) ||
       caldiffDays(warning_timer, today_timestamp) == 0
     )
   }
