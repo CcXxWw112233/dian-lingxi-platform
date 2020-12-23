@@ -37,7 +37,6 @@ const Option = Select.Option
 
 // 定义组件中需要的默认状态值
 let remind_time_value = '5' // 设置的提醒时间
-let stepIndex = 0
 
 @connect(
   ({
@@ -79,6 +78,7 @@ class VideoMeetingPopoverContent extends Component {
       remindDropdownVisible: false,
       emitMeettingStatus: false //是否发送会议
     }
+    this.stepIndex = 0 // 定义步数
   }
 
   // 初始化数据
@@ -100,7 +100,7 @@ class VideoMeetingPopoverContent extends Component {
       providerDefault: null,
       isShowNowTime: true // 表示是否跟随时钟变化
     })
-    stepIndex = 0
+    this.stepIndex = 0
     clearTimeout(this.timer)
     clearTimeout(this.local_timer)
   }
@@ -786,19 +786,20 @@ class VideoMeetingPopoverContent extends Component {
     let currentElem = document.getElementById('video_provider')
     if (!currentElem) return
     // currentElem.innerHTML = currentElem.innerHTML + currentElem.innerHTML;//将轮播内容复制一份
-
     if (type == 'right') {
-      if (stepIndex + 4 == videoConferenceProviderList.length) {
+      if (this.stepIndex + 3 == videoConferenceProviderList.length) {
         return
       }
-      stepIndex++
-      currentElem.style.left = -stepIndex * 93 + 'px'
+      this.stepIndex++
+      currentElem.style.left = -this.stepIndex * 93 + 'px'
     } else if (type == 'left') {
-      if (stepIndex == 0) {
+      this.stepIndex--
+      if (this.stepIndex == 0) {
+        currentElem.style.left = 0 + 'px'
         return
       }
-      stepIndex--
-      currentElem.style.left = stepIndex * 93 + 'px'
+      currentElem.style.left =
+        currentElem.offsetLeft + this.stepIndex * 93 + 'px'
     }
   }
 
@@ -1109,7 +1110,7 @@ class VideoMeetingPopoverContent extends Component {
             >
               {videoConferenceProviderList &&
                 videoConferenceProviderList.length > 4 &&
-                stepIndex > 0 && (
+                this.stepIndex > 0 && (
                   <div
                     onClick={() => {
                       this.handleVideoArrow('left')
@@ -1179,7 +1180,7 @@ class VideoMeetingPopoverContent extends Component {
               </div>
               {videoConferenceProviderList &&
                 videoConferenceProviderList.length > 4 &&
-                stepIndex + 4 < videoConferenceProviderList.length && (
+                this.stepIndex + 3 < videoConferenceProviderList.length && (
                   <div
                     onClick={() => {
                       this.handleVideoArrow('right')

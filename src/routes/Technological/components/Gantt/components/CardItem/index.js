@@ -1703,8 +1703,11 @@ export default class CardItem extends Component {
       '00',
       '00'
     ).getTime()
+    // 在开始和截止范围内 并且 预警时间需要在今天之前 或者等于今天
     return (
-      (warning_timer <= today_start_time && warning_timer <= due_time) ||
+      (start_time <= warning_timer &&
+        warning_timer <= today_start_time &&
+        warning_timer <= due_time) ||
       caldiffDays(warning_timer, today_timestamp) == 0
     )
   }
