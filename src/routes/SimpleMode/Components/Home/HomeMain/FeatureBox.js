@@ -14,6 +14,7 @@ import {
 import { currentNounPlanFilterName } from '../../../../../utils/businessFunction'
 import {
   clickDelay,
+  clickDelayTrigger,
   platformNouns
 } from '../../../../../globalset/clientCustorm'
 class FeatureBox extends Component {
@@ -139,14 +140,14 @@ class FeatureBox extends Component {
     )
 
     if (code !== 'regulations') {
-      setTimeout(() => {
+      clickDelayTrigger(
         dispatch({
           type: 'simplemode/routingJump',
           payload: {
             route: '/technological/simplemode/workbench'
           }
         })
-      }, clickDelay)
+      )
     }
   }
 
