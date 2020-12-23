@@ -1,28 +1,20 @@
 import React, { Component } from 'react'
 import indexStyles from './index.less'
+import classNames from 'classnames/bind'
 import { connect } from 'dva'
 import AvatarList from '@/components/avatarList'
 import globalStyles from '@/globalset/css/globalClassName.less'
-import CheckItem from '@/components/CheckItem'
 import {
   task_item_height,
   task_item_margin_top,
-  date_area_height,
   ganttIsOutlineView,
-  ceil_width,
   ganttIsSingleBoardGroupView
 } from '../../constants'
-import {
-  updateTaskVTwo,
-  changeTaskType,
-  revokeCardDo
-} from '../../../../../../services/technological/task'
+import { updateTaskVTwo } from '../../../../../../services/technological/task'
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
-import { message, Dropdown, Popover, Tooltip, notification, Button } from 'antd'
-import CardDropDetail from '../../components/gattFaceCardItem/CardDropDetail'
+import { message, Dropdown, Tooltip } from 'antd'
 import {
   filterDueTimeSpan,
-  cardIsHasUnRead,
   cardItemIsHasUnRead,
   setDateWithPositionInYearView,
   setDateWidthPositionWeekView,
@@ -33,16 +25,15 @@ import {
   transformTimestamp,
   isSamDay,
   isSamHour,
-  caldiffDays
+  caldiffDays,
+  isOverdueTime
 } from '../../../../../../utils/util'
 import HoverEars from './HoverEars'
 import DragCard from './DragCard'
 import GroupChildCards from './GroupChildCards.js'
-import {
-  EnequeueNotifyTodos,
-  handleReBackNotiParams,
-  rebackCreateNotify
-} from '../../../../../../components/NotificationTodos'
+import { rebackCreateNotify } from '../../../../../../components/NotificationTodos'
+
+const cx = classNames.bind(indexStyles)
 
 // 参考自http://www.jq22.com/webqd1348
 
@@ -109,7 +100,12 @@ export default class CardItem extends Component {
   }
 
   // 标签的颜色
-  setLableColor = (label_data, is_realize, active_compare_height) => {
+  setLableColor = ({
+    label_data,
+    is_realize,
+    active_compare_height,
+    is_show_warning_time: early_warning
+  }) => {
     let bgColor = ''
     let b = ''
     if (label_data && label_data.length) {
@@ -128,12 +124,21 @@ export default class CardItem extends Component {
 
       b = `linear-gradient(to right${bgColor})`
     } else {
-      b =
-        is_realize == '1'
-          ? active_compare_height
-            ? '#5BB48F'
-            : '#CDD1DF'
-          : '#B3D0FF' //'rgb(212, 216, 228)' : '#cbddf7'
+      if (is_realize == '1') {
+        if (active_compare_height) {
+          b = '#5BB48F'
+        } else {
+          b = '#CDD1DF'
+        }
+      } else {
+        b = early_warning ? '#FFA000' : '#B3D0FF'
+      }
+      // b =
+      //   is_realize == '1'
+      //     ? active_compare_height
+      //       ? '#5BB48F'
+      //       : '#CDD1DF'
+      //     : '#B3D0FF' //'rgb(212, 216, 228)' : '#cbddf7'
     }
     return b
   }
@@ -1269,42 +1274,91 @@ export default class CardItem extends Component {
     }
   }
 
-  // 获取大纲视图父任务的截止和开始位置的三角形边框颜色
-  setTriangleTreeColor = (
+  /**
+   * 获取大纲视图父任务的截止和开始位置的三角形边框颜色
+   * @param {Array} label_data 标签列表
+   * @param {String} index start|end 表示是左角标还是右角标
+   * @param {Boolean} is_realize 是否完成
+   * @param {Boolean} is_show_progress_percent 是否是在有进度的情况下
+   * @param {String} status_label 表示逾期状态
+   */
+  setTriangleTreeColor = ({
     label_data = [],
     index,
     is_realize,
     is_show_progress_percent,
-    status_label
-  ) => {
+    status_label,
+    is_show_warning_time
+  }) => {
     let label_color = '#B3D0FF'
     const length = label_data.length
     if (length == 0) {
-      label_color =
-        is_realize == '1'
-          ? status_label == 'ahead_time_middle' && index == 'end'
-            ? 'rgb(91, 180, 143)'
-            : 'rgb(212, 216, 228)'
-          : is_show_progress_percent
-          ? '#5A86F5'
-          : '#B3D0FF'
+      if (is_realize == '1') {
+        if (status_label == 'ahead_time_middle' && index == 'end') {
+          label_color = 'rgb(91, 180, 143)'
+        } else {
+          label_color = 'rgb(205, 209, 223)'
+        }
+      } else {
+        if (is_show_progress_percent) {
+          label_color = '#5A86F5'
+        } else if (is_show_warning_time) {
+          label_color = '#FFA000'
+        } else {
+          label_color = '#B3D0FF'
+        }
+      }
+      // label_color =
+      //   is_realize == '1'
+      //     ? status_label == 'ahead_time_middle' && index == 'end'
+      //       ? 'rgb(91, 180, 143)'
+      //       : 'rgb(212, 216, 228)'
+      //     : is_show_progress_percent
+      //     ? '#5A86F5'
+      //     : '#B3D0FF'
     } else {
       if (index == 'start') {
-        label_color = label_data[0]
-          ? `rgb(${label_data[0].label_color})`
-          : is_realize == '1'
-          ? 'rgb(212, 216, 228)'
-          : is_show_progress_percent
-          ? '#5A86F5'
-          : '#B3D0FF'
+        if (label_data[0]) {
+          label_color = `rgb(${label_data[0].label_color})`
+        } else {
+          if (is_realize == '1') {
+            label_color = 'rgb(212, 216, 228)'
+          } else {
+            if (is_show_progress_percent) {
+              label_color = '#5A86F5'
+            } else {
+              label_color = '#B3D0FF'
+            }
+          }
+        }
+        // label_color = label_data[0]
+        //   ? `rgb(${label_data[0].label_color})`
+        //   : is_realize == '1'
+        //   ? 'rgb(212, 216, 228)'
+        //   : is_show_progress_percent
+        //   ? '#5A86F5'
+        //   : '#B3D0FF'
       } else if (index == 'end') {
-        label_color = label_data[length - 1]
-          ? `rgb(${label_data[length - 1].label_color})`
-          : is_realize == '1'
-          ? 'rgb(212, 216, 228)'
-          : is_show_progress_percent
-          ? '#5A86F5'
-          : '#B3D0FF'
+        if (label_data[length - 1]) {
+          label_color = `rgb(${label_data[length - 1].label_color})`
+        } else {
+          if (is_realize == '1') {
+            label_color = 'rgb(212, 216, 228)'
+          } else {
+            if (is_show_progress_percent) {
+              label_color = '#5A86F5'
+            } else {
+              label_color = '#B3D0FF'
+            }
+          }
+        }
+        // label_color = label_data[length - 1]
+        //   ? `rgb(${label_data[length - 1].label_color})`
+        //   : is_realize == '1'
+        //   ? 'rgb(212, 216, 228)'
+        //   : is_show_progress_percent
+        //   ? '#5A86F5'
+        //   : '#B3D0FF'
       }
     }
     return label_color
@@ -1599,6 +1653,30 @@ export default class CardItem extends Component {
     return { compare_width, status_label }
   }
 
+  // 获取预警时间
+  getCardsWarningTime = ({ time_warning, start_time, due_time }) => {
+    // 23:59:00
+    let ahead_timestamp = time_warning * (24 * 60 * 60 * 1000)
+    let warning_timer = due_time - Number(ahead_timestamp)
+    const today = new Date()
+    const today_timestamp = today.getTime()
+    const today_year = today.getFullYear()
+    const today_month = today.getMonth()
+    const today_day = today.getDate()
+    const today_start_time = new Date(
+      today_year,
+      today_month,
+      today_day,
+      '00',
+      '00',
+      '00'
+    ).getTime()
+    return (
+      (warning_timer <= today_start_time && warning_timer <= due_time) ||
+      caldiffDays(warning_timer, today_timestamp) == 0
+    )
+  }
+
   render() {
     const {
       itemValue = {},
@@ -1606,7 +1684,8 @@ export default class CardItem extends Component {
       gantt_view_mode,
       group_view_type,
       gantt_board_id,
-      card_name_outside
+      card_name_outside,
+      ceilWidth
     } = this.props
     const {
       left,
@@ -1629,7 +1708,8 @@ export default class CardItem extends Component {
       time_span,
       child_card_status = {},
       progress_percent,
-      tree_type
+      tree_type,
+      time_warning
     } = itemValue
     const {
       has_child,
@@ -1677,6 +1757,59 @@ export default class CardItem extends Component {
       is_show_compare_real_plan_timer &&
       status_label == 'ahead_time_middle' &&
       !label_data.length
+    // 定义预警位置
+    const early_warning_position =
+      gantt_view_mode == 'hours'
+        ? time_warning * 9 * ceilWidth
+        : time_warning * ceilWidth
+    // 选择的预警日期
+    let ahead_timestamp = time_warning * (24 * 60 * 60 * 1000)
+    let warning_timer_day = new Date(
+      due_time - Number(ahead_timestamp)
+    ).getDate()
+    warning_timer_day =
+      warning_timer_day >= 10 ? warning_timer_day : '0' + warning_timer_day
+    // 判断是否是今天之前
+    const is_overdue_task = isOverdueTime(due_time)
+    // 显示预警
+    const is_show_warning_time =
+      ganttIsOutlineView({ group_view_type }) &&
+      !parent_card_id &&
+      is_realize == '0' &&
+      is_has_end_time &&
+      is_has_start_time &&
+      start_time != due_time &&
+      !is_overdue_task &&
+      !!time_warning &&
+      time_warning != '0' &&
+      this.getCardsWarningTime({ time_warning, start_time, due_time })
+    // 定义左边触角样式
+    const card_left_triangle = cx({
+      left_triangle: true,
+      // 进度
+      lr_triangle_pro_color: is_show_progress_percent,
+      // 完成
+      lr_triangle_com_color: is_show_compare_real_plan_timer,
+      // 预警
+      lr_triangle_warn_color: !is_show_progress_percent && is_show_warning_time
+    })
+    // 定义右边触角
+    const card_right_triangle = cx({
+      right_triangle: true,
+      // 进度
+      lr_triangle_pro_color:
+        is_show_progress_percent && Number(percent_card_non) >= 100,
+      // 完成占比
+      lr_triangle_com_color: is_show_compare_real_plan_timer,
+      // 提前完成 右边触角是绿的
+      right_triangle_com_color:
+        is_show_compare_real_plan_timer && status_label == 'ahead_time_middle',
+      // 预警
+      lr_triangle_warn_color:
+        !(is_show_progress_percent && Number(percent_card_non) >= 100) &&
+        is_show_warning_time
+    })
+
     return (
       <div
         className={`${'gantt_card_flag_special'} ${
@@ -1760,7 +1893,7 @@ export default class CardItem extends Component {
             indexStyles.specific_example_no_start_time} ${!is_has_end_time &&
             indexStyles.specific_example_no_due_time}`}
           data-targetclassname="specific_example"
-          id={id} //大纲视图需要获取该id作为父级id来实现子任务拖拽影响父任务位置
+          // id={id} //大纲视图需要获取该id作为父级id来实现子任务拖拽影响父任务位置
           // data-rely_top={id}
           title={name}
           style={{
@@ -1768,15 +1901,14 @@ export default class CardItem extends Component {
             left: 0,
             top: 0,
             zIndex: 2,
-            width:
-              (local_width || 6) -
-              (gantt_view_mode == 'year' ? 0 : card_width_diff),
+            width: '100%',
             height: height || task_item_height,
-            background: this.setLableColor(
+            background: this.setLableColor({
               label_data,
               is_realize,
-              active_compare_height
-            ),
+              active_compare_height,
+              is_show_warning_time
+            }),
             boxShadow: 'none'
           }}
         >
@@ -1795,6 +1927,8 @@ export default class CardItem extends Component {
                   ? status_label == 'ahead_time_middle'
                     ? '#5BB48F' //'rgb(175,241,213)'
                     : '#CDD1DF' //'rgb(212,216,228)'
+                  : is_show_warning_time
+                  ? '#FFA000'
                   : '#B3D0FF',
               padding:
                 gantt_view_mode != 'month' && time_span < 6 ? '0' : '0 8px',
@@ -1957,7 +2091,6 @@ export default class CardItem extends Component {
               {name}
             </div>
           )}
-
         <Dropdown
           trigger={['click']}
           getPopupContainer={() => document.getElementById(id)}
@@ -1990,20 +2123,15 @@ export default class CardItem extends Component {
             <>
               {/* 因为完成后 去除了任务条的阴影 所以变小了 那么触角位置需要调整 */}
               <div
-                className={`${
-                  indexStyles.left_triangle
-                } ${is_show_progress_percent &&
-                  indexStyles.lr_triangle_pro_color}
-                  ${is_show_compare_real_plan_timer &&
-                    indexStyles.lr_triangle_com_color}
-                  `}
+                className={card_left_triangle}
                 style={{
-                  borderColor: `${this.setTriangleTreeColor(
+                  borderColor: `${this.setTriangleTreeColor({
                     label_data,
-                    'start',
+                    index: 'start',
                     is_realize,
-                    is_show_progress_percent
-                  )} transparent transparent transparent`
+                    is_show_progress_percent,
+                    is_show_warning_time
+                  })} transparent transparent transparent`
                 }}
               ></div>
               {/* 一点点弧度覆盖 */}
@@ -2013,6 +2141,8 @@ export default class CardItem extends Component {
                     is_realize == '0'
                       ? is_show_progress_percent
                         ? '#5a86f5'
+                        : is_show_warning_time
+                        ? '#FFA000'
                         : '#B3D0FF'
                       : 'rgb(205, 209, 223)'
                 }}
@@ -2024,6 +2154,8 @@ export default class CardItem extends Component {
                     is_realize == '0'
                       ? is_show_progress_percent
                         ? '#5a86f5'
+                        : is_show_warning_time
+                        ? '#FFA000'
                         : '#B3D0FF'
                       : 'rgb(205, 209, 223)'
                 }}
@@ -2036,32 +2168,29 @@ export default class CardItem extends Component {
                   backgroundColor:
                     is_show_progress_percent && !label_data.length
                       ? '#5A86F5'
-                      : this.setTriangleTreeColor(
+                      : this.setTriangleTreeColor({
                           label_data,
-                          'start',
+                          index: 'start',
                           is_realize,
-                          is_show_progress_percent
-                        )
+                          is_show_progress_percent,
+                          is_show_warning_time
+                        })
                 }}
               ></div>
 
               <div
-                className={`${
-                  indexStyles.right_triangle
-                } ${is_show_progress_percent &&
-                  Number(percent_card_non) >= 100 &&
-                  indexStyles.lr_triangle_pro_color} ${is_show_compare_real_plan_timer &&
-                  indexStyles.lr_triangle_com_color} ${is_show_compare_real_plan_timer &&
-                  status_label == 'ahead_time_middle' &&
-                  indexStyles.right_triangle_com_color}`}
+                className={card_right_triangle}
                 style={{
-                  borderColor: `${this.setTriangleTreeColor(
+                  borderColor: `${this.setTriangleTreeColor({
                     label_data,
-                    'end',
+                    index: 'end',
                     is_realize,
-                    is_show_progress_percent && Number(percent_card_non) >= 100,
-                    status_label
-                  )} transparent transparent transparent`,
+                    is_show_progress_percent:
+                      is_show_progress_percent &&
+                      Number(percent_card_non) >= 100,
+                    status_label,
+                    is_show_warning_time
+                  })} transparent transparent transparent`,
                   zIndex:
                     (is_show_progress_percent ||
                       is_show_compare_real_plan_timer) &&
@@ -2077,14 +2206,16 @@ export default class CardItem extends Component {
                     Number(percent_card_non) >= 100 &&
                     !label_data.length
                       ? '#5A86F5'
-                      : this.setTriangleTreeColor(
+                      : this.setTriangleTreeColor({
                           label_data,
-                          'end',
+                          index: 'end',
                           is_realize,
-                          is_show_progress_percent &&
+                          is_show_progress_percent:
+                            is_show_progress_percent &&
                             Number(percent_card_non) >= 100,
-                          status_label
-                        )
+                          status_label,
+                          is_show_warning_time
+                        })
                 }}
               ></div>
               <div
@@ -2094,6 +2225,8 @@ export default class CardItem extends Component {
                       ? is_show_progress_percent &&
                         Number(percent_card_non) >= 100
                         ? '#5a86f5'
+                        : is_show_warning_time
+                        ? '#FFA000'
                         : '#B3D0FF'
                       : status_label == 'ahead_time_middle'
                       ? '#5BB48F'
@@ -2108,6 +2241,8 @@ export default class CardItem extends Component {
                       ? is_show_progress_percent &&
                         Number(percent_card_non) >= 100
                         ? '#5a86f5'
+                        : is_show_warning_time
+                        ? '#FFA000'
                         : '#B3D0FF'
                       : status_label == 'ahead_time_middle'
                       ? '#5BB48F'
@@ -2140,6 +2275,16 @@ export default class CardItem extends Component {
               (gantt_view_mode == 'year' ? 0 : card_width_diff)
             }
           />
+        )}
+        {/* 大纲视图下显示任务预警 */}
+        {is_show_warning_time && (
+          <div
+            style={{ right: early_warning_position - 12 }}
+            className={indexStyles.early_warning}
+            title={`预警时间为：${warning_timer_day}号`}
+          >
+            <span className={globalStyles.authTheme}>&#xe61f;</span>
+          </div>
         )}
       </div>
     )

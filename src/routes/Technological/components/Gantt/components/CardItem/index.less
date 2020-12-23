@@ -232,22 +232,38 @@
     background-color: #b3d0ff;
     z-index: 3;
   }
-
+  // 进行中进度颜色
   .lr_triangle_pro_color {
     // border-color: rgb(31, 90, 240) transparent transparent transparent;
     &::after {
       border-color: #5a86f5 transparent transparent transparent;
     }
   }
+  // 完成进度颜色
   .lr_triangle_com_color {
     &::after {
       border-color: rgb(205, 209, 223) transparent transparent transparent;
+    }
+  }
+  // 预警颜色
+  .lr_triangle_warn_color {
+    &::after {
+      border-color: #ffa000 transparent transparent transparent;
     }
   }
   .right_triangle_com_color {
     &::after {
       border-color: rgb(91, 180, 143) transparent transparent transparent;
     }
+  }
+
+  .early_warning {
+    position: absolute;
+    z-index: 4;
+    top: -15px;
+    right: 0px;
+    transform: rotate(90deg);
+    color: #ffa000;
   }
 
   .ears_out {

@@ -18,6 +18,7 @@ import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner
 import RichTextEditor from '@/components/RichTextEditor'
 import UploadAttachment from '@/components/UploadAttachment'
 import InformRemind from '@/components/InformRemind'
+import EarlyWarning from '@/components/EarlyWarning'
 import {
   timestampToTime,
   timestampToTimeNormal,
@@ -43,7 +44,7 @@ import {
   TASKS,
   REQUEST_DOMAIN_BOARD
 } from '../../../../../../../globalset/js/constant'
-import { caldiffDays } from '../../../../../../../utils/util'
+import { caldiffDays, isOverdueTime } from '../../../../../../../utils/util'
 
 @connect(mapStateToProps)
 export default class MainContent extends Component {
@@ -1230,6 +1231,14 @@ export default class MainContent extends Component {
                           rela_type={type == '0' ? '1' : '2'}
                         />
                       </span>
+                    )}
+                    {/* 表示只有开始和截止时间存在并且在今天之后 */}
+                    {!!start_time && !!due_time && !isOverdueTime(due_time) && (
+                      <EarlyWarning
+                        updateDrawContentWithUpdateParentListDatas={
+                          this.updateDrawContentWithUpdateParentListDatas
+                        }
+                      />
                     )}
                   </div>
                 </div>
