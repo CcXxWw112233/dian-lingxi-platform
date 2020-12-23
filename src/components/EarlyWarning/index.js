@@ -56,8 +56,8 @@ export default class index extends Component {
     drawContent['time_warning'] = selectedValue
     updateTaskVTwo_2({ card_id, time_warning: selectedValue }).then(res => {
       if (isApiResponseOk(res)) {
-        this.props.updateDrawContentWithUpdateParentListDatas &&
-          this.props.updateDrawContentWithUpdateParentListDatas({
+        this.props.handleUpdateDatas &&
+          this.props.handleUpdateDatas({
             drawContent,
             name: 'time_warning',
             value: selectedValue,
@@ -98,10 +98,18 @@ export default class index extends Component {
   renderContent = () => {
     const { optionsList = [], selectedValue } = this.state
     const {
-      drawContent: { start_time, due_time, time_warning }
+      drawContent: { start_time, due_time, time_warning },
+      default_warning_time
     } = this.props
     let temp_dec = this.disabledSelectedOption({ start_time, due_time })
-
+    let disabled =
+      temp_dec == '0'
+        ? selectedValue >= '1'
+        : temp_dec == '1'
+        ? selectedValue >= '2'
+        : temp_dec <= '6'
+        ? selectedValue == '7'
+        : false
     return (
       <div>
         <div>
@@ -116,19 +124,19 @@ export default class index extends Component {
               无预警
             </Select.Option>
             {optionsList.map(item => {
+              let option_disabled =
+                temp_dec == '0'
+                  ? item.value >= '1'
+                  : temp_dec == '1'
+                  ? item.value >= '2'
+                  : temp_dec <= '6'
+                  ? item.value == '7'
+                  : false
               return (
                 <Select.Option
                   label={`到期前${item.label}预警`}
                   value={item.value}
-                  disabled={
-                    temp_dec == '0'
-                      ? item.value >= '1'
-                      : temp_dec == '1'
-                      ? item.value >= '2'
-                      : temp_dec <= '6'
-                      ? item.value == '7'
-                      : false
-                  }
+                  disabled={option_disabled}
                 >
                   {item.label}
                 </Select.Option>
@@ -137,7 +145,11 @@ export default class index extends Component {
           </Select>
         </div>
         <div style={{ textAlign: 'right' }}>
-          <Button onClick={this.handleConfirm} type="primary">
+          <Button
+            disabled={disabled}
+            onClick={this.handleConfirm}
+            type="primary"
+          >
             确定
           </Button>
         </div>
@@ -147,10 +159,12 @@ export default class index extends Component {
 
   render() {
     const { visible } = this.state
-    const { children, title, zIndex, width } = this.props
+    const { children, title, zIndex, width, getPopupContainer } = this.props
     return (
-      <div>
-        <span onClick={this.setEarlyWarningVisible}>预警</span>
+      <>
+        <div className={indexStyles.warning_block}>
+          <span onClick={this.setEarlyWarningVisible}>预警</span>
+        </div>
         <Modal
           title={
             <div
@@ -171,10 +185,13 @@ export default class index extends Component {
           footer={null}
           destroyOnClose
           maskClosable={false}
+          getContainer={() =>
+            getPopupContainer ? getPopupContainer : document.body
+          }
         >
           {this.renderContent()}
         </Modal>
-      </div>
+      </>
     )
   }
 }

@@ -19,6 +19,7 @@ import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner
 import RichTextEditor from '@/components/RichTextEditor'
 import UploadAttachment from '@/components/UploadAttachment'
 import InformRemind from '@/components/InformRemind'
+import EarlyWarning from '@/components/EarlyWarning'
 import {
   timestampToTime,
   timestampToTimeNormal,
@@ -43,7 +44,7 @@ import BasicFieldContainer from './BasicFieldContainer'
 import { currentNounPlanFilterName } from '../../../utils/businessFunction'
 import { TASKS, REQUEST_DOMAIN_BOARD } from '../../../globalset/js/constant'
 import moment from 'moment'
-import { caldiffDays } from '../../../utils/util'
+import { caldiffDays, isOverdueTime } from '../../../utils/util'
 
 @connect(mapStateToProps)
 export default class MainUIComponent extends Component {
@@ -1067,7 +1068,10 @@ export default class MainUIComponent extends Component {
                       <span>时间</span>
                     </div>
                   </div>
-                  <div className={`${mainContentStyles.field_right}`}>
+                  <div
+                    className={`${mainContentStyles.field_right}`}
+                    style={{ display: 'flex', justifyContent: 'space-between' }}
+                  >
                     <div style={{ display: 'flex' }}>
                       <div style={{ position: 'relative' }}>
                         {/* 开始时间 */}
@@ -1257,6 +1261,17 @@ export default class MainUIComponent extends Component {
                         </span>
                       )}
                     </div>
+                    {/* 表示只有开始和截止时间存在并且在今天之后 */}
+                    {!!start_time && !!due_time && !isOverdueTime(due_time) && (
+                      <EarlyWarning
+                        handleUpdateDatas={
+                          this.updateDrawContentWithUpdateParentListDatas
+                        }
+                        getPopupContainer={document.getElementById(
+                          'container_fileDetailContentOut'
+                        )}
+                      />
+                    )}
                   </div>
                 </div>
               </div>

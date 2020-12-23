@@ -1235,7 +1235,7 @@ export default class MainContent extends Component {
                     {/* 表示只有开始和截止时间存在并且在今天之后 */}
                     {!!start_time && !!due_time && !isOverdueTime(due_time) && (
                       <EarlyWarning
-                        updateDrawContentWithUpdateParentListDatas={
+                        handleUpdateDatas={
                           this.updateDrawContentWithUpdateParentListDatas
                         }
                       />
