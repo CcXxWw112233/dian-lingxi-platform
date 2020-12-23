@@ -1776,6 +1776,7 @@ export default class CardItem extends Component {
       is_has_end_time &&
       is_realize == '0' &&
       !parent_card_id &&
+      has_child == '1' &&
       !!percent_card_non &&
       !!parseInt(percent_card_non)
     // 计划时间与完成时间对比

@@ -293,7 +293,7 @@ export default class NodeOperate extends Component {
 
   delete = () => {
     const {
-      nodeValue: { id, tree_type }
+      nodeValue: { id, tree_type, parent_card_id }
     } = this.props
     // this.props.deleteOutLineTreeNode(id)
 
@@ -306,7 +306,7 @@ export default class NodeOperate extends Component {
         if (tree_type == '1') {
           this.deleteMilestone(id)
         } else if (tree_type == '2') {
-          this.deleteCard(id)
+          this.deleteCard(id, parent_card_id)
         } else if (tree_type == '3') {
           this.deleteWorkFlow(id)
         } else {
@@ -314,10 +314,15 @@ export default class NodeOperate extends Component {
       }
     })
   }
-  deleteCard = id => {
+  deleteCard = (id, parent_card_id) => {
     deleteTaskVTwo(id).then(res => {
       if (isApiResponseOk(res)) {
-        this.props.deleteOutLineTreeNode(id, undefined, res.data)
+        this.props.deleteOutLineTreeNode(
+          id,
+          undefined,
+          res.data,
+          parent_card_id
+        )
       } else {
         message.error(res.message)
       }

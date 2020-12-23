@@ -27,7 +27,8 @@ import { getProcessInfo } from '../../../../services/technological/workFlow'
 import { isApiResponseOk } from '../../../../utils/handleResponseData'
 import {
   diffClientDefaultCeilWidth,
-  diffClientDefaultViewMode
+  diffClientDefaultViewMode,
+  onChangeCardHandleCardDetail
 } from './ganttBusiness'
 
 const ProcessDetailModal = lazy(() => import('@/components/ProcessDetailModal'))
@@ -786,8 +787,8 @@ class Gantt extends Component {
     }
   }
   // 大纲视图删除某个节点（如果是删除任务则删除挂载的全部节点， 如果是删除里程碑， 则释放任务到无归属区域）
-  deleteOutLineTreeNode = (id, add_id, change_node_data) => {
-    let { dispatch, outline_tree } = this.props
+  deleteOutLineTreeNode = (id, add_id, change_node_data, parent_card_id) => {
+    let { dispatch, outline_tree, selected_card_visible, card_id } = this.props
     let node = {}
     if (!!id) {
       //删除实际节点
@@ -817,6 +818,32 @@ class Gantt extends Component {
           outline_tree = [].concat(outline_tree, arr)
         } else if (tree_type == '2') {
           //删除任务
+          // 当删除子任务时 需要更新侧边弹窗
+          if (parent_card_id) {
+            onChangeCardHandleCardDetail({
+              card_detail_id: card_id,
+              operate_id: parent_card_id,
+              selected_card_visible, //任务详情弹窗是否弹开
+              dispatch
+            })
+          } else {
+            // 如果删除任务 并且弹窗打开状态 那么需要清空对应数据以及状态
+            if (selected_card_visible) {
+              dispatch({
+                type: 'gantt/updateDatas',
+                payload: {
+                  selected_card_visible: false
+                }
+              })
+              dispatch({
+                type: 'publicTaskDetailModal/updateDatas',
+                payload: {
+                  drawContent: {},
+                  card_id: ''
+                }
+              })
+            }
+          }
         }
       }
       // outline_tree = OutlineTree.filterTreeNode(outline_tree, id); //删除节点
@@ -1111,13 +1138,14 @@ function mapStateToProps({
       panel_outline_create_card_params = {},
       gantt_board_list_id,
       gantt_view_mode,
-      belong_group_row
+      belong_group_row,
+      selected_card_visible
     }
   },
   technological: {
     datas: { page_load_type }
   },
-  publicTaskDetailModal: { drawerVisible },
+  publicTaskDetailModal: { drawerVisible, card_id },
   publicProcessDetailModal: { process_detail_modal_visible }
 }) {
   return {
@@ -1128,10 +1156,12 @@ function mapStateToProps({
     create_start_time,
     create_end_time,
     drawerVisible,
+    card_id,
     about_apps_boards,
     about_group_boards,
     about_user_boards,
     show_board_fold,
+    selected_card_visible,
     page_load_type,
     outline_tree,
     panel_outline_create_card_params,
