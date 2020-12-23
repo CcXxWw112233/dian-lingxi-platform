@@ -28,5 +28,17 @@ export const diffClientRedirect = token => {
 // 区分会协宝与聆悉
 export const platformNouns = ENV_ANDROID_APP ? '聆悉会协宝' : '聆悉'
 
-// 点击事件延迟
+// 点击事件延迟时间
 export const clickDelay = ENV_ANDROID_APP ? 300 : 0
+
+//// 点击事件延迟,为了兼容大屏性能低的按压效果
+export const clickDelayTrigger = (callback, ...args) => {
+  if (typeof callback !== 'function') return
+  if (ENV_ANDROID_APP) {
+    setTimeout(() => {
+      callback(...args)
+    }, clickDelay)
+  } else {
+    callback(...args)
+  }
+}

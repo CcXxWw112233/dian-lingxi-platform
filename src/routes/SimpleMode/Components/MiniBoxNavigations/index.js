@@ -15,7 +15,10 @@ import {
   BOARD_FILES
 } from '../../../../globalset/js/constant'
 import { currentNounPlanFilterName } from '../../../../utils/businessFunction'
-import { clickDelay } from '../../../../globalset/clientCustorm'
+import {
+  clickDelay,
+  clickDelayTrigger
+} from '../../../../globalset/clientCustorm'
 
 const MiniBoxNavigations = props => {
   const {
@@ -84,14 +87,14 @@ const MiniBoxNavigations = props => {
   }
 
   const goHome = () => {
-    setTimeout(() => {
+    clickDelayTrigger(
       dispatch({
         type: 'simplemode/routingJump',
         payload: {
           route: '/technological/simplemode/home'
         }
       })
-    }, clickDelay)
+    )
     // selectBoardToSeeInfo({ board_id: '0', dispatch })
     // dispatch({
     //     type: 'technological/updateDatas',
