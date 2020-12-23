@@ -12,7 +12,10 @@ import {
 } from '../../../../services/technological/workbench'
 import { isApiResponseOk } from '../../../../utils/handleResponseData'
 import { message } from 'antd'
-import { MESSAGE_DURATION_TIME } from '../../../../globalset/js/constant'
+import {
+  BOOLEAN_TRUE_CODE,
+  MESSAGE_DURATION_TIME
+} from '../../../../globalset/js/constant'
 import { routerRedux } from 'dva/router'
 import queryString from 'query-string'
 import { getDateInfo } from '../../../../routes/Technological/components/Gantt/getDate'
@@ -158,6 +161,13 @@ export default {
 
       selected_hide_term: false, // 表示是否选择隐藏项 true 表示是
       isDisplayContentIds: [], // 表示已经隐藏的content_ids
+      outline_tree_filter_type: {
+        //大纲过滤掉的选项, 1代表显示 0 代表隐藏
+        is_show_due: BOOLEAN_TRUE_CODE,
+        is_show_warning: BOOLEAN_TRUE_CODE,
+        is_show_doing: BOOLEAN_TRUE_CODE,
+        is_show_realize: BOOLEAN_TRUE_CODE
+      },
       outline_tree_original: [], // 大纲视图显示隐藏快照 数据源
       card_name_outside: false, //任务名称是否外置
       base_relative_time: '', //相对时间轴的基准时间
@@ -421,6 +431,9 @@ export default {
       const gantt_view_mode = yield select(
         getModelSelectDatasState('gantt', 'gantt_view_mode')
       )
+      const outline_tree_filter_type = yield select(
+        getModelSelectDatasState('gantt', 'outline_tree_filter_type')
+      )
       const min_start_time = date_arr_one_level[0].timestamp //最早时间
       const max_due_time =
         date_arr_one_level[date_arr_one_level.length - 1].timestampEnd
@@ -438,7 +451,8 @@ export default {
           filter_display,
           gantt_view_mode,
           min_start_time,
-          max_due_time
+          max_due_time,
+          outline_tree_filter_type
         }
       )
       // console.log('filnaly_outline_tree_0', filnaly_outline_tree)

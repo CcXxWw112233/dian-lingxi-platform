@@ -15,6 +15,10 @@ import {
   hours_view_due_work_oclock
 } from '../../../../routes/Technological/components/Gantt/constants'
 import { getDateInfo } from '../../../../routes/Technological/components/Gantt/getDate'
+import {
+  BOOLEAN_FALSE_CODE,
+  BOOLEAN_TRUE_CODE
+} from '../../../../globalset/js/constant'
 // 获取一级里程碑包含的高度
 function getLeafCountTree(data = {}) {
   if (!data.children) return 1
@@ -84,6 +88,58 @@ function getMilestoneLeafWithCompleteCardsTimesPercentage(node) {
   recusion(node)
   return { complete_time_diff, all_time_diff }
 }
+
+// 过滤大纲的隐藏项
+const filterOutlineData = ({ outline_tree_filter_type = {}, arr }) => {
+  const {
+    is_show_due = BOOLEAN_TRUE_CODE,
+    is_show_warning = BOOLEAN_TRUE_CODE,
+    is_show_doing = BOOLEAN_TRUE_CODE,
+    is_show_realize = BOOLEAN_TRUE_CODE
+  } = outline_tree_filter_type
+  arr = arr.filter(item => {
+    if (item.tree_type == '1') return true
+    let flag = true
+    //过滤逾期
+    if (is_show_due == BOOLEAN_FALSE_CODE) {
+      if (
+        item.due_time &&
+        item.due_time < new Date().getTime() &&
+        item.is_realize == '0'
+      ) {
+        flag = false
+      }
+    }
+    //过滤预警
+    if (
+      is_show_warning == BOOLEAN_FALSE_CODE &&
+      item.time_warning &&
+      item.time_warning != BOOLEAN_FALSE_CODE
+    ) {
+      flag = false
+    }
+    //过滤完成
+    if (is_show_realize == BOOLEAN_FALSE_CODE) {
+      if (item.is_realize == BOOLEAN_TRUE_CODE) {
+        flag = false
+      }
+    }
+    //正常进行，是非正常情况的非
+    if (is_show_doing == BOOLEAN_FALSE_CODE) {
+      if (
+        (item.due_time ? item.due_time > new Date().getTime() : true) && //未逾期
+        (!item.time_warning || item.time_warning == BOOLEAN_FALSE_CODE) && //未预警
+        item.is_realize == BOOLEAN_FALSE_CODE //未完成
+      ) {
+        flag = false
+      }
+    }
+    return flag
+  })
+  return arr
+}
+
+// 大纲数据每一条item处理
 export function recusionItem(
   tree,
   {
@@ -101,7 +157,8 @@ export function recusionItem(
     filter_display,
     gantt_view_mode,
     min_start_time,
-    max_due_time
+    max_due_time,
+    outline_tree_filter_type
   }
 ) {
   let arr = tree.map((item, key) => {
@@ -204,12 +261,17 @@ export function recusionItem(
           filter_display,
           gantt_view_mode,
           min_start_time,
-          max_due_time
+          max_due_time,
+          outline_tree_filter_type
         }
       )
       if (filter_display) {
         new_item.children = new_item.children.filter(item => item.is_display)
       }
+      new_item.children = filterOutlineData({
+        outline_tree_filter_type,
+        arr: new_item.children
+      }) //过滤隐藏
     }
     //所有叶子 任务的最早时间
     if (tree_type == '1') {
@@ -234,7 +296,10 @@ export function recusionItem(
   if (filter_display) {
     arr = arr.filter(item => item.is_display)
   }
-
+  arr = filterOutlineData({
+    outline_tree_filter_type,
+    arr: arr
+  }) //过滤隐藏
   return arr
 }
 

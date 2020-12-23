@@ -217,7 +217,7 @@ export async function DeleteBaseLine(data) {
 // 保存大纲视图隐藏可见
 export async function saveGanttOutlineNonDisplay(data) {
   return request({
-    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt_chart/outline/nondisplay`,
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt_chart/user/set/hidden`,
     method: 'PUT',
     data
   })
@@ -226,7 +226,7 @@ export async function saveGanttOutlineNonDisplay(data) {
 // 获取已经隐藏的视图列表
 export async function getGanttOutlineHideTrem(params) {
   return request({
-    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt_chart/outline/nondisplay`,
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt_chart/user/set/hidden`,
     method: 'GET',
     params
   })
@@ -282,6 +282,23 @@ export async function exportExcelFieldList(data) {
   return request({
     url: `${REQUEST_DOMAIN_WORK_BENCH}/board/export/excel`,
     method: 'POST',
+    data
+  })
+}
+
+// 获取大纲隐藏的信息
+export async function getGanttUserCustorm(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt_chart/user/set`,
+    method: 'GET',
+    params
+  })
+}
+// 设置大纲隐藏的信息
+export async function setGanttUserCustorm(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt_chart/user/set`,
+    method: 'PUT',
     data
   })
 }
