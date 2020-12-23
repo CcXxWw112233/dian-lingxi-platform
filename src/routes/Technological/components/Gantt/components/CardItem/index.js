@@ -1686,7 +1686,7 @@ export default class CardItem extends Component {
   }
 
   // 获取预警时间
-  getCardsWarningTime = ({ time_warning, start_time, due_time }) => {
+  getCardsWarningTimeScope = ({ time_warning, start_time, due_time }) => {
     // 23:59:00
     let ahead_timestamp = time_warning * (24 * 60 * 60 * 1000)
     let warning_timer = due_time - Number(ahead_timestamp)
@@ -1808,7 +1808,7 @@ export default class CardItem extends Component {
     // 判断是否是今天之前
     const is_overdue_task = isOverdueTime(due_time)
     // 显示预警
-    const is_show_warning_time =
+    const SHOW_WARNING_TRIGGER =
       ganttIsOutlineView({ group_view_type }) &&
       !parent_card_id &&
       is_realize == '0' &&
@@ -1817,8 +1817,13 @@ export default class CardItem extends Component {
       start_time != due_time &&
       !is_overdue_task &&
       !!time_warning &&
-      time_warning != '0' &&
-      this.getCardsWarningTime({ time_warning, start_time, due_time })
+      time_warning != '0'
+    const WARNING_TIME_SCOPE = this.getCardsWarningTimeScope({
+      time_warning,
+      start_time,
+      due_time
+    })
+    const is_show_warning_time = SHOW_WARNING_TRIGGER && WARNING_TIME_SCOPE
     // 定义左边触角样式
     const card_left_triangle = cx({
       left_triangle: true,
@@ -2313,7 +2318,7 @@ export default class CardItem extends Component {
           />
         )}
         {/* 大纲视图下显示任务预警 */}
-        {is_show_warning_time && (
+        {SHOW_WARNING_TRIGGER && (
           <div
             style={{ right: early_warning_position - 12 }}
             className={indexStyles.early_warning}
