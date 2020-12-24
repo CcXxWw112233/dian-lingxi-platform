@@ -113,11 +113,7 @@ const filterOutlineData = ({ outline_tree_filter_type = {}, arr }) => {
       }
     }
     //过滤预警
-    if (
-      is_show_warning == BOOLEAN_FALSE_CODE &&
-      item.time_warning &&
-      item.time_warning != BOOLEAN_FALSE_CODE
-    ) {
+    if (is_show_warning == BOOLEAN_FALSE_CODE && item.is_early_warned) {
       flag = false
     }
     //过滤完成
@@ -139,7 +135,7 @@ const filterOutlineData = ({ outline_tree_filter_type = {}, arr }) => {
     if (is_show_doing == BOOLEAN_FALSE_CODE) {
       if (
         (item.due_time ? item.due_time > new Date().getTime() : true) && //未逾期
-        (!item.time_warning || item.time_warning == BOOLEAN_FALSE_CODE) && //未预警
+        !item.is_early_warned && //未预警
         item.is_realize == BOOLEAN_FALSE_CODE && //未完成
         item.start_time <= new Date().getTime() && //开始了
         (!!item.start_time || !!item.due_time) //排期了
