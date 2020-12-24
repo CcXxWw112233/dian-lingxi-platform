@@ -76,7 +76,7 @@ const Register = options => {
   }
   if (juge == 'wechatRegister') {
     return (
-      <div className={globalClassNmae.page_style_2}>
+      <div className={globalClassNmae.page_style_2} style={{ height: 1000 }}>
         <QueueAnim type="top">
           <div key={'reigster'}>
             <div
@@ -119,7 +119,7 @@ const Register = options => {
     )
   } else {
     return (
-      <div className={globalClassNmae.page_style_2}>
+      <div className={globalClassNmae.page_style_2} style={{ height: 1000 }}>
         <QueueAnim type="top">
           <div key={'reigster'}>
             <div
