@@ -804,13 +804,6 @@ export default class CardItem extends Component {
       delete request_param.start_time
       delete request_param.due_time
     }
-    // 如果时视图 不在时间范围内 就不更新设置时间
-    if (
-      gantt_view_mode == 'hours' &&
-      !isSamHour(start_time, start_time_timestamp)
-    ) {
-      return
-    }
     // console.log('ssssssssssaaaa', 2)
     updateTaskVTwo({ ...request_param }, { isNotLoading: false })
       .then(res => {
