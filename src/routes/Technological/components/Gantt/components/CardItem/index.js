@@ -512,8 +512,8 @@ export default class CardItem extends Component {
     return param
   }
 
+  //右侧增减时间
   overDragCompleteHandleRight = async () => {
-    //右侧增减时间
     const {
       itemValue: {
         id,
@@ -770,7 +770,7 @@ export default class CardItem extends Component {
 
     if (
       ((gantt_view_mode == 'hours' &&
-        isSamHour(start_time, start_time_timestamp)) ||
+        Math.abs(local_left - left) < ceilWidth) ||
         (gantt_view_mode != 'hours' &&
           isSamDay(start_time, start_time_timestamp))) &&
       (single_board_view ? !!row && row == new_row : true) //分组模式下行高微信

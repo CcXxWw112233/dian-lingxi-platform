@@ -408,11 +408,12 @@ export default class CatalogTables extends Component {
   renderTitleOperate = () => {
     return (
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <div
+        操作
+        {/* <div
           className={`${globalStyles.authTheme}  ${indexStyles.table_operate_2} ${indexStyles.table_operate_2_selected}`}
         >
           &#xe7f5;
-        </div>
+        </div> */}
         {/* <div className={`${globalStyles.authTheme}  ${indexStyles.table_operate_2}`} style={{ marginLeft: 16 }}>&#xe6c5;</div> */}
       </div>
     )
