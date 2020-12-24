@@ -4,7 +4,8 @@ import {
   getGttMilestoneList,
   getContentFiterBoardTree,
   getContentFiterUserTree,
-  getHoliday
+  getHoliday,
+  getGanttUserCustorm
 } from '../../../../services/technological/gantt'
 import {
   getProjectList,
@@ -377,8 +378,6 @@ export default {
         yield put({
           type: 'updateDatas',
           payload: {
-            get_gantt_data_loading: false,
-            get_gantt_data_loaded: true,
             folder_seeing_board_id: '0',
             // 清空关于大纲视图显示隐藏数据
             selected_hide_term: false,
@@ -399,12 +398,34 @@ export default {
             yield put({
               type: 'updateDatas',
               payload: {
+                get_gantt_data_loading: false,
+                get_gantt_data_loaded: true,
                 outline_tree: [],
                 outline_tree_round: [],
                 group_rows_lock: []
               }
             })
           } else {
+            // 先获取隐藏项
+            const filterHidenRes = yield call(getGanttUserCustorm, {
+              board_id: gantt_board_id
+            })
+            if (isApiResponseOk(filterHidenRes)) {
+              yield put({
+                type: 'updateDatas',
+                payload: {
+                  outline_tree_filter_type: {
+                    is_show_due: filterHidenRes.data.is_show_due,
+                    is_show_warning: filterHidenRes.data.is_show_warning,
+                    is_show_doing: filterHidenRes.data.is_show_doing,
+                    is_show_realize: filterHidenRes.data.is_show_realize,
+                    is_show_not_start: filterHidenRes.data.is_show_not_start
+                  },
+                  get_gantt_data_loading: false,
+                  get_gantt_data_loaded: true
+                }
+              })
+            }
             yield put({
               type: 'handleOutLineTreeData',
               payload: {

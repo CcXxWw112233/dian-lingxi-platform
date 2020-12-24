@@ -118,7 +118,7 @@ export default class OutLineHeadItem extends Component {
     // 获取已隐藏的元素
     this.getOutlineHideTerm()
     // 获取设置的隐藏项
-    this.getOutlineTreeFilterType()
+    // this.getOutlineTreeFilterType()
     if (
       !OrganizationId ||
       (OrganizationId == '0' &&
