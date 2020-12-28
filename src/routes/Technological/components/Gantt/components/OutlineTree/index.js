@@ -795,7 +795,9 @@ class MyOutlineTree extends Component {
                 &#xe78e;
               </div>
             </Dropdown>
-            <div className={styles.item_title_name}>项目里程碑</div>
+            <div className={styles.item_title_name} style={{ width: 242 }}>
+              项目里程碑
+            </div>
           </div>
           <div className={styles.flex2}>
             {this.state.columns
