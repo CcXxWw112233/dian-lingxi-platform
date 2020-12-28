@@ -50,11 +50,11 @@ export default class BoardFeaturesItem extends Component {
           <span className={`${globalStyles.authTheme}`}>&#xe66a;</span>
         )
         break
-      case '2': //日程
-        container = (
-          <span className={`${globalStyles.authTheme}`}>&#xe68e;</span>
-        )
-        break
+      // case '2': //日程
+      //   container = (
+      //     <span className={`${globalStyles.authTheme}`}>&#xe68e;</span>
+      //   )
+      //   break
       case '3': //流程
         container = (
           <span className={`${globalStyles.authTheme}`}>&#xe68c;</span>
@@ -105,7 +105,7 @@ export default class BoardFeaturesItem extends Component {
         }
         break
       case '2': //日程
-        container = `${currentNounPlanFilterName(TASKS)}`
+        // container = `${currentNounPlanFilterName(TASKS)}`
 
         break
       case '3': //流程

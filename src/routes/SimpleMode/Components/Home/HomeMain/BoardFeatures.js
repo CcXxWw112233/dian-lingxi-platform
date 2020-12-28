@@ -300,7 +300,8 @@ export default class BoardFeatures extends Component {
       case '1': // 表示任务
         return <BoardFeaturesItem key={id} itemValue={value} />
       case '2': // 表示日程
-        return <BoardFeaturesItem key={id} itemValue={value} />
+        // return <BoardFeaturesItem key={id} itemValue={value} />
+        break
       case '3': // 表示流程
         return (
           <BoardFeaturesProcessItem
