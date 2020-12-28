@@ -30,7 +30,7 @@ import { currentNounPlanFilterName } from '@/utils/businessFunction'
 import { PROJECTS } from '@/globalset/js/constant'
 import { isApiResponseOk } from '@/utils/handleResponseData'
 import moment from 'moment'
-import { arrayNonRepeatfy } from '../../../../../utils/util'
+import { arrayNonRepeatfy, isSamDay } from '../../../../../utils/util'
 import { platformNouns } from '../../../../../globalset/clientCustorm'
 import { getProjectList } from '../../../../../services/technological/workbench'
 const Option = Select.Option
@@ -76,7 +76,8 @@ class VideoMeetingPopoverContent extends Component {
       defaultValue: '45', // 当前选择的持续时间
       providerDefault: null, // 默认选中的提供商
       remindDropdownVisible: false,
-      emitMeettingStatus: false //是否发送会议
+      emitMeettingStatus: false, //是否发送会议
+      meeting_duplication: 'none' // 设置会议是否重复
     }
     this.stepIndex = 0 // 定义步数
   }
@@ -84,6 +85,7 @@ class VideoMeetingPopoverContent extends Component {
   // 初始化数据
   initVideoMeetingPopover = () => {
     this.setState({
+      openStartDatePicker: false, // 是否打开日期面板 对日期组件设置key值 来重新更新组件状态，解决设置value后无法切换下一年月
       saveToProject: null,
       meetingTitle: '',
       start_time: '',
@@ -286,20 +288,26 @@ class VideoMeetingPopoverContent extends Component {
     })
   }
 
+  onOpenChange = status => {
+    this.setState({
+      openStartDatePicker: status
+    })
+  }
+
   // 设置会议开始时间
   startDatePickerChange = timeString => {
     const start_timeStamp = timeToTimestamp(timeString)
     const nowDate = timeToTimestamp(new Date())
-    let nextOrPrevDate = new Date(
-      timestampToTimeNormal(start_timeStamp)
-    ).getDate()
-    let currentDate = new Date().getDate()
+    // let nextOrPrevDate = new Date(
+    //   timestampToTimeNormal(start_timeStamp)
+    // ).getDate()
+    // let currentDate = new Date().getDate()
     if (this.timer) {
       clearTimeout(this.timer)
     }
     // 如果是点击的今天，那么提醒什么的都要隐藏
     // 如果点击的是今天之前或者之后，那么就要显示
-    if (currentDate == nextOrPrevDate) {
+    if (isSamDay(start_timeStamp, nowDate)) {
       // 表示如果日期相等
       // 这里还需要判断选择的时钟和分钟是否是现在
       if (
@@ -324,13 +332,6 @@ class VideoMeetingPopoverContent extends Component {
           isShowNowTime: false
         })
       }
-    } else if (nextOrPrevDate < currentDate) {
-      // // 表示是今天之前
-      // this.setState({
-      //   start_time: timestampToTime(start_timeStamp),
-      //   meeting_start_time: start_timeStamp,
-      //   isOrderTime: true
-      // })
     } else {
       // 表示大于今天
       if (this.timer) {
@@ -364,6 +365,70 @@ class VideoMeetingPopoverContent extends Component {
     }
     this.setState({
       defaultValue: key
+    })
+  }
+
+  getWeekDay = meeting_start_time => {
+    const day = new Date(meeting_start_time).getDay()
+    let dec = ''
+    let dec_1 = ''
+    switch (day) {
+      case 0:
+        dec = '周日'
+        dec_1 = '星期日'
+        break
+      case 1:
+        dec = '周一'
+        dec_1 = '星期一'
+        break
+      case 2:
+        dec = '周二'
+        dec_1 = '星期二'
+        break
+      case 3:
+        dec = '周三'
+        dec_1 = '星期三'
+        break
+      case 4:
+        dec = '周四'
+        dec_1 = '星期四'
+        break
+      case 5:
+        dec = '周五'
+        dec_1 = '星期五'
+        break
+      case 6:
+        dec = '周六'
+        dec_1 = '星期六'
+        break
+
+      default:
+        break
+    }
+    return { dec, dec_1 }
+  }
+
+  // 设置会议重复
+  handleChangeSetMeetingDuplication = value => {
+    let meeting_duplication = ''
+    switch (value) {
+      case 'none':
+        meeting_duplication = '0'
+        break
+      case 'every_day':
+        meeting_duplication = '1'
+        break
+      case 'every_week_day':
+        meeting_duplication = '2'
+        break
+      case 'every_work_day':
+        meeting_duplication = '3'
+        break
+      default:
+        break
+    }
+    this.setState({
+      meeting_duplication
     })
   }
 
@@ -847,6 +912,7 @@ class VideoMeetingPopoverContent extends Component {
     let { board_id, videoConferenceProviderList = [] } = this.props
     //过滤出来当前用户有编辑权限的项目
     let newToNoticeList = [].concat(...toNoticeList, othersPeople)
+    const every_week_day = this.getWeekDay(meeting_start_time)
     const videoMeetingPopoverContent_ = (
       <div>
         {videoMeetingPopoverVisible && (
@@ -900,6 +966,7 @@ class VideoMeetingPopoverContent extends Component {
                     className={
                       indexStyles.videoMeeting__topic_content_datePicker
                     }
+                    title={start_time}
                     style={{
                       position: 'relative',
                       zIndex: 0,
@@ -910,11 +977,17 @@ class VideoMeetingPopoverContent extends Component {
                     }}
                   >
                     <span>
-                      <Input value={start_time} />
+                      <Input
+                        style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}
+                        value={start_time}
+                      />
                     </span>
                     <DatePicker
+                      key={this.state.openStartDatePicker}
+                      open={this.state.openStartDatePicker}
                       allowClear={false}
                       onChange={this.startDatePickerChange.bind(this)}
+                      onOpenChange={this.onOpenChange}
                       getCalendarContainer={() =>
                         document.getElementById(
                           'videoMeeting__topic_content_time'
@@ -922,11 +995,21 @@ class VideoMeetingPopoverContent extends Component {
                       }
                       disabledDate={this.disabledDate}
                       disabledTime={this.disabledDateTime}
-                      value={
+                      placeholder={
                         start_time
-                          ? moment(new Date(Number(meeting_start_time)))
+                          ? timestampToTimeNormal(meeting_start_time, '/', true)
                           : undefined
                       }
+                      // defaultValue={
+                      //   start_time
+                      //     ? moment(new Date(Number(meeting_start_time)))
+                      //     : undefined
+                      // }
+                      // value={
+                      //   start_time
+                      //     ? moment(new Date(Number(meeting_start_time)))
+                      //     : undefined
+                      // }
                       format="YYYY/MM/DD HH:mm"
                       showTime={{ format: 'HH:mm' }}
                       style={{
@@ -961,6 +1044,84 @@ class VideoMeetingPopoverContent extends Component {
                 </span>
                 {/* 时间选择 E */}
               </div>
+            </div>
+            {/* 设置会议是否重复 */}
+            <div style={{ position: 'relative', marginBottom: '24px' }}>
+              <Select
+                optionLabelProp="label"
+                style={{ width: '100%' }}
+                getPopupContainer={triggerNode => triggerNode.parentNode}
+                onChange={this.handleChangeSetMeetingDuplication}
+                defaultValue="none"
+              >
+                <Option label="会议不重复" value="none">
+                  不重复
+                </Option>
+                <Option label="每天" value="every_day">
+                  每天
+                </Option>
+                <Option
+                  label={`每${every_week_day.dec}发起会议`}
+                  value="every_week_day"
+                >
+                  每周{every_week_day.dec_1}
+                </Option>
+                <Option label="周一至周五发起会议" value="every_work_day">
+                  每个工作日（周一至周五）
+                </Option>
+              </Select>
+            </div>
+            {/* 设置会议提醒时间 以及提醒方式 */}
+            <div
+              className={indexStyles.videoMeeting_setRemindTime}
+              style={{ position: 'relative', marginBottom: '24px' }}
+            >
+              <Select
+                defaultValue="3"
+                optionLabelProp="label"
+                style={{ width: '130px' }}
+                getPopupContainer={triggerNode => triggerNode.parentNode}
+              >
+                <Option label="发起会议时提醒" value="0">
+                  发起会议时
+                </Option>
+                <Option label="会议开始时提醒" value="1">
+                  开始时
+                </Option>
+                <Option label="会议开始前5分钟提醒" value="2">
+                  5分钟前
+                </Option>
+                <Option label="会议开始前15分钟提醒" value="3">
+                  15分钟前
+                </Option>
+                <Option label="会议开始前30分钟提醒" value="4">
+                  30分钟前
+                </Option>
+                <Option label="会议开始前1小时提醒" value="5">
+                  1小时前
+                </Option>
+                <Option label="会议开始前1天提醒" value="6">
+                  1天前
+                </Option>
+              </Select>
+              <Select
+                defaultValue={['0', '1', '2']}
+                optionLabelProp="label"
+                style={{ width: '164px' }}
+                getPopupContainer={triggerNode => triggerNode.parentNode}
+                mode="multiple"
+                maxTagCount={1}
+              >
+                <Option label="应用内" value="0">
+                  应用内 提醒
+                </Option>
+                <Option label="短信" value="1">
+                  短信 提醒
+                </Option>
+                <Option label="公众号" value="2">
+                  公众号 提醒
+                </Option>
+              </Select>
             </div>
             {/* 设置通知提醒 S */}
             <div className={indexStyles.videoMeeting__remind}>

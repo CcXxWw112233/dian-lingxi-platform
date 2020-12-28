@@ -61,6 +61,30 @@
   .videoMeeting__submitBtn {
     // text-align: right;
   }
+  .videoMeeting_setRemindTime {
+    display: flex;
+    justify-content: space-between;
+    :global {
+      .ant-select-dropdown {
+        max-height: 200px;
+        overflow-y: auto;
+      }
+      .ant-select-selection--multiple {
+        max-height: 32px;
+        // overflow: hidden;
+        .ant-select-selection__rendered {
+          margin-right: 0;
+          > ul {
+            // display: flex;
+            width: 100%;
+          }
+          .ant-select-search--inline {
+            // display: none;
+          }
+        }
+      }
+    }
+  }
 }
 
 .videoMeeting__wrapper {
