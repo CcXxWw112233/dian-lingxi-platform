@@ -18,7 +18,7 @@ import {
   getOrgNameWithOrgIdFilter,
   currentNounPlanFilterName
 } from '../../../../../utils/businessFunction'
-import { Dropdown, Menu, message } from 'antd'
+import { Checkbox, Dropdown, Menu, message, Modal } from 'antd'
 import { connect } from 'dva'
 import {
   toggleContentPrivilege,
@@ -431,6 +431,12 @@ export default class BoardItem extends Component {
       board_info_visible: !board_info_visible
     })
   }
+  // 点击导出项目成员
+  setExportBoardMembersVisible = () => {
+    this.setState({
+      board_members_visible: !this.state.board_members_visible
+    })
+  }
   //添加项目组成员操作
   setShowAddMenberModalVisibile = () => {
     this.setState({
@@ -547,6 +553,9 @@ export default class BoardItem extends Component {
       case 'board_info':
         this.setBoardInfoVisible()
         break
+      case 'export_members': // 导出项目成员
+        this.setExportBoardMembersVisible()
+        break
       default:
         break
     }
@@ -588,6 +597,11 @@ export default class BoardItem extends Component {
             this.props.currentNounPlan
           )}信息`}</Menu.Item>
         }
+        {checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER, board_id) && (
+          <Menu.Item key={'export_members'}>
+            导出{currentNounPlanFilterName(PROJECTS, board_id)}成员
+          </Menu.Item>
+        )}
       </Menu>
     )
   }
@@ -601,7 +615,8 @@ export default class BoardItem extends Component {
     const {
       board_info_visible,
       show_add_menber_visible,
-      menu_oprate_visible
+      menu_oprate_visible,
+      board_members_visible
     } = this.state
     const isAllOrg =
       !currentSelectOrganize.id || currentSelectOrganize.id == '0'
@@ -688,6 +703,64 @@ export default class BoardItem extends Component {
             modalVisible={show_add_menber_visible}
             setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile}
           />
+        )}
+        {board_members_visible && (
+          <Modal
+            title={`导出${currentNounPlanFilterName(PROJECTS, board_id)}成员`}
+            visible={board_members_visible}
+            width={380}
+            maskClosable={false}
+            onCancel={this.setExportBoardMembersVisible}
+            destroyOnClose
+          >
+            <div>
+              <div style={{ marginBottom: '12px' }}>选择导出字段</div>
+              <div>
+                <Checkbox.Group style={{ display: 'flex', flexWrap: 'wrap' }}>
+                  <Checkbox
+                    style={{
+                      width: '50%',
+                      marginBottom: '24px',
+                      marginLeft: 0
+                    }}
+                    value="name"
+                  >
+                    名称
+                  </Checkbox>
+                  <Checkbox
+                    style={{
+                      width: '50%',
+                      marginBottom: '24px',
+                      marginLeft: 0
+                    }}
+                    value="phone"
+                  >
+                    手机号
+                  </Checkbox>
+                  <Checkbox
+                    style={{
+                      width: '50%',
+                      marginBottom: '24px',
+                      marginLeft: 0
+                    }}
+                    value="wechat"
+                  >
+                    微信号
+                  </Checkbox>
+                  <Checkbox
+                    style={{
+                      width: '50%',
+                      marginBottom: '24px',
+                      marginLeft: 0
+                    }}
+                    value="role"
+                  >
+                    角色
+                  </Checkbox>
+                </Checkbox.Group>
+              </div>
+            </div>
+          </Modal>
         )}
       </>
     )
