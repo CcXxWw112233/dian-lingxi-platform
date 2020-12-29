@@ -421,7 +421,7 @@ export default class AppendSubTaskItem extends Component {
               justifyContent: 'space-between'
             }}
           >
-            <div style={{ display: 'flex' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
               {/* 开始时间 */}
               <div>
                 <div className={appendSubTaskStyles.due_time}>

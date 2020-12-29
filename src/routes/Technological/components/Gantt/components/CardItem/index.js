@@ -1600,87 +1600,108 @@ export default class CardItem extends Component {
   // 当前任务完成时间与计划时间对比
   compareCardsRealPlanTimer = node => {
     const { local_width } = this.state
-    const { gantt_view_mode, itemValue = {} } = this.props
+    const { gantt_view_mode, itemValue = {}, ceilWidth } = this.props
     const { width } = itemValue
     let compare_width = 0
     const default_width =
       (width || 6) - (gantt_view_mode == 'year' ? 0 : card_width_diff)
+    const { date_arr_one_level = [] } = this.props
+    // 获取可视时间截止时间
+    const view_last_date =
+      date_arr_one_level[date_arr_one_level.length - 1].timestampEnd
     // 状态标识
     let status_label = ''
-    // 定义一个被除数
-    let dividend = ''
+    // 获取完成时间
     let finish_time_ =
       !!node.finish_time &&
       (String(node.finish_time).length == 10
         ? node.finish_time * 1000
         : node.finish_time)
+    let f_timestamp =
+      finish_time_ > view_last_date ? view_last_date : finish_time_
+    let cs_timestamp = caldiffDays(f_timestamp, node.start_time)
+    let ce_timestamp = caldiffDays(f_timestamp, node.due_time)
     // 表示是 已完成的任务 并且存在完成时间 并且存在开始、结束时间
     //注：同一天创建的任务 截止时间为当天的23:59 所以即使在当天完成 时间戳也会比截止时间小 所以不能用时间戳来比较大小
     if (
       node.tree_type == '2' &&
       node.is_realize == '1' &&
-      !!finish_time_ &&
+      !!f_timestamp &&
       (node.start_time || node.due_time)
     ) {
       // 表示存在开始和结束时间
       if (!!node.due_time && !!node.start_time) {
-        if (caldiffDays(finish_time_, node.due_time) == 0) {
+        if (ce_timestamp == 0) {
           // 表示刚好完成
           compare_width = default_width
           status_label = 'on_time'
-        } else if (finish_time_ > node.due_time) {
-          // 表示逾期完成
-          dividend =
-            node.due_time == node.start_time
-              ? node.start_time
-              : node.due_time - node.start_time
+        } else if (f_timestamp > node.due_time) {
           // 表示逾期完成
           status_label = 'overdue_time'
           compare_width =
             gantt_view_mode == 'hours'
-              ? caldiffDays(finish_time_, node.due_time) * 198 + default_width
-              : caldiffDays(finish_time_, node.due_time) *
-                  this.props.ceilWidth +
-                default_width
-          // node.due_time == node.start_time
-          //   ? caldiffDays(finish_time_, node.due_time) * 34 + default_width
-          //   : parseFloat((finish_time_ - node.start_time) / dividend).toFixed(
-          //       2
-          //     ) *
-          //       default_width +
-          //     10
-        } else if (finish_time_ < node.start_time) {
+              ? ce_timestamp * 198 + default_width
+              : ce_timestamp * this.props.ceilWidth + default_width
+        } else if (f_timestamp < node.start_time) {
           // 表示提前完成
           compare_width = default_width
           status_label = 'ahead_time'
         } else if (
-          finish_time_ >= node.start_time &&
-          finish_time_ < node.due_time
+          f_timestamp >= node.start_time &&
+          f_timestamp < node.due_time
         ) {
           compare_width =
-            caldiffDays(finish_time_, node.start_time) == 0
+            cs_timestamp == 0
               ? this.props.ceilWidth
               : gantt_view_mode == 'hours'
-              ? caldiffDays(finish_time_, node.start_time) * 198
-              : caldiffDays(finish_time_, node.start_time) *
-                this.props.ceilWidth
+              ? caldiffDays(f_timestamp, node.start_time) * 198
+              : caldiffDays(f_timestamp, node.start_time) * this.props.ceilWidth
           status_label = 'ahead_time_middle'
         }
       } else if (!!node.start_time && !node.due_time) {
+        //
         compare_width =
-          caldiffDays(finish_time_, node.start_time) == 0
+          cs_timestamp == 0
             ? this.props.ceilWidth
-            : finish_time_ < node.start_time
+            : f_timestamp < node.start_time
             ? 0
             : gantt_view_mode == 'hours'
-            ? caldiffDays(finish_time_, node.start_time) * 198
-            : caldiffDays(finish_time_, node.start_time) * this.props.ceilWidth
+            ? cs_timestamp * 198
+            : cs_timestamp * this.props.ceilWidth
         status_label =
-          caldiffDays(finish_time_, node.start_time) == 0
+          cs_timestamp == 0
             ? 'on_time'
-            : finish_time_ < node.start_time
+            : f_timestamp < node.start_time
             ? 'ahead_time'
             : 'overdue_time'
+      }
+    } else if (
+      node.tree_type == '2' &&
+      node.is_realize == '0' &&
+      (node.start_time || node.due_time)
+    ) {
+      const today = new Date()
+      const today_year = today.getFullYear()
+      const today_month = today.getMonth()
+      const today_day = today.getDate()
+      const today_start_time = new Date(
+        today_year,
+        today_month,
+        today_day,
+        '23',
+        '59',
+        '00'
+      ).getTime()
+      // 用今天减去开始时间 即使单个时间 开始时间也会赋值为截止时间
+      const t_timestamp =
+        view_last_date < today_start_time ? view_last_date : today_start_time
+      const c_day = caldiffDays(t_timestamp, node.start_time)
+      if (c_day == 0) {
+      } else {
+        compare_width =
+          gantt_view_mode == 'hours'
+            ? c_day * 9 * ceilWidth + 9 * ceilWidth
+            : c_day * ceilWidth + ceilWidth
       }
     }
     return { compare_width, status_label }
@@ -1840,6 +1861,7 @@ export default class CardItem extends Component {
         style={{
           left: local_left + (gantt_view_mode == 'year' ? 0 : card_left_diff),
           top: local_top,
+          //width,
           width:
             (local_width || 6) -
             (gantt_view_mode == 'year' ? 0 : card_width_diff),
@@ -1851,7 +1873,8 @@ export default class CardItem extends Component {
         {...this.handleObj()}
       >
         {/* 这里放 完成时 逾期的进度 */}
-        {is_show_compare_real_plan_timer && status_label == 'overdue_time' && (
+        {((is_show_compare_real_plan_timer && status_label == 'overdue_time') ||
+          (is_realize == '0' && is_overdue)) && (
           <div
             data-targetclassname="specific_example"
             // data-rely_top={id}
@@ -1869,21 +1892,23 @@ export default class CardItem extends Component {
               width: compare_width,
               height: height || task_item_height,
               lineHeight: `${height || task_item_height}px`,
-              backgroundColor: '#FF5A5A', //'rgba(255,32,32,0.4)'
+              backgroundColor: is_realize == '0' ? '#FF5A5A' : '#F1D3D4', //'rgba(255,32,32,0.4)'
               zIndex: 0,
               boxShadow: 'none',
               overflow:
                 ganttIsOutlineView({ group_view_type }) &&
                 card_name_outside &&
-                is_show_compare_real_plan_timer &&
-                status_label == 'overdue_time' &&
+                ((is_show_compare_real_plan_timer &&
+                  status_label == 'overdue_time') ||
+                  (is_realize == '0' && is_overdue)) &&
                 'visible'
             }}
           >
             {ganttIsOutlineView({ group_view_type }) &&
               card_name_outside &&
-              is_show_compare_real_plan_timer &&
-              status_label == 'overdue_time' && (
+              ((is_show_compare_real_plan_timer &&
+                status_label == 'overdue_time') ||
+                (is_realize == '0' && is_overdue)) && (
                 <div
                   style={{
                     position: 'absolute',
@@ -2090,7 +2115,8 @@ export default class CardItem extends Component {
         )}
         {ganttIsOutlineView({ group_view_type }) &&
           card_name_outside &&
-          status_label != 'overdue_time' && (
+          ((is_realize == '1' && status_label != 'overdue_time') ||
+            (is_realize == '0' && !is_overdue)) && (
             <div
               style={{
                 position: 'absolute',
