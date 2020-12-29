@@ -22,7 +22,7 @@ import styles from './index.less'
 import { importExcelWithBoardData } from '../../services/technological'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { connect } from 'dva'
-import { timeToTimestamp } from '../../utils/util'
+import { downloadFile, timeToTimestamp } from '../../utils/util'
 import { split } from 'lodash'
 const EditableContext = React.createContext()
 
@@ -150,12 +150,83 @@ class EditableCell extends React.Component {
     )
   }
 }
+
+const ModalConfirm = ({ guide_visible, handleCancel, importExcel }) => {
+  const downloadSrc =
+    'https://dian-lingxi-public.oss-cn-beijing.aliyuncs.com/doc/board_template.xlsx'
+  return (
+    <Modal
+      visible={guide_visible}
+      onCancel={handleCancel}
+      wrapClassName={styles.guide_confirm_modal}
+      footer={null}
+      style={{ paddingBottom: 0, paddingRight: 0, paddingLeft: 0 }}
+    >
+      <div className={styles.guide_top}></div>
+      <div style={{ height: 16 }}></div>
+      <div className={styles.guide_content}>
+        <div>
+          导入的内容数量建议小于1000条，所有允许导入的字段请参考模板，顺序可灵活定义，超出的字段暂不支持导入
+        </div>
+        <div className={styles.guide_content_item}>
+          <div className={styles.guide_content_item_left}>1. </div>
+          <div className={styles.guide_content_item_right}>
+            序号 的格式支持为1、1.1、1.1.1、1.1.1.1；
+          </div>
+        </div>
+        <div className={styles.guide_content_item}>
+          <div className={styles.guide_content_item_left}>2. </div>
+          <div className={styles.guide_content_item_right}>
+            [类型] 的填写仅限“里程碑”、“子里程碑”、“任务”、“子任务”；
+          </div>
+        </div>
+        <div className={styles.guide_content_item}>
+          <div className={styles.guide_content_item_left}>3. </div>
+          <div className={styles.guide_content_item_right}>
+            [序号]、[类型]、[名称] 为必填字段，其余的字段可不填写；
+          </div>
+        </div>
+        <div className={styles.guide_content_item}>
+          <div className={styles.guide_content_item_left}>4. </div>
+          <div className={styles.guide_content_item_right}>
+            起止时间格式支持YYYY/MM/DD、YYYY-MM-DD与YYYY/MM/DD HH:mm、
+            YYYY-MM-DD HH:mm；
+          </div>
+        </div>
+        <div className={styles.guide_content_item}>
+          <div className={styles.guide_content_item_left}>5. </div>
+          <div className={styles.guide_content_item_right}>
+            正式导入前需删除表头，在系统中支持在线操作；
+          </div>
+        </div>
+        <div className={styles.guide_content_item}>
+          <div className={styles.guide_content_item_left}>6. </div>
+          <div className={styles.guide_content_item_right}>
+            仅支持支持导入xls、xlsx格式。
+          </div>
+        </div>
+      </div>
+      <div style={{ height: 46 }}></div>
+      <div
+        className={styles.guide_download}
+        onClick={() => downloadFile(downloadSrc)}
+      >
+        下载导入模板
+      </div>
+      <div className={styles.guide_btn} onClick={importExcel}>
+        开始导入
+      </div>
+    </Modal>
+  )
+}
+
 @connect()
 export default class ExcelRead extends Component {
   constructor(props) {
     super(props)
     this.state = {
       visible: false,
+      guide_visible: false, //指引的弹窗显示状态
       columns: [],
       data: [],
       tableDefaultKeys: [
@@ -1335,6 +1406,7 @@ export default class ExcelRead extends Component {
     }).then(res => {
       if (isApiResponseOk(res)) {
         this.closeAll()
+        this.setGuideVisible(false)
         this.props.dispatch({
           type: 'gantt/getGanttData',
           payload: {}
@@ -1345,6 +1417,13 @@ export default class ExcelRead extends Component {
     })
   }
 
+  // 设置导入指引弹窗
+  setGuideVisible = bool => {
+    this.setState({
+      guide_visible: bool
+    })
+  }
+
   render() {
     let {
       visible,
@@ -1352,7 +1431,8 @@ export default class ExcelRead extends Component {
       data = [],
       hasSelected,
       selectedKey = {},
-      selectedRows = []
+      selectedRows = [],
+      guide_visible
     } = this.state
     const maxHeight = document.body.clientHeight / 2
     columns = columns.map((col, index) => ({
@@ -1373,9 +1453,18 @@ export default class ExcelRead extends Component {
     }
     return (
       <div>
-        <Button onClick={this.addFile} style={{ marginTop: '8px' }} block>
-          导入表格
+        <Button
+          onClick={() => this.setGuideVisible(true)}
+          style={{ marginTop: '8px' }}
+          block
+        >
+          从excel文件导入
         </Button>
+        <ModalConfirm
+          importExcel={this.addFile}
+          guide_visible={guide_visible}
+          handleCancel={() => this.setGuideVisible(false)}
+        />
         <Modal
           width="80%"
           visible={visible}
