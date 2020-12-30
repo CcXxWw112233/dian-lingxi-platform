@@ -11,7 +11,8 @@ import {
   Dropdown,
   Icon,
   Tooltip,
-  Radio
+  Radio,
+  Modal
 } from 'antd'
 import { connect } from 'dva'
 import { getCurrentSelectedProjectMembersList } from '@/services/technological/workbench'
@@ -33,6 +34,7 @@ import moment from 'moment'
 import { arrayNonRepeatfy, isSamDay } from '../../../../../utils/util'
 import { platformNouns } from '../../../../../globalset/clientCustorm'
 import { getProjectList } from '../../../../../services/technological/workbench'
+import webexOperateGuideImg from '@/assets/sider_right/kty_guide.png'
 const Option = Select.Option
 
 // 定义组件中需要的默认状态值
@@ -79,7 +81,8 @@ class VideoMeetingPopoverContent extends Component {
       emitMeettingStatus: false, //是否发送会议
       meeting_duplication: '', // 设置会议是否重复
       meeting_notice_time: ['0'],
-      meeting_notice_way: ['app', 'sms', 'mp']
+      meeting_notice_way: ['app', 'sms', 'mp'],
+      webexOperateGuideVisible: false //是否显示科天云
     }
     this.stepIndex = 0 // 定义步数
   }
@@ -102,7 +105,12 @@ class VideoMeetingPopoverContent extends Component {
       toNoticeList: [],
       remindDropdownVisible: false,
       providerDefault: null,
-      isShowNowTime: true // 表示是否跟随时钟变化
+      isShowNowTime: true, // 表示是否跟随时钟变化
+      emitMeettingStatus: false, //是否发送会议
+      meeting_duplication: '', // 设置会议是否重复
+      meeting_notice_time: ['0'],
+      meeting_notice_way: ['app', 'sms', 'mp'],
+      webexOperateGuideVisible: false //是否显示科天云
     })
     this.stepIndex = 0
     clearTimeout(this.timer)
@@ -829,6 +837,12 @@ class VideoMeetingPopoverContent extends Component {
     }
   }
 
+  setWebexOperateGuideVisible = () => {
+    this.setState({
+      webexOperateGuideVisible: !this.state.webexOperateGuideVisible
+    })
+  }
+
   // 获取图片logo
   getImgLogo = item => {
     const { id, icon, isDefault } = item
@@ -856,19 +870,20 @@ class VideoMeetingPopoverContent extends Component {
   }
 
   // 视频提供商点击事件
-  onVideoProviderChange = e => {
-    this.setState({
-      providerDefault: e.target.value
-    })
-  }
-
-  // 视频提供商点击事件
   handleSelectVideoProvider = (e, id) => {
     e && e.stopPropagation()
-    this.setState({
-      providerDefault: id,
-      meeting_duplication: ''
-    })
+    this.setState(
+      {
+        providerDefault: id,
+        meeting_duplication: ''
+      },
+      () => {
+        if (id == 2) {
+          console.log('进来了')
+          this.setWebexOperateGuideVisible()
+        }
+      }
+    )
   }
 
   // 点击左右箭头
@@ -884,14 +899,40 @@ class VideoMeetingPopoverContent extends Component {
       this.stepIndex++
       currentElem.style.left = -this.stepIndex * 110 + 'px'
     } else if (type == 'left') {
-      this.stepIndex--
       if (this.stepIndex == 0) {
         currentElem.style.left = 0 + 'px'
         return
       }
-      currentElem.style.left =
-        currentElem.offsetLeft + this.stepIndex * 110 + 'px'
+      if (this.stepIndex == 1) {
+        currentElem.style.left =
+          currentElem.offsetLeft + this.stepIndex * 110 + 'px'
+        this.stepIndex--
+      } else {
+        this.stepIndex--
+        currentElem.style.left =
+          currentElem.offsetLeft + this.stepIndex * 110 + 'px'
+      }
     }
+  }
+
+  // 点击立即访问
+  handleInterviewKty = () => {
+    const openWin = url => {
+      var element1 = document.createElement('a')
+      element1.href = url
+      element1.target = '_blank'
+      element1.id = 'openWin'
+      document.querySelector('body').appendChild(element1)
+      document.getElementById('openWin').click() //点击事件
+      document
+        .getElementById('openWin')
+        .parentNode.removeChild(document.getElementById('openWin'))
+    }
+    openWin('https://ktymeetings.webex.com.cn/')
+    setTimeout(() => {
+      this.setWebexOperateGuideVisible()
+      this.handleVideoMeetingPopoverVisibleChange(false)
+    }, 200)
   }
 
   // 渲染视频会议名称
@@ -919,6 +960,41 @@ class VideoMeetingPopoverContent extends Component {
     return title
   }
 
+  // 渲染科天云操作指引
+  renderWebexOperationalGuidelines = () => {
+    const { webexOperateGuideVisible } = this.state
+    return (
+      <div>
+        <Modal
+          width={1200}
+          visible={webexOperateGuideVisible}
+          footer={null}
+          title={null}
+          onCancel={this.setWebexOperateGuideVisible}
+          maskClosable={false}
+          zIndex={10000}
+          maskStyle={{ zIndex: 10000 }}
+        >
+          <div style={{ position: 'relative' }}>
+            <img width={'100%'} height={'100%'} src={webexOperateGuideImg} />
+            <div
+              onClick={this.handleInterviewKty}
+              className={`${indexStyles.videoMeeting__webex_button} ${indexStyles.videoMeeting__webex_interview}`}
+            >
+              <Button>立即访问</Button>
+            </div>
+            <div
+              className={`${indexStyles.videoMeeting__webex_button} ${indexStyles.videoMeeting__webex_sub} `}
+              onClick={this.handleVideoMeetingSubmit}
+            >
+              <Button>发起会议</Button>
+            </div>
+          </div>
+        </Modal>
+      </div>
+    )
+  }
+
   renderPopover = () => {
     const {
       projectList = [],
@@ -934,7 +1010,8 @@ class VideoMeetingPopoverContent extends Component {
       defaultValue,
       isOrderTime,
       remindDropdownVisible,
-      providerDefault
+      providerDefault,
+      webexOperateGuideVisible
     } = this.state
     let { board_id, videoConferenceProviderList = [] } = this.props
     let gold_provider_id =
@@ -952,6 +1029,7 @@ class VideoMeetingPopoverContent extends Component {
       <div>
         {videoMeetingPopoverVisible && (
           <div
+            id={'videoMeeting__wrapper'}
             className={`${indexStyles.videoMeeting__wrapper} ${globalStyles.global_vertical_scrollbar}`}
           >
             <div className={indexStyles.videoMeeting__topic}>
@@ -1357,7 +1435,7 @@ class VideoMeetingPopoverContent extends Component {
                       return (
                         <Radio.Group
                           style={{ marginBottom: '12px' }}
-                          onChange={this.onVideoProviderChange}
+                          // onChange={this.onVideoProviderChange}
                           value={
                             this.state.providerDefault
                               ? this.state.providerDefault
@@ -1426,6 +1504,7 @@ class VideoMeetingPopoverContent extends Component {
             </div>
           </div>
         )}
+        {webexOperateGuideVisible && this.renderWebexOperationalGuidelines()}
       </div>
     )
     return videoMeetingPopoverContent_
