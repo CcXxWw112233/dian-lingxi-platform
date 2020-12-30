@@ -33,7 +33,7 @@
         margin-right: 5px;
       }
       .videoMeeting__topic_content_title {
-        width: 100%;
+        width: 99%;
       }
     }
   }
@@ -63,7 +63,7 @@
   }
   .videoMeeting_setRemindTime {
     display: flex;
-    justify-content: space-between;
+    // justify-content: space-between;
     :global {
       .ant-select-dropdown {
         max-height: 200px;
@@ -74,9 +74,14 @@
         // overflow: hidden;
         .ant-select-selection__rendered {
           margin-right: 0;
+          height: 32px;
+          overflow: hidden;
           > ul {
             // display: flex;
             width: 100%;
+            > li {
+              max-width: 90px;
+            }
           }
           .ant-select-search--inline {
             // display: none;
@@ -88,8 +93,8 @@
 }
 
 .videoMeeting__wrapper {
-  // width: 400px;
-  width: 320px;
+  width: 400px;
+  // width: 320px;
   // height: 587px;
   max-height: 450px;
   overflow-y: auto;
@@ -257,7 +262,7 @@
 }
 
 .video_provider {
-  width: 80px;
+  width: 98px;
   margin-right: 14px;
   height: 48px;
   background: rgba(255, 255, 255, 1);

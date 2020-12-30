@@ -77,7 +77,9 @@ class VideoMeetingPopoverContent extends Component {
       providerDefault: null, // 默认选中的提供商
       remindDropdownVisible: false,
       emitMeettingStatus: false, //是否发送会议
-      meeting_duplication: 'none' // 设置会议是否重复
+      meeting_duplication: '', // 设置会议是否重复
+      meeting_notice_time: ['0'],
+      meeting_notice_way: ['app', 'sms', 'mp']
     }
     this.stepIndex = 0 // 定义步数
   }
@@ -410,25 +412,22 @@ class VideoMeetingPopoverContent extends Component {
 
   // 设置会议重复
   handleChangeSetMeetingDuplication = value => {
-    let meeting_duplication = ''
-    switch (value) {
-      case 'none':
-        meeting_duplication = '0'
-        break
-      case 'every_day':
-        meeting_duplication = '1'
-        break
-      case 'every_week_day':
-        meeting_duplication = '2'
-        break
-      case 'every_work_day':
-        meeting_duplication = '3'
-        break
-      default:
-        break
-    }
     this.setState({
-      meeting_duplication
+      meeting_duplication: value
+    })
+  }
+
+  // 设置会议提醒时间
+  handleChangeNoticeTime = value => {
+    this.setState({
+      meeting_notice_time: value
+    })
+  }
+
+  // 设置会议提醒方式
+  handleChangeNoticeWay = value => {
+    this.setState({
+      meeting_notice_way: value
     })
   }
 
@@ -664,7 +663,10 @@ class VideoMeetingPopoverContent extends Component {
       isOrderTime,
       providerDefault,
       due_time,
-      defaultValue
+      defaultValue,
+      meeting_duplication,
+      meeting_notice_time,
+      meeting_notice_way
     } = this.state
     let gold_provider_id =
       (videoConferenceProviderList &&
@@ -684,10 +686,23 @@ class VideoMeetingPopoverContent extends Component {
       topic: meetingTitle,
       start_time: meeting_start_time,
       end_time: due_time ? due_time + meeting_start_time : default_due_time,
-      user_for: (user_phone && user_phone.join(',')) || '',
-      user_ids: (userIds && userIds.join(',')) || '',
-      provider_id: providerDefault ? providerDefault : gold_provider_id
+      provider_id: providerDefault ? providerDefault : gold_provider_id,
+      participant: {
+        user_ids: userIds,
+        user_for: user_phone
+      },
+      notice_rule: {
+        notice_time: meeting_notice_time,
+        notice_way: meeting_notice_way
+      },
+      recurring_rule: {
+        recurring_type: meeting_duplication
+      }
+      // user_for: (user_phone && user_phone.join(',')) || '',
+      // user_ids: (userIds && userIds.join(',')) || '',
     }
+    console.log(data, 'ssssssssssss_data')
+    return
 
     Promise.resolve(
       dispatch({
@@ -735,9 +750,19 @@ class VideoMeetingPopoverContent extends Component {
 
   // popoverContent chg 事件
   handleVideoMeetingPopoverVisibleChange = flag => {
+    const { videoConferenceProviderList = [] } = this.props
+    let gold_provider_id =
+      (videoConferenceProviderList &&
+        (
+          videoConferenceProviderList.filter(
+            item => item.is_default == '1'
+          )[0] || []
+        ).id) ||
+      ''
     this.setState(
       {
-        videoMeetingPopoverVisible: flag
+        videoMeetingPopoverVisible: flag,
+        providerDefault: gold_provider_id
       },
       () => {
         if (flag === false) {
@@ -841,7 +866,8 @@ class VideoMeetingPopoverContent extends Component {
   handleSelectVideoProvider = (e, id) => {
     e && e.stopPropagation()
     this.setState({
-      providerDefault: id
+      providerDefault: id,
+      meeting_duplication: ''
     })
   }
 
@@ -856,7 +882,7 @@ class VideoMeetingPopoverContent extends Component {
         return
       }
       this.stepIndex++
-      currentElem.style.left = -this.stepIndex * 93 + 'px'
+      currentElem.style.left = -this.stepIndex * 110 + 'px'
     } else if (type == 'left') {
       this.stepIndex--
       if (this.stepIndex == 0) {
@@ -864,7 +890,7 @@ class VideoMeetingPopoverContent extends Component {
         return
       }
       currentElem.style.left =
-        currentElem.offsetLeft + this.stepIndex * 93 + 'px'
+        currentElem.offsetLeft + this.stepIndex * 110 + 'px'
     }
   }
 
@@ -907,9 +933,18 @@ class VideoMeetingPopoverContent extends Component {
       meetingTitle = '',
       defaultValue,
       isOrderTime,
-      remindDropdownVisible
+      remindDropdownVisible,
+      providerDefault
     } = this.state
     let { board_id, videoConferenceProviderList = [] } = this.props
+    let gold_provider_id =
+      (videoConferenceProviderList &&
+        (
+          videoConferenceProviderList.filter(
+            item => item.is_default == '1'
+          )[0] || []
+        ).id) ||
+      ''
     //过滤出来当前用户有编辑权限的项目
     let newToNoticeList = [].concat(...toNoticeList, othersPeople)
     const every_week_day = this.getWeekDay(meeting_start_time)
@@ -970,10 +1005,11 @@ class VideoMeetingPopoverContent extends Component {
                     style={{
                       position: 'relative',
                       zIndex: 0,
-                      maxWidth: '150px',
+                      // maxWidth: '150px',
                       lineHeight: '38px',
                       display: 'inline-block',
-                      textAlign: 'center'
+                      textAlign: 'center',
+                      flexShrink: 0
                     }}
                   >
                     <span>
@@ -1021,12 +1057,18 @@ class VideoMeetingPopoverContent extends Component {
                       }}
                     />
                   </span>
-                  <span style={{ position: 'relative' }}>
+                  <span
+                    style={{
+                      position: 'relative',
+                      width: '100%',
+                      marginRight: '5px'
+                    }}
+                  >
                     <Select
                       getPopupContainer={triggerNode => triggerNode.parentNode}
                       dropdownClassName={`${indexStyles.select_overlay} ${globalStyles.global_vertical_scrollbar}`}
-                      style={{ width: '138px' }}
                       value={[defaultValue]}
+                      style={{ width: '100%' }}
                     >
                       {dueTimeList &&
                         dueTimeList.map(item => (
@@ -1045,84 +1087,100 @@ class VideoMeetingPopoverContent extends Component {
                 {/* 时间选择 E */}
               </div>
             </div>
-            {/* 设置会议是否重复 */}
-            <div style={{ position: 'relative', marginBottom: '24px' }}>
-              <Select
-                optionLabelProp="label"
-                style={{ width: '100%' }}
-                getPopupContainer={triggerNode => triggerNode.parentNode}
-                onChange={this.handleChangeSetMeetingDuplication}
-                defaultValue="none"
-              >
-                <Option label="会议不重复" value="none">
-                  不重复
-                </Option>
-                <Option label="每天" value="every_day">
-                  每天
-                </Option>
-                <Option
-                  label={`每${every_week_day.dec}发起会议`}
-                  value="every_week_day"
+            {providerDefault == gold_provider_id && (
+              <>
+                {/* 设置会议是否重复 */}
+                <div style={{ position: 'relative', marginBottom: '24px' }}>
+                  <Select
+                    optionLabelProp="label"
+                    style={{ width: '99%' }}
+                    getPopupContainer={triggerNode => triggerNode.parentNode}
+                    onChange={this.handleChangeSetMeetingDuplication}
+                    defaultValue=""
+                  >
+                    <Option label="会议不重复" value="">
+                      不重复
+                    </Option>
+                    <Option label="每天" value="*">
+                      每天
+                    </Option>
+                    <Option
+                      label={`每${every_week_day.dec}发起会议`}
+                      value={
+                        new Date(meeting_start_time).getDay() == 0
+                          ? 7
+                          : new Date(meeting_start_time).getDay()
+                      }
+                    >
+                      每周{every_week_day.dec_1}
+                    </Option>
+                    <Option label="周一至周五发起会议" value="1-5">
+                      每个工作日（周一至周五）
+                    </Option>
+                  </Select>
+                </div>
+                {/* 设置会议提醒时间 以及提醒方式 */}
+                <div
+                  className={indexStyles.videoMeeting_setRemindTime}
+                  style={{ position: 'relative', marginBottom: '24px' }}
                 >
-                  每周{every_week_day.dec_1}
-                </Option>
-                <Option label="周一至周五发起会议" value="every_work_day">
-                  每个工作日（周一至周五）
-                </Option>
-              </Select>
-            </div>
-            {/* 设置会议提醒时间 以及提醒方式 */}
-            <div
-              className={indexStyles.videoMeeting_setRemindTime}
-              style={{ position: 'relative', marginBottom: '24px' }}
-            >
-              <Select
-                defaultValue="3"
-                optionLabelProp="label"
-                style={{ width: '130px' }}
-                getPopupContainer={triggerNode => triggerNode.parentNode}
-              >
-                <Option label="发起会议时提醒" value="0">
-                  发起会议时
-                </Option>
-                <Option label="会议开始时提醒" value="1">
-                  开始时
-                </Option>
-                <Option label="会议开始前5分钟提醒" value="2">
-                  5分钟前
-                </Option>
-                <Option label="会议开始前15分钟提醒" value="3">
-                  15分钟前
-                </Option>
-                <Option label="会议开始前30分钟提醒" value="4">
-                  30分钟前
-                </Option>
-                <Option label="会议开始前1小时提醒" value="5">
-                  1小时前
-                </Option>
-                <Option label="会议开始前1天提醒" value="6">
-                  1天前
-                </Option>
-              </Select>
-              <Select
-                defaultValue={['0', '1', '2']}
-                optionLabelProp="label"
-                style={{ width: '164px' }}
-                getPopupContainer={triggerNode => triggerNode.parentNode}
-                mode="multiple"
-                maxTagCount={1}
-              >
-                <Option label="应用内" value="0">
-                  应用内 提醒
-                </Option>
-                <Option label="短信" value="1">
-                  短信 提醒
-                </Option>
-                <Option label="公众号" value="2">
-                  公众号 提醒
-                </Option>
-              </Select>
-            </div>
+                  <span style={{ marginRight: '16px', width: '100%' }}>
+                    <Select
+                      defaultValue="0"
+                      optionLabelProp="label"
+                      style={{ width: '100%', flexShrink: 0 }}
+                      getPopupContainer={triggerNode => triggerNode.parentNode}
+                      onChange={this.handleChangeNoticeTime}
+                      mode="multiple"
+                      maxTagCount={1}
+                    >
+                      <Option label="发起会议时提醒" value="-1">
+                        发起会议时
+                      </Option>
+                      <Option label="会议开始时提醒" value="0">
+                        开始时
+                      </Option>
+                      <Option label="会议开始前5分钟提醒" value="5">
+                        5分钟前
+                      </Option>
+                      <Option label="会议开始前15分钟提醒" value="15">
+                        15分钟前
+                      </Option>
+                      <Option label="会议开始前30分钟提醒" value="30">
+                        30分钟前
+                      </Option>
+                      <Option label="会议开始前1小时提醒" value="60">
+                        1小时前
+                      </Option>
+                      <Option label="会议开始前1天提醒" value="1440">
+                        1天前
+                      </Option>
+                    </Select>
+                  </span>
+                  <span style={{ marginRight: '5px', width: '100%' }}>
+                    <Select
+                      defaultValue={['app', 'sms', 'mp']}
+                      optionLabelProp="label"
+                      style={{ width: '100%' }}
+                      getPopupContainer={triggerNode => triggerNode.parentNode}
+                      mode="multiple"
+                      maxTagCount={1}
+                      onChange={this.handleChangeNoticeWay}
+                    >
+                      <Option label="应用内" value="app">
+                        应用内 提醒
+                      </Option>
+                      <Option label="短信" value="sms">
+                        短信 提醒
+                      </Option>
+                      <Option label="公众号" value="mp">
+                        公众号 提醒
+                      </Option>
+                    </Select>
+                  </span>
+                </div>
+              </>
+            )}
             {/* 设置通知提醒 S */}
             <div className={indexStyles.videoMeeting__remind}>
               <div
@@ -1262,7 +1320,7 @@ class VideoMeetingPopoverContent extends Component {
             <div
               id={'videoProviderWrapper'}
               style={{
-                width: '320px',
+                // width: '320px',
                 position: 'relative',
                 marginRight: '-16px',
                 margin: 'auto',
@@ -1285,7 +1343,7 @@ class VideoMeetingPopoverContent extends Component {
               <div
                 style={{
                   position: 'relative',
-                  width: '282px',
+                  width: '330px',
                   overflow: 'hidden',
                   left: '10px'
                 }}
