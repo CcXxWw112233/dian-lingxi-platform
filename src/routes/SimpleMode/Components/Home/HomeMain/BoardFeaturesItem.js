@@ -81,9 +81,9 @@ export default class BoardFeaturesItem extends Component {
 
         break
       case '2': //日程
-        container = (
-          <span className={`${globalStyles.authTheme}`}>&#xe84d;</span>
-        )
+        // container = (
+        //   <span className={`${globalStyles.authTheme}`}>&#xe84d;</span>
+        // )
         break
       case '3': //流程
         container = (

@@ -418,7 +418,8 @@ export default class AppendSubTaskItem extends Component {
             style={{
               display: 'flex',
               paddingLeft: '16px',
-              justifyContent: 'space-between'
+              justifyContent: 'space-between',
+              flexWrap: 'wrap'
             }}
           >
             <div style={{ display: 'flex' }}>
