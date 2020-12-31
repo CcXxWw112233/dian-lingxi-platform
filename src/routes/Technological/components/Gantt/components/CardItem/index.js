@@ -127,9 +127,9 @@ export default class CardItem extends Component {
     } else {
       if (is_realize == '1') {
         if (active_compare_height) {
-          b = '#5BB48F'
+          b = 'rgb(39 218 103)'
         } else {
-          b = '#CDD1DF'
+          b = 'rgb(39 218 103)'
         }
       } else {
         b = early_warning ? '#FFA000' : '#B3D0FF'
@@ -1868,7 +1868,8 @@ export default class CardItem extends Component {
           height: height || task_item_height,
           marginTop: task_item_margin_top,
           boxShadow: 'none',
-          zIndex: rely_down || this.is_down || drag_lock ? 2 : 1
+          zIndex: rely_down || this.is_down || drag_lock ? 2 : 1,
+          borderRadius: ganttIsOutlineView({ group_view_type }) && '6px'
         }}
         {...this.handleObj()}
       >
@@ -1892,7 +1893,8 @@ export default class CardItem extends Component {
               width: compare_width,
               height: height || task_item_height,
               lineHeight: `${height || task_item_height}px`,
-              backgroundColor: is_realize == '0' ? '#FF5A5A' : '#F1D3D4', //'rgba(255,32,32,0.4)'
+              backgroundColor:
+                is_realize == '0' ? '#FF5A5A' : 'rgb(39 218 103)', //'rgba(255,32,32,0.4)'
               zIndex: 0,
               boxShadow: 'none',
               overflow:
@@ -1901,7 +1903,8 @@ export default class CardItem extends Component {
                 ((is_show_compare_real_plan_timer &&
                   status_label == 'overdue_time') ||
                   (is_realize == '0' && is_overdue)) &&
-                'visible'
+                'visible',
+              borderRadius: ganttIsOutlineView({ group_view_type }) && '6px'
             }}
           >
             {ganttIsOutlineView({ group_view_type }) &&
@@ -1949,7 +1952,8 @@ export default class CardItem extends Component {
               active_compare_height,
               is_show_warning_time
             }),
-            boxShadow: 'none'
+            boxShadow: 'none',
+            borderRadius: ganttIsOutlineView({ group_view_type }) && '6px'
           }}
         >
           <div
@@ -1965,8 +1969,8 @@ export default class CardItem extends Component {
               backgroundColor:
                 is_realize == '1'
                   ? status_label == 'ahead_time_middle'
-                    ? '#5BB48F' //'rgb(175,241,213)'
-                    : '#CDD1DF' //'rgb(212,216,228)'
+                    ? 'rgb(39 218 103)' //'rgb(175,241,213)'
+                    : 'rgb(39 218 103)' //'rgb(212,216,228)'
                   : is_show_warning_time
                   ? '#FFA000'
                   : '#B3D0FF',
@@ -1977,7 +1981,7 @@ export default class CardItem extends Component {
             }}
           >
             {/* 这里放提前完成时 进度对比 */}
-            {is_show_compare_real_plan_timer &&
+            {/* {is_show_compare_real_plan_timer &&
               status_label == 'ahead_time_middle' && (
                 <div
                   data-targetclassname="specific_example"
@@ -2006,7 +2010,7 @@ export default class CardItem extends Component {
                     zIndex: 0
                   }}
                 ></div>
-              )}
+              )} */}
             {/* 这里放置进行中父任务进度 */}
             {is_show_progress_percent && (
               <div
@@ -2024,11 +2028,12 @@ export default class CardItem extends Component {
                         (percent_card_non / 100) -
                       4,
                   // width: !label_data.length ? '100%' : '98%',
-                  borderRadius: '40px',
-                  borderTopRightRadius:
-                    Number(percent_card_non) >= 100 ? '40px' : '0px',
-                  borderBottomRightRadius:
-                    Number(percent_card_non) >= 100 ? '40px' : '0px',
+                  borderRadius:
+                    ganttIsOutlineView({ group_view_type }) && '6px',
+                  // borderTopRightRadius:
+                  //   Number(percent_card_non) >= 100 ? '40px' : '0px',
+                  // borderBottomRightRadius:
+                  //   Number(percent_card_non) >= 100 ? '40px' : '0px',
                   height: !label_data.length
                     ? task_item_height
                     : task_item_height - 4,
