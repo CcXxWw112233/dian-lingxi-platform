@@ -1327,7 +1327,7 @@ export default class CardItem extends Component {
         }
       } else {
         if (is_show_progress_percent) {
-          label_color = '#5A86F5'
+          label_color = 'rgb(39, 218, 103)' //'#5A86F5'
         } else if (is_show_warning_time) {
           label_color = '#FFA000'
         } else {
@@ -1351,7 +1351,7 @@ export default class CardItem extends Component {
             label_color = 'rgb(212, 216, 228)'
           } else {
             if (is_show_progress_percent) {
-              label_color = '#5A86F5'
+              label_color = 'rgb(39, 218, 103)' //'#5A86F5'
             } else {
               label_color = '#B3D0FF'
             }
@@ -1372,7 +1372,7 @@ export default class CardItem extends Component {
             label_color = 'rgb(212, 216, 228)'
           } else {
             if (is_show_progress_percent) {
-              label_color = '#5A86F5'
+              label_color = 'rgb(39, 218, 103)' //'#5A86F5'
             } else {
               label_color = '#B3D0FF'
             }
@@ -2018,7 +2018,7 @@ export default class CardItem extends Component {
                 className={`${indexStyles.gatt_card_percentage_prop}`}
                 style={{
                   // backgroundColor: '#cbddf7',
-                  backgroundColor: '#5A86F5',
+                  backgroundColor: 'rgb(39, 218, 103)', //'#5A86F5',
                   width: !label_data.length
                     ? ((local_width || 6) -
                         (gantt_view_mode == 'year' ? 0 : card_width_diff)) *
@@ -2186,7 +2186,7 @@ export default class CardItem extends Component {
                   backgroundColor:
                     is_realize == '0'
                       ? is_show_progress_percent
-                        ? '#5a86f5'
+                        ? 'rgb(39, 218, 103)' //'#5a86f5'
                         : is_show_warning_time
                         ? '#FFA000'
                         : '#B3D0FF'
@@ -2199,7 +2199,7 @@ export default class CardItem extends Component {
                   backgroundColor:
                     is_realize == '0'
                       ? is_show_progress_percent
-                        ? '#5a86f5'
+                        ? 'rgb(39, 218, 103)' //'#5a86f5'
                         : is_show_warning_time
                         ? '#FFA000'
                         : '#B3D0FF'
@@ -2213,7 +2213,7 @@ export default class CardItem extends Component {
                 style={{
                   backgroundColor:
                     is_show_progress_percent && !label_data.length
-                      ? '#5A86F5'
+                      ? 'rgb(39, 218, 103)' //'#5A86F5'
                       : this.setTriangleTreeColor({
                           label_data,
                           index: 'start',
