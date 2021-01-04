@@ -104,8 +104,8 @@
     position: absolute;
     height: 13px;
     width: 15px;
-    bottom: -9px;
-    z-index: 0;
+    bottom: -12px;
+    z-index: 2;
   }
 
   .left_triangle {
@@ -122,9 +122,9 @@
     left: 0;
     width: 0;
     height: 0;
-    border-top: 13px solid #b3d0ff;
+    border-top: 13px solid #cdd1df; //#b3d0ff;
     border-right: 15px solid transparent;
-    border-color: #b3d0ff transparent transparent transparent;
+    border-color: #cdd1df transparent transparent transparent;
     position: absolute;
     bottom: 5px;
     left: 2px;
@@ -167,7 +167,7 @@
     width: 2px;
     left: 0px;
     height: 8px;
-    bottom: 2px;
+    bottom: 0px;
     // background-color: red;
   }
 
@@ -184,9 +184,9 @@
     content: '';
     width: 0;
     height: 0;
-    border-top: 13px solid#B3D0FF;
+    border-top: 13px solid#CDD1DF; //#B3D0FF;
     border-left: 15px solid transparent;
-    border-color: #b3d0ff transparent transparent transparent;
+    border-color: #cdd1df transparent transparent transparent;
     position: absolute;
     bottom: 5px;
     right: 2px;
@@ -206,7 +206,7 @@
     width: 2px;
     right: 0px;
     height: 8px;
-    bottom: 2px;
+    bottom: 0px;
     // background-color: red;
   }
 
@@ -236,24 +236,24 @@
   .lr_triangle_pro_color {
     // border-color: rgb(31, 90, 240) transparent transparent transparent;
     &::after {
-      border-color: #5a86f5 transparent transparent transparent;
+      border-color: rgb(149, 222, 100) transparent transparent transparent;
     }
   }
   // 完成进度颜色
   .lr_triangle_com_color {
     &::after {
-      border-color: rgb(205, 209, 223) transparent transparent transparent;
+      border-color: rgb(149, 222, 100) transparent transparent transparent;
     }
   }
   // 预警颜色
   .lr_triangle_warn_color {
     &::after {
-      border-color: #ffa000 transparent transparent transparent;
+      // border-color: #ffa000 transparent transparent transparent;
     }
   }
   .right_triangle_com_color {
     &::after {
-      border-color: rgb(91, 180, 143) transparent transparent transparent;
+      border-color: rgb(149, 222, 100) transparent transparent transparent;
     }
   }
 
