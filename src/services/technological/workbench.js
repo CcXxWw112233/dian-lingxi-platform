@@ -128,32 +128,11 @@ export async function modifOrStopShareLink(payload = {}) {
   })
 }
 
-export async function createMeeting(payload) {
-  const {
-    board_id,
-    flag,
-    topic,
-    user_for = null,
-    user_ids = null,
-    _organization_id,
-    start_time = '',
-    end_time = '',
-    provider_id
-  } = payload
+export async function createMeeting(data) {
   return request({
     url: `${REQUEST_DOMAIN_TEAM_SHOW}/meeting`,
     method: 'POST',
-    data: {
-      _organization_id,
-      board_id,
-      flag,
-      topic,
-      user_for,
-      user_ids,
-      start_time,
-      end_time,
-      provider_id
-    }
+    data
   })
 
   // const body = {
@@ -168,6 +147,15 @@ export async function createMeeting(payload) {
   //flag: 2 //会议类型，全局调用时，值为：2
 }
 
+// 发起会议
+export async function createMeeting_2(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_TEAM_SHOW}${REQUEST_INTERGFACE_VERSIONN}/meeting`,
+    method: 'POST',
+    data
+  })
+}
+
 export async function appointmentMeeting(data) {
   return request({
     url: `${REQUEST_DOMAIN_TEAM_SHOW}/meeting/order`,
@@ -180,6 +168,15 @@ export async function appointmentMeeting(data) {
 export async function getVideoConferenceProviderList(params) {
   return request({
     url: `${REQUEST_DOMAIN_TEAM_SHOW}/meeting/provider`,
+    method: 'GET',
+    params
+  })
+}
+
+// 获取视频会议提供商状态
+export async function getVideoConferenceProviderListStatus(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_TEAM_SHOW}${REQUEST_INTERGFACE_VERSIONN}/meeting/provider/status`,
     method: 'GET',
     params
   })

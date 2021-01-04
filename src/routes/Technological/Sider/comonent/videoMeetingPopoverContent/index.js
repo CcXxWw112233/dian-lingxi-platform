@@ -33,7 +33,11 @@ import { isApiResponseOk } from '@/utils/handleResponseData'
 import moment from 'moment'
 import { arrayNonRepeatfy, isSamDay } from '../../../../../utils/util'
 import { platformNouns } from '../../../../../globalset/clientCustorm'
-import { getProjectList } from '../../../../../services/technological/workbench'
+import {
+  createMeeting_2,
+  getProjectList,
+  getVideoConferenceProviderListStatus
+} from '../../../../../services/technological/workbench'
 import webexOperateGuideImg from '@/assets/sider_right/kty_guide.png'
 const Option = Select.Option
 
@@ -82,7 +86,8 @@ class VideoMeetingPopoverContent extends Component {
       meeting_duplication: '', // 设置会议是否重复
       meeting_notice_time: ['0'],
       meeting_notice_way: ['app', 'sms', 'mp'],
-      webexOperateGuideVisible: false //是否显示科天云
+      webexOperateGuideVisible: false, //是否显示科天云
+      VideoConferenceProviderListStatus: [] // 可用会议室列表状态
     }
     this.stepIndex = 0 // 定义步数
   }
@@ -110,7 +115,8 @@ class VideoMeetingPopoverContent extends Component {
       meeting_duplication: '', // 设置会议是否重复
       meeting_notice_time: ['0'],
       meeting_notice_way: ['app', 'sms', 'mp'],
-      webexOperateGuideVisible: false //是否显示科天云
+      webexOperateGuideVisible: false, //是否显示科天云,
+      VideoConferenceProviderListStatus: [] // 可用会议室列表状态
     })
     this.stepIndex = 0
     clearTimeout(this.timer)
@@ -352,6 +358,15 @@ class VideoMeetingPopoverContent extends Component {
         meeting_start_time: start_timeStamp,
         isOrderTime: true,
         isShowNowTime: false
+      })
+    }
+    const { meeting_duplication } = this.state
+    if (this.state.meeting_duplication && !isNaN(meeting_duplication)) {
+      this.setState({
+        meeting_duplication:
+          new Date(start_timeStamp).getDay() == 0
+            ? 7
+            : new Date(start_timeStamp).getDay()
       })
     }
 
@@ -687,7 +702,7 @@ class VideoMeetingPopoverContent extends Component {
     // 默认45分钟 + 开始时间
     const default_due_time = defaultValue * 60 * 1000 + meeting_start_time
     const data = {
-      _organization_id: org_id,
+      org_id: org_id,
       board_id: saveToProject,
       flag: 2,
       rela_id: saveToProject,
@@ -700,7 +715,7 @@ class VideoMeetingPopoverContent extends Component {
         user_for: user_phone
       },
       notice_rule: {
-        notice_time: meeting_notice_time,
+        notice_type: meeting_notice_time,
         notice_way: meeting_notice_way
       },
       recurring_rule: {
@@ -709,17 +724,20 @@ class VideoMeetingPopoverContent extends Component {
       // user_for: (user_phone && user_phone.join(',')) || '',
       // user_ids: (userIds && userIds.join(',')) || '',
     }
-    console.log(data, 'ssssssssssss_data')
-    return
+    if (gold_provider_id != 5) {
+      delete data.notice_rule
+      delete data.recurring_rule
+    }
 
-    Promise.resolve(
-      dispatch({
-        type: !isOrderTime
-          ? 'technological/initiateVideoMeeting'
-          : 'technological/appointmentVideoMeeting',
-        payload: data
-      })
-    )
+    // Promise.resolve(
+    //   dispatch({
+    //     type: !isOrderTime
+    //       ? 'technological/initiateVideoMeeting'
+    //       : 'technological/appointmentVideoMeeting',
+    //     payload: data
+    //   })
+    // )
+    createMeeting_2({ ...data })
       .then(res => {
         if (res.code === '0') {
           clearTimeout(this.timer)
@@ -875,11 +893,26 @@ class VideoMeetingPopoverContent extends Component {
     this.setState(
       {
         providerDefault: id,
-        meeting_duplication: ''
+        meeting_duplication: '',
+        meeting_notice_time: ['0'],
+        meeting_notice_way: ['app', 'sms', 'mp']
       },
       () => {
+        const { videoConferenceProviderList = [] } = this.props
+        const gold_provider_id =
+          videoConferenceProviderList.find(item => item.is_default == '1').id ||
+          ''
+        if (gold_provider_id != id) {
+          getVideoConferenceProviderListStatus({}).then(res => {
+            if (isApiResponseOk(res)) {
+              // console.log(res)
+              this.setState({
+                VideoConferenceProviderListStatus: res.data || []
+              })
+            }
+          })
+        }
         if (id == 2) {
-          console.log('进来了')
           this.setWebexOperateGuideVisible()
         }
       }
@@ -962,7 +995,18 @@ class VideoMeetingPopoverContent extends Component {
 
   // 渲染科天云操作指引
   renderWebexOperationalGuidelines = () => {
-    const { webexOperateGuideVisible } = this.state
+    const {
+      webexOperateGuideVisible,
+      VideoConferenceProviderListStatus = [],
+      providerDefault
+    } = this.state
+    // 不能选择会议室禁用逻辑
+    const DISABLED_PROVIDER_MEETING =
+      (
+        VideoConferenceProviderListStatus.find(
+          item => item.id == providerDefault
+        ) || {}
+      ).enable_status || ''
     return (
       <div>
         <Modal
@@ -987,7 +1031,11 @@ class VideoMeetingPopoverContent extends Component {
               className={`${indexStyles.videoMeeting__webex_button} ${indexStyles.videoMeeting__webex_sub} `}
               onClick={this.handleVideoMeetingSubmit}
             >
-              <Button>发起会议</Button>
+              <Button disabled={DISABLED_PROVIDER_MEETING == '0'}>
+                {DISABLED_PROVIDER_MEETING == '0'
+                  ? '暂无可用会议室'
+                  : '发起会议'}
+              </Button>
             </div>
           </div>
         </Modal>
@@ -1011,7 +1059,11 @@ class VideoMeetingPopoverContent extends Component {
       isOrderTime,
       remindDropdownVisible,
       providerDefault,
-      webexOperateGuideVisible
+      webexOperateGuideVisible,
+      VideoConferenceProviderListStatus = [],
+      meeting_duplication,
+      meeting_notice_time,
+      meeting_notice_way
     } = this.state
     let { board_id, videoConferenceProviderList = [] } = this.props
     let gold_provider_id =
@@ -1025,6 +1077,20 @@ class VideoMeetingPopoverContent extends Component {
     //过滤出来当前用户有编辑权限的项目
     let newToNoticeList = [].concat(...toNoticeList, othersPeople)
     const every_week_day = this.getWeekDay(meeting_start_time)
+    console.log(this.getWeekDay(meeting_start_time))
+    // 校验的禁用逻辑
+    const DISABLED_VERIFY =
+      !saveToProject ||
+      meetingTitle == '' ||
+      !(newToNoticeList && newToNoticeList.length) ||
+      this.state.emitMeettingStatus //发送会议过程
+    // 不能选择会议室禁用逻辑
+    const DISABLED_PROVIDER_MEETING =
+      (
+        VideoConferenceProviderListStatus.find(
+          item => item.id == providerDefault
+        ) || {}
+      ).enable_status || ''
     const videoMeetingPopoverContent_ = (
       <div>
         {videoMeetingPopoverVisible && (
@@ -1170,11 +1236,13 @@ class VideoMeetingPopoverContent extends Component {
                 {/* 设置会议是否重复 */}
                 <div style={{ position: 'relative', marginBottom: '24px' }}>
                   <Select
+                    // key={meeting_duplication}
                     optionLabelProp="label"
                     style={{ width: '99%' }}
                     getPopupContainer={triggerNode => triggerNode.parentNode}
                     onChange={this.handleChangeSetMeetingDuplication}
                     defaultValue=""
+                    value={meeting_duplication}
                   >
                     <Option label="会议不重复" value="">
                       不重复
@@ -1211,6 +1279,7 @@ class VideoMeetingPopoverContent extends Component {
                       onChange={this.handleChangeNoticeTime}
                       mode="multiple"
                       maxTagCount={1}
+                      value={meeting_notice_time}
                     >
                       <Option label="发起会议时提醒" value="-1">
                         发起会议时
@@ -1244,6 +1313,7 @@ class VideoMeetingPopoverContent extends Component {
                       mode="multiple"
                       maxTagCount={1}
                       onChange={this.handleChangeNoticeWay}
+                      value={meeting_notice_way}
                     >
                       <Option label="应用内" value="app">
                         应用内 提醒
@@ -1490,16 +1560,15 @@ class VideoMeetingPopoverContent extends Component {
             </div>
             <div className={indexStyles.videoMeeting__submitBtn}>
               <Button
-                disabled={
-                  !saveToProject ||
-                  meetingTitle == '' ||
-                  !(newToNoticeList && newToNoticeList.length) ||
-                  this.state.emitMeettingStatus //发送会议过程
-                }
+                disabled={DISABLED_VERIFY || DISABLED_PROVIDER_MEETING == '0'}
                 type="primary"
                 onClick={this.handleVideoMeetingSubmit}
               >
-                {!isOrderTime ? '发起会议' : '预约会议'}
+                {DISABLED_PROVIDER_MEETING == '0'
+                  ? '暂无可用会议室'
+                  : !isOrderTime
+                  ? '发起会议'
+                  : '预约会议'}
               </Button>
             </div>
           </div>
