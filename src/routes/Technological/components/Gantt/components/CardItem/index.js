@@ -1883,7 +1883,7 @@ export default class CardItem extends Component {
           zIndex: rely_down || this.is_down || drag_lock ? 2 : 1,
           borderRadius: ganttIsOutlineView({ group_view_type }) && '6px',
           boxShadow: is_show_warning_time
-            ? '0 0 10px rgba(255,160,0,0.8)'
+            ? '0 0 20px rgba(255,160,0,0.8)'
             : 'none'
         }}
         {...this.handleObj()}
@@ -1921,9 +1921,8 @@ export default class CardItem extends Component {
                 'visible',
               borderRadius: ganttIsOutlineView({ group_view_type }) && '6px',
               boxShadow:
-                ganttIsOutlineView({ group_view_type }) &&
-                (is_realize == '0' || drag_lock)
-                  ? '0 0 10px rgba(255,90,90,0.8)'
+                ganttIsOutlineView({ group_view_type }) && is_realize == '0'
+                  ? '0 0 20px rgba(255,90,90,0.8)'
                   : 'none'
             }}
           >
