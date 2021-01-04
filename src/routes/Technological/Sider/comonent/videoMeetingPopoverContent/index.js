@@ -1077,7 +1077,6 @@ class VideoMeetingPopoverContent extends Component {
     //过滤出来当前用户有编辑权限的项目
     let newToNoticeList = [].concat(...toNoticeList, othersPeople)
     const every_week_day = this.getWeekDay(meeting_start_time)
-    console.log(this.getWeekDay(meeting_start_time))
     // 校验的禁用逻辑
     const DISABLED_VERIFY =
       !saveToProject ||
