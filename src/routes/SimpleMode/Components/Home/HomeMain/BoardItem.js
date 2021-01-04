@@ -113,6 +113,13 @@ export default class BoardItem extends Component {
         board_id: board_id
       }
     })
+    dispatch({
+      type: 'simplemode/getMeetingTodoList',
+      payload: {
+        org_id,
+        board_id
+      }
+    })
     selectBoardToSeeInfo({
       board_id: selectBoard[0] && selectBoard[0].board_id,
       org_id,

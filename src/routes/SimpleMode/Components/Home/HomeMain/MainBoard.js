@@ -81,6 +81,13 @@ export default class MainBoard extends Component {
         board_id: params.board_ids
       }
     })
+    dispatch({
+      type: 'simplemode/getMeetingTodoList',
+      payload: {
+        org_id: params._organization_id,
+        board_id: params.board_ids
+      }
+    })
   }
   setAddProjectModalVisible = () => {
     this.setState({
@@ -209,6 +216,12 @@ export default class MainBoard extends Component {
           // board_ids: '0'
         }
       })
+      dispatch({
+        type: 'simplemode/getMeetingTodoList',
+        payload: {
+          org_id: localStorage.getItem('OrganizationId')
+        }
+      })
     } else {
       //设置当前选中的项目
       if (local_selected_board.board_id) {
@@ -242,6 +255,13 @@ export default class MainBoard extends Component {
           type: 'simplemode/getBoardsProcessTodoList',
           payload: {
             _organization_id: local_selected_board.org_id,
+            board_id: local_selected_board.board_id
+          }
+        })
+        dispatch({
+          type: 'simplemode/getMeetingTodoList',
+          payload: {
+            org_id: local_selected_board.org_id,
             board_id: local_selected_board.board_id
           }
         })
@@ -288,6 +308,13 @@ export default class MainBoard extends Component {
             board_id: projectList[0].board_id
           }
         })
+        dispatch({
+          type: 'simplemode/getMeetingTodoList',
+          payload: {
+            org_id: projectList[0].org_id,
+            board_id: projectList[0].board_id
+          }
+        })
         selectBoardToSeeInfo({
           board_id: projectList[0] && projectList[0].board_id,
           board_name: projectList[0] && projectList[0].board_name,
@@ -325,6 +352,13 @@ export default class MainBoard extends Component {
       type: 'simplemode/getBoardsProcessTodoList',
       payload: {
         _organization_id: localStorage.getItem('OrganizationId')
+        // board_ids: '0'
+      }
+    })
+    dispatch({
+      type: 'simplemode/getMeetingTodoList',
+      payload: {
+        org_id: localStorage.getItem('OrganizationId')
         // board_ids: '0'
       }
     })

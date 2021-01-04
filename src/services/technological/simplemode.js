@@ -4,7 +4,8 @@ import {
   REQUEST_DOMAIN,
   REQUEST_DOMAIN_ARTICLE,
   REQUEST_DOMAIN_BOARD,
-  REQUEST_INTERGFACE_VERSIONN
+  REQUEST_INTERGFACE_VERSIONN,
+  REQUEST_DOMAIN_TEAM_SHOW
 } from '../../globalset/js/constant'
 
 export async function getUserBoxs() {
@@ -72,6 +73,15 @@ export async function getBoardsTaskTodoList(params) {
 export async function getBoardsProcessTodoList(params) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}${REQUEST_INTERGFACE_VERSIONN}/workflow/todo`,
+    method: 'GET',
+    params
+  })
+}
+
+// 获取代办会议列表
+export async function getMeetingTodoList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_TEAM_SHOW}${REQUEST_INTERGFACE_VERSIONN}/meeting/list/by_self`,
     method: 'GET',
     params
   })

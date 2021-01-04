@@ -8,7 +8,8 @@ import {
   getGuideCategoryList,
   getGuideArticle,
   getBoardsTaskTodoList,
-  getBoardsProcessTodoList
+  getBoardsProcessTodoList,
+  getMeetingTodoList
 } from '@/services/technological/simplemode'
 import { MESSAGE_DURATION_TIME } from '../../globalset/js/constant'
 import { isApiResponseOk } from '../../utils/handleResponseData'
@@ -301,6 +302,20 @@ export default {
           type: 'updateDatas',
           payload: {
             board_flow_todo_list: res.data
+          }
+        })
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+    *getMeetingTodoList({ payload }, { call, put, select }) {
+      let res = yield call(getMeetingTodoList, payload)
+      // debugger
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            board_meeting_todo_list: res.data
           }
         })
       } else {
