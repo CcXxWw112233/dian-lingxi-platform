@@ -312,10 +312,16 @@ export default {
       let res = yield call(getMeetingTodoList, payload)
       // debugger
       if (isApiResponseOk(res)) {
+        let data = res.data
+        data = data.map(item => {
+          let new_item = { ...item }
+          new_item.rela_type = 'meeting'
+          return new_item
+        })
         yield put({
           type: 'updateDatas',
           payload: {
-            board_meeting_todo_list: res.data
+            board_meeting_todo_list: data
           }
         })
       } else {

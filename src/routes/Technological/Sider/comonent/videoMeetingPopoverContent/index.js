@@ -746,6 +746,21 @@ class VideoMeetingPopoverContent extends Component {
           if (!isOrderTime)
             remind_time_value = parseInt(meeting_start_time / 1000)
           this.inviteMemberJoin({ card_id, userIds, user_phone, start_url })
+          const {
+            simplemodeCurrentProject: { selected_todo_list_time = '' }
+          } = this.props
+          let params = {
+            limit_time: selected_todo_list_time
+          }
+          dispatch({
+            type: 'simplemode/getMeetingTodoList',
+            payload: {
+              ...params,
+              org_id: localStorage.getItem('OrganizationId'),
+              // board_ids: '0'
+              board_id: saveToProject
+            }
+          })
         } else if (res.code === '1') {
           message.error(res.message)
           this.setState(

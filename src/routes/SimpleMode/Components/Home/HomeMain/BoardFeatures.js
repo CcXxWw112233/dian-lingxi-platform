@@ -35,7 +35,8 @@ export default class BoardFeatures extends Component {
     this.state = {
       board_todo_list: [].concat(
         ...props.board_card_todo_list,
-        ...new_flow_todo_list
+        ...new_flow_todo_list,
+        ...props.board_meeting_todo_list
       ),
       value: []
     }
@@ -48,14 +49,20 @@ export default class BoardFeatures extends Component {
   }
 
   componentWillReceiveProps(nextprops) {
-    const { board_card_todo_list = [], board_flow_todo_list = [] } = this.props
+    const {
+      board_card_todo_list = [],
+      board_flow_todo_list = [],
+      board_meeting_todo_list = []
+    } = this.props
     const {
       board_card_todo_list: new_board_card_todo_list = [],
-      board_flow_todo_list: new_flow_todo_list = []
+      board_flow_todo_list: new_flow_todo_list = [],
+      board_meeting_todo_list: new_board_meeting_todo_list = []
     } = nextprops
     if (
       isObjectValueEqual(board_card_todo_list, new_board_card_todo_list) &&
-      isObjectValueEqual(board_flow_todo_list, new_flow_todo_list)
+      isObjectValueEqual(board_flow_todo_list, new_flow_todo_list) &&
+      isObjectValueEqual(board_meeting_todo_list, new_board_meeting_todo_list)
     )
       return
     this.handleVagueMatching(this.state.value, nextprops)
@@ -85,13 +92,17 @@ export default class BoardFeatures extends Component {
     })
     return new_arr
   }
-  compareEvaluationTimeArray = array => {
-    if (!array) return []
+  compareEvaluationTimeArray = (array = []) => {
+    if (!array || !!!array.length) return []
     let newArray = JSON.parse(JSON.stringify(array || []))
     newArray = newArray.map(item => {
-      if (item.rela_type == '1' || item.rela_type == '2') {
+      if (item.rela_type == '1' || item.rela_type == 'meeting') {
         let new_item = { ...item }
-        let compare_time = item.due_time ? item.due_time : item.create_time
+        let compare_time = item.due_time
+          ? item.due_time
+          : item.end_time
+          ? item.end_time
+          : item.create_time
         new_item = { ...item, compare_time: compare_time }
         return new_item
       } else if (item.rela_type == '3') {
@@ -106,15 +117,24 @@ export default class BoardFeatures extends Component {
 
   // 重新排序
   reorderBoardToDoList = (props, data) => {
-    const { board_card_todo_list = [], board_flow_todo_list = [] } = props
+    const {
+      board_card_todo_list = [],
+      board_flow_todo_list = [],
+      board_meeting_todo_list = []
+    } = props
     let new_flow_todo_list = this.updateFlowsOppositeTime(board_flow_todo_list)
     let new_board_todo_list = data
       ? data
-      : [].concat(...board_card_todo_list, ...new_flow_todo_list)
+      : [].concat(
+          ...board_card_todo_list,
+          ...new_flow_todo_list,
+          ...board_meeting_todo_list
+        )
     // 1. 被驳回列表 并且按照时间排序
     let temp_overrule_arr = new_board_todo_list.filter(
       item => item.runtime_type == '1'
     ) // 将被驳回列表取出，并进行排序排序
+
     let overrule_arr = timeSort(
       this.compareEvaluationTimeArray(temp_overrule_arr),
       'compare_time'
@@ -124,7 +144,8 @@ export default class BoardFeatures extends Component {
       item =>
         item.runtime_type != '1' &&
         (((item.rela_type == '1' || item.rela_type == '2') && item.due_time) ||
-          (item.rela_type == '3' && item.deadline_type == '2'))
+          (item.rela_type == '3' && item.deadline_type == '2') ||
+          (item.rela_type == 'meeting' && item.end_time))
     )
     let non_overrule_time_arr = timeSort(
       this.compareEvaluationTimeArray(temp_overrule_time_arr),
@@ -262,14 +283,17 @@ export default class BoardFeatures extends Component {
       case 'all_time': // 所有时间
         this.setTaskDetailModalVisible()
         this.setProcessDetailModalVisibile()
+        this.setQueryMeetingList()
         break
       case 'recently_week': // 最近七周
         this.setTaskDetailModalVisible({ limit_time: 7 })
         this.setProcessDetailModalVisibile({ limit_time: 7 })
+        this.setQueryMeetingList({ limit_time: 7 })
         break
       case 'recently_month': // 最近一月
         this.setTaskDetailModalVisible({ limit_time: 31 })
         this.setProcessDetailModalVisibile({ limit_time: 31 })
+        this.setQueryMeetingList({ limit_time: 31 })
         break
       default:
         break
@@ -310,7 +334,9 @@ export default class BoardFeatures extends Component {
             itemValue={value}
           />
         )
+        break
       default:
+        return <BoardFeaturesItem key={id} itemValue={value} />
         break
     }
   }
@@ -376,18 +402,46 @@ export default class BoardFeatures extends Component {
     })
   }
 
+  // 设置会议查询事件
+  setQueryMeetingList = data => {
+    const { dispatch, simplemodeCurrentProject = {} } = this.props
+    const { board_id } = simplemodeCurrentProject
+    let params = {
+      ...data,
+      _organization_id: localStorage.getItem('OrganizationId')
+    }
+    if (board_id && board_id != '0') {
+      params.board_id = board_id
+    }
+    dispatch({
+      type: 'simplemode/getMeetingTodoList',
+      payload: params
+    })
+  }
+
   // 设置模糊匹配
   handleVagueMatching = (value, props) => {
-    const { board_card_todo_list = [], board_flow_todo_list = [] } = props
-      ? props
-      : this.props
+    const {
+      board_card_todo_list = [],
+      board_flow_todo_list = [],
+      board_meeting_todo_list = []
+    } = props ? props : this.props
     let new_board_todo_list = removeEmptyArrayEle(
-      [].concat(...board_card_todo_list, ...board_flow_todo_list)
+      [].concat(
+        ...board_card_todo_list,
+        ...board_flow_todo_list,
+        ...board_meeting_todo_list
+      )
     )
     let temp_board_todo_list = removeEmptyArrayEle(
-      [].concat(...board_card_todo_list, ...board_flow_todo_list)
+      [].concat(
+        ...board_card_todo_list,
+        ...board_flow_todo_list,
+        ...board_meeting_todo_list
+      )
     )
     if (!(value && value.length)) {
+      console.log('进来了')
       this.reorderBoardToDoList(props ? props : this.props)
       return
     }
@@ -523,7 +577,8 @@ function mapStateToProps({
   simplemode: {
     simplemodeCurrentProject,
     board_card_todo_list = [],
-    board_flow_todo_list = []
+    board_flow_todo_list = [],
+    board_meeting_todo_list = []
   },
   workbench: {
     datas: { projectList, projectInitLoaded }
@@ -543,6 +598,7 @@ function mapStateToProps({
     currentSelectOrganize,
     board_card_todo_list,
     board_flow_todo_list,
+    board_meeting_todo_list,
     drawerVisible,
     projectList,
     projectInitLoaded,
