@@ -2248,11 +2248,11 @@ export default class CardItem extends Component {
                       Number(percent_card_non) >= 100,
                     status_label,
                     is_show_warning_time
-                  })} transparent transparent transparent`,
-                  zIndex:
-                    (is_show_progress_percent ||
-                      is_show_compare_real_plan_timer) &&
-                    0
+                  })} transparent transparent transparent`
+                  // zIndex:
+                  //   (is_show_progress_percent ||
+                  //     is_show_compare_real_plan_timer) &&
+                  //   0
                 }}
               ></div>
               <div className={indexStyles.right_triangle_mask}></div>
