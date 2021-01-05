@@ -264,7 +264,8 @@ class HoverEars extends Component {
   render() {
     const {
       itemValue: { label_data = [], id },
-      rely_down
+      rely_down,
+      is_outline_view
     } = this.props
     const { x1, y1, length, angle, transformOrigin, x2, y2 } = this.state
     return (
@@ -302,7 +303,10 @@ class HoverEars extends Component {
                 /> */}
 
         <div className={indexStyles.right_circle_wrapper}>
-          <div className={indexStyles.link_right_circle}></div>
+          <div
+            className={indexStyles.link_right_circle}
+            style={{ bottom: is_outline_view && '22px' }}
+          ></div>
           <div
             data-ref={'right_circle_ref'}
             ref={this.right_circle_ref}
@@ -313,6 +317,7 @@ class HoverEars extends Component {
             // data-ref={'right_circle_ref'}
             // ref={this.right_circle_ref}
             // {...this.eventObj}
+            style={{ bottom: is_outline_view && '18px' }}
             className={`${indexStyles.ears_circle} ${indexStyles.right_ear_circle}`}
           />
           <div />

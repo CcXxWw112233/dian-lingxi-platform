@@ -8,7 +8,8 @@ import {
   task_item_height,
   task_item_margin_top,
   ganttIsOutlineView,
-  ganttIsSingleBoardGroupView
+  ganttIsSingleBoardGroupView,
+  task_item_outline_height
 } from '../../constants'
 import { updateTaskVTwo } from '../../../../../../services/technological/task'
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
@@ -288,6 +289,7 @@ export default class CardItem extends Component {
     if (!ganttPanelDashedDrag) {
       this.props.setDasheRectShow && this.props.setDasheRectShow(false)
     }
+    if (this.state.rely_down) return
     // 鼠标移入 触发显示日期
     this.props.dispatch({
       type: 'gantt/updateDatas',
@@ -1546,6 +1548,7 @@ export default class CardItem extends Component {
         // console.log('s_event', 'onMouseLeave')
         this.set_drag_else_over_in(false)
         // 清除显示日期选中
+        if (this.state.rely_down) return
         this.props.dispatch({
           type: 'gantt/updateDatas',
           payload: {
@@ -1872,16 +1875,20 @@ export default class CardItem extends Component {
         data-rely_top={id}
         style={{
           left: local_left + (gantt_view_mode == 'year' ? 0 : card_left_diff),
-          top: local_top,
+          top: ganttIsOutlineView({ group_view_type })
+            ? local_top + 2
+            : local_top,
           //width,
           width:
             (local_width || 6) -
             (gantt_view_mode == 'year' ? 0 : card_width_diff),
-          height: height || task_item_height,
+          height: ganttIsOutlineView({ group_view_type })
+            ? task_item_outline_height
+            : height || task_item_height,
           marginTop: task_item_margin_top,
           // boxShadow: 'none',
           zIndex: rely_down || this.is_down || drag_lock ? 2 : 1,
-          borderRadius: ganttIsOutlineView({ group_view_type }) && '6px',
+          borderRadius: ganttIsOutlineView({ group_view_type }) && '4px',
           boxShadow: is_show_warning_time
             ? '0 0 20px rgba(255,160,0,0.8)'
             : 'none'
@@ -1906,8 +1913,14 @@ export default class CardItem extends Component {
               //   ((is_has_start_time && is_has_end_time) || !is_has_end_time) &&
               //   '40px',
               width: compare_width,
-              height: height || task_item_height,
-              lineHeight: `${height || task_item_height}px`,
+              height: ganttIsOutlineView({ group_view_type })
+                ? task_item_outline_height
+                : height || task_item_height,
+              lineHeight: `${
+                ganttIsOutlineView({ group_view_type })
+                  ? task_item_outline_height
+                  : height || task_item_height
+              }px`,
               backgroundColor:
                 is_realize == '0' ? '#FF5A5A' : 'rgb(149,222,100)', //'rgba(255,32,32,0.4)'
               zIndex: 0,
@@ -1919,7 +1932,7 @@ export default class CardItem extends Component {
                   status_label == 'overdue_time') ||
                   (is_realize == '0' && is_overdue)) &&
                 'visible',
-              borderRadius: ganttIsOutlineView({ group_view_type }) && '6px',
+              borderRadius: ganttIsOutlineView({ group_view_type }) && '4px',
               boxShadow:
                 ganttIsOutlineView({ group_view_type }) && is_realize == '0'
                   ? '0 0 20px rgba(255,90,90,0.8)'
@@ -1964,7 +1977,9 @@ export default class CardItem extends Component {
             top: 0,
             zIndex: 2,
             width: '100%',
-            height: height || task_item_height,
+            height: ganttIsOutlineView({ group_view_type })
+              ? task_item_outline_height
+              : height || task_item_height,
             background: this.setLableColor({
               label_data,
               is_realize,
@@ -1973,7 +1988,7 @@ export default class CardItem extends Component {
               is_outline_view: ganttIsOutlineView({ group_view_type })
             }),
             boxShadow: 'none',
-            borderRadius: ganttIsOutlineView({ group_view_type }) && '6px'
+            borderRadius: ganttIsOutlineView({ group_view_type }) && '4px'
           }}
         >
           <div
@@ -1997,8 +2012,14 @@ export default class CardItem extends Component {
               padding:
                 gantt_view_mode != 'month' && time_span < 6 ? '0' : '0 8px',
               zIndex: 1,
-              height: active_compare_height && (height || task_item_height),
-              borderRadius: ganttIsOutlineView({ group_view_type }) && '6px'
+              height: !label_data.length
+                ? ganttIsOutlineView({ group_view_type })
+                  ? task_item_outline_height
+                  : task_item_height
+                : ganttIsOutlineView({ group_view_type })
+                ? task_item_outline_height - 4
+                : task_item_height - 4,
+              borderRadius: ganttIsOutlineView({ group_view_type }) && '4px'
             }}
           >
             {/* 这里放提前完成时 进度对比 */}
@@ -2020,12 +2041,20 @@ export default class CardItem extends Component {
                     //   '40px',
                     width: compare_width,
                     height: !label_data.length
-                      ? height || task_item_height
-                      : (height || task_item_height) - 4,
+                      ? ganttIsOutlineView({ group_view_type })
+            ? task_item_outline_height
+            : height || task_item_height
+                      : (ganttIsOutlineView({ group_view_type })
+            ? task_item_outline_height
+            : height || task_item_height) - 4,
                     lineHeight: `${
                       !label_data.length
-                        ? height || task_item_height
-                        : (height || task_item_height) - 4
+                        ? ganttIsOutlineView({ group_view_type })
+            ? task_item_outline_height
+            : height || task_item_height
+                        : (ganttIsOutlineView({ group_view_type })
+            ? task_item_outline_height
+            : height || task_item_height) - 4
                     }px`,
                     backgroundColor: '#CDD1DF', //'rgba(255,32,32,0.4)'
                     zIndex: 0
@@ -2050,16 +2079,26 @@ export default class CardItem extends Component {
                       4,
                   // width: !label_data.length ? '100%' : '98%',
                   borderRadius:
-                    ganttIsOutlineView({ group_view_type }) && '6px',
+                    ganttIsOutlineView({ group_view_type }) && '4px',
                   // borderTopRightRadius:
                   //   Number(percent_card_non) >= 100 ? '40px' : '0px',
                   // borderBottomRightRadius:
                   //   Number(percent_card_non) >= 100 ? '40px' : '0px',
                   height: !label_data.length
-                    ? task_item_height
+                    ? ganttIsOutlineView({ group_view_type })
+                      ? task_item_outline_height
+                      : task_item_height
+                    : ganttIsOutlineView({ group_view_type })
+                    ? task_item_outline_height - 4
                     : task_item_height - 4,
                   lineHeight: `${
-                    !label_data.length ? task_item_height : task_item_height - 4
+                    !label_data.length
+                      ? ganttIsOutlineView({ group_view_type })
+                        ? task_item_outline_height
+                        : task_item_height
+                      : ganttIsOutlineView({ group_view_type })
+                      ? task_item_outline_height - 4
+                      : task_item_height - 4
                   }px`,
                   left: !label_data.length && 0
                 }}
@@ -2073,8 +2112,14 @@ export default class CardItem extends Component {
               style={{
                 display: 'flex',
                 color: 'rgba(0,0,0,0.45)',
-                height: task_item_height - 4,
-                lineHeight: `${task_item_height - 4}px`,
+                height: ganttIsOutlineView({ group_view_type })
+                  ? task_item_outline_height - 4
+                  : task_item_height - 4,
+                lineHeight: `${
+                  ganttIsOutlineView({ group_view_type })
+                    ? task_item_outline_height - 4
+                    : task_item_height - 4
+                }px`,
                 zIndex:
                   ((is_show_compare_real_plan_timer &&
                     status_label == 'ahead_time_middle') ||
@@ -2314,6 +2359,7 @@ export default class CardItem extends Component {
               dispatch={this.props.dispatch}
               setRelyLineDrawing={this.setRelyDown}
               rely_down={rely_down}
+              is_outline_view={ganttIsOutlineView({ group_view_type })}
             />
           )}
         {(drag_lock || drag_else_over_in) && (
@@ -2324,6 +2370,7 @@ export default class CardItem extends Component {
               (local_width || 6) -
               (gantt_view_mode == 'year' ? 0 : card_width_diff)
             }
+            is_outline_view={ganttIsOutlineView({ group_view_type })}
           />
         )}
         {/* 大纲视图下显示任务预警 */}
