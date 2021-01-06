@@ -1095,6 +1095,34 @@ export default class TreeNode extends Component {
     })
   }
 
+  //设置节点title的区域宽度， 对齐
+  setTitleWidth = has_child => {
+    const { nodeValue } = this.state
+    const { parent_ids = [] } = nodeValue
+    //length代表往上几层有父节点
+    const length = parent_ids.length
+    // titleWidth=243px
+    let width = 256
+    switch (length) {
+      case 0:
+        width = has_child ? 258 : 272
+        break
+      case 1:
+        width = has_child ? 234 : 250
+        break
+      case 2:
+        width = has_child ? 212 : 228
+        break
+      case 3:
+        width = 204
+        break
+      default:
+        width = 256
+        break
+    }
+    return width
+  }
+
   // 渲染有子节点的
   renderHasChildNode = () => {
     const {
@@ -1199,7 +1227,12 @@ export default class TreeNode extends Component {
                 </span>
               )}
             </div>
-            <div className={styles.item_title_name}>{this.renderTitle()}</div>
+            <div
+              className={styles.item_title_name}
+              style={{ width: this.setTitleWidth(true) }}
+            >
+              {this.renderTitle()}
+            </div>
           </div>
           <div className={styles.flex2}>
             {this.renderForColumns()}
@@ -1387,7 +1420,12 @@ export default class TreeNode extends Component {
                 </span>
               )}
             </div>
-            <div className={styles.item_title_name}>{this.renderTitle()}</div>
+            <div
+              className={styles.item_title_name}
+              style={{ width: this.setTitleWidth() }}
+            >
+              {this.renderTitle()}
+            </div>
           </div>
           <div className={styles.flex2}>
             {this.renderForColumns()}

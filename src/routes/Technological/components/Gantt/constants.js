@@ -1,5 +1,6 @@
 export const date_area_height = 64
 export const task_item_height = 26 //进度条高度
+export const task_item_outline_height = 20 // 大纲视图的任务进度
 export const task_item_height_fold = 24 //进度条高度（折叠后）
 export const task_item_margin_top = 12 //任务条margin-top
 export const ceil_height = task_item_height + task_item_margin_top // task_item_height + task_item_margin_top 单元格高度

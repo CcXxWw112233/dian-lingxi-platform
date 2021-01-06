@@ -1062,6 +1062,7 @@ export default class GetRowGantt extends Component {
             outline_tree_round.map((value, key) => {
               const {
                 row,
+                width,
                 end_time,
                 left,
                 top,
@@ -1105,7 +1106,7 @@ export default class GetRowGantt extends Component {
                       />
                     )}
                     <GetRowTaskItem
-                      key={`${id}_${start_time}_${end_time}_${left}_${top}_${row}`}
+                      key={`${id}_${start_time}_${end_time}_${left}_${top}_${width}_${row}`}
                       itemValue={value}
                       setSpecilTaskExample={this.setSpecilTaskExample}
                       ganttPanelDashedDrag={this.state.drag_creating}

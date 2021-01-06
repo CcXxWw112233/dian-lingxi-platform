@@ -8,7 +8,8 @@ import {
   task_item_height,
   task_item_margin_top,
   ganttIsOutlineView,
-  ganttIsSingleBoardGroupView
+  ganttIsSingleBoardGroupView,
+  task_item_outline_height
 } from '../../constants'
 import { updateTaskVTwo } from '../../../../../../services/technological/task'
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
@@ -105,7 +106,8 @@ export default class CardItem extends Component {
     label_data,
     is_realize,
     active_compare_height,
-    is_show_warning_time: early_warning
+    is_show_warning_time: early_warning,
+    is_outline_view
   }) => {
     let bgColor = ''
     let b = ''
@@ -126,13 +128,22 @@ export default class CardItem extends Component {
       b = `linear-gradient(to right${bgColor})`
     } else {
       if (is_realize == '1') {
-        if (active_compare_height) {
-          b = '#5BB48F'
+        if (is_outline_view) {
+          b = 'rgb(149,222,100)'
         } else {
           b = '#CDD1DF'
         }
+        // if (active_compare_height) {
+        //   b = 'rgb(149,222,100)'
+        // } else {
+        //   b = 'rgb(149,222,100)'
+        // }
       } else {
-        b = early_warning ? '#FFA000' : '#B3D0FF'
+        if (is_outline_view) {
+          b = '#CDD1DF'
+        } else {
+          b = '#B3D0FF' //early_warning ? '#FFA000' : '#B3D0FF'
+        }
       }
       // b =
       //   is_realize == '1'
@@ -278,6 +289,7 @@ export default class CardItem extends Component {
     if (!ganttPanelDashedDrag) {
       this.props.setDasheRectShow && this.props.setDasheRectShow(false)
     }
+    if (this.state.rely_down) return
     // 鼠标移入 触发显示日期
     this.props.dispatch({
       type: 'gantt/updateDatas',
@@ -1316,22 +1328,24 @@ export default class CardItem extends Component {
     status_label,
     is_show_warning_time
   }) => {
-    let label_color = '#B3D0FF'
+    let label_color = '#CDD1DF' //'#B3D0FF'
     const length = label_data.length
     if (length == 0) {
       if (is_realize == '1') {
         if (status_label == 'ahead_time_middle' && index == 'end') {
-          label_color = 'rgb(91, 180, 143)'
+          label_color = 'rgb(149, 222, 100)'
         } else {
-          label_color = 'rgb(205, 209, 223)'
+          label_color = 'rgb(149, 222, 100)'
         }
       } else {
         if (is_show_progress_percent) {
-          label_color = '#5A86F5'
-        } else if (is_show_warning_time) {
-          label_color = '#FFA000'
-        } else {
-          label_color = '#B3D0FF'
+          label_color = 'rgb(149, 222, 100)' //'#5A86F5'
+        }
+        // else if (is_show_warning_time) {
+        //   label_color = '' //'#FFA000'
+        // }
+        else {
+          label_color = '#CDD1DF' //'#B3D0FF'
         }
       }
       // label_color =
@@ -1351,9 +1365,9 @@ export default class CardItem extends Component {
             label_color = 'rgb(212, 216, 228)'
           } else {
             if (is_show_progress_percent) {
-              label_color = '#5A86F5'
+              label_color = 'rgb(149, 222, 100)' //'#5A86F5'
             } else {
-              label_color = '#B3D0FF'
+              label_color = '#CDD1DF' //'#B3D0FF'
             }
           }
         }
@@ -1372,9 +1386,9 @@ export default class CardItem extends Component {
             label_color = 'rgb(212, 216, 228)'
           } else {
             if (is_show_progress_percent) {
-              label_color = '#5A86F5'
+              label_color = 'rgb(149, 222, 100)' //'#5A86F5'
             } else {
-              label_color = '#B3D0FF'
+              label_color = '#CDD1DF' //'#B3D0FF'
             }
           }
         }
@@ -1534,6 +1548,7 @@ export default class CardItem extends Component {
         // console.log('s_event', 'onMouseLeave')
         this.set_drag_else_over_in(false)
         // 清除显示日期选中
+        if (this.state.rely_down) return
         this.props.dispatch({
           type: 'gantt/updateDatas',
           payload: {
@@ -1600,87 +1615,108 @@ export default class CardItem extends Component {
   // 当前任务完成时间与计划时间对比
   compareCardsRealPlanTimer = node => {
     const { local_width } = this.state
-    const { gantt_view_mode, itemValue = {} } = this.props
+    const { gantt_view_mode, itemValue = {}, ceilWidth } = this.props
     const { width } = itemValue
     let compare_width = 0
     const default_width =
       (width || 6) - (gantt_view_mode == 'year' ? 0 : card_width_diff)
+    const { date_arr_one_level = [] } = this.props
+    // 获取可视时间截止时间
+    const view_last_date =
+      date_arr_one_level[date_arr_one_level.length - 1].timestampEnd
     // 状态标识
     let status_label = ''
-    // 定义一个被除数
-    let dividend = ''
+    // 获取完成时间
     let finish_time_ =
       !!node.finish_time &&
       (String(node.finish_time).length == 10
         ? node.finish_time * 1000
         : node.finish_time)
+    let f_timestamp =
+      finish_time_ > view_last_date ? view_last_date : finish_time_
+    let cs_timestamp = caldiffDays(f_timestamp, node.start_time)
+    let ce_timestamp = caldiffDays(f_timestamp, node.due_time)
     // 表示是 已完成的任务 并且存在完成时间 并且存在开始、结束时间
     //注：同一天创建的任务 截止时间为当天的23:59 所以即使在当天完成 时间戳也会比截止时间小 所以不能用时间戳来比较大小
     if (
       node.tree_type == '2' &&
       node.is_realize == '1' &&
-      !!finish_time_ &&
+      !!f_timestamp &&
       (node.start_time || node.due_time)
     ) {
       // 表示存在开始和结束时间
       if (!!node.due_time && !!node.start_time) {
-        if (caldiffDays(finish_time_, node.due_time) == 0) {
+        if (ce_timestamp == 0) {
           // 表示刚好完成
           compare_width = default_width
           status_label = 'on_time'
-        } else if (finish_time_ > node.due_time) {
-          // 表示逾期完成
-          dividend =
-            node.due_time == node.start_time
-              ? node.start_time
-              : node.due_time - node.start_time
+        } else if (f_timestamp > node.due_time) {
           // 表示逾期完成
           status_label = 'overdue_time'
           compare_width =
             gantt_view_mode == 'hours'
-              ? caldiffDays(finish_time_, node.due_time) * 198 + default_width
-              : caldiffDays(finish_time_, node.due_time) *
-                  this.props.ceilWidth +
-                default_width
-          // node.due_time == node.start_time
-          //   ? caldiffDays(finish_time_, node.due_time) * 34 + default_width
-          //   : parseFloat((finish_time_ - node.start_time) / dividend).toFixed(
-          //       2
-          //     ) *
-          //       default_width +
-          //     10
-        } else if (finish_time_ < node.start_time) {
+              ? ce_timestamp * 198 + default_width
+              : ce_timestamp * this.props.ceilWidth + default_width
+        } else if (f_timestamp < node.start_time) {
           // 表示提前完成
           compare_width = default_width
           status_label = 'ahead_time'
         } else if (
-          finish_time_ >= node.start_time &&
-          finish_time_ < node.due_time
+          f_timestamp >= node.start_time &&
+          f_timestamp < node.due_time
         ) {
           compare_width =
-            caldiffDays(finish_time_, node.start_time) == 0
+            cs_timestamp == 0
               ? this.props.ceilWidth
               : gantt_view_mode == 'hours'
-              ? caldiffDays(finish_time_, node.start_time) * 198
-              : caldiffDays(finish_time_, node.start_time) *
-                this.props.ceilWidth
+              ? caldiffDays(f_timestamp, node.start_time) * 198
+              : caldiffDays(f_timestamp, node.start_time) * this.props.ceilWidth
           status_label = 'ahead_time_middle'
         }
       } else if (!!node.start_time && !node.due_time) {
+        //
         compare_width =
-          caldiffDays(finish_time_, node.start_time) == 0
+          cs_timestamp == 0
             ? this.props.ceilWidth
-            : finish_time_ < node.start_time
+            : f_timestamp < node.start_time
             ? 0
             : gantt_view_mode == 'hours'
-            ? caldiffDays(finish_time_, node.start_time) * 198
-            : caldiffDays(finish_time_, node.start_time) * this.props.ceilWidth
+            ? cs_timestamp * 198
+            : cs_timestamp * this.props.ceilWidth
         status_label =
-          caldiffDays(finish_time_, node.start_time) == 0
+          cs_timestamp == 0
             ? 'on_time'
-            : finish_time_ < node.start_time
+            : f_timestamp < node.start_time
             ? 'ahead_time'
             : 'overdue_time'
+      }
+    } else if (
+      node.tree_type == '2' &&
+      node.is_realize == '0' &&
+      (node.start_time || node.due_time)
+    ) {
+      const today = new Date()
+      const today_year = today.getFullYear()
+      const today_month = today.getMonth()
+      const today_day = today.getDate()
+      const today_start_time = new Date(
+        today_year,
+        today_month,
+        today_day,
+        '23',
+        '59',
+        '00'
+      ).getTime()
+      // 用今天减去开始时间 即使单个时间 开始时间也会赋值为截止时间
+      const t_timestamp =
+        view_last_date < today_start_time ? view_last_date : today_start_time
+      const c_day = caldiffDays(t_timestamp, node.start_time)
+      if (c_day == 0) {
+      } else {
+        compare_width =
+          gantt_view_mode == 'hours'
+            ? c_day * 9 * ceilWidth + 9 * ceilWidth
+            : c_day * ceilWidth + ceilWidth
       }
     }
     return { compare_width, status_label }
@@ -1839,19 +1875,29 @@ export default class CardItem extends Component {
         data-rely_top={id}
         style={{
           left: local_left + (gantt_view_mode == 'year' ? 0 : card_left_diff),
-          top: local_top,
+          top: ganttIsOutlineView({ group_view_type })
+            ? local_top + 2
+            : local_top,
+          //width,
           width:
             (local_width || 6) -
             (gantt_view_mode == 'year' ? 0 : card_width_diff),
-          height: height || task_item_height,
+          height: ganttIsOutlineView({ group_view_type })
+            ? task_item_outline_height
+            : height || task_item_height,
           marginTop: task_item_margin_top,
-          boxShadow: 'none',
-          zIndex: rely_down || this.is_down || drag_lock ? 2 : 1
+          // boxShadow: 'none',
+          zIndex: rely_down || this.is_down || drag_lock ? 2 : 1,
+          borderRadius: ganttIsOutlineView({ group_view_type }) && '4px',
+          boxShadow: is_show_warning_time
+            ? '0 0 20px rgba(255,160,0,0.8)'
+            : 'none'
         }}
         {...this.handleObj()}
       >
         {/* 这里放 完成时 逾期的进度 */}
-        {is_show_compare_real_plan_timer && status_label == 'overdue_time' && (
+        {((is_show_compare_real_plan_timer && status_label == 'overdue_time') ||
+          (is_realize == '0' && is_overdue)) && (
           <div
             data-targetclassname="specific_example"
             // data-rely_top={id}
@@ -1867,23 +1913,37 @@ export default class CardItem extends Component {
               //   ((is_has_start_time && is_has_end_time) || !is_has_end_time) &&
               //   '40px',
               width: compare_width,
-              height: height || task_item_height,
-              lineHeight: `${height || task_item_height}px`,
-              backgroundColor: '#FF5A5A', //'rgba(255,32,32,0.4)'
+              height: ganttIsOutlineView({ group_view_type })
+                ? task_item_outline_height
+                : height || task_item_height,
+              lineHeight: `${
+                ganttIsOutlineView({ group_view_type })
+                  ? task_item_outline_height
+                  : height || task_item_height
+              }px`,
+              backgroundColor:
+                is_realize == '0' ? '#FF5A5A' : 'rgb(149,222,100)', //'rgba(255,32,32,0.4)'
               zIndex: 0,
-              boxShadow: 'none',
+              // boxShadow: 'none',
               overflow:
                 ganttIsOutlineView({ group_view_type }) &&
                 card_name_outside &&
-                is_show_compare_real_plan_timer &&
-                status_label == 'overdue_time' &&
-                'visible'
+                ((is_show_compare_real_plan_timer &&
+                  status_label == 'overdue_time') ||
+                  (is_realize == '0' && is_overdue)) &&
+                'visible',
+              borderRadius: ganttIsOutlineView({ group_view_type }) && '4px',
+              boxShadow:
+                ganttIsOutlineView({ group_view_type }) && is_realize == '0'
+                  ? '0 0 20px rgba(255,90,90,0.8)'
+                  : 'none'
             }}
           >
             {ganttIsOutlineView({ group_view_type }) &&
               card_name_outside &&
-              is_show_compare_real_plan_timer &&
-              status_label == 'overdue_time' && (
+              ((is_show_compare_real_plan_timer &&
+                status_label == 'overdue_time') ||
+                (is_realize == '0' && is_overdue)) && (
                 <div
                   style={{
                     position: 'absolute',
@@ -1917,14 +1977,18 @@ export default class CardItem extends Component {
             top: 0,
             zIndex: 2,
             width: '100%',
-            height: height || task_item_height,
+            height: ganttIsOutlineView({ group_view_type })
+              ? task_item_outline_height
+              : height || task_item_height,
             background: this.setLableColor({
               label_data,
               is_realize,
               active_compare_height,
-              is_show_warning_time
+              is_show_warning_time,
+              is_outline_view: ganttIsOutlineView({ group_view_type })
             }),
-            boxShadow: 'none'
+            boxShadow: 'none',
+            borderRadius: ganttIsOutlineView({ group_view_type }) && '4px'
           }}
         >
           <div
@@ -1939,20 +2003,27 @@ export default class CardItem extends Component {
             style={{
               backgroundColor:
                 is_realize == '1'
-                  ? status_label == 'ahead_time_middle'
-                    ? '#5BB48F' //'rgb(175,241,213)'
+                  ? ganttIsOutlineView({ group_view_type })
+                    ? 'rgb(149,222,100)'
                     : '#CDD1DF' //'rgb(212,216,228)'
-                  : is_show_warning_time
-                  ? '#FFA000'
+                  : ganttIsOutlineView({ group_view_type })
+                  ? '#CDD1DF'
                   : '#B3D0FF',
               padding:
                 gantt_view_mode != 'month' && time_span < 6 ? '0' : '0 8px',
               zIndex: 1,
-              height: active_compare_height && (height || task_item_height)
+              height: !label_data.length
+                ? ganttIsOutlineView({ group_view_type })
+                  ? task_item_outline_height
+                  : task_item_height
+                : ganttIsOutlineView({ group_view_type })
+                ? task_item_outline_height - 4
+                : task_item_height - 4,
+              borderRadius: ganttIsOutlineView({ group_view_type }) && '4px'
             }}
           >
             {/* 这里放提前完成时 进度对比 */}
-            {is_show_compare_real_plan_timer &&
+            {/* {is_show_compare_real_plan_timer &&
               status_label == 'ahead_time_middle' && (
                 <div
                   data-targetclassname="specific_example"
@@ -1970,18 +2041,26 @@ export default class CardItem extends Component {
                     //   '40px',
                     width: compare_width,
                     height: !label_data.length
-                      ? height || task_item_height
-                      : (height || task_item_height) - 4,
+                      ? ganttIsOutlineView({ group_view_type })
+            ? task_item_outline_height
+            : height || task_item_height
+                      : (ganttIsOutlineView({ group_view_type })
+            ? task_item_outline_height
+            : height || task_item_height) - 4,
                     lineHeight: `${
                       !label_data.length
-                        ? height || task_item_height
-                        : (height || task_item_height) - 4
+                        ? ganttIsOutlineView({ group_view_type })
+            ? task_item_outline_height
+            : height || task_item_height
+                        : (ganttIsOutlineView({ group_view_type })
+            ? task_item_outline_height
+            : height || task_item_height) - 4
                     }px`,
                     backgroundColor: '#CDD1DF', //'rgba(255,32,32,0.4)'
                     zIndex: 0
                   }}
                 ></div>
-              )}
+              )} */}
             {/* 这里放置进行中父任务进度 */}
             {is_show_progress_percent && (
               <div
@@ -1989,7 +2068,7 @@ export default class CardItem extends Component {
                 className={`${indexStyles.gatt_card_percentage_prop}`}
                 style={{
                   // backgroundColor: '#cbddf7',
-                  backgroundColor: '#5A86F5',
+                  backgroundColor: 'rgb(149,222,100)', //'#5A86F5',
                   width: !label_data.length
                     ? ((local_width || 6) -
                         (gantt_view_mode == 'year' ? 0 : card_width_diff)) *
@@ -1999,16 +2078,27 @@ export default class CardItem extends Component {
                         (percent_card_non / 100) -
                       4,
                   // width: !label_data.length ? '100%' : '98%',
-                  borderRadius: '40px',
-                  borderTopRightRadius:
-                    Number(percent_card_non) >= 100 ? '40px' : '0px',
-                  borderBottomRightRadius:
-                    Number(percent_card_non) >= 100 ? '40px' : '0px',
+                  borderRadius:
+                    ganttIsOutlineView({ group_view_type }) && '4px',
+                  // borderTopRightRadius:
+                  //   Number(percent_card_non) >= 100 ? '40px' : '0px',
+                  // borderBottomRightRadius:
+                  //   Number(percent_card_non) >= 100 ? '40px' : '0px',
                   height: !label_data.length
-                    ? task_item_height
+                    ? ganttIsOutlineView({ group_view_type })
+                      ? task_item_outline_height
+                      : task_item_height
+                    : ganttIsOutlineView({ group_view_type })
+                    ? task_item_outline_height - 4
                     : task_item_height - 4,
                   lineHeight: `${
-                    !label_data.length ? task_item_height : task_item_height - 4
+                    !label_data.length
+                      ? ganttIsOutlineView({ group_view_type })
+                        ? task_item_outline_height
+                        : task_item_height
+                      : ganttIsOutlineView({ group_view_type })
+                      ? task_item_outline_height - 4
+                      : task_item_height - 4
                   }px`,
                   left: !label_data.length && 0
                 }}
@@ -2021,16 +2111,15 @@ export default class CardItem extends Component {
               onMouseMove={e => e.preventDefault()}
               style={{
                 display: 'flex',
-                color:
-                  is_realize == '1'
-                    ? is_show_compare_real_plan_timer
-                      ? 'rgba(0,0,0,0.45)'
-                      : 'rgba(0,0,0,.25)'
-                    : is_show_progress_percent
-                    ? '#fff'
-                    : '',
-                height: task_item_height - 4,
-                lineHeight: `${task_item_height - 4}px`,
+                color: 'rgba(0,0,0,0.45)',
+                height: ganttIsOutlineView({ group_view_type })
+                  ? task_item_outline_height - 4
+                  : task_item_height - 4,
+                lineHeight: `${
+                  ganttIsOutlineView({ group_view_type })
+                    ? task_item_outline_height - 4
+                    : task_item_height - 4
+                }px`,
                 zIndex:
                   ((is_show_compare_real_plan_timer &&
                     status_label == 'ahead_time_middle') ||
@@ -2054,13 +2143,15 @@ export default class CardItem extends Component {
                   </span>
                 </Tooltip>
               )}
-              <span
-                data-rely_top={id}
-                className={indexStyles.due_time_description}
-                data-targetclassname="specific_example"
-              >
-                {is_overdue && is_realize != '1' && due_description}
-              </span>
+              {!ganttIsOutlineView({ group_view_type }) && (
+                <span
+                  data-rely_top={id}
+                  className={indexStyles.due_time_description}
+                  data-targetclassname="specific_example"
+                >
+                  {is_overdue && is_realize != '1' && due_description}
+                </span>
+              )}
             </div>
             <div
               data-targetclassname="specific_example"
@@ -2090,7 +2181,8 @@ export default class CardItem extends Component {
         )}
         {ganttIsOutlineView({ group_view_type }) &&
           card_name_outside &&
-          status_label != 'overdue_time' && (
+          ((is_realize == '1' && status_label != 'overdue_time') ||
+            (is_realize == '0' && !is_overdue)) && (
             <div
               style={{
                 position: 'absolute',
@@ -2155,11 +2247,9 @@ export default class CardItem extends Component {
                   backgroundColor:
                     is_realize == '0'
                       ? is_show_progress_percent
-                        ? '#5a86f5'
-                        : is_show_warning_time
-                        ? '#FFA000'
-                        : '#B3D0FF'
-                      : 'rgb(205, 209, 223)'
+                        ? 'rgb(149, 222, 100)' //'#5a86f5'
+                        : 'rgb(205, 209, 223)' //'#B3D0FF'
+                      : 'rgb(149, 222, 100)'
                 }}
                 className={indexStyles.left_radian_mask}
               ></div>
@@ -2168,11 +2258,9 @@ export default class CardItem extends Component {
                   backgroundColor:
                     is_realize == '0'
                       ? is_show_progress_percent
-                        ? '#5a86f5'
-                        : is_show_warning_time
-                        ? '#FFA000'
-                        : '#B3D0FF'
-                      : 'rgb(205, 209, 223)'
+                        ? 'rgb(149, 222, 100)' //'#5a86f5'
+                        : 'rgb(205, 209, 223)' //'#B3D0FF'
+                      : 'rgb(149, 222, 100)'
                 }}
                 className={indexStyles.left_radian_mask2}
               ></div>
@@ -2182,7 +2270,7 @@ export default class CardItem extends Component {
                 style={{
                   backgroundColor:
                     is_show_progress_percent && !label_data.length
-                      ? '#5A86F5'
+                      ? 'rgb(149, 222, 100)' //'#5A86F5'
                       : this.setTriangleTreeColor({
                           label_data,
                           index: 'start',
@@ -2205,11 +2293,11 @@ export default class CardItem extends Component {
                       Number(percent_card_non) >= 100,
                     status_label,
                     is_show_warning_time
-                  })} transparent transparent transparent`,
-                  zIndex:
-                    (is_show_progress_percent ||
-                      is_show_compare_real_plan_timer) &&
-                    0
+                  })} transparent transparent transparent`
+                  // zIndex:
+                  //   (is_show_progress_percent ||
+                  //     is_show_compare_real_plan_timer) &&
+                  //   0
                 }}
               ></div>
               <div className={indexStyles.right_triangle_mask}></div>
@@ -2220,7 +2308,7 @@ export default class CardItem extends Component {
                     is_show_progress_percent &&
                     Number(percent_card_non) >= 100 &&
                     !label_data.length
-                      ? '#5A86F5'
+                      ? 'rgb(205, 209, 223)'
                       : this.setTriangleTreeColor({
                           label_data,
                           index: 'end',
@@ -2239,13 +2327,9 @@ export default class CardItem extends Component {
                     is_realize == '0'
                       ? is_show_progress_percent &&
                         Number(percent_card_non) >= 100
-                        ? '#5a86f5'
-                        : is_show_warning_time
-                        ? '#FFA000'
-                        : '#B3D0FF'
-                      : status_label == 'ahead_time_middle'
-                      ? '#5BB48F'
-                      : 'rgb(205, 209, 223)'
+                        ? 'rgb(149, 222, 100)'
+                        : 'rgb(205, 209, 223)'
+                      : 'rgb(149, 222, 100)'
                 }}
                 className={indexStyles.right_radian_mask}
               ></div>
@@ -2255,13 +2339,9 @@ export default class CardItem extends Component {
                     is_realize == '0'
                       ? is_show_progress_percent &&
                         Number(percent_card_non) >= 100
-                        ? '#5a86f5'
-                        : is_show_warning_time
-                        ? '#FFA000'
-                        : '#B3D0FF'
-                      : status_label == 'ahead_time_middle'
-                      ? '#5BB48F'
-                      : 'rgb(205, 209, 223)'
+                        ? 'rgb(149, 222, 100)'
+                        : 'rgb(205, 209, 223)'
+                      : 'rgb(149, 222, 100)'
                 }}
                 className={indexStyles.right_radian_mask2}
               ></div>
@@ -2279,6 +2359,7 @@ export default class CardItem extends Component {
               dispatch={this.props.dispatch}
               setRelyLineDrawing={this.setRelyDown}
               rely_down={rely_down}
+              is_outline_view={ganttIsOutlineView({ group_view_type })}
             />
           )}
         {(drag_lock || drag_else_over_in) && (
@@ -2289,6 +2370,7 @@ export default class CardItem extends Component {
               (local_width || 6) -
               (gantt_view_mode == 'year' ? 0 : card_width_diff)
             }
+            is_outline_view={ganttIsOutlineView({ group_view_type })}
           />
         )}
         {/* 大纲视图下显示任务预警 */}

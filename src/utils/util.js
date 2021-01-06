@@ -1010,3 +1010,19 @@ export const getDiffDate = (minDate, maxDate) => {
   }
   return months
 }
+
+/**
+ * 下载文件
+ * @param {string} url 可下载的文件链接
+ */
+export function downloadFile(url) {
+  var element1 = document.createElement('a')
+  element1.href = url
+  element1.download = url // 需要加上download属性
+  element1.id = 'openWin_download'
+  document.querySelector('body').appendChild(element1)
+  document.getElementById('openWin_download').click() //点击事件
+  document
+    .getElementById('openWin_download')
+    .parentNode.removeChild(document.getElementById('openWin_download'))
+}
