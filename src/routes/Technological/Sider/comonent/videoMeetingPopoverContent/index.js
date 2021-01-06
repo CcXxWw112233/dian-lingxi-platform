@@ -671,6 +671,15 @@ class VideoMeetingPopoverContent extends Component {
       emitMeettingStatus: bool
     })
   }
+  // 发起会议之前
+  handleBeforeVideoMeetingSubmit = () => {
+    const { providerDefault } = this.state
+    if (providerDefault == '2') {
+      this.setWebexOperateGuideVisible()
+      return
+    }
+    this.handleVideoMeetingSubmit()
+  }
   // 发起会议
   handleVideoMeetingSubmit = () => {
     this.setEmitMeettingStatus(true)
@@ -927,9 +936,9 @@ class VideoMeetingPopoverContent extends Component {
             }
           })
         }
-        if (id == 2) {
-          this.setWebexOperateGuideVisible()
-        }
+        // if (id == 2) {
+        //   this.setWebexOperateGuideVisible()
+        // }
       }
     )
   }
@@ -1575,7 +1584,7 @@ class VideoMeetingPopoverContent extends Component {
               <Button
                 disabled={DISABLED_VERIFY || DISABLED_PROVIDER_MEETING == '0'}
                 type="primary"
-                onClick={this.handleVideoMeetingSubmit}
+                onClick={this.handleBeforeVideoMeetingSubmit}
               >
                 {DISABLED_PROVIDER_MEETING == '0'
                   ? '暂无可用会议室'

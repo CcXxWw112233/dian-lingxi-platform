@@ -5,7 +5,8 @@ import {
   PROJECT_TEAM_BOARD_EDIT,
   MESSAGE_DURATION_TIME,
   NOT_HAS_PERMISION_COMFIRN,
-  PROJECTS
+  PROJECTS,
+  REQUEST_DOMAIN_BOARD
 } from '../../../../../globalset/js/constant'
 import VisitControl from '../../../../Technological/components/VisitControl'
 import globalStyles from '@/globalset/css/globalClassName.less'
@@ -16,7 +17,8 @@ import {
   getOrgIdByBoardId,
   selectBoardToSeeInfo,
   getOrgNameWithOrgIdFilter,
-  currentNounPlanFilterName
+  currentNounPlanFilterName,
+  setRequestHeaderBaseInfo
 } from '../../../../../utils/businessFunction'
 import { Checkbox, Dropdown, Menu, message, Modal } from 'antd'
 import { connect } from 'dva'
@@ -33,6 +35,8 @@ import ShowAddMenberModal from '@/routes/Technological/components/Project/ShowAd
 import { isApiResponseOk } from '../../../../../utils/handleResponseData'
 import { arrayNonRepeatfy } from '../../../../../utils/util'
 import { inviteMembersInWebJoin } from '../../../../../utils/inviteMembersInWebJoin'
+import axios from 'axios'
+import Cookies from 'js-cookie'
 
 @connect(mapStateToProps)
 export default class BoardItem extends Component {
@@ -444,6 +448,71 @@ export default class BoardItem extends Component {
       board_members_visible: !this.state.board_members_visible
     })
   }
+  // 点击导出项目成员
+  handleExportBoardMembers = itemValue => {
+    const { board_id } = itemValue
+    // let params = {
+    //   board_id,
+    //   codes: ["NAME","MOBILE","ROLE"]
+    // }
+    const url = '/board/members/export'
+    const options = {
+      url: `${REQUEST_DOMAIN_BOARD}${url}`,
+      method: 'post',
+      headers: {
+        Authorization: Cookies.get('Authorization'),
+        ...setRequestHeaderBaseInfo({
+          data: { board_id },
+          headers: {},
+          params: {}
+        })
+      },
+      data: {
+        board_id
+        // codes: checkedValue
+      },
+      responseType: 'blob',
+      timeout: 0
+    }
+    axios({
+      ...options
+    })
+      .then(resp => {
+        if (resp.status < 400) {
+          let respHeader = resp.headers
+          let file_name = respHeader['content-disposition'] || ''
+          file_name = (file_name.split('=') || [])[1] || ''
+          file_name = file_name.split('.')[0]
+          file_name = decodeURIComponent(escape(file_name)) + '.xlsx'
+          let blob = new Blob([resp.data], {
+            type:
+              'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+          })
+          let a = document.createElement('a')
+          a.href = window.URL.createObjectURL(blob)
+          a.download = file_name
+          a.click()
+          // 释放内存
+          window.URL.revokeObjectURL(a.href)
+          a = null
+        } else {
+          message.warn('导出失败')
+        }
+        this.props.updateState &&
+          this.props.updateState({
+            name: 'showLoading',
+            value: false
+          })
+      })
+      .catch(err => {
+        message.warn('导出失败')
+        this.props.updateState &&
+          this.props.updateState({
+            name: 'showLoading',
+            value: false
+          })
+      })
+  }
   //添加项目组成员操作
   setShowAddMenberModalVisibile = () => {
     this.setState({
@@ -561,7 +630,8 @@ export default class BoardItem extends Component {
         this.setBoardInfoVisible()
         break
       case 'export_members': // 导出项目成员
-        this.setExportBoardMembersVisible()
+        this.handleExportBoardMembers(itemValue)
+        // this.setExportBoardMembersVisible()
         break
       default:
         break
@@ -711,7 +781,7 @@ export default class BoardItem extends Component {
             setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile}
           />
         )}
-        {board_members_visible && (
+        {/* {board_members_visible && (
           <Modal
             title={`导出${currentNounPlanFilterName(PROJECTS, board_id)}成员`}
             visible={board_members_visible}
@@ -768,7 +838,7 @@ export default class BoardItem extends Component {
               </div>
             </div>
           </Modal>
-        )}
+        )} */}
       </>
     )
   }
