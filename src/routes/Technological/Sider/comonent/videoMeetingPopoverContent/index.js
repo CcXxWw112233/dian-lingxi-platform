@@ -31,7 +31,11 @@ import { currentNounPlanFilterName } from '@/utils/businessFunction'
 import { PROJECTS } from '@/globalset/js/constant'
 import { isApiResponseOk } from '@/utils/handleResponseData'
 import moment from 'moment'
-import { arrayNonRepeatfy, isSamDay } from '../../../../../utils/util'
+import {
+  arrayNonRepeatfy,
+  caldiffDays,
+  isSamDay
+} from '../../../../../utils/util'
 import { platformNouns } from '../../../../../globalset/clientCustorm'
 import {
   createMeeting_2,
@@ -318,9 +322,9 @@ class VideoMeetingPopoverContent extends Component {
     //   timestampToTimeNormal(start_timeStamp)
     // ).getDate()
     // let currentDate = new Date().getDate()
-    if (this.timer) {
-      clearTimeout(this.timer)
-    }
+    // if (this.timer) {
+    //   clearTimeout(this.timer)
+    // }
     // 如果是点击的今天，那么提醒什么的都要隐藏
     // 如果点击的是今天之前或者之后，那么就要显示
     if (isSamDay(start_timeStamp, nowDate)) {
@@ -335,7 +339,10 @@ class VideoMeetingPopoverContent extends Component {
         ).getMinutes() == new Date(nowDate).getMinutes()
       ) {
         this.setState({
-          isOrderTime: false
+          start_time: timestampToTime(start_timeStamp),
+          meeting_start_time: start_timeStamp,
+          isOrderTime: false,
+          isShowNowTime: false
         })
       } else {
         if (this.timer) {
@@ -970,6 +977,9 @@ class VideoMeetingPopoverContent extends Component {
           currentElem.offsetLeft + this.stepIndex * 110 + 'px'
       }
     }
+    this.setState({
+      stepIndex: this.stepIndex
+    })
   }
 
   // 点击立即访问
@@ -1524,6 +1534,16 @@ class VideoMeetingPopoverContent extends Component {
                 >
                   {videoConferenceProviderList &&
                     videoConferenceProviderList.map(item => {
+                      console.log(
+                        videoConferenceProviderList &&
+                          videoConferenceProviderList.length > 4 &&
+                          this.stepIndex > 0
+                      )
+                      let disabled =
+                        item.id != gold_provider_id &&
+                        caldiffDays(new Date().getTime(), meeting_start_time) !=
+                          0
+
                       return (
                         <Radio.Group
                           style={{ marginBottom: '12px' }}
@@ -1535,10 +1555,14 @@ class VideoMeetingPopoverContent extends Component {
                               ? item.id
                               : ''
                           }
+                          disabled={disabled}
                         >
                           <div
                             key={`${item.id}-${item.icon}`}
-                            style={{ textAlign: 'center', marginTop: '12px' }}
+                            style={{
+                              textAlign: 'center',
+                              marginTop: '12px'
+                            }}
                           >
                             <Tooltip
                               overlayStyle={{ minWidth: '86px' }}
@@ -1551,9 +1575,13 @@ class VideoMeetingPopoverContent extends Component {
                             >
                               <div
                                 onClick={e => {
-                                  this.handleSelectVideoProvider(e, item.id)
+                                  !disabled &&
+                                    this.handleSelectVideoProvider(e, item.id)
                                 }}
                                 className={indexStyles.video_provider}
+                                style={{
+                                  cursor: disabled ? 'not-allowed' : 'pointer'
+                                }}
                               >
                                 {this.getImgLogo(item)}
                               </div>
