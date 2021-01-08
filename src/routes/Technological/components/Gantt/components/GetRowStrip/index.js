@@ -568,9 +568,9 @@ export default class GetRowStrip extends PureComponent {
               min_leaf_left +
               (!parent_id
                 ? ceilWidth
-                : ['month', 'hours'].includes(gantt_view_mode)
+                : ['month', 'hours', 'week'].includes(gantt_view_mode)
                 ? ceilWidth / 2
-                : 0)
+                : ceilWidth * 2)
           }}
         >
           <div className={styles.left_triangle}></div>
@@ -590,9 +590,9 @@ export default class GetRowStrip extends PureComponent {
                   min_leaf_left +
                   (!parent_id
                     ? ceilWidth
-                    : ['month', 'hours'].includes(gantt_view_mode)
+                    : ['month', 'hours', 'week'].includes(gantt_view_mode)
                     ? ceilWidth / 2
-                    : 0)) *
+                    : ceilWidth * 2)) *
                 (percent_card_non / 100)
             }}
           >
