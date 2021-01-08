@@ -1534,11 +1534,6 @@ class VideoMeetingPopoverContent extends Component {
                 >
                   {videoConferenceProviderList &&
                     videoConferenceProviderList.map(item => {
-                      console.log(
-                        videoConferenceProviderList &&
-                          videoConferenceProviderList.length > 4 &&
-                          this.stepIndex > 0
-                      )
                       let disabled =
                         item.id != gold_provider_id &&
                         caldiffDays(new Date().getTime(), meeting_start_time) !=
