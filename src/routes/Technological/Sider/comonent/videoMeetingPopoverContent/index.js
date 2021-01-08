@@ -52,12 +52,12 @@ let remind_time_value = '5' // 设置的提醒时间
   ({
     technological: {
       datas: { videoConferenceProviderList = [] }
-    }
-    // simplemode: { simplemodeCurrentProject = {} }
+    },
+    simplemode: { simplemodeCurrentProject = {} }
   }) => {
     return {
-      videoConferenceProviderList
-      // simplemodeCurrentProject
+      videoConferenceProviderList,
+      simplemodeCurrentProject
     }
   }
 )
@@ -590,17 +590,34 @@ class VideoMeetingPopoverContent extends Component {
 
   // 邀请人加入的回调
   inviteMemberJoin = ({ card_id, userIds = [], start_url }) => {
-    const { isOrderTime } = this.state
+    const { isOrderTime, saveToProject } = this.state
     if (!card_id) {
       setTimeout(() => {
         message.success(!isOrderTime ? '发起会议成功' : '预约会议成功')
       }, 500)
       this.setState(
         {
-          videoMeetingPopoverVisible: false
+          videoMeetingPopoverVisible: false,
+          webexOperateGuideVisible: false
         },
-        async () => {
-          await this.initVideoMeetingPopover()
+        () => {
+          this.initVideoMeetingPopover()
+          const {
+            simplemodeCurrentProject: { selected_todo_list_time = '' },
+            dispatch
+          } = this.props
+          let params = {
+            limit_time: selected_todo_list_time
+          }
+          dispatch({
+            type: 'simplemode/getMeetingTodoList',
+            payload: {
+              ...params,
+              org_id: localStorage.getItem('OrganizationId'),
+              // board_ids: '0'
+              board_id: saveToProject
+            }
+          })
         }
       )
       start_url && this.openWinNiNewTabWithATag(start_url)
@@ -755,27 +772,18 @@ class VideoMeetingPopoverContent extends Component {
     // )
     createMeeting_2({ ...data })
       .then(res => {
-        if (res.code === '0') {
+        if (isApiResponseOk(res)) {
           clearTimeout(this.timer)
           clearTimeout(this.local_timer)
           const { start_url, card_id } = res.data
-          if (!isOrderTime)
+          if (!isOrderTime) {
             remind_time_value = parseInt(meeting_start_time / 1000)
-          this.inviteMemberJoin({ card_id, userIds, user_phone, start_url })
-          const {
-            simplemodeCurrentProject: { selected_todo_list_time = '' }
-          } = this.props
-          let params = {
-            limit_time: selected_todo_list_time
           }
-          dispatch({
-            type: 'simplemode/getMeetingTodoList',
-            payload: {
-              ...params,
-              org_id: localStorage.getItem('OrganizationId'),
-              // board_ids: '0'
-              board_id: saveToProject
-            }
+          this.inviteMemberJoin({
+            card_id,
+            userIds,
+            user_phone,
+            start_url
           })
         } else if (res.code === '1') {
           message.error(res.message)
