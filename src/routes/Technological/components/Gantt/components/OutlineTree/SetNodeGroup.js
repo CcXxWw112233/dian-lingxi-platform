@@ -270,7 +270,7 @@ export default class SetNodeGroup extends Component {
           </div>
         }
       >
-        <div>
+        <div title={this.renderName()}>
           {this.renderName() || (
             <span style={{ color: 'rgba(0,0,0,.15)' }}>未选择</span>
           )}

@@ -641,6 +641,10 @@ export default class TreeNode extends Component {
         </div>
       )
     }
+    const diff_style = {
+      '1': 6,
+      '2': 2
+    }
     return (
       <span>
         {tree_type != '0' && (
@@ -673,7 +677,8 @@ export default class TreeNode extends Component {
                 <div
                   style={{
                     display: 'inline-block',
-                    verticalAlign: 'text-bottom'
+                    verticalAlign: 'text-bottom',
+                    marginLeft: diff_style[executors.length] || 0
                   }}
                 >
                   <AvatarList users={executors} size={20} />
