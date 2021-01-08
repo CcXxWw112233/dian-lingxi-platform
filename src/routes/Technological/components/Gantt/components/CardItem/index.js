@@ -1754,7 +1754,8 @@ export default class CardItem extends Component {
       child_card_status = {},
       progress_percent,
       tree_type,
-      time_warning
+      time_warning,
+      is_expand
     } = itemValue
     const {
       has_child,
@@ -2226,7 +2227,8 @@ export default class CardItem extends Component {
           !parent_card_id &&
           has_child == '1' &&
           (child_max_due_time || child_min_start_time) &&
-          (gantt_view_mode != 'month' ? time_span > 6 : true) && (
+          (gantt_view_mode != 'month' ? time_span > 6 : true) &&
+          is_expand && (
             <>
               {/* 因为完成后 去除了任务条的阴影 所以变小了 那么触角位置需要调整 */}
               <div
