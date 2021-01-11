@@ -9,53 +9,105 @@ import PieComponent from './components/PieComponent'
 import LineComponent from './components/LineComponent'
 import PieEarlyWarningComponent from './components/PieEarlyWarningComponent'
 import { timestampToTimeNormal } from '../../../../../utils/util'
+import { currentNounPlanFilterName } from '../../../../../utils/businessFunction'
+import { PROJECTS } from '../../../../../globalset/js/constant'
+import { getReportBoardCode } from '../../../../../services/technological/statisticalReport'
+import { isApiResponseOk } from '../../../../../utils/handleResponseData'
 @connect(mapStateToProps)
 export default class index extends Component {
   state = {
     data: [
       {
-        key: 1,
-        name: '方案设计',
-        address: '深国际',
-        timer: '1609776000',
-        status: '未完成',
+        id: '1348552555843686400',
+        name: '宗地踏勘',
+        parent_id: '0',
+        group_name: '深国际',
+        end_time: '1611590340',
+        overdue_day: '1',
+        overdue_count_day: '1',
+        warning_day: '1',
+        warning_count_day: '1',
+        status: '50%',
         children: [
           {
-            key: 1.3,
-            name: '方案设计1',
-            address: '柏涛',
-            timer: '1609776000',
-            status: '90%'
+            id: '1348552560616804352',
+            name: '投资论证',
+            parent_id: '0',
+            group_name: '波涛',
+            end_time: '1611935940',
+            overdue_day: '1',
+            warning_day: '1',
+            status: '未完成'
+          },
+          {
+            id: '1348552564240683008',
+            name: '策划定位与规划设计',
+            parent_id: '0',
+            group_name: '深圳中技',
+            end_time: '1612195140',
+            overdue_day: '1',
+            warning_day: '1',
+            status: '完成'
           }
         ]
-      },
-      {
-        key: 2,
-        name: '基坑支护、桩基招标图',
-        address: '深圳中技（装配式、海绵城市、绿建）',
-        status: '90%',
-        timer: new Date().getTime(),
-        description: ''
       }
     ]
+  }
+
+  getReportBoardCode = board_id => {
+    if (!board_id) return
+    getReportBoardCode({ board_id }).then(res => {
+      if (isApiResponseOk(res)) {
+        // console.log(res)
+        this.setState({
+          code_url: res.data.code_url
+        })
+      }
+    })
+  }
+
+  componentDidMount() {
+    // console.log('进来了')
+    const { simplemodeCurrentProject = {} } = this.props
+    this.getReportBoardCode(simplemodeCurrentProject.board_id || '')
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { board_id } = this.props.simplemodeCurrentProject
+    const { board_id: next_board_id } = nextProps.simplemodeCurrentProject
+    if (board_id != next_board_id) {
+      this.getReportBoardCode(next_board_id)
+    }
   }
 
   renderTableContent = () => {
     const columns = [
       { title: '事件名称', dataIndex: 'name', key: 'name' },
-      { title: '责任方', dataIndex: 'address', key: 'address' },
+      { title: '责任方', dataIndex: 'group_name', key: 'group_name' },
       { title: '进度/状态', dataIndex: 'status', key: 'status' },
       {
         title: '截止日期',
-        dataIndex: 'timer',
-        key: 'x',
+        dataIndex: 'end_time',
+        key: 'end_time',
         render: (text, record, index) => {
-          const { timer } = record
+          const { end_time, overdue_day, warning_day } = record
           return (
             <span>
-              {timestampToTimeNormal(timer)}
+              <span style={{ marginRight: '15px' }}>
+                {end_time && timestampToTimeNormal(end_time)}
+              </span>
               {''}
-              {'逾期6天'}
+              {overdue_day ? (
+                <span
+                  style={{ color: '#F5222D' }}
+                >{`逾期${overdue_day}天`}</span>
+              ) : warning_day ? (
+                <span
+                  style={{ color: '#FAAD14' }}
+                >{`剩余${warning_day}天`}</span>
+              ) : (
+                ''
+              )}
             </span>
           )
         }
@@ -75,7 +127,8 @@ export default class index extends Component {
   render() {
     const {
       workbenchBoxContent_height,
-      workbenchBoxContentWapperModalStyle = {}
+      workbenchBoxContentWapperModalStyle = {},
+      simplemodeCurrentProject = {}
     } = this.props
     let chart_item_width =
       workbenchBoxContentWapperModalStyle.width == '100%'
@@ -104,18 +157,27 @@ export default class index extends Component {
             borderRadius: '4px'
           }}
         >
-          <div className={indexStyles.chart_title}>我的报表</div>
+          <div className={indexStyles.chart_title}>
+            {`${
+              !!simplemodeCurrentProject.board_id &&
+              simplemodeCurrentProject.board_id != '0'
+                ? simplemodeCurrentProject?.board_name || ''
+                : ''
+            }`}
+            {`${currentNounPlanFilterName(PROJECTS)}`}
+            统计报表
+          </div>
           <div className={indexStyles.chart_content_1}>
             <div className={indexStyles.chart_c_top}>
               <PieEarlyWarningComponent />
               <div className={indexStyles.chart_d_code}>
                 <div>
                   <img
-                    src=""
+                    src={this.state.code_url}
                     style={{
                       width: '206px',
-                      height: '206px',
-                      backgroundColor: 'pink'
+                      height: '206px'
+                      // backgroundColor: 'pink'
                     }}
                   />
                 </div>
@@ -145,9 +207,13 @@ export default class index extends Component {
 }
 
 function mapStateToProps({
-  simplemode: { workbenchBoxContentWapperModalStyle = {} }
+  simplemode: {
+    workbenchBoxContentWapperModalStyle = {},
+    simplemodeCurrentProject = {}
+  }
 }) {
   return {
-    workbenchBoxContentWapperModalStyle
+    workbenchBoxContentWapperModalStyle,
+    simplemodeCurrentProject
   }
 }
