@@ -32,7 +32,7 @@ class PieEarlyWarningComponent extends Component {
   }
 
   getChartOptions = props => {
-    const { status = [], count = [] } = this.state
+    const { status = [], count = [] } = props
     let data = [...count]
     data = data.map((item, index) => {
       let new_item = {
@@ -41,36 +41,7 @@ class PieEarlyWarningComponent extends Component {
       }
       return new_item
     })
-    // data = data.map(item => {
-    //   let new_item = { ...item }
-    //   if (item.value == 0) {
-    //     new_item.itemStyle = {
-    //       normal: {
-    //         label: {
-    //           show: false,
-    //           position: 'inside'
-    //         },
-    //         labelLine: {
-    //           show: false
-    //         }
-    //       }
-    //     }
-    //     return new_item
-    //   } else {
-    //     new_item.itemStyle = {
-    //       normal: {
-    //         label: {
-    //           show: true,
-    //           formatter: `${item.name} \n ${item.value}`
-    //         },
-    //         labelLine: {
-    //           show: true
-    //         }
-    //       }
-    //     }
-    //     return new_item
-    //   }
-    // })
+    let flag = Object.keys(data.find(item => item.value == 0) || {}).length
     let option = {
       tooltip: {
         trigger: 'item',
@@ -88,12 +59,12 @@ class PieEarlyWarningComponent extends Component {
         {
           // name: '访问来源',
           type: 'pie',
-          radius: '85%',
+          radius: '75%',
           center: ['45%', '50%'],
           data: data,
           label: {
             normal: {
-              // position: 'inside',
+              position: !!flag ? 'inside' : 'outside',
               formatter: '{b|{b}}  \n  {c|{c}}',
               //图形外文字上下显示
               borderWidth: 20,
@@ -109,13 +80,13 @@ class PieEarlyWarningComponent extends Component {
                   //name 文字样式
                   fontSize: 16,
                   lineHeight: 30,
-                  color: '#CDCDD0'
+                  color: 'rgba(0,0,0,0.65)'
                 },
                 c: {
                   //value 文字样式
                   fontSize: 16,
                   lineHeight: 30,
-                  color: '#CDCDD0', //'#63BF6A',
+                  color: 'rgba(0,0,0,0.65)', //'#63BF6A',
                   align: 'center'
                 }
               }
@@ -144,7 +115,7 @@ class PieEarlyWarningComponent extends Component {
     return option
   }
 
-  getReportBoardWarnStatus = () => {
+  getReportBoardWarnStatus = board_id => {
     echarts.registerTheme('walden', echartTheme)
     let myChart = echarts.init(
       document.getElementById('pieEarlyWarnContent'),
@@ -158,10 +129,17 @@ class PieEarlyWarningComponent extends Component {
       maskColor: 'rgba(255, 255, 255, 0.2)',
       zlevel: 0
     })
-    getReportBoardWarnStatus().then(res => {
+    if (!board_id || board_id == 0) {
+      myChart.hideLoading()
+      this.setState({
+        noData: true
+      })
+      return
+    }
+    getReportBoardWarnStatus({ board_id }).then(res => {
       if (isApiResponseOk(res)) {
         let flag = false
-        let data = res.data
+        let data = res.data.count
         if (data && data instanceof Object) {
           if (Object.keys(data).length) {
             flag = true
@@ -171,6 +149,11 @@ class PieEarlyWarningComponent extends Component {
             flag = true
           }
         }
+        this.props.updateStateDatas &&
+          this.props.updateStateDatas({
+            name: 'data',
+            value: res.data.items || []
+          })
         if (flag) {
           let option = this.getChartOptions(res.data)
           // option = newline(option, 3, 'xAxis')
@@ -189,6 +172,11 @@ class PieEarlyWarningComponent extends Component {
           })
         }
         myChart.hideLoading()
+      } else {
+        myChart.hideLoading()
+        this.setState({
+          noData: true
+        })
       }
     })
   }
@@ -203,7 +191,10 @@ class PieEarlyWarningComponent extends Component {
   }
 
   componentDidMount() {
-    this.getReportBoardWarnStatus()
+    const {
+      simplemodeCurrentProject: { board_id }
+    } = this.props
+    this.getReportBoardWarnStatus(board_id)
     window.addEventListener('resize', this.resizeTTY)
   }
 
@@ -219,7 +210,7 @@ class PieEarlyWarningComponent extends Component {
     const { board_id } = this.props.simplemodeCurrentProject
     const { board_id: next_board_id } = nextProps.simplemodeCurrentProject
     if (board_id != next_board_id) {
-      this.getReportBoardWarnStatus()
+      this.getReportBoardWarnStatus(next_board_id)
     }
   }
 

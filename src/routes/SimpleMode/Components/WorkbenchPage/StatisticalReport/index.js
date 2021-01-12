@@ -16,49 +16,24 @@ import { isApiResponseOk } from '../../../../../utils/handleResponseData'
 @connect(mapStateToProps)
 export default class index extends Component {
   state = {
-    data: [
-      {
-        id: '1348552555843686400',
-        name: '宗地踏勘',
-        parent_id: '0',
-        group_name: '深国际',
-        end_time: '1611590340',
-        overdue_day: '1',
-        overdue_count_day: '1',
-        warning_day: '1',
-        warning_count_day: '1',
-        status: '50%',
-        children: [
-          {
-            id: '1348552560616804352',
-            name: '投资论证',
-            parent_id: '0',
-            group_name: '波涛',
-            end_time: '1611935940',
-            overdue_day: '1',
-            warning_day: '1',
-            status: '未完成'
-          },
-          {
-            id: '1348552564240683008',
-            name: '策划定位与规划设计',
-            parent_id: '0',
-            group_name: '深圳中技',
-            end_time: '1612195140',
-            overdue_day: '1',
-            warning_day: '1',
-            status: '完成'
-          }
-        ]
-      }
-    ]
+    data: []
+  }
+
+  updateStateDatas = ({ name, value }) => {
+    this.setState({
+      [name]: value
+    })
   }
 
   getReportBoardCode = board_id => {
-    if (!board_id) return
+    if (!board_id || board_id == 0) {
+      this.setState({
+        code_url: ''
+      })
+      return
+    }
     getReportBoardCode({ board_id }).then(res => {
       if (isApiResponseOk(res)) {
-        // console.log(res)
         this.setState({
           code_url: res.data.code_url
         })
@@ -67,7 +42,6 @@ export default class index extends Component {
   }
 
   componentDidMount() {
-    // console.log('进来了')
     const { simplemodeCurrentProject = {} } = this.props
     this.getReportBoardCode(simplemodeCurrentProject.board_id || '')
   }
@@ -80,15 +54,36 @@ export default class index extends Component {
     }
   }
 
+  setTableData = (arr = []) => {
+    return arr.map(item => {
+      let new_item = { ...item }
+      new_item.key = item.id
+      if (new_item.children.length == 0) delete new_item.children
+      if (new_item.children && !!new_item.children.length) {
+        new_item.children = this.setTableData(new_item.children)
+      }
+      return new_item
+    })
+  }
+
   renderTableContent = () => {
+    let { data = [] } = this.state
+    const { workbenchBoxContent_height } = this.props
+    const scroll_height = workbenchBoxContent_height - 800
     const columns = [
-      { title: '事件名称', dataIndex: 'name', key: 'name' },
-      { title: '责任方', dataIndex: 'group_name', key: 'group_name' },
-      { title: '进度/状态', dataIndex: 'status', key: 'status' },
+      { title: '事件名称', dataIndex: 'name', key: 'name', width: 164 },
+      {
+        title: '责任方',
+        dataIndex: 'group_name',
+        key: 'group_name',
+        width: 164
+      },
+      { title: '进度/状态', dataIndex: 'status', key: 'status', width: 164 },
       {
         title: '截止日期',
         dataIndex: 'end_time',
         key: 'end_time',
+        width: 164,
         render: (text, record, index) => {
           const { end_time, overdue_day, warning_day } = record
           return (
@@ -113,12 +108,16 @@ export default class index extends Component {
         }
       }
     ]
+    data = this.setTableData(data)
     return (
       <div>
         <Table
           columns={columns}
-          dataSource={this.state.data}
+          dataSource={data}
           pagination={false}
+          scroll={{ y: '100%' }}
+          style={{ maxHeight: 500 }}
+          rowKey="id"
         />
       </div>
     )
@@ -130,6 +129,7 @@ export default class index extends Component {
       workbenchBoxContentWapperModalStyle = {},
       simplemodeCurrentProject = {}
     } = this.props
+    const { data = [] } = this.state
     let chart_item_width =
       workbenchBoxContentWapperModalStyle.width == '100%'
         ? document.getElementById('statisticalReportContainer')
@@ -146,15 +146,20 @@ export default class index extends Component {
         style={{
           height: workbenchBoxContent_height,
           // width: workbenchBoxContentWapperModalStyle.width
-          width: '100%'
+          width: '100%',
+          overflowY: 'auto'
         }}
       >
         <div
+          className={`${globalStyles.global_vertical_scrollbar}`}
           style={{
             backgroundColor: '#fff',
             padding: '27px 38px',
-            height: '100%',
-            borderRadius: '4px'
+            // height: '100%',
+            borderRadius: '4px',
+            minHeight: workbenchBoxContent_height,
+            paddingBottom: '24px'
+            // overflowY: 'auto'
           }}
         >
           <div className={indexStyles.chart_title}>
@@ -169,7 +174,9 @@ export default class index extends Component {
           </div>
           <div className={indexStyles.chart_content_1}>
             <div className={indexStyles.chart_c_top}>
-              <PieEarlyWarningComponent />
+              <PieEarlyWarningComponent
+                updateStateDatas={this.updateStateDatas}
+              />
               <div className={indexStyles.chart_d_code}>
                 <div>
                   <img
@@ -179,6 +186,7 @@ export default class index extends Component {
                       height: '206px'
                       // backgroundColor: 'pink'
                     }}
+                    alt="二维码"
                   />
                 </div>
                 <div style={{ textAlign: 'center' }}>
@@ -197,7 +205,7 @@ export default class index extends Component {
               </div>
             </div>
             <div className={indexStyles.chart_c_bottom}>
-              {this.renderTableContent()}
+              {this.renderTableContent(data)}
             </div>
           </div>
         </div>

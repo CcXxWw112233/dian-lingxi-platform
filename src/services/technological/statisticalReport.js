@@ -41,10 +41,11 @@ export function getReportBoardGrowth() {
 }
 
 // 获取项目预警状态等统计图表
-export function getReportBoardWarnStatus() {
+export function getReportBoardWarnStatus(params) {
   return request({
-    url: `${REQUEST_DOMAIN_BOARD}/report/board/status`,
+    url: `${REQUEST_DOMAIN_BOARD}/report/board/progress?board_id=${params.board_id}`,
     method: 'GET'
+    // params
   })
 }
 
