@@ -27,8 +27,12 @@ export default class index extends Component {
         value: '2'
       },
       {
-        label: '一周',
-        value: '7'
+        label: '3天',
+        value: '3'
+      },
+      {
+        label: '5天',
+        value: '5'
       }
     ]
   }
@@ -39,11 +43,14 @@ export default class index extends Component {
 
   setEarlyWarningVisible = () => {
     const {
-      drawContent: { time_warning }
+      drawContent: { time_warning },
+      projectDetailInfoData: {
+        board_set: { time_warning: board_time_warning }
+      }
     } = this.props
     this.setState({
       visible: !this.state.visible,
-      selectedValue: time_warning
+      selectedValue: time_warning || board_time_warning
     })
   }
 
@@ -98,18 +105,23 @@ export default class index extends Component {
   renderContent = () => {
     const { optionsList = [], selectedValue } = this.state
     const {
-      drawContent: { start_time, due_time, time_warning },
-      default_warning_time
+      drawContent: { start_time, due_time }
     } = this.props
     let temp_dec = this.disabledSelectedOption({ start_time, due_time })
-    let disabled =
-      temp_dec == '0'
-        ? selectedValue >= '1'
-        : temp_dec == '1'
-        ? selectedValue >= '2'
-        : temp_dec <= '6'
-        ? selectedValue == '7'
-        : false
+    let disabled = false
+    if (temp_dec == '0') {
+      // 表示开始和结束在同一天 表示只能选择1天之前的
+      disabled = selectedValue >= '1'
+    } else if (temp_dec == '1') {
+      // 表示相差一天
+      disabled = selectedValue >= '2'
+    } else if (temp_dec == '2') {
+      disabled = selectedValue >= '3'
+    } else if (temp_dec <= '4') {
+      disabled = selectedValue >= '5'
+    } else {
+      disabled = false
+    }
     return (
       <div>
         <div>
@@ -124,14 +136,28 @@ export default class index extends Component {
               无预警
             </Select.Option>
             {optionsList.map(item => {
-              let option_disabled =
-                temp_dec == '0'
-                  ? item.value >= '1'
-                  : temp_dec == '1'
-                  ? item.value >= '2'
-                  : temp_dec <= '6'
-                  ? item.value == '7'
-                  : false
+              let option_disabled = false
+              if (temp_dec == '0') {
+                // 表示开始和结束在同一天 表示只能选择1天之前的
+                option_disabled = item.value >= '1'
+              } else if (temp_dec == '1') {
+                // 表示相差一天
+                option_disabled = item.value >= '2'
+              } else if (temp_dec == '2') {
+                option_disabled = item.value >= '3'
+              } else if (temp_dec <= '4') {
+                option_disabled = item.value >= '5'
+              } else {
+                option_disabled = false
+              }
+              // let option_disabled =
+              //   temp_dec == '0'
+              //     ? item.value >= '1'
+              //     : temp_dec == '1'
+              //     ? item.value >= '2'
+              //     : temp_dec <= '6'
+              //     ? item.value == '7'
+              //     : false
               return (
                 <Select.Option
                   label={`到期前${item.label}预警`}
@@ -201,10 +227,14 @@ index.defaultProps = {
 }
 
 function mapStateToProps({
-  publicTaskDetailModal: { drawContent = {}, card_id }
+  publicTaskDetailModal: { drawContent = {}, card_id },
+  projectDetail: {
+    datas: { projectDetailInfoData = {} }
+  }
 }) {
   return {
     drawContent,
-    card_id
+    card_id,
+    projectDetailInfoData
   }
 }

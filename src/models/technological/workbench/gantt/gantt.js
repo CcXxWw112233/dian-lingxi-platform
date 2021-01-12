@@ -456,6 +456,12 @@ export default {
       const outline_tree_filter_type = yield select(
         getModelSelectDatasState('gantt', 'outline_tree_filter_type')
       )
+      // 获取项目预警值
+      const {
+        board_set: { time_warning: board_eraly_waring }
+      } = yield select(
+        getModelSelectDatasState('projectDetail', 'projectDetailInfoData')
+      )
       const min_start_time = date_arr_one_level[0].timestamp //最早时间
       const max_due_time =
         date_arr_one_level[date_arr_one_level.length - 1].timestampEnd
@@ -463,7 +469,6 @@ export default {
       // const tree_arr_1 = data.filter(item => item.tree_type == '1')//.sort(jsonArrayCompareSort('due_time', transformTimestamp)) //里程碑截止时间由近及远
       // const tree_arr_2 = data.filter(item => item.tree_type != '1')//.sort(jsonArrayCompareSort('start_time', transformTimestamp))
       // new_outline_tree = [].concat(tree_arr_1, tree_arr_2)//先把里程碑排进去，再排没有归属的任务
-
       let filnaly_outline_tree = recusionItem(
         new_outline_tree,
         { parent_expand: true },
@@ -474,7 +479,8 @@ export default {
           gantt_view_mode,
           min_start_time,
           max_due_time,
-          outline_tree_filter_type
+          outline_tree_filter_type,
+          board_eraly_waring
         }
       )
       // console.log('filnaly_outline_tree_0', filnaly_outline_tree)

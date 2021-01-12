@@ -674,6 +674,17 @@ export default class DrawDetailInfo extends React.Component {
   // 设置项目预警
   handleSelectedWarnValue = value => {
     console.log(value)
+    this.updateDateDatas({
+      name: 'time_warning',
+      value: value,
+      isSetDatas: true
+    })
+    this.props.dispatch({
+      type: 'gantt/handleOutLineTreeData',
+      payload: {
+        data: this.props.outline_tree
+      }
+    })
   }
 
   render() {
@@ -713,7 +724,8 @@ export default class DrawDetailInfo extends React.Component {
       date_format,
       start_time,
       due_time,
-      relative_time
+      relative_time,
+      time_warning
     } = board_set
     data = data || []
     const avatarList = data.concat([1]) //[1,2,3,4,5,6,7,8,9]//长度再加一
@@ -1237,9 +1249,13 @@ export default class DrawDetailInfo extends React.Component {
                   style={{ width: '180px', letterSpacing: '1px' }}
                   onChange={this.handleSelectedWarnValue}
                   placeholder="到期预警日期"
+                  value={time_warning || '0'}
                 >
                   <Select.Option label="无预警" value="0">
                     无预警
+                  </Select.Option>
+                  <Select.Option label={`到期前0.5天预警`} value={'0.5'}>
+                    提前0.5天
                   </Select.Option>
                   <Select.Option label={`到期前1天预警`} value={'1'}>
                     提前1天
@@ -1347,6 +1363,9 @@ function mapStateToProps({
   },
   technological: {
     datas: { userBoardPermissions }
+  },
+  gantt: {
+    datas: { outline_tree = [] }
   }
 }) {
   return {
@@ -1354,6 +1373,7 @@ function mapStateToProps({
     isInitEntry,
     projectDetailInfoData,
     projectRoles,
-    userBoardPermissions
+    userBoardPermissions,
+    outline_tree
   }
 }
