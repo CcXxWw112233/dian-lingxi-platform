@@ -65,7 +65,15 @@ class PieEarlyWarningComponent extends Component {
           label: {
             normal: {
               position: !!flag ? 'inside' : 'outside',
-              formatter: '{b|{b}}  \n  {c|{c}}',
+              formatter: !!flag
+                ? function(params) {
+                    if (params.value > 0) {
+                      return `${params.name} \n ${params.value}`
+                    } else {
+                      return ''
+                    }
+                  }
+                : '{b|{b}}  \n  {c|{c}}',
               //图形外文字上下显示
               borderWidth: 20,
               borderRadius: 4,
