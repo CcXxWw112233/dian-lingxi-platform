@@ -26,13 +26,15 @@ import {
   checkIsHasPermissionInVisitControlWithGroup
 } from '../../../../../../../utils/businessFunction'
 import { PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE } from '../../../../../../../globalset/js/constant'
-import { isOverdueTime } from '../../../../../../../utils/util'
+import { isOverdueTime, timeToTimestamp } from '../../../../../../../utils/util'
+import moment from 'moment'
 
 @connect(mapStateToProps)
 export default class HeaderContentRightMenu extends Component {
   state = {
     onlyReadingShareModalVisible: false, //只读分享modal
-    onlyReadingShareData: {}
+    onlyReadingShareData: {},
+    value: new Date().getTime()
   }
 
   getCurrentDrawerContentPropsModelDatasExecutors = () => {
@@ -552,11 +554,34 @@ export default class HeaderContentRightMenu extends Component {
         })
   }
 
+  onSelectDateValueChange = (date, dateString) => {
+    const { drawContent = {}, card_id } = this.props
+    let new_drawContent = { ...drawContent }
+    if (dateString) {
+      new_drawContent.finish_time = timeToTimestamp(dateString)
+    } else {
+      new_drawContent.finish_time = ''
+    }
+    this.setState({
+      value: timeToTimestamp(dateString)
+    })
+    this.props.handleTaskDetailChange &&
+      this.props.handleTaskDetailChange({
+        drawContent: new_drawContent,
+        card_id
+      })
+  }
+
   // 渲染修改完成时间popovercontent
   renderPopoverContent = () => {
+    const { value } = this.state
     return (
       <div style={{ width: '188px' }}>
-        <div style={{ marginBottom: '10px' }}>实际完成时间</div>
+        <div
+          style={{ marginBottom: '10px', fontWeight: 500, color: '#474A5B' }}
+        >
+          实际完成时间
+        </div>
         <div style={{ marginBottom: '10px' }}>
           <span
             style={{
@@ -570,7 +595,11 @@ export default class HeaderContentRightMenu extends Component {
               whiteSpace: 'nowrap'
             }}
           >
-            <DatePicker />
+            <DatePicker
+              allowClear={false}
+              onChange={this.onSelectDateValueChange}
+              value={moment(value)}
+            />
           </span>
         </div>
         <div style={{ textAlign: 'right' }}>
