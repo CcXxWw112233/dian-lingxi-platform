@@ -318,7 +318,7 @@ class PieEarlyWarningComponent extends Component {
           columns={columns}
           dataSource={data}
           pagination={false}
-          scroll={{ y: 200 }}
+          scroll={{ y: 450 }}
           style={{ maxHeight: 500 }}
           rowKey="id"
         />
