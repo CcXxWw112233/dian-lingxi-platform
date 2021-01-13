@@ -566,7 +566,7 @@ export default class HeaderContentRightMenu extends Component {
     return (
       <div className={headerStyles.detail_action_list}>
         {/* 删除 */}
-        <span className={`${headerStyles.action}`}>
+        {/* <span className={`${headerStyles.action}`}>
           <Tooltip title="删除">
             <span
               className={headerStyles.dele_icon}
@@ -579,7 +579,7 @@ export default class HeaderContentRightMenu extends Component {
               </span>
             </span>
           </Tooltip>
-        </span>
+        </span> */}
         {/* 分享协作 */}
         {/* <span className={`${headerStyles.action} `}>
           {is_shared === '1' ? (
@@ -623,6 +623,14 @@ export default class HeaderContentRightMenu extends Component {
             }
           />
         </span> */}
+        {/* 设置修改完成时间 */}
+        <span className={`${headerStyles.action} ${headerStyles.finish_time}`}>
+          <Tooltip title="完成时间">
+            <span className={headerStyles.finish_time_icon}>
+              <span className={`${globalStyles.authTheme} `}>&#xe7cd;</span>
+            </span>
+          </Tooltip>
+        </span>
         {/* 访问控制 */}
         <span className={`${headerStyles.action} ${headerStyles.visit_wrap}`}>
           {board_id && this.validVisitControlVisible() && (
@@ -638,6 +646,20 @@ export default class HeaderContentRightMenu extends Component {
               handleAddNewMember={this.handleVisitControlAddNewMember}
             />
           )}
+        </span>
+        <span className={`${headerStyles.action}`}>
+          <Tooltip title="删除">
+            <span
+              className={headerStyles.dele_icon}
+              onClick={this.handleDelCard}
+            >
+              <span
+                className={`${globalStyles.authTheme} ${headerStyles.dele}`}
+              >
+                &#xe7c3;
+              </span>
+            </span>
+          </Tooltip>
         </span>
       </div>
     )
