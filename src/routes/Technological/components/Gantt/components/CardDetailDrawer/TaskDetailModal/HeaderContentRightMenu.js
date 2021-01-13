@@ -1,6 +1,6 @@
 /* eslint-disable no-loop-func */
 import React, { Component } from 'react'
-import { Tooltip, message, Modal } from 'antd'
+import { Tooltip, message, Modal, Popover, DatePicker, Button } from 'antd'
 import { connect } from 'dva'
 import headerStyles from './HeaderContent.less'
 import VisitControl from '@/routes/Technological/components/VisitControl/index'
@@ -26,6 +26,7 @@ import {
   checkIsHasPermissionInVisitControlWithGroup
 } from '../../../../../../../utils/businessFunction'
 import { PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE } from '../../../../../../../globalset/js/constant'
+import { isOverdueTime } from '../../../../../../../utils/util'
 
 @connect(mapStateToProps)
 export default class HeaderContentRightMenu extends Component {
@@ -551,6 +552,34 @@ export default class HeaderContentRightMenu extends Component {
         })
   }
 
+  // 渲染修改完成时间popovercontent
+  renderPopoverContent = () => {
+    return (
+      <div style={{ width: '188px' }}>
+        <div style={{ marginBottom: '10px' }}>实际完成时间</div>
+        <div style={{ marginBottom: '10px' }}>
+          <span
+            style={{
+              position: 'relative',
+              zIndex: 0,
+              minWidth: '80px',
+              lineHeight: '38px',
+              padding: '0 12px',
+              display: 'inline-block',
+              textAlign: 'center',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            <DatePicker />
+          </span>
+        </div>
+        <div style={{ textAlign: 'right' }}>
+          <Button type="primary">确定</Button>
+        </div>
+      </div>
+    )
+  }
+
   render() {
     const { drawContent = {} } = this.props
     const {
@@ -559,8 +588,10 @@ export default class HeaderContentRightMenu extends Component {
       is_privilege,
       privileges = [],
       executors = [],
-      is_shared
+      is_shared,
+      due_time
     } = drawContent
+    const is_overdue_task = isOverdueTime(due_time)
     const { onlyReadingShareData, onlyReadingShareModalVisible } = this.state
     const { data } = this.getCurrentDrawerContentPropsModelDatasExecutors()
     return (
@@ -624,11 +655,37 @@ export default class HeaderContentRightMenu extends Component {
           />
         </span> */}
         {/* 设置修改完成时间 */}
-        <span className={`${headerStyles.action} ${headerStyles.finish_time}`}>
+        <span className={`${headerStyles.action}`}>
           <Tooltip title="完成时间">
-            <span className={headerStyles.finish_time_icon}>
-              <span className={`${globalStyles.authTheme} `}>&#xe7cd;</span>
-            </span>
+            {isOverdueTime(due_time) ? (
+              <Popover
+                trigger={['click']}
+                placement="bottomRight"
+                content={this.renderPopoverContent()}
+                title={null}
+                getPopupContainer={triggerNode => triggerNode.parentNode}
+              >
+                <span className={` ${headerStyles.finish_time}`}>
+                  <span
+                    className={`${globalStyles.authTheme} ${headerStyles.finish_time_icon} `}
+                  >
+                    &#xe7cd;
+                  </span>
+                </span>
+              </Popover>
+            ) : (
+              <span
+                style={{ cursor: 'not-allowed' }}
+                className={` ${headerStyles.finish_time}`}
+                title="暂不可修改完成时间"
+              >
+                <span
+                  className={`${globalStyles.authTheme} ${headerStyles.finish_time_icon} `}
+                >
+                  &#xe7cd;
+                </span>
+              </span>
+            )}
           </Tooltip>
         </span>
         {/* 访问控制 */}
