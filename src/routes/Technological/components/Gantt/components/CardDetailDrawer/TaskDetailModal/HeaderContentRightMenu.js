@@ -572,6 +572,24 @@ export default class HeaderContentRightMenu extends Component {
       })
   }
 
+  // 判断时间选择范围 (因为是已逾期的任务才有完成时间选择)
+  // 所以必定是截止时间小于今天 那就是大于等于开始时间并且小于等于今天时间
+  disabledSelectDate = due_time => {
+    const { drawContent = {} } = this.props
+    const { start_time } = drawContent
+    if (!start_time || !due_time) {
+      return false
+    }
+    const newStartTime =
+      start_time.toString().length > 10
+        ? Number(start_time).valueOf() / 1000
+        : Number(start_time).valueOf()
+    return (
+      Number(due_time.valueOf()) / 1000 < newStartTime ||
+      Number(due_time.valueOf()) / 1000 > new Date().valueOf() / 1000
+    )
+  }
+
   // 渲染修改完成时间popovercontent
   renderPopoverContent = () => {
     const { value } = this.state
@@ -599,6 +617,7 @@ export default class HeaderContentRightMenu extends Component {
               allowClear={false}
               onChange={this.onSelectDateValueChange}
               value={moment(value)}
+              disabledDate={this.disabledSelectDate.bind(this)}
             />
           </span>
         </div>
@@ -618,7 +637,8 @@ export default class HeaderContentRightMenu extends Component {
       privileges = [],
       executors = [],
       is_shared,
-      due_time
+      due_time,
+      is_realize
     } = drawContent
     const is_overdue_task = isOverdueTime(due_time)
     const { onlyReadingShareData, onlyReadingShareModalVisible } = this.state
@@ -684,39 +704,41 @@ export default class HeaderContentRightMenu extends Component {
           />
         </span> */}
         {/* 设置修改完成时间 */}
-        <span className={`${headerStyles.action}`}>
-          <Tooltip title="完成时间">
-            {isOverdueTime(due_time) ? (
-              <Popover
-                trigger={['click']}
-                placement="bottomRight"
-                content={this.renderPopoverContent()}
-                title={null}
-                getPopupContainer={triggerNode => triggerNode.parentNode}
-              >
-                <span className={` ${headerStyles.finish_time}`}>
+        {is_realize == '1' && (
+          <span className={`${headerStyles.action}`}>
+            <Tooltip title="完成时间">
+              {isOverdueTime(due_time) ? (
+                <Popover
+                  trigger={['click']}
+                  placement="bottomRight"
+                  content={this.renderPopoverContent()}
+                  title={null}
+                  getPopupContainer={triggerNode => triggerNode.parentNode}
+                >
+                  <span className={` ${headerStyles.finish_time}`}>
+                    <span
+                      className={`${globalStyles.authTheme} ${headerStyles.finish_time_icon} `}
+                    >
+                      &#xe7cd;
+                    </span>
+                  </span>
+                </Popover>
+              ) : (
+                <span
+                  style={{ cursor: 'not-allowed' }}
+                  className={` ${headerStyles.finish_time}`}
+                  title="暂不可修改完成时间"
+                >
                   <span
                     className={`${globalStyles.authTheme} ${headerStyles.finish_time_icon} `}
                   >
                     &#xe7cd;
                   </span>
                 </span>
-              </Popover>
-            ) : (
-              <span
-                style={{ cursor: 'not-allowed' }}
-                className={` ${headerStyles.finish_time}`}
-                title="暂不可修改完成时间"
-              >
-                <span
-                  className={`${globalStyles.authTheme} ${headerStyles.finish_time_icon} `}
-                >
-                  &#xe7cd;
-                </span>
-              </span>
-            )}
-          </Tooltip>
-        </span>
+              )}
+            </Tooltip>
+          </span>
+        )}
         {/* 访问控制 */}
         <span className={`${headerStyles.action} ${headerStyles.visit_wrap}`}>
           {board_id && this.validVisitControlVisible() && (
