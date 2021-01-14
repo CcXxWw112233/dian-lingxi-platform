@@ -332,7 +332,11 @@ class PieEarlyWarningComponent extends Component {
       <>
         <div
           id="pieEarlyWarnContent"
-          style={{ width: 780, height: 480, padding: '0px 2px' }}
+          style={{
+            width: '60%',
+            height: 480,
+            padding: '0px 2px'
+          }}
         ></div>
         {this.state.noData && (
           <div className={indexStyles.chart_noData}>暂无数据</div>
