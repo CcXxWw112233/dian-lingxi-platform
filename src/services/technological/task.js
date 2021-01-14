@@ -721,11 +721,20 @@ export async function updateTaskVTwo_2(data) {
   } else {
     delete BaseInfo.boardId
   }
-  console.log(card_id)
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/board/card`,
     method: 'PUT',
     headers: { BaseInfo },
+    data
+  })
+}
+
+// 修改任务完成时间
+export async function updateTaskFinishTimeVTwo(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}${REQUEST_INTERGFACE_VERSIONN}/card/finish_time`,
+    method: 'PUT',
+    headers: createHeaderContentDataByCardId(data.card_id),
     data
   })
 }

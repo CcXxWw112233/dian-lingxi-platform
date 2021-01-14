@@ -1074,7 +1074,8 @@ export default class GetRowGantt extends Component {
                 parent_card_id,
                 status,
                 name,
-                nodes = []
+                nodes = [],
+                finish_time
               } = value
               const nodes_status = nodes.findIndex(item => item.status == '1')
               const juge_expand =
@@ -1106,7 +1107,9 @@ export default class GetRowGantt extends Component {
                       />
                     )}
                     <GetRowTaskItem
-                      key={`${id}_${start_time}_${end_time}_${left}_${top}_${width}_${row}`}
+                      key={`${id}_${start_time}_${end_time}_${left}_${top}_${width}_${row}_${String(
+                        finish_time
+                      )}`}
                       itemValue={value}
                       setSpecilTaskExample={this.setSpecilTaskExample}
                       ganttPanelDashedDrag={this.state.drag_creating}
