@@ -327,7 +327,7 @@ class HoverEars extends Component {
           style={{
             top: y1,
             left: x1,
-            height: length ? length - 12 : 0,
+            height: length ? length - 14 : 0,
             transform: `rotate(${angle}deg)`,
             transformOrigin
           }}
