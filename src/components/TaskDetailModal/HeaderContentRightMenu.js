@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Tooltip, message, Modal } from 'antd'
+import { Tooltip, message, Modal, Popover, DatePicker, Button } from 'antd'
 import { connect } from 'dva'
 import headerStyles from './HeaderContent.less'
 import VisitControl from '../../routes/Technological/components/VisitControl/index'
@@ -17,7 +17,11 @@ import {
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { currentNounPlanFilterName } from '@/utils/businessFunction'
 import { MESSAGE_DURATION_TIME, TASKS } from '@/globalset/js/constant'
-import { arrayNonRepeatfy } from '../../utils/util'
+import {
+  arrayNonRepeatfy,
+  isOverdueTime,
+  timeToTimestamp
+} from '../../utils/util'
 import { getCurrentDrawerContentPropsModelFieldData } from './handleOperateModal'
 // import { lx_utils } from 'lingxi-im'
 import {
@@ -25,7 +29,14 @@ import {
   checkIsHasPermissionInVisitControl,
   checkIsHasPermissionInVisitControlWithGroup
 } from '../../utils/businessFunction'
-import { PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE } from '../../globalset/js/constant'
+import {
+  NOT_HAS_PERMISION_COMFIRN,
+  PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE,
+  PROJECT_TEAM_CARD_EDIT_FINISH_TIME
+} from '../../globalset/js/constant'
+import moment from 'moment'
+import { updateTaskFinishTimeVTwo } from '../../services/technological/task'
+import { isApiResponseOk } from '../../utils/handleResponseData'
 const lx_utils = undefined
 
 @connect(mapStateToProps)
@@ -545,6 +556,171 @@ export default class HeaderContentRightMenu extends Component {
         })
   }
 
+  // 控制popoverconte显示隐藏
+  onVisibleChange = visible => {
+    const {
+      drawContent: { finish_time }
+    } = this.props
+    let f_time = finish_time
+      ? finish_time.toString().length == 10
+        ? finish_time * 1000
+        : finish_time
+      : new Date().getTime()
+    this.setState({
+      popoverVisible: visible,
+      finish_time: f_time
+    })
+  }
+
+  onSelectDateValueChange = (date, dateString) => {
+    this.setState({
+      finish_time: timeToTimestamp(dateString)
+    })
+  }
+
+  // 判断时间选择范围 (因为是已逾期的任务才有完成时间选择)
+  // 所以必定是截止时间小于今天 那就是大于等于开始时间并且小于等于今天时间
+  disabledSelectDate = end_time => {
+    const { drawContent = {} } = this.props
+    const { start_time, due_time } = drawContent
+    let flag = false
+    // if (!start_time || !due_time) {
+    //   return false
+    // }
+    const newStartTime =
+      start_time &&
+      (start_time.toString().length > 10
+        ? Number(start_time).valueOf() / 1000
+        : Number(start_time).valueOf())
+    const newDueTime =
+      due_time &&
+      (due_time.toString().length > 10
+        ? Number(due_time).valueOf() / 1000
+        : Number(due_time).valueOf())
+    if (!!newStartTime && !!newDueTime) {
+      return (
+        Number(end_time.valueOf()) / 1000 < newDueTime ||
+        Number(end_time.valueOf()) / 1000 > new Date().valueOf() / 1000
+      )
+    } else if (!!newStartTime && !newDueTime) {
+      return (
+        Number(end_time.valueOf()) / 1000 < newStartTime ||
+        Number(end_time.valueOf()) / 1000 > new Date().valueOf() / 1000
+      )
+    } else if (!newStartTime && !!newDueTime) {
+      return Number(end_time.valueOf()) / 1000 < newDueTime
+    }
+    // return (
+    //   Number(end_time.valueOf()) / 1000 < newStartTime ||
+    //   Number(end_time.valueOf()) / 1000 > new Date().valueOf() / 1000
+    // )
+  }
+
+  // 点击设置完成时间
+  handleClickSetTaskFinishTime = () => {
+    const { finish_time } = this.state
+    const {
+      drawContent = {},
+      card_id,
+      dispatch,
+      drawContent: { board_id, finish_time: card_finish_time }
+    } = this.props
+    let new_drawContent = { ...drawContent }
+    if (
+      !checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_EDIT_FINISH_TIME, board_id)
+    ) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return
+    }
+    const today = new Date(finish_time)
+    const today_year = today.getFullYear()
+    const today_month = today.getMonth()
+    const today_day = today.getDate()
+    const today_start_time = new Date(
+      today_year,
+      today_month,
+      today_day,
+      '00',
+      '00',
+      '00'
+    ).getTime()
+    if (!!finish_time) {
+      new_drawContent.finish_time = today_start_time
+    } else {
+      new_drawContent.finish_time = ''
+    }
+    updateTaskFinishTimeVTwo({ card_id, finish_time: today_start_time }).then(
+      res => {
+        if (isApiResponseOk(res)) {
+          dispatch({
+            type: 'publicTaskDetailModal/updateDatas',
+            payload: {
+              drawContent: new_drawContent
+            }
+          })
+          this.onVisibleChange(false)
+          this.props.handleTaskDetailChange &&
+            this.props.handleTaskDetailChange({
+              drawContent: new_drawContent,
+              card_id
+            })
+        } else {
+          message.warn(res.message)
+          // this.setState({
+          //   finish_time: card_finish_time
+          //     ? card_finish_time
+          //     : new Date().getTime()
+          // })
+          this.onVisibleChange(false)
+        }
+      }
+    )
+  }
+
+  // 渲染修改完成时间popovercontent
+  renderPopoverContent = () => {
+    const { finish_time } = this.state
+    return (
+      <div style={{ width: '188px' }}>
+        <div
+          style={{ marginBottom: '10px', fontWeight: 500, color: '#474A5B' }}
+        >
+          实际完成时间
+        </div>
+        <div style={{ marginBottom: '10px' }}>
+          <span
+            style={{
+              position: 'relative',
+              zIndex: 0,
+              minWidth: '80px',
+              lineHeight: '38px',
+              padding: '0 12px',
+              display: 'inline-block',
+              textAlign: 'center',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            <DatePicker
+              allowClear={false}
+              onChange={this.onSelectDateValueChange}
+              value={moment(finish_time)}
+              disabledDate={this.disabledSelectDate.bind(this)}
+            />
+          </span>
+        </div>
+        <div style={{ textAlign: 'right' }}>
+          <Button
+            onClick={this.handleClickSetTaskFinishTime}
+            disabled={!finish_time}
+            type="primary"
+          >
+            确定
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
   render() {
     const { drawContent = {} } = this.props
     const {
@@ -554,15 +730,59 @@ export default class HeaderContentRightMenu extends Component {
       is_privilege,
       privileges = [],
       executors = [],
-      is_shared
+      is_shared,
+      is_realize,
+      due_time
     } = drawContent
-    const { onlyReadingShareData, onlyReadingShareModalVisible } = this.state
+    const {
+      onlyReadingShareData,
+      onlyReadingShareModalVisible,
+      popoverVisible
+    } = this.state
     const { data = [] } = getCurrentDrawerContentPropsModelFieldData({
       properties,
       code: 'EXECUTOR'
     })
     return (
       <div className={headerStyles.detail_action_list}>
+        {/* 设置修改完成时间 */}
+        {is_realize == '1' && (
+          <span className={`${headerStyles.action}`}>
+            <Tooltip title="完成时间">
+              {isOverdueTime(due_time) ? (
+                <Popover
+                  visible={popoverVisible}
+                  trigger={['click']}
+                  placement="bottomRight"
+                  content={this.renderPopoverContent()}
+                  title={null}
+                  getPopupContainer={triggerNode => triggerNode.parentNode}
+                  onVisibleChange={this.onVisibleChange}
+                >
+                  <span className={` ${headerStyles.finish_time}`}>
+                    <span
+                      className={`${globalStyles.authTheme} ${headerStyles.finish_time_icon} `}
+                    >
+                      &#xe7cd;
+                    </span>
+                  </span>
+                </Popover>
+              ) : (
+                <span
+                  style={{ cursor: 'not-allowed' }}
+                  className={` ${headerStyles.finish_time}`}
+                  title="暂不可修改完成时间"
+                >
+                  <span
+                    className={`${globalStyles.authTheme} ${headerStyles.finish_time_icon} `}
+                  >
+                    &#xe7cd;
+                  </span>
+                </span>
+              )}
+            </Tooltip>
+          </span>
+        )}
         {/* 访问控制 */}
         <span className={`${headerStyles.action} ${headerStyles.visit_wrap}`}>
           {board_id && this.validVisitControlVisible() && (

@@ -656,30 +656,32 @@ export default class HeaderContentRightMenu extends Component {
     } else {
       new_drawContent.finish_time = ''
     }
-    updateTaskFinishTimeVTwo({ card_id, today_start_time }).then(res => {
-      if (isApiResponseOk(res)) {
-        dispatch({
-          type: 'publicTaskDetailModal/updateDatas',
-          payload: {
-            drawContent: new_drawContent
-          }
-        })
-        this.onVisibleChange(false)
-        this.props.handleTaskDetailChange &&
-          this.props.handleTaskDetailChange({
-            drawContent: new_drawContent,
-            card_id
+    updateTaskFinishTimeVTwo({ card_id, finish_time: today_start_time }).then(
+      res => {
+        if (isApiResponseOk(res)) {
+          dispatch({
+            type: 'publicTaskDetailModal/updateDatas',
+            payload: {
+              drawContent: new_drawContent
+            }
           })
-      } else {
-        message.warn(res.message)
-        // this.setState({
-        //   finish_time: card_finish_time
-        //     ? card_finish_time
-        //     : new Date().getTime()
-        // })
-        this.onVisibleChange(false)
+          this.onVisibleChange(false)
+          this.props.handleTaskDetailChange &&
+            this.props.handleTaskDetailChange({
+              drawContent: new_drawContent,
+              card_id
+            })
+        } else {
+          message.warn(res.message)
+          // this.setState({
+          //   finish_time: card_finish_time
+          //     ? card_finish_time
+          //     : new Date().getTime()
+          // })
+          this.onVisibleChange(false)
+        }
       }
-    })
+    )
   }
 
   // 渲染修改完成时间popovercontent
