@@ -599,7 +599,7 @@ export default class HeaderContentRightMenu extends Component {
         : Number(due_time).valueOf())
     if (!!newStartTime && !!newDueTime) {
       return (
-        Number(end_time.valueOf()) / 1000 < newDueTime ||
+        Number(end_time.valueOf()) / 1000 < newStartTime ||
         Number(end_time.valueOf()) / 1000 > new Date().valueOf() / 1000
       )
     } else if (!!newStartTime && !newDueTime) {
@@ -608,7 +608,10 @@ export default class HeaderContentRightMenu extends Component {
         Number(end_time.valueOf()) / 1000 > new Date().valueOf() / 1000
       )
     } else if (!newStartTime && !!newDueTime) {
-      return Number(end_time.valueOf()) / 1000 < newDueTime
+      return (
+        Number(end_time.valueOf()) / 1000 < newDueTime ||
+        Number(end_time.valueOf()) / 1000 > new Date().valueOf() / 1000
+      )
     }
     // return (
     //   Number(end_time.valueOf()) / 1000 < newStartTime ||
@@ -652,6 +655,7 @@ export default class HeaderContentRightMenu extends Component {
     updateTaskFinishTimeVTwo({ card_id, finish_time: today_start_time }).then(
       res => {
         if (isApiResponseOk(res)) {
+          message.success('修改成功', MESSAGE_DURATION_TIME)
           dispatch({
             type: 'publicTaskDetailModal/updateDatas',
             payload: {
@@ -732,7 +736,8 @@ export default class HeaderContentRightMenu extends Component {
       executors = [],
       is_shared,
       is_realize,
-      due_time
+      due_time,
+      start_time
     } = drawContent
     const {
       onlyReadingShareData,
@@ -746,40 +751,26 @@ export default class HeaderContentRightMenu extends Component {
     return (
       <div className={headerStyles.detail_action_list}>
         {/* 设置修改完成时间 */}
-        {is_realize == '1' && (
+        {is_realize == '1' && (!!start_time || !!due_time) && (
           <span className={`${headerStyles.action}`}>
             <Tooltip title="完成时间">
-              {isOverdueTime(due_time) ? (
-                <Popover
-                  visible={popoverVisible}
-                  trigger={['click']}
-                  placement="bottomRight"
-                  content={this.renderPopoverContent()}
-                  title={null}
-                  getPopupContainer={triggerNode => triggerNode.parentNode}
-                  onVisibleChange={this.onVisibleChange}
-                >
-                  <span className={` ${headerStyles.finish_time}`}>
-                    <span
-                      className={`${globalStyles.authTheme} ${headerStyles.finish_time_icon} `}
-                    >
-                      &#xe7cd;
-                    </span>
-                  </span>
-                </Popover>
-              ) : (
-                <span
-                  style={{ cursor: 'not-allowed' }}
-                  className={` ${headerStyles.finish_time}`}
-                  title="暂不可修改完成时间"
-                >
+              <Popover
+                visible={popoverVisible}
+                trigger={['click']}
+                placement="bottomRight"
+                content={this.renderPopoverContent()}
+                title={null}
+                getPopupContainer={triggerNode => triggerNode.parentNode}
+                onVisibleChange={this.onVisibleChange}
+              >
+                <span className={` ${headerStyles.finish_time}`}>
                   <span
                     className={`${globalStyles.authTheme} ${headerStyles.finish_time_icon} `}
                   >
                     &#xe7cd;
                   </span>
                 </span>
-              )}
+              </Popover>
             </Tooltip>
           </span>
         )}
