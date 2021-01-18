@@ -167,7 +167,8 @@ export function recusionItem(
     gantt_view_mode,
     min_start_time,
     max_due_time,
-    outline_tree_filter_type
+    outline_tree_filter_type,
+    board_eraly_waring
   }
 ) {
   let arr = tree.map((item, key) => {
@@ -238,19 +239,27 @@ export function recusionItem(
           end_date
         })
         // 是否显示预警其他条件 存在开始和截止时间 并且设置了预警 并且 是未完成任务 并且是父任务
+        let IS_BOARD_WARNING_VALUE =
+          !!board_eraly_waring && board_eraly_waring != '0'
+        let IS_CARD_ITEM_WARNING_VALUE = !!new_item.time_warning
         let IS_SHOW_WARNING_OTHER_TERM =
-          !!new_item.time_warning &&
-          new_item.time_warning != '0' &&
+          ((!!new_item.time_warning && new_item.time_warning != '0') ||
+            IS_BOARD_WARNING_VALUE) &&
           !!start_time &&
           !!due_time &&
           !new_item.parent_card_id &&
           new_item.is_realize == '0'
         new_item.is_early_warned =
           getCardsWarningTimeScope({
-            time_warning: new_item.time_warning,
+            time_warning: IS_CARD_ITEM_WARNING_VALUE
+              ? new_item.time_warning
+              : IS_BOARD_WARNING_VALUE || '0',
             start_time,
             due_time
           }) && IS_SHOW_WARNING_OTHER_TERM
+        new_item.time_warning = IS_CARD_ITEM_WARNING_VALUE
+          ? new_item.time_warning
+          : board_eraly_waring || '0'
       }
     }
     new_item.time_span = time_span

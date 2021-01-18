@@ -39,3 +39,21 @@ export function getReportBoardGrowth() {
     method: 'GET'
   })
 }
+
+// 获取项目预警状态等统计图表
+export function getReportBoardWarnStatus(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/report/board/progress?board_id=${params.board_id}`,
+    method: 'GET'
+    // params
+  })
+}
+
+// 获取进度统计二维码
+export function getReportBoardCode(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/report/board/progress/qrcode?board_id=${data.board_id}`,
+    method: 'POST',
+    data: data
+  })
+}

@@ -441,7 +441,6 @@ export default class BoardFeatures extends Component {
       )
     )
     if (!(value && value.length)) {
-      console.log('进来了')
       this.reorderBoardToDoList(props ? props : this.props)
       return
     }

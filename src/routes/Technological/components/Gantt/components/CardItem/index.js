@@ -1818,6 +1818,7 @@ export default class CardItem extends Component {
       warning_timer_day >= 10 ? warning_timer_day : '0' + warning_timer_day
     // 判断是否是今天之前
     const is_overdue_task = isOverdueTime(due_time)
+    let warning_timestamp = due_time - Number(ahead_timestamp)
     // 显示预警
     const SHOW_WARNING_TRIGGER =
       ganttIsOutlineView({ group_view_type }) &&
@@ -1828,7 +1829,9 @@ export default class CardItem extends Component {
       start_time != due_time &&
       !is_overdue_task &&
       !!time_warning &&
-      time_warning != '0'
+      time_warning != '0' &&
+      (warning_timestamp >= start_time ||
+        caldiffDays(warning_timestamp, start_time) == 0)
     const WARNING_TIME_SCOPE = getCardsWarningTimeScope({
       time_warning,
       start_time,
