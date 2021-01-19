@@ -10,9 +10,10 @@ import 'echarts/lib/chart/bar'
 import 'echarts/lib/component/tooltip'
 import 'echarts/lib/component/title'
 import 'echarts/lib/component/legend'
-import { getReportBoardGrowth } from '../../../../../../services/technological/statisticalReport'
+import { getReportBoardFunnel } from '../../../../../../services/technological/statisticalReport'
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
 import echartTheme from '../echartTheme.json'
+import { removeEmptyArrayEle } from '../../../../../../utils/util'
 @connect(mapStateToProps)
 class FunnelComponent extends Component {
   state = {
@@ -20,14 +21,22 @@ class FunnelComponent extends Component {
   }
 
   getChartOptions = props => {
-    // const { time = [], number = [] } = props
+    const { status = [], count = [] } = props
+    let data = [...count]
+    data = data.map((item, index) => {
+      let new_item = {
+        value: item,
+        name: status[index]
+      }
+      return new_item
+    })
     let option = {
       tooltip: {
         trigger: 'item',
         formatter: '{a} <br/>{b} : {c}%'
       },
       legend: {
-        data: ['展现', '点击', '访问', '咨询', '订单'],
+        data: status,
         orient: 'vertical',
         left: 38,
         bottom: 0,
@@ -36,7 +45,7 @@ class FunnelComponent extends Component {
 
       series: [
         {
-          name: '漏斗图',
+          // name: '漏斗图',
           type: 'funnel',
           left: '10%',
           top: 60,
@@ -70,13 +79,7 @@ class FunnelComponent extends Component {
               fontSize: 20
             }
           },
-          data: [
-            { value: 60, name: '访问' },
-            { value: 40, name: '咨询' },
-            { value: 20, name: '订单' },
-            { value: 80, name: '点击' },
-            { value: 100, name: '展现' }
-          ]
+          data: data
         }
       ]
     }
@@ -84,7 +87,7 @@ class FunnelComponent extends Component {
     return option
   }
 
-  getReportBoardGrowth = () => {
+  getReportBoardFunnel = (selectedKeys = []) => {
     echarts.registerTheme('walden', echartTheme)
     let myChart = echarts.init(
       document.getElementById('funnelComponent'),
@@ -98,13 +101,17 @@ class FunnelComponent extends Component {
       maskColor: 'rgba(255, 255, 255, 0.2)',
       zlevel: 0
     })
-    let option = this.getChartOptions()
+    let selectedKeys_ = removeEmptyArrayEle(selectedKeys)
+    if (selectedKeys_.length == 0) {
+      myChart.hideLoading()
+      this.setState({
+        noData: true
+      })
+      return
+    }
     // option = newline(option, 3, 'xAxis')
     // 使用刚指定的配置项和数据显示图表。
-    myChart.hideLoading()
-    myChart.setOption(option)
-    return
-    getReportBoardGrowth().then(res => {
+    getReportBoardFunnel({ board_ids: selectedKeys_ }).then(res => {
       if (isApiResponseOk(res)) {
         let flag = false
         let data = res.data
@@ -124,7 +131,7 @@ class FunnelComponent extends Component {
           myChart.hideLoading()
           myChart.setOption(option)
           this.setState({
-            noData: true
+            noData: false
           })
         } else {
           this.setState({
@@ -146,7 +153,8 @@ class FunnelComponent extends Component {
   }
 
   componentDidMount() {
-    this.getReportBoardGrowth()
+    const { selectedKeys = [] } = this.props
+    this.getReportBoardFunnel(selectedKeys)
     window.addEventListener('resize', this.resizeTTY)
   }
 
@@ -159,10 +167,19 @@ class FunnelComponent extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { board_id } = this.props.simplemodeCurrentProject
-    const { board_id: next_board_id } = nextProps.simplemodeCurrentProject
-    if (board_id != next_board_id) {
-      this.getReportBoardGrowth()
+    const {
+      simplemodeCurrentProject: { board_id },
+      selectedKeys = []
+    } = this.props
+    const {
+      simplemodeCurrentProject: { board_id: next_board_id },
+      selectedKeys: new_selectedKeys = []
+    } = nextProps
+    if (
+      board_id != next_board_id ||
+      new_selectedKeys.length != selectedKeys.length
+    ) {
+      this.getReportBoardFunnel(new_selectedKeys)
     }
   }
 
@@ -188,10 +205,14 @@ class FunnelComponent extends Component {
 export default FunnelComponent
 
 function mapStateToProps({
-  simplemode: { simplemodeCurrentProject = {}, chatImVisiable }
+  simplemode: { simplemodeCurrentProject = {}, chatImVisiable },
+  workbench: {
+    datas: { projectList = [] }
+  }
 }) {
   return {
     simplemodeCurrentProject,
-    chatImVisiable
+    chatImVisiable,
+    projectList
   }
 }

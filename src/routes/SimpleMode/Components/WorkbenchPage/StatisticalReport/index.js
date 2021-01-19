@@ -11,6 +11,7 @@ import { currentNounPlanFilterName } from '../../../../../utils/businessFunction
 import { PROJECTS } from '../../../../../globalset/js/constant'
 import FunnelComponent from './components/FunnelComponent'
 import { Dropdown, Menu } from 'antd'
+import { removeEmptyArrayEle } from '../../../../../utils/util'
 @connect(mapStateToProps)
 export default class index extends Component {
   state = {
@@ -30,15 +31,63 @@ export default class index extends Component {
     ]
   }
 
+  updateSelectKeys = (props = {}) => {
+    const { simplemodeCurrentProject = {}, projectList = [] } = props
+    let board_ids = []
+    if (simplemodeCurrentProject.board_id == '0') {
+      projectList.map(item => {
+        board_ids.push(item.board_id)
+      })
+    } else {
+      board_ids.push(simplemodeCurrentProject.board_id)
+    }
+    this.setState({
+      selectedKeys: board_ids
+    })
+  }
+
+  componentDidMount() {
+    this.updateSelectKeys(this.props)
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { board_id } = this.props.simplemodeCurrentProject
+    const { board_id: next_board_id } = nextProps.simplemodeCurrentProject
+    if (board_id != next_board_id) {
+      this.updateSelectKeys(nextProps)
+    }
+  }
+
   onVisibleChange = visible => {
     this.setState({
       dropdownVisible: visible
     })
   }
 
+  handleSelectAllOrCancel = () => {
+    const { selectedKeys = [] } = this.state
+    const { projectList = [] } = this.props
+    let board_ids = []
+    if (selectedKeys.length == projectList.length) {
+      board_ids = []
+    } else {
+      projectList.map(i => {
+        board_ids.push(i.board_id)
+      })
+      board_ids = removeEmptyArrayEle(board_ids)
+    }
+    this.setState({
+      selectedKeys: board_ids
+    })
+  }
+
   handleSelect = e => {
     const { domEvent, key, selectedKeys = [] } = e
     domEvent && domEvent.stopPropagation()
+    if (key == 'select_all') {
+      this.handleSelectAllOrCancel()
+      return
+    }
     this.setState({
       selectedKeys
     })
@@ -47,6 +96,10 @@ export default class index extends Component {
   handleDeSelect = e => {
     const { domEvent, key, selectedKeys = [] } = e
     domEvent && domEvent.stopPropagation()
+    if (key == 'select_all') {
+      this.handleSelectAllOrCancel()
+      return
+    }
     this.setState({
       selectedKeys
     })
@@ -68,6 +121,7 @@ export default class index extends Component {
 
   renderMenu = () => {
     const { data = [], selectedKeys = [] } = this.state
+    const { projectList = [] } = this.props
     return (
       <Menu
         multiple={true}
@@ -78,19 +132,21 @@ export default class index extends Component {
         selectedKeys={selectedKeys}
         onClick={({ domEvent }) => domEvent && domEvent.stopPropagation()}
       >
-        <Menu.Item key="3">
+        <Menu.Item key="select_all">
           <div className={indexStyles.chart_overlay_item}>
             <span>全选</span>
             <span
               className={`${globalStyles.authTheme} ${indexStyles.chart_overlay_check}`}
-              style={{ display: data.length == selectedKeys.length && 'block' }}
+              style={{
+                display: projectList.length == selectedKeys.length && 'block'
+              }}
             >
               &#xe7fc;
             </span>
           </div>
         </Menu.Item>
         <Menu.Divider />
-        {data.map(item => {
+        {projectList.map(item => {
           return (
             <Menu.Item key={item.board_id}>
               <div
@@ -222,7 +278,10 @@ export default class index extends Component {
               </div>
               {/* 条形图 */}
               <div className={indexStyles.chart_item_bottom}>
-                <FunnelComponent width={chart_item_width} />
+                <FunnelComponent
+                  selectedKeys={this.state.selectedKeys}
+                  width={chart_item_width}
+                />
               </div>
               <div className={indexStyles.chart_item_d_menu}>
                 <Dropdown
@@ -253,10 +312,14 @@ function mapStateToProps({
   simplemode: {
     workbenchBoxContentWapperModalStyle = {},
     simplemodeCurrentProject = {}
+  },
+  workbench: {
+    datas: { projectList = [] }
   }
 }) {
   return {
     workbenchBoxContentWapperModalStyle,
-    simplemodeCurrentProject
+    simplemodeCurrentProject,
+    projectList
   }
 }
