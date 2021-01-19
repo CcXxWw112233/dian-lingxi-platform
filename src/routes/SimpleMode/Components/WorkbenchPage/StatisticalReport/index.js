@@ -9,8 +9,49 @@ import LineComponent from './components/LineComponent'
 import PieEarlyWarningComponent from './components/PieEarlyWarningComponent'
 import { currentNounPlanFilterName } from '../../../../../utils/businessFunction'
 import { PROJECTS } from '../../../../../globalset/js/constant'
+import FunnelComponent from './components/FunnelComponent'
+import { Dropdown, Menu } from 'antd'
 @connect(mapStateToProps)
 export default class index extends Component {
+  state = {
+    data: [
+      {
+        board_id: '1111',
+        board_name: '我的天'
+      },
+      {
+        board_id: '2222',
+        board_name: '24HRS'
+      },
+      {
+        board_id: '3333',
+        board_name: '很长很长很长很长很长很长很长很长的项目名'
+      }
+    ]
+  }
+
+  onVisibleChange = visible => {
+    this.setState({
+      dropdownVisible: visible
+    })
+  }
+
+  handleSelect = e => {
+    const { domEvent, key, selectedKeys = [] } = e
+    domEvent && domEvent.stopPropagation()
+    this.setState({
+      selectedKeys
+    })
+  }
+
+  handleDeSelect = e => {
+    const { domEvent, key, selectedKeys = [] } = e
+    domEvent && domEvent.stopPropagation()
+    this.setState({
+      selectedKeys
+    })
+  }
+
   // 渲染title
   renderTitle = () => {
     const {
@@ -25,6 +66,55 @@ export default class index extends Component {
     return title_dec
   }
 
+  renderMenu = () => {
+    const { data = [], selectedKeys = [] } = this.state
+    return (
+      <Menu
+        multiple={true}
+        onSelect={this.handleSelect}
+        onDeselect={this.handleDeSelect}
+        selectable={true}
+        className={indexStyles.chart_overlay_funnel}
+        selectedKeys={selectedKeys}
+        onClick={({ domEvent }) => domEvent && domEvent.stopPropagation()}
+      >
+        <Menu.Item key="3">
+          <div className={indexStyles.chart_overlay_item}>
+            <span>全选</span>
+            <span
+              className={`${globalStyles.authTheme} ${indexStyles.chart_overlay_check}`}
+              style={{ display: data.length == selectedKeys.length && 'block' }}
+            >
+              &#xe7fc;
+            </span>
+          </div>
+        </Menu.Item>
+        <Menu.Divider />
+        {data.map(item => {
+          return (
+            <Menu.Item key={item.board_id}>
+              <div
+                title={item.board_name}
+                className={indexStyles.chart_overlay_item}
+              >
+                <span>{item.board_name}</span>
+                <span
+                  className={`${globalStyles.authTheme} ${indexStyles.chart_overlay_check}`}
+                  style={{
+                    display:
+                      selectedKeys.indexOf(item.board_id) != -1 && 'block'
+                  }}
+                >
+                  &#xe7fc;
+                </span>
+              </div>
+            </Menu.Item>
+          )
+        })}
+      </Menu>
+    )
+  }
+
   render() {
     const {
       workbenchBoxContent_height,
@@ -33,8 +123,9 @@ export default class index extends Component {
     } = this.props
     let chart_item_width =
       workbenchBoxContentWapperModalStyle.width == '100%'
-        ? document.body.clientWidth / 2 - 100
-        : parseInt(workbenchBoxContentWapperModalStyle.width) / 2 - 100
+        ? document.body.clientWidth / 2 - 80
+        : parseInt(workbenchBoxContentWapperModalStyle.width) / 2 - 80
+    const { dropdownVisible } = this.state
     return (
       <div
         id={'statisticalReportContainer'}
@@ -49,7 +140,7 @@ export default class index extends Component {
         <div
           className={`${globalStyles.global_vertical_scrollbar}`}
           style={{
-            backgroundColor: '#fff',
+            // backgroundColor: '#fff',
             padding: '27px 38px',
             // height: '100%',
             borderRadius: '4px',
@@ -83,7 +174,7 @@ export default class index extends Component {
             </div>
             <div
               className={indexStyles.chart_item}
-              style={{ width: chart_item_width }}
+              style={{ width: chart_item_width, marginRight: 0 }}
             >
               <div className={indexStyles.chart_item_top}>
                 <div className={indexStyles.chart_item_t_left}>任务数统计</div>
@@ -107,7 +198,7 @@ export default class index extends Component {
             </div>
             <div
               className={indexStyles.chart_item}
-              style={{ width: chart_item_width }}
+              style={{ width: chart_item_width, marginRight: 0 }}
             >
               <div className={indexStyles.chart_item_top}>
                 <div className={indexStyles.chart_item_t_left}>
@@ -120,6 +211,35 @@ export default class index extends Component {
               {/* 条形图 */}
               <div className={indexStyles.chart_item_bottom}>
                 <LineComponent width={chart_item_width} />
+              </div>
+            </div>
+            <div
+              className={indexStyles.chart_item}
+              style={{ width: chart_item_width }}
+            >
+              <div className={indexStyles.chart_item_top}>
+                <div className={indexStyles.chart_item_t_left}>新增项目数</div>
+              </div>
+              {/* 条形图 */}
+              <div className={indexStyles.chart_item_bottom}>
+                <FunnelComponent width={chart_item_width} />
+              </div>
+              <div className={indexStyles.chart_item_d_menu}>
+                <Dropdown
+                  getPopupContainer={triggerNode => triggerNode.parentNode}
+                  overlay={this.renderMenu()}
+                  trigger={['click']}
+                  overlayStyle={{ maxWidth: '200px', width: '200px' }}
+                  visible={dropdownVisible}
+                  onVisibleChange={this.onVisibleChange}
+                >
+                  <span
+                    style={{ fontSize: 18, fontWeight: 500, color: '#000' }}
+                    className={globalStyles.authTheme}
+                  >
+                    &#xe60a; 选择项目 &#xe7ee;
+                  </span>
+                </Dropdown>
               </div>
             </div>
           </div>

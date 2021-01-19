@@ -12,6 +12,7 @@
     font-weight: 600;
     color: rgba(0, 0, 0, 0.65);
     line-height: 28px;
+    margin: -20px 0 20px -20px;
   }
   .chart_content {
     display: flex;
@@ -24,7 +25,10 @@
       // background:pink;
       background-color: #fff;
       border-radius: 4px;
-      margin: 16px 8px;
+      // margin: 16px 8px;
+      margin-bottom: 16px;
+      margin-right: 16px;
+      position: relative;
       // padding: 24px;
       .chart_item_top {
         display: flex;
@@ -56,10 +60,32 @@
           cursor: pointer;
         }
       }
+      .chart_item_d_menu {
+        position: absolute;
+        right: 38px;
+        top: 38px;
+        cursor: pointer;
+        .chart_overlay_item {
+          display: flex;
+          justify-content: space-between;
+          > span:nth-child(1) {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+          }
+          .chart_overlay_check {
+            display: none;
+          }
+        }
+        .chart_overlay_item:hover .chart_overlay_check {
+          display: block;
+        }
+      }
     }
   }
   .chart_content_1 {
     // height: 100%;
+    background-color: #fff;
     .chart_c_top {
       // background-color: pink;
       // height: 100%;

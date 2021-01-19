@@ -319,7 +319,7 @@ class PieEarlyWarningComponent extends Component {
           dataSource={data}
           pagination={false}
           scroll={{ y: 450 }}
-          style={{ maxHeight: 500 }}
+          style={{ maxHeight: 500, padding: '0 38px' }}
           rowKey="id"
         />
       </div>
