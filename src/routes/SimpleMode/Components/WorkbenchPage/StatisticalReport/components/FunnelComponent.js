@@ -33,7 +33,7 @@ class FunnelComponent extends Component {
     let option = {
       tooltip: {
         trigger: 'item',
-        formatter: '{a} <br/>{b} : {c}个'
+        formatter: '{b} : {c}个'
       },
       legend: {
         data: status,
