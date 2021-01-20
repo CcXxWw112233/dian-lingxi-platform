@@ -10,7 +10,7 @@ import PieEarlyWarningComponent from './components/PieEarlyWarningComponent'
 import { currentNounPlanFilterName } from '../../../../../utils/businessFunction'
 import { PROJECTS } from '../../../../../globalset/js/constant'
 import FunnelComponent from './components/FunnelComponent'
-import { Dropdown, Menu } from 'antd'
+import { Dropdown, Menu, Popover } from 'antd'
 import { removeEmptyArrayEle } from '../../../../../utils/util'
 @connect(mapStateToProps)
 export default class index extends Component {
@@ -288,6 +288,29 @@ export default class index extends Component {
                 />
               </div>
               <div className={indexStyles.chart_item_d_menu}>
+                <Popover
+                  getPopupContainer={triggerNode => triggerNode.parentNode}
+                  title="提示"
+                  content={
+                    <div style={{ whiteSpace: 'pre-wrap' }}>
+                      1、选择多个项目； <br />
+                      2、统计各里程碑的完成数量；
+                      <br />
+                      3、生成漏斗图；
+                      <br />
+                      <span style={{ color: '#FAAD14' }}>
+                        注意：所选的项目必须拥有共同名称的里程碑；
+                      </span>
+                    </div>
+                  }
+                >
+                  <span
+                    style={{ marginRight: '12px', fontSize: '18px' }}
+                    className={globalStyles.authTheme}
+                  >
+                    &#xe77b;
+                  </span>
+                </Popover>
                 <Dropdown
                   getPopupContainer={triggerNode => triggerNode.parentNode}
                   overlay={this.renderMenu()}

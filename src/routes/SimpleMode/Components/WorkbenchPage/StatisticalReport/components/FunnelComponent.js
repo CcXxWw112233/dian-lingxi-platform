@@ -62,6 +62,13 @@ class FunnelComponent extends Component {
           label: {
             show: true,
             position: 'inside'
+            // formatter: function(params) {
+            //   if (params.value > 0) {
+            //     return params.value
+            //   } else {
+            //     return ''
+            //   }
+            // }
           },
           labelLine: {
             length: 10,
@@ -114,7 +121,7 @@ class FunnelComponent extends Component {
     getReportBoardFunnel({ board_ids: selectedKeys_ }).then(res => {
       if (isApiResponseOk(res)) {
         let flag = false
-        let data = res.data
+        let data = res.data.count
         if (data && data instanceof Object) {
           if (Object.keys(data).length) {
             flag = true
