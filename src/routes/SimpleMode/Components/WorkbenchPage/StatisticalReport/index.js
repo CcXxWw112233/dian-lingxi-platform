@@ -245,7 +245,9 @@ export default class index extends Component {
               style={{ width: chart_item_width }}
             >
               <div className={indexStyles.chart_item_top}>
-                <div className={indexStyles.chart_item_t_left}>项目状态</div>
+                <div className={indexStyles.chart_item_t_left}>
+                  {currentNounPlanFilterName(PROJECTS)}状态
+                </div>
               </div>
               {/* 条形图 */}
               <div className={indexStyles.chart_item_bottom}>
@@ -258,7 +260,7 @@ export default class index extends Component {
             >
               <div className={indexStyles.chart_item_top}>
                 <div className={indexStyles.chart_item_t_left}>
-                  新增项目数{' '}
+                  新增{currentNounPlanFilterName(PROJECTS)}数{' '}
                   <span className={indexStyles.chart_item_t_left_date}>
                     (每月)
                   </span>
@@ -274,7 +276,9 @@ export default class index extends Component {
               style={{ width: chart_item_width }}
             >
               <div className={indexStyles.chart_item_top}>
-                <div className={indexStyles.chart_item_t_left}>新增项目数</div>
+                <div
+                  className={indexStyles.chart_item_t_left}
+                >{`${currentNounPlanFilterName(PROJECTS)}进展漏斗`}</div>
               </div>
               {/* 条形图 */}
               <div className={indexStyles.chart_item_bottom}>
