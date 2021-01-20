@@ -288,7 +288,12 @@ export default class index extends Component {
                   getPopupContainer={triggerNode => triggerNode.parentNode}
                   overlay={this.renderMenu()}
                   trigger={['click']}
-                  overlayStyle={{ maxWidth: '200px', width: '200px' }}
+                  overlayStyle={{
+                    maxWidth: '200px',
+                    width: '200px',
+                    maxHeight: '250px',
+                    overflowY: 'auto'
+                  }}
                   visible={dropdownVisible}
                   onVisibleChange={this.onVisibleChange}
                 >
