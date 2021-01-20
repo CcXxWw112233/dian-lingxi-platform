@@ -57,3 +57,12 @@ export function getReportBoardCode(data) {
     data: data
   })
 }
+
+// 获取漏斗图
+export function getReportBoardFunnel(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/report/board/milestone/funnel?board_ids=${params.board_ids}`,
+    method: 'GET'
+    // params
+  })
+}
