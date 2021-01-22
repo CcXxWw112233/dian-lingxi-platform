@@ -19,7 +19,8 @@ const Copyright = () => {
         <span style={{color: '#bfbfbf', cursor: 'pointer'}}>价格</span>
       </Tooltip> */}
       {/* &nbsp;&nbsp;| */}
-      &nbsp;&nbsp;©&nbsp;&nbsp;2018&nbsp;&nbsp;{platformNouns}
+      &nbsp;&nbsp;©&nbsp;&nbsp;2018-{new Date().getFullYear()}&nbsp;&nbsp;
+      {platformNouns}
       &nbsp;&nbsp;粤ICP备17146321号
     </div>
   )
