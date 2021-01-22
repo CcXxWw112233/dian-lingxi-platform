@@ -298,7 +298,8 @@ export function recusionItem(
           gantt_view_mode,
           min_start_time,
           max_due_time,
-          outline_tree_filter_type
+          outline_tree_filter_type,
+          board_eraly_waring
         }
       )
       if (filter_display) {
