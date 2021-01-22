@@ -48,6 +48,7 @@ import {
   timestampToTimeNormal,
   timeToTimestamp
 } from '../../../../../utils/util'
+import { ganttIsOutlineView } from '../../Gantt/constants'
 
 const TextArea = Input.TextArea
 
@@ -514,7 +515,7 @@ export default class DrawDetailInfo extends React.Component {
     })
   }
 
-  updateDateDatas = ({ name, value, isSetDatas, relative_time }) => {
+  updateDateDatas = ({ name, value, isSetDatas, relative_time, calback }) => {
     const {
       projectDetailInfoData = {},
       projectDetailInfoData: { board_id, board_set = {} }
@@ -566,6 +567,7 @@ export default class DrawDetailInfo extends React.Component {
             projectDetailInfoData: new_projectDetailInfoData
           }
         })
+        if (calback && typeof calback == 'function') calback()
       }
     })
   }
@@ -673,17 +675,23 @@ export default class DrawDetailInfo extends React.Component {
 
   // 设置项目预警
   handleSelectedWarnValue = value => {
-    console.log(value)
+    const { group_view_type } = this.props
+    const fn = () => {
+      if (window.location.href.indexOf('home') != -1) return
+      if (ganttIsOutlineView({ group_view_type })) {
+        this.props.dispatch({
+          type: 'gantt/handleOutLineTreeData',
+          payload: {
+            data: this.props.outline_tree
+          }
+        })
+      }
+    }
     this.updateDateDatas({
       name: 'time_warning',
       value: value,
-      isSetDatas: true
-    })
-    this.props.dispatch({
-      type: 'gantt/handleOutLineTreeData',
-      payload: {
-        data: this.props.outline_tree
-      }
+      isSetDatas: true,
+      calback: fn
     })
   }
 
@@ -1365,7 +1373,7 @@ function mapStateToProps({
     datas: { userBoardPermissions }
   },
   gantt: {
-    datas: { outline_tree = [] }
+    datas: { outline_tree = [], group_view_type }
   }
 }) {
   return {
@@ -1374,6 +1382,7 @@ function mapStateToProps({
     projectDetailInfoData,
     projectRoles,
     userBoardPermissions,
-    outline_tree
+    outline_tree,
+    group_view_type
   }
 }

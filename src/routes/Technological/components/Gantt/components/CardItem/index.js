@@ -1755,7 +1755,8 @@ export default class CardItem extends Component {
       progress_percent,
       tree_type,
       time_warning,
-      is_expand
+      is_expand,
+      board_eraly_waring
     } = itemValue
     const {
       has_child,
@@ -1807,10 +1808,20 @@ export default class CardItem extends Component {
     // 定义预警位置
     const early_warning_position =
       gantt_view_mode == 'hours'
-        ? time_warning * 9 * ceilWidth
-        : time_warning * ceilWidth
+        ? (time_warning || time_warning == '0'
+            ? time_warning
+            : board_eraly_waring) *
+          9 *
+          ceilWidth
+        : (time_warning || time_warning == '0'
+            ? time_warning
+            : board_eraly_waring) * ceilWidth
     // 选择的预警日期
-    let ahead_timestamp = time_warning * (24 * 60 * 60 * 1000)
+    let ahead_timestamp =
+      (time_warning || time_warning == '0'
+        ? time_warning
+        : board_eraly_waring) *
+      (24 * 60 * 60 * 1000)
     let warning_timer_day = new Date(
       due_time - Number(ahead_timestamp)
     ).getDate()
@@ -1819,6 +1830,15 @@ export default class CardItem extends Component {
     // 判断是否是今天之前
     const is_overdue_task = isOverdueTime(due_time)
     let warning_timestamp = due_time - Number(ahead_timestamp)
+    let WARNING_VALUE = false
+    if (!!time_warning && time_warning != '0') {
+      WARNING_VALUE = true
+    } else if (time_warning == '0') {
+      WARNING_VALUE = false
+    } else if (!!board_eraly_waring && board_eraly_waring != '0') {
+      WARNING_VALUE = true
+    }
+
     // 显示预警
     const SHOW_WARNING_TRIGGER =
       ganttIsOutlineView({ group_view_type }) &&
@@ -1828,12 +1848,14 @@ export default class CardItem extends Component {
       is_has_start_time &&
       start_time != due_time &&
       !is_overdue_task &&
-      !!time_warning &&
-      time_warning != '0' &&
+      WARNING_VALUE &&
       (warning_timestamp >= start_time ||
         caldiffDays(warning_timestamp, start_time) == 0)
+    const TIME_WARNING_VALUE = !!time_warning
+      ? time_warning
+      : board_eraly_waring
     const WARNING_TIME_SCOPE = getCardsWarningTimeScope({
-      time_warning,
+      time_warning: TIME_WARNING_VALUE,
       start_time,
       due_time
     })

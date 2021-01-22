@@ -785,7 +785,8 @@ export default class GetRowGantt extends Component {
         is_has_end_time,
         start_time,
         due_time,
-        is_outine_group_head
+        is_outine_group_head,
+        time_warning
       } = value2
       const { is_overdue, due_description } = filterDueTimeSpan({
         start_time,
@@ -796,7 +797,7 @@ export default class GetRowGantt extends Component {
       return (
         !is_outine_group_head && ( //大纲视图会将分组头部塞进任务，做统一处理,但并不是真正的任务
           <GetRowTaskItem
-            key={`${id}_${start_time}_${end_time}_${left}_${top}_${time_span}_${row}`}
+            key={`${id}_${start_time}_${end_time}_${left}_${top}_${time_span}_${row}_${time_warning}`}
             itemValue={value2}
             setSpecilTaskExample={this.setSpecilTaskExample}
             ganttPanelDashedDrag={this.state.drag_creating}
@@ -1075,7 +1076,8 @@ export default class GetRowGantt extends Component {
                 status,
                 name,
                 nodes = [],
-                finish_time
+                finish_time,
+                time_warning
               } = value
               const nodes_status = nodes.findIndex(item => item.status == '1')
               const juge_expand =
@@ -1109,7 +1111,7 @@ export default class GetRowGantt extends Component {
                     <GetRowTaskItem
                       key={`${id}_${start_time}_${end_time}_${left}_${top}_${width}_${row}_${String(
                         finish_time
-                      )}`}
+                      )}_${time_warning}`}
                       itemValue={value}
                       setSpecilTaskExample={this.setSpecilTaskExample}
                       ganttPanelDashedDrag={this.state.drag_creating}

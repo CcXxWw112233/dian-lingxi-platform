@@ -253,13 +253,17 @@ export function recusionItem(
           getCardsWarningTimeScope({
             time_warning: IS_CARD_ITEM_WARNING_VALUE
               ? new_item.time_warning
-              : IS_BOARD_WARNING_VALUE || '0',
+              : board_eraly_waring || '0',
             start_time,
             due_time
           }) && IS_SHOW_WARNING_OTHER_TERM
+        // new_item.time_warning = IS_CARD_ITEM_WARNING_VALUE
+        //   ? new_item.time_warning
+        //   : board_eraly_waring || '0'
         new_item.time_warning = IS_CARD_ITEM_WARNING_VALUE
           ? new_item.time_warning
-          : board_eraly_waring || '0'
+          : null
+        new_item.board_eraly_waring = board_eraly_waring
       }
     }
     new_item.time_span = time_span
