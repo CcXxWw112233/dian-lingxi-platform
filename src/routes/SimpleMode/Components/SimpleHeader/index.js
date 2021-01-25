@@ -3,7 +3,7 @@ import dva, { connect } from 'dva'
 import indexStyles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 // import VideoMeeting from '@/routes/Technological/Sider/comonent/videoMeetingPopoverContent/index'
-import { Tooltip, Dropdown, Modal } from 'antd'
+import { Tooltip, Dropdown, Modal, Popover } from 'antd'
 import Cookies from 'js-cookie'
 import SimpleNavigation from './Components/SimpleNavigation/index'
 // import SimpleDrawer from './Components/SimpleDrawer/index'
@@ -19,6 +19,8 @@ import {
 // import Guide from '../Guide/index'
 import { PROJECTS } from '../../../../globalset/js/constant'
 import LingxiIm, { lx_utils, Im } from 'lingxi-im'
+import small_routine_code from '../../../../assets/sider_right/small_routine_code.png'
+import official_accounts_code from '../../../../assets/sider_right/official_accounts_code.png'
 
 const VideoMeeting = lazy(() =>
   import(
@@ -623,6 +625,34 @@ class SimpleHeader extends Component {
     })
   }
 
+  // 渲染小程序/公众号内容
+  renderLingxiPlantformCode = () => {
+    return (
+      <div className={indexStyles.popover_plantform_content}>
+        <div className={indexStyles.popover_plantform_small_routine}>
+          <div className={indexStyles.popover_small_routine_code}>
+            <img src={small_routine_code} width="120px" height="120px" />
+          </div>
+          <div className={indexStyles.popover_code_text}>
+            <p>聆悉协作・小程序</p>
+            <span>
+              无需手动操作，对准纸张自动完成扫描，清晰无水印；同时支持 OCR
+              文字识别，并能无缝对接印象笔记。
+            </span>
+          </div>
+        </div>
+        <div className={indexStyles.popover_plantform_official_accounts}>
+          <div className={indexStyles.popover_plantform_official_accounts_code}>
+            <img src={official_accounts_code} width="120px" height="120px" />
+          </div>
+          <div className={indexStyles.popover_code_text}>
+            <p>聆悉协作・公众号</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   render() {
     const {
       chatImVisiable = false,
@@ -689,6 +719,35 @@ class SimpleHeader extends Component {
             </div>
           </Dropdown>
         )}
+
+        <Popover
+          trigger={['click']}
+          title={null}
+          content={this.renderLingxiPlantformCode()}
+          getPopupContainer={triggerNode => triggerNode.parentNode}
+        >
+          <div className={`${indexStyles.plantformCode}`}>
+            <span
+              style={{
+                fontSize: '22px',
+                marginRight: '4px',
+                verticalAlign: 'middle'
+              }}
+              className={globalStyles.authTheme}
+            >
+              &#xe634;
+            </span>
+            <span
+              style={{
+                verticalAlign: 'middle',
+                fontSize: '12px',
+                textShadow: '0px 1px 2px rgba(0, 0, 0, 0.15)'
+              }}
+            >
+              小程序/公众号
+            </span>
+          </div>
+        </Popover>
 
         <Tooltip title="操作指引">
           <div
