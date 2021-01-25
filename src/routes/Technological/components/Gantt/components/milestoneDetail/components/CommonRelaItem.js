@@ -1,6 +1,6 @@
 import React from 'react'
 import taskItemStyles from './taskItem.less'
-import { Icon, Popconfirm } from 'antd'
+import { Icon, message, Popconfirm } from 'antd'
 import {
   caldiffDays,
   timestampToTimeNormal
@@ -9,8 +9,15 @@ import globalStyles from '../../../../../../../globalset/css/globalClassName.les
 import AvatarList from '../../../../../../../components/avatarList'
 import { connect } from 'dva'
 import { currentNounPlanFilterName } from '../../../../../../../utils/businessFunction'
-import { TASKS } from '../../../../../../../globalset/js/constant'
+import {
+  MESSAGE_DURATION_TIME,
+  TASKS
+} from '../../../../../../../globalset/js/constant'
 import { isApiResponseOk } from '../../../../../../../utils/handleResponseData'
+import { completeTask } from '../../../../../../../services/technological/task'
+import { ganttIsOutlineView } from '../../../constants'
+import { getTreeNodeValue } from '../../../../../../../models/technological/workbench/gantt/gantt_utils'
+import { onChangeCardHandleCardDetail } from '../../../ganttBusiness'
 
 @connect(mapStateToProps)
 export default class CommonRelaItem extends React.Component {
@@ -48,6 +55,133 @@ export default class CommonRelaItem extends React.Component {
       }
     })
   }
+
+  changeOutLineTreeNodeProto = (id, data = {}) => {
+    let { dispatch, outline_tree = [] } = this.props
+    let nodeValue = getTreeNodeValue(outline_tree, id)
+    const mapSetProto = data => {
+      Object.keys(data).map(item => {
+        nodeValue[item] = data[item]
+      })
+    }
+    if (nodeValue) {
+      mapSetProto(data)
+
+      dispatch({
+        type: 'gantt/handleOutLineTreeData',
+        payload: {
+          data: outline_tree
+        }
+      })
+    } else {
+      console.error('OutlineTree.getTreeNodeValue:未查询到节点')
+    }
+  }
+
+  changeListGroupNodeProto = ({ card_id, list_id, is_realize }) => {
+    const { list_group = [], dispatch } = this.props
+    let list_group_new = [...list_group]
+    // 1. 获取当前任务所在的分组位置
+    const group_drop_index = list_group_new.findIndex(
+      item => item.lane_id == list_id
+    )
+    if (group_drop_index == -1) return
+    // 2. 遍历 从已排期或者未排期的任务列表中找到当前任务
+    const card_item = list_group_new[group_drop_index]['lane_data'][
+      'cards'
+    ].find(item => item.id == card_id)
+    const card_index = list_group_new[group_drop_index]['lane_data'][
+      'cards'
+    ].findIndex(item => item.id == card_id)
+    const card_no_time_item = list_group_new[group_drop_index]['lane_data'][
+      'card_no_times'
+    ].find(item => item.id == card_id)
+    const card_no_time_index = list_group_new[group_drop_index]['lane_data'][
+      'card_no_times'
+    ].findIndex(item => item.id == card_id)
+    if (card_item && !!Object.keys(card_item).length) {
+      list_group_new[group_drop_index]['lane_data']['cards'][card_index] = {
+        ...card_item,
+        is_realize: is_realize
+      }
+    }
+    if (card_no_time_item && !!Object.keys(card_no_time_item).length) {
+      list_group_new[group_drop_index]['lane_data']['card_no_times'][
+        card_no_time_index
+      ] = {
+        ...card_no_time_item,
+        is_realize: is_realize
+      }
+    }
+    dispatch({
+      type: 'gantt/updateListGroup',
+      payload: {
+        datas: list_group_new
+      }
+    })
+  }
+
+  // 更新甘特图
+  updateGanttDatas = ({ card_id, is_realize, list_id }) => {
+    const { group_view_type, outline_tree = [] } = this.props
+    if (ganttIsOutlineView({ group_view_type })) {
+      // 如果是大纲视图
+      let nodeValue = getTreeNodeValue(outline_tree, card_id)
+      nodeValue.is_realize = is_realize
+      this.changeOutLineTreeNodeProto(card_id, { ...nodeValue })
+    } else {
+      this.changeListGroupNodeProto({ card_id, is_realize, list_id })
+    }
+  }
+
+  // 更新里程碑详情数据
+  updateMilestoneDetailDatas = () => {
+    let {
+      milestone_detail: { id },
+      dispatch
+    } = this.props
+    dispatch({
+      type: 'milestoneDetail/getMilestoneDetail',
+      payload: {
+        id
+      }
+    })
+  }
+
+  // 点击完成任务
+  setIsCheck = ({ is_completed, id, list_id }) => {
+    const {
+      milestone_detail: { board_id },
+      dispatch,
+      card_id,
+      selected_card_visible
+    } = this.props
+    const obj = {
+      card_id: id,
+      is_realize: is_completed === '1' ? '0' : '1',
+      board_id
+    }
+
+    completeTask({ ...obj }).then(res => {
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('更新成功', MESSAGE_DURATION_TIME)
+        }, 200)
+        this.updateMilestoneDetailDatas()
+        if (window.location.href.indexOf('home') != -1) return
+        this.updateGanttDatas({ ...obj, list_id })
+        onChangeCardHandleCardDetail({
+          card_detail_id: card_id, //来自任务详情的id
+          selected_card_visible, //任务详情弹窗是否弹开
+          dispatch,
+          operate_id: id //当前操作的id
+        })
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    })
+  }
+
   render() {
     const {
       itemValue = {},
@@ -62,7 +196,8 @@ export default class CommonRelaItem extends React.Component {
       deadline,
       is_completed,
       users = [],
-      progress_percent
+      progress_percent,
+      list_id
     } = itemValue
     const result_process = Math.round(progress_percent * 100) / 100
     return (
@@ -76,6 +211,9 @@ export default class CommonRelaItem extends React.Component {
                   ? taskItemStyles.nomalCheckBoxActive
                   : taskItemStyles.nomalCheckBox
               }
+              onClick={() => {
+                this.setIsCheck({ is_completed, id, list_id })
+              }}
             >
               <Icon
                 type="check"
@@ -145,9 +283,24 @@ export default class CommonRelaItem extends React.Component {
 }
 function mapStateToProps({
   milestoneDetail: { milestone_detail = {} },
-  publicTaskDetailModal: { card_id }
+  publicTaskDetailModal: { card_id },
+  gantt: {
+    datas: {
+      group_view_type,
+      outline_tree = [],
+      selected_card_visible,
+      list_group = []
+    }
+  }
 }) {
-  return { milestone_detail, card_id }
+  return {
+    milestone_detail,
+    card_id,
+    group_view_type,
+    outline_tree,
+    selected_card_visible,
+    list_group
+  }
 }
 
 CommonRelaItem.defaultProps = {
