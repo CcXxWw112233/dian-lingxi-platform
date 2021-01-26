@@ -635,10 +635,7 @@ class SimpleHeader extends Component {
           </div>
           <div className={indexStyles.popover_code_text}>
             <p>聆悉协作・小程序</p>
-            <span>
-              无需手动操作，对准纸张自动完成扫描，清晰无水印；同时支持 OCR
-              文字识别，并能无缝对接印象笔记。
-            </span>
+            <span>扫码关注小程序，获取你的移动工作台</span>
           </div>
         </div>
         <div className={indexStyles.popover_plantform_official_accounts}>
@@ -647,6 +644,7 @@ class SimpleHeader extends Component {
           </div>
           <div className={indexStyles.popover_code_text}>
             <p>聆悉协作・公众号</p>
+            <span>扫码关注二维码，随时掌握项目动态</span>
           </div>
         </div>
       </div>
