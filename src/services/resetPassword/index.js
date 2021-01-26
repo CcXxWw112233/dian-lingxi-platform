@@ -1,12 +1,12 @@
 import request from '../../utils/requestAxios'
-import { REQUEST_DOMAIN } from '../../globalset/js/constant'
+import { REQUEST_AUTH, REQUEST_DOMAIN } from '../../globalset/js/constant'
 
 //重置密码
 export async function formSubmit(data) {
   const { accountType = '' } = data
   return request(
     {
-      url: `${REQUEST_DOMAIN}/user/reset/password/${accountType}`,
+      url: `${REQUEST_AUTH}/oauth/user/reset/password/${accountType}`,
       method: 'PUT',
       data
     },
@@ -17,7 +17,7 @@ export async function formSubmit(data) {
 //获取验证码
 export async function requestVerifyCode(data) {
   return request({
-    url: `${REQUEST_DOMAIN}/sms/code/send`,
+    url: `${REQUEST_AUTH}/auth/public/sms/code/send`,
     method: 'POST',
     data
   })

@@ -76,8 +76,20 @@ class FormList extends React.Component {
         if (values['password']) {
           values['password'] = sha256(values['password'])
         }
+        const params = {
+          grant_type: 'wechat_account_bind',
+          account_bind_params: {
+            account: values.account,
+            key: this.props.bindKey
+          }
+        }
+        if (bindType === 'password') {
+          params.account_bind_params.password = values.password
+        } else {
+          params.account_bind_params.verify_code = values.verifycode
+        }
         this.props.wechatAccountBind
-          ? this.props.wechatAccountBind(values)
+          ? this.props.wechatAccountBind(params)
           : false
       }
     })

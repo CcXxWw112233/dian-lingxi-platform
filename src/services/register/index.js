@@ -1,10 +1,10 @@
 import request from '../../utils/requestAxios'
-import { REQUEST_DOMAIN } from '../../globalset/js/constant'
+import { REQUEST_AUTH, REQUEST_DOMAIN } from '../../globalset/js/constant'
 
 //注册
 export async function formSubmit(data) {
   return request({
-    url: `${REQUEST_DOMAIN}/user/signup`,
+    url: `${REQUEST_DOMAIN}/user/oauth/signup`,
     method: 'POST',
     data: data
   })
@@ -13,7 +13,7 @@ export async function formSubmit(data) {
 //获取验证码
 export async function requestVerifyCode(data) {
   return request({
-    url: `${REQUEST_DOMAIN}/sms/code/send`,
+    url: `${REQUEST_AUTH}/public/sms/code/send`,
     method: 'POST',
     data
   })
@@ -34,7 +34,7 @@ export async function checkAccountRestered(data) {
 //注册绑定微信并且登录
 export async function wechatSignupBindLogin(data) {
   return request({
-    url: `${REQUEST_DOMAIN}/user/wechat/signup/bind`,
+    url: `${REQUEST_DOMAIN}/user/oauth/token/wechat_account_bind`,
     method: 'POST',
     data
   })

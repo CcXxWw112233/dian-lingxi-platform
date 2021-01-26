@@ -27,12 +27,12 @@
     if(window.location.host.indexOf('lingxi') !== -1){
       url = 'https://lingxi.di-an.com/dian_lingxi/upms/weChat/collBack'
     } else {
-      url =  'https://lingxi.di-an.com/dian_lingxi/upms/weChat/collBack'//'http://d4x6rb.natappfree.cc/api/upms/weChat/collBack'
+      url =  'http://pfjnud.natappfree.cc/dian_lingxi/auth/public/oauth/token/wechat/web/yinyi/collBack'//'http://d4x6rb.natappfree.cc/api/upms/weChat/collBack'
     }
     var obj = new WxLogin({
       self_redirect:true,
       id:"login_container",
-      appid: "wx358dea60cb617301",
+      appid: 'wxce1a263db8b3a99a',//生产"wx358dea60cb617301",
       scope: "snsapi_login",
       redirect_uri: encodeURIComponent(url),
       state: Math.ceil(Math.random()*1000),

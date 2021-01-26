@@ -8,19 +8,21 @@ import { clearnImAuth } from './businessFunction'
 Cookies.set('is401', false, { expires: 30, path: '' })
 
 const gotoRefresh = async data => {
-  const refreshTokenApi = data => {
+  const refreshTokenApi = params => {
     return request({
-      url: `${REQUEST_DOMAIN}/refreshToken`,
-      method: 'PUT',
-      data
+      url: `dian_lingxi_auth/refreshToken`,
+      method: 'GET',
+      params: {
+        refresh_token: params.refreshToken
+      }
     })
   }
   const res = await refreshTokenApi(data)
   const code = res.code
   if ('0' == code) {
-    const tokenArray = res.data.split('__')
-    Cookies.set('Authorization', tokenArray[0], { expires: 30, path: '' })
-    Cookies.set('refreshToken', tokenArray[1], { expires: 30, path: '' })
+    const { access_token, refresh_token } = res.data
+    Cookies.set('Authorization', access_token, { expires: 30, path: '' })
+    Cookies.set('refreshToken', refresh_token, { expires: 30, path: '' })
     Cookies.set('is401', false, { expires: 30, path: '' })
     window.location.reload()
   } else {

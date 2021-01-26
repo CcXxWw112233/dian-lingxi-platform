@@ -37,7 +37,7 @@ export default function request(options = {}, elseSet = {}) {
   const Authorization = Cookies.get('Authorization')
   const refreshToken = Cookies.get('refreshToken')
 
-  header['Authorization'] = Authorization //refreshToken
+  header['AccessToken'] = Authorization //refreshToken
   header['refreshToken'] = refreshToken
 
   const header_base_info = setRequestHeaderBaseInfo({ data, params, headers })
@@ -123,7 +123,7 @@ export const uploadFileForAxios = (url, data, headers = {}) => {
   const Authorization = Cookies.get('Authorization')
   let a = axios.post(url, data, {
     headers: {
-      Authorization,
+      AccessToken: Authorization,
       ...setRequestHeaderBaseInfo({ data, headers: {}, params: {} }),
       ...headers
     }

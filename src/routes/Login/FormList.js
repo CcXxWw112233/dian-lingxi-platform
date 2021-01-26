@@ -11,9 +11,10 @@ import {
 } from '../../utils/verify'
 import { MESSAGE_DURATION_TIME } from '../../globalset/js/constant'
 import sha256 from 'js-sha256'
+import { connect } from 'dva'
 
 const FormItem = Form.Item
-
+@connect(({ login: { datas: { captcha_key } } }) => ({ captcha_key }))
 class FormList extends React.Component {
   state = {
     isMobile: false //验证输入过程是手机号的时候,是否正确手机号，用来判断是否获取验证码按钮 样式
@@ -65,7 +66,27 @@ class FormList extends React.Component {
         if (values['password']) {
           values['password'] = sha256(values['password'])
         }
-        this.props.formSubmit ? this.props.formSubmit(values) : false
+        let request_params = {}
+        if (loginType === 'password') {
+          request_params = {
+            grant_type: 'enhance_password',
+            pwd_params: {
+              account: values['account'],
+              password: values['password'],
+              captcha_key: this.props.captcha_key,
+              verify_code: values['verifycode']
+            }
+          }
+        } else {
+          request_params = {
+            grant_type: 'sms_code',
+            sms_params: {
+              account: values['account'],
+              verify_code: values['verifycode']
+            }
+          }
+        }
+        this.props.formSubmit ? this.props.formSubmit(request_params) : false
       }
     })
   }

@@ -1,0 +1,2 @@
+export const RESPONSE_CODE_914003 = 914003
+export const RESPONSE_CODE_914004 = 914004

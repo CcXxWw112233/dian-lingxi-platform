@@ -45,10 +45,13 @@ class Login extends React.Component {
           return
         }
         let token = e.data.token
+        if (!token) return
+        const split_arr = token.split('__')
         this.props.dispatch({
           type: getEffectOrReducerByName('wechatLogin'),
           payload: {
-            token
+            access_token: split_arr[0],
+            refresh_token: split_arr[1]
           }
         })
       }
@@ -136,7 +139,7 @@ class Login extends React.Component {
       wechatAccountBind(data) {
         dispatch({
           type: getEffectOrReducerByName('wechatAccountBind'),
-          payload: { ...data, key: bindKey }
+          payload: { ...data }
         })
       }
     }
@@ -334,6 +337,7 @@ class Login extends React.Component {
                 />
                 <FormListBind
                   bindType={this.state.bindType}
+                  bindKey={bindKey}
                   {...formListProps}
                   setLoginType={this.setLoginType.bind(this)}
                   loginType={loginType}

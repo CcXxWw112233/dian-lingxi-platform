@@ -78,9 +78,10 @@ export default {
       let res = yield call(wechatSignupBindLogin, payload)
       // debugger
       if (isApiResponseOk(res)) {
-        const tokenArray = res.data.split('__')
-        Cookies.set('Authorization', tokenArray[0], { expires: 30, path: '' })
-        Cookies.set('refreshToken', tokenArray[1], { expires: 30, path: '' })
+        const { access_token, refresh_token } = res.data
+        // const tokenArray = res.data.split('__')
+        Cookies.set('Authorization', access_token, { expires: 30, path: '' })
+        Cookies.set('refreshToken', refresh_token, { expires: 30, path: '' })
         Cookies.set('is401', false, { expires: 30, path: '' })
         // debugger
         const res2 = yield call(createDefaultOrg)

@@ -22,6 +22,10 @@ import {
   diffClientRedirect
 } from '../../globalset/clientCustorm'
 import queryString from 'query-string'
+import {
+  RESPONSE_CODE_914003,
+  RESPONSE_CODE_914004
+} from '../../globalset/js/response_code'
 
 let redirectLocation
 let redirect_by_env_provider = null //由端能力提供的跳转方法（webview）
@@ -99,8 +103,8 @@ export default {
       const res = yield call(simplGetUserInfoSync) || {}
       //如果存在组织， 否则跳到指引页面
       if (isApiResponseOk(res)) {
-        const { has_org } = res.data
-        const { is_simple_model, current_org } = res.data.user_set
+        const { has_org, user_set = {} } = res.data
+        const { is_simple_model, current_org } = user_set
         if (has_org == '1') {
           const delay = ms =>
             new Promise(resolve => {
@@ -153,17 +157,17 @@ export default {
     },
     // 登录成功设置token
     *setTokenBeforeLogin({ payload }, { select, call, put }) {
-      const { data } = payload
-      const tokenArray = data.split('__')
-      Cookies.set('Authorization', tokenArray[0], { expires: 30, path: '' })
-      Cookies.set('refreshToken', tokenArray[1], { expires: 30, path: '' })
+      const { data = {} } = payload
+      const { access_token, refresh_token } = data
+      Cookies.set('Authorization', access_token, { expires: 30, path: '' })
+      Cookies.set('refreshToken', refresh_token, { expires: 30, path: '' })
       Cookies.set('is401', false, { expires: 30, path: '' })
 
-      diffClientInitToken(Cookies.get('Authorization'))
+      diffClientInitToken(access_token)
 
       if (redirect_by_env_provider) {
         //由端能力自己提供跳转，当这个参数存在的时候，不允许前端主动跳转，操作由第三方提供的能力
-        diffClientRedirect(tokenArray[0])
+        diffClientRedirect(access_token)
         return
       }
       //普通登录跳转
@@ -173,7 +177,7 @@ export default {
       })
     },
     *wechatAccountBind({ payload }, { select, call, put }) {
-      let res = yield call(wechatAccountBind, payload)
+      let res = yield call(formSubmit, payload)
       if (isApiResponseOk(res)) {
         // const tokenArray = res.data.split('__')
         // Cookies.set('Authorization', tokenArray[0], {expires: 30, path: ''})
@@ -204,7 +208,7 @@ export default {
       yield put({
         type: 'setTokenBeforeLogin',
         payload: {
-          data: token
+          data: { ...payload }
         }
       })
       //做登录成功重定向
@@ -216,7 +220,7 @@ export default {
     *formSubmit({ payload }, { select, call, put }) {
       //提交表单
       const captcha_key = yield select(selectLoginCaptchaKey)
-      let res = yield call(formSubmit, { ...payload, captcha_key })
+      let res = yield call(formSubmit, { ...payload })
       const code = res.code
       if (isApiResponseOk(res)) {
         yield put({
@@ -231,7 +235,7 @@ export default {
         //   payload: {}
         // })
       } else {
-        if (code == '4005' || code == '4006') {
+        if (code == RESPONSE_CODE_914003) {
           yield put({
             type: 'updateDatas',
             payload: {
@@ -241,7 +245,7 @@ export default {
               captcha_key: res.data && res.data.captcha_key
             }
           })
-        } else if (code == '4007') {
+        } else if (code == RESPONSE_CODE_914004) {
           yield put({
             type: 'updateDatas',
             payload: {

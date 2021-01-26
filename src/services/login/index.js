@@ -1,10 +1,10 @@
 import request from '../../utils/requestAxios'
-import { REQUEST_DOMAIN } from '../../globalset/js/constant'
+import { REQUEST_AUTH, REQUEST_DOMAIN } from '../../globalset/js/constant'
 
 //d登录
 export async function formSubmit(data) {
   return request({
-    url: `${REQUEST_DOMAIN}/user/signin`,
+    url: `dian_lingxi_auth/signin`,
     method: 'POST',
     data
   })
@@ -13,7 +13,7 @@ export async function formSubmit(data) {
 //获取验证码
 export async function requestVerifyCode(data) {
   return request({
-    url: `${REQUEST_DOMAIN}/sms/code/send`,
+    url: `${REQUEST_AUTH}/public/sms/code/send`,
     method: 'POST',
     data
   })
@@ -40,7 +40,7 @@ export const refreshTokenApi = data => {
 //刷新图片验证码
 export const changePicVerifySrc = params => {
   return request({
-    url: `${REQUEST_DOMAIN}/user/getLoginImageCaptcha`,
+    url: `${REQUEST_AUTH}/public/oauth/token/getLoginImageCaptcha`,
     method: 'GET',
     params
   })
