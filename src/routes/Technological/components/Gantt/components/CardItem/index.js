@@ -102,13 +102,7 @@ export default class CardItem extends Component {
   }
 
   // 标签的颜色
-  setLableColor = ({
-    label_data,
-    is_realize,
-    active_compare_height,
-    is_show_warning_time: early_warning,
-    is_outline_view
-  }) => {
+  setLableColor = ({ label_data, is_realize }) => {
     let bgColor = ''
     let b = ''
     if (label_data && label_data.length) {
@@ -128,29 +122,10 @@ export default class CardItem extends Component {
       b = `linear-gradient(to right${bgColor})`
     } else {
       if (is_realize == '1') {
-        if (is_outline_view) {
-          b = 'rgb(149,222,100)'
-        } else {
-          b = '#CDD1DF'
-        }
-        // if (active_compare_height) {
-        //   b = 'rgb(149,222,100)'
-        // } else {
-        //   b = 'rgb(149,222,100)'
-        // }
+        b = 'rgb(149,222,100)'
       } else {
-        if (is_outline_view) {
-          b = '#CDD1DF'
-        } else {
-          b = '#B3D0FF' //early_warning ? '#FFA000' : '#B3D0FF'
-        }
+        b = '#CDD1DF'
       }
-      // b =
-      //   is_realize == '1'
-      //     ? active_compare_height
-      //       ? '#5BB48F'
-      //       : '#CDD1DF'
-      //     : '#B3D0FF' //'rgb(212, 216, 228)' : '#cbddf7'
     }
     return b
   }
@@ -1901,20 +1876,16 @@ export default class CardItem extends Component {
         data-rely_top={id}
         style={{
           left: local_left + (gantt_view_mode == 'year' ? 0 : card_left_diff),
-          top: ganttIsOutlineView({ group_view_type })
-            ? local_top + 2
-            : local_top,
+          top: local_top + 2,
           //width,
           width:
             (local_width || 6) -
             (gantt_view_mode == 'year' ? 0 : card_width_diff),
-          height: ganttIsOutlineView({ group_view_type })
-            ? task_item_outline_height
-            : height || task_item_height,
+          height: task_item_outline_height,
           marginTop: task_item_margin_top,
           // boxShadow: 'none',
           zIndex: rely_down || this.is_down || drag_lock ? 2 : 1,
-          borderRadius: ganttIsOutlineView({ group_view_type }) && '4px',
+          borderRadius: '4px',
           boxShadow: is_show_warning_time
             ? '0 0 20px rgba(255,160,0,0.8)'
             : 'none'
@@ -2003,18 +1974,13 @@ export default class CardItem extends Component {
             top: 0,
             zIndex: 2,
             width: '100%',
-            height: ganttIsOutlineView({ group_view_type })
-              ? task_item_outline_height
-              : height || task_item_height,
+            height: task_item_outline_height,
             background: this.setLableColor({
               label_data,
-              is_realize,
-              active_compare_height,
-              is_show_warning_time,
-              is_outline_view: ganttIsOutlineView({ group_view_type })
+              is_realize
             }),
             boxShadow: 'none',
-            borderRadius: ganttIsOutlineView({ group_view_type }) && '4px'
+            borderRadius: '4px'
           }}
         >
           <div
@@ -2028,24 +1994,14 @@ export default class CardItem extends Component {
             onMouseMove={e => e.preventDefault()}
             style={{
               backgroundColor:
-                is_realize == '1'
-                  ? ganttIsOutlineView({ group_view_type })
-                    ? 'rgb(149,222,100)'
-                    : '#CDD1DF' //'rgb(212,216,228)'
-                  : ganttIsOutlineView({ group_view_type })
-                  ? '#CDD1DF'
-                  : '#B3D0FF',
+                is_realize == '1' ? 'rgb(149,222,100)' : '#CDD1DF',
               padding:
                 gantt_view_mode != 'month' && time_span < 6 ? '0' : '0 8px',
               zIndex: 1,
               height: !label_data.length
-                ? ganttIsOutlineView({ group_view_type })
-                  ? task_item_outline_height
-                  : task_item_height
-                : ganttIsOutlineView({ group_view_type })
-                ? task_item_outline_height - 4
-                : task_item_height - 4,
-              borderRadius: ganttIsOutlineView({ group_view_type }) && '4px'
+                ? task_item_outline_height
+                : task_item_outline_height - 4,
+              borderRadius: '4px'
             }}
           >
             {/* 这里放提前完成时 进度对比 */}
@@ -2138,14 +2094,8 @@ export default class CardItem extends Component {
               style={{
                 display: 'flex',
                 color: 'rgba(0,0,0,0.45)',
-                height: ganttIsOutlineView({ group_view_type })
-                  ? task_item_outline_height - 4
-                  : task_item_height - 4,
-                lineHeight: `${
-                  ganttIsOutlineView({ group_view_type })
-                    ? task_item_outline_height - 4
-                    : task_item_height - 4
-                }px`,
+                height: task_item_outline_height - 4,
+                lineHeight: `${task_item_outline_height - 4}px`,
                 zIndex:
                   ((is_show_compare_real_plan_timer &&
                     status_label == 'ahead_time_middle') ||
