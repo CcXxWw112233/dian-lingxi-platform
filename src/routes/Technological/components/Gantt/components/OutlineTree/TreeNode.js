@@ -1191,7 +1191,7 @@ export default class TreeNode extends Component {
         >
           <div
             className={styles.flex1}
-            style={{ flex: defaultColumns.length <= 2 ? 2 : 0.7 }}
+            style={{ flex: defaultColumns.length <= 2 ? 2 : 1 }}
           >
             <div className={styles.item_icons}>
               {((hoverItem.id && hoverItem.id == id) ||
@@ -1234,18 +1234,20 @@ export default class TreeNode extends Component {
             </div>
             <div
               className={styles.item_title_name}
-              style={{ width: this.setTitleWidth(true) }}
+              style={{ flex: 1, width: this.setTitleWidth(true) }}
             >
               {this.renderTitle()}
             </div>
           </div>
-          <div className={styles.flex2}>
-            {this.renderForColumns()}
-            {/* <div className={styles.item_users_avatar}>
+          {!!defaultColumns.length && (
+            <div className={styles.flex2}>
+              {this.renderForColumns()}
+              {/* <div className={styles.item_users_avatar}>
               {this.renderAvatar()}
             </div>
             <div className={styles.item_times}>{this.renderTimes()}</div> */}
-          </div>
+            </div>
+          )}
         </div>
         <div
           className={styles.collapse_transition}
@@ -1383,7 +1385,7 @@ export default class TreeNode extends Component {
         >
           <div
             className={styles.flex1}
-            style={{ flex: defaultColumns.length <= 2 ? 2 : 0.7 }}
+            style={{ flex: defaultColumns.length <= 2 ? 2 : 1 }}
           >
             <div className={styles.item_icons}>
               {add_id ? (
@@ -1427,18 +1429,20 @@ export default class TreeNode extends Component {
             </div>
             <div
               className={styles.item_title_name}
-              style={{ width: this.setTitleWidth() }}
+              style={{ width: this.setTitleWidth(), flex: 1 }}
             >
               {this.renderTitle()}
             </div>
           </div>
-          <div className={styles.flex2}>
-            {this.renderForColumns()}
-            {/* <div className={styles.item_users_avatar}>
+          {!!defaultColumns.length && (
+            <div className={styles.flex2}>
+              {this.renderForColumns()}
+              {/* <div className={styles.item_users_avatar}>
               {this.renderAvatar()}
             </div>
             <div className={styles.item_times}>{this.renderTimes()}</div> */}
-          </div>
+            </div>
+          )}
         </div>
       </>
     )

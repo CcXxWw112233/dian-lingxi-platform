@@ -270,7 +270,10 @@ export default class SetNodeGroup extends Component {
           </div>
         }
       >
-        <div title={this.renderName()}>
+        <div
+          title={this.renderName()}
+          className={`${globalStyles.global_ellipsis}`}
+        >
           {this.renderName() || (
             <span style={{ color: 'rgba(0,0,0,.15)' }}>未选择</span>
           )}
