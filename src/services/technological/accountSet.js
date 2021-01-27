@@ -1,5 +1,6 @@
 import request from '../../utils/requestAxios'
 import {
+  REQUEST_AUTH,
   REQUEST_DOMAIN,
   REQUEST_INTERGFACE_VERSIONN
 } from '../../globalset/js/constant'
@@ -24,7 +25,7 @@ export async function updateUserInfo(data) {
 //更改密码
 export async function changePassWord(data) {
   return request({
-    url: `${REQUEST_DOMAIN}/user/password`,
+    url: `${REQUEST_AUTH}/oauth/user/info/password/reset/old`,
     method: 'PUT',
     data
   })

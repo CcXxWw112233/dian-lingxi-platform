@@ -85,12 +85,17 @@ class FormList extends React.Component {
         values['password'] = sha256(values['password'])
       }
       if (!err) {
+        // const obj = {
+        //   ...values,
+        //   accountType: !!mobile ? 'mobile' : 'email',
+        //   mobile,
+        //   email,
+        //   token
+        // }
         const obj = {
-          ...values,
-          accountType: !!mobile ? 'mobile' : 'email',
-          mobile,
-          email,
-          token
+          account: mobile,
+          verify_code: values['code'],
+          password: values['password']
         }
         this.props.formSubmit ? this.props.formSubmit(obj) : false
       }

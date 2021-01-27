@@ -6,7 +6,7 @@ export async function formSubmit(data) {
   const { accountType = '' } = data
   return request(
     {
-      url: `${REQUEST_AUTH}/oauth/user/reset/password/${accountType}`,
+      url: `${REQUEST_AUTH}/oauth/user/info/password/reset/mobile`,
       method: 'PUT',
       data
     },
@@ -17,7 +17,7 @@ export async function formSubmit(data) {
 //获取验证码
 export async function requestVerifyCode(data) {
   return request({
-    url: `${REQUEST_AUTH}/auth/public/sms/code/send`,
+    url: `${REQUEST_AUTH}/public/sms/code/send`,
     method: 'POST',
     data
   })
