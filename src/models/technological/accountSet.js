@@ -118,21 +118,33 @@ export default modelExtend(technological, {
 
     *checkMobileIsRegisted({ payload }, { select, call, put }) {
       const { data } = payload
-      let res = yield call(checkMobileIsRegisted, data)
+      const res = yield call(changeMobile, {
+        account: data.mobile,
+        verify_code: data.code
+      })
       if (isApiResponseOk(res)) {
-        if (res.data) {
-          message.warn('该手机号已被注册', MESSAGE_DURATION_TIME)
-        } else {
-          let res2 = yield call(changeMobile, data)
-          if (isApiResponseOk(res2)) {
-            message.success('更换手机号成功。', MESSAGE_DURATION_TIME)
-          } else {
-            message.warn(res2.message, MESSAGE_DURATION_TIME)
-          }
-        }
+        message.success('更换手机号成功。', MESSAGE_DURATION_TIME)
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
+      // let res = yield call(checkMobileIsRegisted, data)
+      // if (isApiResponseOk(res)) {
+      //   if (res.data) {
+      //     message.warn('该手机号已被注册', MESSAGE_DURATION_TIME)
+      //   } else {
+      //     let res2 = yield call(changeMobile, {
+      //       account: data.mobile,
+      //       verify_code: data.code
+      //     })
+      //     if (isApiResponseOk(res2)) {
+      //       message.success('更换手机号成功。', MESSAGE_DURATION_TIME)
+      //     } else {
+      //       message.warn(res2.message, MESSAGE_DURATION_TIME)
+      //     }
+      //   }
+      // } else {
+      //   message.warn(res.message, MESSAGE_DURATION_TIME)
+      // }
     },
     *checkEmailIsRegisted({ payload }, { select, call, put }) {
       const { data } = payload

@@ -42,7 +42,7 @@ export async function checkMobileIsRegisted(params) {
 //更换手机
 export async function changeMobile(data) {
   return request({
-    url: `${REQUEST_DOMAIN}/user/change/mobile`,
+    url: `${REQUEST_AUTH}/oauth/user/info/mobile/reset`,
     method: 'PUT',
     data
   })

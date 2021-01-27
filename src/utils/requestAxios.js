@@ -39,7 +39,9 @@ export default function request(options = {}, elseSet = {}) {
 
   header['AccessToken'] = Authorization //refreshToken
   header['refreshToken'] = refreshToken
-
+  if (url.indexOf('/public/sms/code/send') !== -1) {
+    delete header.AccessToken
+  }
   const header_base_info = setRequestHeaderBaseInfo({ data, params, headers })
 
   /***
