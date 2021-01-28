@@ -1876,7 +1876,7 @@ export default class CardItem extends Component {
         data-rely_top={id}
         style={{
           left: local_left + (gantt_view_mode == 'year' ? 0 : card_left_diff),
-          top: local_top + 2,
+          top: local_top + 2 + 38,
           //width,
           width:
             (local_width || 6) -

@@ -227,16 +227,21 @@ export default class GroupMilestones extends Component {
   }
   // 根据下一个里程碑日期，来获取当前里程碑日期的‘name1,name2,name3...’应该有的宽度
   setMiletonesNamesWidth = timestamp => {
-    const { milestoneMap = {}, ceilWidth, gantt_board_id } = this.props
+    const {
+      milestoneMap = {},
+      ceilWidth,
+      gantt_board_id,
+      gantt_view_mode
+    } = this.props
     const { list_id } = this.props //gantt_board_id为0的情况下，分组id就是各个项目的id
     let times_arr = Object.keys(milestoneMap) //[timestamp1, timestamp2,...]
-    if (gantt_board_id == '0') {
-      //以分组划分，过滤掉不属于该项目分组的里程碑所属于的时间
-      times_arr = times_arr.filter(
-        time =>
-          milestoneMap[time].findIndex(item => item.board_id == list_id) != -1
-      )
-    }
+    // if (gantt_board_id == '0') {
+    //   //以分组划分，过滤掉不属于该项目分组的里程碑所属于的时间
+    //   times_arr = times_arr.filter(
+    //     time =>
+    //       milestoneMap[time].findIndex(item => item.board_id == list_id) != -1
+    //   )
+    // }
     // console.log('ssssss', times_arr)
     times_arr = times_arr.sort((a, b) => Number(a) - Number(b))
     const index = times_arr.findIndex(item => isSamDay(item, timestamp)) //对应上当前日期所属的下标
@@ -244,6 +249,23 @@ export default class GroupMilestones extends Component {
     if (!next_miletones_time) {
       return 'auto'
     }
+    if (gantt_view_mode == 'month') {
+      if (caldiffDays(timestamp, next_miletones_time) == 1) {
+        return caldiffDays(timestamp, next_miletones_time) * (ceilWidth / 2)
+      } else {
+        return caldiffDays(timestamp, next_miletones_time) * ceilWidth - 18
+      }
+    } else if (gantt_view_mode == 'hours') {
+      // 18 是里程碑旗子宽度
+      return caldiffDays(timestamp, next_miletones_time) * (ceilWidth * 9 - 18)
+    } else {
+      if (caldiffDays(timestamp, next_miletones_time) == 1) {
+        return 0
+      } else {
+        return caldiffDays(timestamp, next_miletones_time) * ceilWidth - 18
+      }
+    }
+    console.log(caldiffDays(timestamp, next_miletones_time))
     return caldiffDays(timestamp, next_miletones_time) * ceilWidth
   }
   // 里程碑是否过期的颜色设置

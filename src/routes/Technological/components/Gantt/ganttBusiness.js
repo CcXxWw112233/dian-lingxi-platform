@@ -605,6 +605,7 @@ export const setDateWidthPositionWeekView = ({
   ) //在所属周的周几
 
   const week_data = date_arr_one_level[belong_week]
+  if (!week_data) return {}
   const week_data_timestamp = week_data.timestamp
   const timestamp = week_data_timestamp + belong_day * 24 * 60 * 60 * 1000
   const timestampEnd =
