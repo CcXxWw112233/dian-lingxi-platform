@@ -143,7 +143,7 @@ export default class BaseInfo extends React.Component {
       withCredentials: true,
       action: `${REQUEST_DOMAIN_TEAM_SHOW}/upload`,
       headers: {
-        Authorization: Cookies.get('Authorization'),
+        AccessToken: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
         ...setUploadHeaderBaseInfo({})
       },

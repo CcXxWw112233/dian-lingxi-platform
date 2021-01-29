@@ -110,7 +110,7 @@ class PersonalInfoForm extends React.Component {
       withCredentials: true,
       action: `${REQUEST_DOMAIN}/user/info/change/avatar`,
       headers: {
-        Authorization: Cookies.get('Authorization'),
+        AccessToken: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
         ...setUploadHeaderBaseInfo({})
       },

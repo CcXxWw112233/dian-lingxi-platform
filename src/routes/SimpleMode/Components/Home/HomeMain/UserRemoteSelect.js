@@ -50,7 +50,7 @@ export default class UserRemoteSelect extends React.Component {
       url: `${REQUEST_DOMAIN_BOARD}/milestone/fuzzy`,
       method: 'get',
       headers: {
-        Authorization: Cookies.get('Authorization'),
+        AccessToken: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
 
         ...setUploadHeaderBaseInfo({})
@@ -75,7 +75,7 @@ export default class UserRemoteSelect extends React.Component {
     })
     // fetch('/api/projects/milestone/fuzzy', {
     //   headers: {
-    //     Authorization: Cookies.get('Authorization'),
+    //     AccessToken: Cookies.get('Authorization'),
     //     refreshToken: Cookies.get('refreshToken'),
 
     //     ...setUploadHeaderBaseInfo({}),

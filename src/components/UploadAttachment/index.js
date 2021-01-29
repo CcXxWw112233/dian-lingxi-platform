@@ -105,7 +105,7 @@ export default class UploadAttachment extends Component {
     return {
       name: 'file',
       headers: {
-        authorization: 'authorization-text'
+        AccessToken: 'authorization-text'
       },
       accept: FILE_UPLOAD_ACCEPT_TYPE,
       fileList: fileList,
@@ -171,7 +171,7 @@ export default class UploadAttachment extends Component {
       //processData: false,
       data: formData,
       headers: {
-        Authorization: Cookies.get('Authorization'),
+        AccessToken: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
 
         ...setUploadHeaderBaseInfo({

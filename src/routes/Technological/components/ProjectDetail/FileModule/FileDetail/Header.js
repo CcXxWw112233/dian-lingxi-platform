@@ -24,6 +24,8 @@ import {
   UPLOAD_FILE_SIZE,
   ORGANIZATION
 } from '../../../../../../globalset/js/constant'
+import globalStyles from '@/globalset/css/globalClassName.less'
+
 import Cookies from 'js-cookie'
 import {
   checkIsHasPermissionInBoard,
@@ -247,7 +249,7 @@ class Header extends React.Component {
         file_version_id: filePreviewCurrentVersionId
       },
       headers: {
-        Authorization: Cookies.get('Authorization'),
+        AccessToken: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
         ...setUploadHeaderBaseInfo({})
       },

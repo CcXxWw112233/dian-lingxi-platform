@@ -248,7 +248,7 @@ export default class FileFieldContent extends Component {
       action: `${REQUEST_DOMAIN_BOARD}/file/upload/common`,
       accept: FILE_UPLOAD_ACCEPT_TYPE,
       headers: {
-        Authorization: Cookies.get('Authorization'),
+        AccessToken: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
         ...setUploadHeaderBaseInfo({
           orgId: org_id,

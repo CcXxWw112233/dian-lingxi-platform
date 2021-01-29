@@ -91,7 +91,7 @@ class UploadTemporaryFile extends Component {
         upload_type: '1'
       },
       headers: {
-        Authorization: Cookies.get('Authorization'),
+        AccessToken: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
         ...setUploadHeaderBaseInfo({ boardId: '1187320331644309504' })
       },

@@ -633,7 +633,7 @@ class AddTaskModal extends Component {
           currentSelectedFileFolder[currentSelectedFileFolder.length - 1]
       },
       headers: {
-        Authorization: Cookies.get('Authorization'),
+        AccessToken: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
         ...setUploadHeaderBaseInfo({
           boardId: currentSelectedProject.board_id,

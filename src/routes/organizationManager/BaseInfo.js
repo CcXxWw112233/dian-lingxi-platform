@@ -258,7 +258,7 @@ export default class BaseInfo extends React.Component {
       withCredentials: true,
       action: `${REQUEST_DOMAIN}/organization/logo_upload`,
       headers: {
-        Authorization: Cookies.get('Authorization'),
+        AccessToken: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
         ...setUploadHeaderBaseInfo({})
       },

@@ -132,7 +132,7 @@ export default class UploadNormal extends Component {
       accept: FILE_UPLOAD_ACCEPT_TYPE,
       showUploadList: false,
       headers: {
-        Authorization: Cookies.get('Authorization'),
+        AccessToken: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
         ...setUploadHeaderBaseInfo({ boardId: board_id })
       },

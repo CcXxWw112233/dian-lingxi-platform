@@ -460,7 +460,7 @@ export default class BoardItem extends Component {
       url: `${REQUEST_DOMAIN_BOARD}${url}`,
       method: 'post',
       headers: {
-        Authorization: Cookies.get('Authorization'),
+        AccessToken: Cookies.get('Authorization'),
         ...setRequestHeaderBaseInfo({
           data: { board_id },
           headers: {},

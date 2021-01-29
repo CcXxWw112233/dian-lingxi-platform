@@ -797,7 +797,7 @@ export default class DetailConfirmInfoTwo extends React.Component {
         node_instance_id: processEditDatas[itemKey].id
       },
       headers: {
-        Authorization: Cookies.get('Authorization'),
+        AccessToken: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
         ...setUploadHeaderBaseInfo({})
       },

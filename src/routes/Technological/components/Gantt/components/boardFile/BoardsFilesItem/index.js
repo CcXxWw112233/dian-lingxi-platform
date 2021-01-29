@@ -204,7 +204,7 @@ export default class Index extends Component {
         upload_type: '1'
       },
       headers: {
-        Authorization: Cookies.get('Authorization'),
+        AccessToken: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
         ...setUploadHeaderBaseInfo({ boardId: board_id })
       },

@@ -1615,7 +1615,7 @@ class DrawContent extends React.Component {
         card_id
       },
       headers: {
-        Authorization: Cookies.get('Authorization'),
+        AccessToken: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
         ...setUploadHeaderBaseInfo({ contentDataType: CONTENT_DATA_TYPE_CARD })
       },

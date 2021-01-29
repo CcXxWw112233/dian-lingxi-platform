@@ -58,7 +58,7 @@ export default class index extends Component {
       url: `${REQUEST_DOMAIN_WORK_BENCH}${url}`,
       method: 'post',
       headers: {
-        Authorization: Cookies.get('Authorization')
+        AccessToken: Cookies.get('Authorization')
       },
       data: {
         board_id,

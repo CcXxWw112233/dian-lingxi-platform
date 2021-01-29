@@ -638,7 +638,7 @@ class BoardCommunication extends Component {
       //processData: false,
       data: formData,
       headers: {
-        Authorization: Cookies.get('Authorization'),
+        AccessToken: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
         ...setUploadHeaderBaseInfo({})
       },
@@ -662,7 +662,7 @@ class BoardCommunication extends Component {
             url: `${REQUEST_DOMAIN_FILE}/file/info/${fileId}`,
             method: 'GET',
             headers: {
-              Authorization: Cookies.get('Authorization'),
+              AccessToken: Cookies.get('Authorization'),
               refreshToken: Cookies.get('refreshToken'),
               ...setUploadHeaderBaseInfo({})
             }

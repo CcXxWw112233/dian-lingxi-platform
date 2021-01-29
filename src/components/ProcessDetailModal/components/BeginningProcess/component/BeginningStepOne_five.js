@@ -218,7 +218,7 @@ export default class BeginningStepOne_five extends Component {
       action: `${REQUEST_DOMAIN_BOARD}/v2/flow/task/upload`,
       accept: FILE_UPLOAD_ACCEPT_TYPE,
       headers: {
-        Authorization: Cookies.get('Authorization'),
+        AccessToken: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
 
         ...setUploadHeaderBaseInfo({

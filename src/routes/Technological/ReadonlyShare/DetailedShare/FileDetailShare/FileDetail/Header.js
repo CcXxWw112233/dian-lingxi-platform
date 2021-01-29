@@ -247,7 +247,7 @@ class Header extends React.Component {
         file_version_id: filePreviewCurrentVersionId
       },
       headers: {
-        Authorization: Cookies.get('Authorization'),
+        AccessToken: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),
         ...setUploadHeaderBaseInfo({})
       },
