@@ -108,7 +108,7 @@ class PersonalInfoForm extends React.Component {
     const uploadProps = {
       name: 'file',
       withCredentials: true,
-      action: `${REQUEST_DOMAIN}/user/upload`,
+      action: `${REQUEST_DOMAIN}/user/info/change/avatar`,
       headers: {
         Authorization: Cookies.get('Authorization'),
         refreshToken: Cookies.get('refreshToken'),

@@ -89,7 +89,7 @@ export async function associateUser(params) {
   // }
   return request(
     {
-      url: `${REQUEST_DOMAIN}/user/associate`,
+      url: `${REQUEST_DOMAIN}/user/info/associate`,
       method: 'GET',
       params
     },

@@ -8,7 +8,7 @@ import {
 //获取用户信息
 export async function getUserInfo(params) {
   return request({
-    url: `${REQUEST_DOMAIN}${REQUEST_INTERGFACE_VERSIONN}/user`,
+    url: `${REQUEST_DOMAIN}/user/info`,
     method: 'GET'
   })
 }
@@ -16,7 +16,7 @@ export async function getUserInfo(params) {
 //更向用户信息
 export async function updateUserInfo(data) {
   return request({
-    url: `${REQUEST_DOMAIN}/user`,
+    url: `${REQUEST_DOMAIN}/user/info`,
     method: 'PUT',
     data
   })
@@ -59,7 +59,7 @@ export async function checkEmailIsRegisted(params) {
 //申请更换邮箱发送邮件确认
 export async function changeEmail(data) {
   return request({
-    url: `${REQUEST_DOMAIN}/user/change/email/validate`,
+    url: `${REQUEST_DOMAIN}/user/info/change/email/send`,
     method: 'PUT',
     data
   })
@@ -68,14 +68,14 @@ export async function changeEmail(data) {
 //解绑微信
 export async function unBindWechat(data) {
   return request({
-    url: `${REQUEST_DOMAIN}/user/wechat/un_bind`,
+    url: `${REQUEST_DOMAIN}/user/info/wechat/un_bind`,
     method: 'PUT'
   })
 }
 
 export async function updateUserSet(data) {
   return request({
-    url: `${REQUEST_DOMAIN}/user/set`,
+    url: `${REQUEST_DOMAIN}/user/info/set`,
     method: 'PUT',
     data
   })

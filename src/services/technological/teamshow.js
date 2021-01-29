@@ -8,7 +8,7 @@ import Cookies from 'js-cookie'
 //获取用户信息
 export async function getUSerInfo(params) {
   return request({
-    url: `${REQUEST_DOMAIN}${REQUEST_INTERGFACE_VERSIONN}/user`,
+    url: `${REQUEST_DOMAIN}/user/info`,
     method: 'GET'
   })
 }
@@ -16,7 +16,7 @@ export async function getUSerInfo(params) {
 //退出登录
 export async function logout(data) {
   return request({
-    url: `${REQUEST_DOMAIN}/user/logout`,
+    url: `${REQUEST_DOMAIN}/public/user/signout`,
     method: 'GET',
     params: {
       accessToken: Cookies.get('Authorization'),

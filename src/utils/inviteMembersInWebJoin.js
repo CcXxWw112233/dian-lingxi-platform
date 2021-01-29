@@ -110,7 +110,7 @@ export const getEnrollUsers = user => {
   data.append('file', file)
   return new Promise((resolve, reject) => {
     axiosForSend(
-      `${REQUEST_DOMAIN}${REQUEST_INTERGFACE_VERSIONN}/user/invite?invitee_account=${user}`,
+      `${REQUEST_DOMAIN}/user/signup/invite/single?invitee_account=${user}`,
       data
     )
       .then(res => {

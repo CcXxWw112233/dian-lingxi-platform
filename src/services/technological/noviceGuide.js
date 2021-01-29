@@ -22,7 +22,7 @@ export async function generateBoardCode(params) {
 //邀请成员加入组织
 export async function inviteMemberJoinOrg(data) {
   return request({
-    url: `${REQUEST_DOMAIN}/organization/invite`,
+    url: `${REQUEST_DOMAIN}/org/access/invite`,
     method: 'PUT',
     data: {
       ...data,

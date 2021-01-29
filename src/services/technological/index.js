@@ -11,7 +11,7 @@ import { getGlobalData } from '@/utils/businessFunction'
 export async function inviteNewUserInProject({ data }) {
   //data 用户，手机号或者邮箱，多个逗号隔开
   return request({
-    url: `${REQUEST_DOMAIN}/user/invite`,
+    url: `${REQUEST_DOMAIN}/user/signup/invite/multiple`,
     method: 'POST',
     data: {
       data
@@ -22,7 +22,7 @@ export async function inviteNewUserInProject({ data }) {
 //获取用户信息
 export async function getUSerInfo(params) {
   return request({
-    url: `${REQUEST_DOMAIN}${REQUEST_INTERGFACE_VERSIONN}/user`,
+    url: `${REQUEST_DOMAIN}/user/info`,
     method: 'GET'
   })
 }
@@ -30,7 +30,7 @@ export async function getUSerInfo(params) {
 //退出登录
 export async function logout(data) {
   return request({
-    url: `${REQUEST_DOMAIN}/user/logout`,
+    url: `${REQUEST_DOMAIN}/public/user/signout`,
     method: 'GET',
     params: {
       accessToken: Cookies.get('Authorization'),
@@ -129,7 +129,7 @@ export async function scanQrCodeJoin(data) {
 export async function organizationInviteWebJoin(data) {
   const { _organization_id } = data
   return request({
-    url: `${REQUEST_DOMAIN}/organization/invite/web/join`,
+    url: `${REQUEST_DOMAIN}/org/access/invite/web`,
     method: 'POST',
     data: {
       ...data,

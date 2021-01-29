@@ -22,7 +22,7 @@ export async function requestVerifyCode(data) {
 //绑定微信号与账号
 export async function wechatAccountBind(data) {
   return request({
-    url: `${REQUEST_DOMAIN}/user/wechat/account/bind`,
+    url: `${REQUEST_DOMAIN}/public/user/signin/wechat/bind`,
     method: 'POST',
     data
   })

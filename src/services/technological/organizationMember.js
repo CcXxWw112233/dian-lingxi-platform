@@ -45,7 +45,7 @@ export async function removeMembersWithGroup(data) {
 //将访客加入组织
 export async function joinOrganization(data) {
   return request({
-    url: `${REQUEST_DOMAIN}/organization/visitor/invite`,
+    url: `${REQUEST_DOMAIN}/org/access/invite/visitor`,
     method: 'PUT',
     data: {
       ...data,
@@ -174,7 +174,7 @@ export async function getCurrentUserOrganizes(params) {
 // 切换组织
 export async function changeCurrentOrg(data) {
   return request({
-    url: `${REQUEST_DOMAIN}${REQUEST_INTERGFACE_VERSIONN}/user/changecurrentorg/${data.org_id}`,
+    url: `${REQUEST_DOMAIN}/user/info/org/change/${data.org_id}`,
     method: 'PUT',
     data
   })
@@ -236,7 +236,7 @@ export async function updateOrganization(data) {
 //申请加入组织
 export async function applyJoinOrganization(data) {
   return request({
-    url: `${REQUEST_DOMAIN}/organization/apply`,
+    url: `${REQUEST_DOMAIN}/org/access/apply`,
     method: 'POST',
     data
   })
@@ -245,7 +245,7 @@ export async function applyJoinOrganization(data) {
 //邀请成员加入组织
 export async function inviteJoinOrganization(data) {
   return request({
-    url: `${REQUEST_DOMAIN}/organization/invite`,
+    url: `${REQUEST_DOMAIN}/org/access/invite`,
     method: 'PUT',
     data: {
       ...data,
@@ -333,7 +333,7 @@ export async function getUserBoardPermissions(params) {
 // 用户设置是否显示组织名称
 export async function getSetShowOrgName(data) {
   return request({
-    url: `${REQUEST_DOMAIN}/user/set`,
+    url: `${REQUEST_DOMAIN}/user/info/set`,
     method: 'PUT',
     data
   })
@@ -342,7 +342,7 @@ export async function getSetShowOrgName(data) {
 // 用户设置是否显示极简模式
 export async function setShowSimpleModel(data) {
   return request({
-    url: `${REQUEST_DOMAIN}/user/set`,
+    url: `${REQUEST_DOMAIN}/user/info/set`,
     method: 'PUT',
     data: {
       is_simple_model: data,
