@@ -105,7 +105,14 @@ class FormList extends React.Component {
         if (ENV_ANDROID_APP) {
           values['register_origin'] = '2'
         }
-        this.props.formSubmit ? this.props.formSubmit(values) : false
+        const request_params = {
+          ...values,
+          verify_code: values['verifycode'],
+          account: values['mobile']
+        }
+        delete request_params.mobile
+        delete request_params.verifycode
+        this.props.formSubmit ? this.props.formSubmit(request_params) : false
       }
     })
   }

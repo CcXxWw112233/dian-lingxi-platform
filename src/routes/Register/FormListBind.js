@@ -98,8 +98,15 @@ class FormList extends React.Component {
         if (values['password']) {
           values['password'] = sha256(values['password'])
         }
+        const request_params = {
+          ...values,
+          verify_code: values['verifycode'],
+          account: values['mobile']
+        }
+        delete request_params.mobile
+        delete request_params.verifycode
         this.props.wechatSignupBindLogin
-          ? this.props.wechatSignupBindLogin(values)
+          ? this.props.wechatSignupBindLogin(request_params)
           : false
       }
     })
