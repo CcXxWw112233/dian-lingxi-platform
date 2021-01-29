@@ -225,15 +225,33 @@ export default class GroupMilestones extends Component {
     }, '')
     return names
   }
+  // 获取以top为分组的结构
+  getMiletonesWithTopStructure = top => {
+    const { render_milestones_data = [] } = this.state
+    let list = []
+    render_milestones_data.map(item => {
+      if (item.top == top) {
+        list.push(item)
+      }
+    })
+    return {
+      top,
+      list
+    }
+  }
   // 根据下一个里程碑日期，来获取当前里程碑日期的‘name1,name2,name3...’应该有的宽度
-  setMiletonesNamesWidth = timestamp => {
+  setMiletonesNamesWidth = (timestamp, top) => {
     const {
       milestoneMap = {},
       ceilWidth,
       gantt_board_id,
       gantt_view_mode
     } = this.props
-    const { list_id } = this.props //gantt_board_id为0的情况下，分组id就是各个项目的id
+    // const { list_id } = this.props //gantt_board_id为0的情况下，分组id就是各个项目的id
+    let top_arr = this.getMiletonesWithTopStructure(top)
+    const miletones_position = top_arr.list.findIndex(
+      t => t.timestamp == timestamp
+    )
     let times_arr = Object.keys(milestoneMap) //[timestamp1, timestamp2,...]
     // if (gantt_board_id == '0') {
     //   //以分组划分，过滤掉不属于该项目分组的里程碑所属于的时间
@@ -246,7 +264,11 @@ export default class GroupMilestones extends Component {
     times_arr = times_arr.sort((a, b) => Number(a) - Number(b))
     const index = times_arr.findIndex(item => isSamDay(item, timestamp)) //对应上当前日期所属的下标
     const next_miletones_time = times_arr[index + 1] //当前里程碑日期的对应下一个里程碑日期所在时间
-    if (!next_miletones_time) {
+    // 除了最后一个里程碑宽度为auto 还有就是不在同一个分组或者项目的里程碑 最后一个为auto
+    if (
+      !next_miletones_time ||
+      (top == top_arr.top && miletones_position == top_arr.list.length - 1)
+    ) {
       return 'auto'
     }
     if (gantt_view_mode == 'month') {
@@ -262,7 +284,10 @@ export default class GroupMilestones extends Component {
       if (caldiffDays(timestamp, next_miletones_time) == 1) {
         return 0
       } else {
-        return caldiffDays(timestamp, next_miletones_time) * ceilWidth - 18
+        if (caldiffDays(timestamp, next_miletones_time) * 7 - 18 <= 0) {
+          return 0
+        }
+        return caldiffDays(timestamp, next_miletones_time) * 7 - 18
       }
     }
     console.log(caldiffDays(timestamp, next_miletones_time))
@@ -387,7 +412,7 @@ export default class GroupMilestones extends Component {
                     className={`${indexStyles.board_miletiones_names} ${globalStyles.global_ellipsis}`}
                     data-targetclassname="specific_example_milestone"
                     style={{
-                      maxWidth: this.setMiletonesNamesWidth(timestamp),
+                      maxWidth: this.setMiletonesNamesWidth(timestamp, top),
                       color: this.setMiletonesColor({
                         is_over_duetime,
                         is_all_realized: one_levels_completed
@@ -454,7 +479,7 @@ export default class GroupMilestones extends Component {
                     className={`${indexStyles.board_miletiones_names} ${globalStyles.global_ellipsis}`}
                     data-targetclassname="specific_example_milestone"
                     style={{
-                      maxWidth: this.setMiletonesNamesWidth(timestamp),
+                      maxWidth: this.setMiletonesNamesWidth(timestamp, top),
                       color: this.setMiletonesColor({
                         is_over_duetime,
                         is_all_realized: two_levels_completed

@@ -1697,6 +1697,23 @@ export default class CardItem extends Component {
     return { compare_width, status_label }
   }
 
+  // 获取存在里程碑的分组ID
+  getIsHasMilestoneInListGroup = () => {
+    const { milestoneMap = {}, list_group = [] } = this.props
+    const first_list_id = list_group[0].lane_id
+    let list_ids = []
+    for (let val in milestoneMap) {
+      milestoneMap[val].map(i => {
+        if (i.list_id) {
+          list_ids.push(i.list_id)
+        } else {
+          list_ids.push(first_list_id)
+        }
+      })
+    }
+    return Array.from(new Set(list_ids))
+  }
+
   render() {
     const {
       itemValue = {},
@@ -1705,7 +1722,9 @@ export default class CardItem extends Component {
       group_view_type,
       gantt_board_id,
       card_name_outside,
-      ceilWidth
+      ceilWidth,
+      ceiHeight,
+      list_id
     } = this.props
     const {
       left,
@@ -1862,6 +1881,13 @@ export default class CardItem extends Component {
         is_show_warning_time
     })
 
+    // 获取存在里程碑的分组
+    let list_ids = []
+    if (!ganttIsOutlineView({ group_view_type })) {
+      list_ids = this.getIsHasMilestoneInListGroup()
+    }
+    const isHasListGroup = list_ids.indexOf(list_id) != -1
+    const count_top = isHasListGroup ? local_top + 2 + ceiHeight : local_top + 2
     return (
       <div
         className={`${'gantt_card_flag_special'} ${
@@ -1876,7 +1902,7 @@ export default class CardItem extends Component {
         data-rely_top={id}
         style={{
           left: local_left + (gantt_view_mode == 'year' ? 0 : card_left_diff),
-          top: local_top + 2 + 38,
+          top: count_top,
           //width,
           width:
             (local_width || 6) -
@@ -2380,7 +2406,8 @@ function mapStateToProps({
       outline_tree_round = [],
       selected_card_visible,
       notification_todos,
-      card_name_outside
+      card_name_outside,
+      milestoneMap = {}
     }
   },
   imCooperation: { im_all_latest_unread_messages = [] },
@@ -2402,6 +2429,7 @@ function mapStateToProps({
     card_detail_id,
     selected_card_visible,
     notification_todos,
-    card_name_outside
+    card_name_outside,
+    milestoneMap
   }
 }
