@@ -22,7 +22,8 @@ import {
   genPrincipalListFromAssignees,
   findCurrentApproveNodesPosition,
   findCurrentRatingScoreNodesPosition,
-  findCurrentOverruleNodesPosition
+  findCurrentOverruleNodesPosition,
+  transAssigneesToIds
 } from '../../handleOperateModal'
 import {
   checkIsHasPermissionInVisitControl,
@@ -39,6 +40,12 @@ import {
   timestampToTimeNormal
 } from '../../../../../utils/util'
 import DifferenceDeadlineType from '../../DifferenceDeadlineType'
+import AmendComponent from '../../ProcessStartConfirm/AmendComponent'
+import {
+  changeProcessAssignees,
+  changeProcessRecipients
+} from '../../../../../services/technological/workFlow'
+import { isApiResponseOk } from '../../../../../utils/handleResponseData'
 const TextArea = Input.TextArea
 @connect(mapStateToProps)
 export default class BeginningStepThree extends Component {
@@ -119,14 +126,99 @@ export default class BeginningStepThree extends Component {
 
   // 更新对应步骤下的节点内容数据, 即当前操作对象的数据
   updateCorrespondingPrcodessStepWithNodeContent = (data, value) => {
-    const { itemValue, processEditDatas = [], itemKey, dispatch } = this.props
+    const {
+      itemValue: { id, assignees = [], recipients = [] },
+      processEditDatas = [],
+      itemKey,
+      dispatch,
+      projectDetailInfoData: { data: boardData = [] }
+    } = this.props
     let newProcessEditDatas = [...processEditDatas]
-    newProcessEditDatas[itemKey][data] = value
-    dispatch({
-      type: 'publicProcessDetailModal/updateDatas',
-      payload: {
-        processEditDatas: newProcessEditDatas
+
+    if (data == 'assignees' && !!value) {
+      let assignees_ = []
+      let users = []
+      boardData.map(item => {
+        if ((value.split(',') || []).indexOf(item.user_id || item.id) != -1) {
+          assignees_.push(item)
+          users.push(item.user_id)
+        }
+      })
+      changeProcessAssignees({
+        flow_node_instance_id: id,
+        users: users
+      }).then(res => {
+        if (isApiResponseOk(res)) {
+          setTimeout(() => {
+            message.success('修改成功', MESSAGE_DURATION_TIME)
+          }, 200)
+          newProcessEditDatas[itemKey][data] = assignees_
+          dispatch({
+            type: 'publicProcessDetailModal/updateDatas',
+            payload: {
+              processEditDatas: newProcessEditDatas
+            }
+          })
+        } else {
+          newProcessEditDatas[itemKey][data] = assignees
+          message.warn(res.message, MESSAGE_DURATION_TIME)
+        }
+      })
+      return
+    } else if (data == 'recipients' && !!value) {
+      let recipients_ = []
+      let users = []
+      boardData.map(item => {
+        if ((value.split(',') || []).indexOf(item.user_id || item.id) != -1) {
+          recipients_.push(item)
+          users.push(item.user_id)
+        }
+      })
+      changeProcessRecipients({
+        flow_node_instance_id: id,
+        users: users
+      }).then(res => {
+        if (isApiResponseOk(res)) {
+          setTimeout(() => {
+            message.success('修改成功', MESSAGE_DURATION_TIME)
+          }, 200)
+          newProcessEditDatas[itemKey][data] = recipients_
+          dispatch({
+            type: 'publicProcessDetailModal/updateDatas',
+            payload: {
+              processEditDatas: newProcessEditDatas
+            }
+          })
+        } else {
+          newProcessEditDatas[itemKey][data] = recipients
+          message.warn(res.message, MESSAGE_DURATION_TIME)
+        }
+      })
+      return
+    } else {
+      newProcessEditDatas[itemKey][data] = value
+      dispatch({
+        type: 'publicProcessDetailModal/updateDatas',
+        payload: {
+          processEditDatas: newProcessEditDatas
+        }
+      })
+    }
+  }
+
+  updateParentsAssigneesOrCopyPersonnel = (data, key) => {
+    const { value } = data
+    const {
+      projectDetailInfoData: { data: boardData = [] }
+    } = this.props
+    let values = []
+    boardData.map(item => {
+      if (value.indexOf(item.user_id) != -1) {
+        values.push(item)
       }
+    })
+    this.setState({
+      [key]: values
     })
   }
 
@@ -1006,7 +1098,12 @@ export default class BeginningStepThree extends Component {
   }
 
   render() {
-    const { itemKey, itemValue, processEditDatas = [] } = this.props
+    const {
+      itemKey,
+      itemValue,
+      processEditDatas = [],
+      projectDetailInfoData: { data = [], board_id }
+    } = this.props
     const {
       is_show_spread_arrow,
       transPrincipalList = [],
@@ -1019,8 +1116,17 @@ export default class BeginningStepThree extends Component {
       deadline_value,
       deadline_time_type,
       status,
-      runtime_type
+      runtime_type,
+      assignees,
+      cc_locking,
+      recipients,
+      score_node_set: { score_locked }
     } = itemValue
+    let new_itemValue = { ...itemValue }
+    new_itemValue.assignees = transAssigneesToIds(assignees).join(',')
+    if (cc_type == '1') {
+      new_itemValue.recipients = transAssigneesToIds(recipients).join(',')
+    }
     return (
       <div
         id={status == '1' && 'currentStaticRatingScoreContainer'}
@@ -1131,6 +1237,46 @@ export default class BeginningStepThree extends Component {
                       <span className={indexStyles.content__principalList_info}>
                         {`${transPrincipalList.length}位评分人`}
                       </span>
+                      {status == '0' &&
+                        (score_locked == '0' ? (
+                          <span style={{ position: 'relative' }}>
+                            <AmendComponent
+                              type="2"
+                              updateParentsAssigneesOrCopyPersonnel={
+                                this.updateParentsAssigneesOrCopyPersonnel
+                              }
+                              updateCorrespondingPrcodessStepWithNodeContent={
+                                this
+                                  .updateCorrespondingPrcodessStepWithNodeContent
+                              }
+                              placementTitle="评分人"
+                              data={data}
+                              itemKey={itemKey}
+                              itemValue={new_itemValue}
+                              board_id={board_id}
+                            />
+                          </span>
+                        ) : (
+                          <Tooltip
+                            arrowPointAtCenter={true}
+                            title="已锁定评分人"
+                            placement="top"
+                            getPopupContainer={triggerNode =>
+                              triggerNode.parentNode
+                            }
+                          >
+                            <span
+                              style={{
+                                cursor: 'pointer',
+                                color: 'rgba(0,0,0,0.25)',
+                                marginLeft: '4px'
+                              }}
+                              className={globalStyles.authTheme}
+                            >
+                              &#xe86a;
+                            </span>
+                          </Tooltip>
+                        ))}
                     </>
                   )}
                 </div>
@@ -1176,6 +1322,43 @@ export default class BeginningStepThree extends Component {
                           {`${transCopyPersonnelList.length}位抄送人`}
                         </span>
                       </>
+                    )}
+                    {status == '0' && cc_locking == '0' ? (
+                      <span style={{ position: 'relative' }}>
+                        <AmendComponent
+                          type="3"
+                          updateParentsAssigneesOrCopyPersonnel={
+                            this.updateParentsAssigneesOrCopyPersonnel
+                          }
+                          updateCorrespondingPrcodessStepWithNodeContent={
+                            this.updateCorrespondingPrcodessStepWithNodeContent
+                          }
+                          placementTitle="抄送人"
+                          data={data}
+                          itemKey={itemKey}
+                          itemValue={new_itemValue}
+                          board_id={board_id}
+                        />
+                      </span>
+                    ) : (
+                      <Tooltip
+                        title="已锁定抄送人"
+                        placement="top"
+                        getPopupContainer={triggerNode =>
+                          triggerNode.parentNode
+                        }
+                      >
+                        <span
+                          style={{
+                            cursor: 'pointer',
+                            color: 'rgba(0,0,0,0.25)',
+                            marginLeft: '4px'
+                          }}
+                          className={globalStyles.authTheme}
+                        >
+                          &#xe86a;
+                        </span>
+                      </Tooltip>
                     )}
                   </div>
                 )}
