@@ -43,6 +43,7 @@ import {
 } from '../../utils/businessFunction'
 import { clearnImAuth } from '../../utils/businessFunction'
 import { getModelSelectDatasState } from '../utils'
+import { handleInviteUsersToId } from '../../utils/inviteMembersInWebJoin'
 
 const clearAboutLocalstorage = () => {
   //清掉当前相关业务逻辑的用户数据
@@ -459,7 +460,13 @@ export default {
       }
     },
     *inviteJoinOrganization({ payload }, { select, call, put }) {
-      let res = yield call(inviteJoinOrganization, payload)
+      const { members } = payload
+      const members_ = yield call(
+        handleInviteUsersToId({ users: members.split(',') })
+      )
+      let res = yield call(inviteJoinOrganization, {
+        members: members_.length ? members_.join(',') : ''
+      })
       if (isApiResponseOk(res)) {
         message.success(
           `已成功添加${currentNounPlanFilterName(

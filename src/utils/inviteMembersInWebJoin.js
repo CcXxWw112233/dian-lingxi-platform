@@ -30,26 +30,30 @@ const avatars = { create: () => {} }
  * @param {Array} users [id,phoneNo]
  * @returns {Array} j
  */
-export async function handleInviteUsersToId({ users = [] }) {
-  //用户id
-  const effective_user_ids = users.filter(
-    item => item.length > 18 && validOnlyNumber(item)
-  )
-  //用户手机
-  const user_tels = users.filter(
-    item => validateTel(item) && validOnlyNumber(item)
-  )
-  if (user_tels.length) {
-    const res = await inviteNewUserInProject({ data: user_tels.join(',') })
-    // debugger
-    if (isApiResponseOk(res)) {
-      const users = res.data.map(item => item.id)
-      return [...effective_user_ids, ...users]
-    } else {
-      return []
-    }
+export function handleInviteUsersToId({ users = [] }) {
+  return function() {
+    return new Promise(async resolve => {
+      //用户id
+      const effective_user_ids = users.filter(
+        item => item.length > 18 && validOnlyNumber(item)
+      )
+      //用户手机
+      const user_tels = users.filter(
+        item => validateTel(item) && validOnlyNumber(item)
+      )
+      if (user_tels.length) {
+        const res = await inviteNewUserInProject({ data: user_tels.join(',') })
+        // debugger
+        if (isApiResponseOk(res)) {
+          const users = res.data.map(item => item.id)
+          resolve([...effective_user_ids, ...users])
+        } else {
+          resolve([])
+        }
+      }
+      resolve([...effective_user_ids])
+    })
   }
-  return [...effective_user_ids]
 }
 /**
  * 邀请成员 进组织和项目
@@ -73,7 +77,7 @@ export async function inviteMembersInWebJoin({
   const org_id_ = org_id ? org_id : getOrgIdByBoardId(board_id)
   const user_ids = await handleInviteUsersToId({
     users: users.split(',')
-  })
+  })()
   // debugger
   if (!user_ids.length) return
   organizationInviteWebJoin({

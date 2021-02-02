@@ -38,6 +38,7 @@ import {
   checkIsHasPermission,
   currentNounPlanFilterName
 } from '../../utils/businessFunction'
+import { handleInviteUsersToId } from '../../utils/inviteMembersInWebJoin'
 export default modelExtend(technological, {
   namespace: 'organizationMember',
   state: [],
@@ -294,7 +295,14 @@ export default modelExtend(technological, {
       }
     },
     *inviteMemberToGroup({ payload }, { select, call, put }) {
-      let res = yield call(inviteMemberToGroup, payload)
+      const { members } = payload
+      const members_ = yield call(
+        handleInviteUsersToId({ users: members.split(',') })
+      )
+      let res = yield call(inviteMemberToGroup, {
+        ...payload,
+        members: members_.length ? members_.join(',') : ''
+      })
       if (isApiResponseOk(res)) {
         yield put({
           type: 'getGroupList',
