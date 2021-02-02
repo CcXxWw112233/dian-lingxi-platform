@@ -499,6 +499,17 @@ const whetherIsExistOnlineExcel = ({ forms = [] }) => {
   return flag
 }
 
+// 获取id数组
+const transAssigneesToIds = (assignees = []) => {
+  let tempIds = []
+  assignees.map(item => {
+    if (item.id || item.user_id) {
+      tempIds.push(item.id || item.user_id)
+    }
+  })
+  return Array.from(new Set(tempIds))
+}
+
 export {
   showDeleteTempleteConfirm,
   genPrincipalListFromAssignees,
@@ -520,5 +531,6 @@ export {
   compareOppositeTimer,
   removeEmptyArrayEle,
   updateUserStorage,
-  whetherIsExistOnlineExcel
+  whetherIsExistOnlineExcel,
+  transAssigneesToIds
 }

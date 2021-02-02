@@ -3,7 +3,8 @@ import {
   REQUEST_DOMAIN_FILE,
   CONTENT_DATA_TYPE_FLOW,
   REQUEST_INTERGFACE_VERSIONN,
-  REQUEST_DOMAIN
+  REQUEST_DOMAIN,
+  REQUEST_DOMAIN_BOARD
 } from '../../globalset/js/constant'
 import request from '../../utils/requestAxios'
 
@@ -346,5 +347,23 @@ export async function getOnlineExcelDataWithProcess(params) {
     url: `${REQUEST_DOMAIN_FILE}/file/online/excel/${params.id}`,
     method: 'GET'
     // params
+  })
+}
+
+// 修改流程节点执行人
+export async function changeProcessAssignees(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/workflow/node/edit/assignee`,
+    method: 'PUT',
+    data
+  })
+}
+
+// 修改流程节点抄送人
+export async function changeProcessRecipients(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/workflow/node/edit/recipient`,
+    method: 'PUT',
+    data
   })
 }
