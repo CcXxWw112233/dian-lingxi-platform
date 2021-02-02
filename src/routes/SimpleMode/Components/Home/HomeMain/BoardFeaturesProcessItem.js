@@ -163,7 +163,7 @@ export default class BoardFeaturesProcessItem extends Component {
           {this.renderTime().time} {this.renderTime().dec}
         </div>
         {!!runtime_type && runtime_type == '1' && (
-          <div className={styles.feature_item_reject}>被驳回</div>
+          <div className={styles.feature_item_reject}>驳回</div>
         )}
       </div>
     )

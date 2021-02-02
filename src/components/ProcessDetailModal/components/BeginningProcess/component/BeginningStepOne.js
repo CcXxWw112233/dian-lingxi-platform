@@ -873,7 +873,7 @@ export default class BeginningStepOne extends Component {
                         letterSpacing: '2px'
                       }}
                     >
-                      {'(被驳回)'}
+                      {'(驳回)'}
                     </span>
                   )}
                 </div>

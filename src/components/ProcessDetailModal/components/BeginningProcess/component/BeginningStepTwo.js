@@ -1300,7 +1300,7 @@ export default class BeginningStepTwo extends Component {
                           letterSpacing: '2px'
                         }}
                       >
-                        {'(被驳回)'}
+                        {'(驳回)'}
                       </span>
                     )}
                   </div>
