@@ -49,6 +49,7 @@ import {
   timeToTimestamp
 } from '../../../../../utils/util'
 import { ganttIsOutlineView } from '../../Gantt/constants'
+import { inviteMembersInWebJoin } from '../../../../../utils/inviteMembersInWebJoin'
 
 const TextArea = Input.TextArea
 
@@ -408,46 +409,76 @@ export default class DrawDetailInfo extends React.Component {
       dispatch,
       projectDetailInfoData = {}
     } = this.props
-    const { org_id } = projectDetailInfoData
+    const { org_id, board_id } = projectDetailInfoData
     const temp_ids = data.users.split(',')
     const invitation_org = localStorage.getItem('OrganizationId')
-    organizationInviteWebJoin({
-      _organization_id: org_id,
-      type: invitationType,
-      users: temp_ids
-    }).then(res => {
-      if (res && res.code === '0') {
-        commInviteWebJoin({
-          id: invitationId,
-          role_id: res.data.role_id,
-          type: invitationType,
-          users: res.data.users,
-          rela_condition: rela_Condition
-        }).then(res => {
-          if (isApiResponseOk(res)) {
-            setTimeout(() => {
-              message.success('邀请成功', MESSAGE_DURATION_TIME)
-            }, 500)
-            const { projectDetailInfoData = {} } = this.props
-            const { board_id } = projectDetailInfoData
-            if (invitationType === '1') {
-              dispatch({
-                type: 'projectDetail/projectDetailInfo',
-                payload: {
-                  id: board_id
-                }
-              })
-              dispatch({
-                type: 'workbenchTaskDetail/projectDetailInfo',
-                payload: {
-                  id: board_id
-                }
-              })
-            }
+
+    const calback = function() {
+      if (invitationType === '1') {
+        dispatch({
+          type: 'projectDetail/projectDetailInfo',
+          payload: {
+            id: board_id
+          }
+        })
+        dispatch({
+          type: 'workbenchTaskDetail/projectDetailInfo',
+          payload: {
+            id: board_id
           }
         })
       }
+    }
+    inviteMembersInWebJoin({
+      invitationType,
+      invitationId,
+      org_id,
+      board_id,
+      users: data.users,
+      calback,
+      join_board_param: {
+        rela_condition: rela_Condition,
+        id: invitationId
+      }
     })
+    // return
+    // organizationInviteWebJoin({
+    //   _organization_id: org_id,
+    //   type: invitationType,
+    //   users: temp_ids
+    // }).then(res => {
+    //   if (res && res.code === '0') {
+    //     commInviteWebJoin({
+    //       id: invitationId,
+    //       role_id: res.data.role_id,
+    //       type: invitationType,
+    //       users: res.data.users,
+    //       rela_condition: rela_Condition
+    //     }).then(res => {
+    //       if (isApiResponseOk(res)) {
+    //         setTimeout(() => {
+    //           message.success('邀请成功', MESSAGE_DURATION_TIME)
+    //         }, 500)
+    //         const { projectDetailInfoData = {} } = this.props
+    //         const { board_id } = projectDetailInfoData
+    //         if (invitationType === '1') {
+    //           dispatch({
+    //             type: 'projectDetail/projectDetailInfo',
+    //             payload: {
+    //               id: board_id
+    //             }
+    //           })
+    //           dispatch({
+    //             type: 'workbenchTaskDetail/projectDetailInfo',
+    //             payload: {
+    //               id: board_id
+    //             }
+    //           })
+    //         }
+    //       }
+    //     })
+    //   }
+    // })
   }
 
   // 添加字段

@@ -527,9 +527,10 @@ export default class BoardItem extends Component {
     inviteMembersInWebJoin({
       dispatch,
       invitationType: '1',
+      invitationId: board_id,
       board_id,
       org_id,
-      values,
+      users: values.users,
       calback: () => {
         setTimeout(() => {
           dispatch({

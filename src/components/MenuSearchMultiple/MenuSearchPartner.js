@@ -21,6 +21,7 @@ import { connect } from 'dva'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { validateTel } from '@/utils/verify'
 import { isArrayEqual } from '../../utils/util'
+import { inviteMembersInWebJoin } from '../../utils/inviteMembersInWebJoin'
 
 @connect(mapStateToProps)
 export default class MenuSearchPartner extends React.Component {
@@ -162,106 +163,179 @@ export default class MenuSearchPartner extends React.Component {
     const invitation_org =
       getOrgIdByBoardId(board_id) || localStorage.getItem('OrganizationId')
 
-    organizationInviteWebJoin({
-      _organization_id: invitation_org,
-      type: invitationType,
-      users: temp_ids
-    }).then(res => {
-      if (res && res.code === '0') {
-        const { users, role_id } = res.data
-        commInviteWebJoin({
-          id: invitationId,
-          role_id: role_id,
-          type: invitationType,
-          users: users,
-          rela_condition: rela_Condition
-        }).then(res => {
-          if (isApiResponseOk(res)) {
-            this.props.inviteOthersToBoardCalback &&
-              this.props.inviteOthersToBoardCalback({ users })
-            if (invitationType === '4') {
-              dispatch({
-                type: 'projectDetail/projectDetailInfo',
-                payload: {
-                  id: board_id
-                }
-              })
-              // dispatch({
-              //     type: 'projectDetailTask/getCardDetail',
-              //     payload: {
-              //         id: invitationId
-              //     }
-              // })
-              dispatch({
-                type: 'workbenchTaskDetail/projectDetailInfo',
-                payload: {
-                  id: board_id
-                }
-              })
-              // dispatch({
-              //     type: 'workbenchTaskDetail/getCardDetail',
-              //     payload: {
-              //         id: board_id,
-              //         board_id: board_id,
-              //         calback: function (data) {
-              //             dispatch({
-              //                 type: 'workbenchPublicDatas/getRelationsSelectionPre',
-              //                 payload: {
-              //                     _organization_id: invitation_org
-              //                 }
-              //             })
-              //         }
-              //     }
-              // })
-            } else if (invitationType === '1') {
-              // 邀请成员直接加入项目
-              dispatch({
-                type: 'projectDetail/projectDetailInfo',
-                payload: {
-                  id: board_id
-                }
-              })
-              dispatch({
-                type: 'workbenchTaskDetail/projectDetailInfo',
-                payload: {
-                  id: board_id
-                }
-              })
-            } else if (invitationType === '7') {
-              dispatch({
-                type: 'projectDetail/projectDetailInfo',
-                payload: {
-                  id: invitationId
-                }
-              })
-            } else if (invitationType === '8') {
-              dispatch({
-                type: 'projectDetail/projectDetailInfo',
-                payload: {
-                  id: board_id
-                }
-              })
-              dispatch({
-                type: 'projectDetailProcess/getProcessInfo',
-                payload: {
-                  id: invitationId
-                }
-              })
-              dispatch({
-                type: 'workbenchDetailProcess/getProcessInfo',
-                payload: {
-                  id: board_id
-                }
-              })
-            }
-          } else {
-            message.warn(res.message, MESSAGE_DURATION_TIME)
+    const calback = ({ users }) => {
+      this.props.inviteOthersToBoardCalback &&
+        this.props.inviteOthersToBoardCalback({ users })
+      if (invitationType === '4') {
+        dispatch({
+          type: 'projectDetail/projectDetailInfo',
+          payload: {
+            id: board_id
           }
         })
-      } else {
-        message.warn(res.message, MESSAGE_DURATION_TIME)
+        dispatch({
+          type: 'workbenchTaskDetail/projectDetailInfo',
+          payload: {
+            id: board_id
+          }
+        })
+      } else if (invitationType === '1') {
+        // 邀请成员直接加入项目
+        dispatch({
+          type: 'projectDetail/projectDetailInfo',
+          payload: {
+            id: board_id
+          }
+        })
+        dispatch({
+          type: 'workbenchTaskDetail/projectDetailInfo',
+          payload: {
+            id: board_id
+          }
+        })
+      } else if (invitationType === '7') {
+        dispatch({
+          type: 'projectDetail/projectDetailInfo',
+          payload: {
+            id: invitationId
+          }
+        })
+      } else if (invitationType === '8') {
+        dispatch({
+          type: 'projectDetail/projectDetailInfo',
+          payload: {
+            id: board_id
+          }
+        })
+        dispatch({
+          type: 'projectDetailProcess/getProcessInfo',
+          payload: {
+            id: invitationId
+          }
+        })
+        dispatch({
+          type: 'workbenchDetailProcess/getProcessInfo',
+          payload: {
+            id: board_id
+          }
+        })
+      }
+    }
+
+    inviteMembersInWebJoin({
+      invitationType,
+      invitationId,
+      org_id: invitation_org,
+      board_id,
+      users: data.users,
+      calback,
+      join_board_param: {
+        rela_condition: rela_Condition,
+        id: invitationId
       }
     })
+
+    // return
+    // organizationInviteWebJoin({
+    //   _organization_id: invitation_org,
+    //   type: invitationType,
+    //   users: temp_ids
+    // }).then(res => {
+    //   if (res && res.code === '0') {
+    //     const { users, role_id } = res.data
+    //     commInviteWebJoin({
+    //       id: invitationId,
+    //       role_id: role_id,
+    //       type: invitationType,
+    //       users: users,
+    //       rela_condition: rela_Condition
+    //     }).then(res => {
+    //       if (isApiResponseOk(res)) {
+    //         this.props.inviteOthersToBoardCalback &&
+    //           this.props.inviteOthersToBoardCalback({ users })
+    //         if (invitationType === '4') {
+    //           dispatch({
+    //             type: 'projectDetail/projectDetailInfo',
+    //             payload: {
+    //               id: board_id
+    //             }
+    //           })
+    //           // dispatch({
+    //           //     type: 'projectDetailTask/getCardDetail',
+    //           //     payload: {
+    //           //         id: invitationId
+    //           //     }
+    //           // })
+    //           dispatch({
+    //             type: 'workbenchTaskDetail/projectDetailInfo',
+    //             payload: {
+    //               id: board_id
+    //             }
+    //           })
+    //           // dispatch({
+    //           //     type: 'workbenchTaskDetail/getCardDetail',
+    //           //     payload: {
+    //           //         id: board_id,
+    //           //         board_id: board_id,
+    //           //         calback: function (data) {
+    //           //             dispatch({
+    //           //                 type: 'workbenchPublicDatas/getRelationsSelectionPre',
+    //           //                 payload: {
+    //           //                     _organization_id: invitation_org
+    //           //                 }
+    //           //             })
+    //           //         }
+    //           //     }
+    //           // })
+    //         } else if (invitationType === '1') {
+    //           // 邀请成员直接加入项目
+    //           dispatch({
+    //             type: 'projectDetail/projectDetailInfo',
+    //             payload: {
+    //               id: board_id
+    //             }
+    //           })
+    //           dispatch({
+    //             type: 'workbenchTaskDetail/projectDetailInfo',
+    //             payload: {
+    //               id: board_id
+    //             }
+    //           })
+    //         } else if (invitationType === '7') {
+    //           dispatch({
+    //             type: 'projectDetail/projectDetailInfo',
+    //             payload: {
+    //               id: invitationId
+    //             }
+    //           })
+    //         } else if (invitationType === '8') {
+    //           dispatch({
+    //             type: 'projectDetail/projectDetailInfo',
+    //             payload: {
+    //               id: board_id
+    //             }
+    //           })
+    //           dispatch({
+    //             type: 'projectDetailProcess/getProcessInfo',
+    //             payload: {
+    //               id: invitationId
+    //             }
+    //           })
+    //           dispatch({
+    //             type: 'workbenchDetailProcess/getProcessInfo',
+    //             payload: {
+    //               id: board_id
+    //             }
+    //           })
+    //         }
+    //       } else {
+    //         message.warn(res.message, MESSAGE_DURATION_TIME)
+    //       }
+    //     })
+    //   } else {
+    //     message.warn(res.message, MESSAGE_DURATION_TIME)
+    //   }
+    // })
   }
   setShowAddMenberModalVisibile() {
     if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER)) {

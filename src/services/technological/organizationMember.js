@@ -150,7 +150,7 @@ export async function discontinueMember(data) {
 //邀请加入当前分组
 export async function inviteMemberToGroup(data) {
   return request({
-    url: `${REQUEST_DOMAIN}/group/invite`,
+    url: `${REQUEST_DOMAIN}/org/member/group/invite`,
     method: 'PUT',
     data: {
       ...data,
