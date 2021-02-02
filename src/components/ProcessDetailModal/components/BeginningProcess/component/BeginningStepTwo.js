@@ -1233,7 +1233,8 @@ export default class BeginningStepTwo extends Component {
       itemKey,
       processEditDatas = [],
       itemValue,
-      projectDetailInfoData: { data = [], board_id }
+      projectDetailInfoData: { data = [], board_id },
+      processInfo: { status: parentStatus }
     } = this.props
     const {
       status,
@@ -1372,7 +1373,7 @@ export default class BeginningStepTwo extends Component {
                         >
                           {`${transPrincipalList.length}位审批人`}
                         </span>
-                        {status == '0' && (
+                        {parentStatus == '0' && (
                           <span style={{ position: 'relative' }}>
                             <AmendComponent
                               type="2"
@@ -1437,7 +1438,7 @@ export default class BeginningStepTwo extends Component {
                           </span>
                         </>
                       )}
-                      {status == '0' &&
+                      {parentStatus == '0' &&
                         (cc_locking == '0' ? (
                           <span style={{ position: 'relative' }}>
                             <AmendComponent

@@ -1447,13 +1447,16 @@ export default class MainContent extends Component {
       <div
         style={{
           display: 'flex',
-          flexDirection: 'column',
-          width: '248px',
+          // flexDirection: 'column',
+          // width: '248px',
           height: '112px',
-          justifyContent: 'space-around'
+          justifyContent: 'center',
+          alignItems: 'center',
+          width: '100%'
         }}
       >
         <Button
+          style={{ marginRight: '34px', minWidth: '116px' }}
           disabled={saveTempleteDisabled}
           onClick={this.handleCreateProcess}
           type="primary"
@@ -1829,29 +1832,29 @@ export default class MainContent extends Component {
                 position: 'relative'
               }}
             >
-              {processPageFlagStep == '3' && (
-                <Popover
-                  trigger="click"
-                  title={null}
-                  onVisibleChange={this.handleProcessStartConfirmVisible}
-                  content={this.renderProcessStartConfirm()}
-                  icon={<></>}
-                  getPopupContainer={triggerNode => triggerNode.parentNode}
-                >
-                  <Button
-                    type={processPageFlagStep == '3' && 'primary'}
-                    disabled={saveTempleteDisabled}
-                    style={{
-                      marginRight: '24px',
-                      height: '40px',
-                      border: '1px solid rgba(24,144,255,1)',
-                      color: processPageFlagStep == '3' ? '#fff' : '#1890FF'
-                    }}
-                  >
-                    开始{`${currentNounPlanFilterName(FLOWS)}`}
-                  </Button>
-                </Popover>
-              )}
+              {processPageFlagStep == '3' && this.renderProcessStartConfirm()
+              // <Popover
+              //   trigger="click"
+              //   title={null}
+              //   onVisibleChange={this.handleProcessStartConfirmVisible}
+              //   content={this.renderProcessStartConfirm()}
+              //   icon={<></>}
+              //   getPopupContainer={triggerNode => triggerNode.parentNode}
+              // >
+              //   <Button
+              //     type={processPageFlagStep == '3' && 'primary'}
+              //     disabled={saveTempleteDisabled}
+              //     style={{
+              //       marginRight: '24px',
+              //       height: '40px',
+              //       border: '1px solid rgba(24,144,255,1)',
+              //       color: processPageFlagStep == '3' ? '#fff' : '#1890FF'
+              //     }}
+              //   >
+              //     开始{`${currentNounPlanFilterName(FLOWS)}`}
+              //   </Button>
+              // </Popover>
+              }
               {(processPageFlagStep == '1' || processPageFlagStep == '2') && (
                 <Button
                   onClick={this.handleSaveProcessTemplate}

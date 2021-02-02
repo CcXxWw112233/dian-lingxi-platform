@@ -1102,7 +1102,8 @@ export default class BeginningStepThree extends Component {
       itemKey,
       itemValue,
       processEditDatas = [],
-      projectDetailInfoData: { data = [], board_id }
+      projectDetailInfoData: { data = [], board_id },
+      processInfo: { status: parentStatus }
     } = this.props
     const {
       is_show_spread_arrow,
@@ -1237,7 +1238,7 @@ export default class BeginningStepThree extends Component {
                       <span className={indexStyles.content__principalList_info}>
                         {`${transPrincipalList.length}位评分人`}
                       </span>
-                      {status == '0' &&
+                      {parentStatus == '0' &&
                         (score_locked == '0' ? (
                           <span style={{ position: 'relative' }}>
                             <AmendComponent
@@ -1323,43 +1324,45 @@ export default class BeginningStepThree extends Component {
                         </span>
                       </>
                     )}
-                    {status == '0' && cc_locking == '0' ? (
-                      <span style={{ position: 'relative' }}>
-                        <AmendComponent
-                          type="3"
-                          updateParentsAssigneesOrCopyPersonnel={
-                            this.updateParentsAssigneesOrCopyPersonnel
-                          }
-                          updateCorrespondingPrcodessStepWithNodeContent={
-                            this.updateCorrespondingPrcodessStepWithNodeContent
-                          }
-                          placementTitle="抄送人"
-                          data={data}
-                          itemKey={itemKey}
-                          itemValue={new_itemValue}
-                          board_id={board_id}
-                        />
-                      </span>
-                    ) : (
-                      <Tooltip
-                        title="已锁定抄送人"
-                        placement="top"
-                        getPopupContainer={triggerNode =>
-                          triggerNode.parentNode
-                        }
-                      >
-                        <span
-                          style={{
-                            cursor: 'pointer',
-                            color: 'rgba(0,0,0,0.25)',
-                            marginLeft: '4px'
-                          }}
-                          className={globalStyles.authTheme}
-                        >
-                          &#xe86a;
+                    {parentStatus == '0' &&
+                      (cc_locking == '0' ? (
+                        <span style={{ position: 'relative' }}>
+                          <AmendComponent
+                            type="3"
+                            updateParentsAssigneesOrCopyPersonnel={
+                              this.updateParentsAssigneesOrCopyPersonnel
+                            }
+                            updateCorrespondingPrcodessStepWithNodeContent={
+                              this
+                                .updateCorrespondingPrcodessStepWithNodeContent
+                            }
+                            placementTitle="抄送人"
+                            data={data}
+                            itemKey={itemKey}
+                            itemValue={new_itemValue}
+                            board_id={board_id}
+                          />
                         </span>
-                      </Tooltip>
-                    )}
+                      ) : (
+                        <Tooltip
+                          title="已锁定抄送人"
+                          placement="top"
+                          getPopupContainer={triggerNode =>
+                            triggerNode.parentNode
+                          }
+                        >
+                          <span
+                            style={{
+                              cursor: 'pointer',
+                              color: 'rgba(0,0,0,0.25)',
+                              marginLeft: '4px'
+                            }}
+                            className={globalStyles.authTheme}
+                          >
+                            &#xe86a;
+                          </span>
+                        </Tooltip>
+                      ))}
                   </div>
                 )}
               </div>

@@ -804,7 +804,8 @@ export default class BeginningStepOne extends Component {
       processEditDatas = [],
       itemValue = {},
       projectDetailInfoData: { data = [], board_id },
-      currentOrgAllMembers = []
+      currentOrgAllMembers = [],
+      processInfo: { status: parentStatus }
     } = this.props
     const {
       status,
@@ -943,7 +944,7 @@ export default class BeginningStepOne extends Component {
                       </span>
                     </>
                   )}
-                  {status == '0' && (
+                  {parentStatus == '0' && (
                     <span style={{ position: 'relative' }}>
                       <AmendComponent
                         type="1"
@@ -1006,7 +1007,7 @@ export default class BeginningStepOne extends Component {
                         </span>
                       </>
                     )}
-                    {status == '0' &&
+                    {parentStatus == '0' &&
                       (cc_locking == '0' ? (
                         <span style={{ position: 'relative' }}>
                           <AmendComponent
