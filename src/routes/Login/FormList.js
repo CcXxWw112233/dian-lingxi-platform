@@ -38,11 +38,11 @@ class FormList extends React.Component {
           datas: { is_show_pic_verify_code }
         } = model
         if (
-          !validateTel(values['account']) &&
-          !validateEmail(values['account'])
+          !validateTel(values['account'])
+          // && !validateEmail(values['account'])
         ) {
           //输入既不满足手机号又不满足邮箱
-          message.warn('请输入正确的手机号或邮箱。', MESSAGE_DURATION_TIME)
+          message.warn('请输入正确的手机号。', MESSAGE_DURATION_TIME)
           return false
         }
         if (loginType === 'password') {
@@ -96,9 +96,12 @@ class FormList extends React.Component {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (name === 'account') {
         //输入框是账户
-        if (!validateTel(values[name]) && !validateEmail(values[name])) {
+        if (
+          !validateTel(values[name])
+          // && !validateEmail(values[name])
+        ) {
           //输入既不满足手机号又不满足邮箱
-          message.warn('请输入正确的手机号或邮箱。', MESSAGE_DURATION_TIME)
+          message.warn('请输入正确的手机号。', MESSAGE_DURATION_TIME)
         }
         if (validateTel(values[name])) {
           //如果用户输入的是手机号
@@ -187,9 +190,9 @@ class FormList extends React.Component {
                 <Icon type="user" style={{ color: '#8C8C8C', fontSize: 16 }} />
               }
               maxLength={40}
-              // placeholder="手机号/邮箱"
               placeholder={
-                loginType === 'password' ? '手机号/邮箱' : '输入手机号'
+                '输入手机号'
+                // loginType === 'password' ? '手机号/邮箱' : '输入手机号'
               }
               onBlur={this.verifyByBlur.bind(null, 'account')}
               onChange={e => this.verifyAccountByChange(e, 'account')}

@@ -72,15 +72,16 @@ class FormList extends React.Component {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         if (
-          !validateTel(values['mobile']) &&
-          !validateEmail(values['mobile'])
+          !validateTel(values['mobile'])
+          // &&!validateEmail(values['mobile'])
         ) {
           //输入既不满足手机号又不满足邮箱
           if (this.state.accountType === 'mobile') {
             message.warn('请输入正确格式的手机号。', MESSAGE_DURATION_TIME)
-          } else {
-            message.warn('请输入正确格式的邮箱。', MESSAGE_DURATION_TIME)
           }
+          // else {
+          //   message.warn('请输入正确格式的邮箱。', MESSAGE_DURATION_TIME)
+          // }
           return false
         }
         if (!this.state.completeValidation) {
@@ -106,7 +107,7 @@ class FormList extends React.Component {
             rules: [
               {
                 required: false,
-                message: '请输入绑定的手机号或邮箱',
+                message: '请输入绑定的手机号',
                 whitespace: true
               }
             ]
@@ -114,8 +115,8 @@ class FormList extends React.Component {
             <Input
               style={{ height: '40px', fontSize: 16 }}
               maxLength={40}
-              placeholder="绑定的手机号或邮箱"
-              onChange={e => this.verifyAccountByChange(e, 'account')}
+              placeholder="绑定的手机号"
+              // onChange={e => this.verifyAccountByChange(e, 'account')}
             />
           )}
         </FormItem>
