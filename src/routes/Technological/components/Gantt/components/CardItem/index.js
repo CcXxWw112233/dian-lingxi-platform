@@ -784,17 +784,17 @@ export default class CardItem extends Component {
       board_id: board_id || gantt_board_id,
       ...row_param
     }
-    if (
-      (gantt_view_mode == 'hours' &&
-        isSamHour(start_time, start_time_timestamp)) ||
-      (gantt_view_mode != 'hours' && isSamDay(start_time, start_time_timestamp))
-      // isSamDay(start_time, start_time_timestamp)
-    ) {
-      //时间一样时只改变行
-      delete request_param.start_time
-      delete request_param.due_time
-    }
-    // console.log('ssssssssssaaaa', 2)
+    // if (
+    //   (gantt_view_mode == 'hours' &&
+    //     isSamHour(start_time, start_time_timestamp)) ||
+    //   (gantt_view_mode != 'hours' && isSamDay(start_time, start_time_timestamp))
+    //   // isSamDay(start_time, start_time_timestamp)
+    // ) {
+    //   //时间一样时只改变行
+    //   delete request_param.start_time
+    //   delete request_param.due_time
+    // }
+    console.log('ssssssssssaaaa', 2)
     updateTaskVTwo({ ...request_param }, { isNotLoading: false })
       .then(res => {
         if (isApiResponseOk(res)) {
@@ -917,16 +917,17 @@ export default class CardItem extends Component {
     // if (group_row_param.list_id == '0') {
     //     delete params.list_id
     // }
-    if (
-      (gantt_view_mode == 'hours' &&
-        isSamHour(start_time, start_time_timestamp)) ||
-      (gantt_view_mode != 'hours' && isSamDay(start_time, start_time_timestamp))
-      // isSamDay(start_time, start_time_timestamp)
-    ) {
-      //时间一样时只改变行
-      delete params.start_time
-      delete params.due_time
-    }
+    // if (
+    //   (gantt_view_mode == 'hours' &&
+    //     isSamHour(start_time, start_time_timestamp)) ||
+    //   (gantt_view_mode != 'hours' && isSamDay(start_time, start_time_timestamp))
+    //   // isSamDay(start_time, start_time_timestamp)
+    // ) {
+    //   //时间一样时只改变行
+    //   delete params.start_time
+    //   delete params.due_time
+    // }
+    console.log('ssssssssssaaaa', 3)
     updateTaskVTwo({ ...params }, { isNotLoading: false })
       .then(res => {
         if (isApiResponseOk(res)) {

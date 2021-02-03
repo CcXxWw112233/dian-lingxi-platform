@@ -747,7 +747,7 @@ export default class GroupMilestones extends Component {
       list_group = [],
       get_milestone_loading
     } = this.props
-    console.log('ssssssss', dragg_milestone_err)
+    // console.log('ssssssss', dragg_milestone_err)
     return (
       <div
         style={{
