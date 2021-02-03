@@ -31,7 +31,8 @@ export default class GroupMilestones extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      render_milestones_data: []
+      render_milestones_data: [],
+      dragg_milestone_err: false //拖拽里程碑是否报错
     }
   }
   componentDidMount() {
@@ -662,6 +663,9 @@ export default class GroupMilestones extends Component {
       elements.forEach(node => {
         node.style.transform = 'translate(0px, 0px)'
       })
+      this.setState({
+        dragg_milestone_err: false
+      })
     }
     const params = {
       id: milestones[0].id,
@@ -737,12 +741,13 @@ export default class GroupMilestones extends Component {
   }
 
   render() {
-    const { render_milestones_data = [] } = this.state
+    const { render_milestones_data = [], dragg_milestone_err } = this.state
     const {
       group_view_type,
       list_group = [],
       get_milestone_loading
     } = this.props
+    console.log('ssssssss', dragg_milestone_err)
     return (
       <div
         style={{
@@ -757,7 +762,7 @@ export default class GroupMilestones extends Component {
           !!list_group.length &&
           render_milestones_data.map(item => {
             return (
-              <React.Fragment key={item.timestamp}>
+              <React.Fragment key={`${item.timestamp} ${dragg_milestone_err}`}>
                 {this.renderView(item)}
               </React.Fragment>
             )
