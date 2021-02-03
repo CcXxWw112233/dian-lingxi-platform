@@ -1882,12 +1882,12 @@ export default class CardItem extends Component {
     })
 
     // 获取存在里程碑的分组
-    let list_ids = []
-    if (!ganttIsOutlineView({ group_view_type })) {
-      list_ids = this.getIsHasMilestoneInListGroup()
-    }
-    const isHasListGroup = list_ids.indexOf(list_id) != -1
-    const count_top = isHasListGroup ? local_top + 2 + ceiHeight : local_top + 2
+    // let list_ids = []
+    // if (!ganttIsOutlineView({ group_view_type })) {
+    //   list_ids = this.getIsHasMilestoneInListGroup()
+    // }
+    // const isHasListGroup = list_ids.indexOf(list_id) != -1
+    // const count_top = isHasListGroup ? local_top + 2 + ceiHeight : local_top + 2
     return (
       <div
         className={`${'gantt_card_flag_special'} ${
@@ -1902,7 +1902,7 @@ export default class CardItem extends Component {
         data-rely_top={id}
         style={{
           left: local_left + (gantt_view_mode == 'year' ? 0 : card_left_diff),
-          top: count_top,
+          top: local_top + 2,
           //width,
           width:
             (local_width || 6) -
