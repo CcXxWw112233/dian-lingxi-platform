@@ -49,6 +49,7 @@ export async function getGuideCategoryList(params) {
   return request({
     url: `${REQUEST_DOMAIN_ARTICLE}/api/guide/category`,
     method: 'GET',
+    headers: { Authorization: 'lingxi' },
     params
   })
 }
@@ -56,7 +57,8 @@ export async function getGuideCategoryList(params) {
 export async function getGuideArticle(data) {
   return request({
     url: `${REQUEST_DOMAIN_ARTICLE}/api/guide/article?category_id=${data.id}`,
-    method: 'GET'
+    method: 'GET',
+    headers: { Authorization: 'lingxi' }
   })
 }
 
