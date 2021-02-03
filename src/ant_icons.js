@@ -20,6 +20,7 @@ export { default as LockOutline } from '@ant-design/icons/lib/outline/LockOutlin
 export { default as LoadingOutline } from '@ant-design/icons/lib/outline/LoadingOutline'
 export { default as LeftOutline } from '@ant-design/icons/lib/outline/LeftOutline'
 export { default as DownOutline } from '@ant-design/icons/lib/outline/DownOutline'
+export { default as UpOutline } from '@ant-design/icons/lib/outline/UpOutline'
 export { default as CaretRightOutline } from '@ant-design/icons/lib/outline/CaretRightOutline'
 export { default as BarsOutline } from '@ant-design/icons/lib/outline/BarsOutline'
 export { default as RightOutline } from '@ant-design/icons/lib/outline/RightOutline'
