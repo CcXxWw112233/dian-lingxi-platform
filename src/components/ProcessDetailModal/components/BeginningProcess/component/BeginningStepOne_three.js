@@ -168,7 +168,7 @@ export default class BeginningStepOne_three extends Component {
               onChange={this.handleStartDatePickerChange.bind(this)}
               onOpenChange={this.handleStartOpenChange}
               open={this.state.startOpen}
-              format="YYYY-MM-DD HH:mm"
+              format="YYYY/MM/DD HH:mm"
               showTime={{ format: 'HH:mm' }}
               style={{ width: '100%' }}
               placeholder={prompt_content}
@@ -185,7 +185,7 @@ export default class BeginningStepOne_three extends Component {
           // 表示仅日期
           container = (
             <RangePicker
-              format="YYYY-MM-DD"
+              format="YYYY/MM/DD"
               style={{ width: '100%' }}
               onChange={this.rangePickerChange}
               value={
@@ -203,7 +203,7 @@ export default class BeginningStepOne_three extends Component {
           container = (
             <RangePicker
               showTime={{ format: 'HH:mm' }}
-              format="YYYY-MM-DD HH:mm"
+              format="YYYY/MM/DD HH:mm"
               onChange={this.rangePickerChange2}
               style={{ width: '100%' }}
               value={
