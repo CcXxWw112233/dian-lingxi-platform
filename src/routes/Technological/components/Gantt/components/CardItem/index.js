@@ -179,8 +179,8 @@ export default class CardItem extends Component {
       //在中间
       // target.style.cursor = 'move';
     }
-    this.x = e.clientX || e.changedTouches[0].clientX
-    this.y = e.clientY || e.changedTouches[0].clientY
+    this.x = e.clientX || e.changedTouches?.[0]?.clientX
+    this.y = e.clientY || e.changedTouches?.[0]?.clientY
     //获取左部和顶部的偏移量
     this.l = target.offsetLeft
     this.t = target.offsetTop
@@ -260,11 +260,11 @@ export default class CardItem extends Component {
       left
     } = itemValue
     //在鼠标hover到任务条上，非创建任务时，将虚线框隐藏
-    const { ganttPanelDashedDrag } = this.props
+    const { ganttPanelDashedDrag, task_is_dragging } = this.props
     if (!ganttPanelDashedDrag) {
       this.props.setDasheRectShow && this.props.setDasheRectShow(false)
     }
-    if (this.state.rely_down) return
+    if (this.state.rely_down || task_is_dragging) return
     // 鼠标移入 触发显示日期
     this.props.dispatch({
       type: 'gantt/updateDatas',
@@ -283,7 +283,7 @@ export default class CardItem extends Component {
 
   // 延展左边
   extentionLeft = e => {
-    const nx = e.clientX || e.changedTouches[0].clientX
+    const nx = e.clientX || e.changedTouches?.[0]?.clientX
     //计算移动后的左偏移量和顶部的偏移量
     const nl = nx - (this.x - this.l)
     const nw = this.x - nx //宽度
@@ -295,7 +295,7 @@ export default class CardItem extends Component {
 
   // 延展右边
   extentionRight = e => {
-    const nx = e.clientX || e.changedTouches[0].clientX
+    const nx = e.clientX || e.changedTouches?.[0]?.clientX
     const { local_width_flag } = this.state
     const { ceilWidth } = this.props
     //计算移动后的左偏移量和顶部的偏移量
@@ -319,11 +319,11 @@ export default class CardItem extends Component {
   // 整条拖动
   changePosition = e => {
     //获取x和y
-    const nx = e.clientX || e.changedTouches[0].clientX
-    const ny = e.clientY || e.changedTouches[0].clientY
+    const nx = e.clientX || e.changedTouches?.[0]?.clientX
+    const ny = e.clientY || e.changedTouches?.[0]?.clientY
     //计算移动后的左偏移量和顶部的偏移量
     const nl = nx - (this.x - this.l)
-    const nt = ny - (this.y - this.t)
+    let nt = ny - (this.y - this.t)
     const { gantt_view_mode } = this.props
     if (gantt_view_mode == 'relative_time') {
       if (nl <= 0) return
@@ -357,6 +357,9 @@ export default class CardItem extends Component {
       !ganttIsOutlineView({ group_view_type })
     ) {
       //只有在分组的情况下才能拖上下
+      if (nt <= 0) {
+        nt = 0
+      }
       this.setState({
         local_top: nt
       })
@@ -371,7 +374,7 @@ export default class CardItem extends Component {
       return
     }
     const { currentTarget } = event
-    const clientX = event.clientX || event.changedTouches[0].clientX
+    const clientX = event.clientX || event.changedTouches?.[0]?.clientX
     const { clientWidth } = currentTarget
     const oDiv = currentTarget
     const target_1 = document.getElementById('gantt_card_out_middle')
@@ -1523,7 +1526,7 @@ export default class CardItem extends Component {
         // console.log('s_event', 'onMouseLeave')
         this.set_drag_else_over_in(false)
         // 清除显示日期选中
-        if (this.state.rely_down) return
+        if (this.state.rely_down || this.props.task_is_dragging) return
         this.props.dispatch({
           type: 'gantt/updateDatas',
           payload: {

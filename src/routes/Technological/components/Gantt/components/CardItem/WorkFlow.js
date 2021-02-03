@@ -64,7 +64,7 @@ export default class WorkFlowItem extends Component {
     setTimeout(() => {
       this.is_down = true
     }, 50)
-    this.x = e.clientX || e.changedTouches[0].clientX
+    this.x = e.clientX || e.changedTouches?.[0]?.clientX
     //获取左部和顶部的偏移量
     this.l = target.offsetLeft
 
@@ -116,7 +116,7 @@ export default class WorkFlowItem extends Component {
   // 整条拖动
   changePosition = e => {
     //获取x和y
-    const nx = e.clientX || e.changedTouches[0].clientX
+    const nx = e.clientX || e.changedTouches?.[0]?.clientX
     //计算移动后的左偏移量和顶部的偏移量
     const nl = nx - (this.x - this.l)
     this.setState({
