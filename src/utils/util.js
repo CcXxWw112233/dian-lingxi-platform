@@ -411,7 +411,7 @@ export const compareTwoTimestamp = (timeStampA, timestampB) => {
     timestampB.toString().length < 13
       ? Number(timestampB) * 1000
       : Number(timestampB)
-  return new_time_a > new_time_b
+  return new_time_a >= new_time_b
 }
 
 // 比较两个时间是否同一天
