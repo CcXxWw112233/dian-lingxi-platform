@@ -30,11 +30,11 @@ export async function getUSerInfo(params) {
 //退出登录
 export async function logout(data) {
   return request({
-    url: `${REQUEST_DOMAIN}/public/user/signout`,
+    url: `dian_lingxi_auth/signout`,
     method: 'GET',
     params: {
-      accessToken: Cookies.get('Authorization'),
-      refreshToken: Cookies.get('refreshToken')
+      accessToken: Cookies.get('Authorization')
+      // refreshToken: Cookies.get('refreshToken')
     }
   })
 }
