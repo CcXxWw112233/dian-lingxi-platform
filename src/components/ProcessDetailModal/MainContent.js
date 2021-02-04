@@ -1682,12 +1682,19 @@ export default class MainContent extends Component {
                           fontSize: '14px'
                         }}
                       >
-                        {timestampToTimeNormal(
-                          plan_start_time ? plan_start_time : create_time,
-                          '/',
-                          true
-                        )}{' '}
-                        开始
+                        {status == '0'
+                          ? plan_start_time
+                            ? `${timestampToTimeNormal(
+                                plan_start_time,
+                                '/',
+                                true
+                              )}开始`
+                            : '未设置启动时间'
+                          : `${timestampToTimeNormal(
+                              create_time,
+                              '/',
+                              true
+                            )}开始`}{' '}
                       </span>
                     )}
                   </div>
@@ -1934,12 +1941,19 @@ export default class MainContent extends Component {
               </span>
               {processPageFlagStep == '4' && (
                 <span style={{ flexShrink: 0, color: 'rgba(0,0,0,0.45)' }}>
-                  {timestampToTimeNormal(
-                    plan_start_time ? plan_start_time : create_time,
-                    '/',
-                    true
-                  )}{' '}
-                  开始
+                  {status == '0'
+                    ? plan_start_time
+                      ? `${timestampToTimeNormal(
+                          plan_start_time,
+                          '/',
+                          true
+                        )}开始`
+                      : '未设置启动时间'
+                    : `${timestampToTimeNormal(
+                        create_time,
+                        '/',
+                        true
+                      )}开始`}{' '}
                 </span>
               )}
             </div>

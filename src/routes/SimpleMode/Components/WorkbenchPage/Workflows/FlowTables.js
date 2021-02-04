@@ -303,6 +303,15 @@ export default class FlowTables extends Component {
     const { id, board_id, org_id } = record
     const { dispatch, simplemodeCurrentProject = {} } = this.props
     setBoardIdStorage(board_id, org_id)
+    dispatch({
+      type: 'projectDetail/projectDetailInfo',
+      payload: {
+        id: board_id
+      }
+    }).then(res => {
+      this.handleProcessInfo(id)
+    })
+    return
     if (
       !simplemodeCurrentProject.board_id ||
       simplemodeCurrentProject.board_id == '0'

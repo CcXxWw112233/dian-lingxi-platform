@@ -51,7 +51,8 @@ import {
   hours_view_start_work_oclock,
   hours_view_due_work_oclock,
   ceil_width_hours,
-  group_rows_fold_1
+  group_rows_fold_1,
+  hole_movedown_height
 } from '../../../../routes/Technological/components/Gantt/constants'
 import { getModelSelectDatasState } from '../../../utils'
 import { getProjectGoupList } from '../../../../services/technological/task'
