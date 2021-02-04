@@ -35,7 +35,7 @@ class FileListRightBarFileDetailModal extends React.Component {
           background: '#fff',
           left: 0,
           top: 0,
-          zIndex: 1003
+          zIndex: 1009
         }
       : {}
     return (

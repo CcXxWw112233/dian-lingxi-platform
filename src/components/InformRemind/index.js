@@ -141,7 +141,7 @@ export default class index extends Component {
             title={title}
             visible={visible}
             width={595}
-            zIndex={1007}
+            zIndex={1009}
             maskClosable={false}
             destroyOnClose
             mask={true}

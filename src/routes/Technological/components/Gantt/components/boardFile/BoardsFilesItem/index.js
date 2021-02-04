@@ -18,7 +18,8 @@ import {
   setUploadHeaderBaseInfo,
   getGlobalData
 } from '../../../../../../../utils/businessFunction'
-import FileDetailModal from '@/components/FileDetailModal'
+import FileDetailModal from '@/routes/Technological/components/ProjectDetail/FileModule/FileListRightBarFileDetailModal'
+//'@/components/FileDetailModal'
 import { connect } from 'dva'
 import { currentFolderJudegeFileUpload } from '../../../ganttBusiness'
 const { Dragger } = Upload

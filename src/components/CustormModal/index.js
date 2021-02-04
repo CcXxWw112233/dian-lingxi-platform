@@ -149,7 +149,7 @@ class CustormModal extends React.Component {
       visible,
       overInner,
       width,
-      zIndex = 1006,
+      zIndex = 1009,
       maskClosable,
       footer,
       destroyOnClose,

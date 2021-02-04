@@ -1806,7 +1806,7 @@ export default class PdfComment extends React.Component {
       let file_name = name
       Modal.confirm({
         title: '另存为',
-        zIndex: 1007,
+        zIndex: 1009,
         content: (
           <Input
             placeholder="请输入文件名"
