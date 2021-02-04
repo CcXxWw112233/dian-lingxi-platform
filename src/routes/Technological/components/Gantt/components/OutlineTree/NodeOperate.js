@@ -281,6 +281,9 @@ export default class NodeOperate extends Component {
           this.props.editName()
         }
         break
+      case 'look_detail':
+        this.lookDetail()
+        break
       default:
         if (/^group_id_+/.test(key)) {
           //选择任务分组
@@ -520,6 +523,66 @@ export default class NodeOperate extends Component {
       }
     })
   }
+
+  //查看详情
+  lookDetail = () => {
+    const {
+      nodeValue: { tree_type, id, parent_card_id },
+      gantt_board_id,
+      dispatch
+    } = this.props
+    if (tree_type == '1') {
+      dispatch({
+        type: 'milestoneDetail/updateDatas',
+        payload: {
+          milestone_id: id
+        }
+      })
+      dispatch({
+        type: 'gantt/updateDatas',
+        payload: {
+          miletone_detail_modal_visible: true
+        }
+      })
+    } else if (tree_type == '2') {
+      dispatch({
+        type: 'gantt/updateDatas',
+        payload: {
+          selected_card_visible: true
+        }
+      })
+      dispatch({
+        type: 'publicTaskDetailModal/updateDatas',
+        payload: {
+          card_id: parent_card_id || id
+        }
+      })
+      dispatch({
+        type: 'workbenchPublicDatas/updateDatas',
+        payload: {
+          board_id: gantt_board_id
+        }
+      })
+    } else if (tree_type == '3') {
+      dispatch({
+        type: 'publicProcessDetailModal/getProcessInfo',
+        payload: {
+          id,
+          calback: () => {
+            dispatch({
+              type: 'publicProcessDetailModal/updateDatas',
+              payload: {
+                process_detail_modal_visible: true,
+                currentProcessInstanceId: id,
+                processPageFlagStep: '4'
+              }
+            })
+          }
+        }
+      })
+    } else {
+    }
+  }
   render() {
     const { group_sub_visible, create_group_visible } = this.state
     const { nodeValue = {} } = this.props
@@ -559,6 +622,12 @@ export default class NodeOperate extends Component {
           onClick={() => this.menuItemClick('rename')}
         >
           重命名
+        </div>
+        <div
+          className={styles.menu_item}
+          onClick={() => this.menuItemClick('look_detail')}
+        >
+          查看详情
         </div>
         {//一级任务是顶级则没有
         tree_type == '1' && (
