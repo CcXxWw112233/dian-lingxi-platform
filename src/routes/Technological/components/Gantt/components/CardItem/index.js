@@ -132,11 +132,14 @@ export default class CardItem extends Component {
 
   // 任务弹窗
   setSpecilTaskExample = data => {
-    const { task_is_dragging, ganttPanelDashedDrag } = this.props
-    const { is_moved } = this.state
+    const {
+      task_is_dragging,
+      ganttPanelDashedDrag,
+      task_is_drag_moving
+    } = this.props
     // console.log('这是什么', '松开回调', task_is_dragging, is_moved, ganttPanelDashedDrag)
     if (
-      is_moved ||
+      task_is_drag_moving ||
       ganttPanelDashedDrag //这是表示创建中
     ) {
       this.props.setTaskIsDragging && this.props.setTaskIsDragging(false, 1) //当拖动完成后，释放创建任务的锁，让可以正常创建任务
@@ -146,9 +149,10 @@ export default class CardItem extends Component {
     setSpecilTaskExample(data)
     // 恢复最初状态
     setTimeout(() => {
-      this.setState({
-        is_moved: false
-      })
+      // this.setState({
+      //   is_moved: false
+      // })
+      this.props.setTaskIsDragMoving(false)
       this.props.setTaskIsDragging && this.props.setTaskIsDragging(false, 2) //当拖动完成后，释放创建任务的锁，让可以正常创建任务
     }, 700)
 
@@ -208,9 +212,10 @@ export default class CardItem extends Component {
     if (this.is_down == false) {
       return
     }
-    this.setState({
-      is_moved: true
-    })
+    // this.setState({
+    //   is_moved: true
+    // })
+    this.props.setTaskIsDragMoving(true)
     const { drag_type } = this.state
     // console.log('s_event', 'onTouchMove3', drag_type)
     if ('position' == drag_type) {
@@ -455,9 +460,11 @@ export default class CardItem extends Component {
     document.removeEventListener('touchmove', this.onTouchMove, false)
     document.removeEventListener('touchend', this.onTouchEnd, false)
     setTimeout(() => {
-      this.setState({
-        is_moved: false
-      })
+      // this.setState({
+      //   is_moved: false
+      // })
+      this.props.setTaskIsDragMoving(false)
+
       this.props.setTaskIsDragging && this.props.setTaskIsDragging(false, 4) //当拖动完成后，释放创建任务的锁，让可以正常创建任务
     }, 300)
   }
@@ -759,11 +766,12 @@ export default class CardItem extends Component {
     updateData = { ...updateData, ...row_param }
 
     if (
-      ((gantt_view_mode == 'hours' &&
+      (((gantt_view_mode == 'hours' &&
         Math.abs(local_left - left) < ceilWidth) ||
         (gantt_view_mode != 'hours' &&
           isSamDay(start_time, start_time_timestamp))) &&
-      (single_board_view ? !!row && row == new_row : true) //分组模式下行高微信
+        (single_board_view ? !!row && row == new_row : true)) || //分组模式下行高微信
+      !new_row
     ) {
       //向右拖动时，如果是在同一天, 同一行，则不去更新
       this.setState(
