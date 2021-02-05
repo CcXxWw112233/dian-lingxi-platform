@@ -576,12 +576,12 @@ export default class GroupMilestones extends Component {
     this.milestone_drag_point_diff = x - this.milestone_initial_left //做初始标记，由于鼠标拖拽的位置在该元素上不同，记录元素最左边和鼠标落点的差值
     this.drag_ele = e.currentTarget
 
-    // console.log('sssssssss_00', {
-    //   x,
-    //   milestone_initial_left: this.milestone_initial_left,
-    //   milestone_drag_point_diff: this.milestone_drag_point_diff,
-    //   target: e.currentTarget.style.left
-    // })
+    console.log('sssssssss_00', {
+      x,
+      milestone_initial_left: this.milestone_initial_left,
+      milestone_drag_point_diff: this.milestone_drag_point_diff,
+      target: e.target.style.left
+    })
   }
   milestoneDraging = e => {
     const { pageX } = getPageXY(e)
@@ -621,7 +621,6 @@ export default class GroupMilestones extends Component {
         gantt_head_width
       }) || {}
     // console.log('sssssssssss_22_0', x, this.milestone_drag_point_diff)
-
     // x = x - this.milestone_drag_point_diff + ceilWidth //校准
     // const { x } = (await this.setCurrentRect(this.milestone_drag_ele)) || {}
     let date = {} //具体日期
@@ -673,6 +672,22 @@ export default class GroupMilestones extends Component {
     }
     if (gantt_board_id == '0') {
       setBoardIdStorage(milestones[0].board_id)
+    }
+    if (
+      (gantt_view_mode == 'hours' &&
+        isSamHour(milestones[0].deadline, timestampEnd)) ||
+      (gantt_view_mode != 'hours' &&
+        isSamDay(milestones[0].deadline, timestampEnd))
+    ) {
+      this.setState(
+        {
+          dragg_milestone_err: true
+        },
+        () => {
+          resetNodeTransform()
+        }
+      )
+      return
     }
     return new Promise((resolve, reject) => {
       updateMilestone(
