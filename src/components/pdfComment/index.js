@@ -1167,7 +1167,7 @@ export default class PdfComment extends React.Component {
               let dataContainer = object.get('container_size')
               if (dataContainer) {
                 dataContainer = dataContainer.split(',').map(item => +item)
-                let scale = container.clientWidth / dataContainer[0]
+                let scale = canvas.getWidth() / dataContainer[0]
                 object.scaleX = object.scaleX * scale
                 object.scaleY = object.scaleY * scale
                 object.left = object.left * scale
@@ -2088,8 +2088,8 @@ export default class PdfComment extends React.Component {
   // 切换抓手状态
   initDragEvent = () => {
     // if(this.state.isHand){
-    if (this.state.isHand) this.addModalToMobile()
-    else this.removeModal()
+    // if (this.state.isHand) this.addModalToMobile()
+    // else this.removeModal()
     this.drawCanvas = this.drawCanvas.map(item => {
       // 控件不能被选择，不会被操作
       item.selectable = this.state.isHand
@@ -2285,7 +2285,8 @@ export default class PdfComment extends React.Component {
         version_history: []
       })
       // 禁用画笔等
-      this.toogleHand(true)
+      // this.toogleHand(true)
+      this.changePen(false)
       this.setDrawType('mouse')
       this.drawCanvas.forEach(canvas => {
         canvas.forEachObject(o => {
