@@ -55,8 +55,14 @@ const getEffectOrReducerByName = name => `gantt/${name}`
 export default class GetRowGantt extends Component {
   constructor(props) {
     super(props)
+    this.initDashRectPrototype = {
+      x: 0,
+      y: 0,
+      width: 0,
+      height: task_item_height
+    }
     this.state = {
-      currentRect: { x: 0, y: 0, width: 0, height: task_item_height }, //当前操作的矩形属性
+      currentRect: this.initDashRectPrototype, //当前操作的矩形属性
       dasheRectShow: false, //虚线框是否显示
       isDasheRect: false, //生成任务后在原始虚线框位置处生成一条数据
       start_time: '',
@@ -211,6 +217,10 @@ export default class GetRowGantt extends Component {
     this.setState({ isMouseDown: true })
     this.handleCreateTask({ start_end: '1', top: currentRect.y })
     const target = this.refs.gantt_operate_area_panel //event.target || event.srcElement;
+    if (this.judgeAreaNotAllowDrag(currentRect.y)) {
+      this.stopDragging()
+      return
+    }
     target.onmousemove = this.dashedDragMousemove.bind(this)
     target.onmouseup = this.dashedDragMouseup.bind(this)
   }
@@ -289,9 +299,14 @@ export default class GetRowGantt extends Component {
 
   // 判断是否在可拖拽创建区域
   judgeAreaNotAllowDrag = py => {
-    const { group_not_allow_drag_area = [] } = this.props
-    for (let val of group_not_allow_drag_area) {
-      if (py >= val.start_area && py <= val.end_area) {
+    const {
+      group_not_allow_drag_area = [],
+      group_list_area_fold_section = []
+    } = this.props
+    for (let i = 0; i < group_not_allow_drag_area.length; i++) {
+      const val = group_not_allow_drag_area[i]
+      if (group_list_area_fold_section[i].is_group_folded) return false
+      if (py > val.start_area && py < val.end_area) {
         return true
       }
     }
@@ -376,7 +391,8 @@ export default class GetRowGantt extends Component {
 
     if (this.judgeAreaNotAllowDrag(py)) {
       this.setState({
-        dasheRectShow: false
+        dasheRectShow: false,
+        currentRect: { ...this.initDashRectPrototype, y: py }
       })
       return
     }
@@ -1026,6 +1042,7 @@ export default class GetRowGantt extends Component {
   }
   render() {
     const { currentRect = {}, dasheRectShow, drag_holiday_count } = this.state
+    // console.log('sssssssaaaa', this.props.group_not_allow_drag_area)
     const {
       gold_date_arr = [],
       list_group = [],

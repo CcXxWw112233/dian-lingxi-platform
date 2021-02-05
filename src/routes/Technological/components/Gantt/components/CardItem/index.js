@@ -778,7 +778,8 @@ export default class CardItem extends Component {
         (gantt_view_mode != 'hours' &&
           isSamDay(start_time, start_time_timestamp))) &&
         (single_board_view ? !!row && row == new_row : true)) || //分组模式下行高微信
-      !new_row
+      (ganttIsSingleBoardGroupView({ group_view_type, gantt_board_id }) &&
+        !new_row)
     ) {
       //向右拖动时，如果是在同一天, 同一行，则不去更新
       this.setState(
@@ -919,7 +920,10 @@ export default class CardItem extends Component {
 
     const group_row_param = await this.getRowsParam(local_top)
     // console.log('ssssssssssaaaa_改变分组', group_row_param)
-    if (!group_row_param.list_id || !group_row_param.row) {
+    if (
+      !ganttIsOutlineView({ group_view_type }) &&
+      (!group_row_param.list_id || !group_row_param.row)
+    ) {
       // 取不到目标分组的信息
       this.setState({
         local_left: left,

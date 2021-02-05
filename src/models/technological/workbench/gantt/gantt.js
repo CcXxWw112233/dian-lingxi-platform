@@ -1395,15 +1395,18 @@ export default {
         })
         const group_not_allow_drag_area = []
         for (let i = 0; i < group_list_area_section_height.length; i++) {
+          let start_area =
+            i == 0 ? 0 : group_list_area_section_height[i - 1] - 0.5 * ceiHeight
+          let end_area =
+            i == 0
+              ? ceiHeight
+              : group_list_area_section_height[i - 1] + ceiHeight
+          if (group_list_area_fold_section[i].is_group_folded) {
+            end_area = start_area
+          }
           group_not_allow_drag_area.push({
-            start_area:
-              i == 0
-                ? 0
-                : group_list_area_section_height[i - 1] - 0.5 * ceiHeight,
-            end_area:
-              i == 0
-                ? ceiHeight
-                : group_list_area_section_height[i - 1] + ceiHeight
+            start_area,
+            end_area
           })
         }
         // console.log('sssss', 's3', group_list_area_section_height)

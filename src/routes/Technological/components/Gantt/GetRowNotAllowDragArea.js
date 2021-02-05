@@ -72,7 +72,10 @@ export default class GetRowNotAllowDragArea extends Component {
                 // background: 'rgba(205,20,22,.1)',
                 background: 'rgba(255,0,0,.1)',
                 top,
-                height: end_area - top + ceiHeight * 0.5 - 6,
+                height:
+                  end_area == start_area
+                    ? 0
+                    : end_area - top + ceiHeight * 0.5 - 6,
                 backgroundImage:
                   '-webkit-gradient(linear, 0 0, 100% 100%, color-stop(.25, rgba(255, 255, 255, .3)), color-stop(.25, transparent), color-stop(.5, transparent), color-stop(.5, rgba(255, 255, 255, .3)), color-stop(.75, rgba(255, 255, 255, .3)), color-stop(.75, transparent), to(transparent))',
                 backgroundSize: '8px 8px'
