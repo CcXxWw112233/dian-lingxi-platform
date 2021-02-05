@@ -739,7 +739,7 @@ export default class GroupListHeadItem extends Component {
     const that = this
     Modal.confirm({
       title: `归档该项目？`,
-      zIndex: 1007,
+      zIndex: 1009,
       // content: <div style={{ color: 'rgba(0,0,0, .8)', fontSize: 14 }}>
       //   <span >删除后不可恢复</span>
       // </div>,

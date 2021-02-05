@@ -440,7 +440,7 @@ export default class MilestoneAdd extends React.Component {
           add_lcb_modal_visible={add_lcb_modal_visible}
           setAddLCBModalVisibile={this.setAddLCBModalVisibile}
           submitCreatMilestone={this.submitCreatMilestone}
-          zIndex={1007}
+          zIndex={1009}
         />
       </div>
     )

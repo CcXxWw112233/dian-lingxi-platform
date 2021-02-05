@@ -923,7 +923,7 @@ class DrawContent extends React.Component {
 
     Modal.confirm({
       title: `确认要删除这个附件吗？`,
-      zIndex: 1007,
+      zIndex: 1009,
       content: (
         <div style={{ color: 'rgba(0,0,0, .8)', fontSize: 14 }}>
           <span>删除后不可恢复</span>

@@ -30,7 +30,7 @@ export default class Header extends React.Component {
     Modal.confirm({
       title: '提示',
       content: '确认删除该里程碑？',
-      zIndex: 1007,
+      zIndex: 1009,
       onOk() {
         requestDeleteMiletone({ id }).then(res => {
           if (isApiResponseOk(res)) {

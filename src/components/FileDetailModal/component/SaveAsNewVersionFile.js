@@ -637,7 +637,7 @@ export default class SaveAsNewVersionFile extends Component {
     return (
       <div>
         <Modal
-          zIndex={1007}
+          zIndex={1009}
           visible={visible}
           title={<div style={{ textAlign: 'center' }}>{title}</div>}
           onOk={this.onOk}
