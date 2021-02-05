@@ -1178,6 +1178,17 @@ export default class PdfComment extends React.Component {
             canvas.set('_id', data.id)
             // 更新背景图
             canvas.setBackgroundImage(url, canvas.renderAll.bind(canvas), {})
+            let bg = canvas.get('backgroundImage')
+            if (!bg) return
+            let imgW = bg.get('width')
+            let imgH = bg.get('height')
+
+            bg.set({
+              scaleX: canvas.getWidth() / imgW,
+              scaleY: canvas.getHeight() / imgH
+            })
+            // 背景适配
+            canvas.setBackgroundImage(bg, canvas.renderAll.bind(canvas), {})
             // setTimeout(()=> {
             //   // 优化内存
             //   window.URL.revokeObjectURL(url);
@@ -2244,6 +2255,9 @@ export default class PdfComment extends React.Component {
         versionMsg: { ...val, postil_numbners: [] },
         version_history: []
       })
+      // 禁用画笔等
+      this.toogleHand(true)
+      this.setDrawType('mouse')
       this.drawCanvas.forEach(canvas => {
         canvas.forEachObject(o => {
           canvas.remove(o)
