@@ -82,9 +82,9 @@ export default class ThumbnailFilesListShow extends Component {
           key: 'file_size'
         },
         {
-          title: '修改日期',
-          dataIndex: 'update_time',
-          key: 'update_time',
+          title: '创建时间',
+          dataIndex: 'create_time',
+          key: 'create_time',
           render: (text, record, index) => {
             if (!text) return
             return (
