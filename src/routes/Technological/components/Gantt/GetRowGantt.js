@@ -18,7 +18,8 @@ import {
   ganttIsOutlineView,
   ceil_width,
   ceil_height,
-  gantt_panel_left_diff
+  gantt_panel_left_diff,
+  ganttIsSingleBoardGroupView
 } from './constants'
 import CardDropDetail from './components/gattFaceCardItem/CardDropDetail'
 import QueueAnim from 'rc-queue-anim'
@@ -1054,9 +1055,11 @@ export default class GetRowGantt extends Component {
         >
           <GroupCanvas gantt_card_height={gantt_card_height}></GroupCanvas>
           <SvgArea gantt_card_height={gantt_card_height}></SvgArea>
-          <GetRowNotAllowDragArea
-            task_is_drag_moving={this.state.task_is_drag_moving}
-          />
+          {ganttIsSingleBoardGroupView({ gantt_board_id, group_view_type }) && (
+            <GetRowNotAllowDragArea
+              task_is_drag_moving={this.state.task_is_drag_moving}
+            />
+          )}
 
           {this.renderDashedRect()}
           {/* 非大纲视图下渲染任务和或者进度 */}

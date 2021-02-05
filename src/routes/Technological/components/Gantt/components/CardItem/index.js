@@ -265,11 +265,15 @@ export default class CardItem extends Component {
       left
     } = itemValue
     //在鼠标hover到任务条上，非创建任务时，将虚线框隐藏
-    const { ganttPanelDashedDrag, task_is_dragging } = this.props
+    const {
+      ganttPanelDashedDrag,
+      task_is_dragging,
+      task_is_drag_moving
+    } = this.props
     if (!ganttPanelDashedDrag) {
       this.props.setDasheRectShow && this.props.setDasheRectShow(false)
     }
-    if (this.state.rely_down || task_is_dragging) return
+    if (this.state.rely_down || task_is_dragging || task_is_drag_moving) return
     // 鼠标移入 触发显示日期
     this.props.dispatch({
       type: 'gantt/updateDatas',
@@ -761,7 +765,10 @@ export default class CardItem extends Component {
       group_view_type,
       gantt_board_id
     }) //分组视图下
-    const { row: new_row } = await this.getRowsParam(local_top)
+    const { row: new_row, list_id: new_list_id } = await this.getRowsParam(
+      local_top
+    )
+    // console.log('ssssssssssaaaa_当前分组', { new_row, new_list_id })
     const row_param = single_board_view ? { row: new_row } : {}
     updateData = { ...updateData, ...row_param }
 
@@ -911,6 +918,15 @@ export default class CardItem extends Component {
     updateData.due_time = end_time_timestamp
 
     const group_row_param = await this.getRowsParam(local_top)
+    // console.log('ssssssssssaaaa_改变分组', group_row_param)
+    if (!group_row_param.list_id || !group_row_param.row) {
+      // 取不到目标分组的信息
+      this.setState({
+        local_left: left,
+        local_top: top
+      })
+      return
+    }
     updateData = { ...updateData, ...group_row_param }
 
     // const params_list_id = this.getDragAroundListId()
@@ -935,7 +951,6 @@ export default class CardItem extends Component {
     //   delete params.start_time
     //   delete params.due_time
     // }
-    console.log('ssssssssssaaaa', 3)
     updateTaskVTwo({ ...params }, { isNotLoading: false })
       .then(res => {
         if (isApiResponseOk(res)) {
@@ -1535,7 +1550,12 @@ export default class CardItem extends Component {
         // console.log('s_event', 'onMouseLeave')
         this.set_drag_else_over_in(false)
         // 清除显示日期选中
-        if (this.state.rely_down || this.props.task_is_dragging) return
+        if (
+          this.state.rely_down ||
+          this.props.task_is_dragging ||
+          this.props.task_is_drag_moving
+        )
+          return
         this.props.dispatch({
           type: 'gantt/updateDatas',
           payload: {
