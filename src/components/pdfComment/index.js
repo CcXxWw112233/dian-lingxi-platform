@@ -398,24 +398,29 @@ export default class PdfComment extends React.Component {
     return arr
   }
 
-  setDrawType = type => {
+  setDrawType = async type => {
     if (this.drawType !== type) {
       this.drawType = type
     }
+    this.isActiveDraw(type)
+    await this.setAwaitTime(180)
+    this.setState({
+      drawStyles: { ...this.state.drawStyles, activeType: type }
+    })
     // 重复点击，不进行处理
     // if (type && this.drawType === type) return
-
-    if (this.drawType) {
-      // this.toogleHand(false)
-    }
-    this.setState({
-      drawStyles: { ...this.state.drawStyles, activeType: this.drawType }
-    })
-    this.isActiveDraw()
+    // this.setState(
+    //   {
+    //     drawStyles: { ...this.state.drawStyles, activeType: type }
+    //   },
+    //   () => {
+    //     this.isActiveDraw(type)
+    //   }
+    // )
   }
 
   // 绘制场景中，不允许有其他交互
-  isActiveDraw = () => {
+  isActiveDraw = type => {
     // if(this.drawType){
     // console.log(this.drawType)
     ;(async () => {
@@ -939,9 +944,10 @@ export default class PdfComment extends React.Component {
     object.on('deselected', () => {
       clearTimeout(this.editTimer)
       this.editTimer = setTimeout(() => {
+        // console.log(object)
         this.setState({
           activeObject: null,
-          drawStyles: { ...this.state.drawStyles, activeType: '' }
+          drawStyles: { ...this.state.drawStyles, activeType: 'mouse' }
         })
         // 如果是新增的text，则不更新
         if (object.type === 'textbox' && object.get('_newText')) {
@@ -1162,7 +1168,7 @@ export default class PdfComment extends React.Component {
             }
             canvas.loadFromJSON(obj, null, (c, object) => {
               this.allObjects.push(object)
-               // document.querySelector('#allCanvas');
+              // document.querySelector('#allCanvas');
               // 保存每次画的时候，当前的页面大小，用来计算偏移量
               let dataContainer = object.get('container_size')
               if (dataContainer) {
@@ -1362,7 +1368,6 @@ export default class PdfComment extends React.Component {
     })
     let { drawStyles } = this.state
     let type = this.checkType(val)
-    console.log(type)
     if (!type) {
       this.setState({
         activeObject: val
