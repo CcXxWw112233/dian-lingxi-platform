@@ -305,7 +305,7 @@ export default class GetRowGantt extends Component {
     } = this.props
     for (let i = 0; i < group_not_allow_drag_area.length; i++) {
       const val = group_not_allow_drag_area[i]
-      if (group_list_area_fold_section[i].is_group_folded) return false
+      // if (group_list_area_fold_section[i].is_group_folded) return false
       if (py > val.start_area && py < val.end_area) {
         return true
       }

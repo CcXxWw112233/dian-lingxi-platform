@@ -1402,7 +1402,8 @@ export default {
               ? ceiHeight
               : group_list_area_section_height[i - 1] + ceiHeight
           if (group_list_area_fold_section[i].is_group_folded) {
-            end_area = start_area
+            // end_area = start_area
+            end_area = group_list_area_section_height[i]
           }
           group_not_allow_drag_area.push({
             start_area,
