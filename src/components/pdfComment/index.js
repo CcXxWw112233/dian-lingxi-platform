@@ -1150,16 +1150,19 @@ export default class PdfComment extends React.Component {
             // console.log(records)
             let obj = {
               objects: records.filter(itm => itm),
-              version: '4.1.0'
+              version: '4.1.0',
+              backgroundImage: canvas.get('backgroundImage')
             }
+            let dom = document.querySelector('#allCanvas')
             // console.log(data.data)
             // 更新不同分辨率下，每个数据所在的位置
+            let container = {
+              clientWidth: dom.clientWidth, // canvas.getWidth(),
+              clientHeight: dom.clientHeight // canvas.getHeight()
+            }
             canvas.loadFromJSON(obj, null, (c, object) => {
               this.allObjects.push(object)
-              let container = {
-                clientWidth: canvas.getWidth(),
-                clientHeight: canvas.getHeight()
-              } // document.querySelector('#allCanvas');
+               // document.querySelector('#allCanvas');
               // 保存每次画的时候，当前的页面大小，用来计算偏移量
               let dataContainer = object.get('container_size')
               if (dataContainer) {
@@ -1172,23 +1175,48 @@ export default class PdfComment extends React.Component {
                 object.setCoords()
               }
             })
-            canvas.requestRenderAll()
-            canvas.calcOffset()
-            // 设定此页的id
-            canvas.set('_id', data.id)
-            // 更新背景图
-            canvas.setBackgroundImage(url, canvas.renderAll.bind(canvas), {})
-            let bg = canvas.get('backgroundImage')
-            if (!bg) return
-            let imgW = bg.get('width')
-            let imgH = bg.get('height')
 
-            bg.set({
-              scaleX: canvas.getWidth() / imgW,
-              scaleY: canvas.getHeight() / imgH
-            })
+            // canvas.setWidth(container.clientWidth)
+            // canvas.setHeight(container.clientHeight)
+
+            // canvas.requestRenderAll()
+            // canvas.renderAll()
+            // canvas.calcOffset()
+            // // 设定此页的id
+            // canvas.set('_id', data.id)
+            // // 更新背景图
+            // // canvas.setBackgroundImage(url, canvas.renderAll.bind(canvas), {
+            // //   width: canvas.getWidth(),
+            // //   height: canvas.getHeight()
+            // // })
+            // // let bg = canvas.backgroundImage
+
+            // fabric.Image.fromURL(url, img => {
+            //   img.set({
+            //     width: container.clientWidth,
+            //     height: container.clientHeight,
+            //   })
+            //   // if (bg) {
+            //   //   bg.set({
+            //   //     scaleX: w / bg.getWidth(),
+            //   //     scaleY: h / bg.getHeight()
+            //   //   })
+            //   // }
+            //   canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas), {})
+            // })
+            // let bg = canvas.get('backgroundImage')
+            // if (bg) {
+            //   let imgW = bg.get('width')
+            //   let imgH = bg.get('height')
+
+            //   bg.set({
+            //     scaleX: canvas.getWidth() / imgW,
+            //     scaleY: canvas.getHeight() / imgH
+            //   })
             // 背景适配
-            canvas.setBackgroundImage(bg, canvas.renderAll.bind(canvas), {})
+
+            // }
+
             // setTimeout(()=> {
             //   // 优化内存
             //   window.URL.revokeObjectURL(url);
@@ -1200,6 +1228,7 @@ export default class PdfComment extends React.Component {
           }
         })
         .catch(err => {
+          console.log(err)
           reject()
         })
     })
@@ -2240,7 +2269,7 @@ export default class PdfComment extends React.Component {
         if (postil_numbners.length && postil_numbners.includes(i + 1)) {
           await this.loadDataToCanvas(i + 1, canvas, canvas.get('bg_url'))
         }
-        await this.setAwaitTime(100)
+        await this.setAwaitTime(10)
       }
     })()
   }
