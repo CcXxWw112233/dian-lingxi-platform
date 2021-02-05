@@ -100,11 +100,11 @@ export default class ThumbnailFilesListShow extends Component {
           dataIndex: 'operate',
           key: 'operate',
           render: (text, record, index) => {
-            console.log('sssssssssssssaaaa', {
-              text,
-              record,
-              index
-            })
+            // console.log('sssssssssssssaaaa', {
+            //   text,
+            //   record,
+            //   index
+            // })
             return this.renderKeyOperate(record)
           }
         }
