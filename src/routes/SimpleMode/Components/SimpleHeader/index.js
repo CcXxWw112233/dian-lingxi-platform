@@ -33,7 +33,11 @@ const VideoMeeting = lazy(() =>
 const SimpleDrawer = lazy(() => import('./Components/SimpleDrawer/index'))
 // const Organization = lazy(() => import('@/routes/organizationManager'))
 const TaskDetailModal = lazy(() => import('@/components/TaskDetailModal'))
-const FileDetailModal = lazy(() => import('@/components/FileDetailModal'))
+const FileListRightBarFileDetailModal = lazy(() =>
+  import(
+    '../../../Technological/components/ProjectDetail/FileModule/FileListRightBarFileDetailModal'
+  )
+) //lazy(() => import('@/components/FileDetailModal'))
 const ProcessDetailModal = lazy(() => import('@/components/ProcessDetailModal'))
 const Guide = lazy(() => import('../Guide/index'))
 
@@ -145,6 +149,7 @@ class SimpleHeader extends Component {
     }
     Im.option({
       ...ImOptions
+      // APPKEY: 'c3abea191b7838ff65f9a6a44ff5e45f'
       // APPKEY: 'ab3db8f71133efc21085a278db04e7e7',//'6b5d044ca33c559b9b91f02e29573f79',//ceshi//"ab3db8f71133efc21085a278db04e7e7", //
     })
     const clickDynamicFunc = data => {
@@ -831,7 +836,7 @@ class SimpleHeader extends Component {
             />
           )}
           {isInOpenFile && this.state.whetherShowFileDetailModalVisible && (
-            <FileDetailModal
+            <FileListRightBarFileDetailModal
               setPreviewFileModalVisibile={this.setPreviewFileModalVisibile}
               fileType={fileType}
               filePreviewCurrentFileId={filePreviewCurrentFileId}
