@@ -194,6 +194,8 @@ export default class PdfComment extends React.Component {
     this.editTimer = null
     this.allObjects = []
     this.pdf = null
+    // 是否有批注数据
+    this.hasHistory = false
   }
   async componentDidMount() {
     this.mounted = true
@@ -1024,7 +1026,8 @@ export default class PdfComment extends React.Component {
         allowTouchScrolling: true,
         selection: false,
         // 元素是否不可以选中
-        skipTargetFind: false
+        skipTargetFind: false,
+        backgroundColor: '#ffffff'
       })
       canvas.freeDrawingBrush.color = style.color
       canvas.freeDrawingBrush.width = style.width
@@ -1040,6 +1043,9 @@ export default class PdfComment extends React.Component {
       // 如果没切换版本，则继续请求，如果更换了版本，则不请求 -- 逻辑重新考虑
       // if(!this.isChangeVersion)
       let postil_numbners = this.state.versionMsg.postil_numbners || []
+      if (postil_numbners.length) {
+        this.hasHistory = true
+      } else this.hasHistory = false
       postil_numbners = postil_numbners.map(numb => +numb)
       if (postil_numbners.length && postil_numbners.includes(index)) {
         this.loadDataToCanvas(index, canvas, url)
@@ -1075,6 +1081,7 @@ export default class PdfComment extends React.Component {
       }
       Action.getObjects(params)
         .then(res => {
+          if (this.state.versionMsg.id === 'main_V') return reject()
           // console.log(res);
           resolve(res.data)
           canvas.forEachObject(o => {
@@ -1260,6 +1267,7 @@ export default class PdfComment extends React.Component {
   // 加载文件
   loadFile = async () => {
     // let url = 'api/2.pdf';
+    console.log(this.props.url, '加载的url')
     let url = this.props.url + '&_t=' + new Date().getTime()
 
     let pdfFile = pdfjsLib.getDocument({
@@ -1670,6 +1678,13 @@ export default class PdfComment extends React.Component {
       return this.exportImg(type)
     }
 
+    // 如果没有任何更改，则直接导出源文件
+    if (!this.allObjects.length && type === 'export') {
+      let url = this.props.url + '&_t=' + new Date().getTime()
+      window.open(url)
+      return
+    }
+
     // console.log(this.state.loadendElement)
     if (this.state.loadendElement < this.state.allPdfElement)
       return notification.warning({
@@ -1999,6 +2014,9 @@ export default class PdfComment extends React.Component {
   }
 
   setActiveDraw = key => {
+    if (this.state.versionMsg.id === 'main_V') {
+      return message.warn('默认批注版本不允许操作，请切换批注版本')
+    }
     if (this.state.activeObject && this.state.drawStyles.activeType === key) {
       // this.setDrawType(key)
       return
@@ -2066,7 +2084,7 @@ export default class PdfComment extends React.Component {
     Action.getVersionList({ file_id: this.props.file_id }).then(res => {
       // console.log(res);
       this.setState({
-        version_list: res.data
+        version_list: res.data.concat({ id: 'main_V', name: '原文件' })
       })
     })
   }
@@ -2221,6 +2239,19 @@ export default class PdfComment extends React.Component {
     if (this.state.versionMsg.id === val.id) return
     this.isChangeVersion = true
     this.allObjects = []
+    if (val.id === 'main_V') {
+      this.setState({
+        versionMsg: { ...val, postil_numbners: [] },
+        version_history: []
+      })
+      this.drawCanvas.forEach(canvas => {
+        canvas.forEachObject(o => {
+          canvas.remove(o)
+        })
+      })
+      this.allObjects = []
+      return
+    }
     let res = await Action.getVersion({ file_id: this.props.file_id })
     this.setState(
       {
@@ -2238,22 +2269,26 @@ export default class PdfComment extends React.Component {
   VersionRender = ({ data }) => {
     const { VersionOperation } = this
     let { versionMsg } = this.state
-    return data.map(item => {
-      return (
-        <div
-          className={`${styles.version_item} ${
-            versionMsg.id === item.id ? styles.version_active : ''
-          }`}
-          key={item.id}
-          onClick={this.setActionVersion.bind(this, item)}
-        >
-          {item.name
-            ? item.name
-            : dateFormat(+item.create_time + '000', 'yyyy/MM/dd HH:mm')}
-          <VersionOperation data={item} />
-        </div>
-      )
-    })
+    return (
+      <div>
+        {data.map(item => {
+          return (
+            <div
+              className={`${styles.version_item} ${
+                versionMsg.id === item.id ? styles.version_active : ''
+              }`}
+              key={item.id}
+              onClick={this.setActionVersion.bind(this, item)}
+            >
+              {item.name
+                ? item.name
+                : dateFormat(+item.create_time + '000', 'yyyy/MM/dd HH:mm')}
+              {item.id !== 'main_V' && <VersionOperation data={item} />}
+            </div>
+          )
+        })}
+      </div>
+    )
   }
   // 本地更新实时同步
   updateHistoryForType = (type, index, id) => {
@@ -2275,8 +2310,7 @@ export default class PdfComment extends React.Component {
   saveVersionAs = () => {
     let { versionMsg } = this.state
     let text =
-      versionMsg.name ||
-      dateFormat(+versionMsg.create_time + '000', 'yyyy/MM/dd HH:mm')
+      versionMsg.name || dateFormat(new Date().getTime(), 'yyyy/MM/dd HH:mm')
     let modal = Modal.confirm({
       title: '保存版本',
       content: (
@@ -2348,6 +2382,9 @@ export default class PdfComment extends React.Component {
 
   // 获取历史记录
   fetchHistory = flag => {
+    if (this.state.versionMsg.id === 'main_V') {
+      return
+    }
     let { versionMsg, isHistoryIn } = this.state
     let param = {
       next_id: '',
@@ -2572,8 +2609,15 @@ export default class PdfComment extends React.Component {
   // 渲染颜色选择
   renderChooseColor = ({ children }) => {
     let { activeObject, drawStyles } = this.state
+    let hide =
+      this.state.versionMsg.id === 'main_V'
+        ? {
+            visible: false
+          }
+        : {}
     return (
       <Popover
+        {...hide}
         content={
           <div className={styles.setColorAndSize}>
             <div className={styles.operation_item}>
@@ -2724,8 +2768,15 @@ export default class PdfComment extends React.Component {
                 )
               }
               if (item.key === 'note') {
+                let hide =
+                  this.state.versionMsg.id === 'main_V'
+                    ? {
+                        visible: false
+                      }
+                    : {}
                 return (
                   <Popover
+                    {...hide}
                     trigger={['click']}
                     content={
                       <div>
@@ -2804,7 +2855,7 @@ export default class PdfComment extends React.Component {
                 ghost
                 type="primary"
               >
-                保存
+                新增批注版本
               </Button>
             </div>
             {/* <span onClick={this.fileSaveAs}>另存</span> */}

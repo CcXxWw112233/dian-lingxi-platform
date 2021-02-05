@@ -8,14 +8,14 @@ import { connect } from 'dva'
 import {
   fileConvertPdfAlsoUpdateVersion,
   setCurrentVersionFile
-} from '@/services/technological/file'
+} from '../../services/technological/file'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { message, Modal, Tooltip } from 'antd'
 import {
   checkIsHasPermissionInBoard,
   getSubfixName,
   checkIsHasPermissionInVisitControl
-} from '@/utils/businessFunction'
+} from '../../utils/businessFunction'
 import {
   MESSAGE_DURATION_TIME,
   NOT_HAS_PERMISION_COMFIRN,
@@ -333,11 +333,11 @@ class MainContent extends Component {
                 })
             }
           })
-          .catch(() => reject())
+          .catch(() => reject(1))
       } else if (this.dontTransferType.indexOf(FILE_NAME) !== -1) {
         resolve({})
       } else {
-        reject()
+        reject(2)
       }
     })
   }
@@ -401,9 +401,13 @@ class MainContent extends Component {
       return
     }
     canEnter = await this.handleEnterCirclePointComment().catch(err => err)
+    // console.log(canEnter,"cancenter")
     if (!!canEnter) {
       let obj = {
-        url: arr.indexOf(FILE_NAME) !== -1 ? fileFileUrl : filePreviewUrl,
+        url:
+          arr.indexOf(FILE_NAME) !== -1
+            ? this.props.fileFileUrl
+            : this.props.filePreviewUrl,
         file_id: id,
         file_name,
         fileType: type,
@@ -465,6 +469,7 @@ class MainContent extends Component {
     if (res) {
       return true
     }
+
     return false
     // this.setState({
     //   is_petty_loading: !isZoomPictureFullScreenMode,
