@@ -399,6 +399,7 @@ export default class CommunicationThumbnailFiles extends Component {
         {filesShowType == '0' ? (
           <ThumbnailFilesListShow
             // thumbnailFilesList={thumbnailFilesList}
+            dispatch={this.props.dispatch}
             thumbnailFilesList={onlyFileList}
             onlyFileTableLoading={onlyFileTableLoading}
             isSearchDetailOnfocusOrOnblur={isSearchDetailOnfocusOrOnblur}
@@ -408,6 +409,7 @@ export default class CommunicationThumbnailFiles extends Component {
           <ThumbnailFilesTilingShow
             thumbnailFilesList={onlyFileList}
             previewFile={this.previewFile}
+            dispatch={this.props.dispatch}
           />
         )}
       </div>

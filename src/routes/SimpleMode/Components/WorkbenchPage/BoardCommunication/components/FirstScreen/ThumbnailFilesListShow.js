@@ -5,9 +5,11 @@ import {
   timestampToTimeNormal
 } from '@/utils/util'
 import globalStyles from '@/globalset/css/globalClassName.less'
-import { Table } from 'antd'
+import { Button, Table, Tooltip, Popconfirm, message } from 'antd'
 import styles from './CommunicationThumbnailFiles.less'
 import { getSubfixName } from '@/utils/businessFunction.js'
+import { isApiResponseOk } from '../../../../../../../utils/handleResponseData'
+import { fileRemove } from '../../../../../../../services/technological/file'
 
 // @connect(mapStateToProps)
 // @connect()
@@ -92,6 +94,19 @@ export default class ThumbnailFilesListShow extends Component {
               </div>
             )
           }
+        },
+        {
+          title: '操作',
+          dataIndex: 'operate',
+          key: 'operate',
+          render: (text, record, index) => {
+            console.log('sssssssssssssaaaa', {
+              text,
+              record,
+              index
+            })
+            return this.renderKeyOperate(record)
+          }
         }
       ]
     }
@@ -125,7 +140,83 @@ export default class ThumbnailFilesListShow extends Component {
   //         </div>
   //     )
   // }
-
+  actionsManager = (action, itemValue) => {
+    const { dispatch } = this.props
+    const { file_resource_id, file_id, org_id, board_id, id, type } = itemValue
+    const obj = {
+      download: () => {
+        dispatch({
+          type: 'publicFileDetailModal/fileDownload',
+          payload: {
+            ids: file_resource_id,
+            fileIds: file_id,
+            _organization_id: org_id
+          }
+        })
+      },
+      delete: async () => {
+        const params = {
+          board_id,
+          arrays: JSON.stringify([{ type, id }])
+        }
+        const { thumbnailFilesList = [] } = this.props
+        const new_thumbnailFilesList = thumbnailFilesList.filter(
+          item => item.id != id
+        )
+        const res = await fileRemove(params)
+        if (isApiResponseOk(res)) {
+          dispatch({
+            type: 'projectCommunication/updateDatas',
+            payload: {
+              onlyFileList: new_thumbnailFilesList
+            }
+          })
+          message.success('删除成功')
+        } else {
+          message.error(res.message)
+        }
+      }
+    }
+    obj[action]()
+  }
+  // 列表操作
+  renderKeyOperate = item => {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'flex-start',
+          paddingRight: 20
+        }}
+      >
+        <Tooltip title={'下载'}>
+          <div
+            className={`${globalStyles.authTheme}  ${styles.table_operate}`}
+            style={{ marginRight: 16 }}
+            onClick={e => this.actionsManager('download', item, e)}
+          >
+            &#xe7f1;
+          </div>
+        </Tooltip>
+        <Popconfirm
+          title={`确认删除吗？`}
+          onConfirm={e => this.actionsManager('delete', item, e)}
+          onCancel={e => e.stopPropagation()}
+          okText="确定"
+          cancelText="取消"
+        >
+          <Tooltip title={'删除'}>
+            <div
+              className={`${globalStyles.authTheme} ${globalStyles.link_mouse}  ${styles.table_operate}`}
+              onClick={e => e.stopPropagation()}
+            >
+              &#xe7c3;
+            </div>
+          </Tooltip>
+        </Popconfirm>
+      </div>
+    )
+  }
   render() {
     const {
       thumbnailFilesList = [],

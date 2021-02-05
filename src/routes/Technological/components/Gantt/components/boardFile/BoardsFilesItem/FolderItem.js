@@ -177,6 +177,20 @@ export default class FolderItem extends Component {
         setBoardIdStorage(this.props.itemValue.board_id)
         this.toggleVisitControlModal(true)
         break
+      case '4':
+        const {
+          itemValue: { file_resource_id, file_id, org_id },
+          dispatch
+        } = this.props
+        dispatch({
+          type: 'publicFileDetailModal/fileDownload',
+          payload: {
+            ids: file_resource_id,
+            fileIds: file_id,
+            _organization_id: org_id
+          }
+        })
+        break
       default:
         break
     }
@@ -220,6 +234,21 @@ export default class FolderItem extends Component {
             移入回收站
           </span>
         </Menu.Item>
+        {type == '2' && (
+          <Menu.Item key={4} style={{ width: 248 }}>
+            <span
+              style={{ fontSize: 14, color: `rgba(0,0,0,0.65)`, width: 248 }}
+            >
+              <i
+                className={`${globalStyles.authTheme}`}
+                style={{ fontSize: 16 }}
+              >
+                &#xe7cc;
+              </i>{' '}
+              下载
+            </span>
+          </Menu.Item>
+        )}
       </Menu>
     )
   }
