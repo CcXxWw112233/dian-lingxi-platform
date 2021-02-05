@@ -2,6 +2,7 @@ import { connect } from 'dva'
 import React, { Component } from 'react'
 import {
   caldiffDays,
+  caldiffHours,
   isSamDay,
   isSamHour,
   transformTimestamp
@@ -273,14 +274,23 @@ export default class GroupMilestones extends Component {
       return 'auto'
     }
     if (gantt_view_mode == 'month') {
-      if (caldiffDays(timestamp, next_miletones_time) == 1) {
+      if (caldiffDays(timestamp, next_miletones_time) <= 1) {
         return caldiffDays(timestamp, next_miletones_time) * (ceilWidth / 2)
       } else {
         return caldiffDays(timestamp, next_miletones_time) * ceilWidth - 18
       }
     } else if (gantt_view_mode == 'hours') {
-      // 18 是里程碑旗子宽度
-      return caldiffDays(timestamp, next_miletones_time) * (ceilWidth * 9 - 18)
+      if (isSamDay(timestamp, next_miletones_time)) {
+        console.log(caldiffHours(timestamp, next_miletones_time))
+        if (caldiffHours(timestamp, next_miletones_time) <= 1) {
+          return 0
+        } else {
+          return caldiffHours(timestamp, next_miletones_time) * ceilWidth - 18
+        }
+        // 18 是里程碑旗子宽度
+      } else {
+        return caldiffDays(timestamp, next_miletones_time) * ceilWidth * 9 - 18
+      }
     } else {
       if (caldiffDays(timestamp, next_miletones_time) == 1) {
         return 0
@@ -576,12 +586,12 @@ export default class GroupMilestones extends Component {
     this.milestone_drag_point_diff = x - this.milestone_initial_left //做初始标记，由于鼠标拖拽的位置在该元素上不同，记录元素最左边和鼠标落点的差值
     this.drag_ele = e.currentTarget
 
-    console.log('sssssssss_00', {
-      x,
-      milestone_initial_left: this.milestone_initial_left,
-      milestone_drag_point_diff: this.milestone_drag_point_diff,
-      target: e.target.style.left
-    })
+    // console.log('sssssssss_00', {
+    //   x,
+    //   milestone_initial_left: this.milestone_initial_left,
+    //   milestone_drag_point_diff: this.milestone_drag_point_diff,
+    //   target: e.target.style.left
+    // })
   }
   milestoneDraging = e => {
     const { pageX } = getPageXY(e)
