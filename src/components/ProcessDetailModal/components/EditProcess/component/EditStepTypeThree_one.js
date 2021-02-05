@@ -125,7 +125,7 @@ export default class EditStepTypeThree_one extends Component {
                           <span style={{ display: 'flex' }}>
                             <span
                               style={{
-                                marginRight: '9px',
+                                // marginRight: '9px',
                                 display: 'inline-block',
                                 maxWidth:
                                   clientWidth &&
