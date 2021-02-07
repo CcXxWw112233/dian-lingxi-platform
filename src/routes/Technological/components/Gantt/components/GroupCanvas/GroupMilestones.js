@@ -241,8 +241,9 @@ export default class GroupMilestones extends Component {
       list
     }
   }
+
   // 根据下一个里程碑日期，来获取当前里程碑日期的‘name1,name2,name3...’应该有的宽度
-  setMiletonesNamesWidth = (timestamp, top) => {
+  setMiletonesNamesWidth = ({ timestamp, top, belong_group_id }) => {
     const {
       milestoneMap = {},
       ceilWidth,
@@ -255,14 +256,15 @@ export default class GroupMilestones extends Component {
       t => t.timestamp == timestamp
     )
     let times_arr = Object.keys(milestoneMap) //[timestamp1, timestamp2,...]
-    // if (gantt_board_id == '0') {
-    //   //以分组划分，过滤掉不属于该项目分组的里程碑所属于的时间
-    //   times_arr = times_arr.filter(
-    //     time =>
-    //       milestoneMap[time].findIndex(item => item.board_id == list_id) != -1
-    //   )
-    // }
-    // console.log('ssssss', times_arr)
+    if (gantt_board_id == '0') {
+      //以分组划分，过滤掉不属于该项目分组的里程碑所属于的时间
+      times_arr = times_arr.filter(
+        time =>
+          milestoneMap[time].findIndex(
+            item => item.board_id == belong_group_id
+          ) != -1
+      )
+    }
     times_arr = times_arr.sort((a, b) => Number(a) - Number(b))
     const index = times_arr.findIndex(item => isSamDay(item, timestamp)) //对应上当前日期所属的下标
     const next_miletones_time = times_arr[index + 1] //当前里程碑日期的对应下一个里程碑日期所在时间
@@ -461,7 +463,11 @@ export default class GroupMilestones extends Component {
                     className={`${indexStyles.board_miletiones_names} ${globalStyles.global_ellipsis}`}
                     data-targetclassname="specific_example_milestone"
                     style={{
-                      maxWidth: this.setMiletonesNamesWidth(timestamp, top),
+                      maxWidth: this.setMiletonesNamesWidth({
+                        timestamp,
+                        top,
+                        belong_group_id
+                      }),
                       color: this.setMiletonesColor({
                         is_over_duetime,
                         is_all_realized: one_levels_completed
@@ -528,7 +534,11 @@ export default class GroupMilestones extends Component {
                     className={`${indexStyles.board_miletiones_names} ${globalStyles.global_ellipsis}`}
                     data-targetclassname="specific_example_milestone"
                     style={{
-                      maxWidth: this.setMiletonesNamesWidth(timestamp, top),
+                      maxWidth: this.setMiletonesNamesWidth({
+                        timestamp,
+                        top,
+                        belong_group_id
+                      }),
                       color: this.setMiletonesColor({
                         is_over_duetime,
                         is_all_realized: two_levels_completed
