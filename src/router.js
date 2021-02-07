@@ -193,6 +193,10 @@ const Routers = function({ history, app }) {
       path: '/emailRedirect',
       // models: () => [import('./models/emailRedirect')],
       component: () => import('./routes/EmailRedirect/')
+    },
+    {
+      path: '/anyPublicPages/previewTable/:id',
+      component: () => import('./routes/AnyNotAuthPages/PublicPreviewTable')
     }
     //  {
     //   path: '/organizationManager',

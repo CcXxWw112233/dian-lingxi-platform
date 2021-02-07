@@ -5,7 +5,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import { remove } from 'js-cookie'
 import WriteFile from './writeFile'
 export default class PreviewTable extends React.Component {
-  constructor() {
+  constructor(props) {
     super(...arguments)
     this.state = {
       dataSource: [],
@@ -46,9 +46,16 @@ export default class PreviewTable extends React.Component {
       'Y',
       'Z'
     ]
+    if (props.minCols) {
+      this.minCols = props.minCols
+    }
+    if (props.minRows) {
+      this.minRows = props.minRows
+    }
   }
   componentDidMount() {
     let { data } = this.props
+
     if (data && data.length) {
       this.setData(data)
     } else {
@@ -412,7 +419,7 @@ export default class PreviewTable extends React.Component {
     let { activeData = [], dataSource = [] } = this.state
     const { showDownload = false, leadingOutVisible = false } = this.props
     return (
-      <div className={styles.tableContainer}>
+      <div className={styles.tableContainer} style={this.props.style}>
         <table cellSpacing="0" cellPadding="0" border="0">
           <thead>
             <tr style={{ background: 'rgba(0,0,0,0.15)' }}>
