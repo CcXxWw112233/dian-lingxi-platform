@@ -267,11 +267,12 @@ export default class GroupMilestones extends Component {
     const index = times_arr.findIndex(item => isSamDay(item, timestamp)) //对应上当前日期所属的下标
     const next_miletones_time = times_arr[index + 1] //当前里程碑日期的对应下一个里程碑日期所在时间
     // 除了最后一个里程碑宽度为auto 还有就是不在同一个分组或者项目的里程碑 最后一个为auto
+    // 18 是里程碑旗子宽度
     if (
       !next_miletones_time ||
       (top == top_arr.top && miletones_position == top_arr.list.length - 1)
     ) {
-      return 'auto'
+      return 'none'
     }
     if (gantt_view_mode == 'month') {
       if (caldiffDays(timestamp, next_miletones_time) <= 1) {
@@ -280,29 +281,66 @@ export default class GroupMilestones extends Component {
         return caldiffDays(timestamp, next_miletones_time) * ceilWidth - 18
       }
     } else if (gantt_view_mode == 'hours') {
+      // 如果是同一天的 就判断小时
+      let next_miletones_time_ =
+        String(next_miletones_time).length === 10
+          ? next_miletones_time * 1000
+          : next_miletones_time
+      let c_hours =
+        new Date(timestamp).getHours() >= 17 ||
+        new Date(timestamp).getHours() < 9
+          ? 17
+          : new Date(timestamp).getHours()
+      let n_hours =
+        new Date(Number(next_miletones_time_)).getHours() >= 17 ||
+        new Date(Number(next_miletones_time_)).getHours() < 9
+          ? 17
+          : new Date(Number(next_miletones_time_)).getHours()
       if (isSamDay(timestamp, next_miletones_time)) {
-        console.log(caldiffHours(timestamp, next_miletones_time))
-        if (caldiffHours(timestamp, next_miletones_time) <= 1) {
+        if (n_hours - c_hours <= 1) {
           return 0
         } else {
-          return caldiffHours(timestamp, next_miletones_time) * ceilWidth - 18
+          return Math.abs(n_hours - c_hours) * ceilWidth - 18
         }
-        // 18 是里程碑旗子宽度
       } else {
-        return caldiffDays(timestamp, next_miletones_time) * ceilWidth * 9 - 18
+        if (n_hours < c_hours) {
+          if (caldiffDays(timestamp, next_miletones_time) <= 1) {
+            if (n_hours - (c_hours - 9) <= 1) return 0
+            return (n_hours - (c_hours - 9)) * ceilWidth - 18
+          } else {
+            return (
+              (n_hours - (c_hours - 9)) * ceilWidth +
+              9 *
+                ceilWidth *
+                (caldiffDays(timestamp, next_miletones_time) - 1) -
+              18
+            )
+          }
+        } else if (n_hours >= c_hours) {
+          return (
+            9 * ceilWidth * caldiffDays(timestamp, next_miletones_time) -
+            18 +
+            (n_hours - c_hours) * ceilWidth
+          )
+        }
       }
-    } else {
-      if (caldiffDays(timestamp, next_miletones_time) == 1) {
+    } else if (gantt_view_mode == 'week') {
+      if (caldiffDays(timestamp, next_miletones_time) <= 2) {
         return 0
       } else {
-        if (caldiffDays(timestamp, next_miletones_time) * 7 - 18 <= 0) {
+        if (caldiffDays(timestamp, next_miletones_time) * ceilWidth - 18 <= 0) {
           return 0
         }
-        return caldiffDays(timestamp, next_miletones_time) * 7 - 18
+        return caldiffDays(timestamp, next_miletones_time) * ceilWidth - 18
+      }
+    } else if (gantt_view_mode == 'year') {
+      if (caldiffDays(timestamp, next_miletones_time) <= 8) {
+        return 0
+      } else {
+        return caldiffDays(timestamp, next_miletones_time) * ceilWidth - 18
       }
     }
-    console.log(caldiffDays(timestamp, next_miletones_time))
-    return caldiffDays(timestamp, next_miletones_time) * ceilWidth
+    // return caldiffDays(timestamp, next_miletones_time) * ceilWidth
   }
   // 里程碑是否过期的颜色设置
   setMiletonesColor = ({ is_over_duetime, has_lcb, is_all_realized }) => {
