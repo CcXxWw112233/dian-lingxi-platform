@@ -847,6 +847,7 @@ class SimpleHeader extends Component {
             this.state.whetherShowProcessDetailModalVisible && (
               <ProcessDetailModal
                 process_detail_modal_visible={process_detail_modal_visible}
+                notburningProcessFile={true}
               />
             )}
           {guideModalVisiable && (
