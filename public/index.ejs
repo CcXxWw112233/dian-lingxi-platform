@@ -66,6 +66,9 @@
     ></div>
   </body>
   <script>
+    // 部分黑名单不加载js的路由名称
+    var BlackRoterNames = ["anyPublicPages"]
+
     window.onload = function() {
       // alert('loaded')
       setTimeout(function() {
@@ -74,7 +77,19 @@
             'none'
         }
       }, 300)
+
+      var hash = window.location.hash
+      var canload = true;
+      BlackRoterNames.forEach(item => {
+        var reg = new RegExp(item);
+        if(reg.test(hash)){
+          canload = false
+        }
+      })
+      if(!canload) return;
+
       setTimeout(function() {
+
         var secScript2 = document.createElement('script')
         secScript2.setAttribute('type', 'text/javascript')
         secScript2.setAttribute('src', './luckysheet/plugins/js/plugin.min.js')
