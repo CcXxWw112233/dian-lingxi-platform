@@ -261,13 +261,14 @@ export default class GroupMilestones extends Component {
     times_arr = times_arr.filter(
       time =>
         milestoneMap[time].findIndex(
-          item => item.board_id == belong_group_id
+          item => item.board_id == belong_group_id || '0'
         ) != -1
     )
     // }
     times_arr = times_arr.sort((a, b) => Number(a) - Number(b))
     const index = times_arr.findIndex(item => isSamDay(item, timestamp)) //对应上当前日期所属的下标
     const next_miletones_time = times_arr[index + 1] //当前里程碑日期的对应下一个里程碑日期所在时间
+    console.log(times_arr)
     // 除了最后一个里程碑宽度为auto 还有就是不在同一个分组或者项目的里程碑 最后一个为auto
     // 18 是里程碑旗子宽度
     if (
@@ -336,6 +337,7 @@ export default class GroupMilestones extends Component {
         return caldiffDays(timestamp, next_miletones_time) * ceilWidth - 18
       }
     } else if (gantt_view_mode == 'year') {
+      console.log(times_arr)
       if (caldiffDays(timestamp, next_miletones_time) <= 11) {
         return 0
       } else {
