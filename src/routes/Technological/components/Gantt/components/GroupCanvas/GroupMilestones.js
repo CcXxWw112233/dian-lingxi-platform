@@ -336,7 +336,7 @@ export default class GroupMilestones extends Component {
         return caldiffDays(timestamp, next_miletones_time) * ceilWidth - 18
       }
     } else if (gantt_view_mode == 'year') {
-      if (caldiffDays(timestamp, next_miletones_time) <= 8) {
+      if (caldiffDays(timestamp, next_miletones_time) <= 11) {
         return 0
       } else {
         return caldiffDays(timestamp, next_miletones_time) * ceilWidth - 18
