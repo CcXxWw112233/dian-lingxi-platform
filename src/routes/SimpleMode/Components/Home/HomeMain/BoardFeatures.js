@@ -76,6 +76,11 @@ export default class BoardFeatures extends Component {
         whetherShowProcessDetailModal: visible
       })
     }
+    if (type == 'card') {
+      this.setState({
+        whetherShowTaskDetailModal: visible
+      })
+    }
   }
 
   // 先修改流程中的时间为相对时间
@@ -190,7 +195,7 @@ export default class BoardFeatures extends Component {
       payload: params
     })
     this.setState({
-      whetherShowModalVisible: false
+      whetherShowProcessDetailModal: false
     })
   }
 
@@ -322,7 +327,13 @@ export default class BoardFeatures extends Component {
     const { id, rela_type } = value
     switch (rela_type) {
       case '1': // 表示任务
-        return <BoardFeaturesItem key={id} itemValue={value} />
+        return (
+          <BoardFeaturesItem
+            whetherShowModalVisible={this.whetherShowModalVisible}
+            key={id}
+            itemValue={value}
+          />
+        )
       case '2': // 表示日程
         // return <BoardFeaturesItem key={id} itemValue={value} />
         break
@@ -399,6 +410,9 @@ export default class BoardFeatures extends Component {
     dispatch({
       type: 'simplemode/getBoardsTaskTodoList',
       payload: params
+    })
+    this.setState({
+      whetherShowTaskDetailModal: false
     })
   }
 
@@ -494,7 +508,10 @@ export default class BoardFeatures extends Component {
     const {
       simplemodeCurrentProject: { selected_todo_list_time }
     } = this.props
-    const { whetherShowProcessDetailModal } = this.state
+    const {
+      whetherShowProcessDetailModal,
+      whetherShowTaskDetailModal
+    } = this.state
     const selected_filed_time =
       !selected_todo_list_time || selected_todo_list_time == 'all_time'
         ? '所有时间'
@@ -550,12 +567,16 @@ export default class BoardFeatures extends Component {
           style={{ display: board_card_todo_list.length ? 'block' : 'none' }}
         ></div>
         <Suspense fallback={''}>
-          <TaskDetailModal
-            task_detail_modal_visible={drawerVisible}
-            setTaskDetailModalVisible={this.setTaskDetailModalVisible} //关闭任务弹窗回调
-            handleTaskDetailChange={this.handleCard}
-            handleDeleteCard={this.handleDeleteCard}
-          />
+          {drawerVisible && whetherShowTaskDetailModal && (
+            <TaskDetailModal
+              task_detail_modal_visible={
+                drawerVisible && whetherShowTaskDetailModal
+              }
+              setTaskDetailModalVisible={this.setTaskDetailModalVisible} //关闭任务弹窗回调
+              handleTaskDetailChange={this.handleCard}
+              handleDeleteCard={this.handleDeleteCard}
+            />
+          )}
           {process_detail_modal_visible && whetherShowProcessDetailModal && (
             <ProcessDetailModal
               process_detail_modal_visible={process_detail_modal_visible}

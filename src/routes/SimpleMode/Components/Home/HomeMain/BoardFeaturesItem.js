@@ -28,6 +28,8 @@ export default class BoardFeaturesItem extends Component {
       itemValue: { id = '', board_id = '', parent_id, rela_type }
     } = this.props
     if (rela_type == 'meeting') return
+    this.props.whetherShowModalVisible &&
+      this.props.whetherShowModalVisible({ type: 'card', visible: true })
     dispatch({
       type: 'publicTaskDetailModal/updateDatas',
       payload: {

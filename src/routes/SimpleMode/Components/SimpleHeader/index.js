@@ -150,7 +150,7 @@ class SimpleHeader extends Component {
     Im.option({
       ...ImOptions
       // APPKEY: 'c3abea191b7838ff65f9a6a44ff5e45f'
-      // APPKEY: 'ab3db8f71133efc21085a278db04e7e7',//'6b5d044ca33c559b9b91f02e29573f79',//ceshi//"ab3db8f71133efc21085a278db04e7e7", //
+      // APPKEY: '3a4464b3ff2767d3e9bf76e77de762c7' //'6b5d044ca33c559b9b91f02e29573f79',//ceshi//"ab3db8f71133efc21085a278db04e7e7", //
     })
     const clickDynamicFunc = data => {
       // 需要延时打开，因为IM先调用关闭，在打开的，而关闭比打开的走的慢
@@ -270,13 +270,14 @@ class SimpleHeader extends Component {
       relaDataId2,
       relaDataName2
     } = data
-    // console.log('ssss', data)
-    dispatch({
-      type: 'projectDetail/updateDatas',
-      payload: {
-        board_id: boardId
-      }
-    })
+    if (!!boardId) {
+      dispatch({
+        type: 'projectDetail/projectDetailInfo',
+        payload: {
+          id: boardId
+        }
+      })
+    }
     setBoardIdStorage(boardId)
     switch (type) {
       case 'board':
@@ -436,16 +437,20 @@ class SimpleHeader extends Component {
         //     }
         // })
         setTimeout(() => {
-          dispatch({
-            type: 'publicTaskDetailModal/updateDatas',
-            payload: {
-              drawerVisible: true,
-              card_id: cardId
+          this.setState(
+            {
+              whetherShowTaskDetailModalVisible: true
+            },
+            () => {
+              dispatch({
+                type: 'publicTaskDetailModal/updateDatas',
+                payload: {
+                  drawerVisible: true,
+                  card_id: cardId
+                }
+              })
             }
-          })
-          this.setState({
-            whetherShowTaskDetailModalVisible: true
-          })
+          )
         }, 200)
         break
       case 'flow':
@@ -827,9 +832,11 @@ class SimpleHeader extends Component {
               visible={simpleDrawerVisible}
             />
           )}
-          {drawerVisible && this.state.whetherShowTaskDetailModalVisible && (
+          {this.state.whetherShowTaskDetailModalVisible && drawerVisible && (
             <TaskDetailModal
-              task_detail_modal_visible={drawerVisible}
+              task_detail_modal_visible={
+                drawerVisible && this.state.whetherShowTaskDetailModalVisible
+              }
               // setTaskDetailModalVisible={this.setTaskDetailModalVisible}
               // handleTaskDetailChange={this.handleChangeCard}
               // handleDeleteCard={this.handleDeleteCard}
@@ -840,13 +847,18 @@ class SimpleHeader extends Component {
               setPreviewFileModalVisibile={this.setPreviewFileModalVisibile}
               fileType={fileType}
               filePreviewCurrentFileId={filePreviewCurrentFileId}
-              file_detail_modal_visible={isInOpenFile}
+              file_detail_modal_visible={
+                isInOpenFile && this.state.whetherShowFileDetailModalVisible
+              }
             />
           )}
           {process_detail_modal_visible &&
             this.state.whetherShowProcessDetailModalVisible && (
               <ProcessDetailModal
-                process_detail_modal_visible={process_detail_modal_visible}
+                process_detail_modal_visible={
+                  process_detail_modal_visible &&
+                  this.state.whetherShowProcessDetailModalVisible
+                }
                 notburningProcessFile={true}
               />
             )}
