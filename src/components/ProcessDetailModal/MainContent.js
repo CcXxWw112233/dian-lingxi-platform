@@ -94,7 +94,7 @@ export default class MainContent extends Component {
     })
   }
 
-  // 利用锚点方式对元素进行定位
+  // 利用锚点方式对元素进行定位(需要定位到当前进行中的节点) PS: 审批节点和评分节点都需要展开上一个节点
   handleAnchorPointElement = () => {
     let scrollElement = document.getElementById('container_configureProcessOut')
     let currentDoingDataCollectionItem = document.getElementById(
@@ -115,7 +115,7 @@ export default class MainContent extends Component {
         })
       }
     }
-    // 表示进行中的审批节点
+    // 表示进行中的审批节点 500距离估算的
     if (currentDoingApproveItem) {
       if (scrollElement.scrollTo) {
         scrollElement.scrollTo({
@@ -124,7 +124,7 @@ export default class MainContent extends Component {
         })
       }
     }
-
+    // 表示进行中的是评分节点 300距离估算的
     if (currentStaticRatingScoreItem) {
       if (scrollElement.scrollTo) {
         scrollElement.scrollTo({
@@ -147,6 +147,7 @@ export default class MainContent extends Component {
       flag = false
       return flag
     } else {
+      // 表示找到 进行中|中止的流程中正在进行的节点并且是资料收集节点
       let curr_need_storage_node =
         (processInfo['nodes'] &&
           processInfo['nodes'].length &&
@@ -176,6 +177,7 @@ export default class MainContent extends Component {
       ? JSON.parse(localStorage.getItem('userInfo'))
       : {}
     const { id, status } = processInfo
+    // 相当于判断是否需要用缓存的内容覆盖model中的数据
     if (this.whetherIsUpdateDatasFromStorageToModel(props)) {
       // 表示更新model中的数据
       const pro_info = localStorage.getItem('userProcessWithNodesStatusStorage')
@@ -293,8 +295,10 @@ export default class MainContent extends Component {
   componentDidMount() {
     window.addEventListener('resize', this.resizeTTY)
     window.addEventListener('scroll', this.onScroll)
+    // 监听滚动条状态--需要定位当前正在进行的节点
     this.handleAnchorPointElement()
     const { processPageFlagStep } = this.props
+    // 这里表示 如果是配置流程或者是编辑流程 那么需要调用接口查询一些引导,用户是否点击我知道了
     if (processPageFlagStep == '1' || processPageFlagStep == '2') {
       this.props.dispatch({
         type: 'publicProcessDetailModal/configurePorcessGuide',
@@ -304,8 +308,11 @@ export default class MainContent extends Component {
         }
       })
     }
+    // 初始化画布
     this.initCanvas(this.props)
+    // 是否需要更新组织列表成员
     this.whetherUpdateOrgnazationMemberList(this.props)
+    // 设置用户节点内容缓存
     this.setUserProcessWithNodesStorage(this.props)
   }
   componentWillUnmount() {
@@ -320,6 +327,7 @@ export default class MainContent extends Component {
       clientWidth
     })
   }
+  // 是否需要获取流程中成员列表(取的是组织成员列表)
   whetherUpdateOrgnazationMemberList = props => {
     const {
       templateInfo: { org_id }
@@ -335,6 +343,7 @@ export default class MainContent extends Component {
           }
         })
       } else {
+        // 如果是已经启动了的流程不需要查询成员
         if (props.processPageFlagStep == '4') return
         this.props.dispatch({
           type: 'publicProcessDetailModal/getCurrentOrgAllMembers',
@@ -395,6 +404,7 @@ export default class MainContent extends Component {
     circle.clearRect(0, 0, 210, 210) //清空
     //创建多个圆弧
     const length = processEditDatas.length
+    // 根据不同的状态设置画布步骤的颜色
     if (length == '0') {
       circle.beginPath() //开始一个新的路径
       circle.save()
@@ -471,7 +481,7 @@ export default class MainContent extends Component {
     }
   }
 
-  // 滚动事件
+  // 滚动事件 --- 只控制了悬浮吸顶效果 其余已去除
   onScroll = e => {
     let scrollTop = document.getElementById('container_configureProcessOut')
       .scrollTop
@@ -535,6 +545,7 @@ export default class MainContent extends Component {
     }, 30)
   }
 
+  // 更新流程实例名称|描述
   updateFlowInstanceNameOrDescription = (data, key) => {
     const { value } = data
     const { currentSelectType } = this.state
@@ -575,6 +586,7 @@ export default class MainContent extends Component {
             })
           }, 200)
           processInfo[key] = value
+          // 下面都是处理更新了名称等更新外部列表中的数据
           this.props.handleProcessDetailChange &&
             this.props.handleProcessDetailChange({
               flow_instance_id: id,
@@ -612,6 +624,7 @@ export default class MainContent extends Component {
     }
   }
 
+  // 标题change事件
   titleInputValueChange = e => {
     e && e.stopPropagation()
     if (e.target.value.trimLR() == '') {
@@ -871,6 +884,7 @@ export default class MainContent extends Component {
       processEditDatas = [],
       templateInfo: { id, is_covert_template, enable_change }
     } = this.props
+    // is_covert_template 这个是转为模板的 已去除该功能
     if (is_covert_template && is_covert_template == '1') {
       this.handleSaveConfigureProcessTemplete()
     } else {
@@ -1886,6 +1900,7 @@ export default class MainContent extends Component {
               </Checkbox>
             </div>
           )}
+        {/* 悬浮 状态的流程名称等*/}
         <div
           id="suspensionFlowInstansNav"
           className={`${indexStyles.suspensionFlowInstansNav}`}
