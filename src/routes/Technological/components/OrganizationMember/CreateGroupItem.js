@@ -181,7 +181,8 @@ export default class TaskItem extends React.Component {
       members = [],
       leader_id = '',
       leader_avatar = '',
-      leader_members = []
+      leader_members = [],
+      org_id
     } = itemValue //is_default ==='1' 默认分组不可操作
     //is_default 0 1 2 普通分组/未分组/访客分组
     const {
@@ -334,6 +335,9 @@ export default class TaskItem extends React.Component {
         </QueueAnim>
         <ShowAddMenberModal
           {...this.props}
+          invitationType={'11'}
+          invitationId={org_id}
+          invitationOrg={org_id}
           addMembers={this.addMembers.bind(this)}
           modalVisible={this.state.ShowAddMenberModalVisibile}
           setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(
