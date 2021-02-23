@@ -565,6 +565,12 @@ export default class NodeOperate extends Component {
       })
     } else if (tree_type == '3') {
       dispatch({
+        type: 'projectDetail/projectDetailInfo',
+        payload: {
+          id: gantt_board_id
+        }
+      })
+      dispatch({
         type: 'publicProcessDetailModal/getProcessInfo',
         payload: {
           id,
