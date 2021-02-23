@@ -109,6 +109,21 @@ export default class GroupListHeadSet extends Component {
         type: 'gantt/getGanttData',
         payload: {}
       })
+      // 设置用户记录的设置信息,在用户信息中记录默认视图
+      if (group_view_type_new == '1' || group_view_type_new == '4') {
+        dispatch({
+          type: 'accountSet/updateUserSet',
+          payload: {
+            gantt_group_view_type:
+              group_view_type_new == '1' ? 'group' : 'outline'
+          }
+        }).then(() => {
+          dispatch({
+            type: 'technological/simplGetUserInfo',
+            payload: {}
+          })
+        })
+      }
     }, clickDelay)
   }
   onVisibleChange = bool => {

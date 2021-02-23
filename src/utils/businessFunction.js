@@ -640,10 +640,13 @@ export const selectBoardToSeeInfo = ({
       }
     })
   }
-
+  const userInfo = JSON.parse(localStorage.getItem('userInfo'))
   let new_group_view_type = group_view_type
   if (board_id == '0' || !board_id) {
     new_group_view_type = '1'
+  } else {
+    new_group_view_type =
+      userInfo?.user_set?.gantt_group_view_type == 'outline' ? '4' : '1'
   }
 
   dispatch({
@@ -665,6 +668,7 @@ export const selectBoardToSeeInfo = ({
       current_board: board_id || '0'
     }
   })
+  console.log('sssssaaaas', new_group_view_type)
   dispatch({
     //更新用户信息中已选项目
     type: 'technological/setUserInfoAbout',
