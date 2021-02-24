@@ -143,12 +143,14 @@ export default class index extends Component {
           style={{
             width: layoutClientWidth,
             height:
-              isPaymentOrgUser() && is_show_board_file_area != '1'
+              is_show_board_file_area == '2'
                 ? '0px'
-                : '272px'
+                : is_show_board_file_area == '1'
+                ? '272px'
+                : '0px'
           }}
         >
-          {isPaymentOrgUser() && is_show_board_file_area != '1' && (
+          {is_show_board_file_area != '1' && (
             <div style={{ position: 'relative', left: '22px' }}>
               <ShowFileSlider />
             </div>

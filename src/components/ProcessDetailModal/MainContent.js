@@ -33,7 +33,8 @@ import { currentNounPlanFilterName } from '@/utils/businessFunction'
 import {
   checkIsHasPermissionInBoard,
   setBoardIdStorage,
-  getGlobalData
+  getGlobalData,
+  isPaymentOrgUser
 } from '../../utils/businessFunction'
 import { cursorMoveEnd } from './components/handleOperateModal'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
@@ -2001,7 +2002,7 @@ export default class MainContent extends Component {
             </Tooltip>
           </div>
         )} */}
-        {processPageFlagStep == '4' && (
+        {processPageFlagStep == '4' && isPaymentOrgUser() && (
           <ProcessFile
             notburningProcessFile={this.props.notburningProcessFile}
           />
