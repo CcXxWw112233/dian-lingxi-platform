@@ -795,7 +795,7 @@ export default {
           const { board_id: currentProjectBoardId } = yield select(
             getModelSelectDatasState('projectDetail', 'projectDetailInfoData')
           )
-          debugger
+          // debugger
           if (op_board_id == currentProjectBoardId) {
             if (is_deleted_ == '0') {
               let projectDetailInfoData = yield select(
