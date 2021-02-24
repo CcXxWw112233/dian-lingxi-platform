@@ -62,7 +62,7 @@ tio.ws = function(
         ? JSON.parse(localStorage.getItem('userInfo'))
         : ''
       // _url = `ws://${WEBSOCKET_PATH}:${WEBSOCKET_PORT}/?uid=${id}&token=${Authorization}&tiows_reconnect=true`;
-      _url = `${ws_url}?uid=${id}&token=${Authorization}&tiows_reconnect=true`
+      _url = `${ws_url}?uid=${id}&token=${Authorization}&tiows_reconnect=true&t=lingxiweb`
     }
     let ws = new WebSocket(_url)
     this.ws = ws
