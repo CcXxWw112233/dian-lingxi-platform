@@ -277,10 +277,11 @@ export default class ConfigureStepOne_two extends Component {
               value={title}
               maxLength={50}
               onChange={this.propertyNameChange}
+              placeholder="请输入标题"
             />
           </div>
           <div>
-            <p>请选择标题:</p>
+            <p>提示内容:</p>
             <Input
               value={prompt_content}
               maxLength={50}
@@ -314,6 +315,7 @@ export default class ConfigureStepOne_two extends Component {
                     onChange={e => {
                       this.optionsValueChange(e, index)
                     }}
+                    placeholder="请填写选项内容"
                   />
                   {index != '0' && (
                     <span
