@@ -8,6 +8,7 @@ import {
   isArrayEqual
 } from '../../../../../utils/util'
 import { getOrgIdByBoardId } from '../../../../../utils/businessFunction'
+import { accordingToSortMembersList } from '../../handleOperateModal'
 
 const { TabPane } = Tabs
 
@@ -151,6 +152,7 @@ export default class DuplicateAndReportPerson extends Component {
     // const { designatedPersonnelList = [] } = this.state
     let designatedPersonnelList = this.filterRecipients()
     let org_id = getOrgIdByBoardId(board_id) || '0'
+    let new_data = accordingToSortMembersList(data, designatedPersonnelList)
     return (
       <div style={{ flex: 1, padding: '8px 0' }}>
         {!designatedPersonnelList.length ? (
@@ -167,17 +169,12 @@ export default class DuplicateAndReportPerson extends Component {
               overlay={
                 <MenuSearchPartner
                   isInvitation={true}
-                  // show_select_all={true}
-                  // select_all_type={'0'}
-                  listData={data}
+                  listData={new_data}
                   keyCode={'user_id'}
                   searchName={'name'}
                   currentSelect={designatedPersonnelList}
-                  // board_id={board_id}
-                  // invitationType='1'
-                  // invitationId={board_id}
-                  // invitationOrg={org_id}
                   chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
+                  not_allow_sort_list={true}
                 />
               }
             >
@@ -294,17 +291,12 @@ export default class DuplicateAndReportPerson extends Component {
               overlay={
                 <MenuSearchPartner
                   isInvitation={true}
-                  // show_select_all={true}
-                  // select_all_type={'0'}
-                  listData={data}
+                  listData={new_data}
                   keyCode={'user_id'}
                   searchName={'name'}
                   currentSelect={designatedPersonnelList}
-                  // board_id={board_id}
-                  // invitationType='1'
-                  // invitationId={board_id}
-                  // invitationOrg={org_id}
                   chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
+                  not_allow_sort_list={true}
                 />
               }
             >

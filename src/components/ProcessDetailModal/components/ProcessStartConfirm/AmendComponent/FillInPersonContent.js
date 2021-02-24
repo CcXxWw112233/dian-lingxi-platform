@@ -12,6 +12,7 @@ import {
   currentNounPlanFilterName
 } from '../../../../../utils/businessFunction'
 import { FLOWS } from '../../../../../globalset/js/constant'
+import { accordingToSortMembersList } from '../../handleOperateModal'
 
 export default class FillInPersonContent extends Component {
   constructor(props) {
@@ -197,6 +198,7 @@ export default class FillInPersonContent extends Component {
     // const { designatedPersonnelList = [] } = this.state
     let designatedPersonnelList = this.filterAssignees()
     let org_id = getOrgIdByBoardId(board_id) || '0'
+    let new_data = accordingToSortMembersList(data, designatedPersonnelList)
     return (
       <div style={{ flex: 1, padding: '8px 0' }}>
         {!designatedPersonnelList.length ? (
@@ -214,11 +216,12 @@ export default class FillInPersonContent extends Component {
               overlay={
                 <MenuSearchPartner
                   isInvitation={true}
-                  listData={data}
+                  listData={new_data}
                   keyCode={'user_id'}
                   searchName={'name'}
                   currentSelect={designatedPersonnelList}
                   chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
+                  not_allow_sort_list={true}
                 />
               }
             >
@@ -262,8 +265,10 @@ export default class FillInPersonContent extends Component {
                     {avatar ? (
                       <Tooltip
                         overlayStyle={{ minWidth: '62px' }}
-                        getPopupContainer={triggerNode =>
-                          triggerNode.parentNode
+                        getPopupContainer={() =>
+                          document.getElementById(
+                            `fillInPersonMiniTopContainer_${itemKey}`
+                          )
                         }
                         placement="top"
                         title={name || user_name || '佚名'}
@@ -282,8 +287,10 @@ export default class FillInPersonContent extends Component {
                     ) : (
                       <Tooltip
                         overlayStyle={{ minWidth: '62px' }}
-                        getPopupContainer={triggerNode =>
-                          triggerNode.parentNode
+                        getPopupContainer={() =>
+                          document.getElementById(
+                            `fillInPersonMiniTopContainer_${itemKey}`
+                          )
                         }
                         placement="top"
                         title={name || user_name || '佚名'}
@@ -332,17 +339,12 @@ export default class FillInPersonContent extends Component {
               overlay={
                 <MenuSearchPartner
                   isInvitation={true}
-                  // show_select_all={true}
-                  // select_all_type={'0'}
-                  listData={data}
+                  listData={new_data}
                   keyCode={'user_id'}
                   searchName={'name'}
                   currentSelect={designatedPersonnelList}
-                  // board_id={board_id}
-                  // invitationType='1'
-                  // invitationId={board_id}
-                  // invitationOrg={org_id}
                   chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
+                  not_allow_sort_list={true}
                 />
               }
             >

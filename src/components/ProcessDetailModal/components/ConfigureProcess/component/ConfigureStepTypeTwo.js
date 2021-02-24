@@ -5,6 +5,7 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import MoreOptionsComponent from '../../MoreOptionsComponent'
 import { connect } from 'dva'
+import { accordingToSortMembersList } from '../../handleOperateModal'
 
 @connect(mapStateToProps)
 export default class ConfigureStepTypeTwo extends Component {
@@ -196,6 +197,10 @@ export default class ConfigureStepTypeTwo extends Component {
     const new_data = JSON.parse(JSON.stringify(data) || [])
     const { approve_type, approve_value } = itemValue
     let approvalsList = this.filterAssignees()
+    let new_currentOrgAllMembers = accordingToSortMembersList(
+      currentOrgAllMembers,
+      approvalsList
+    )
     // const { approvalsList = [] } = this.state
     return (
       <div>
@@ -296,17 +301,12 @@ export default class ConfigureStepTypeTwo extends Component {
                   overlay={
                     <MenuSearchPartner
                       isInvitation={true}
-                      // show_select_all={true}
-                      // select_all_type={'0'}
-                      listData={currentOrgAllMembers}
+                      listData={new_currentOrgAllMembers}
                       keyCode={'user_id'}
                       searchName={'name'}
                       currentSelect={approvalsList}
-                      // board_id={board_id}
-                      // invitationType='1'
-                      // invitationId={board_id}
-                      // invitationOrg={org_id}
                       chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
+                      not_allow_sort_list={true}
                     />
                   }
                 >
@@ -423,17 +423,12 @@ export default class ConfigureStepTypeTwo extends Component {
                   overlay={
                     <MenuSearchPartner
                       isInvitation={true}
-                      // show_select_all={true}
-                      // select_all_type={'0'}
-                      listData={currentOrgAllMembers}
+                      listData={new_currentOrgAllMembers}
                       keyCode={'user_id'}
                       searchName={'name'}
                       currentSelect={approvalsList}
-                      // board_id={board_id}
-                      // invitationType='1'
-                      // invitationId={board_id}
-                      // invitationOrg={org_id}
                       chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
+                      not_allow_sort_list={true}
                     />
                   }
                 >

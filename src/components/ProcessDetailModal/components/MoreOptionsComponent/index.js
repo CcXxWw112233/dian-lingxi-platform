@@ -4,6 +4,7 @@ import indexStyles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import NameChangeInput from '@/components/NameChangeInput'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
+import { accordingToSortMembersList } from '../handleOperateModal'
 
 const Option = Select.Option
 
@@ -425,6 +426,7 @@ export default class MoreOptionsComponent extends Component {
     const { data = [], org_id, board_id, itemValue } = this.props
     const { cc_locking } = itemValue
     let makeCopyPersonList = this.filterRecipients()
+    let new_data = accordingToSortMembersList(data, makeCopyPersonList)
     return (
       <div className={indexStyles.fill_person}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -481,15 +483,12 @@ export default class MoreOptionsComponent extends Component {
                 overlay={
                   <MenuSearchPartner
                     isInvitation={true}
-                    listData={data}
+                    listData={new_data}
                     keyCode={'user_id'}
                     searchName={'name'}
                     currentSelect={makeCopyPersonList}
-                    // board_id={board_id}
-                    // invitationType='1'
-                    // invitationId={board_id}
-                    // invitationOrg={org_id}
                     chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
+                    not_allow_sort_list={true}
                   />
                 }
               >
@@ -597,15 +596,12 @@ export default class MoreOptionsComponent extends Component {
                 overlay={
                   <MenuSearchPartner
                     isInvitation={true}
-                    listData={data}
+                    listData={new_data}
                     keyCode={'user_id'}
                     searchName={'name'}
                     currentSelect={makeCopyPersonList}
-                    // board_id={board_id}
-                    // invitationType='1'
-                    // invitationId={board_id}
-                    // invitationOrg={org_id}
                     chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
+                    not_allow_sort_list={true}
                   />
                 }
               >
