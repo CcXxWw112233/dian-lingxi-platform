@@ -292,6 +292,7 @@ export default class TreeRemoveOrgMemberModal extends Component {
                   onChange={e => {
                     this.handleOnSelectValue(e, item)
                   }}
+                  style={{ minWidth: '150px' }}
                 >
                   {users.map(value => {
                     return <Option key={value.user_id}>{value.name}</Option>
