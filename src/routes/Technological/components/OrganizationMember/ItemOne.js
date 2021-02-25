@@ -338,6 +338,7 @@ export default class ItemOne extends React.Component {
       return (
         <Menu onClick={this.handleMenuClick.bind(this)}>
           {is_visitor !== '1' &&
+          role_type !== '0' &&
           checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_EDIT) ? (
             <Menu.SubMenu title="设置角色" key={'role'}>
               {roleList.map((value, key) => {
@@ -380,6 +381,7 @@ export default class ItemOne extends React.Component {
             ''
           )}
           {is_visitor !== '1' &&
+          role_type !== '0' &&
           checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_REMOVE) ? (
             <Menu.Item
               key={'removeOrgMember'}
@@ -449,20 +451,20 @@ export default class ItemOne extends React.Component {
             </div>
           </div>
           <div className={CreateTaskStyle.item_1_top_right}>
-            {role_type !== '0' ? (
-              <Dropdown
-                overlay={operateMenu()}
-                getPopupContainer={() =>
-                  document.getElementById('organizationMemberContainer')
-                }
-              >
-                <div>
-                  <Icon type="ellipsis" theme="outlined" />
-                </div>
-              </Dropdown>
-            ) : (
+            {/* {role_type !== '0' ? ( */}
+            <Dropdown
+              overlay={operateMenu()}
+              getPopupContainer={() =>
+                document.getElementById('organizationMemberContainer')
+              }
+            >
+              <div>
+                <Icon type="ellipsis" theme="outlined" />
+              </div>
+            </Dropdown>
+            {/* ) : (
               ''
-            )}
+            )} */}
             <div
               className={
                 isShowBottDetail

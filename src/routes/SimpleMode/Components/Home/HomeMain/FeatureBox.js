@@ -122,7 +122,7 @@ class FeatureBox extends Component {
       dispatch({
         type: 'gantt/updateDatas',
         payload: {
-          group_view_type: '1'
+          // group_view_type: '1'
         }
       })
     }
