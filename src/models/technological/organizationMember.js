@@ -40,23 +40,25 @@ import {
 } from '../../utils/businessFunction'
 export default modelExtend(technological, {
   namespace: 'organizationMember',
-  state: [],
+  state: {
+    datas: {
+      member_count: 0,
+      batch_setting: false, //进入批量设置
+      batch_setting_ids: [], //批量设置所选id [111,222,333]
+      batch_setting_ids_map: [], //带分组的成员id [{group_1_id: [member_id1,member_id2]}，{group_2_id: [member_id1,member_id2]}。。。]
+      groupList: [], //全部分组
+      TreeGroupModalVisiblie: false, //树状分组是否可见
+      groupTreeList: [], //树状分组数据
+      currentBeOperateMemberId: '', //当前被操作的成员id
+      roleList: [], //当前组织角色列表
+      menuSearchSingleSpinning: false //获取分组负责人转转转
+    }
+  },
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen(location => {
         message.destroy()
         if (location.pathname === '/technological/organizationMember') {
-          dispatch({
-            type: 'updateDatas',
-            payload: {
-              groupList: [], //全部分组
-              TreeGroupModalVisiblie: false, //树状分组是否可见
-              groupTreeList: [], //树状分组数据
-              currentBeOperateMemberId: '', //当前被操作的成员id
-              roleList: [], //当前组织角色列表
-              menuSearchSingleSpinning: false //获取分组负责人转转转
-            }
-          })
           if (
             checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_QUERY) &&
             localStorage.getItem('OrganizationId') != '0'
