@@ -38,7 +38,7 @@ export default class ConfirmInfoOne_six extends Component {
         className={indexStyles.text_form}
       >
         <p>在线表格</p>
-        <PreviewTable data={data.sheet_data || []} />
+        <PreviewTable data={data.sheet_data || []} minRows={10} minCols={5} />
       </div>
     )
   }

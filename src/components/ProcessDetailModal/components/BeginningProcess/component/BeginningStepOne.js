@@ -39,7 +39,8 @@ import {
 import {
   genPrincipalListFromAssignees,
   findCurrentFileInfo,
-  transAssigneesToIds
+  transAssigneesToIds,
+  DidShowUrging
 } from '../../handleOperateModal'
 import DifferenceDeadlineType from '../../DifferenceDeadlineType'
 import BeginningStepOne_six from './BeginningStepOne_six'
@@ -67,8 +68,27 @@ export default class BeginningStepOne extends Component {
           ? true
           : false, // 是否展开箭头 详情 true表示展开
       form_values: [],
-      sheetListData: {} // 存放表格列表数据
+      sheetListData: {}, // 存放表格列表数据
+      /**
+       * 是否显示催办按钮
+       */
+      updateShowUrgeBtn: false
     }
+  }
+
+  componentDidMount() {
+    this.updateUrgeBtn()
+  }
+
+  /**
+   * 更新按钮
+   */
+  updateUrgeBtn = () => {
+    const { processInfo, itemValue } = this.props
+    const doit = DidShowUrging(processInfo, itemValue.id)
+    this.setState({
+      updateShowUrgeBtn: doit.isShowUrgeButton()
+    })
   }
 
   updateState = flag => {
@@ -824,7 +844,8 @@ export default class BeginningStepOne extends Component {
     const {
       transPrincipalList = [],
       transCopyPersonnelList = [],
-      is_show_spread_arrow
+      is_show_spread_arrow,
+      updateShowUrgeBtn
     } = this.state
 
     let new_itemValue = { ...itemValue }
@@ -942,6 +963,14 @@ export default class BeginningStepOne extends Component {
                       <span className={indexStyles.content__principalList_info}>
                         {`${transPrincipalList.length}位填写人`}
                       </span>
+                      {updateShowUrgeBtn && (
+                        <Button type="primary" style={{ marginLeft: 15 }}>
+                          <span className={globalStyles.authTheme}>
+                            &#xe84c;
+                          </span>
+                          <span style={{ marginLeft: 5 }}>催办</span>
+                        </Button>
+                      )}
                     </>
                   )}
                   {parentStatus == '0' && (

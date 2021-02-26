@@ -47,10 +47,10 @@ export default class PreviewTable extends React.Component {
       'Z'
     ]
     if (props.minCols) {
-      this.minCols = props.minCols
+      this.minCols = props.minCols - 1
     }
     if (props.minRows) {
-      this.minRows = props.minRows
+      this.minRows = props.minRows - 1
     }
   }
   componentDidMount() {

@@ -521,6 +521,124 @@ const accordingToSortMembersList = (listData = [], selectedData = []) => {
   return new_data
 }
 
+/**
+ * 初始化显示隐藏催办按钮和文字逻辑
+ */
+export const DidShowUrging = (flow_data = {}, current = '') => {
+  /**
+   * user_id 当前用户id
+   * NODETYPE 审批节点类型
+   * BEGINGTYPE 运行中的状态
+   * PROCESSING 是否审批状态
+   * URGETYPE 是否正在催办
+   */
+  const user_id = '',
+    NODETYPE2 = '2',
+    BEGINGTYPE = '1',
+    ApproveType1 = '1',
+    PROCESSING = '1',
+    URGETYPE = '1'
+  // create_by 发起人 status 状态{3=结束(完成) 2=中止 1=运行中 0=未开始} curr_node_id 当前进行的节点id
+  // processed {1=正在审批中 0=未到审批 2=审批完成}
+  const { create_by, status, nodes = [], curr_node_id, is_urge } = flow_data
+  // 当前节点详情，nodes[i]
+  const currentNode = nodes.find(item => item.id === curr_node_id) || {}
+
+  /**
+   * 是否自己是发起人
+   */
+  const isMyShelf = () => {
+    if (user_id === create_by) {
+      return true
+    }
+    return false
+  }
+  /**
+   * 是否当前节点
+   */
+  const isCurrent = () => {
+    return current === curr_node_id
+  }
+  /**
+   * 是否运行中的状态
+   */
+  const isStatusStart = () => {
+    return status === BEGINGTYPE
+  }
+  /**
+   * 是否是审批节点
+   */
+  const isNodeType2 = () => {
+    return currentNode.node_type === NODETYPE2
+  }
+  /**
+   * 是否是串签
+   */
+  const isApproveType1 = () => {
+    return currentNode.approve_type === ApproveType1
+  }
+  /**
+   * 是否只有一个审批人
+   */
+  const isOnlyOneUrgUser = () => {
+    return (currentNode.assignees || []).length === 1
+  }
+  /**
+   * 当前审批人是否是自己
+   */
+  const isUrgingMyself = () => {
+    const my = (currentNode.assignees || []).find(item => item.id === user_id)
+    return my.processed === PROCESSING
+  }
+
+  return {
+    /**
+     * 是否显示催办按钮
+     */
+    isShowUrgeButton: () => {
+      /**
+       * 不是运行中的
+       */
+      if (!isStatusStart() || !isCurrent()) {
+        console.log('未开始或者不是当前节点')
+        return false
+      }
+
+      /**
+       * 检查是不是只有一个并且自己是审批人
+       */
+      if (isOnlyOneUrgUser() && isMyShelf()) {
+        console.log('检查是不是只有一个并且自己是审批人')
+        return false
+      }
+
+      /**
+       * 如果是多个人
+       */
+      if (!isOnlyOneUrgUser()) {
+        /**
+         * 是否是审批节点并且是串签节点
+         */
+        if (isNodeType2() && isApproveType1()) {
+          // 自己是不是串签节点审批人
+          if (isUrgingMyself()) {
+            console.log('自己是当前串签节点审批人')
+            return false
+          }
+        }
+      }
+
+      return true
+    },
+    /**
+     * 是否显示催办文字
+     */
+    isShowUrgeText: () => {
+      return false
+    }
+  }
+}
+
 export {
   showDeleteTempleteConfirm,
   genPrincipalListFromAssignees,

@@ -143,6 +143,8 @@ export default class Sheet extends React.Component {
       config.columlen = obj
       config.rowlen = row
       item.config = config
+      delete item.row
+      delete item.column
       return item
     })
     return arr
@@ -198,7 +200,9 @@ export default class Sheet extends React.Component {
       showsheetbar,
       showstatisticBar,
       editMode: disabledEdit,
-      data
+      data,
+      row: 10,
+      column: 5
     })
     setTimeout(() => {
       this.setFormatFunction(data)
