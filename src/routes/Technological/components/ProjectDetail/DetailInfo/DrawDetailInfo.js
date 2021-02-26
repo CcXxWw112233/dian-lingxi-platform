@@ -49,6 +49,7 @@ import {
   timeToTimestamp
 } from '../../../../../utils/util'
 import { ganttIsOutlineView } from '../../Gantt/constants'
+import TreeRemoveBoardMemberModal from './TreeRemoveBoardMemberModal'
 
 const TextArea = Input.TextArea
 
@@ -206,7 +207,16 @@ export default class DrawDetailInfo extends React.Component {
           message.warn('请不要移除自己', MESSAGE_DURATION_TIME)
           return false
         }
-        this.confirm({ board_id, user_id })
+        this.setState(
+          {
+            removerUserId: user_id
+          },
+          () => {
+            this.setTreeRemoveBoardMemberVisible()
+          }
+        )
+
+        // this.confirm({ board_id, user_id })
         break
       default:
         break
@@ -310,6 +320,13 @@ export default class DrawDetailInfo extends React.Component {
     }
     this.setState({
       ShowAddMenberModalVisibile: !this.state.ShowAddMenberModalVisibile
+    })
+  }
+
+  setTreeRemoveBoardMemberVisible = () => {
+    this.setState({
+      TreeRemoveBoardMemberModalVisible: !this.state
+        .TreeRemoveBoardMemberModalVisible
     })
   }
 
@@ -1341,6 +1358,15 @@ export default class DrawDetailInfo extends React.Component {
               this
             )}
           />
+          {this.state.TreeRemoveBoardMemberModalVisible && (
+            <TreeRemoveBoardMemberModal
+              visible={this.state.TreeRemoveBoardMemberModalVisible}
+              setTreeRemoveBoardMemberVisible={
+                this.setTreeRemoveBoardMemberVisible
+              }
+              removerUserId={this.state.removerUserId}
+            />
+          )}
         </div>
         {/* <div style={{display: dynamic_header_sticky ? 'block' : 'none'}} className={DrawDetailInfoStyle.shadow}>
           <div
