@@ -2,14 +2,61 @@ import React, { Component } from 'react'
 import DrawDetailInfoStyle from './DrawDetailInfo.less'
 import { Dropdown, Modal, Table, Menu, Select, Checkbox } from 'antd'
 import globalClassName from '@/globalset/css/globalClassName.less'
+import { getTransferSelectedDetailList } from '../../../../../services/technological/organizationMember'
+import { connect } from 'dva'
+import { isApiResponseOk } from '../../../../../utils/handleResponseData'
 
+@connect(mapStateToProps)
 export default class TreeRemoveBoardMemberModal extends Component {
   state = {
     selectedRows: [],
     columns: [],
-    dataSource: []
+    dataSource: [],
+    data: [],
+    transferSelectedList: []
   }
-  componentDidMount() {}
+
+  componentDidMount() {
+    const {
+      removerUserId,
+      projectDetailInfoData: { board_id }
+    } = this.props
+    this.filterRemoveCurrentUser()
+    getTransferSelectedDetailList({ user_id: removerUserId, board_id }).then(
+      res => {
+        console.log(res.data)
+        if (isApiResponseOk(res)) {
+          this.setState({
+            transferSelectedList: res.data
+          })
+        }
+      }
+    )
+  }
+
+  // 获取排除移除该成员的项目成员列表
+  filterRemoveCurrentUser = () => {
+    const {
+      removerUserId,
+      projectDetailInfoData: { data = [] }
+    } = this.props
+    let new_data = [...data]
+    new_data = new_data.filter(item => item.user_id != removerUserId)
+    this.setState({
+      data: new_data
+    })
+  }
+
+  // 判断类型是否可选
+  whetherIsSelectType = type => {
+    const { transferSelectedList = [] } = this.state
+    let flag = true
+    let obj = transferSelectedList.find(i => i.content_type == type)
+    if (obj && !!Object.keys(obj).length) {
+      flag = false
+    }
+    return flag
+  }
 
   // 渲染类型下拉菜单
   renderTtileTypeContent = () => {
@@ -35,14 +82,16 @@ export default class TreeRemoveBoardMemberModal extends Component {
 
   // 渲染交接人下拉菜单
   renderHandoverMenu = () => {
+    const { data = [] } = this.state
     return (
       <Menu>
         <Menu.Item style={{ fontWeight: 'bold', color: 'rgba(0,0,0,0.85)' }}>
           批量移交至：
         </Menu.Item>
         <Menu.Divider />
-        <Menu.Item key="1">粱环露</Menu.Item>
-        <Menu.Item key="2">谢飞娟</Menu.Item>
+        {data.map(item => {
+          return <Menu.Item value={item.user_id}>{item.name}</Menu.Item>
+        })}
       </Menu>
     )
   }
@@ -77,44 +126,21 @@ export default class TreeRemoveBoardMemberModal extends Component {
 
   // 获取table的数据
   getTablesProps = () => {
-    const dataSource = [
-      {
-        id: 'a',
-        key: '3',
-        type: '3',
-        name: '西湖区湖底公园2号'
-      },
-      {
-        id: 'b',
-        key: '3',
-        type: '3',
-        name: '西湖区湖底公园2号'
-      },
-      {
-        id: 'c',
-        key: '2',
-        type: '2',
-        name: '西湖区湖底公园1号'
-      },
-      {
-        id: 'd',
-        key: '1',
-        type: '1',
-        name: '西湖区湖底公园3号'
-      },
-      {
-        id: 'e',
-        key: '1',
-        type: '1',
-        name: '西湖区湖底公园4号'
-      },
-      {
-        id: 'f',
-        key: '1',
-        type: '1',
-        name: '西湖区湖底公园5号'
-      }
-    ]
+    const { transferSelectedList = [], data = [] } = this.state
+    // const dataSource = [
+    //   {
+    //     id: 'a',
+    //     key: '3',
+    //     type: '3',
+    //     name: '西湖区湖底公园2号'
+    //   },
+    // ]
+    const dataSource = transferSelectedList.map(item => {
+      let new_item = { ...item }
+      new_item.id = item.content_id
+      new_item.key = item.content_type
+      return new_item
+    })
 
     const columns = [
       {
@@ -124,12 +150,12 @@ export default class TreeRemoveBoardMemberModal extends Component {
         ellipsis: true,
         width: 84,
         render: (text, record) => {
-          const { type } = record
-          if (type == '1') {
+          const { content_type } = record
+          if (content_type == '1') {
             return '里程碑'
-          } else if (type == '2') {
+          } else if (content_type == '2') {
             return '任务'
-          } else if (type == '3') {
+          } else if (content_type == '3') {
             return '流程'
           }
         }
@@ -147,7 +173,17 @@ export default class TreeRemoveBoardMemberModal extends Component {
         key: 'user',
         width: 150,
         render: () => {
-          return <Select style={{ width: '100%' }}></Select>
+          return (
+            <Select placeholder={'请选择'} style={{ width: '100%' }}>
+              {data.map(item => {
+                return (
+                  <Select.Option value={item.user_id}>
+                    {item.name}
+                  </Select.Option>
+                )
+              })}
+            </Select>
+          )
         }
       }
     ]
@@ -190,9 +226,15 @@ export default class TreeRemoveBoardMemberModal extends Component {
         selectable={true}
         style={{ width: 94 }}
       >
-        <Menu.Item key="3">流程</Menu.Item>
-        <Menu.Item key="2">任务</Menu.Item>
-        <Menu.Item key="1">里程碑</Menu.Item>
+        <Menu.Item key="3" disabled={this.whetherIsSelectType('3')}>
+          流程
+        </Menu.Item>
+        <Menu.Item key="2" disabled={this.whetherIsSelectType('2')}>
+          任务
+        </Menu.Item>
+        <Menu.Item key="1" disabled={this.whetherIsSelectType('1')}>
+          里程碑
+        </Menu.Item>
       </Menu>
     )
   }
@@ -280,4 +322,14 @@ TreeRemoveBoardMemberModal.defaultProps = {
   visible: false, // 控制弹窗显示隐藏
   setTreeRemoveBoardMemberVisible: function() {}, // 设置弹窗显示隐藏回调
   removerUserId: '' // 当前移除的成员ID
+}
+
+function mapStateToProps({
+  projectDetail: {
+    datas: { projectDetailInfoData = {} }
+  }
+}) {
+  return {
+    projectDetailInfoData
+  }
 }
