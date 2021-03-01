@@ -1,9 +1,17 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import AvatarList from '../../AvatarList'
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png'
-import { Button, Popconfirm, Input, message, Tooltip } from 'antd'
+import {
+  Button,
+  Popconfirm,
+  Input,
+  message,
+  Tooltip,
+  notification,
+  Modal
+} from 'antd'
 import { connect } from 'dva'
 import {
   timestampToTimeNormal,
@@ -31,9 +39,11 @@ import OpinionContent from '../OpinionContent'
 import AmendComponent from '../../ProcessStartConfirm/AmendComponent'
 import {
   changeProcessAssignees,
-  changeProcessRecipients
+  changeProcessRecipients,
+  UrgeStart
 } from '../../../../../services/technological/workFlow'
 import { isApiResponseOk } from '../../../../../utils/handleResponseData'
+import { DidShowUrging } from '../../../../../utils/businessFunction'
 
 const TextArea = Input.TextArea
 @connect(mapStateToProps)
@@ -68,8 +78,21 @@ export default class BeginningStepTwo extends Component {
       historyCommentsList: props.itemValue.his_comments
         ? [...props.itemValue.his_comments]
         : [],
-      currentSelectArrow: ''
+      currentSelectArrow: '',
+      /**
+       * 是否显示催办按钮
+       */
+      updateShowUrgeBtn: false,
+      updateShowUrgeText: false
     }
+    /**
+     * modal的namespace
+     */
+    this.process_action_key = 'publicProcessDetailModal'
+    /**
+     * redux中需要调用的方法
+     */
+    this.action_valuekey = 'getProcessInfo'
   }
 
   componentWillReceiveProps(nextProps) {
@@ -108,6 +131,38 @@ export default class BeginningStepTwo extends Component {
         currentSelectArrow: ''
       })
     }
+    this.updateUrgeBtn(nextProps)
+  }
+
+  componentDidMount() {
+    this.updateUrgeBtn()
+  }
+
+  updateProcessInfo = async () => {
+    const { dispatch, processInfo } = this.props
+    await dispatch({
+      type: this.process_action_key + '/' + this.action_valuekey,
+      payload: {
+        id: processInfo.id
+      }
+    })
+    // this.updateUrgeBtn()
+  }
+  /**
+   * 更新按钮
+   */
+  updateUrgeBtn = props => {
+    const { processInfo, itemValue } = props || this.props
+    const doit = DidShowUrging(processInfo, itemValue.id)
+    this.setState(
+      {
+        updateShowUrgeBtn: doit.isShowUrgeButton(),
+        updateShowUrgeText: doit.isShowUrgeText(itemValue)
+      },
+      () => {
+        // console.log(this.state.updateShowUrgeBtn)
+      }
+    )
   }
 
   // 更新对应步骤下的节点内容数据, 即当前操作对象的数据
@@ -869,6 +924,9 @@ export default class BeginningStepTwo extends Component {
     )
   }
 
+  /**
+   * 节点展开后的详情内容
+   */
   renderEditDetailContent = () => {
     const {
       itemValue,
@@ -1100,7 +1158,7 @@ export default class BeginningStepTwo extends Component {
   }
 
   /**
-   * 渲染悬浮状态的审批节点
+   * 渲染悬浮状态的审批节点 (作废)
    * 根据 container_configureProcessOut 容器作为父元素来定位的
    */
   renderAbsoluteContent = () => {
@@ -1228,6 +1286,43 @@ export default class BeginningStepTwo extends Component {
     )
   }
 
+  confirmToUrge = () => {
+    const { itemValue } = this.props
+    Modal.confirm({
+      // style: {
+
+      // },
+      // getContainer: () =>
+      //   document.getElementById('container_fileDetailContentOut'),
+      zIndex: 1011,
+      title: '提示',
+      content: '确定催办此节点吗？节点中的负责人将会收到通知',
+      okText: '确认',
+      cancelText: '取消',
+      onOk: () => {
+        UrgeStart({ flow_node_instance_id: itemValue.id })
+          .then(res => {
+            // console.log(res)
+            if (isApiResponseOk(res)) {
+              this.updateUrgeBtn()
+              notification.success({
+                message: '提示',
+                description: res.message
+              })
+              this.updateProcessInfo()
+            } else {
+              notification.warn({
+                message: '警告',
+                description: res.message
+              })
+            }
+            return res
+          })
+          .catch(console.log)
+      }
+    })
+  }
+
   render() {
     const {
       itemKey,
@@ -1248,7 +1343,9 @@ export default class BeginningStepTwo extends Component {
     const {
       transPrincipalList = [],
       transCopyPersonnelList = [],
-      is_show_spread_arrow
+      is_show_spread_arrow,
+      updateShowUrgeText,
+      updateShowUrgeBtn
     } = this.state
     let new_itemValue = { ...itemValue }
     new_itemValue.assignees = transAssigneesToIds(assignees).join(',')
@@ -1291,6 +1388,16 @@ export default class BeginningStepTwo extends Component {
                       &#xe616;
                     </span>
                     <span>{name}</span>
+                    {updateShowUrgeText && (
+                      <Fragment>
+                        <span className="urging_text_red">
+                          <span className={globalStyles.authTheme}>
+                            &#xe84c;
+                          </span>
+                          <span style={{ marginLeft: 5 }}>催办</span>
+                        </span>
+                      </Fragment>
+                    )}
                     {runtime_type == '1' && (
                       <span
                         style={{
@@ -1373,6 +1480,18 @@ export default class BeginningStepTwo extends Component {
                         >
                           {`${transPrincipalList.length}位审批人`}
                         </span>
+                        {updateShowUrgeBtn && (
+                          <Button
+                            type="primary"
+                            style={{ marginLeft: 15 }}
+                            onClick={this.confirmToUrge}
+                          >
+                            <span className={globalStyles.authTheme}>
+                              &#xe84c;
+                            </span>
+                            <span style={{ marginLeft: 5 }}>催办</span>
+                          </Button>
+                        )}
                         {parentStatus == '0' && (
                           <span style={{ position: 'relative' }}>
                             <AmendComponent

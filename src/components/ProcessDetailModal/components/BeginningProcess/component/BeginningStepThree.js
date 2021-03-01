@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-pascal-case */
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import AvatarList from '../../AvatarList'
@@ -11,7 +11,9 @@ import {
   Popconfirm,
   Input,
   message,
-  Popover
+  Popover,
+  Modal,
+  notification
 } from 'antd'
 import { connect } from 'dva'
 import {
@@ -27,7 +29,8 @@ import {
 } from '../../handleOperateModal'
 import {
   checkIsHasPermissionInVisitControl,
-  checkIsHasPermissionInBoard
+  checkIsHasPermissionInBoard,
+  DidShowUrging
 } from '../../../../../utils/businessFunction'
 import {
   PROJECT_FLOW_FLOW_ACCESS,
@@ -43,7 +46,8 @@ import DifferenceDeadlineType from '../../DifferenceDeadlineType'
 import AmendComponent from '../../ProcessStartConfirm/AmendComponent'
 import {
   changeProcessAssignees,
-  changeProcessRecipients
+  changeProcessRecipients,
+  UrgeStart
 } from '../../../../../services/technological/workFlow'
 import { isApiResponseOk } from '../../../../../utils/handleResponseData'
 const TextArea = Input.TextArea
@@ -80,8 +84,21 @@ export default class BeginningStepThree extends Component {
         ? [...props.itemValue.his_comments]
         : [],
       currentSelectJudgeArrow: '',
-      currentSelectHisArrow: ''
+      currentSelectHisArrow: '',
+      /**
+       * 是否显示催办按钮
+       */
+      updateShowUrgeBtn: false,
+      updateShowUrgeText: false
     }
+    /**
+     * modal的namespace
+     */
+    this.process_action_key = 'publicProcessDetailModal'
+    /**
+     * redux中需要调用的方法
+     */
+    this.action_valuekey = 'getProcessInfo'
   }
 
   componentWillReceiveProps(nextProps) {
@@ -122,6 +139,76 @@ export default class BeginningStepThree extends Component {
         currentSelectHisArrow: ''
       })
     }
+    this.updateUrgeBtn(nextProps)
+  }
+
+  componentDidMount() {
+    this.updateUrgeBtn()
+  }
+
+  /**
+   * 更新按钮
+   */
+  updateUrgeBtn = props => {
+    const { processInfo, itemValue } = props || this.props
+    const doit = DidShowUrging(processInfo, itemValue.id)
+    this.setState(
+      {
+        updateShowUrgeBtn: doit.isShowUrgeButton(),
+        updateShowUrgeText: doit.isShowUrgeText(itemValue)
+      },
+      () => {
+        // console.log(this.state.updateShowUrgeBtn)
+      }
+    )
+  }
+
+  updateProcessInfo = async () => {
+    const { dispatch, processInfo } = this.props
+    await dispatch({
+      type: this.process_action_key + '/' + this.action_valuekey,
+      payload: {
+        id: processInfo.id
+      }
+    })
+    // this.updateUrgeBtn()
+  }
+
+  confirmToUrge = () => {
+    const { itemValue } = this.props
+    Modal.confirm({
+      // style: {
+
+      // },
+      // getContainer: () =>
+      //   document.getElementById('container_fileDetailContentOut'),
+      zIndex: 1011,
+      title: '提示',
+      content: '确定催办此节点吗？节点中的负责人将会收到通知',
+      okText: '确认',
+      cancelText: '取消',
+      onOk: () => {
+        UrgeStart({ flow_node_instance_id: itemValue.id })
+          .then(res => {
+            // console.log(res)
+            if (isApiResponseOk(res)) {
+              this.updateUrgeBtn()
+              notification.success({
+                message: '提示',
+                description: res.message
+              })
+              this.updateProcessInfo()
+            } else {
+              notification.warn({
+                message: '警告',
+                description: res.message
+              })
+            }
+            return res
+          })
+          .catch(console.log)
+      }
+    })
   }
 
   // 更新对应步骤下的节点内容数据, 即当前操作对象的数据
@@ -1108,7 +1195,9 @@ export default class BeginningStepThree extends Component {
     const {
       is_show_spread_arrow,
       transPrincipalList = [],
-      transCopyPersonnelList = []
+      transCopyPersonnelList = [],
+      updateShowUrgeText,
+      updateShowUrgeBtn
     } = this.state
     const {
       name,
@@ -1161,6 +1250,14 @@ export default class BeginningStepThree extends Component {
                     &#xe7b6;
                   </span>
                   <span>{name}</span>
+                  {updateShowUrgeText && (
+                    <Fragment>
+                      <span className="urging_text_red">
+                        <span className={globalStyles.authTheme}>&#xe84c;</span>
+                        <span style={{ marginLeft: 5 }}>催办</span>
+                      </span>
+                    </Fragment>
+                  )}
                   {runtime_type == '1' && (
                     <span
                       style={{
@@ -1238,6 +1335,18 @@ export default class BeginningStepThree extends Component {
                       <span className={indexStyles.content__principalList_info}>
                         {`${transPrincipalList.length}位评分人`}
                       </span>
+                      {updateShowUrgeBtn && (
+                        <Button
+                          type="primary"
+                          style={{ marginLeft: 15 }}
+                          onClick={this.confirmToUrge}
+                        >
+                          <span className={globalStyles.authTheme}>
+                            &#xe84c;
+                          </span>
+                          <span style={{ marginLeft: 5 }}>催办</span>
+                        </Button>
+                      )}
                       {parentStatus == '0' &&
                         (score_locked == '0' ? (
                           <span style={{ position: 'relative' }}>

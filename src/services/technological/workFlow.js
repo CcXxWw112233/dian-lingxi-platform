@@ -367,3 +367,14 @@ export async function changeProcessRecipients(data) {
     data
   })
 }
+
+/**
+ * 流程节点催办
+ */
+export function UrgeStart(data) {
+  return request({
+    method: 'GET',
+    url: `${REQUEST_DOMAIN_FLOWS}/flow/task/urge`,
+    params: data
+  })
+}

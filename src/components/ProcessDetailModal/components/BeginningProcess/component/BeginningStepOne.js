@@ -19,7 +19,7 @@ import {
   validateTwoDecimal
 } from '../../../../../utils/verify'
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png'
-import { Button, message, Tooltip } from 'antd'
+import { Button, message, Modal, notification, Tooltip } from 'antd'
 import { connect } from 'dva'
 import {
   compareACoupleOfObjects,
@@ -46,10 +46,13 @@ import BeginningStepOne_six from './BeginningStepOne_six'
 import {
   changeProcessAssignees,
   changeProcessRecipients,
-  saveOnlineExcelWithProcess
+  saveOnlineExcelWithProcess,
+  UrgeStart
 } from '../../../../../services/technological/workFlow'
 import { isApiResponseOk } from '../../../../../utils/handleResponseData'
 import AmendComponent from '../../ProcessStartConfirm/AmendComponent'
+import { Fragment } from 'react'
+import { DidShowUrging } from '../../../../../utils/businessFunction'
 
 @connect(mapStateToProps)
 export default class BeginningStepOne extends Component {
@@ -67,8 +70,37 @@ export default class BeginningStepOne extends Component {
           ? true
           : false, // 是否展开箭头 详情 true表示展开
       form_values: [],
-      sheetListData: {} // 存放表格列表数据
+      sheetListData: {}, // 存放表格列表数据
+      /**
+       * 是否显示催办按钮
+       */
+      updateShowUrgeBtn: false,
+      updateShowUrgeText: false
     }
+    /**
+     * modal的namespace
+     */
+    this.process_action_key = 'publicProcessDetailModal'
+    /**
+     * redux中需要调用的方法
+     */
+    this.action_valuekey = 'getProcessInfo'
+  }
+
+  componentDidMount() {
+    this.updateUrgeBtn()
+  }
+
+  /**
+   * 更新按钮
+   */
+  updateUrgeBtn = (props) => {
+    const { processInfo, itemValue } = props || this.props
+    const doit = DidShowUrging(processInfo, itemValue.id)
+    this.setState({
+      updateShowUrgeBtn: doit.isShowUrgeButton(),
+      updateShowUrgeText: doit.isShowUrgeText(itemValue)
+    })
   }
 
   updateState = flag => {
@@ -103,6 +135,7 @@ export default class BeginningStepOne extends Component {
             : false
       })
     }
+    this.updateUrgeBtn(nextProps)
   }
 
   /**
@@ -798,6 +831,57 @@ export default class BeginningStepOne extends Component {
     )
   }
 
+  /**
+   * 更新流程详情
+   */
+  updateProcessInfo = async () => {
+    const { dispatch, processInfo } = this.props
+    await dispatch({
+      type: this.process_action_key + '/' + this.action_valuekey,
+      payload: {
+        id: processInfo.id
+      }
+    })
+    // this.updateUrgeBtn()
+  }
+
+  confirmToUrge = () => {
+    const { itemValue } = this.props
+    Modal.confirm({
+      // style: {
+
+      // },
+      // getContainer: () =>
+      //   document.getElementById('container_fileDetailContentOut'),
+      zIndex: 1011,
+      title: '提示',
+      content: '确定催办此节点吗？节点中的负责人将会收到通知',
+      okText: '确认',
+      cancelText: '取消',
+      onOk: () => {
+        UrgeStart({ flow_node_instance_id: itemValue.id })
+          .then(res => {
+            // console.log(res)
+            if (isApiResponseOk(res)) {
+              this.updateUrgeBtn()
+              notification.success({
+                message: '提示',
+                description: res.message
+              })
+              this.updateProcessInfo()
+            } else {
+              notification.warn({
+                message: '警告',
+                description: res.message
+              })
+            }
+            return res
+          })
+          .catch(console.log)
+      }
+    })
+  }
+
   render() {
     const {
       itemKey,
@@ -824,7 +908,9 @@ export default class BeginningStepOne extends Component {
     const {
       transPrincipalList = [],
       transCopyPersonnelList = [],
-      is_show_spread_arrow
+      is_show_spread_arrow,
+      updateShowUrgeBtn,
+      updateShowUrgeText
     } = this.state
 
     let new_itemValue = { ...itemValue }
@@ -864,6 +950,14 @@ export default class BeginningStepOne extends Component {
                     &#xe7b1;
                   </span>
                   <span>{name}</span>
+                  {updateShowUrgeText && (
+                    <Fragment>
+                      <span className="urging_text_red">
+                        <span className={globalStyles.authTheme}>&#xe84c;</span>
+                        <span style={{ marginLeft: 5 }}>催办</span>
+                      </span>
+                    </Fragment>
+                  )}
                   {runtime_type == '1' && (
                     <span
                       style={{
@@ -942,6 +1036,18 @@ export default class BeginningStepOne extends Component {
                       <span className={indexStyles.content__principalList_info}>
                         {`${transPrincipalList.length}位填写人`}
                       </span>
+                      {updateShowUrgeBtn && (
+                        <Button
+                          type="primary"
+                          style={{ marginLeft: 15 }}
+                          onClick={this.confirmToUrge}
+                        >
+                          <span className={globalStyles.authTheme}>
+                            &#xe84c;
+                          </span>
+                          <span style={{ marginLeft: 5 }}>催办</span>
+                        </Button>
+                      )}
                     </>
                   )}
                   {parentStatus == '0' && (

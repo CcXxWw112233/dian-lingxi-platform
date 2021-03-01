@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Table } from 'antd'
 import { timestampToTimeNormal } from '../../../../../utils/util'
 import {
+  DidShowUrging,
   getOrgNameWithOrgIdFilter,
   setBoardIdStorage
 } from '../../../../../utils/businessFunction'
@@ -77,11 +78,12 @@ export default class FlowTables extends Component {
         }
       },
       {
+        width: 100,
         title: this.renderTitle(list_type).state_title,
         dataIndex: 'state',
         key: 'state',
         ellipsis: true,
-        width: 164,
+        // width: 164,
         render: item => {
           return this.renderKeyState(item)
         }
@@ -91,33 +93,34 @@ export default class FlowTables extends Component {
         dataIndex: 'time',
         key: 'time',
         ellipsis: true,
-        width: 164,
+        width: 100,
         render: (item, value) => {
           return this.renderKeyTime(item, value)
         }
       },
       {
-        title: list_type == '1' ? '步骤执行人' : '发起人',
+        title: list_type == '1' ? '执行人' : '发起人',
         dataIndex: 'originator',
         key: 'originator',
         ellipsis: true,
-        width: 164,
+        width: 100,
         render: (item, value) => {
           return this.renderKeyOriginator(item, value)
         }
       }
     ]
+
     this.setState({
       columns,
       dataSource
     })
   }
   renderTitle = list_type => {
-    let time_title = '步骤完成期限'
+    let time_title = '完成期限'
     let state_title = '流程状态'
     switch (list_type) {
       case '1':
-        time_title = '步骤完成期限'
+        time_title = '完成期限'
         state_title = '当前步骤'
         break
       case '2':
@@ -139,7 +142,12 @@ export default class FlowTables extends Component {
   }
   renderKeyName = item => {
     let name_dec = item
-    const { name, board_name, org_id } = item
+    const { name, board_name, org_id, is_urge } = item
+    /**
+     * 是否需要隐藏显示催办
+     */
+    const isUrging = DidShowUrging({}, '')
+    const showText = isUrging.isShowUrgeText({ is_urge: is_urge })
     const {
       currentUserOrganizes = [],
       simplemodeCurrentProject = {}
@@ -161,6 +169,12 @@ export default class FlowTables extends Component {
             &#xe682;
           </span>
           <span>{name}</span>
+          {showText && (
+            <span className="urging_text_red">
+              <span className={globalStyles.authTheme}>&#xe84c;</span>
+              <span style={{ marginLeft: 5 }}>催办</span>
+            </span>
+          )}
         </p>
         {(board_id == '0' || !board_id) && (
           <p

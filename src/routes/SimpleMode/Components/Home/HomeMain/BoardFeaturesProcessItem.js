@@ -13,7 +13,8 @@ import {
 } from '../../../../../utils/util'
 import {
   getOrgNameWithOrgIdFilter,
-  currentNounPlanFilterName
+  currentNounPlanFilterName,
+  DidShowUrging
 } from '../../../../../utils/businessFunction'
 import { compareOppositeTimer } from '../../../../../components/ProcessDetailModal/components/handleOperateModal'
 import { FLOWS } from '../../../../../globalset/js/constant'
@@ -115,9 +116,14 @@ export default class BoardFeaturesProcessItem extends Component {
       completed_node_num,
       runtime_type,
       deadline_type,
-      last_complete_time
+      last_complete_time,
+      /**
+       * 是否催办
+       */
+      is_urge
     } = itemValue
     const belong_name = this.renderBelong()
+    const showText = DidShowUrging({}, '')
     return (
       <div
         className={`${
@@ -143,6 +149,16 @@ export default class BoardFeaturesProcessItem extends Component {
               {total_node_name}{' '}
               {`( ${completed_node_num} / ${total_node_num} )`}
             </span>
+
+            {showText.isShowUrgeText({ is_urge: is_urge }) && (
+              <span
+                className="urging_text_red text_showdow_alpha_white"
+                style={{ padding: 2 }}
+              >
+                <span className={`${globalStyles.authTheme}`}>&#xe84c;</span>
+                <span style={{ marginLeft: 2 }}>催办</span>
+              </span>
+            )}
           </div>
           {!!belong_name && (
             <div
