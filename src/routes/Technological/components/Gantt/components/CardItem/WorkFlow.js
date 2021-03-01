@@ -17,6 +17,7 @@ import {
 } from '../../ganttBusiness'
 import { isSamDay } from '../../../../../../utils/util'
 import { workflowUpdateTime } from '../../../../../../services/technological/workFlow'
+import { DidShowUrging } from '../../../../../../utils/businessFunction'
 // 参考自http://www.jq22.com/webqd1348
 
 // const dateAreaHeight = date_area_height //日期区域高度，作为修正
@@ -37,6 +38,7 @@ export default class WorkFlowItem extends Component {
     }
     this.x = 0
     this.l = 0
+    this.didShow = DidShowUrging({}, '')
   }
 
   componentDidMount() {
@@ -303,7 +305,7 @@ export default class WorkFlowItem extends Component {
 
   render() {
     const { itemValue = {}, gantt_view_mode } = this.props
-    const { height, name, id, status, nodes = [] } = itemValue
+    const { height, name, id, status, nodes = [], is_urge } = itemValue
     const { local_left, local_top, rely_down } = this.state
     return (
       <div
@@ -349,6 +351,14 @@ export default class WorkFlowItem extends Component {
           {''}
           {''}
           {status == '1' && this.renderFlowNodesStep(nodes)}）
+        </div>
+        <div className="">
+          {this.didShow.isShowUrgeText({ is_urge }) && (
+            <span className="urging_text_red">
+              <span className={globalStyles.authTheme}>&#xe84c;</span>
+              <span style={{ marginLeft: 5 }}>催办</span>
+            </span>
+          )}
         </div>
       </div>
     )

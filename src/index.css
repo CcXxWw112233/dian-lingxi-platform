@@ -18,6 +18,21 @@ body,
 :global(.christmas.ant-btn-primary::before) {
   display: none !important;
 }
+:global(.urging_text_red){
+  color: #F95455;
+  font-size: 14px;
+  margin-left: 10px;
+  white-space: nowrap;
+}
+:global(.urging_text_white){
+  color: #fff;
+  font-size: 14px;
+  margin-left: 10px;
+  white-space: nowrap;
+}
+:global(.text_showdow_alpha_white){
+  text-shadow: 1px 0 0 rgb(255 255 255 / 50%), -1px 0 0 rgb(255 255 255 / 50%), 0px 1px 0 rgb(255 255 255 / 50%), 0px -1px 0 rgb(255 255 255 / 50%);
+}
 body {
   /* background-color: rgba(245, 245, 245, 1); */
   overflow: auto !important;
