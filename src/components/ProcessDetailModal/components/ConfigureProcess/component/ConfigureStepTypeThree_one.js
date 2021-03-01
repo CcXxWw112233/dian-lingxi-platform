@@ -756,6 +756,7 @@ export default class ConfigureStepTypeThree_one extends Component {
                   {/* <div className={`${indexStyles.rating_editTable} ${globalStyles.global_vertical_scrollbar}`} contentEditable={true}></div> */}
                   {is_show_title_area ? (
                     <textarea
+                      placeholder="请填写标题内容"
                       autoFocus={true}
                       onFocus={e => {
                         this.onFocus(e, key || id || index, index)
@@ -788,7 +789,12 @@ export default class ConfigureStepTypeThree_one extends Component {
                         this.handleShowTitleArea(e, key || id || index, index)
                       }}
                     >
-                      <div className={indexStyles.show_title_area}>{title}</div>
+                      <div
+                        className={indexStyles.show_title_area}
+                        style={{ color: !title && 'rgba(0,0,0,0.25)' }}
+                      >
+                        {title || '请填写标题内容'}
+                      </div>
                       {description && description != '' && (
                         <div
                           style={{ marginRight: '4px' }}
@@ -804,6 +810,7 @@ export default class ConfigureStepTypeThree_one extends Component {
                   {/* <div className={indexStyles.rating_editTable} contentEditable={true}></div> */}
                   <textarea
                     value={max_score}
+                    placeholder="请填写最高分数值"
                     onBlur={e => {
                       this.handleAutoGradeTextAreaBlur(
                         e,
@@ -896,6 +903,7 @@ export default class ConfigureStepTypeThree_one extends Component {
                   {/* <div className={`${indexStyles.rating_editTable} ${globalStyles.global_vertical_scrollbar}`} contentEditable={true}></div> */}
                   {is_show_title_area ? (
                     <textarea
+                      placeholder="请填写标题内容"
                       autoFocus={true}
                       onFocus={e => {
                         this.onFocus(e, key || id || index, index)
@@ -929,10 +937,13 @@ export default class ConfigureStepTypeThree_one extends Component {
                       }}
                     >
                       <div
-                        style={{ maxWidth: '140px' }}
+                        style={{
+                          maxWidth: '140px',
+                          color: !title && 'rgba(0,0,0,0.25)'
+                        }}
                         className={indexStyles.show_title_area}
                       >
-                        {title}
+                        {title || '请填写标题内容'}
                       </div>
                       {description && description != '' && (
                         <div
@@ -948,6 +959,7 @@ export default class ConfigureStepTypeThree_one extends Component {
                 <td style={{ width: '90px' }}>
                   {/* <div className={`${indexStyles.rating_editTable} ${globalStyles.global_vertical_scrollbar}`} contentEditable={true}></div> */}
                   <textarea
+                    placeholder="请填写权重占比"
                     value={weight_ratio}
                     onBlur={e => {
                       this.handleChangeAutoWeightTextAreaBlur(
@@ -969,6 +981,7 @@ export default class ConfigureStepTypeThree_one extends Component {
                 <td style={{ position: 'relative', width: '90px' }}>
                   {/* <div className={indexStyles.rating_editTable} contentEditable={true}></div> */}
                   <textarea
+                    placeholder="请填写最高分数值"
                     value={max_score}
                     onChange={e => {
                       this.handleAutoGradeTextAreaValue2(

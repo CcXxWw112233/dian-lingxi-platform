@@ -49,6 +49,7 @@ import {
   timeToTimestamp
 } from '../../../../../utils/util'
 import { ganttIsOutlineView } from '../../Gantt/constants'
+import TreeRemoveBoardMemberModal from './TreeRemoveBoardMemberModal'
 
 const TextArea = Input.TextArea
 
@@ -206,7 +207,16 @@ export default class DrawDetailInfo extends React.Component {
           message.warn('请不要移除自己', MESSAGE_DURATION_TIME)
           return false
         }
-        this.confirm({ board_id, user_id })
+        this.setState(
+          {
+            removerUserId: user_id
+          },
+          () => {
+            this.setTreeRemoveBoardMemberVisible()
+          }
+        )
+
+        // this.confirm({ board_id, user_id })
         break
       default:
         break
@@ -310,6 +320,13 @@ export default class DrawDetailInfo extends React.Component {
     }
     this.setState({
       ShowAddMenberModalVisibile: !this.state.ShowAddMenberModalVisibile
+    })
+  }
+
+  setTreeRemoveBoardMemberVisible = () => {
+    this.setState({
+      TreeRemoveBoardMemberModalVisible: !this.state
+        .TreeRemoveBoardMemberModalVisible
     })
   }
 
@@ -1004,7 +1021,13 @@ export default class DrawDetailInfo extends React.Component {
                   const { avatar, user_id } = value
                   return (
                     <div className={DrawDetailInfoStyle.manImageItem} key={key}>
-                      <Dropdown overlay={manImageDropdown(value)}>
+                      <Dropdown
+                        trigger={['click']}
+                        overlay={manImageDropdown(value)}
+                        getPopupContainer={() =>
+                          document.getElementById('detailInfoOut')
+                        }
+                      >
                         {avatar ? (
                           <img src={avatar} />
                         ) : (
@@ -1246,40 +1269,42 @@ export default class DrawDetailInfo extends React.Component {
                 </div>
               </div>
             )}
-            <div className={DrawDetailInfoStyle.set_time_item}>
-              <div className={DrawDetailInfoStyle.set_time_label}>
-                预警设置：
+            {date_mode == '0' && (
+              <div className={DrawDetailInfoStyle.set_time_item}>
+                <div className={DrawDetailInfoStyle.set_time_label}>
+                  预警设置：
+                </div>
+                <div className={DrawDetailInfoStyle.set_time_content}>
+                  <Select
+                    optionLabelProp="label"
+                    // defaultValue="无预警"
+                    style={{ width: '180px', letterSpacing: '1px' }}
+                    onChange={this.handleSelectedWarnValue}
+                    placeholder="到期预警日期"
+                    value={time_warning || '0'}
+                  >
+                    <Select.Option label="无预警" value="0">
+                      无预警
+                    </Select.Option>
+                    <Select.Option label={`到期前0.5天预警`} value={'0.5'}>
+                      提前0.5天
+                    </Select.Option>
+                    <Select.Option label={`到期前1天预警`} value={'1'}>
+                      提前1天
+                    </Select.Option>
+                    <Select.Option label={`到期前2天预警`} value={'2'}>
+                      提前2天
+                    </Select.Option>
+                    <Select.Option label={`到期前3天预警`} value={'3'}>
+                      提前3天
+                    </Select.Option>
+                    <Select.Option label={`到期前5天预警`} value={'5'}>
+                      提前5天
+                    </Select.Option>
+                  </Select>
+                </div>
               </div>
-              <div className={DrawDetailInfoStyle.set_time_content}>
-                <Select
-                  optionLabelProp="label"
-                  // defaultValue="无预警"
-                  style={{ width: '180px', letterSpacing: '1px' }}
-                  onChange={this.handleSelectedWarnValue}
-                  placeholder="到期预警日期"
-                  value={time_warning || '0'}
-                >
-                  <Select.Option label="无预警" value="0">
-                    无预警
-                  </Select.Option>
-                  <Select.Option label={`到期前0.5天预警`} value={'0.5'}>
-                    提前0.5天
-                  </Select.Option>
-                  <Select.Option label={`到期前1天预警`} value={'1'}>
-                    提前1天
-                  </Select.Option>
-                  <Select.Option label={`到期前2天预警`} value={'2'}>
-                    提前2天
-                  </Select.Option>
-                  <Select.Option label={`到期前3天预警`} value={'3'}>
-                    提前3天
-                  </Select.Option>
-                  <Select.Option label={`到期前5天预警`} value={'5'}>
-                    提前5天
-                  </Select.Option>
-                </Select>
-              </div>
-            </div>
+            )}
           </div>
           <div style={{ marginTop: '32px' }}>
             <CustomCategoriesOperate
@@ -1339,6 +1364,15 @@ export default class DrawDetailInfo extends React.Component {
               this
             )}
           />
+          {this.state.TreeRemoveBoardMemberModalVisible && (
+            <TreeRemoveBoardMemberModal
+              visible={this.state.TreeRemoveBoardMemberModalVisible}
+              setTreeRemoveBoardMemberVisible={
+                this.setTreeRemoveBoardMemberVisible
+              }
+              removerUserId={this.state.removerUserId}
+            />
+          )}
         </div>
         {/* <div style={{display: dynamic_header_sticky ? 'block' : 'none'}} className={DrawDetailInfoStyle.shadow}>
           <div

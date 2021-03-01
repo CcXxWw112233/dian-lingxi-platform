@@ -869,7 +869,7 @@ export default class MainUIComponent extends Component {
       projectDetailInfoData = {}
     } = this.props
     const { board_set = {} } = projectDetailInfoData
-    const { relative_time } = board_set
+    const { relative_time, date_mode } = board_set
     const {
       org_id,
       card_id,
@@ -1262,16 +1262,19 @@ export default class MainUIComponent extends Component {
                       )}
                     </div>
                     {/* 表示只有开始和截止时间存在并且在今天之后 */}
-                    {!!start_time && !!due_time && !isOverdueTime(due_time) && (
-                      <EarlyWarning
-                        handleUpdateDatas={
-                          this.updateDrawContentWithUpdateParentListDatas
-                        }
-                        getPopupContainer={document.getElementById(
-                          'container_fileDetailContentOut'
-                        )}
-                      />
-                    )}
+                    {!!start_time &&
+                      !!due_time &&
+                      !isOverdueTime(due_time) &&
+                      date_mode == '0' && (
+                        <EarlyWarning
+                          handleUpdateDatas={
+                            this.updateDrawContentWithUpdateParentListDatas
+                          }
+                          getPopupContainer={document.getElementById(
+                            'container_fileDetailContentOut'
+                          )}
+                        />
+                      )}
                   </div>
                 </div>
               </div>

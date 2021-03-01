@@ -296,6 +296,7 @@ export default class ConfigureStepOne_one extends Component {
               value={title}
               maxLength={50}
               onChange={this.propertyNameChange}
+              placeholder="请输入标题"
             />
           </div>
           <div>

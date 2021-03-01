@@ -253,7 +253,11 @@ export default class CardItem extends Component {
   }
 
   onMouseEnter = () => {
-    const { itemValue } = this.props
+    const {
+      itemValue,
+      projectDetailInfoData: { board_set = {} }
+    } = this.props
+    const { date_mode, relative_time } = board_set
     const {
       top,
       id,
@@ -273,7 +277,13 @@ export default class CardItem extends Component {
     if (!ganttPanelDashedDrag) {
       this.props.setDasheRectShow && this.props.setDasheRectShow(false)
     }
-    if (this.state.rely_down || task_is_dragging || task_is_drag_moving) return
+    if (
+      this.state.rely_down ||
+      task_is_dragging ||
+      task_is_drag_moving ||
+      date_mode == '1'
+    )
+      return
     // 鼠标移入 触发显示日期
     this.props.dispatch({
       type: 'gantt/updateDatas',
@@ -1438,7 +1448,12 @@ export default class CardItem extends Component {
     }
   }
   handleObj = () => {
-    const { itemValue = {}, card_rely_draging } = this.props
+    const {
+      itemValue = {},
+      card_rely_draging,
+      projectDetailInfoData: { board_set = {} }
+    } = this.props
+    const { date_mode } = board_set
     const { drag_lock } = this.state
     const {
       top,
@@ -1557,7 +1572,8 @@ export default class CardItem extends Component {
         if (
           this.state.rely_down ||
           this.props.task_is_dragging ||
-          this.props.task_is_drag_moving
+          this.props.task_is_drag_moving ||
+          date_mode == '1'
         )
           return
         this.props.dispatch({
@@ -1760,8 +1776,10 @@ export default class CardItem extends Component {
       card_name_outside,
       ceilWidth,
       ceiHeight,
-      list_id
+      list_id,
+      projectDetailInfoData: { board_set = {} }
     } = this.props
+    const { date_mode } = board_set
     const {
       left,
       top,
@@ -1872,6 +1890,7 @@ export default class CardItem extends Component {
     // 显示预警
     const SHOW_WARNING_TRIGGER =
       ganttIsOutlineView({ group_view_type }) &&
+      date_mode == '0' &&
       !parent_card_id &&
       is_realize == '0' &&
       is_has_end_time &&
@@ -2447,7 +2466,10 @@ function mapStateToProps({
     }
   },
   imCooperation: { im_all_latest_unread_messages = [] },
-  publicTaskDetailModal: { card_id: card_detail_id }
+  publicTaskDetailModal: { card_id: card_detail_id },
+  projectDetail: {
+    datas: { projectDetailInfoData = {} }
+  }
 }) {
   return {
     list_group,
@@ -2466,6 +2488,7 @@ function mapStateToProps({
     selected_card_visible,
     notification_todos,
     card_name_outside,
-    milestoneMap
+    milestoneMap,
+    projectDetailInfoData
   }
 }
