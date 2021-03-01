@@ -36,6 +36,30 @@ export default class TreeRemoveBoardMemberModal extends Component {
     })
   }
 
+  confirm(data) {
+    const that = this
+    Modal.confirm({
+      title: '确认将他移出项目吗？',
+      zIndex: 2000,
+      content: (
+        <div style={{ color: 'rgba(0,0,0, .8)', fontSize: 14 }}>
+          <span>退出后将无法获取该项目的相关动态</span>
+        </div>
+      ),
+      okText: '确认',
+      cancelText: '取消',
+      onOk() {
+        const { dispatch } = that.props
+        dispatch({
+          type: 'projectDetail/removeMenbers',
+          payload: {
+            ...data
+          }
+        })
+      }
+    })
+  }
+
   componentDidMount() {
     const {
       removerUserId,
@@ -46,14 +70,22 @@ export default class TreeRemoveBoardMemberModal extends Component {
     getTransferSelectedDetailList({ user_id: removerUserId, board_id }).then(
       res => {
         if (isApiResponseOk(res)) {
-          res.data.map(item => {
-            listType.push(item.content_type)
-          })
-          listType = Array.from(new Set(listType))
-          this.setState({
-            transferSelectedList: res.data,
-            listType
-          })
+          if (!!res.data.length) {
+            res.data.map(item => {
+              listType.push(item.content_type)
+            })
+            listType = Array.from(new Set(listType))
+            this.setState({
+              transferSelectedList: res.data,
+              listType
+            })
+          } else {
+            this.props.setTreeRemoveBoardMemberVisible &&
+              this.props.setTreeRemoveBoardMemberVisible()
+            setTimeout(() => {
+              this.confirm({ board_id, user_id: removerUserId })
+            }, 100)
+          }
         }
       }
     )
@@ -537,23 +569,26 @@ export default class TreeRemoveBoardMemberModal extends Component {
   }
   render() {
     const { visible } = this.props
+    const { transferSelectedList = [] } = this.state
     return (
       <div>
-        <Modal
-          title={`移除成员确认`}
-          visible={visible} //moveToDirectoryVisiblie
-          width={630}
-          zIndex={1009}
-          destroyOnClose={true}
-          maskClosable={false}
-          okText="确认"
-          cancelText="取消"
-          onCancel={this.onCancel}
-          okButtonProps={{ disabled: !this.whetherIsSelectConfirm() }}
-          onOk={this.onOk}
-        >
-          {this.renderContent()}
-        </Modal>
+        {transferSelectedList && !!transferSelectedList.length && (
+          <Modal
+            title={`移除成员确认`}
+            visible={visible} //moveToDirectoryVisiblie
+            width={630}
+            zIndex={1009}
+            destroyOnClose={true}
+            maskClosable={false}
+            okText="确认"
+            cancelText="取消"
+            onCancel={this.onCancel}
+            okButtonProps={{ disabled: !this.whetherIsSelectConfirm() }}
+            onOk={this.onOk}
+          >
+            {this.renderContent()}
+          </Modal>
+        )}
       </div>
     )
   }

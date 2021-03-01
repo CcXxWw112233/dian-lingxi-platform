@@ -1021,7 +1021,13 @@ export default class DrawDetailInfo extends React.Component {
                   const { avatar, user_id } = value
                   return (
                     <div className={DrawDetailInfoStyle.manImageItem} key={key}>
-                      <Dropdown overlay={manImageDropdown(value)}>
+                      <Dropdown
+                        trigger={['click']}
+                        overlay={manImageDropdown(value)}
+                        getPopupContainer={() =>
+                          document.getElementById('detailInfoOut')
+                        }
+                      >
                         {avatar ? (
                           <img src={avatar} />
                         ) : (
