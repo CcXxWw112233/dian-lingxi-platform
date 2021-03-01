@@ -1313,7 +1313,7 @@ export default class BeginningStepTwo extends Component {
             } else {
               notification.warn({
                 message: '警告',
-                description: '已经催办成功，请不要重复催办'
+                description: res.message
               })
             }
             return res
