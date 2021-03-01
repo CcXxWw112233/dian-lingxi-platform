@@ -163,6 +163,17 @@ export default class BeginningStepThree extends Component {
     )
   }
 
+  updateProcessInfo = async () => {
+    const { dispatch, processInfo } = this.props
+    await dispatch({
+      type: this.process_action_key + '/' + this.action_valuekey,
+      payload: {
+        id: processInfo.id
+      }
+    })
+    // this.updateUrgeBtn()
+  }
+
   confirmToUrge = () => {
     const { itemValue } = this.props
     Modal.confirm({

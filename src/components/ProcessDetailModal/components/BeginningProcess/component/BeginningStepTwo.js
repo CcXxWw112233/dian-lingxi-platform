@@ -138,6 +138,16 @@ export default class BeginningStepTwo extends Component {
     this.updateUrgeBtn()
   }
 
+  updateProcessInfo = async () => {
+    const { dispatch, processInfo } = this.props
+    await dispatch({
+      type: this.process_action_key + '/' + this.action_valuekey,
+      payload: {
+        id: processInfo.id
+      }
+    })
+    // this.updateUrgeBtn()
+  }
   /**
    * 更新按钮
    */

@@ -834,14 +834,15 @@ export default class BeginningStepOne extends Component {
   /**
    * 更新流程详情
    */
-  updateProcessInfo = () => {
+  updateProcessInfo = async () => {
     const { dispatch, processInfo } = this.props
-    dispatch({
+    await dispatch({
       type: this.process_action_key + '/' + this.action_valuekey,
       payload: {
         id: processInfo.id
       }
     })
+    // this.updateUrgeBtn()
   }
 
   confirmToUrge = () => {

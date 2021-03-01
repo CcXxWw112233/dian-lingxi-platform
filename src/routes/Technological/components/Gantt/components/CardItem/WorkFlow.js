@@ -39,6 +39,10 @@ export default class WorkFlowItem extends Component {
     this.x = 0
     this.l = 0
     this.didShow = DidShowUrging({}, '')
+    /**
+     * 流程状态是否已完成
+     */
+    this.STATUSOK = '3'
   }
 
   componentDidMount() {
@@ -353,12 +357,13 @@ export default class WorkFlowItem extends Component {
           {status == '1' && this.renderFlowNodesStep(nodes)}）
         </div>
         <div className="">
-          {this.didShow.isShowUrgeText({ is_urge }) && (
-            <span className="urging_text_red">
-              <span className={globalStyles.authTheme}>&#xe84c;</span>
-              <span style={{ marginLeft: 5 }}>催办</span>
-            </span>
-          )}
+          {this.didShow.isShowUrgeText({ is_urge }) &&
+            status !== this.STATUSOK && (
+              <span className="urging_text_red">
+                <span className={globalStyles.authTheme}>&#xe84c;</span>
+                <span style={{ marginLeft: 5 }}>催办</span>
+              </span>
+            )}
         </div>
       </div>
     )
