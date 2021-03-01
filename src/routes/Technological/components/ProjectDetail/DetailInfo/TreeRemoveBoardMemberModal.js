@@ -349,11 +349,11 @@ export default class TreeRemoveBoardMemberModal extends Component {
         width: 150,
         render: (text, record) => {
           const { transfer_user_id = '' } = record
-          let value_ =
-            transfer_user_id &&
-            (transfer_user_id.indexOf(',') != -1
+          let value_ = !!transfer_user_id
+            ? transfer_user_id.indexOf(',') != -1
               ? '多人交接'
-              : transfer_user_id)
+              : transfer_user_id
+            : undefined
           return (
             <Select
               onChange={e => {
