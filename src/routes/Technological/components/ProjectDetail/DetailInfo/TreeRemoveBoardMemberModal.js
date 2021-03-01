@@ -160,8 +160,8 @@ export default class TreeRemoveBoardMemberModal extends Component {
   }
 
   // 渲染表头类型内容
-  renderTtileTypeContent = () => {
-    const { titleTypeDropDownVisible } = this.state
+  renderTitleTypeContent = () => {
+    const { titleTypeDropDownVisible, transferSelectedList = [] } = this.state
     return (
       <div className={DrawDetailInfoStyle.title_type_wrapper}>
         <Dropdown
@@ -170,7 +170,11 @@ export default class TreeRemoveBoardMemberModal extends Component {
           overlay={this.renderOverlayTitleTypeMenu()}
           visible={titleTypeDropDownVisible}
           onVisibleChange={this.setTitleTypeDropDown}
-          getPopupContainer={triggerNode => triggerNode.parentNode}
+          getPopupContainer={
+            transferSelectedList.length > 1
+              ? triggerNode => triggerNode.parentNode
+              : null
+          }
         >
           <div className={DrawDetailInfoStyle.title_type_select}>
             <span>类型</span>
@@ -316,7 +320,7 @@ export default class TreeRemoveBoardMemberModal extends Component {
     })
     const columns = [
       {
-        title: this.renderTtileTypeContent(),
+        title: this.renderTitleTypeContent(),
         dataIndex: 'id',
         key: 'id',
         ellipsis: true,
@@ -470,6 +474,7 @@ export default class TreeRemoveBoardMemberModal extends Component {
         onDeselect={this.handleMenuReallyDeselect}
         selectable={true}
         style={{ width: 94 }}
+        getPopupContainer={triggerNode => triggerNode.parentNode}
       >
         <Menu.Item key="-1">全部</Menu.Item>
         <Menu.Item key="0">无</Menu.Item>
@@ -536,7 +541,7 @@ export default class TreeRemoveBoardMemberModal extends Component {
       <div>
         <div
           className={globalClassName.global_vertical_scrollbar}
-          style={{ overflowY: 'auto', maxHeight: '390px' }}
+          style={{ overflowY: 'auto', maxHeight: '390px', minHeight: '200px' }}
         >
           <Table
             rowSelection={this.rowSelection()}
