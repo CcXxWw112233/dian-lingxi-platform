@@ -1,6 +1,15 @@
 import React, { Component } from 'react'
 import DrawDetailInfoStyle from './DrawDetailInfo.less'
-import { Dropdown, Modal, Table, Menu, Select, Checkbox, Tooltip } from 'antd'
+import {
+  Dropdown,
+  Modal,
+  Table,
+  Menu,
+  Select,
+  Checkbox,
+  Tooltip,
+  message
+} from 'antd'
 import globalClassName from '@/globalset/css/globalClassName.less'
 import {
   getTransferSelectedDetailList,
@@ -9,6 +18,7 @@ import {
 import { connect } from 'dva'
 import { isApiResponseOk } from '../../../../../utils/handleResponseData'
 import { arrayNonRepeatfy } from '../../../../../utils/util'
+import { MESSAGE_DURATION_TIME } from '../../../../../globalset/js/constant'
 
 @connect(mapStateToProps)
 export default class TreeRemoveBoardMemberModal extends Component {
@@ -102,9 +112,17 @@ export default class TreeRemoveBoardMemberModal extends Component {
       removerUserId,
       projectDetailInfoData: { board_id }
     } = this.props
+    // 后端需要的数据结构
+    let transfer = [
+      {
+        content_id: board_id,
+        content_type: '1', //表示项目
+        content_transfer: transferSelectedList
+      }
+    ]
     removeMemberWithSettingTransferUser({
       handover_user_id: removerUserId,
-      transfer: transferSelectedList
+      transfer: transfer
     }).then(res => {
       if (isApiResponseOk(res)) {
         this.props.dispatch({
@@ -113,6 +131,20 @@ export default class TreeRemoveBoardMemberModal extends Component {
             id: board_id
           }
         })
+        this.props.setTreeRemoveBoardMemberVisible &&
+          this.props.setTreeRemoveBoardMemberVisible()
+        if (
+          window.location.href.indexOf('/technological/simplemode/workbench') !=
+          -1
+        ) {
+          this.props.dispatch({
+            type: 'gantt/getGanttData',
+            payload: {}
+          })
+        }
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+        this.initState()
         this.props.setTreeRemoveBoardMemberVisible &&
           this.props.setTreeRemoveBoardMemberVisible()
       }
