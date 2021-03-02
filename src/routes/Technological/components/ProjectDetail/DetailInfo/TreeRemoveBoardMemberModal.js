@@ -102,9 +102,15 @@ export default class TreeRemoveBoardMemberModal extends Component {
       removerUserId,
       projectDetailInfoData: { board_id }
     } = this.props
+    // 后端需要的数据结构
+    let transfer = {
+      content_id: board_id,
+      content_type: '1', //表示项目
+      content_transfer: transferSelectedList
+    }
     removeMemberWithSettingTransferUser({
       handover_user_id: removerUserId,
-      transfer: transferSelectedList
+      transfer: transfer
     }).then(res => {
       if (isApiResponseOk(res)) {
         this.props.dispatch({
