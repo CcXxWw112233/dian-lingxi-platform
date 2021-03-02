@@ -532,7 +532,8 @@ export default class ConfigureProcess extends Component {
       approve_type,
       score_node_set = {},
       deadline_type,
-      deadline_value
+      deadline_value,
+      assignee_roles
     } = itemValue
     let result_value =
       score_node_set && Object.keys(score_node_set).length
@@ -540,6 +541,7 @@ export default class ConfigureProcess extends Component {
         : ''
     let newAssignees
     let newRecipients
+    // 这里是对数据进行兼容处理 肯是字符串也可能是数组
     if (!assignees || assignees == '') {
       newAssignees = []
     } else if (assignees instanceof Array) {
@@ -556,11 +558,17 @@ export default class ConfigureProcess extends Component {
     }
     // let newAssignees = assignees != 'undefined' && (assignees && assignees != '') ? assignees.split(',') : []
     // let newRecipients = recipients != 'undefined' && (recipients && recipients != '') ? recipients.split(',') : []
+    /*
+     这个禁用的判断逻辑 之前逻辑是因为需要具体定位错误文案 所以进行的分开判断
+     (但存在公共的逻辑冗余了 即如果合并判断 就无法定位具体错误文案
+      而是单个单个(比如：xxx请输入（单个） 而不是xxx和xxx和xxx未输入选择...（具体）这种)的--后期整理吧)
+     新增指定角色 没有单独提取进行判断,而是直接合并判断的（时间紧迫）
+    */
     switch (node_type) {
       case '1':
         if (cc_type == '0' || cc_type == '') {
           // 没有选择抄送人的时候
-          if (assignee_type == '1') {
+          if (assignee_type == '1' || assignee_type == '3') {
             // 表示的是任何人
             if (!name && !(forms && forms.length)) {
               confirmButtonText = '请输入步骤名称和至少添加一个表项'
@@ -571,6 +579,12 @@ export default class ConfigureProcess extends Component {
             } else if (name && !(forms && forms.length)) {
               confirmButtonText = '至少添加一个表项'
               confirmButtonDisabled = true
+            }
+            if (assignee_type == '3') {
+              if (!assignee_roles) {
+                confirmButtonText = '请选择角色'
+                confirmButtonDisabled = true
+              }
             }
           } else if (assignee_type == '2') {
             // 表示的是指定人员
@@ -634,7 +648,7 @@ export default class ConfigureProcess extends Component {
           }
         } else if (cc_type == '1') {
           // 表示选择了抄送人
-          if (assignee_type == '1') {
+          if (assignee_type == '1' || assignee_type == '3') {
             // 表示的是任何人
             if (
               !name &&
@@ -692,6 +706,12 @@ export default class ConfigureProcess extends Component {
             ) {
               confirmButtonText = '至少添加一个表项以及至少添加一位抄送人'
               confirmButtonDisabled = true
+            }
+            if (assignee_type == '3') {
+              if (!assignee_roles) {
+                confirmButtonText = '请选择角色'
+                confirmButtonDisabled = true
+              }
             }
           } else if (assignee_type == '2') {
             if (
@@ -856,6 +876,7 @@ export default class ConfigureProcess extends Component {
         }
         if (deadline_type == '2') {
           if (isNaN(deadline_value)) {
+            confirmButtonText = '请输入完成期限值'
             confirmButtonDisabled = true
           }
         }

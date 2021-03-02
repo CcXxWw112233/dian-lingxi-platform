@@ -64,8 +64,12 @@ export default class index extends Component {
   }
 
   render() {
-    const { placementTitle, itemValue, type } = this.props
-    const { node_type } = itemValue
+    const {
+      placementTitle,
+      itemValue,
+      type,
+      placementText = '修改'
+    } = this.props
     return (
       <span>
         <Popover
@@ -78,7 +82,9 @@ export default class index extends Component {
           className={`${indexStyles.mini_popover_card}`}
           onVisibleChange={this.onVisibleChange}
         >
-          <span className={indexStyles.confirm_edit}>修改</span>
+          <span className={indexStyles.confirm_edit}>
+            {placementText || '修改'}
+          </span>
         </Popover>
       </span>
     )

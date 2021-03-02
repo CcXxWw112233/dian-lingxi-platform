@@ -12,7 +12,11 @@ import {
   currentNounPlanFilterName
 } from '../../../../../utils/businessFunction'
 import { FLOWS } from '../../../../../globalset/js/constant'
-import { accordingToSortMembersList } from '../../handleOperateModal'
+import {
+  accordingToSortMembersList,
+  getCurrentDesignatedRolesMembers,
+  getRolesName
+} from '../../handleOperateModal'
 
 export default class FillInPersonContent extends Component {
   constructor(props) {
@@ -49,9 +53,9 @@ export default class FillInPersonContent extends Component {
   // 任何人 | 指定人
   assigneeTypeChange = e => {
     this.setState({
-      assignee_type: e.target.value
+      assignee_type: e.target.value,
+      designatedPersonnelList: []
     })
-    // this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('assignee_type', e.target.value)
   }
 
   // 把assignees中的执行人,在项目中的所有成员过滤出来
@@ -194,11 +198,18 @@ export default class FillInPersonContent extends Component {
 
   // 渲染指定人员
   renderDesignatedPersonnel = () => {
-    const { data = [], board_id, itemKey } = this.props
+    const {
+      data = [],
+      board_id,
+      itemKey,
+      itemValue: { assignees }
+    } = this.props
+    const { assignee_type } = this.state
     // const { designatedPersonnelList = [] } = this.state
     let designatedPersonnelList = this.filterAssignees()
     let org_id = getOrgIdByBoardId(board_id) || '0'
     let new_data = accordingToSortMembersList(data, designatedPersonnelList)
+    let roles_data = getCurrentDesignatedRolesMembers(data, assignees)
     return (
       <div style={{ flex: 1, padding: '8px 0' }}>
         {!designatedPersonnelList.length ? (
@@ -216,7 +227,7 @@ export default class FillInPersonContent extends Component {
               overlay={
                 <MenuSearchPartner
                   isInvitation={true}
-                  listData={new_data}
+                  listData={assignee_type == '3' ? roles_data : new_data}
                   keyCode={'user_id'}
                   searchName={'name'}
                   currentSelect={designatedPersonnelList}
@@ -339,7 +350,7 @@ export default class FillInPersonContent extends Component {
               overlay={
                 <MenuSearchPartner
                   isInvitation={true}
-                  listData={new_data}
+                  listData={assignee_type == '3' ? roles_data : new_data}
                   keyCode={'user_id'}
                   searchName={'name'}
                   currentSelect={designatedPersonnelList}
@@ -369,11 +380,16 @@ export default class FillInPersonContent extends Component {
 
   // 渲染资料收集的内容
   renderDataCollection = () => {
-    const { itemValue, NotModifiedInitiator, itemKey } = this.props
-    const { assignee_type, assignees } = itemValue
+    const {
+      itemValue,
+      NotModifiedInitiator,
+      itemKey,
+      currentDesignatedRolesData = []
+    } = this.props
+    const { assignee_type, assignees, assignee_roles } = itemValue
     const { designatedPersonnelList } = this.state
     let disabledAssignees =
-      assignee_type == '2' || NotModifiedInitiator
+      assignee_type == '2' || assignee_type == '3' || NotModifiedInitiator
         ? designatedPersonnelList && designatedPersonnelList.length
           ? assignees
             ? isArrayEqual(assignees.split(','), designatedPersonnelList)
@@ -405,9 +421,15 @@ export default class FillInPersonContent extends Component {
               <Radio style={{ marginBottom: '12px' }} value="2">
                 指定人员
               </Radio>
+              <Radio style={{ marginBottom: '12px' }} value="3">
+                指定角色 -{' '}
+                {getRolesName(currentDesignatedRolesData, assignee_roles)}
+              </Radio>
             </Radio.Group>
           )}
-          {(this.state.assignee_type == '2' || NotModifiedInitiator) && (
+          {(this.state.assignee_type == '2' ||
+            this.state.assignee_type == '3' ||
+            NotModifiedInitiator) && (
             <div>{this.renderDesignatedPersonnel()}</div>
           )}
         </div>

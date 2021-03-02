@@ -23,7 +23,8 @@ import {
   rebackProcessTask,
   nonAwayTempleteStartPropcess,
   updateFlowInstanceNameOrDescription,
-  getCurrentOrgAllMembers
+  getCurrentOrgAllMembers,
+  getDesignatedRoles
 } from '../../../services/technological/workFlow'
 import { public_selectCurrentFlowTabsStatus } from './select'
 let dispatchEvent = null
@@ -86,7 +87,8 @@ export default {
           processEditDatas: [],
           not_show_create_node_guide: '1',
           not_show_create_form_guide: '1',
-          not_show_create_rating_guide: '1'
+          not_show_create_rating_guide: '1',
+          currentDesignatedRolesData: [] // 当前获取组织中指定角色
         }
       })
       if (calback && typeof calback == 'function') calback()
@@ -586,6 +588,19 @@ export default {
           type: 'updateDatas',
           payload: {
             currentOrgAllMembers: membersData
+          }
+        })
+      }
+    },
+    // 获取组织角色
+    *getDesignatedRoles({ payload }, { call, put }) {
+      let res = yield call(getDesignatedRoles, { ...payload })
+      if (isApiResponseOk(res)) {
+        console.log(res.data)
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            currentDesignatedRolesData: res.data
           }
         })
       }

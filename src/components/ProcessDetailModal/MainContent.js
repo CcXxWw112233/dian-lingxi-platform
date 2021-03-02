@@ -315,6 +315,10 @@ export default class MainContent extends Component {
     this.whetherUpdateOrgnazationMemberList(this.props)
     // 设置用户节点内容缓存
     this.setUserProcessWithNodesStorage(this.props)
+    this.props.dispatch({
+      type: 'publicProcessDetailModal/getDesignatedRoles',
+      payload: {}
+    })
   }
   componentWillUnmount() {
     window.removeEventListener('resize', this.resizeTTY)

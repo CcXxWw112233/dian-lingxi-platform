@@ -521,6 +521,42 @@ const accordingToSortMembersList = (listData = [], selectedData = []) => {
   return new_data
 }
 
+/**
+ * 获取角色名称
+ * @param {*} data 获取角色列表的数据
+ * @param {*} assignee_roles 选择的角色类型
+ */
+const getRolesName = (data = [], assignee_roles) => {
+  let name
+  data.map(item => {
+    if (item.id == assignee_roles) {
+      name = item.name
+    }
+  })
+  return name
+}
+
+/**
+ * 从组织成员中获取角色成员
+ * @param {Array} currentOrgAllMembers 组织成员列表
+ * @param {String} assignees 成员id 逗号隔开
+ * @returns 返回一个特定角色的成员数组
+ */
+const getCurrentDesignatedRolesMembers = (
+  currentOrgAllMembers = [],
+  assignees = ''
+) => {
+  if (!assignees) return []
+  let roles_data = []
+  let new_assignees = assignees.split(',')
+  currentOrgAllMembers.map(item => {
+    if (new_assignees.indexOf(item.user_id) != -1) {
+      roles_data.push(item)
+    }
+  })
+  return roles_data
+}
+
 export {
   showDeleteTempleteConfirm,
   genPrincipalListFromAssignees,
@@ -544,5 +580,7 @@ export {
   updateUserStorage,
   whetherIsExistOnlineExcel,
   transAssigneesToIds,
-  accordingToSortMembersList
+  accordingToSortMembersList,
+  getRolesName,
+  getCurrentDesignatedRolesMembers
 }
