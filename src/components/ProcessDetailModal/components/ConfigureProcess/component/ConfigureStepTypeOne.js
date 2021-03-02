@@ -390,7 +390,7 @@ export default class ConfigureStepTypeOne extends Component {
           <Menu.Item key="2">选择</Menu.Item>
           <Menu.Item key="3">日期</Menu.Item>
           <Menu.Item key="5">附件</Menu.Item>
-          <Menu.Item key="6">在线表格</Menu.Item>
+          <Menu.Item key="6">表格</Menu.Item>
         </Menu>
       </div>
     )

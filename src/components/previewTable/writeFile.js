@@ -276,7 +276,7 @@ export default class WriteFile extends React.Component {
   // }
 
   DownLoadFile = async workbook => {
-    let { fileName = '在线表格' } = this.props
+    let { fileName = '表格' } = this.props
     let buffer = await workbook.xlsx.writeBuffer()
     let blob = new Blob([buffer])
     let url = window.URL.createObjectURL(blob)
