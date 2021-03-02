@@ -121,7 +121,10 @@ class DropdownSelect extends Component {
         }
       >
         <div style={{ display: 'flex' }}>
-          <div style={{ flex: 1 }} className={globalStyles.global_ellipsis}>
+          <div
+            style={{ flex: 1, maxWidth: '500px' }}
+            className={globalStyles.global_ellipsis}
+          >
             {item.name}
             {item.parentName && (
               <span className={styles.parentTitle}>#{item.parentName}</span>

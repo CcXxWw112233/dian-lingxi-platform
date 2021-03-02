@@ -374,6 +374,7 @@ export default modelExtend(projectDetail, {
         }
       } else {
       }
+      return res
     },
     *listenWsProcessDynamics({ payload }, { select, call, put }) {
       //查询流程动态

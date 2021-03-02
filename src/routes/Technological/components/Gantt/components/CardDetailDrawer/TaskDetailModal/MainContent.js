@@ -837,11 +837,11 @@ export default class MainContent extends Component {
     const {
       drawContent = {},
       milestoneList = [],
-      projectDetailInfoData = {},
+      projectDetailInfoData: { board_set = {} },
       base_relative_time: relative_time
     } = this.props
     // const { board_set = {} } = projectDetailInfoData
-    // const { relative_time } = board_set
+    const { date_mode } = board_set
     const {
       card_id,
       card_name,
@@ -1233,13 +1233,16 @@ export default class MainContent extends Component {
                       </span>
                     )}
                     {/* 表示只有开始和截止时间存在并且在今天之后 */}
-                    {!!start_time && !!due_time && !isOverdueTime(due_time) && (
-                      <EarlyWarning
-                        handleUpdateDatas={
-                          this.updateDrawContentWithUpdateParentListDatas
-                        }
-                      />
-                    )}
+                    {!!start_time &&
+                      !!due_time &&
+                      !isOverdueTime(due_time) &&
+                      date_mode == '0' && (
+                        <EarlyWarning
+                          handleUpdateDatas={
+                            this.updateDrawContentWithUpdateParentListDatas
+                          }
+                        />
+                      )}
                   </div>
                 </div>
               </div>

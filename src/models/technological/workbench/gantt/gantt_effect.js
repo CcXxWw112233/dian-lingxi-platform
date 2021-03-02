@@ -802,6 +802,114 @@ export default {
         getModelSelectDatasState('gantt', 'gantt_board_id')
       )
       yield call(setGanttTableItem, { ...payload, board_id: gantt_board_id })
+    },
+    // 更新大纲视图以及修改对应节点
+    *changeOutLineTreeNodeProto({ payload = {} }, { select, call, put }) {
+      const { id, data = {} } = payload
+      let outline_tree = yield select(
+        getModelSelectDatasState('gantt', 'outline_tree')
+      )
+      let nodeValue = getTreeNodeValue(outline_tree, id)
+      const mapSetProto = data => {
+        Object.keys(data).map(item => {
+          nodeValue[item] = data[item]
+        })
+      }
+      if (nodeValue) {
+        mapSetProto(data)
+
+        yield put({
+          type: 'gantt/handleOutLineTreeData',
+          payload: {
+            data: outline_tree
+          }
+        })
+      } else {
+        console.error('OutlineTree.getTreeNodeValue:未查询到节点')
+      }
+    },
+    // 里程碑详情完成任务|取消任务修改分组对应的任务数据
+    *changeListGroupNodeProto({ payload = {} }, { select, call, put }) {
+      const { card_id, list_id, is_realize, board_id } = payload
+      const list_group = yield select(
+        getModelSelectDatasState('gantt', 'list_group')
+      )
+      const gantt_board_id = yield select(
+        getModelSelectDatasState('gantt', 'gantt_board_id')
+      )
+      let list_group_new = [...list_group]
+
+      if (gantt_board_id == '0') {
+        yield put({
+          type: 'gantt/getGttMilestoneList',
+          payload: {}
+        })
+      } else {
+        // 1. 获取当前任务所在的分组位置
+        const group_drop_index = list_group_new.findIndex(
+          item => item.lane_id == list_id
+        )
+        if (group_drop_index == -1) return
+        // 2. 遍历 从已排期或者未排期的任务列表中找到当前任务
+        const card_item = list_group_new[group_drop_index]['lane_data'][
+          'cards'
+        ].find(item => item.id == card_id)
+        const card_index = list_group_new[group_drop_index]['lane_data'][
+          'cards'
+        ].findIndex(item => item.id == card_id)
+        const card_no_time_item = list_group_new[group_drop_index]['lane_data'][
+          'card_no_times'
+        ].find(item => item.id == card_id)
+        const card_no_time_index = list_group_new[group_drop_index][
+          'lane_data'
+        ]['card_no_times'].findIndex(item => item.id == card_id)
+        if (card_item && !!Object.keys(card_item).length) {
+          list_group_new[group_drop_index]['lane_data']['cards'][card_index] = {
+            ...card_item,
+            is_realize: is_realize
+          }
+        }
+        if (card_no_time_item && !!Object.keys(card_no_time_item).length) {
+          list_group_new[group_drop_index]['lane_data']['card_no_times'][
+            card_no_time_index
+          ] = {
+            ...card_no_time_item,
+            is_realize: is_realize
+          }
+        }
+        yield put({
+          type: 'gantt/updateListGroup',
+          payload: {
+            datas: list_group_new
+          }
+        })
+      }
+    },
+    // 里程碑中任务取消|完成状态更新里程碑状态
+    *updateGanttMilestoneData({ payload = {} }, { select, call, put }) {
+      const { card_id, list_id, is_realize } = payload
+      const group_view_type = yield select(
+        getModelSelectDatasState('gantt', 'group_view_type')
+      )
+      if (ganttIsOutlineView({ group_view_type })) {
+        let outline_tree = yield select(
+          getModelSelectDatasState('gantt', 'outline_tree')
+        )
+        let nodeValue = getTreeNodeValue(outline_tree, card_id)
+        nodeValue.is_realize = is_realize
+        yield put({
+          type: 'changeOutLineTreeNodeProto',
+          payload: {
+            id: card_id,
+            data: { ...nodeValue }
+          }
+        })
+      } else {
+        yield put({
+          type: 'changeListGroupNodeProto',
+          payload: { ...payload }
+        })
+      }
     }
   }
 }

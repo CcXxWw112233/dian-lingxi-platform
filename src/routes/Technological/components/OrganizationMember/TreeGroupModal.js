@@ -1,9 +1,9 @@
 import React from 'react'
 import { Input, Button, Modal, Tree, message } from 'antd'
 import indexStyles from './index.less'
-
+import { connect } from 'dva'
 const TreeNode = Tree.TreeNode
-
+@connect(mapStateToProps)
 export default class TreeGroupModal extends React.Component {
   state = {
     groups: ''
@@ -15,13 +15,24 @@ export default class TreeGroupModal extends React.Component {
 
   onOk = () => {
     const {
-      datas: { currentBeOperateMemberId }
-    } = this.props.model
+      currentBeOperateMemberId,
+      batch_setting,
+      batch_setting_ids
+    } = this.props
     this.props.updateDatas({ TreeGroupModalVisiblie: false })
-    this.props.setMemberWitchGroup({
-      groups: this.state.groups,
-      member_id: currentBeOperateMemberId
-    })
+    let params = {
+      groups: this.state.groups
+    }
+    if (batch_setting) {
+      if (!batch_setting_ids.length) {
+        message.warn('未选择人员')
+        return
+      }
+      params.member_ids = batch_setting_ids
+    } else {
+      params.member_id = currentBeOperateMemberId
+    }
+    this.props.setMemberWitchGroup(params)
   }
 
   onCheck = e => {
@@ -30,9 +41,7 @@ export default class TreeGroupModal extends React.Component {
     })
   }
   render() {
-    const {
-      datas: { TreeGroupModalVisiblie, groupTreeList = [] }
-    } = this.props.model
+    const { TreeGroupModalVisiblie, groupTreeList = [] } = this.props
     const loop = data => {
       if (!data || !data.length) {
         return
@@ -81,5 +90,25 @@ export default class TreeGroupModal extends React.Component {
         </Modal>
       </div>
     )
+  }
+}
+
+function mapStateToProps({
+  organizationMember: {
+    datas: {
+      batch_setting,
+      batch_setting_ids,
+      TreeGroupModalVisiblie,
+      groupTreeList = [],
+      currentBeOperateMemberId
+    }
+  }
+}) {
+  return {
+    batch_setting,
+    batch_setting_ids,
+    TreeGroupModalVisiblie,
+    groupTreeList,
+    currentBeOperateMemberId
   }
 }

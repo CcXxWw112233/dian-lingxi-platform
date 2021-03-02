@@ -229,7 +229,7 @@ class FileDetailContent extends Component {
         if (isApiResponseOk(res)) {
           this.initStateDatas({ data: res.data }).then(_ => {
             resolve(res.data)
-            console.log(res.data, '全局获取详情')
+            // console.log(res.data, '全局获取详情')
           })
           // !this.props.isOpenAttachmentFile && this.linkImWithFile({ name: res.data.base_info.file_name, type: 'file', board_id: res.data.base_info.board_id, id: res.data.base_info.id, currentPreviewFileVersionId: res.data.base_info.version_id })
         } else {
@@ -280,7 +280,8 @@ class FileDetailContent extends Component {
       clientHeight,
       filePreviewCurrentSize,
       isOpenAttachmentFile,
-      filePreviewCurrentName
+      filePreviewCurrentName,
+      fileFullStyle
     } = this.props
     const {
       filePreviewCurrentFileId,
@@ -295,6 +296,8 @@ class FileDetailContent extends Component {
         <PublicDetailModal
           modalVisible={file_detail_modal_visible}
           onCancel={this.onCancel}
+          type="fileDetail"
+          fileFullStyle={fileFullStyle}
           mainContent={
             not_support_file_preview ? (
               <NonsupportPreviewFileContent />
@@ -335,6 +338,7 @@ class FileDetailContent extends Component {
                 }
                 filePreviewCurrentFileId={filePreviewCurrentFileId}
                 fileType={fileType}
+                onFullScreen={this.props.onFullScreen}
               />
             )
           }

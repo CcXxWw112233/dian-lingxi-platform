@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-pascal-case */
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import AvatarList from '../../AvatarList'
@@ -11,7 +11,9 @@ import {
   Popconfirm,
   Input,
   message,
-  Popover
+  Popover,
+  Modal,
+  notification
 } from 'antd'
 import { connect } from 'dva'
 import {
@@ -22,11 +24,13 @@ import {
   genPrincipalListFromAssignees,
   findCurrentApproveNodesPosition,
   findCurrentRatingScoreNodesPosition,
-  findCurrentOverruleNodesPosition
+  findCurrentOverruleNodesPosition,
+  transAssigneesToIds
 } from '../../handleOperateModal'
 import {
   checkIsHasPermissionInVisitControl,
-  checkIsHasPermissionInBoard
+  checkIsHasPermissionInBoard,
+  DidShowUrging
 } from '../../../../../utils/businessFunction'
 import {
   PROJECT_FLOW_FLOW_ACCESS,
@@ -39,6 +43,13 @@ import {
   timestampToTimeNormal
 } from '../../../../../utils/util'
 import DifferenceDeadlineType from '../../DifferenceDeadlineType'
+import AmendComponent from '../../ProcessStartConfirm/AmendComponent'
+import {
+  changeProcessAssignees,
+  changeProcessRecipients,
+  UrgeStart
+} from '../../../../../services/technological/workFlow'
+import { isApiResponseOk } from '../../../../../utils/handleResponseData'
 const TextArea = Input.TextArea
 @connect(mapStateToProps)
 export default class BeginningStepThree extends Component {
@@ -73,8 +84,21 @@ export default class BeginningStepThree extends Component {
         ? [...props.itemValue.his_comments]
         : [],
       currentSelectJudgeArrow: '',
-      currentSelectHisArrow: ''
+      currentSelectHisArrow: '',
+      /**
+       * 是否显示催办按钮
+       */
+      updateShowUrgeBtn: false,
+      updateShowUrgeText: false
     }
+    /**
+     * modal的namespace
+     */
+    this.process_action_key = 'publicProcessDetailModal'
+    /**
+     * redux中需要调用的方法
+     */
+    this.action_valuekey = 'getProcessInfo'
   }
 
   componentWillReceiveProps(nextProps) {
@@ -115,18 +139,173 @@ export default class BeginningStepThree extends Component {
         currentSelectHisArrow: ''
       })
     }
+    this.updateUrgeBtn(nextProps)
+  }
+
+  componentDidMount() {
+    this.updateUrgeBtn()
+  }
+
+  /**
+   * 更新按钮
+   */
+  updateUrgeBtn = props => {
+    const { processInfo, itemValue } = props || this.props
+    const doit = DidShowUrging(processInfo, itemValue.id)
+    this.setState(
+      {
+        updateShowUrgeBtn: doit.isShowUrgeButton(),
+        updateShowUrgeText: doit.isShowUrgeText(itemValue)
+      },
+      () => {
+        // console.log(this.state.updateShowUrgeBtn)
+      }
+    )
+  }
+
+  updateProcessInfo = async () => {
+    const { dispatch, processInfo } = this.props
+    await dispatch({
+      type: this.process_action_key + '/' + this.action_valuekey,
+      payload: {
+        id: processInfo.id
+      }
+    })
+    // this.updateUrgeBtn()
+  }
+
+  confirmToUrge = () => {
+    const { itemValue } = this.props
+    Modal.confirm({
+      // style: {
+
+      // },
+      // getContainer: () =>
+      //   document.getElementById('container_fileDetailContentOut'),
+      zIndex: 1011,
+      title: '提示',
+      content: '确定催办此节点吗？节点中的负责人将会收到通知',
+      okText: '确认',
+      cancelText: '取消',
+      onOk: () => {
+        UrgeStart({ flow_node_instance_id: itemValue.id })
+          .then(res => {
+            // console.log(res)
+            if (isApiResponseOk(res)) {
+              this.updateUrgeBtn()
+              notification.success({
+                message: '提示',
+                description: res.message
+              })
+              this.updateProcessInfo()
+            } else {
+              notification.warn({
+                message: '警告',
+                description: res.message
+              })
+            }
+            return res
+          })
+          .catch(console.log)
+      }
+    })
   }
 
   // 更新对应步骤下的节点内容数据, 即当前操作对象的数据
   updateCorrespondingPrcodessStepWithNodeContent = (data, value) => {
-    const { itemValue, processEditDatas = [], itemKey, dispatch } = this.props
+    const {
+      itemValue: { id, assignees = [], recipients = [] },
+      processEditDatas = [],
+      itemKey,
+      dispatch,
+      projectDetailInfoData: { data: boardData = [] }
+    } = this.props
     let newProcessEditDatas = [...processEditDatas]
-    newProcessEditDatas[itemKey][data] = value
-    dispatch({
-      type: 'publicProcessDetailModal/updateDatas',
-      payload: {
-        processEditDatas: newProcessEditDatas
+
+    if (data == 'assignees' && !!value) {
+      let assignees_ = []
+      let users = []
+      boardData.map(item => {
+        if ((value.split(',') || []).indexOf(item.user_id || item.id) != -1) {
+          assignees_.push(item)
+          users.push(item.user_id)
+        }
+      })
+      changeProcessAssignees({
+        flow_node_instance_id: id,
+        users: users
+      }).then(res => {
+        if (isApiResponseOk(res)) {
+          setTimeout(() => {
+            message.success('修改成功', MESSAGE_DURATION_TIME)
+          }, 200)
+          newProcessEditDatas[itemKey][data] = assignees_
+          dispatch({
+            type: 'publicProcessDetailModal/updateDatas',
+            payload: {
+              processEditDatas: newProcessEditDatas
+            }
+          })
+        } else {
+          newProcessEditDatas[itemKey][data] = assignees
+          message.warn(res.message, MESSAGE_DURATION_TIME)
+        }
+      })
+      return
+    } else if (data == 'recipients' && !!value) {
+      let recipients_ = []
+      let users = []
+      boardData.map(item => {
+        if ((value.split(',') || []).indexOf(item.user_id || item.id) != -1) {
+          recipients_.push(item)
+          users.push(item.user_id)
+        }
+      })
+      changeProcessRecipients({
+        flow_node_instance_id: id,
+        users: users
+      }).then(res => {
+        if (isApiResponseOk(res)) {
+          setTimeout(() => {
+            message.success('修改成功', MESSAGE_DURATION_TIME)
+          }, 200)
+          newProcessEditDatas[itemKey][data] = recipients_
+          dispatch({
+            type: 'publicProcessDetailModal/updateDatas',
+            payload: {
+              processEditDatas: newProcessEditDatas
+            }
+          })
+        } else {
+          newProcessEditDatas[itemKey][data] = recipients
+          message.warn(res.message, MESSAGE_DURATION_TIME)
+        }
+      })
+      return
+    } else {
+      newProcessEditDatas[itemKey][data] = value
+      dispatch({
+        type: 'publicProcessDetailModal/updateDatas',
+        payload: {
+          processEditDatas: newProcessEditDatas
+        }
+      })
+    }
+  }
+
+  updateParentsAssigneesOrCopyPersonnel = (data, key) => {
+    const { value } = data
+    const {
+      projectDetailInfoData: { data: boardData = [] }
+    } = this.props
+    let values = []
+    boardData.map(item => {
+      if (value.indexOf(item.user_id) != -1) {
+        values.push(item)
       }
+    })
+    this.setState({
+      [key]: values
     })
   }
 
@@ -1006,11 +1185,19 @@ export default class BeginningStepThree extends Component {
   }
 
   render() {
-    const { itemKey, itemValue, processEditDatas = [] } = this.props
+    const {
+      itemKey,
+      itemValue,
+      processEditDatas = [],
+      projectDetailInfoData: { data = [], board_id },
+      processInfo: { status: parentStatus }
+    } = this.props
     const {
       is_show_spread_arrow,
       transPrincipalList = [],
-      transCopyPersonnelList = []
+      transCopyPersonnelList = [],
+      updateShowUrgeText,
+      updateShowUrgeBtn
     } = this.state
     const {
       name,
@@ -1019,8 +1206,17 @@ export default class BeginningStepThree extends Component {
       deadline_value,
       deadline_time_type,
       status,
-      runtime_type
+      runtime_type,
+      assignees,
+      cc_locking,
+      recipients,
+      score_node_set: { score_locked }
     } = itemValue
+    let new_itemValue = { ...itemValue }
+    new_itemValue.assignees = transAssigneesToIds(assignees).join(',')
+    if (cc_type == '1') {
+      new_itemValue.recipients = transAssigneesToIds(recipients).join(',')
+    }
     return (
       <div
         id={status == '1' && 'currentStaticRatingScoreContainer'}
@@ -1054,6 +1250,14 @@ export default class BeginningStepThree extends Component {
                     &#xe7b6;
                   </span>
                   <span>{name}</span>
+                  {updateShowUrgeText && (
+                    <Fragment>
+                      <span className="urging_text_red">
+                        <span className={globalStyles.authTheme}>&#xe84c;</span>
+                        <span style={{ marginLeft: 5 }}>催办</span>
+                      </span>
+                    </Fragment>
+                  )}
                   {runtime_type == '1' && (
                     <span
                       style={{
@@ -1063,7 +1267,7 @@ export default class BeginningStepThree extends Component {
                         letterSpacing: '2px'
                       }}
                     >
-                      {'(被驳回)'}
+                      {'(驳回)'}
                     </span>
                   )}
                 </div>
@@ -1131,6 +1335,58 @@ export default class BeginningStepThree extends Component {
                       <span className={indexStyles.content__principalList_info}>
                         {`${transPrincipalList.length}位评分人`}
                       </span>
+                      {updateShowUrgeBtn && (
+                        <Button
+                          type="primary"
+                          style={{ marginLeft: 15 }}
+                          onClick={this.confirmToUrge}
+                        >
+                          <span className={globalStyles.authTheme}>
+                            &#xe84c;
+                          </span>
+                          <span style={{ marginLeft: 5 }}>催办</span>
+                        </Button>
+                      )}
+                      {parentStatus == '0' &&
+                        (score_locked == '0' ? (
+                          <span style={{ position: 'relative' }}>
+                            <AmendComponent
+                              type="2"
+                              updateParentsAssigneesOrCopyPersonnel={
+                                this.updateParentsAssigneesOrCopyPersonnel
+                              }
+                              updateCorrespondingPrcodessStepWithNodeContent={
+                                this
+                                  .updateCorrespondingPrcodessStepWithNodeContent
+                              }
+                              placementTitle="评分人"
+                              data={data}
+                              itemKey={itemKey}
+                              itemValue={new_itemValue}
+                              board_id={board_id}
+                            />
+                          </span>
+                        ) : (
+                          <Tooltip
+                            arrowPointAtCenter={true}
+                            title="已锁定评分人"
+                            placement="top"
+                            getPopupContainer={triggerNode =>
+                              triggerNode.parentNode
+                            }
+                          >
+                            <span
+                              style={{
+                                cursor: 'pointer',
+                                color: 'rgba(0,0,0,0.25)',
+                                marginLeft: '4px'
+                              }}
+                              className={globalStyles.authTheme}
+                            >
+                              &#xe86a;
+                            </span>
+                          </Tooltip>
+                        ))}
                     </>
                   )}
                 </div>
@@ -1177,6 +1433,45 @@ export default class BeginningStepThree extends Component {
                         </span>
                       </>
                     )}
+                    {parentStatus == '0' &&
+                      (cc_locking == '0' ? (
+                        <span style={{ position: 'relative' }}>
+                          <AmendComponent
+                            type="3"
+                            updateParentsAssigneesOrCopyPersonnel={
+                              this.updateParentsAssigneesOrCopyPersonnel
+                            }
+                            updateCorrespondingPrcodessStepWithNodeContent={
+                              this
+                                .updateCorrespondingPrcodessStepWithNodeContent
+                            }
+                            placementTitle="抄送人"
+                            data={data}
+                            itemKey={itemKey}
+                            itemValue={new_itemValue}
+                            board_id={board_id}
+                          />
+                        </span>
+                      ) : (
+                        <Tooltip
+                          title="已锁定抄送人"
+                          placement="top"
+                          getPopupContainer={triggerNode =>
+                            triggerNode.parentNode
+                          }
+                        >
+                          <span
+                            style={{
+                              cursor: 'pointer',
+                              color: 'rgba(0,0,0,0.25)',
+                              marginLeft: '4px'
+                            }}
+                            className={globalStyles.authTheme}
+                          >
+                            &#xe86a;
+                          </span>
+                        </Tooltip>
+                      ))}
                   </div>
                 )}
               </div>

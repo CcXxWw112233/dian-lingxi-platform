@@ -21,7 +21,6 @@ export default class ProcessDetailModal extends Component {
         processEditDatas: [],
         node_type: '1', // 当前的节点类型
         processCurrentEditStep: 0, // 当前的编辑步骤 第几步
-        processCurrentCompleteStep: 0, // 当前处于的操作步骤
         templateInfo: {}, // 模板信息
         processInfo: {}, // 流程实例信息
         currentProcessInstanceId: '', // 当前查看的流程实例名称
@@ -38,6 +37,7 @@ export default class ProcessDetailModal extends Component {
     lx_utils && lx_utils.setCommentData(this.props.processInfo.id || null)
   }
 
+  // 点击容器外部控制 修改流程实例名称或者描述的输入状态
   commonDrawerContentOutClick = () => {
     const {
       currentFlowInstanceName,

@@ -1076,19 +1076,17 @@ class Gantt extends Component {
           handleChildTaskChange={this.handleChildTaskChange}
         /> */}
         <Suspense fallback={''}>
-          {this.state.isPreviewProcessModalVisible &&
-            this.props.process_detail_modal_visible && (
-              <ProcessDetailModal
-                process_detail_modal_visible={
-                  this.props.process_detail_modal_visible
-                }
-                setProcessDetailModalVisibile={
-                  this.setProcessDetailModalVisible
-                }
-                handleProcessDetailChange={this.handleProcessDetailChange}
-                notburningProcessFile={true}
-              />
-            )}
+          {// this.state.isPreviewProcessModalVisible &&
+          this.props.process_detail_modal_visible && (
+            <ProcessDetailModal
+              process_detail_modal_visible={
+                this.props.process_detail_modal_visible
+              }
+              setProcessDetailModalVisibile={this.setProcessDetailModalVisible}
+              handleProcessDetailChange={this.handleProcessDetailChange}
+              notburningProcessFile={true}
+            />
+          )}
         </Suspense>
 
         {addTaskModalVisible && (

@@ -42,7 +42,8 @@ class SimpleMode extends PureComponent {
       current_org,
       current_board_id,
       current_board_name,
-      current_board_belong_org
+      current_board_belong_org,
+      gantt_group_view_type
     } = user_set
     if (id) {
       if (current_board_id && current_board_id != '0') {
@@ -60,8 +61,8 @@ class SimpleMode extends PureComponent {
         dispatch({
           type: 'gantt/updateDatas',
           payload: {
-            gantt_board_id: current_board_id
-            // group_view_type: '4'
+            gantt_board_id: current_board_id,
+            group_view_type: gantt_group_view_type == 'group' ? '1' : '4'
           }
         })
         dispatch({

@@ -12,6 +12,7 @@ import { connect } from 'dva'
 import ConfigureStepOne_six from './ConfigureStepOne_six'
 import { getOnlineExcelWithProcess } from '../../../../../services/technological/workFlow'
 import { isApiResponseOk } from '../../../../../utils/handleResponseData'
+import { accordingToSortMembersList } from '../../handleOperateModal'
 
 @connect(mapStateToProps)
 export default class ConfigureStepTypeOne extends Component {
@@ -403,6 +404,10 @@ export default class ConfigureStepTypeOne extends Component {
     } = this.props
     // const { designatedPersonnelList = [] } = this.state
     let designatedPersonnelList = this.filterAssignees()
+    let new_currentOrgAllMembers = accordingToSortMembersList(
+      currentOrgAllMembers,
+      designatedPersonnelList
+    )
     return (
       <div style={{ flex: 1, padding: '8px 0' }}>
         {!designatedPersonnelList.length ? (
@@ -415,17 +420,12 @@ export default class ConfigureStepTypeOne extends Component {
               overlay={
                 <MenuSearchPartner
                   isInvitation={true}
-                  // show_select_all={true}
-                  // select_all_type={'0'}
-                  listData={currentOrgAllMembers}
+                  listData={new_currentOrgAllMembers}
                   keyCode={'user_id'}
                   searchName={'name'}
                   currentSelect={designatedPersonnelList}
-                  // board_id={board_id}
-                  // invitationType='1'
-                  // invitationId={board_id}
-                  // invitationOrg={org_id}
                   chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
+                  not_allow_sort_list={true}
                 />
               }
             >
@@ -533,17 +533,12 @@ export default class ConfigureStepTypeOne extends Component {
               overlay={
                 <MenuSearchPartner
                   isInvitation={true}
-                  // show_select_all={true}
-                  // select_all_type={'0'}
-                  listData={currentOrgAllMembers}
+                  listData={new_currentOrgAllMembers}
                   keyCode={'user_id'}
                   searchName={'name'}
                   currentSelect={designatedPersonnelList}
-                  // board_id={board_id}
-                  // invitationType='1'
-                  // invitationId={board_id}
-                  // invitationOrg={org_id}
                   chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
+                  not_allow_sort_list={true}
                 />
               }
             >

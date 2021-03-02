@@ -219,7 +219,7 @@ export default class ItemOne extends React.Component {
     const { itemValue, parentItemValue } = this.props
     const { member_id } = itemValue
     const group_id = parentItemValue.id
-    const org_id = Cookies.get('org_id')
+    const org_id = localStorage.getItem('OrganizationId')
     this.props.removeMembersWithGroup({ member_id, group_id, org_id })
   }
   //停用
@@ -268,9 +268,7 @@ export default class ItemOne extends React.Component {
     } = this.props
     const { bott_id } = this.state
     const element = document.getElementById(bott_id)
-    const {
-      datas: { groupList = [] }
-    } = this.props.model
+    const { groupList = [] } = this.props
     this.setState(
       {
         isShowBottDetail: !this.state.isShowBottDetail
@@ -304,10 +302,170 @@ export default class ItemOne extends React.Component {
     if (time) element.style.transition = 'height ' + time + 'ms'
     element.style.height = type ? targetHeight : 0
   }
+  operateMenu = () => {
+    const { itemValue, parentItemValue } = this.props
+    const { is_default } = parentItemValue
+    const { role_type, is_visitor } = itemValue
+    const { roleList = [] } = this.props
 
+    return (
+      <Menu onClick={this.handleMenuClick.bind(this)}>
+        {is_visitor !== '1' &&
+        role_type !== '0' &&
+        checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_EDIT) ? (
+          <Menu.SubMenu title="设置角色" key={'role'}>
+            {roleList.map((value, key) => {
+              return (
+                <Menu.Item
+                  key={`role_${value.id}`}
+                  style={{ textAlign: 'center', padding: 0, margin: 0 }}
+                >
+                  <div className={CreateTaskStyle.elseProjectMemu}>
+                    {value.name}
+                  </div>
+                </Menu.Item>
+              )
+            })}
+          </Menu.SubMenu>
+        ) : (
+          ''
+        )}
+        {is_visitor !== '1' &&
+        checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_EDIT) ? (
+          <Menu.Item
+            key={'setGroup'}
+            style={{ textAlign: 'center', padding: 0, margin: 0 }}
+          >
+            <div className={CreateTaskStyle.elseProjectMemu}>设置分组</div>
+          </Menu.Item>
+        ) : (
+          ''
+        )}
+        {is_default !== '1' &&
+        is_visitor !== '1' &&
+        checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_EDIT) ? (
+          <Menu.Item
+            key={'remove'}
+            style={{ textAlign: 'center', padding: 0, margin: 0 }}
+          >
+            <div className={CreateTaskStyle.elseProjectMemu}>移出分组</div>
+          </Menu.Item>
+        ) : (
+          ''
+        )}
+        {is_visitor !== '1' &&
+        role_type !== '0' &&
+        checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_REMOVE) ? (
+          <Menu.Item
+            key={'removeOrgMember'}
+            style={{ textAlign: 'center', padding: 0, margin: 0 }}
+          >
+            <div
+              className={CreateTaskStyle.elseProjectMemu}
+              style={{ color: '#F5222D' }}
+            >
+              移出{currentNounPlanFilterName(ORGANIZATION)}
+            </div>
+          </Menu.Item>
+        ) : (
+          ''
+        )}
+
+        {is_default == '2' &&
+        is_visitor == '1' &&
+        checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD) ? (
+          <Menu.Item
+            key={'joinORG'}
+            style={{ textAlign: 'center', padding: 0, margin: 0 }}
+          >
+            <div className={CreateTaskStyle.elseProjectMemu}>
+              加入{currentNounPlanFilterName(ORGANIZATION)}
+            </div>
+          </Menu.Item>
+        ) : (
+          ''
+        )}
+        {is_default == '2' &&
+        is_visitor == '1' &&
+        checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_REMOVE) ? (
+          <Menu.Item
+            key={'removeUser'}
+            style={{ textAlign: 'center', padding: 0, margin: 0 }}
+          >
+            <div
+              className={CreateTaskStyle.elseProjectMemu}
+              style={{ color: '#F5222D' }}
+            >
+              移出用户
+            </div>
+          </Menu.Item>
+        ) : (
+          ''
+        )}
+        {/*<Menu.Item key={'discontinue'} style={{textAlign: 'center', padding: 0, margin: 0}}>*/}
+        {/*<div className={CreateTaskStyle.elseProjectDangerMenu}>*/}
+        {/*停用*/}
+        {/*</div>*/}
+        {/*</Menu.Item>*/}
+      </Menu>
+    )
+  }
+  batSettingSelect = e => {
+    const {
+      itemValue,
+      batch_setting_ids = [],
+      batch_setting_ids_map = [],
+      dispatch,
+      parentItemValue: { id: group_id }
+    } = this.props
+    const { member_id } = itemValue
+    let _new_batch_setting_ids = [...batch_setting_ids]
+    let _new_batch_setting_ids_map = [...batch_setting_ids_map]
+
+    const checked = e.target.checked
+    if (checked) {
+      _new_batch_setting_ids.push(member_id)
+      _new_batch_setting_ids = Array.from(new Set(_new_batch_setting_ids))
+    } else {
+      _new_batch_setting_ids = _new_batch_setting_ids.filter(
+        item => item != member_id
+      )
+    }
+
+    let index = undefined
+    for (let i = 0; i < _new_batch_setting_ids_map.length; i++) {
+      if (group_id == Object.keys(_new_batch_setting_ids_map[i])[0]) {
+        index = i
+        break
+      }
+    }
+    if (checked) {
+      if (index == undefined) {
+        _new_batch_setting_ids_map.push({ [group_id]: [member_id] })
+      } else {
+        _new_batch_setting_ids_map[index][group_id].push(member_id)
+        _new_batch_setting_ids_map[index][group_id] = Array.from(
+          new Set(_new_batch_setting_ids_map[index][group_id])
+        )
+      }
+    } else {
+      _new_batch_setting_ids_map[index][group_id] = _new_batch_setting_ids_map[
+        index
+      ][group_id].filter(item => item != member_id)
+    }
+    console.log('_new_batch_setting_ids_maps', _new_batch_setting_ids_map)
+    dispatch({
+      type: 'organizationMember/updateDatas',
+      payload: {
+        batch_setting_ids: _new_batch_setting_ids,
+        batch_setting_ids_map: _new_batch_setting_ids_map,
+        ssss: 111
+      }
+    })
+  }
   render() {
     const { isShowBottDetail, bott_id } = this.state
-    const { itemValue, parentItemValue } = this.props
+    const { itemValue, parentItemValue, batch_setting } = this.props
     const { is_default } = parentItemValue
     const {
       member_id,
@@ -327,113 +485,9 @@ export default class ItemOne extends React.Component {
       card_data = [],
       workflow_data = []
     } = role_detailInfo
-    const {
-      datas: { roleList = [] }
-    } = this.props.model
     let role_detailInfo_is_has = false
     for (let val in role_detailInfo) {
       role_detailInfo_is_has = true
-    }
-    const operateMenu = () => {
-      return (
-        <Menu onClick={this.handleMenuClick.bind(this)}>
-          {is_visitor !== '1' &&
-          checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_EDIT) ? (
-            <Menu.SubMenu title="设置角色" key={'role'}>
-              {roleList.map((value, key) => {
-                return (
-                  <Menu.Item
-                    key={`role_${value.id}`}
-                    style={{ textAlign: 'center', padding: 0, margin: 0 }}
-                  >
-                    <div className={CreateTaskStyle.elseProjectMemu}>
-                      {value.name}
-                    </div>
-                  </Menu.Item>
-                )
-              })}
-            </Menu.SubMenu>
-          ) : (
-            ''
-          )}
-          {is_visitor !== '1' &&
-          checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_EDIT) ? (
-            <Menu.Item
-              key={'setGroup'}
-              style={{ textAlign: 'center', padding: 0, margin: 0 }}
-            >
-              <div className={CreateTaskStyle.elseProjectMemu}>设置分组</div>
-            </Menu.Item>
-          ) : (
-            ''
-          )}
-          {is_default !== '1' &&
-          is_visitor !== '1' &&
-          checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_EDIT) ? (
-            <Menu.Item
-              key={'remove'}
-              style={{ textAlign: 'center', padding: 0, margin: 0 }}
-            >
-              <div className={CreateTaskStyle.elseProjectMemu}>移出分组</div>
-            </Menu.Item>
-          ) : (
-            ''
-          )}
-          {is_visitor !== '1' &&
-          checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_REMOVE) ? (
-            <Menu.Item
-              key={'removeOrgMember'}
-              style={{ textAlign: 'center', padding: 0, margin: 0 }}
-            >
-              <div
-                className={CreateTaskStyle.elseProjectMemu}
-                style={{ color: '#F5222D' }}
-              >
-                移出{currentNounPlanFilterName(ORGANIZATION)}
-              </div>
-            </Menu.Item>
-          ) : (
-            ''
-          )}
-
-          {is_default == '2' &&
-          is_visitor == '1' &&
-          checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD) ? (
-            <Menu.Item
-              key={'joinORG'}
-              style={{ textAlign: 'center', padding: 0, margin: 0 }}
-            >
-              <div className={CreateTaskStyle.elseProjectMemu}>
-                加入{currentNounPlanFilterName(ORGANIZATION)}
-              </div>
-            </Menu.Item>
-          ) : (
-            ''
-          )}
-          {is_default == '2' &&
-          is_visitor == '1' &&
-          checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_REMOVE) ? (
-            <Menu.Item
-              key={'removeUser'}
-              style={{ textAlign: 'center', padding: 0, margin: 0 }}
-            >
-              <div
-                className={CreateTaskStyle.elseProjectMemu}
-                style={{ color: '#F5222D' }}
-              >
-                移出用户
-              </div>
-            </Menu.Item>
-          ) : (
-            ''
-          )}
-          {/*<Menu.Item key={'discontinue'} style={{textAlign: 'center', padding: 0, margin: 0}}>*/}
-          {/*<div className={CreateTaskStyle.elseProjectDangerMenu}>*/}
-          {/*停用*/}
-          {/*</div>*/}
-          {/*</Menu.Item>*/}
-        </Menu>
-      )
     }
 
     return (
@@ -449,34 +503,38 @@ export default class ItemOne extends React.Component {
             </div>
           </div>
           <div className={CreateTaskStyle.item_1_top_right}>
-            {role_type !== '0' ? (
-              <Dropdown
-                overlay={operateMenu()}
-                getPopupContainer={() =>
-                  document.getElementById('organizationMemberContainer')
-                }
-              >
-                <div>
-                  <Icon type="ellipsis" theme="outlined" />
+            {!batch_setting ? (
+              <>
+                <Dropdown
+                  overlay={this.operateMenu()}
+                  getPopupContainer={() =>
+                    document.getElementById('organizationMemberContainer')
+                  }
+                >
+                  <div>
+                    <Icon type="ellipsis" theme="outlined" />
+                  </div>
+                </Dropdown>
+                <div
+                  className={
+                    isShowBottDetail
+                      ? CreateTaskStyle.upDown_up
+                      : CreateTaskStyle.upDown_down
+                  }
+                >
+                  <Icon
+                    onClick={this.setIsShowBottDetail.bind(this)}
+                    type="down"
+                    theme="outlined"
+                    style={{ color: '#595959' }}
+                  />
                 </div>
-              </Dropdown>
+              </>
             ) : (
-              ''
+              <>
+                <Checkbox onChange={this.batSettingSelect}></Checkbox>
+              </>
             )}
-            <div
-              className={
-                isShowBottDetail
-                  ? CreateTaskStyle.upDown_up
-                  : CreateTaskStyle.upDown_down
-              }
-            >
-              <Icon
-                onClick={this.setIsShowBottDetail.bind(this)}
-                type="down"
-                theme="outlined"
-                style={{ color: '#595959' }}
-              />
-            </div>
           </div>
         </div>
         <div
@@ -553,21 +611,28 @@ export default class ItemOne extends React.Component {
   }
 }
 
-const customPanelStyle = {
-  background: '#f5f5f5',
-  borderRadius: 4,
-  fontSize: 12,
-  color: '#8c8c8c',
-  border: 0,
-  overflow: 'hidden'
-}
-
 function mapStateToProps({
+  organizationMember: {
+    datas: {
+      batch_setting,
+      member_count,
+      roleList,
+      groupList,
+      batch_setting_ids,
+      batch_setting_ids_map
+    }
+  },
   technological: {
     datas: { userOrgPermissions }
   }
 }) {
   return {
-    userOrgPermissions
+    userOrgPermissions,
+    batch_setting,
+    member_count,
+    roleList,
+    groupList,
+    batch_setting_ids,
+    batch_setting_ids_map
   }
 }

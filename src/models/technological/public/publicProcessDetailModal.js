@@ -1,19 +1,7 @@
 import { isApiResponseOk } from '../../../utils/handleResponseData'
 import { message } from 'antd'
 import { currentNounPlanFilterName } from '../../../utils/businessFunction'
-import {
-  MESSAGE_DURATION_TIME,
-  FILES,
-  FLOWS
-} from '../../../globalset/js/constant'
-import { getSubfixName } from '../../../utils/businessFunction'
-import QueryString from 'querystring'
-import {
-  processEditDatasConstant,
-  processEditDatasRecordsConstant,
-  processDoingListMatch,
-  processInfoMatch
-} from '../../../components/ProcessDetailModal/constant'
+import { MESSAGE_DURATION_TIME, FLOWS } from '../../../globalset/js/constant'
 import {
   getProcessTemplateList,
   saveProcessTemplate,
@@ -37,14 +25,8 @@ import {
   updateFlowInstanceNameOrDescription,
   getCurrentOrgAllMembers
 } from '../../../services/technological/workFlow'
-// import { getCurrentOrgAllMembers } from '../../../services/technological/workbench'
 import { public_selectCurrentFlowTabsStatus } from './select'
-
 let dispatchEvent = null
-let board_id = null
-let appsSelectKey = null
-let flow_id = null
-
 export default {
   namespace: 'publicProcessDetailModal',
   state: {
@@ -52,23 +34,22 @@ export default {
     currentFlowInstanceDescription: '', // 当前的实例描述内容
     isEditCurrentFlowInstanceName: true, // 是否正在编辑当前实例的名称
     isEditCurrentFlowInstanceDescription: false, // 是否正在编辑当前实例的描述
-    processPageFlagStep: '1', // "1", "2", "3", "4" 分别对应 新建， 编辑， 启动
-    process_detail_modal_visible: false,
-    processDoingList: [], // 进行中的流程
-    processStopedList: [], // 已中止的流程
-    processComepletedList: [], // 已完成的流程
-    processNotBeginningList: [], // 未开始的流程
-    processEditDatas: [],
+    processPageFlagStep: '1', // 流程状态标识 "1", "2", "3", "4" 分别对应 新建(配置)， 编辑， 启动，进行中
+    process_detail_modal_visible: false, // 控制流程弹窗显示隐藏
+    processDoingList: [], // 进行中的流程列表
+    processStopedList: [], // 已中止的流程列表
+    processComepletedList: [], // 已完成的流程列表
+    processNotBeginningList: [], // 未开始的流程列表
+    processEditDatas: [], // 存放节点的数据(即会更新一份节点在这里,也是渲染的数据源)
     processCurrentEditStep: 0, // 当前的编辑步骤 第几步
-    processCurrentCompleteStep: 0, // 当前处于的操作步骤
     templateInfo: {}, // 模板信息
     processInfo: {}, // 流程实例信息
-    currentProcessInstanceId: '', // 当前查看的流程实例名称
-    currentTempleteIdentifyId: '', // 当前查看的模板编号凭证ID
-    currentFlowTabsStatus: '1',
-    not_show_create_node_guide: '1',
-    not_show_create_form_guide: '1',
-    not_show_create_rating_guide: '1'
+    currentProcessInstanceId: '', // 当前查看的流程实例ID
+    currentTempleteIdentifyId: '', // 当前查看的模板编号凭证ID(这个是用来如果是编辑已存在流程需要带上这个凭证)
+    currentFlowTabsStatus: '1', // 点击流程查看详情会更新一个当前流程实例的状态
+    not_show_create_node_guide: '1', // 流程添加步骤的指引 1 表示用户点击了我知道了
+    not_show_create_form_guide: '1', // 配置表项的步骤指引 同上
+    not_show_create_rating_guide: '1' //配置评分的步骤指引 同上
   },
   subscriptions: {
     setup({ dispatch, history }) {

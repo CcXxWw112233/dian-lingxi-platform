@@ -99,8 +99,8 @@ export default class CompleteDeadlineContent extends Component {
       } else {
         flag = false
       }
-      if (!flag) {
-        return
+      if (flag) {
+        return flag
       } else {
         if (deadlineType && deadlineType != deadline_type) {
           flag = true
@@ -108,8 +108,8 @@ export default class CompleteDeadlineContent extends Component {
           flag = false
         }
       }
-      if (!flag) {
-        return
+      if (flag) {
+        return flag
       } else {
         if (deadlineTimeType && deadlineTimeType != deadline_time_type) {
           flag = true

@@ -51,7 +51,8 @@ import {
   hours_view_start_work_oclock,
   hours_view_due_work_oclock,
   ceil_width_hours,
-  group_rows_fold_1
+  group_rows_fold_1,
+  hole_movedown_height
 } from '../../../../routes/Technological/components/Gantt/constants'
 import { getModelSelectDatasState } from '../../../utils'
 import { getProjectGoupList } from '../../../../services/technological/task'
@@ -175,7 +176,8 @@ export default {
       base_relative_time: '', //相对时间轴的基准时间
 
       group_folded_rely_card: [], // 表示分组折叠后 存在有依赖关系的任务
-      gantt_card_date_no_section: {} // 表示选中任务时对应显示日期内容
+      gantt_card_date_no_section: {}, // 表示选中任务时对应显示日期内容
+      group_not_allow_drag_area: [] //不可拖拽区域
     }
   },
   subscriptions: {
@@ -1188,7 +1190,10 @@ export default {
               ganttIsSingleBoardGroupView({ group_view_type, gantt_board_id })
             ) {
               if (item.row) {
-                item.top = after_group_height + (item.row - 1) * ceiHeight
+                item.top =
+                  after_group_height +
+                  (item.row - 1) * ceiHeight +
+                  hole_movedown_height
               }
             } else {
               // --------------------时间高度排序start
@@ -1388,6 +1393,23 @@ export default {
             ).is_group_folded
           }
         })
+        const group_not_allow_drag_area = []
+        for (let i = 0; i < group_list_area_section_height.length; i++) {
+          let start_area =
+            i == 0 ? 0 : group_list_area_section_height[i - 1] - 0.5 * ceiHeight
+          let end_area =
+            i == 0
+              ? ceiHeight
+              : group_list_area_section_height[i - 1] + ceiHeight
+          if (group_list_area_fold_section[i].is_group_folded) {
+            // end_area = start_area
+            end_area = group_list_area_section_height[i]
+          }
+          group_not_allow_drag_area.push({
+            start_area,
+            end_area
+          })
+        }
         // console.log('sssss', 's3', group_list_area_section_height)
         yield put({
           type: 'updateDatas',
@@ -1396,7 +1418,8 @@ export default {
             group_rows,
             list_group,
             group_list_area_section_height,
-            group_list_area_fold_section
+            group_list_area_fold_section,
+            group_not_allow_drag_area
           }
         })
         yield put({

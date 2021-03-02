@@ -1,108 +1,168 @@
-.headerWapper {}
+.headerWapper {
+}
 
 .miniNavigation {
-    width: 32px;
-    height: 32px;
-    line-height: 32px;
-    position: absolute;
-    top     : 24px;
-    left    : 40px;
-    cursor  : pointer;
-    color: #ffffff;
+  width: 32px;
+  height: 32px;
+  line-height: 32px;
+  position: absolute;
+  top: 24px;
+  left: 40px;
+  cursor: pointer;
+  color: #ffffff;
 }
 
 .miniImMessage {
-    width: 32px;
-    height: 32px;
-    line-height: 32px;
+  width: 32px;
+  height: 32px;
+  line-height: 32px;
+  position: absolute;
+  top: 26px;
+  right: 40px;
+  cursor: pointer;
+  .no_reads {
+    background: #f5222d;
+    min-width: 14px;
+    padding: 0 4px;
+    height: 14px;
     position: absolute;
-    top     : 26px;
-    right   : 40px;
-    cursor  : pointer;
-    .no_reads{
-        background: #F5222D;
-        min-width: 14px;
-        padding: 0 4px;
-        height: 14px;
-        position: absolute;
-        color: #ffffff;
-        border-radius: 20px;
-        text-align: center;
-        line-height: 14px;
-        font-size: 10px;
-        left: 20px;
-        top: -2px;
+    color: #ffffff;
+    border-radius: 20px;
+    text-align: center;
+    line-height: 14px;
+    font-size: 10px;
+    left: 20px;
+    top: -2px;
+  }
+}
+
+.plantformCode {
+  min-width: 138px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  height: 32px;
+  line-height: 32px;
+  position: absolute;
+  top: 25px;
+  right: 186px;
+  cursor: pointer;
+  color: #ffffff;
+  text-align: center;
+  display: inline-block;
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+
+.popover_plantform_content {
+  width: 428px;
+  height: 326px;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  //   text-align: center;
+  .popover_plantform_small_routine,
+  .popover_plantform_official_accounts {
+    height: 50%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    .popover_small_routine_code,
+    .popover_plantform_official_accounts_code {
+      width: 35%;
+      text-align: center;
     }
+    .popover_code_text {
+      width: 50%;
+      > p {
+        height: 20px;
+        font-size: 20px;
+        font-family: PingFangSC-Semibold, PingFang SC;
+        font-weight: 600;
+        color: #212434;
+        line-height: 20px;
+      }
+      > span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        /* autoprefixer: off */
+        -webkit-box-orient: vertical;
+        -moz-box-orient: vertical;
+        /* autoprefixer: on */
+        -webkit-line-clamp: 3;
+        word-break: break-all;
+      }
+    }
+  }
 }
 
 .guideButton {
-    width: 32px;
-    height: 32px;
-    line-height: 32px;
-    position: absolute;
-    top     : 25px;
-    right   : 130px;
-    cursor  : pointer; 
-    color: #ffffff;
+  width: 32px;
+  height: 32px;
+  line-height: 32px;
+  position: absolute;
+  top: 25px;
+  right: 130px;
+  cursor: pointer;
+  color: #ffffff;
 }
 
 .chatWapper {
-    position      : absolute;
-    top           : 0px;
-    right         : 0px;
-    width         : 400px;
-    height        : 100vh;
-    box-shadow    : 1px 0px 0px 0px rgba(0, 0, 0, 0.09);
-    background    : #ffffff;
-    z-index       : 9;
-    overflow      : hidden;
-    display       : flex;
-    flex-direction: column;
-    padding-bottom: 50px;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  width: 400px;
+  height: 100vh;
+  box-shadow: 1px 0px 0px 0px rgba(0, 0, 0, 0.09);
+  background: #ffffff;
+  z-index: 9;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 50px;
 
-    .chatHeader {
-        width     : 372px;
-        height    : 64px;
-        background: rgba(255, 255, 255, 1);
-        box-shadow: 1px 0px 0px 0px rgba(0, 0, 0, 0.09);
+  .chatHeader {
+    width: 372px;
+    height: 64px;
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 1px 0px 0px 0px rgba(0, 0, 0, 0.09);
 
-        .menu {
-            float      : left;
-            width      : 72px;
-            height     : 64px;
-            line-height: 64px;
-            text-align : center;
-            cursor     : pointer;
-        }
-
-        border-bottom: 1px rgba(0, 0, 0, 0.09) solid;
+    .menu {
+      float: left;
+      width: 72px;
+      height: 64px;
+      line-height: 64px;
+      text-align: center;
+      cursor: pointer;
     }
 
-    .imWapper {
-        width: 372px;
-        flex : 1;
-        padding-left: 10px;
-        iframe {
-            width     : 100%;
-            height    : 100%;
-            border    : 0px;
-            overflow-y: scroll;
+    border-bottom: 1px rgba(0, 0, 0, 0.09) solid;
+  }
 
-        }
-
+  .imWapper {
+    width: 372px;
+    flex: 1;
+    padding-left: 10px;
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: 0px;
+      overflow-y: scroll;
     }
+  }
 
-    .videoMeetingWapper {
-        display    : flex;
-        align-items: center;
-        position: absolute;
-        bottom: 0px;
-        left: 0px;
-        width      : 400px;
-        // height     : 64px;
-        // line-height: 64px;
-        margin     : 0 auto;
-        padding    : 15px 20px;
-        border-top : 1px rgba(0, 0, 0, 0.09) solid;
-    }
+  .videoMeetingWapper {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    width: 400px;
+    // height     : 64px;
+    // line-height: 64px;
+    margin: 0 auto;
+    padding: 15px 20px;
+    border-top: 1px rgba(0, 0, 0, 0.09) solid;
+  }
 }

@@ -183,6 +183,7 @@ export default modelExtend(technological, {
     //用户设置 /user/set
     *updateUserSet({ payload }, { select, call, put }) {
       let res = yield call(updateUserSet, payload)
+      return res
     }
   },
 

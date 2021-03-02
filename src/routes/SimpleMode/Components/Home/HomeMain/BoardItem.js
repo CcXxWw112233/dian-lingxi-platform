@@ -717,7 +717,7 @@ export default class BoardItem extends Component {
           >
             <p
               title={board_name}
-              className={`${styles.board_area_middle_item_board_name}`}
+              className={`${styles.board_area_middle_item_board_name} ${globalStyles.global_ellipsis}`}
             >
               {board_name}
             </p>

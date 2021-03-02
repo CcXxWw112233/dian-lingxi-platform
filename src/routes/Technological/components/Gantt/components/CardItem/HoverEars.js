@@ -305,7 +305,7 @@ class HoverEars extends Component {
         <div className={indexStyles.right_circle_wrapper}>
           <div
             className={indexStyles.link_right_circle}
-            style={{ bottom: is_outline_view && '22px' }}
+            style={{ bottom: '22px' }}
           ></div>
           <div
             data-ref={'right_circle_ref'}
@@ -317,7 +317,7 @@ class HoverEars extends Component {
             // data-ref={'right_circle_ref'}
             // ref={this.right_circle_ref}
             // {...this.eventObj}
-            style={{ bottom: is_outline_view && '18px' }}
+            style={{ bottom: '18px' }}
             className={`${indexStyles.ears_circle} ${indexStyles.right_ear_circle}`}
           />
           <div />

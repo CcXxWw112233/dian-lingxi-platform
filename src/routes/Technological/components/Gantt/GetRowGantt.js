@@ -18,13 +18,14 @@ import {
   ganttIsOutlineView,
   ceil_width,
   ceil_height,
-  gantt_panel_left_diff
+  gantt_panel_left_diff,
+  ganttIsSingleBoardGroupView
 } from './constants'
 import CardDropDetail from './components/gattFaceCardItem/CardDropDetail'
 import QueueAnim from 'rc-queue-anim'
 import GetRowTaskItem from './components/CardItem/index'
 import WorkFlow from './components/CardItem/WorkFlow'
-
+import GetRowNotAllowDragArea from './GetRowNotAllowDragArea'
 import {
   filterDueTimeSpan,
   setDateWithPositionInYearView,
@@ -54,8 +55,14 @@ const getEffectOrReducerByName = name => `gantt/${name}`
 export default class GetRowGantt extends Component {
   constructor(props) {
     super(props)
+    this.initDashRectPrototype = {
+      x: 0,
+      y: 0,
+      width: 0,
+      height: task_item_height
+    }
     this.state = {
-      currentRect: { x: 0, y: 0, width: 0, height: task_item_height }, //当前操作的矩形属性
+      currentRect: this.initDashRectPrototype, //当前操作的矩形属性
       dasheRectShow: false, //虚线框是否显示
       isDasheRect: false, //生成任务后在原始虚线框位置处生成一条数据
       start_time: '',
@@ -63,6 +70,7 @@ export default class GetRowGantt extends Component {
       specific_example_arr: [], //任务实例列表
       drag_holiday_count: 0, // //拖拽生成虚线框的节假日总天数
       task_is_dragging: false, //任务实例是否在拖拽中
+      task_is_drag_moving: false,
       isMouseDown: false,
       drag_creating: false, //拖拽生成任务中
       card_rely_draging: false //任务卡片相关拖拽中
@@ -91,6 +99,11 @@ export default class GetRowGantt extends Component {
     } else {
       target.style.cursor = 'crosshair'
     }
+  }
+  setTaskIsDragMoving = bool => {
+    this.setState({
+      task_is_drag_moving: bool
+    })
   }
   setTaskIsDragging = (bool, flag) => {
     //设置任务是否在拖拽中的状态
@@ -204,6 +217,10 @@ export default class GetRowGantt extends Component {
     this.setState({ isMouseDown: true })
     this.handleCreateTask({ start_end: '1', top: currentRect.y })
     const target = this.refs.gantt_operate_area_panel //event.target || event.srcElement;
+    if (this.judgeAreaNotAllowDrag(currentRect.y)) {
+      this.stopDragging()
+      return
+    }
     target.onmousemove = this.dashedDragMousemove.bind(this)
     target.onmouseup = this.dashedDragMouseup.bind(this)
   }
@@ -280,6 +297,21 @@ export default class GetRowGantt extends Component {
     }, 1000)
   }
 
+  // 判断是否在可拖拽创建区域
+  judgeAreaNotAllowDrag = py => {
+    const {
+      group_not_allow_drag_area = [],
+      group_list_area_fold_section = []
+    } = this.props
+    for (let i = 0; i < group_not_allow_drag_area.length; i++) {
+      const val = group_not_allow_drag_area[i]
+      // if (group_list_area_fold_section[i].is_group_folded) return false
+      if (py > val.start_area && py < val.end_area) {
+        return true
+      }
+    }
+    return false
+  }
   //鼠标移动
   dashedMouseMove = e => {
     const {
@@ -357,6 +389,13 @@ export default class GetRowGantt extends Component {
       gantt_panel_left_diff
     let py = e.pageY - target_0.offsetTop + target_1.scrollTop - dateAreaHeight
 
+    if (this.judgeAreaNotAllowDrag(py)) {
+      this.setState({
+        dasheRectShow: false,
+        currentRect: { ...this.initDashRectPrototype, y: py }
+      })
+      return
+    }
     const molX = px % ceilWidth
     const molY =
       py %
@@ -561,7 +600,9 @@ export default class GetRowGantt extends Component {
     if (ganttIsOutlineView({ group_view_type })) {
       return Promise.resolve({ current_list_group_id: 0 })
     }
-
+    if (this.judgeAreaNotAllowDrag(top)) {
+      return Promise.resolve({})
+    }
     // const getSum = (total, num) => {
     //   return total + num;
     // }
@@ -597,7 +638,7 @@ export default class GetRowGantt extends Component {
       belong_group_row =
         (top - group_list_area_section_height[conter_key - 1]) / ceil_height + 1
     }
-    // console.log('ssssssssss_top', conter_key, belong_group_row)
+    belong_group_row -= 1
     const current_list_group_id = list_group[conter_key]['list_id']
     dispatch({
       type: getEffectOrReducerByName('updateDatas'),
@@ -804,6 +845,8 @@ export default class GetRowGantt extends Component {
             getCurrentGroup={this.getCurrentGroup}
             list_id={list_id}
             task_is_dragging={this.state.task_is_dragging}
+            task_is_drag_moving={this.state.task_is_drag_moving}
+            setTaskIsDragMoving={this.setTaskIsDragMoving}
             setGoldDateArr={this.props.setGoldDateArr}
             setScrollPosition={this.props.setScrollPosition}
             setDragCreating={this.setDragCreating}
@@ -999,6 +1042,7 @@ export default class GetRowGantt extends Component {
   }
   render() {
     const { currentRect = {}, dasheRectShow, drag_holiday_count } = this.state
+    // console.log('sssssssaaaa', this.props.group_not_allow_drag_area)
     const {
       gold_date_arr = [],
       list_group = [],
@@ -1028,6 +1072,12 @@ export default class GetRowGantt extends Component {
         >
           <GroupCanvas gantt_card_height={gantt_card_height}></GroupCanvas>
           <SvgArea gantt_card_height={gantt_card_height}></SvgArea>
+          {ganttIsSingleBoardGroupView({ gantt_board_id, group_view_type }) && (
+            <GetRowNotAllowDragArea
+              task_is_drag_moving={this.state.task_is_drag_moving}
+            />
+          )}
+
           {this.renderDashedRect()}
           {/* 非大纲视图下渲染任务和或者进度 */}
           {!ganttIsOutlineView({ group_view_type }) &&
@@ -1120,6 +1170,8 @@ export default class GetRowGantt extends Component {
                       changeOutLineTreeNodeProto={
                         this.props.changeOutLineTreeNodeProto
                       }
+                      task_is_drag_moving={this.state.task_is_drag_moving}
+                      setTaskIsDragMoving={this.setTaskIsDragMoving}
                       task_is_dragging={this.state.task_is_dragging}
                       setGoldDateArr={this.props.setGoldDateArr}
                       setScrollPosition={this.props.setScrollPosition}
@@ -1246,7 +1298,8 @@ function mapStateToProps({
       gantt_view_mode,
       gantt_head_width,
       active_baseline_data,
-      group_list_area_fold_section = []
+      group_list_area_fold_section = [],
+      group_not_allow_drag_area = []
     }
   },
   technological: {
@@ -1273,6 +1326,7 @@ function mapStateToProps({
     gantt_view_mode,
     gantt_head_width,
     active_baseline_data,
-    group_list_area_fold_section
+    group_list_area_fold_section,
+    group_not_allow_drag_area
   }
 }

@@ -2,6 +2,7 @@ import { connect } from 'dva'
 import React, { Component } from 'react'
 import {
   caldiffDays,
+  caldiffHours,
   isSamDay,
   isSamHour,
   transformTimestamp
@@ -31,7 +32,8 @@ export default class GroupMilestones extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      render_milestones_data: []
+      render_milestones_data: [],
+      dragg_milestone_err: false //拖拽里程碑是否报错
     }
   }
   componentDidMount() {
@@ -225,26 +227,135 @@ export default class GroupMilestones extends Component {
     }, '')
     return names
   }
+  // 获取以top为分组的结构
+  getMiletonesWithTopStructure = top => {
+    const { render_milestones_data = [] } = this.state
+    let list = []
+    render_milestones_data.map(item => {
+      if (item.top == top) {
+        list.push(item)
+      }
+    })
+    return {
+      top,
+      list
+    }
+  }
+
   // 根据下一个里程碑日期，来获取当前里程碑日期的‘name1,name2,name3...’应该有的宽度
-  setMiletonesNamesWidth = timestamp => {
-    const { milestoneMap = {}, ceilWidth, gantt_board_id } = this.props
-    const { list_id } = this.props //gantt_board_id为0的情况下，分组id就是各个项目的id
+  setMiletonesNamesWidth = ({ timestamp, top, belong_group_id }) => {
+    const {
+      milestoneMap = {},
+      ceilWidth,
+      gantt_board_id,
+      gantt_view_mode,
+      list_group = []
+    } = this.props
+    // const { list_id } = this.props //gantt_board_id为0的情况下，分组id就是各个项目的id
+    let top_arr = this.getMiletonesWithTopStructure(top)
+    const miletones_position = top_arr.list.findIndex(
+      t => t.timestamp == timestamp
+    )
     let times_arr = Object.keys(milestoneMap) //[timestamp1, timestamp2,...]
     if (gantt_board_id == '0') {
       //以分组划分，过滤掉不属于该项目分组的里程碑所属于的时间
       times_arr = times_arr.filter(
         time =>
-          milestoneMap[time].findIndex(item => item.board_id == list_id) != -1
+          milestoneMap[time].findIndex(
+            item => item.board_id == belong_group_id
+          ) != -1
       )
+    } else {
+      times_arr = times_arr.filter(time => {
+        return (
+          milestoneMap[time].findIndex(
+            item =>
+              (item.list_id || list_group[0].lane_id) ==
+              (!!belong_group_id && belong_group_id != '0'
+                ? belong_group_id
+                : '0')
+          ) != -1
+        )
+      })
     }
-    // console.log('ssssss', times_arr)
     times_arr = times_arr.sort((a, b) => Number(a) - Number(b))
     const index = times_arr.findIndex(item => isSamDay(item, timestamp)) //对应上当前日期所属的下标
     const next_miletones_time = times_arr[index + 1] //当前里程碑日期的对应下一个里程碑日期所在时间
-    if (!next_miletones_time) {
-      return 'auto'
+    // 除了最后一个里程碑宽度为auto 还有就是不在同一个分组或者项目的里程碑 最后一个为auto
+    // 18 是里程碑旗子宽度
+    if (
+      !next_miletones_time ||
+      (top == top_arr.top && miletones_position == top_arr.list.length - 1)
+    ) {
+      return 'none'
     }
-    return caldiffDays(timestamp, next_miletones_time) * ceilWidth
+    if (gantt_view_mode == 'month') {
+      if (caldiffDays(timestamp, next_miletones_time) <= 1) {
+        return caldiffDays(timestamp, next_miletones_time) * (ceilWidth / 2)
+      } else {
+        return caldiffDays(timestamp, next_miletones_time) * ceilWidth - 18
+      }
+    } else if (gantt_view_mode == 'hours') {
+      // 如果是同一天的 就判断小时
+      let next_miletones_time_ =
+        String(next_miletones_time).length === 10
+          ? next_miletones_time * 1000
+          : next_miletones_time
+      let c_hours =
+        new Date(timestamp).getHours() >= 17 ||
+        new Date(timestamp).getHours() < 9
+          ? 17
+          : new Date(timestamp).getHours()
+      let n_hours =
+        new Date(Number(next_miletones_time_)).getHours() >= 17 ||
+        new Date(Number(next_miletones_time_)).getHours() < 9
+          ? 17
+          : new Date(Number(next_miletones_time_)).getHours()
+      if (isSamDay(timestamp, next_miletones_time)) {
+        if (n_hours - c_hours <= 1) {
+          return 0
+        } else {
+          return Math.abs(n_hours - c_hours) * ceilWidth - 18
+        }
+      } else {
+        if (n_hours < c_hours) {
+          if (caldiffDays(timestamp, next_miletones_time) <= 1) {
+            if (n_hours - (c_hours - 9) <= 1) return 0
+            return (n_hours - (c_hours - 9)) * ceilWidth - 18
+          } else {
+            return (
+              (n_hours - (c_hours - 9)) * ceilWidth +
+              9 *
+                ceilWidth *
+                (caldiffDays(timestamp, next_miletones_time) - 1) -
+              18
+            )
+          }
+        } else if (n_hours >= c_hours) {
+          return (
+            9 * ceilWidth * caldiffDays(timestamp, next_miletones_time) -
+            18 +
+            (n_hours - c_hours) * ceilWidth
+          )
+        }
+      }
+    } else if (gantt_view_mode == 'week') {
+      if (caldiffDays(timestamp, next_miletones_time) <= 2) {
+        return 0
+      } else {
+        if (caldiffDays(timestamp, next_miletones_time) * ceilWidth - 18 <= 0) {
+          return 0
+        }
+        return caldiffDays(timestamp, next_miletones_time) * ceilWidth - 18
+      }
+    } else if (gantt_view_mode == 'year') {
+      if (caldiffDays(timestamp, next_miletones_time) <= 11) {
+        return 0
+      } else {
+        return caldiffDays(timestamp, next_miletones_time) * ceilWidth - 18
+      }
+    }
+    // return caldiffDays(timestamp, next_miletones_time) * ceilWidth
   }
   // 里程碑是否过期的颜色设置
   setMiletonesColor = ({ is_over_duetime, has_lcb, is_all_realized }) => {
@@ -365,7 +476,11 @@ export default class GroupMilestones extends Component {
                     className={`${indexStyles.board_miletiones_names} ${globalStyles.global_ellipsis}`}
                     data-targetclassname="specific_example_milestone"
                     style={{
-                      maxWidth: this.setMiletonesNamesWidth(timestamp),
+                      maxWidth: this.setMiletonesNamesWidth({
+                        timestamp,
+                        top,
+                        belong_group_id
+                      }),
                       color: this.setMiletonesColor({
                         is_over_duetime,
                         is_all_realized: one_levels_completed
@@ -432,7 +547,11 @@ export default class GroupMilestones extends Component {
                     className={`${indexStyles.board_miletiones_names} ${globalStyles.global_ellipsis}`}
                     data-targetclassname="specific_example_milestone"
                     style={{
-                      maxWidth: this.setMiletonesNamesWidth(timestamp),
+                      maxWidth: this.setMiletonesNamesWidth({
+                        timestamp,
+                        top,
+                        belong_group_id
+                      }),
                       color: this.setMiletonesColor({
                         is_over_duetime,
                         is_all_realized: two_levels_completed
@@ -532,7 +651,7 @@ export default class GroupMilestones extends Component {
     //   x,
     //   milestone_initial_left: this.milestone_initial_left,
     //   milestone_drag_point_diff: this.milestone_drag_point_diff,
-    //   target: e.currentTarget.style.left
+    //   target: e.target.style.left
     // })
   }
   milestoneDraging = e => {
@@ -573,7 +692,6 @@ export default class GroupMilestones extends Component {
         gantt_head_width
       }) || {}
     // console.log('sssssssssss_22_0', x, this.milestone_drag_point_diff)
-
     // x = x - this.milestone_drag_point_diff + ceilWidth //校准
     // const { x } = (await this.setCurrentRect(this.milestone_drag_ele)) || {}
     let date = {} //具体日期
@@ -615,6 +733,9 @@ export default class GroupMilestones extends Component {
       elements.forEach(node => {
         node.style.transform = 'translate(0px, 0px)'
       })
+      this.setState({
+        dragg_milestone_err: false
+      })
     }
     const params = {
       id: milestones[0].id,
@@ -622,6 +743,22 @@ export default class GroupMilestones extends Component {
     }
     if (gantt_board_id == '0') {
       setBoardIdStorage(milestones[0].board_id)
+    }
+    if (
+      (gantt_view_mode == 'hours' &&
+        isSamHour(milestones[0].deadline, timestampEnd)) ||
+      (gantt_view_mode != 'hours' &&
+        isSamDay(milestones[0].deadline, timestampEnd))
+    ) {
+      this.setState(
+        {
+          dragg_milestone_err: true
+        },
+        () => {
+          resetNodeTransform()
+        }
+      )
+      return
     }
     return new Promise((resolve, reject) => {
       updateMilestone(
@@ -690,12 +827,13 @@ export default class GroupMilestones extends Component {
   }
 
   render() {
-    const { render_milestones_data = [] } = this.state
+    const { render_milestones_data = [], dragg_milestone_err } = this.state
     const {
       group_view_type,
       list_group = [],
       get_milestone_loading
     } = this.props
+    // console.log('ssssssss', dragg_milestone_err)
     return (
       <div
         style={{
@@ -710,7 +848,7 @@ export default class GroupMilestones extends Component {
           !!list_group.length &&
           render_milestones_data.map(item => {
             return (
-              <React.Fragment key={item.timestamp}>
+              <React.Fragment key={`${item.timestamp} ${dragg_milestone_err}`}>
                 {this.renderView(item)}
               </React.Fragment>
             )

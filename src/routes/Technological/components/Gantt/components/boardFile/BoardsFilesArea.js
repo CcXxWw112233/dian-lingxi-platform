@@ -8,6 +8,11 @@ import HideFileSlider from './HideFileSlider'
 
 @connect(mapStateToProps)
 export default class BoardsFilesArea extends Component {
+  constructor(props) {
+    super(props)
+    this.scrollTop = 0
+    this.outRef = React.createRef()
+  }
   state = {
     previewFileModalVisibile: false
   }
@@ -31,6 +36,16 @@ export default class BoardsFilesArea extends Component {
         filePreviewCurrentName: ''
       }
     })
+  }
+
+  componentWillReceiveProps(nextProps) {
+    // 从单项目切换到多项目
+    if (
+      nextProps.folder_seeing_board_id == '0' &&
+      this.props.folder_seeing_board_id != nextProps.folder_seeing_board_id
+    ) {
+      this.recoverRefSrcollTop()
+    }
   }
 
   setBoardFileMessagesRead = () => {
@@ -67,17 +82,41 @@ export default class BoardsFilesArea extends Component {
       }
     }
   }
+  // 监听事件
+  listenScroll = e => {
+    const scrollTop = e.currentTarget.scrollTop
+    //多项目文件查看
+    if (this.props.folder_seeing_board_id == '0') {
+      setTimeout(() => {
+        this.setScrollTop(scrollTop)
+      }, 500)
+    }
+  }
+  setScrollTop = scrollTop => {
+    this.scrollTop = scrollTop
+    console.log('sssssssaaa', scrollTop)
+  }
+
+  // 单项目切换回到多项目要恢复之前查看的位置
+  recoverRefSrcollTop = () => {
+    setTimeout(() => {
+      this.outRef.current.scrollTop = this.scrollTop
+    }, 400)
+  }
+
   render() {
     const { is_show_board_file_area, boards_flies = [] } = this.props
 
     return (
       <div
+        ref={this.outRef}
         className={` ${globalStyles.global_vertical_scrollbar} ${
           styles.boards_files_area
         }
             ${is_show_board_file_area == '1' && styles.boards_files_area_show}
             ${is_show_board_file_area == '2' && styles.boards_files_area_hide}
             `}
+        onScroll={this.listenScroll}
       >
         <HideFileSlider />
         <div

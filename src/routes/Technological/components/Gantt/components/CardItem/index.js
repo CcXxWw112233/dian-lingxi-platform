@@ -102,13 +102,7 @@ export default class CardItem extends Component {
   }
 
   // 标签的颜色
-  setLableColor = ({
-    label_data,
-    is_realize,
-    active_compare_height,
-    is_show_warning_time: early_warning,
-    is_outline_view
-  }) => {
+  setLableColor = ({ label_data, is_realize }) => {
     let bgColor = ''
     let b = ''
     if (label_data && label_data.length) {
@@ -128,40 +122,24 @@ export default class CardItem extends Component {
       b = `linear-gradient(to right${bgColor})`
     } else {
       if (is_realize == '1') {
-        if (is_outline_view) {
-          b = 'rgb(149,222,100)'
-        } else {
-          b = '#CDD1DF'
-        }
-        // if (active_compare_height) {
-        //   b = 'rgb(149,222,100)'
-        // } else {
-        //   b = 'rgb(149,222,100)'
-        // }
+        b = 'rgb(149,222,100)'
       } else {
-        if (is_outline_view) {
-          b = '#CDD1DF'
-        } else {
-          b = '#B3D0FF' //early_warning ? '#FFA000' : '#B3D0FF'
-        }
+        b = '#CDD1DF'
       }
-      // b =
-      //   is_realize == '1'
-      //     ? active_compare_height
-      //       ? '#5BB48F'
-      //       : '#CDD1DF'
-      //     : '#B3D0FF' //'rgb(212, 216, 228)' : '#cbddf7'
     }
     return b
   }
 
   // 任务弹窗
   setSpecilTaskExample = data => {
-    const { task_is_dragging, ganttPanelDashedDrag } = this.props
-    const { is_moved } = this.state
+    const {
+      task_is_dragging,
+      ganttPanelDashedDrag,
+      task_is_drag_moving
+    } = this.props
     // console.log('这是什么', '松开回调', task_is_dragging, is_moved, ganttPanelDashedDrag)
     if (
-      is_moved ||
+      task_is_drag_moving ||
       ganttPanelDashedDrag //这是表示创建中
     ) {
       this.props.setTaskIsDragging && this.props.setTaskIsDragging(false, 1) //当拖动完成后，释放创建任务的锁，让可以正常创建任务
@@ -171,9 +149,10 @@ export default class CardItem extends Component {
     setSpecilTaskExample(data)
     // 恢复最初状态
     setTimeout(() => {
-      this.setState({
-        is_moved: false
-      })
+      // this.setState({
+      //   is_moved: false
+      // })
+      this.props.setTaskIsDragMoving(false)
       this.props.setTaskIsDragging && this.props.setTaskIsDragging(false, 2) //当拖动完成后，释放创建任务的锁，让可以正常创建任务
     }, 700)
 
@@ -204,8 +183,8 @@ export default class CardItem extends Component {
       //在中间
       // target.style.cursor = 'move';
     }
-    this.x = e.clientX || e.changedTouches[0].clientX
-    this.y = e.clientY || e.changedTouches[0].clientY
+    this.x = e.clientX || e.changedTouches?.[0]?.clientX
+    this.y = e.clientY || e.changedTouches?.[0]?.clientY
     //获取左部和顶部的偏移量
     this.l = target.offsetLeft
     this.t = target.offsetTop
@@ -233,9 +212,10 @@ export default class CardItem extends Component {
     if (this.is_down == false) {
       return
     }
-    this.setState({
-      is_moved: true
-    })
+    // this.setState({
+    //   is_moved: true
+    // })
+    this.props.setTaskIsDragMoving(true)
     const { drag_type } = this.state
     // console.log('s_event', 'onTouchMove3', drag_type)
     if ('position' == drag_type) {
@@ -273,7 +253,11 @@ export default class CardItem extends Component {
   }
 
   onMouseEnter = () => {
-    const { itemValue } = this.props
+    const {
+      itemValue,
+      projectDetailInfoData: { board_set = {} }
+    } = this.props
+    const { date_mode, relative_time } = board_set
     const {
       top,
       id,
@@ -285,11 +269,21 @@ export default class CardItem extends Component {
       left
     } = itemValue
     //在鼠标hover到任务条上，非创建任务时，将虚线框隐藏
-    const { ganttPanelDashedDrag } = this.props
+    const {
+      ganttPanelDashedDrag,
+      task_is_dragging,
+      task_is_drag_moving
+    } = this.props
     if (!ganttPanelDashedDrag) {
       this.props.setDasheRectShow && this.props.setDasheRectShow(false)
     }
-    if (this.state.rely_down) return
+    if (
+      this.state.rely_down ||
+      task_is_dragging ||
+      task_is_drag_moving ||
+      date_mode == '1'
+    )
+      return
     // 鼠标移入 触发显示日期
     this.props.dispatch({
       type: 'gantt/updateDatas',
@@ -308,7 +302,7 @@ export default class CardItem extends Component {
 
   // 延展左边
   extentionLeft = e => {
-    const nx = e.clientX || e.changedTouches[0].clientX
+    const nx = e.clientX || e.changedTouches?.[0]?.clientX
     //计算移动后的左偏移量和顶部的偏移量
     const nl = nx - (this.x - this.l)
     const nw = this.x - nx //宽度
@@ -320,7 +314,7 @@ export default class CardItem extends Component {
 
   // 延展右边
   extentionRight = e => {
-    const nx = e.clientX || e.changedTouches[0].clientX
+    const nx = e.clientX || e.changedTouches?.[0]?.clientX
     const { local_width_flag } = this.state
     const { ceilWidth } = this.props
     //计算移动后的左偏移量和顶部的偏移量
@@ -344,11 +338,11 @@ export default class CardItem extends Component {
   // 整条拖动
   changePosition = e => {
     //获取x和y
-    const nx = e.clientX || e.changedTouches[0].clientX
-    const ny = e.clientY || e.changedTouches[0].clientY
+    const nx = e.clientX || e.changedTouches?.[0]?.clientX
+    const ny = e.clientY || e.changedTouches?.[0]?.clientY
     //计算移动后的左偏移量和顶部的偏移量
     const nl = nx - (this.x - this.l)
-    const nt = ny - (this.y - this.t)
+    let nt = ny - (this.y - this.t)
     const { gantt_view_mode } = this.props
     if (gantt_view_mode == 'relative_time') {
       if (nl <= 0) return
@@ -382,6 +376,9 @@ export default class CardItem extends Component {
       !ganttIsOutlineView({ group_view_type })
     ) {
       //只有在分组的情况下才能拖上下
+      if (nt <= 0) {
+        nt = 0
+      }
       this.setState({
         local_top: nt
       })
@@ -396,7 +393,7 @@ export default class CardItem extends Component {
       return
     }
     const { currentTarget } = event
-    const clientX = event.clientX || event.changedTouches[0].clientX
+    const clientX = event.clientX || event.changedTouches?.[0]?.clientX
     const { clientWidth } = currentTarget
     const oDiv = currentTarget
     const target_1 = document.getElementById('gantt_card_out_middle')
@@ -477,9 +474,11 @@ export default class CardItem extends Component {
     document.removeEventListener('touchmove', this.onTouchMove, false)
     document.removeEventListener('touchend', this.onTouchEnd, false)
     setTimeout(() => {
-      this.setState({
-        is_moved: false
-      })
+      // this.setState({
+      //   is_moved: false
+      // })
+      this.props.setTaskIsDragMoving(false)
+
       this.props.setTaskIsDragging && this.props.setTaskIsDragging(false, 4) //当拖动完成后，释放创建任务的锁，让可以正常创建任务
     }, 300)
   }
@@ -776,16 +775,21 @@ export default class CardItem extends Component {
       group_view_type,
       gantt_board_id
     }) //分组视图下
-    const { row: new_row } = await this.getRowsParam(local_top)
+    const { row: new_row, list_id: new_list_id } = await this.getRowsParam(
+      local_top
+    )
+    // console.log('ssssssssssaaaa_当前分组', { new_row, new_list_id })
     const row_param = single_board_view ? { row: new_row } : {}
     updateData = { ...updateData, ...row_param }
 
     if (
-      ((gantt_view_mode == 'hours' &&
+      (((gantt_view_mode == 'hours' &&
         Math.abs(local_left - left) < ceilWidth) ||
         (gantt_view_mode != 'hours' &&
           isSamDay(start_time, start_time_timestamp))) &&
-      (single_board_view ? !!row && row == new_row : true) //分组模式下行高微信
+        (single_board_view ? !!row && row == new_row : true)) || //分组模式下行高微信
+      (ganttIsSingleBoardGroupView({ group_view_type, gantt_board_id }) &&
+        !new_row)
     ) {
       //向右拖动时，如果是在同一天, 同一行，则不去更新
       this.setState(
@@ -806,17 +810,17 @@ export default class CardItem extends Component {
       board_id: board_id || gantt_board_id,
       ...row_param
     }
-    if (
-      (gantt_view_mode == 'hours' &&
-        isSamHour(start_time, start_time_timestamp)) ||
-      (gantt_view_mode != 'hours' && isSamDay(start_time, start_time_timestamp))
-      // isSamDay(start_time, start_time_timestamp)
-    ) {
-      //时间一样时只改变行
-      delete request_param.start_time
-      delete request_param.due_time
-    }
-    // console.log('ssssssssssaaaa', 2)
+    // if (
+    //   (gantt_view_mode == 'hours' &&
+    //     isSamHour(start_time, start_time_timestamp)) ||
+    //   (gantt_view_mode != 'hours' && isSamDay(start_time, start_time_timestamp))
+    //   // isSamDay(start_time, start_time_timestamp)
+    // ) {
+    //   //时间一样时只改变行
+    //   delete request_param.start_time
+    //   delete request_param.due_time
+    // }
+    console.log('ssssssssssaaaa', 2)
     updateTaskVTwo({ ...request_param }, { isNotLoading: false })
       .then(res => {
         if (isApiResponseOk(res)) {
@@ -925,6 +929,18 @@ export default class CardItem extends Component {
     updateData.due_time = end_time_timestamp
 
     const group_row_param = await this.getRowsParam(local_top)
+    // console.log('ssssssssssaaaa_改变分组', group_row_param)
+    if (
+      !ganttIsOutlineView({ group_view_type }) &&
+      (!group_row_param.list_id || !group_row_param.row)
+    ) {
+      // 取不到目标分组的信息
+      this.setState({
+        local_left: left,
+        local_top: top
+      })
+      return
+    }
     updateData = { ...updateData, ...group_row_param }
 
     // const params_list_id = this.getDragAroundListId()
@@ -939,16 +955,16 @@ export default class CardItem extends Component {
     // if (group_row_param.list_id == '0') {
     //     delete params.list_id
     // }
-    if (
-      (gantt_view_mode == 'hours' &&
-        isSamHour(start_time, start_time_timestamp)) ||
-      (gantt_view_mode != 'hours' && isSamDay(start_time, start_time_timestamp))
-      // isSamDay(start_time, start_time_timestamp)
-    ) {
-      //时间一样时只改变行
-      delete params.start_time
-      delete params.due_time
-    }
+    // if (
+    //   (gantt_view_mode == 'hours' &&
+    //     isSamHour(start_time, start_time_timestamp)) ||
+    //   (gantt_view_mode != 'hours' && isSamDay(start_time, start_time_timestamp))
+    //   // isSamDay(start_time, start_time_timestamp)
+    // ) {
+    //   //时间一样时只改变行
+    //   delete params.start_time
+    //   delete params.due_time
+    // }
     updateTaskVTwo({ ...params }, { isNotLoading: false })
       .then(res => {
         if (isApiResponseOk(res)) {
@@ -1432,7 +1448,13 @@ export default class CardItem extends Component {
     }
   }
   handleObj = () => {
-    const { itemValue = {}, card_rely_draging } = this.props
+    const {
+      itemValue = {},
+      card_rely_draging,
+      projectDetailInfoData: { board_set = {} },
+      selected_card_visible
+    } = this.props
+    const { date_mode } = board_set
     const { drag_lock } = this.state
     const {
       top,
@@ -1504,7 +1526,7 @@ export default class CardItem extends Component {
             drag_else_over_in: false
           })
         }, 200)
-        if (card_rely_draging || !drag_lock) return
+        if ((card_rely_draging || !drag_lock) && !selected_card_visible) return
         this.setSpecilTaskExample({ id: parent_card_id || id, top, board_id })
       }, //查看子任务是查看父任务
 
@@ -1536,7 +1558,7 @@ export default class CardItem extends Component {
             drag_else_over_in: false
           })
         }, 200)
-        if (card_rely_draging || !drag_lock) return
+        if ((card_rely_draging || !drag_lock) && !selected_card_visible) return
         this.setSpecilTaskExample({ id: parent_card_id || id, top, board_id })
       }, //查看子任务是查看父任务
       onMouseEnter: () => {
@@ -1548,7 +1570,13 @@ export default class CardItem extends Component {
         // console.log('s_event', 'onMouseLeave')
         this.set_drag_else_over_in(false)
         // 清除显示日期选中
-        if (this.state.rely_down) return
+        if (
+          this.state.rely_down ||
+          this.props.task_is_dragging ||
+          this.props.task_is_drag_moving ||
+          date_mode == '1'
+        )
+          return
         this.props.dispatch({
           type: 'gantt/updateDatas',
           payload: {
@@ -1722,6 +1750,23 @@ export default class CardItem extends Component {
     return { compare_width, status_label }
   }
 
+  // 获取存在里程碑的分组ID
+  getIsHasMilestoneInListGroup = () => {
+    const { milestoneMap = {}, list_group = [] } = this.props
+    const first_list_id = list_group[0].lane_id
+    let list_ids = []
+    for (let val in milestoneMap) {
+      milestoneMap[val].map(i => {
+        if (i.list_id) {
+          list_ids.push(i.list_id)
+        } else {
+          list_ids.push(first_list_id)
+        }
+      })
+    }
+    return Array.from(new Set(list_ids))
+  }
+
   render() {
     const {
       itemValue = {},
@@ -1730,8 +1775,12 @@ export default class CardItem extends Component {
       group_view_type,
       gantt_board_id,
       card_name_outside,
-      ceilWidth
+      ceilWidth,
+      ceiHeight,
+      list_id,
+      projectDetailInfoData: { board_set = {} }
     } = this.props
+    const { date_mode } = board_set
     const {
       left,
       top,
@@ -1842,6 +1891,7 @@ export default class CardItem extends Component {
     // 显示预警
     const SHOW_WARNING_TRIGGER =
       ganttIsOutlineView({ group_view_type }) &&
+      date_mode == '0' &&
       !parent_card_id &&
       is_realize == '0' &&
       is_has_end_time &&
@@ -1887,6 +1937,13 @@ export default class CardItem extends Component {
         is_show_warning_time
     })
 
+    // 获取存在里程碑的分组
+    // let list_ids = []
+    // if (!ganttIsOutlineView({ group_view_type })) {
+    //   list_ids = this.getIsHasMilestoneInListGroup()
+    // }
+    // const isHasListGroup = list_ids.indexOf(list_id) != -1
+    // const count_top = isHasListGroup ? local_top + 2 + ceiHeight : local_top + 2
     return (
       <div
         className={`${'gantt_card_flag_special'} ${
@@ -1901,20 +1958,16 @@ export default class CardItem extends Component {
         data-rely_top={id}
         style={{
           left: local_left + (gantt_view_mode == 'year' ? 0 : card_left_diff),
-          top: ganttIsOutlineView({ group_view_type })
-            ? local_top + 2
-            : local_top,
+          top: local_top + 2,
           //width,
           width:
             (local_width || 6) -
             (gantt_view_mode == 'year' ? 0 : card_width_diff),
-          height: ganttIsOutlineView({ group_view_type })
-            ? task_item_outline_height
-            : height || task_item_height,
+          height: task_item_outline_height,
           marginTop: task_item_margin_top,
           // boxShadow: 'none',
           zIndex: rely_down || this.is_down || drag_lock ? 2 : 1,
-          borderRadius: ganttIsOutlineView({ group_view_type }) && '4px',
+          borderRadius: '4px',
           boxShadow: is_show_warning_time
             ? '0 0 20px rgba(255,160,0,0.8)'
             : 'none'
@@ -2003,18 +2056,13 @@ export default class CardItem extends Component {
             top: 0,
             zIndex: 2,
             width: '100%',
-            height: ganttIsOutlineView({ group_view_type })
-              ? task_item_outline_height
-              : height || task_item_height,
+            height: task_item_outline_height,
             background: this.setLableColor({
               label_data,
-              is_realize,
-              active_compare_height,
-              is_show_warning_time,
-              is_outline_view: ganttIsOutlineView({ group_view_type })
+              is_realize
             }),
             boxShadow: 'none',
-            borderRadius: ganttIsOutlineView({ group_view_type }) && '4px'
+            borderRadius: '4px'
           }}
         >
           <div
@@ -2028,24 +2076,14 @@ export default class CardItem extends Component {
             onMouseMove={e => e.preventDefault()}
             style={{
               backgroundColor:
-                is_realize == '1'
-                  ? ganttIsOutlineView({ group_view_type })
-                    ? 'rgb(149,222,100)'
-                    : '#CDD1DF' //'rgb(212,216,228)'
-                  : ganttIsOutlineView({ group_view_type })
-                  ? '#CDD1DF'
-                  : '#B3D0FF',
+                is_realize == '1' ? 'rgb(149,222,100)' : '#CDD1DF',
               padding:
                 gantt_view_mode != 'month' && time_span < 6 ? '0' : '0 8px',
               zIndex: 1,
               height: !label_data.length
-                ? ganttIsOutlineView({ group_view_type })
-                  ? task_item_outline_height
-                  : task_item_height
-                : ganttIsOutlineView({ group_view_type })
-                ? task_item_outline_height - 4
-                : task_item_height - 4,
-              borderRadius: ganttIsOutlineView({ group_view_type }) && '4px'
+                ? task_item_outline_height
+                : task_item_outline_height - 4,
+              borderRadius: '4px'
             }}
           >
             {/* 这里放提前完成时 进度对比 */}
@@ -2138,14 +2176,8 @@ export default class CardItem extends Component {
               style={{
                 display: 'flex',
                 color: 'rgba(0,0,0,0.45)',
-                height: ganttIsOutlineView({ group_view_type })
-                  ? task_item_outline_height - 4
-                  : task_item_height - 4,
-                lineHeight: `${
-                  ganttIsOutlineView({ group_view_type })
-                    ? task_item_outline_height - 4
-                    : task_item_height - 4
-                }px`,
+                height: task_item_outline_height - 4,
+                lineHeight: `${task_item_outline_height - 4}px`,
                 zIndex:
                   ((is_show_compare_real_plan_timer &&
                     status_label == 'ahead_time_middle') ||
@@ -2430,11 +2462,15 @@ function mapStateToProps({
       outline_tree_round = [],
       selected_card_visible,
       notification_todos,
-      card_name_outside
+      card_name_outside,
+      milestoneMap = {}
     }
   },
   imCooperation: { im_all_latest_unread_messages = [] },
-  publicTaskDetailModal: { card_id: card_detail_id }
+  publicTaskDetailModal: { card_id: card_detail_id },
+  projectDetail: {
+    datas: { projectDetailInfoData = {} }
+  }
 }) {
   return {
     list_group,
@@ -2452,6 +2488,8 @@ function mapStateToProps({
     card_detail_id,
     selected_card_visible,
     notification_todos,
-    card_name_outside
+    card_name_outside,
+    milestoneMap,
+    projectDetailInfoData
   }
 }

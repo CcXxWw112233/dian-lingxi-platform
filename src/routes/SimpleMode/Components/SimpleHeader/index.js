@@ -3,7 +3,7 @@ import dva, { connect } from 'dva'
 import indexStyles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 // import VideoMeeting from '@/routes/Technological/Sider/comonent/videoMeetingPopoverContent/index'
-import { Tooltip, Dropdown, Modal } from 'antd'
+import { Tooltip, Dropdown, Modal, Popover } from 'antd'
 import Cookies from 'js-cookie'
 import SimpleNavigation from './Components/SimpleNavigation/index'
 // import SimpleDrawer from './Components/SimpleDrawer/index'
@@ -19,6 +19,8 @@ import {
 // import Guide from '../Guide/index'
 import { PROJECTS } from '../../../../globalset/js/constant'
 import LingxiIm, { lx_utils, Im } from 'lingxi-im'
+import small_routine_code from '../../../../assets/sider_right/small_routine_code.png'
+import official_accounts_code from '../../../../assets/sider_right/official_accounts_code.png'
 
 const VideoMeeting = lazy(() =>
   import(
@@ -31,7 +33,11 @@ const VideoMeeting = lazy(() =>
 const SimpleDrawer = lazy(() => import('./Components/SimpleDrawer/index'))
 // const Organization = lazy(() => import('@/routes/organizationManager'))
 const TaskDetailModal = lazy(() => import('@/components/TaskDetailModal'))
-const FileDetailModal = lazy(() => import('@/components/FileDetailModal'))
+const FileListRightBarFileDetailModal = lazy(() =>
+  import(
+    '../../../Technological/components/ProjectDetail/FileModule/FileListRightBarFileDetailModal'
+  )
+) //lazy(() => import('@/components/FileDetailModal'))
 const ProcessDetailModal = lazy(() => import('@/components/ProcessDetailModal'))
 const Guide = lazy(() => import('../Guide/index'))
 
@@ -143,7 +149,8 @@ class SimpleHeader extends Component {
     }
     Im.option({
       ...ImOptions
-      // APPKEY: 'ab3db8f71133efc21085a278db04e7e7',//'6b5d044ca33c559b9b91f02e29573f79',//ceshi//"ab3db8f71133efc21085a278db04e7e7", //
+      // APPKEY: 'c3abea191b7838ff65f9a6a44ff5e45f'
+      // APPKEY: '3a4464b3ff2767d3e9bf76e77de762c7' //'6b5d044ca33c559b9b91f02e29573f79',//ceshi//"ab3db8f71133efc21085a278db04e7e7", //
     })
     const clickDynamicFunc = data => {
       // 需要延时打开，因为IM先调用关闭，在打开的，而关闭比打开的走的慢
@@ -232,7 +239,6 @@ class SimpleHeader extends Component {
               processEditDatas: [],
               node_type: '1', // 当前的节点类型
               processCurrentEditStep: 0, // 当前的编辑步骤 第几步
-              processCurrentCompleteStep: 0, // 当前处于的操作步骤
               templateInfo: {}, // 模板信息
               processInfo: {}, // 流程实例信息
               currentProcessInstanceId: '', // 当前查看的流程实例名称
@@ -263,13 +269,14 @@ class SimpleHeader extends Component {
       relaDataId2,
       relaDataName2
     } = data
-    // console.log('ssss', data)
-    dispatch({
-      type: 'projectDetail/updateDatas',
-      payload: {
-        board_id: boardId
-      }
-    })
+    if (!!boardId) {
+      dispatch({
+        type: 'projectDetail/projectDetailInfo',
+        payload: {
+          id: boardId
+        }
+      })
+    }
     setBoardIdStorage(boardId)
     switch (type) {
       case 'board':
@@ -429,16 +436,20 @@ class SimpleHeader extends Component {
         //     }
         // })
         setTimeout(() => {
-          dispatch({
-            type: 'publicTaskDetailModal/updateDatas',
-            payload: {
-              drawerVisible: true,
-              card_id: cardId
+          this.setState(
+            {
+              whetherShowTaskDetailModalVisible: true
+            },
+            () => {
+              dispatch({
+                type: 'publicTaskDetailModal/updateDatas',
+                payload: {
+                  drawerVisible: true,
+                  card_id: cardId
+                }
+              })
             }
-          })
-          this.setState({
-            whetherShowTaskDetailModalVisible: true
-          })
+          )
         }, 200)
         break
       case 'flow':
@@ -623,6 +634,32 @@ class SimpleHeader extends Component {
     })
   }
 
+  // 渲染小程序/公众号内容
+  renderLingxiPlantformCode = () => {
+    return (
+      <div className={indexStyles.popover_plantform_content}>
+        <div className={indexStyles.popover_plantform_small_routine}>
+          <div className={indexStyles.popover_small_routine_code}>
+            <img src={small_routine_code} width="120px" height="120px" />
+          </div>
+          <div className={indexStyles.popover_code_text}>
+            <p>聆悉协作・小程序</p>
+            <span>扫码关注小程序，获取你的移动工作台</span>
+          </div>
+        </div>
+        <div className={indexStyles.popover_plantform_official_accounts}>
+          <div className={indexStyles.popover_plantform_official_accounts_code}>
+            <img src={official_accounts_code} width="120px" height="120px" />
+          </div>
+          <div className={indexStyles.popover_code_text}>
+            <p>聆悉协作・公众号</p>
+            <span>扫码关注二维码，随时掌握项目动态</span>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   render() {
     const {
       chatImVisiable = false,
@@ -689,6 +726,35 @@ class SimpleHeader extends Component {
             </div>
           </Dropdown>
         )}
+
+        <Popover
+          trigger={['click']}
+          title={null}
+          content={this.renderLingxiPlantformCode()}
+          getPopupContainer={triggerNode => triggerNode.parentNode}
+        >
+          <div className={`${indexStyles.plantformCode}`}>
+            <span
+              style={{
+                fontSize: '22px',
+                marginRight: '4px',
+                verticalAlign: 'middle'
+              }}
+              className={globalStyles.authTheme}
+            >
+              &#xe634;
+            </span>
+            <span
+              style={{
+                verticalAlign: 'middle',
+                fontSize: '12px',
+                textShadow: '0px 1px 2px rgba(0, 0, 0, 0.15)'
+              }}
+            >
+              小程序/公众号
+            </span>
+          </div>
+        </Popover>
 
         <Tooltip title="操作指引">
           <div
@@ -765,26 +831,34 @@ class SimpleHeader extends Component {
               visible={simpleDrawerVisible}
             />
           )}
-          {drawerVisible && this.state.whetherShowTaskDetailModalVisible && (
+          {this.state.whetherShowTaskDetailModalVisible && drawerVisible && (
             <TaskDetailModal
-              task_detail_modal_visible={drawerVisible}
+              task_detail_modal_visible={
+                drawerVisible && this.state.whetherShowTaskDetailModalVisible
+              }
               // setTaskDetailModalVisible={this.setTaskDetailModalVisible}
               // handleTaskDetailChange={this.handleChangeCard}
               // handleDeleteCard={this.handleDeleteCard}
             />
           )}
           {isInOpenFile && this.state.whetherShowFileDetailModalVisible && (
-            <FileDetailModal
+            <FileListRightBarFileDetailModal
               setPreviewFileModalVisibile={this.setPreviewFileModalVisibile}
               fileType={fileType}
               filePreviewCurrentFileId={filePreviewCurrentFileId}
-              file_detail_modal_visible={isInOpenFile}
+              file_detail_modal_visible={
+                isInOpenFile && this.state.whetherShowFileDetailModalVisible
+              }
             />
           )}
           {process_detail_modal_visible &&
             this.state.whetherShowProcessDetailModalVisible && (
               <ProcessDetailModal
-                process_detail_modal_visible={process_detail_modal_visible}
+                process_detail_modal_visible={
+                  process_detail_modal_visible &&
+                  this.state.whetherShowProcessDetailModalVisible
+                }
+                notburningProcessFile={true}
               />
             )}
           {guideModalVisiable && (

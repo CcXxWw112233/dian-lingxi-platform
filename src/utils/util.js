@@ -411,7 +411,7 @@ export const compareTwoTimestamp = (timeStampA, timestampB) => {
     timestampB.toString().length < 13
       ? Number(timestampB) * 1000
       : Number(timestampB)
-  return new_time_a > new_time_b
+  return new_time_a >= new_time_b
 }
 
 // 比较两个时间是否同一天
@@ -1025,4 +1025,22 @@ export function downloadFile(url) {
   document
     .getElementById('openWin_download')
     .parentNode.removeChild(document.getElementById('openWin_download'))
+}
+
+// 计算两个时间相差几个小时
+export function caldiffHours(timestamp1, timestamp2) {
+  let hourSpan, residue1, iHours
+  let timestamp1_ =
+    String(timestamp1).length == 10
+      ? Number(timestamp1) * 1000
+      : Number(timestamp1)
+  let timestamp2_ =
+    String(timestamp2).length == 10
+      ? Number(timestamp2) * 1000
+      : Number(timestamp2)
+  hourSpan = new Date(timestamp1_).getTime() - new Date(timestamp2_).getTime()
+  hourSpan = Math.abs(hourSpan)
+  residue1 = hourSpan % (24 * 3600 * 1000) // 计算天数后剩余的毫秒数
+  iHours = Math.floor(residue1 / (3600 * 1000))
+  return iHours
 }

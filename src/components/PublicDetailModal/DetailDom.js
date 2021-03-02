@@ -37,13 +37,18 @@ export default class DetailDom extends React.Component {
 
   render() {
     const { clientHeight, clientWidth } = this.state
-    const { modalTop } = this.props
+    const { modalTop, fileFullStyle } = this.props
     const offsetTopDeviation = 100 //用来计算偏移量偏差
     return (
       <div
+        id="CustormModal_DetailDom"
         onClick={this.commonDrawerContentOutClick}
         className={indexStyles.fileDetailOut}
-        style={{ height: clientHeight - offsetTopDeviation, top: 0 }}
+        style={{
+          height: clientHeight - offsetTopDeviation,
+          top: 0,
+          ...fileFullStyle
+        }}
       >
         <Header {...this.props} setModalVisibile />
         <DetailContent

@@ -1069,7 +1069,7 @@ const LogicWithMainContent = {
     if (flag) {
       Modal.confirm({
         title: `确认要删除这条字段吗？`,
-        zIndex: 1007,
+        zIndex: 1009,
         content: (
           <div style={{ color: 'rgba(0,0,0, .65)', fontSize: 14 }}>
             <span>删除包括删除这条字段已填写的内容。</span>
@@ -2086,7 +2086,7 @@ const LogicWithMainContent = {
     const { deliverables = [] } = drawContent
     Modal.confirm({
       title: `确认要删除这个附件吗？`,
-      zIndex: 1007,
+      zIndex: 1009,
       content: (
         <div style={{ color: 'rgba(0,0,0, .8)', fontSize: 14 }}>
           <span>删除后不可恢复</span>

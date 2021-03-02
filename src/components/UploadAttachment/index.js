@@ -524,7 +524,7 @@ export default class UploadAttachment extends Component {
           visible={uploadFileVisible || visible}
           onOk={this.handleOk}
           onCancel={this.closeUploadAttachmentModal}
-          zIndex={1007}
+          zIndex={1009}
           width={556}
           maskClosable={false}
           okButtonProps={{

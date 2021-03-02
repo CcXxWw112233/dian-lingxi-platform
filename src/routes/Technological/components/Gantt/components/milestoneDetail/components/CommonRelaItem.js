@@ -1,6 +1,6 @@
 import React from 'react'
 import taskItemStyles from './taskItem.less'
-import { Icon, Popconfirm } from 'antd'
+import { Icon, message, Popconfirm } from 'antd'
 import {
   caldiffDays,
   timestampToTimeNormal
@@ -9,8 +9,15 @@ import globalStyles from '../../../../../../../globalset/css/globalClassName.les
 import AvatarList from '../../../../../../../components/avatarList'
 import { connect } from 'dva'
 import { currentNounPlanFilterName } from '../../../../../../../utils/businessFunction'
-import { TASKS } from '../../../../../../../globalset/js/constant'
+import {
+  MESSAGE_DURATION_TIME,
+  TASKS
+} from '../../../../../../../globalset/js/constant'
 import { isApiResponseOk } from '../../../../../../../utils/handleResponseData'
+import { completeTask } from '../../../../../../../services/technological/task'
+import { ganttIsOutlineView } from '../../../constants'
+import { getTreeNodeValue } from '../../../../../../../models/technological/workbench/gantt/gantt_utils'
+import { onChangeCardHandleCardDetail } from '../../../ganttBusiness'
 
 @connect(mapStateToProps)
 export default class CommonRelaItem extends React.Component {
@@ -48,6 +55,64 @@ export default class CommonRelaItem extends React.Component {
       }
     })
   }
+
+  // 更新甘特图
+  updateGanttDatas = (payload = {}) => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'gantt/updateGanttMilestoneData',
+      payload: payload
+    })
+  }
+
+  // 更新里程碑详情数据
+  updateMilestoneDetailDatas = () => {
+    let {
+      milestone_detail: { id },
+      dispatch
+    } = this.props
+    dispatch({
+      type: 'milestoneDetail/getMilestoneDetail',
+      payload: {
+        id
+      }
+    })
+  }
+
+  // 点击完成任务
+  setIsCheck = ({ is_completed, id, list_id }) => {
+    const {
+      milestone_detail: { board_id },
+      dispatch,
+      card_id,
+      selected_card_visible
+    } = this.props
+    const obj = {
+      card_id: id,
+      is_realize: is_completed === '1' ? '0' : '1',
+      board_id
+    }
+
+    completeTask({ ...obj }).then(res => {
+      if (isApiResponseOk(res)) {
+        setTimeout(() => {
+          message.success('更新成功', MESSAGE_DURATION_TIME)
+        }, 200)
+        this.updateMilestoneDetailDatas()
+        if (window.location.href.indexOf('home') != -1) return
+        this.updateGanttDatas({ ...obj, list_id })
+        onChangeCardHandleCardDetail({
+          card_detail_id: card_id, //来自任务详情的id
+          selected_card_visible, //任务详情弹窗是否弹开
+          dispatch,
+          operate_id: id //当前操作的id
+        })
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    })
+  }
+
   render() {
     const {
       itemValue = {},
@@ -62,7 +127,8 @@ export default class CommonRelaItem extends React.Component {
       deadline,
       is_completed,
       users = [],
-      progress_percent
+      progress_percent,
+      list_id = '0'
     } = itemValue
     const result_process = Math.round(progress_percent * 100) / 100
     return (
@@ -76,6 +142,9 @@ export default class CommonRelaItem extends React.Component {
                   ? taskItemStyles.nomalCheckBoxActive
                   : taskItemStyles.nomalCheckBox
               }
+              onClick={() => {
+                this.setIsCheck({ is_completed, id, list_id })
+              }}
             >
               <Icon
                 type="check"
@@ -145,9 +214,24 @@ export default class CommonRelaItem extends React.Component {
 }
 function mapStateToProps({
   milestoneDetail: { milestone_detail = {} },
-  publicTaskDetailModal: { card_id }
+  publicTaskDetailModal: { card_id },
+  gantt: {
+    datas: {
+      group_view_type,
+      outline_tree = [],
+      selected_card_visible,
+      list_group = []
+    }
+  }
 }) {
-  return { milestone_detail, card_id }
+  return {
+    milestone_detail,
+    card_id,
+    group_view_type,
+    outline_tree,
+    selected_card_visible,
+    list_group
+  }
 }
 
 CommonRelaItem.defaultProps = {

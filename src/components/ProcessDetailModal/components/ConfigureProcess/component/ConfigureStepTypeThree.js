@@ -23,6 +23,7 @@ import { principalList, tableList } from '../../../constant'
 import ConfigureStepTypeThree_one from './ConfigureStepTypeThree_one'
 import { currentNounPlanFilterName } from '../../../../../utils/businessFunction'
 import { FLOWS } from '../../../../../globalset/js/constant'
+import { accordingToSortMembersList } from '../../handleOperateModal'
 const Option = Select.Option
 @connect(mapStateToProps)
 export default class ConfigureStepTypeThree extends Component {
@@ -305,6 +306,10 @@ export default class ConfigureStepTypeThree extends Component {
     } = this.props
     // const { designatedPersonnelList = [] } = this.state
     let designatedPersonnelList = this.filterAssignees()
+    let new_currentOrgAllMembers = accordingToSortMembersList(
+      currentOrgAllMembers,
+      designatedPersonnelList
+    )
     return (
       <div style={{ flex: 1, padding: '8px 0' }}>
         {!designatedPersonnelList.length ? (
@@ -317,17 +322,12 @@ export default class ConfigureStepTypeThree extends Component {
               overlay={
                 <MenuSearchPartner
                   isInvitation={true}
-                  // show_select_all={true}
-                  // select_all_type={'0'}
-                  listData={currentOrgAllMembers}
+                  listData={new_currentOrgAllMembers}
                   keyCode={'user_id'}
                   searchName={'name'}
                   currentSelect={designatedPersonnelList}
-                  // board_id={board_id}
-                  // invitationType='1'
-                  // invitationId={board_id}
-                  // invitationOrg={org_id}
                   chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
+                  not_allow_sort_list={true}
                 />
               }
             >
@@ -435,17 +435,12 @@ export default class ConfigureStepTypeThree extends Component {
               overlay={
                 <MenuSearchPartner
                   isInvitation={true}
-                  // show_select_all={true}
-                  // select_all_type={'0'}
-                  listData={currentOrgAllMembers}
+                  listData={new_currentOrgAllMembers}
                   keyCode={'user_id'}
                   searchName={'name'}
                   currentSelect={designatedPersonnelList}
-                  // board_id={board_id}
-                  // invitationType='1'
-                  // invitationId={board_id}
-                  // invitationOrg={org_id}
                   chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
+                  not_allow_sort_list={true}
                 />
               }
             >

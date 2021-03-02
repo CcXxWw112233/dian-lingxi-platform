@@ -219,8 +219,8 @@ class BoardDropdownSelect extends Component {
         board_name: name,
         is_new_board: true,
         dispatch,
-        org_id: data._organization_id,
-        group_view_type: '4'
+        org_id: data._organization_id
+        // group_view_type: '4'
       }) //极简模式项目选择
       const sessionStorage_item = window.sessionStorage.getItem(
         'session_currentSelectedWorkbenchBox'

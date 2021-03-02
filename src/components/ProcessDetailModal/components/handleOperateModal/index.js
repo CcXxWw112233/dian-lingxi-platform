@@ -499,6 +499,28 @@ const whetherIsExistOnlineExcel = ({ forms = [] }) => {
   return flag
 }
 
+// 获取id数组
+const transAssigneesToIds = (assignees = []) => {
+  let tempIds = []
+  assignees.map(item => {
+    if (item.id || item.user_id) {
+      tempIds.push(item.id || item.user_id)
+    }
+  })
+  return Array.from(new Set(tempIds))
+}
+
+/**
+ * 按照一定的人员顺序排列
+ * @param {Array} listData 数据源列表
+ * @param {Array} selectedData 已选择人员列表
+ */
+const accordingToSortMembersList = (listData = [], selectedData = []) => {
+  let new_data = [].concat(...selectedData, ...listData)
+  new_data = arrayNonRepeatfy(new_data)
+  return new_data
+}
+
 export {
   showDeleteTempleteConfirm,
   genPrincipalListFromAssignees,
@@ -520,5 +542,7 @@ export {
   compareOppositeTimer,
   removeEmptyArrayEle,
   updateUserStorage,
-  whetherIsExistOnlineExcel
+  whetherIsExistOnlineExcel,
+  transAssigneesToIds,
+  accordingToSortMembersList
 }

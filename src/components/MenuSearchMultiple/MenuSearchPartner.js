@@ -120,14 +120,17 @@ export default class MenuSearchPartner extends React.Component {
     } else {
       arr = list
     }
-
-    //添加任务执行人后往前插入
-    const { selectedKeys } = this.state
-    for (let i = 0; i < arr.length; i++) {
-      if (selectedKeys.indexOf(arr[i]['user_id']) != -1) {
-        if (i > 0 && selectedKeys.indexOf(arr[i - 1]['user_id']) == -1) {
-          const deItem = arr.splice(i, 1)
-          arr.unshift(...deItem)
+    // 是否需要这样排序
+    const { not_allow_sort_list } = this.props
+    if (!not_allow_sort_list) {
+      //添加任务执行人后往前插入
+      const { selectedKeys } = this.state
+      for (let i = 0; i < arr.length; i++) {
+        if (selectedKeys.indexOf(arr[i]['user_id']) != -1) {
+          if (i > 0 && selectedKeys.indexOf(arr[i - 1]['user_id']) == -1) {
+            const deItem = arr.splice(i, 1)
+            arr.unshift(...deItem)
+          }
         }
       }
     }
@@ -696,7 +699,8 @@ MenuSearchPartner.deafultProps = {
   },
   show_select_all: false, //默认不显示邀请全部
   select_all_type: '0', //0默认抛出全部key, 1争对任务设置负责人，只能单点一个就调用接口设置或删除。
-  single: false //默认多选，是否单选
+  single: false, //默认多选，是否单选
+  not_allow_sort_list: false // 不允许排序 默认允许
 }
 
 function mapStateToProps({

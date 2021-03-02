@@ -10,6 +10,8 @@ export default class BeginningStepOne_six extends Component {
   constructor(props) {
     super(props)
     this.state = {}
+    this.tableRow = 10
+    this.tableColumn = 5
   }
 
   getOnlineExcelDataWithProcess = props => {
@@ -59,10 +61,19 @@ export default class BeginningStepOne_six extends Component {
         <p>
           在线表格
           <span style={{ marginLeft: 10 }}>
-            <Sheet data={data.sheet_data} onMessage={this.updateSheetData} />
+            <Sheet
+              data={data.sheet_data}
+              onMessage={this.updateSheetData}
+              row={this.tableRow}
+              column={this.tableColumn}
+            />
           </span>
         </p>
-        <PrivewTable data={data.sheet_data} />
+        <PrivewTable
+          data={data.sheet_data}
+          minRows={this.tableRow}
+          minCols={this.tableColumn}
+        />
       </div>
     )
   }

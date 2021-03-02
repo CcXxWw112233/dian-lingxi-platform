@@ -1,6 +1,7 @@
 import { getModelSelectDatasState, getModelSelectState } from '../../utils'
 import { getOrgIdByBoardId } from '../../../utils/businessFunction'
 import { arrayNonRepeatfy } from '../../../utils/util'
+import { message } from 'antd'
 
 // 该model是圈子推送已读未读的内容
 const model_milestoneDetail = name => `milestoneDetail/${name}`
@@ -42,6 +43,22 @@ export default {
       })
       yield put({
         type: 'handleGanttMilestone',
+        payload: {
+          coperateName,
+          coperateType,
+          coperateData
+        }
+      })
+      yield put({
+        type: 'handleFlow',
+        payload: {
+          coperateName,
+          coperateType,
+          coperateData
+        }
+      })
+      yield put({
+        type: 'handleBoard',
         payload: {
           coperateName,
           coperateType,
@@ -722,6 +739,85 @@ export default {
             })
           }
 
+          break
+        default:
+          break
+      }
+    },
+    // 处理流程
+    *handleFlow({ payload }, { select, call, put }) {
+      const { coperateName, coperateType, coperateData } = payload
+      switch (coperateType) {
+        case 'change:flow:instance':
+          const currentProcessInstanceId = yield select(
+            getModelSelectState(
+              'publicProcessDetailModal',
+              'currentProcessInstanceId'
+            )
+          )
+          const flow_id = getAfterNameId(coperateName).split('/')[0]
+          if (currentProcessInstanceId == flow_id) {
+            dispathes({
+              type: 'publicProcessDetailModal/getProcessInfo',
+              payload: {
+                id: currentProcessInstanceId
+              }
+            })
+          }
+          break
+        default:
+          break
+      }
+    },
+    *handleBoard({ payload }, { select, call, put }) {
+      const { coperateName, coperateType, coperateData } = payload
+      switch (coperateType) {
+        case 'change:flow:instance':
+          const currentProcessInstanceId = yield select(
+            getModelSelectState(
+              'publicProcessDetailModal',
+              'currentProcessInstanceId'
+            )
+          )
+          const flow_id = getAfterNameId(coperateName).split('/')[0]
+          if (currentProcessInstanceId == flow_id) {
+            dispathes({
+              type: 'publicProcessDetailModal/getProcessInfo',
+              payload: {
+                id: currentProcessInstanceId
+              }
+            })
+          }
+          break
+        case 'change:board':
+          let op_board_id = getAfterNameId(coperateName)
+          let is_deleted_ = coperateData['is_deleted']
+          const { board_id: currentProjectBoardId } = yield select(
+            getModelSelectDatasState('projectDetail', 'projectDetailInfoData')
+          )
+          // debugger
+          if (op_board_id == currentProjectBoardId) {
+            if (is_deleted_ == '0') {
+              let projectDetailInfoData = yield select(
+                getModelSelectDatasState(
+                  'projectDetail',
+                  'projectDetailInfoData'
+                )
+              )
+              projectDetailInfoData = {
+                ...projectDetailInfoData,
+                ...coperateData
+              }
+              dispathes({
+                type: 'projectDetail/updateDatas',
+                payload: {
+                  projectDetailInfoData
+                }
+              })
+            } else if (is_deleted_ == '1') {
+              message.warn('当前项目已被删除')
+            }
+          }
           break
         default:
           break

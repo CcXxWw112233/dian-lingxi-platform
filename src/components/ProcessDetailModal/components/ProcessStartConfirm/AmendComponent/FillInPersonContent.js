@@ -12,6 +12,7 @@ import {
   currentNounPlanFilterName
 } from '../../../../../utils/businessFunction'
 import { FLOWS } from '../../../../../globalset/js/constant'
+import { accordingToSortMembersList } from '../../handleOperateModal'
 
 export default class FillInPersonContent extends Component {
   constructor(props) {
@@ -152,23 +153,8 @@ export default class FillInPersonContent extends Component {
       is_click_confirm_btn: true
     })
     const { designatedPersonnelList = [], assignee_type } = this.state
-    if (assignee_type == '1') {
-      ;(await this.props.updateCorrespondingPrcodessStepWithNodeContent) &&
-        this.props.updateCorrespondingPrcodessStepWithNodeContent(
-          'assignee_type',
-          assignee_type
-        )
-      ;(await this.props.updateCorrespondingPrcodessStepWithNodeContent) &&
-        this.props.updateCorrespondingPrcodessStepWithNodeContent(
-          'assignees',
-          ''
-        )
-      this.setState({
-        designatedPersonnelList: []
-      })
-      ;(await this.props.onVisibleChange) &&
-        this.props.onVisibleChange(false, this.updateState)
-    } else if (assignee_type == '2') {
+    const { NotModifiedInitiator } = this.props
+    if (assignee_type == '2' || NotModifiedInitiator) {
       let newDesignatedPersonnelList = [...designatedPersonnelList]
       this.props.updateCorrespondingPrcodessStepWithNodeContent &&
         this.props.updateCorrespondingPrcodessStepWithNodeContent(
@@ -187,15 +173,32 @@ export default class FillInPersonContent extends Component {
         )
       this.props.onVisibleChange &&
         this.props.onVisibleChange(false, this.updateState)
+    } else if (assignee_type == '1') {
+      ;(await this.props.updateCorrespondingPrcodessStepWithNodeContent) &&
+        this.props.updateCorrespondingPrcodessStepWithNodeContent(
+          'assignee_type',
+          assignee_type
+        )
+      ;(await this.props.updateCorrespondingPrcodessStepWithNodeContent) &&
+        this.props.updateCorrespondingPrcodessStepWithNodeContent(
+          'assignees',
+          ''
+        )
+      this.setState({
+        designatedPersonnelList: []
+      })
+      ;(await this.props.onVisibleChange) &&
+        this.props.onVisibleChange(false, this.updateState)
     }
   }
 
   // 渲染指定人员
   renderDesignatedPersonnel = () => {
-    const { data = [], board_id } = this.props
+    const { data = [], board_id, itemKey } = this.props
     // const { designatedPersonnelList = [] } = this.state
     let designatedPersonnelList = this.filterAssignees()
     let org_id = getOrgIdByBoardId(board_id) || '0'
+    let new_data = accordingToSortMembersList(data, designatedPersonnelList)
     return (
       <div style={{ flex: 1, padding: '8px 0' }}>
         {!designatedPersonnelList.length ? (
@@ -205,23 +208,20 @@ export default class FillInPersonContent extends Component {
               trigger={['click']}
               overlayClassName={indexStyles.overlay_pricipal}
               getPopupContainer={() =>
-                document.getElementById('fillInPersonMiniTopContainer')
+                document.getElementById(
+                  `fillInPersonMiniTopContainer_${itemKey}`
+                )
               }
               overlayStyle={{ maxWidth: '200px' }}
               overlay={
                 <MenuSearchPartner
                   isInvitation={true}
-                  // show_select_all={true}
-                  // select_all_type={'0'}
-                  listData={data}
+                  listData={new_data}
                   keyCode={'user_id'}
                   searchName={'name'}
                   currentSelect={designatedPersonnelList}
-                  // board_id={board_id}
-                  // invitationType='1'
-                  // invitationId={board_id}
-                  // invitationOrg={org_id}
                   chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
+                  not_allow_sort_list={true}
                 />
               }
             >
@@ -265,8 +265,10 @@ export default class FillInPersonContent extends Component {
                     {avatar ? (
                       <Tooltip
                         overlayStyle={{ minWidth: '62px' }}
-                        getPopupContainer={triggerNode =>
-                          triggerNode.parentNode
+                        getPopupContainer={() =>
+                          document.getElementById(
+                            `fillInPersonMiniTopContainer_${itemKey}`
+                          )
                         }
                         placement="top"
                         title={name || user_name || '佚名'}
@@ -285,8 +287,10 @@ export default class FillInPersonContent extends Component {
                     ) : (
                       <Tooltip
                         overlayStyle={{ minWidth: '62px' }}
-                        getPopupContainer={triggerNode =>
-                          triggerNode.parentNode
+                        getPopupContainer={() =>
+                          document.getElementById(
+                            `fillInPersonMiniTopContainer_${itemKey}`
+                          )
                         }
                         placement="top"
                         title={name || user_name || '佚名'}
@@ -327,23 +331,20 @@ export default class FillInPersonContent extends Component {
               trigger={['click']}
               overlayClassName={indexStyles.overlay_pricipal}
               getPopupContainer={() =>
-                document.getElementById('fillInPersonMiniTopContainer')
+                document.getElementById(
+                  `fillInPersonMiniTopContainer_${itemKey}`
+                )
               }
               overlayStyle={{ maxWidth: '200px' }}
               overlay={
                 <MenuSearchPartner
                   isInvitation={true}
-                  // show_select_all={true}
-                  // select_all_type={'0'}
-                  listData={data}
+                  listData={new_data}
                   keyCode={'user_id'}
                   searchName={'name'}
                   currentSelect={designatedPersonnelList}
-                  // board_id={board_id}
-                  // invitationType='1'
-                  // invitationId={board_id}
-                  // invitationOrg={org_id}
                   chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
+                  not_allow_sort_list={true}
                 />
               }
             >
@@ -368,11 +369,11 @@ export default class FillInPersonContent extends Component {
 
   // 渲染资料收集的内容
   renderDataCollection = () => {
-    const { itemValue } = this.props
+    const { itemValue, NotModifiedInitiator, itemKey } = this.props
     const { assignee_type, assignees } = itemValue
     const { designatedPersonnelList } = this.state
     let disabledAssignees =
-      assignee_type == '2'
+      assignee_type == '2' || NotModifiedInitiator
         ? designatedPersonnelList && designatedPersonnelList.length
           ? assignees
             ? isArrayEqual(assignees.split(','), designatedPersonnelList)
@@ -388,23 +389,25 @@ export default class FillInPersonContent extends Component {
     return (
       <div className={indexStyles.mini_content}>
         <div
-          id="fillInPersonMiniTopContainer"
+          id={`fillInPersonMiniTopContainer_${itemKey}`}
           className={`${indexStyles.mini_top} ${globalStyles.global_vertical_scrollbar}`}
         >
-          <Radio.Group
-            style={{ display: 'flex', flexDirection: 'column' }}
-            value={this.state.assignee_type}
-            onChange={this.assigneeTypeChange}
-          >
-            <Radio
-              style={{ marginBottom: '12px' }}
-              value="1"
-            >{`${currentNounPlanFilterName(FLOWS)}发起人`}</Radio>
-            <Radio style={{ marginBottom: '12px' }} value="2">
-              指定人员
-            </Radio>
-          </Radio.Group>
-          {this.state.assignee_type == '2' && (
+          {!NotModifiedInitiator && (
+            <Radio.Group
+              style={{ display: 'flex', flexDirection: 'column' }}
+              value={this.state.assignee_type}
+              onChange={this.assigneeTypeChange}
+            >
+              <Radio
+                style={{ marginBottom: '12px' }}
+                value="1"
+              >{`${currentNounPlanFilterName(FLOWS)}发起人`}</Radio>
+              <Radio style={{ marginBottom: '12px' }} value="2">
+                指定人员
+              </Radio>
+            </Radio.Group>
+          )}
+          {(this.state.assignee_type == '2' || NotModifiedInitiator) && (
             <div>{this.renderDesignatedPersonnel()}</div>
           )}
         </div>

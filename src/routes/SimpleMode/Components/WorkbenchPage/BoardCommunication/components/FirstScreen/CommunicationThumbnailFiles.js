@@ -18,7 +18,8 @@ import {
   NOT_HAS_PERMISION_COMFIRN,
   PROJECT_TEAM_CARD_COMPLETE,
   PROJECT_TEAM_CARD_EDIT,
-  PROJECT_TEAM_CARD_ATTACHMENT_UPLOAD
+  PROJECT_TEAM_CARD_ATTACHMENT_UPLOAD,
+  PROJECT_FILES_FILE_UPDATE
 } from '@/globalset/js/constant'
 import {
   checkIsHasPermissionInBoard,
@@ -268,7 +269,7 @@ export default class CommunicationThumbnailFiles extends Component {
     } = this.props
     const isHasUploadFilesPermission = () => {
       return checkIsHasPermissionInBoard(
-        PROJECT_TEAM_CARD_ATTACHMENT_UPLOAD,
+        PROJECT_FILES_FILE_UPDATE,
         currentSelectBoardId
       )
     }
@@ -399,6 +400,7 @@ export default class CommunicationThumbnailFiles extends Component {
         {filesShowType == '0' ? (
           <ThumbnailFilesListShow
             // thumbnailFilesList={thumbnailFilesList}
+            dispatch={this.props.dispatch}
             thumbnailFilesList={onlyFileList}
             onlyFileTableLoading={onlyFileTableLoading}
             isSearchDetailOnfocusOrOnblur={isSearchDetailOnfocusOrOnblur}
@@ -408,6 +410,7 @@ export default class CommunicationThumbnailFiles extends Component {
           <ThumbnailFilesTilingShow
             thumbnailFilesList={onlyFileList}
             previewFile={this.previewFile}
+            dispatch={this.props.dispatch}
           />
         )}
       </div>

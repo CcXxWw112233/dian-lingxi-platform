@@ -10,6 +10,7 @@ import { connect } from 'dva'
 import AvatarList from '@/components/TaskDetailModal/AvatarList'
 import moment from 'moment'
 import { timestampToTime } from '../../../../../../../../utils/util'
+import { isValidAvatar } from '../../../../../../../../components/TaskDetailModal/handleOperateModal'
 
 @connect(
   ({
@@ -325,7 +326,7 @@ export default class AppendSubTask extends Component {
                                   key={index}
                                   tips={name}
                                   src={
-                                    this.isValidAvatar(avatar)
+                                    isValidAvatar(avatar)
                                       ? avatar
                                       : defaultUserAvatar
                                   }
