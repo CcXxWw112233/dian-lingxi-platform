@@ -909,7 +909,7 @@ export default class BeginningStepOne extends Component {
       itemValue = {},
       projectDetailInfoData: { data = [], board_id },
       currentOrgAllMembers = [],
-      processInfo: { status: parentStatus }
+      processInfo: { status: parentStatus, enable_change }
     } = this.props
     const {
       status,
@@ -1075,26 +1075,27 @@ export default class BeginningStepOne extends Component {
                       )}
                     </>
                   )}
-                  {parentStatus == '0' && (
-                    <span style={{ position: 'relative' }}>
-                      <AmendComponent
-                        type="1"
-                        updateParentsAssigneesOrCopyPersonnel={
-                          this.updateParentsAssigneesOrCopyPersonnel
-                        }
-                        updateCorrespondingPrcodessStepWithNodeContent={
-                          this.updateCorrespondingPrcodessStepWithNodeContent
-                        }
-                        placementTitle="填写人"
-                        data={new_data}
-                        itemKey={itemKey}
-                        itemValue={new_itemValue}
-                        board_id={board_id}
-                        NotModifiedInitiator={true}
-                        currentOrgAllMembers={currentOrgAllMembers}
-                      />
-                    </span>
-                  )}
+                  {parentStatus == '0' &&
+                    (enable_change == '1' || assignee_type == '3') && (
+                      <span style={{ position: 'relative' }}>
+                        <AmendComponent
+                          type="1"
+                          updateParentsAssigneesOrCopyPersonnel={
+                            this.updateParentsAssigneesOrCopyPersonnel
+                          }
+                          updateCorrespondingPrcodessStepWithNodeContent={
+                            this.updateCorrespondingPrcodessStepWithNodeContent
+                          }
+                          placementTitle="填写人"
+                          data={new_data}
+                          itemKey={itemKey}
+                          itemValue={new_itemValue}
+                          board_id={board_id}
+                          NotModifiedInitiator={true}
+                          currentOrgAllMembers={currentOrgAllMembers}
+                        />
+                      </span>
+                    )}
                 </div>
                 {/* 抄送人 */}
                 {cc_type == '1' && (
@@ -1141,23 +1142,27 @@ export default class BeginningStepOne extends Component {
                     )}
                     {parentStatus == '0' &&
                       (cc_locking == '0' ? (
-                        <span style={{ position: 'relative' }}>
-                          <AmendComponent
-                            type="3"
-                            updateParentsAssigneesOrCopyPersonnel={
-                              this.updateParentsAssigneesOrCopyPersonnel
-                            }
-                            updateCorrespondingPrcodessStepWithNodeContent={
-                              this
-                                .updateCorrespondingPrcodessStepWithNodeContent
-                            }
-                            placementTitle="抄送人"
-                            data={data}
-                            itemKey={itemKey}
-                            itemValue={new_itemValue}
-                            board_id={board_id}
-                          />
-                        </span>
+                        <>
+                          {enable_change == '1' && (
+                            <span style={{ position: 'relative' }}>
+                              <AmendComponent
+                                type="3"
+                                updateParentsAssigneesOrCopyPersonnel={
+                                  this.updateParentsAssigneesOrCopyPersonnel
+                                }
+                                updateCorrespondingPrcodessStepWithNodeContent={
+                                  this
+                                    .updateCorrespondingPrcodessStepWithNodeContent
+                                }
+                                placementTitle="抄送人"
+                                data={data}
+                                itemKey={itemKey}
+                                itemValue={new_itemValue}
+                                board_id={board_id}
+                              />
+                            </span>
+                          )}
+                        </>
                       ) : (
                         <Tooltip
                           title="已锁定抄送人"

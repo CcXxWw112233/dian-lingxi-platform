@@ -212,7 +212,8 @@ export default class ConfirmInfoThree extends Component {
       itemValue,
       currentOrgAllMembers = [],
       projectDetailInfoData: { data = [], board_id },
-      processEditDatas = []
+      processEditDatas = [],
+      templateInfo: { enable_change }
     } = this.props
     const { is_show_spread_arrow } = this.state
     const {
@@ -311,23 +312,27 @@ export default class ConfirmInfoThree extends Component {
                         {`${transPrincipalList.length}位评分人`}
                       </span>
                       {score_locked == '0' ? (
-                        <span style={{ position: 'relative' }}>
-                          <AmendComponent
-                            type="2"
-                            updateParentsAssigneesOrCopyPersonnel={
-                              this.updateParentsAssigneesOrCopyPersonnel
-                            }
-                            updateCorrespondingPrcodessStepWithNodeContent={
-                              this
-                                .updateCorrespondingPrcodessStepWithNodeContent
-                            }
-                            placementTitle="评分人"
-                            data={currentOrgAllMembers}
-                            itemKey={itemKey}
-                            itemValue={itemValue}
-                            board_id={board_id}
-                          />
-                        </span>
+                        <>
+                          {enable_change == '1' && (
+                            <span style={{ position: 'relative' }}>
+                              <AmendComponent
+                                type="2"
+                                updateParentsAssigneesOrCopyPersonnel={
+                                  this.updateParentsAssigneesOrCopyPersonnel
+                                }
+                                updateCorrespondingPrcodessStepWithNodeContent={
+                                  this
+                                    .updateCorrespondingPrcodessStepWithNodeContent
+                                }
+                                placementTitle="评分人"
+                                data={currentOrgAllMembers}
+                                itemKey={itemKey}
+                                itemValue={itemValue}
+                                board_id={board_id}
+                              />
+                            </span>
+                          )}
+                        </>
                       ) : (
                         <Tooltip
                           arrowPointAtCenter={true}
@@ -394,23 +399,27 @@ export default class ConfirmInfoThree extends Component {
                           {`${transCopyPersonnelList.length}位抄送人`}
                         </span>
                         {cc_locking == '0' ? (
-                          <span style={{ position: 'relative' }}>
-                            <AmendComponent
-                              type="3"
-                              updateParentsAssigneesOrCopyPersonnel={
-                                this.updateParentsAssigneesOrCopyPersonnel
-                              }
-                              updateCorrespondingPrcodessStepWithNodeContent={
-                                this
-                                  .updateCorrespondingPrcodessStepWithNodeContent
-                              }
-                              placementTitle="抄送人"
-                              data={currentOrgAllMembers}
-                              itemKey={itemKey}
-                              itemValue={itemValue}
-                              board_id={board_id}
-                            />
-                          </span>
+                          <>
+                            {enable_change == '1' && (
+                              <span style={{ position: 'relative' }}>
+                                <AmendComponent
+                                  type="3"
+                                  updateParentsAssigneesOrCopyPersonnel={
+                                    this.updateParentsAssigneesOrCopyPersonnel
+                                  }
+                                  updateCorrespondingPrcodessStepWithNodeContent={
+                                    this
+                                      .updateCorrespondingPrcodessStepWithNodeContent
+                                  }
+                                  placementTitle="抄送人"
+                                  data={currentOrgAllMembers}
+                                  itemKey={itemKey}
+                                  itemValue={itemValue}
+                                  board_id={board_id}
+                                />
+                              </span>
+                            )}
+                          </>
                         ) : (
                           <Tooltip
                             title="已锁定抄送人"
@@ -463,17 +472,19 @@ export default class ConfirmInfoThree extends Component {
                     {`${deadline_value}${renderTimeType(deadline_time_type)}`}内
                   </span>
                 )}
-                <span style={{ position: 'relative' }}>
-                  <AmendComponent
-                    updateCorrespondingPrcodessStepWithNodeContent={
-                      this.updateCorrespondingPrcodessStepWithNodeContent
-                    }
-                    placementTitle="完成期限"
-                    data={currentOrgAllMembers}
-                    itemKey={itemKey}
-                    itemValue={itemValue}
-                  />
-                </span>
+                {enable_change == '1' && (
+                  <span style={{ position: 'relative' }}>
+                    <AmendComponent
+                      updateCorrespondingPrcodessStepWithNodeContent={
+                        this.updateCorrespondingPrcodessStepWithNodeContent
+                      }
+                      placementTitle="完成期限"
+                      data={currentOrgAllMembers}
+                      itemKey={itemKey}
+                      itemValue={itemValue}
+                    />
+                  </span>
+                )}
               </div>
             </div>
             {is_show_spread_arrow && this.renderEditDetailContent()}
@@ -487,11 +498,17 @@ export default class ConfirmInfoThree extends Component {
 function mapStateToProps({
   publicProcessDetailModal: {
     processEditDatas = [],
-    currentOrgAllMembers = []
+    currentOrgAllMembers = [],
+    templateInfo = {}
   },
   projectDetail: {
     datas: { projectDetailInfoData = {} }
   }
 }) {
-  return { processEditDatas, currentOrgAllMembers, projectDetailInfoData }
+  return {
+    processEditDatas,
+    currentOrgAllMembers,
+    projectDetailInfoData,
+    templateInfo
+  }
 }

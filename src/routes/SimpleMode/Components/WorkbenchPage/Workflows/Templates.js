@@ -432,7 +432,23 @@ export default class Templates extends Component {
               id={'template_item_bott'}
               className={styles.template_item_bott}
             >
-              {enable_change == '0' ? (
+              {(checkIsHasPermissionInBoard(
+                PROJECT_FLOWS_FLOW_CREATE,
+                select_board_id
+              ) ||
+                select_board_id == '0' ||
+                !select_board_id) && (
+                <Tooltip title={'启用流程'}>
+                  <div
+                    className={`${globalStyles.authTheme} ${styles.template_operate}`}
+                    onClick={() => this.handleStartBoardProcess(value)}
+                  >
+                    &#xe796; <span style={{ fontSize: '12px' }}>启用流程</span>
+                  </div>
+                </Tooltip>
+              )}
+
+              {/* {enable_change == '0' ? (
                 <>
                   {(checkIsHasPermissionInBoard(
                     PROJECT_FLOWS_FLOW_CREATE,
@@ -488,7 +504,7 @@ export default class Templates extends Component {
                     </Tooltip>
                   )}
                 </>
-              )}
+              )} */}
             </div>
           </div>
         )
