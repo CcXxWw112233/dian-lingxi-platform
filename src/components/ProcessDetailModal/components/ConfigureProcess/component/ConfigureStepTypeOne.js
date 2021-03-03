@@ -191,7 +191,6 @@ export default class ConfigureStepTypeOne extends Component {
 
   // 设置选择角色类型
   handleSelectOrgRoles = value => {
-    console.log(value)
     this.updateConfigureProcess({ value: value }, 'assignee_roles')
   }
 

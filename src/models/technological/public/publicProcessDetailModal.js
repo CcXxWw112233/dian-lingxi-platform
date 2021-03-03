@@ -596,7 +596,6 @@ export default {
     *getDesignatedRoles({ payload }, { call, put }) {
       let res = yield call(getDesignatedRoles, { ...payload })
       if (isApiResponseOk(res)) {
-        console.log(res.data)
         yield put({
           type: 'updateDatas',
           payload: {

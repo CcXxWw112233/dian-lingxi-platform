@@ -965,6 +965,12 @@ export default class ConfigureProcess extends Component {
             confirmButtonDisabled = true
           }
         }
+        if (assignee_type == '3') {
+          if (!assignee_roles) {
+            confirmButtonText = '请选择角色'
+            confirmButtonDisabled = true
+          }
+        }
         break
       case '3':
         const reg = /^([0-9]\d{0,3}(\.\d{1,2})?|10000)$/

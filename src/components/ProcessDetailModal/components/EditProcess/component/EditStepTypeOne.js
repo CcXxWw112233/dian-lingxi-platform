@@ -440,7 +440,7 @@ export default class EditStepTypeOne extends Component {
                   </div>
                 )}
               </div>
-              <div style={{ display: 'flex' }}>
+              <div style={{ display: 'flex', flexShrink: 0 }}>
                 <span
                   style={{
                     fontWeight: 500,
