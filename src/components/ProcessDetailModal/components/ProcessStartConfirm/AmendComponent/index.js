@@ -100,5 +100,5 @@ index.defaultProps = {
   itemKey: '', //渲染的组件key
   itemValue: {}, //每一条item对象
   board_id: '', //项目ID
-  NotModifiedInitiator: false //表示不显示发起人等状态
+  NotModifiedInitiator: false //表示不显示模式状态
 }

@@ -251,15 +251,9 @@ export default class ConfirmInfoOne extends Component {
                       className={indexStyles.content__principalList_icon}
                     >
                       {!(transPrincipalList && transPrincipalList.length) ? (
-                        <>
-                          {assignee_type == '3' ? (
-                            <span style={{ color: 'rgba(0,0,0,0.5)' }}>
-                              暂无成员
-                            </span>
-                          ) : (
-                            '请选择成员'
-                          )}
-                        </>
+                        <span style={{ color: 'rgba(0,0,0,0.5)' }}>
+                          未设置填写人
+                        </span>
                       ) : (
                         <>
                           <AvatarList

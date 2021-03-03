@@ -884,74 +884,144 @@ export default class ConfigureProcess extends Component {
       case '2':
         if (cc_type == '0' || cc_type == '') {
           // 表示没有选择抄送人
-          if (!name && !(newAssignees && newAssignees.length)) {
-            confirmButtonText = '请输入步骤名称和至少添加一位审批人'
-            confirmButtonDisabled = true
-          } else if (!name && newAssignees && newAssignees.length) {
-            confirmButtonText = '请输入步骤名称'
-            confirmButtonDisabled = true
-          } else if (name && !(newAssignees && newAssignees.length)) {
-            confirmButtonText = '至少添加一位审批人'
-            confirmButtonDisabled = true
+          if (assignee_type == '2') {
+            if (!name && !(newAssignees && newAssignees.length)) {
+              confirmButtonText = '请输入步骤名称和至少添加一位审批人'
+              confirmButtonDisabled = true
+            } else if (!name && newAssignees && newAssignees.length) {
+              confirmButtonText = '请输入步骤名称'
+              confirmButtonDisabled = true
+            } else if (name && !(newAssignees && newAssignees.length)) {
+              confirmButtonText = '至少添加一位审批人'
+              confirmButtonDisabled = true
+            }
+          } else if (assignee_type == '3') {
+            if (!name && !assignee_roles) {
+              confirmButtonText = '请输入步骤名称和请选择角色类型'
+              confirmButtonDisabled = true
+            } else if (name && !assignee_roles) {
+              confirmButtonText = '请选择角色'
+              confirmButtonDisabled = true
+            } else if (!name && !!assignee_roles) {
+              confirmButtonText = '请输入步骤名称'
+              confirmButtonDisabled = true
+            }
           }
         } else if (cc_type == '1') {
           // 表示选择了抄送人
-          if (
-            !name &&
-            !(newAssignees && newAssignees.length) &&
-            !(newRecipients && newRecipients.length)
-          ) {
-            confirmButtonText =
-              '请输入步骤名称、至少添加一位审批人以及至少添加一位抄送人'
-            confirmButtonDisabled = true
-          } else if (
-            name &&
-            !(newAssignees && newAssignees.length) &&
-            !(newRecipients && newRecipients.length)
-          ) {
-            confirmButtonText = '至少添加一位审批人和至少添加一位抄送人'
-            confirmButtonDisabled = true
-          } else if (
-            !name &&
-            newAssignees &&
-            newAssignees.length &&
-            !(newRecipients && newRecipients.length)
-          ) {
-            confirmButtonText = '请输入步骤名称以及至少添加一位抄送人'
-            confirmButtonDisabled = true
-          } else if (
-            !name &&
-            !(newAssignees && newAssignees.length) &&
-            newRecipients &&
-            newRecipients.length
-          ) {
-            confirmButtonText = '请输入步骤名称以及至少添加一位审批人'
-            confirmButtonDisabled = true
-          } else if (
-            !name &&
-            newAssignees &&
-            newAssignees.length &&
-            newRecipients &&
-            newRecipients.length
-          ) {
-            confirmButtonText = '请输入步骤名称'
-            confirmButtonDisabled = true
-          } else if (
-            name &&
-            !(newAssignees && newAssignees.length) &&
-            newRecipients &&
-            newRecipients.length
-          ) {
-            confirmButtonText = '至少添加一位审批人'
-            confirmButtonDisabled = true
-          } else if (
-            name &&
-            newAssignees &&
-            newAssignees.length &&
-            !(newRecipients && newRecipients.length)
-          ) {
-            confirmButtonText = '至少添加一位抄送人'
-            confirmButtonDisabled = true
+          if (assignee_type == '2') {
+            if (
+              !name &&
+              !(newAssignees && newAssignees.length) &&
+              !(newRecipients && newRecipients.length)
+            ) {
+              confirmButtonText =
+                '请输入步骤名称、至少添加一位审批人以及至少添加一位抄送人'
+              confirmButtonDisabled = true
+            } else if (
+              name &&
+              !(newAssignees && newAssignees.length) &&
+              !(newRecipients && newRecipients.length)
+            ) {
+              confirmButtonText = '至少添加一位审批人和至少添加一位抄送人'
+              confirmButtonDisabled = true
+            } else if (
+              !name &&
+              newAssignees &&
+              newAssignees.length &&
+              !(newRecipients && newRecipients.length)
+            ) {
+              confirmButtonText = '请输入步骤名称以及至少添加一位抄送人'
+              confirmButtonDisabled = true
+            } else if (
+              !name &&
+              !(newAssignees && newAssignees.length) &&
+              newRecipients &&
+              newRecipients.length
+            ) {
+              confirmButtonText = '请输入步骤名称以及至少添加一位审批人'
+              confirmButtonDisabled = true
+            } else if (
+              !name &&
+              newAssignees &&
+              newAssignees.length &&
+              newRecipients &&
+              newRecipients.length
+            ) {
+              confirmButtonText = '请输入步骤名称'
+              confirmButtonDisabled = true
+            } else if (
+              name &&
+              !(newAssignees && newAssignees.length) &&
+              newRecipients &&
+              newRecipients.length
+            ) {
+              confirmButtonText = '至少添加一位审批人'
+              confirmButtonDisabled = true
+            } else if (
+              name &&
+              newAssignees &&
+              newAssignees.length &&
+              !(newRecipients && newRecipients.length)
+            ) {
+              confirmButtonText = '至少添加一位抄送人'
+              confirmButtonDisabled = true
+            }
+          } else if (assignee_type == '3') {
+            if (
+              !name &&
+              !assignee_roles &&
+              !(newRecipients && newRecipients.length)
+            ) {
+              confirmButtonText =
+                '请输入步骤名称、请选择角色类型以及至少添加一位抄送人'
+              confirmButtonDisabled = true
+            } else if (
+              name &&
+              !assignee_roles &&
+              !(newRecipients && newRecipients.length)
+            ) {
+              confirmButtonText = '请选择角色类型以及至少添加一位抄送人'
+              confirmButtonDisabled = true
+            } else if (
+              !name &&
+              !!assignee_roles &&
+              !(newRecipients && newRecipients.length)
+            ) {
+              confirmButtonText = '请输入步骤名称以及至少添加一位抄送人'
+              confirmButtonDisabled = true
+            } else if (
+              !name &&
+              !assignee_roles &&
+              newRecipients &&
+              !!newRecipients.length
+            ) {
+              confirmButtonText = '请输入步骤名称以及请选择角色类型'
+              confirmButtonDisabled = true
+            } else if (
+              !name &&
+              !!assignee_roles &&
+              newRecipients &&
+              !!newRecipients.length
+            ) {
+              confirmButtonText = '请输入步骤名称'
+              confirmButtonDisabled = true
+            } else if (
+              name &&
+              !assignee_roles &&
+              newRecipients &&
+              newRecipients.length
+            ) {
+              confirmButtonText = '请选择角色'
+              confirmButtonDisabled = true
+            } else if (
+              name &&
+              !!assignee_roles &&
+              !(newRecipients && newRecipients.length)
+            ) {
+              confirmButtonText = '至少添加一位抄送人'
+              confirmButtonDisabled = true
+            }
           }
         }
         if (approve_type == '3') {
@@ -962,12 +1032,7 @@ export default class ConfigureProcess extends Component {
         }
         if (deadline_type == '2') {
           if (isNaN(deadline_value)) {
-            confirmButtonDisabled = true
-          }
-        }
-        if (assignee_type == '3') {
-          if (!assignee_roles) {
-            confirmButtonText = '请选择角色'
+            confirmButtonText = '请输入完成期限值'
             confirmButtonDisabled = true
           }
         }
@@ -1055,6 +1120,7 @@ export default class ConfigureProcess extends Component {
         }
         if (deadline_type == '2') {
           if (isNaN(deadline_value)) {
+            confirmButtonText = '请输入完成期限值'
             confirmButtonDisabled = true
           }
         }

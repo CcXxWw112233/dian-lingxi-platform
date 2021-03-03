@@ -544,11 +544,11 @@ const getRolesName = (data = [], assignee_roles) => {
  */
 const getCurrentDesignatedRolesMembers = (
   currentOrgAllMembers = [],
-  assignees = ''
+  role_users = []
 ) => {
-  if (!assignees) return []
+  if (!role_users.length) return []
   let roles_data = []
-  let new_assignees = assignees.split(',')
+  let new_assignees = [...role_users]
   currentOrgAllMembers.map(item => {
     if (new_assignees.indexOf(item.user_id) != -1) {
       roles_data.push(item)
