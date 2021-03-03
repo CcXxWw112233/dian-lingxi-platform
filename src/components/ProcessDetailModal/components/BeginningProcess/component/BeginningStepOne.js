@@ -39,7 +39,8 @@ import {
 import {
   genPrincipalListFromAssignees,
   findCurrentFileInfo,
-  transAssigneesToIds
+  transAssigneesToIds,
+  getCurrentDesignatedRolesMembers
 } from '../../handleOperateModal'
 import DifferenceDeadlineType from '../../DifferenceDeadlineType'
 import BeginningStepOne_six from './BeginningStepOne_six'
@@ -94,7 +95,7 @@ export default class BeginningStepOne extends Component {
   /**
    * 更新按钮
    */
-  updateUrgeBtn = (props) => {
+  updateUrgeBtn = props => {
     const { processInfo, itemValue } = props || this.props
     const doit = DidShowUrging(processInfo, itemValue.id)
     this.setState({
@@ -111,10 +112,17 @@ export default class BeginningStepOne extends Component {
   updateParentsAssigneesOrCopyPersonnel = (data, key) => {
     const { value } = data
     const {
-      projectDetailInfoData: { data: boardData = [] }
+      projectDetailInfoData: { data: boardData = [] },
+      currentOrgAllMembers = [],
+      itemValue: { role_users = [], assignee_type }
     } = this.props
+    let roles_data = getCurrentDesignatedRolesMembers(
+      currentOrgAllMembers,
+      role_users
+    )
+    let new_data = assignee_type == '3' ? [...roles_data] : [...boardData]
     let values = []
-    boardData.map(item => {
+    new_data.map(item => {
       if (value.indexOf(item.user_id) != -1) {
         values.push(item)
       }
@@ -162,17 +170,29 @@ export default class BeginningStepOne extends Component {
   // 更新对应步骤下的节点内容数据, 即当前操作对象的数据
   updateCorrespondingPrcodessStepWithNodeContent = (data, value) => {
     const {
-      itemValue: { id, assignees = [], recipients = [] },
+      itemValue: {
+        id,
+        assignees = [],
+        recipients = [],
+        assignee_type,
+        role_users = []
+      },
       processEditDatas = [],
       itemKey,
       dispatch,
-      projectDetailInfoData: { data: boardData = [] }
+      projectDetailInfoData: { data: boardData = [] },
+      currentOrgAllMembers = []
     } = this.props
+    let roles_data = getCurrentDesignatedRolesMembers(
+      currentOrgAllMembers,
+      role_users
+    )
+    let new_data = assignee_type == '3' ? [...roles_data] : [...boardData]
     let newProcessEditDatas = [...processEditDatas]
     if (data == 'assignees' && !!value) {
       let assignees_ = []
       let users = []
-      boardData.map(item => {
+      new_data.map(item => {
         if ((value.split(',') || []).indexOf(item.user_id || item.id) != -1) {
           assignees_.push(item)
           users.push(item.user_id)
@@ -903,7 +923,8 @@ export default class BeginningStepOne extends Component {
       runtime_type,
       assignees,
       cc_locking,
-      recipients
+      recipients,
+      role_users = []
     } = itemValue
     const {
       transPrincipalList = [],
@@ -912,7 +933,11 @@ export default class BeginningStepOne extends Component {
       updateShowUrgeBtn,
       updateShowUrgeText
     } = this.state
-
+    let roles_data = getCurrentDesignatedRolesMembers(
+      currentOrgAllMembers,
+      role_users
+    )
+    let new_data = assignee_type == '3' ? [...roles_data] : [...data]
     let new_itemValue = { ...itemValue }
     new_itemValue.assignees = transAssigneesToIds(assignees).join(',')
     if (cc_type == '1') {
@@ -1061,11 +1086,12 @@ export default class BeginningStepOne extends Component {
                           this.updateCorrespondingPrcodessStepWithNodeContent
                         }
                         placementTitle="填写人"
-                        data={data}
+                        data={new_data}
                         itemKey={itemKey}
                         itemValue={new_itemValue}
                         board_id={board_id}
                         NotModifiedInitiator={true}
+                        currentOrgAllMembers={currentOrgAllMembers}
                       />
                     </span>
                   )}

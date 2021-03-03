@@ -154,7 +154,6 @@ export default class ConfirmInfoTwo extends Component {
       itemValue,
       processEditDatas = [],
       currentOrgAllMembers = [],
-      currentDesignatedRolesData = [],
       projectDetailInfoData: { data = [], board_id }
     } = this.props
     const { is_show_spread_arrow } = this.state
@@ -276,7 +275,8 @@ export default class ConfirmInfoTwo extends Component {
                         itemKey={itemKey}
                         itemValue={itemValue}
                         board_id={board_id}
-                        currentDesignatedRolesData={currentDesignatedRolesData}
+                        currentOrgAllMembers={currentOrgAllMembers}
+                        NotModifiedInitiator={true}
                       />
                     </span>
                   </div>
@@ -418,8 +418,7 @@ export default class ConfirmInfoTwo extends Component {
 function mapStateToProps({
   publicProcessDetailModal: {
     processEditDatas = [],
-    currentOrgAllMembers = [],
-    currentDesignatedRolesData = []
+    currentOrgAllMembers = []
   },
   projectDetail: {
     datas: { projectDetailInfoData = {} }
@@ -428,7 +427,6 @@ function mapStateToProps({
   return {
     processEditDatas,
     currentOrgAllMembers,
-    projectDetailInfoData,
-    currentDesignatedRolesData
+    projectDetailInfoData
   }
 }

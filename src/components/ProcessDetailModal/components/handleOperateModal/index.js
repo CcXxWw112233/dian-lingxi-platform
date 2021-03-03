@@ -557,6 +557,21 @@ const getCurrentDesignatedRolesMembers = (
   return roles_data
 }
 
+/**
+ * 判断每个节点中是否都存在成员
+ * @param {Array} nodes 节点列表
+ */
+const whetherIsHasMembersInEveryNodes = (nodes = []) => {
+  let flag = true
+  let gold_item = nodes.find(i => {
+    if (i.assignee_type != '1' && !i.assignees) {
+      return i
+    }
+  })
+  flag = gold_item && !!Object.keys(gold_item).length
+  return flag
+}
+
 export {
   showDeleteTempleteConfirm,
   genPrincipalListFromAssignees,
@@ -582,5 +597,6 @@ export {
   transAssigneesToIds,
   accordingToSortMembersList,
   getRolesName,
-  getCurrentDesignatedRolesMembers
+  getCurrentDesignatedRolesMembers,
+  whetherIsHasMembersInEveryNodes
 }

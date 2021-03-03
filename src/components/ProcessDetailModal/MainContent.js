@@ -36,7 +36,10 @@ import {
   getGlobalData,
   isPaymentOrgUser
 } from '../../utils/businessFunction'
-import { cursorMoveEnd } from './components/handleOperateModal'
+import {
+  cursorMoveEnd,
+  whetherIsHasMembersInEveryNodes
+} from './components/handleOperateModal'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import ProcessFile from './ProcessFile'
 // import { lx_utils } from 'lingxi-im'
@@ -335,7 +338,8 @@ export default class MainContent extends Component {
   // 是否需要获取流程中成员列表(取的是组织成员列表)
   whetherUpdateOrgnazationMemberList = props => {
     const {
-      templateInfo: { org_id }
+      templateInfo: { org_id },
+      processInfo: { status }
     } = props
     if (props.process_detail_modal_visible) {
       // localStorage.getItem('OrganizationId')
@@ -348,8 +352,8 @@ export default class MainContent extends Component {
           }
         })
       } else {
-        // 如果是已经启动了的流程不需要查询成员
-        if (props.processPageFlagStep == '4') return
+        // 如果是已经启动了的流程不需要查询成员 (除预启动外)
+        if (props.processPageFlagStep == '4' && status != '0') return
         this.props.dispatch({
           type: 'publicProcessDetailModal/getCurrentOrgAllMembers',
           payload: {
@@ -1451,23 +1455,20 @@ export default class MainContent extends Component {
   // 渲染开始流程的气泡框
   renderProcessStartConfirm = () => {
     const { currentFlowInstanceName, processEditDatas = [] } = this.props
-    // 禁用开始流程的按钮逻辑 1.判断流程名称是否输入 ==> 2. 是否有步骤 并且步骤都不是配置的样子 ==> 3. 并且上一个节点有选择类型 都是或者的关系 只要有一个不满足返回 true 表示 禁用 false 表示不禁用
-    let saveTempleteDisabled =
+    // 禁用开始流程的按钮逻辑 1.判断流程名称是否输入 ==> 2. 是否存在未选择人员的情况
+    let saveTempleteDisabled = false
+    let errText = ''
+    if (
       currentFlowInstanceName == '' ||
-      (processEditDatas &&
-        processEditDatas.length &&
-        processEditDatas[processEditDatas.length - 1].is_edit == '0') ||
-      (processEditDatas &&
-        processEditDatas.length &&
-        !processEditDatas[processEditDatas.length - 1].node_type)
-        ? true
-        : false
+      whetherIsHasMembersInEveryNodes(processEditDatas)
+    ) {
+      saveTempleteDisabled = true
+      errText = '请填写流程名称或未设置填写人、审批人'
+    }
     return (
       <div
         style={{
           display: 'flex',
-          // flexDirection: 'column',
-          // width: '248px',
           height: '112px',
           justifyContent: 'center',
           alignItems: 'center',
@@ -1479,6 +1480,7 @@ export default class MainContent extends Component {
           disabled={saveTempleteDisabled}
           onClick={this.handleCreateProcess}
           type="primary"
+          title={errText}
         >
           立即开始
         </Button>

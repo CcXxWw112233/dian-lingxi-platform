@@ -75,10 +75,16 @@ export default class ConfirmInfoOne extends Component {
   filterAssignees = () => {
     const {
       projectDetailInfoData: { data = [] },
-      currentOrgAllMembers = []
+      currentOrgAllMembers = [],
+      itemValue: { role_users = [], assignee_type }
     } = this.props
     const { transPrincipalList = [] } = this.state
-    let new_data = [...currentOrgAllMembers]
+    let roles_data = getCurrentDesignatedRolesMembers(
+      currentOrgAllMembers,
+      role_users
+    )
+    let new_data =
+      assignee_type == '3' ? [...roles_data] : [...currentOrgAllMembers]
     let newTransPrincipalList =
       transPrincipalList &&
       transPrincipalList.map(item => {
@@ -176,8 +182,7 @@ export default class ConfirmInfoOne extends Component {
       itemValue,
       processEditDatas = [],
       currentOrgAllMembers = [],
-      projectDetailInfoData: { data = [], board_id },
-      currentDesignatedRolesData = []
+      projectDetailInfoData: { data = [], board_id }
     } = this.props
     const { is_show_spread_arrow } = this.state
     let transPrincipalList = this.filterAssignees()
@@ -301,9 +306,8 @@ export default class ConfirmInfoOne extends Component {
                           itemKey={itemKey}
                           itemValue={itemValue}
                           board_id={board_id}
-                          currentDesignatedRolesData={
-                            currentDesignatedRolesData
-                          }
+                          currentOrgAllMembers={currentOrgAllMembers}
+                          NotModifiedInitiator={true}
                         />
                       </span>
                     </div>
@@ -331,7 +335,7 @@ export default class ConfirmInfoOne extends Component {
                         </span>
                       </span>
                       <span>{`${currentNounPlanFilterName(FLOWS)}发起人`}</span>
-                      <span style={{ position: 'relative' }}>
+                      {/* <span style={{ position: 'relative' }}>
                         <AmendComponent
                           type="1"
                           updateParentsAssigneesOrCopyPersonnel={
@@ -345,8 +349,10 @@ export default class ConfirmInfoOne extends Component {
                           itemKey={itemKey}
                           itemValue={itemValue}
                           board_id={board_id}
+                          currentOrgAllMembers={currentOrgAllMembers}
+                          NotModifiedInitiator={true}
                         />
-                      </span>
+                      </span> */}
                     </div>
                   )}
                   {/* 抄送人 */}
@@ -485,8 +491,7 @@ export default class ConfirmInfoOne extends Component {
 function mapStateToProps({
   publicProcessDetailModal: {
     processEditDatas = [],
-    currentOrgAllMembers = [],
-    currentDesignatedRolesData = []
+    currentOrgAllMembers = []
   },
   projectDetail: {
     datas: { projectDetailInfoData = {} }
@@ -495,7 +500,6 @@ function mapStateToProps({
   return {
     processEditDatas,
     currentOrgAllMembers,
-    projectDetailInfoData,
-    currentDesignatedRolesData
+    projectDetailInfoData
   }
 }

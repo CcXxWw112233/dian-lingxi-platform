@@ -34,7 +34,7 @@ export default class FillInPersonContent extends Component {
   componentWillReceiveProps(nextProps) {
     const { popoverVisible, itemValue } = nextProps
     const { is_click_confirm_btn } = this.state
-    if (!popoverVisible && !is_click_confirm_btn && this.props.popoverVisible) {
+    if (this.props.popoverVisible != popoverVisible && !is_click_confirm_btn) {
       this.setState({
         designatedPersonnelList: itemValue.assignees
           ? itemValue.assignees.split(',')
@@ -54,7 +54,16 @@ export default class FillInPersonContent extends Component {
 
   // 把assignees中的执行人,在项目中的所有成员过滤出来
   filterAssignees = () => {
-    const { data = [] } = this.props
+    const {
+      data = [],
+      itemValue: { role_users = [] },
+      currentOrgAllMembers = []
+    } = this.props
+    const { assignee_type } = this.state
+    let roles_data = getCurrentDesignatedRolesMembers(
+      currentOrgAllMembers,
+      role_users
+    )
     const { designatedPersonnelList = [] } = this.state
     let new_data = [...data]
     let newDesignatedPersonnelList =
@@ -160,6 +169,10 @@ export default class FillInPersonContent extends Component {
       )
     if (assignee_type == '2' || assignee_type == '3') {
       let newDesignatedPersonnelList = [...designatedPersonnelList]
+      console.log(
+        newDesignatedPersonnelList,
+        'ssssssss_newDesignatedPersonnelList'
+      )
       this.props.updateCorrespondingPrcodessStepWithNodeContent &&
         this.props.updateCorrespondingPrcodessStepWithNodeContent(
           'assignees',
@@ -184,6 +197,13 @@ export default class FillInPersonContent extends Component {
       this.props.onVisibleChange &&
         this.props.onVisibleChange(false, this.updateState)
     }
+    if (assignee_type != '3') {
+      this.props.updateCorrespondingPrcodessStepWithNodeContent &&
+        this.props.updateCorrespondingPrcodessStepWithNodeContent(
+          'assignee_roles',
+          ''
+        )
+    }
   }
 
   // 渲染指定人员
@@ -191,12 +211,16 @@ export default class FillInPersonContent extends Component {
     const {
       data = [],
       itemKey,
-      itemValue: { role_users = [], approve_type }
+      itemValue: { role_users = [], approve_type },
+      currentOrgAllMembers = []
     } = this.props
     const { assignee_type } = this.state
     let designatedPersonnelList = this.filterAssignees()
     let new_data = accordingToSortMembersList(data, designatedPersonnelList)
-    let roles_data = getCurrentDesignatedRolesMembers(data, role_users)
+    let roles_data = getCurrentDesignatedRolesMembers(
+      currentOrgAllMembers,
+      role_users
+    )
     return (
       <div style={{ flex: 1, padding: '8px 0' }}>
         {!designatedPersonnelList.length ? (
@@ -455,6 +479,7 @@ export default class FillInPersonContent extends Component {
             </Radio.Group>
           )}
           {(this.state.assignee_type == '2' ||
+            NotModifiedInitiator ||
             this.state.assignee_type == '3') && (
             <div>{this.renderDesignatedPersonnel()}</div>
           )}

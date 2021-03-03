@@ -32,7 +32,8 @@ import {
   findCurrentApproveNodesPosition,
   findCurrentOverruleNodesPosition,
   findCurrentRatingScoreNodesPosition,
-  transAssigneesToIds
+  transAssigneesToIds,
+  getCurrentDesignatedRolesMembers
 } from '../../handleOperateModal'
 import DifferenceDeadlineType from '../../DifferenceDeadlineType'
 import OpinionContent from '../OpinionContent'
@@ -1329,7 +1330,8 @@ export default class BeginningStepTwo extends Component {
       processEditDatas = [],
       itemValue,
       projectDetailInfoData: { data = [], board_id },
-      processInfo: { status: parentStatus }
+      processInfo: { status: parentStatus },
+      currentOrgAllMembers = []
     } = this.props
     const {
       status,
@@ -1338,8 +1340,15 @@ export default class BeginningStepTwo extends Component {
       runtime_type,
       assignees,
       cc_locking,
-      recipients
+      recipients,
+      role_users = [],
+      assignee_type
     } = itemValue
+    let roles_data = getCurrentDesignatedRolesMembers(
+      currentOrgAllMembers,
+      role_users
+    )
+    let new_data = assignee_type == '3' ? [...roles_data] : [...data]
     const {
       transPrincipalList = [],
       transCopyPersonnelList = [],
@@ -1495,7 +1504,7 @@ export default class BeginningStepTwo extends Component {
                         {parentStatus == '0' && (
                           <span style={{ position: 'relative' }}>
                             <AmendComponent
-                              type="2"
+                              type="1"
                               updateParentsAssigneesOrCopyPersonnel={
                                 this.updateParentsAssigneesOrCopyPersonnel
                               }
@@ -1504,10 +1513,12 @@ export default class BeginningStepTwo extends Component {
                                   .updateCorrespondingPrcodessStepWithNodeContent
                               }
                               placementTitle="审批人"
-                              data={data}
+                              data={new_data}
                               itemKey={itemKey}
                               itemValue={new_itemValue}
                               board_id={board_id}
+                              NotModifiedInitiator={true}
+                              currentOrgAllMembers={currentOrgAllMembers}
                             />
                           </span>
                         )}
@@ -1617,7 +1628,11 @@ export default class BeginningStepTwo extends Component {
 }
 
 function mapStateToProps({
-  publicProcessDetailModal: { processEditDatas = [], processInfo = {} },
+  publicProcessDetailModal: {
+    processEditDatas = [],
+    processInfo = {},
+    currentOrgAllMembers = []
+  },
   technological: {
     datas: { userBoardPermissions = [] }
   },
@@ -1629,6 +1644,7 @@ function mapStateToProps({
     processEditDatas,
     processInfo,
     userBoardPermissions,
-    projectDetailInfoData
+    projectDetailInfoData,
+    currentOrgAllMembers
   }
 }
