@@ -161,6 +161,7 @@ export default class Templates extends Component {
     // 如果是全部项目, 那么需要选择项目
     if (local_board_id == '0' || !local_board_id) {
       this.setBoardSelectVisible(true, item)
+      setBoardIdStorage('0', org_id)
     } else {
       // 表示是具体项目
       this.handleStartProcess(item)
