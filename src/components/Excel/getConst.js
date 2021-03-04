@@ -1,4 +1,4 @@
-import styles from './index.less'
+import { EXCELCONFIG } from './constans'
 /**
  * 设置错误状态
  * @param {Array} columns 对应table中的列
@@ -18,7 +18,9 @@ export const setErrorStageOrUpdate = ({
 // 选择类型文字判断
 export const GENRE_TYPE_REG = /^里程碑$|^任务$|^子任务$|^子里程碑$/
 
-// 正整数
+/**
+ *  正整数
+ * */
 export const POSITIVE_INTEGER_REG = /^[0-9]*[1-9][0-9]*$/
 
 // 获取对象中键的值
@@ -85,7 +87,7 @@ export const valiColumn = ({
  * @param {String} gold_type 表示当前操作的列 A,B,C
  * @param {String} dictionary 需要比较的列 'number' | 'type'
  * @param {Object} selectedKey { A:number,B:type... }
- * @returns {Boolean} true 表示验证通过
+ * @returns {Object<{reg: boolean, errormsg: string}>} object.reg true 表示验证通过 object.errormsg 错误信息
  */
 export const checkNumberReg = ({
   symbol = '.',
@@ -97,7 +99,8 @@ export const checkNumberReg = ({
   selectedKey
 }) => {
   let len = String(val).split(symbol).length
-  if (!val || String(val).trimLR() == '') return false
+  if (!val || String(val).trimLR() == '')
+    return { errormsg: EXCELCONFIG.NUMBERERRORMSGS.EMPITY, reg: false }
   if (checkType) {
     if (String(val).indexOf(symbol) != -1) {
       // 表示有小数点的时候
@@ -105,7 +108,10 @@ export const checkNumberReg = ({
         len > 4 ||
         !valiColumn({ item, gold_type, dictionary, selectedKey })
       ) {
-        return false
+        return {
+          errormsg: EXCELCONFIG.NUMBERERRORMSGS.LENGTHERR,
+          reg: false
+        }
       }
     } else {
       // 表示没有小数点的时候
@@ -113,28 +119,46 @@ export const checkNumberReg = ({
         (isNaN(val) && !POSITIVE_INTEGER_REG.test(val)) ||
         !valiColumn({ item, gold_type, dictionary, selectedKey })
       ) {
-        return false
+        return {
+          errormsg: EXCELCONFIG.NUMBERERRORMSGS.NOTNUMBER,
+          reg: false
+        }
       }
     }
   } else {
     if (!isNaN(+val) && +val % 1 === 0) {
-      return true
+      return {
+        errormsg: EXCELCONFIG.NUMBERERRORMSGS.NULL,
+        reg: true
+      }
     }
     // 表示没有小数点的时候
     if (String(val).indexOf(symbol) != -1) {
       // 表示有小数点的时候
       if (len > 4) {
-        return false
+        return {
+          errormsg: EXCELCONFIG.NUMBERERRORMSGS.LENGTHERR,
+          reg: false
+        }
       }
     } else {
       // 表示没有小数点的时候
       if (!val) {
-        return false
+        return {
+          errormsg: EXCELCONFIG.NUMBERERRORMSGS.EMPITY,
+          reg: false
+        }
       }
-      return false
+      return {
+        errormsg: EXCELCONFIG.NUMBERERRORMSGS.NOTNUMBER,
+        reg: false
+      }
     }
   }
-  return true
+  return {
+    errormsg: EXCELCONFIG.NUMBERERRORMSGS.NULL,
+    reg: true
+  }
 }
 
 /**
@@ -145,7 +169,7 @@ export const checkNumberReg = ({
  * @param {String} gold_type 表头 A,B,C,D....
  * @param {String} dictionary 需要比较的列 A,B,C
  * @param {Object} selectedKey { A:number,B:type... }
- * @returns {Boolean} true 表示校验通过
+ * @returns {Object<{reg: boolean, errormsg: string}>} object.reg true 表示验证通过 object.errormsg 错误信息
  */
 export const checkTypeReg = ({
   val,
@@ -163,14 +187,38 @@ export const checkTypeReg = ({
       !GENRE_TYPE_REG.test(val) ||
       !valiColumn({ item, gold_type, dictionary, selectedKey })
     ) {
-      return false
+      if (
+        !GENRE_TYPE_REG.test(val) ||
+        !valiColumn({ item, gold_type, dictionary, selectedKey })
+      ) {
+        return {
+          reg: false,
+          errormsg: EXCELCONFIG.TYPEERRORS.NOTREGTEXT
+        }
+      }
+      return {
+        errormsg: EXCELCONFIG.TYPEERRORS.EMPITY,
+        reg: false
+      }
     }
   } else {
     if (val == '' || String(val).trimLR() == '' || !GENRE_TYPE_REG.test(val)) {
-      return false
+      if (!GENRE_TYPE_REG.test(val)) {
+        return {
+          reg: false,
+          errormsg: EXCELCONFIG.TYPEERRORS.NOTREGTEXT
+        }
+      }
+      return {
+        errormsg: EXCELCONFIG.TYPEERRORS.EMPITY,
+        reg: false
+      }
     }
   }
-  return true
+  return {
+    errormsg: EXCELCONFIG.TYPEERRORS.NULL,
+    reg: true
+  }
 }
 
 /**
@@ -191,25 +239,38 @@ export const checkNameReg = val => {
  * @returns {Boolean} true表示验证通过
  */
 export const checkTimerReg = (time_format, val) => {
-  if (val == '') return true
-  let time_reg = ''
+  let time_reg = '',
+    text = EXCELCONFIG.TIMEERRORS.NULL
+  if (val == '')
+    return {
+      reg: true,
+      errormsg: text
+    }
   switch (time_format) {
     case 'YYYY-MM-DD':
+      text = EXCELCONFIG.TIMEERRORS.NOTREGTIME + ',时间格式为1970-01-01'
       time_reg = YYYYMMDDREG
       break
     case 'YYYY-MM-DD HH:mm':
+      text = EXCELCONFIG.TIMEERRORS.NOTREGTIME + ',时间格式为1970-01-01 12:00'
       time_reg = YYYYMMDD_HHMM_REG
       break
     case 'YYYY/MM/DD':
+      text = EXCELCONFIG.TIMEERRORS.NOTREGTIME + ',时间格式为1970/01/01'
       time_reg = YYYYMMDD_REG_1
       break
     case 'YYYY/MM/DD HH:mm':
+      text = EXCELCONFIG.TIMEERRORS.NOTREGTIME + ',时间格式为1970/01/01 12:00'
       time_reg = YYYYMMDD_HHMM_REG_1
       break
     default:
       break
   }
-  return time_reg.test(val)
+  const flag = time_reg.test(val)
+  return {
+    reg: flag,
+    errormsg: flag ? EXCELCONFIG.TIMEERRORS.NULL : text
+  }
 }
 
 /**

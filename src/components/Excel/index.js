@@ -24,6 +24,7 @@ import { isApiResponseOk } from '../../utils/handleResponseData'
 import { connect } from 'dva'
 import { downloadFile, timeToTimestamp } from '../../utils/util'
 import { split } from 'lodash'
+import { EXCELCONFIG } from './constans'
 const EditableContext = React.createContext()
 
 const EditableRow = ({ form, index, ...props }) => (
@@ -67,6 +68,7 @@ class EditableCell extends React.Component {
     const { editing } = this.state
     const { is_error, is_error_key = {} } = record
     let rulesText = ''
+    console.log(record)
     switch (title) {
       case 'name':
         rulesText = '名称不能为空,名称不能超过100个字'
@@ -139,7 +141,7 @@ class EditableCell extends React.Component {
       <td
         {...restProps}
         className={`${className} ${flag && styles.error_text}`}
-        title={flag && record.is_error_text[dataIndex]}
+        title={flag ? record.is_error_text[dataIndex] : ''}
       >
         {editable ? (
           <EditableContext.Consumer>{this.renderCell}</EditableContext.Consumer>
@@ -618,7 +620,8 @@ export default class ExcelRead extends Component {
         // 第一条数据，必须是里程碑或者任务
         if (!this.align_type[0].includes(value)) {
           item.is_error_key[column] = 'type'
-          item.is_error_text[column] = '类型格式错误'
+          item.is_error_text[column] =
+            EXCELCONFIG.TYPEERRORS.FIRSTTYPENOTREGTEXT
         }
       } else {
         let prev = data[index - 1]
@@ -630,7 +633,7 @@ export default class ExcelRead extends Component {
           // console.log(value, this.typeValid[value], prevValue)
           if (!parentKey.includes(value)) {
             item.is_error_key[column] = 'type'
-            item.is_error_text[column] = '类型格式错误'
+            item.is_error_text[column] = EXCELCONFIG.TYPEERRORS.PREVTYPEREGERR
           } else {
             delete item.is_error_key[column]
             delete item.is_error_text[column]
@@ -653,7 +656,8 @@ export default class ExcelRead extends Component {
                   delete item.is_error_text[column]
                 } else {
                   item.is_error_key[column] = 'type'
-                  item.is_error_text[column] = '类型格式错误'
+                  item.is_error_text[column] =
+                    EXCELCONFIG.TYPEERRORS.PREVTYPEREGERR
                 }
               }
             }
@@ -683,21 +687,20 @@ export default class ExcelRead extends Component {
       let checkVal = item[text]
       let new_item = { ...item }
       new_item.typekey = text
-      if (
-        checkTypeReg({
-          val: checkVal,
-          checkNumer: !!numberkey,
-          item,
-          gold_type: text,
-          dictionary: 'number',
-          selectedKey
-        })
-      ) {
+      const checkReturns = checkTypeReg({
+        val: checkVal,
+        checkNumer: !!numberkey,
+        item,
+        gold_type: text,
+        dictionary: 'number',
+        selectedKey
+      })
+      if (checkReturns.reg) {
         delete new_item.is_error_key[text]
         delete new_item.is_error_text[text]
       } else {
         new_item.is_error_key[text] = 'type'
-        new_item.is_error_text[text] = '类型不能为空或者类型格式错误'
+        new_item.is_error_text[text] = checkReturns.errormsg // 类型不能为空或者类型格式错误
       }
       if (Object.keys(new_item.is_error_key || {}).length) {
         new_item.is_error = true
@@ -729,9 +732,10 @@ export default class ExcelRead extends Component {
     })
   }
 
-  // 检查上一个数据和当前数据是否层级合理
+  /** 检查上一个数据和当前数据是否层级合理*/
   checkPrevWithNow = (prev, val, splitKey) => {
-    if (!prev || !val) return false
+    const { NUMBERERRORMSGS } = EXCELCONFIG
+    if (!prev || !val) return { errormsg: NUMBERERRORMSGS.EMPITY, reg: false }
     let prevSplitArr = prev.split(splitKey)
     let splitArr = val.split(splitKey)
     let len = prevSplitArr.length
@@ -747,31 +751,77 @@ export default class ExcelRead extends Component {
         if (keys[length].includes(len)) {
           // 如果上一个是1.1.1.1 现在是1.2则验证通过 但是如果是1.1.1.1 - 2.1 则不通过
           if (len > 1 && splitArr[0] !== prevSplitArr[0]) {
-            return false
-          } else return true
-        } else return false
+            return {
+              errormsg:
+                NUMBERERRORMSGS.SIBLINGERR + ',' + NUMBERERRORMSGS.LEVELERR,
+              reg: false
+            }
+          } else
+            return {
+              errormsg: NUMBERERRORMSGS.NULL,
+              reg: true
+            }
+        } else
+          return {
+            reg: false,
+            errormsg:
+              NUMBERERRORMSGS.SIBLINGERR + ',' + NUMBERERRORMSGS.LEVELERR
+          }
       case 3:
       case 4:
         if (keys[length].includes(len)) {
-          let flag = true
+          let flag = true,
+            text = NUMBERERRORMSGS.NULL
           if (len === 3 || len === 2) {
             flag = splitArr[1] === prevSplitArr[1]
+            !flag &&
+              (text =
+                NUMBERERRORMSGS.SIBLINGERR +
+                ',' +
+                NUMBERERRORMSGS.PREVSIBLINGINTANDFLOAT)
           }
           if (len === 4) {
             flag =
               splitArr[1] === prevSplitArr[1] && splitArr[2] === prevSplitArr[2]
+            !flag &&
+              (text =
+                NUMBERERRORMSGS.SIBLINGERR +
+                ',' +
+                NUMBERERRORMSGS.PREVSIBLINGINTANDFLOAT)
           }
           if (length === 3 && len === 4) {
             flag = splitArr[1] === prevSplitArr[1]
+            !flag &&
+              (text =
+                NUMBERERRORMSGS.SIBLINGERR +
+                ',' +
+                NUMBERERRORMSGS.PREVSIBLINGINTANDFLOAT)
           }
-          return flag
+          return {
+            reg: flag,
+            errormsg: text
+          }
+        } else {
+          return {
+            reg: false,
+            errormsg:
+              NUMBERERRORMSGS.SIBLINGERR + ',' + NUMBERERRORMSGS.LEVELERR
+          }
         }
         break
       default:
+        return {
+          reg: false,
+          errormsg: NUMBERERRORMSGS.SIBLINGERR + ',' + NUMBERERRORMSGS.LEVELERR
+        }
+    }
+    return {
+      reg: false,
+      errormsg: '123213123213'
     }
   }
 
-  // 检测序号准确性
+  /**  检测序号准确性*/
   getFloorNumber = (data, column, splitKey) => {
     // let { data } = this.state
     let checkInteger = 0 // 正在验证的整数
@@ -798,24 +848,32 @@ export default class ExcelRead extends Component {
             item.numberlength = len - 1
             let prev = data[index - 1] // 上一个数据 item是当前数据
             // 判断上一个数据和这个数据是否合理, 如果检验通过
-            if (this.checkPrevWithNow(prev[column], value, splitKey)) {
+            const checkValues = this.checkPrevWithNow(
+              prev[column],
+              value,
+              splitKey
+            )
+            if (checkValues.reg) {
               delete item.is_error_key[column]
               delete item.is_error_text[column]
             } else {
               // 不通过
               item.is_error_key[column] = 'number'
-              item.is_error_text[column] = '序号格式错误'
+              item.is_error_text[column] = checkValues.errormsg
             }
             if (+splitArr[0] !== checkInteger) {
               // 判断当前数据与整数数据抑制 例 1 下面不能出现 2.1
               item.is_error_key[column] = 'number'
-              item.is_error_text[column] = '序号格式错误'
+              item.is_error_text[column] =
+                EXCELCONFIG.NUMBERERRORMSGS.SIBLINGERR +
+                '---' +
+                EXCELCONFIG.NUMBERERRORMSGS.NEXTSIBLINGINTANDFLOAT
             }
           }
         } else if (index === 0) {
           // 是第一条数据，直接报错，因为不是整数
           item.is_error_key[column] = 'number'
-          item.is_error_text[column] = '序号格式错误'
+          item.is_error_text[column] = EXCELCONFIG.NUMBERERRORMSGS.NOTINT
         }
       }
       item.is_error = this.dataCheckIsError(item)
@@ -839,22 +897,21 @@ export default class ExcelRead extends Component {
       let checkVal = item[text]
       let new_item = { ...item }
       let flag = arr.length > 1 ? true : false
-      if (
-        checkNumberReg({
-          symbol: '.',
-          val: checkVal,
-          checkType: false,
-          item,
-          gold_type: text,
-          dictionary: 'type',
-          selectedKey
-        })
-      ) {
+      const checkReturns = checkNumberReg({
+        symbol: '.',
+        val: checkVal,
+        checkType: false,
+        item,
+        gold_type: text,
+        dictionary: 'type',
+        selectedKey
+      })
+      if (checkReturns.reg) {
         delete new_item.is_error_key[text]
         delete new_item.is_error_text[text]
       } else {
         new_item.is_error_key[text] = 'number'
-        new_item.is_error_text[text] = '序号格式错误'
+        new_item.is_error_text[text] = checkReturns.errormsg //'序号格式错误'
       }
       if (Object.keys(new_item.is_error_key || {}).length) {
         new_item.is_error = true
@@ -1003,7 +1060,7 @@ export default class ExcelRead extends Component {
           )
         ) {
           item.is_error_key[text] = select_name
-          item.is_error_text[text] = '开始时间不能大于截止时间'
+          item.is_error_text[text] = EXCELCONFIG.TIMEERRORS.STARTTIMEGTENDTIME
         } else {
           delete item.is_error_key[text]
           delete item.is_error_text[text]
@@ -1053,10 +1110,11 @@ export default class ExcelRead extends Component {
         checkTimeValue = goldTimeValue
         goldTimeValue = temp
       }
+      const checkTime = checkTimerReg(format, checkVal)
       // 校验本身的逻辑
-      if (!checkTimerReg(format, checkVal)) {
+      if (!checkTime.reg) {
         new_item.is_error_key[text] = select_name
-        new_item.is_error_text[text] = '时间格式错误'
+        new_item.is_error_text[text] = checkTime.errormsg
       } else {
         delete item.is_error_key[text]
         delete item.is_error_text[text]
