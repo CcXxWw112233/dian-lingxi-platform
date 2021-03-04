@@ -1003,6 +1003,7 @@ export default class MainContent extends Component {
     if (!payload) return Promise.resolve([])
     const {
       request_flows_params = {},
+      currentFlowListType,
       projectDetailInfoData: { board_id, org_id }
     } = this.props
     let BOARD_ID =
@@ -1027,7 +1028,8 @@ export default class MainContent extends Component {
     this.props.dispatch({
       type: 'publicProcessDetailModal/getProcessListByType',
       payload: {
-        status: temp_time2 ? '0' : '1',
+        // status: temp_time2 ? '0' : '1',
+        type: currentFlowListType,
         board_id: BOARD_ID || res.data.board_id,
         _organization_id: request_flows_params._organization_id || org_id
       }
@@ -1046,7 +1048,8 @@ export default class MainContent extends Component {
       currentFlowInstanceDescription,
       processEditDatas = [],
       templateInfo: { id },
-      request_flows_params = {}
+      request_flows_params = {},
+      currentFlowListType
     } = this.props
     let BOARD_ID =
       (request_flows_params && request_flows_params.request_board_id) ||
@@ -1077,7 +1080,8 @@ export default class MainContent extends Component {
         that.props.dispatch({
           type: 'publicProcessDetailModal/getProcessListByType',
           payload: {
-            status: start_time ? '0' : '1',
+            // status: start_time ? '0' : '1',
+            type: currentFlowListType,
             board_id: BOARD_ID,
             _organization_id: request_flows_params._organization_id || org_id
           }
@@ -2035,7 +2039,8 @@ function mapStateToProps({
     processCurrentEditStep,
     templateInfo = {},
     currentFlowTabsStatus,
-    not_show_create_node_guide
+    not_show_create_node_guide,
+    currentFlowListType
   },
   projectDetail: {
     datas: { projectDetailInfoData = {} }
@@ -2066,6 +2071,7 @@ function mapStateToProps({
     not_show_create_node_guide,
     projectDetailInfoData,
     userBoardPermissions,
-    is_show_board_file_area
+    is_show_board_file_area,
+    currentFlowListType
   }
 }

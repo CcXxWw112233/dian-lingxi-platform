@@ -48,6 +48,7 @@ export default {
     currentProcessInstanceId: '', // 当前查看的流程实例ID
     currentTempleteIdentifyId: '', // 当前查看的模板编号凭证ID(这个是用来如果是编辑已存在流程需要带上这个凭证)
     currentFlowTabsStatus: '1', // 点击流程查看详情会更新一个当前流程实例的状态
+    currentFlowListType: 'process', //process,processed,cc_me,by_me,all 待处理/已处理/抄送我/我发起/全部
     not_show_create_node_guide: '1', // 流程添加步骤的指引 1 表示用户点击了我知道了
     not_show_create_form_guide: '1', // 配置表项的步骤指引 同上
     not_show_create_rating_guide: '1' //配置评分的步骤指引 同上
@@ -317,35 +318,38 @@ export default {
 
     // 获取流程列表，类型进行中 已终止 已完成
     *getProcessListByType({ payload }, { call, put }) {
-      const { status, board_id, _organization_id } = payload
+      const { status, board_id, _organization_id, type } = payload
       const res = yield call(getProcessListByType, {
-        status,
+        // status,
         board_id,
-        _organization_id
+        _organization_id,
+        type
       })
       let listName
-      switch (status) {
-        case '1':
-          listName = 'processDoingList'
-          break
-        case '2':
-          listName = 'processStopedList'
-          break
-        case '3':
-          listName = 'processComepletedList'
-          break
-        case '0':
-          listName = 'processNotBeginningList'
-          break
-        default:
-          listName = 'processDoingList'
-          break
-      }
+      // switch (status) {
+      //   case '1':
+      //     listName = 'processDoingList'
+      //     break
+      //   case '2':
+      //     listName = 'processStopedList'
+      //     break
+      //   case '3':
+      //     listName = 'processComepletedList'
+      //     break
+      //   case '0':
+      //     listName = 'processNotBeginningList'
+      //     break
+      //   default:
+      //     listName = 'processDoingList'
+      //     break
+      // }
       if (isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',
           payload: {
-            [listName]: res.data
+            // [listName]: res.data,
+            processListData: res.data,
+            currentFlowListType: type
           }
         })
       } else {

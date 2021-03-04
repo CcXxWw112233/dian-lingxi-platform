@@ -26,7 +26,7 @@ export default class FlowTables extends Component {
   }
   setTabledata = props => {
     //设置列和数据源
-    const { list_source = [], list_type } = props
+    const { list_source = [], list_status } = props
     const dataSource = list_source.map(item => {
       const {
         id,
@@ -43,19 +43,19 @@ export default class FlowTables extends Component {
       const new_item = { ...item, key: id }
       let key_time
       let key_state
-      if ('1' == list_type) {
+      if ('1' == list_status) {
         key_time = last_complete_time
         key_state = `${total_node_name}（${completed_node_num}/${total_node_num}）`
         if (!total_node_name || !completed_node_num || !total_node_num) {
           key_state = ''
         }
-      } else if ('2' == list_type) {
+      } else if ('2' == list_status) {
         key_time = update_time
         key_state = '已中止'
-      } else if ('3' == list_type) {
+      } else if ('3' == list_status) {
         key_time = update_time //代替尚未定义
         key_state = '已完成'
-      } else if ('0' == list_type) {
+      } else if ('0' == list_status) {
         key_time = plan_start_time ? plan_start_time : ''
         key_state = plan_start_time ? '未开始' : ''
       } else {
@@ -79,7 +79,7 @@ export default class FlowTables extends Component {
       },
       {
         width: 100,
-        title: this.renderTitle(list_type).state_title,
+        title: this.renderTitle(list_status).state_title,
         dataIndex: 'state',
         key: 'state',
         ellipsis: true,
@@ -89,7 +89,7 @@ export default class FlowTables extends Component {
         }
       },
       {
-        title: this.renderTitle(list_type).time_title,
+        title: this.renderTitle(list_status).time_title,
         dataIndex: 'time',
         key: 'time',
         ellipsis: true,
@@ -99,7 +99,7 @@ export default class FlowTables extends Component {
         }
       },
       {
-        title: list_type == '1' ? '执行人' : '发起人',
+        title: list_status == '1' ? '执行人' : '发起人',
         dataIndex: 'originator',
         key: 'originator',
         ellipsis: true,
@@ -115,10 +115,10 @@ export default class FlowTables extends Component {
       dataSource
     })
   }
-  renderTitle = list_type => {
+  renderTitle = list_status => {
     let time_title = '完成期限'
     let state_title = '流程状态'
-    switch (list_type) {
+    switch (list_status) {
       case '1':
         time_title = '完成期限'
         state_title = '当前步骤'
@@ -192,9 +192,9 @@ export default class FlowTables extends Component {
     )
   }
   renderKeyState = item => {
-    const { list_type } = this.props
+    const { list_status } = this.props
     let state_dec = ''
-    switch (list_type) {
+    switch (list_status) {
       case '1':
         state_dec = <span style={{ color: '#1890FF' }}>{item}</span>
         break
@@ -217,9 +217,9 @@ export default class FlowTables extends Component {
     return state_dec
   }
   renderKeyTime = (item, value) => {
-    const { list_type } = this.props
+    const { list_status } = this.props
     let time_dec = ''
-    switch (list_type) {
+    switch (list_status) {
       case '1':
         time_dec = (
           <span
@@ -262,9 +262,9 @@ export default class FlowTables extends Component {
   }
   renderKeyOriginator = (item, value) => {
     const { curr_executors = [], creator = {} } = value
-    const { list_type } = this.props
+    const { list_status } = this.props
     let executor_dec = <div></div>
-    switch (list_type) {
+    switch (list_status) {
       case '1':
         executor_dec = (
           <div>

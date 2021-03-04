@@ -75,7 +75,12 @@ export default class HeaderContentRightMenu extends Component {
   }
 
   commonProcessVisitControlUpdateCurrentModalData = (newProcessInfo, type) => {
-    const { dispatch, processInfo = {}, request_flows_params = {} } = this.props
+    const {
+      dispatch,
+      processInfo = {},
+      request_flows_params = {},
+      currentFlowListType
+    } = this.props
     const { status, board_id, org_id } = processInfo
     let BOARD_ID =
       (request_flows_params && request_flows_params.request_board_id) ||
@@ -90,7 +95,8 @@ export default class HeaderContentRightMenu extends Component {
       dispatch({
         type: 'publicProcessDetailModal/getProcessListByType',
         payload: {
-          status: status,
+          // status: status,
+          type: currentFlowListType,
           board_id: BOARD_ID,
           _organization_id: request_flows_params._organization_id || org_id
         }
@@ -379,7 +385,8 @@ export default class HeaderContentRightMenu extends Component {
     const {
       processInfo: { id, board_id, org_id },
       request_flows_params = {},
-      currentFlowTabsStatus
+      currentFlowTabsStatus,
+      currentFlowListType
     } = this.props
     let BOARD_ID =
       (request_flows_params && request_flows_params.request_board_id) ||
@@ -401,7 +408,8 @@ export default class HeaderContentRightMenu extends Component {
             type: 'publicProcessDetailModal/getProcessListByType',
             payload: {
               board_id: BOARD_ID,
-              status: currentFlowTabsStatus || '1',
+              // status: currentFlowTabsStatus || '1',
+              type: currentFlowListType || 'process',
               _organization_id: request_flows_params._organization_id || org_id
             }
           })
@@ -428,7 +436,8 @@ export default class HeaderContentRightMenu extends Component {
     const {
       processInfo: { id, board_id, org_id },
       currentFlowTabsStatus,
-      request_flows_params = {}
+      request_flows_params = {},
+      currentFlowListType
     } = this.props
     if (!this.whetherIsHasPermission(PROJECT_FLOWS_FLOW_DELETE)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
@@ -440,7 +449,8 @@ export default class HeaderContentRightMenu extends Component {
       board_id,
       org_id,
       currentFlowTabsStatus,
-      request_flows_params
+      request_flows_params,
+      currentFlowListType
     })
   }
 
@@ -449,6 +459,7 @@ export default class HeaderContentRightMenu extends Component {
     board_id,
     org_id,
     currentFlowTabsStatus,
+    currentFlowListType,
     request_flows_params = {}
   }) {
     const that = this
@@ -478,7 +489,8 @@ export default class HeaderContentRightMenu extends Component {
                 type: 'publicProcessDetailModal/getProcessListByType',
                 payload: {
                   board_id: BOARD_ID,
-                  status: currentFlowTabsStatus || '1',
+                  // status: currentFlowTabsStatus || '1',
+                  type: currentFlowListType || 'process',
                   _organization_id:
                     request_flows_params._organization_id || org_id
                 }
@@ -520,6 +532,7 @@ export default class HeaderContentRightMenu extends Component {
     const {
       processInfo: { id, board_id, org_id },
       currentFlowTabsStatus,
+      currentFlowListType,
       request_flows_params = {}
     } = this.props
     let BOARD_ID =
@@ -542,7 +555,8 @@ export default class HeaderContentRightMenu extends Component {
             type: 'publicProcessDetailModal/getProcessListByType',
             payload: {
               board_id: BOARD_ID,
-              status: currentFlowTabsStatus || '1',
+              // status: currentFlowTabsStatus || '1',
+              type: currentFlowListType || 'process',
               _organization_id: request_flows_params._organization_id || org_id
             }
           })
@@ -765,7 +779,8 @@ function mapStateToProps({
     processInfo = {},
     processPageFlagStep,
     templateInfo = {},
-    currentFlowTabsStatus
+    currentFlowTabsStatus,
+    currentFlowListType
   },
   projectDetail: {
     datas: { projectDetailInfoData = {} }
@@ -780,6 +795,7 @@ function mapStateToProps({
     templateInfo,
     currentFlowTabsStatus,
     projectDetailInfoData,
-    userBoardPermissions
+    userBoardPermissions,
+    currentFlowListType
   }
 }

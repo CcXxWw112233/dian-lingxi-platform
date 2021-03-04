@@ -466,7 +466,8 @@ export default class BeginningStepThree extends Component {
       processInfo: { id: flow_instance_id, board_id },
       itemValue,
       request_flows_params = {},
-      itemKey
+      itemKey,
+      currentFlowListType
     } = this.props
     const { id: flow_node_instance_id } = itemValue
     let score_values = this.getCurrentAllNodesScoreValues()
@@ -494,7 +495,8 @@ export default class BeginningStepThree extends Component {
             type: 'publicProcessDetailModal/getProcessListByType',
             payload: {
               board_id: BOARD_ID,
-              status: '1',
+              // status: '1',
+              type: currentFlowListType,
               _organization_id: request_flows_params._organization_id
             }
           })
@@ -509,7 +511,8 @@ export default class BeginningStepThree extends Component {
       itemValue: { id: flow_node_instance_id, assignees, his_comments = [] },
       processInfo: { id: flow_instance_id, board_id },
       dispatch,
-      request_flows_params = {}
+      request_flows_params = {},
+      currentFlowListType
     } = this.props
     let BOARD_ID =
       (request_flows_params && request_flows_params.request_board_id) ||
@@ -529,7 +532,8 @@ export default class BeginningStepThree extends Component {
             type: 'publicProcessDetailModal/getProcessListByType',
             payload: {
               board_id: BOARD_ID,
-              status: '1',
+              // status: '1',
+              type: currentFlowListType,
               _organization_id: request_flows_params._organization_id
             }
           })
@@ -1509,7 +1513,11 @@ export default class BeginningStepThree extends Component {
 }
 
 function mapStateToProps({
-  publicProcessDetailModal: { processEditDatas = [], processInfo = {} },
+  publicProcessDetailModal: {
+    processEditDatas = [],
+    processInfo = {},
+    currentFlowListType
+  },
   projectDetail: {
     datas: { projectDetailInfoData = {} }
   },
@@ -1521,6 +1529,7 @@ function mapStateToProps({
     processEditDatas,
     processInfo,
     projectDetailInfoData,
-    userBoardPermissions
+    userBoardPermissions,
+    currentFlowListType
   }
 }

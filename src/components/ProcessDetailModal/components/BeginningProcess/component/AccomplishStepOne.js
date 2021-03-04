@@ -124,7 +124,8 @@ export default class AccomplishStepOne extends Component {
       itemValue: { id: flow_node_instance_id },
       processInfo: { id: flow_instance_id, board_id },
       dispatch,
-      request_flows_params = {}
+      request_flows_params = {},
+      currentFlowListType
     } = this.props
     let BOARD_ID =
       (request_flows_params && request_flows_params.request_board_id) ||
@@ -142,7 +143,8 @@ export default class AccomplishStepOne extends Component {
             type: 'publicProcessDetailModal/getProcessListByType',
             payload: {
               board_id: BOARD_ID,
-              status: '1',
+              // status: '1',
+              type: currentFlowListType,
               _organization_id: request_flows_params._organization_id
             }
           })
@@ -509,7 +511,11 @@ export default class AccomplishStepOne extends Component {
 }
 
 function mapStateToProps({
-  publicProcessDetailModal: { processEditDatas = [], processInfo = {} }
+  publicProcessDetailModal: {
+    processEditDatas = [],
+    processInfo = {},
+    currentFlowListType
+  }
 }) {
-  return { processEditDatas, processInfo }
+  return { processEditDatas, processInfo, currentFlowListType }
 }
