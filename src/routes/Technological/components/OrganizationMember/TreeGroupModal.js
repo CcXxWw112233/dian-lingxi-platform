@@ -17,7 +17,8 @@ export default class TreeGroupModal extends React.Component {
     const {
       currentBeOperateMemberId,
       batch_setting,
-      batch_setting_ids
+      batch_setting_ids,
+      dispatch
     } = this.props
     this.props.updateDatas({ TreeGroupModalVisiblie: false })
     let params = {
@@ -32,7 +33,22 @@ export default class TreeGroupModal extends React.Component {
     } else {
       params.member_id = currentBeOperateMemberId
     }
-    this.props.setMemberWitchGroup(params)
+    dispatch({
+      type: 'organizationMember/setMemberWitchGroup',
+      payload: {
+        ...params
+      }
+    }).then(() => {
+      dispatch({
+        type: 'organizationMember/updateDatas',
+        payload: {
+          batch_setting_ids: [],
+          batch_setting_ids_map: [],
+          batch_setting_ids_source: []
+        }
+      })
+    })
+    // this.props.setMemberWitchGroup(params)
   }
 
   onCheck = e => {
