@@ -430,7 +430,7 @@ export default class GroupMilestones extends Component {
     return height
   }
   renderView = (value = {}) => {
-    const { ceilWidth } = this.props
+    const { ceilWidth, gantt_board_id } = this.props
     const {
       left,
       top,
@@ -513,6 +513,7 @@ export default class GroupMilestones extends Component {
                     belong_group_id,
                     one_levels
                   }),
+                  display: gantt_board_id == '0' ? 'none' : 'block',
                   background: this.setMiletonesColor({
                     is_over_duetime,
                     is_all_realized: one_levels_completed

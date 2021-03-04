@@ -46,6 +46,7 @@ export default modelExtend(technological, {
       batch_setting: false, //进入批量设置
       batch_setting_ids: [], //批量设置所选id [111,222,333]
       batch_setting_ids_map: [], //带分组的成员id [{group_1_id: [member_id1,member_id2]}，{group_2_id: [member_id1,member_id2]}。。。]
+      batch_setting_ids_source: [], // [${group_id}_${member_id}, ...]
       groupList: [], //全部分组
       TreeGroupModalVisiblie: false, //树状分组是否可见
       groupTreeList: [], //树状分组数据
@@ -268,6 +269,7 @@ export default modelExtend(technological, {
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
+      return res
     },
     *setMemberWitchGroup({ payload }, { select, call, put }) {
       let res = yield call(setMemberWitchGroup, payload)
@@ -289,6 +291,7 @@ export default modelExtend(technological, {
           MESSAGE_DURATION_TIME
         )
       }
+      return res
     },
     *getGroupPartialInfo({ payload }, { select, call, put }) {
       let res = yield call(getGroupPartialInfo, payload)
@@ -383,6 +386,7 @@ export default modelExtend(technological, {
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
+      return res
     },
     *getMemberInfo({ payload }, { select, call, put }) {
       const { member_id, parentKey, itemKey, calback } = payload

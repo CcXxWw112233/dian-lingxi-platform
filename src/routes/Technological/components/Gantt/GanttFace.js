@@ -104,6 +104,11 @@ export default class GanttFace extends Component {
 
   componentWillReceiveProps(nextProps) {
     // 针对改变项目相对时间和实际时间改变
+    this.handleRelatimeLineWithBoardChange(nextProps)
+  }
+
+  // 更改项目时，项目详情中附带的时间视图模式有可能会改变，从相对时间轴和普通时间轴的转变
+  handleRelatimeLineWithBoardChange = nextProps => {
     const {
       projectDetailInfoData = {},
       gantt_board_id,
@@ -123,7 +128,9 @@ export default class GanttFace extends Component {
       date_mode: date_mode_next,
       relative_time: relative_time_next
     } = board_set_next
+    // 如果视图改变了
     if (date_mode_next && date_mode_next != date_mode) {
+      // 如果从普通时间视图变成相对时间视图
       if (date_mode_next == '1') {
         this.props.dispatch({
           type: 'gantt/updateDatas',
@@ -154,7 +161,7 @@ export default class GanttFace extends Component {
           gantt_date_area.style.left = `0px`
         }
       } else {
-        if (gantt_view_mode != 'relative_time') return //如果不是相对视图就算了
+        if (gantt_view_mode != 'relative_time') return //如果原来不是相对视图就算了
         this.props.dispatch({
           type: 'gantt/updateDatas',
           payload: {
@@ -168,9 +175,12 @@ export default class GanttFace extends Component {
         }, 100)
         const gantt_date_area = document.getElementById('gantt_date_area')
         if (gantt_date_area) {
-          gantt_date_area.style.left = `-${ceilWidth *
-            (60 - 4 - 4 + new Date().getDate() - 1) -
-            16}px`
+          // gantt_date_area.style.left = `-${ceilWidth *
+          //   (60 - 4 - 4 + new Date().getDate() - 1) -
+          //   16}px`
+          setTimeout(() => {
+            gantt_date_area.style.left = `${-this.setInitScrollLeft()}px`
+          }, 300)
         }
       }
     }
@@ -208,6 +218,7 @@ export default class GanttFace extends Component {
     }
   }
 
+  // 获取流程模板列表
   getProcessTemplateList() {
     const { dispatch } = this.props
     dispatch({
@@ -298,7 +309,7 @@ export default class GanttFace extends Component {
     if (gantt_view_mode == 'relative_time') {
       position = 0
     } else if (gantt_view_mode == 'hours') {
-      position = 17 * 7 * ceilWidth
+      position = 17 * 7 * ceilWidth //默认滚动到最最中间
     }
 
     // const position =
@@ -773,6 +784,7 @@ export default class GanttFace extends Component {
         id={'gantt_card_out'}
         style={{ height: gantt_card_height, width: '100%' }}
       >
+        {/* loading状态区域 */}
         {(get_gantt_data_loading || get_gantt_data_loading_other) && (
           <div
             className={indexStyles.cardDetailMask}
@@ -792,6 +804,7 @@ export default class GanttFace extends Component {
         {group_view_type == '1' && <MiletoneGuide />}
 
         <div className={indexStyles.cardDetail_left}></div>
+        {/* 甘特图主区域 */}
         <div
           className={indexStyles.cardDetail_middle}
           id={'gantt_card_out_middle_wrapper'}
@@ -804,6 +817,7 @@ export default class GanttFace extends Component {
             style={{ height: date_area_height }} //撑住DateList相同高度的底部
           /> */}
           {/* <DateList /> */}
+          {/* 甘特图头部 */}
           <div className={indexStyles.board}>
             <div
               className={indexStyles.board_head}
@@ -830,6 +844,7 @@ export default class GanttFace extends Component {
                 gantt_card_height={gantt_card_height}
                 dataAreaRealHeight={dataAreaRealHeight}
               />
+              {/* 拖拽头部拉伸宽度组件 */}
               <HeaderWidthTriggle gantt_card_height={gantt_card_height} />
 
               {/* <GroupListHeadElse gantt_card_height={gantt_card_height} dataAreaRealHeight={dataAreaRealHeight} /> */}
@@ -840,6 +855,7 @@ export default class GanttFace extends Component {
               className={indexStyles.board_body}
               style={{ height: gantt_card_height - 20 }}
             >
+              {/* 日期栏 */}
               <DateList />
               <div
                 style={{ height: date_area_height }} //撑住DateList相同高度的底部
@@ -856,6 +872,7 @@ export default class GanttFace extends Component {
                 onMouseOverCapture={this.onMouseOverCapture}
                 onScroll={this.ganttScroll}
               >
+                {/* 退出基线 */}
                 {show_base_line_mode && (
                   <div className={indexStyles.toExitBaseLine} id="exitbaseline">
                     <span>已加载：{active_baseline.name}</span>
@@ -868,6 +885,7 @@ export default class GanttFace extends Component {
                   </div>
                 )}
                 <div className={indexStyles.panel}>
+                  {/* 甘特图面板 */}
                   <GetRowGantt
                     changeOutLineTreeNodeProto={
                       this.props.changeOutLineTreeNodeProto
@@ -898,6 +916,7 @@ export default class GanttFace extends Component {
                         : 'none'
                     }}
                   >
+                    {/* 项目模板 */}
                     {gantt_board_id && gantt_board_id != '0' && (
                       <BoardTemplate
                         insertTaskToListGroup={this.props.insertTaskToListGroup}
@@ -905,6 +924,7 @@ export default class GanttFace extends Component {
                       />
                     )}
                   </div>
+                  {/* 任务详情组件 */}
                   <CardDetailDrawer {...this.props.task_detail_props} />
                   {/* 查看更多字段 */}
                   <CustomFieldDetailDrawer />
@@ -918,6 +938,7 @@ export default class GanttFace extends Component {
           </div>
         </div>
         {/* <div className={indexStyles.cardDetail_right}></div> */}
+        {/* 时间视图选择 时/日/周/月 */}
         <FaceRightButton
           setGoldDateArr={this.setGoldDateArr}
           setScrollPosition={this.setScrollPosition}
@@ -925,7 +946,9 @@ export default class GanttFace extends Component {
         {isPaymentOrgUser() && is_show_board_file_area != '1' && (
           <ShowFileSlider />
         )}
+        {/* 文件区域 */}
         <BoardsFilesArea />
+        {/* 里程碑详情 */}
         <GanttMilestonePublicInput />
       </div>
     )
