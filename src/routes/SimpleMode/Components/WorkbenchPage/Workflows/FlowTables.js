@@ -83,7 +83,7 @@ export default class FlowTables extends Component {
       },
       {
         width: 100,
-        title: this.renderTitle(list_status).state_title,
+        title: this.renderTitle(list_type).state_title,
         dataIndex: 'state',
         key: 'state',
         ellipsis: true,
@@ -93,7 +93,7 @@ export default class FlowTables extends Component {
         }
       },
       {
-        title: this.renderTitle(list_status).time_title,
+        title: this.renderTitle(list_type).time_title,
         dataIndex: 'time',
         key: 'time',
         ellipsis: true,
@@ -103,7 +103,7 @@ export default class FlowTables extends Component {
         }
       },
       {
-        title: list_status == '1' ? '执行人' : '发起人',
+        title: list_type == '1' ? '执行人' : '发起人',
         dataIndex: 'originator',
         key: 'originator',
         ellipsis: true,
@@ -119,10 +119,10 @@ export default class FlowTables extends Component {
       dataSource
     })
   }
-  renderTitle = list_status => {
+  renderTitle = list_type => {
     let time_title = '完成期限'
     let state_title = '流程状态'
-    switch (list_status) {
+    switch (list_type) {
       case '1':
         time_title = '完成期限'
         state_title = '当前步骤'
