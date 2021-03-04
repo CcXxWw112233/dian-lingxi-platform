@@ -10,7 +10,7 @@ export const EXCELCONFIG = {
     /**
      * 空数据
      */
-    EMPITY: '数据为空',
+    EMPITY: '数据不能为空',
     /**
      * 长度错误
      */
@@ -61,7 +61,7 @@ export const EXCELCONFIG = {
     /**
      * 空数据
      */
-    EMPITY: '数据为空',
+    EMPITY: '数据不能为空',
     /**
      * 不是指定的文字
      */
@@ -83,7 +83,7 @@ export const EXCELCONFIG = {
     /**
      * 空数据
      */
-    EMPITY: '数据为空',
+    EMPITY: '数据不能为空',
     /**
      * 不合法的时间类型数据
      */
