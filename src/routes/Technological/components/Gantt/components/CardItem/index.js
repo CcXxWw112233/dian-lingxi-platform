@@ -1451,7 +1451,8 @@ export default class CardItem extends Component {
     const {
       itemValue = {},
       card_rely_draging,
-      projectDetailInfoData: { board_set = {} }
+      projectDetailInfoData: { board_set = {} },
+      selected_card_visible
     } = this.props
     const { date_mode } = board_set
     const { drag_lock } = this.state
@@ -1525,7 +1526,7 @@ export default class CardItem extends Component {
             drag_else_over_in: false
           })
         }, 200)
-        if (card_rely_draging || !drag_lock) return
+        if ((card_rely_draging || !drag_lock) && !selected_card_visible) return
         this.setSpecilTaskExample({ id: parent_card_id || id, top, board_id })
       }, //查看子任务是查看父任务
 
@@ -1557,7 +1558,7 @@ export default class CardItem extends Component {
             drag_else_over_in: false
           })
         }, 200)
-        if (card_rely_draging || !drag_lock) return
+        if ((card_rely_draging || !drag_lock) && !selected_card_visible) return
         this.setSpecilTaskExample({ id: parent_card_id || id, top, board_id })
       }, //查看子任务是查看父任务
       onMouseEnter: () => {

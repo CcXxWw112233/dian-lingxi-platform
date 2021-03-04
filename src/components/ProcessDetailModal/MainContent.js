@@ -36,7 +36,10 @@ import {
   getGlobalData,
   isPaymentOrgUser
 } from '../../utils/businessFunction'
-import { cursorMoveEnd } from './components/handleOperateModal'
+import {
+  cursorMoveEnd,
+  whetherIsHasMembersInEveryNodes
+} from './components/handleOperateModal'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import ProcessFile from './ProcessFile'
 // import { lx_utils } from 'lingxi-im'
@@ -315,6 +318,10 @@ export default class MainContent extends Component {
     this.whetherUpdateOrgnazationMemberList(this.props)
     // 设置用户节点内容缓存
     this.setUserProcessWithNodesStorage(this.props)
+    this.props.dispatch({
+      type: 'publicProcessDetailModal/getDesignatedRoles',
+      payload: {}
+    })
   }
   componentWillUnmount() {
     window.removeEventListener('resize', this.resizeTTY)
@@ -331,7 +338,8 @@ export default class MainContent extends Component {
   // 是否需要获取流程中成员列表(取的是组织成员列表)
   whetherUpdateOrgnazationMemberList = props => {
     const {
-      templateInfo: { org_id }
+      templateInfo: { org_id },
+      processInfo: { status }
     } = props
     if (props.process_detail_modal_visible) {
       // localStorage.getItem('OrganizationId')
@@ -344,8 +352,8 @@ export default class MainContent extends Component {
           }
         })
       } else {
-        // 如果是已经启动了的流程不需要查询成员
-        if (props.processPageFlagStep == '4') return
+        // 如果是已经启动了的流程不需要查询成员 (除预启动外)
+        if (props.processPageFlagStep == '4' && status != '0') return
         this.props.dispatch({
           type: 'publicProcessDetailModal/getCurrentOrgAllMembers',
           payload: {
@@ -995,6 +1003,7 @@ export default class MainContent extends Component {
     if (!payload) return Promise.resolve([])
     const {
       request_flows_params = {},
+      currentFlowListType,
       projectDetailInfoData: { board_id, org_id }
     } = this.props
     let BOARD_ID =
@@ -1019,7 +1028,8 @@ export default class MainContent extends Component {
     this.props.dispatch({
       type: 'publicProcessDetailModal/getProcessListByType',
       payload: {
-        status: temp_time2 ? '0' : '1',
+        // status: temp_time2 ? '0' : '1',
+        type: currentFlowListType,
         board_id: BOARD_ID || res.data.board_id,
         _organization_id: request_flows_params._organization_id || org_id
       }
@@ -1038,7 +1048,8 @@ export default class MainContent extends Component {
       currentFlowInstanceDescription,
       processEditDatas = [],
       templateInfo: { id },
-      request_flows_params = {}
+      request_flows_params = {},
+      currentFlowListType
     } = this.props
     let BOARD_ID =
       (request_flows_params && request_flows_params.request_board_id) ||
@@ -1069,7 +1080,8 @@ export default class MainContent extends Component {
         that.props.dispatch({
           type: 'publicProcessDetailModal/getProcessListByType',
           payload: {
-            status: start_time ? '0' : '1',
+            // status: start_time ? '0' : '1',
+            type: currentFlowListType,
             board_id: BOARD_ID,
             _organization_id: request_flows_params._organization_id || org_id
           }
@@ -1447,23 +1459,20 @@ export default class MainContent extends Component {
   // 渲染开始流程的气泡框
   renderProcessStartConfirm = () => {
     const { currentFlowInstanceName, processEditDatas = [] } = this.props
-    // 禁用开始流程的按钮逻辑 1.判断流程名称是否输入 ==> 2. 是否有步骤 并且步骤都不是配置的样子 ==> 3. 并且上一个节点有选择类型 都是或者的关系 只要有一个不满足返回 true 表示 禁用 false 表示不禁用
-    let saveTempleteDisabled =
+    // 禁用开始流程的按钮逻辑 1.判断流程名称是否输入 ==> 2. 是否存在未选择人员的情况
+    let saveTempleteDisabled = false
+    let errText = ''
+    if (
       currentFlowInstanceName == '' ||
-      (processEditDatas &&
-        processEditDatas.length &&
-        processEditDatas[processEditDatas.length - 1].is_edit == '0') ||
-      (processEditDatas &&
-        processEditDatas.length &&
-        !processEditDatas[processEditDatas.length - 1].node_type)
-        ? true
-        : false
+      whetherIsHasMembersInEveryNodes(processEditDatas)
+    ) {
+      saveTempleteDisabled = true
+      errText = '请填写流程名称或未设置填写人、审批人以及抄送人'
+    }
     return (
       <div
         style={{
           display: 'flex',
-          // flexDirection: 'column',
-          // width: '248px',
           height: '112px',
           justifyContent: 'center',
           alignItems: 'center',
@@ -1475,6 +1484,7 @@ export default class MainContent extends Component {
           disabled={saveTempleteDisabled}
           onClick={this.handleCreateProcess}
           type="primary"
+          title={errText}
         >
           立即开始
         </Button>
@@ -1544,7 +1554,8 @@ export default class MainContent extends Component {
         processEditDatas.find(item => item.is_edit == '0')) ||
       (processEditDatas &&
         processEditDatas.length &&
-        !processEditDatas[processEditDatas.length - 1].node_type)
+        !processEditDatas[processEditDatas.length - 1].node_type) ||
+      whetherIsHasMembersInEveryNodes(processEditDatas)
         ? true
         : false
     return (
@@ -1883,6 +1894,10 @@ export default class MainContent extends Component {
                   disabled={saveTempleteDisabled}
                   type="primary"
                   style={{ height: '40px' }}
+                  title={
+                    saveTempleteDisabled &&
+                    '请填写流程名称或未设置填写人、审批人以及抄送人'
+                  }
                 >
                   保存模板
                 </Button>
@@ -2029,7 +2044,8 @@ function mapStateToProps({
     processCurrentEditStep,
     templateInfo = {},
     currentFlowTabsStatus,
-    not_show_create_node_guide
+    not_show_create_node_guide,
+    currentFlowListType
   },
   projectDetail: {
     datas: { projectDetailInfoData = {} }
@@ -2060,6 +2076,7 @@ function mapStateToProps({
     not_show_create_node_guide,
     projectDetailInfoData,
     userBoardPermissions,
-    is_show_board_file_area
+    is_show_board_file_area,
+    currentFlowListType
   }
 }

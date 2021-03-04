@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Dropdown, Icon, Radio, InputNumber, Tooltip } from 'antd'
+import { Dropdown, Icon, Radio, InputNumber, Tooltip, Select } from 'antd'
 import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
@@ -186,6 +186,209 @@ export default class ConfigureStepTypeTwo extends Component {
     this.updateConfigureProcess({ value: Number(value) }, 'approve_value')
   }
 
+  // 指定人或选择角色
+  assigneeTypeChange = e => {
+    this.updateConfigureProcess({ value: e.target.value }, 'assignee_type')
+  }
+
+  // 设置选择角色类型
+  handleSelectOrgRoles = value => {
+    this.updateConfigureProcess({ value: value }, 'assignee_roles')
+  }
+
+  // 渲染审批人
+  renderApprovedPersonnel = () => {
+    const { itemValue, currentOrgAllMembers = [] } = this.props
+    const { approve_type } = itemValue
+    let approvalsList = this.filterAssignees()
+    let new_currentOrgAllMembers = accordingToSortMembersList(
+      currentOrgAllMembers,
+      approvalsList
+    )
+    return (
+      <div style={{ flex: 1, padding: '8px 0' }}>
+        {!approvalsList.length ? (
+          <div style={{ position: 'relative' }}>
+            <Dropdown
+              trigger={['click']}
+              overlayClassName={indexStyles.overlay_pricipal}
+              getPopupContainer={triggerNode => triggerNode.parentNode}
+              overlayStyle={{ maxWidth: '200px' }}
+              overlay={
+                <MenuSearchPartner
+                  isInvitation={true}
+                  listData={new_currentOrgAllMembers}
+                  keyCode={'user_id'}
+                  searchName={'name'}
+                  currentSelect={approvalsList}
+                  chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
+                  not_allow_sort_list={true}
+                />
+              }
+            >
+              {/* 添加通知人按钮 */}
+
+              <div className={indexStyles.addNoticePerson}>
+                <span
+                  className={`${globalStyles.authTheme} ${indexStyles.plus_icon}`}
+                >
+                  &#xe8fe;
+                </span>
+              </div>
+            </Dropdown>
+          </div>
+        ) : (
+          <div
+            style={{
+              position: 'relative',
+              display: 'flex',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              lineHeight: '22px'
+            }}
+          >
+            {approvalsList.map((value, index) => {
+              const { avatar, name, user_name, user_id } = value
+              return (
+                <div
+                  style={{ display: 'flex', alignItems: 'center' }}
+                  key={user_id}
+                >
+                  <div
+                    className={`${indexStyles.user_item}`}
+                    style={{
+                      position: 'relative',
+                      textAlign: 'center',
+                      marginBottom: '8px'
+                    }}
+                    key={user_id}
+                  >
+                    {avatar ? (
+                      <Tooltip
+                        overlayStyle={{ minWidth: '62px' }}
+                        getPopupContainer={triggerNode =>
+                          triggerNode.parentNode
+                        }
+                        placement="top"
+                        title={name || user_name || '佚名'}
+                      >
+                        <img
+                          className={indexStyles.img_hover}
+                          style={{
+                            width: '32px',
+                            height: '32px',
+                            borderRadius: 20,
+                            margin: '0 2px'
+                          }}
+                          src={avatar}
+                        />
+                      </Tooltip>
+                    ) : (
+                      <Tooltip
+                        overlayStyle={{ minWidth: '62px' }}
+                        getPopupContainer={triggerNode =>
+                          triggerNode.parentNode
+                        }
+                        placement="top"
+                        title={name || user_name || '佚名'}
+                      >
+                        <div
+                          className={indexStyles.default_user_hover}
+                          style={{
+                            width: '32px',
+                            height: '32px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            borderRadius: 20,
+                            backgroundColor: '#f5f5f5',
+                            margin: '0 2px'
+                          }}
+                        >
+                          <Icon
+                            type={'user'}
+                            style={{ fontSize: 14, color: '#8c8c8c' }}
+                          />
+                        </div>
+                      </Tooltip>
+                    )}
+                    {/* <div style={{ marginRight: 8, fontSize: '14px' }}>{name || user_name || '佚名'}</div> */}
+                    <span
+                      onClick={e => {
+                        this.handleRemoveExecutors(e, user_id)
+                      }}
+                      className={`${indexStyles.userItemDeleBtn}`}
+                    ></span>
+                  </div>
+                  {approve_type == '1' && (
+                    <span
+                      style={{ color: 'rgba(0,0,0,0.25)' }}
+                      className={globalStyles.authTheme}
+                    >
+                      &#xe61f;
+                    </span>
+                  )}
+                </div>
+              )
+            })}
+            <Dropdown
+              trigger={['click']}
+              overlayClassName={indexStyles.overlay_pricipal}
+              getPopupContainer={triggerNode => triggerNode.parentNode}
+              overlayStyle={{ maxWidth: '200px' }}
+              overlay={
+                <MenuSearchPartner
+                  isInvitation={true}
+                  listData={new_currentOrgAllMembers}
+                  keyCode={'user_id'}
+                  searchName={'name'}
+                  currentSelect={approvalsList}
+                  chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
+                  not_allow_sort_list={true}
+                />
+              }
+            >
+              {/* 添加通知人按钮 */}
+
+              <div
+                className={indexStyles.addNoticePerson}
+                style={{ marginTop: '-6px' }}
+              >
+                <span
+                  className={`${globalStyles.authTheme} ${indexStyles.plus_icon}`}
+                >
+                  &#xe8fe;
+                </span>
+              </div>
+            </Dropdown>
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  // 渲染指定角色
+  renderDesignatedRole = () => {
+    const { currentDesignatedRolesData = [], itemValue = {} } = this.props
+    const { assignee_roles } = itemValue
+    return (
+      <div style={{ flex: 1, padding: '8px 0' }}>
+        <div style={{ position: 'relative' }}>
+          <Select
+            onChange={this.handleSelectOrgRoles}
+            style={{ minWidth: '160px' }}
+            placeholder="请选择角色"
+            value={assignee_roles}
+          >
+            {currentDesignatedRolesData.map(item => {
+              return <Select.Option value={item.id}>{item.name}</Select.Option>
+            })}
+          </Select>
+        </div>
+      </div>
+    )
+  }
+
   render() {
     const {
       itemValue,
@@ -193,15 +396,8 @@ export default class ConfigureStepTypeTwo extends Component {
       projectDetailInfoData = {},
       currentOrgAllMembers = []
     } = this.props
-    const { data = [], board_id, org_id } = projectDetailInfoData
-    const new_data = JSON.parse(JSON.stringify(data) || [])
-    const { approve_type, approve_value } = itemValue
-    let approvalsList = this.filterAssignees()
-    let new_currentOrgAllMembers = accordingToSortMembersList(
-      currentOrgAllMembers,
-      approvalsList
-    )
-    // const { approvalsList = [] } = this.state
+    const { board_id, org_id } = projectDetailInfoData
+    const { approve_type, approve_value, assignee_type } = itemValue
     return (
       <div>
         {/* 审批类型 */}
@@ -281,172 +477,30 @@ export default class ConfigureStepTypeTwo extends Component {
         </div>
         {/* 审批人 */}
         <div className={indexStyles.fill_person}>
-          <span className={`${indexStyles.label_person}`}>
-            <span
-              className={`${globalStyles.authTheme}`}
-              style={{ fontSize: '16px' }}
-            >
-              &#xe7b2;
-            </span>{' '}
-            审批人 (必填)&nbsp;:
-          </span>
-          <div style={{ flex: 1, padding: '8px 0' }}>
-            {!approvalsList.length ? (
-              <div style={{ position: 'relative' }}>
-                <Dropdown
-                  trigger={['click']}
-                  overlayClassName={indexStyles.overlay_pricipal}
-                  getPopupContainer={triggerNode => triggerNode.parentNode}
-                  overlayStyle={{ maxWidth: '200px' }}
-                  overlay={
-                    <MenuSearchPartner
-                      isInvitation={true}
-                      listData={new_currentOrgAllMembers}
-                      keyCode={'user_id'}
-                      searchName={'name'}
-                      currentSelect={approvalsList}
-                      chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
-                      not_allow_sort_list={true}
-                    />
-                  }
-                >
-                  {/* 添加通知人按钮 */}
-
-                  <div className={indexStyles.addNoticePerson}>
-                    <span
-                      className={`${globalStyles.authTheme} ${indexStyles.plus_icon}`}
-                    >
-                      &#xe8fe;
-                    </span>
-                  </div>
-                </Dropdown>
-              </div>
-            ) : (
-              <div
-                style={{
-                  position: 'relative',
-                  display: 'flex',
-                  alignItems: 'center',
-                  flexWrap: 'wrap',
-                  lineHeight: '22px'
-                }}
+          <div>
+            <span className={`${indexStyles.label_person}`}>
+              <span
+                className={`${globalStyles.authTheme}`}
+                style={{ fontSize: '16px' }}
               >
-                {approvalsList.map((value, index) => {
-                  const { avatar, name, user_name, user_id } = value
-                  return (
-                    <div
-                      style={{ display: 'flex', alignItems: 'center' }}
-                      key={user_id}
-                    >
-                      <div
-                        className={`${indexStyles.user_item}`}
-                        style={{
-                          position: 'relative',
-                          textAlign: 'center',
-                          marginBottom: '8px'
-                        }}
-                        key={user_id}
-                      >
-                        {avatar ? (
-                          <Tooltip
-                            overlayStyle={{ minWidth: '62px' }}
-                            getPopupContainer={triggerNode =>
-                              triggerNode.parentNode
-                            }
-                            placement="top"
-                            title={name || user_name || '佚名'}
-                          >
-                            <img
-                              className={indexStyles.img_hover}
-                              style={{
-                                width: '32px',
-                                height: '32px',
-                                borderRadius: 20,
-                                margin: '0 2px'
-                              }}
-                              src={avatar}
-                            />
-                          </Tooltip>
-                        ) : (
-                          <Tooltip
-                            overlayStyle={{ minWidth: '62px' }}
-                            getPopupContainer={triggerNode =>
-                              triggerNode.parentNode
-                            }
-                            placement="top"
-                            title={name || user_name || '佚名'}
-                          >
-                            <div
-                              className={indexStyles.default_user_hover}
-                              style={{
-                                width: '32px',
-                                height: '32px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                borderRadius: 20,
-                                backgroundColor: '#f5f5f5',
-                                margin: '0 2px'
-                              }}
-                            >
-                              <Icon
-                                type={'user'}
-                                style={{ fontSize: 14, color: '#8c8c8c' }}
-                              />
-                            </div>
-                          </Tooltip>
-                        )}
-                        {/* <div style={{ marginRight: 8, fontSize: '14px' }}>{name || user_name || '佚名'}</div> */}
-                        <span
-                          onClick={e => {
-                            this.handleRemoveExecutors(e, user_id)
-                          }}
-                          className={`${indexStyles.userItemDeleBtn}`}
-                        ></span>
-                      </div>
-                      {approve_type == '1' && (
-                        <span
-                          style={{ color: 'rgba(0,0,0,0.25)' }}
-                          className={globalStyles.authTheme}
-                        >
-                          &#xe61f;
-                        </span>
-                      )}
-                    </div>
-                  )
-                })}
-                <Dropdown
-                  trigger={['click']}
-                  overlayClassName={indexStyles.overlay_pricipal}
-                  getPopupContainer={triggerNode => triggerNode.parentNode}
-                  overlayStyle={{ maxWidth: '200px' }}
-                  overlay={
-                    <MenuSearchPartner
-                      isInvitation={true}
-                      listData={new_currentOrgAllMembers}
-                      keyCode={'user_id'}
-                      searchName={'name'}
-                      currentSelect={approvalsList}
-                      chirldrenTaskChargeChange={this.chirldrenTaskChargeChange}
-                      not_allow_sort_list={true}
-                    />
-                  }
-                >
-                  {/* 添加通知人按钮 */}
-
-                  <div
-                    className={indexStyles.addNoticePerson}
-                    style={{ marginTop: '-6px' }}
-                  >
-                    <span
-                      className={`${globalStyles.authTheme} ${indexStyles.plus_icon}`}
-                    >
-                      &#xe8fe;
-                    </span>
-                  </div>
-                </Dropdown>
-              </div>
-            )}
+                &#xe7b2;
+              </span>{' '}
+              审批人 (必填)&nbsp;:
+            </span>
+            <span>
+              <Radio.Group
+                style={{ lineHeight: '48px' }}
+                value={assignee_type}
+                onChange={this.assigneeTypeChange}
+              >
+                <Radio value="2">指定人员</Radio>
+                <Radio value="3">指定角色</Radio>
+              </Radio.Group>
+            </span>
+          </div>
+          <div>
+            {assignee_type == '2' && this.renderApprovedPersonnel()}
+            {assignee_type == '3' && this.renderDesignatedRole()}
           </div>
         </div>
         {/* 更多选项 */}
@@ -468,11 +522,17 @@ export default class ConfigureStepTypeTwo extends Component {
 function mapStateToProps({
   publicProcessDetailModal: {
     processEditDatas = [],
-    currentOrgAllMembers = []
+    currentOrgAllMembers = [],
+    currentDesignatedRolesData = []
   },
   projectDetail: {
     datas: { projectDetailInfoData = {} }
   }
 }) {
-  return { processEditDatas, currentOrgAllMembers, projectDetailInfoData }
+  return {
+    processEditDatas,
+    currentOrgAllMembers,
+    projectDetailInfoData,
+    currentDesignatedRolesData
+  }
 }

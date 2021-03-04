@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Button, Dropdown, Icon, Menu, Radio, Tooltip } from 'antd'
+import { Button, Dropdown, Icon, Menu, Radio, Select, Tooltip } from 'antd'
 import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import ConfigureStepOne_one from './ConfigureStepOne_one'
@@ -187,6 +187,11 @@ export default class ConfigureStepTypeOne extends Component {
           this.props.updateSheetList({ id: res.data, sheetData: [] })
       }
     })
+  }
+
+  // 设置选择角色类型
+  handleSelectOrgRoles = value => {
+    this.updateConfigureProcess({ value: value }, 'assignee_roles')
   }
 
   //表单填写项
@@ -390,7 +395,7 @@ export default class ConfigureStepTypeOne extends Component {
           <Menu.Item key="2">选择</Menu.Item>
           <Menu.Item key="3">日期</Menu.Item>
           <Menu.Item key="5">附件</Menu.Item>
-          <Menu.Item key="6">在线表格</Menu.Item>
+          <Menu.Item key="6">表格</Menu.Item>
         </Menu>
       </div>
     )
@@ -561,6 +566,28 @@ export default class ConfigureStepTypeOne extends Component {
     )
   }
 
+  // 渲染指定角色
+  renderDesignatedRole = () => {
+    const { currentDesignatedRolesData = [], itemValue = {} } = this.props
+    const { assignee_roles } = itemValue
+    return (
+      <div style={{ flex: 1, padding: '8px 0' }}>
+        <div style={{ position: 'relative' }}>
+          <Select
+            onChange={this.handleSelectOrgRoles}
+            style={{ minWidth: '160px' }}
+            placeholder="请选择角色"
+            value={assignee_roles}
+          >
+            {currentDesignatedRolesData.map(item => {
+              return <Select.Option value={item.id}>{item.name}</Select.Option>
+            })}
+          </Select>
+        </div>
+      </div>
+    )
+  }
+
   render() {
     const {
       itemValue,
@@ -629,9 +656,11 @@ export default class ConfigureStepTypeOne extends Component {
             >
               <Radio value="1">流程发起人</Radio>
               <Radio value="2">指定人员</Radio>
+              <Radio value="3">指定角色</Radio>
             </Radio.Group>
           </div>
           {assignee_type == '2' && this.renderDesignatedPersonnel()}
+          {assignee_type == '3' && this.renderDesignatedRole()}
         </div>
         {/* 更多选项 */}
         <div>
@@ -656,7 +685,8 @@ function mapStateToProps({
   publicProcessDetailModal: {
     processEditDatas = [],
     processCurrentEditStep,
-    currentOrgAllMembers = []
+    currentOrgAllMembers = [],
+    currentDesignatedRolesData = []
   },
   projectDetail: {
     datas: { projectDetailInfoData = {} }
@@ -666,6 +696,7 @@ function mapStateToProps({
     processEditDatas,
     processCurrentEditStep,
     currentOrgAllMembers,
-    projectDetailInfoData
+    projectDetailInfoData,
+    currentDesignatedRolesData
   }
 }

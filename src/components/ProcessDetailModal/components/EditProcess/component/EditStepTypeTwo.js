@@ -5,7 +5,7 @@ import AvatarList from '../../AvatarList'
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png'
 import { Button, Tooltip } from 'antd'
 import { connect } from 'dva'
-import { renderTimeType } from '../../handleOperateModal'
+import { getRolesName, renderTimeType } from '../../handleOperateModal'
 
 @connect(mapStateToProps)
 export default class EditStepTypeTwo extends Component {
@@ -171,7 +171,7 @@ export default class EditStepTypeTwo extends Component {
   }
 
   render() {
-    const { itemKey, itemValue } = this.props
+    const { itemKey, itemValue, currentDesignatedRolesData = [] } = this.props
     const { is_show_spread_arrow } = this.state
     const {
       name,
@@ -179,7 +179,9 @@ export default class EditStepTypeTwo extends Component {
       deadline_type,
       deadline_value,
       deadline_time_type,
-      cc_locking
+      cc_locking,
+      assignee_type,
+      assignee_roles
     } = itemValue
     let transPrincipalList = this.filterAssignees()
     let transCopyPersonnelList = this.filterRecipients()
@@ -232,44 +234,84 @@ export default class EditStepTypeTwo extends Component {
             >
               <div>
                 {/* 填写人 */}
-                <div
-                  style={{ display: 'inline-block' }}
-                  className={indexStyles.content__principalList_icon}
-                >
-                  {!(transPrincipalList && transPrincipalList.length) ? (
-                    <span style={{ color: 'rgba(0,0,0,0.45)' }}>
-                      未设置审批人
-                    </span>
-                  ) : (
-                    <>
-                      <AvatarList
-                        size="small"
-                        maxLength={10}
-                        excessItemsStyle={{
-                          color: '#f56a00',
-                          backgroundColor: '#fde3cf'
+                {assignee_type == '2' && (
+                  <div
+                    style={{ display: 'inline-block' }}
+                    className={indexStyles.content__principalList_icon}
+                  >
+                    {!(transPrincipalList && transPrincipalList.length) ? (
+                      <span
+                        style={{
+                          color: 'rgba(0,0,0,0.45)',
+                          verticalAlign: 'middle'
                         }}
                       >
-                        {transPrincipalList &&
-                          transPrincipalList.length &&
-                          transPrincipalList.map(({ name, avatar }, index) => (
-                            <AvatarList.Item
-                              key={index}
-                              tips={name || '佚名'}
-                              src={
-                                this.isValidAvatar(avatar)
-                                  ? avatar
-                                  : defaultUserAvatar
-                              }
-                            />
-                          ))}
-                      </AvatarList>
-                      <span className={indexStyles.content__principalList_info}>
-                        {`${transPrincipalList.length}位审批人`}
+                        未设置审批人
                       </span>
-                    </>
-                  )}
-                </div>
+                    ) : (
+                      <>
+                        <AvatarList
+                          size="small"
+                          maxLength={10}
+                          excessItemsStyle={{
+                            color: '#f56a00',
+                            backgroundColor: '#fde3cf'
+                          }}
+                        >
+                          {transPrincipalList &&
+                            transPrincipalList.length &&
+                            transPrincipalList.map(
+                              ({ name, avatar }, index) => (
+                                <AvatarList.Item
+                                  key={index}
+                                  tips={name || '佚名'}
+                                  src={
+                                    this.isValidAvatar(avatar)
+                                      ? avatar
+                                      : defaultUserAvatar
+                                  }
+                                />
+                              )
+                            )}
+                        </AvatarList>
+                        <span
+                          className={indexStyles.content__principalList_info}
+                        >
+                          {`${transPrincipalList.length}位审批人`}
+                        </span>
+                      </>
+                    )}
+                  </div>
+                )}
+                {assignee_type == '3' && (
+                  <div
+                    style={{ display: 'inline-block' }}
+                    className={indexStyles.content__principalList_icon}
+                  >
+                    <span
+                      style={{
+                        display: 'inline-block',
+                        width: '24px',
+                        height: '24px',
+                        background: 'rgba(230,247,255,1)',
+                        borderRadius: '20px',
+                        textAlign: 'center',
+                        marginRight: '5px'
+                      }}
+                    >
+                      <span
+                        style={{ color: '#1890FF' }}
+                        className={globalStyles.authTheme}
+                      >
+                        &#xe7b2;
+                      </span>
+                    </span>
+                    <span>
+                      指定角色 -{' '}
+                      {getRolesName(currentDesignatedRolesData, assignee_roles)}
+                    </span>
+                  </div>
+                )}
                 {/* 抄送人 */}
                 {cc_type == '1' && (
                   <div
@@ -279,7 +321,12 @@ export default class EditStepTypeTwo extends Component {
                     {!(
                       transCopyPersonnelList && transCopyPersonnelList.length
                     ) ? (
-                      <span style={{ color: 'rgba(0,0,0,0.45)' }}>
+                      <span
+                        style={{
+                          color: 'rgba(0,0,0,0.45)',
+                          verticalAlign: 'middle'
+                        }}
+                      >
                         未设置抄送人
                       </span>
                     ) : (
@@ -338,7 +385,7 @@ export default class EditStepTypeTwo extends Component {
                   </div>
                 )}
               </div>
-              <div style={{ display: 'flex' }}>
+              <div style={{ display: 'flex', flexShrink: 0 }}>
                 <span
                   style={{
                     fontWeight: 500,
@@ -378,11 +425,17 @@ export default class EditStepTypeTwo extends Component {
 function mapStateToProps({
   publicProcessDetailModal: {
     processEditDatas = [],
-    currentOrgAllMembers = []
+    currentOrgAllMembers = [],
+    currentDesignatedRolesData = []
   },
   projectDetail: {
     datas: { projectDetailInfoData = {} }
   }
 }) {
-  return { processEditDatas, currentOrgAllMembers, projectDetailInfoData }
+  return {
+    processEditDatas,
+    currentOrgAllMembers,
+    projectDetailInfoData,
+    currentDesignatedRolesData
+  }
 }

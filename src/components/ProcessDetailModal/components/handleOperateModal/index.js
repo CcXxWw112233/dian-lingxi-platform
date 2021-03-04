@@ -521,6 +521,66 @@ const accordingToSortMembersList = (listData = [], selectedData = []) => {
   return new_data
 }
 
+/**
+ * 获取角色名称
+ * @param {*} data 获取角色列表的数据
+ * @param {*} assignee_roles 选择的角色类型
+ */
+const getRolesName = (data = [], assignee_roles) => {
+  let name
+  data.map(item => {
+    if (item.id == assignee_roles) {
+      name = item.name
+    }
+  })
+  return name
+}
+
+/**
+ * 从组织成员中获取角色成员
+ * @param {Array} currentOrgAllMembers 组织成员列表
+ * @param {String} assignees 成员id 逗号隔开
+ * @returns 返回一个特定角色的成员数组
+ */
+const getCurrentDesignatedRolesMembers = (
+  currentOrgAllMembers = [],
+  role_users = []
+) => {
+  if (!role_users.length) return []
+  let roles_data = []
+  let new_assignees = [...role_users]
+  currentOrgAllMembers.map(item => {
+    if (new_assignees.indexOf(item.user_id) != -1) {
+      roles_data.push(item)
+    }
+  })
+  return roles_data
+}
+
+/**
+ * 判断每个节点中是否都存在成员
+ * @param {Array} nodes 节点列表
+ */
+const whetherIsHasMembersInEveryNodes = (nodes = []) => {
+  let flag = true
+  // let gold_item = nodes.find(i => {
+  //   if (i.assignee_type != '1' && !i.assignees) {
+  //     return i
+  //   }
+  // })
+  for (let index = 0; index < nodes.length; index++) {
+    if (nodes[index].assignee_type != '1' && !nodes[index].assignees) {
+      flag = true
+      break
+    }
+    if (nodes[index].cc_type == '1' && !nodes[index].recipients) {
+      flag = true
+      break
+    }
+  }
+  return flag
+}
+
 export {
   showDeleteTempleteConfirm,
   genPrincipalListFromAssignees,
@@ -544,5 +604,8 @@ export {
   updateUserStorage,
   whetherIsExistOnlineExcel,
   transAssigneesToIds,
-  accordingToSortMembersList
+  accordingToSortMembersList,
+  getRolesName,
+  getCurrentDesignatedRolesMembers,
+  whetherIsHasMembersInEveryNodes
 }

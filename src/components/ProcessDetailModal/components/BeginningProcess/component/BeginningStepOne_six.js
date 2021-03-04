@@ -58,8 +58,14 @@ export default class BeginningStepOne_six extends Component {
         }}
         className={indexStyles.text_form}
       >
-        <p>
-          在线表格
+        <p
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between'
+          }}
+        >
+          表格
           <span style={{ marginLeft: 10 }}>
             <Sheet
               data={data.sheet_data}

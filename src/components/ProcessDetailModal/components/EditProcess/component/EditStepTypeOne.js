@@ -11,7 +11,7 @@ import EditStepTypeOne_six from './EditStepTypeOne_six'
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png'
 import { Button, Tooltip } from 'antd'
 import { connect } from 'dva'
-import { renderTimeType } from '../../handleOperateModal'
+import { getRolesName, renderTimeType } from '../../handleOperateModal'
 import { currentNounPlanFilterName } from '../../../../../utils/businessFunction'
 import { FLOWS } from '../../../../../globalset/js/constant'
 import { isObjectValueEqual } from '../../../../../utils/util'
@@ -205,7 +205,12 @@ export default class EditStepTypeOne extends Component {
   }
 
   render() {
-    const { itemKey, processEditDatas = [], itemValue } = this.props
+    const {
+      itemKey,
+      processEditDatas = [],
+      itemValue,
+      currentDesignatedRolesData = []
+    } = this.props
     const { is_show_spread_arrow } = this.state
     const {
       id,
@@ -216,7 +221,8 @@ export default class EditStepTypeOne extends Component {
       deadline_time_type,
       cc_type,
       assignee_type,
-      cc_locking
+      cc_locking,
+      assignee_roles
     } = itemValue
     let transPrincipalList = this.filterAssignees()
     let transCopyPersonnelList = this.filterRecipients()
@@ -271,7 +277,7 @@ export default class EditStepTypeOne extends Component {
             >
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 {/* 填写人 */}
-                {assignee_type == '2' ? (
+                {assignee_type == '2' && (
                   <div
                     style={{ display: 'inline-block' }}
                     className={indexStyles.content__principalList_icon}
@@ -312,7 +318,8 @@ export default class EditStepTypeOne extends Component {
                       </>
                     )}
                   </div>
-                ) : (
+                )}
+                {assignee_type == '1' && (
                   <div
                     style={{ display: 'inline-block' }}
                     className={indexStyles.content__principalList_icon}
@@ -338,6 +345,35 @@ export default class EditStepTypeOne extends Component {
                     <span>{`${currentNounPlanFilterName(FLOWS)}发起人`}</span>
                   </div>
                 )}
+                {assignee_type == '3' && (
+                  <div
+                    style={{ display: 'inline-block' }}
+                    className={indexStyles.content__principalList_icon}
+                  >
+                    <span
+                      style={{
+                        display: 'inline-block',
+                        width: '24px',
+                        height: '24px',
+                        background: 'rgba(230,247,255,1)',
+                        borderRadius: '20px',
+                        textAlign: 'center',
+                        marginRight: '5px'
+                      }}
+                    >
+                      <span
+                        style={{ color: '#1890FF' }}
+                        className={globalStyles.authTheme}
+                      >
+                        &#xe7b2;
+                      </span>
+                    </span>
+                    <span>
+                      指定角色 -{' '}
+                      {getRolesName(currentDesignatedRolesData, assignee_roles)}
+                    </span>
+                  </div>
+                )}
                 {/* 抄送人 */}
                 {cc_type == '1' && (
                   <div
@@ -347,7 +383,14 @@ export default class EditStepTypeOne extends Component {
                     {!(
                       transCopyPersonnelList && transCopyPersonnelList.length
                     ) ? (
-                      ''
+                      <span
+                        style={{
+                          color: 'rgba(0,0,0,0.45)',
+                          verticalAlign: 'middle'
+                        }}
+                      >
+                        未设置抄送人
+                      </span>
                     ) : (
                       <>
                         <AvatarList
@@ -404,7 +447,7 @@ export default class EditStepTypeOne extends Component {
                   </div>
                 )}
               </div>
-              <div style={{ display: 'flex' }}>
+              <div style={{ display: 'flex', flexShrink: 0 }}>
                 <span
                   style={{
                     fontWeight: 500,
@@ -444,11 +487,17 @@ export default class EditStepTypeOne extends Component {
 function mapStateToProps({
   publicProcessDetailModal: {
     processEditDatas = [],
-    currentOrgAllMembers = []
+    currentOrgAllMembers = [],
+    currentDesignatedRolesData = []
   },
   projectDetail: {
     datas: { projectDetailInfoData = {} }
   }
 }) {
-  return { processEditDatas, currentOrgAllMembers, projectDetailInfoData }
+  return {
+    processEditDatas,
+    currentOrgAllMembers,
+    projectDetailInfoData,
+    currentDesignatedRolesData
+  }
 }

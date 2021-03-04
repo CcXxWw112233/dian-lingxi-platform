@@ -39,6 +39,16 @@ class OrganizationMember extends Component {
     }
   }
 
+  componentWillUnmount() {
+    this.props.dispatch({
+      type: 'organizationMember/updateDatas',
+      payload: {
+        batch_setting: false, //进入批量设置
+        batch_setting_ids: [], //批量设置所选id
+        batch_setting_ids_map: []
+      }
+    })
+  }
   render() {
     const { modal, model, dispatch } = this.props
     const CreateGroupProps = {

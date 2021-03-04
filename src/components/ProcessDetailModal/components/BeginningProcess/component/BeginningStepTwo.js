@@ -32,7 +32,8 @@ import {
   findCurrentApproveNodesPosition,
   findCurrentOverruleNodesPosition,
   findCurrentRatingScoreNodesPosition,
-  transAssigneesToIds
+  transAssigneesToIds,
+  getCurrentDesignatedRolesMembers
 } from '../../handleOperateModal'
 import DifferenceDeadlineType from '../../DifferenceDeadlineType'
 import OpinionContent from '../OpinionContent'
@@ -276,7 +277,8 @@ export default class BeginningStepTwo extends Component {
       itemValue: { id: flow_node_instance_id, assignees, his_comments = [] },
       processInfo: { id: flow_instance_id, board_id },
       dispatch,
-      request_flows_params = {}
+      request_flows_params = {},
+      currentFlowListType
     } = this.props
     let BOARD_ID =
       (request_flows_params && request_flows_params.request_board_id) ||
@@ -292,7 +294,8 @@ export default class BeginningStepTwo extends Component {
             type: 'publicProcessDetailModal/getProcessListByType',
             payload: {
               board_id: BOARD_ID,
-              status: '1',
+              // status: '1',
+              type: currentFlowListType,
               _organization_id: request_flows_params._organization_id
             }
           })
@@ -344,7 +347,8 @@ export default class BeginningStepTwo extends Component {
     const {
       processInfo: { id: flow_instance_id, board_id },
       itemValue,
-      request_flows_params = {}
+      request_flows_params = {},
+      currentFlowListType
     } = this.props
     const { id: flow_node_instance_id } = itemValue
     const { successfulMessage, rejectMessage } = this.state
@@ -371,7 +375,8 @@ export default class BeginningStepTwo extends Component {
             type: 'publicProcessDetailModal/getProcessListByType',
             payload: {
               board_id: BOARD_ID,
-              status: '1',
+              // status: '1',
+              type: currentFlowListType,
               _organization_id: request_flows_params._organization_id
             }
           })
@@ -430,7 +435,8 @@ export default class BeginningStepTwo extends Component {
     const {
       processInfo: { id: flow_instance_id, board_id },
       itemValue,
-      request_flows_params = {}
+      request_flows_params = {},
+      currentFlowListType
     } = this.props
     const { id: flow_node_instance_id } = itemValue
     const { rejectMessage } = this.state
@@ -457,7 +463,8 @@ export default class BeginningStepTwo extends Component {
             type: 'publicProcessDetailModal/getProcessListByType',
             payload: {
               board_id: BOARD_ID,
-              status: '1',
+              // status: '1',
+              type: currentFlowListType,
               _organization_id: request_flows_params._organization_id
             }
           })
@@ -1329,7 +1336,8 @@ export default class BeginningStepTwo extends Component {
       processEditDatas = [],
       itemValue,
       projectDetailInfoData: { data = [], board_id },
-      processInfo: { status: parentStatus }
+      processInfo: { status: parentStatus, enable_change },
+      currentOrgAllMembers = []
     } = this.props
     const {
       status,
@@ -1338,8 +1346,15 @@ export default class BeginningStepTwo extends Component {
       runtime_type,
       assignees,
       cc_locking,
-      recipients
+      recipients,
+      role_users = [],
+      assignee_type
     } = itemValue
+    let roles_data = getCurrentDesignatedRolesMembers(
+      currentOrgAllMembers,
+      role_users
+    )
+    let new_data = assignee_type == '3' ? [...roles_data] : [...data]
     const {
       transPrincipalList = [],
       transCopyPersonnelList = [],
@@ -1492,25 +1507,33 @@ export default class BeginningStepTwo extends Component {
                             <span style={{ marginLeft: 5 }}>催办</span>
                           </Button>
                         )}
-                        {parentStatus == '0' && (
-                          <span style={{ position: 'relative' }}>
-                            <AmendComponent
-                              type="2"
-                              updateParentsAssigneesOrCopyPersonnel={
-                                this.updateParentsAssigneesOrCopyPersonnel
-                              }
-                              updateCorrespondingPrcodessStepWithNodeContent={
-                                this
-                                  .updateCorrespondingPrcodessStepWithNodeContent
-                              }
-                              placementTitle="审批人"
-                              data={data}
-                              itemKey={itemKey}
-                              itemValue={new_itemValue}
-                              board_id={board_id}
-                            />
-                          </span>
-                        )}
+                        {parentStatus == '0' &&
+                          (enable_change == '1' || assignee_type == '3') && (
+                            <span
+                              style={{
+                                position: 'relative',
+                                verticalAlign: 'middle'
+                              }}
+                            >
+                              <AmendComponent
+                                type="1"
+                                updateParentsAssigneesOrCopyPersonnel={
+                                  this.updateParentsAssigneesOrCopyPersonnel
+                                }
+                                updateCorrespondingPrcodessStepWithNodeContent={
+                                  this
+                                    .updateCorrespondingPrcodessStepWithNodeContent
+                                }
+                                placementTitle="审批人"
+                                data={new_data}
+                                itemKey={itemKey}
+                                itemValue={new_itemValue}
+                                board_id={board_id}
+                                NotModifiedInitiator={true}
+                                currentOrgAllMembers={currentOrgAllMembers}
+                              />
+                            </span>
+                          )}
                       </>
                     )}
                   </div>
@@ -1559,23 +1582,32 @@ export default class BeginningStepTwo extends Component {
                       )}
                       {parentStatus == '0' &&
                         (cc_locking == '0' ? (
-                          <span style={{ position: 'relative' }}>
-                            <AmendComponent
-                              type="3"
-                              updateParentsAssigneesOrCopyPersonnel={
-                                this.updateParentsAssigneesOrCopyPersonnel
-                              }
-                              updateCorrespondingPrcodessStepWithNodeContent={
-                                this
-                                  .updateCorrespondingPrcodessStepWithNodeContent
-                              }
-                              placementTitle="抄送人"
-                              data={data}
-                              itemKey={itemKey}
-                              itemValue={new_itemValue}
-                              board_id={board_id}
-                            />
-                          </span>
+                          <>
+                            {enable_change == '1' && (
+                              <span
+                                style={{
+                                  position: 'relative',
+                                  verticalAlign: 'middle'
+                                }}
+                              >
+                                <AmendComponent
+                                  type="3"
+                                  updateParentsAssigneesOrCopyPersonnel={
+                                    this.updateParentsAssigneesOrCopyPersonnel
+                                  }
+                                  updateCorrespondingPrcodessStepWithNodeContent={
+                                    this
+                                      .updateCorrespondingPrcodessStepWithNodeContent
+                                  }
+                                  placementTitle="抄送人"
+                                  data={data}
+                                  itemKey={itemKey}
+                                  itemValue={new_itemValue}
+                                  board_id={board_id}
+                                />
+                              </span>
+                            )}
+                          </>
                         ) : (
                           <Tooltip
                             title="已锁定抄送人"
@@ -1617,7 +1649,12 @@ export default class BeginningStepTwo extends Component {
 }
 
 function mapStateToProps({
-  publicProcessDetailModal: { processEditDatas = [], processInfo = {} },
+  publicProcessDetailModal: {
+    processEditDatas = [],
+    processInfo = {},
+    currentOrgAllMembers = [],
+    currentFlowListType
+  },
   technological: {
     datas: { userBoardPermissions = [] }
   },
@@ -1629,6 +1666,8 @@ function mapStateToProps({
     processEditDatas,
     processInfo,
     userBoardPermissions,
-    projectDetailInfoData
+    projectDetailInfoData,
+    currentOrgAllMembers,
+    currentFlowListType
   }
 }

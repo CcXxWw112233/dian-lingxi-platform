@@ -201,7 +201,11 @@ export default class Templates extends Component {
       local_board_id
     } = this.state
     const { id, board_id, org_id, enable_change } = item ? item : curr_temp_info
-    const { dispatch, request_flows_params = {} } = this.props
+    const {
+      dispatch,
+      request_flows_params = {},
+      currentFlowListType
+    } = this.props
     let BOARD_ID =
       (request_flows_params && request_flows_params.request_board_id) ||
       board_id
@@ -228,7 +232,8 @@ export default class Templates extends Component {
         that.props.dispatch({
           type: 'publicProcessDetailModal/getProcessListByType',
           payload: {
-            status: start_time ? '0' : '1',
+            // status: start_time ? '0' : '1',
+            type: currentFlowListType,
             board_id: BOARD_ID,
             _organization_id: request_flows_params._organization_id || org_id
           }
@@ -432,7 +437,23 @@ export default class Templates extends Component {
               id={'template_item_bott'}
               className={styles.template_item_bott}
             >
-              {enable_change == '0' ? (
+              {(checkIsHasPermissionInBoard(
+                PROJECT_FLOWS_FLOW_CREATE,
+                select_board_id
+              ) ||
+                select_board_id == '0' ||
+                !select_board_id) && (
+                <Tooltip title={'启用流程'}>
+                  <div
+                    className={`${globalStyles.authTheme} ${styles.template_operate}`}
+                    onClick={() => this.handleStartBoardProcess(value)}
+                  >
+                    &#xe796; <span style={{ fontSize: '12px' }}>启用流程</span>
+                  </div>
+                </Tooltip>
+              )}
+
+              {/* {enable_change == '0' ? (
                 <>
                   {(checkIsHasPermissionInBoard(
                     PROJECT_FLOWS_FLOW_CREATE,
@@ -488,7 +509,7 @@ export default class Templates extends Component {
                     </Tooltip>
                   )}
                 </>
-              )}
+              )} */}
             </div>
           </div>
         )
@@ -540,7 +561,7 @@ export default class Templates extends Component {
 }
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({
-  publicProcessDetailModal: { processTemplateList },
+  publicProcessDetailModal: { processTemplateList, currentFlowListType },
   simplemode: { simplemodeCurrentProject = {} },
   technological: {
     datas: {
@@ -557,6 +578,7 @@ function mapStateToProps({
     currentSelectOrganize,
     currentUserOrganizes,
     userBoardPermissions,
-    process_detail_modal_visible
+    process_detail_modal_visible,
+    currentFlowListType
   }
 }
