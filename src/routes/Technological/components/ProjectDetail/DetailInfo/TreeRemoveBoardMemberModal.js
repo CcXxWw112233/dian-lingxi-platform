@@ -516,7 +516,7 @@ export default class TreeRemoveBoardMemberModal extends Component {
         <Menu.Item key="2" disabled={listType.indexOf('2') == -1}>
           任务
         </Menu.Item>
-        <Menu.Item key="4" disabled={listType.indexOf('1') == -1}>
+        <Menu.Item key="4" disabled={listType.indexOf('4') == -1}>
           里程碑
         </Menu.Item>
       </Menu>

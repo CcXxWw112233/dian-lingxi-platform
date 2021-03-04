@@ -153,12 +153,13 @@ export default {
         return
       }
       const finally_no = res.data.length - 1
+      const first_no = 0
       yield put({
         type: 'updateDatas',
         payload: {
-          triggerList: [res.data[finally_no]],
-          remind_trigger: res.data[finally_no].type_code,
-          remind_edit_type: res.data[finally_no].remind_edit_type
+          triggerList: res.data,
+          remind_trigger: res.data[first_no].type_code,
+          remind_edit_type: res.data[first_no].remind_edit_type
         }
       })
     },

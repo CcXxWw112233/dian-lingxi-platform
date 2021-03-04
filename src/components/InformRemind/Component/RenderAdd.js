@@ -439,7 +439,7 @@ export default class RenderAdd extends Component {
           {/* 显示自定义时间 */}
           {remind_edit_type == 3 && (
             <DatePicker
-              allowClear={false}
+              // allowClear={false}
               showTime={{ format: 'HH:mm' }}
               defaultValue={
                 remind_time_value.length <= 2
