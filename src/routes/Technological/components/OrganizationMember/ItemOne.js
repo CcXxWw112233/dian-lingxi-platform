@@ -415,20 +415,30 @@ export default class ItemOne extends React.Component {
       itemValue,
       batch_setting_ids = [],
       batch_setting_ids_map = [],
+      batch_setting_ids_source = [],
       dispatch,
       parentItemValue: { id: group_id }
     } = this.props
     const { member_id } = itemValue
     let _new_batch_setting_ids = [...batch_setting_ids]
     let _new_batch_setting_ids_map = [...batch_setting_ids_map]
+    let _new_batch_setting_ids_source = [...batch_setting_ids_source]
 
     const checked = e.target.checked
     if (checked) {
       _new_batch_setting_ids.push(member_id)
       _new_batch_setting_ids = Array.from(new Set(_new_batch_setting_ids))
+
+      _new_batch_setting_ids_source.push(`${group_id}_${member_id}`)
+      _new_batch_setting_ids_source = Array.from(
+        new Set(_new_batch_setting_ids_source)
+      )
     } else {
       _new_batch_setting_ids = _new_batch_setting_ids.filter(
         item => item != member_id
+      )
+      _new_batch_setting_ids_source = _new_batch_setting_ids_source.filter(
+        item => item != `${group_id}_${member_id}`
       )
     }
 
@@ -459,14 +469,21 @@ export default class ItemOne extends React.Component {
       payload: {
         batch_setting_ids: _new_batch_setting_ids,
         batch_setting_ids_map: _new_batch_setting_ids_map,
-        ssss: 111
+        batch_setting_ids_source: _new_batch_setting_ids_source
       }
     })
   }
   render() {
     const { isShowBottDetail, bott_id } = this.state
-    const { itemValue, parentItemValue, batch_setting } = this.props
-    const { is_default } = parentItemValue
+    const {
+      itemValue,
+      parentItemValue,
+      batch_setting,
+      batch_setting_ids,
+      batch_setting_ids_map,
+      batch_setting_ids_source
+    } = this.props
+    const { is_default, id: group_id } = parentItemValue
     const {
       member_id,
       avatar,
@@ -532,7 +549,12 @@ export default class ItemOne extends React.Component {
               </>
             ) : (
               <>
-                <Checkbox onChange={this.batSettingSelect}></Checkbox>
+                <Checkbox
+                  onChange={this.batSettingSelect}
+                  checked={batch_setting_ids_source.includes(
+                    `${group_id}_${member_id}`
+                  )}
+                ></Checkbox>
               </>
             )}
           </div>
@@ -619,7 +641,8 @@ function mapStateToProps({
       roleList,
       groupList,
       batch_setting_ids,
-      batch_setting_ids_map
+      batch_setting_ids_map,
+      batch_setting_ids_source
     }
   },
   technological: {
@@ -633,6 +656,7 @@ function mapStateToProps({
     roleList,
     groupList,
     batch_setting_ids,
-    batch_setting_ids_map
+    batch_setting_ids_map,
+    batch_setting_ids_source
   }
 }

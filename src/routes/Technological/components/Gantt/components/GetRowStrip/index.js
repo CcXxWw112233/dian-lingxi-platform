@@ -551,9 +551,26 @@ export default class GetRowStrip extends PureComponent {
       itemValue: { due_time, min_leaf_left, left, parent_id, percent_card_non },
       ceilWidth,
       gantt_view_mode,
-      date_arr_one_level
+      date_arr_one_level,
+      projectDetailInfoData
     } = this.props
     if (due_time && date_arr_one_level[0].timestamp > due_time) return <></> //不在时间范围内
+
+    const date_mode = projectDetailInfoData?.board_set?.date_mode
+    let width = left - min_leaf_left
+    if (!parent_id) {
+      width = width + ceilWidth
+    } else {
+      if (['month', 'hours', 'week'].includes(gantt_view_mode)) {
+        width = width + ceilWidth / 2
+      } else {
+        if (date_mode != '1') {
+          width = width + ceilWidth * 2
+        } else {
+          width = width + ceilWidth / 2
+        }
+      }
+    }
     return !!due_time ? (
       <>
         <div
@@ -563,14 +580,15 @@ export default class GetRowStrip extends PureComponent {
             styles.leaf_min_time_complete_color}`}
           style={{
             left: min_leaf_left,
-            width:
-              left -
-              min_leaf_left +
-              (!parent_id
-                ? ceilWidth
-                : ['month', 'hours', 'week'].includes(gantt_view_mode)
-                ? ceilWidth / 2
-                : ceilWidth * 2)
+            width
+            // width:
+            //   left -
+            //   min_leaf_left +
+            //   (!parent_id
+            //     ? ceilWidth
+            //     : ['month', 'hours', 'week'].includes(gantt_view_mode)
+            //     ? ceilWidth / 2
+            //     : ceilWidth * 2)
           }}
         >
           <div className={styles.left_triangle}></div>
@@ -585,15 +603,16 @@ export default class GetRowStrip extends PureComponent {
             ) >= 100 && styles.leaf_min_time_complete_color}`}
             style={{
               left: min_leaf_left,
-              width:
-                (left -
-                  min_leaf_left +
-                  (!parent_id
-                    ? ceilWidth
-                    : ['month', 'hours', 'week'].includes(gantt_view_mode)
-                    ? ceilWidth / 2
-                    : ceilWidth * 2)) *
-                (percent_card_non / 100)
+              width: width * (percent_card_non / 100)
+              // width:
+              //   (left -
+              //     min_leaf_left +
+              //     (!parent_id
+              //       ? ceilWidth
+              //       : ['month', 'hours', 'week'].includes(gantt_view_mode)
+              //       ? ceilWidth / 2
+              //       : ceilWidth * 2)) *
+              //   (percent_card_non / 100)
             }}
           >
             <div className={styles.left_triangle}></div>
