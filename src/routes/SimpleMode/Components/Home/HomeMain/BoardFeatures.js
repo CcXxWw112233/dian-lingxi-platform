@@ -381,11 +381,15 @@ export default class BoardFeatures extends Component {
       tempBoardToDoList = [...board_todo_list]
     }
     return tempBoardToDoList.length ? (
-      tempBoardToDoList.map(value => {
-        const { id } = value
-        // return <BoardFeaturesProcessItem key={id} itemValue={value} />
-        return <>{this.renderDiffRelaTypeFeaturesItem(value)}</>
-      })
+      tempBoardToDoList
+        .sort((a, b) => {
+          return +(b.is_urge || 0) - +(a.is_urge || 0)
+        })
+        .map(value => {
+          const { id } = value
+          // return <BoardFeaturesProcessItem key={id} itemValue={value} />
+          return <>{this.renderDiffRelaTypeFeaturesItem(value)}</>
+        })
     ) : (
       <div className={`${globalStyles.authTheme} ${styles.nodataArea}`}>
         <div className={`${globalStyles.authTheme} ${styles.alarm}`}>
