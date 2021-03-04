@@ -563,12 +563,21 @@ const getCurrentDesignatedRolesMembers = (
  */
 const whetherIsHasMembersInEveryNodes = (nodes = []) => {
   let flag = true
-  let gold_item = nodes.find(i => {
-    if (i.assignee_type != '1' && !i.assignees) {
-      return i
+  // let gold_item = nodes.find(i => {
+  //   if (i.assignee_type != '1' && !i.assignees) {
+  //     return i
+  //   }
+  // })
+  for (let index = 0; index < nodes.length; index++) {
+    if (nodes[index].assignee_type != '1' && !nodes[index].assignees) {
+      flag = true
+      break
     }
-  })
-  flag = gold_item && !!Object.keys(gold_item).length
+    if (nodes[index].cc_type == '1' && !nodes[index].recipients) {
+      flag = true
+      break
+    }
+  }
   return flag
 }
 

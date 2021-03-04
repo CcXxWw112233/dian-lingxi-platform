@@ -302,7 +302,14 @@ export default class ConfirmInfoTwo extends Component {
                       {!(
                         transCopyPersonnelList && transCopyPersonnelList.length
                       ) ? (
-                        ''
+                        <span
+                          style={{
+                            color: 'rgba(0,0,0,0.45)',
+                            verticalAlign: 'middle'
+                          }}
+                        >
+                          未设置抄送人
+                        </span>
                       ) : (
                         <>
                           <AvatarList
@@ -338,7 +345,7 @@ export default class ConfirmInfoTwo extends Component {
                       )}
                       {cc_locking == '0' ? (
                         <>
-                          {enable_change == '1 ' && (
+                          {enable_change == '1' && (
                             <span
                               style={{
                                 position: 'relative',

@@ -1467,7 +1467,7 @@ export default class MainContent extends Component {
       whetherIsHasMembersInEveryNodes(processEditDatas)
     ) {
       saveTempleteDisabled = true
-      errText = '请填写流程名称或未设置填写人、审批人'
+      errText = '请填写流程名称或未设置填写人、审批人以及抄送人'
     }
     return (
       <div
@@ -1554,7 +1554,8 @@ export default class MainContent extends Component {
         processEditDatas.find(item => item.is_edit == '0')) ||
       (processEditDatas &&
         processEditDatas.length &&
-        !processEditDatas[processEditDatas.length - 1].node_type)
+        !processEditDatas[processEditDatas.length - 1].node_type) ||
+      whetherIsHasMembersInEveryNodes(processEditDatas)
         ? true
         : false
     return (
@@ -1893,6 +1894,10 @@ export default class MainContent extends Component {
                   disabled={saveTempleteDisabled}
                   type="primary"
                   style={{ height: '40px' }}
+                  title={
+                    saveTempleteDisabled &&
+                    '请填写流程名称或未设置填写人、审批人以及抄送人'
+                  }
                 >
                   保存模板
                 </Button>

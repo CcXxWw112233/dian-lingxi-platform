@@ -383,7 +383,14 @@ export default class EditStepTypeOne extends Component {
                     {!(
                       transCopyPersonnelList && transCopyPersonnelList.length
                     ) ? (
-                      ''
+                      <span
+                        style={{
+                          color: 'rgba(0,0,0,0.45)',
+                          verticalAlign: 'middle'
+                        }}
+                      >
+                        未设置抄送人
+                      </span>
                     ) : (
                       <>
                         <AvatarList

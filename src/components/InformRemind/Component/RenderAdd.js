@@ -224,7 +224,7 @@ export default class RenderAdd extends Component {
     const { is_click_button } = this.state
     if (is_click_button) {
       setTimeout(() => {
-        message.warn('正在添加中,请不要重复点击哦~')
+        message.warn('正在添加中,请不要重复点击')
       }, 200)
       this.setState({
         is_click_button: false
