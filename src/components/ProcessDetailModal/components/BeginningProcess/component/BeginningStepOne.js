@@ -1077,7 +1077,12 @@ export default class BeginningStepOne extends Component {
                   )}
                   {parentStatus == '0' &&
                     (enable_change == '1' || assignee_type == '3') && (
-                      <span style={{ position: 'relative' }}>
+                      <span
+                        style={{
+                          position: 'relative',
+                          verticalAlign: 'middle'
+                        }}
+                      >
                         <AmendComponent
                           type="1"
                           updateParentsAssigneesOrCopyPersonnel={
@@ -1144,7 +1149,12 @@ export default class BeginningStepOne extends Component {
                       (cc_locking == '0' ? (
                         <>
                           {enable_change == '1' && (
-                            <span style={{ position: 'relative' }}>
+                            <span
+                              style={{
+                                position: 'relative',
+                                verticalAlign: 'middle'
+                              }}
+                            >
                               <AmendComponent
                                 type="3"
                                 updateParentsAssigneesOrCopyPersonnel={

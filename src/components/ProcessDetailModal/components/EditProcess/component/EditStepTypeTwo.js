@@ -240,7 +240,12 @@ export default class EditStepTypeTwo extends Component {
                     className={indexStyles.content__principalList_icon}
                   >
                     {!(transPrincipalList && transPrincipalList.length) ? (
-                      <span style={{ color: 'rgba(0,0,0,0.45)' }}>
+                      <span
+                        style={{
+                          color: 'rgba(0,0,0,0.45)',
+                          verticalAlign: 'middle'
+                        }}
+                      >
                         未设置审批人
                       </span>
                     ) : (

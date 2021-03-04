@@ -624,7 +624,7 @@ export default class ConfigureStepTypeThree extends Component {
                 </Select>
               </span>
               {(count_type == '2' || count_type == '3') && (
-                <span style={{ position: 'relative' }}>
+                <span style={{ position: 'relative', verticalAlign: 'middle' }}>
                   <Select
                     value={count_type}
                     onChange={this.handleComputingModeChange}

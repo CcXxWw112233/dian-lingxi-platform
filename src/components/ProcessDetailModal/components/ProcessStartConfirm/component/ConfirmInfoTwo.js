@@ -226,7 +226,12 @@ export default class ConfirmInfoTwo extends Component {
                     className={indexStyles.content__principalList_icon}
                   >
                     {!(transPrincipalList && transPrincipalList.length) ? (
-                      <span style={{ color: 'rgba(0,0,0,0.45)' }}>
+                      <span
+                        style={{
+                          color: 'rgba(0,0,0,0.45)',
+                          verticalAlign: 'middle'
+                        }}
+                      >
                         未设置审批人
                       </span>
                     ) : (
@@ -263,7 +268,12 @@ export default class ConfirmInfoTwo extends Component {
                       </>
                     )}
                     {(enable_change == '1' || assignee_type == '3') && (
-                      <span style={{ position: 'relative' }}>
+                      <span
+                        style={{
+                          position: 'relative',
+                          verticalAlign: 'middle'
+                        }}
+                      >
                         <AmendComponent
                           type="1"
                           updateParentsAssigneesOrCopyPersonnel={
@@ -292,9 +302,7 @@ export default class ConfirmInfoTwo extends Component {
                       {!(
                         transCopyPersonnelList && transCopyPersonnelList.length
                       ) ? (
-                        <span style={{ color: 'rgba(0,0,0,0.45)' }}>
-                          未设置抄送人
-                        </span>
+                        ''
                       ) : (
                         <>
                           <AvatarList
@@ -331,7 +339,12 @@ export default class ConfirmInfoTwo extends Component {
                       {cc_locking == '0' ? (
                         <>
                           {enable_change == '1 ' && (
-                            <span style={{ position: 'relative' }}>
+                            <span
+                              style={{
+                                position: 'relative',
+                                verticalAlign: 'middle'
+                              }}
+                            >
                               <AmendComponent
                                 type="3"
                                 updateParentsAssigneesOrCopyPersonnel={
@@ -402,7 +415,9 @@ export default class ConfirmInfoTwo extends Component {
                   </span>
                 )}
                 {enable_change == '1' && (
-                  <span style={{ position: 'relative' }}>
+                  <span
+                    style={{ position: 'relative', verticalAlign: 'middle' }}
+                  >
                     <AmendComponent
                       updateCorrespondingPrcodessStepWithNodeContent={
                         this.updateCorrespondingPrcodessStepWithNodeContent

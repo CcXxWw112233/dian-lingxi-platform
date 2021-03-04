@@ -1351,7 +1351,12 @@ export default class BeginningStepThree extends Component {
                         (score_locked == '0' ? (
                           <>
                             {enable_change == '1' && (
-                              <span style={{ position: 'relative' }}>
+                              <span
+                                style={{
+                                  position: 'relative',
+                                  verticalAlign: 'middle'
+                                }}
+                              >
                                 <AmendComponent
                                   type="2"
                                   updateParentsAssigneesOrCopyPersonnel={
@@ -1441,7 +1446,12 @@ export default class BeginningStepThree extends Component {
                       (cc_locking == '0' ? (
                         <>
                           {enable_change == '1' && (
-                            <span style={{ position: 'relative' }}>
+                            <span
+                              style={{
+                                position: 'relative',
+                                verticalAlign: 'middle'
+                              }}
+                            >
                               <AmendComponent
                                 type="3"
                                 updateParentsAssigneesOrCopyPersonnel={
