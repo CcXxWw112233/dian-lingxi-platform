@@ -106,7 +106,7 @@ export default class FlowInstances extends Component {
         <div className={styles.flows_bott}>
           <FlowTables
             list_type={list_type}
-            list_status={list_status}
+            // list_status={list_status}
             list_source={list_source}
             workbenchBoxContent_height={this.props.workbenchBoxContent_height}
           />

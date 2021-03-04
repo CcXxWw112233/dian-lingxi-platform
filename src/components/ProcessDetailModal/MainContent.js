@@ -1458,13 +1458,17 @@ export default class MainContent extends Component {
 
   // 渲染开始流程的气泡框
   renderProcessStartConfirm = () => {
-    const { currentFlowInstanceName, processEditDatas = [] } = this.props
+    const {
+      currentFlowInstanceName,
+      processEditDatas = [],
+      processPageFlagStep
+    } = this.props
     // 禁用开始流程的按钮逻辑 1.判断流程名称是否输入 ==> 2. 是否存在未选择人员的情况
     let saveTempleteDisabled = false
     let errText = ''
     if (
       currentFlowInstanceName == '' ||
-      whetherIsHasMembersInEveryNodes(processEditDatas)
+      whetherIsHasMembersInEveryNodes(processEditDatas, processPageFlagStep)
     ) {
       saveTempleteDisabled = true
       errText = '请填写流程名称或未设置填写人、审批人以及抄送人'
@@ -1555,7 +1559,7 @@ export default class MainContent extends Component {
       (processEditDatas &&
         processEditDatas.length &&
         !processEditDatas[processEditDatas.length - 1].node_type) ||
-      whetherIsHasMembersInEveryNodes(processEditDatas)
+      whetherIsHasMembersInEveryNodes(processEditDatas, processPageFlagStep)
         ? true
         : false
     return (

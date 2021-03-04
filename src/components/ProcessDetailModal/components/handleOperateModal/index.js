@@ -561,17 +561,24 @@ const getCurrentDesignatedRolesMembers = (
  * 判断每个节点中是否都存在成员
  * @param {Array} nodes 节点列表
  */
-const whetherIsHasMembersInEveryNodes = (nodes = []) => {
-  let flag = true
+const whetherIsHasMembersInEveryNodes = (nodes = [], processPageFlagStep) => {
+  let flag = false
   // let gold_item = nodes.find(i => {
   //   if (i.assignee_type != '1' && !i.assignees) {
   //     return i
   //   }
   // })
   for (let index = 0; index < nodes.length; index++) {
-    if (nodes[index].assignee_type != '1' && !nodes[index].assignees) {
-      flag = true
-      break
+    if (processPageFlagStep == '3') {
+      if (nodes[index].assignee_type != '1' && !nodes[index].assignees) {
+        flag = true
+        break
+      }
+    } else {
+      if (nodes[index].assignee_type == '2' && !nodes[index].assignees) {
+        flag = true
+        break
+      }
     }
     if (nodes[index].cc_type == '1' && !nodes[index].recipients) {
       flag = true

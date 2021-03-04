@@ -110,6 +110,8 @@ export default class Templates extends Component {
     this.setBoardSelectVisible(false)
     const { curr_temp_info = {} } = this.state
     const { enable_change } = curr_temp_info
+    this.handleStartProcess(curr_temp_info)
+    return
     if (enable_change == '0') {
       // 表示不经过模板启动
       this.handleOperateStartConfirmProcessOne()
