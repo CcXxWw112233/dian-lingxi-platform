@@ -25,10 +25,14 @@ export function getReportCardNumber() {
 }
 
 // 项目状态
-export function getReportBoardStatus() {
+export function getReportBoardStatus(params) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/report/board/status`,
-    method: 'GET'
+    method: 'GET',
+    params: {
+      ...params,
+      _organization_id: localStorage.getItem('OrganizationId')
+    }
   })
 }
 
