@@ -26,7 +26,7 @@ export default class FlowTables extends Component {
   }
   setTabledata = props => {
     //设置列和数据源
-    const { list_source = [], list_type } = props
+    const { list_source = [], list_status } = props
     const dataSource = list_source
       .map(item => {
         const {
@@ -44,19 +44,19 @@ export default class FlowTables extends Component {
         const new_item = { ...item, key: id }
         let key_time
         let key_state
-        if ('1' == list_type) {
+        if ('1' == list_status) {
           key_time = last_complete_time
           key_state = `${total_node_name}（${completed_node_num}/${total_node_num}）`
           if (!total_node_name || !completed_node_num || !total_node_num) {
             key_state = ''
           }
-        } else if ('2' == list_type) {
+        } else if ('2' == list_status) {
           key_time = update_time
           key_state = '已中止'
-        } else if ('3' == list_type) {
+        } else if ('3' == list_status) {
           key_time = update_time //代替尚未定义
           key_state = '已完成'
-        } else if ('0' == list_type) {
+        } else if ('0' == list_status) {
           key_time = plan_start_time ? plan_start_time : ''
           key_state = plan_start_time ? '未开始' : ''
         } else {
