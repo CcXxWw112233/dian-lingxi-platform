@@ -43,8 +43,8 @@ export const WEBSOCKET_URL = (function(NODE_ENV, location) {
 // export const MAP_URL = 'https://map.di-an.com' //投资地图-正式环境
 export const MAP_URL =
   window.location.host.indexOf('lingxi.di-an') != -1
-    ? 'https://map.di-an.com/'
-    : 'http://60.205.252.199/' //投资地图-测试环境
+    ? 'https://map.di-an.com/#/home'
+    : 'http://test.map.new-di.com/#/home' //投资地图-测试环境
 
 export const WEBSOCKET_PATH = '192.168.1.16' //'47.93.53.149'//'192.168.0.14'  //WS链接地址dsfsd
 export const WEBSOCKET_PORT = '9326' //WS链接地址
