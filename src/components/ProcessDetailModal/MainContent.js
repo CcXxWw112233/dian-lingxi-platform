@@ -571,6 +571,9 @@ export default class MainContent extends Component {
       const {
         processInfo: { id, board_id }
       } = this.props
+      let BOARD_ID =
+        (request_flows_params && request_flows_params.request_board_id) ||
+        board_id
       // let newProcessDoingList = [...processDoingList]
       // let newProcessNotBeginningList = [...processNotBeginningList]
       // let currentListItemPosition =
@@ -597,10 +600,6 @@ export default class MainContent extends Component {
             })
           }, 200)
           processInfo[key] = value
-          /**
-           * 下面都是处理更新了名称等更新外部列表中的数据
-           * 之前列表是根据 进行中|已终止...等排列 现在需废弃这个方法
-           */
           this.props.handleProcessDetailChange &&
             this.props.handleProcessDetailChange({
               flow_instance_id: id,
@@ -611,7 +610,7 @@ export default class MainContent extends Component {
           dispatch({
             type: 'publicProcessDetailModal/getProcessListByType',
             payload: {
-              board_id: board_id,
+              board_id: BOARD_ID,
               // status: currentFlowTabsStatus || '1',
               type: currentFlowListType || 'process',
               _organization_id:
@@ -619,6 +618,10 @@ export default class MainContent extends Component {
                 localStorage.getItem('OrganizationId')
             }
           })
+          /**
+           * 下面都是处理更新了名称等更新外部列表中的数据
+           * 之前列表是根据 进行中|已终止...等排列 现在需废弃这个方法
+           */
           // if (
           //   currentFlowTabsStatus == '1' &&
           //   currentListItemPosition &&
