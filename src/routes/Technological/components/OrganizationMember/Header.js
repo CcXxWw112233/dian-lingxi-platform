@@ -181,7 +181,6 @@ export default class Header extends React.Component {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    const modal = Modal.confirm()
     // 这里的 `update` 相当于是对 Modal进行配置
     const { dispatch, batch_setting_ids_map, batch_setting_ids } = this.props
     if (!batch_setting_ids.length) {
@@ -189,6 +188,7 @@ export default class Header extends React.Component {
       return
     }
     const _self = this
+    const modal = Modal.confirm()
     modal.update({
       title: `确认移出？`,
       okText: '确认',

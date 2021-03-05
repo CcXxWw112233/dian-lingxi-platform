@@ -1060,256 +1060,266 @@ export default class BoardTemplate extends Component {
     const reg = /^[A-Za-z0-9]{6}$/
     return gantt_board_id && gantt_board_id != '0' ? (
       <div
-        className={`${styles.container_init}   ${boardTemplateShow == '1' &&
-          styles.container_show} ${boardTemplateShow == '2' &&
-          styles.container_hide}`}
-        style={{
-          height: gantt_card_height,
-          // top: date_area_height
-          visibility: group_view_type != '2' ? 'visible' : 'hidden'
-        }}
+        className={`${styles.wrapper}`}
+        style={{ width: boardTemplateShow == '1' ? 320 : 40 }}
       >
-        {!this.state.selected_template_id && (
-          <div style={{ height: date_area_height }} className={styles.top}>
-            <div className={`${styles.top_select}`}>
-              <div
-                className={`${styles.top_select_left} ${template_origin ==
-                  '2' && styles.selected}`}
-                onClick={() => this.selectTemplateType('2')}
-              >
-                自有模版
+        <div
+          className={`${styles.container_init}   ${boardTemplateShow == '1' &&
+            styles.container_show} ${boardTemplateShow == '2' &&
+            styles.container_hide}`}
+          style={{
+            height: gantt_card_height,
+            // top: date_area_height
+            visibility: group_view_type != '2' ? 'visible' : 'hidden'
+          }}
+        >
+          {!this.state.selected_template_id && (
+            <div style={{ height: date_area_height }} className={styles.top}>
+              <div className={`${styles.top_select}`}>
+                <div
+                  className={`${styles.top_select_left} ${template_origin ==
+                    '2' && styles.selected}`}
+                  onClick={() => this.selectTemplateType('2')}
+                >
+                  自有模版
+                </div>
+                <div
+                  className={`${styles.top_select_right} ${template_origin ==
+                    '0' && styles.selected}`}
+                  onClick={() => this.selectTemplateType('0')}
+                >
+                  行业模版
+                </div>
               </div>
-              <div
-                className={`${styles.top_select_right} ${template_origin ==
-                  '0' && styles.selected}`}
-                onClick={() => this.selectTemplateType('0')}
-              >
-                行业模版
-              </div>
-            </div>
 
-            {/* <span className={styles.title}>项目模板</span> */}
-            {/* <Dropdown overlay={this.renderTemplateList()}>
+              {/* <span className={styles.title}>项目模板</span> */}
+              {/* <Dropdown overlay={this.renderTemplateList()}>
                                 <div className={styles.top_left}>
                                     <div className={`${globalStyles.global_ellipsis} ${styles.name}`}>{selected_template_name}</div>
                                     <div className={`${globalStyles.authTheme} ${styles.down}`}>&#xe7ee;</div>
                                 </div>
                             </Dropdown> */}
-            {/* {
+              {/* {
                                 this.isShowSetting() &&
                                 (
                                     <div className={`${globalStyles.authTheme} ${styles.top_right}`} onClick={this.routingJumpToOrgManager}>&#xe78e;</div>
                                 )
                             } */}
-          </div>
-        )}
-
-        {/* 拖拽子任务时，用于存放任务图标的ui,做dom操作 */}
-        <div style={{ display: 'none' }} id={'save_child_card_icon'}>
-          <div
-            className={globalStyles.authTheme}
-            style={{ color: '#18B2FF', fontSize: 18, marginRight: 6 }}
-          >
-            &#xe6f0;
-          </div>
-        </div>
-        {this.state.selected_template_id ? (
-          <>
-            <div
-              className={`${styles.list_item} ${styles.list_item_flex}`}
-              onClick={() => this.selectBoardTemplate(0)}
-            >
-              <span className={styles.backBtn}>
-                {' '}
-                <i className={globalStyles.authTheme}>&#xe7ec;</i>
-              </span>
-              <div
-                className={`${styles.lable} ${globalStyles.global_ellipsis}`}
-              >
-                {selected_template_name}
-              </div>
             </div>
-            {/* 主区 */}
-            <Spin spinning={spinning}>
+          )}
+
+          {/* 拖拽子任务时，用于存放任务图标的ui,做dom操作 */}
+          <div style={{ display: 'none' }} id={'save_child_card_icon'}>
+            <div
+              className={globalStyles.authTheme}
+              style={{ color: '#18B2FF', fontSize: 18, marginRight: 6 }}
+            >
+              &#xe6f0;
+            </div>
+          </div>
+          {this.state.selected_template_id ? (
+            <>
               <div
-                style={{ maxHeight: gantt_card_height - date_area_height - 48 }}
-                onMouseDown={this.outerMouseDown}
-                className={styles.main}
+                className={`${styles.list_item} ${styles.list_item_flex}`}
+                onClick={() => this.selectBoardTemplate(0)}
               >
-                <div>
-                  <Tree
-                    checkable
-                    // checkStrictly
-                    checkedKeys={checkedKeys}
-                    onCheck={this.onCheck}
-                    draggable={gantt_view_mode == 'month'}
-                    onDragStart={this.onDragStart}
-                    data-currentpanel="board_templete"
-                    onDrop={this.onDrop}
-                    // onDragEnter={this.onDragEnter}
-                    // onDragLeave={this.onDragLeave}
-                    // onDragOver={this.onDragOver}
-                    // onDragEnd={this.onDragEnd}
-                    // onDrop={this.onDrop}
-                    // switcherIcon={
-                    //     <Icon type="caret-down" style={{ fontSize: 20, color: 'rgba(0,0,0,.45)' }} />
-                    // }
-                  >
-                    {this.renderTemplateTree(template_data)}
-                  </Tree>
+                <span className={styles.backBtn}>
+                  {' '}
+                  <i className={globalStyles.authTheme}>&#xe7ec;</i>
+                </span>
+                <div
+                  className={`${styles.lable} ${globalStyles.global_ellipsis}`}
+                >
+                  {selected_template_name}
                 </div>
               </div>
-            </Spin>
-            {checkIsHasPermissionInBoard(
-              PROJECT_TEAM_CARD_CREATE,
-              gantt_board_id
-            ) &&
-              checkIsHasPermissionInBoard(
-                PROJECT_TEAM_BOARD_MILESTONE,
-                gantt_board_id
-              ) && (
-                // !outline_tree.length &&
-                <div className={styles.footer}>
-                  <Button
-                    type="primary"
-                    block
-                    onClick={() =>
-                      this.openImportBoardModal(this.state.selected_template_id)
-                    }
-                  >
-                    引用到项目
-                  </Button>
-                </div>
-              )}
-          </>
-        ) : (
-          <>
-            <div className={styles.temp_middle}>
-              {this.state.template_list && this.state.template_list.length ? (
-                this.state.template_list.map(item => {
-                  const { id, name, template_type } = item
-                  return (
-                    <div
-                      class={styles.boardTplItem}
-                      onClick={() => this.selectBoardTemplate(id)}
-                    >
-                      <span
-                        className={`${styles.left} ${globalStyles.global_ellipsis}`}
-                      >
-                        {name}
-                      </span>
-                      <span>
-                        {template_type == '2' && (
-                          <Popover
-                            key={id}
-                            trigger={['click']}
-                            getPopupContainer={triggerNode =>
-                              triggerNode.parentNode
-                            }
-                            visible={
-                              item.id == templete_share_id &&
-                              templete_share_visible
-                            }
-                            onVisibleChange={this.onTempleteShareVisibleChange}
-                            placement="bottomRight"
-                            title={null}
-                            content={
-                              <div
-                                className={styles.popover_content}
-                                onClick={e => e && e.stopPropagation()}
-                              >
-                                <span
-                                  onClick={this.onCancelTempleteShareVisble}
-                                  className={`${styles.popover_close}`}
-                                >
-                                  <i className={`${globalStyles.authTheme}`}>
-                                    &#xe7fe;
-                                  </i>
-                                </span>
-                                <div>一次性提取码</div>
-                                <div id={`templete_share_${id}`}>
-                                  {share_content}
-                                </div>
-                                <div>
-                                  <span>
-                                    <span className={globalStyles.authTheme}>
-                                      &#xe7fc;
-                                    </span>
-                                  </span>
-                                  已复制成功，快去分享模版吧！
-                                </div>
-                              </div>
-                            }
-                          >
-                            <i
-                              onClick={e => this.handleDisposableCode(e, id)}
-                              className={`${globalStyles.authTheme} ${styles.share_icon}`}
-                            >
-                              &#xe7e7;
-                            </i>
-                          </Popover>
-                        )}
-                        <i className={globalStyles.authTheme}>&#xe7eb;</i>
-                      </span>
-                    </div>
-                  )
-                })
-              ) : (
+              {/* 主区 */}
+              <Spin spinning={spinning}>
                 <div
                   style={{
-                    textAlign: 'center',
-                    color: 'rgba(0,0,0,0.3)',
-                    marginTop: 50
+                    maxHeight: gantt_card_height - date_area_height - 48
                   }}
+                  onMouseDown={this.outerMouseDown}
+                  className={styles.main}
                 >
-                  <div
-                    className={`${globalStyles.authTheme}`}
-                    style={{ fontSize: 50, textAlign: 'center' }}
-                  >
-                    &#xe703;
-                  </div>
-                  <div>暂无数据</div>
-                </div>
-              )}
-            </div>
-            {template_origin == '2' && (
-              // !!(
-              //   this.state.template_list && this.state.template_list.length
-              // ) &&
-              <Popover
-                title={null}
-                trigger={'click'}
-                placement="top"
-                onVisibleChange={this.handlePickUpTempleteVisible}
-                content={
                   <div>
-                    <div>输入提取码：</div>
-                    <div style={{ display: 'flex', marginTop: '8px' }}>
-                      <Input
-                        value={inputValue}
-                        onChange={this.handleInputChange}
-                      />
-                      <Button
-                        disabled={!inputValue || !reg.test(inputValue)}
-                        type="primary"
-                        style={{ marginLeft: '16px' }}
-                        onClick={this.handlePickUpTemplete}
-                      >
-                        确定
-                      </Button>
-                    </div>
+                    <Tree
+                      checkable
+                      // checkStrictly
+                      checkedKeys={checkedKeys}
+                      onCheck={this.onCheck}
+                      draggable={gantt_view_mode == 'month'}
+                      onDragStart={this.onDragStart}
+                      data-currentpanel="board_templete"
+                      onDrop={this.onDrop}
+                      // onDragEnter={this.onDragEnter}
+                      // onDragLeave={this.onDragLeave}
+                      // onDragOver={this.onDragOver}
+                      // onDragEnd={this.onDragEnd}
+                      // onDrop={this.onDrop}
+                      // switcherIcon={
+                      //     <Icon type="caret-down" style={{ fontSize: 20, color: 'rgba(0,0,0,.45)' }} />
+                      // }
+                    >
+                      {this.renderTemplateTree(template_data)}
+                    </Tree>
                   </div>
-                }
-              >
-                <div className={styles.pick_templete}>
-                  <Button>提取模板</Button>
                 </div>
-              </Popover>
-            )}
-          </>
-        )}
+              </Spin>
+              {checkIsHasPermissionInBoard(
+                PROJECT_TEAM_CARD_CREATE,
+                gantt_board_id
+              ) &&
+                checkIsHasPermissionInBoard(
+                  PROJECT_TEAM_BOARD_MILESTONE,
+                  gantt_board_id
+                ) && (
+                  // !outline_tree.length &&
+                  <div className={styles.footer}>
+                    <Button
+                      type="primary"
+                      block
+                      onClick={() =>
+                        this.openImportBoardModal(
+                          this.state.selected_template_id
+                        )
+                      }
+                    >
+                      引用到项目
+                    </Button>
+                  </div>
+                )}
+            </>
+          ) : (
+            <>
+              <div className={styles.temp_middle}>
+                {this.state.template_list && this.state.template_list.length ? (
+                  this.state.template_list.map(item => {
+                    const { id, name, template_type } = item
+                    return (
+                      <div
+                        class={styles.boardTplItem}
+                        onClick={() => this.selectBoardTemplate(id)}
+                      >
+                        <span
+                          className={`${styles.left} ${globalStyles.global_ellipsis}`}
+                        >
+                          {name}
+                        </span>
+                        <span>
+                          {template_type == '2' && (
+                            <Popover
+                              key={id}
+                              trigger={['click']}
+                              getPopupContainer={triggerNode =>
+                                triggerNode.parentNode
+                              }
+                              visible={
+                                item.id == templete_share_id &&
+                                templete_share_visible
+                              }
+                              onVisibleChange={
+                                this.onTempleteShareVisibleChange
+                              }
+                              placement="bottomRight"
+                              title={null}
+                              content={
+                                <div
+                                  className={styles.popover_content}
+                                  onClick={e => e && e.stopPropagation()}
+                                >
+                                  <span
+                                    onClick={this.onCancelTempleteShareVisble}
+                                    className={`${styles.popover_close}`}
+                                  >
+                                    <i className={`${globalStyles.authTheme}`}>
+                                      &#xe7fe;
+                                    </i>
+                                  </span>
+                                  <div>一次性提取码</div>
+                                  <div id={`templete_share_${id}`}>
+                                    {share_content}
+                                  </div>
+                                  <div>
+                                    <span>
+                                      <span className={globalStyles.authTheme}>
+                                        &#xe7fc;
+                                      </span>
+                                    </span>
+                                    已复制成功，快去分享模版吧！
+                                  </div>
+                                </div>
+                              }
+                            >
+                              <i
+                                onClick={e => this.handleDisposableCode(e, id)}
+                                className={`${globalStyles.authTheme} ${styles.share_icon}`}
+                              >
+                                &#xe7e7;
+                              </i>
+                            </Popover>
+                          )}
+                          <i className={globalStyles.authTheme}>&#xe7eb;</i>
+                        </span>
+                      </div>
+                    )
+                  })
+                ) : (
+                  <div
+                    style={{
+                      textAlign: 'center',
+                      color: 'rgba(0,0,0,0.3)',
+                      marginTop: 50
+                    }}
+                  >
+                    <div
+                      className={`${globalStyles.authTheme}`}
+                      style={{ fontSize: 50, textAlign: 'center' }}
+                    >
+                      &#xe703;
+                    </div>
+                    <div>暂无数据</div>
+                  </div>
+                )}
+              </div>
+              {template_origin == '2' && (
+                // !!(
+                //   this.state.template_list && this.state.template_list.length
+                // ) &&
+                <Popover
+                  title={null}
+                  trigger={'click'}
+                  placement="top"
+                  onVisibleChange={this.handlePickUpTempleteVisible}
+                  content={
+                    <div>
+                      <div>输入提取码：</div>
+                      <div style={{ display: 'flex', marginTop: '8px' }}>
+                        <Input
+                          value={inputValue}
+                          onChange={this.handleInputChange}
+                        />
+                        <Button
+                          disabled={!inputValue || !reg.test(inputValue)}
+                          type="primary"
+                          style={{ marginLeft: '16px' }}
+                          onClick={this.handlePickUpTemplete}
+                        >
+                          确定
+                        </Button>
+                      </div>
+                    </div>
+                  }
+                >
+                  <div className={styles.pick_templete}>
+                    <Button>提取模板</Button>
+                  </div>
+                </Popover>
+              )}
+            </>
+          )}
 
-        {/* <div
+          {/* <div
                             onClick={this.toggleBoardTemplateDrawer}
                             className={`${styles.switchSpin_init} ${boardTemplateShow == '1' && styles.switchSpinShow} ${boardTemplateShow == '2' && styles.switchSpinClose}`}
                             style={{
@@ -1318,6 +1328,42 @@ export default class BoardTemplate extends Component {
                             <div className={`${styles.switchSpin_top}`}></div>
                             <div className={`${styles.switchSpin_bott}`}></div>
                         </div> */}
+          {/* <div
+            onClick={this.toggleBoardTemplateDrawer}
+            className={`${styles.switchExpand}`}
+            style={{
+              top: gantt_card_height / 2,
+              right: boardTemplateShow == 1 ? '280px' : '20px'
+            }}
+          > */}
+          {/* <div className={`${styles.switchExpandOpen} ${globalStyles.authTheme}`}>&#xe687;</div> */}
+          {/* <div className={`${styles.switchExpandIcon}`}>
+              {boardTemplateShow == 1 ? (
+                <span className={globalStyles.authTheme}>&#xe689;</span>
+              ) : (
+                <span className={globalStyles.authTheme}>&#xe687;</span>
+              )}
+            </div>
+          </div> */}
+          <BoardTemplateManager
+            _organization_id={
+              localStorage.getItem('OrganizationId') != '0'
+                ? localStorage.getItem('OrganizationId')
+                : getGlobalData('aboutBoardOrganizationId')
+            }
+            project_templete_scheme_visible={project_templete_scheme_visible}
+            setProjectTempleteSchemeModal={this.setProjectTempleteSchemeModal}
+          ></BoardTemplateManager>
+
+          {safeConfirmModalVisible && (
+            <SafeConfirmModal
+              visible={safeConfirmModalVisible}
+              selectedTpl={this.state.selectedTpl}
+              onChangeVisible={this.changeSafeConfirmModalVisible}
+              onOk={this.onImportBoardTemplate}
+            />
+          )}
+        </div>
         <div
           onClick={this.toggleBoardTemplateDrawer}
           className={`${styles.switchExpand}`}
@@ -1335,24 +1381,6 @@ export default class BoardTemplate extends Component {
             )}
           </div>
         </div>
-        <BoardTemplateManager
-          _organization_id={
-            localStorage.getItem('OrganizationId') != '0'
-              ? localStorage.getItem('OrganizationId')
-              : getGlobalData('aboutBoardOrganizationId')
-          }
-          project_templete_scheme_visible={project_templete_scheme_visible}
-          setProjectTempleteSchemeModal={this.setProjectTempleteSchemeModal}
-        ></BoardTemplateManager>
-
-        {safeConfirmModalVisible && (
-          <SafeConfirmModal
-            visible={safeConfirmModalVisible}
-            selectedTpl={this.state.selectedTpl}
-            onChangeVisible={this.changeSafeConfirmModalVisible}
-            onOk={this.onImportBoardTemplate}
-          />
-        )}
       </div>
     ) : (
       <></>
