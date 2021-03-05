@@ -886,10 +886,13 @@ export const DidShowUrging = (flow_data = {}, current = '') => {
         return false
       }
 
+      if (!isMyShelf()) {
+        return false
+      }
+
       /**
        * 检查是不是只有一个并且自己是审批人
        */
-      console.log(isOnlyOneUrgUser(), isMyShelf())
       if (isOnlyOneUrgUser() && isMyShelf() && isUrgingMyself()) {
         console.log('检查是不是只有一个并且自己是审批人并且自己是唯一审批人')
         return false
@@ -933,11 +936,6 @@ export const DidShowUrging = (flow_data = {}, current = '') => {
          */
         if (isScoreNodeType() && isOnlyMyNotUrging()) {
           console.log('是评分节点，并且只有自己没审批')
-          return false
-        }
-
-        if (!isMyShelf()) {
-          console.log('如果发起人不是自己')
           return false
         }
       }
