@@ -563,20 +563,22 @@ export default class MainContent extends Component {
       processInfo = {},
       processDoingList = [],
       processNotBeginningList = [],
-      currentFlowTabsStatus
+      currentFlowTabsStatus,
+      currentFlowListType,
+      request_flows_params = {}
     } = this.props
     if (currentSelectType == '2') {
       const {
-        processInfo: { id }
+        processInfo: { id, board_id }
       } = this.props
-      let newProcessDoingList = [...processDoingList]
-      let newProcessNotBeginningList = [...processNotBeginningList]
-      let currentListItemPosition =
-        currentFlowTabsStatus == '1'
-          ? newProcessDoingList.findIndex(item => item.id == id)
-          : currentFlowTabsStatus == '0'
-          ? newProcessNotBeginningList.findIndex(item => item.id == id)
-          : ''
+      // let newProcessDoingList = [...processDoingList]
+      // let newProcessNotBeginningList = [...processNotBeginningList]
+      // let currentListItemPosition =
+      //   currentFlowTabsStatus == '1'
+      //     ? newProcessDoingList.findIndex(item => item.id == id)
+      //     : currentFlowTabsStatus == '0'
+      //     ? newProcessNotBeginningList.findIndex(item => item.id == id)
+      //     : ''
       let obj = {
         id
       }
@@ -595,7 +597,10 @@ export default class MainContent extends Component {
             })
           }, 200)
           processInfo[key] = value
-          // 下面都是处理更新了名称等更新外部列表中的数据
+          /**
+           * 下面都是处理更新了名称等更新外部列表中的数据
+           * 之前列表是根据 进行中|已终止...等排列 现在需废弃这个方法
+           */
           this.props.handleProcessDetailChange &&
             this.props.handleProcessDetailChange({
               flow_instance_id: id,
@@ -603,31 +608,42 @@ export default class MainContent extends Component {
               name: 'name',
               value: value
             })
-          if (
-            currentFlowTabsStatus == '1' &&
-            currentListItemPosition &&
-            currentListItemPosition != -1
-          ) {
-            newProcessDoingList[currentListItemPosition]['name'] = value
-            dispatch({
-              type: 'publicProcessDetailModal/updateDatas',
-              payload: {
-                processDoingList: newProcessDoingList
-              }
-            })
-          } else if (
-            currentFlowTabsStatus == '0' &&
-            currentListItemPosition &&
-            currentListItemPosition != -1
-          ) {
-            newProcessNotBeginningList[currentListItemPosition]['name'] = value
-            dispatch({
-              type: 'publicProcessDetailModal/updateDatas',
-              payload: {
-                processNotBeginningList: newProcessNotBeginningList
-              }
-            })
-          }
+          dispatch({
+            type: 'publicProcessDetailModal/getProcessListByType',
+            payload: {
+              board_id: board_id,
+              // status: currentFlowTabsStatus || '1',
+              type: currentFlowListType || 'process',
+              _organization_id:
+                request_flows_params._organization_id ||
+                localStorage.getItem('OrganizationId')
+            }
+          })
+          // if (
+          //   currentFlowTabsStatus == '1' &&
+          //   currentListItemPosition &&
+          //   currentListItemPosition != -1
+          // ) {
+          //   newProcessDoingList[currentListItemPosition]['name'] = value
+          //   dispatch({
+          //     type: 'publicProcessDetailModal/updateDatas',
+          //     payload: {
+          //       processDoingList: newProcessDoingList
+          //     }
+          //   })
+          // } else if (
+          //   currentFlowTabsStatus == '0' &&
+          //   currentListItemPosition &&
+          //   currentListItemPosition != -1
+          // ) {
+          //   newProcessNotBeginningList[currentListItemPosition]['name'] = value
+          //   dispatch({
+          //     type: 'publicProcessDetailModal/updateDatas',
+          //     payload: {
+          //       processNotBeginningList: newProcessNotBeginningList
+          //     }
+          //   })
+          // }
         }
       })
     }
@@ -1732,8 +1748,8 @@ export default class MainContent extends Component {
                   <NameChangeInput
                     autosize
                     onChange={this.titleInputValueChange}
-                    onBlur={this.titleTextAreaChangeBlur}
-                    onPressEnter={this.titleTextAreaChangeBlur}
+                    // onBlur={this.titleTextAreaChangeBlur}
+                    // onPressEnter={this.titleTextAreaChangeBlur}
                     onClick={e => e && e.stopPropagation()}
                     setIsEdit={this.titleTextAreaChangeBlur}
                     autoFocus={true}
@@ -1807,7 +1823,7 @@ export default class MainContent extends Component {
                   <NameChangeInput
                     id={'flowInstanceDescriptionTextArea'}
                     onChange={this.descriptionTextAreaChange}
-                    onBlur={this.descriptionTextAreaChangeBlur}
+                    // onBlur={this.descriptionTextAreaChangeBlur}
                     setIsEdit={this.descriptionTextAreaChangeBlur}
                     autosize
                     autoFocus={true}

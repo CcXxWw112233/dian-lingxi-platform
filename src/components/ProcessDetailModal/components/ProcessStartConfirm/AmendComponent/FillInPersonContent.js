@@ -169,10 +169,6 @@ export default class FillInPersonContent extends Component {
       )
     if (assignee_type == '2' || assignee_type == '3') {
       let newDesignatedPersonnelList = [...designatedPersonnelList]
-      console.log(
-        newDesignatedPersonnelList,
-        'ssssssss_newDesignatedPersonnelList'
-      )
       this.props.updateCorrespondingPrcodessStepWithNodeContent &&
         this.props.updateCorrespondingPrcodessStepWithNodeContent(
           'assignees',

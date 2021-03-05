@@ -868,7 +868,15 @@ export default class BeginningStepOne extends Component {
   }
 
   confirmToUrge = () => {
-    const { itemValue } = this.props
+    const {
+      itemValue,
+      currentFlowListType,
+      request_flows_params = {},
+      processInfo: { board_id }
+    } = this.props
+    let BOARD_ID =
+      (request_flows_params && request_flows_params.request_board_id) ||
+      board_id
     Modal.confirm({
       // style: {
 
@@ -891,6 +899,17 @@ export default class BeginningStepOne extends Component {
                 description: res.message
               })
               this.updateProcessInfo()
+              this.props.dispatch({
+                type: 'publicProcessDetailModal/getProcessListByType',
+                payload: {
+                  board_id: BOARD_ID,
+                  // status: currentFlowTabsStatus || '1',
+                  type: currentFlowListType || 'process',
+                  _organization_id:
+                    request_flows_params._organization_id ||
+                    localStorage.getItem('OrganizationId')
+                }
+              })
             } else {
               notification.warn({
                 message: '警告',
