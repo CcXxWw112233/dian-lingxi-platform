@@ -861,7 +861,8 @@ export const DidShowUrging = (flow_data = {}, current = '') => {
    * 当前审批人是否是自己
    */
   const isUrgingMyself = () => {
-    const my = (currentNode.assignees || []).find(item => item.id === user_id)
+    const my =
+      (currentNode.assignees || []).find(item => item.id === user_id) || {}
     return my.processed === PROCESSING
   }
 
@@ -888,13 +889,9 @@ export const DidShowUrging = (flow_data = {}, current = '') => {
       /**
        * 检查是不是只有一个并且自己是审批人
        */
-      if (
-        (isOnlyOneUrgUser() && isMyShelf()) ||
-        (isOnlyOneUrgUser() && !isMyShelf())
-      ) {
-        console.log(
-          '检查是不是只有一个并且自己是审批人或者只有一个审批人，并且自己不是审批人'
-        )
+      console.log(isOnlyOneUrgUser(), isMyShelf())
+      if (isOnlyOneUrgUser() && isMyShelf() && isUrgingMyself()) {
+        console.log('检查是不是只有一个并且自己是审批人并且自己是唯一审批人')
         return false
       }
 
