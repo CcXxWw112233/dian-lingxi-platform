@@ -221,7 +221,7 @@ export default class RenderAdd extends Component {
     this.setState({
       is_click_button: true
     })
-    const { is_click_button } = this.state
+    const { is_click_button, is_show_date_picker } = this.state
     if (is_click_button) {
       setTimeout(() => {
         message.warn('正在添加中,请不要重复点击')
@@ -247,11 +247,23 @@ export default class RenderAdd extends Component {
       }
       return new_item
     })
+    let params = {}
+    if (is_show_date_picker) {
+      params = { ...new_info_list[0] }
+    } else {
+      new_info_list[0].remind_time_value
+        ? delete new_info_list[0].remind_time_value
+        : ''
+      new_info_list[0].remind_time_type
+        ? delete new_info_list[0].remind_time_type
+        : ''
+      params = { ...new_info_list[0] }
+    }
     // 将添加事件置为false
     dispatch({
       type: 'informRemind/updateDatas',
       payload: {
-        setInfoRemindList: new_info_list,
+        setInfoRemindList: [{ ...params }],
         is_add_remind: false,
         remind_trigger: triggerList[0].type_code,
         remind_time_type: 'd',
@@ -261,7 +273,7 @@ export default class RenderAdd extends Component {
     })
     dispatch({
       type: 'informRemind/setRemindInformation',
-      payload: {}
+      payload: { ...params }
     })
   }
 

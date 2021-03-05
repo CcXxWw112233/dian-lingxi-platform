@@ -199,7 +199,6 @@ export default {
           if (arr[i] == undefined) {
             arr.splice(i, 1)
             i = i - 1 // i - 1 ,因为空元素在数组下标 2 位置，删除空之后，后面的元素要向前补位，
-            // 这样才能真正去掉空元素,觉得这句可以删掉的连续为空试试，然后思考其中逻辑
           }
         }
         return arr
@@ -214,6 +213,10 @@ export default {
         remind_time_type,
         remind_time_value,
         users: removeEmptyArrayEle(temp_user)
+      }
+      if (remind_trigger != 'userdefined') {
+        data.remind_time_type ? delete data.remind_time_type : ''
+        data.remind_time_value ? delete data.remind_time_value : ''
       }
       const res = yield call(updateRemindInformation, data)
       if (!isApiResponseOk(res)) {
@@ -235,17 +238,20 @@ export default {
 
     // 设置提醒的方法
     *setRemindInformation({ payload = {} }, { select, call, put }) {
-      const { calback } = payload
-      const [
-        {
-          rela_id,
-          rela_type,
-          remind_time_type,
-          remind_time_value,
-          remind_trigger,
-          message_consumers
-        }
-      ] = yield select(getModelSelectState('informRemind', 'setInfoRemindList'))
+      const {
+        calback,
+        rela_id,
+        rela_type,
+        remind_time_type,
+        remind_time_value,
+        remind_trigger,
+        message_consumers
+      } = payload
+      // const [
+      //   {
+
+      //   }
+      // ] = yield select(getModelSelectState('informRemind', 'setInfoRemindList'))
       let tempId = []
       for (var i in message_consumers) {
         if (message_consumers[i].user_id) {
@@ -260,10 +266,10 @@ export default {
         remind_trigger,
         users: tempId
       }
-      let tempKey = Object.keys(payload)
-      if (tempKey && tempKey.length) {
-        data = payload
-      }
+      // let tempKey = Object.keys(payload)
+      // if (tempKey && tempKey.length) {
+      //   data = payload
+      // }
       const res = yield call(setRemindInformation, data)
       if (!isApiResponseOk(res)) {
         message.error(res.message)
@@ -272,7 +278,8 @@ export default {
       yield put({
         type: 'getTriggerHistory',
         payload: {
-          rela_id: tempKey && tempKey.length ? payload.rela_id : rela_id
+          // rela_id: tempKey && tempKey.length ? payload.rela_id : rela_id
+          rela_id: rela_id
         }
       })
       calback && typeof calback == 'function' ? calback() : ''

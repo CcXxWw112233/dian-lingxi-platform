@@ -128,7 +128,7 @@ export default class RenderHistory extends Component {
     const { is_click_button } = this.state
     if (is_click_button) {
       setTimeout(() => {
-        message.warn('正在添加中,请不要重复点击哦~')
+        message.warn('正在添加中,请不要重复点击')
       }, 200)
       this.setState({
         is_click_button: false
@@ -355,6 +355,19 @@ export default class RenderHistory extends Component {
       message_consumers
     } = itemValue
     // console.log(remind_trigger, 'sss')
+    const button_disable = () => {
+      if (message_consumers && message_consumers.length > 0) {
+        if (
+          remind_trigger == 'userdefined' &&
+          (!remind_time_value || remind_time_value.length < 10)
+        ) {
+          return true
+        }
+        return false
+      } else {
+        return true
+      }
+    }
 
     return (
       <>
@@ -392,9 +405,10 @@ export default class RenderHistory extends Component {
                 disabled={status == 2 ? true : false}
                 showTime={{ format: 'HH:mm' }}
                 defaultValue={
-                  remind_time_value.length <= 2
+                  remind_time_value &&
+                  (remind_time_value.length <= 2
                     ? ''
-                    : moment(this.getdate(remind_time_value))
+                    : moment(this.getdate(remind_time_value)))
                 }
                 placeholder="请选择日期"
                 format="YYYY-MM-DD HH:mm"
@@ -499,9 +513,7 @@ export default class RenderHistory extends Component {
           {/* 鼠标的hover事件 控制删除小图标的显示隐藏 */}
           {is_edit_status ? (
             <Button
-              disabled={
-                message_consumers && message_consumers.length ? false : true
-              }
+              disabled={button_disable()}
               onClick={() => {
                 this.handleUpdateInfoRemind(id, message_consumers)
               }}

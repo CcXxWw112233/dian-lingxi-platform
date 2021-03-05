@@ -623,72 +623,72 @@ class VideoMeetingPopoverContent extends Component {
       start_url && this.openWinNiNewTabWithATag(start_url)
       return false
     }
-    this.setRemindInfo({ card_id, userIds, user_phone: [], start_url })
+    // this.setRemindInfo({ card_id, userIds, user_phone: [], start_url })
   }
 
   // 发起会议成功之后调用通知提醒
-  setRemindInfo = ({ card_id, userIds = [], user_phone = [], start_url }) => {
-    const { dispatch } = this.props
-    const { isOrderTime } = this.state
-    const temp_user = [].concat(userIds, user_phone)
-    const data = {
-      rela_id: card_id,
-      remind_time_value,
-      rela_type: '2',
-      remind_time_type: !isOrderTime ? 'datetime' : 'm',
-      remind_trigger: !isOrderTime ? 'userdefined' : 'schedule:start:before',
-      users: temp_user
-    }
+  // setRemindInfo = ({ card_id, userIds = [], user_phone = [], start_url }) => {
+  //   const { dispatch } = this.props
+  //   const { isOrderTime } = this.state
+  //   const temp_user = [].concat(userIds, user_phone)
+  //   const data = {
+  //     rela_id: card_id,
+  //     remind_time_value,
+  //     rela_type: '2',
+  //     remind_time_type: !isOrderTime ? 'datetime' : 'm',
+  //     remind_trigger: !isOrderTime ? 'userdefined' : 'schedule:start:before',
+  //     users: temp_user
+  //   }
 
-    if (!(temp_user && temp_user.length)) {
-      setTimeout(() => {
-        message.success('发起会议成功')
-      }, 500)
-      this.setState(
-        {
-          videoMeetingPopoverVisible: false
-        },
-        () => {
-          this.initVideoMeetingPopover()
-        }
-      )
-      this.openWinNiNewTabWithATag(start_url)
-      dispatch({
-        type: 'workbench/getMeetingList',
-        payload: {}
-      })
-    } else {
-      Promise.resolve(
-        dispatch({
-          type: 'informRemind/setRemindInformation',
-          payload: {
-            ...data,
-            calback: () => {
-              setTimeout(() => {
-                message.success('发起会议成功')
-              }, 500)
-            }
-          }
-        })
-      ).then(res => {
-        if (isApiResponseOk(res)) {
-          this.setState(
-            {
-              videoMeetingPopoverVisible: false
-            },
-            () => {
-              this.initVideoMeetingPopover()
-            }
-          )
-          this.openWinNiNewTabWithATag(start_url)
-          dispatch({
-            type: 'workbench/getMeetingList',
-            payload: {}
-          })
-        }
-      })
-    }
-  }
+  //   if (!(temp_user && temp_user.length)) {
+  //     setTimeout(() => {
+  //       message.success('发起会议成功')
+  //     }, 500)
+  //     this.setState(
+  //       {
+  //         videoMeetingPopoverVisible: false
+  //       },
+  //       () => {
+  //         this.initVideoMeetingPopover()
+  //       }
+  //     )
+  //     this.openWinNiNewTabWithATag(start_url)
+  //     dispatch({
+  //       type: 'workbench/getMeetingList',
+  //       payload: {}
+  //     })
+  //   } else {
+  //     Promise.resolve(
+  //       dispatch({
+  //         type: 'informRemind/setRemindInformation',
+  //         payload: {
+  //           ...data,
+  //           calback: () => {
+  //             setTimeout(() => {
+  //               message.success('发起会议成功')
+  //             }, 500)
+  //           }
+  //         }
+  //       })
+  //     ).then(res => {
+  //       if (isApiResponseOk(res)) {
+  //         this.setState(
+  //           {
+  //             videoMeetingPopoverVisible: false
+  //           },
+  //           () => {
+  //             this.initVideoMeetingPopover()
+  //           }
+  //         )
+  //         this.openWinNiNewTabWithATag(start_url)
+  //         dispatch({
+  //           type: 'workbench/getMeetingList',
+  //           payload: {}
+  //         })
+  //       }
+  //     })
+  //   }
+  // }
   // 是否发送会议
   setEmitMeettingStatus = bool => {
     this.setState({
