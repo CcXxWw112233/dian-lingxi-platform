@@ -386,7 +386,8 @@ export function getDesignatedRoles(params) {
     url: `${REQUEST_DOMAIN}/org/role/list`,
     params: {
       ...params,
-      _organization_id: localStorage.getItem('OrganizationId')
+      _organization_id:
+        params._organization_id || localStorage.getItem('OrganizationId')
     }
   })
 }

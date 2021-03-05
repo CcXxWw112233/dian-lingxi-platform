@@ -34,7 +34,8 @@ import {
   checkIsHasPermissionInBoard,
   setBoardIdStorage,
   getGlobalData,
-  isPaymentOrgUser
+  isPaymentOrgUser,
+  getOrgIdByBoardId
 } from '../../utils/businessFunction'
 import {
   cursorMoveEnd,
@@ -318,10 +319,8 @@ export default class MainContent extends Component {
     this.whetherUpdateOrgnazationMemberList(this.props)
     // 设置用户节点内容缓存
     this.setUserProcessWithNodesStorage(this.props)
-    this.props.dispatch({
-      type: 'publicProcessDetailModal/getDesignatedRoles',
-      payload: {}
-    })
+    // 获取组织角色
+    this.getDesignatedRoles(this.props)
   }
   componentWillUnmount() {
     window.removeEventListener('resize', this.resizeTTY)
@@ -339,8 +338,9 @@ export default class MainContent extends Component {
   whetherUpdateOrgnazationMemberList = props => {
     const {
       templateInfo: { org_id },
-      processInfo: { status }
+      processInfo: { status, board_id }
     } = props
+
     if (props.process_detail_modal_visible) {
       // localStorage.getItem('OrganizationId')
       if (props.processPageFlagStep == '3') {
@@ -354,15 +354,42 @@ export default class MainContent extends Component {
       } else {
         // 如果是已经启动了的流程不需要查询成员 (除预启动外)
         if (props.processPageFlagStep == '4' && status != '0') return
+        const ORG_ID = getOrgIdByBoardId(board_id)
         this.props.dispatch({
           type: 'publicProcessDetailModal/getCurrentOrgAllMembers',
           payload: {
-            _organization_id: localStorage.getItem('OrganizationId')
+            _organization_id: ORG_ID || localStorage.getItem('OrganizationId')
           }
         })
       }
     }
   }
+
+  /**
+   * 获取组织角色
+   * @param {*} props
+   * 只有是启动页 或者预启动的时候才需要获取
+   */
+  getDesignatedRoles = props => {
+    const {
+      processInfo: { board_id, status },
+      templateInfo: { org_id },
+      processPageFlagStep
+    } = props
+    if (
+      processPageFlagStep != '3' ||
+      (processPageFlagStep != '4' && status != '0')
+    )
+      return
+    const ORG_ID = org_id ? org_id : getOrgIdByBoardId(board_id)
+    props.dispatch({
+      type: 'publicProcessDetailModal/getDesignatedRoles',
+      payload: {
+        _organization_id: ORG_ID
+      }
+    })
+  }
+
   // 用来更新canvas中的步骤
   componentWillReceiveProps(nextProps) {
     const {
