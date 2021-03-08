@@ -378,3 +378,16 @@ export function UrgeStart(data) {
     params: data
   })
 }
+
+// 流程获取角色列表
+export function getDesignatedRoles(params) {
+  return request({
+    method: 'GET',
+    url: `${REQUEST_DOMAIN}/org/role/list`,
+    params: {
+      ...params,
+      _organization_id:
+        params._organization_id || localStorage.getItem('OrganizationId')
+    }
+  })
+}

@@ -61,14 +61,14 @@ class FunnelComponent extends Component {
           gap: 2,
           label: {
             show: true,
-            position: 'inside'
-            // formatter: function(params) {
-            //   if (params.value > 0) {
-            //     return params.value
-            //   } else {
-            //     return ''
-            //   }
-            // }
+            position: 'inside',
+            formatter: function(params) {
+              if (params.value > 0) {
+                return params.value
+              } else {
+                return ''
+              }
+            }
           },
           labelLine: {
             length: 10,

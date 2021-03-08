@@ -3,16 +3,14 @@ import { Radio, Button, Dropdown, Tooltip, Icon } from 'antd'
 import indexStyles from '../index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
-import {
-  compareACoupleOfObjects,
-  isArrayEqual
-} from '../../../../../utils/util'
-import {
-  getOrgIdByBoardId,
-  currentNounPlanFilterName
-} from '../../../../../utils/businessFunction'
+import { isArrayEqual } from '../../../../../utils/util'
+import { currentNounPlanFilterName } from '../../../../../utils/businessFunction'
 import { FLOWS } from '../../../../../globalset/js/constant'
-import { accordingToSortMembersList } from '../../handleOperateModal'
+import {
+  accordingToSortMembersList,
+  getCurrentDesignatedRolesMembers,
+  getRolesName
+} from '../../handleOperateModal'
 
 export default class FillInPersonContent extends Component {
   constructor(props) {
@@ -36,7 +34,7 @@ export default class FillInPersonContent extends Component {
   componentWillReceiveProps(nextProps) {
     const { popoverVisible, itemValue } = nextProps
     const { is_click_confirm_btn } = this.state
-    if (!popoverVisible && !is_click_confirm_btn && this.props.popoverVisible) {
+    if (this.props.popoverVisible != popoverVisible && !is_click_confirm_btn) {
       this.setState({
         designatedPersonnelList: itemValue.assignees
           ? itemValue.assignees.split(',')
@@ -49,14 +47,23 @@ export default class FillInPersonContent extends Component {
   // 任何人 | 指定人
   assigneeTypeChange = e => {
     this.setState({
-      assignee_type: e.target.value
+      assignee_type: e.target.value,
+      designatedPersonnelList: []
     })
-    // this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('assignee_type', e.target.value)
   }
 
   // 把assignees中的执行人,在项目中的所有成员过滤出来
   filterAssignees = () => {
-    const { data = [] } = this.props
+    const {
+      data = [],
+      itemValue: { role_users = [] },
+      currentOrgAllMembers = []
+    } = this.props
+    const { assignee_type } = this.state
+    let roles_data = getCurrentDesignatedRolesMembers(
+      currentOrgAllMembers,
+      role_users
+    )
     const { designatedPersonnelList = [] } = this.state
     let new_data = [...data]
     let newDesignatedPersonnelList =
@@ -147,20 +154,21 @@ export default class FillInPersonContent extends Component {
     // this.props.updateCorrespondingPrcodessStepWithNodeContent && this.props.updateCorrespondingPrcodessStepWithNodeContent('assignees', newAssigneesStr)
   }
 
-  // 确定的点击事件
-  handleConfirmChangeAssignees = async () => {
+  /**
+   * 确定点击事件
+   */
+  handleConfirmChangeAssignees = () => {
     this.setState({
       is_click_confirm_btn: true
     })
     const { designatedPersonnelList = [], assignee_type } = this.state
-    const { NotModifiedInitiator } = this.props
-    if (assignee_type == '2' || NotModifiedInitiator) {
+    this.props.updateCorrespondingPrcodessStepWithNodeContent &&
+      this.props.updateCorrespondingPrcodessStepWithNodeContent(
+        'assignee_type',
+        assignee_type
+      )
+    if (assignee_type == '2' || assignee_type == '3') {
       let newDesignatedPersonnelList = [...designatedPersonnelList]
-      this.props.updateCorrespondingPrcodessStepWithNodeContent &&
-        this.props.updateCorrespondingPrcodessStepWithNodeContent(
-          'assignee_type',
-          assignee_type
-        )
       this.props.updateCorrespondingPrcodessStepWithNodeContent &&
         this.props.updateCorrespondingPrcodessStepWithNodeContent(
           'assignees',
@@ -174,12 +182,7 @@ export default class FillInPersonContent extends Component {
       this.props.onVisibleChange &&
         this.props.onVisibleChange(false, this.updateState)
     } else if (assignee_type == '1') {
-      ;(await this.props.updateCorrespondingPrcodessStepWithNodeContent) &&
-        this.props.updateCorrespondingPrcodessStepWithNodeContent(
-          'assignee_type',
-          assignee_type
-        )
-      ;(await this.props.updateCorrespondingPrcodessStepWithNodeContent) &&
+      this.props.updateCorrespondingPrcodessStepWithNodeContent &&
         this.props.updateCorrespondingPrcodessStepWithNodeContent(
           'assignees',
           ''
@@ -187,18 +190,33 @@ export default class FillInPersonContent extends Component {
       this.setState({
         designatedPersonnelList: []
       })
-      ;(await this.props.onVisibleChange) &&
+      this.props.onVisibleChange &&
         this.props.onVisibleChange(false, this.updateState)
+    }
+    if (assignee_type != '3') {
+      this.props.updateCorrespondingPrcodessStepWithNodeContent &&
+        this.props.updateCorrespondingPrcodessStepWithNodeContent(
+          'assignee_roles',
+          ''
+        )
     }
   }
 
   // 渲染指定人员
   renderDesignatedPersonnel = () => {
-    const { data = [], board_id, itemKey } = this.props
-    // const { designatedPersonnelList = [] } = this.state
+    const {
+      data = [],
+      itemKey,
+      itemValue: { role_users = [], approve_type },
+      currentOrgAllMembers = []
+    } = this.props
+    const { assignee_type } = this.state
     let designatedPersonnelList = this.filterAssignees()
-    let org_id = getOrgIdByBoardId(board_id) || '0'
     let new_data = accordingToSortMembersList(data, designatedPersonnelList)
+    let roles_data = getCurrentDesignatedRolesMembers(
+      currentOrgAllMembers,
+      role_users
+    )
     return (
       <div style={{ flex: 1, padding: '8px 0' }}>
         {!designatedPersonnelList.length ? (
@@ -216,7 +234,7 @@ export default class FillInPersonContent extends Component {
               overlay={
                 <MenuSearchPartner
                   isInvitation={true}
-                  listData={new_data}
+                  listData={assignee_type == '3' ? roles_data : new_data}
                   keyCode={'user_id'}
                   searchName={'name'}
                   currentSelect={designatedPersonnelList}
@@ -323,6 +341,14 @@ export default class FillInPersonContent extends Component {
                       className={`${indexStyles.userItemDeleBtn}`}
                     ></span>
                   </div>
+                  {approve_type == '1' && (
+                    <span
+                      style={{ color: 'rgba(0,0,0,0.25)' }}
+                      className={globalStyles.authTheme}
+                    >
+                      &#xe61f;
+                    </span>
+                  )}
                 </div>
               )
             })}
@@ -339,7 +365,7 @@ export default class FillInPersonContent extends Component {
               overlay={
                 <MenuSearchPartner
                   isInvitation={true}
-                  listData={new_data}
+                  listData={assignee_type == '3' ? roles_data : new_data}
                   keyCode={'user_id'}
                   searchName={'name'}
                   currentSelect={designatedPersonnelList}
@@ -369,23 +395,58 @@ export default class FillInPersonContent extends Component {
 
   // 渲染资料收集的内容
   renderDataCollection = () => {
-    const { itemValue, NotModifiedInitiator, itemKey } = this.props
-    const { assignee_type, assignees } = itemValue
+    const {
+      itemValue,
+      NotModifiedInitiator,
+      itemKey,
+      currentDesignatedRolesData = []
+    } = this.props
+    const { assignee_type, assignees, assignee_roles, node_type } = itemValue
     const { designatedPersonnelList } = this.state
-    let disabledAssignees =
-      assignee_type == '2' || NotModifiedInitiator
-        ? designatedPersonnelList && designatedPersonnelList.length
-          ? assignees
-            ? isArrayEqual(assignees.split(','), designatedPersonnelList)
-            : false
-          : true
-        : true
-    let disabledAssigneeType =
-      assignee_type != this.state.assignee_type &&
-      designatedPersonnelList &&
-      designatedPersonnelList.length
-        ? false
-        : true
+
+    /**
+     * 判断人员
+     * 如果是类型2|3|情况下
+     * 如果存在人员 那么比较model和当前选择的人员是否一致 否那么不禁用 否则置灰
+     */
+    let disabledAssignees = true
+    // this.state.assignee_type == '2' ||
+    // this.state.assignee_type == '3' ||
+    // NotModifiedInitiator
+    //   ? designatedPersonnelList && !!designatedPersonnelList.length
+    //     ? assignees
+    //       ? isArrayEqual(assignees.split(','), designatedPersonnelList)
+    //       : false
+    //     : true
+    //   : true
+    if (this.state.assignee_type == '2' || this.state.assignee_type == '3') {
+      if (designatedPersonnelList && !!designatedPersonnelList.length) {
+        if (assignees) {
+          disabledAssignees = isArrayEqual(
+            assignees.split(','),
+            designatedPersonnelList
+          )
+        } else {
+          disabledAssignees = false
+        }
+      }
+    }
+    /**
+     * 判断类型
+     * 1.如果state中的类型和model中的类型不一致
+     * A：如果是assignee_type==1表示是发起人 那么直接return false 表示不禁用
+     * B：如果是assignee_type==2|3表示是指定人员或者指定角色 那么需要判断designatedPersonnelList的长度是否存在人员，无则禁用，否则不禁用（false）
+     * 2.如果state中的类型和model中的类型一致 那么禁用（这里表示和之前状态一样 所以置灰无需修改状态）
+     */
+    let disabledAssigneeType = true
+    if (assignee_type != this.state.assignee_type) {
+      if (this.state.assignee_type == '1') {
+        disabledAssigneeType = false
+      }
+      // else if (designatedPersonnelList && !designatedPersonnelList.length) {
+      //   disabledAssigneeType = true
+      // }
+    }
     return (
       <div className={indexStyles.mini_content}>
         <div
@@ -398,16 +459,24 @@ export default class FillInPersonContent extends Component {
               value={this.state.assignee_type}
               onChange={this.assigneeTypeChange}
             >
-              <Radio
-                style={{ marginBottom: '12px' }}
-                value="1"
-              >{`${currentNounPlanFilterName(FLOWS)}发起人`}</Radio>
+              {node_type == '1' && (
+                <Radio
+                  style={{ marginBottom: '12px' }}
+                  value="1"
+                >{`${currentNounPlanFilterName(FLOWS)}发起人`}</Radio>
+              )}
               <Radio style={{ marginBottom: '12px' }} value="2">
                 指定人员
               </Radio>
+              <Radio style={{ marginBottom: '12px' }} value="3">
+                指定角色 -{' '}
+                {getRolesName(currentDesignatedRolesData, assignee_roles)}
+              </Radio>
             </Radio.Group>
           )}
-          {(this.state.assignee_type == '2' || NotModifiedInitiator) && (
+          {(this.state.assignee_type == '2' ||
+            NotModifiedInitiator ||
+            this.state.assignee_type == '3') && (
             <div>{this.renderDesignatedPersonnel()}</div>
           )}
         </div>

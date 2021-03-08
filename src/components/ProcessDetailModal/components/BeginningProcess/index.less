@@ -1,12 +1,12 @@
 // 非操作人显示蒙层
 .nonOperatorPerson {
-   position: absolute;
-   right: 0;
-   left: 0;
-   top: 0;
-   bottom: 0;
-   margin: auto;
-   z-index: 1100;
+  position: absolute;
+  right: 0;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  z-index: 1100;
 }
 
 .prompt_content {
@@ -16,18 +16,19 @@
       height: 100%;
     }
   }
-
 }
 
-.popover_card, .default_popover_card {
+.popover_card,
+.default_popover_card {
   margin: 0 12px 0 26px;
   flex: 1;
   flex-shrink: 0;
-  min-height:120px;
-  background:rgba(255,255,255,1);
-  box-shadow:0px 0px 0px 2px rgba(230,247,255,1),0px 0px 8px 2px rgba(24,144,255,0.15);
+  min-height: 120px;
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0px 0px 0px 2px rgba(230, 247, 255, 1),
+    0px 0px 8px 2px rgba(24, 144, 255, 0.15);
   // opacity:0.9;
-  border:1px solid rgba(24,144,255,1);
+  border: 1px solid rgba(24, 144, 255, 1);
   border-radius: 4px;
   position: relative;
   padding: 16px 12px;
@@ -39,20 +40,20 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    min-height:40px;
+    min-height: 40px;
     line-height: 40px;
-    font-size:16px;
-    font-family:PingFangSC-Medium,PingFang SC;
-    font-weight:900;
-    color:rgba(0,0,0,0.65);
+    font-size: 16px;
+    font-family: PingFangSC-Medium, PingFang SC;
+    font-weight: 900;
+    color: rgba(0, 0, 0, 0.65);
     padding: 0 14px;
     margin-bottom: 12px;
     .spreadIcon {
       display: block;
-      width:24px;
-      height:24px;
-      background:rgba(255,255,255,1);
-      box-shadow:0px 0px 4px 1px rgba(0,0,0,0.15);
+      width: 24px;
+      height: 24px;
+      background: rgba(255, 255, 255, 1);
+      box-shadow: 0px 0px 4px 1px rgba(0, 0, 0, 0.15);
       border-radius: 12px;
       display: flex;
       align-items: center;
@@ -61,48 +62,49 @@
       .spread_arrow {
         font-size: 12px;
         &:hover {
-          color: #1890FF;
+          color: #1890ff;
         }
       }
     }
   }
   .content__principalList_icon {
     padding: 0 14px;
+    vertical-align: middle;
   }
   .content__principalList_info {
     margin-left: 8px;
-    font-size:14px;
-    font-family:PingFangSC-Medium,PingFang SC;
-    font-weight:500;
-    color:rgba(0,0,0,0.45);
-
+    font-size: 14px;
+    font-family: PingFangSC-Medium, PingFang SC;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.45);
+    vertical-align: middle;
   }
   .deadline_time {
-    font-size:14px;
-    font-weight:500;
-    color:rgba(0,0,0,0.45);
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.45);
   }
   .stepTypeIcon {
-    color: #1890FF;
+    color: #1890ff;
     margin-right: 8px;
     font-size: 16px;
   }
   .text_form {
     margin-bottom: 16px;
     padding: 0 14px 8px;
-    min-height:82px;
-    border-radius:4px;
-    opacity:1;
+    min-height: 82px;
+    border-radius: 4px;
+    opacity: 1;
     // border:1px solid rgba(0,0,0,0.15);
     // background:rgba(0,0,0,0.02);
     position: relative;
     > p {
       margin-bottom: 4px;
-      font-size:14px;
-      font-family:PingFangSC-Medium,PingFang SC;
-      font-weight:500;
-      color:rgba(0,0,0,0.85);
-      line-height:22px;
+      font-size: 14px;
+      font-family: PingFangSC-Medium, PingFang SC;
+      font-weight: 500;
+      color: rgba(0, 0, 0, 0.85);
+      line-height: 22px;
       // display: flex;
       // justify-content: space-between;
       // margin-right: 20px;
@@ -120,7 +122,7 @@
       // width:810px;
       // height:32px;
       // padding: 5px 8px;
-      >span {
+      > span {
         word-break: break-all;
       }
     }
@@ -132,9 +134,9 @@
     }
     .file_item {
       // width:842px;
-      height:38px;
-      background:rgba(0,0,0,0.02);
-      border-radius:4px;
+      height: 38px;
+      background: rgba(0, 0, 0, 0.02);
+      border-radius: 4px;
       display: flex;
       align-items: center;
       justify-content: space-around;
@@ -142,14 +144,14 @@
       margin-top: 8px;
       .file_theme_code {
         font-size: 24px;
-        color: #1890FF;
+        color: #1890ff;
         vertical-align: middle;
       }
       .file_name {
-        font-size:14px;
-        font-family:PingFangSC-Regular,PingFang SC;
-        font-weight:400;
-        color:rgba(0,0,0,0.65);
+        font-size: 14px;
+        font-family: PingFangSC-Regular, PingFang SC;
+        font-weight: 400;
+        color: rgba(0, 0, 0, 0.65);
         vertical-align: middle;
         cursor: pointer;
         margin: 0 8px;
@@ -157,18 +159,18 @@
         align-items: center;
       }
       .del_name {
-        font-size:14px;
-        font-family:PingFangSC-Regular,PingFang SC;
-        font-weight:400;
-        color:rgba(245,34,45,1);
+        font-size: 14px;
+        font-family: PingFangSC-Regular, PingFang SC;
+        font-weight: 400;
+        color: rgba(245, 34, 45, 1);
         flex-shrink: 0;
         cursor: pointer;
       }
       .down_name {
-        font-size:14px;
-        font-family:PingFangSC-Regular,PingFang SC;
-        font-weight:400;
-        color:#1890FF;
+        font-size: 14px;
+        font-family: PingFangSC-Regular, PingFang SC;
+        font-weight: 400;
+        color: #1890ff;
         flex-shrink: 0;
         cursor: pointer;
       }
@@ -177,27 +179,27 @@
   // 上传
   .upload_static {
     // width:810px;
-    height:60px;
-    background:rgba(251,251,251,1);
-    border-radius:4px;
+    height: 60px;
+    background: rgba(251, 251, 251, 1);
+    border-radius: 4px;
     cursor: pointer;
     // opacity:0.9;
-    border:1px dashed rgba(24,144,255,1);
+    border: 1px dashed rgba(24, 144, 255, 1);
     padding: 16px;
     display: flex;
     .file_drap_tips {
-      font-size:14px;
-      font-family:PingFangSC-Regular,PingFang SC;
-      font-weight:400;
-      color:rgba(24,144,255,1);
-      line-height:20px;
+      font-size: 14px;
+      font-family: PingFangSC-Regular, PingFang SC;
+      font-weight: 400;
+      color: rgba(24, 144, 255, 1);
+      line-height: 20px;
     }
     .file_layout {
-      font-size:12px;
-      font-family:PingFangSC-Regular,PingFang SC;
-      font-weight:400;
-      color:rgba(140,140,140,1);
-      line-height:17px;
+      font-size: 12px;
+      font-family: PingFangSC-Regular, PingFang SC;
+      font-weight: 400;
+      color: rgba(140, 140, 140, 1);
+      line-height: 17px;
     }
   }
   .select_remarks {
@@ -210,10 +212,10 @@
       color: rgba(0, 0, 0, 0.45);
     }
     // margin-top: 16px;
-    >div {
+    > div {
       margin-top: 8px;
       font-size: 14px;
-      color: rgba(0,0,0,0.65);
+      color: rgba(0, 0, 0, 0.65);
     }
   }
   .reback_btn {
@@ -221,17 +223,17 @@
     border-top: 1px solid #e8e8e8;
     text-align: center;
     > button {
-      border:1px solid rgba(24,144,255,1);
-      color: #1890FF;
+      border: 1px solid rgba(24, 144, 255, 1);
+      color: #1890ff;
     }
   }
   // 评分项
   .ratingItems {
     width: 100%;
-    min-height:138px;
-    background:rgba(0,0,0,0.02);
-    border-radius:4px;
-    border:1px solid rgba(0,0,0,0.09);
+    min-height: 138px;
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.09);
     padding: 8px 0px 16px 8px;
     display: flex;
     flex-wrap: wrap;
@@ -251,37 +253,37 @@
         justify-content: space-between;
       }
       .rating_grade {
-        width:100%;
-        min-height:88px;
-        background:rgba(255,255,255,1);
-        border-radius:4px;
-        border:1px solid rgba(0,0,0,0.09);
+        width: 100%;
+        min-height: 88px;
+        background: rgba(255, 255, 255, 1);
+        border-radius: 4px;
+        border: 1px solid rgba(0, 0, 0, 0.09);
         padding: 10px 0px;
-        font-size:14px;
-        font-family:PingFangSC-Regular,PingFang SC;
-        font-weight:400;
+        font-size: 14px;
+        font-family: PingFangSC-Regular, PingFang SC;
+        font-weight: 400;
         text-align: center;
         // color:#1890FF;
-        color: rgba(0,0,0,0.15);
+        color: rgba(0, 0, 0, 0.15);
         // line-height:80px;
         padding-left: 4px;
         // border-color: rgba(82, 168, 236, 0.8);
         // box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px rgba(82, 168, 236, 0.6);
         .rating_grade_value {
-          font-size:35px;
-          font-family:PingFangSC-Medium,PingFang SC;
-          font-weight:500;
-          color:rgba(0,0,0,0.09);
-          line-height:68px;
+          font-size: 35px;
+          font-family: PingFangSC-Medium, PingFang SC;
+          font-weight: 500;
+          color: rgba(0, 0, 0, 0.09);
+          line-height: 68px;
         }
       }
       .rating_weight {
-        color: #1890FF;
+        color: #1890ff;
       }
       .rating_input {
         height: 88px;
         font-size: 48px;
-        color: #1890FF;
+        color: #1890ff;
         text-align: center;
       }
     }
@@ -293,7 +295,6 @@
     .rating_normal_width {
       width: 100%;
     }
-
   }
   .rating_label_name {
     margin-right: 8px;
@@ -301,11 +302,11 @@
   .select_item {
     // width:94px;
     display: inline-block;
-    height:40px;
-    background:rgba(245,245,245,1);
-    border-radius:4px;
-    opacity:0.9;
-    border:1px solid rgba(0,0,0,0.09);
+    height: 40px;
+    background: rgba(245, 245, 245, 1);
+    border-radius: 4px;
+    opacity: 0.9;
+    border: 1px solid rgba(0, 0, 0, 0.09);
     text-align: center;
     line-height: 40px;
     margin-right: 8px;
@@ -313,7 +314,7 @@
 }
 
 .default_popover_card {
-  border:1px solid rgba(0,0,0,0.15);
+  border: 1px solid rgba(0, 0, 0, 0.15);
   box-shadow: none;
 }
 
@@ -325,7 +326,7 @@
   left: -10px;
   width: 0;
   height: 0;
-  border-right: 10px solid #1890FF;
+  border-right: 10px solid #1890ff;
   border-bottom: 10px solid transparent;
   border-top: 10px solid transparent;
 }
@@ -349,7 +350,7 @@
   left: -10px;
   width: 0;
   height: 0;
-  border-right: 10px solid rgba(0,0,0,0.15);
+  border-right: 10px solid rgba(0, 0, 0, 0.15);
   border-bottom: 10px solid transparent;
   border-top: 10px solid transparent;
 }
@@ -368,7 +369,7 @@
 // 中止状态的样子
 .stopLine {
   width: 2px;
-  background: rgba(0,0,0,0.09);
+  background: rgba(0, 0, 0, 0.09);
   position: relative;
   top: 46px;
   left: 24px;
@@ -379,42 +380,44 @@
   width: 48px;
   height: 48px;
   border-radius: 40px;
-  opacity:0.81;
+  opacity: 0.81;
   text-align: center;
   line-height: 48px;
-  color: rgba(0,0,0,0.25);
+  color: rgba(0, 0, 0, 0.25);
   z-index: 1;
   font-size: 20px;
-  background:#fff;
-  border:1px solid rgba(0,0,0,0.15);
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.15);
   flex-shrink: 0;
 }
 
-.line{ // 理解成完成的样式
+.line {
+  // 理解成完成的样式
   width: 2px;
-  background: #1890FF;
+  background: #1890ff;
   position: relative;
   top: 46px;
   left: 24px;
   flex-shrink: 0;
 }
-.circle{
+.circle {
   width: 48px;
   height: 48px;
   border-radius: 40px;
-  opacity:0.81;
+  opacity: 0.81;
   text-align: center;
   line-height: 48px;
-  color: rgba(24,144,255,1);
+  color: rgba(24, 144, 255, 1);
   z-index: 1;
   font-size: 20px;
-  background:rgba(255,255,255,1);
-  border:1px solid rgba(24,144,255,1);
+  background: rgba(255, 255, 255, 1);
+  border: 1px solid rgba(24, 144, 255, 1);
   flex-shrink: 0;
 }
-.hasnotCompetedLine{ // 理解成还没有开始时的样式
+.hasnotCompetedLine {
+  // 理解成还没有开始时的样式
   width: 2px;
-  background: #E0E0E0;
+  background: #e0e0e0;
   position: relative;
   top: 48px;
   left: 24px;
@@ -422,25 +425,30 @@
   // bottom: 0;
   /* z-index: -30; */
 }
-.hasnotCompetedCircle{
+.hasnotCompetedCircle {
   width: 48px;
   height: 48px;
   border-radius: 40px;
-  background:rgba(0,0,0,0.04);
-  border:1px solid rgba(0,0,0,0.15);
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.15);
   text-align: center;
   line-height: 48px;
   z-index: 1;
   font-size: 20px;
   flex-shrink: 0;
 }
-.doingCircle{ // 正在进行中的步骤圈样式
+.doingCircle {
+  // 正在进行中的步骤圈样式
   width: 48px;
   height: 48px;
   border-radius: 40px;
-  background:linear-gradient(90deg,rgba(24,144,255,1) 0%,rgba(24,205,255,1) 100%);
-  box-shadow:0px 1px 4px 0px rgba(0,0,0,0.15);
-  opacity:0.81;
+  background: linear-gradient(
+    90deg,
+    rgba(24, 144, 255, 1) 0%,
+    rgba(24, 205, 255, 1) 100%
+  );
+  box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.15);
+  opacity: 0.81;
   text-align: center;
   line-height: 48px;
   color: #f5f5f5;
@@ -448,9 +456,10 @@
   font-size: 20px;
   flex-shrink: 0;
 }
-.doingLine{ // 正在进行中的步骤线的样式
+.doingLine {
+  // 正在进行中的步骤线的样式
   width: 2px;
-  background: #E0E0E0;
+  background: #e0e0e0;
   position: relative;
   top: 46px;
   left: 24px;
@@ -481,12 +490,12 @@
 
 .popcontent {
   .c_area {
-    resize:none;
-    width:288px;
-    height:82px;
-    background:rgba(255,255,255,1);
-    border-radius:4px;
-    border:1px solid rgba(0,0,0,0.15);
+    resize: none;
+    width: 288px;
+    height: 82px;
+    background: rgba(255, 255, 255, 1);
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
     box-shadow: none;
   }
 }
@@ -510,11 +519,11 @@
     }
     .default_status {
       display: inline-block;
-      width:48px;
-      height:20px;
-      background:#E8E8E8;
-      border-radius:4px;
-      color: rgba(0,0,0,0.45);
+      width: 48px;
+      height: 20px;
+      background: #e8e8e8;
+      border-radius: 4px;
+      color: rgba(0, 0, 0, 0.45);
       font-size: 12px;
       text-align: center;
       line-height: 20px;
@@ -522,11 +531,11 @@
     }
     .approv_rating {
       display: inline-block;
-      width:48px;
-      height:20px;
-      background:rgba(230,247,255,1);
-      border-radius:4px;
-      color: #1890FF;
+      width: 48px;
+      height: 20px;
+      background: rgba(230, 247, 255, 1);
+      border-radius: 4px;
+      color: #1890ff;
       font-size: 12px;
       text-align: center;
       line-height: 20px;
@@ -534,11 +543,11 @@
     }
     .approv_pass {
       display: inline-block;
-      width:36px;
-      height:20px;
-      background:rgba(230,247,255,1);
-      border-radius:4px;
-      color: #1890FF;
+      width: 36px;
+      height: 20px;
+      background: rgba(230, 247, 255, 1);
+      border-radius: 4px;
+      color: #1890ff;
       font-size: 12px;
       text-align: center;
       line-height: 20px;
@@ -546,11 +555,11 @@
     }
     .approve_reject {
       display: inline-block;
-      width:36px;
-      height:20px;
-      background:rgba(255,204,199,1);
-      border-radius:4px;
-      color: #F5222D;
+      width: 36px;
+      height: 20px;
+      background: rgba(255, 204, 199, 1);
+      border-radius: 4px;
+      color: #f5222d;
       font-size: 12px;
       text-align: center;
       line-height: 20px;
@@ -561,7 +570,7 @@
       top: -8px;
       right: -4px;
       // opacity: 1;
-      color: #1890FF;
+      color: #1890ff;
       font-size: 14px;
     }
     .approve_reject_userIcon {
@@ -569,7 +578,7 @@
       top: -8px;
       right: -4px;
       // opacity: 1;
-      color: #FF4D4F;
+      color: #ff4d4f;
       font-size: 14px;
     }
   }
@@ -591,9 +600,9 @@
 }
 
 .opinion_content {
-  height:96px;
-  background:rgba(255,255,255,1);
-  border-radius:4px;
-  border:1px solid rgba(0,0,0,0.15);
+  height: 96px;
+  background: rgba(255, 255, 255, 1);
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
   padding: 12px;
 }

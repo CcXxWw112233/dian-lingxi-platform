@@ -129,7 +129,7 @@ export default class TreeNode extends Component {
       ) //当天所在月位置index
     } else if (gantt_view_mode == 'week') {
       toDayIndex = date_arr_one_level.findIndex(
-        item => gold_time > item.timestamp && gold_time < item.timestampEnd
+        item => gold_time >= item.timestamp && gold_time <= item.timestampEnd
       ) //当天所在哪个周
     } else {
     }

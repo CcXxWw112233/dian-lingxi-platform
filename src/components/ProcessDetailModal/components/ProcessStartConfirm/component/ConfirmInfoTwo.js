@@ -154,7 +154,8 @@ export default class ConfirmInfoTwo extends Component {
       itemValue,
       processEditDatas = [],
       currentOrgAllMembers = [],
-      projectDetailInfoData: { data = [], board_id }
+      projectDetailInfoData: { data = [], board_id },
+      templateInfo: { enable_change }
     } = this.props
     const { is_show_spread_arrow } = this.state
     let transPrincipalList = this.filterAssignees()
@@ -225,7 +226,12 @@ export default class ConfirmInfoTwo extends Component {
                     className={indexStyles.content__principalList_icon}
                   >
                     {!(transPrincipalList && transPrincipalList.length) ? (
-                      <span style={{ color: 'rgba(0,0,0,0.45)' }}>
+                      <span
+                        style={{
+                          color: 'rgba(0,0,0,0.45)',
+                          verticalAlign: 'middle'
+                        }}
+                      >
                         未设置审批人
                       </span>
                     ) : (
@@ -261,22 +267,31 @@ export default class ConfirmInfoTwo extends Component {
                         </span>
                       </>
                     )}
-                    <span style={{ position: 'relative' }}>
-                      <AmendComponent
-                        type="2"
-                        updateParentsAssigneesOrCopyPersonnel={
-                          this.updateParentsAssigneesOrCopyPersonnel
-                        }
-                        updateCorrespondingPrcodessStepWithNodeContent={
-                          this.updateCorrespondingPrcodessStepWithNodeContent
-                        }
-                        placementTitle="审批人"
-                        data={currentOrgAllMembers}
-                        itemKey={itemKey}
-                        itemValue={itemValue}
-                        board_id={board_id}
-                      />
-                    </span>
+                    {(enable_change == '1' || assignee_type == '3') && (
+                      <span
+                        style={{
+                          position: 'relative',
+                          verticalAlign: 'middle'
+                        }}
+                      >
+                        <AmendComponent
+                          type="1"
+                          updateParentsAssigneesOrCopyPersonnel={
+                            this.updateParentsAssigneesOrCopyPersonnel
+                          }
+                          updateCorrespondingPrcodessStepWithNodeContent={
+                            this.updateCorrespondingPrcodessStepWithNodeContent
+                          }
+                          placementTitle="审批人"
+                          data={currentOrgAllMembers}
+                          itemKey={itemKey}
+                          itemValue={itemValue}
+                          board_id={board_id}
+                          currentOrgAllMembers={currentOrgAllMembers}
+                          NotModifiedInitiator={true}
+                        />
+                      </span>
+                    )}
                   </div>
                   {/* 抄送人 */}
                   {cc_type == '1' && (
@@ -287,7 +302,12 @@ export default class ConfirmInfoTwo extends Component {
                       {!(
                         transCopyPersonnelList && transCopyPersonnelList.length
                       ) ? (
-                        <span style={{ color: 'rgba(0,0,0,0.45)' }}>
+                        <span
+                          style={{
+                            color: 'rgba(0,0,0,0.45)',
+                            verticalAlign: 'middle'
+                          }}
+                        >
                           未设置抄送人
                         </span>
                       ) : (
@@ -324,23 +344,32 @@ export default class ConfirmInfoTwo extends Component {
                         </>
                       )}
                       {cc_locking == '0' ? (
-                        <span style={{ position: 'relative' }}>
-                          <AmendComponent
-                            type="3"
-                            updateParentsAssigneesOrCopyPersonnel={
-                              this.updateParentsAssigneesOrCopyPersonnel
-                            }
-                            updateCorrespondingPrcodessStepWithNodeContent={
-                              this
-                                .updateCorrespondingPrcodessStepWithNodeContent
-                            }
-                            placementTitle="抄送人"
-                            data={currentOrgAllMembers}
-                            itemKey={itemKey}
-                            itemValue={itemValue}
-                            board_id={board_id}
-                          />
-                        </span>
+                        <>
+                          {enable_change == '1' && (
+                            <span
+                              style={{
+                                position: 'relative',
+                                verticalAlign: 'middle'
+                              }}
+                            >
+                              <AmendComponent
+                                type="3"
+                                updateParentsAssigneesOrCopyPersonnel={
+                                  this.updateParentsAssigneesOrCopyPersonnel
+                                }
+                                updateCorrespondingPrcodessStepWithNodeContent={
+                                  this
+                                    .updateCorrespondingPrcodessStepWithNodeContent
+                                }
+                                placementTitle="抄送人"
+                                data={currentOrgAllMembers}
+                                itemKey={itemKey}
+                                itemValue={itemValue}
+                                board_id={board_id}
+                              />
+                            </span>
+                          )}
+                        </>
                       ) : (
                         <Tooltip
                           title="已锁定抄送人"
@@ -392,17 +421,21 @@ export default class ConfirmInfoTwo extends Component {
                     {`${deadline_value}${renderTimeType(deadline_time_type)}`}内
                   </span>
                 )}
-                <span style={{ position: 'relative' }}>
-                  <AmendComponent
-                    updateCorrespondingPrcodessStepWithNodeContent={
-                      this.updateCorrespondingPrcodessStepWithNodeContent
-                    }
-                    placementTitle="完成期限"
-                    data={currentOrgAllMembers}
-                    itemKey={itemKey}
-                    itemValue={itemValue}
-                  />
-                </span>
+                {enable_change == '1' && (
+                  <span
+                    style={{ position: 'relative', verticalAlign: 'middle' }}
+                  >
+                    <AmendComponent
+                      updateCorrespondingPrcodessStepWithNodeContent={
+                        this.updateCorrespondingPrcodessStepWithNodeContent
+                      }
+                      placementTitle="完成期限"
+                      data={currentOrgAllMembers}
+                      itemKey={itemKey}
+                      itemValue={itemValue}
+                    />
+                  </span>
+                )}
               </div>
             </div>
             {is_show_spread_arrow && this.renderEditDetailContent()}
@@ -416,11 +449,17 @@ export default class ConfirmInfoTwo extends Component {
 function mapStateToProps({
   publicProcessDetailModal: {
     processEditDatas = [],
-    currentOrgAllMembers = []
+    currentOrgAllMembers = [],
+    templateInfo = {}
   },
   projectDetail: {
     datas: { projectDetailInfoData = {} }
   }
 }) {
-  return { processEditDatas, currentOrgAllMembers, projectDetailInfoData }
+  return {
+    processEditDatas,
+    currentOrgAllMembers,
+    projectDetailInfoData,
+    templateInfo
+  }
 }

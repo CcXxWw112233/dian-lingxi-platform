@@ -10,6 +10,7 @@ import {
 import { getOrgIdByBoardId } from '../../../../../utils/businessFunction'
 import { accordingToSortMembersList } from '../../handleOperateModal'
 
+// 废弃了（添加指定角色之后审批节点没有用上这个组件，和资料收集节点公用一个）
 export default class ExamineAndApproveContent extends Component {
   constructor(props) {
     super(props)

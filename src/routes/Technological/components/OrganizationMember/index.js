@@ -45,7 +45,8 @@ class OrganizationMember extends Component {
       payload: {
         batch_setting: false, //进入批量设置
         batch_setting_ids: [], //批量设置所选id
-        batch_setting_ids_map: []
+        batch_setting_ids_map: [],
+        batch_setting_ids_source: []
       }
     })
   }

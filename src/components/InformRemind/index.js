@@ -19,6 +19,7 @@ export default class index extends Component {
    * 通知提醒的点击事件
    * 1. 默认需要获取事件列表
    * 2. 还需要获取事件的消息列表(是否存在历史记录)
+   * rela_type 1=任务 2=日程 3=流程 4=文件 5=里程碑
    */
   handleInformRemind() {
     const { dispatch, rela_type, rela_id, rela_fileId } = this.props

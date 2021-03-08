@@ -93,7 +93,9 @@ export default class Header extends React.Component {
       type: 'organizationMember/updateDatas',
       payload: {
         batch_setting: bool,
-        batch_setting_ids: []
+        batch_setting_ids: [],
+        batch_setting_ids_map: [],
+        batch_setting_ids_source: []
       }
     })
   }
@@ -145,10 +147,27 @@ export default class Header extends React.Component {
         member_ids: batch_setting_ids,
         role_id: key
       }
+    }).then(() => {
+      this.restoreMultipleSelected()
+    })
+  }
+  restoreMultipleSelected = () => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'organizationMember/updateDatas',
+      payload: {
+        batch_setting_ids: [],
+        batch_setting_ids_map: [],
+        batch_setting_ids_source: []
+      }
     })
   }
   settingMembersGroup = () => {
-    const { dispatch } = this.props
+    const { dispatch, batch_setting_ids } = this.props
+    if (!batch_setting_ids.length) {
+      message.warn('未选择人员')
+      return
+    }
     dispatch({
       type: 'organizationMember/updateDatas',
       payload: {
@@ -162,10 +181,14 @@ export default class Header extends React.Component {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }
-    const modal = Modal.confirm()
     // 这里的 `update` 相当于是对 Modal进行配置
-    const { dispatch, batch_setting_ids_map } = this.props
-
+    const { dispatch, batch_setting_ids_map, batch_setting_ids } = this.props
+    if (!batch_setting_ids.length) {
+      message.warn('未选择人员')
+      return
+    }
+    const _self = this
+    const modal = Modal.confirm()
     modal.update({
       title: `确认移出？`,
       okText: '确认',
@@ -181,6 +204,8 @@ export default class Header extends React.Component {
             org_id,
             multiple: batch_setting_ids_map
           }
+        }).then(() => {
+          _self.restoreMultipleSelected()
         })
         // this.props.removeMembersWithGroup({ member_id, group_id, org_id })
       },

@@ -11,7 +11,10 @@ import ConfirmInfoOne_six from './ConfirmInfoOne_six'
 import AmendComponent from '../AmendComponent'
 import defaultUserAvatar from '@/assets/invite/user_default_avatar@2x.png'
 import { connect } from 'dva'
-import { renderTimeType } from '../../handleOperateModal'
+import {
+  getCurrentDesignatedRolesMembers,
+  renderTimeType
+} from '../../handleOperateModal'
 import { Tooltip } from 'antd'
 import { currentNounPlanFilterName } from '../../../../../utils/businessFunction'
 import { FLOWS } from '../../../../../globalset/js/constant'
@@ -72,10 +75,16 @@ export default class ConfirmInfoOne extends Component {
   filterAssignees = () => {
     const {
       projectDetailInfoData: { data = [] },
-      currentOrgAllMembers = []
+      currentOrgAllMembers = [],
+      itemValue: { role_users = [], assignee_type }
     } = this.props
     const { transPrincipalList = [] } = this.state
-    let new_data = [...currentOrgAllMembers]
+    let roles_data = getCurrentDesignatedRolesMembers(
+      currentOrgAllMembers,
+      role_users
+    )
+    let new_data =
+      assignee_type == '3' ? [...roles_data] : [...currentOrgAllMembers]
     let newTransPrincipalList =
       transPrincipalList &&
       transPrincipalList.map(item => {
@@ -173,7 +182,8 @@ export default class ConfirmInfoOne extends Component {
       itemValue,
       processEditDatas = [],
       currentOrgAllMembers = [],
-      projectDetailInfoData: { data = [], board_id }
+      projectDetailInfoData: { data = [], board_id },
+      templateInfo: { enable_change }
     } = this.props
     const { is_show_spread_arrow } = this.state
     let transPrincipalList = this.filterAssignees()
@@ -241,13 +251,20 @@ export default class ConfirmInfoOne extends Component {
               <div className={indexStyles.content__principalList_icon}>
                 <div style={{ display: 'inline-block' }}>
                   {/* 填写人 */}
-                  {assignee_type == '2' ? (
+                  {assignee_type == '2' || assignee_type == '3' ? (
                     <div
                       style={{ display: 'inline-block' }}
                       className={indexStyles.content__principalList_icon}
                     >
                       {!(transPrincipalList && transPrincipalList.length) ? (
-                        ''
+                        <span
+                          style={{
+                            color: 'rgba(0,0,0,0.5)',
+                            verticalAlign: 'middle'
+                          }}
+                        >
+                          未设置填写人
+                        </span>
                       ) : (
                         <>
                           <AvatarList
@@ -281,22 +298,32 @@ export default class ConfirmInfoOne extends Component {
                           </span>
                         </>
                       )}
-                      <span style={{ position: 'relative' }}>
-                        <AmendComponent
-                          type="1"
-                          updateParentsAssigneesOrCopyPersonnel={
-                            this.updateParentsAssigneesOrCopyPersonnel
-                          }
-                          updateCorrespondingPrcodessStepWithNodeContent={
-                            this.updateCorrespondingPrcodessStepWithNodeContent
-                          }
-                          placementTitle="填写人"
-                          data={currentOrgAllMembers}
-                          itemKey={itemKey}
-                          itemValue={itemValue}
-                          board_id={board_id}
-                        />
-                      </span>
+                      {(enable_change == '1' || assignee_type == '3') && (
+                        <span
+                          style={{
+                            position: 'relative',
+                            verticalAlign: 'middle'
+                          }}
+                        >
+                          <AmendComponent
+                            type="1"
+                            updateParentsAssigneesOrCopyPersonnel={
+                              this.updateParentsAssigneesOrCopyPersonnel
+                            }
+                            updateCorrespondingPrcodessStepWithNodeContent={
+                              this
+                                .updateCorrespondingPrcodessStepWithNodeContent
+                            }
+                            placementTitle="填写人"
+                            data={currentOrgAllMembers}
+                            itemKey={itemKey}
+                            itemValue={itemValue}
+                            board_id={board_id}
+                            currentOrgAllMembers={currentOrgAllMembers}
+                            NotModifiedInitiator={true}
+                          />
+                        </span>
+                      )}
                     </div>
                   ) : (
                     <div
@@ -322,7 +349,7 @@ export default class ConfirmInfoOne extends Component {
                         </span>
                       </span>
                       <span>{`${currentNounPlanFilterName(FLOWS)}发起人`}</span>
-                      <span style={{ position: 'relative' }}>
+                      {/* <span style={{ position: 'relative',verticalAlign: 'middle' }}>
                         <AmendComponent
                           type="1"
                           updateParentsAssigneesOrCopyPersonnel={
@@ -336,8 +363,10 @@ export default class ConfirmInfoOne extends Component {
                           itemKey={itemKey}
                           itemValue={itemValue}
                           board_id={board_id}
+                          currentOrgAllMembers={currentOrgAllMembers}
+                          NotModifiedInitiator={true}
                         />
-                      </span>
+                      </span> */}
                     </div>
                   )}
                   {/* 抄送人 */}
@@ -349,7 +378,14 @@ export default class ConfirmInfoOne extends Component {
                       {!(
                         transCopyPersonnelList && transCopyPersonnelList.length
                       ) ? (
-                        ''
+                        <span
+                          style={{
+                            color: 'rgba(0,0,0,0.45)',
+                            verticalAlign: 'middle'
+                          }}
+                        >
+                          未设置抄送人
+                        </span>
                       ) : (
                         <>
                           <AvatarList
@@ -384,23 +420,32 @@ export default class ConfirmInfoOne extends Component {
                         </>
                       )}
                       {cc_locking == '0' ? (
-                        <span style={{ position: 'relative' }}>
-                          <AmendComponent
-                            type="3"
-                            updateParentsAssigneesOrCopyPersonnel={
-                              this.updateParentsAssigneesOrCopyPersonnel
-                            }
-                            updateCorrespondingPrcodessStepWithNodeContent={
-                              this
-                                .updateCorrespondingPrcodessStepWithNodeContent
-                            }
-                            placementTitle="抄送人"
-                            data={currentOrgAllMembers}
-                            itemKey={itemKey}
-                            itemValue={itemValue}
-                            board_id={board_id}
-                          />
-                        </span>
+                        <>
+                          {enable_change == '1' && (
+                            <span
+                              style={{
+                                position: 'relative',
+                                verticalAlign: 'middle'
+                              }}
+                            >
+                              <AmendComponent
+                                type="3"
+                                updateParentsAssigneesOrCopyPersonnel={
+                                  this.updateParentsAssigneesOrCopyPersonnel
+                                }
+                                updateCorrespondingPrcodessStepWithNodeContent={
+                                  this
+                                    .updateCorrespondingPrcodessStepWithNodeContent
+                                }
+                                placementTitle="抄送人"
+                                data={currentOrgAllMembers}
+                                itemKey={itemKey}
+                                itemValue={itemValue}
+                                board_id={board_id}
+                              />
+                            </span>
+                          )}
+                        </>
                       ) : (
                         <Tooltip
                           title="已锁定抄送人"
@@ -452,17 +497,21 @@ export default class ConfirmInfoOne extends Component {
                     {`${deadline_value}${renderTimeType(deadline_time_type)}`}内
                   </span>
                 )}
-                <span style={{ position: 'relative' }}>
-                  <AmendComponent
-                    updateCorrespondingPrcodessStepWithNodeContent={
-                      this.updateCorrespondingPrcodessStepWithNodeContent
-                    }
-                    placementTitle="完成期限"
-                    data={currentOrgAllMembers}
-                    itemKey={itemKey}
-                    itemValue={itemValue}
-                  />
-                </span>
+                {enable_change == '1' && (
+                  <span
+                    style={{ position: 'relative', verticalAlign: 'middle' }}
+                  >
+                    <AmendComponent
+                      updateCorrespondingPrcodessStepWithNodeContent={
+                        this.updateCorrespondingPrcodessStepWithNodeContent
+                      }
+                      placementTitle="完成期限"
+                      data={currentOrgAllMembers}
+                      itemKey={itemKey}
+                      itemValue={itemValue}
+                    />
+                  </span>
+                )}
               </div>
             </div>
             {is_show_spread_arrow && this.renderEditDetailContent()}
@@ -476,11 +525,17 @@ export default class ConfirmInfoOne extends Component {
 function mapStateToProps({
   publicProcessDetailModal: {
     processEditDatas = [],
-    currentOrgAllMembers = []
+    currentOrgAllMembers = [],
+    templateInfo = {}
   },
   projectDetail: {
     datas: { projectDetailInfoData = {} }
   }
 }) {
-  return { processEditDatas, currentOrgAllMembers, projectDetailInfoData }
+  return {
+    processEditDatas,
+    currentOrgAllMembers,
+    projectDetailInfoData,
+    templateInfo
+  }
 }

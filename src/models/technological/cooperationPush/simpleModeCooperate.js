@@ -743,6 +743,14 @@ export default {
         default:
           break
       }
+      yield put({
+        type: 'handleBoard',
+        payload: {
+          coperateName,
+          coperateType,
+          coperateData
+        }
+      })
     },
     // 处理流程
     *handleFlow({ payload }, { select, call, put }) {

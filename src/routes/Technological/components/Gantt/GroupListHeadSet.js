@@ -176,7 +176,7 @@ export default class GroupListHeadSet extends Component {
         })
         setTimeout(() => {
           this.props.setGoldDateArr({})
-          this.props.setScrollPosition({})
+          // this.props.setScrollPosition({})
         }, 200)
         //返回项目列表的情况下，如果是相对时间视图，则要处理回到月是图
         // if (gantt_view_mode == 'relative_time') {

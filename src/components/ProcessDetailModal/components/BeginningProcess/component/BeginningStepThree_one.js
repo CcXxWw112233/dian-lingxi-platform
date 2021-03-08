@@ -834,7 +834,7 @@ export default class BeginningStepThree_one extends Component {
           {/* 评分人意见以及分数详情 */}
           <div>
             {transPrincipalList &&
-              transPrincipalList.length &&
+              !!transPrincipalList.length &&
               transPrincipalList.map(item => {
                 if (item.score_items && item.score_items.length != '0') {
                   return <>{this.renderRatingPersonSuggestion(item)}</>
