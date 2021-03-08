@@ -533,6 +533,22 @@ export default class HeaderContentRightMenu extends Component {
     })
   }
 
+  // 重新启动模板发起流程
+  handleLaunchStartProcess = () => {
+    const {
+      processInfo: { flow_template_id },
+      dispatch
+    } = this.props
+    dispatch({
+      type: 'publicProcessDetailModal/getTemplateInfo',
+      payload: {
+        id: flow_template_id,
+        processPageFlagStep: '3',
+        process_detail_modal_visible: true
+      }
+    })
+  }
+
   // 重启流程的点击事件
   handleReStartProcess = () => {
     let that = this
@@ -643,6 +659,9 @@ export default class HeaderContentRightMenu extends Component {
       case 'restart': // 表示匹配重启
         this.handleReStartProcess()
         break
+      case 'launchStart': // 表示中止后重新启动模板发起流程
+        this.handleLaunchStartProcess()
+        break
       default:
         break
     }
@@ -702,6 +721,22 @@ export default class HeaderContentRightMenu extends Component {
               } */}
             {status == '2' && (
               <Button
+                onClick={this.handleLaunchStartProcess}
+                className={indexStyles.covert_templete}
+                style={{ marginLeft: '20px' }}
+              >
+                <span
+                  style={{ marginRight: '4px' }}
+                  className={globalStyles.authTheme}
+                >
+                  &#xe788;
+                </span>
+                重新发起
+                {/* {currentNounPlanFilterName(FLOWS)} */}
+              </Button>
+            )}
+            {status == '2' && (
+              <Button
                 onClick={this.handleReStartProcess}
                 className={indexStyles.covert_templete}
                 style={{ marginLeft: '20px' }}
@@ -712,7 +747,8 @@ export default class HeaderContentRightMenu extends Component {
                 >
                   &#xe788;
                 </span>
-                重启{currentNounPlanFilterName(FLOWS)}
+                继续执行
+                {/* {currentNounPlanFilterName(FLOWS)} */}
               </Button>
             )}
 

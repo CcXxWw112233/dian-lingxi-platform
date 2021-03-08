@@ -397,7 +397,8 @@ export default class MainContent extends Component {
       processPageFlagStep
     } = nextProps
     const {
-      processInfo: { curr_node_sort: old_curr_node_sort }
+      processInfo: { curr_node_sort: old_curr_node_sort },
+      processPageFlagStep: old_processPageFlagStep
     } = this.props
     if (old_curr_node_sort && curr_node_sort) {
       if (curr_node_sort != old_curr_node_sort) {
@@ -409,6 +410,10 @@ export default class MainContent extends Component {
     // 更新缓存内容
     if (processPageFlagStep == '4') {
       this.updateUserProcessWithNodesStorage(nextProps)
+    }
+    // 中止流程后进入模板 所以需要更新一下组织成员列表
+    if (old_processPageFlagStep == '4' && processPageFlagStep == '3') {
+      this.whetherUpdateOrgnazationMemberList(nextProps)
     }
   }
 
