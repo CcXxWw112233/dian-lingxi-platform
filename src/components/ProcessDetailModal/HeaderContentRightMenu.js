@@ -425,7 +425,14 @@ export default class HeaderContentRightMenu extends Component {
               name: 'status',
               value: '2'
             })
-          that.props.onCancel && that.props.onCancel()
+          // 中止流程不关闭弹窗
+          that.props.dispatch({
+            type: 'publicProcessDetailModal/getProcessInfo',
+            payload: {
+              id
+            }
+          })
+          // that.props.onCancel && that.props.onCancel()
         }
       }
     })
