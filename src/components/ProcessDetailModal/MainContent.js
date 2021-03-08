@@ -376,11 +376,11 @@ export default class MainContent extends Component {
       templateInfo: { org_id },
       processPageFlagStep
     } = props
-    if (
-      processPageFlagStep != '3' ||
-      (processPageFlagStep != '4' && status != '0')
-    )
-      return
+    // if (
+    //   processPageFlagStep != '3' ||
+    //   (processPageFlagStep != '4' && status != '0')
+    // )
+    //   return
     const ORG_ID = org_id ? org_id : getOrgIdByBoardId(board_id)
     props.dispatch({
       type: 'publicProcessDetailModal/getDesignatedRoles',
