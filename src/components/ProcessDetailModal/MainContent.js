@@ -1177,7 +1177,7 @@ export default class MainContent extends Component {
     }
     const { processPageFlagStep } = this.props
     switch (processPageFlagStep) {
-      case '1': // 表示是配置的时候显示的开始流程
+      case '1': // 表示是配置的时候显示的开始流程 （这个好像废弃了--因为配置时只有保存模板了）
         this.handleOperateConfigureConfirmCalbackProcess(start_time)
         break
       case '3': // 表示是启动的时候显示的开始流程
@@ -1255,11 +1255,15 @@ export default class MainContent extends Component {
       not_show_create_node_guide
     } = this.props
     // let { is_edit } = processEditDatas && processEditDatas[processCurrentEditStep] || {}
+    /**
+     * 判断是否存在配置节点
+     */
     let gold_item =
       (processEditDatas &&
-        processEditDatas.length &&
+        !!processEditDatas.length &&
         processEditDatas.find(item => item.is_edit == '0')) ||
       {}
+    // 渲染逻辑：判断是否有节点 无:添加 有:判断是否存在配置节点 如果存在不可添加 需要完成上一步才能添加
     return (
       <div style={{ position: 'relative' }} id="addProcessStep">
         {processEditDatas && processEditDatas.length ? (
@@ -1907,6 +1911,7 @@ export default class MainContent extends Component {
               <>{this.renderDiffContentProcess(value, key)}</>
             )
           })} */}
+          {/* 添加步骤 */}
           {(processPageFlagStep == '1' || processPageFlagStep == '2') &&
             this.renderAddProcessStep()}
           {processEditDatas.length >= 2 && (

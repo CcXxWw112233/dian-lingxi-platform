@@ -47,7 +47,7 @@ export default class ConfigureStepOne_one extends Component {
         : JSON.parse(JSON.stringify(props.itemValue || {})),
       local_item: compareACoupleOfObjects(compare_item1, compare_item2)
         ? JSON.parse(JSON.stringify(temp_item || {}))
-        : JSON.parse(JSON.stringify(props.itemValue || {}))
+        : JSON.parse(JSON.stringify(props.itemValue || {})) //保存一份本地的item
     }
   }
 
@@ -56,7 +56,7 @@ export default class ConfigureStepOne_one extends Component {
     const { itemKey, parentKey, processEditDatas = [] } = this.props
     let update_item = JSON.parse(JSON.stringify(local_item || {}))
     if (!is_click_confirm_btn) {
-      // 判断是否点击了确定按钮,否 那么就保存回原来的状态
+      // 判断是否点击了确定按钮,否 那么就保存回原来的状态 即 用local_item 覆盖变化的
       if (visible == false) {
         this.setState({
           form_item: update_item
@@ -159,13 +159,16 @@ export default class ConfigureStepOne_one extends Component {
     const { forms = [] } = processEditDatas[parentKey]
     const { is_click_currentTextForm } = itemValue
     let newFormsData = JSON.parse(JSON.stringify(forms || []))
+    console.log(popoverVisible, 'sssssssssssssss_popoverVisible')
     if (newFormsData && newFormsData.length > 1) {
       newFormsData = newFormsData.map((item, index) => {
         if (item.is_click_currentTextForm && index != itemKey) {
+          //表示点击了其他元素 把当前状态设置为false
           let new_item
           new_item = { ...item, is_click_currentTextForm: false }
           return new_item
         } else if (item.is_click_currentTextForm && index == itemKey) {
+          // 点击了当前已高亮的元素
           let new_item
           new_item = {
             ...item,
@@ -173,6 +176,7 @@ export default class ConfigureStepOne_one extends Component {
           }
           return new_item
         } else if (!item.is_click_currentTextForm && index == itemKey) {
+          // 点击当前未高亮的元素---popoverVisible一开始为false 所以取反
           let new_item
           new_item = {
             ...item,
@@ -180,6 +184,7 @@ export default class ConfigureStepOne_one extends Component {
           }
           return new_item
         } else if (!item.is_click_currentTextForm && index != itemKey) {
+          //表示点击的不是当前高亮元素
           return item
         }
       })
@@ -187,6 +192,7 @@ export default class ConfigureStepOne_one extends Component {
         this.props.updateConfigureProcess({ value: newFormsData }, 'forms')
       // this.updateEdit({ value: !is_click_currentTextForm }, 'is_click_currentTextForm')
     } else {
+      // 添加第一条的时候 默认高亮状态
       this.updateEdit(
         { value: !popoverVisible ? true : false },
         'is_click_currentTextForm'
