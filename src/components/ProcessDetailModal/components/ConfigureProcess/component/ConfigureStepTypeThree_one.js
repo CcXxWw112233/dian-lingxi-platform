@@ -1072,15 +1072,15 @@ export default class ConfigureStepTypeThree_one extends Component {
       // 表示未开启权重
       if (local_enable_weight != enable_weight) {
         //表示本地和modal中是否发生改变
-        // if (
-        //   isObjectValueEqual(localScoreList, score_items) ||
-        //   this.whetherIsEmptyContent() ||
-        //   this.whetherIsScoreValueAccordReg()
-        // ) {
-        //   disabledFlag = false
-        // } else {
-        //   disabledFlag = false
-        // }
+        if (
+          isObjectValueEqual(localScoreList, score_items) ||
+          this.whetherIsEmptyContent() ||
+          this.whetherIsScoreValueAccordReg()
+        ) {
+          disabledFlag = false
+        } else {
+          disabledFlag = false
+        }
       } else {
         // 比较两个评分是否相等 或者 判断是否有空数据、是否每个分数值满足规则
         if (
