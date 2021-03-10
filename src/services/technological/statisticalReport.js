@@ -70,3 +70,14 @@ export function getReportBoardFunnel(params) {
     // params
   })
 }
+
+/**
+ * 获取项目统计数据
+ */
+export const getBoardStatistical = data => {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/report/board/statistic`,
+    method: 'GET',
+    params: data
+  })
+}

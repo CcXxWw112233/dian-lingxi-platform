@@ -8,6 +8,9 @@ import 'echarts/lib/chart/bar'
 import 'echarts/lib/component/tooltip'
 import 'echarts/lib/component/title'
 import 'echarts/lib/component/legend'
+import { ECHARTSTHEME } from '../constans'
+import theme from '../../StatisticalReport/echartTheme.json'
+import { debounce } from '../../../../../../utils/util'
 
 /**
  * 饼图
@@ -24,10 +27,16 @@ export default class PieProject extends React.Component {
      * echarts的主体
      */
     this.chart = null
+    this.resize = debounce(this.resize, 100)
+    window.addEventListener('resize', this.resize)
   }
 
   componentDidMount() {
     this.getPieOptionData()
+  }
+
+  resize = () => {
+    this.chart && this.chart.resize()
   }
 
   /**
@@ -38,33 +47,64 @@ export default class PieProject extends React.Component {
   }
 
   /**
-   * 构建echarts
+   * 通过数据重组一个数据
+   * @returns [{name: '', value}]
    */
-  initEcharts = () => {
-    this.chart = echarts.init(document.getElementById(this.ChartId))
+  getPieData = (object = {}) => {
+    const { data = {} } = this.props
+    const { status = [], count = [] } = data
+    return count.map((item, index) => {
+      if (object.name === status[index]) {
+        return {
+          name: status[index],
+          value: item,
+          ...object
+        }
+      }
+      return {
+        name: status[index],
+        value: item
+      }
+    })
+  }
+
+  componentDidUpdate() {
+    this.updateChart()
+  }
+
+  /**
+   * 动态更新echarts
+   */
+  updateChart = () => {
+    /**
+     * data {status} legend的文字列表
+     * count series数据
+     */
+    const { data, selectedParam } = this.props
+    const sData = this.getPieData(selectedParam)
     const option = {
       tooltip: {
-        trigger: 'item'
+        trigger: 'item',
+        formatter: '{b} : {c} ({d}%)'
       },
       legend: {
         orient: 'vertical',
-        right: 16
+        right: 16,
+        data: data.status,
+        type: 'scroll'
       },
       series: [
         {
-          name: '访问来源',
+          name: '状态分布',
           type: 'pie',
           radius: '90%',
           center: ['35%', '50%'],
-          data: [
-            { value: 1048, name: '搜索引擎' },
-            { value: 735, name: '直接访问' },
-            { value: 580, name: '邮件营销' },
-            { value: 484, name: '联盟广告' },
-            { value: 300, name: '视频广告' }
-          ],
+          data: sData,
           label: {
-            show: false
+            show: true,
+            formatter: params =>
+              params.value > 0 ? params.name + '\n' + params.value : '',
+            position: 'inside'
           },
           emphasis: {
             itemStyle: {
@@ -77,11 +117,37 @@ export default class PieProject extends React.Component {
       ]
     }
     this.chart.setOption(option)
+    if (sData.length) this.chart.hideLoading()
+  }
+
+  /**
+   * 构建echarts
+   */
+  initEcharts = () => {
+    echarts.registerTheme(ECHARTSTHEME, theme)
+    this.chart = echarts.init(
+      document.getElementById(this.ChartId),
+      ECHARTSTHEME
+    )
+    this.chart.showLoading()
+    this.updateChart()
+    this.chart.on('click', this.handleEchartClick)
+  }
+
+  /**
+   * echarts点击事件处理
+   */
+  handleEchartClick = params => {
+    const { onHandleClick } = this.props
+    const { data } = params
+    if (data.value > 0) onHandleClick && onHandleClick(data)
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.resize)
   }
 
   render() {
-    return (
-      <div className={styles.chart_box_content} id={this.ChartId}></div>
-    )
+    return <div className={styles.chart_box_content} id={this.ChartId}></div>
   }
 }

@@ -8,6 +8,10 @@ import 'echarts/lib/chart/bar'
 import 'echarts/lib/component/tooltip'
 import 'echarts/lib/component/title'
 import 'echarts/lib/component/legend'
+import theme from '../../StatisticalReport/echartTheme.json'
+import { ECHARTSTHEME } from '../constans'
+import { message } from 'antd'
+import { debounce } from '../../../../../../utils/util'
 /**
  * 项目统计漏斗图
  */
@@ -23,31 +27,86 @@ export default class FunnlProject extends React.Component {
      * echarts的主体
      */
     this.chart = null
+    this.resize = debounce(this.resize, 100)
+    window.addEventListener('resize', this.resize)
+  }
+
+  resize = () => {
+    this.chart && this.chart.resize()
   }
 
   componentDidMount() {
     this.initChart()
   }
+  componentDidUpdate() {
+    this.updateChart()
+  }
 
   /**
-   * 构建echarts
+   * 通过数据重组一个数据
+   * @returns [{name: '', value}]
    */
-  initChart = () => {
-    this.chart = echarts.init(document.getElementById(this.ChartId))
+  getData = (object = {}) => {
+    const { data = {} } = this.props
+    const { status = [], count = [] } = data
+    if (status.length || count.length)
+      return count.map((item, index) => {
+        if (object.name === status[index]) {
+          return {
+            name: status[index],
+            value: item,
+            ...object
+          }
+        }
+        return {
+          name: status[index],
+          value: item
+        }
+      })
+    else if (!status.length && !count.length)
+      return [
+        {
+          name: '暂无阶段分布数据',
+          value: 100,
+          emptyData: true,
+          itemStyle: {
+            color: '#ccc'
+          },
+          emphasis: {
+            scale: false,
+            label: {
+              fontSize: 12
+            }
+          }
+        }
+      ]
+  }
+
+  /**
+   * 动态更新echarts
+   */
+  updateChart = () => {
+    const { data = {} } = this.props
+    const chart_data = this.getData()
     const option = {
       tooltip: {
         trigger: 'item',
-        formatter: '{a} <br/>{b} : {c}%'
+        formatter: param => {
+          if (param.data.emptyData) {
+            return '暂无阶段分布数据'
+          }
+          return param.name + '\n' + param.value
+        }
       },
       legend: {
-        data: ['展现', '点击', '访问', '咨询', '订单'],
+        data: data.status,
         orient: 'vertical',
         right: 16
       },
 
       series: [
         {
-          name: '漏斗图',
+          name: '阶段分布',
           type: 'funnel',
           left: '5%',
           top: 20,
@@ -60,9 +119,16 @@ export default class FunnlProject extends React.Component {
           minSize: '0%',
           maxSize: '100%',
           sort: 'descending',
-          gap: 2,
+          gap: 0,
+          selectedMode: 'single',
           label: {
             show: true,
+            formatter: params => {
+              if (params.data.emptyData) {
+                return '暂无阶段分布数据'
+              }
+              return params.name + '\n' + params.value
+            },
             position: 'inside'
           },
           labelLine: {
@@ -81,18 +147,39 @@ export default class FunnlProject extends React.Component {
               fontSize: 20
             }
           },
-          data: [
-            { value: 60, name: '访问' },
-            { value: 40, name: '咨询' },
-            { value: 20, name: '订单' },
-            { value: 80, name: '点击' },
-            { value: 100, name: '展现' }
-          ]
+          data: chart_data
         }
       ]
     }
 
     this.chart.setOption(option)
+  }
+  /**
+   * 构建echarts
+   */
+  initChart = () => {
+    const { data = {} } = this.props
+    echarts.registerTheme(ECHARTSTHEME, theme)
+    this.chart = echarts.init(
+      document.getElementById(this.ChartId),
+      ECHARTSTHEME
+    )
+    this.updateChart()
+    this.chart.on('click', this.handleEchartClick)
+  }
+
+  /**
+   * echarts点击事件处理
+   */
+  handleEchartClick = params => {
+    const { onHandleClick } = this.props
+    if (params.data.emptyData) return
+    if (params.data.value > 0) onHandleClick && onHandleClick(params.data)
+    else message.warn('所选图表无数据，无法作为过滤条件')
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.resize)
   }
 
   render() {

@@ -16,13 +16,9 @@ export default class ChartBox extends React.Component {
       <div className={styles.container}>
         <div className={styles.container_title}>
           <span className={styles.title}>{title}</span>
-          <span className={styles.qrcode_icon}>
-            c
-          </span>
+          {/* <span className={styles.qrcode_icon}>c</span> */}
         </div>
-        <div className={styles.chart_container}>
-          { children }
-        </div>
+        <div className={styles.chart_container}>{children}</div>
       </div>
     )
   }
