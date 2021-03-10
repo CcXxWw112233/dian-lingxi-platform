@@ -71,8 +71,8 @@ export const processEditDatasItemThreeConstant = {
       weight_ratio: '100' //权重占比
     }
   ], // 评分项
-  is_confirm: '0',
-  is_edit: '0' // 是否进入编辑
+  is_confirm: '0', //是否完成 0表示还是在进行中
+  is_edit: '0' // 是否进入编辑 0 表示还是在配置页
 }
 
 // 假数据

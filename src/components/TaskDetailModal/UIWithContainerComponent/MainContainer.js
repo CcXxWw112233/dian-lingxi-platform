@@ -184,6 +184,7 @@ const LogicWithMainContent = {
         }
         // 获取分组详情数据
         this.getTaskGroup(res.data.board_id)
+        // 获取里程碑数据
         this.getMilestone(res.data.board_id)
         // 初始化获取字段信息 (需过滤已经存现在的字段)
         // this.filterCurrentExistenceField(res.data)
@@ -272,6 +273,7 @@ const LogicWithMainContent = {
             })
       },
       visit_control_comment: function() {
+        // 是否有评论的权限
         return checkIsHasPermissionInVisitControl(
           'comment',
           privileges,
@@ -443,7 +445,7 @@ const LogicWithMainContent = {
   },
   // 设置标题文本失去焦点回调 E
 
-  // 设置是否完成状态的下拉回调 S
+  // 设置是否完成状态的下拉回调 S --- 已废弃
   handleFiledIsComplete: function(e) {
     const { dispatch, drawContent = {} } = this.props
     const { board_id, card_id, is_realize } = drawContent
@@ -676,7 +678,7 @@ const LogicWithMainContent = {
     flag = date_mode == '1'
     return flag
   },
-
+  // 设置开始的相对时间 S
   handleStartRelativeChange: function(value) {
     const {
       drawContent = {},
@@ -731,7 +733,9 @@ const LogicWithMainContent = {
     } else {
     }
   },
+  // 设置开始的相对时间 E
 
+  // 设置截止的相对时间 S
   handleDueRelativeChange: function(value) {
     const {
       drawContent = {},
@@ -785,6 +789,7 @@ const LogicWithMainContent = {
       })
     }
   },
+  // 设置截止的相对时间 E
 
   // 开始时间 chg事件 S
   startDatePickerChange: function(timeString) {
@@ -1160,7 +1165,7 @@ const LogicWithMainContent = {
   },
   // 对应字段的删除 E
 
-  // 会议的状态值, 比较当前时间和开始时间结束时间的对比 S
+  // 会议的状态值, 比较当前时间和开始时间结束时间的对比 S --- 已废弃
   getMeetingStatus: function() {
     let meetingField
     meetingField = <span></span>

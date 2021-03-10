@@ -125,9 +125,9 @@ export default class MainUIComponent extends Component {
     // const { propertiesList = [] } = this.state
     const { drawContent = {}, propertiesList = [] } = this.props
     const { org_id, properties = [], fields = [] } = drawContent
-    if (!(propertiesList && propertiesList.length)) {
-      return <></>
-    }
+    // if (!(propertiesList && propertiesList.length)) {
+    //   return <></>
+    // }
     let new_propertiesList = [...propertiesList]
     new_propertiesList = new_propertiesList.filter(
       item => item.code != 'CONTENTLINK'

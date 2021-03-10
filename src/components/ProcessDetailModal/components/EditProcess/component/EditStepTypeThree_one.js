@@ -130,7 +130,7 @@ export default class EditStepTypeThree_one extends Component {
                                 maxWidth:
                                   clientWidth &&
                                   !(flag && score_items.length > 1)
-                                    ? clientWidth + 'px'
+                                    ? clientWidth - 10 + 'px'
                                     : autoWidth,
                                 minWidth: '50px',
                                 whiteSpace: 'nowrap',

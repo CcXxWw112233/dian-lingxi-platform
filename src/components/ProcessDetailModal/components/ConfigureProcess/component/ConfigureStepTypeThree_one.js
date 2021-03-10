@@ -603,10 +603,10 @@ export default class ConfigureStepTypeThree_one extends Component {
     this.props.updateConfigureProcess &&
       this.props.updateConfigureProcess({ value: new_data }, 'score_items')
     // 这是因为删除后 需要延时去更新状态
-    let temp_index = index == new_data.length ? new_data.length - 1 : index
-    setTimeout(() => {
-      this.titleResize(temp_index)
-    }, 200)
+    // let temp_index = index == new_data.length ? new_data.length - 1 : index
+    // setTimeout(() => {
+    //   // this.titleResize(temp_index)
+    // }, 200)
   }
 
   onFocus = (e, key, i) => {
@@ -1403,7 +1403,7 @@ export default class ConfigureStepTypeThree_one extends Component {
                                   maxWidth:
                                     clientWidth &&
                                     !(flag && score_items.length > 1)
-                                      ? clientWidth + 'px'
+                                      ? clientWidth - 10 + 'px'
                                       : autoWidth,
                                   minWidth: '50px',
                                   whiteSpace: 'nowrap',
