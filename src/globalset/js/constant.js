@@ -29,8 +29,8 @@ export const REQUEST_KNOW_POLICY = `${REQUEST_DOMAIN_ARTICLE}/api`
 
 export const WEBSOCKET_URL = (function(NODE_ENV, location) {
   if (NODE_ENV == 'development') {
-    return 'wss://lingxi.di-an.com/websocket'
-    // return 'ws://test.lingxi.new-di.com/websocket'
+    // return 'wss://lingxi.di-an.com/websocket'
+    return 'ws://test.lingxi.new-di.com/websocket'
     // return 'ws://prerelease.lingxi.new-di.com/websocket'
     // return 'ws://192.168.1.68/websocket'
     return 'ws://dev.lingxi.new-di.com/websocket' //开发环境

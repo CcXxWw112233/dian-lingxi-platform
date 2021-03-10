@@ -50,14 +50,15 @@ export default class SelectBoardModal extends Component {
       local_board_id,
       zIndex
     } = this.props
-    const target_projectList = projectList.filter(
-      (
-        item //过滤掉没有流程应用的
-      ) =>
-        (item.apps || item.app_data).findIndex(
-          item2 => item2.code == 'Flows'
-        ) != -1
-    )
+    const target_projectList = projectList
+    // const target_projectList = projectList.filter(
+    //   (
+    //     item //过滤掉没有流程应用的
+    //   ) =>
+    //     (item.apps || item.app_data).findIndex(
+    //       item2 => item2.code == 'Flows'
+    //     ) != -1
+    // )
     const aboutBoardOrganizationId = getGlobalData('aboutBoardOrganizationId')
     // 过滤有权限的项目
     const isHasPermissionProject = aboutBoardOrganizationId

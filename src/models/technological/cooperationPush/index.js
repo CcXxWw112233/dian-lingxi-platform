@@ -153,14 +153,13 @@ export default {
         handleType = 'handleWsData_board_detail'
       } else if (locationPath.indexOf('technological/project') != -1) {
         handleType = 'handleWsData_board_list'
-      } else if (
-        locationPath.indexOf('/technological/simplemode/workbench') != -1
-      ) {
+      } else if (locationPath.indexOf('/technological/simplemode') != -1) {
         handleType = 'simpleModeCooperate/handleSimpleModeCooperate'
-      } else if (locationPath.indexOf('/technological/simplemode/home') != -1) {
-        // 极简首页, 处理代办
-        handleType = 'simpleModeCooperate/handleCooperateToDoListAgent'
       }
+      // else if (locationPath.indexOf('/technological/simplemode/home') != -1) {
+      //   // 极简首页, 处理代办
+      //   handleType = 'simpleModeCooperate/handleCooperateToDoListAgent'
+      // }
       yield put({
         type: handleType,
         payload: {
