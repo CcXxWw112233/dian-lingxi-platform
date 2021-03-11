@@ -45,12 +45,12 @@ export default class FillInPersonContent extends Component {
   }
 
   // 任何人 | 指定人
-  assigneeTypeChange = e => {
-    this.setState({
-      assignee_type: e.target.value,
-      designatedPersonnelList: []
-    })
-  }
+  // assigneeTypeChange = e => {
+  //   this.setState({
+  //     assignee_type: e.target.value,
+  //     designatedPersonnelList: []
+  //   })
+  // }
 
   // 把assignees中的执行人,在项目中的所有成员过滤出来
   filterAssignees = () => {
@@ -59,11 +59,6 @@ export default class FillInPersonContent extends Component {
       itemValue: { role_users = [] },
       currentOrgAllMembers = []
     } = this.props
-    const { assignee_type } = this.state
-    let roles_data = getCurrentDesignatedRolesMembers(
-      currentOrgAllMembers,
-      role_users
-    )
     const { designatedPersonnelList = [] } = this.state
     let new_data = [...data]
     let newDesignatedPersonnelList =
@@ -162,44 +157,45 @@ export default class FillInPersonContent extends Component {
       is_click_confirm_btn: true
     })
     const { designatedPersonnelList = [], assignee_type } = this.state
+    // this.props.updateCorrespondingPrcodessStepWithNodeContent &&
+    //   this.props.updateCorrespondingPrcodessStepWithNodeContent(
+    //     'assignee_type',
+    //     assignee_type
+    //   )
+    // if (assignee_type == '2' || assignee_type == '3') {
+    let newDesignatedPersonnelList = [...designatedPersonnelList]
     this.props.updateCorrespondingPrcodessStepWithNodeContent &&
       this.props.updateCorrespondingPrcodessStepWithNodeContent(
-        'assignee_type',
-        assignee_type
+        'assignees',
+        newDesignatedPersonnelList.join(',')
       )
-    if (assignee_type == '2' || assignee_type == '3') {
-      let newDesignatedPersonnelList = [...designatedPersonnelList]
-      this.props.updateCorrespondingPrcodessStepWithNodeContent &&
-        this.props.updateCorrespondingPrcodessStepWithNodeContent(
-          'assignees',
-          newDesignatedPersonnelList.join(',')
-        )
-      this.props.updateParentsAssigneesOrCopyPersonnel &&
-        this.props.updateParentsAssigneesOrCopyPersonnel(
-          { value: newDesignatedPersonnelList },
-          'transPrincipalList'
-        )
-      this.props.onVisibleChange &&
-        this.props.onVisibleChange(false, this.updateState)
-    } else if (assignee_type == '1') {
-      this.props.updateCorrespondingPrcodessStepWithNodeContent &&
-        this.props.updateCorrespondingPrcodessStepWithNodeContent(
-          'assignees',
-          ''
-        )
-      this.setState({
-        designatedPersonnelList: []
-      })
-      this.props.onVisibleChange &&
-        this.props.onVisibleChange(false, this.updateState)
-    }
-    if (assignee_type != '3') {
-      this.props.updateCorrespondingPrcodessStepWithNodeContent &&
-        this.props.updateCorrespondingPrcodessStepWithNodeContent(
-          'assignee_roles',
-          ''
-        )
-    }
+    this.props.updateParentsAssigneesOrCopyPersonnel &&
+      this.props.updateParentsAssigneesOrCopyPersonnel(
+        { value: newDesignatedPersonnelList },
+        'transPrincipalList'
+      )
+    this.props.onVisibleChange &&
+      this.props.onVisibleChange(false, this.updateState)
+    // }
+    // else if (assignee_type == '1') {
+    //   this.props.updateCorrespondingPrcodessStepWithNodeContent &&
+    //     this.props.updateCorrespondingPrcodessStepWithNodeContent(
+    //       'assignees',
+    //       ''
+    //     )
+    //   this.setState({
+    //     designatedPersonnelList: []
+    //   })
+    //   this.props.onVisibleChange &&
+    //     this.props.onVisibleChange(false, this.updateState)
+    // }
+    // if (assignee_type != '3') {
+    //   this.props.updateCorrespondingPrcodessStepWithNodeContent &&
+    //     this.props.updateCorrespondingPrcodessStepWithNodeContent(
+    //       'assignee_roles',
+    //       ''
+    //     )
+    // }
   }
 
   // 渲染指定人员
@@ -419,18 +415,18 @@ export default class FillInPersonContent extends Component {
     //       : false
     //     : true
     //   : true
-    if (this.state.assignee_type == '2' || this.state.assignee_type == '3') {
-      if (designatedPersonnelList && !!designatedPersonnelList.length) {
-        if (assignees) {
-          disabledAssignees = isArrayEqual(
-            assignees.split(','),
-            designatedPersonnelList
-          )
-        } else {
-          disabledAssignees = false
-        }
+    // if (this.state.assignee_type == '2' || this.state.assignee_type == '3') {
+    if (designatedPersonnelList && !!designatedPersonnelList.length) {
+      if (assignees) {
+        disabledAssignees = isArrayEqual(
+          assignees.split(','),
+          designatedPersonnelList
+        )
+      } else {
+        disabledAssignees = false
       }
     }
+    // }
     /**
      * 判断类型
      * 1.如果state中的类型和model中的类型不一致
@@ -438,22 +434,22 @@ export default class FillInPersonContent extends Component {
      * B：如果是assignee_type==2|3表示是指定人员或者指定角色 那么需要判断designatedPersonnelList的长度是否存在人员，无则禁用，否则不禁用（false）
      * 2.如果state中的类型和model中的类型一致 那么禁用（这里表示和之前状态一样 所以置灰无需修改状态）
      */
-    let disabledAssigneeType = true
-    if (assignee_type != this.state.assignee_type) {
-      if (this.state.assignee_type == '1') {
-        disabledAssigneeType = false
-      }
-      // else if (designatedPersonnelList && !designatedPersonnelList.length) {
-      //   disabledAssigneeType = true
-      // }
-    }
+    // let disabledAssigneeType = true
+    // if (assignee_type != this.state.assignee_type) {
+    //   if (this.state.assignee_type == '1') {
+    //     disabledAssigneeType = false
+    //   }
+    //   // else if (designatedPersonnelList && !designatedPersonnelList.length) {
+    //   //   disabledAssigneeType = true
+    //   // }
+    // }
     return (
       <div className={indexStyles.mini_content}>
         <div
           id={`fillInPersonMiniTopContainer_${itemKey}`}
           className={`${indexStyles.mini_top} ${globalStyles.global_vertical_scrollbar}`}
         >
-          {!NotModifiedInitiator && (
+          {/* {!NotModifiedInitiator && (
             <Radio.Group
               style={{ display: 'flex', flexDirection: 'column' }}
               value={this.state.assignee_type}
@@ -478,11 +474,12 @@ export default class FillInPersonContent extends Component {
             NotModifiedInitiator ||
             this.state.assignee_type == '3') && (
             <div>{this.renderDesignatedPersonnel()}</div>
-          )}
+          )} */}
+          <div>{this.renderDesignatedPersonnel()}</div>
         </div>
         <div className={indexStyles.mini_bottom}>
           <Button
-            disabled={disabledAssigneeType && disabledAssignees ? true : false}
+            disabled={disabledAssignees ? true : false}
             onClick={this.handleConfirmChangeAssignees}
             type="primary"
           >

@@ -321,7 +321,7 @@ export default class ConfirmInfoThree extends Component {
                               }}
                             >
                               <AmendComponent
-                                type="2"
+                                type="1"
                                 updateParentsAssigneesOrCopyPersonnel={
                                   this.updateParentsAssigneesOrCopyPersonnel
                                 }
