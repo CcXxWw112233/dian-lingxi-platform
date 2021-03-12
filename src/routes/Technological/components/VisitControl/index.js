@@ -34,13 +34,13 @@ class VisitControl extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      addMemberModalVisible: false, // 是否显示添加成员的弹窗, 默认为 false 不显示
+      // addMemberModalVisible: false, // 是否显示添加成员的弹窗, 默认为 false 不显示
       comfirmRemoveModalVisible: false, // 是否显示移除职员的弹窗, 默认为 false 不显示
-      visible: false, // ？？？ 这是控制popover组件自身的显示状态
+      visible: false, // 这是控制popover组件自身的显示状态
       selectedOtherPersonId: '', //当前选中的外部邀请人员的 id
       othersPersonList: [], //外部邀请人员的list
       transPrincipalList: [], //外部已有权限人的list
-      ShowAddMenberModalVisibile: false,
+      ShowAddMenberModalVisibile: false, //是否显示添加成员的弹窗, 默认为 false 不显示
       removerOtherPersonId: '' // 当前需要删除的成员id
     }
     this.inputRef = React.createRef()
@@ -64,13 +64,16 @@ class VisitControl extends Component {
   // // 获取添加成员的回调
   handleGetAddNewMember = members => {
     const { handleAddNewMember } = this.props
+    // 获取平台人员
     const filterPlatformUsersId = users =>
       users && users.filter(u => u.type == 'platform')
+    // 操作不是平台中的人员==> 然后将平台和平台之外的人拼接 ['xxxid','xxxphone','1347369711855341568','18270711420] ==> 在暴露方法 handleAddNewMember
     this.handleNotPlatformMember(members)
       .then(users_arr => [...users_arr, ...filterPlatformUsersId(members)])
       .then(users_arr => handleAddNewMember(users_arr))
   }
   async handleNotPlatformMember(members) {
+    // 找到不是平台中的人员 过滤 得到手机号等==>['18270711420',....]
     const isNotPlatformMember = m => m.type == 'other'
     const users = members
       .filter(item => isNotPlatformMember(item))
@@ -85,75 +88,38 @@ class VisitControl extends Component {
   }
   handleInviteMemberReturnResult = selectedMember => {
     this.handleGetAddNewMember(selectedMember)
-
+    // 添加成员成功后关闭弹窗
     this.setState({
-      addMemberModalVisible: false,
+      // addMemberModalVisible: false,
       ShowAddMenberModalVisibile: false
     })
   }
   addMenbersInProject = (values, selectedMember) => {
     this.handleInviteMemberReturnResult(selectedMember)
-    return
-    const { invitationType, board_id } = this.props
-    const org_id = getOrgIdByBoardId(board_id)
-    inviteMembersInWebJoin({
-      invitationType,
-      board_id,
-      org_id,
-      values,
-      selectedMember,
-      calback: this.handleInviteMemberReturnResult
-    })
   }
 
   /**
    * 访问控制的开关切换
    * @param {Boolean} checked 是否开启访问控制的状态
    */
-  // handleToggleVisitControl = checked => {
-  //   const { handleVisitControlChange } = this.props;
-  //   handleVisitControlChange(checked);
-  // };
   handleToggleVisitControl = e => {
-    const {
-      handleVisitControlChange,
-      isPropVisitControl,
-      otherPrivilege = [],
-      board_id
-    } = this.props
-    if (e.key == 'unClock') {
-      // 表示关闭状态
-      if (
-        !checkIsHasPermissionInBoard(
-          PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE,
-          board_id
-        )
-      ) {
-        message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-        return false
-      }
-      this.setState({
-        toggle_selectedKey: e.key
-      })
-      handleVisitControlChange(false, e.key)
-    } else {
-      if (
-        !checkIsHasPermissionInBoard(
-          PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE,
-          board_id
-        )
-      ) {
-        message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-        return false
-      }
-      this.setState({
-        toggle_selectedKey: e.key
-      })
-      handleVisitControlChange(true, e.key)
+    const { handleVisitControlChange, board_id } = this.props
+    if (
+      !checkIsHasPermissionInBoard(
+        PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE,
+        board_id
+      )
+    ) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
     }
+    this.setState({
+      toggle_selectedKey: e.key
+    })
+    handleVisitControlChange(e.key == 'unClock' ? false : true, e.key)
   }
 
-  // 我的理解是: 别的地方调用该popover的时候关闭或者打开的控制该状态的回调，
+  // popover的关闭或者打开的控制该状态的回调，
   onPopoverVisibleChange = visible => {
     const { handleVisitControlPopoverVisible } = this.props
     const isClose = visible === false
@@ -192,12 +158,7 @@ class VisitControl extends Component {
    */
   handleSelectedOtherPersonListOperatorItem = ({ _, key }) => {
     const operatorType = key
-    const {
-      handleClickedOtherPersonListOperatorItem,
-      otherPrivilege,
-      isPropVisitControl,
-      board_id
-    } = this.props
+    const { handleClickedOtherPersonListOperatorItem, board_id } = this.props
     const { selectedOtherPersonId, removerOtherPersonId } = this.state
     if (
       !checkIsHasPermissionInBoard(
@@ -214,6 +175,7 @@ class VisitControl extends Component {
         comfirmRemoveModalVisible: true
       })
     }
+    // 暴露当前点击操作人下拉状态
     handleClickedOtherPersonListOperatorItem(
       selectedOtherPersonId,
       operatorType,
@@ -252,21 +214,21 @@ class VisitControl extends Component {
   }
 
   // 关闭添加成员弹窗的回调
-  handleCloseAddMemberModal = e => {
-    if (e) e.stopPropagation()
-    this.setState({
-      addMemberModalVisible: false,
-      ShowAddMenberModalVisibile: false
-    })
-  }
+  // handleCloseAddMemberModal = e => {
+  //   if (e) e.stopPropagation()
+  //   this.setState({
+  //     addMemberModalVisible: false,
+  //     ShowAddMenberModalVisibile: false
+  //   })
+  // }
 
   // 点击添加成员的回调
-  handleAddNewMember = () => {
-    this.setState({
-      addMemberModalVisible: true
-    })
-    this.togglePopoverVisible
-  }
+  // handleAddNewMember = () => {
+  //   // this.setState({
+  //   //   addMemberModalVisible: true
+  //   // })
+  //   this.togglePopoverVisible
+  // }
 
   //点击添加成员操作
   setShowAddMenberModalVisibile = () => {
@@ -410,20 +372,19 @@ class VisitControl extends Component {
     this.compareOtherPrivilegeInPropsAndUpdateIfNecessary(nextProps)
   }
 
+  // 渲染访问权限下拉菜单
   toggleVisitControl = () => {
     const {
       isPropVisitControl,
       isShowPropOtherPrivilege,
       isPropVisitControlKey
     } = this.props
-    const is_privilege_key =
-      isPropVisitControlKey == '0'
-        ? 'unlock'
-        : isPropVisitControlKey == '2'
-        ? 'clock_edit'
-        : isPropVisitControlKey == '1'
-        ? 'clock_read'
-        : 'unlock'
+    let is_privilege_key = 'unlock'
+    if (isPropVisitControlKey == '2') {
+      is_privilege_key = 'clock_edit'
+    } else if (isPropVisitControlKey == '1') {
+      is_privilege_key = 'clock_read'
+    }
     return (
       <Menu
         getPopupContainer={triggerNode => triggerNode.parentNode}
@@ -877,8 +838,8 @@ VisitControl.defaultProps = {
     // }
   ],
   notShowPrincipal: false, //不显示权限人列表
-  isShowPropOtherPrivilege: false, // 是否显示列表外人员禁止访问
-  isPropVisitControlKey: '0', // 表示传入的当前访问控制状态
+  isShowPropOtherPrivilege: false, // 控制是否显示 "列表外人员禁止访问" 默认不显示
+  isPropVisitControlKey: '0', // "0" 开放访问与操作, "1" 列表外人员禁止访问, "2" 仅列表人员可操作  表示传入的当前访问控制状态
   otherPersonOperatorMenuItem: [
     //添加人员的菜单操作映射
     {
@@ -901,7 +862,7 @@ VisitControl.defaultProps = {
       }
     }
   ],
-  otherPrivilege: {}, //现有的添加人员列表
+  otherPrivilege: [], //现有的添加人员列表
   //{'id': 'read'}
   handleClickedOtherPersonListOperatorItem: function() {
     //点击选中邀请进来的外部人员的下拉菜单项目的回调函数
