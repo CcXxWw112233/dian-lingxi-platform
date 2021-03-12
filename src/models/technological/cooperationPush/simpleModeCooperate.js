@@ -65,6 +65,14 @@ export default {
           coperateData
         }
       })
+      yield put({
+        type: 'handleCooperateToDoListAgent',
+        payload: {
+          coperateName,
+          coperateType,
+          coperateData
+        }
+      })
     },
 
     // 处理甘特图任务
@@ -409,15 +417,16 @@ export default {
     },
     // 处理首页代办(任务|流程)
     *handleCooperateToDoListAgent({ payload }, { select, call, put }) {
-      const { res } = payload
-      const { data } = res
-      let coperate = data[0] //协作
-      let news = data[1] || {} //消息
-      //获取消息协作类型
-      const coperateName = coperate.e
-      const coperateType = coperateName.substring(0, coperateName.indexOf('/'))
-      const coperateData = JSON.parse(coperate.d)
+      // const { res } = payload
+      // const { data } = res
+      // let coperate = data[0] //协作
+      // let news = data[1] || {} //消息
+      // //获取消息协作类型
+      // const coperateName = coperate.e
+      // const coperateType = coperateName.substring(0, coperateName.indexOf('/'))
+      // const coperateData = JSON.parse(coperate.d)
       // console.log(coperateData, coperateName, 'coperateData')
+      const { coperateName, coperateType, coperateData } = payload
       // 代办任务列表
       let board_card_todo_list = yield select(
         getModelSelectState('simplemode', 'board_card_todo_list')
@@ -539,6 +548,14 @@ export default {
                   type: 'workbench/updateDatas',
                   payload: {
                     projectList: arrayNonRepeatfy(new_projectList, 'board_id')
+                  }
+                })
+                yield put({
+                  type: 'handleBoxAddBoard',
+                  payload: {
+                    coperateName,
+                    coperateType,
+                    coperateData
                   }
                 })
               }
@@ -779,6 +796,9 @@ export default {
     },
     *handleBoard({ payload }, { select, call, put }) {
       const { coperateName, coperateType, coperateData } = payload
+      const projectDetailInfoData = yield select(
+        getModelSelectDatasState('projectDetail', 'projectDetailInfoData')
+      )
       switch (coperateType) {
         case 'change:flow:instance':
           const currentProcessInstanceId = yield select(
@@ -800,9 +820,7 @@ export default {
         case 'change:board':
           let op_board_id = getAfterNameId(coperateName)
           let is_deleted_ = coperateData['is_deleted']
-          const { board_id: currentProjectBoardId } = yield select(
-            getModelSelectDatasState('projectDetail', 'projectDetailInfoData')
-          )
+          const currentProjectBoardId = projectDetailInfoData?.board_id
           // debugger
           if (op_board_id == currentProjectBoardId) {
             if (is_deleted_ == '0') {
@@ -830,6 +848,41 @@ export default {
         default:
           break
       }
+    },
+    // 添加项目处理甘特图
+    *handleBoxAddBoard({ payload }, { select, call, put }) {
+      const { coperateName, coperateType, coperateData } = payload
+      console.log('ssssssaaa', { coperateName, coperateType, coperateData })
+      const { board_id } = yield select(
+        getModelSelectState('simplemode', 'simplemodeCurrentProject')
+      )
+      const group_view_type = yield select(
+        getModelSelectDatasState('gantt', 'group_view_type')
+      )
+      const session_currentSelectedWorkbenchBox = window.sessionStorage.getItem(
+        'session_currentSelectedWorkbenchBox'
+      )
+      if (!session_currentSelectedWorkbenchBox) return
+      const { code: box_code } = JSON.parse(session_currentSelectedWorkbenchBox)
+      if (!!board_id && board_id != '0') return //如果是单项目
+      // 如果是在查看甘特图
+      if (box_code == 'board:plans') {
+        // 如果是在项目视图
+        if (group_view_type == '1') {
+          yield put({
+            type: 'gantt/getGanttData',
+            payload: {}
+          })
+        }
+      } else if (box_code == 'board:chat') {
+        // 如果是在项目交流
+        yield put({
+          type: 'gantt/getGanttBoardsFiles',
+          payload: {}
+        })
+      }
+
+      // debugger
     }
   },
 

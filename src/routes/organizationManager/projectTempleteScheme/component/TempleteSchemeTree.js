@@ -10,6 +10,8 @@ import { removeEmptyArrayEle } from '../../../../utils/util'
 import { updateTempleteContainer } from '../../../../services/organization'
 import { currentNounPlanFilterName } from '../../../../utils/businessFunction'
 import { TASKS, FLOWS } from '../../../../globalset/js/constant'
+import SetTempExcutors from './SetTempExcutors'
+
 const { TreeNode } = Tree
 const { SubMenu } = Menu
 @connect(mapStateToProps)
@@ -1466,7 +1468,7 @@ export default class TempleteSchemeTree extends Component {
   // ------------------------- 拖拽内容 E ----------------------------------
 
   // 渲染点点点
-  renderSelectMoreOptions = ({ type, id }) => {
+  renderSelectMoreOptions = ({ type, id, executors }) => {
     const {
       currentTempleteListContainer = [],
       processTemplateList = []
@@ -1482,6 +1484,13 @@ export default class TempleteSchemeTree extends Component {
         }}
         getPopupContainer={triggerNode => triggerNode.parentNode}
       >
+        {type == '2' && (
+          <SubMenu title="设置执行人" trigger={['click']}>
+            {/* <Menu.Item key={'insert_milepost'}>插入里程碑</Menu.Item> */}
+            <SetTempExcutors executors={executors} id={id} />
+          </SubMenu>
+        )}
+
         {type == '1' && (
           <Menu.Item key={'insert_milepost'}>插入里程碑</Menu.Item>
         )}
@@ -1531,7 +1540,7 @@ export default class TempleteSchemeTree extends Component {
   }
 
   // 渲染dropdown内容
-  renderSpotDropdownContent = ({ type, id }) => {
+  renderSpotDropdownContent = ({ type, id, ...data }) => {
     return (
       <div onClick={e => e.stopPropagation()}>
         <Dropdown
@@ -1540,7 +1549,7 @@ export default class TempleteSchemeTree extends Component {
           getPopupContainer={() =>
             document.getElementById('planningSchemeItemWrapper')
           }
-          overlay={this.renderSelectMoreOptions({ type, id })}
+          overlay={this.renderSelectMoreOptions({ type, id, ...data })}
         >
           <span
             onClick={e => {
@@ -1557,7 +1566,7 @@ export default class TempleteSchemeTree extends Component {
   }
 
   // 渲染树状列表的title
-  renderPlanTreeTitle = ({ type, name, is_rename, id }) => {
+  renderPlanTreeTitle = ({ type, name, is_rename, id, ...data }) => {
     const { local_name, inputValue } = this.state
     const disabled = inputValue == local_name || inputValue == ''
     let icon = ''
@@ -1650,7 +1659,7 @@ export default class TempleteSchemeTree extends Component {
               &#xe62e;
             </span>
             <div className={indexStyles.icon_list}>
-              {this.renderSpotDropdownContent({ type, id })}
+              {this.renderSpotDropdownContent({ type, id, ...data })}
             </div>
           </>
         )}
@@ -1671,7 +1680,8 @@ export default class TempleteSchemeTree extends Component {
                 type: template_data_type,
                 name,
                 id,
-                is_rename
+                is_rename,
+                ...item
               })}
               key={item.id}
               dataRef={item}
@@ -1686,7 +1696,8 @@ export default class TempleteSchemeTree extends Component {
                 type: template_data_type,
                 name,
                 id,
-                is_rename
+                is_rename,
+                ...item
               })}
               key={item.id}
               dataRef={item}
