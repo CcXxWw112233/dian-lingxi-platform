@@ -414,6 +414,7 @@ export default class MainContent extends Component {
     // 中止流程后进入模板 所以需要更新一下组织成员列表
     if (old_processPageFlagStep == '4' && processPageFlagStep == '3') {
       this.whetherUpdateOrgnazationMemberList(nextProps)
+      this.getDesignatedRoles(nextProps)
     }
   }
 
