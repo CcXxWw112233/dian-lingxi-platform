@@ -17,7 +17,7 @@ import {
 // import FileDetailModal from '@/components/FileDetailModal'
 // import ProcessDetailModal from '@/components/ProcessDetailModal'
 // import Guide from '../Guide/index'
-import { PROJECTS } from '../../../../globalset/js/constant'
+import { NODE_ENV, PROJECTS } from '../../../../globalset/js/constant'
 import LingxiIm, { lx_utils, Im } from 'lingxi-im'
 import small_routine_code from '../../../../assets/sider_right/small_routine_code.png'
 import official_accounts_code from '../../../../assets/sider_right/official_accounts_code.png'
@@ -144,7 +144,10 @@ class SimpleHeader extends Component {
 
     lx_utils.filterUserList(filterId)
     let ImOptions = { baseUrl: `${protocol}//${host}/` }
-    if (window.location.host.indexOf('test.lingxi.new-di.com') != -1) {
+    if (
+      ['test.lingxi.new-di.com', 'localhost'].includes(window.location.host) ||
+      NODE_ENV === 'development'
+    ) {
       ImOptions.APPKEY = '3a4464b3ff2767d3e9bf76e77de762c7'
     }
     Im.option({
