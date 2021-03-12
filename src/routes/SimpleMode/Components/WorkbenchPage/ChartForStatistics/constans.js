@@ -58,14 +58,74 @@ export const DefaultFilterConditions = {
      */
     filterKey: 'create_time',
     /**
-     * 图表类型 line
+     * 图表类型 Line
      */
-    chartKey: 'line',
+    chartKey: 'Line',
     itemStyle: {
       color: '#ff0000'
     },
     symbol: 'circle',
     symbolSize: 16
+  },
+  /**
+   * 状态分布
+   */
+  CARD_STATUS: {
+    key: '4',
+    value: '4',
+    name: '状态分布',
+    filterName: '',
+    /**
+     * 查询条件需要过滤的字段 status
+     */
+    filterKey: 'status',
+    /**
+     * 图表类型 Pie
+     */
+    chartKey: 'card_pie',
+    /**
+     * 高亮的样式
+     */
+    itemStyle: {
+      borderColor: '#000',
+      borderWidth: 2,
+      shadowColor: 'rgba(0, 0, 0, 0.5)',
+      shadowBlur: 10
+    }
+  },
+  /**
+   * 任务工时分布
+   */
+  CARD_TIME: {
+    key: '5',
+    value: '5',
+    name: '工时分布',
+    filterName: '',
+    /**
+     * 查询条件需要过滤的字段 status
+     */
+    filterKey: 'status',
+    /**
+     * 图表类型 Pie
+     */
+    chartKey: 'card_time'
+  },
+  /**
+   * 任务数量分布
+   */
+  CARD_NUMBER: {
+    key: '5',
+    value: '5',
+    name: '数量分布',
+    filterName: '',
+    /**
+     * 查询条件需要过滤的字段 status
+     */
+    filterKey: 'status',
+    /**
+     * 图表类型 Pie
+     */
+    chartKey: 'card_number'
   }
 }
 

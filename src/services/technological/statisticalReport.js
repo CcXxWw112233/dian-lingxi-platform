@@ -81,3 +81,14 @@ export const getBoardStatistical = data => {
     params: data
   })
 }
+
+/**
+ * 获取任务统计数据
+ */
+export const getTaskStatistical = data => {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/report/card/statistic`,
+    method: 'GET',
+    params: data
+  })
+}

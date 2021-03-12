@@ -15,9 +15,16 @@ import PieProject from './components/PieProject'
 import FunnlProject from './components/FunnelProject'
 import { connect } from 'dva'
 import BoardTable from './components/BoardTable'
-import { getBoardStatistical } from '../../../../../services/technological/statisticalReport'
+import {
+  getBoardStatistical,
+  getTaskStatistical
+} from '../../../../../services/technological/statisticalReport'
 import { getProjectUserList } from '../../../../../services/technological/workbench'
 import LineChartProject from './components/LineChartProject'
+import PieTask from './components/PieTask'
+import TaskTable from './components/TaskTable'
+import ChartWorkTime from './components/ChartWorkTime'
+import ChartTaskNumber from './components/ChartNumber'
 
 @connect(({ simplemode: { simplemodeCurrentProject } }) => ({
   simplemodeCurrentProject
@@ -63,6 +70,41 @@ export default class ChartForStatistics extends React.Component {
         status: []
       },
       /**
+       * 任务状态分布
+       */
+      card_status: {
+        /**
+         * data 数据
+         */
+        count: [],
+        /**
+         * tooltip的数据
+         */
+        status: []
+      },
+      /**
+       * 任务数量分布
+       */
+      card_number: {
+        legend: [],
+        series: [],
+        user_ids: [],
+        users: []
+      },
+      /**
+       * 任务列表
+       */
+      items: [],
+      /**
+       * 任务工时分布
+       */
+      card_working_hour: {
+        legend: [],
+        series: [],
+        user_ids: [],
+        users: []
+      },
+      /**
        * 项目列表数据
        */
       boards: [],
@@ -70,6 +112,10 @@ export default class ChartForStatistics extends React.Component {
        * 用于显示的表格数据
        */
       filter_boards: [],
+      /**
+       * 用于显示任务列表
+       */
+      filter_tasks: [],
       /**
        * 用于过滤的字段
        */
@@ -140,7 +186,7 @@ export default class ChartForStatistics extends React.Component {
       this.setState(
         {
           projects: res.data || [],
-          selected: id === ALLBOARD ? this.getAllBoardId(res.data || []) : id,
+          selected: id === ALLBOARD ? this.getAllBoardId(res.data || []) : [id],
           isCheckedAll: id === ALLBOARD
         },
         () => {
@@ -155,10 +201,17 @@ export default class ChartForStatistics extends React.Component {
    */
   getData = () => {
     const { selected } = this.state
-    getBoardStatistical({ board_ids: selected.join(',') }).then(res => {
+    getBoardStatistical({ board_ids: (selected || []).join(',') }).then(res => {
       // console.log(res)
       this.clearQueryParam()
       this.setState({ ...res.data, filter_boards: res.data?.boards })
+    })
+
+    getTaskStatistical({ board_ids: (selected || []).join(',') }).then(res => {
+      this.setState({
+        ...res.data,
+        filter_tasks: this.setTableData(res.data?.items)
+      })
     })
   }
 
@@ -174,7 +227,7 @@ export default class ChartForStatistics extends React.Component {
   }
 
   /**
-   * 是否全选
+   * 是否全选项目
    * @param {} val
    */
   handleSelectedAll = val => {
@@ -193,6 +246,97 @@ export default class ChartForStatistics extends React.Component {
         isCheckedAll: false,
         selected: []
       })
+  }
+
+  /**
+   * 更新项目统计数据
+   * @param {*} data
+   */
+  updateBoardsForEcharts = (data = []) => {
+    this.filterPie(data)
+    this.filterFunnel(data)
+    this.filterLine(data)
+  }
+
+  /**
+   * 更新项目统计饼图
+   * @param {*} data
+   */
+  filterPie = (data = []) => {
+    const { STATUS } = DefaultFilterConditions
+    const { board_status } = this.state
+    const obj = {}
+    data.forEach(item => {
+      if (!obj[item[STATUS.filterKey]]) {
+        obj[item[STATUS.filterKey]] = []
+      }
+      obj[item[STATUS.filterKey]].push(item)
+    })
+    let current = []
+    board_status.status.forEach(item => {
+      if (obj[item]) {
+        current.push(obj[item].length)
+      } else current.push(0)
+    })
+    this.setState({
+      board_status: {
+        ...board_status,
+        count: current
+      }
+    })
+  }
+  /**
+   * 更新项目统计漏斗图
+   */
+  filterFunnel = (data = []) => {
+    const { STEPS } = DefaultFilterConditions
+    const { board_stage } = this.state
+    let current = new Array(board_stage.status.length).fill(0)
+    data.forEach(item => {
+      if (item[STEPS.filterKey]) {
+        board_stage.status.forEach((stat, index) => {
+          // 如果数据中的列表包含了预设的值，则数据自增
+          if (item[STEPS.filterKey].includes(stat)) {
+            current[index] += 1
+          }
+        })
+      }
+    })
+    this.setState({
+      board_stage: {
+        ...board_stage,
+        count: current
+      }
+    })
+  }
+
+  /**
+   * 更新项目统计折线图
+   */
+  filterLine = (data = []) => {
+    const { TIME } = DefaultFilterConditions
+    const { board_create_time } = this.state
+    let current = new Array(board_create_time.time.length).fill(0)
+    data.forEach(item => {
+      const create_time = item[TIME.filterKey]
+      const date = new Date(+(create_time + '000'))
+      const y = date.getFullYear()
+      const m = date.getMonth() + 1
+      board_create_time.time.forEach((time, index) => {
+        const t = time.split('-')
+        const year = +t[0]
+        const month = +t[1]
+        if (year === y && m === month) {
+          current[index] += 1
+        }
+      })
+    })
+    this.setState({
+      board_create_time: {
+        ...board_create_time,
+        number: [...current]
+      }
+    })
   }
 
   /**
@@ -314,7 +458,9 @@ export default class ChartForStatistics extends React.Component {
       }
       if (StepQuery) {
         // 如果是阶段分布过滤
-        arr = arr.filter(item => item[STEPS.filterKey].includes(StepQuery.name))
+        arr = arr.filter(item =>
+          (item[STEPS.filterKey] || []).includes(StepQuery.name)
+        )
       }
       if (TimeQuery) {
         // 如果是时间分布过滤
@@ -332,11 +478,13 @@ export default class ChartForStatistics extends React.Component {
       this.setState({
         filter_boards: arr
       })
+      this.updateBoardsForEcharts(arr)
     } else {
       // 没有过滤项，直接恢复原来的数据
       this.setState({
         filter_boards: [...boards]
       })
+      this.updateBoardsForEcharts([...boards])
     }
   }
 
@@ -359,6 +507,29 @@ export default class ChartForStatistics extends React.Component {
     )
     // 更新列表
   }
+
+  /**
+   * 过滤children字段空数组
+   * @param {*} arr
+   * @returns
+   */
+  setTableData = (arr = []) => {
+    return arr.map(item => {
+      let new_item = { ...item }
+      new_item.key = item.id
+      if (new_item.children && new_item.children.length == 0)
+        delete new_item.children
+      if (new_item.children && !!new_item.children.length) {
+        new_item.children = this.setTableData(new_item.children)
+      }
+      return new_item
+    })
+  }
+
+  /**
+   * 更新任务列表过滤
+   */
+  updateTaskFilter = () => {}
 
   render() {
     const {
@@ -504,6 +675,28 @@ export default class ChartForStatistics extends React.Component {
         </div>
         <div className={styles.table}>
           <BoardTable data={this.state.filter_boards} />
+        </div>
+        {/* 任务统计 */}
+        <div className={styles.statistics_content}>
+          <div className={styles.statis_title}>任务统计</div>
+          <div className={styles.statis_container}>
+            <ChartBox title={DefaultFilterConditions.CARD_STATUS.name}>
+              <PieTask data={this.state.card_status} />
+            </ChartBox>
+            <ChartBox title={DefaultFilterConditions.CARD_TIME.name}>
+              <ChartWorkTime data={this.state.card_working_hour} />
+            </ChartBox>
+            <ChartBox title={DefaultFilterConditions.CARD_NUMBER.name}>
+              <ChartTaskNumber data={this.state.card_number} />
+            </ChartBox>
+          </div>
+          <div className={styles.provier_open}>
+            <b onClick={this.handleToggleOpen}>展开/收起</b>{' '}
+            <span>项目列表</span>
+          </div>
+          <div className={styles.table}>
+            <TaskTable data={this.state.filter_tasks} />
+          </div>
         </div>
       </div>
     )

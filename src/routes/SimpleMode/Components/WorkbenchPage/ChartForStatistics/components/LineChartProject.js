@@ -11,6 +11,7 @@ import 'echarts/lib/component/legend'
 import theme from '../../StatisticalReport/echartTheme.json'
 import { ECHARTSTHEME } from '../constans'
 import { message } from 'antd'
+import { debounce } from '../../../../../../utils/util'
 
 export default class LineChartProject extends React.Component {
   constructor(props) {
@@ -18,6 +19,9 @@ export default class LineChartProject extends React.Component {
     this.state = {}
     this.chart = null
     this.ChartId = 'project_linechart'
+
+    this.resize = debounce(this.resize, 100)
+    window.addEventListener('resize', this.resize)
   }
 
   componentDidMount() {
@@ -34,12 +38,12 @@ export default class LineChartProject extends React.Component {
   getData = (object = {}) => {
     const { data = {} } = this.props
     const { time = [], number = [] } = data
-    return number.map((item, index) => {
+    return [...number].map((item, index) => {
       if (object.name === time[index]) {
         return {
+          ...object,
           name: time[index],
-          value: item,
-          ...object
+          value: item
         }
       }
       return {
@@ -50,7 +54,7 @@ export default class LineChartProject extends React.Component {
   }
 
   updateChart = () => {
-    const { time = [], number = [] } = this.props.data
+    const { time = [] } = this.props.data
     const { selectedParam } = this.props
     const option = {
       tooltip: {
@@ -87,7 +91,7 @@ export default class LineChartProject extends React.Component {
       series: [
         {
           top: 0,
-          data: this.getData(selectedParam),
+          data: [...this.getData(selectedParam)],
           type: 'line'
         }
       ],
@@ -121,11 +125,19 @@ export default class LineChartProject extends React.Component {
     this.chart.on('click', this.handleEchartClick)
   }
 
+  resize = () => {
+    this.chart && this.chart.resize()
+  }
+
   handleEchartClick = params => {
     const { onHandleClick } = this.props
     if (params.data.emptyData) return
     if (params.data.value > 0) onHandleClick && onHandleClick(params.data)
     else message.warn('所选图表无数据，无法作为过滤条件')
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.resize)
   }
 
   render() {

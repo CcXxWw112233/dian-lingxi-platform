@@ -13,16 +13,13 @@ import theme from '../../StatisticalReport/echartTheme.json'
 import { debounce } from '../../../../../../utils/util'
 
 /**
- * 饼图
+ * 任务的饼图
  */
-export default class PieProject extends React.Component {
+export default class PieTask extends React.Component {
   constructor(props) {
     super(props)
     this.state = {}
-    /**
-     * echarts节点的id
-     */
-    this.ChartId = 'project_pie'
+    this.ChartId = 'task_pie'
     /**
      * echarts的主体
      */
@@ -32,18 +29,15 @@ export default class PieProject extends React.Component {
   }
 
   componentDidMount() {
-    this.getPieOptionData()
+    this.initEcharts()
   }
 
   resize = () => {
     this.chart && this.chart.resize()
   }
 
-  /**
-   * 获取饼图数据
-   */
-  getPieOptionData = () => {
-    this.initEcharts()
+  componentDidUpdate() {
+    this.updateChart()
   }
 
   /**
@@ -67,11 +61,6 @@ export default class PieProject extends React.Component {
       }
     })
   }
-
-  componentDidUpdate() {
-    this.updateChart()
-  }
-
   /**
    * 动态更新echarts
    */
@@ -93,6 +82,7 @@ export default class PieProject extends React.Component {
         data: data.status,
         type: 'scroll'
       },
+      color: ['#F6BD16', '#FF5959', '#CDD1DF', '#95DE64'],
       series: [
         {
           name: '状态分布',
@@ -120,9 +110,6 @@ export default class PieProject extends React.Component {
     if (sData.length) this.chart.hideLoading()
   }
 
-  /**
-   * 构建echarts
-   */
   initEcharts = () => {
     echarts.registerTheme(ECHARTSTHEME, theme)
     this.chart = echarts.init(
@@ -134,20 +121,13 @@ export default class PieProject extends React.Component {
     this.chart.on('click', this.handleEchartClick)
   }
 
-  /**
-   * echarts点击事件处理
-   */
-  handleEchartClick = params => {
-    const { onHandleClick } = this.props
-    const { data } = params
-    if (data.value > 0) onHandleClick && onHandleClick(data)
-  }
-
   componentWillUnmount() {
     window.removeEventListener('resize', this.resize)
   }
 
+  handleEchartClick = () => {}
+
   render() {
-    return <div className={styles.chart_box_content} id={this.ChartId}></div>
+    return <div id={this.ChartId} className={styles.chart_box_content}></div>
   }
 }

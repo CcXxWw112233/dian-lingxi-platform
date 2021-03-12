@@ -53,9 +53,9 @@ export default class FunnlProject extends React.Component {
       return count.map((item, index) => {
         if (object.name === status[index]) {
           return {
+            ...object,
             name: status[index],
-            value: item,
-            ...object
+            value: item
           }
         }
         return {
