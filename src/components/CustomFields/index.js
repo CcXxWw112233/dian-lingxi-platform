@@ -386,5 +386,6 @@ export default class Index extends Component {
 Index.defaultProps = {
   org_id: '', // 需要一个组织ID获取树状列表
   relations_fields: [], // 需要一个关联字段（即引用的字段）
-  handleAddCustomField: function() {} // 添加自定义字段回调，由外部决定
+  handleAddCustomField: function() {}, // 添加自定义字段回调，由外部决定
+  onlyShowPopoverContent: false // 是否直接显示弹窗内容
 }
