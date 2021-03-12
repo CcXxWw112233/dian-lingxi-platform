@@ -120,6 +120,7 @@ export default class BeginningStepOne_five extends Component {
       return false
     }
     if (FILE_UPLOAD_ACCEPT_TYPE.indexOf(getSubfixName(file.name)) == -1) {
+      file.status = 'error'
       message.warn(`当前格式不支持`)
       return false
     }

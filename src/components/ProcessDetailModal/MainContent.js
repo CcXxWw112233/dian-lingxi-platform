@@ -218,7 +218,7 @@ export default class MainContent extends Component {
       // 设置缓存
       let curr_need_storage_node =
         (processInfo['nodes'] &&
-          processInfo['nodes'].length &&
+          !!processInfo['nodes'].length &&
           processInfo['nodes'].find(
             i =>
               (status == '1' || status == '2') &&
@@ -448,6 +448,7 @@ export default class MainContent extends Component {
     // 根据不同的状态设置画布步骤的颜色
     if (length == '0') {
       circle.beginPath() //开始一个新的路径
+      //用来保存Canvas的状态。save之后，可以调用Canvas的平移、放缩、旋转、错切、裁剪等操作。 restore：用来恢复Canvas之前保存的状态。防止save后对Canvas执行的操作对后续的绘制有影响
       circle.save()
       circle.lineWidth = lineWidth
       let color = 'rgba(0,0,0,0.04)'
