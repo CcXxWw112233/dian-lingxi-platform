@@ -341,6 +341,12 @@ export default {
         }
 
         if (gantt_board_id != '0' && gantt_board_id) {
+          yield put({
+            type: 'handleReadedBoard',
+            payload: {
+              board_id: gantt_board_id
+            }
+          })
           params.board_id = gantt_board_id
           if (group_view_type == '5') {
             //分组点击
@@ -1705,6 +1711,26 @@ export default {
           message.warn(res.message, MESSAGE_DURATION_TIME)
         }
       }
+    },
+    // 代表访问过这个项目
+    *handleReadedBoard({ payload }, { select, call, put }) {
+      const { board_id } = payload
+      const projectList = yield select(
+        getModelSelectDatasState('workbench', 'projectList')
+      )
+      if (!projectList) return
+      const projectList_new = projectList.map(item => {
+        if (board_id == item.board_id) {
+          item.is_new = '0'
+        }
+        return item
+      })
+      yield put({
+        type: 'workbench/updateDatas',
+        payload: {
+          projectList: projectList_new
+        }
+      })
     }
   },
 

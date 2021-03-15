@@ -474,27 +474,33 @@ export default {
           })
           break
         case 'change:board': // 修改项目
+          dispathes({
+            type: 'workbench/getProjectList',
+            payload: {
+              projectList: new_projectList
+            }
+          })
           if (
             coperateData.is_deleted == '1' ||
             coperateData.is_archived == '1'
           ) {
             // 表示是归档或者删除项目
             // 删除项目之后, 对应的代办任务|流程也需要删除
-            new_projectList = new_projectList.filter(
-              item => item.board_id != coperateData.board_id
-            )
-            new_board_card_todo_list_ = new_board_card_todo_list_.filter(
-              item => item.board_id != coperateData.board_id
-            )
-            new_board_flow_todo_list_ = new_board_flow_todo_list_.filter(
-              item => item.board_id != coperateData.board_id
-            )
-            dispathes({
-              type: 'workbench/updateDatas',
-              payload: {
-                projectList: new_projectList
-              }
-            })
+            // new_projectList = new_projectList.filter(
+            //   item => item.board_id != coperateData.board_id
+            // )
+            // new_board_card_todo_list_ = new_board_card_todo_list_.filter(
+            //   item => item.board_id != coperateData.board_id
+            // )
+            // new_board_flow_todo_list_ = new_board_flow_todo_list_.filter(
+            //   item => item.board_id != coperateData.board_id
+            // )
+            // dispathes({
+            //   type: 'workbench/updateDatas',
+            //   payload: {
+            //     projectList: new_projectList
+            //   }
+            // })
             dispathes({
               type: 'simplemode/updateDatas',
               payload: {
@@ -511,15 +517,15 @@ export default {
               {}
             if (!(current_user && Object.keys(current_user).length)) {
               // 表示该成员不在项目中了
-              new_projectList = new_projectList.filter(
-                item => item.board_id != coperateData.board_id
-              )
-              dispathes({
-                type: 'workbench/updateDatas',
-                payload: {
-                  projectList: arrayNonRepeatfy(new_projectList, 'board_id')
-                }
-              })
+              // new_projectList = new_projectList.filter(
+              //   item => item.board_id != coperateData.board_id
+              // )
+              // dispathes({
+              //   type: 'workbench/updateDatas',
+              //   payload: {
+              //     projectList: arrayNonRepeatfy(new_projectList, 'board_id')
+              //   }
+              // })
               return
             } else {
               let whetherIsExitence = new_projectList.find(
@@ -527,29 +533,29 @@ export default {
               )
               if (whetherIsExitence && Object.keys(whetherIsExitence).length) {
                 // 表示是已存在的项目, 那么就是更新
-                new_projectList = new_projectList.map(item => {
-                  if (item.board_id == coperateData.board_id) {
-                    let new_item = { ...item, ...coperateData }
-                    return new_item
-                  } else {
-                    return item
-                  }
-                })
-                dispathes({
-                  type: 'workbench/updateDatas',
-                  payload: {
-                    projectList: arrayNonRepeatfy(new_projectList, 'board_id')
-                  }
-                })
+                // new_projectList = new_projectList.map(item => {
+                //   if (item.board_id == coperateData.board_id) {
+                //     let new_item = { ...item, ...coperateData }
+                //     return new_item
+                //   } else {
+                //     return item
+                //   }
+                // })
+                // dispathes({
+                //   type: 'workbench/updateDatas',
+                //   payload: {
+                //     projectList: arrayNonRepeatfy(new_projectList, 'board_id')
+                //   }
+                // })
               } else {
                 // 否则就是添加项目
-                new_projectList.unshift(coperateData)
-                dispathes({
-                  type: 'workbench/updateDatas',
-                  payload: {
-                    projectList: arrayNonRepeatfy(new_projectList, 'board_id')
-                  }
-                })
+                // new_projectList.unshift(coperateData)
+                // dispathes({
+                //   type: 'workbench/updateDatas',
+                //   payload: {
+                //     projectList: arrayNonRepeatfy(new_projectList, 'board_id')
+                //   }
+                // })
                 yield put({
                   type: 'handleBoxAddBoard',
                   payload: {
