@@ -5,11 +5,12 @@ import {
   Button,
   Checkbox,
   message,
-  notification
+  notification,
+  Popover
 } from 'antd'
 import React from 'react'
 import styles from './index.less'
-import { ALLBOARD, DefaultFilterConditions } from './constans'
+import { ALLBOARD, BOARDQRCODE, CHARDQRCODE, DefaultFilterConditions } from './constans'
 import ChartBox from './components/ChartBox'
 import PieProject from './components/PieProject'
 import FunnlProject from './components/FunnelProject'
@@ -17,6 +18,7 @@ import { connect } from 'dva'
 import BoardTable from './components/BoardTable'
 import {
   getBoardStatistical,
+  getChartQrcode,
   getTaskStatistical
 } from '../../../../../services/technological/statisticalReport'
 import { getProjectUserList } from '../../../../../services/technological/workbench'
@@ -25,6 +27,7 @@ import PieTask from './components/PieTask'
 import TaskTable from './components/TaskTable'
 import ChartWorkTime from './components/ChartWorkTime'
 import ChartTaskNumber from './components/ChartNumber'
+import queryString from 'query-string'
 
 @connect(({ simplemode: { simplemodeCurrentProject } }) => ({
   simplemodeCurrentProject
@@ -33,6 +36,10 @@ export default class ChartForStatistics extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      /**
+       * 二维码地址
+       */
+      qrcode_img: '',
       /**
        * 所有项目列表
        */
@@ -196,18 +203,21 @@ export default class ChartForStatistics extends React.Component {
     })
   }
 
+  getSelectedBoardIds = () => {
+    const { selected } = this.state
+    return (selected || []).join(',')
+  }
   /**
    * 获取数据
    */
   getData = () => {
-    const { selected } = this.state
-    getBoardStatistical({ board_ids: (selected || []).join(',') }).then(res => {
+    getBoardStatistical({ board_ids: this.getSelectedBoardIds() }).then(res => {
       // console.log(res)
       this.clearQueryParam()
       this.setState({ ...res.data, filter_boards: res.data?.boards })
     })
 
-    getTaskStatistical({ board_ids: (selected || []).join(',') }).then(res => {
+    getTaskStatistical({ board_ids: this.getSelectedBoardIds() }).then(res => {
       this.setState({
         ...res.data,
         filter_tasks: this.setTableData(res.data?.items)
@@ -525,6 +535,48 @@ export default class ChartForStatistics extends React.Component {
       return new_item
     })
   }
+  /**
+   * 获取报表的小程序二维码
+   * @param type "board_statistic" | "card_statistic"
+   */
+  getQrcode = (type = BOARDQRCODE) => {
+    const { filter_params, selected } = this.state
+    const { STATUS, STEPS, TIME } = DefaultFilterConditions
+    const arr = [STATUS, STEPS, TIME]
+    const list = arr
+      .map(item => {
+        const name = filter_params[item.chartKey]?.name
+        if (name) {
+          return [item.filterKey, name]
+        }
+        return null
+      })
+      .filter(i => i)
+    const entries = new Map(list)
+    let obj = Object.fromEntries(entries || {})
+    const param = queryString.stringify(obj)
+    getChartQrcode({
+      report_code: type,
+      board_ids: selected,
+      query_condition: param
+    }).then(res => {
+      // console.log(res)
+      const { code_url } = res.data
+      this.setState({
+        qrcode_img: code_url
+      })
+    })
+  }
+
+  /**
+   * 打开二维码弹窗
+   */
+  openQrcode = (visible, t) => {
+    if (visible) {
+      this.setState({ qrcode_img: '' })
+      this.getQrcode(t)
+    }
+  }
 
   /**
    * 更新任务列表过滤
@@ -627,7 +679,21 @@ export default class ChartForStatistics extends React.Component {
           </div>
         </div>
         <div className={styles.statistics_content}>
-          <div className={styles.statis_title}>项目统计</div>
+          <div className={styles.statis_title}>
+            项目统计
+            <Popover
+              trigger={['click']}
+              onVisibleChange={this.openQrcode}
+              placement="leftTop"
+              content={
+                <div style={{ width: 300 }}>
+                  <img src={this.state.qrcode_img} alt="二维码" width="100%" />
+                </div>
+              }
+            >
+              <div className={styles.showQR}>&#xe702;</div>
+            </Popover>
+          </div>
           <div className={styles.statis_container}>
             {/* 状态分布 */}
             <ChartBox title={DefaultFilterConditions.STATUS.name}>
@@ -678,7 +744,20 @@ export default class ChartForStatistics extends React.Component {
         </div>
         {/* 任务统计 */}
         <div className={styles.statistics_content}>
-          <div className={styles.statis_title}>任务统计</div>
+          <div className={styles.statis_title}>任务统计
+          <Popover
+              trigger={['click']}
+              onVisibleChange={(v) => this.openQrcode(v, CHARDQRCODE)}
+              placement="leftTop"
+              content={
+                <div style={{ width: 300 }}>
+                  <img src={this.state.qrcode_img} alt="二维码" width="100%" />
+                </div>
+              }
+            >
+              <div className={styles.showQR}>&#xe702;</div>
+            </Popover>
+          </div>
           <div className={styles.statis_container}>
             <ChartBox title={DefaultFilterConditions.CARD_STATUS.name}>
               <PieTask data={this.state.card_status} />

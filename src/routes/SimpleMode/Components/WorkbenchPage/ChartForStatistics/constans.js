@@ -138,3 +138,9 @@ export const ALLBOARD = '0'
  * echarts主题名称
  */
 export const ECHARTSTHEME = 'walden'
+
+/**
+ * 二维码类型
+ */
+export const BOARDQRCODE = 'board_statistic'
+export const CHARDQRCODE = 'card_statistic'

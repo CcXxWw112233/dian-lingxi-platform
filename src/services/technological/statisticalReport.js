@@ -92,3 +92,14 @@ export const getTaskStatistical = data => {
     params: data
   })
 }
+
+/**
+ * 生成报表二维码
+ */
+export const getChartQrcode = data => {
+  return request({
+    method: 'POST',
+    url: `${REQUEST_DOMAIN_BOARD}/report/qrcode`,
+    data
+  })
+}
