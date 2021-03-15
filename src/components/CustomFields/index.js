@@ -1,12 +1,18 @@
 import React, { Component } from 'react'
 import { connect } from 'dva'
-import { Popover, Button, Tree } from 'antd'
+import { Popover, Button, Tree, message } from 'antd'
 import indexStyles from './index.less'
 import globalsetStyles from '@/globalset/css/globalClassName.less'
 import { getCustomFieldList } from '../../services/organization'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { removeEmptyArrayEle, isArrayEqual } from '../../utils/util'
 import EmptyImg from '@/assets/projectDetail/process/Empty@2x.png'
+import { checkIsHasPermissionInBoard } from '../../utils/businessFunction'
+import {
+  MESSAGE_DURATION_TIME,
+  NOT_HAS_PERMISION_COMFIRN,
+  PROJECT_TEAM_BOARD_EDIT
+} from '../../globalset/js/constant'
 
 const { TreeNode } = Tree
 
@@ -206,6 +212,10 @@ export default class Index extends Component {
 
   // 添加字段
   handleAddCustomField = e => {
+    if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_EDIT)) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     e && e.stopPropagation()
     this.setState({
       isOnConfirmAddField: true

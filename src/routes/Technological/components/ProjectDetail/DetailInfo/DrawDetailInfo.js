@@ -597,6 +597,10 @@ export default class DrawDetailInfo extends React.Component {
 
   // 更新日期模式
   handleDateMode = e => {
+    if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_EDIT)) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     let value = e.target.value
     const relative_time_ = this.setRelativeTime()
     this.updateDateDatas({
@@ -618,6 +622,10 @@ export default class DrawDetailInfo extends React.Component {
 
   // 更新日期格式
   handleDateFormat = e => {
+    if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_EDIT)) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     let value = e.target.value
     this.updateDateDatas({ name: 'date_format', value, isSetDatas: true })
   }
@@ -692,6 +700,10 @@ export default class DrawDetailInfo extends React.Component {
 
   // 设置项目预警
   handleSelectedWarnValue = value => {
+    if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_EDIT)) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     const { group_view_type } = this.props
     const fn = () => {
       if (window.location.href.indexOf('home') != -1) return
