@@ -20,7 +20,7 @@ import {
   currentNounPlanFilterName,
   setRequestHeaderBaseInfo
 } from '../../../../../utils/businessFunction'
-import { Checkbox, Dropdown, Menu, message, Modal } from 'antd'
+import { Badge, Checkbox, Dropdown, Menu, message, Modal } from 'antd'
 import { connect } from 'dva'
 import {
   toggleContentPrivilege,
@@ -37,6 +37,7 @@ import { arrayNonRepeatfy } from '../../../../../utils/util'
 import { inviteMembersInWebJoin } from '../../../../../utils/inviteMembersInWebJoin'
 import axios from 'axios'
 import Cookies from 'js-cookie'
+import CustormBadgeDot from '@/components/CustormBadgeDot'
 
 @connect(mapStateToProps)
 export default class BoardItem extends Component {
@@ -684,7 +685,7 @@ export default class BoardItem extends Component {
   }
   render() {
     const {
-      itemValue: { board_id, board_name, org_id, is_star },
+      itemValue: { board_id, board_name, org_id, is_star, is_new },
       simplemodeCurrentProject,
       currentUserOrganizes = [],
       currentSelectOrganize = {}
@@ -714,12 +715,15 @@ export default class BoardItem extends Component {
             id={`board_area_middle_item_middle_${board_id}`}
             className={`${styles.board_area_middle_item_middle} ${globalStyles.global_ellipsis}`}
           >
-            <p
+            {/* <Badge dot> */}
+            <div
               title={board_name}
               className={`${styles.board_area_middle_item_board_name} ${globalStyles.global_ellipsis}`}
             >
               {board_name}
-            </p>
+              <CustormBadgeDot show_dot={is_new == '1'} top={12} />
+            </div>
+            {/* </Badge> */}
             {isAllOrg && (
               <p
                 title={getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}

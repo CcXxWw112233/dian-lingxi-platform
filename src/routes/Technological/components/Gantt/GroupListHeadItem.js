@@ -16,6 +16,8 @@ import {
 } from '../../../../services/technological/project'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import AvatarList from '@/components/avatarList'
+import CustormBadgeDot from '@/components/CustormBadgeDot'
+
 import CheckItem from '@/components/CheckItem'
 import {
   updateTaskGroup,
@@ -1583,7 +1585,8 @@ export default class GroupListHeadItem extends Component {
       lane_progress_percent,
       lane_start_time,
       lane_end_time,
-      lane_member_count
+      lane_member_count,
+      is_new
     } = itemValue
     const {
       isShowBottDetail,
@@ -1703,6 +1706,7 @@ export default class GroupListHeadItem extends Component {
                     // onClick={this.listNameClick}
                   >
                     {local_list_name}
+                    <CustormBadgeDot show_dot={is_new == '1'} />
                   </div>
                 )}
                 {(is_privilege == '1' || is_privilege == '2') && (

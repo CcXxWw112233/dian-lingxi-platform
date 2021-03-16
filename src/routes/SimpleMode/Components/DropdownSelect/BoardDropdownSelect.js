@@ -283,6 +283,7 @@ class BoardDropdownSelect extends Component {
         !isPaymentOrgUser(org_id)
       ) {
         menuItemList.push({
+          ...board,
           id,
           name,
           parentName: getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes),
@@ -290,6 +291,7 @@ class BoardDropdownSelect extends Component {
         })
       } else {
         menuItemList.push({
+          ...board,
           id,
           name,
           parentName: getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)
