@@ -9,7 +9,7 @@ export default class WechatInviteToboard extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      code_type: '1', //1二维码一次性有效，2二维码长期有效
+      code_type: '2', //2二维码一次性有效，1二维码长期有效
       qr_code_src: ''
     }
   }
@@ -121,7 +121,7 @@ export default class WechatInviteToboard extends Component {
             marginTop: 14
           }}
         >
-          {code_type == '1'
+          {code_type == '2'
             ? '为了安全起见，本二维码仅限单次扫码使用，'
             : '本二维码已切换为长期有效（含转发），'}
           <br />
@@ -133,7 +133,7 @@ export default class WechatInviteToboard extends Component {
             点击此处
           </span>
           切换为
-          {code_type == '1' ? '长期有效' : '一次性有效'}
+          {code_type == '2' ? '长期有效' : '一次性有效'}
         </div>
       </div>
     )
