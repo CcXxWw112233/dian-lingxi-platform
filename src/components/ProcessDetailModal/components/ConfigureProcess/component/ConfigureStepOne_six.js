@@ -72,16 +72,18 @@ export default class ConfigureStepOne_six extends Component {
           }}
         >
           表格
-          <span style={{ marginLeft: 10 }}>
-            <Sheet
-              data={data.sheet_data}
-              onMessage={this.updateSheetData}
-              row={this.tableRow}
-              column={this.tableColumn}
-            />
-          </span>
         </p>
         <PrivewTable
+          expend={
+            <span style={{ marginRight: 10 }}>
+              <Sheet
+                data={data.sheet_data}
+                onMessage={this.updateSheetData}
+                row={this.tableRow}
+                column={this.tableColumn}
+              />
+            </span>
+          }
           data={data.sheet_data}
           minRows={this.tableRow}
           minCols={this.tableColumn}

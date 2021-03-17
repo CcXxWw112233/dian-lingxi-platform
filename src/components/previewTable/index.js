@@ -417,7 +417,11 @@ export default class PreviewTable extends React.Component {
 
   render() {
     let { activeData = [], dataSource = [] } = this.state
-    const { showDownload = false, leadingOutVisible = false } = this.props
+    const {
+      showDownload = false,
+      leadingOutVisible = false,
+      expend = null
+    } = this.props
     return (
       <div className={styles.tableContainer} style={this.props.style}>
         <table cellSpacing="0" cellPadding="0" border="0">
@@ -454,6 +458,7 @@ export default class PreviewTable extends React.Component {
               buttonClass={`${globalStyles.authTheme} ${styles.exportFile}`}
             />
           )}
+          {expend}
           {dataSource.length ? (
             dataSource.map((item, d) => {
               return (

@@ -33,6 +33,7 @@ import TaskTable from './components/TaskTable'
 import ChartWorkTime from './components/ChartWorkTime'
 import ChartTaskNumber from './components/ChartNumber'
 import queryString from 'query-string'
+import { isApiResponseOk } from '../../../../../utils/handleResponseData'
 
 @connect(({ simplemode: { simplemodeCurrentProject } }) => ({
   simplemodeCurrentProject
@@ -214,21 +215,44 @@ export default class ChartForStatistics extends React.Component {
   getBoardList = props => {
     const { simplemodeCurrentProject } = props || this.props
     const id = simplemodeCurrentProject.board_id
-    getProjectUserList().then(res => {
-      // 保存项目列表
-      this.setState(
-        {
-          projects: res.data || [],
-          selected: id === ALLBOARD ? this.getAllBoardId(res.data || []) : [id],
-          isCheckedAll: id === ALLBOARD
-        },
-        () => {
-          this.getData()
+    getProjectUserList()
+      .then(res => {
+        if (isApiResponseOk(res)) {
+          // 保存项目列表
+          this.setState(
+            {
+              projects: res.data || [],
+              selected:
+                id === ALLBOARD ? this.getAllBoardId(res.data || []) : [id],
+              isCheckedAll: id === ALLBOARD
+            },
+            () => {
+              this.getData()
+            }
+          )
+        } else {
+          this.errorInit()
         }
+        return res
+      })
+      .catch(err => {
+        this.errorInit()
+      })
+  }
+
+  /**
+   * 初始化失败的提示
+   */
+  errorInit = () => {
+    notification.warn({
+      message: '请求错误',
+      description: (
+        <span>
+          获取项目列表失败, <a onClick={() => this.getBoardList()}>点击重试</a>
+        </span>
       )
     })
   }
-
   /**
    * 获取选中的项目id
    * @returns string 1,2,3

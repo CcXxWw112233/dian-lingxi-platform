@@ -110,6 +110,7 @@ export default class LineChartProject extends React.Component {
             ]
           : null
     }
+    // this.chart.clear()
     this.chart.setOption(option)
   }
   /**

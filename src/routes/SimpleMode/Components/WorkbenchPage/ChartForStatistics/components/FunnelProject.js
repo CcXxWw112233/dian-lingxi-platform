@@ -151,7 +151,7 @@ export default class FunnlProject extends React.Component {
         }
       ]
     }
-
+    // this.chart.clear()
     this.chart.setOption(option)
   }
   /**

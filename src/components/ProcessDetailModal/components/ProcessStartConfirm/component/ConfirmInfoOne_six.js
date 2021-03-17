@@ -28,7 +28,7 @@ export default class ConfirmInfoOne_six extends Component {
   }
 
   render() {
-    const { itemValue } = this.props
+    const { itemValue, expend = null } = this.props
     const { online_excel_id } = itemValue
     const { data = [] } = this.state
     return (
@@ -38,7 +38,12 @@ export default class ConfirmInfoOne_six extends Component {
         className={indexStyles.text_form}
       >
         <p>在线表格</p>
-        <PreviewTable data={data.sheet_data || []} minRows={10} minCols={5} />
+        <PreviewTable
+          expend={expend}
+          data={data.sheet_data || []}
+          minRows={10}
+          minCols={5}
+        />
       </div>
     )
   }

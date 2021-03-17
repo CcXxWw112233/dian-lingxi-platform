@@ -116,6 +116,7 @@ export default class PieProject extends React.Component {
         }
       ]
     }
+    // this.chart.clear()
     this.chart.setOption(option)
     if (sData.length) this.chart.hideLoading()
   }

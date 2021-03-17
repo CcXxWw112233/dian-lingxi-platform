@@ -142,7 +142,7 @@ export default class ChartTaskNumber extends React.Component {
       },
       series: newSeries
     }
-
+    this.chart.clear()
     this.chart.setOption(option)
     this.chart.hideLoading()
   }
