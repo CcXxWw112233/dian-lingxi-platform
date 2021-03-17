@@ -140,7 +140,10 @@ export const ALLBOARD = '0'
 export const ECHARTSTHEME = 'walden'
 
 /**
- * 二维码类型
+ * 项目类型标识
  */
 export const BOARDQRCODE = 'board_statistic'
-export const CHARDQRCODE = 'card_statistic'
+/**
+ * 任务类型标识
+ */
+export const CARDQRCODE = 'card_statistic'

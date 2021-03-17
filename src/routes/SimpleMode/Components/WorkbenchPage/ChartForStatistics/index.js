@@ -10,7 +10,12 @@ import {
 } from 'antd'
 import React from 'react'
 import styles from './index.less'
-import { ALLBOARD, BOARDQRCODE, CHARDQRCODE, DefaultFilterConditions } from './constans'
+import {
+  ALLBOARD,
+  BOARDQRCODE,
+  CARDQRCODE,
+  DefaultFilterConditions
+} from './constans'
 import ChartBox from './components/ChartBox'
 import PieProject from './components/PieProject'
 import FunnlProject from './components/FunnelProject'
@@ -36,6 +41,14 @@ export default class ChartForStatistics extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      /**
+       * 任务数
+       */
+      card_count: 0,
+      /**
+       * 项目数
+       */
+      board_count: 0,
       /**
        * 二维码地址
        */
@@ -203,6 +216,10 @@ export default class ChartForStatistics extends React.Component {
     })
   }
 
+  /**
+   * 获取选中的项目id
+   * @returns string 1,2,3
+   */
   getSelectedBoardIds = () => {
     const { selected } = this.state
     return (selected || []).join(',')
@@ -214,15 +231,34 @@ export default class ChartForStatistics extends React.Component {
     getBoardStatistical({ board_ids: this.getSelectedBoardIds() }).then(res => {
       // console.log(res)
       this.clearQueryParam()
-      this.setState({ ...res.data, filter_boards: res.data?.boards })
-    })
-
-    getTaskStatistical({ board_ids: this.getSelectedBoardIds() }).then(res => {
       this.setState({
         ...res.data,
-        filter_tasks: this.setTableData(res.data?.items)
+        /**
+         * 用于渲染列表的过滤数据
+         */
+        filter_boards: res.data?.boards,
+        /**
+         * 用于显示项目数量
+         */
+        board_count: res.data?.boards.length
       })
     })
+
+    this.fetchCardStatistical()
+  }
+  /**
+   * 获取任务数据列表
+   */
+  fetchCardStatistical = ids => {
+    getTaskStatistical({ board_ids: ids || this.getSelectedBoardIds() }).then(
+      res => {
+        this.setState({
+          ...res.data,
+          filter_tasks: this.setTableData(res.data?.items),
+          card_count: res.data?.card_number.total
+        })
+      }
+    )
   }
 
   /**
@@ -238,7 +274,7 @@ export default class ChartForStatistics extends React.Component {
 
   /**
    * 是否全选项目
-   * @param {} val
+   * @param {object} val
    */
   handleSelectedAll = val => {
     /**
@@ -366,14 +402,24 @@ export default class ChartForStatistics extends React.Component {
 
   /**
    * 图表被点击的回调
+   * @param {string} type 类型 Pie | Funnel ...
    */
   handleFilterQuery = (type, data) => {
     // console.log(type, data)
     let { filter_params } = this.state
+    /**
+     * 查询的条件，显示值
+     */
     const addKey = data.name
 
     // 不存在就赋值
+    /**
+     * 用来判定是否第二次点击，因为第二次点击要去除查询条件
+     */
     let isAdd = false
+    /**
+     * 查询条件列表 [{name: '进行中', type: 'Pie',...}]
+     */
     let querys = [...filter_params.querys]
     if (querys.find(item => item.name === addKey && item.type === type)) {
       isAdd = true
@@ -404,7 +450,7 @@ export default class ChartForStatistics extends React.Component {
        * 如果是饼图
        */
       case DefaultFilterConditions.STATUS.chartKey:
-        // 更新
+        // 如果存在选中条件，就添加选中样式
         if (!isAdd)
           filter_params[type] = {
             ...data,
@@ -456,9 +502,9 @@ export default class ChartForStatistics extends React.Component {
   updateFilterBoards = () => {
     const { filter_params, boards } = this.state
     const { STATUS, STEPS, TIME } = DefaultFilterConditions
+    let arr = [...boards]
     if (filter_params.querys.length) {
       const querys = filter_params.querys || []
-      let arr = [...boards]
       const StatusQuery = querys.find(item => item.type === STATUS.chartKey)
       const StepQuery = querys.find(item => item.type === STEPS.chartKey)
       const TimeQuery = querys.find(item => item.type === TIME.chartKey)
@@ -489,13 +535,21 @@ export default class ChartForStatistics extends React.Component {
         filter_boards: arr
       })
       this.updateBoardsForEcharts(arr)
+      this.updateTaskFilter(arr)
     } else {
       // 没有过滤项，直接恢复原来的数据
       this.setState({
         filter_boards: [...boards]
       })
       this.updateBoardsForEcharts([...boards])
+      this.updateTaskFilter([...boards])
     }
+    /**
+     * 更新项目数量
+     */
+    this.setState({
+      board_count: arr.length
+    })
   }
 
   /**
@@ -540,7 +594,7 @@ export default class ChartForStatistics extends React.Component {
    * @param type "board_statistic" | "card_statistic"
    */
   getQrcode = (type = BOARDQRCODE) => {
-    const { filter_params, selected } = this.state
+    const { filter_params, selected, filter_boards } = this.state
     const { STATUS, STEPS, TIME } = DefaultFilterConditions
     const arr = [STATUS, STEPS, TIME]
     const list = arr
@@ -557,7 +611,8 @@ export default class ChartForStatistics extends React.Component {
     const param = queryString.stringify(obj)
     getChartQrcode({
       report_code: type,
-      board_ids: selected,
+      board_ids:
+        type === CARDQRCODE ? filter_boards.map(item => item.id) : selected,
       query_condition: param
     }).then(res => {
       // console.log(res)
@@ -570,6 +625,8 @@ export default class ChartForStatistics extends React.Component {
 
   /**
    * 打开二维码弹窗
+   * @param {boolean} visible 二维码开启还是关闭
+   * @param {string} t 二维码类型，任务还是项目
    */
   openQrcode = (visible, t) => {
     if (visible) {
@@ -581,7 +638,10 @@ export default class ChartForStatistics extends React.Component {
   /**
    * 更新任务列表过滤
    */
-  updateTaskFilter = () => {}
+  updateTaskFilter = (data = []) => {
+    const ids = data.map(item => item.id)
+    this.fetchCardStatistical(ids.join(','))
+  }
 
   render() {
     const {
@@ -658,6 +718,7 @@ export default class ChartForStatistics extends React.Component {
                 return (
                   <Tag
                     closable
+                    color="#108ee9"
                     onClose={() => this.removeQueryParam(item)}
                     key={item.type}
                   >
@@ -669,16 +730,19 @@ export default class ChartForStatistics extends React.Component {
           </div>
           <div className={styles.board_total}>
             <div className={styles.board}>
-              <span>12</span>
+              <span>{this.state.board_count}</span>
               <span>项目数</span>
             </div>
             <div className={styles.task}>
-              <span>12</span>
-              <span>项目数</span>
+              <span>{this.state.card_count}</span>
+              <span>任务数</span>
             </div>
           </div>
         </div>
-        <div className={styles.statistics_content}>
+        <div
+          className={styles.statistics_content}
+          style={{ display: selected.length === 1 ? 'none' : 'block' }}
+        >
           <div className={styles.statis_title}>
             项目统计
             <Popover
@@ -735,19 +799,20 @@ export default class ChartForStatistics extends React.Component {
               />
             </ChartBox>
           </div>
-        </div>
-        <div className={styles.provier_open}>
-          <b onClick={this.handleToggleOpen}>展开/收起</b> <span>项目列表</span>
-        </div>
-        <div className={styles.table}>
-          <BoardTable data={this.state.filter_boards} />
+          <div className={styles.provier_open}>
+            {/* <b onClick={this.handleToggleOpen}>展开/收起</b> <span>项目列表</span> */}
+          </div>
+          <div className={styles.table}>
+            <BoardTable data={this.state.filter_boards} />
+          </div>
         </div>
         {/* 任务统计 */}
         <div className={styles.statistics_content}>
-          <div className={styles.statis_title}>任务统计
-          <Popover
+          <div className={styles.statis_title}>
+            任务统计
+            <Popover
               trigger={['click']}
-              onVisibleChange={(v) => this.openQrcode(v, CHARDQRCODE)}
+              onVisibleChange={v => this.openQrcode(v, CARDQRCODE)}
               placement="leftTop"
               content={
                 <div style={{ width: 300 }}>
@@ -770,8 +835,8 @@ export default class ChartForStatistics extends React.Component {
             </ChartBox>
           </div>
           <div className={styles.provier_open}>
-            <b onClick={this.handleToggleOpen}>展开/收起</b>{' '}
-            <span>项目列表</span>
+            {/* <b onClick={this.handleToggleOpen}>展开/收起</b>{' '}
+            <span>项目列表</span> */}
           </div>
           <div className={styles.table}>
             <TaskTable data={this.state.filter_tasks} />
