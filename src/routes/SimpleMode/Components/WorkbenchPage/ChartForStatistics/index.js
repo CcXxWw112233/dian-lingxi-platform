@@ -42,6 +42,10 @@ export default class ChartForStatistics extends React.Component {
     super(props)
     this.state = {
       /**
+       * 是否多个项目统计
+       */
+      isMultipleBoardSearch: false,
+      /**
        * 任务数
        */
       card_count: 0,
@@ -249,7 +253,8 @@ export default class ChartForStatistics extends React.Component {
         /**
          * 用于显示项目数量
          */
-        board_count: res.data?.boards.length
+        board_count: res.data?.boards.length,
+        isMultipleBoardSearch: this.state.selected.length > 1
       })
     })
 
@@ -748,73 +753,77 @@ export default class ChartForStatistics extends React.Component {
             </div>
           </div>
         </div>
-        <div
-          className={styles.statistics_content}
-          style={{ display: selected.length === 1 ? 'none' : 'block' }}
-        >
-          <div className={styles.statis_title}>
-            项目统计
-            <Popover
-              trigger={['click']}
-              onVisibleChange={this.openQrcode}
-              placement="leftTop"
-              content={
-                <div style={{ width: 300 }}>
-                  <img src={this.state.qrcode_img} alt="二维码" width="100%" />
-                </div>
-              }
-            >
-              <div className={styles.showQR}>&#xe702;</div>
-            </Popover>
-          </div>
-          <div className={styles.statis_container}>
-            {/* 状态分布 */}
-            <ChartBox title={DefaultFilterConditions.STATUS.name}>
-              <PieProject
-                data={this.state.board_status}
-                selectedParam={
-                  filter_params[DefaultFilterConditions.STATUS.chartKey]
+        {this.state.isMultipleBoardSearch && (
+          <div className={styles.statistics_content}>
+            <div className={styles.statis_title}>
+              项目统计
+              <Popover
+                trigger={['click']}
+                onVisibleChange={this.openQrcode}
+                placement="leftTop"
+                content={
+                  <div style={{ width: 300 }}>
+                    <img
+                      src={this.state.qrcode_img}
+                      alt="二维码"
+                      width="100%"
+                    />
+                  </div>
                 }
-                onHandleClick={this.handleFilterQuery.bind(
-                  this,
-                  DefaultFilterConditions.STATUS.chartKey
-                )}
-              />
-            </ChartBox>
-            {/* 阶段分布 */}
-            <ChartBox title={DefaultFilterConditions.STEPS.name}>
-              <FunnlProject
-                data={this.state.board_stage}
-                selectedParam={
-                  filter_params[DefaultFilterConditions.STEPS.chartKey]
-                }
-                onHandleClick={this.handleFilterQuery.bind(
-                  this,
-                  DefaultFilterConditions.STEPS.chartKey
-                )}
-              />
-            </ChartBox>
-            {/* 时间分布 */}
-            <ChartBox title={DefaultFilterConditions.TIME.name}>
-              <LineChartProject
-                data={this.state.board_create_time}
-                selectedParam={
-                  filter_params[DefaultFilterConditions.TIME.chartKey]
-                }
-                onHandleClick={this.handleFilterQuery.bind(
-                  this,
-                  DefaultFilterConditions.TIME.chartKey
-                )}
-              />
-            </ChartBox>
+              >
+                <div className={styles.showQR}>&#xe702;</div>
+              </Popover>
+            </div>
+            <div className={styles.statis_container}>
+              {/* 状态分布 */}
+              <ChartBox title={DefaultFilterConditions.STATUS.name}>
+                <PieProject
+                  data={this.state.board_status}
+                  selectedParam={
+                    filter_params[DefaultFilterConditions.STATUS.chartKey]
+                  }
+                  onHandleClick={this.handleFilterQuery.bind(
+                    this,
+                    DefaultFilterConditions.STATUS.chartKey
+                  )}
+                />
+              </ChartBox>
+              {/* 阶段分布 */}
+              <ChartBox title={DefaultFilterConditions.STEPS.name}>
+                <FunnlProject
+                  data={this.state.board_stage}
+                  selectedParam={
+                    filter_params[DefaultFilterConditions.STEPS.chartKey]
+                  }
+                  onHandleClick={this.handleFilterQuery.bind(
+                    this,
+                    DefaultFilterConditions.STEPS.chartKey
+                  )}
+                />
+              </ChartBox>
+              {/* 时间分布 */}
+              <ChartBox title={DefaultFilterConditions.TIME.name}>
+                <LineChartProject
+                  data={this.state.board_create_time}
+                  selectedParam={
+                    filter_params[DefaultFilterConditions.TIME.chartKey]
+                  }
+                  onHandleClick={this.handleFilterQuery.bind(
+                    this,
+                    DefaultFilterConditions.TIME.chartKey
+                  )}
+                />
+              </ChartBox>
+            </div>
+            <div className={styles.provier_open}>
+              {/* <b onClick={this.handleToggleOpen}>展开/收起</b> <span>项目列表</span> */}
+            </div>
+            <div className={styles.table}>
+              <BoardTable data={this.state.filter_boards} />
+            </div>
           </div>
-          <div className={styles.provier_open}>
-            {/* <b onClick={this.handleToggleOpen}>展开/收起</b> <span>项目列表</span> */}
-          </div>
-          <div className={styles.table}>
-            <BoardTable data={this.state.filter_boards} />
-          </div>
-        </div>
+        )}
+
         {/* 任务统计 */}
         <div className={styles.statistics_content}>
           <div className={styles.statis_title}>
