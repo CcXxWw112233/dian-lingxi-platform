@@ -8,7 +8,8 @@ import {
 import { getFileList } from '@/services/technological/file.js'
 import { isApiResponseOk } from '@/utils/handleResponseData'
 import styles from './index.less'
-import { log } from 'util'
+import CustormBadgeDot from '@/components/CustormBadgeDot'
+import { folderItemHasUnReadNo } from '../../../../../../Technological/components/Gantt/ganttBusiness'
 
 const { Panel } = Collapse
 const { TreeNode, DirectoryTree } = Tree
@@ -46,10 +47,29 @@ export default class CommunicationTreeList extends Component {
   // 渲染当前项目子节点树
   renderTreeNodes = communicationSubFolderData =>
     communicationSubFolderData.map(item => {
+      const { type = '1', folder_id } = item
+      const { im_all_latest_unread_messages, wil_handle_types } = this.props
+      const un_read_count = folderItemHasUnReadNo({
+        type,
+        relaDataId: folder_id,
+        im_all_latest_unread_messages,
+        wil_handle_types
+      })
       if (item.child_data) {
         return (
           <TreeNode
-            title={item.folder_name}
+            title={
+              <span style={{ position: 'relative' }}>
+                {item.folder_name}
+                <CustormBadgeDot
+                  show_dot={un_read_count > 0}
+                  type={'showCount'}
+                  count={un_read_count}
+                  right={-6}
+                  top={-4}
+                />
+              </span>
+            }
             key={item.folder_id}
             dataRef={item}
           >
@@ -185,6 +205,7 @@ function mapStateToProps({
   technological: {
     datas: { currentUserOrganizes = [], is_show_org_name, is_all_org }
   },
+  imCooperation: { im_all_latest_unread_messages, wil_handle_types = [] },
   // projectCommunication:{
   //     count,
   // }
@@ -203,6 +224,8 @@ function mapStateToProps({
     is_all_org,
     // count
     communicationSubFolderData,
-    expandedKeys
+    expandedKeys,
+    im_all_latest_unread_messages,
+    wil_handle_types
   }
 }

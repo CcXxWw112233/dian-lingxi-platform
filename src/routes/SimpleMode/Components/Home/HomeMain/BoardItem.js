@@ -721,7 +721,10 @@ export default class BoardItem extends Component {
               className={`${styles.board_area_middle_item_board_name} ${globalStyles.global_ellipsis}`}
             >
               {board_name}
-              <CustormBadgeDot show_dot={is_new == '1'} top={12} />
+              <CustormBadgeDot
+                show_dot={is_new == '1'}
+                top={localStorage.getItem('OrganizationId') == '0' ? 0 : 12}
+              />
             </div>
             {/* </Badge> */}
             {isAllOrg && (

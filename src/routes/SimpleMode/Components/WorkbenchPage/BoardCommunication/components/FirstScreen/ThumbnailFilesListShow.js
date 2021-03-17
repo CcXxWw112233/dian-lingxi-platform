@@ -10,22 +10,62 @@ import styles from './CommunicationThumbnailFiles.less'
 import { getSubfixName } from '@/utils/businessFunction.js'
 import { isApiResponseOk } from '../../../../../../../utils/handleResponseData'
 import { fileRemove } from '../../../../../../../services/technological/file'
+import CustormBadgeDot from '@/components/CustormBadgeDot'
+import {
+  cardItemIsHasUnRead,
+  folderItemHasUnReadNo
+} from '../../../../../../Technological/components/Gantt/ganttBusiness'
+import { connect } from 'dva'
 
-// @connect(mapStateToProps)
 // @connect()
-
+@connect(mapStateToProps)
 export default class ThumbnailFilesListShow extends Component {
   constructor(props) {
     super(props)
     this.state = {
       // currentFileschoiceType: 0, // "0 搜索全部文件 1 搜索子集文件
       // thumbnailFilesList: thumbnailFilesList, // 缩略图数据
+    }
+    // this.setColumns()
+  }
+  getUnReadCount = ({
+    type,
+    id,
+    im_all_latest_unread_messages,
+    wil_handle_types
+  }) =>
+    folderItemHasUnReadNo({
+      type,
+      relaDataId: id,
+      im_all_latest_unread_messages,
+      wil_handle_types
+    })
+  previewFile = data => {
+    const { id } = data
+    this.props.previewFile(data)
+    // 设置已读
+    const { im_all_latest_unread_messages, dispatch } = this.props
+    if (
+      cardItemIsHasUnRead({ relaDataId: id, im_all_latest_unread_messages })
+    ) {
+      dispatch({
+        type: 'imCooperation/imUnReadMessageItemClear',
+        payload: {
+          relaDataId: id
+        }
+      })
+    }
+  }
+  setColumns = props => {
+    const { im_all_latest_unread_messages, wil_handle_types } = props
+    this.setState({
       columns: [
         {
           title: '文件名',
           dataIndex: 'file_name',
           key: 'file_name',
           render: (text, record, index) => {
+            const { type, id } = record
             const getEllipsisFileName = name => {
               let str = name
               if (!name) return
@@ -35,11 +75,19 @@ export default class ThumbnailFilesListShow extends Component {
               return arr
             }
             if (!text) return
-            // console.log(text, 'ssssssss')
+            // console.log(sssssssaaasd__', un_read_count)
+            const un_read_count = this.getUnReadCount({
+              im_all_latest_unread_messages,
+              wil_handle_types,
+              type,
+              id
+            })
+            // console.log('sssssssaaasd__', un_read_count)
+
             return (
               <div
                 className={styles.fileNameRow}
-                onClick={() => this.props.previewFile(record)}
+                onClick={() => this.previewFile(record)}
               >
                 {record && record.thumbnail_url ? (
                   <div className={styles.imgBox}>
@@ -58,7 +106,7 @@ export default class ThumbnailFilesListShow extends Component {
                     }}
                   ></div>
                 )}
-                <span style={{ display: 'flex' }}>
+                <span style={{ display: 'flex', position: 'relative' }}>
                   <span
                     style={{
                       maxWidth: '500px',
@@ -70,6 +118,13 @@ export default class ThumbnailFilesListShow extends Component {
                     {getEllipsisFileName(text)}
                   </span>
                   &nbsp;{getSubfixName(text)}
+                  <CustormBadgeDot
+                    show_dot={un_read_count > 0}
+                    type={'showCount'}
+                    count={un_read_count}
+                    top={-4}
+                    right={-6}
+                  />
                 </span>
                 {/* <span>{text}</span> */}
               </div>
@@ -109,10 +164,13 @@ export default class ThumbnailFilesListShow extends Component {
           }
         }
       ]
-    }
+    })
   }
-
+  componentWillReceiveProps(nextProps) {
+    this.setColumns(nextProps)
+  }
   componentDidMount() {
+    this.setColumns(this.props)
     // this.initData();
   }
 
@@ -252,4 +310,10 @@ export default class ThumbnailFilesListShow extends Component {
 
 ThumbnailFilesListShow.defaultProps = {
   // 这是一个项目交流中默认渲染文件的组件
+}
+
+function mapStateToProps({
+  imCooperation: { im_all_latest_unread_messages, wil_handle_types = [] }
+}) {
+  return { im_all_latest_unread_messages, wil_handle_types }
 }

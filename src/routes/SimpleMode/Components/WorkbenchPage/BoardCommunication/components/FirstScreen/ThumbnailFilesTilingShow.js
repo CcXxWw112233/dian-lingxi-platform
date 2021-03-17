@@ -5,10 +5,16 @@ import { Tooltip, Popconfirm, message } from 'antd'
 import styles from './CommunicationThumbnailFiles.less'
 import { isApiResponseOk } from '../../../../../../../utils/handleResponseData'
 import { fileRemove } from '../../../../../../../services/technological/file'
+import CustormBadgeDot from '@/components/CustormBadgeDot'
+import { connect } from 'dva'
+import {
+  cardItemIsHasUnRead,
+  folderItemHasUnReadNo
+} from '../../../../../../Technological/components/Gantt/ganttBusiness'
 
 // @connect(mapStateToProps)
 // @connect()
-
+@connect(mapStateToProps)
 export default class ThumbnailFilesTilingShow extends Component {
   constructor(props) {
     super(props)
@@ -58,20 +64,45 @@ export default class ThumbnailFilesTilingShow extends Component {
     }
     obj[action]()
   }
+  previewFile = data => {
+    const { id } = data
+    this.props.previewFile(data)
+    // 设置已读
+    const { im_all_latest_unread_messages, dispatch } = this.props
+    if (
+      cardItemIsHasUnRead({ relaDataId: id, im_all_latest_unread_messages })
+    ) {
+      dispatch({
+        type: 'imCooperation/imUnReadMessageItemClear',
+        payload: {
+          relaDataId: id
+        }
+      })
+    }
+  }
   render() {
     const { thumbnailFilesList = [] } = this.props
     console.log('thumbnailFilesList', thumbnailFilesList)
+    const { im_all_latest_unread_messages, wil_handle_types } = this.props
+
     return (
       <div className={styles.ThumbnailFilesTilingShow}>
         {thumbnailFilesList &&
           thumbnailFilesList.length !== 0 &&
           thumbnailFilesList.map(item => {
+            const { type, id } = item
+            const un_read_count = folderItemHasUnReadNo({
+              type,
+              relaDataId: id,
+              im_all_latest_unread_messages,
+              wil_handle_types
+            })
             return (
               <div
                 className={styles.itemBox}
                 key={item.id}
                 title={item.file_name}
-                onClick={() => this.props.previewFile(item)}
+                onClick={() => this.previewFile(item)}
               >
                 {item.thumbnail_url ? (
                   <img src={item.thumbnail_url || ''} alt="" />
@@ -83,6 +114,13 @@ export default class ThumbnailFilesTilingShow extends Component {
                     }}
                   ></div>
                 )}
+                <CustormBadgeDot
+                  show_dot={un_read_count > 0}
+                  type={'showCount'}
+                  count={un_read_count}
+                  // top={-4}
+                  // right={-6}
+                />
                 <div className={styles.operate_area}>
                   <Tooltip title={'下载'}>
                     <div
@@ -120,4 +158,9 @@ export default class ThumbnailFilesTilingShow extends Component {
 
 ThumbnailFilesTilingShow.defaultProps = {
   // 这是一个项目交流中缩略图组件
+}
+function mapStateToProps({
+  imCooperation: { im_all_latest_unread_messages, wil_handle_types = [] }
+}) {
+  return { im_all_latest_unread_messages, wil_handle_types }
 }
