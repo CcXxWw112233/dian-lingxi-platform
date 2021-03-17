@@ -42,3 +42,8 @@ function DEvent() {
 }
 let evt = new DEvent()
 export default evt
+
+/**
+ * 表格预览的触发事件
+ */
+export const PREVIEWTABLE = 'OpenPreview'

@@ -5,13 +5,21 @@ import { getOnlineExcelDataWithProcess } from '../../../../../services/technolog
 import { isApiResponseOk } from '../../../../../utils/handleResponseData'
 import PrivewTable from '../../../../previewTable/index'
 import Sheet from '../../../../Sheet'
+import DEvent, { PREVIEWTABLE } from '../../../../../utils/event'
+import { Popconfirm } from 'antd'
 @connect(mapStateToProps)
 export default class BeginningStepOne_six extends Component {
   constructor(props) {
     super(props)
-    this.state = {}
+    this.state = {
+      /**
+       * 是否打开确认框
+       */
+      openConfirm: false
+    }
     this.tableRow = 10
     this.tableColumn = 5
+    this.startEvent = {}
   }
 
   getOnlineExcelDataWithProcess = props => {
@@ -44,6 +52,44 @@ export default class BeginningStepOne_six extends Component {
       updateSheetList({ id: this.state.data.id, sheetData: data })
   }
 
+  /**
+   * 确认编辑表格
+   */
+  handleToEdit = () => {
+    DEvent.firEvent(PREVIEWTABLE, true)
+    this.setState({
+      openConfirm: false
+    })
+  }
+
+  /**
+   * 鼠标按下
+   * @param {*} e
+   */
+  handleMouseDown = e => {
+    this.startEvent = { x: e.pageX, y: e.pageY }
+  }
+
+  /**
+   * 鼠标抬起
+   * @param {*} e
+   */
+  handleMouseUp = e => {
+    const endEvent = { x: e.pageX, y: e.pageY }
+    const tans = 10
+    const sqtansX = Math.abs(this.startEvent.x - endEvent.x)
+    const sqtansY = Math.abs(this.startEvent.y - endEvent.y)
+    if (sqtansX <= tans || sqtansY <= tans) {
+      this.setState({
+        openConfirm: true
+      })
+    }
+  }
+
+  handleMouseOut = e => {
+    this.startEvent = {}
+  }
+
   render() {
     const {
       itemValue: { online_excel_id }
@@ -57,6 +103,9 @@ export default class BeginningStepOne_six extends Component {
           border: '1px solid rgba(0,0,0,0.15)'
         }}
         className={indexStyles.text_form}
+        onMouseDown={this.handleMouseDown}
+        onMouseUp={this.handleMouseUp}
+        onMouseLeave={this.handleMouseOut}
       >
         <p
           style={{
@@ -66,20 +115,29 @@ export default class BeginningStepOne_six extends Component {
           }}
         >
           表格
-          <span style={{ marginLeft: 10 }}>
-            <Sheet
-              data={data.sheet_data}
-              onMessage={this.updateSheetData}
-              row={this.tableRow}
-              column={this.tableColumn}
-            />
-          </span>
         </p>
-        <PrivewTable
-          data={data.sheet_data}
-          minRows={this.tableRow}
-          minCols={this.tableColumn}
-        />
+        <Popconfirm
+          visible={this.state.openConfirm}
+          title="是否进入编辑模式"
+          onConfirm={this.handleToEdit}
+          onVisibleChange={val => this.setState({ openConfirm: val })}
+        >
+          <PrivewTable
+            expend={
+              <span style={{ marginRight: 10 }}>
+                <Sheet
+                  data={data.sheet_data}
+                  onMessage={this.updateSheetData}
+                  row={this.tableRow}
+                  column={this.tableColumn}
+                />
+              </span>
+            }
+            data={data.sheet_data}
+            minRows={this.tableRow}
+            minCols={this.tableColumn}
+          />
+        </Popconfirm>
       </div>
     )
   }
