@@ -688,7 +688,7 @@ export default class ChartForStatistics extends React.Component {
               value={selected}
               onChange={this.handleSelectBoard}
               dropdownMatchSelectWidth={false}
-              dropdownStyle={{ maxWidth: 300 }}
+              dropdownStyle={{ maxWidth: 500 }}
               dropdownRender={menu => (
                 <div onMouseDown={e => e.preventDefault()}>
                   <div className={styles.menus}>{menu}</div>
