@@ -21,9 +21,10 @@ const InvestmentMaps = lazy(() => import('./InvestmentMaps/index'))
 const XczNews = lazy(() => import('./XczNews/index'))
 const Zhichengshe = lazy(() => import('./Zhichengshe/index'))
 const Workglows = lazy(() => import('./Workflows'))
-const StatisticalReport = lazy(() => import('./StatisticalReport'))
+// const StatisticalReport = lazy(() => import('./StatisticalReport'))
 const WhiteBoardRooms = lazy(() => import('./WhiteBoard'))
 const MeetingManage = lazy(() => import('./MeetingManage'))
+const ChartForStatistics = lazy(() => import('./ChartForStatistics'))
 
 class WorkbenchPage extends Component {
   constructor(props) {
@@ -248,7 +249,7 @@ class WorkbenchPage extends Component {
                 />
               )}
               {isPaymentUser && 'report' == select_box_code && (
-                <StatisticalReport
+                <ChartForStatistics
                   workbenchBoxContent_height={workbenchBoxContent_height}
                 />
               )}

@@ -70,3 +70,36 @@ export function getReportBoardFunnel(params) {
     // params
   })
 }
+
+/**
+ * 获取项目统计数据
+ */
+export const getBoardStatistical = data => {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/report/board/statistic`,
+    method: 'GET',
+    params: data
+  })
+}
+
+/**
+ * 获取任务统计数据
+ */
+export const getTaskStatistical = data => {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/report/card/statistic`,
+    method: 'GET',
+    params: data
+  })
+}
+
+/**
+ * 生成报表二维码
+ */
+export const getChartQrcode = data => {
+  return request({
+    method: 'POST',
+    url: `${REQUEST_DOMAIN_BOARD}/report/qrcode`,
+    data
+  })
+}
