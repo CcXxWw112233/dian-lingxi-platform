@@ -161,6 +161,15 @@ export default class ChartForStatistics extends React.Component {
     this.getBoardList()
   }
 
+  componentDidUpdate(nextProps) {
+    const { simplemodeCurrentProject } = nextProps
+    if (
+      this.props.simplemodeCurrentProject?.board_id !==
+      simplemodeCurrentProject?.board_id
+    ) {
+      this.getBoardList()
+    }
+  }
   /**
    * 清除搜索条件
    */
@@ -198,8 +207,8 @@ export default class ChartForStatistics extends React.Component {
   /**
    * 获取项目列表
    */
-  getBoardList = () => {
-    const { simplemodeCurrentProject } = this.props
+  getBoardList = props => {
+    const { simplemodeCurrentProject } = props || this.props
     const id = simplemodeCurrentProject.board_id
     getProjectUserList().then(res => {
       // 保存项目列表
