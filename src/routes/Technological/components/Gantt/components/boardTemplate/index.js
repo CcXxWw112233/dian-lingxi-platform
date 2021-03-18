@@ -867,6 +867,12 @@ export default class BoardTemplate extends Component {
             type: 'gantt/getGanttData',
             payload: {}
           })
+          dispatch({
+            type: 'projectDetail/projectDetailInfo',
+            payload: {
+              id: gantt_board_id
+            }
+          })
         } else {
           message.error(res.message)
         }
