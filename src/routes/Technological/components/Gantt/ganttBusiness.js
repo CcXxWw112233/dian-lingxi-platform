@@ -217,7 +217,13 @@ export const fileModuleIsHasUnRead = ({
   let count = 0
   for (let val of im_all_latest_unread_messages) {
     if (FILE_MODULE_UN_READ_ACTIONS.includes(val.action)) {
-      count++
+      if (board_id && board_id != '0') {
+        if (board_id == val.boardId || board_id == val.board_id) {
+          count++
+        }
+      } else {
+        count++
+      }
     }
   }
   return count

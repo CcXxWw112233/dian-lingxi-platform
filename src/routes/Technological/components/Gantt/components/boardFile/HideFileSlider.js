@@ -21,7 +21,8 @@ export default class ShowFileSlider extends Component {
     const {
       is_show_board_file_area,
       im_all_latest_unread_messages = [],
-      wil_handle_types = []
+      wil_handle_types = [],
+      gantt_board_id
     } = this.props
 
     return (
@@ -40,16 +41,19 @@ export default class ShowFileSlider extends Component {
         {`${currentNounPlanFilterName(PROJECTS)}文件`}
         {/* 未读消息数 */}
         {fileModuleIsHasUnRead({
+          board_id: gantt_board_id,
           im_all_latest_unread_messages,
           wil_handle_types
         }) > 0 && (
           <div className={styles.has_no_read}>
             {fileModuleIsHasUnRead({
+              board_id: gantt_board_id,
               im_all_latest_unread_messages,
               wil_handle_types
             }) > 99
               ? '99+'
               : fileModuleIsHasUnRead({
+                  board_id: gantt_board_id,
                   im_all_latest_unread_messages,
                   wil_handle_types
                 })}
@@ -62,13 +66,14 @@ export default class ShowFileSlider extends Component {
 
 function mapStateToProps({
   gantt: {
-    datas: { is_show_board_file_area }
+    datas: { is_show_board_file_area, gantt_board_id }
   },
   imCooperation: { im_all_latest_unread_messages = [], wil_handle_types = [] }
 }) {
   return {
     is_show_board_file_area,
     im_all_latest_unread_messages,
-    wil_handle_types
+    wil_handle_types,
+    gantt_board_id
   }
 }
