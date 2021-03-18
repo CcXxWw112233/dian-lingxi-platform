@@ -212,9 +212,9 @@ export default class ChartForStatistics extends React.Component {
   /**
    * 获取项目列表
    */
-  getBoardList = props => {
-    const { simplemodeCurrentProject } = props || this.props
-    const id = simplemodeCurrentProject.board_id
+  getBoardList = _ => {
+    const { simplemodeCurrentProject } = this.props
+    const id = simplemodeCurrentProject.board_id || '0'
     getProjectUserList()
       .then(res => {
         if (isApiResponseOk(res)) {
@@ -293,7 +293,7 @@ export default class ChartForStatistics extends React.Component {
         this.setState({
           ...res.data,
           filter_tasks: this.setTableData(res.data?.items),
-          card_count: res.data?.card_number.total
+          card_count: res.data?.card_status.total || 0
         })
       }
     )
@@ -703,6 +703,9 @@ export default class ChartForStatistics extends React.Component {
           </div>
           <div className={styles.filter_condition}>
             <Select
+              filterOption={(val, option) =>
+                option.props.title.indexOf(val) !== -1
+              }
               defaultValue="0"
               size="small"
               style={{ width: '200px' }}
