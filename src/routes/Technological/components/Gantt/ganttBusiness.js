@@ -201,6 +201,13 @@ const handleNewsItem = val => {
   // console.log('sssss_gold_data', gold_data)
   return gold_data
 }
+
+const FILE_MODULE_UN_READ_ACTIONS = [
+  'board.file.upload',
+  'board.card.update.file.add',
+  'board.file.version.upload'
+]
+
 // 文件模块是否存在未读数
 export const fileModuleIsHasUnRead = ({
   board_id,
@@ -209,10 +216,7 @@ export const fileModuleIsHasUnRead = ({
 }) => {
   let count = 0
   for (let val of im_all_latest_unread_messages) {
-    if (
-      val.action == 'board.file.upload' ||
-      val.action == 'board.file.version.upload'
-    ) {
+    if (FILE_MODULE_UN_READ_ACTIONS.includes(val.action)) {
       count++
     }
   }
@@ -275,10 +279,7 @@ export const folderItemHasUnReadNo = ({
   const current_item = im_all_latest_unread_messages.find(item => {
     const gold_item = handleNewsItem(item)
     const { action } = item
-    if (
-      action == 'board.file.upload' ||
-      action == 'board.file.version.upload'
-    ) {
+    if (FILE_MODULE_UN_READ_ACTIONS.includes(action)) {
       const {
         content: { folder_path = {} }
       } = gold_item
@@ -295,10 +296,7 @@ export const folderItemHasUnReadNo = ({
   // 这里arr已经更新
   let count = 0
   for (let val of im_all_latest_unread_messages) {
-    if (
-      val.action == 'board.file.upload' ||
-      val.action == 'board.file.version.upload'
-    ) {
+    if (FILE_MODULE_UN_READ_ACTIONS.includes(val.action)) {
       const {
         content: { folder_path = {} }
       } = handleNewsItem(val)
@@ -323,6 +321,24 @@ export const folderItemHasUnReadNo = ({
   }
   return count
 }
+
+//获取项目未读文件的内容数
+export const boardHasUnReadCount = ({
+  board_id,
+  im_all_latest_unread_messages = []
+}) => {
+  // debugger
+  let count = 0
+  for (let val of im_all_latest_unread_messages) {
+    if (
+      (val.boardId || val.board_id) == board_id &&
+      FILE_MODULE_UN_READ_ACTIONS.includes(val.action)
+    )
+      ++count
+  }
+  return count
+}
+
 // 当前文件夹判断最新推送消息属于board.file.upload   (场景： 点击多级文件夹后, 如果有文件上传，推送过来的所属文件夹id，和当前查阅文件夹id匹配)
 export const currentFolderJudegeFileUpload = ({
   folder_id,

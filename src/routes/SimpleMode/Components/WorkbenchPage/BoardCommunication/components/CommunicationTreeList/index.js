@@ -9,7 +9,11 @@ import { getFileList } from '@/services/technological/file.js'
 import { isApiResponseOk } from '@/utils/handleResponseData'
 import styles from './index.less'
 import CustormBadgeDot from '@/components/CustormBadgeDot'
-import { folderItemHasUnReadNo } from '../../../../../../Technological/components/Gantt/ganttBusiness'
+import {
+  boardHasUnReadCount,
+  folderItemHasUnReadNo
+} from '../../../../../../Technological/components/Gantt/ganttBusiness'
+import globalStyles from '@/globalset/css/globalClassName.less'
 
 const { Panel } = Collapse
 const { TreeNode, DirectoryTree } = Tree
@@ -31,10 +35,34 @@ export default class CommunicationTreeList extends Component {
 
   // 显示项目目录名（一级）
   showHeader = (item, isShowCompanyName) => {
+    const { im_all_latest_unread_messages } = this.props
+    const count = boardHasUnReadCount({
+      board_id: item.id,
+      im_all_latest_unread_messages
+    })
+    console.log('sssssssadad', count, item, im_all_latest_unread_messages)
+
     const { currentUserOrganizes = [] } = this.props
     return (
       <div className={styles.panelHeader}>
-        <div className={styles.name}>{item.board_name}</div>
+        <div className={styles.name} title={item.board_name}>
+          <span
+            style={{
+              position: 'relative',
+              display: 'inline-block',
+              maxWidth: 240
+            }}
+          >
+            {item.board_name}
+            <CustormBadgeDot
+              show_dot={count > 0}
+              type={'showCount'}
+              count={count}
+              right={-6}
+              top={-4}
+            />
+          </span>
+        </div>
         {isShowCompanyName && (
           <div className={styles.org_name}>
             #{getOrgNameWithOrgIdFilter(item.org_id, currentUserOrganizes)}
