@@ -20,8 +20,8 @@ export default class BoardTable extends React.Component {
       },
       {
         title: '所使用的模板',
-        dataIndex: 'templateName',
-        key: 'templateName'
+        dataIndex: 'template_name',
+        key: 'template_name'
       },
       {
         title: '创建时间',
