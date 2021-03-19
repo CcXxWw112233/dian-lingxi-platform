@@ -810,11 +810,14 @@ export default class ChartForStatistics extends React.Component {
               )
               /**
                * 判定子集是否有符合条件的数据
+               * 判定逻辑，此条数据有符合的字段或者子集有符合的字段
                */
-              obj.subhassom = obj.children.some(child => {
-                if (child.children && child.children.length) return true
-                else return child[CARD_STATUS.filterKey] === FilterName
-              })
+              obj.subhassom =
+                item[CARD_STATUS.filterKey] === FilterName ||
+                obj.children.some(child => {
+                  if (child.children && child.children.length) return true
+                  else return child[CARD_STATUS.filterKey] === FilterName
+                })
             } else {
               delete obj.children
             }
@@ -844,14 +847,19 @@ export default class ChartForStatistics extends React.Component {
               )
               /**
                * 判定子集是否有符合条件的数据
+               * 判定逻辑，此条数据有符合的字段或者子集有符合的字段
                */
-              obj.subhassom = obj.children.some(child => {
-                if (child.children && child.children.length) return true
-                else
-                  return (child[CARD_TIME.filterKey] || []).some(
-                    user => user.id === FilterId
-                  )
-              })
+              obj.subhassom =
+                (obj[CARD_TIME.filterKey] || []).some(
+                  user => user.id === FilterId
+                ) ||
+                obj.children.some(child => {
+                  if (child.children && child.children.length) return true
+                  else
+                    return (child[CARD_TIME.filterKey] || []).some(
+                      user => user.id === FilterId
+                    )
+                })
             } else {
               delete obj.children
             }
