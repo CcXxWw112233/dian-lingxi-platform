@@ -56,7 +56,7 @@ export const DefaultFilterConditions = {
     /**
      * 查询条件需要过滤的字段 create_time
      */
-    filterKey: 'create_time',
+    filterKey: 'start_time',
     /**
      * 图表类型 Line
      */
@@ -76,20 +76,20 @@ export const DefaultFilterConditions = {
     name: '状态分布',
     filterName: '',
     /**
-     * 查询条件需要过滤的字段 status
+     * 查询条件需要过滤的字段 status_value
      */
-    filterKey: 'status',
+    filterKey: 'status_value',
     /**
-     * 图表类型 Pie
+     * 图表类型 card_pie
      */
     chartKey: 'card_pie',
     /**
      * 高亮的样式
      */
     itemStyle: {
-      borderColor: '#000',
-      borderWidth: 2,
-      shadowColor: 'rgba(0, 0, 0, 0.5)',
+      borderColor: 'rgba(0, 0, 100, 0.5)',
+      borderWidth: 3,
+      shadowColor: 'rgba(0, 0, 100, 0.5)',
       shadowBlur: 10
     }
   },
@@ -102,30 +102,48 @@ export const DefaultFilterConditions = {
     name: '工时分布',
     filterName: '',
     /**
-     * 查询条件需要过滤的字段 status
+     * 查询条件需要过滤的字段 executors
      */
-    filterKey: 'status',
+    filterKey: 'executors',
     /**
-     * 图表类型 Pie
+     * 图表类型 card_time
      */
-    chartKey: 'card_time'
+    chartKey: 'card_time',
+    /**
+     * 高亮的样式
+     */
+    itemStyle: {
+      borderColor: 'rgba(0, 0, 100, 0.5)',
+      borderWidth: 3,
+      // shadowColor: 'rgba(0, 0, 100, 0.5)',
+      // shadowBlur: 15
+    }
   },
   /**
    * 任务数量分布
    */
   CARD_NUMBER: {
-    key: '5',
-    value: '5',
+    key: '6',
+    value: '6',
     name: '数量分布',
     filterName: '',
     /**
-     * 查询条件需要过滤的字段 status
+     * 查询条件需要过滤的字段 executors
      */
-    filterKey: 'status',
+    filterKey: 'executors',
     /**
-     * 图表类型 Pie
+     * 图表类型 card_number
      */
-    chartKey: 'card_number'
+    chartKey: 'card_number',
+    /**
+     * 高亮的样式
+     */
+    itemStyle: {
+      borderColor: 'rgba(0, 0, 100, 0.5)',
+      borderWidth: 3,
+      // shadowColor: 'rgba(0, 0, 100, 0.5)',
+      // shadowBlur: 15
+    }
   }
 }
 

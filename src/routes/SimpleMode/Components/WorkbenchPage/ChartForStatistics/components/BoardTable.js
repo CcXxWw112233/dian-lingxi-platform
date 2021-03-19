@@ -24,7 +24,7 @@ export default class BoardTable extends React.Component {
         key: 'template_name'
       },
       {
-        title: '创建时间',
+        title: '项目开始时间',
         dataIndex: 'create_time',
         key: 'create_time',
         render: text => {
@@ -34,11 +34,11 @@ export default class BoardTable extends React.Component {
         }
       },
       {
-        title: '创建人',
+        title: '项目负责人',
         key: 'creator',
         render: record => {
-          const { create_by } = record || {}
-          return <span>{create_by.name}</span>
+          const { leader = [] } = record || {}
+          return <span>{leader.map(item => item.name).join('、')}</span>
         }
       }
     ]

@@ -77,7 +77,7 @@ export default class ChartForStatistics extends React.Component {
         count: [],
         status: []
       },
-      board_create_time: {
+      board_start_time: {
         number: [],
         time: []
       },
@@ -158,6 +158,23 @@ export default class ChartForStatistics extends React.Component {
          * 时间分布的查询数据
          */
         [DefaultFilterConditions.TIME.chartKey]: {}
+      },
+      /**
+       * 任务统计过滤
+       */
+      card_filter: {
+        /**
+         * 任务状态分布查询数据
+         */
+        [DefaultFilterConditions.CARD_STATUS.chartKey]: {},
+        /**
+         * 任务工时分布查询数据
+         */
+        [DefaultFilterConditions.CARD_TIME.chartKey]: {},
+        /**
+         * 任务数量分布查询数据
+         */
+        [DefaultFilterConditions.CARD_NUMBER.chartKey]: {}
       }
     }
   }
@@ -399,14 +416,14 @@ export default class ChartForStatistics extends React.Component {
    */
   filterLine = (data = []) => {
     const { TIME } = DefaultFilterConditions
-    const { board_create_time } = this.state
-    let current = new Array(board_create_time.time.length).fill(0)
+    const { board_start_time } = this.state
+    let current = new Array(board_start_time.time.length).fill(0)
     data.forEach(item => {
       const create_time = item[TIME.filterKey]
       const date = new Date(+(create_time + '000'))
       const y = date.getFullYear()
       const m = date.getMonth() + 1
-      board_create_time.time.forEach((time, index) => {
+      board_start_time.time.forEach((time, index) => {
         const t = time.split('-')
         const year = +t[0]
         const month = +t[1]
@@ -416,8 +433,8 @@ export default class ChartForStatistics extends React.Component {
       })
     })
     this.setState({
-      board_create_time: {
-        ...board_create_time,
+      board_start_time: {
+        ...board_start_time,
         number: [...current]
       }
     })
@@ -681,12 +698,183 @@ export default class ChartForStatistics extends React.Component {
     this.fetchCardStatistical(ids.join(','))
   }
 
+  /** 清空任务统计的查询条件 */
+  clearCardFilter = () => {
+    return {
+      /**
+       * 任务状态分布查询数据
+       */
+      [DefaultFilterConditions.CARD_STATUS.chartKey]: {},
+      /**
+       * 任务工时分布查询数据
+       */
+      [DefaultFilterConditions.CARD_TIME.chartKey]: {},
+      /**
+       * 任务数量分布查询数据
+       */
+      [DefaultFilterConditions.CARD_NUMBER.chartKey]: {}
+    }
+  }
+
+  /**
+   * 任务图表点击逻辑
+   */
+  handleClickCardChart = (type, val) => {
+    let { card_filter } = this.state
+    const { CARD_STATUS, CARD_NUMBER, CARD_TIME } = DefaultFilterConditions
+    /**
+     * 是否已经选择了，需要去除选择
+     */
+    let inArray = false
+    if (card_filter[type].name && card_filter[type].name === val.name) {
+      inArray = true
+      // card_filter[type] = {}
+    }
+    card_filter = this.clearCardFilter()
+    switch (type) {
+      case CARD_STATUS.chartKey:
+        if (!inArray) {
+          card_filter[type] = {
+            ...val,
+            itemStyle: CARD_STATUS.itemStyle || {}
+          }
+        }
+        break
+      case CARD_NUMBER.chartKey:
+        if (!inArray) {
+          card_filter[type] = {
+            ...val,
+            itemStyle: CARD_NUMBER.itemStyle || {}
+          }
+        }
+        break
+      case CARD_TIME.chartKey:
+        if (!inArray) {
+          card_filter[type] = {
+            ...val,
+            itemStyle: CARD_TIME.itemStyle || {}
+          }
+        }
+        break
+      default:
+        break
+    }
+
+    /**
+     * 去除了children空数组字段
+     */
+    let arr
+    if (!inArray) {
+      arr = this.cardFilterForData(type, this.state.items, val)
+    } else {
+      arr = this.cardFilterForData('', this.state.items, val)
+    }
+
+    this.setState({
+      card_filter,
+      filter_tasks: this.setTableData(arr)
+    })
+  }
+
+  /**
+   * 任务列表过滤
+   */
+  cardFilterForData = (type, data = [], filterData = {}) => {
+    const { CARD_STATUS, CARD_NUMBER, CARD_TIME } = DefaultFilterConditions
+    let arr = []
+    /**
+     * 饼图的名称过滤
+     */
+    const FilterName = filterData.name
+    /**
+     * 柱状图 （时间，数量分布）的id过滤
+     */
+    const FilterId = filterData.user_id
+    data.forEach(item => {
+      switch (type) {
+        case CARD_STATUS.chartKey:
+          if (
+            item[CARD_STATUS.filterKey] === FilterName ||
+            (item.children && item.children.length)
+          ) {
+            let obj = { ...item, subhassom: true }
+            if (obj.children && obj.children.length) {
+              /**
+               * 递归调用遍历子列表
+               */
+              obj.children = this.cardFilterForData(
+                type,
+                obj.children,
+                filterData
+              )
+              /**
+               * 判定子集是否有符合条件的数据
+               */
+              obj.subhassom = obj.children.some(child => {
+                if (child.children && child.children.length) return true
+                else return child[CARD_STATUS.filterKey] === FilterName
+              })
+            } else {
+              delete obj.children
+            }
+            /**
+             * 如果有子列表并且子列表中含有符合条件的数据
+             */
+            if (obj.subhassom) arr.push(obj)
+          }
+          break
+        case CARD_TIME.chartKey:
+        case CARD_NUMBER.chartKey:
+          /**
+           * 如果数据包含了用户
+           */
+          if (
+            (item[CARD_TIME.filterKey] || []).some(
+              user => user.id === FilterId
+            ) ||
+            (item.children && item.children.length)
+          ) {
+            let obj = { ...item, subhassom: true }
+            if (obj.children && obj.children.length) {
+              obj.children = this.cardFilterForData(
+                type,
+                obj.children,
+                filterData
+              )
+              /**
+               * 判定子集是否有符合条件的数据
+               */
+              obj.subhassom = obj.children.some(child => {
+                if (child.children && child.children.length) return true
+                else
+                  return (child[CARD_TIME.filterKey] || []).some(
+                    user => user.id === FilterId
+                  )
+              })
+            } else {
+              delete obj.children
+            }
+            /**
+             * 如果有子列表并且子列表中含有符合条件的数据
+             */
+            if (obj.subhassom) arr.push(obj)
+          }
+          break
+        default:
+          arr = this.setTableData(data)
+          break
+      }
+    })
+    return arr
+  }
+
   render() {
     const {
       projects = [],
       selected = [],
       isCheckedAll,
-      filter_params
+      filter_params,
+      card_filter
     } = this.state
     const { workbenchBoxContent_height } = this.props
     return (
@@ -831,7 +1019,7 @@ export default class ChartForStatistics extends React.Component {
               {/* 时间分布 */}
               <ChartBox title={DefaultFilterConditions.TIME.name}>
                 <LineChartProject
-                  data={this.state.board_create_time}
+                  data={this.state.board_start_time}
                   selectedParam={
                     filter_params[DefaultFilterConditions.TIME.chartKey]
                   }
@@ -870,13 +1058,40 @@ export default class ChartForStatistics extends React.Component {
           </div>
           <div className={styles.statis_container}>
             <ChartBox title={DefaultFilterConditions.CARD_STATUS.name}>
-              <PieTask data={this.state.card_status} />
+              <PieTask
+                data={this.state.card_status}
+                onHandleClick={this.handleClickCardChart.bind(
+                  this,
+                  DefaultFilterConditions.CARD_STATUS.chartKey
+                )}
+                selectedParam={
+                  card_filter[DefaultFilterConditions.CARD_STATUS.chartKey]
+                }
+              />
             </ChartBox>
             <ChartBox title={DefaultFilterConditions.CARD_TIME.name}>
-              <ChartWorkTime data={this.state.card_working_hour} />
+              <ChartWorkTime
+                data={this.state.card_working_hour}
+                onHandleClick={this.handleClickCardChart.bind(
+                  this,
+                  DefaultFilterConditions.CARD_TIME.chartKey
+                )}
+                selectedParam={
+                  card_filter[DefaultFilterConditions.CARD_TIME.chartKey]
+                }
+              />
             </ChartBox>
             <ChartBox title={DefaultFilterConditions.CARD_NUMBER.name}>
-              <ChartTaskNumber data={this.state.card_number} />
+              <ChartTaskNumber
+                data={this.state.card_number}
+                onHandleClick={this.handleClickCardChart.bind(
+                  this,
+                  DefaultFilterConditions.CARD_NUMBER.chartKey
+                )}
+                selectedParam={
+                  card_filter[DefaultFilterConditions.CARD_NUMBER.chartKey]
+                }
+              />
             </ChartBox>
           </div>
           <div className={styles.provier_open}>
