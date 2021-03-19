@@ -310,7 +310,8 @@ export default class ChartForStatistics extends React.Component {
         this.setState({
           ...res.data,
           filter_tasks: this.setTableData(res.data?.items),
-          card_count: res.data?.card_status.total || 0
+          card_count: res.data?.card_status.total || 0,
+          card_filter: this.clearCardFilter()
         })
       }
     )
