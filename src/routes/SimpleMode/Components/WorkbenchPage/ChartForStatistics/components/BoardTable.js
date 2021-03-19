@@ -25,8 +25,8 @@ export default class BoardTable extends React.Component {
       },
       {
         title: '项目开始时间',
-        dataIndex: 'create_time',
-        key: 'create_time',
+        dataIndex: 'start_time',
+        key: 'start_time',
         render: text => {
           const time = text + '000'
           const flag = isNaN(+time)
