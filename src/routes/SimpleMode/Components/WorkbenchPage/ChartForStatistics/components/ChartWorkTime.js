@@ -45,11 +45,25 @@ export default class ChartWorkTime extends React.Component {
    * 动态更新echarts
    */
   updateChart = () => {
-    const { data = {} } = this.props
-    const { legend = [], users = [], series = [] } = data
+    const { data = {}, selectedParam = {} } = this.props
+    const { legend = [], users = [], series = [], user_ids = [] } = data
     let newSeries = series.map(item => {
       // 将字符串data转换成number
-      let data = item.data.map(a => +a)
+      let data = item.data.map((a, index) => {
+        if (user_ids[index] === selectedParam.user_id) {
+          return {
+            ...selectedParam,
+            name: users[index],
+            value: +a,
+            user_id: user_ids[index]
+          }
+        }
+        return {
+          name: users[index],
+          value: +a,
+          user_id: user_ids[index]
+        }
+      })
       let new_item = {
         ...item,
         type: 'bar',
@@ -120,7 +134,7 @@ export default class ChartWorkTime extends React.Component {
           left: '9%',
           bottom: -5,
           start: 0,
-          end: 50 //初始化滚动条
+          end: 90 //初始化滚动条
         }
       ],
       yAxis: [
@@ -159,7 +173,14 @@ export default class ChartWorkTime extends React.Component {
     this.chart.on('click', this.handleEchartClick)
   }
 
-  handleEchartClick = () => {}
+  handleEchartClick = (val) => {
+    const { onHandleClick } = this.props
+
+    const { data } = val
+    if (data.value > 0) {
+      onHandleClick && onHandleClick(data)
+    }
+  }
   render() {
     return <div id={this.ChartId} className={styles.chart_box_content}></div>
   }

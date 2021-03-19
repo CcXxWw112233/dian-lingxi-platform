@@ -126,7 +126,18 @@ export default class PieTask extends React.Component {
     window.removeEventListener('resize', this.resize)
   }
 
-  handleEchartClick = () => {}
+  /**
+   * 图表点击
+   * @param {*} val
+   */
+  handleEchartClick = val => {
+    const { onHandleClick } = this.props
+
+    const { data } = val
+    if (data.value > 0) {
+      onHandleClick && onHandleClick(data)
+    }
+  }
 
   render() {
     return <div id={this.ChartId} className={styles.chart_box_content}></div>

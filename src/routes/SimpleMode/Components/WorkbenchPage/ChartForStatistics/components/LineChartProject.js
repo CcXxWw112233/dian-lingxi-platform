@@ -104,7 +104,7 @@ export default class LineChartProject extends React.Component {
                 xAxisIndex: [0],
                 left: '9%', //滚动条靠左侧的百分比
                 bottom: -2,
-                start: 50, //滚动条的起始位置
+                start: 10, //滚动条的起始位置
                 end: 100 //滚动条的截止位置（按比例分割你的柱状图x轴长度）
               }
             ]

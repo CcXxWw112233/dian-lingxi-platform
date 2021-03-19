@@ -12,11 +12,6 @@ export default class TaskTable extends React.Component {
     this.state = {}
     this.columns = [
       {
-        title: '事件名称',
-        dataIndex: 'name',
-        key: 'name'
-      },
-      {
         title: '项目名称',
         dataIndex: 'board_name',
         key: 'board_name'
@@ -27,7 +22,30 @@ export default class TaskTable extends React.Component {
         key: 'group_name'
       },
       {
-        title: '进度/状态',
+        title: '状态',
+        dataIndex: 'status_value'
+      },
+      {
+        title: '事件名称',
+        dataIndex: 'name',
+        key: 'name'
+      },
+      {
+        title: '负责人',
+        dataIndex: '',
+        key: 'executors',
+        render: (text, record) => {
+          const { executors = [] } = record || {}
+          return <span>{executors.map(item => item.name).join('、')}</span>
+        }
+      },
+      {
+        title: '工时（时）',
+        dataIndex: 'work_hours',
+        key: 'work_hours'
+      },
+      {
+        title: '进度',
         dataIndex: 'status',
         key: 'status'
       },
