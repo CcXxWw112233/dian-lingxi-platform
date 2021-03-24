@@ -43,7 +43,11 @@ export async function removeMenbers(data) {
   })
 }
 
-// 查询项目角色列表
+/**
+ * 查询项目角色列表
+ * @param {*} params
+ * @returns
+ */
 export async function getProjectRoles(params) {
   return request({
     url: `${REQUEST_DOMAIN}/role/query`,

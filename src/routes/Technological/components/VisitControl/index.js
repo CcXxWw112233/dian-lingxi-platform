@@ -16,7 +16,7 @@ import {
 import {
   checkIsHasPermissionInBoard,
   isHasOrgMemberQueryPermission
-} from '@/utils/businessFunction'
+} from '../../../..//utils/businessFunction'
 import { isApiResponseOk } from '@/utils/handleResponseData'
 import {
   organizationInviteWebJoin,
@@ -24,6 +24,7 @@ import {
 } from './../../../../services/technological/index'
 import { getOrgIdByBoardId } from '../../../../utils/businessFunction'
 import { inviteMembersInWebJoin } from '../../../../utils/inviteMembersInWebJoin'
+import ROLEAVATAR from '../../../../assets/invite/role_avatar.png'
 
 let cx = classNames.bind(styles)
 @connect(({ technological }) => ({
@@ -62,7 +63,7 @@ class VisitControl extends Component {
     avatarUrl.includes('http://') || avatarUrl.includes('https://')
 
   // // 获取添加成员的回调
-  handleGetAddNewMember = members => {
+  handleGetAddNewMember = (members, roles) => {
     const { handleAddNewMember } = this.props
     // 获取平台人员
     const filterPlatformUsersId = users =>
@@ -70,7 +71,7 @@ class VisitControl extends Component {
     // 操作不是平台中的人员==> 然后将平台和平台之外的人拼接 ['xxxid','xxxphone','1347369711855341568','18270711420] ==> 在暴露方法 handleAddNewMember
     this.handleNotPlatformMember(members)
       .then(users_arr => [...users_arr, ...filterPlatformUsersId(members)])
-      .then(users_arr => handleAddNewMember(users_arr))
+      .then(users_arr => handleAddNewMember(users_arr, roles))
   }
   async handleNotPlatformMember(members) {
     // 找到不是平台中的人员 过滤 得到手机号等==>['18270711420',....]
@@ -86,16 +87,16 @@ class VisitControl extends Component {
     let users_arr = res.data
     return Promise.resolve(users_arr)
   }
-  handleInviteMemberReturnResult = selectedMember => {
-    this.handleGetAddNewMember(selectedMember)
+  handleInviteMemberReturnResult = (selectedMember, roleMembers) => {
+    this.handleGetAddNewMember(selectedMember, roleMembers)
     // 添加成员成功后关闭弹窗
     this.setState({
       // addMemberModalVisible: false,
       ShowAddMenberModalVisibile: false
     })
   }
-  addMenbersInProject = (values, selectedMember) => {
-    this.handleInviteMemberReturnResult(selectedMember)
+  addMenbersInProject = (values, selectedMember, roleMembers) => {
+    this.handleInviteMemberReturnResult(selectedMember, roleMembers)
   }
 
   /**
@@ -185,7 +186,7 @@ class VisitControl extends Component {
 
   /**
    * 点击移除成员弹窗的确定回调
-   * @param {Object} e 当前的事件对象
+   * @param {Event} e 当前的事件对象
    */
   handleComfirmRemoveModalOk = e => {
     if (e) e.stopPropagation()
@@ -273,15 +274,22 @@ class VisitControl extends Component {
       return (
         otherPrivilege &&
         otherPrivilege.reduce((acc, curr) => {
-          const { content_privilege_code, user_info = {}, id } = curr
-          const { name, avatar } = user_info
+          const {
+            content_privilege_code,
+            user_info = {},
+            id,
+            role_info = {}
+          } = curr
+          const { name, avatar, id: uid } = user_info.id ? user_info : role_info
           const obj = {
             id: id,
             name: name,
-            user_id: user_info['id'],
+            user_id: uid,
             avatar:
               !!avatar && this.isValidAvatar(avatar)
                 ? avatar
+                : role_info.id // 是否是角色对象
+                ? ROLEAVATAR // 角色头像
                 : defaultUserAvatar,
             privilege: content_privilege_code
           }
