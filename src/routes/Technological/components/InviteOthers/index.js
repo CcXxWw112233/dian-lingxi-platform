@@ -33,6 +33,11 @@ import globalStyles from '@/globalset/css/globalClassName.less'
 // import SpriteBoottts from '@dicebear/avatars-bottts-sprites'
 import Cookies from 'js-cookie'
 import axios from 'axios'
+import { getProjectRoles } from '../../../../services/technological/prjectDetail'
+/**
+ * 角色头像
+ */
+import ROLEAVATAR from '../../../../assets/invite/role_avatar.png'
 let cx = classNames.bind(styles)
 
 const Option = Select.Option
@@ -66,7 +71,15 @@ class InviteOthers extends Component {
       currentSyncSetsMemberList: {}, //原生的已经被同步的集合的所有成员，此处不能保存成数组，更不能过滤重复的人员，因为如果取消同步的时候，会移除已同步的集合的交集处的人员，引发意外的bug      isInSelectedList: false,
       currentMemberListSet: 'org', //当前显示的集合 org || group-id || project-id
       isInSelectedList: false, //是否仅显示列表的
-      step: 'home' //当前的步进 home || group-list || group-id || project-list ||project-id
+      step: 'home', //当前的步进 home || group-list || group-id || project-list ||project-id
+      /**
+       * 角色列表，用于渲染
+       */
+      roleList: [],
+      /**
+       * 选中了角色的列表
+       */
+      selected_roles: []
     }
     this.options = {
       radius: 32,
@@ -414,13 +427,18 @@ class InviteOthers extends Component {
     this.delFromSelectedMember(item)
   }
 
-  // ？？？？
+  /**
+   * 选中或反选中的人员
+   * @param {{id: string,user_id: string, name: string, avatar: string}} item 选中的人员
+   * @param {React.MouseEvent} e Event
+   * @returns {undefind} void
+   */
   handleToggleMemberInSelectedMember = (item, e) => {
     if (e) e.stopPropagation()
     const { selectedMember } = this.state
     const member = this.genUserToDefinedMember(item)
     const isMemberHasInSelectedMember = () =>
-      selectedMember.find(each => each.id === (member.id || member.user_id))
+      selectedMember.some(each => each.id === (member.id || member.user_id))
     if (isMemberHasInSelectedMember()) {
       return this.delFromSelectedMember(member)
     }
@@ -606,6 +624,17 @@ class InviteOthers extends Component {
     if (callback) callback()
   }
 
+  /**
+   * 是否全选了角色
+   * @returns Boolean
+   */
+  isSelectedAllRole = () => {
+    // 如果没有判定是否需要显示角色，那么就默认是true, 不打乱原来的逻辑
+    if (!this.props.loadRoleData) return true
+    const { selected_roles, roleList } = this.state
+    return roleList.length === selected_roles.length
+  }
+
   // 是否全选
   isSelectedAll = () => {
     const { membersListToSelect } = this.state
@@ -616,10 +645,15 @@ class InviteOthers extends Component {
 
   // 全选的切换事件
   handleToggleSelectCurrentListAll = () => {
-    const { membersListToSelect, selectedMember } = this.state
+    const {
+      membersListToSelect,
+      selectedMember,
+      selected_roles,
+      roleList
+    } = this.state
     //如果是全选状态，那么就全不选, 否则就全选
     // const isSelectedAll = () => membersListToSelect.every(item => this.checkMemberInSelectedMember(item))
-    if (this.isSelectedAll()) {
+    if (this.isSelectedAll() && this.isSelectedAllRole()) {
       membersListToSelect.map(item =>
         this.handleToggleMemberInSelectedMember(item)
       )
@@ -643,6 +677,24 @@ class InviteOthers extends Component {
           this.handleReturnResultWhenNotShowSubmitBtn()
         }
       )
+    }
+
+    if (this.isSelectedAllRole() && this.isSelectedAll()) {
+      /**
+       * 权限角色列表清空全选
+       */
+      this.setState({
+        selected_roles: []
+      })
+    } else {
+      // 权限角色列表全选
+      const ids = selected_roles.map(item => item.id)
+      const notSelectedRoles = roleList
+        .filter(item => !ids.includes(item.id))
+        .map(item => ({ ...item, name: item.name, id: item.id }))
+      this.setState({
+        selected_roles: [...selected_roles, ...notSelectedRoles]
+      })
     }
   }
 
@@ -753,21 +805,80 @@ class InviteOthers extends Component {
 
   // 提交选择的用户回调
   handleSubmitSeletedMember = () => {
-    const { handleInviteMemberReturnResult } = this.props
-    const { selectedMember } = this.state
+    const { handleInviteMemberReturnResult = () => {} } = this.props
+    const { selectedMember, selected_roles } = this.state
     // this.getIcons(selectedMember).then(users => {
     //   handleInviteMemberReturnResult(users)
     // })
-    handleInviteMemberReturnResult(selectedMember)
+    handleInviteMemberReturnResult(selectedMember, selected_roles)
   }
 
   componentDidMount() {
-    const { _organization_id, shouldNotGetGroupInDidMount } = this.props
+    const {
+      _organization_id,
+      shouldNotGetGroupInDidMount,
+      // 加载角色数据
+      loadRoleData
+    } = this.props
     if (!shouldNotGetGroupInDidMount) {
       this.getGroupList({
         _organization_id
       })
     }
+    /**
+     * 如果是Boolean值，那么判定true或者是false，
+     * 如果是 function 那么就直接进行加载，异步加载
+     */
+    const loadRoleDataType = typeof loadRoleData
+    if (loadRoleDataType === 'boolean') {
+      loadRoleData && this.loadRole(loadRoleData).catch(console.log)
+    } else if (loadRoleDataType === 'function') {
+      this.loadRole(loadRoleData).catch(console.log)
+    }
+  }
+
+  /**
+   * 加载角色数据列表
+   * @param {boolean | Promise<{name: string, id: string}[]> | Function} callback 回调用来加载角色列表
+   */
+  loadRole = async callback => {
+    /**
+     * 数据列表
+     */
+    let data = []
+    /**
+     * 如果是方法，则运行方法
+     */
+    if (callback instanceof Function) {
+      data = await callback.call(this)
+    } else {
+      data = await this.getRoleData()
+    }
+    /**
+     * 拿到了数据
+     */
+    if (data && data.length) {
+      this.setState({
+        roleList: data
+      })
+    }
+  }
+
+  /**
+   * 获取角色列表
+   */
+  getRoleData = () => {
+    return getProjectRoles({
+      type: '2',
+      _organization_id: this.props._organization_id
+    })
+      .then(res => {
+        if (isApiResponseOk(res)) {
+          return res.data
+        }
+        return []
+      })
+      .catch(err => false)
   }
 
   componentWillReceiveProps(nextProps) {
@@ -795,7 +906,10 @@ class InviteOthers extends Component {
     return null
   }
 
-  // 渲染列表的结构
+  /**
+   * 渲染从分组邀请或从项目邀请
+   * @returns ReactElement
+   */
   renderSelectList = () => {
     const { step, projectList, isInSelectedList } = this.state
     const { groupList = [] } = this.state
@@ -882,6 +996,35 @@ class InviteOthers extends Component {
     )
     return wrapper
   }
+
+  /**
+   * 选中或删除选中角色
+   * @param {{id: string, name: string}} role_member 角色对象
+   * @param {React.MouseEvent | null} e Event
+   */
+  handleClickRole = (role_member, e) => {
+    if (e) e.stopPropagation()
+    let arr = [...this.state.selected_roles]
+    if (arr.some(item => item.id === role_member.id)) {
+      arr = arr.filter(user => user.id !== role_member.id)
+    } else arr.push(role_member)
+
+    this.setState({
+      selected_roles: arr
+    })
+  }
+
+  /**
+   * 获取此角色是否已经选中
+   * @param {{id: string, name: string}} role_member 角色对象
+   * @returns {Boolean} 是否选中
+   */
+  checkMemberInSelectedRoleMember = role_member => {
+    const { selected_roles } = this.state
+    if (!role_member) return false
+    return selected_roles.some(item => item.id === role_member.id)
+  }
+
   render() {
     const {
       title,
@@ -891,7 +1034,11 @@ class InviteOthers extends Component {
       isShowSubmitBtn,
       children,
       isDisableSubmitWhenNoSelectItem,
-      show_wechat_invite
+      show_wechat_invite,
+      /**
+       * 是否隐藏从分组邀请或从项目邀请
+       */
+      hideSelectFromGroupOrBoard
     } = this.props
     const {
       fetching,
@@ -901,7 +1048,9 @@ class InviteOthers extends Component {
       membersListToSelect = [],
       isInSelectedList,
       currentOrgAllMembersList,
-      step
+      step,
+      // 选中的角色
+      selected_roles
     } = this.state
     let seize_a_seat_arr_length = 11 - selectedMember.length // 11为最多的占位符
     let seize_a_seat_arr = []
@@ -918,6 +1067,7 @@ class InviteOthers extends Component {
     )
 
     const isHasSelectedItem = !!selectedMember.length
+    const isHasSelectedRole = !!this.state.selected_roles.length
 
     let inviteSelectWrapper = cx({
       invite__select_content_wrapper: true,
@@ -956,9 +1106,40 @@ class InviteOthers extends Component {
             &#xe611;
           </span>
         </div>
-        {!!(selectedMember && selectedMember.length) && (
+        {(!!(selectedMember && selectedMember.length) ||
+          !!selected_roles?.length) && (
           <div className={styles.invite__result_wrapper}>
             <div className={styles.invite__result_list}>
+              {selected_roles.map(item => {
+                return (
+                  <div
+                    key={item.id}
+                    className={styles.invite__result_list_item}
+                  >
+                    <Tooltip
+                      overlayStyle={{ zIndex: '9999' }}
+                      title={item.name}
+                      getPopupContainer={triggerNode => triggerNode.parentNode}
+                    >
+                      <div
+                        className={styles.invite__result_list_item_img_wrapper}
+                      >
+                        <img
+                          src={ROLEAVATAR}
+                          alt=""
+                          width="32"
+                          height="32"
+                          className={styles.invite__result_list_item_img}
+                        />
+                        <span
+                          className={styles.invite__result_list_icon}
+                          onClick={e => this.handleClickRole(item, e)}
+                        />
+                      </div>
+                    </Tooltip>
+                  </div>
+                )
+              })}
               {selectedMember.map(item => {
                 // let svg = this.avatars.create(item.user)
                 return (
@@ -1042,7 +1223,7 @@ class InviteOthers extends Component {
               </div>
             )}
             <div className={inviteSelectWrapper}>
-              {this.renderSelectList()}
+              {!hideSelectFromGroupOrBoard && this.renderSelectList()}
               {!isInSelectedList && (
                 <div className={styles.invite__select_member_wrapper}>
                   <div
@@ -1052,7 +1233,7 @@ class InviteOthers extends Component {
                     <span className={styles.invite__select_member_All_text}>
                       全选
                     </span>
-                    {this.isSelectedAll() ? (
+                    {this.isSelectedAll() && this.isSelectedAllRole() ? (
                       <span
                         className={
                           styles.invite__select_member_item_operator_selected
@@ -1066,6 +1247,60 @@ class InviteOthers extends Component {
                       />
                     )}
                   </div>
+                  {/* 渲染角色列表 */}
+                  {this.state.roleList.length
+                    ? this.state.roleList.map(item => {
+                        return (
+                          <div
+                            key={item.id}
+                            className={styles.invite__select_member_item}
+                            onClick={e => this.handleClickRole(item, e)}
+                          >
+                            <span
+                              className={styles.invite__select_member_item_info}
+                            >
+                              <img
+                                className={
+                                  styles.invite__select_member_item_avatar
+                                }
+                                src={ROLEAVATAR}
+                                alt=""
+                                width="24"
+                                height="24"
+                              />
+                              <span
+                                className={
+                                  styles.invite__select_member_item_title
+                                }
+                              >
+                                {item.name || item.full_name}
+                                <span
+                                  className={
+                                    styles.invite__select_member_item_title_role
+                                  }
+                                >
+                                  (角色)
+                                </span>
+                              </span>
+                            </span>
+                            {this.checkMemberInSelectedRoleMember(item) ? (
+                              <span
+                                className={
+                                  styles.invite__select_member_item_operator_selected
+                                }
+                              />
+                            ) : (
+                              <span
+                                className={
+                                  styles.invite__select_member_item_operator_unselected
+                                }
+                              />
+                            )}
+                          </div>
+                        )
+                      })
+                    : null}
+                  {/* 渲染人员列表 */}
                   {sortedMembersListToSelect.map(item => {
                     return (
                       <div
@@ -1137,7 +1372,11 @@ class InviteOthers extends Component {
               </Button>
             )}
             <Button
-              disabled={isDisableSubmitWhenNoSelectItem && !isHasSelectedItem}
+              disabled={
+                isDisableSubmitWhenNoSelectItem &&
+                !isHasSelectedItem &&
+                !isHasSelectedRole
+              }
               onClick={this.handleSubmitSeletedMember}
               type="primary"
             >
@@ -1151,7 +1390,18 @@ class InviteOthers extends Component {
 }
 
 InviteOthers.defaultProps = {
+  /**
+   * 是否显示标题
+   */
   isShowTitle: true,
+  /**
+   * 是否隐藏从分组邀请或者从项目邀请
+   */
+  hideSelectFromGroupOrBoard: false,
+  /**
+   * 是否加载角色列表 || 或者是一个加载方法，返回的是角色数据
+   */
+  loadRoleData: false,
   title: '步骤三: 邀请他人一起参与项目', //标题
   submitText: '完成创建', //提交按钮文字
   isDisableSubmitWhenNoSelectItem: false, //如果没有选择 item 就禁用提交
