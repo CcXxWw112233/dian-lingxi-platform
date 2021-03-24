@@ -110,7 +110,7 @@ export const PROJECT_TEAM_CARD_CREATE = 'project:team:card:create' //创建任�
 export const PROJECT_TEAM_CARD_EDIT = 'project:team:card:edit' //编辑任务 permission_type=2
 export const PROJECT_TEAM_CARD_COMPLETE = 'project:team:card:complete' //完成/重做任务 permission_type=2
 export const PROJECT_TEAM_CARD_DELETE = 'project:team:card:delete' //删除任务 permission_type=2
-export const PROJECT_TEAM_CARD_GROUP = 'project:team:card:group' //管理任务分组 permission_type=2
+export const PROJECT_TEAM_CARD_GROUP = 'project:team:content:group' //管理任务分组 permission_type=2
 export const PROJECT_TEAM_CARD_EDIT_FINISH_TIME =
   'project:team:card:edit:finishTime' //修改任务完成时间
 export const PROJECT_TEAM_CARD_COMMENT_PUBLISH =

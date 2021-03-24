@@ -127,10 +127,14 @@ export async function updateVersionFileDescription(data) {
 
 // 把文件文件夹 放入回收站
 export async function fileRemove(data) {
+  const ids = JSON.parse(data.arrays)
+    .map(item => item.id)
+    .join(',')
   return request({
     url: `${REQUEST_DOMAIN_FILE}/file/remove`,
     method: 'POST',
-    data
+    data,
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, ids)
   })
 }
 

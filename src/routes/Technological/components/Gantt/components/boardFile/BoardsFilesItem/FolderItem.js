@@ -13,7 +13,8 @@ import {
   PROJECT_FILES_FILE_INTERVIEW,
   NOT_HAS_PERMISION_COMFIRN,
   MESSAGE_DURATION_TIME,
-  PROJECT_FILES_FILE_UPDATE
+  PROJECT_FILES_FILE_UPDATE,
+  PROJECT_FILES_FOLDER
 } from '../../../../../../../globalset/js/constant'
 import { connect } from 'dva'
 import {
@@ -160,7 +161,7 @@ export default class FolderItem extends Component {
             privileges,
             is_privilege,
             [],
-            checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)
+            checkIsHasPermissionInBoard(PROJECT_FILES_FOLDER, board_id)
           )
         ) {
           setTimeout(() => {
