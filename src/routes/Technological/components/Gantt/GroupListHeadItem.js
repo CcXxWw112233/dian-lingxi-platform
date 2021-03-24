@@ -1559,6 +1559,16 @@ export default class GroupListHeadItem extends Component {
     })
   }
 
+  getCurentUserRoleId = () => {
+    const { user_set = {} } = localStorage.getItem('userInfo')
+      ? JSON.parse(localStorage.getItem('userInfo'))
+      : {}
+    const { user_id } = user_set
+    const {
+      projectDetailInfoData: { data: board_users }
+    } = this.props
+    return board_users.find(item => item.user_id == user_id)?.role_id
+  }
   render() {
     const {
       currentUserOrganizes = [],
@@ -1735,7 +1745,8 @@ export default class GroupListHeadItem extends Component {
                         permissionsValue: checkIsHasPermissionInBoard(
                           PROJECT_TEAM_CARD_CREATE,
                           gantt_board_id
-                        )
+                        ),
+                        role_id: this.getCurentUserRoleId()
                       }) ? (
                         <>&#xe7ca;</>
                       ) : (

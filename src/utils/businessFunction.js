@@ -230,13 +230,15 @@ export const getProjectParticipant = (
  * @param {String} is_privilege 分组对应的开启权限 0 表示开启访问 1 表示禁止外部人员访问 2 表示仅列表成员访问与操作, 外部人员不可操作
  * @param {Array} privileges 分组中的权限列表 (需要包括继承的)
  * @param {Boolean} permissionsValue 用户在项目中的权限
+ * @param {String} role_id 项目角色
  * @returns {Boolean} true 表示有权限
  */
 export const checkIsHasPermissionInVisitControlWithGroup = ({
   code,
   list_id,
   list_group = [],
-  permissionsValue
+  permissionsValue,
+  role_id //= '1365244689736929280'
 }) => {
   const gold_item = list_group.find(item => item.list_id == list_id) || {}
   const {
@@ -287,9 +289,16 @@ export const checkIsHasPermissionInVisitControlWithGroup = ({
         return currentUserArr
       }
     })
+    // 角色列表
+    const roleArr = new_privileges.filter(item => {
+      if (item.role_info && item.role_info?.id == role_id) return true
+      return false
+    })
 
-    if (!(currentUserArr && currentUserArr.length)) {
-      // 表示在权限列表中没有找到该操作人
+    if (
+      !(currentUserArr && currentUserArr.length) && // 表示在权限列表中没有找到该操作人
+      !(roleArr && roleArr.length) // 表示在权限列表中没有找到该角色
+    ) {
       if (is_privilege == '1') {
         // 表示该操作人看不见该分组 那么肯定没有权限
         return (flag = false)
@@ -299,9 +308,11 @@ export const checkIsHasPermissionInVisitControlWithGroup = ({
       }
     }
     // 表示已经存在在权限列表中了 那么判断当前操作人是否具有可编辑权限
-    flag = currentUserArr.find(
-      item => item.content_privilege_code == code || 'edit'
-    )
+    // 或者项目角色具有编辑权限
+    flag =
+      currentUserArr.find(
+        item => item.content_privilege_code == code || 'edit'
+      ) || roleArr.find(item => item.content_privilege_code == code || 'edit')
   }
   return flag
 }

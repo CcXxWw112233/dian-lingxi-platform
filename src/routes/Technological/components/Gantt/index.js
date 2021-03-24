@@ -131,6 +131,16 @@ class Gantt extends Component {
   }
   // 添加任务 -----------start
   addTaskModalVisibleChange = flag => {
+    const getCurentUserRoleId = () => {
+      const { user_set = {} } = localStorage.getItem('userInfo')
+        ? JSON.parse(localStorage.getItem('userInfo'))
+        : {}
+      const { user_id } = user_set
+      const {
+        projectDetailInfoData: { data: board_users }
+      } = this.props
+      return board_users.find(item => item.user_id == user_id)?.role_id
+    }
     const {
       list_group = [],
       current_list_group_id,
@@ -145,7 +155,8 @@ class Gantt extends Component {
         code: 'read',
         list_id: current_list_group_id,
         list_group,
-        permissionsValue
+        permissionsValue,
+        role_id: getCurentUserRoleId()
       })
     ) {
       message.warn('权限不足，操作未被许可', MESSAGE_DURATION_TIME)
@@ -1140,6 +1151,9 @@ function mapStateToProps({
       selected_card_visible
     }
   },
+  projectDetail: {
+    datas: { projectDetailInfoData = {} }
+  },
   technological: {
     datas: { page_load_type }
   },
@@ -1167,7 +1181,8 @@ function mapStateToProps({
     gantt_board_list_id,
     gantt_view_mode,
     belong_group_row,
-    process_detail_modal_visible
+    process_detail_modal_visible,
+    projectDetailInfoData
   }
 }
 
