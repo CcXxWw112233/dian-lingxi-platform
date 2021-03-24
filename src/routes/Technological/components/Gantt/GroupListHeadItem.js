@@ -1251,10 +1251,7 @@ export default class GroupListHeadItem extends Component {
       ...projectParticipant,
       extendParticipant
     ) // 用来保存新的负责人列表
-    let new_projectParticipant = arrayNonRepeatfy(
-      temp_projectParticipant,
-      'user_id'
-    )
+    let new_projectParticipant = arrayNonRepeatfy(temp_projectParticipant)
     return new_projectParticipant
   }
 
@@ -1279,7 +1276,7 @@ export default class GroupListHeadItem extends Component {
     }
     let new_projectParticipant = arrayNonRepeatfy(
       removeEmptyArrayEle(temp_projectParticipant),
-      'user_id'
+      'id'
     )
     return new_projectParticipant
   }

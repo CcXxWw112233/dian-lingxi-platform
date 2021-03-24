@@ -25,7 +25,13 @@ import {
 import { getOrgIdByBoardId } from '../../../../utils/businessFunction'
 import { inviteMembersInWebJoin } from '../../../../utils/inviteMembersInWebJoin'
 import ROLEAVATAR from '../../../../assets/invite/role_avatar.png'
-import { UNLOCK, LISTLOCK, NOTLISTLOCKREAD } from './constans'
+import {
+  UNLOCK,
+  LISTLOCK,
+  NOTLISTLOCKREAD,
+  ROLETYPEID,
+  MEMBERTYPEID
+} from './constans'
 
 let cx = classNames.bind(styles)
 @connect(({ technological }) => ({
@@ -158,7 +164,9 @@ class VisitControl extends Component {
   /**
    * 点击选中邀请进来的外部人员的下拉菜单的回调
    */
-  handleSelectedOtherPersonListOperatorItem = ({ _, key }) => {
+  handleSelectedOtherPersonListOperatorItem = (data, val) => {
+    console.log(data, val)
+    const { _, key } = val
     const operatorType = key
     const { handleClickedOtherPersonListOperatorItem, board_id } = this.props
     const { selectedOtherPersonId, removerOtherPersonId } = this.state
@@ -181,7 +189,8 @@ class VisitControl extends Component {
     handleClickedOtherPersonListOperatorItem(
       selectedOtherPersonId,
       operatorType,
-      removerOtherPersonId
+      removerOtherPersonId,
+      data.type
     )
   }
 
@@ -281,11 +290,14 @@ class VisitControl extends Component {
             id,
             role_info = {}
           } = curr
-          const { name, avatar, id: uid } = user_info.id ? user_info : role_info
+          const { name, avatar, id: uid, type } = user_info.id
+            ? user_info
+            : role_info
           const obj = {
             id: id,
             name: name,
             user_id: uid,
+            type: user_info.id ? MEMBERTYPEID : role_info.id ? ROLETYPEID : '',
             avatar:
               !!avatar && this.isValidAvatar(avatar)
                 ? avatar
@@ -502,11 +514,16 @@ class VisitControl extends Component {
   }
 
   /**渲染其他人操作下拉菜单的选项*/
-  renderOtherPersonOperatorMenu = privilege => {
+  renderOtherPersonOperatorMenu = (privilege, data) => {
     const { otherPersonOperatorMenuItem } = this.props
     const { Item } = Menu
     return (
-      <Menu onClick={this.handleSelectedOtherPersonListOperatorItem}>
+      <Menu
+        onClick={this.handleSelectedOtherPersonListOperatorItem.bind(
+          this,
+          data
+        )}
+      >
         {otherPersonOperatorMenuItem.map(({ key, value, style }) => {
           const itemClass = cx({
             content__othersPersonList_Item_operator_dropdown_menu_item: true,
@@ -550,11 +567,11 @@ class VisitControl extends Component {
               transPrincipalList.map(({ name, avatar, type }, index) => (
                 <AvatarList.Item
                   key={index}
-                  tips={name}
+                  tips={`${type === ROLETYPEID ? name + '(角色)' : name}`}
                   src={
                     this.isValidAvatar(avatar)
                       ? avatar
-                      : type === ROLEAVATAR
+                      : type === ROLETYPEID
                       ? ROLEAVATAR
                       : defaultUserAvatar
                   }
@@ -587,58 +604,63 @@ class VisitControl extends Component {
         className={styles.content__othersPersonList_wrapper}
       >
         {othersPersonList &&
-          othersPersonList.map(({ id, user_id, name, avatar, privilege }) => (
-            <div
-              key={id}
-              className={styles.content__othersPersonList_Item_wrapper}
-            >
-              <span className={styles.content__othersPersonList_Item_info}>
-                <img
-                  width="20"
-                  height="20"
-                  src={avatar}
-                  alt=""
-                  className={styles.content__othersPersonList_Item_avatar}
-                />
-                <span className={styles.content__othersPersonList_Item_name}>
-                  {name}
-                </span>
-              </span>
-              <Dropdown
-                autoAdjustOverflow={false}
-                // getPopupContainer={() => document.getElementById('content__othersPersonList_wrapper')}
-                getPopupContainer={triggerNode => triggerNode.parentNode}
-                trigger={['click']}
-                overlay={this.renderOtherPersonOperatorMenu(privilege)}
+          othersPersonList.map(
+            ({ id, user_id, name, avatar, privilege }, index) => (
+              <div
+                key={id}
+                className={styles.content__othersPersonList_Item_wrapper}
               >
-                <span
-                  onClick={() =>
-                    this.handleClickedOtherPersonListItem(id, user_id)
-                  }
-                  className={styles.content__othersPersonList_Item_operator}
+                <span className={styles.content__othersPersonList_Item_info}>
+                  <img
+                    width="20"
+                    height="20"
+                    src={avatar}
+                    alt=""
+                    className={styles.content__othersPersonList_Item_avatar}
+                  />
+                  <span className={styles.content__othersPersonList_Item_name}>
+                    {name}
+                  </span>
+                </span>
+                <Dropdown
+                  autoAdjustOverflow={false}
+                  // getPopupContainer={() => document.getElementById('content__othersPersonList_wrapper')}
+                  getPopupContainer={triggerNode => triggerNode.parentNode}
+                  trigger={['click']}
+                  overlay={this.renderOtherPersonOperatorMenu(
+                    privilege,
+                    othersPersonList[index]
+                  )}
                 >
                   <span
-                    className={
-                      styles.content__othersPersonList_Item_operator_text
+                    onClick={() =>
+                      this.handleClickedOtherPersonListItem(id, user_id)
                     }
+                    className={styles.content__othersPersonList_Item_operator}
                   >
-                    {
-                      (
-                        otherPersonOperatorMenuItem.find(
-                          item => item.value === privilege
-                        ) || {}
-                      ).key
-                    }
+                    <span
+                      className={
+                        styles.content__othersPersonList_Item_operator_text
+                      }
+                    >
+                      {
+                        (
+                          otherPersonOperatorMenuItem.find(
+                            item => item.value === privilege
+                          ) || {}
+                        ).key
+                      }
+                    </span>
+                    <span
+                      className={`${globalStyles.authTheme} ${styles.content__othersPersonList_Item_operator_icon}`}
+                    >
+                      &#xe7ee;
+                    </span>
                   </span>
-                  <span
-                    className={`${globalStyles.authTheme} ${styles.content__othersPersonList_Item_operator_icon}`}
-                  >
-                    &#xe7ee;
-                  </span>
-                </span>
-              </Dropdown>
-            </div>
-          ))}
+                </Dropdown>
+              </div>
+            )
+          )}
       </div>
     )
   }

@@ -1063,7 +1063,7 @@ class InviteOthers extends Component {
       return this.renderWhenNoData()
     }
     const sortedMembersListToSelect = this.sortMemberListByCapital(
-      membersListToSelect
+      membersListToSelect.filter(item => item)
     )
 
     const isHasSelectedItem = !!selectedMember.length
