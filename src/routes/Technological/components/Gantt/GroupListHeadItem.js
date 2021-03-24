@@ -43,7 +43,8 @@ import {
   PROJECT_TEAM_BOARD_ARCHIVE,
   PROJECTS,
   PROJECT_TEAM_BOARD_DELETE,
-  PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE
+  PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE,
+  PROJECT_TEAM_CARD_CREATE
 } from '../../../../globalset/js/constant'
 import VisitControl from '../VisitControl/index'
 import globalStyle from '@/globalset/css/globalClassName.less'
@@ -1713,9 +1714,25 @@ export default class GroupListHeadItem extends Component {
                   <Tooltip title="已开启访问控制" placement="top">
                     <span
                       className={globalStyle.authTheme}
-                      style={{ marginLeft: 10, fontSize: 16, color: '#8c8c8c' }}
+                      style={{
+                        marginLeft: 10,
+                        fontSize: 16,
+                        color: '#8c8c8c'
+                      }}
                     >
-                      &#xe7ca;
+                      {!checkIsHasPermissionInVisitControlWithGroup({
+                        code: 'read',
+                        list_id: list_id,
+                        list_group,
+                        permissionsValue: checkIsHasPermissionInBoard(
+                          PROJECT_TEAM_CARD_CREATE,
+                          gantt_board_id
+                        )
+                      }) ? (
+                        <>&#xe7ca;</>
+                      ) : (
+                        <>&#xe7c9;</>
+                      )}
                     </span>
                   </Tooltip>
                 )}
