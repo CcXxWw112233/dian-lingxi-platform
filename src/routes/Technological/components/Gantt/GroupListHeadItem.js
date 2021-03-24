@@ -1136,7 +1136,6 @@ export default class GroupListHeadItem extends Component {
    * @param {Array} users_arr 添加成员的数组
    */
   handleVisitControlAddNewMember = (users_arr = [], roles = []) => {
-    console.log(roles)
     if (!users_arr.length && !roles.length) return
 
     this.handleSetContentPrivilege(users_arr, roles, 'read')

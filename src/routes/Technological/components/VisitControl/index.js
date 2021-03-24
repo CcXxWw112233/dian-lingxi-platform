@@ -25,6 +25,7 @@ import {
 import { getOrgIdByBoardId } from '../../../../utils/businessFunction'
 import { inviteMembersInWebJoin } from '../../../../utils/inviteMembersInWebJoin'
 import ROLEAVATAR from '../../../../assets/invite/role_avatar.png'
+import { UNLOCK, LISTLOCK, NOTLISTLOCKREAD } from './constans'
 
 let cx = classNames.bind(styles)
 @connect(({ technological }) => ({
@@ -260,7 +261,7 @@ class VisitControl extends Component {
         otherPrivilege &&
         otherPrivilege.every(item => {
           return currentOrgAllMembersList.find(
-            each => each.id === item.user_info.id
+            each => each.id === (item.user_info || item.role_info).id
           )
         })
       )
@@ -405,11 +406,11 @@ class VisitControl extends Component {
             : 'clock_edit'
         }
       >
-        <Menu.Item key="unClock">开放访问与操作</Menu.Item>
+        <Menu.Item key="unClock">{UNLOCK}</Menu.Item>
         {isShowPropOtherPrivilege && (
-          <Menu.Item key="clock_edit">仅列表人员可操作</Menu.Item>
+          <Menu.Item key="clock_edit">{LISTLOCK}</Menu.Item>
         )}
-        <Menu.Item key="clock_read">列表外人员禁止访问</Menu.Item>
+        <Menu.Item key="clock_read">{NOTLISTLOCKREAD}</Menu.Item>
       </Menu>
     )
   }
@@ -423,28 +424,40 @@ class VisitControl extends Component {
       onlyShowPopoverContent,
       isShowPropOtherPrivilege
     } = this.props
+    /**
+     * 未添加控制图标
+     */
     const unClockIcon = (
       <i className={`${globalStyles.authTheme} ${styles.title__text_icon}`}>
         &#xe7ca;
       </i>
     )
+    /**
+     * 有权限控制图标
+     */
     const clockIcon = (
       <i className={`${globalStyles.authTheme} ${styles.title__text_icon}`}>
         &#xe86a;
       </i>
     )
 
+    /**
+     * 控制标识和文本控制
+     * unlock 未授权控制
+     * 2 列表可编辑
+     * 1 列表外不可访问
+     */
     const is_privilege_text = isShowPropOtherPrivilege
       ? isPropVisitControlKey == 'unlock'
-        ? '开放访问与操作'
+        ? UNLOCK
         : isPropVisitControlKey == '2'
-        ? '仅列表人员可操作'
+        ? LISTLOCK
         : isPropVisitControlKey == '1'
-        ? '列表外人员禁止访问'
-        : '开放访问与操作'
+        ? NOTLISTLOCKREAD
+        : UNLOCK
       : !isPropVisitControl
-      ? '开放访问与操作'
-      : '列表外人员禁止访问'
+      ? UNLOCK
+      : NOTLISTLOCKREAD
 
     return (
       <div
@@ -488,7 +501,7 @@ class VisitControl extends Component {
     )
   }
 
-  // 渲染其他人操作下拉菜单的选项
+  /**渲染其他人操作下拉菜单的选项*/
   renderOtherPersonOperatorMenu = privilege => {
     const { otherPersonOperatorMenuItem } = this.props
     const { Item } = Menu
@@ -518,7 +531,7 @@ class VisitControl extends Component {
     )
   }
 
-  // 渲染popover中的负责人列表组件
+  /**  渲染popover中的负责人列表组件*/
   renderPopoverContentPrincipalList() {
     const { principalInfo } = this.props
     const { transPrincipalList } = this.state
@@ -534,11 +547,17 @@ class VisitControl extends Component {
             }}
           >
             {transPrincipalList &&
-              transPrincipalList.map(({ name, avatar }, index) => (
+              transPrincipalList.map(({ name, avatar, type }, index) => (
                 <AvatarList.Item
                   key={index}
                   tips={name}
-                  src={this.isValidAvatar(avatar) ? avatar : defaultUserAvatar}
+                  src={
+                    this.isValidAvatar(avatar)
+                      ? avatar
+                      : type === ROLEAVATAR
+                      ? ROLEAVATAR
+                      : defaultUserAvatar
+                  }
                 />
               ))}
           </AvatarList>
@@ -558,7 +577,7 @@ class VisitControl extends Component {
     )
   }
 
-  // 渲染popover中其他人的组件列表
+  /** 渲染popover中其他人的组件列表 */
   renderPopoverContentOthersPersonList = () => {
     const { otherPersonOperatorMenuItem } = this.props
     const { othersPersonList } = this.state
