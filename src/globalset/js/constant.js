@@ -122,6 +122,9 @@ export const PROJECT_FILES_FILE_UPLOAD = 'project:files:file:upload' //上传文
 export const PROJECT_FILES_FILE_DOWNLOAD = 'project:files:file:download' //下载文件 permission_type=2
 export const PROJECT_FILES_FILE_UPDATE = 'project:files:file:update' //更新文件 permission_type=2
 export const PROJECT_FILES_FILE_DELETE = 'project:files:file:delete' //删除文件 permission_type=2
+/**
+ * 文件编辑权限 permission_type = 2
+ */
 export const PROJECT_FILES_FILE_EDIT = 'project:files:file:edit' //编辑文件 permission_type=2
 export const PROJECT_FILES_FOLDER = 'project:files:folder' //管理文件夹 permission_type=2
 export const PROJECT_FILES_COMMENT_PUBLISH = 'project:files:comment:publish' //发表评论 permission_type=2
