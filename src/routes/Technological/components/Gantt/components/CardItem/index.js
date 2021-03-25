@@ -2197,7 +2197,7 @@ export default class CardItem extends Component {
                     style={{ color: 'rgba(0,0,0,0.50)', marginLeft: '5px' }}
                     data-targetclassname="specific_example"
                   >
-                    &#xe7ca;
+                    &#xe850;
                   </span>
                 </Tooltip>
               )}
