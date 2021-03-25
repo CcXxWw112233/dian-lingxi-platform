@@ -1556,6 +1556,7 @@ export default class GroupListHeadItem extends Component {
     })
   }
 
+  // 获取用户角色id
   getCurentUserRoleId = () => {
     const { user_set = {} } = localStorage.getItem('userInfo')
       ? JSON.parse(localStorage.getItem('userInfo'))
@@ -1565,6 +1566,56 @@ export default class GroupListHeadItem extends Component {
       projectDetailInfoData: { data: board_users }
     } = this.props
     return board_users.find(item => item.user_id == user_id)?.role_id
+  }
+
+  // 设置访问控制最终返回信息的ui
+  setVisitControlState = () => {
+    const {
+      list_group,
+      itemValue: { list_id, is_privilege },
+      gantt_board_id
+    } = this.props
+    if (!is_privilege || is_privilege == '0') {
+      return 'all_auth' //具有全部权限
+    }
+    if (
+      !checkIsHasPermissionInVisitControlWithGroup({
+        code: 'read',
+        list_id: list_id,
+        list_group,
+        permissionsValue: checkIsHasPermissionInBoard(
+          PROJECT_TEAM_CARD_CREATE,
+          gantt_board_id
+        ),
+        role_id: this.getCurentUserRoleId()
+      })
+    ) {
+      return 'no_auth' //没有权限
+    }
+    if (is_privilege == '1') {
+      return 'outside_cannot_read' //列表内人员操作
+    } else if (is_privilege == '2') {
+      return 'inside_can_edit' //列表外人员禁止访问
+    }
+  }
+  // 设置访问控制图标
+  setVisitControlIcon = tag => {
+    const _obj = {
+      all_auth: { title: '', node: '' },
+      no_auth: {
+        title: '您无编辑权限',
+        node: <span>&#xe7ca;</span>
+      },
+      inside_can_edit: {
+        title: '指定人可查看',
+        node: <span>&#xe850;</span>
+      },
+      outside_cannot_read: {
+        title: '隐藏项，非指定人不可见',
+        node: <span style={{ opacity: 0.7 }}>&#xe850;</span>
+      }
+    }
+    return _obj[tag] || {}
   }
   render() {
     const {
@@ -1618,6 +1669,8 @@ export default class GroupListHeadItem extends Component {
     const is_group_folded = (
       group_list_area_fold_section.find(item => item.list_id == list_id) || {}
     ).is_group_folded
+    // 设置的访问控制类型
+    const visit_control_tag = this.setVisitControlState()
     return (
       <div>
         <div
@@ -1643,6 +1696,10 @@ export default class GroupListHeadItem extends Component {
                         : indexStyles.spin_fold_show
                     }`}
                     onClick={this.handleToggleGroupFolded}
+                    style={{
+                      opacity:
+                        visit_control_tag == 'outside_cannot_read' ? '0.7' : '1'
+                    }}
                   >
                     &#xe61f;
                   </div>
@@ -1721,12 +1778,24 @@ export default class GroupListHeadItem extends Component {
                     className={`${indexStyles.list_name} ${globalStyle.global_ellipsis}`}
                     // onClick={this.listNameClick}
                   >
-                    {local_list_name}
+                    <span
+                      style={{
+                        opacity:
+                          visit_control_tag == 'outside_cannot_read'
+                            ? '0.7'
+                            : '1'
+                      }}
+                    >
+                      {local_list_name}
+                    </span>
                     <CustormBadgeDot show_dot={is_new == '1'} />
                   </div>
                 )}
                 {(is_privilege == '1' || is_privilege == '2') && (
-                  <Tooltip title="已开启访问控制" placement="top">
+                  <Tooltip
+                    title={this.setVisitControlIcon(visit_control_tag).title}
+                    placement="top"
+                  >
                     <span
                       className={globalStyle.authTheme}
                       style={{
@@ -1735,20 +1804,8 @@ export default class GroupListHeadItem extends Component {
                         color: '#8c8c8c'
                       }}
                     >
-                      {!checkIsHasPermissionInVisitControlWithGroup({
-                        code: 'read',
-                        list_id: list_id,
-                        list_group,
-                        permissionsValue: checkIsHasPermissionInBoard(
-                          PROJECT_TEAM_CARD_CREATE,
-                          gantt_board_id
-                        ),
-                        role_id: this.getCurentUserRoleId()
-                      }) ? (
-                        <>&#xe7ca;</>
-                      ) : (
-                        <>&#xe7c9;</>
-                      )}
+                      {/* 设置图标 */}
+                      {this.setVisitControlIcon(visit_control_tag).node}
                     </span>
                   </Tooltip>
                 )}
