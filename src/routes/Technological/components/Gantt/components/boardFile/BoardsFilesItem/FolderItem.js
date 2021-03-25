@@ -34,6 +34,7 @@ import {
   removeContentPrivilege
 } from '../../../../../../../services/technological/project'
 import { arrayNonRepeatfy } from '../../../../../../../utils/util'
+import { ROLETYPEID } from '../../../../VisitControl/constans'
 
 @connect(mapStateToProps)
 export default class FolderItem extends Component {
@@ -621,7 +622,12 @@ export default class FolderItem extends Component {
    * @param {String} id 设置成员对应的id
    * @param {String} type 设置成员对应的字段
    */
-  handleVisitControlChangeContentPrivilege = (id, type, errorText) => {
+  handleVisitControlChangeContentPrivilege = (
+    id,
+    type,
+    user_type,
+    errorText
+  ) => {
     const { itemValue = {} } = this.props
     const { current_folder_id, getFolderFileList } = this.props
     const { version_id, belong_folder_id, id: folder_id } = itemValue
@@ -629,13 +635,16 @@ export default class FolderItem extends Component {
     const content_id = dataType == 'file' ? version_id : folder_id
     const content_type = dataType == 'file' ? 'file' : 'folder'
     const privilege_code = type
-    let temp_id = []
-    temp_id.push(id)
+    let param = {}
+    if (user_type === ROLETYPEID) {
+      param = { role_ids: [id] }
+    } else param = { user_ids: [id] }
+
     setContentPrivilege({
       content_id,
       content_type,
       privilege_code,
-      user_ids: temp_id
+      ...param
     }).then(res => {
       if (res && res.code == '0') {
         setTimeout(() => {
@@ -654,13 +663,19 @@ export default class FolderItem extends Component {
    * @param {String} type 这是对应的用户字段
    * @param {String} removeId 这是对应移除用户的id
    */
-  handleClickedOtherPersonListOperatorItem = (id, type, removeId) => {
+  handleClickedOtherPersonListOperatorItem = (
+    id,
+    type,
+    removeId,
+    user_type
+  ) => {
     if (type == 'remove') {
       this.handleVisitControlRemoveContentPrivilege(removeId)
     } else {
       this.handleVisitControlChangeContentPrivilege(
         id,
         type,
+        user_type,
         '更新用户控制类型失败'
       )
     }
@@ -670,14 +685,15 @@ export default class FolderItem extends Component {
    * 添加成员的回调
    * @param {Array} users_arr 添加成员的数组
    */
-  handleVisitControlAddNewMember = (users_arr = []) => {
-    if (!users_arr.length) return
-    this.handleSetContentPrivilege(users_arr, 'read')
+  handleVisitControlAddNewMember = (users_arr = [], roles = []) => {
+    if (!users_arr.length && !roles.length) return
+    this.handleSetContentPrivilege(users_arr, roles, 'read')
   }
 
   // 访问控制设置成员
   handleSetContentPrivilege = (
     users_arr = [],
+    roles = [],
     type,
     errorText = '访问控制添加人员失败，请稍后再试'
   ) => {
@@ -715,7 +731,7 @@ export default class FolderItem extends Component {
     new_privileges =
       new_privileges &&
       new_privileges.map(item => {
-        let { id } = item && item.user_info && item.user_info
+        let { id } = (item && item.user_info && item.user_info) || {}
         if (user_id == id) {
           // 从权限列表中找到自己
           if (temp_ids.indexOf(id) != -1) {
@@ -741,10 +757,11 @@ export default class FolderItem extends Component {
           }
         })
     }
-
+    if (!roles.length && !temp_ids.length) return
     setContentPrivilege({
       content_id,
       content_type,
+      role_ids: roles.map(item => item.id),
       privilege_code,
       user_ids: temp_ids
     }).then(res => {
@@ -818,6 +835,10 @@ export default class FolderItem extends Component {
               notShowPrincipal={
                 this.getVisitControlModalDataType() == 'file' ? true : false
               }
+              // 加载角色列表
+              loadRoleData={true}
+              // 隐藏从分组或者项目选择
+              hideSelectFromGroupOrBoard={true}
               otherPrivilege={privileges}
               otherPersonOperatorMenuItem={
                 visitControlOtherPersonOperatorMenuItem

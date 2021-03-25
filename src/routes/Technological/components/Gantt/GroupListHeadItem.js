@@ -1136,15 +1136,16 @@ export default class GroupListHeadItem extends Component {
    * 添加成员的回调
    * @param {Array} users_arr 添加成员的数组
    */
-  handleVisitControlAddNewMember = (users_arr = []) => {
-    if (!users_arr.length) return
+  handleVisitControlAddNewMember = (users_arr = [], roles = []) => {
+    if (!users_arr.length && !roles.length) return
 
-    this.handleSetContentPrivilege(users_arr, 'read')
+    this.handleSetContentPrivilege(users_arr, roles, 'read')
   }
 
   // 访问控制添加成员
   handleSetContentPrivilege = (
     users_arr,
+    roles,
     type,
     errorText = '访问控制添加人员失败，请稍后再试'
   ) => {
@@ -1171,7 +1172,7 @@ export default class GroupListHeadItem extends Component {
     new_privileges =
       new_privileges &&
       new_privileges.map(item => {
-        let { id } = item && item.user_info && item.user_info
+        let { id } = (item && item.user_info && item.user_info) || {}
         if (user_id == id) {
           // 从权限列表中找到自己
           if (temp_ids.indexOf(id) != -1) {
@@ -1202,6 +1203,7 @@ export default class GroupListHeadItem extends Component {
       board_id: gantt_board_id == '0' ? list_id : board_id,
       content_id,
       content_type,
+      role_ids: roles.map(item => item.id),
       privilege_code,
       user_ids: temp_ids
     }).then(res => {
@@ -1250,10 +1252,7 @@ export default class GroupListHeadItem extends Component {
       ...projectParticipant,
       extendParticipant
     ) // 用来保存新的负责人列表
-    let new_projectParticipant = arrayNonRepeatfy(
-      temp_projectParticipant,
-      'user_id'
-    )
+    let new_projectParticipant = arrayNonRepeatfy(temp_projectParticipant)
     return new_projectParticipant
   }
 
@@ -1278,7 +1277,7 @@ export default class GroupListHeadItem extends Component {
     }
     let new_projectParticipant = arrayNonRepeatfy(
       removeEmptyArrayEle(temp_projectParticipant),
-      'user_id'
+      'id'
     )
     return new_projectParticipant
   }
@@ -1305,6 +1304,11 @@ export default class GroupListHeadItem extends Component {
             ? this.getProjectDetailInfoData()
             : this.getProjectParticipant()
         }
+        // 是否需要加载角色数据 Boolean | Promise<RoleItem[]> | Function => RoleItem[]
+        loadRoleData={true}
+        _organization_id={getOrgIdByBoardId(board_id)}
+        // 是否隐藏组织和分组选择人员
+        hideSelectFromGroupOrBoard={true}
         isPropVisitControlKey={is_privilege}
         // principalInfo='位任务列表负责人'
         otherPrivilege={privileges}

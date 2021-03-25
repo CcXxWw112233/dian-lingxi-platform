@@ -8,7 +8,11 @@ export function handleErrorResponse(data) {
     message(message, MESSAGE_DURATION_TIME)
   }
 }
-//判断是否返回正常
+/**
+ * 判断数据是否返回正常
+ * @param {{code: '0' | '-1' | '9999' | string, data: any, message: string}} response 返回的数据
+ * @returns Boolean
+ */
 export const isApiResponseOk = response => {
   return response && Number(response.code) === INT_REQUEST_OK
 }

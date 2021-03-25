@@ -51,6 +51,7 @@ import { getFolderList } from '@/services/technological/file'
 import { currentNounPlanFilterName } from '../../utils/businessFunction'
 import { FILES } from '../../globalset/js/constant'
 import DEvent from '../../utils/event'
+import { ROLETYPEID } from '../../routes/Technological/components/VisitControl/constans'
 
 @connect(mapStateToProps)
 export default class HeaderContentRightMenu extends Component {
@@ -928,13 +929,19 @@ export default class HeaderContentRightMenu extends Component {
    * @param {String} type 这是对应的用户字段
    * @param {String} removeId 这是对应移除用户的id
    */
-  handleClickedOtherPersonListOperatorItem = (id, type, removeId) => {
+  handleClickedOtherPersonListOperatorItem = (
+    id,
+    type,
+    removeId,
+    user_type
+  ) => {
     if (type === 'remove') {
       this.handleVisitControlRemoveContentPrivilege(removeId)
     } else {
       this.handleVisitControlChangeContentPrivilege(
         id,
         type,
+        user_type,
         '更新用户控制类型失败'
       )
     }
@@ -968,20 +975,24 @@ export default class HeaderContentRightMenu extends Component {
    * @param {String} id 设置成员对应的id
    * @param {String} type 设置成员对应的字段
    */
-  handleVisitControlChangeContentPrivilege = (id, type) => {
+  handleVisitControlChangeContentPrivilege = (id, type, user_type) => {
     const {
       currentPreviewFileData: { version_id }
     } = this.props
     const content_id = version_id
     const content_type = 'file'
     const privilege_code = type
-    let temp_id = []
-    temp_id.push(id)
+
+    let param = {}
+    if (user_type === ROLETYPEID) {
+      param = { role_ids: [id] }
+    } else param = { user_ids: [id] }
+
     setContentPrivilege({
       content_id,
       content_type,
       privilege_code,
-      user_ids: temp_id
+      ...param
     }).then(res => {
       if (res && res.code === '0') {
         setTimeout(() => {
@@ -1004,14 +1015,15 @@ export default class HeaderContentRightMenu extends Component {
    * 添加成员的回调
    * @param {Array} users_arr 添加成员的数组
    */
-  handleVisitControlAddNewMember = (users_arr = []) => {
-    if (!users_arr.length) return
-    this.handleSetContentPrivilege(users_arr, 'read')
+  handleVisitControlAddNewMember = (users_arr = [], roles = []) => {
+    if (!users_arr.length && !roles.length) return
+    this.handleSetContentPrivilege(users_arr, roles, 'read')
   }
 
   // 访问控制设置回调
   handleSetContentPrivilege = (
     users_arr = [],
+    roles = [],
     type,
     errorText = '访问控制添加人员失败，请稍后再试'
   ) => {
@@ -1041,7 +1053,7 @@ export default class HeaderContentRightMenu extends Component {
     new_privileges =
       new_privileges &&
       new_privileges.map(item => {
-        let { id } = item && item.user_info && item.user_info
+        let { id } = (item && item.user_info && item.user_info) || {}
         if (user_id == id) {
           // 从权限列表中找到自己
           if (temp_ids.indexOf(id) != -1) {
@@ -1067,10 +1079,11 @@ export default class HeaderContentRightMenu extends Component {
           }
         })
     }
-
+    if (!roles.length && !temp_ids.length) return
     setContentPrivilege({
       content_id,
       content_type,
+      role_ids: roles.map(item => item.id),
       privilege_code,
       user_ids: temp_ids
     }).then(res => {
@@ -1389,6 +1402,8 @@ export default class HeaderContentRightMenu extends Component {
                   handleVisitControlChange={this.handleVisitControlChange}
                   otherPrivilege={privileges}
                   notShowPrincipal={true}
+                  loadRoleData={true}
+                  hideSelectFromGroupOrBoard={true}
                   handleClickedOtherPersonListOperatorItem={
                     this.handleClickedOtherPersonListOperatorItem
                   }

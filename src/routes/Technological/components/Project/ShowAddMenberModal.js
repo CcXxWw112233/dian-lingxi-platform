@@ -10,6 +10,8 @@ import CustormModal from '../../../../components/CustormModal'
 import InviteOthers from './../InviteOthers/index'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import WechatInviteToboard from './components/WechatInviteToboard'
+import { getProjectRoles } from '../../../../services/technological/prjectDetail'
+import { isApiResponseOk } from '../../../../utils/handleResponseData'
 class ShowAddMenberModal extends React.Component {
   state = {
     users: '',
@@ -25,7 +27,7 @@ class ShowAddMenberModal extends React.Component {
     this.props.setShowAddMenberModalVisibile()
   }
   // 提交表单
-  handleSubmit = ({ userStr, selectedMember }) => {
+  handleSubmit = ({ userStr, selectedMember, roleMembers }) => {
     // e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
@@ -33,7 +35,7 @@ class ShowAddMenberModal extends React.Component {
         values['users'] = userStr
         this.props.setShowAddMenberModalVisibile()
         this.props.addMenbersInProject
-          ? this.props.addMenbersInProject(values, selectedMember)
+          ? this.props.addMenbersInProject(values, selectedMember, roleMembers)
           : false
       }
     })
@@ -59,12 +61,19 @@ class ShowAddMenberModal extends React.Component {
       }
     }, '')
   }
-  handleInviteMemberReturnResult = (selectedMember = []) => {
-    // this.props.new_handleInviteMemberReturnResult &&
-    //   this.props.new_handleInviteMemberReturnResult(selectedMember)
+  /**
+   * 选择了成员列表
+   * @param {any[]} selectedMember 人员选择列表
+   * @param {any[]} roleSelected 角色选择列表
+   */
+  handleInviteMemberReturnResult = (selectedMember = [], roleSelected = []) => {
+    // console.log(roleSelected)
+    this.props.new_handleInviteMemberReturnResult &&
+      this.props.new_handleInviteMemberReturnResult(selectedMember)
     this.handleSubmit({
       userStr: this.handleUsersToUsersStr(selectedMember),
-      selectedMember
+      selectedMember,
+      roleMembers: roleSelected
     })
   }
 
@@ -75,13 +84,32 @@ class ShowAddMenberModal extends React.Component {
     })
   }
 
+  /**
+   * 获取角色信息列表
+   * @returns {Promise<object[]>}
+   */
+  getRoleData = () => {
+    return getProjectRoles({ type: '2' })
+      .then(res => {
+        if (isApiResponseOk(res)) {
+          return res.data
+        }
+        return []
+      })
+      .catch(err => false)
+  }
+
   renderUsersList = () => {
     const {
       _organization_id,
       show_wechat_invite,
       title,
       submitText,
-      board_id
+      board_id,
+      // 是否加载角色数据
+      loadRoleData,
+      // 是否隐藏从项目或分组选折人员
+      hideSelectFromGroupOrBoard = false
     } = this.props
     const container = (
       <Form style={{ margin: '0 auto', width: '100%' }}>
@@ -99,8 +127,15 @@ class ShowAddMenberModal extends React.Component {
         </div>
         <div style={{ margin: '0px -24px' }}>
           <InviteOthers
+            // 提交按钮的文字
             submitText={submitText ? submitText : '确定'}
+            // 是否显示title
             isShowTitle={false}
+            // 是否显示从分组或者从项目选择
+            hideSelectFromGroupOrBoard={hideSelectFromGroupOrBoard}
+            // 是否加载角色数据列表
+            loadRoleData={loadRoleData}
+            // 组织id
             _organization_id={
               _organization_id ||
               getOrgIdByBoardId(board_id) ||

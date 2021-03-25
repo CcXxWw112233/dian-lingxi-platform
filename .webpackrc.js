@@ -42,6 +42,15 @@ export default {
     src: path.resolve(__dirname, './src'),
     '@ant-design/icons/lib/dist$': path.resolve(__dirname, './src/ant_icons.js')
   },
+  proxy: {
+    '/dian_lingxi/': {
+      target: 'http://test.lingxi.new-di.com/',
+      changeOrigin: true,
+      pathRewrite: {
+        '^': '',
+      },
+    },
+  },
   hash: true,
   manifest: {
     basePath: '/app/'

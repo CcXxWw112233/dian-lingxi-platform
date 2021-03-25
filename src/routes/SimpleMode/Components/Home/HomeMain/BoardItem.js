@@ -281,7 +281,7 @@ export default class BoardItem extends Component {
     new_privileges =
       new_privileges &&
       new_privileges.map(item => {
-        let { id } = item && item.user_info && item.user_info
+        let { id } = (item && item.user_info && item.user_info) || {}
         if (user_id == id) {
           // 从权限列表中找到自己
           if (temp_ids.indexOf(id) != -1) {
@@ -337,7 +337,7 @@ export default class BoardItem extends Component {
     const { data: projectParticipant = [] } = projectDetailInfoData
     const { privileges_extend = [] } = itemValue
     let temp_projectParticipant = [].concat(
-      projectParticipant && [...projectParticipant],
+      // projectParticipant && [...projectParticipant],
       privileges_extend && [...privileges_extend]
     )
     const removeEmptyArrayEle = arr => {
@@ -352,7 +352,7 @@ export default class BoardItem extends Component {
     }
     let new_projectParticipant = arrayNonRepeatfy(
       removeEmptyArrayEle(temp_projectParticipant),
-      'user_id'
+      'id'
     )
     return new_projectParticipant
   }
