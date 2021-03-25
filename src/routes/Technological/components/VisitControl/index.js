@@ -797,7 +797,11 @@ class VisitControl extends Component {
           {this.isCurrentHasNoMember() ? (
             <>{this.renderPopoverContentNoContent()}</>
           ) : (
-            <Collapse bordered={false} onChange={this.collapseChange}>
+            <Collapse
+              bordered={false}
+              onChange={this.collapseChange}
+              activeKey={this.state.panelActivekey}
+            >
               {!notShowPrincipal && (
                 <Collapse.Panel
                   header={
