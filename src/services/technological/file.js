@@ -289,7 +289,7 @@ export async function fileInfoByUrl(params) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/file/info/${params.id}`,
     method: 'GET',
-    headers: createHeaderContentData(CONTENT_DATA_TYPE_FOLDER, params.id),
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.id),
     params
   })
 }
