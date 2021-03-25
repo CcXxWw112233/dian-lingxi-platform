@@ -597,7 +597,10 @@ class VisitControl extends Component {
     const { principalInfo } = this.props
     const { transPrincipalList } = this.state
     return (
-      <div className={styles.content__principalList_wrapper}>
+      <div
+        className={styles.content__principalList_wrapper}
+        style={{ height: '100%', overflow: 'auto' }}
+      >
         <div className={styles.content__principalList_icon}>
           {(transPrincipalList || []).map(item => {
             return (
@@ -770,7 +773,7 @@ class VisitControl extends Component {
 
   /**
    * 折叠面板的开关回调
-   * @param {*} val 折叠对象
+   * @param {string[]} val 折叠对象
    */
   collapseChange = val => {
     // console.log(val)
