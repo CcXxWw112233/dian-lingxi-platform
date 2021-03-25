@@ -65,6 +65,7 @@ import GroupListHeadDragNoTimeDataItem from './GroupListHeadDragNoTimeDataItem'
 // import { lx_utils } from 'lingxi-im'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import { clickDelay } from '../../../../globalset/clientCustorm'
+import { LISTLOCK, NOTLISTLOCKREAD } from '../VisitControl/constans'
 
 @connect(mapStateToProps)
 export default class GroupListHeadItem extends Component {
@@ -1050,9 +1051,9 @@ export default class GroupListHeadItem extends Component {
     const is_privilege_bool = toBool(is_privilege)
     const is_open = !flag
       ? 0
-      : key == 'clock_edit'
+      : key == LISTLOCK.key
       ? 2
-      : key == 'clock_read'
+      : key == NOTLISTLOCKREAD.key
       ? 1
       : 0
     // if (flag === is_privilege_bool) {
