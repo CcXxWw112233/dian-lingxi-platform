@@ -230,32 +230,24 @@ const LogicWithMainContent = {
     const is_valid_group = true
     // 表示先判断分组权限 然后在判断访问控制
     return {
-      visit_control_edit: function() {
-        // 是否是有编辑权限
-        return checkIsHasPermissionInVisitControlWithGroup({
+      visit_control_edit: function(ass) {
+        const a = checkIsHasPermissionInVisitControlWithGroup({
           code: 'read',
           list_id: list_id,
           list_group: card_list_group,
           permissionsValue: checkIsHasPermissionInBoard(code, board_id)
         })
-          ? checkIsHasPermissionInVisitControl(
-              'edit',
-              privileges,
-              is_privilege,
-              [],
-              checkIsHasPermissionInBoard(code, board_id),
-              is_valid_group
-            )
-          : checkIsHasPermissionInVisitControl(
-              'edit',
-              privileges,
-              is_privilege,
-              [],
-              checkIsHasPermissionInBoard(code, board_id),
-              is_valid_group
-            )
-          ? false
-          : true
+        const b = checkIsHasPermissionInVisitControl(
+          'edit',
+          privileges,
+          is_privilege,
+          [],
+          checkIsHasPermissionInBoard(code, board_id),
+          is_valid_group
+        )
+        // 是否是有编辑权限
+        return b
+        // return a ? b : b ? false : true
         return checkIsHasPermissionInVisitControl(
           'edit',
           privileges,
