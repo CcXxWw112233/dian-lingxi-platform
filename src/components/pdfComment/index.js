@@ -30,11 +30,17 @@ import { dateFormat } from '@/utils/util'
 import ChooseColor from './component/colorChoose'
 import { NoteIcon } from './component/noteIcon'
 import axios from 'axios'
-import { setRequestHeaderBaseInfo } from '../../utils/businessFunction'
+import {
+  checkIsHasPermissionInBoard,
+  setRequestHeaderBaseInfo
+} from '../../utils/businessFunction'
 import { REQUEST_DOMAIN_FILE } from '@/globalset/js/constant'
 import DEvent from '../../utils/event'
 import { ENV_ANDROID_APP } from '../../globalset/clientCustorm'
-import { REQUEST_DOMAIN_BOARD } from '../../globalset/js/constant'
+import {
+  PROJECT_FILES_FILE_EDIT,
+  REQUEST_DOMAIN_BOARD
+} from '../../globalset/js/constant'
 // import scr from './worker'
 const DefineIcon = Icon.createFromIconfontCN({
   scriptUrl: '//at.alicdn.com/t/font_779568_41vfncsv7yu.js'
@@ -196,6 +202,13 @@ export default class PdfComment extends React.Component {
     this.pdf = null
     // 是否有批注数据
     this.hasHistory = false
+    /**
+     * 是否有编辑权限
+     */
+    this.hasEditPromisions = checkIsHasPermissionInBoard(
+      PROJECT_FILES_FILE_EDIT,
+      props.board_id
+    )
   }
   async componentDidMount() {
     this.mounted = true
@@ -1179,6 +1192,7 @@ export default class PdfComment extends React.Component {
                 object.left = object.left * scale
                 object.top = object.top * scale
                 object.setCoords()
+                if (!this.hasEditPromisions) this.lockObject(object, true)
               }
             })
 
@@ -1563,6 +1577,7 @@ export default class PdfComment extends React.Component {
   }
   // 删除选中对象
   removeObject = () => {
+    if (!this.hasEditPromisions) return
     let { activeObject } = this.state
     this.drawType = null
     this.changePen(false)
@@ -2059,6 +2074,7 @@ export default class PdfComment extends React.Component {
   }
 
   setActiveDraw = key => {
+    if (!this.hasEditPromisions) return message.warn('暂无编辑权限')
     if (this.state.versionMsg.id === 'main_V') {
       return message.warn('默认批注版本不允许操作，请切换批注版本')
     }
@@ -2332,7 +2348,9 @@ export default class PdfComment extends React.Component {
               {item.name
                 ? item.name
                 : dateFormat(+item.create_time + '000', 'yyyy/MM/dd HH:mm')}
-              {item.id !== 'main_V' && <VersionOperation data={item} />}
+              {item.id !== 'main_V' && this.hasEditPromisions && (
+                <VersionOperation data={item} />
+              )}
             </div>
           )
         })}
@@ -2598,6 +2616,10 @@ export default class PdfComment extends React.Component {
       )
     })
   }
+  /**
+   * 设置选中元素的透明度
+   * @param {*} val
+   */
   setObjectOpacity = val => {
     let { activeObject, drawStyles } = this.state
     // console.log(val)
@@ -2792,93 +2814,94 @@ export default class PdfComment extends React.Component {
             &#xe7b4;
           </span>
           <div className={styles.tools_items}>
-            {this.drawTools.map(item => {
-              if (drawT.includes(item.key)) {
-                return (
-                  <this.renderChooseColor key={item.key}>
-                    <span
-                      className={styles.tools_item}
-                      key={item.key}
-                      style={{
-                        color:
-                          item.key === this.state.drawStyles.activeType
-                            ? this.state.drawStyles[
+            {this.hasEditPromisions &&
+              this.drawTools.map(item => {
+                if (drawT.includes(item.key)) {
+                  return (
+                    <this.renderChooseColor key={item.key}>
+                      <span
+                        className={styles.tools_item}
+                        key={item.key}
+                        style={{
+                          color:
+                            item.key === this.state.drawStyles.activeType
+                              ? this.state.drawStyles[
+                                  this.state.drawStyles.activeType
+                                ]?.color
+                              : ''
+                        }}
+                        onClick={() => {
+                          this.setActiveDraw(item.key)
+                        }}
+                      >
+                        <DefineIcon type={item.icon} />
+                      </span>
+                    </this.renderChooseColor>
+                  )
+                }
+                if (item.key === 'note') {
+                  let hide =
+                    this.state.versionMsg.id === 'main_V'
+                      ? {
+                          visible: false
+                        }
+                      : {}
+                  return (
+                    <Popover
+                      {...hide}
+                      trigger={['click']}
+                      content={
+                        <div>
+                          <div>颜色</div>
+                          <ChooseColor
+                            needHex={true}
+                            onChange={this.setNoteColor}
+                            color={
+                              this.state.drawStyles[
                                 this.state.drawStyles.activeType
                               ]?.color
-                            : ''
-                      }}
-                      onClick={() => {
-                        this.setActiveDraw(item.key)
-                      }}
-                    >
-                      <DefineIcon type={item.icon} />
-                    </span>
-                  </this.renderChooseColor>
-                )
-              }
-              if (item.key === 'note') {
-                let hide =
-                  this.state.versionMsg.id === 'main_V'
-                    ? {
-                        visible: false
+                            }
+                            colors={this.noteColors}
+                          />
+                        </div>
                       }
-                    : {}
+                    >
+                      <span
+                        className={`${styles.tools_item}`}
+                        style={{
+                          color:
+                            this.state.drawStyles.activeType === item.key
+                              ? this.state.drawStyles[
+                                  this.state.drawStyles.activeType
+                                ]?.color
+                              : ''
+                        }}
+                        key={item.key}
+                        onClick={() => this.setHandActive(item.key)}
+                      >
+                        <DefineIcon type={item.icon} />
+                      </span>
+                    </Popover>
+                  )
+                }
                 return (
-                  <Popover
-                    {...hide}
-                    trigger={['click']}
-                    content={
-                      <div>
-                        <div>颜色</div>
-                        <ChooseColor
-                          needHex={true}
-                          onChange={this.setNoteColor}
-                          color={
-                            this.state.drawStyles[
+                  <span
+                    className={`${styles.tools_item}`}
+                    style={{
+                      color:
+                        this.state.drawStyles.activeType === item.key
+                          ? this.state.drawStyles[
                               this.state.drawStyles.activeType
                             ]?.color
-                          }
-                          colors={this.noteColors}
-                        />
-                      </div>
-                    }
+                          : ''
+                    }}
+                    key={item.key}
+                    onClick={() => this.setHandActive(item.key)}
                   >
-                    <span
-                      className={`${styles.tools_item}`}
-                      style={{
-                        color:
-                          this.state.drawStyles.activeType === item.key
-                            ? this.state.drawStyles[
-                                this.state.drawStyles.activeType
-                              ]?.color
-                            : ''
-                      }}
-                      key={item.key}
-                      onClick={() => this.setHandActive(item.key)}
-                    >
-                      <DefineIcon type={item.icon} />
-                    </span>
-                  </Popover>
+                    <DefineIcon type={item.icon} />
+                  </span>
                 )
-              }
-              return (
-                <span
-                  className={`${styles.tools_item}`}
-                  style={{
-                    color:
-                      this.state.drawStyles.activeType === item.key
-                        ? this.state.drawStyles[
-                            this.state.drawStyles.activeType
-                          ]?.color
-                        : ''
-                  }}
-                  key={item.key}
-                  onClick={() => this.setHandActive(item.key)}
-                >
-                  <DefineIcon type={item.icon} />
-                </span>
-              )
-            })}
+              })}
             <div className={styles.version}>
               <span className={styles.version_n}>批注版本：</span>
               <Popover
@@ -2897,15 +2920,17 @@ export default class PdfComment extends React.Component {
                       )}
                 </a>
               </Popover>
-              <Button
-                size="small"
-                className={styles.saveAs}
-                onClick={this.saveVersionAs}
-                ghost
-                type="primary"
-              >
-                新增批注版本
-              </Button>
+              {this.hasEditPromisions && (
+                <Button
+                  size="small"
+                  className={styles.saveAs}
+                  onClick={this.saveVersionAs}
+                  ghost
+                  type="primary"
+                >
+                  新增批注版本
+                </Button>
+              )}
             </div>
             {/* <span onClick={this.fileSaveAs}>另存</span> */}
           </div>
