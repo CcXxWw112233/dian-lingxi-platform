@@ -14,27 +14,26 @@
     .trigger__icon:hover {
       cursor: pointer;
       color: #40a9ff;
-      background-color: #E6F7FF;
-      
+      background-color: #e6f7ff;
     }
     .trigger__btn__wrapper {
       display: inline-flex;
       align-items: center;
- 
+
       min-height: 20px;
-      line-height:20px;
-     
+      line-height: 20px;
+
       padding: 2px 8px 2px 6px;
-      background:rgba(0,0,0,0.04);
-      border-radius:4px;
+      background: rgba(0, 0, 0, 0.04);
+      border-radius: 4px;
       &:hover {
-        background:rgba(230,247,255,1);
+        background: rgba(230, 247, 255, 1);
       }
       .trigger__btn__icon {
         display: inline-block;
         width: 16px;
         height: 16px;
-        margin-top:-4px;
+        margin-top: -4px;
       }
       .trigger__btn_text {
         display: inline-block;
@@ -44,7 +43,7 @@
         margin-left: 2px;
       }
       opacity: 1;
-      transition: all .3s;
+      transition: all 0.3s;
     }
     .trigger__btn__wrapper:hover .trigger__btn__icon {
       cursor: pointer;
@@ -80,13 +79,12 @@
   .title__operator {
   }
 }
-
 .content__wrapper {
   .content__list_wrapper {
     max-height: 190px;
     overflow-y: auto;
     margin: -12px -5px 0;
-    padding: 0 16px;
+    // padding: 0 16px;
     border-bottom: 1px solid #efefef;
     .content__principalList_wrapper {
       height: 38px;
@@ -95,7 +93,7 @@
       justify-content: space-between;
       align-items: center;
       .content__principalList_icon {
-        display: flex;
+        // display: flex;
       }
       .content__principalList_info {
         user-select: none;
@@ -109,6 +107,19 @@
         align-items: center;
         margin: 0 -16px;
         padding: 0 16px;
+        &:hover{
+          .removeItems{
+            display: block;
+          }
+        }
+        .removeItems{
+          font-size: 1.2rem;
+          // display: none;
+          cursor: pointer;
+          &:hover{
+            color: #f32525df;
+          }
+        }
         .content__othersPersonList_Item_info {
           .content__othersPersonList_Item_avatar {
             border-radius: 50%;
@@ -177,7 +188,7 @@
   user-select: none;
 }
 .content__othersPersonList_Item_operator_dropdown_menu_item_disabled {
-  color: #B8B8B8;
+  color: #b8b8b8;
   cursor: not-allowed;
 }
 .content__noConten_wrapper {
@@ -190,7 +201,8 @@
     width: 83px;
     height: 53px;
     margin-bottom: 6px;
-    background: url(./../../../../assets/workbench/visitControl/Empty@2x.png) center center no-repeat;
+    background: url(./../../../../assets/workbench/visitControl/Empty@2x.png)
+      center center no-repeat;
     background-size: contain;
   }
   .content__noConten_text {
@@ -201,3 +213,15 @@
     line-height: 20px;
   }
 }
+.pannel_header {
+  display: flex;
+  justify-content: space-between;
+}
+.pannel_item {
+  background: #fff;
+  border-radius: 4;
+  margin-bottom: 0;
+  border: 0;
+  overflow: hidden;
+}
+
