@@ -169,26 +169,54 @@ export default class FolderItem extends Component {
         const role =
           projectDetailInfoData.data &&
           projectDetailInfoData.data.find(item => item.user_id === userInfo.id)
-
-        if (
-          !checkIsHasPermissionInVisitControl(
-            'edit',
-            privileges,
-            is_privilege,
-            [],
-            checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)
-          ) ||
-          !checkFolderEditPermissions(
-            privileges,
-            board_id,
-            PROJECT_FILES_FOLDER,
-            role ? role.role_id : ''
-          )
-        ) {
-          setTimeout(() => {
-            message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-          }, 50)
-          return
+        /**
+         * 访问控制里面有没有自己
+         */
+        const privilegesInUser = privileges.some(
+          item => item.user_info && item.user_info.user_id === userInfo.id
+        )
+        if (!privilegesInUser) {
+          if (
+            !checkIsHasPermissionInVisitControl(
+              'edit',
+              privileges,
+              is_privilege,
+              [],
+              checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)
+            ) &&
+            !checkFolderEditPermissions(
+              privileges,
+              board_id,
+              PROJECT_FILES_FOLDER,
+              role ? role.role_id : ''
+            )
+          ) {
+            setTimeout(() => {
+              message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+            }, 50)
+            return
+          }
+        } else {
+          if (
+            !checkIsHasPermissionInVisitControl(
+              'edit',
+              privileges,
+              is_privilege,
+              [],
+              checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)
+            ) ||
+            !checkFolderEditPermissions(
+              privileges,
+              board_id,
+              PROJECT_FILES_FOLDER,
+              role ? role.role_id : ''
+            )
+          ) {
+            setTimeout(() => {
+              message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+            }, 50)
+            return
+          }
         }
         this.setIsShowChange(true)
         break
