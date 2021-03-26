@@ -14,7 +14,8 @@ import { message, Modal, Tooltip } from 'antd'
 import {
   checkIsHasPermissionInBoard,
   getSubfixName,
-  checkIsHasPermissionInVisitControl
+  checkIsHasPermissionInVisitControl,
+  checkRoleAndMemberVisitControlPermissions
 } from '../../utils/businessFunction'
 import {
   MESSAGE_DURATION_TIME,
@@ -431,7 +432,7 @@ class MainContent extends Component {
 
   // 除pdf外的其他文件进入圈评
   handleEnterCirclePointComment = async () => {
-    const { isZoomPictureFullScreenMode } = this.props
+    const { isZoomPictureFullScreenMode, projectDetailInfoData } = this.props
     const { currentPreviewFileData = {} } = this.props
     const {
       board_id,
@@ -441,14 +442,32 @@ class MainContent extends Component {
       file_name,
       folder_id
     } = currentPreviewFileData
+    /**
+     * 个人信息
+     */
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'))
+    /**
+     * 角色信息
+     */
+    const role =
+      projectDetailInfoData.data &&
+      projectDetailInfoData.data.find(item => item.user_id === userInfo.id)
+
     if (
-      !checkIsHasPermissionInVisitControl(
-        'edit,read',
+      !checkRoleAndMemberVisitControlPermissions({
         privileges,
+        board_id,
         is_privilege,
-        [],
-        checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)
-      )
+        board_permissions_code: PROJECT_FILES_FILE_UPDATE,
+        role_id: role ? role.role_id : ''
+      })
+      // !checkIsHasPermissionInVisitControl(
+      //   'edit,read',
+      //   privileges,
+      //   is_privilege,
+      //   [],
+      //   checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)
+      // )
     ) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       // this.props.updateStateDatas({
@@ -1493,11 +1512,15 @@ function mapStateToProps({
     datas: { userBoardPermissions }
   },
   simplemode: { chatImVisiable = false },
-  publicFileDetailModal: { isOpenAttachmentFile }
+  publicFileDetailModal: { isOpenAttachmentFile },
+  projectDetail: {
+    datas: { projectDetailInfoData }
+  }
 }) {
   return {
     userBoardPermissions,
     chatImVisiable,
-    isOpenAttachmentFile
+    isOpenAttachmentFile,
+    projectDetailInfoData
   }
 }
