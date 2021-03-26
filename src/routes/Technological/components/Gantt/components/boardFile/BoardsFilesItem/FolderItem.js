@@ -8,7 +8,7 @@ import {
   checkIsHasPermissionInVisitControl,
   checkIsHasPermissionInBoard,
   checkIsRoleHasPermissionsInBoard,
-  checkFolderEditPermissions
+  checkRoleAndMemberVisitControlPermissions
 } from '../../../../../../../utils/businessFunction'
 import { Input, Menu, Dropdown, message, Tooltip, Modal } from 'antd'
 import {
@@ -184,12 +184,13 @@ export default class FolderItem extends Component {
               [],
               checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)
             ) &&
-            !checkFolderEditPermissions(
+            !checkRoleAndMemberVisitControlPermissions({
               privileges,
               board_id,
-              PROJECT_FILES_FOLDER,
-              role ? role.role_id : ''
-            )
+              board_permissions_code: PROJECT_FILES_FOLDER,
+              role_id: role ? role.role_id : '',
+              is_privilege: is_privilege
+            })
           ) {
             setTimeout(() => {
               message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
@@ -205,12 +206,13 @@ export default class FolderItem extends Component {
               [],
               checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)
             ) ||
-            !checkFolderEditPermissions(
+            !checkRoleAndMemberVisitControlPermissions({
               privileges,
               board_id,
-              PROJECT_FILES_FOLDER,
-              role ? role.role_id : ''
-            )
+              board_permissions_code: PROJECT_FILES_FOLDER,
+              role_id: role ? role.role_id : '',
+              is_privilege: is_privilege
+            })
           ) {
             setTimeout(() => {
               message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)

@@ -321,18 +321,18 @@ export const checkIsHasPermissionInVisitControlWithGroup = ({
  * 检测角色在项目中是否有文件夹整理编辑权限
  * @param {{content_privilege_code: string, role_info: object , id: string, type: string}[]} privileges 需要检查的对象列表
  * @param {string} board_id 需要检测的项目id
- * @param {string} permissions_code 需要检测的权限码
+ * @param {string} board_permissions_code 需要检测的权限码
  * @param {string} role_id 需要检测的角色id
  * @param {string} is_privilege 是否打开了访问控制权限
  * @returns {Boolean}
  */
-export const checkFolderEditPermissions = (
+export const checkRoleAndMemberVisitControlPermissions = ({
   privileges = [],
   board_id,
-  permissions_code,
+  board_permissions_code,
   role_id,
   is_privilege
-) => {
+}) => {
   /**
    * 用户信息
    */
@@ -354,8 +354,7 @@ export const checkFolderEditPermissions = (
    */
   if (
     !board_id ||
-    !permissions_code ||
-    !role_id ||
+    !board_permissions_code ||
     (privileges && !privileges.length)
   )
     return false
@@ -383,6 +382,10 @@ export const checkFolderEditPermissions = (
   }
 
   /**
+   * 如果没有人员，发现没有角色id，则直接无权限
+   */
+  if (!role_id) return false
+  /**
    * 检查是否存在需要检查的角色id
    */
   const hasRole = privileges.length
@@ -402,7 +405,7 @@ export const checkFolderEditPermissions = (
    */
   return (
     hasRole ||
-    (BoardPermissions.some(item => item === permissions_code) &&
+    (BoardPermissions.some(item => item === board_permissions_code) &&
       isOpenCode === is_privilege)
   )
 }
