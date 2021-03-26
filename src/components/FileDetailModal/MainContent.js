@@ -434,6 +434,7 @@ class MainContent extends Component {
   handleEnterCirclePointComment = async () => {
     const { isZoomPictureFullScreenMode, projectDetailInfoData } = this.props
     const { currentPreviewFileData = {} } = this.props
+    console.log(currentPreviewFileData)
     const {
       board_id,
       privileges = [],
@@ -459,7 +460,8 @@ class MainContent extends Component {
         board_id,
         is_privilege,
         board_permissions_code: PROJECT_FILES_FILE_UPDATE,
-        role_id: role ? role.role_id : ''
+        role_id: role ? role.role_id : '',
+        EditCode: ['edit', 'read']
       })
       // !checkIsHasPermissionInVisitControl(
       //   'edit,read',

@@ -318,13 +318,14 @@ export const checkIsHasPermissionInVisitControlWithGroup = ({
 }
 
 /**
- * 检测角色在项目中是否有文件夹整理编辑权限
+ * 检测角色和成员在项目中是否有编辑权限
  * @param {{content_privilege_code: string, role_info: object , id: string, type: string}[]} privileges 需要检查的对象列表
  * @param {string} board_id 需要检测的项目id
  * @param {string|string[]} board_permissions_code 需要检测的权限码
  * @param {string} role_id 需要检测的角色id
  * @param {string} is_privilege 是否打开了访问控制权限
  * @param {Boolean} isEvery 是否权限列表都要匹配
+ * @param {string | string []} EditCode 附加判定条件，仅查看或可编辑
  * @returns {Boolean}
  */
 export const checkRoleAndMemberVisitControlPermissions = ({
@@ -333,7 +334,8 @@ export const checkRoleAndMemberVisitControlPermissions = ({
   board_permissions_code,
   role_id,
   is_privilege,
-  isEvery
+  isEvery,
+  EditCode = 'edit'
 }) => {
   /**
    * 用户信息
@@ -346,7 +348,7 @@ export const checkRoleAndMemberVisitControlPermissions = ({
   /**
    * 编辑权限标识
    */
-  const EditCode = 'edit'
+  // const EditCode = 'edit'
   /**
    * 所有的权限列表
    */
@@ -381,7 +383,7 @@ export const checkRoleAndMemberVisitControlPermissions = ({
       item =>
         item.user_info &&
         item.user_info.id === userInfo.id &&
-        item.content_privilege_code === EditCode
+        EditCode.indexOf(item.content_privilege_code) !== -1
     )
   }
 
@@ -397,7 +399,7 @@ export const checkRoleAndMemberVisitControlPermissions = ({
         item =>
           item.role_info &&
           item.role_info.id === role_id &&
-          item.content_privilege_code === EditCode
+          EditCode.indexOf(item.content_privilege_code) !== -1
       )
     : false
   /**
