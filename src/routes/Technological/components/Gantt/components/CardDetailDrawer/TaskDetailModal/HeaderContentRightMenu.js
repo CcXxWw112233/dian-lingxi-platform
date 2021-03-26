@@ -855,6 +855,7 @@ export default class HeaderContentRightMenu extends Component {
               otherPrivilege={privileges}
               loadRoleData={true}
               hideSelectFromGroupOrBoard={true}
+              isPropVisitControlKey={is_privilege}
               handleClickedOtherPersonListOperatorItem={
                 this.handleClickedOtherPersonListOperatorItem
               }

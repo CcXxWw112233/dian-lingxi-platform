@@ -770,6 +770,7 @@ export default class HeaderContentRightMenu extends Component {
                   handleVisitControlChange={this.handleVisitControlChange}
                   principalList={data}
                   otherPrivilege={privileges}
+                  isPropVisitControlKey={is_privilege}
                   // 是否需要加载角色数据 Boolean | Promise<RoleItem[]> | Function => RoleItem[]
                   loadRoleData={true}
                   // 是否隐藏组织和分组选择人员
