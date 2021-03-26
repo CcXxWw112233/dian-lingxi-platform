@@ -371,6 +371,7 @@ export default class BoardItem extends Component {
         principalList={this.getProjectDetailInfoData()}
         // principalInfo='位任务列表负责人'
         otherPrivilege={privileges}
+        isPropVisitControlKey="1"
         otherPersonOperatorMenuItem={
           this.visitControlOtherPersonOperatorMenuItem
         }
