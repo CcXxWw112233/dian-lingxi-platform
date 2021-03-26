@@ -321,9 +321,10 @@ export const checkIsHasPermissionInVisitControlWithGroup = ({
  * 检测角色在项目中是否有文件夹整理编辑权限
  * @param {{content_privilege_code: string, role_info: object , id: string, type: string}[]} privileges 需要检查的对象列表
  * @param {string} board_id 需要检测的项目id
- * @param {string} board_permissions_code 需要检测的权限码
+ * @param {string|string[]} board_permissions_code 需要检测的权限码
  * @param {string} role_id 需要检测的角色id
  * @param {string} is_privilege 是否打开了访问控制权限
+ * @param {Boolean} isEvery 是否权限列表都要匹配
  * @returns {Boolean}
  */
 export const checkRoleAndMemberVisitControlPermissions = ({
@@ -331,7 +332,8 @@ export const checkRoleAndMemberVisitControlPermissions = ({
   board_id,
   board_permissions_code,
   role_id,
-  is_privilege
+  is_privilege,
+  isEvery
 }) => {
   /**
    * 用户信息
@@ -349,6 +351,8 @@ export const checkRoleAndMemberVisitControlPermissions = ({
    * 所有的权限列表
    */
   const permissions = JSON.parse(localStorage.getItem('userBoardPermissions'))
+
+  if (is_privilege === isOpenCode) return true
   /**
    * 没有必要参数，一律没权限
    */
@@ -400,14 +404,30 @@ export const checkRoleAndMemberVisitControlPermissions = ({
    * 检查的角色不存在于列表中
    */
   if (!hasRole) return false
+
+  /**
+   * 匹配权限码
+   */
+  let allRegCode
+  if (isEvery) {
+    let arr = Array.isArray(board_permissions_code)
+      ? board_permissions_code
+      : [board_permissions_code]
+    /**
+     * 匹配所有的权限码是否都符合条件
+     */
+    allRegCode = arr.every(item => {
+      return BoardPermissions.indexOf(item) !== -1
+    })
+  } else {
+    allRegCode = BoardPermissions.some(
+      item => board_permissions_code.indexOf(item) != -1
+    )
+  }
   /**
    * 返回是否有权限
    */
-  return (
-    hasRole ||
-    (BoardPermissions.some(item => item === board_permissions_code) &&
-      isOpenCode === is_privilege)
-  )
+  return hasRole || (allRegCode && isOpenCode === is_privilege)
 }
 
 /**
