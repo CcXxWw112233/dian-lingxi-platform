@@ -36,9 +36,11 @@ import {
 import { rebackCreateNotify } from '../../NotificationTodos'
 // import { lx_utils } from 'lingxi-im'
 import {
+  checkRoleAndMemberVisitControlPermissions,
   checkIsHasPermissionInVisitControlWithGroup,
   getSubfixName
 } from '../../../utils/businessFunction'
+import { connect } from 'dva'
 const lx_utils = undefined
 
 // 逻辑组件
@@ -228,6 +230,7 @@ const LogicWithMainContent = {
     })
     const { privileges = [], board_id, is_privilege, list_id } = drawContent
     const is_valid_group = true
+    const _that = this
     // 表示先判断分组权限 然后在判断访问控制
     return {
       visit_control_edit: function(ass) {
@@ -245,8 +248,31 @@ const LogicWithMainContent = {
           checkIsHasPermissionInBoard(code, board_id),
           is_valid_group
         )
+
+        /**
+         * 个人信息
+         */
+        const userInfo = JSON.parse(localStorage.getItem('userInfo'))
+        /**
+         * 角色信息
+         */
+        const role =
+          _that.props.projectDetailInfoData.data &&
+          _that.props.projectDetailInfoData.data.find(
+            item => item.user_id === userInfo.id
+          )
+        /**
+         * 检测角色和人员是否有访问控制权限
+         */
+        const c = checkRoleAndMemberVisitControlPermissions({
+          privileges,
+          board_id,
+          board_permissions_code: code,
+          role_id: role ? role.role_id : '',
+          is_privilege: is_privilege
+        })
         // 是否是有编辑权限
-        return b
+        return c
         // return a ? b : b ? false : true
         return checkIsHasPermissionInVisitControl(
           'edit',
@@ -2191,6 +2217,7 @@ const LogicWithMainContent = {
     }
   }
 }
+
 export default class DepositMainComponent extends Component {
   render() {
     const {
