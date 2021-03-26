@@ -744,7 +744,6 @@ class VisitControl extends Component {
           type="primary"
           block
           onClick={this.setShowAddMenberModalVisibile}
-          disabled={isPropVisitControlKey.toString() === UNLOCK.key}
         >
           添加指定人
         </Button>
@@ -837,35 +836,34 @@ class VisitControl extends Component {
                   {this.renderPopoverContentPrincipalList()}
                 </Collapse.Panel>
               )}
-              {isPropVisitControlKey.toString() !== UNLOCK.key && (
-                <Collapse.Panel
-                  key="2"
-                  header={
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        paddingRight: 15
-                      }}
-                    >
-                      <div>指定人</div>
-                      <div style={{ color: 'rgba(0,0,0,0.7)' }}>
-                        {(this.state.othersPersonList || []).length}人
-                      </div>
+
+              <Collapse.Panel
+                key="2"
+                header={
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      paddingRight: 15
+                    }}
+                  >
+                    <div>指定人</div>
+                    <div style={{ color: 'rgba(0,0,0,0.7)' }}>
+                      {(this.state.othersPersonList || []).length}人
                     </div>
-                  }
-                  className={styles.pannel_item}
-                  style={{
-                    background: '#fff',
-                    borderRadius: 4,
-                    marginBottom: 0,
-                    border: 0,
-                    overflow: 'hidden'
-                  }}
-                >
-                  {this.renderPopoverContentOthersPersonList()}
-                </Collapse.Panel>
-              )}
+                  </div>
+                }
+                className={styles.pannel_item}
+                style={{
+                  background: '#fff',
+                  borderRadius: 4,
+                  marginBottom: 0,
+                  border: 0,
+                  overflow: 'hidden'
+                }}
+              >
+                {this.renderPopoverContentOthersPersonList()}
+              </Collapse.Panel>
             </Collapse>
           )}
         </div>
