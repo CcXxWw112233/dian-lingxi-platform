@@ -6,7 +6,9 @@ import {
   setBoardIdStorage,
   getGlobalData,
   checkIsHasPermissionInVisitControl,
-  checkIsHasPermissionInBoard
+  checkIsHasPermissionInBoard,
+  checkIsRoleHasPermissionsInBoard,
+  checkFolderEditPermissions
 } from '../../../../../../../utils/businessFunction'
 import { Input, Menu, Dropdown, message, Tooltip, Modal } from 'antd'
 import {
@@ -154,15 +156,33 @@ export default class FolderItem extends Component {
     switch (key) {
       case '1':
         const {
-          itemValue: { board_id, privileges = [], is_privilege }
+          itemValue: { board_id, privileges = [], is_privilege },
+          projectDetailInfoData
         } = this.props
+        /**
+         * 个人信息
+         */
+        const userInfo = JSON.parse(localStorage.getItem('userInfo'))
+        /**
+         * 角色信息
+         */
+        const role =
+          projectDetailInfoData.data &&
+          projectDetailInfoData.data.find(item => item.user_id === userInfo.id)
+
         if (
           !checkIsHasPermissionInVisitControl(
             'edit',
             privileges,
             is_privilege,
             [],
-            checkIsHasPermissionInBoard(PROJECT_FILES_FOLDER, board_id)
+            checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)
+          ) ||
+          !checkFolderEditPermissions(
+            privileges,
+            board_id,
+            PROJECT_FILES_FOLDER,
+            role ? role.role_id : ''
           )
         ) {
           setTimeout(() => {
@@ -960,7 +980,14 @@ export default class FolderItem extends Component {
 }
 
 function mapStateToProps({
-  imCooperation: { im_all_latest_unread_messages = [], wil_handle_types = [] }
+  imCooperation: { im_all_latest_unread_messages = [], wil_handle_types = [] },
+  projectDetail: {
+    datas: { projectDetailInfoData = {} }
+  }
 }) {
-  return { im_all_latest_unread_messages, wil_handle_types }
+  return {
+    im_all_latest_unread_messages,
+    wil_handle_types,
+    projectDetailInfoData
+  }
 }
