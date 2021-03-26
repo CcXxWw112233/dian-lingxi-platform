@@ -1158,6 +1158,7 @@ export default class FileList extends React.Component {
                     principalInfo="位任务列表负责人"
                     // notShowPrincipal={true}
                     otherPrivilege={privileges}
+                    isPropVisitControlKey={is_privilege}
                     otherPersonOperatorMenuItem={
                       visitControlOtherPersonOperatorMenuItem
                     }

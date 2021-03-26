@@ -66,6 +66,7 @@ class VisitControl extends Component {
       panelActivekey: []
     }
     this.inputRef = React.createRef()
+    console.log(props)
   }
 
   // 小图标的点击事件或者说访问控制的点击事件
