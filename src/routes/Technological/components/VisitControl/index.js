@@ -674,7 +674,7 @@ class VisitControl extends Component {
                     {name}
                   </span>
                 </span>
-                {isPropVisitControlKey.toString() !== NOTLISTLOCKREAD.key ? (
+                {isPropVisitControlKey.toString() !== LISTLOCK.key ? (
                   <Dropdown
                     autoAdjustOverflow={false}
                     // getPopupContainer={() => document.getElementById('content__othersPersonList_wrapper')}
@@ -736,12 +736,14 @@ class VisitControl extends Component {
 
   // 渲染popover组件中的底部 添加成员按钮
   renderPopoverContentAddMemberBtn = () => {
+    const { isPropVisitControlKey } = this.props
     return (
       <div className={styles.content__addMemberBtn_wrapper}>
         <Button
           type="primary"
           block
           onClick={this.setShowAddMenberModalVisibile}
+          disabled={isPropVisitControlKey.toString() === UNLOCK.key}
         >
           添加指定人
         </Button>
@@ -784,7 +786,7 @@ class VisitControl extends Component {
 
   // 渲染popover组件中的内容
   renderPopoverContent = () => {
-    const { notShowPrincipal } = this.props
+    const { notShowPrincipal, isPropVisitControlKey } = this.props
     return (
       <div className={styles.content__wrapper}>
         <div
@@ -834,33 +836,35 @@ class VisitControl extends Component {
                   {this.renderPopoverContentPrincipalList()}
                 </Collapse.Panel>
               )}
-              <Collapse.Panel
-                key="2"
-                header={
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      paddingRight: 15
-                    }}
-                  >
-                    <div>指定人</div>
-                    <div style={{ color: 'rgba(0,0,0,0.7)' }}>
-                      {(this.state.othersPersonList || []).length}人
+              {isPropVisitControlKey.toString() !== UNLOCK.key && (
+                <Collapse.Panel
+                  key="2"
+                  header={
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        paddingRight: 15
+                      }}
+                    >
+                      <div>指定人</div>
+                      <div style={{ color: 'rgba(0,0,0,0.7)' }}>
+                        {(this.state.othersPersonList || []).length}人
+                      </div>
                     </div>
-                  </div>
-                }
-                className={styles.pannel_item}
-                style={{
-                  background: '#fff',
-                  borderRadius: 4,
-                  marginBottom: 0,
-                  border: 0,
-                  overflow: 'hidden'
-                }}
-              >
-                {this.renderPopoverContentOthersPersonList()}
-              </Collapse.Panel>
+                  }
+                  className={styles.pannel_item}
+                  style={{
+                    background: '#fff',
+                    borderRadius: 4,
+                    marginBottom: 0,
+                    border: 0,
+                    overflow: 'hidden'
+                  }}
+                >
+                  {this.renderPopoverContentOthersPersonList()}
+                </Collapse.Panel>
+              )}
             </Collapse>
           )}
         </div>
