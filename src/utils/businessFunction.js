@@ -64,7 +64,7 @@ export const checkIsHasPermission = (code, param_org_id) => {
 /**
  * 这是检测某个用户的访问控制权限
  * 思路: 先在该用户所在的权限列表中查询找到对应的用户, 如果存在, 那么该用户的权限就是
- * code 类型 { edit > comment > read > permissionsValue } 中的一种,
+ * code 类型 { edit > comment > read > permissionsValue } 中的一种或几种 => ‘edit,read’
  * 如果不存在, 那么就去查看该用户在项目中对应的权限列表
  *
  * 想要达到的效果是,在哪里调用就返回对应的true/false
@@ -138,7 +138,7 @@ export const checkIsHasPermissionInVisitControl = (
         if (!id) return false
         if (user_id == id) {
           // 判断改成员能不能在自己的权限列表中查询到
-          if (item.content_privilege_code == code) {
+          if (code.indexOf(item.content_privilege_code) != -1) {
             // 如果说该职员的权限状态与code匹配, 返回true, 表示有权利
             flag = true
           } else {
@@ -175,7 +175,7 @@ export const checkIsHasPermissionInVisitControl = (
       if (!id) return false
       if (user_id == id) {
         // 判断改成员能不能在自己的权限列表中查询到
-        if (item.content_privilege_code == code) {
+        if (code.indexOf(item.content_privilege_code) != -1) {
           // 如果说该职员的权限状态与code匹配, 返回true, 表示有权利
           flag = true
         } else {

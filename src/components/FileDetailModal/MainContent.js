@@ -443,7 +443,7 @@ class MainContent extends Component {
     } = currentPreviewFileData
     if (
       !checkIsHasPermissionInVisitControl(
-        'edit',
+        'edit,read',
         privileges,
         is_privilege,
         [],
