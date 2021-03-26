@@ -232,7 +232,8 @@ export async function updateFolder(data) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/folder`,
     method: 'PUT',
-    data
+    data,
+    headers: createHeaderContentData(CONTENT_DATA_TYPE_FOLDER, data.folder_id)
   })
 }
 
