@@ -457,7 +457,11 @@ export default class HeaderContentRightMenu extends Component {
   }
 
   // 下载文件
-  handleFileDownload({ filePreviewCurrentResourceId, pdfDownLoadSrc }) {
+  handleFileDownload({ filePreviewCurrentResourceId, pdfDownLoadSrc }, e) {
+    if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     const { filePreviewSizeExceed, filePreviewIsUsable } = this.props
     if (!filePreviewSizeExceed && filePreviewIsUsable) {
       //当文件格式大小符合，能在pdf打开的时候，才调用
@@ -466,10 +470,7 @@ export default class HeaderContentRightMenu extends Component {
         return
       }
     }
-    if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_DOWNLOAD)) {
-      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      return false
-    }
+
     //如果时pdf
     if (pdfDownLoadSrc) {
       window.open(pdfDownLoadSrc)
