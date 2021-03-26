@@ -1403,7 +1403,7 @@ export default class HeaderContentRightMenu extends Component {
                   otherPrivilege={privileges}
                   notShowPrincipal={true}
                   loadRoleData={true}
-                  hideSelectFromGroupOrBoard={true}
+                  hideSelectFromGroupOrBoard={false}
                   handleClickedOtherPersonListOperatorItem={
                     this.handleClickedOtherPersonListOperatorItem
                   }

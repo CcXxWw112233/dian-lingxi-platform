@@ -1308,7 +1308,7 @@ export default class GroupListHeadItem extends Component {
         loadRoleData={true}
         _organization_id={getOrgIdByBoardId(board_id)}
         // 是否隐藏组织和分组选择人员
-        hideSelectFromGroupOrBoard={true}
+        hideSelectFromGroupOrBoard={false}
         isPropVisitControlKey={is_privilege}
         // principalInfo='位任务列表负责人'
         otherPrivilege={privileges}

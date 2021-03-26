@@ -774,7 +774,7 @@ export default class HeaderContentRightMenu extends Component {
                   // 是否需要加载角色数据 Boolean | Promise<RoleItem[]> | Function => RoleItem[]
                   loadRoleData={true}
                   // 是否隐藏组织和分组选择人员
-                  hideSelectFromGroupOrBoard={true}
+                  hideSelectFromGroupOrBoard={false}
                   handleClickedOtherPersonListOperatorItem={
                     this.handleClickedOtherPersonListOperatorItem
                   }

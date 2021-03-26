@@ -837,7 +837,7 @@ export default class FolderItem extends Component {
               // 加载角色列表
               loadRoleData={true}
               // 隐藏从分组或者项目选择
-              hideSelectFromGroupOrBoard={true}
+              hideSelectFromGroupOrBoard={false}
               isPropVisitControlKey={is_privilege}
               otherPrivilege={privileges}
               otherPersonOperatorMenuItem={
