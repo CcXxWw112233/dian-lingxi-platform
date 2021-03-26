@@ -453,6 +453,7 @@ export default {
               (res.data.app_data[0] ? res.data.app_data[0].key : 1)
           }
         })
+        localStorage.setItem('projectDetailInfoData', JSON.stringify(res.data))
       } else {
       }
       return res || {}
