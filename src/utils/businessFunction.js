@@ -391,7 +391,7 @@ export const checkRoleAndMemberVisitControlPermissions = ({
    */
   if (!role_id) return false
   /**
-   * 检查是否存在需要检查的角色id
+   * 检查是否存在需要检查的角色id 判断权限
    */
   const hasRole = privileges.length
     ? privileges.some(
@@ -402,9 +402,15 @@ export const checkRoleAndMemberVisitControlPermissions = ({
       )
     : false
   /**
+   * 只判定角色在不在，不判断权限
+   */
+  const checkRoleInArray = privileges.some(
+    item => item.role_info && item.role_info.id === role_id
+  )
+  /**
    * 检查的角色不存在于列表中
    */
-  if (!hasRole) return false
+  if (!hasRole && is_privilege !== isOpenCode) return false
 
   /**
    * 匹配权限码
@@ -426,13 +432,29 @@ export const checkRoleAndMemberVisitControlPermissions = ({
     )
   }
 
+  if (
+    !checkRoleInArray &&
+    is_privilege === isOpenCode &&
+    EditCode.includes('edit')
+  )
+    return allRegCode
+
+  if (
+    !checkRoleInArray &&
+    is_privilege === isOpenCode &&
+    EditCode.includes('read')
+  )
+    return true
+
   if (is_privilege === isOpenCode && EditCode.includes('edit')) return false
   if (is_privilege === isOpenCode && EditCode.includes('read')) return true
+
 
   /**
    * 返回是否有权限
    */
-  return hasRole || (allRegCode && isOpenCode === is_privilege)
+  // console.log(hasRole, allRegCode)
+  return hasRole || allRegCode
 }
 
 /**

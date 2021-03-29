@@ -20,7 +20,8 @@ import {
 import {
   MESSAGE_DURATION_TIME,
   NOT_HAS_PERMISION_COMFIRN,
-  PROJECT_FILES_FILE_UPDATE
+  PROJECT_FILES_FILE_UPDATE,
+  PROJECT_FILES_FILE_INTERVIEW
 } from '@/globalset/js/constant'
 import NotSupportImg from '@/assets/projectDetail/fileDetail/not_support.png'
 import { platformNouns } from '../../globalset/clientCustorm'
@@ -462,7 +463,10 @@ class MainContent extends Component {
         privileges,
         board_id,
         is_privilege,
-        board_permissions_code: PROJECT_FILES_FILE_UPDATE,
+        board_permissions_code: [
+          // PROJECT_FILES_FILE_UPDATE,
+          PROJECT_FILES_FILE_INTERVIEW
+        ],
         role_id: role ? role.role_id : '',
         EditCode: ['edit', 'read']
       })
