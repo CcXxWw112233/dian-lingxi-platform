@@ -337,6 +337,23 @@ export const checkRoleAndMemberVisitControlPermissions = ({
   isEvery,
   EditCode = 'edit'
 }) => {
+  if (!role_id) {
+    /**
+     * 个人信息
+     */
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'))
+    const projectDetailInfoData = JSON.parse(
+      localStorage.getItem('projectDetailInfoData')
+    )
+    /**
+     * 角色信息
+     */
+    const role =
+      projectDetailInfoData.data &&
+      projectDetailInfoData.data.find(item => item.user_id === userInfo.id)
+
+    role_id = role?.role_id
+  }
   /**
    * 用户信息
    */
@@ -432,13 +449,18 @@ export const checkRoleAndMemberVisitControlPermissions = ({
     )
   }
 
+  /**
+   * 判断，无权限，也不存在于参与人列表，等于是无限制的时候，角色不在参与人列表中，是可以查看的
+   */
   if (
     !checkRoleInArray &&
     is_privilege === isOpenCode &&
     EditCode.includes('read')
   )
     return true
-
+  /**
+   * 判断，无权限，也不存在于参与人列表，等于是无限制的时候，角色不在参与人列表中，是不能编辑的
+   */
   if (
     !checkRoleInArray &&
     is_privilege === isOpenCode &&
@@ -446,6 +468,9 @@ export const checkRoleAndMemberVisitControlPermissions = ({
   )
     return allRegCode
 
+  /**
+   * 判断，没有权限，没有人员，但是是无限制，而且是查看，等于是访客可以查看，不可编辑
+   */
   if (
     !hasRole &&
     !hasMember &&
@@ -453,6 +478,10 @@ export const checkRoleAndMemberVisitControlPermissions = ({
     EditCode.includes('read')
   )
     return true
+
+  /**
+   * 判断，没有权限，没有人员，但是是无限制，等于是访客可以查看，不可编辑
+   */
   if (
     !hasRole &&
     !hasMember &&
