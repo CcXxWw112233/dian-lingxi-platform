@@ -41,6 +41,7 @@ import {
   getSubfixName
 } from '../../../utils/businessFunction'
 import { connect } from 'dva'
+import { PROJECT_FILES_FILE_UPLOAD } from '../../../globalset/js/constant'
 const lx_utils = undefined
 
 // 逻辑组件
@@ -233,7 +234,10 @@ const LogicWithMainContent = {
     const _that = this
     // 表示先判断分组权限 然后在判断访问控制
     return {
-      visit_control_edit: function(ass) {
+      visit_control_edit: function (ass) {
+        /** 只需要检测角色权限的权限码，不加入访问控制 */
+        const userCheckBoardPermissions = [PROJECT_TEAM_CARD_COMPLETE, PROJECT_FILES_FILE_UPLOAD]
+
         const a = checkIsHasPermissionInVisitControlWithGroup({
           code: 'read',
           list_id: list_id,
@@ -261,6 +265,11 @@ const LogicWithMainContent = {
           _that.props.projectDetailInfoData.data.find(
             item => item.user_id === userInfo.id
           )
+
+        /** 如果是不需要经过访问控制的权限码，那就只判定项目是否有权限 */
+        if (userCheckBoardPermissions.indexOf(code) !== -1) {
+          return checkIsHasPermissionInBoard(code, board_id)
+        }
         /**
          * 检测角色和人员是否有访问控制权限
          */

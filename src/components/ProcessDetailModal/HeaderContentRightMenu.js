@@ -11,11 +11,6 @@ import {
 } from '../../services/technological/project'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import {
-  currentNounPlanFilterName,
-  checkIsHasPermissionInBoard,
-  checkIsHasPermissionInVisitControl
-} from '@/utils/businessFunction'
-import {
   MESSAGE_DURATION_TIME,
   PROJECT_FLOWS_FLOW_ABORT,
   PROJECT_FLOWS_FLOW_DELETE,
@@ -29,7 +24,13 @@ import {
   transformNewRecipientsToString,
   wipeOffSomeDataWithScoreNodes
 } from './components/handleOperateModal'
-import { getGlobalData } from '../../utils/businessFunction'
+import {
+  getGlobalData,
+  currentNounPlanFilterName,
+  checkIsHasPermissionInBoard,
+  checkIsHasPermissionInVisitControl,
+  checkRoleAndMemberVisitControlPermissions
+} from '../../utils/businessFunction'
 import { arrayNonRepeatfy } from '../../utils/util'
 import { ROLETYPEID } from '../../routes/Technological/components/VisitControl/constans'
 @connect(mapStateToProps)
@@ -355,7 +356,12 @@ export default class HeaderContentRightMenu extends Component {
    * @param {String} type 这是对应的用户字段
    * @param {String} removeId 这是对应移除用户的id
    */
-  handleClickedOtherPersonListOperatorItem = (id, type, removeId, user_type) => {
+  handleClickedOtherPersonListOperatorItem = (
+    id,
+    type,
+    removeId,
+    user_type
+  ) => {
     if (type === 'remove') {
       this.handleVisitControlRemoveContentPrivilege(removeId)
     } else {
@@ -375,13 +381,12 @@ export default class HeaderContentRightMenu extends Component {
     const principalList = genPrincipalListFromAssignees(nodes)
     let flag = false
     if (
-      checkIsHasPermissionInVisitControl(
-        'edit',
+      checkRoleAndMemberVisitControlPermissions({
+        board_id,
         privileges,
-        is_privilege,
-        principalList,
-        checkIsHasPermissionInBoard(permissionValue, board_id)
-      )
+        board_permissions_code: permissionValue,
+        is_privilege
+      })
     ) {
       flag = true
     }
@@ -699,6 +704,20 @@ export default class HeaderContentRightMenu extends Component {
   }
 
   render() {
+    /** 访问控制的单独控制权限 */
+    const OperationSettings = [
+      {
+        key: '可访问',
+        value: 'read'
+      },
+      {
+        key: '移出',
+        value: 'remove',
+        style: {
+          color: '#f73b45'
+        }
+      }
+    ]
     const {
       projectDetailInfoData: { data = [] },
       processInfo = {},
@@ -770,6 +789,7 @@ export default class HeaderContentRightMenu extends Component {
                   handleVisitControlChange={this.handleVisitControlChange}
                   principalList={data}
                   otherPrivilege={privileges}
+                  otherPersonOperatorMenuItem={OperationSettings}
                   isPropVisitControlKey={is_privilege}
                   // 是否需要加载角色数据 Boolean | Promise<RoleItem[]> | Function => RoleItem[]
                   loadRoleData={true}
@@ -783,13 +803,12 @@ export default class HeaderContentRightMenu extends Component {
               )}
             </span>
             {/* 通知提醒 */}
-            {checkIsHasPermissionInVisitControl(
-              'edit',
+            {checkRoleAndMemberVisitControlPermissions({
+              board_id,
               privileges,
               is_privilege,
-              [],
-              checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS, board_id)
-            ) && (
+              board_permissions_code: PROJECT_FLOW_FLOW_ACCESS
+            }) && (
               <div
                 className={indexStyles.margin_right10}
                 style={{ marginTop: '4px' }}

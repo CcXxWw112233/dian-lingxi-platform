@@ -48,7 +48,10 @@ import {
 import ShareAndInvite from '@/routes/Technological/components/ShareAndInvite/index'
 import SaveAsNewVersionFile from './component/SaveAsNewVersionFile'
 import { getFolderList } from '@/services/technological/file'
-import { currentNounPlanFilterName } from '../../utils/businessFunction'
+import {
+  checkRoleAndMemberVisitControlPermissions,
+  currentNounPlanFilterName
+} from '../../utils/businessFunction'
 import { FILES } from '../../globalset/js/constant'
 import DEvent from '../../utils/event'
 import { ROLETYPEID } from '../../routes/Technological/components/VisitControl/constans'
@@ -1413,13 +1416,12 @@ export default class HeaderContentRightMenu extends Component {
               )}
             </div>
             {/* 通知提醒 */}
-            {checkIsHasPermissionInVisitControl(
-              'edit',
-              privileges,
+            {checkRoleAndMemberVisitControlPermissions({
+              board_permissions_code: PROJECT_FILES_FILE_EDIT,
+              board_id,
               is_privilege,
-              [],
-              checkIsHasPermissionInBoard(PROJECT_FILES_FILE_EDIT, board_id)
-            ) && (
+              privileges
+            }) && (
               <div
                 className={headerStyles.margin_right10}
                 style={{ marginTop: '4px' }}
