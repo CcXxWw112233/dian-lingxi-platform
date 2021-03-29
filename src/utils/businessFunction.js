@@ -435,20 +435,31 @@ export const checkRoleAndMemberVisitControlPermissions = ({
   if (
     !checkRoleInArray &&
     is_privilege === isOpenCode &&
+    EditCode.includes('read')
+  )
+    return true
+
+  if (
+    !checkRoleInArray &&
+    is_privilege === isOpenCode &&
     EditCode.includes('edit')
   )
     return allRegCode
 
   if (
-    !checkRoleInArray &&
+    !hasRole &&
+    !hasMember &&
     is_privilege === isOpenCode &&
     EditCode.includes('read')
   )
     return true
-
-  if (is_privilege === isOpenCode && EditCode.includes('edit')) return false
-  if (is_privilege === isOpenCode && EditCode.includes('read')) return true
-
+  if (
+    !hasRole &&
+    !hasMember &&
+    is_privilege === isOpenCode &&
+    EditCode.includes('edit')
+  )
+    return false
 
   /**
    * 返回是否有权限
