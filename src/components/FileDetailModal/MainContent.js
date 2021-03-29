@@ -413,7 +413,10 @@ class MainContent extends Component {
         file_name,
         fileType: type,
         board_id,
-        folder_id
+        folder_id,
+        privileges,
+        is_privilege,
+        projectDetailInfoData: this.props.projectDetailInfoData
       }
       this.setState({
         pdfCommentData: obj,
@@ -434,7 +437,7 @@ class MainContent extends Component {
   handleEnterCirclePointComment = async () => {
     const { isZoomPictureFullScreenMode, projectDetailInfoData } = this.props
     const { currentPreviewFileData = {} } = this.props
-    console.log(currentPreviewFileData)
+    // console.log(currentPreviewFileData)
     const {
       board_id,
       privileges = [],

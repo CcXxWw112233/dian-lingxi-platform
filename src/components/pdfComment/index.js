@@ -32,6 +32,7 @@ import { NoteIcon } from './component/noteIcon'
 import axios from 'axios'
 import {
   checkIsHasPermissionInBoard,
+  checkRoleAndMemberVisitControlPermissions,
   setRequestHeaderBaseInfo
 } from '../../utils/businessFunction'
 import { REQUEST_DOMAIN_FILE } from '@/globalset/js/constant'
@@ -203,12 +204,27 @@ export default class PdfComment extends React.Component {
     // 是否有批注数据
     this.hasHistory = false
     /**
+     * 个人信息
+     */
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'))
+    /**
+     * 角色信息
+     */
+    const role =
+      props.projectDetailInfoData.data &&
+      props.projectDetailInfoData.data.find(
+        item => item.user_id === userInfo.id
+      )
+    /**
      * 是否有编辑权限
      */
-    this.hasEditPromisions = checkIsHasPermissionInBoard(
-      PROJECT_FILES_FILE_EDIT,
-      props.board_id
-    )
+    this.hasEditPromisions = checkRoleAndMemberVisitControlPermissions({
+      board_id: props.board_id,
+      board_permissions_code: PROJECT_FILES_FILE_EDIT,
+      is_privilege: props.is_privilege,
+      privileges: props.privileges,
+      role_id: role ? role.role_id : ''
+    })
   }
   async componentDidMount() {
     this.mounted = true
@@ -259,6 +275,7 @@ export default class PdfComment extends React.Component {
   }
   // 构建版本数据加载
   InitAllData = isFirst => {
+    console.log(this.props)
     this.mounted = false
     this.drawCanvas = []
     this.isDoing = [] // 绘制的数据缓存

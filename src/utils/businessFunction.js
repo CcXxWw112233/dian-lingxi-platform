@@ -342,7 +342,7 @@ export const checkRoleAndMemberVisitControlPermissions = ({
    */
   const userInfo = JSON.parse(localStorage.getItem('userInfo'))
   /**
-   * 没有访问控制权限
+   * 没有访问控制
    */
   const isOpenCode = '0'
   /**
@@ -354,7 +354,6 @@ export const checkRoleAndMemberVisitControlPermissions = ({
    */
   const permissions = JSON.parse(localStorage.getItem('userBoardPermissions'))
 
-  if (is_privilege === isOpenCode) return true
   /**
    * 没有必要参数，一律没权限
    */
@@ -426,6 +425,10 @@ export const checkRoleAndMemberVisitControlPermissions = ({
       item => board_permissions_code.indexOf(item) != -1
     )
   }
+
+  if (is_privilege === isOpenCode && EditCode.includes('edit')) return false
+  if (is_privilege === isOpenCode && EditCode.includes('read')) return true
+
   /**
    * 返回是否有权限
    */
