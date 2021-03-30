@@ -16,7 +16,22 @@ import { addNewFolder } from '../../../../../../../services/technological/file'
 import { isApiResponseOk } from '../../../../../../../utils/handleResponseData'
 import UploadNotification from '@/components/UploadNotification'
 import UploadNormal from '@/components/UploadNormal'
+import { connect } from 'dva'
+import DEvent, {
+  DRAGFILESUPLOADSUCCESS
+} from '../../../../../../../utils/event'
+import DragProvider from '../../../../../../../components/DragProvider'
 
+/** 添加上传文件，文件夹按钮 */
+class AddFile extends Component {
+  render() {
+    return <div>&#xe8fe;</div>
+  }
+}
+
+/** 含有拖拽上传功能的组件 */
+const AddFileButton = DragProvider(AddFile)
+@connect(() => ({}))
 export default class FolderList extends Component {
   constructor(props) {
     super(props)
@@ -28,6 +43,9 @@ export default class FolderList extends Component {
       show_upload_notification: false,
       swich_render_upload: true //是否显示加号
     }
+    DEvent.on(DRAGFILESUPLOADSUCCESS, () => {
+      this.getFolderFileList()
+    })
   }
 
   componentWillReceiveProps(nexProps) {
@@ -42,6 +60,9 @@ export default class FolderList extends Component {
     this.setState({
       file_data
     })
+  }
+  componentWillUnmount() {
+    DEvent.un(DRAGFILESUPLOADSUCCESS)
   }
 
   addItemClick = ({ key }) => {
@@ -282,11 +303,16 @@ export default class FolderList extends Component {
           return (
             <div key={`${id}`}>
               <FolderItem
+                contentStyle={{
+                  width: '90%'
+                }}
+                uploadDisabled={item.type === '2'}
                 current_folder_id={current_folder_id}
                 getFolderFileList={this.props.getFolderFileList}
                 updateParentFileStateData={this.props.updateParentFileStateData}
                 itemValue={item}
                 board_id={board_id}
+                folder_id={id}
                 setBreadPaths={this.setBreadPaths}
                 updatePrivateVariablesWithOpenFile={
                   this.props.updatePrivateVariablesWithOpenFile
@@ -294,6 +320,7 @@ export default class FolderList extends Component {
                 setPreviewFileModalVisibile={
                   this.props.setPreviewFileModalVisibile
                 }
+                dispatch={this.props.dispatch}
               />
             </div>
           )
@@ -317,7 +344,16 @@ export default class FolderList extends Component {
           <div
             className={`${styles.folder_item} ${globalStyles.authTheme} ${styles.add_item}`}
           >
-            &#xe8fe;
+            <AddFileButton
+              contentStyle={{
+                width: '100%',
+                height: '100%',
+                textAlign: 'center'
+              }}
+              {...this.props}
+              board_id={board_id}
+              folder_id={current_folder_id}
+            />
           </div>
         </Dropdown>
         {/* {

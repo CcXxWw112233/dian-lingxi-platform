@@ -11,11 +11,12 @@ import {
   cardItemIsHasUnRead,
   folderItemHasUnReadNo
 } from '../../../../../../Technological/components/Gantt/ganttBusiness'
+import DragProvider from '../../../../../../../components/DragProvider'
 
 // @connect(mapStateToProps)
 // @connect()
 @connect(mapStateToProps)
-export default class ThumbnailFilesTilingShow extends Component {
+class ThumbnailFilesTilingShow extends Component {
   constructor(props) {
     super(props)
     this.state = {}
@@ -164,3 +165,5 @@ function mapStateToProps({
 }) {
   return { im_all_latest_unread_messages, wil_handle_types }
 }
+
+export default DragProvider(ThumbnailFilesTilingShow)

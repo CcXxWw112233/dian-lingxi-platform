@@ -234,9 +234,12 @@ const LogicWithMainContent = {
     const _that = this
     // 表示先判断分组权限 然后在判断访问控制
     return {
-      visit_control_edit: function (ass) {
+      visit_control_edit: function(ass) {
         /** 只需要检测角色权限的权限码，不加入访问控制 */
-        const userCheckBoardPermissions = [PROJECT_TEAM_CARD_COMPLETE, PROJECT_FILES_FILE_UPLOAD]
+        const userCheckBoardPermissions = [
+          PROJECT_TEAM_CARD_COMPLETE,
+          PROJECT_FILES_FILE_UPLOAD
+        ]
 
         const a = checkIsHasPermissionInVisitControlWithGroup({
           code: 'read',
@@ -276,8 +279,8 @@ const LogicWithMainContent = {
           role_id: role ? role.role_id : '',
           is_privilege: is_privilege
         })
-        /** 如果是不需要经过访问控制的权限码，那就只判定项目是否有权限 */
-        if (c && userCheckBoardPermissions.indexOf(code) !== -1) {
+        /** 如果是不需要经过访问控制的权限码，那就只判定项目是否有权限, 如果访问控制都没有权限了，就没有权限 */
+        if (c && userCheckBoardPermissions.includes(code)) {
           return checkIsHasPermissionInBoard(code, board_id)
         }
         // 是否是有编辑权限
