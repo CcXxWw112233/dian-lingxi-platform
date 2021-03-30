@@ -1319,7 +1319,8 @@ export default {
               list_group[i].board_fold_data.time_span * ceilWidth
             list_group[i].board_fold_data.top =
               after_group_height +
-              (ceil_height_fold * group_rows_fold - task_item_height_fold) / 2 //上下居中 (96-24)/2
+              (ceil_height_fold * group_rows_fold - task_item_height_fold) / 2 +
+              milestone_base_height //上下居中 (96-24)/2
             for (let k = 0; k < date_arr_one_level.length; k++) {
               // if (isSamDay(list_group[i].board_fold_data['start_time'], date_arr_one_level[k]['timestamp'])) { //是同一天
               //   list_group[i].board_fold_data.left = k * ceilWidth
@@ -1404,17 +1405,21 @@ export default {
         const group_not_allow_drag_area = []
         for (let i = 0; i < group_list_area_section_height.length; i++) {
           let start_area =
-            i == 0 ? 0 : group_list_area_section_height[i - 1] - 0.5 * ceiHeight
+            i == 0
+              ? 0
+              : group_list_area_section_height[i - 1] -
+                0.5 * ceiHeight +
+                milestone_base_height -
+                3 //3没有实际意义
           let end_area =
             i == 0
               ? ceiHeight
               : group_list_area_section_height[i - 1] + ceiHeight
-          start_area += milestone_base_height //分组的原本起始高度，加上在头部加上的里程碑进度栏的高度
           if (group_list_area_fold_section[i].is_group_folded) {
             // end_area = start_area
             end_area = group_list_area_section_height[i]
           }
-          end_area += milestone_base_height //分组的原本结束高度，加上在头部加上的里程碑进度栏的高度
+          end_area += milestone_base_height - 3 //分组的原本结束高度，加上在头部加上的里程碑进度栏的高度，3没有实际意义
           group_not_allow_drag_area.push({
             start_area,
             end_area
