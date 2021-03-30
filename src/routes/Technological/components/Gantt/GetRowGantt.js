@@ -46,6 +46,7 @@ import {
 } from '../../../../utils/util'
 import SvgArea from './components/SvgArea'
 import GroupCanvas from './components/GroupCanvas'
+import MilestonesBaseBody from './components/MilestonesBaseProgress/MilestonesBaseBody'
 
 import BaseLineItem from './components/CardItem/BaseLineItem'
 const clientWidth = document.documentElement.clientWidth //获取页面可见高度
@@ -1070,6 +1071,7 @@ export default class GetRowGantt extends Component {
           id={'gantt_operate_area_panel'}
           ref={'gantt_operate_area_panel'}
         >
+          <MilestonesBaseBody />
           <GroupCanvas gantt_card_height={gantt_card_height}></GroupCanvas>
           <SvgArea gantt_card_height={gantt_card_height}></SvgArea>
           {ganttIsSingleBoardGroupView({ gantt_board_id, group_view_type }) && (
