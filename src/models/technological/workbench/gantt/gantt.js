@@ -1289,11 +1289,8 @@ export default {
             // )
             const fix_row =
               Math.ceil(wapper_height / ceiHeight) - before_group_row //+ 2
-            group_rows[i] = Math.max.apply(null, [
-              length,
-              fix_row,
-              group_rows[i]
-            ]) //group_rows[i] +30
+            group_rows[i] =
+              Math.max.apply(null, [length, fix_row, group_rows[i]]) - 1 //group_rows[i] +30
           }
           group_list_area[i] = group_rows[i] * ceiHeight
           // 设置项目汇总的top和left,width
