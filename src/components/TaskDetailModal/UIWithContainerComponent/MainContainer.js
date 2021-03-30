@@ -266,10 +266,6 @@ const LogicWithMainContent = {
             item => item.user_id === userInfo.id
           )
 
-        /** 如果是不需要经过访问控制的权限码，那就只判定项目是否有权限 */
-        if (userCheckBoardPermissions.indexOf(code) !== -1) {
-          return checkIsHasPermissionInBoard(code, board_id)
-        }
         /**
          * 检测角色和人员是否有访问控制权限
          */
@@ -280,6 +276,10 @@ const LogicWithMainContent = {
           role_id: role ? role.role_id : '',
           is_privilege: is_privilege
         })
+        /** 如果是不需要经过访问控制的权限码，那就只判定项目是否有权限 */
+        if (c && userCheckBoardPermissions.indexOf(code) !== -1) {
+          return checkIsHasPermissionInBoard(code, board_id)
+        }
         // 是否是有编辑权限
         return c
         // return a ? b : b ? false : true
