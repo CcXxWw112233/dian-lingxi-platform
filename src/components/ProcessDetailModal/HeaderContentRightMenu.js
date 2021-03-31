@@ -22,7 +22,8 @@ import {
   genPrincipalListFromAssignees,
   transformNewAssigneesToString,
   transformNewRecipientsToString,
-  wipeOffSomeDataWithScoreNodes
+  wipeOffSomeDataWithScoreNodes,
+  getNodesMembers
 } from './components/handleOperateModal'
 import {
   getGlobalData,
@@ -734,6 +735,8 @@ export default class HeaderContentRightMenu extends Component {
       board_id
     } = processInfo
     const principalList = genPrincipalListFromAssignees(nodes)
+    /** 参与人列表 */
+    const members = getNodesMembers(nodes)
     return (
       <div>
         {processPageFlagStep == '4' ? (
@@ -787,7 +790,7 @@ export default class HeaderContentRightMenu extends Component {
                   board_id={board_id}
                   isPropVisitControl={is_privilege === '0' ? false : true}
                   handleVisitControlChange={this.handleVisitControlChange}
-                  principalList={principalList}
+                  principalList={members}
                   otherPrivilege={privileges}
                   otherPersonOperatorMenuItem={OperationSettings}
                   isPropVisitControlKey={is_privilege}
