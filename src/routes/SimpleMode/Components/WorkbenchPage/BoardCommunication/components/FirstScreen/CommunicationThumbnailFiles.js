@@ -404,7 +404,10 @@ export default class CommunicationThumbnailFiles extends Component {
           <ThumbnailFilesListShow
             showTips={true}
             board_id={currentSelectBoardId}
-            uploadDisabled={currentSelectBoardId === '0'}
+            uploadDisabled={
+              this.props.simplemodeCurrentProject?.board_id === '0' &&
+              currentSelectBoardId === '0'
+            }
             folder_id={current_folder_id}
             contentStyle={{ height: 'calc(100% - 108px)' }}
             // thumbnailFilesList={thumbnailFilesList}
@@ -417,7 +420,10 @@ export default class CommunicationThumbnailFiles extends Component {
         ) : (
           <ThumbnailFilesTilingShow
             showTips={true}
-            uploadDisabled={currentSelectBoardId === '0'}
+            uploadDisabled={
+              this.props.simplemodeCurrentProject?.board_id === '0' &&
+              currentSelectBoardId === '0'
+            }
             thumbnailFilesList={onlyFileList}
             previewFile={this.previewFile}
             board_id={currentSelectBoardId}
