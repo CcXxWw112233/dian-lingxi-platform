@@ -251,7 +251,6 @@ function DragProvider(Wrapper) {
       return (
         <div
           tabIndex="-1"
-          draggable
           ref={this.dragRef}
           style={this.props.contentStyle || {}}
           className={`${styles.container}`}
