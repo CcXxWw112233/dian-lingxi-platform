@@ -306,7 +306,6 @@ export default class CommunicationThumbnailFiles extends Component {
   }
 
   render() {
-    console.log(this.props)
     const {
       isVisibleFileList,
       onlyFileList,
