@@ -47,3 +47,7 @@ export default evt
  * 表格预览的触发事件
  */
 export const PREVIEWTABLE = 'OpenPreview'
+/**
+ * 统一拖拽文件上传成功触发事件
+ */
+export const DRAGFILESUPLOADSUCCESS = 'dragUploadSuccess'

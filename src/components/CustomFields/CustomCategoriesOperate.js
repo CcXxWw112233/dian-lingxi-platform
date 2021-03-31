@@ -7,8 +7,22 @@ import NumberFieldContent from './component/NumberFieldContent'
 import TextFieldContent from './component/TextFieldContent'
 import FileFieldContent from './component/FileFieldContent'
 import MemberFieldContent from './component/MemberFieldContent'
+import { message } from 'antd'
+import {
+  NOT_HAS_PERMISION_COMFIRN,
+  MESSAGE_DURATION_TIME
+} from '../../globalset/js/constant'
 
 export default class CustomCategoriesOperate extends Component {
+  handleUpdateModelDatas = arg => {
+    if (this.props.disabled) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    } else {
+      const { handleUpdateModelDatas = () => { } } = this.props
+      handleUpdateModelDatas.call(this, arg)
+    }
+  }
+
   renderContent = (item, key) => {
     const { onlyShowPopoverContent } = this.props
     const {
@@ -24,50 +38,55 @@ export default class CustomCategoriesOperate extends Component {
       case '1':
         mainContent = (
           <RadioFieldContent
+            disabled={this.props.disabled}
             onlyShowPopoverContent={onlyShowPopoverContent}
             itemValue={item}
             itemKey={key}
-            handleUpdateModelDatas={this.props.handleUpdateModelDatas}
+            handleUpdateModelDatas={this.handleUpdateModelDatas}
           />
         )
         break
       case '2':
         mainContent = (
           <CheckboxFieldContent
+            disabled={this.props.disabled}
             onlyShowPopoverContent={onlyShowPopoverContent}
             itemValue={item}
             itemKey={key}
-            handleUpdateModelDatas={this.props.handleUpdateModelDatas}
+            handleUpdateModelDatas={this.handleUpdateModelDatas}
           />
         )
         break
       case '3':
         mainContent = (
           <DateFieldContent
+            disabled={this.props.disabled}
             onlyShowPopoverContent={onlyShowPopoverContent}
             itemValue={item}
             itemKey={key}
-            handleUpdateModelDatas={this.props.handleUpdateModelDatas}
+            handleUpdateModelDatas={this.handleUpdateModelDatas}
           />
         )
         break
       case '4':
         mainContent = (
           <NumberFieldContent
+            disabled={this.props.disabled}
             onlyShowPopoverContent={onlyShowPopoverContent}
             itemValue={item}
             itemKey={key}
-            handleUpdateModelDatas={this.props.handleUpdateModelDatas}
+            handleUpdateModelDatas={this.handleUpdateModelDatas}
           />
         )
         break
       case '5':
         mainContent = (
           <TextFieldContent
+            disabled={this.props.disabled}
             onlyShowPopoverContent={onlyShowPopoverContent}
             itemValue={item}
             itemKey={key}
-            handleUpdateModelDatas={this.props.handleUpdateModelDatas}
+            handleUpdateModelDatas={this.handleUpdateModelDatas}
           />
         )
         break
@@ -77,7 +96,7 @@ export default class CustomCategoriesOperate extends Component {
             onlyShowPopoverContent={onlyShowPopoverContent}
             itemValue={item}
             itemKey={key}
-            handleUpdateModelDatas={this.props.handleUpdateModelDatas}
+            handleUpdateModelDatas={this.handleUpdateModelDatas}
           />
         )
         break
@@ -87,7 +106,7 @@ export default class CustomCategoriesOperate extends Component {
             onlyShowPopoverContent={onlyShowPopoverContent}
             itemValue={item}
             itemKey={key}
-            handleUpdateModelDatas={this.props.handleUpdateModelDatas}
+            handleUpdateModelDatas={this.handleUpdateModelDatas}
           />
         )
         break

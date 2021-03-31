@@ -16,10 +16,11 @@ import {
   folderItemHasUnReadNo
 } from '../../../../../../Technological/components/Gantt/ganttBusiness'
 import { connect } from 'dva'
+import DragProvider from '../../../../../../../components/DragProvider'
 
 // @connect()
 @connect(mapStateToProps)
-export default class ThumbnailFilesListShow extends Component {
+class ThumbnailFilesListShow extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -317,3 +318,5 @@ function mapStateToProps({
 }) {
   return { im_all_latest_unread_messages, wil_handle_types }
 }
+
+export default DragProvider(ThumbnailFilesListShow)

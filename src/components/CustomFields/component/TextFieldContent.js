@@ -51,6 +51,7 @@ export default class TextFieldContent extends Component {
       itemValue: { field_value }
     } = this.state
     e && e.stopPropagation()
+    if (this.props.disabled) return this.props.handleUpdateModelDatas({})
     this.setState({
       inputVisible: true,
       inputValue: field_value,
@@ -59,6 +60,7 @@ export default class TextFieldContent extends Component {
   }
 
   onChange = e => {
+    if (this.props.disabled) return this.props.handleUpdateModelDatas({})
     this.setState({
       inputValue: e.target.value
     })
@@ -77,6 +79,7 @@ export default class TextFieldContent extends Component {
       })
       return
     }
+    if (this.props.disabled) return this.props.handleUpdateModelDatas({})
     this.props
       .dispatch({
         type: 'organizationManager/setRelationCustomField',
@@ -103,6 +106,7 @@ export default class TextFieldContent extends Component {
   // 删除关联字段
   handleDeleteRelationField = (e, id) => {
     e && e.stopPropagation()
+    if (this.props.disabled) return this.props.handleUpdateModelDatas({})
     this.props
       .dispatch({
         type: 'organizationManager/deleteRelationCustomField',

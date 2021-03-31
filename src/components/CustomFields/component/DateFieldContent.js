@@ -66,6 +66,7 @@ export default class DateFieldContent extends Component {
   }
 
   startDatePickerChange = timeString => {
+    if (this.props.disabled) return this.props.handleUpdateModelDatas({})
     const {
       itemValue: { id }
     } = this.state
@@ -93,6 +94,7 @@ export default class DateFieldContent extends Component {
   // 删除关联字段
   handleDeleteRelationField = (e, id) => {
     e && e.stopPropagation()
+    if (this.props.disabled) return this.props.handleUpdateModelDatas({})
     this.props
       .dispatch({
         type: 'organizationManager/deleteRelationCustomField',

@@ -306,6 +306,7 @@ export default class CommunicationThumbnailFiles extends Component {
   }
 
   render() {
+    console.log(this.props)
     const {
       isVisibleFileList,
       onlyFileList,
@@ -314,7 +315,9 @@ export default class CommunicationThumbnailFiles extends Component {
       bread_paths,
       currentFileschoiceTab,
       filesShowType,
-      currentFileDataType
+      currentFileDataType,
+      current_folder_id,
+      currentSelectBoardId
     } = this.props
     const currentIayerSearch =
       bread_paths && bread_paths.length && bread_paths[bread_paths.length - 1]
@@ -399,6 +402,10 @@ export default class CommunicationThumbnailFiles extends Component {
 
         {filesShowType == '0' ? (
           <ThumbnailFilesListShow
+            showTips={true}
+            board_id={currentSelectBoardId}
+            folder_id={current_folder_id}
+            contentStyle={{ height: 'calc(100% - 108px)' }}
             // thumbnailFilesList={thumbnailFilesList}
             dispatch={this.props.dispatch}
             thumbnailFilesList={onlyFileList}
@@ -408,8 +415,13 @@ export default class CommunicationThumbnailFiles extends Component {
           />
         ) : (
           <ThumbnailFilesTilingShow
+            showTips={true}
             thumbnailFilesList={onlyFileList}
             previewFile={this.previewFile}
+            board_id={currentSelectBoardId}
+            folder_id={current_folder_id}
+            contentStyle={{ height: 'calc(100% - 108px)' }}
+            // thumbnailFilesList={thumbnailFilesList}
             dispatch={this.props.dispatch}
           />
         )}

@@ -28,6 +28,7 @@ export default class CheckboxFieldContent extends Component {
   onSelect = (e, relation_id) => {
     const { domEvent, key, selectedKeys = [] } = e
     domEvent && domEvent.stopPropagation()
+    if (this.props.disabled) return this.props.handleUpdateModelDatas({})
     this.props
       .dispatch({
         type: 'organizationManager/setRelationCustomField',
@@ -50,6 +51,7 @@ export default class CheckboxFieldContent extends Component {
   onDeselect = (e, relation_id) => {
     const { domEvent, key, selectedKeys = [] } = e
     domEvent && domEvent.stopPropagation()
+    if (this.props.disabled) return this.props.handleUpdateModelDatas({})
     this.props
       .dispatch({
         type: 'organizationManager/setRelationCustomField',
@@ -110,6 +112,7 @@ export default class CheckboxFieldContent extends Component {
   // 删除关联字段
   handleDeleteRelationField = (e, id) => {
     e && e.stopPropagation()
+    if (this.props.disabled) return this.props.handleUpdateModelDatas({})
     this.props
       .dispatch({
         type: 'organizationManager/deleteRelationCustomField',
