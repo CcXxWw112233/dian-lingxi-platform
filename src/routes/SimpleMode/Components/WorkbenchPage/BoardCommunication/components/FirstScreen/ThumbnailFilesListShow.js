@@ -291,7 +291,7 @@ class ThumbnailFilesListShow extends Component {
           globalStyles.global_vertical_scrollbar
         } ${isShow ? styles.changeHeight : ''}`}
       >
-        <Table
+        {thumbnailFilesList.length ? <Table
           // style={{height:500}}
           // scroll={{ y: tableHeight}}
           dataSource={thumbnailFilesList}
@@ -303,7 +303,11 @@ class ThumbnailFilesListShow extends Component {
           // }}
           pagination={false}
           rowKey={record => record.file_id}
-        />
+        /> :
+          <div className={styles.dropText}>
+            <span>拖拽到此处或文件夹，完成上传，同样支持按钮点击上传</span>
+          </div>}
+
       </div>
     )
   }
