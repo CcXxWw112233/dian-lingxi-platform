@@ -41,6 +41,8 @@ export default class Index extends Component {
       type: 'board',
       folder_id
     }
+    /** 选中的文件夹id */
+    this.handleFolderId = ''
     this.state = {
       first_paths_item,
       current_folder_id: folder_id,
@@ -48,10 +50,20 @@ export default class Index extends Component {
       bread_paths: [first_paths_item], //面包屑路径
       show_drag: false //是否显示上传
     }
-    DEvent.addEventListener(DRAGFILESUPLOADSUCCESS, this.getBoardFileList)
+    DEvent.addEventListener(DRAGFILESUPLOADSUCCESS, this.dragUploadFun)
+  }
+  /** 拖拽文件上传的更新列表方法 */
+  dragUploadFun = () => {
+    /** 如果有文件夹id就更新文件夹 */
+    if (this.handleFolderId) {
+      this.getFolderFileList({})
+    } else {
+      /** 没有文件夹id就更新项目列表 */
+      this.getBoardFileList()
+    }
   }
   componentWillUnmount() {
-    DEvent.removeEventListener(DRAGFILESUPLOADSUCCESS, this.getBoardFileList)
+    DEvent.removeEventListener(DRAGFILESUPLOADSUCCESS, this.dragUploadFun)
   }
   // 更新父组件中的文件列表中某个状态
   updateParentFileStateData = (data, key) => {
@@ -76,10 +88,12 @@ export default class Index extends Component {
     const { id, type } = path_item
     let new_bread_paths = [...bread_paths]
     if (type == 'board') {
+      this.handleFolderId = ''
       //项目
       new_bread_paths = [first_paths_item]
       this.getBoardFileList()
     } else {
+      this.handleFolderId = id
       //文件夹
       const index = bread_paths.findIndex(item => item.id == id)
       if (index == -1) {
@@ -122,7 +136,7 @@ export default class Index extends Component {
     this.getFolderFileList({ id: folder_id })
     console.log('加载中...')
   }
-  getFolderFileList = async ({ id }) => {
+  getFolderFileList = async ({ id = this.handleFolderId }) => {
     //获取其他目录文件列表
     this.setState({
       current_folder_id: id
@@ -329,7 +343,7 @@ export default class Index extends Component {
           current_folder_id={current_folder_id}
           board_id={board_id}
           bread_paths={bread_paths}
-          folder_id=""
+          folder_id={current_folder_id}
           uploadDisabled={
             !checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD, board_id)
           }
