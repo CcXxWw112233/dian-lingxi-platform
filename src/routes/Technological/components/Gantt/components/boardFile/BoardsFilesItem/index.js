@@ -16,12 +16,16 @@ import {
 import Cookies from 'js-cookie'
 import {
   setUploadHeaderBaseInfo,
-  getGlobalData
+  getGlobalData,
+  checkIsHasPermissionInBoard
 } from '../../../../../../../utils/businessFunction'
 import FileDetailModal from '@/routes/Technological/components/ProjectDetail/FileModule/FileListRightBarFileDetailModal'
 //'@/components/FileDetailModal'
 import { connect } from 'dva'
 import { currentFolderJudegeFileUpload } from '../../../ganttBusiness'
+import DEvent, {
+  DRAGFILESUPLOADSUCCESS
+} from '../../../../../../../utils/event'
 const { Dragger } = Upload
 
 @connect(mapStateToProps)
@@ -44,6 +48,10 @@ export default class Index extends Component {
       bread_paths: [first_paths_item], //面包屑路径
       show_drag: false //是否显示上传
     }
+    DEvent.addEventListener(DRAGFILESUPLOADSUCCESS, this.getBoardFileList)
+  }
+  componentWillUnmount() {
+    DEvent.removeEventListener(DRAGFILESUPLOADSUCCESS, this.getBoardFileList)
   }
   // 更新父组件中的文件列表中某个状态
   updateParentFileStateData = (data, key) => {
@@ -112,6 +120,7 @@ export default class Index extends Component {
       first_paths_item: { folder_id = ' ' }
     } = this.state
     this.getFolderFileList({ id: folder_id })
+    console.log('加载中...')
   }
   getFolderFileList = async ({ id }) => {
     //获取其他目录文件列表
@@ -315,10 +324,15 @@ export default class Index extends Component {
           setBreadPaths={this.setBreadPaths}
         />
         <FolderList
+          {...this.props}
           file_data={file_data}
           current_folder_id={current_folder_id}
           board_id={board_id}
           bread_paths={bread_paths}
+          folder_id=""
+          uploadDisabled={
+            !checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD, board_id)
+          }
           setBreadPaths={this.setBreadPaths}
           getFolderFileList={this.getFolderFileList}
           updateParentFileStateData={this.updateParentFileStateData}

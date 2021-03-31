@@ -321,6 +321,7 @@ export default class CommunicationThumbnailFiles extends Component {
   //   this.props.toggleVisitControlModal(flag, item)
   // }
   render() {
+    console.log(this.props)
     const {
       isVisibleFileList,
       onlyFileList,
@@ -329,7 +330,9 @@ export default class CommunicationThumbnailFiles extends Component {
       bread_paths,
       currentFileschoiceTab,
       filesShowType,
-      currentFileDataType
+      currentFileDataType,
+      current_folder_id,
+      currentSelectBoardId
     } = this.props
     const currentIayerSearch =
       bread_paths && bread_paths.length && bread_paths[bread_paths.length - 1]
@@ -419,6 +422,14 @@ export default class CommunicationThumbnailFiles extends Component {
 
         {filesShowType == '0' ? (
           <ThumbnailFilesListShow
+            showTips={true}
+            board_id={currentSelectBoardId}
+            uploadDisabled={
+              this.props.simplemodeCurrentProject?.board_id === '0' &&
+              currentSelectBoardId === '0'
+            }
+            folder_id={current_folder_id}
+            contentStyle={{ height: 'calc(100% - 108px)' }}
             // thumbnailFilesList={thumbnailFilesList}
             dispatch={this.props.dispatch}
             thumbnailFilesList={onlyFileList}
@@ -430,8 +441,17 @@ export default class CommunicationThumbnailFiles extends Component {
           />
         ) : (
           <ThumbnailFilesTilingShow
+            showTips={true}
+            uploadDisabled={
+              this.props.simplemodeCurrentProject?.board_id === '0' &&
+              currentSelectBoardId === '0'
+            }
             thumbnailFilesList={onlyFileList}
             previewFile={this.previewFile}
+            board_id={currentSelectBoardId}
+            folder_id={current_folder_id}
+            contentStyle={{ height: 'calc(100% - 108px)' }}
+            // thumbnailFilesList={thumbnailFilesList}
             dispatch={this.props.dispatch}
           />
         )}
@@ -450,7 +470,8 @@ function mapStateToProps({
   },
   technological: {
     datas: { userBoardPermissions }
-  }
+  },
+  simplemode: { simplemodeCurrentProject }
 }) {
   return {
     onlyFileList,
@@ -458,7 +479,8 @@ function mapStateToProps({
     filesShowType,
     userBoardPermissions,
     isBatchOperation,
-    fileSelectList
+    fileSelectList,
+    simplemodeCurrentProject
   }
 }
 

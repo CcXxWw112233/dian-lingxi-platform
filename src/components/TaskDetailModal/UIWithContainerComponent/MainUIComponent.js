@@ -1310,6 +1310,7 @@ export default class MainUIComponent extends Component {
           {/* 渲染添加关联字段 */}
           <div>
             <CustomCategoriesOperate
+              {...this.props}
               fields={fields}
               handleUpdateModelDatas={this.handleUpdateModelDatas}
             />

@@ -36,11 +36,13 @@ import {
   PROJECT_FILES_FOLDER
 } from '../../../../../../../globalset/js/constant'
 import Item from 'antd/lib/list/Item'
+import DragProvider from '../../../../../../../components/DragProvider'
+
 const { Panel } = Collapse
 const { TreeNode, DirectoryTree } = Tree
 
-@connect(mapStateToProps)
-export default class CommunicationTreeList extends Component {
+/** 显示项目目录名（一级）*/
+class ShowHeader extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -48,22 +50,17 @@ export default class CommunicationTreeList extends Component {
     }
   }
 
-  componentDidMount() {
-    const { isVisibleFileList } = this.props
+  render() {
     const {
-      // is_show_board_file_area,
-      boards_flies = []
+      im_all_latest_unread_messages,
+      item,
+      isShowCompanyName
     } = this.props
-  }
-
-  // 显示项目目录名（一级）
-  showHeader = (item, isShowCompanyName) => {
-    const { im_all_latest_unread_messages } = this.props
     const count = boardHasUnReadCount({
       board_id: item.id,
       im_all_latest_unread_messages
     })
-    console.log('sssssssadad', count, item, im_all_latest_unread_messages)
+    // console.log('sssssssadad', count, item, im_all_latest_unread_messages)
 
     const { currentUserOrganizes = [] } = this.props
     return (
@@ -94,6 +91,88 @@ export default class CommunicationTreeList extends Component {
       </div>
     )
   }
+}
+
+class TreeTitle extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {}
+  }
+
+  render() {
+    const {
+      folder_name,
+      un_read_count,
+      item,
+      input_folder_id,
+      renderMoreMenu
+    } = this.props
+    return (
+      <span>
+        <span style={{ position: 'relative' }}>
+          {input_folder_id == item.folder_id ? (
+            <Input
+              className={styles.folder_input}
+              style={{ height: 25 }}
+              autoFocus
+              defaultValue={item.folder_name}
+              onChange={this.inputOnchange}
+              onPressEnter={e => this.inputOnPressEnter(item, e)}
+              onBlur={e => this.inputOnPressEnter(item, e)}
+            />
+          ) : (
+            item.folder_name
+          )}
+          <CustormBadgeDot
+            show_dot={un_read_count > 0}
+            type={'showCount'}
+            count={un_read_count}
+            right={-6}
+            top={-4}
+          />
+        </span>
+        <span className={styles.dropDown_icon}>
+          <Dropdown trigger={['click']} overlay={renderMoreMenu(item)}>
+            <span className={`${globalStyles.authTheme}`}>&#xe7fd;</span>
+          </Dropdown>
+        </span>
+      </span>
+    )
+    return (
+      <span style={{ position: 'relative' }}>
+        {folder_name}
+        <CustormBadgeDot
+          show_dot={un_read_count > 0}
+          type={'showCount'}
+          count={un_read_count}
+          right={-6}
+          top={-4}
+        />
+      </span>
+    )
+  }
+}
+
+/** 拖拽组件 */
+const DefaultShowHeader = DragProvider(ShowHeader)
+/** 文件夹树节点的拖拽上传组件 */
+const DragTitleHeader = DragProvider(TreeTitle)
+
+@connect(mapStateToProps)
+export default class CommunicationTreeList extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {}
+  }
+
+  componentDidMount() {
+    const { isVisibleFileList } = this.props
+    const {
+      // is_show_board_file_area,
+      boards_flies = []
+    } = this.props
+  }
+
   // 重命名
   handleRename = folder_id => {
     this.setState({
@@ -210,6 +289,45 @@ export default class CommunicationTreeList extends Component {
     })
   }
 
+  // // 显示项目目录名（一级）
+  // showHeader = (item, isShowCompanyName) => {
+  //   const { im_all_latest_unread_messages } = this.props
+  //   const count = boardHasUnReadCount({
+  //     board_id: item.id,
+  //     im_all_latest_unread_messages
+  //   })
+  //   console.log('sssssssadad', count, item, im_all_latest_unread_messages)
+
+  //   const { currentUserOrganizes = [] } = this.props
+  //   return (
+  //     <div className={styles.panelHeader}>
+  //       <div className={styles.name} title={item.board_name}>
+  //         <span
+  //           style={{
+  //             position: 'relative',
+  //             display: 'inline-block',
+  //             maxWidth: 240
+  //           }}
+  //         >
+  //           {item.board_name}
+  //           <CustormBadgeDot
+  //             show_dot={count > 0}
+  //             type={'showCount'}
+  //             count={count}
+  //             right={-6}
+  //             top={-4}
+  //           />
+  //         </span>
+  //       </div>
+  //       {isShowCompanyName && (
+  //         <div className={styles.org_name}>
+  //           #{getOrgNameWithOrgIdFilter(item.org_id, currentUserOrganizes)}
+  //         </div>
+  //       )}
+  //     </div>
+  //   )
+  // }
+
   // 更改名称
   inputOnPressEnter = (item, e) => {
     this.requestUpdateFolder(item)
@@ -262,9 +380,9 @@ export default class CommunicationTreeList extends Component {
     console.log(e.target.value)
   }
   // 渲染当前项目子节点树
-  renderTreeNodes = communicationSubFolderData =>
+  renderTreeNodes = (communicationSubFolderData, board_id) =>
     communicationSubFolderData.map(item => {
-      const { type = '1', folder_name } = item
+      const { type = '1', folder_name, id } = item
       const { folder_id, input_folder_value, input_folder_id } = this.state
       const { im_all_latest_unread_messages, wil_handle_types } = this.props
       const un_read_count = folderItemHasUnReadNo({
@@ -277,50 +395,49 @@ export default class CommunicationTreeList extends Component {
         return (
           <TreeNode
             title={
-              <span>
-                <span style={{ position: 'relative' }}>
-                  {input_folder_id == item.folder_id ? (
-                    <Input
-                      className={styles.folder_input}
-                      style={{ height: 25 }}
-                      autoFocus
-                      defaultValue={item.folder_name}
-                      onChange={this.inputOnchange}
-                      onPressEnter={e => this.inputOnPressEnter(item, e)}
-                      onBlur={e => this.inputOnPressEnter(item, e)}
-                    />
-                  ) : (
-                    item.folder_name
-                  )}
-                  <CustormBadgeDot
-                    show_dot={un_read_count > 0}
-                    type={'showCount'}
-                    count={un_read_count}
-                    right={-6}
-                    top={-4}
-                  />
-                </span>
-                <span className={styles.dropDown_icon}>
-                  <Dropdown
-                    trigger={['click']}
-                    overlay={this.renderMoreMenu(item)}
-                  >
-                    <span className={`${globalStyles.authTheme}`}>
-                      &#xe7fd;
-                    </span>
-                  </Dropdown>
-                </span>
-              </span>
+              <DragTitleHeader
+                {...this.props}
+                contentStyle={{
+                  display: 'inline-block',
+                  width: '80%'
+                }}
+                un_read_count={un_read_count}
+                board_id={board_id}
+                folder_id={item.folder_id}
+                folder_name={item.folder_name}
+                item={item}
+                input_folder_id={input_folder_id}
+                renderMoreMenu={() => this.renderMoreMenu(item)}
+              />
             }
             key={item.folder_id}
             dataRef={item}
           >
-            {this.renderTreeNodes(item.child_data)}
+            {this.renderTreeNodes(item.child_data, board_id)}
           </TreeNode>
         )
       }
       return (
-        <TreeNode title={item.folder_name} key={item.folder_id} {...item} />
+        <TreeNode
+          title={
+            <DragTitleHeader
+              {...this.props}
+              contentStyle={{
+                display: 'inline-block',
+                width: '80%'
+              }}
+              un_read_count={un_read_count}
+              board_id={board_id}
+              folder_id={folder_id}
+              folder_name={item.folder_name}
+              item={item}
+              input_folder_id={input_folder_id}
+              renderMoreMenu={() => this.renderMoreMenu(item)}
+            />
+          }
+          key={item.folder_id}
+          {...item}
+        />
       )
     })
 
@@ -399,6 +516,7 @@ export default class CommunicationTreeList extends Component {
                       board_name,
                       id,
                       type,
+                      folder_id,
                       org_id,
                       file_data = []
                     } = item
@@ -408,7 +526,15 @@ export default class CommunicationTreeList extends Component {
                       //添加付费过滤 liuyingj 2019-11-13
                       isPaymentOrgUser(org_id) && (
                         <Panel
-                          header={this.showHeader(item, isShowCompanyName)}
+                          header={
+                            <DefaultShowHeader
+                              {...this.props}
+                              item={item}
+                              board_id={id}
+                              folder_id={folder_id}
+                              isShowCompanyName={isShowCompanyName}
+                            />
+                          }
                           key={`${item.id}`}
                           onClick={() => this.panelOnClick(item)}
                         >
@@ -422,7 +548,7 @@ export default class CommunicationTreeList extends Component {
                               autoExpandParent={this.state.autoExpandParent}
                               selectedKeys={[currentFolderId]}
                             >
-                              {this.renderTreeNodes(child_data)}
+                              {this.renderTreeNodes(child_data, id)}
                             </DirectoryTree>
                           ) : (
                             ''

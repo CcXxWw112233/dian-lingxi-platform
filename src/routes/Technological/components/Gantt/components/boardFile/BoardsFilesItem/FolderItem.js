@@ -37,9 +37,10 @@ import {
 } from '../../../../../../../services/technological/project'
 import { arrayNonRepeatfy } from '../../../../../../../utils/util'
 import { ROLETYPEID } from '../../../../VisitControl/constans'
+import DragProvider from '../../../../../../../components/DragProvider'
 
 @connect(mapStateToProps)
-export default class FolderItem extends Component {
+class FolderItem extends Component {
   constructor(props) {
     super(props)
     const { itemValue = {} } = this.props
@@ -1027,3 +1028,5 @@ function mapStateToProps({
     projectDetailInfoData
   }
 }
+
+export default DragProvider(FolderItem)

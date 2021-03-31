@@ -36,6 +36,7 @@ import {
   FILE_UPLOAD_ACCEPT_TYPE
 } from '@/globalset/js/constant'
 import { openImChatBoard } from '../../../../../utils/businessFunction'
+import DEvent, { DRAGFILESUPLOADSUCCESS } from '../../../../../utils/event'
 // import { lx_utils, Im } from 'lingxi-im'
 
 const { TreeNode, DirectoryTree } = Tree
@@ -83,6 +84,14 @@ class BoardCommunication extends Component {
     //   // 获取圈子显示隐藏状态
     //   // this.setState({ isShowlingxiIm: val});
     // })
+    /** 更新文件列表 */
+    DEvent.addEventListener(DRAGFILESUPLOADSUCCESS, this.getThumbnailFilesData)
+  }
+  componentWillUnmount() {
+    DEvent.removeEventListener(
+      DRAGFILESUPLOADSUCCESS,
+      this.getThumbnailFilesData
+    )
   }
 
   componentWillReceiveProps(nextProps) {
@@ -2193,11 +2202,11 @@ class BoardCommunication extends Component {
                     !this.state.previewFileModalVisibile && (
                         <UploadTemporaryFile
                             isVisibleFileList={isVisibleFileList}
-                            // 
+                            //
                             getDraggerProps={this.getDraggerProps}
                             onBeforeUpload={this.onBeforeUpload}
                             dragEnterCaptureFlag={dragEnterCaptureFlag}
-                            // 
+                            //
                             simplemodeCurrentProject={simplemodeCurrentProject}
                             currentBoardId = {this.props.gantt_board_id}
                         />

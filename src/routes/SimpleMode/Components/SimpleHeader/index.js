@@ -3,7 +3,7 @@ import dva, { connect } from 'dva'
 import indexStyles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 // import VideoMeeting from '@/routes/Technological/Sider/comonent/videoMeetingPopoverContent/index'
-import { Tooltip, Dropdown, Modal, Popover } from 'antd'
+import { Tooltip, Dropdown, Modal, Popover, Avatar } from 'antd'
 import Cookies from 'js-cookie'
 import SimpleNavigation from './Components/SimpleNavigation/index'
 // import SimpleDrawer from './Components/SimpleDrawer/index'
@@ -684,6 +684,14 @@ class SimpleHeader extends Component {
       guideImgSrc,
       simpleDrawerContentKey
     } = this.state
+    const {
+      current_org = {},
+      name,
+      avatar,
+      user_set = {}
+    } = localStorage.getItem('userInfo')
+      ? JSON.parse(localStorage.getItem('userInfo'))
+      : {}
     return (
       <div className={indexStyles.headerWapper}>
         {/* {false && (
@@ -720,12 +728,28 @@ class SimpleHeader extends Component {
             <div
               className={`${indexStyles.miniNavigation} ${globalStyles.normal_icon_mouse_event}`}
             >
-              <i
-                className={`${globalStyles.authTheme}`}
-                style={{ fontSize: '32px' }}
-              >
-                &#xe69f;
-              </i>
+              <div>
+                <Avatar src={avatar} size={40}>
+                  <i
+                    className={`${globalStyles.authTheme}`}
+                    style={{ fontSize: '32px' }}
+                  >
+                    &#xe69f;
+                  </i>
+                </Avatar>
+              </div>
+              <div className={indexStyles.user_msg}>
+                <div
+                  className={`${indexStyles.user_name} text_showdow_alpha_black`}
+                >
+                  {name}
+                </div>
+                <div
+                  className={`${indexStyles.current_org} text_showdow_alpha_black`}
+                >
+                  {current_org?.name}
+                </div>
+              </div>
             </div>
           </Dropdown>
         )}
