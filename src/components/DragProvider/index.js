@@ -1,7 +1,7 @@
 import React from 'react'
 import styles from './index.less'
 import hoistNonReactStatic from 'hoist-non-react-statics'
-import { debounce } from 'lodash'
+// import { debounce } from 'lodash'
 import Axios from 'axios'
 import { REQUEST_DOMAIN_FILE } from '../../globalset/js/constant'
 import { message } from 'antd'
@@ -22,7 +22,7 @@ function DragProvider(Wrapper) {
       this.state = {
         isDragIn: false
       }
-      this.DragLeave = debounce(this.DragLeave, 300)
+      // this.DragLeave = debounce(this.DragLeave, 100)
       this.leaveTime = null
     }
     componentDidMount() {
@@ -251,7 +251,6 @@ function DragProvider(Wrapper) {
       return (
         <div
           tabIndex="-1"
-          draggable
           ref={this.dragRef}
           style={this.props.contentStyle || {}}
           className={`${styles.container}`}

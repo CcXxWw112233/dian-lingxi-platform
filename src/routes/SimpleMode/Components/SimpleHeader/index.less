@@ -2,14 +2,23 @@
 }
 
 .miniNavigation {
-  width: 32px;
+  // width: 32px;
   height: 32px;
-  line-height: 32px;
+  // line-height: 32px;
   position: absolute;
   top: 24px;
   left: 40px;
   cursor: pointer;
   color: #ffffff;
+  display: flex;
+  align-items: center;
+  .user_msg{
+    margin-left: 8px;
+    .current_org{
+      font-size: 12px;
+      opacity: 0.7;
+    }
+  }
 }
 
 .miniImMessage {
