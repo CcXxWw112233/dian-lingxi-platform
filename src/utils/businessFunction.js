@@ -374,12 +374,7 @@ export const checkRoleAndMemberVisitControlPermissions = ({
   /**
    * 没有必要参数，一律没权限
    */
-  if (
-    !board_id ||
-    !board_permissions_code ||
-    (privileges && !privileges.length)
-  )
-    return false
+  if (!board_id || !board_permissions_code) return false
   /**
    * 当前项目权限列表
    */
@@ -403,6 +398,7 @@ export const checkRoleAndMemberVisitControlPermissions = ({
     )
   }
 
+  // console.log(hasMember, EditCode, role_id)
   /**
    * 如果没有人员，发现没有角色id，则直接无权限
    */

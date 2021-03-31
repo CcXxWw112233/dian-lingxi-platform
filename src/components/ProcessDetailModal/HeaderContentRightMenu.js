@@ -787,7 +787,7 @@ export default class HeaderContentRightMenu extends Component {
                   board_id={board_id}
                   isPropVisitControl={is_privilege === '0' ? false : true}
                   handleVisitControlChange={this.handleVisitControlChange}
-                  principalList={data}
+                  principalList={principalList}
                   otherPrivilege={privileges}
                   otherPersonOperatorMenuItem={OperationSettings}
                   isPropVisitControlKey={is_privilege}

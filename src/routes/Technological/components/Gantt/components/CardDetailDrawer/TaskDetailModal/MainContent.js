@@ -1274,7 +1274,18 @@ export default class MainContent extends Component {
           {/* 渲染添加关联字段 */}
           <div>
             <CustomCategoriesOperate
+              {...this.props}
               onlyShowPopoverContent={true}
+              disabled={
+                (
+                  this.checkDiffCategoriesAuthoritiesIsVisible &&
+                  this.checkDiffCategoriesAuthoritiesIsVisible()
+                    .visit_control_edit &&
+                  !this.checkDiffCategoriesAuthoritiesIsVisible(
+                    PROJECT_TEAM_CARD_EDIT
+                  ).visit_control_edit()
+                )
+              }
               fields={fields}
               handleUpdateModelDatas={this.handleUpdateModelDatas}
             />

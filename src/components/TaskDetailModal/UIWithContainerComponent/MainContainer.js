@@ -2080,16 +2080,16 @@ const LogicWithMainContent = {
       return
     }
     if (type == 'remove') {
-      if (
-        this.checkDiffCategoriesAuthoritiesIsVisible &&
-        this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit &&
-        !this.checkDiffCategoriesAuthoritiesIsVisible(
-          PROJECT_TEAM_CARD_EDIT
-        ).visit_control_edit()
-      ) {
-        message.warn('权限不足,操作未被许可', MESSAGE_DURATION_TIME)
-        return false
-      }
+      // if (
+      //   this.checkDiffCategoriesAuthoritiesIsVisible &&
+      //   this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit &&
+      //   !this.checkDiffCategoriesAuthoritiesIsVisible(
+      //     PROJECT_TEAM_CARD_EDIT
+      //   ).visit_control_edit()
+      // ) {
+      //   message.warn('权限不足,操作未被许可', MESSAGE_DURATION_TIME)
+      //   return false
+      // }
       this.deleteAttachmentFile({ attachment_id, card_id, code })
     } else if (type == 'download') {
       dispatch({
@@ -2105,16 +2105,16 @@ const LogicWithMainContent = {
 
   /**附件删除 */
   deleteAttachmentFile: function(data) {
-    if (
-      this.checkDiffCategoriesAuthoritiesIsVisible &&
-      this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit &&
-      !this.checkDiffCategoriesAuthoritiesIsVisible(
-        PROJECT_TEAM_CARD_EDIT
-      ).visit_control_edit()
-    ) {
-      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      return false
-    }
+    // if (
+    //   this.checkDiffCategoriesAuthoritiesIsVisible &&
+    //   this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit &&
+    //   !this.checkDiffCategoriesAuthoritiesIsVisible(
+    //     PROJECT_TEAM_CARD_EDIT
+    //   ).visit_control_edit()
+    // ) {
+    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    //   return false
+    // }
     const { attachment_id, code } = data
     const that = this
     const { drawContent = {}, dispatch } = this.props

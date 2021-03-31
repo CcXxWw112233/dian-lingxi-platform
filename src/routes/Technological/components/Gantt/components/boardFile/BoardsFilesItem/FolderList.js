@@ -319,6 +319,7 @@ class FolderList extends Component {
                   this.props.setPreviewFileModalVisibile
                 }
                 dispatch={this.props.dispatch}
+                disabled={this.props.disabled}
               />
             </div>
           )
