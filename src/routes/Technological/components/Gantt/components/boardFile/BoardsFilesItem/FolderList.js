@@ -43,7 +43,7 @@ class FolderList extends Component {
       show_upload_notification: false,
       swich_render_upload: true //是否显示加号
     }
-    DEvent.addEventListener(DRAGFILESUPLOADSUCCESS, this.getFolderFileList)
+    // DEvent.addEventListener(DRAGFILESUPLOADSUCCESS, this.getFolderFileList)
   }
 
   componentWillReceiveProps(nexProps) {
@@ -60,7 +60,7 @@ class FolderList extends Component {
     })
   }
   componentWillUnmount() {
-    DEvent.removeEventListener(DRAGFILESUPLOADSUCCESS, this.getFolderFileList)
+    // DEvent.removeEventListener(DRAGFILESUPLOADSUCCESS, this.getFolderFileList)
   }
 
   addItemClick = ({ key }) => {
