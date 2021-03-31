@@ -73,12 +73,13 @@ class BoardCommunication extends Component {
     //   // this.setState({ isShowlingxiIm: val});
     // })
     /** 更新文件列表 */
-    DEvent.on(DRAGFILESUPLOADSUCCESS, () => {
-      this.getThumbnailFilesData()
-    })
+    DEvent.addEventListener(DRAGFILESUPLOADSUCCESS, this.getThumbnailFilesData)
   }
   componentWillUnmount() {
-    DEvent.un(DRAGFILESUPLOADSUCCESS)
+    DEvent.removeEventListener(
+      DRAGFILESUPLOADSUCCESS,
+      this.getThumbnailFilesData
+    )
   }
 
   componentWillReceiveProps(nextProps) {

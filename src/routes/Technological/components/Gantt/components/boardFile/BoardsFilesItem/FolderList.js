@@ -32,7 +32,7 @@ class AddFile extends Component {
 /** 含有拖拽上传功能的组件 */
 const AddFileButton = DragProvider(AddFile)
 @connect(() => ({}))
-export default class FolderList extends Component {
+class FolderList extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -43,9 +43,7 @@ export default class FolderList extends Component {
       show_upload_notification: false,
       swich_render_upload: true //是否显示加号
     }
-    DEvent.on(DRAGFILESUPLOADSUCCESS, () => {
-      this.getFolderFileList()
-    })
+    DEvent.addEventListener(DRAGFILESUPLOADSUCCESS, this.getFolderFileList)
   }
 
   componentWillReceiveProps(nexProps) {
@@ -62,7 +60,7 @@ export default class FolderList extends Component {
     })
   }
   componentWillUnmount() {
-    DEvent.un(DRAGFILESUPLOADSUCCESS)
+    DEvent.removeEventListener(DRAGFILESUPLOADSUCCESS, this.getFolderFileList)
   }
 
   addItemClick = ({ key }) => {
@@ -365,3 +363,5 @@ export default class FolderList extends Component {
     )
   }
 }
+
+export default DragProvider(FolderList)
