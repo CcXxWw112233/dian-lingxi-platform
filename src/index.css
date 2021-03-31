@@ -33,6 +33,9 @@ body,
 :global(.text_showdow_alpha_white){
   text-shadow: 1px 0 0 rgb(255 255 255 / 50%), -1px 0 0 rgb(255 255 255 / 50%), 0px 1px 0 rgb(255 255 255 / 50%), 0px -1px 0 rgb(255 255 255 / 50%);
 }
+:global(.text_showdow_alpha_black){
+  text-shadow: 1px 0 0 rgb(0 0 0 / 50%), -1px 0 0 rgb(0 0 0 / 50%), 0px 1px 0 rgb(0 0 0 / 50%), 0px -1px 0 rgb(0 0 0 / 50%);
+}
 body {
   /* background-color: rgba(245, 245, 245, 1); */
   overflow: auto !important;

@@ -150,7 +150,9 @@ class WallpaperSelect extends Component {
       <div>
         {!wallpaperSelectModalVisiable && (
           <div className={indexStyles.wallpaperSelectWapper}>
-            <div className={indexStyles.wallpaperSelector}>
+            <div
+              className={`${indexStyles.wallpaperSelector} text_showdow_alpha_black`}
+            >
               <i
                 title={'上一页壁纸'}
                 onClick={this.selectPreviousWallpaper}
