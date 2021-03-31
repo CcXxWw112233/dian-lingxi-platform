@@ -23,6 +23,25 @@ export const gantt_head_width_init = 280 //甘特图头部默认宽度
 export const hole_movedown_height = ceil_height //整体下移高度
 export const milestone_base_height = 40 //顶部里程碑基准高度
 
+// 设置里程碑进度的显示
+export const showMilestoneBase = ({ group_view_type, gantt_board_id }) => {
+  if (['1', '4'].includes(group_view_type) && gantt_board_id != '0') {
+    return true
+  }
+  return false
+}
+// 设置里程碑进度的高度
+export const getMilestoneBaseHeight = ({ group_view_type, gantt_board_id }) => {
+  if (
+    showMilestoneBase({
+      group_view_type,
+      gantt_board_id
+    })
+  ) {
+    return milestone_base_height
+  }
+  return 0
+}
 // export const gantt_panel_left_diff = 20 //左边遮罩误差
 export const ganttIsFold = ({
   group_view_type,

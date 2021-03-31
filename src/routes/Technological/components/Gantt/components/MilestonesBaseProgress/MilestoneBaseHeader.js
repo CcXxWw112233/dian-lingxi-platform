@@ -1,5 +1,9 @@
 import React, { Component } from 'react'
-import { ganttIsOutlineView, milestone_base_height } from '../../constants'
+import {
+  ganttIsOutlineView,
+  milestone_base_height,
+  showMilestoneBase
+} from '../../constants'
 import styles from './index.less'
 import outlineStyles from '../OutlineTree/index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
@@ -161,13 +165,19 @@ export default class MilestoneBaseHeader extends Component {
     const {
       outline_columns,
       outline_default_columns,
-      group_view_type
+      group_view_type,
+      gantt_board_id
     } = this.props
     const is_outline_view = ganttIsOutlineView({ group_view_type })
     return (
       <div
         className={`${styles.base}`}
-        style={{ height: milestone_base_height }}
+        style={{
+          height: milestone_base_height,
+          display: showMilestoneBase({ group_view_type, gantt_board_id })
+            ? 'block'
+            : 'none'
+        }}
       >
         <div className={outlineStyles.outline_header}>
           <div
@@ -228,7 +238,8 @@ function mapStateToProps({
       outline_columns,
       outline_default_columns,
       outline_is_show_order,
-      group_view_type
+      group_view_type,
+      gantt_board_id
     }
   }
 }) {
@@ -236,6 +247,7 @@ function mapStateToProps({
     outline_columns,
     outline_default_columns,
     outline_is_show_order,
-    group_view_type
+    group_view_type,
+    gantt_board_id
   }
 }

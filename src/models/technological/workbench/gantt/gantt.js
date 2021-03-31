@@ -53,7 +53,8 @@ import {
   ceil_width_hours,
   group_rows_fold_1,
   hole_movedown_height,
-  milestone_base_height
+  milestone_base_height,
+  getMilestoneBaseHeight
 } from '../../../../routes/Technological/components/Gantt/constants'
 import { getModelSelectDatasState } from '../../../utils'
 import { getProjectGoupList } from '../../../../services/technological/task'
@@ -1205,7 +1206,7 @@ export default {
                   after_group_height +
                   (item.row - 1) * ceiHeight +
                   hole_movedown_height +
-                  milestone_base_height
+                  getMilestoneBaseHeight({ gantt_board_id, group_view_type })
               }
             } else {
               // --------------------时间高度排序start
@@ -1321,7 +1322,8 @@ export default {
             list_group[i].board_fold_data.top =
               after_group_height +
               (ceil_height_fold * group_rows_fold - task_item_height_fold) / 2 +
-              milestone_base_height //上下居中 (96-24)/2
+              getMilestoneBaseHeight({ gantt_board_id, group_view_type })
+            //上下居中 (96-24)/2
             for (let k = 0; k < date_arr_one_level.length; k++) {
               // if (isSamDay(list_group[i].board_fold_data['start_time'], date_arr_one_level[k]['timestamp'])) { //是同一天
               //   list_group[i].board_fold_data.left = k * ceilWidth
@@ -1410,7 +1412,7 @@ export default {
               ? 0
               : group_list_area_section_height[i - 1] -
                 0.5 * ceiHeight +
-                milestone_base_height -
+                getMilestoneBaseHeight({ gantt_board_id, group_view_type }) -
                 3 //3没有实际意义
           let end_area =
             i == 0
@@ -1420,7 +1422,8 @@ export default {
             // end_area = start_area
             end_area = group_list_area_section_height[i]
           }
-          end_area += milestone_base_height - 3 //分组的原本结束高度，加上在头部加上的里程碑进度栏的高度，3没有实际意义
+          end_area +=
+            getMilestoneBaseHeight({ gantt_board_id, group_view_type }) - 3 //分组的原本结束高度，加上在头部加上的里程碑进度栏的高度，3没有实际意义
           group_not_allow_drag_area.push({
             start_area,
             end_area

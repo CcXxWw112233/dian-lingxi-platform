@@ -20,7 +20,8 @@ import {
   ceil_height,
   gantt_panel_left_diff,
   ganttIsSingleBoardGroupView,
-  milestone_base_height
+  milestone_base_height,
+  getMilestoneBaseHeight
 } from './constants'
 import CardDropDetail from './components/gattFaceCardItem/CardDropDetail'
 import QueueAnim from 'rc-queue-anim'
@@ -599,7 +600,8 @@ export default class GetRowGantt extends Component {
       group_view_type,
       group_list_area_section_height = [],
       dispatch,
-      list_group
+      list_group,
+      gantt_board_id
     } = this.props
     if (ganttIsOutlineView({ group_view_type })) {
       return Promise.resolve({ current_list_group_id: 0 })
@@ -629,7 +631,9 @@ export default class GetRowGantt extends Component {
     // }
     let conter_key = 0 //所属分组下标
     let belong_group_row = 0 //所在分组的某一行
-    const trans_top = top - milestone_base_height
+    const trans_top =
+      top - getMilestoneBaseHeight({ gantt_board_id, group_view_type })
+
     for (let i = 0, len = group_list_area_section_height.length; i < len; i++) {
       if (top < group_list_area_section_height[i]) {
         conter_key = i
