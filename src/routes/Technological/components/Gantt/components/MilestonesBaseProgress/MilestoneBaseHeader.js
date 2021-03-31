@@ -1,22 +1,12 @@
 import React, { Component } from 'react'
-import { milestone_base_height } from '../../constants'
+import { ganttIsOutlineView, milestone_base_height } from '../../constants'
 import styles from './index.less'
 import outlineStyles from '../OutlineTree/index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { Menu, Switch, Dropdown } from 'antd'
 import { connect } from 'dva'
 // 分组和大纲视图最顶部的里程碑那一栏
-@connect(function({
-  gantt: {
-    datas: { outline_columns, outline_default_columns, outline_is_show_order }
-  }
-}) {
-  return {
-    outline_columns,
-    outline_default_columns,
-    outline_is_show_order
-  }
-})
+@connect(mapStateToProps)
 export default class MilestoneBaseHeader extends Component {
   constructor(props) {
     super(props)
@@ -169,11 +159,11 @@ export default class MilestoneBaseHeader extends Component {
   }
   render() {
     const {
-      dispatch,
       outline_columns,
       outline_default_columns,
-      outline_is_show_order
+      group_view_type
     } = this.props
+    const is_outline_view = ganttIsOutlineView({ group_view_type })
     return (
       <div
         className={`${styles.base}`}
@@ -184,18 +174,21 @@ export default class MilestoneBaseHeader extends Component {
             className={outlineStyles.flex1}
             style={{ flex: outline_default_columns.length <= 2 ? 2 : 1 }}
           >
-            <Dropdown
-              overlayClassName={outlineStyles.settingOverlay}
-              trigger={['click']}
-              overlay={this.SettingMenu()}
-              overlayStyle={{ width: 200 }}
-            >
-              <div
-                className={`${globalStyles.authTheme} ${outlineStyles.settings_icon}`}
+            {is_outline_view && (
+              <Dropdown
+                overlayClassName={outlineStyles.settingOverlay}
+                trigger={['click']}
+                overlay={this.SettingMenu()}
+                overlayStyle={{ width: 200 }}
               >
-                &#xe78e;
-              </div>
-            </Dropdown>
+                <div
+                  className={`${globalStyles.authTheme} ${outlineStyles.settings_icon}`}
+                >
+                  &#xe78e;
+                </div>
+              </Dropdown>
+            )}
+
             <div
               className={outlineStyles.item_title_name}
               style={{ width: 242 }}
@@ -204,18 +197,45 @@ export default class MilestoneBaseHeader extends Component {
             </div>
           </div>
           <div className={outlineStyles.flex2}>
-            {outline_columns
-              .filter(c => outline_default_columns.includes(c.key))
-              .map(item => {
-                return (
-                  <div className={outlineStyles[item.className]} key={item.key}>
-                    {item.title}
-                  </div>
-                )
-              })}
+            {is_outline_view ? (
+              <>
+                {outline_columns
+                  .filter(c => outline_default_columns.includes(c.key))
+                  .map(item => {
+                    return (
+                      <div
+                        className={outlineStyles[item.className]}
+                        key={item.key}
+                      >
+                        {item.title}
+                      </div>
+                    )
+                  })}
+              </>
+            ) : (
+              <div style={{ paddingRight: 20 }}>56%</div>
+            )}
           </div>
         </div>
       </div>
     )
+  }
+}
+
+function mapStateToProps({
+  gantt: {
+    datas: {
+      outline_columns,
+      outline_default_columns,
+      outline_is_show_order,
+      group_view_type
+    }
+  }
+}) {
+  return {
+    outline_columns,
+    outline_default_columns,
+    outline_is_show_order,
+    group_view_type
   }
 }

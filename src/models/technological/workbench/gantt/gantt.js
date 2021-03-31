@@ -443,6 +443,10 @@ export default {
               }
             })
           }
+          yield put({
+            type: 'getGttMilestoneList',
+            payload: {}
+          })
           return { code: '0' }
         } else {
           return { code: '1' }
@@ -1434,10 +1438,10 @@ export default {
             group_not_allow_drag_area
           }
         })
-        yield put({
-          type: 'getGttMilestoneList',
-          payload: {}
-        })
+        // yield put({
+        //   type: 'getGttMilestoneList',
+        //   payload: {}
+        // })
         yield put({
           type: 'updateGroupFoldedRelyCard',
           payload: {
