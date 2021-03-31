@@ -304,7 +304,7 @@ class FolderList extends Component {
                 contentStyle={{
                   width: '90%'
                 }}
-                uploadDisabled={item.type === '2'}
+                uploadDisabled={item.type === '2' || this.props.uploadDisabled}
                 current_folder_id={current_folder_id}
                 getFolderFileList={this.props.getFolderFileList}
                 updateParentFileStateData={this.props.updateParentFileStateData}
@@ -319,7 +319,6 @@ class FolderList extends Component {
                   this.props.setPreviewFileModalVisibile
                 }
                 dispatch={this.props.dispatch}
-                disabled={this.props.disabled}
               />
             </div>
           )
@@ -351,6 +350,7 @@ class FolderList extends Component {
               }}
               {...this.props}
               board_id={board_id}
+              uploadDisabled={this.props.uploadDisabled}
               folder_id={current_folder_id}
             />
           </div>
