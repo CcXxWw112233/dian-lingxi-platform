@@ -330,7 +330,7 @@ export default class Index extends Component {
           board_id={board_id}
           bread_paths={bread_paths}
           folder_id=""
-          disabled={checkIsHasPermissionInBoard(
+          uploadDisabled={checkIsHasPermissionInBoard(
             PROJECT_FILES_FILE_UPLOAD,
             board_id
           )}
