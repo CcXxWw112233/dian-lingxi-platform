@@ -304,7 +304,22 @@ export default class CommunicationThumbnailFiles extends Component {
     //     </UploadNormal>
     // )
   }
+  batchOperation = () => {
+    const { dispatch, isBatchOperation } = this.props
+    dispatch({
+      type: 'projectCommunication/updateDatas',
+      payload: {
+        isBatchOperation: !isBatchOperation
+      }
+    })
+  }
+  // toggleVisitControlModal(flag, item) {
+  //   var that = this
+  //   console.log(that.props)
 
+  //   debugger
+  //   this.props.toggleVisitControlModal(flag, item)
+  // }
   render() {
     const {
       isVisibleFileList,
@@ -340,6 +355,11 @@ export default class CommunicationThumbnailFiles extends Component {
                 // </Upload>
                 ''}
           </div>
+          <dev className={styles.fileOperation}>新建文件夹</dev>
+          <dev className={styles.fileOperation}>上传</dev>
+          <dev className={styles.fileOperation} onClick={this.batchOperation}>
+            批量操作
+          </dev>
           <div className={styles.changeTypeOperation}>
             <div
               className={`${styles.listShow} ${
@@ -369,7 +389,7 @@ export default class CommunicationThumbnailFiles extends Component {
               className={currentFileDataType == '0' ? styles.currentFile : ''}
               onClick={() => this.changeChooseType('all_files')}
             >
-              “全部文件”
+              “全部件”
             </span>
             {currentIayerFolderName ? (
               <span
@@ -405,6 +425,8 @@ export default class CommunicationThumbnailFiles extends Component {
             onlyFileTableLoading={onlyFileTableLoading}
             isSearchDetailOnfocusOrOnblur={isSearchDetailOnfocusOrOnblur}
             previewFile={this.previewFile}
+            toggleVisitControlModal={this.props.toggleVisitControlModal}
+            getThumbnailFilesData={this.props.getThumbnailFilesData}
           />
         ) : (
           <ThumbnailFilesTilingShow
@@ -419,7 +441,13 @@ export default class CommunicationThumbnailFiles extends Component {
 }
 
 function mapStateToProps({
-  projectCommunication: { onlyFileList, onlyFileTableLoading, filesShowType },
+  projectCommunication: {
+    isBatchOperation,
+    onlyFileList,
+    onlyFileTableLoading,
+    filesShowType,
+    fileSelectList
+  },
   technological: {
     datas: { userBoardPermissions }
   }
@@ -428,7 +456,9 @@ function mapStateToProps({
     onlyFileList,
     onlyFileTableLoading,
     filesShowType,
-    userBoardPermissions
+    userBoardPermissions,
+    isBatchOperation,
+    fileSelectList
   }
 }
 

@@ -1,66 +1,84 @@
 .communicationThumbnailFiles.changeContentWidth {
-  width: calc(~'100% - 297px');
+  width      : calc(~'100% - 297px');
   margin-left: 298px;
 }
+
 .communicationThumbnailFiles {
   /* 首屏-右侧上传，切换缩略图展示，缩略图列表 */
-  height: 100%;
-  padding: 0 1px;
+  height     : 100%;
+  padding    : 0 1px;
   font-family: PingFangSC-Medium, PingFang SC, '微软雅黑';
+
   .thumbnailFilesHeader {
-    display: flex;
-    height: 38px;
-    padding: 8px 0 0 18px;
+    display      : flex;
+    height       : 38px;
+    padding      : 8px 0 0 18px;
     border-bottom: 1px solid #e5e5e5;
+
     :global {
       .ant-upload {
-        color: #40a9ff;
-        font-size: 14px;
+        color      : #40a9ff;
+        font-size  : 14px;
         font-weight: 600;
-        cursor: pointer;
+        cursor     : pointer;
       }
     }
+
     .uploadFile {
       flex: 1;
     }
+
+    .fileOperation {
+      padding      : 5px 15px;
+      margin-right : 15px;
+      color        : #3F445D;
+      font-size    : 12px;
+      border-radius: 4px;
+      border       : 1px solid #D0D3E2;
+    }
+
     .changeTypeOperation {
       // width: 60px;
       width: inherit;
+
       .listShow,
       .tilingShow {
-        width: 20px;
-        display: inline-block;
-        text-align: center;
-        line-height: 20px;
+        width       : 20px;
+        display     : inline-block;
+        text-align  : center;
+        line-height : 20px;
         margin-right: 15px;
-        cursor: pointer;
+        cursor      : pointer;
       }
+
       // .tilingShow{
       //     // cursor: not-allowed;
       // }
       .currentFilesShowType {
-        color: #fff;
+        color           : #fff;
         background-color: #40a9ff;
-        border-radius: 4px;
+        border-radius   : 4px;
       }
     }
   }
 
   .searchTypeBox {
-    width: 100%;
-    height: 42px;
-    line-height: 42px;
-    text-align: center;
+    width           : 100%;
+    height          : 42px;
+    line-height     : 42px;
+    text-align      : center;
     background-color: #f5f5f5;
+
     span {
-      color: #40a9ff;
+      color       : #40a9ff;
       margin-right: 10px;
-      cursor: pointer;
+      cursor      : pointer;
     }
+
     .currentFile {
-      color: #fff;
-      padding: 2px 8px;
-      border-radius: 5px;
+      color           : #fff;
+      padding         : 2px 8px;
+      border-radius   : 5px;
       background-color: #40a9ff;
     }
   }
@@ -71,58 +89,70 @@
 
   .thumbnailFilesList {
     /* 缩略图list */
-    height: calc(~'100% - 108px');
+    height     : calc(~'100% - 108px');
     // height: 100%;
     // overflow: auto;
-    overflow-y: auto;
-    padding: 0 10px 30px 10px;
+    overflow-y : auto;
+    padding    : 0 10px 30px 10px;
+
     :global {
-      .ant-table-thead > tr > th {
+      .ant-table-thead>tr>th {
         background-color: #fff;
       }
-      .ant-table-thead > tr > th,
-      .ant-table-tbody > tr > td {
+
+      .ant-table-thead>tr>th,
+      .ant-table-tbody>tr>td {
         border: 0;
       }
+
       .ant-table-pagination.ant-pagination {
         margin-right: 15px;
       }
+
       .ant-table-body {
         overflow: auto;
       }
     }
+
     .fileNameRow {
       // line-height: 35px;
-      display: flex;
+      display    : flex;
       align-items: center;
-      cursor: pointer;
+      cursor     : pointer;
+
       .imgBox,
       .otherFile {
-        width: 56px;
-        height: 40px;
-        background: rgba(232, 232, 232, 1);
+        width        : 56px;
+        height       : 40px;
+        background   : rgba(232, 232, 232, 1);
         border-radius: 4px;
-        margin-right: 10px;
+        margin-right : 10px;
+        margin-left  : 10px;
       }
+
       .imgBox {
         display: inline-block;
-        border: 1px solid #f5f5f5;
+        border : 1px solid #f5f5f5;
+
         img {
-          width: 100%;
+          width : 100%;
           height: 100%;
         }
       }
+
       .otherFile {
-        display: inline-block;
+        display   : inline-block;
         text-align: center;
-        font-size: 26px;
+        font-size : 26px;
       }
     }
+
     .table_operate {
-      color: rgba(0, 0, 0, 0.45);
+      color    : rgba(0, 0, 0, 0.45);
       font-size: 18px;
-      cursor: pointer;
+      cursor   : pointer;
     }
+
     .table_operate:hover {
       color: #40a9ff;
     }
@@ -133,59 +163,92 @@
   //     flex: auto;
   //  }
   .ThumbnailFilesTilingShow {
-    height: calc(~'100% - 108px');
+    height    : calc(~'100% - 108px');
     overflow-y: auto;
-    padding: 10px 20px 0 20px;
+    padding   : 10px 20px 0 20px;
+
     // display: flex;
     // display: -webkit-flex;
     // flex-wrap: wrap;
     // justify-content: space-between;
     /* 缩略图平铺 */
+    .itemBox:hover {
+      box-shadow: 0px 8px 16px 0px rgba(87, 92, 118, 0.65);
+    }
+
     .itemBox {
-      width: 148px;
-      height: 96px;
-      overflow: hidden;
-      border: 1px solid #f1f1f1;
-      float: left;
-      margin: 5px;
+      width        : 148px;
+      height       : 96px;
+      overflow     : hidden;
+      border       : 1px solid #f1f1f1;
+      float        : left;
+      margin       : 5px;
       border-radius: 5px;
-      background: rgba(232, 232, 232, 1);
-      position: relative;
+      background   : rgba(232, 232, 232, 1);
+      position     : relative;
+
       img {
-        width: 100%;
+        width : 100%;
         height: 100%;
       }
+
       .otherFile {
-        text-align: center;
-        font-size: 36px;
+        text-align : center;
+        font-size  : 36px;
         line-height: 96px;
       }
+
       .operate_area {
-        display: none;
-        position: absolute;
+        display         : none;
+        position        : absolute;
         background-color: rgba(0, 0, 0, 0.65);
-        height: 24px;
-        width: 100%;
-        bottom: 0;
+        height          : 24px;
+        width           : 100%;
+        bottom          : 0;
         // display: flex;
-        justify-content: flex-end;
-        cursor: pointer;
-        line-height: 24px;
-        padding-right: 8px;
+        justify-content : flex-end;
+        cursor          : pointer;
+        line-height     : 24px;
+        padding-right   : 8px;
+
         .table_operate {
-          color: #fff;
+          color    : #fff;
           font-size: 18px;
-          cursor: pointer;
+          cursor   : pointer;
         }
+
         .table_operate:hover {
           color: #40a9ff;
         }
       }
     }
+
     .itemBox:hover {
       .operate_area {
         display: flex;
       }
     }
+  }
+
+  .folder_item {
+    display       : flex;
+    flex-direction: row;
+    color         : rgba(0, 0, 0, 0.65);
+  }
+
+  .folder_input {
+    background   : #FFFFFF;
+    border-radius: 4px;
+    color        : rgba(0, 0, 0, 0.65);
+    border       : 1px solid #1890FF;
+    padding      : 0 10px;
+    max-width    : 500px;
+  }
+
+  .file_select_icon {
+    position: absolute;
+    left    : 5px;
+    top     : 5px;
+    color   : #9EA6C2;
   }
 }

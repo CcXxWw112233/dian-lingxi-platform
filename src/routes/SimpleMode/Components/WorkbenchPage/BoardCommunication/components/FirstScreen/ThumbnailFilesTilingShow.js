@@ -83,7 +83,11 @@ export default class ThumbnailFilesTilingShow extends Component {
   render() {
     const { thumbnailFilesList = [] } = this.props
     console.log('thumbnailFilesList', thumbnailFilesList)
-    const { im_all_latest_unread_messages, wil_handle_types } = this.props
+    const {
+      im_all_latest_unread_messages,
+      wil_handle_types,
+      isBatchOperation
+    } = this.props
 
     return (
       <div className={styles.ThumbnailFilesTilingShow}>
@@ -104,6 +108,16 @@ export default class ThumbnailFilesTilingShow extends Component {
                 title={item.file_name}
                 onClick={() => this.previewFile(item)}
               >
+                {isBatchOperation ? (
+                  <i
+                    className={`${globalStyles.authTheme} ${styles.file_select_icon}`}
+                    style={{ fontSize: 20 }}
+                  >
+                    &#xe661;
+                  </i>
+                ) : (
+                  ''
+                )}
                 {item.thumbnail_url ? (
                   <img src={item.thumbnail_url || ''} alt="" />
                 ) : (
@@ -160,7 +174,13 @@ ThumbnailFilesTilingShow.defaultProps = {
   // 这是一个项目交流中缩略图组件
 }
 function mapStateToProps({
-  imCooperation: { im_all_latest_unread_messages, wil_handle_types = [] }
+  imCooperation: { im_all_latest_unread_messages, wil_handle_types = [] },
+  projectCommunication: { isBatchOperation, fileSelectList }
 }) {
-  return { im_all_latest_unread_messages, wil_handle_types }
+  return {
+    im_all_latest_unread_messages,
+    wil_handle_types,
+    isBatchOperation,
+    fileSelectList
+  }
 }

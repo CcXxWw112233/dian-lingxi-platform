@@ -5,7 +5,7 @@ import {
   getOnlyThumbnailFileList
 } from '@/services/technological/projectCommunication'
 // import { getProjectList } from '@/services/technological/workbench'
-import { getFolderList } from '@/services/technological/file'
+import { getFolderList, fileReName } from '@/services/technological/file'
 import { isApiResponseOk } from '@/utils/handleResponseData'
 import { getChildIds } from '../../routes/SimpleMode/Components/WorkbenchPage/BoardCommunication/components/getCommunicationFileListFn'
 import { message } from 'antd'
@@ -26,7 +26,9 @@ export default {
     currentLayerSelectedStyle: false, // 当前层选中样式
     firstLayerTreeFolder_id: '', // tree根目录folder_id
     expandedKeys: '', // （受控）展开指定的树节点
-    autoExpandParent: false
+    autoExpandParent: false,
+    isBatchOperation: false, // 是否批量操作,
+    fileSelectList: [] // 批量操作选中的文件数组
   },
 
   subscriptions: {
@@ -153,7 +155,16 @@ export default {
       }
     }
   },
-
+  // 文件重命名
+  *fileReName({ payload }, { select, call, put }) {
+    const res = yield call(fileReName, payload)
+    if (isApiResponseOk(res)) {
+      // debugger;
+      // console.log('res',res);
+      // console.log('resisTrue',JSON.stringify(res.data) === '{}');
+    } else {
+    }
+  },
   reducers: {
     updateDatas(state, action) {
       return {

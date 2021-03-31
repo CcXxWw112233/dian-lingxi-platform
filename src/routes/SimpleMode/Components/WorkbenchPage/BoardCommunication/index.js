@@ -8,8 +8,20 @@ import { getParent } from './components/getCommunicationFileListFn'
 import CommunicationFirstScreenHeader from './components/FirstScreen/CommunicationFirstScreenHeader'
 import CommunicationTreeList from './components/CommunicationTreeList'
 import CommunicationThumbnailFiles from './components/FirstScreen/CommunicationThumbnailFiles'
-import { Select, Icon, Tree, Upload, message } from 'antd'
-import { REQUEST_DOMAIN_FILE } from '@/globalset/js/constant'
+import { Select, Icon, Tree, Upload, message, Modal } from 'antd'
+import {
+  REQUEST_DOMAIN_FILE,
+  MESSAGE_DURATION_TIME
+} from '@/globalset/js/constant'
+import { ROLETYPEID } from '../../../../Technological/components/VisitControl/constans'
+
+import VisitControl from '../../../../Technological/components/VisitControl'
+import { arrayNonRepeatfy } from '../../../../../utils/util'
+import {
+  toggleContentPrivilege,
+  setContentPrivilege,
+  removeContentPrivilege
+} from '@/services/technological/project'
 import axios from 'axios'
 import Cookies from 'js-cookie'
 import {
@@ -1313,6 +1325,380 @@ class BoardCommunication extends Component {
     )
   }
 
+  // 获取访问控制的数据
+  genVisitContorlData = (originData = {}) => {
+    // 判断是不是空对象
+    const isEmptyObj = obj => !Object.getOwnPropertyNames(obj).length
+    if (isEmptyObj(originData)) {
+      return {}
+    }
+    const {
+      type,
+      folder_name,
+      file_name,
+      is_privilege,
+      privileges = [],
+      privileges_extend = [],
+      id
+      // child_privilegeuser_ids
+    } = originData
+    const fileTypeName = type == '1' ? '文件夹' : '文件'
+    const fileOrFolderName = type == '1' ? folder_name : file_name
+    const genVisitControlOtherPersonOperatorMenuItem = type => {
+      if (type == '1') {
+        return [
+          {
+            key: '可访问',
+            value: 'read'
+          },
+          {
+            key: '可编辑',
+            value: 'edit'
+          },
+          {
+            key: '移出',
+            value: 'remove',
+            style: {
+              color: '#f73b45'
+            }
+          }
+        ]
+      }
+      if (type == '2') {
+        return [
+          {
+            key: '仅查看',
+            value: 'read'
+          },
+          {
+            key: '可编辑',
+            value: 'edit'
+          },
+          {
+            key: '可评论',
+            value: 'comment'
+          },
+          {
+            key: '移出',
+            value: 'remove',
+            style: {
+              color: '#f73b45'
+            }
+          }
+        ]
+      }
+      return []
+    }
+    const visitControlOtherPersonOperatorMenuItem = genVisitControlOtherPersonOperatorMenuItem(
+      type
+    )
+    return {
+      // child_privilegeuser_ids,
+      id,
+      fileTypeName,
+      fileOrFolderName,
+      visitControlOtherPersonOperatorMenuItem,
+      is_privilege,
+      privileges,
+      privileges_extend,
+      removeMemberPromptText:
+        type === '1'
+          ? '移出后用户将不能访问此文件夹'
+          : '移出后用户将不能访问此文件'
+    }
+  }
+  // 权限弹窗
+  toggleVisitControlModal = (flag, item) => {
+    console.log(item)
+    this.setState({
+      currentValue: item,
+      visitControlModalVisible: flag,
+      currentVisitControlModalVisibleItem: item ? item.id : ''
+    })
+  }
+  /**
+   * 访问控制的开关切换
+   * @param {Boolean} flag 开关切换
+   */
+  handleVisitControlChange = flag => {
+    if (this.isTheSameVisitControlState(flag)) {
+      return
+    }
+    this.handleToggleContentPrivilege(flag)
+  }
+  isTheSameVisitControlState = flag => {
+    const toBool = str => !!Number(str)
+    const is_privilege_bool = toBool(this.state.currentValue.is_privilege)
+    if (flag == is_privilege_bool) {
+      return true
+    }
+    return false
+  }
+  /**
+   * 访问控制的开关切换
+   * @param {Boolean} flag 开关切换
+   */
+  handleToggleContentPrivilege = flag => {
+    const _this = this
+    // const {
+    // getFolderFileList,
+    // updateParentFileStateData
+    // } = this.props
+    const itemValue = this.state.currentValue
+    const current_folder_id = this.state.currentFolderId
+    const dataType = this.getVisitControlModalDataType()
+    const data = {
+      content_id: dataType == 'file' ? itemValue.version_id : itemValue.id,
+      content_type: dataType == 'file' ? 'file' : 'folder',
+      is_open: flag ? 1 : 0
+    }
+    toggleContentPrivilege(data).then(res => {
+      const resOk = res => res && res.code == '0'
+      if (resOk(res)) {
+        setTimeout(() => {
+          message.success('设置成功')
+        }, 500)
+        // getFolderFileList({ id: current_folder_id })
+      } else {
+        message.warning(res.message)
+      }
+    })
+  }
+  // 获取访问控制弹窗中的数据类型??
+  getVisitControlModalDataType = () => {
+    return this.state.currentValue.type == '1' ? 'folder' : 'file'
+  }
+  /**
+   * 添加成员的回调
+   * @param {Array} users_arr 添加成员的数组
+   */
+  handleVisitControlAddNewMember = (users_arr = [], roles = []) => {
+    if (!users_arr.length && !roles.length) return
+    this.handleSetContentPrivilege(users_arr, roles, 'read')
+  }
+  // 访问控制设置成员
+  handleSetContentPrivilege = (
+    users_arr = [],
+    roles = [],
+    type,
+    errorText = '访问控制添加人员失败，请稍后再试'
+  ) => {
+    const { user_set = {} } = localStorage.getItem('userInfo')
+      ? JSON.parse(localStorage.getItem('userInfo'))
+      : {}
+    const { user_id } = user_set
+    const itemValue = this.state.currentValue
+    const current_folder_id = this.state.currentFolderId
+    const dataType = this.getVisitControlModalDataType()
+    const content_id = dataType == 'file' ? itemValue.version_id : itemValue.id
+    const content_type =
+      dataType == 'file' ? 'itemValue.file' : 'itemValue.folder'
+    const privilege_code = type
+    let temp_ids = [] // 用来保存添加用户的id
+    let new_ids = [] // 用来保存权限列表中用户id
+    let new_privileges = [...itemValue.privileges]
+    // 这是所有添加成员的id列表
+    users_arr &&
+      users_arr.map(item => {
+        temp_ids.push(item.id)
+      })
+    let flag
+    // 权限列表中的id
+    new_privileges =
+      new_privileges &&
+      new_privileges.map(item => {
+        let { id } = (item && item.user_info && item.user_info) || {}
+        if (user_id == id) {
+          // 从权限列表中找到自己
+          if (temp_ids.indexOf(id) != -1) {
+            // 判断自己是否在添加的列表中
+            flag = true
+          }
+        }
+        new_ids.push(id)
+      })
+    // 这里是需要做一个只添加了自己的一条提示
+    if (flag && temp_ids.length == '1') {
+      // 表示只选择了自己, 而不是全选
+      message.warn('该成员已存在, 请不要重复添加', MESSAGE_DURATION_TIME)
+      return false
+    } else {
+      // 否则表示进行了全选, 那么就过滤
+      temp_ids =
+        temp_ids &&
+        temp_ids.filter(item => {
+          if (new_ids.indexOf(item) == -1) {
+            return item
+          }
+        })
+    }
+    if (!roles.length && !temp_ids.length) return
+    setContentPrivilege({
+      content_id,
+      content_type,
+      role_ids: roles.map(item => item.id),
+      privilege_code,
+      user_ids: temp_ids
+    }).then(res => {
+      if (res && res.code == '0') {
+        setTimeout(() => {
+          message.success('添加用户成功')
+        }, 500)
+        // getFolderFileList({ id: current_folder_id })
+      } else {
+        message.warning(res.message)
+      }
+    })
+  }
+  /**
+   * 其他成员的下拉回调
+   * @param {String} id 这是用户的user_id
+   * @param {String} type 这是对应的用户字段
+   * @param {String} removeId 这是对应移除用户的id
+   */
+  handleClickedOtherPersonListOperatorItem = (
+    id,
+    type,
+    removeId,
+    user_type
+  ) => {
+    if (type == 'remove') {
+      this.handleVisitControlRemoveContentPrivilege(removeId)
+    } else {
+      this.handleVisitControlChangeContentPrivilege(
+        id,
+        type,
+        user_type,
+        '更新用户控制类型失败'
+      )
+    }
+  }
+  /**
+   * 访问控制设置更新成员
+   * @param {String} id 设置成员对应的id
+   * @param {String} type 设置成员对应的字段
+   */
+  handleVisitControlChangeContentPrivilege = (
+    id,
+    type,
+    user_type,
+    errorText
+  ) => {
+    const { itemValue = {} } = this.state
+    // const { current_folder_id, getFolderFileList } = this.state
+    const current_folder_id = this.state.currentFolderId
+    const { version_id, belong_folder_id, id: folder_id } = itemValue
+    const dataType = this.getVisitControlModalDataType()
+    const content_id = dataType == 'file' ? version_id : folder_id
+    const content_type = dataType == 'file' ? 'file' : 'folder'
+    const privilege_code = type
+    let param = {}
+    if (user_type === ROLETYPEID) {
+      param = { role_ids: [id] }
+    } else param = { user_ids: [id] }
+    setContentPrivilege({
+      content_id,
+      content_type,
+      privilege_code,
+      ...param
+    }).then(res => {
+      if (res && res.code == '0') {
+        setTimeout(() => {
+          message.success('设置成功')
+        }, 500)
+        // getFolderFileList({ id: current_folder_id })
+      } else {
+        message.warning(res.message)
+      }
+    })
+  }
+  // 点击弹窗取消的回调
+  handleVisitControlModalCancel = () => {
+    // const { getFolderFileList, current_folder_id } = this.props
+    // const calback = () => {
+    // getFolderFileList({ id: current_folder_id })
+    // }
+    this.toggleVisitControlModal(false)
+  }
+  // 渲染访问控制
+  renderVisitControlContent = () => {
+    const {
+      id,
+      removeMemberPromptText,
+      is_privilege,
+      privileges = [],
+      privileges_extend = [],
+      fileTypeName,
+      fileOrFolderName,
+      visitControlOtherPersonOperatorMenuItem
+    } = this.genVisitContorlData(this.state.currentValue)
+    const new_projectParticipant =
+      privileges_extend && privileges_extend.length
+        ? arrayNonRepeatfy([].concat(...privileges_extend))
+        : []
+    const {
+      currentVisitControlModalVisibleItem,
+      visitControlModalVisible
+    } = this.state
+    return (
+      <div id={id} onClick={e => e && e.stopPropagation()}>
+        <Modal
+          title={null}
+          width={400}
+          footer={null}
+          destroyOnClose={true}
+          visible={
+            visitControlModalVisible &&
+            id == currentVisitControlModalVisibleItem
+          }
+          maskClosable={false}
+          onCancel={this.handleVisitControlModalCancel}
+          getContainer={
+            document.getElementById('process_file_detail_container')
+              ? () => document.getElementById('process_file_detail_container')
+              : ''
+          }
+        >
+          <div
+            style={{
+              paddingTop: '54px',
+              marginLeft: '-7px',
+              marginRight: '-5px'
+            }}
+          >
+            <VisitControl
+              onlyShowPopoverContent={true}
+              isPropVisitControl={is_privilege == '0' ? false : true}
+              principalInfo="位文件访问人"
+              principalList={
+                this.getVisitControlModalDataType() == 'folder'
+                  ? new_projectParticipant
+                  : []
+              }
+              notShowPrincipal={
+                this.getVisitControlModalDataType() == 'file' ? true : false
+              }
+              // 加载角色列表
+              loadRoleData={true}
+              // 隐藏从分组或者项目选择
+              hideSelectFromGroupOrBoard={false}
+              isPropVisitControlKey={is_privilege}
+              otherPrivilege={privileges}
+              otherPersonOperatorMenuItem={
+                visitControlOtherPersonOperatorMenuItem
+              }
+              removeMemberPromptText={removeMemberPromptText}
+              handleVisitControlChange={this.handleVisitControlChange}
+              handleAddNewMember={this.handleVisitControlAddNewMember}
+              handleClickedOtherPersonListOperatorItem={
+                this.handleClickedOtherPersonListOperatorItem
+              }
+            />
+          </div>
+        </Modal>
+      </div>
+    )
+  }
   render() {
     const {
       // currentBoardDetail = {},
@@ -1339,7 +1725,8 @@ class BoardCommunication extends Component {
       currentFileschoiceTab,
       currentSearchValue,
       currentFileDataType,
-      currentFolderId
+      currentFolderId,
+      visitControlModalVisible
     } = this.state
     // const container_workbenchBoxContent = document.getElementById('container_workbenchBoxContent');
     // const zommPictureComponentHeight = container_workbenchBoxContent ? container_workbenchBoxContent.offsetHeight - 60 - 10 : 600; //60为文件内容组件头部高度 50为容器padding
@@ -1695,7 +2082,6 @@ class BoardCommunication extends Component {
         >
           <Icon type={isVisibleFileList ? 'left' : 'right'} />
         </div>
-
         {/* 首屏-项目交流Tree目录列表 */}
         {isVisibleFileList && (
           <CommunicationTreeList
@@ -1709,10 +2095,12 @@ class BoardCommunication extends Component {
             isVisibleFileList={isVisibleFileList}
             isShowFileList={this.isShowFileList}
             collapseActiveKeys={collapseActiveKeys}
+            onSelectBoard={this.onSelectBoard}
             setCollapseActiveKeys={this.setCollapseActiveKeys}
             currentItemLayerId={currentItemLayerId}
             currentFileDataType={currentFileDataType}
             currentSelectBoardId={currentSelectBoardId}
+            toggleVisitControlModal={this.toggleVisitControlModal}
             currentFolderId={currentFolderId}
             currentLayerSelectedStyle={currentLayerSelectedStyle}
             {...this.props}
@@ -1727,6 +2115,7 @@ class BoardCommunication extends Component {
             currentItemLayerId={currentItemLayerId}
             current_folder_id={currentFolderId}
             bread_paths={bread_paths}
+            toggleVisitControlModal={this.toggleVisitControlModal}
             isSearchDetailOnfocusOrOnblur={isSearchDetailOnfocusOrOnblur}
             getThumbnailFilesData={this.getThumbnailFilesData}
             updataApiData={this.updataApiData}
@@ -1765,7 +2154,7 @@ class BoardCommunication extends Component {
             hideUpdatedFileDetail={this.hideUpdatedFileDetail}
           />
         )}
-
+        {visitControlModalVisible && <>{this.renderVisitControlContent()}</>}
         {/* {
                     showFileListisOpenFileDetailModal && (
                         <FileListRightBarFileDetailModal
