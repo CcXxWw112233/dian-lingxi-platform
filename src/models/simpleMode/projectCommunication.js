@@ -1,11 +1,17 @@
 import { getGlobalSearchResultList } from '@/services/technological'
+
 import {
   getCommunicationTreeListData,
   getProjectList,
   getOnlyThumbnailFileList
 } from '@/services/technological/projectCommunication'
 // import { getProjectList } from '@/services/technological/workbench'
-import { getFolderList, fileReName } from '@/services/technological/file'
+import {
+  getFolderList,
+  fileReName,
+  batchOperationFileDelete,
+  fileRemove
+} from '@/services/technological/file'
 import { isApiResponseOk } from '@/utils/handleResponseData'
 import { getChildIds } from '../../routes/SimpleMode/Components/WorkbenchPage/BoardCommunication/components/getCommunicationFileListFn'
 import { message } from 'antd'
@@ -28,7 +34,8 @@ export default {
     expandedKeys: '', // （受控）展开指定的树节点
     autoExpandParent: false,
     isBatchOperation: false, // 是否批量操作,
-    fileSelectList: [] // 批量操作选中的文件数组
+    fileSelectList: [], // 批量操作选中的文件数组
+    selectedRowKeys: []
   },
 
   subscriptions: {
@@ -153,18 +160,56 @@ export default {
         })
       } else {
       }
+    },
+    // 文件删除
+    *fileRemove({ payload }, { select, call, put }) {
+      const res = yield call(fileRemove, payload)
+      if (isApiResponseOk(res)) {
+        message.success('删除成功')
+      } else {
+        message.error(res.message)
+      }
+    },
+    //重命名
+    *fileReName({ payload }, { select, call, put }) {
+      const res = yield call(fileReName, payload)
+      const { board_id } = payload
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'projectCommunication/getFolderList',
+          payload: {
+            board_id: board_id
+          }
+        })
+      } else {
+      }
+    },
+    /**
+     * 文件批量删除
+     */
+    *batchOperationFileDelete({ payload }, { select, call, put }) {
+      const res = yield call(batchOperationFileDelete, payload)
+      const { board_id } = payload
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'projectCommunication/getFolderList',
+          payload: {
+            board_id: board_id
+          }
+        })
+      } else {
+        message.error(res.message)
+      }
     }
   },
+  // dispatch({
+  // type: getEffectOrReducerByName_8('getFolderList'),
+  // payload: {
+  // board_id: boardId
+  // }
+  // })
   // 文件重命名
-  *fileReName({ payload }, { select, call, put }) {
-    const res = yield call(fileReName, payload)
-    if (isApiResponseOk(res)) {
-      // debugger;
-      // console.log('res',res);
-      // console.log('resisTrue',JSON.stringify(res.data) === '{}');
-    } else {
-    }
-  },
+
   reducers: {
     updateDatas(state, action) {
       return {

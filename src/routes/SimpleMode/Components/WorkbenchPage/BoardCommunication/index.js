@@ -1593,7 +1593,7 @@ class BoardCommunication extends Component {
     user_type,
     errorText
   ) => {
-    const { itemValue = {} } = this.state
+    const itemValue = this.state.currentValue
     // const { current_folder_id, getFolderFileList } = this.state
     const current_folder_id = this.state.currentFolderId
     const { version_id, belong_folder_id, id: folder_id } = itemValue

@@ -9,6 +9,7 @@
   padding    : 0 1px;
   font-family: PingFangSC-Medium, PingFang SC, '微软雅黑';
 
+
   .thumbnailFilesHeader {
     display      : flex;
     height       : 38px;
@@ -35,6 +36,11 @@
       font-size    : 12px;
       border-radius: 4px;
       border       : 1px solid #D0D3E2;
+    }
+
+    .fileDelete {
+      background: #F95455 !important;
+      color     : white !important;
     }
 
     .changeTypeOperation {
@@ -250,5 +256,11 @@
     left    : 5px;
     top     : 5px;
     color   : #9EA6C2;
+  }
+
+  .thumbnailFilesHeader_isBatchOperation {
+    position: absolute;
+    height  : 38px;
+    right   : 20px;
   }
 }

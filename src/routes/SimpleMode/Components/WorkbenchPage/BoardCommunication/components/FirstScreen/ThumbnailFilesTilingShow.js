@@ -66,7 +66,14 @@ class ThumbnailFilesTilingShow extends Component {
     obj[action]()
   }
   previewFile = data => {
+    const { isBatchOperation } = this.props
     const { id } = data
+    // 批量操作的 不跳转
+    if (isBatchOperation) {
+      this.props.addBatchOperationList(data)
+      return
+    }
+
     this.props.previewFile(data)
     // 设置已读
     const { im_all_latest_unread_messages, dispatch } = this.props
@@ -87,7 +94,8 @@ class ThumbnailFilesTilingShow extends Component {
     const {
       im_all_latest_unread_messages,
       wil_handle_types,
-      isBatchOperation
+      isBatchOperation,
+      fileSelectList
     } = this.props
 
     return (
@@ -102,6 +110,11 @@ class ThumbnailFilesTilingShow extends Component {
               im_all_latest_unread_messages,
               wil_handle_types
             })
+            const isSelected = fileSelectList.some(function(currentValue) {
+              return (
+                item.id == currentValue.id && item.type == currentValue.type
+              )
+            })
             return (
               <div
                 className={styles.itemBox}
@@ -110,12 +123,21 @@ class ThumbnailFilesTilingShow extends Component {
                 onClick={() => this.previewFile(item)}
               >
                 {isBatchOperation ? (
-                  <i
-                    className={`${globalStyles.authTheme} ${styles.file_select_icon}`}
-                    style={{ fontSize: 20 }}
-                  >
-                    &#xe661;
-                  </i>
+                  isSelected ? (
+                    <i
+                      className={`${globalStyles.authTheme}  ${styles.file_select_icon}`}
+                      style={{ fontSize: 20, color: '#6A9AFF' }}
+                    >
+                      &#xe638;
+                    </i>
+                  ) : (
+                    <i
+                      className={`${globalStyles.authTheme} ${styles.file_select_icon}`}
+                      style={{ fontSize: 20 }}
+                    >
+                      &#xe661;
+                    </i>
+                  )
                 ) : (
                   ''
                 )}

@@ -408,3 +408,16 @@ export async function fileReName(params) {
     data: params
   })
 }
+/**
+ * 批量删除
+ * @param
+ * @returns
+ */
+
+export async function batchOperationFileDelete(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/file/remove`,
+    method: 'POST',
+    data
+  })
+}

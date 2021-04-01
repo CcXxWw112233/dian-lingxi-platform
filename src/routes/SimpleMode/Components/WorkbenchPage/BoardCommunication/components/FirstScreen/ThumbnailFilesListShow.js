@@ -55,8 +55,13 @@ class ThumbnailFilesListShow extends Component {
     })
   previewFile = data => {
     const { id } = data
+    const { isBatchOperation } = this.props
     const { input_folder_Id } = this.state
     if (input_folder_Id) {
+      return
+    }
+    if (isBatchOperation) {
+      this.props.addBatchOperationList(data)
       return
     }
     this.props.previewFile(data)
@@ -77,9 +82,11 @@ class ThumbnailFilesListShow extends Component {
     const {
       im_all_latest_unread_messages,
       wil_handle_types,
-      isBatchOperation
+      isBatchOperation,
+      fileSelectList
     } = props
     const { input_folder_Id } = this.state
+
     this.setState({
       columns: [
         {
@@ -88,6 +95,12 @@ class ThumbnailFilesListShow extends Component {
           key: 'file_name',
           render: (text, record, index) => {
             const { type, id } = record
+
+            const isSelected = fileSelectList.some(function(currentValue) {
+              return
+              record.id == currentValue.id && record.type == currentValue.type
+            })
+
             const getEllipsisFileName = name => {
               let str = name
               if (!name) return
@@ -111,16 +124,6 @@ class ThumbnailFilesListShow extends Component {
                 className={styles.fileNameRow}
                 onClick={() => this.previewFile(record)}
               >
-                {isBatchOperation ? (
-                  <i
-                    className={`${globalStyles.authTheme}`}
-                    style={{ fontSize: 20, color: '#9EA6C2' }}
-                  >
-                    &#xe661;
-                  </i>
-                ) : (
-                  ''
-                )}
                 {record && record.thumbnail_url ? (
                   <div className={styles.imgBox}>
                     <img
@@ -380,9 +383,6 @@ class ThumbnailFilesListShow extends Component {
 
   // 更改名称
   inputOnPressEnter = (item, e) => {
-    // fileReName
-
-    console.log('sssssssssssssssssssssss', item)
     this.requestUpdateFolder(item)
     this.setIsShowChange(false)
   }
@@ -394,15 +394,16 @@ class ThumbnailFilesListShow extends Component {
     }
     const params = {
       id: item.id,
-      name: input_folder_value
+      name: input_folder_value,
+      board_id: item.board_id
     }
-    const res = fileReName(params)
-    if (isApiResponseOk(res)) {
-      this.props.getThumbnailFilesData()
-    } else {
-      message.warn(res.message)
-    }
+    // fileReName
+    dispatch({
+      type: 'projectCommunication/getFolderList',
+      payload: params
+    })
   }
+
   inputOnchange = e => {
     const { value } = e.target
     // if (value.trimLR() == '') {
@@ -419,13 +420,43 @@ class ThumbnailFilesListShow extends Component {
     })
     this.setColumns(this.props)
   }
-
+  onSelectChange = selectedRowKeys => {
+    const { dispatch, thumbnailFilesList } = this.props
+    let result = []
+    console.log('selectedRowKeys changed: ', selectedRowKeys)
+    for (let i = 0; i < selectedRowKeys.length; i++) {
+      for (let j = 0; j < thumbnailFilesList.length; j++) {
+        if (selectedRowKeys[i] === thumbnailFilesList[j].id) {
+          let item = {
+            type: thumbnailFilesList[j].type,
+            id: thumbnailFilesList[j].id
+          }
+          result.push(item)
+        }
+      }
+    }
+    dispatch({
+      type: 'projectCommunication/updateDatas',
+      payload: {
+        selectedRowKeys: selectedRowKeys,
+        fileSelectList: result
+      }
+    })
+  }
   render() {
     const {
       thumbnailFilesList = [],
       onlyFileTableLoading,
-      isSearchDetailOnfocusOrOnblur
+      isSearchDetailOnfocusOrOnblur,
+      isBatchOperation,
+      fileSelectList,
+      selectedRowKeys
     } = this.props
+    const rowSelection = {
+      selectedRowKeys,
+      onChange: this.onSelectChange
+    }
+
     const { columns } = this.state
     // console.log('isSearchDetailOnfocusOrOnblur',isSearchDetailOnfocusOrOnblur);
     const isShow = isSearchDetailOnfocusOrOnblur
@@ -447,6 +478,7 @@ class ThumbnailFilesListShow extends Component {
           // }}
           pagination={false}
           rowKey={record => record.file_id}
+          rowSelection={isBatchOperation ? rowSelection : ''}
         />
       </div>
     )
@@ -459,13 +491,14 @@ ThumbnailFilesListShow.defaultProps = {
 
 function mapStateToProps({
   imCooperation: { im_all_latest_unread_messages, wil_handle_types = [] },
-  projectCommunication: { isBatchOperation, fileSelectList }
+  projectCommunication: { isBatchOperation, fileSelectList, selectedRowKeys }
 }) {
   return {
     im_all_latest_unread_messages,
     wil_handle_types,
     isBatchOperation,
-    fileSelectList
+    fileSelectList,
+    selectedRowKeys
   }
 }
 
