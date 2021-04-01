@@ -325,7 +325,10 @@ class BoardCommunication extends Component {
             currentValue: {
               ...this.state.currentValue,
               ...fileData
-            }
+            },
+            visitControlModalVisible: fileData
+              ? this.state.visitControlModalVisible
+              : false
           })
         }
       }

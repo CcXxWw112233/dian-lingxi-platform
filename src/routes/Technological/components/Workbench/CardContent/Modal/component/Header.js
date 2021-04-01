@@ -7,6 +7,7 @@ export default class Header extends React.Component {
   state = {}
 
   cancelModal = () => {
+    debugger
     this.props.onCancel && this.props.onCancel()
   }
 
