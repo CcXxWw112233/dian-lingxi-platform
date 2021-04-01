@@ -399,7 +399,7 @@ class ThumbnailFilesListShow extends Component {
     }
     // fileReName
     dispatch({
-      type: 'projectCommunication/getFolderList',
+      type: 'projectCommunication/fileReName',
       payload: params
     })
   }

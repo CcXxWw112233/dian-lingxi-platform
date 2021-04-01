@@ -51,3 +51,7 @@ export const PREVIEWTABLE = 'OpenPreview'
  * 统一拖拽文件上传成功触发事件
  */
 export const DRAGFILESUPLOADSUCCESS = 'dragUploadSuccess'
+/**
+ * 文件删除触发事件
+ */
+export const FILEDELETE = 'confirmFileOperationDelete'

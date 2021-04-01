@@ -7,6 +7,7 @@ import { connect } from 'dva'
 import globalStyles from '@/globalset/css/globalClassName.less'
 // import { HandleCanvas } from '../utils/test'
 import { fabric } from 'fabric'
+import DEvent, { FILEDELETE } from '../../utils/event'
 import {
   Input,
   Button,
@@ -40,7 +41,6 @@ import {
 } from '../../utils/businessFunction'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { REQUEST_DOMAIN_FILE } from '@/globalset/js/constant'
-import DEvent from '../../utils/event'
 import { ENV_ANDROID_APP } from '../../globalset/clientCustorm'
 import {
   PROJECT_FILES_FILE_EDIT,
@@ -69,6 +69,7 @@ export default class PdfComment extends React.Component {
       allPdfElement: 1,
       loadendElement: 0,
       displayColorPicker: false,
+      isconfirmDeleteModelShow: false, //删除二次确认弹窗
       isHand: false,
       loadend: false,
       version_list: [],
@@ -2798,7 +2799,20 @@ export default class PdfComment extends React.Component {
       drawStyles: { ...drawStyles, [drawStyles.activeType]: { color: val } }
     })
   }
+  // 删除展示二次确认
   deleteFile = () => {
+    this.setState({
+      isconfirmDeleteModelShow: true
+    })
+  }
+  // 取消删除
+  cancelFileOperationDelete = () => {
+    this.setState({
+      isconfirmDeleteModelShow: false
+    })
+  }
+  // 确认删除
+  confirmFileOperationDelete = () => {
     const { dispatch, thumbnailFilesList = [], board_id, file_id } = this.props
     const params = {
       board_id,
@@ -2808,6 +2822,10 @@ export default class PdfComment extends React.Component {
       type: 'projectCommunication/fileRemove',
       payload: params
     })
+    console.log(DEvent, FILEDELETE)
+    DEvent.firEvent(FILEDELETE, 'delete') //文件删除监听
+
+    this.cancelFileOperationDelete()
   }
   render() {
     let {
@@ -2815,7 +2833,8 @@ export default class PdfComment extends React.Component {
       // allPdfElement,
       // loadendElement,
       // drawStyles,
-      isHistoryIn
+      isHistoryIn,
+      isconfirmDeleteModelShow
     } = this.state
     const drawT = ['pen', 'text', 'box', 'ellipse', 'arrow']
     const { VersionRender } = this
@@ -2964,8 +2983,11 @@ export default class PdfComment extends React.Component {
               )}
             </div>
             {/* <span onClick={this.fileSaveAs}>另存</span> */}
-            <span class={styles.delete} onClick={this.deleteFile}>
-              删除
+            <span
+              className={`${globalStyles.authTheme} ${styles.delete}`}
+              onClick={this.deleteFile}
+            >
+              &#xe720;
             </span>
           </div>
           {/* <span></span> */}
@@ -3172,7 +3194,41 @@ export default class PdfComment extends React.Component {
             )}
           </div>
         </div>
+        {isconfirmDeleteModelShow && (
+          <Modal
+            title="删除确认"
+            visible={true}
+            onOk={this.confirmFileOperationDelete}
+            onCancel={this.cancelFileOperationDelete}
+            // okButtonProps=(<Button type="danger">Danger</Button>)
+            footer={[
+              <Button key="back" onClick={this.cancelFileOperationDelete}>
+                取消
+              </Button>,
+              <Button
+                key="submit"
+                className={styles.confirmDeleteBtn}
+                type="danger"
+                onClick={this.confirmFileOperationDelete}
+              >
+                删除
+              </Button>
+            ]}
+          >
+            <div className={styles.deleteModelContent}>
+              <i
+                className={`${globalStyles.authTheme}`}
+                style={{ marginRight: 5, fontSize: 20, color: '#FF8A00' }}
+              >
+                &#xe814;
+              </i>
+              删除文件后不能恢复，确定要删除吗?
+            </div>
+          </Modal>
+        )}
+
         {this.props.fileType === 'pdf' && <this.renderPageSize />}
+
         <BackTop target={() => document.querySelector('#canvas_container')} />
       </div>
       //   ,document.body

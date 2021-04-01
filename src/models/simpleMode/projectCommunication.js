@@ -35,7 +35,8 @@ export default {
     autoExpandParent: false,
     isBatchOperation: false, // 是否批量操作,
     fileSelectList: [], // 批量操作选中的文件数组
-    selectedRowKeys: []
+    selectedRowKeys: [],
+    isAddNewFolder: false
   },
 
   subscriptions: {
@@ -174,11 +175,12 @@ export default {
     },
     //重命名
     *fileReName({ payload }, { select, call, put }) {
-      const res = yield call(fileReName, payload)
-      const { board_id } = payload
+      const { board_id, id, name } = payload
+
+      const res = yield call(fileReName, { id: id, name: name })
       if (isApiResponseOk(res)) {
         yield put({
-          type: 'projectCommunication/getFolderList',
+          type: 'projectCommunication/getOnlyFileList',
           payload: {
             board_id: board_id
           }
@@ -194,7 +196,7 @@ export default {
       const { board_id } = payload
       if (isApiResponseOk(res)) {
         yield put({
-          type: 'projectCommunication/getFolderList',
+          type: 'projectCommunication/getOnlyFileList',
           payload: {
             board_id: board_id
           }

@@ -6,11 +6,12 @@ import {
   setBoardIdStorage
 } from '@/utils/businessFunction'
 import { REQUEST_DOMAIN_FILE, UPLOAD_FILE_SIZE } from '@/globalset/js/constant'
+import globalStyles from '@/globalset/css/globalClassName.less'
 import Cookies from 'js-cookie'
 import ThumbnailFilesListShow from './ThumbnailFilesListShow'
 import ThumbnailFilesTilingShow from './ThumbnailFilesTilingShow'
 import defaultTypeImg from '@/assets/invite/user_default_avatar@2x.png'
-import { Upload, Icon, message, Modal } from 'antd'
+import { Upload, Icon, message, Modal, Button } from 'antd'
 import styles from './CommunicationThumbnailFiles.less'
 import UploadNormal from '../../../../../../../components/UploadNormal'
 import {
@@ -31,7 +32,8 @@ export default class CommunicationThumbnailFiles extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      currentFileschoiceTab: 0 // "0 搜索全部文件 1 搜索子集文件
+      currentFileschoiceTab: 0, // "0 搜索全部文件 1 搜索子集文件
+      isconfirmDeleteModelShow: false
       // thumbnailFilesList: thumbnailFilesList, // 缩略图数据
       // defaultFilesShowType: '0', // 缩略图呈现方式： 0 缩略图table呈现 1 缩略图平铺呈现
     }
@@ -353,8 +355,21 @@ export default class CommunicationThumbnailFiles extends Component {
       }
     })
   }
-  // 确定删除
-  fileOperationDelete = () => {
+  // 删除二次删除提醒
+  confirmDeleteModelShow = () => {
+    this.setState({
+      isconfirmDeleteModelShow: true
+    })
+  }
+  // 二次确认取消删除
+  cancelFileOperationDelete = () => {
+    this.setState({
+      isconfirmDeleteModelShow: false
+    })
+    this.cancelfileOperation()
+  }
+  // 二次确认确定删除
+  confirmFileOperationDelete = () => {
     const { dispatch, fileSelectList, currentSelectBoardId } = this.props
     // 没有选择具体项目不让删除
     if (currentSelectBoardId) {
@@ -387,6 +402,19 @@ export default class CommunicationThumbnailFiles extends Component {
       }
     })
   }
+  addNewFolder = () => {
+    const { dispatch, currentSelectBoardId } = this.props
+    if (currentSelectBoardId) {
+      dispatch({
+        type: 'projectCommunication/updateDatas',
+        payload: {
+          isAddNewFolder: true
+        }
+      })
+    } else {
+      message.error(`请选择相应的项目新增文件夹`)
+    }
+  }
   render() {
     const {
       isVisibleFileList,
@@ -401,6 +429,7 @@ export default class CommunicationThumbnailFiles extends Component {
       currentSelectBoardId,
       isBatchOperation
     } = this.props
+    const { isconfirmDeleteModelShow } = this.state
     const currentIayerSearch =
       bread_paths && bread_paths.length && bread_paths[bread_paths.length - 1]
     const currentIayerFolderName =
@@ -426,7 +455,7 @@ export default class CommunicationThumbnailFiles extends Component {
             </dev>
             <dev
               className={`${styles.fileOperation} ${styles.fileDelete}`}
-              onClick={this.fileOperationDelete}
+              onClick={this.confirmDeleteModelShow}
             >
               删除
             </dev>
@@ -434,15 +463,23 @@ export default class CommunicationThumbnailFiles extends Component {
         ) : (
           <div className={styles.thumbnailFilesHeader}>
             <div className={styles.uploadFile}>
-              {bread_paths && bread_paths.length
+              {/*} {bread_paths && bread_paths.length
                 ? this.renderUpload()
-                : // <Upload {...this.uploadProps()} showUploadList={false}>
-                  //     <Icon type="upload" /> 上传文件
-                  // </Upload>
-                  ''}
+                : 
+                // <Upload {...this.uploadProps()} showUploadList={false}>
+                //     <Icon type="upload" /> 上传文件
+                // </Upload>
+                ''}
+             */}
             </div>
-            <dev className={styles.fileOperation}>新建文件夹</dev>
-            <dev className={styles.fileOperation}>上传</dev>
+            <dev className={styles.fileOperation} onClick={this.addNewFolder}>
+              新建文件夹
+            </dev>
+            {bread_paths && bread_paths.length ? (
+              <dev className={styles.fileOperation}>{this.renderUpload()} </dev>
+            ) : (
+              ''
+            )}
             <dev className={styles.fileOperation} onClick={this.batchOperation}>
               批量操作
             </dev>
@@ -542,16 +579,38 @@ export default class CommunicationThumbnailFiles extends Component {
             dispatch={this.props.dispatch}
           />
         )}
-        <Modal
-          title="Basic Modal"
-          visible={this.state.visible}
-          onOk={this.handleOk}
-          onCancel={this.handleCancel}
-        >
-          <p>Some contents...</p>
-          <p>Some contents...</p>
-          <p>Some contents...</p>
-        </Modal>
+        {isconfirmDeleteModelShow && (
+          <Modal
+            title="删除确认"
+            visible={true}
+            onOk={this.confirmFileOperationDelete}
+            onCancel={this.cancelFileOperationDelete}
+            // okButtonProps=(<Button type="danger">Danger</Button>)
+            footer={[
+              <Button key="back" onClick={this.cancelFileOperationDelete}>
+                取消
+              </Button>,
+              <Button
+                key="submit"
+                className={styles.confirmDeleteBtn}
+                type="danger"
+                onClick={this.confirmFileOperationDelete}
+              >
+                删除
+              </Button>
+            ]}
+          >
+            <div className={styles.deleteModelContent}>
+              <i
+                className={`${globalStyles.authTheme}`}
+                style={{ marginRight: 5, fontSize: 20, color: '#FF8A00' }}
+              >
+                &#xe814;
+              </i>
+              删除文件后不能恢复，确定要删除吗?
+            </div>
+          </Modal>
+        )}
       </div>
     )
   }

@@ -1822,7 +1822,8 @@ class BoardCommunication extends Component {
       // simplemodeCurrentProject,
       // communicationProjectListData,
       // communicationSubFolderData,
-      currentLayerSelectedStyle
+      currentLayerSelectedStyle,
+      isAddNewFolder
     } = this.props
     const {
       // currentfile = {},
@@ -2442,7 +2443,8 @@ function mapStateToProps({
     communicationProjectListData,
     communicationSubFolderData,
     rootDirectoryFolder_id,
-    currentLayerSelectedStyle
+    currentLayerSelectedStyle,
+    isAddNewFolder
   },
   publicFileDetailModal: {
     filePreviewCurrentFileId,
@@ -2481,7 +2483,8 @@ function mapStateToProps({
     filePreviewCurrentFileId,
     fileType,
     isInOpenFile,
-    filePreviewCurrentName
+    filePreviewCurrentName,
+    isAddNewFolder
   }
 }
 export default connect(mapStateToProps)(BoardCommunication)
