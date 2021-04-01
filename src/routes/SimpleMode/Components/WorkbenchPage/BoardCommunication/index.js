@@ -162,6 +162,9 @@ class BoardCommunication extends Component {
   getCommunicationFolderList = (boardId, dontUpdateFiles) => {
     const { dispatch } = this.props
     if (boardId) {
+      this.setState({
+        currentBoardId: boardId
+      })
       dispatch({
         type: getEffectOrReducerByName_8('getFolderList'),
         payload: {

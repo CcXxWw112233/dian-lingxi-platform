@@ -188,7 +188,7 @@ export default class BeginningStepOne_one extends Component {
     let name = '不限格式'
     switch (verification_rule) {
       case '':
-        debugger
+        // debugger
         name = ''
         break
       case 'mobile':

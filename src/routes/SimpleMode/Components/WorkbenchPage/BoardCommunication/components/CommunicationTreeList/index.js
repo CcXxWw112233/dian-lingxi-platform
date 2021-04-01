@@ -136,7 +136,10 @@ class TreeTitle extends Component {
               top={-4}
             />
           </span>
-          <span className={styles.dropDown_icon}>
+          <span
+            className={styles.dropDown_icon}
+            onClick={e => e.stopPropagation()}
+          >
             <Dropdown trigger={['click']} overlay={renderMoreMenu(item)}>
               <span className={`${globalStyles.authTheme}`}>&#xe7fd;</span>
             </Dropdown>
@@ -179,7 +182,6 @@ export default class CommunicationTreeList extends Component {
     } = this.props
   }
   menuItemClick = (e, item) => {
-    e.domEvent.stopPropagation()
     const { key } = e
     switch (key) {
       case '1':
@@ -243,19 +245,30 @@ export default class CommunicationTreeList extends Component {
     const res = await fileRemove(params)
     if (isApiResponseOk(res)) {
       // getFolderFileList({ id: current_folder_id })
-      this.props.queryCommunicationFileData()
-      this.props.getCommunicationFolderList(board_id)
+      // this.props.queryCommunicationFileData()
+      this.props.getCommunicationFolderList(board_id, false)
+      // dispatch({
+      // type: 'simpleWorkbenchbox/getFolderList',
+      // payload: {
+      // board_id: board_id
+      // }
+      // })
     } else {
       message.error(res.message)
     }
   }
   // 修改文件夹名
   requestUpdateFolder = async Item => {
-    const { input_folder_value } = this.state
+    const { input_folder_value, currentSelectBoardId } = this.state
     const { dispatch } = this.props
+    const {
+      projectDetailInfoData: { board_id },
+      communicationSubFolderData
+    } = this.props
     if (input_folder_value == '' || input_folder_value == Item.folder_name) {
       return false
     }
+
     const params = {
       board_id: Item.board_id,
       folder_id: Item.folder_id,
@@ -266,11 +279,45 @@ export default class CommunicationTreeList extends Component {
       this.setState({
         local_name: input_folder_value
       })
-      this.props.queryCommunicationFileData()
-      this.props.getCommunicationFolderList(Item.board_id)
+      let folderList = communicationSubFolderData.child_data
+      // let communicationSubFolderList = communicationSubFolderData
+
+      // folderList.forEach((elem, index) => {
+      // if (elem.folder_id === Item.folder_id) {
+      // let item = Item
+      // item.folder_name = input_folder_value
+      // folderList[index] = item
+      // communicationSubFolderList.child_data = folderList
+      // }
+      // })
+      let communicationSubFolderList = this.updateFolderList(
+        communicationSubFolderData,
+        Item.folder_id,
+        input_folder_value
+      )
+      dispatch({
+        type: 'projectCommunication/updateDatas',
+        payload: {
+          communicationSubFolderData: { ...communicationSubFolderList }
+        }
+      })
+      // this.props.queryCommunicationFileData()
+      // this.props.getCommunicationFolderList(currentSelectBoardId, false)
     } else {
       message.warn(res.message)
     }
+  }
+
+  // 修改本地文件夹列表
+  updateFolderList = (data, folder_id, input_folder_value) => {
+    data.child_data.forEach(item => {
+      if (item.folder_id == folder_id) {
+        item.folder_name = input_folder_value
+      } else if (item.child_data && item.child_data) {
+        this.updateFolderList(item, folder_id, input_folder_value)
+      }
+    })
+    return data
   }
 
   setIsShowChange = (flag, item) => {
@@ -347,7 +394,13 @@ export default class CommunicationTreeList extends Component {
   requestAddNewFolder = async () => {
     const { dispatch, currentSelectBoardId, currentFolderId } = this.props
     const { input_new_folder_value } = this.state
-    if (input_new_folder_value == '') {
+    if (input_new_folder_value == '' || input_new_folder_value == undefined) {
+      dispatch({
+        type: 'projectCommunication/updateDatas',
+        payload: {
+          isAddNewFolder: false
+        }
+      })
       return false
     }
     const res = await addNewFolder({
@@ -357,8 +410,8 @@ export default class CommunicationTreeList extends Component {
     })
     if (isApiResponseOk(res)) {
       // getFolderFileList({ id: current_folder_id })
-      this.props.queryCommunicationFileData()
-      this.props.getCommunicationFolderList(currentSelectBoardId)
+      // this.props.queryCommunicationFileData()
+      this.props.getCommunicationFolderList(currentSelectBoardId, false)
       dispatch({
         type: 'projectCommunication/updateDatas',
         payload: {

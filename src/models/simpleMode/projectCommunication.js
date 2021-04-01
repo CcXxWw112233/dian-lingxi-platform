@@ -175,14 +175,15 @@ export default {
     },
     //重命名
     *fileReName({ payload }, { select, call, put }) {
-      const { board_id, id, name } = payload
+      const { board_id, id, name, folder_id } = payload
 
       const res = yield call(fileReName, { id: id, name: name })
       if (isApiResponseOk(res)) {
         yield put({
           type: 'projectCommunication/getOnlyFileList',
           payload: {
-            board_id: board_id
+            board_id: board_id,
+            folder_id: folder_id
           }
         })
       } else {
@@ -193,14 +194,16 @@ export default {
      */
     *batchOperationFileDelete({ payload }, { select, call, put }) {
       const res = yield call(batchOperationFileDelete, payload)
-      const { board_id } = payload
+      const { board_id, folder_id } = payload
+      debugger
       if (isApiResponseOk(res)) {
-        yield put({
-          type: 'projectCommunication/getOnlyFileList',
-          payload: {
-            board_id: board_id
-          }
-        })
+        // yield put({
+        // type: 'projectCommunication/getOnlyFileList',
+        // payload: {
+        // board_id: board_id,
+        // folder_id: folder_id
+        // }
+        // })
       } else {
         message.error(res.message)
       }
