@@ -167,7 +167,6 @@ class ThumbnailFilesListShow extends Component {
                     </span>
                   )}
                   &nbsp;{getSubfixName(text)}
-                  {input_folder_Id}
                   <CustormBadgeDot
                     show_dot={un_read_count > 0}
                     type={'showCount'}
@@ -388,14 +387,16 @@ class ThumbnailFilesListShow extends Component {
   }
   requestUpdateFolder(item) {
     const { input_folder_value } = this.state
-    const { dispatch } = this.props
+
+    const { dispatch, folder_id, board_id } = this.props
     if (input_folder_value == '' || input_folder_value == item.file_name) {
       return false
     }
     const params = {
       id: item.id,
       name: input_folder_value,
-      board_id: item.board_id
+      board_id: item.board_id,
+      folder_id: folder_id
     }
     // fileReName
     dispatch({
@@ -414,11 +415,16 @@ class ThumbnailFilesListShow extends Component {
       input_folder_value: value
     })
   }
+  // 展示修改文件名的输入框
   setIsShowChange = (flag, item) => {
-    this.setState({
-      input_folder_Id: item ? item.file_id : ''
-    })
-    this.setColumns(this.props)
+    this.setState(
+      {
+        input_folder_Id: item ? item.file_id : ''
+      },
+      () => {
+        this.setColumns(this.props)
+      }
+    )
   }
   onSelectChange = selectedRowKeys => {
     const { dispatch, thumbnailFilesList } = this.props

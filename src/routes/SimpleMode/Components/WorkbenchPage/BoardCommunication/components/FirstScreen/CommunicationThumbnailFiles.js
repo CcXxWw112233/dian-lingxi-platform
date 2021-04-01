@@ -370,7 +370,15 @@ export default class CommunicationThumbnailFiles extends Component {
   }
   // 二次确认确定删除
   confirmFileOperationDelete = () => {
-    const { dispatch, fileSelectList, currentSelectBoardId } = this.props
+    const {
+      dispatch,
+      fileSelectList,
+      currentSelectBoardId,
+      current_folder_id,
+      bread_paths,
+      onlyFileList = []
+    } = this.props
+    debugger
     // 没有选择具体项目不让删除
     if (currentSelectBoardId) {
       // 没有选择文件提示
@@ -379,13 +387,29 @@ export default class CommunicationThumbnailFiles extends Component {
         return
       }
       const params = {
-        arrays: fileSelectList,
-        board_id: currentSelectBoardId
+        arrays: JSON.stringify(fileSelectList),
+        board_id: currentSelectBoardId,
+        folder_id: current_folder_id
       }
       dispatch({
         type: 'projectCommunication/batchOperationFileDelete',
         payload: params
       })
+      let newonlyFileList = onlyFileList
+      for (let i = 0; i < newonlyFileList.length; i++) {
+        for (let j = 0; j < fileSelectList.length; j++) {
+          if (newonlyFileList[i].id == fileSelectList[j].id) {
+            newonlyFileList.splice(i, 1)
+          }
+        }
+      }
+      dispatch({
+        type: 'projectCommunication/updateDatas',
+        payload: {
+          onlyFileList: newonlyFileList
+        }
+      })
+      this.cancelFileOperationDelete()
     } else {
       message.error(`请选择相应的项目批量删除`)
     }
@@ -472,6 +496,9 @@ export default class CommunicationThumbnailFiles extends Component {
                 ''}
              */}
             </div>
+            <dev className={styles.markString}>
+              拖拽文件至文件夹或文件夹内，完成上传，同拖拽文件至文件夹或文件夹内，完成上传，同样支持点击上传
+            </dev>
             <dev className={styles.fileOperation} onClick={this.addNewFolder}>
               新建文件夹
             </dev>
