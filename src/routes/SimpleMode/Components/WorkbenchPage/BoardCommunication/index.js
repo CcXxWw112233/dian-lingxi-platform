@@ -142,6 +142,22 @@ class BoardCommunication extends Component {
     this.setState({ currentFileDataType: '0' })
   }
 
+  /** 更新树的参与人员数据 */
+  updateFolderPrivileges = (data = [], folder_id) => {
+    let obj
+    data.forEach(item => {
+      console.log(item.folder_id, folder_id)
+      if (item.folder_id === folder_id) {
+        obj = item
+      }
+
+      if (!obj && item.child_data.length) {
+        obj = this.updateFolderPrivileges(item.child_data, folder_id)
+      }
+    })
+    return obj || {}
+  }
+
   // 获取项目交流目录下项目数据'1'
   getCommunicationFolderList = (boardId, dontUpdateFiles) => {
     const { dispatch } = this.props
@@ -150,6 +166,22 @@ class BoardCommunication extends Component {
         type: getEffectOrReducerByName_8('getFolderList'),
         payload: {
           board_id: boardId
+        }
+      }).then(res => {
+        if (this.state.currentValue?.folder_id) {
+          const privilege = this.updateFolderPrivileges(
+            [res.data],
+            this.state.currentValue?.folder_id
+          )
+          this.setState({
+            currentValue: {
+              ...this.state.currentValue,
+              ...privilege
+            },
+            visitControlModalVisible: privilege.folder_id
+              ? this.state.visitControlModalVisible
+              : false
+          })
         }
       })
     }
@@ -286,10 +318,14 @@ class BoardCommunication extends Component {
       /** 如果返回正确的数据而且页面访问控制弹窗打开了 */
       if (res.code === '0' && res.data && this.state.visitControlModalVisible) {
         if (this.getVisitControlModalDataType() === 'file') {
+          const fileData = res.data.find(
+            item => item?.version_id === this.state.currentValue?.version_id
+          )
           this.setState({
-            currentValue: res.data.find(
-              item => item.version_id === this.state.currentValue.version_id
-            )
+            currentValue: {
+              ...this.state.currentValue,
+              ...fileData
+            }
           })
         }
       }
@@ -1500,7 +1536,7 @@ class BoardCommunication extends Component {
   }
   // 获取访问控制弹窗中的数据类型??
   getVisitControlModalDataType = () => {
-    return this.state.currentValue.type == '1' ? 'folder' : 'file'
+    return this.state.currentValue?.type == '1' ? 'folder' : 'file'
   }
   /**
    * 添加成员的回调
@@ -1591,6 +1627,29 @@ class BoardCommunication extends Component {
       }
     })
   }
+
+  /**
+   * 访问控制移除成员
+   * @param {String} id 移除成员对应的id
+   */
+  handleVisitControlRemoveContentPrivilege = id => {
+    const { current_folder_id } = this.props
+    removeContentPrivilege({
+      id: id
+    }).then(res => {
+      const isResOk = res => res && res.code == '0'
+      if (isResOk(res)) {
+        setTimeout(() => {
+          message.success('移除用户成功')
+        }, 500)
+        this.whetherUpdateFolderListData(this.getVisitControlModalDataType())
+        // getFolderFileList({ id: current_folder_id })
+      } else {
+        message.warning(res.message)
+      }
+    })
+  }
+
   /**
    * 其他成员的下拉回调
    * @param {String} id 这是用户的user_id
@@ -1728,9 +1787,9 @@ class BoardCommunication extends Component {
                   ? new_projectParticipant
                   : []
               }
-              notShowPrincipal={
-                this.getVisitControlModalDataType() == 'file' ? true : false
-              }
+              // notShowPrincipal={
+              //   this.getVisitControlModalDataType() == 'file' ? true : false
+              // }
               // 加载角色列表
               loadRoleData={true}
               // 隐藏从分组或者项目选择

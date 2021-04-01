@@ -104,6 +104,7 @@ export default {
         })
       } else {
       }
+      return res
     },
 
     *getTreeDataIds({ payload }, { select, call, put }) {
