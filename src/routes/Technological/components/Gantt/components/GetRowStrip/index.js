@@ -548,11 +548,20 @@ export default class GetRowStrip extends PureComponent {
   //渲染里程碑设置---start
   renderMilestoneSet = () => {
     const {
-      itemValue: { due_time, min_leaf_left, left, parent_id, percent_card_non },
+      itemValue: {
+        due_time,
+        min_leaf_left,
+        left,
+        parent_id,
+        percent_card_non,
+        id
+      },
       ceilWidth,
       gantt_view_mode,
       date_arr_one_level,
-      projectDetailInfoData
+      projectDetailInfoData,
+      hover_milestone_id,
+      cardids_with_milestone
     } = this.props
     if (due_time && date_arr_one_level[0].timestamp > due_time) return <></> //不在时间范围内
 
@@ -580,7 +589,7 @@ export default class GetRowStrip extends PureComponent {
             styles.leaf_min_time_complete_color}`}
           style={{
             left: min_leaf_left,
-            width
+            width,
             // width:
             //   left -
             //   min_leaf_left +
@@ -589,6 +598,10 @@ export default class GetRowStrip extends PureComponent {
             //     : ['month', 'hours', 'week'].includes(gantt_view_mode)
             //     ? ceilWidth / 2
             //     : ceilWidth * 2)
+            opacity:
+              !!hover_milestone_id && !cardids_with_milestone.includes(id)
+                ? '0.2'
+                : '1'
           }}
         >
           <div className={styles.left_triangle}></div>
@@ -645,7 +658,9 @@ export default class GetRowStrip extends PureComponent {
       group_list_area,
       list_group_key,
       ceilWidth,
-      gantt_view_mode
+      gantt_view_mode,
+      hover_milestone_id,
+      cardids_with_milestone
     } = this.props
     const {
       id,
@@ -691,7 +706,11 @@ export default class GetRowStrip extends PureComponent {
         style={{
           display,
           left: marginLeft,
-          paddingLeft
+          paddingLeft,
+          opacity:
+            !!hover_milestone_id && !cardids_with_milestone.includes(id)
+              ? '0.2'
+              : '1'
         }}
       >
         <Tooltip
@@ -1213,7 +1232,9 @@ function mapStateToProps({
       date_total,
       gantt_view_mode,
       gantt_head_width,
-      selected_card_visible
+      selected_card_visible,
+      hover_milestone_id,
+      cardids_with_milestone
     }
   },
   milestoneDetail: { milestone_detail = {} },
@@ -1246,6 +1267,8 @@ function mapStateToProps({
     gantt_view_mode,
     gantt_head_width,
     card_detail_id,
-    selected_card_visible
+    selected_card_visible,
+    hover_milestone_id,
+    cardids_with_milestone
   }
 }
