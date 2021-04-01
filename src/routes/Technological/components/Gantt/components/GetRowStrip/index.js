@@ -757,7 +757,7 @@ export default class GetRowStrip extends PureComponent {
   milestoneSetClick = param_date => {
     const date = param_date || this.calHoverDate()
     const { timestamp, timestampEnd } = date
-    const { itemValue = {} } = this.props
+    const { itemValue = {}, dispatch } = this.props
     let { id } = itemValue
     return new Promise((resolve, reject) => {
       updateMilestone({ id, deadline: timestampEnd }, { isNotLoading: false })
@@ -768,6 +768,10 @@ export default class GetRowStrip extends PureComponent {
               due_time: timestampEnd
             })
             message.success('更新成功')
+            dispatch({
+              type: 'gantt/getGttMilestoneList',
+              payload: {}
+            })
             resolve(res)
           } else {
             message.error(res.message)

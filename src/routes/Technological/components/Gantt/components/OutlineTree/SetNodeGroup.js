@@ -197,7 +197,8 @@ export default class SetNodeGroup extends Component {
     const {
       gantt_board_id,
       nodeValue: { id, list_id: selected_list_id },
-      nodeValue: { tree_type }
+      nodeValue: { tree_type },
+      dispatch
     } = this.props
     let params = {
       list_id
@@ -217,6 +218,12 @@ export default class SetNodeGroup extends Component {
     func({ ...params }, { isNotLoading: false }).then(res => {
       if (isApiResponseOk(res)) {
         message.success(!is_cancle ? '关联分组成功' : '已取消关联')
+        if (tree_type == '1') {
+          dispatch({
+            type: 'gantt/getGttMilestoneList',
+            payload: {}
+          })
+        }
         this.setRelationGroupId({ list_id: params.list_id })
       } else {
         message.error(res.message)
