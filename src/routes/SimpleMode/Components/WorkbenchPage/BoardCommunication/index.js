@@ -143,7 +143,7 @@ class BoardCommunication extends Component {
   }
 
   // 获取项目交流目录下项目数据'1'
-  getCommunicationFolderList = boardId => {
+  getCommunicationFolderList = (boardId, dontUpdateFiles) => {
     const { dispatch } = this.props
     if (boardId) {
       dispatch({
@@ -160,10 +160,10 @@ class BoardCommunication extends Component {
       currentFileDataType: '1', // 当前文件数据所属层：0全部文件/1项目内文件/2文件夹内文件
       currentSearchValue: '' // 清空搜索关键字
     })
-    this.setcurrentItemLayerId(boardId)
+    this.setcurrentItemLayerId(boardId, dontUpdateFiles)
   }
 
-  setcurrentItemLayerId = id => {
+  setcurrentItemLayerId = (id, dontUpdateFiles) => {
     // 设置当前所在的项目/层级ID
     this.setState(
       {
@@ -172,7 +172,7 @@ class BoardCommunication extends Component {
       },
       () => {
         this.changeFirstBreadPaths() // 改变第一层面包屑路径
-        this.getThumbnailFilesData() // 更新右侧缩略图列表
+        if (!dontUpdateFiles) this.getThumbnailFilesData() // 更新右侧缩略图列表
       }
     )
   }
@@ -267,7 +267,7 @@ class BoardCommunication extends Component {
     return params
   }
 
-  // 获取右侧缩略图展示列表显示
+  /** 获取右侧缩略图展示列表显示 */
   getThumbnailFilesData = (data = {}) => {
     // console.log('获取右侧缩略图显示');
     const { dispatch, simplemodeCurrentProject = {} } = this.props
@@ -281,6 +281,17 @@ class BoardCommunication extends Component {
       payload: {
         board_id: (board_id && board_id != '0' && board_id) || boardId,
         folder_id: folderId
+      }
+    }).then(res => {
+      /** 如果返回正确的数据而且页面访问控制弹窗打开了 */
+      if (res.code === '0' && res.data && this.state.visitControlModalVisible) {
+        if (this.getVisitControlModalDataType() === 'file') {
+          this.setState({
+            currentValue: res.data.find(
+              item => item.version_id === this.state.currentValue.version_id
+            )
+          })
+        }
       }
     })
   }
@@ -1254,9 +1265,10 @@ class BoardCommunication extends Component {
   }
 
   // 是否需要更新文件列表, 当访问控制设置时
-  whetherUpdateFolderListData = () => {
-    // this.queryCommunicationFileData();
-    this.getThumbnailFilesData()
+  whetherUpdateFolderListData = type => {
+    if (type === 'folder')
+      this.getCommunicationFolderList(this.state.currentSelectBoardId, true)
+    else this.getThumbnailFilesData()
     // if (folder_id) {
     //     this.getFolderFileList({ id: folder_id })
     // }
@@ -1401,6 +1413,17 @@ class BoardCommunication extends Component {
     const visitControlOtherPersonOperatorMenuItem = genVisitControlOtherPersonOperatorMenuItem(
       type
     )
+
+    /** 访问控制去重 */
+    const notRepeatPrivileges = []
+    const obj = {}
+    privileges.forEach(item => {
+      if (!obj[item.id]) {
+        notRepeatPrivileges.push(item)
+        obj[item.id] = true
+      }
+    })
+
     return {
       // child_privilegeuser_ids,
       id,
@@ -1408,7 +1431,7 @@ class BoardCommunication extends Component {
       fileOrFolderName,
       visitControlOtherPersonOperatorMenuItem,
       is_privilege,
-      privileges,
+      privileges: notRepeatPrivileges,
       privileges_extend,
       removeMemberPromptText:
         type === '1'
@@ -1418,7 +1441,7 @@ class BoardCommunication extends Component {
   }
   // 权限弹窗
   toggleVisitControlModal = (flag, item) => {
-    console.log(item)
+    console.log(flag, item)
     this.setState({
       currentValue: item,
       visitControlModalVisible: flag,
@@ -1457,7 +1480,8 @@ class BoardCommunication extends Component {
     const current_folder_id = this.state.currentFolderId
     const dataType = this.getVisitControlModalDataType()
     const data = {
-      content_id: dataType == 'file' ? itemValue.version_id : itemValue.id,
+      content_id:
+        dataType == 'file' ? itemValue.version_id : itemValue.folder_id,
       content_type: dataType == 'file' ? 'file' : 'folder',
       is_open: flag ? 1 : 0
     }
@@ -1467,6 +1491,7 @@ class BoardCommunication extends Component {
         setTimeout(() => {
           message.success('设置成功')
         }, 500)
+        this.whetherUpdateFolderListData(dataType)
         // getFolderFileList({ id: current_folder_id })
       } else {
         message.warning(res.message)
@@ -1499,9 +1524,9 @@ class BoardCommunication extends Component {
     const itemValue = this.state.currentValue
     const current_folder_id = this.state.currentFolderId
     const dataType = this.getVisitControlModalDataType()
-    const content_id = dataType == 'file' ? itemValue.version_id : itemValue.id
-    const content_type =
-      dataType == 'file' ? 'itemValue.file' : 'itemValue.folder'
+    const content_id =
+      dataType == 'file' ? itemValue.version_id : itemValue.folder_id
+    const content_type = dataType == 'file' ? 'file' : 'folder'
     const privilege_code = type
     let temp_ids = [] // 用来保存添加用户的id
     let new_ids = [] // 用来保存权限列表中用户id
@@ -1553,6 +1578,13 @@ class BoardCommunication extends Component {
         setTimeout(() => {
           message.success('添加用户成功')
         }, 500)
+        this.setState({
+          currentValue: {
+            ...this.state.currentValue,
+            privileges: [].concat(this.state.currentValue.privileges, res.data)
+          }
+        })
+        this.whetherUpdateFolderListData(content_type)
         // getFolderFileList({ id: current_folder_id })
       } else {
         message.warning(res.message)
@@ -1598,7 +1630,7 @@ class BoardCommunication extends Component {
     const current_folder_id = this.state.currentFolderId
     const { version_id, belong_folder_id, id: folder_id } = itemValue
     const dataType = this.getVisitControlModalDataType()
-    const content_id = dataType == 'file' ? version_id : folder_id
+    const content_id = dataType == 'file' ? version_id : itemValue.folder_id
     const content_type = dataType == 'file' ? 'file' : 'folder'
     const privilege_code = type
     let param = {}
@@ -1615,6 +1647,18 @@ class BoardCommunication extends Component {
         setTimeout(() => {
           message.success('设置成功')
         }, 500)
+        this.setState({
+          currentValue: {
+            ...this.state.currentValue,
+            privileges: (this.state.currentValue.privileges || []).map(item => {
+              if (item.id === res.data[0].id) {
+                return res.data[0]
+              }
+              return item
+            })
+          }
+        })
+        this.whetherUpdateFolderListData(content_type)
         // getFolderFileList({ id: current_folder_id })
       } else {
         message.warning(res.message)

@@ -37,6 +37,7 @@ import {
 } from '../../../../../../../globalset/js/constant'
 import Item from 'antd/lib/list/Item'
 import DragProvider from '../../../../../../../components/DragProvider'
+import { FolderType } from '../../constans'
 
 const { Panel } = Collapse
 const { TreeNode, DirectoryTree } = Tree
@@ -343,6 +344,7 @@ export default class CommunicationTreeList extends Component {
     })
   }
   toggleVisitControlModal = (flag, item) => {
+    item.type = FolderType
     this.props.toggleVisitControlModal(true, item)
   }
   renderMoreMenu = item => {

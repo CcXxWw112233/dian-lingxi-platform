@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import MainContent from '@/components/FileDetailModal/MainContent.js'
-import HeaderContent from '@/components/FileDetailModal/HeaderContent.js'
+import HeaderContent from '../../../../../../../components/FileDetailModal/HeaderContent.js'
 import Header from './Header'
 import DetailContent from './DetailContent'
 import { connect } from 'dva'
