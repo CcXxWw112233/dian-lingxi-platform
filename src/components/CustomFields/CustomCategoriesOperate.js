@@ -18,7 +18,7 @@ export default class CustomCategoriesOperate extends Component {
     if (this.props.disabled) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
     } else {
-      const { handleUpdateModelDatas = () => { } } = this.props
+      const { handleUpdateModelDatas = () => {} } = this.props
       handleUpdateModelDatas.call(this, arg)
     }
   }

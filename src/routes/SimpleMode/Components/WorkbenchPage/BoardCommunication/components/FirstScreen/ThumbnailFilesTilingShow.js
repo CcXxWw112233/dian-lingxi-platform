@@ -66,7 +66,14 @@ class ThumbnailFilesTilingShow extends Component {
     obj[action]()
   }
   previewFile = data => {
+    const { isBatchOperation } = this.props
     const { id } = data
+    // 批量操作的 不跳转
+    if (isBatchOperation) {
+      this.props.addBatchOperationList(data)
+      return
+    }
+
     this.props.previewFile(data)
     // 设置已读
     const { im_all_latest_unread_messages, dispatch } = this.props
@@ -84,7 +91,12 @@ class ThumbnailFilesTilingShow extends Component {
   render() {
     const { thumbnailFilesList = [] } = this.props
     console.log('thumbnailFilesList', thumbnailFilesList)
-    const { im_all_latest_unread_messages, wil_handle_types } = this.props
+    const {
+      im_all_latest_unread_messages,
+      wil_handle_types,
+      isBatchOperation,
+      fileSelectList
+    } = this.props
 
     return (
       <div className={styles.ThumbnailFilesTilingShow}>
@@ -98,6 +110,11 @@ class ThumbnailFilesTilingShow extends Component {
               im_all_latest_unread_messages,
               wil_handle_types
             })
+            const isSelected = fileSelectList.some(function(currentValue) {
+              return (
+                item.id == currentValue.id && item.type == currentValue.type
+              )
+            })
             return (
               <div
                 className={styles.itemBox}
@@ -105,6 +122,25 @@ class ThumbnailFilesTilingShow extends Component {
                 title={item.file_name}
                 onClick={() => this.previewFile(item)}
               >
+                {isBatchOperation ? (
+                  isSelected ? (
+                    <i
+                      className={`${globalStyles.authTheme}  ${styles.file_select_icon}`}
+                      style={{ fontSize: 20, color: '#6A9AFF' }}
+                    >
+                      &#xe638;
+                    </i>
+                  ) : (
+                    <i
+                      className={`${globalStyles.authTheme} ${styles.file_select_icon}`}
+                      style={{ fontSize: 20 }}
+                    >
+                      &#xe661;
+                    </i>
+                  )
+                ) : (
+                  ''
+                )}
                 {item.thumbnail_url ? (
                   <img src={item.thumbnail_url || ''} alt="" />
                 ) : (
@@ -161,9 +197,15 @@ ThumbnailFilesTilingShow.defaultProps = {
   // 这是一个项目交流中缩略图组件
 }
 function mapStateToProps({
-  imCooperation: { im_all_latest_unread_messages, wil_handle_types = [] }
+  imCooperation: { im_all_latest_unread_messages, wil_handle_types = [] },
+  projectCommunication: { isBatchOperation, fileSelectList }
 }) {
-  return { im_all_latest_unread_messages, wil_handle_types }
+  return {
+    im_all_latest_unread_messages,
+    wil_handle_types,
+    isBatchOperation,
+    fileSelectList
+  }
 }
 
 export default DragProvider(ThumbnailFilesTilingShow)

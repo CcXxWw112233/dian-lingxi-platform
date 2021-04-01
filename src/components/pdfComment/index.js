@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom'
 import Cookies from 'js-cookie'
 // import { connect } from 'dva';
 import styles from './index.less'
+import { connect } from 'dva'
 import globalStyles from '@/globalset/css/globalClassName.less'
 // import { HandleCanvas } from '../utils/test'
 import { fabric } from 'fabric'
@@ -24,6 +25,8 @@ import {
   Avatar
 } from 'antd'
 import ColorPicker from 'react-color'
+import { fileRemove } from '@/services/technological/file'
+
 import jsPDF from 'jspdf'
 import Action from './action'
 import { dateFormat } from '@/utils/util'
@@ -35,6 +38,7 @@ import {
   checkRoleAndMemberVisitControlPermissions,
   setRequestHeaderBaseInfo
 } from '../../utils/businessFunction'
+import { isApiResponseOk } from '../../utils/handleResponseData'
 import { REQUEST_DOMAIN_FILE } from '@/globalset/js/constant'
 import DEvent from '../../utils/event'
 import { ENV_ANDROID_APP } from '../../globalset/clientCustorm'
@@ -50,7 +54,7 @@ const DefineIcon = Icon.createFromIconfontCN({
 fabric.Object.prototype.transparentCorners = false
 fabric.Object.prototype.cornerColor = 'blue'
 fabric.Object.prototype.cornerStyle = 'circle'
-
+@connect(() => ({}))
 export default class PdfComment extends React.Component {
   constructor(props) {
     super(props)
@@ -2794,7 +2798,17 @@ export default class PdfComment extends React.Component {
       drawStyles: { ...drawStyles, [drawStyles.activeType]: { color: val } }
     })
   }
-
+  deleteFile = () => {
+    const { dispatch, thumbnailFilesList = [], board_id, file_id } = this.props
+    const params = {
+      board_id,
+      arrays: JSON.stringify([{ type: '2', id: file_id }])
+    }
+    dispatch({
+      type: 'projectCommunication/fileRemove',
+      payload: params
+    })
+  }
   render() {
     let {
       // activeElement,
@@ -2950,6 +2964,9 @@ export default class PdfComment extends React.Component {
               )}
             </div>
             {/* <span onClick={this.fileSaveAs}>另存</span> */}
+            <span class={styles.delete} onClick={this.deleteFile}>
+              删除
+            </span>
           </div>
           {/* <span></span> */}
         </div>
