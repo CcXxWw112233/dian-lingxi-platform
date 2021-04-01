@@ -15,7 +15,7 @@ import {
   isPaymentOrgUser,
   checkRoleAndMemberVisitControlPermissions
 } from '@/utils/businessFunction'
-import { getFileList } from '@/services/technological/file.js'
+import { getFileList, addNewFolder } from '@/services/technological/file.js'
 import { isApiResponseOk } from '@/utils/handleResponseData'
 import styles from './index.less'
 import CustormBadgeDot from '@/components/CustormBadgeDot'
@@ -28,6 +28,7 @@ import {
   fileRemove,
   updateFolder
 } from '../../../../../../../services/technological/file'
+
 import {
   PROJECT_FILES_FILE_INTERVIEW,
   NOT_HAS_PERMISION_COMFIRN,
@@ -98,43 +99,47 @@ class TreeTitle extends Component {
     super(props)
     this.state = {}
   }
-
   render() {
     const {
       folder_name,
       un_read_count,
       item,
       input_folder_id,
-      renderMoreMenu
+      renderMoreMenu,
+      isAddNewFolder,
+      inputOnPressEnter,
+      inputOnchange
     } = this.props
     return (
       <span>
-        <span style={{ position: 'relative' }}>
-          {input_folder_id == item.folder_id ? (
-            <Input
-              className={styles.folder_input}
-              style={{ height: 25 }}
-              autoFocus
-              defaultValue={item.folder_name}
-              onChange={this.inputOnchange}
-              onPressEnter={e => this.inputOnPressEnter(item, e)}
-              onBlur={e => this.inputOnPressEnter(item, e)}
+        <span>
+          <span style={{ position: 'relative' }}>
+            {input_folder_id == item.folder_id ? (
+              <Input
+                className={styles.folder_input}
+                style={{ height: 25 }}
+                autoFocus
+                defaultValue={item.folder_name}
+                onChange={e => inputOnchange(e)}
+                onPressEnter={e => inputOnPressEnter(item, e)}
+                onBlur={e => inputOnPressEnter(item, e)}
+              />
+            ) : (
+              item.folder_name
+            )}
+            <CustormBadgeDot
+              show_dot={un_read_count > 0}
+              type={'showCount'}
+              count={un_read_count}
+              right={-6}
+              top={-4}
             />
-          ) : (
-            item.folder_name
-          )}
-          <CustormBadgeDot
-            show_dot={un_read_count > 0}
-            type={'showCount'}
-            count={un_read_count}
-            right={-6}
-            top={-4}
-          />
-        </span>
-        <span className={styles.dropDown_icon}>
-          <Dropdown trigger={['click']} overlay={renderMoreMenu(item)}>
-            <span className={`${globalStyles.authTheme}`}>&#xe7fd;</span>
-          </Dropdown>
+          </span>
+          <span className={styles.dropDown_icon}>
+            <Dropdown trigger={['click']} overlay={renderMoreMenu(item)}>
+              <span className={`${globalStyles.authTheme}`}>&#xe7fd;</span>
+            </Dropdown>
+          </span>
         </span>
       </span>
     )
@@ -172,24 +177,14 @@ export default class CommunicationTreeList extends Component {
       boards_flies = []
     } = this.props
   }
-
-  // 重命名
-  handleRename = folder_id => {
-    this.setState({
-      folder_id: folder_id,
-      current_action: 'rename'
-    })
-  }
   menuItemClick = (e, item) => {
     e.domEvent.stopPropagation()
     const { key } = e
     switch (key) {
       case '1':
-        debugger
-
         const { projectDetailInfoData } = this.props
         const privileges = item.privileges
-        const board_id = item.board_id
+        const board_id = projectDetailInfoData.board_id
         const is_privilege = item.is_privilege
         // /**
         //  * 个人信息
@@ -237,18 +232,12 @@ export default class CommunicationTreeList extends Component {
     const { dispatch } = this.props
     const {
       // itemValue: { board_id, privileges = [], is_privilege },
-      projectDetailInfoData
+      projectDetailInfoData: { board_id }
     } = this.props
-    const board_id = item.board_id
     const current_folder_id = item.folder_id
-
-    // const {
-    // getFolderFileList,
-    // } = this.props
-    const { id, type } = item
     const params = {
       board_id,
-      arrays: JSON.stringify([{ type, id }])
+      arrays: JSON.stringify([{ type: '1', id: current_folder_id }])
     }
     const res = await fileRemove(params)
     if (isApiResponseOk(res)) {
@@ -282,6 +271,7 @@ export default class CommunicationTreeList extends Component {
       message.warn(res.message)
     }
   }
+
   setIsShowChange = (flag, item) => {
     console.log(item)
     this.setState({
@@ -337,11 +327,48 @@ export default class CommunicationTreeList extends Component {
     this.setIsShowChange(false)
   }
   inputOnchange = e => {
+    console.log(e)
     const { value } = e.target
     this.setState({
       input_folder_value: value
     })
   }
+  // 新增文件夹
+  newFloderInputOnchange = e => {
+    const { value } = e.target
+    this.setState({
+      input_new_folder_value: value
+    })
+  }
+  addNewFolder = e => {
+    this.requestAddNewFolder()
+  }
+  requestAddNewFolder = async () => {
+    const { dispatch, currentSelectBoardId, currentFolderId } = this.props
+    const { input_new_folder_value } = this.state
+    if (input_new_folder_value == '') {
+      return false
+    }
+    const res = await addNewFolder({
+      board_id: currentSelectBoardId,
+      parent_id: currentFolderId,
+      folder_name: input_new_folder_value
+    })
+    if (isApiResponseOk(res)) {
+      // getFolderFileList({ id: current_folder_id })
+      this.props.queryCommunicationFileData()
+      this.props.getCommunicationFolderList(currentSelectBoardId)
+      dispatch({
+        type: 'projectCommunication/updateDatas',
+        payload: {
+          isAddNewFolder: false
+        }
+      })
+    } else {
+      message.error(res.message)
+    }
+  }
+  // 展示访问控制弹窗
   toggleVisitControlModal = (flag, item) => {
     this.props.toggleVisitControlModal(true, item)
   }
@@ -384,7 +411,11 @@ export default class CommunicationTreeList extends Component {
     communicationSubFolderData.map(item => {
       const { type = '1', folder_name, id } = item
       const { folder_id, input_folder_value, input_folder_id } = this.state
-      const { im_all_latest_unread_messages, wil_handle_types } = this.props
+      const {
+        im_all_latest_unread_messages,
+        wil_handle_types,
+        isAddNewFolder
+      } = this.props
       const un_read_count = folderItemHasUnReadNo({
         type,
         relaDataId: item.folder_id,
@@ -408,6 +439,8 @@ export default class CommunicationTreeList extends Component {
                 item={item}
                 input_folder_id={input_folder_id}
                 renderMoreMenu={() => this.renderMoreMenu(item)}
+                inputOnPressEnter={e => this.inputOnPressEnter(item, e)}
+                inputOnchange={this.inputOnchange}
               />
             }
             key={item.folder_id}
@@ -418,26 +451,30 @@ export default class CommunicationTreeList extends Component {
         )
       }
       return (
-        <TreeNode
-          title={
-            <DragTitleHeader
-              {...this.props}
-              contentStyle={{
-                display: 'inline-block',
-                width: '80%'
-              }}
-              un_read_count={un_read_count}
-              board_id={board_id}
-              folder_id={folder_id}
-              folder_name={item.folder_name}
-              item={item}
-              input_folder_id={input_folder_id}
-              renderMoreMenu={() => this.renderMoreMenu(item)}
-            />
-          }
-          key={item.folder_id}
-          {...item}
-        />
+        <span>
+          <TreeNode
+            title={
+              <DragTitleHeader
+                {...this.props}
+                contentStyle={{
+                  display: 'inline-block',
+                  width: '80%'
+                }}
+                un_read_count={un_read_count}
+                board_id={board_id}
+                folder_id={folder_id}
+                folder_name={item.folder_name}
+                item={item}
+                input_folder_id={input_folder_id}
+                renderMoreMenu={() => this.renderMoreMenu(item)}
+                inputOnPressEnter={e => this.inputOnPressEnter(item, e)}
+                inputOnchange={this.inputOnchange}
+              />
+            }
+            key={item.folder_id}
+            {...item}
+          />
+        </span>
       )
     })
 
@@ -486,7 +523,8 @@ export default class CommunicationTreeList extends Component {
       currentLayerSelectedStyle,
       expandedKeys,
       selectedKeys,
-      currentFolderId
+      currentFolderId,
+      isAddNewFolder
     } = this.props
     const isShowCompanyName = is_show_org_name && is_all_org // 是否显示归属组织
     const { child_data = [] } = communicationSubFolderData
@@ -553,6 +591,17 @@ export default class CommunicationTreeList extends Component {
                           ) : (
                             ''
                           )}
+                          {isAddNewFolder && (
+                            <Input
+                              className={styles.folder_input}
+                              style={{ height: 25 }}
+                              autoFocus
+                              // defaultValue=
+                              onChange={this.newFloderInputOnchange}
+                              onPressEnter={e => this.addNewFolder(e)}
+                              onBlur={e => this.addNewFolder(e)}
+                            />
+                          )}
                         </Panel>
                       )
                     )
@@ -584,7 +633,8 @@ function mapStateToProps({
     currentBoardId,
     communicationProjectListData,
     communicationSubFolderData,
-    expandedKeys
+    expandedKeys,
+    isAddNewFolder
   }
 }) {
   return {
@@ -598,6 +648,7 @@ function mapStateToProps({
     expandedKeys,
     im_all_latest_unread_messages,
     wil_handle_types,
-    projectDetailInfoData
+    projectDetailInfoData,
+    isAddNewFolder
   }
 }
