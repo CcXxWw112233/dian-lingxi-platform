@@ -104,6 +104,7 @@ export default {
         })
       } else {
       }
+      return res
     },
 
     *getTreeDataIds({ payload }, { select, call, put }) {
@@ -139,6 +140,7 @@ export default {
         })
       } else {
       }
+      return res
     },
 
     // 搜索
