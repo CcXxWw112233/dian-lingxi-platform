@@ -418,6 +418,9 @@ export default class CommunicationTreeList extends Component {
           isAddNewFolder: false
         }
       })
+      this.setState({
+        input_new_folder_value: ''
+      })
     } else {
       message.error(res.message)
     }
