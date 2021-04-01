@@ -1957,7 +1957,7 @@ export default class OutLineHeadItem extends Component {
     return (
       <div
         className={styles.outline_wrapper}
-        style={{ marginTop: task_item_margin_top }}
+        // style={{ marginTop: task_item_margin_top }}
       >
         <OutlineTree
           // defaultExpandedKeys={['0-0-0']}

@@ -19,7 +19,9 @@ import {
   ceil_width,
   ceil_height,
   gantt_panel_left_diff,
-  ganttIsSingleBoardGroupView
+  ganttIsSingleBoardGroupView,
+  milestone_base_height,
+  getMilestoneBaseHeight
 } from './constants'
 import CardDropDetail from './components/gattFaceCardItem/CardDropDetail'
 import QueueAnim from 'rc-queue-anim'
@@ -46,6 +48,7 @@ import {
 } from '../../../../utils/util'
 import SvgArea from './components/SvgArea'
 import GroupCanvas from './components/GroupCanvas'
+import MilestonesBaseBody from './components/MilestonesBaseProgress/MilestonesBaseBody'
 
 import BaseLineItem from './components/CardItem/BaseLineItem'
 const clientWidth = document.documentElement.clientWidth //获取页面可见高度
@@ -211,16 +214,16 @@ export default class GetRowGantt extends Component {
       return
     }
     const { currentRect = {} } = this.state
-    this.x1 = currentRect.x
-    this.y1 = currentRect.y
     this.setDragCreating(false)
     this.setState({ isMouseDown: true })
     this.handleCreateTask({ start_end: '1', top: currentRect.y })
     const target = this.refs.gantt_operate_area_panel //event.target || event.srcElement;
-    if (this.judgeAreaNotAllowDrag(currentRect.y)) {
+    if (this.judgeAreaNotAllowDrag(this.y1, true)) {
       this.stopDragging()
       return
     }
+    this.x1 = currentRect.x
+    this.y1 = currentRect.y
     target.onmousemove = this.dashedDragMousemove.bind(this)
     target.onmouseup = this.dashedDragMouseup.bind(this)
   }
@@ -389,6 +392,8 @@ export default class GetRowGantt extends Component {
       gantt_panel_left_diff
     let py = e.pageY - target_0.offsetTop + target_1.scrollTop - dateAreaHeight
 
+    this.x1 = px
+    this.y1 = py
     if (this.judgeAreaNotAllowDrag(py)) {
       this.setState({
         dasheRectShow: false,
@@ -595,14 +600,15 @@ export default class GetRowGantt extends Component {
       group_view_type,
       group_list_area_section_height = [],
       dispatch,
-      list_group
+      list_group,
+      gantt_board_id
     } = this.props
     if (ganttIsOutlineView({ group_view_type })) {
       return Promise.resolve({ current_list_group_id: 0 })
     }
-    if (this.judgeAreaNotAllowDrag(top)) {
-      return Promise.resolve({})
-    }
+    // if (this.judgeAreaNotAllowDrag(top)) {
+    //   return Promise.resolve({})
+    // }
     // const getSum = (total, num) => {
     //   return total + num;
     // }
@@ -625,6 +631,8 @@ export default class GetRowGantt extends Component {
     // }
     let conter_key = 0 //所属分组下标
     let belong_group_row = 0 //所在分组的某一行
+    const trans_top =
+      top - getMilestoneBaseHeight({ gantt_board_id, group_view_type })
 
     for (let i = 0, len = group_list_area_section_height.length; i < len; i++) {
       if (top < group_list_area_section_height[i]) {
@@ -633,12 +641,15 @@ export default class GetRowGantt extends Component {
       }
     }
     if (conter_key == 0) {
-      belong_group_row = top / ceil_height + 1
+      belong_group_row = trans_top / ceil_height + 1
     } else {
       belong_group_row =
-        (top - group_list_area_section_height[conter_key - 1]) / ceil_height + 1
+        (trans_top - group_list_area_section_height[conter_key - 1]) /
+          ceil_height +
+        1
     }
     belong_group_row -= 1
+    belong_group_row = Math.round(belong_group_row)
     const current_list_group_id = list_group[conter_key]['list_id']
     dispatch({
       type: getEffectOrReducerByName('updateDatas'),
@@ -647,7 +658,7 @@ export default class GetRowGantt extends Component {
         belong_group_row
       }
     })
-
+    // console.log('sssssssssaaa_2', { current_list_group_id, belong_group_row })
     return Promise.resolve({ current_list_group_id, belong_group_row })
   }
 
@@ -1070,6 +1081,7 @@ export default class GetRowGantt extends Component {
           id={'gantt_operate_area_panel'}
           ref={'gantt_operate_area_panel'}
         >
+          <MilestonesBaseBody />
           <GroupCanvas gantt_card_height={gantt_card_height}></GroupCanvas>
           <SvgArea gantt_card_height={gantt_card_height}></SvgArea>
           {ganttIsSingleBoardGroupView({ gantt_board_id, group_view_type }) && (
@@ -1264,7 +1276,7 @@ export default class GetRowGantt extends Component {
                 )
               )
             })}
-          {!ganttIsOutlineView({ group_view_type }) && (
+          {['1', '4'].includes(group_view_type) && (
             <GetRowGanttVirtual
               ganttPanelDashedDrag={this.state.drag_creating}
               setDragCreating={this.setDragCreating}

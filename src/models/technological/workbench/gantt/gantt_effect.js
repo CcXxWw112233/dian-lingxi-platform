@@ -64,7 +64,42 @@ export default {
     show_base_line_mode: false, // 是否进入基线状态
     active_baseline: {}, // 基线版本
     miletone_detail_modal_visible: false, //显示里程碑详情弹窗
-    outline_setting_msg: {} // 大纲视图设置项
+    outline_setting_msg: {}, // 大纲视图设置项
+    outline_columns: [
+      {
+        key: 'item_start_time',
+        title: '开始',
+        className: 'item_start_time',
+        dataIndex: 'is_show_start_time'
+      },
+      {
+        key: 'item_end_time',
+        title: '结束',
+        className: 'item_end_time',
+        dataIndex: 'is_show_end_time'
+      },
+      {
+        key: 'item_users_avatar',
+        title: '负责人',
+        className: 'item_users_avatar',
+        dataIndex: 'is_show_leader'
+      },
+      {
+        key: 'item_times',
+        title: '工时',
+        className: 'item_times',
+        dataIndex: 'is_show_time_span'
+      },
+      {
+        key: 'item_group_list',
+        title: '分组',
+        className: 'item_group_list',
+        dataIndex: 'is_show_list'
+      }
+    ], //大纲显示项
+    outline_default_columns: ['item_users_avatar', 'item_times'], ////大纲默认显示项
+    outline_is_show_order: true, //大纲显示编号
+    cardids_with_milestone: [] //hover未分组的里程碑，带出来子集的任务id列表
   },
   effects: {
     *addCardRely({ payload = {} }, { select, call, put }) {

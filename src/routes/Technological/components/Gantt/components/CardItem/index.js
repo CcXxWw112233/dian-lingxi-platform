@@ -1778,7 +1778,8 @@ export default class CardItem extends Component {
       ceilWidth,
       ceiHeight,
       list_id,
-      projectDetailInfoData: { board_set = {} }
+      projectDetailInfoData: { board_set = {} },
+      cardids_with_milestone
     } = this.props
     const { date_mode } = board_set
     const {
@@ -1970,7 +1971,13 @@ export default class CardItem extends Component {
           borderRadius: '4px',
           boxShadow: is_show_warning_time
             ? '0 0 20px rgba(255,160,0,0.8)'
-            : 'none'
+            : 'none',
+          //当hover里程碑的时候，如果不属于当前hover里程碑的任务灰掉
+          opacity:
+            cardids_with_milestone.length &&
+            !cardids_with_milestone.includes(id)
+              ? '0.2'
+              : '1'
         }}
         {...this.handleObj()}
       >
@@ -2463,7 +2470,8 @@ function mapStateToProps({
       selected_card_visible,
       notification_todos,
       card_name_outside,
-      milestoneMap = {}
+      milestoneMap = {},
+      cardids_with_milestone
     }
   },
   imCooperation: { im_all_latest_unread_messages = [] },
@@ -2490,6 +2498,7 @@ function mapStateToProps({
     notification_todos,
     card_name_outside,
     milestoneMap,
-    projectDetailInfoData
+    projectDetailInfoData,
+    cardids_with_milestone
   }
 }
