@@ -463,31 +463,29 @@ class ThumbnailFilesListShow extends Component {
     return (
       <div
         className={`${styles.thumbnailFilesList}
-        ${globalStyles.global_vertical_scrollbar} 
+        ${globalStyles.global_vertical_scrollbar}
         ${isShow ? styles.changeHeight : ''}`}
       >
-        {thumbnailFilesList.length ? <Table
-          // style={{height:500}}
-          // scroll={{ y: tableHeight}}
-          dataSource={thumbnailFilesList}
-          columns={columns}
-          pagination={{ pageSize: 10 }}
-          loading={onlyFileTableLoading}
-          // pagination={{
-          //     pageSize: 6
-          // }}
-          pagination={false}
-          rowKey={record => record.file_id}
-<<<<<<< HEAD
-        /> :
+        {thumbnailFilesList.length ? (
+          <Table
+            // style={{height:500}}
+            // scroll={{ y: tableHeight}}
+            dataSource={thumbnailFilesList}
+            columns={columns}
+            pagination={{ pageSize: 10 }}
+            loading={onlyFileTableLoading}
+            // pagination={{
+            //     pageSize: 6
+            // }}
+            pagination={false}
+            rowKey={record => record.file_id}
+            rowSelection={isBatchOperation ? rowSelection : ''}
+          />
+        ) : (
           <div className={styles.dropText}>
             <span>拖拽到此处或文件夹，完成上传，同样支持按钮点击上传</span>
-          </div>}
-
-=======
-          rowSelection={isBatchOperation ? rowSelection : ''}
-        />
->>>>>>> feature/llq
+          </div>
+        )}
       </div>
     )
   }
