@@ -232,7 +232,7 @@ export async function addChirldTaskVTwo(data) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}${REQUEST_INTERGFACE_VERSIONN}/card`,
     method: 'POST',
-    headers: createHeaderContentDataByCardId(data.parent_id),
+    // headers: createHeaderContentDataByCardId(data.parent_id),
     data
   })
 }

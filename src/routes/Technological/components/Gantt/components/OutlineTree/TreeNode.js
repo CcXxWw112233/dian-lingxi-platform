@@ -906,7 +906,11 @@ export default class TreeNode extends Component {
     //仅在任务时需要强is_has_start_time判断
     let contain = ''
     if (start_time && (tree_type == '2' ? is_has_start_time : true)) {
-      contain = dateFormat(start_time, format_type[date_format])
+      contain = (
+        <i style={{ cursor: 'auto', fontStyle: 'normal' }}>
+          {dateFormat(start_time, format_type[date_format])}
+        </i>
+      )
     } else {
       contain = (
         <span
