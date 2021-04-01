@@ -597,7 +597,10 @@ export default class GroupMilestones extends Component {
         style={{
           top: -milestone_base_height,
           left: left + ceilWidth,
-          height: 20
+          height: 20,
+          display: this.setMilestoneFlagShow(one_levels_no_group)
+            ? 'block'
+            : 'none'
         }}
       >
         <div>
@@ -733,7 +736,14 @@ export default class GroupMilestones extends Component {
             <div
               data-targetclassname="specific_example_milestone"
               className={indexStyles.milestone_wrapper}
-              style={{ top, left: left + ceilWidth, height: 20 }}
+              style={{
+                top,
+                left: left + ceilWidth,
+                height: 20,
+                display: this.setMilestoneFlagShow(one_levels)
+                  ? 'block'
+                  : 'none'
+              }}
             >
               {this.renderDropDown(
                 one_levels,
@@ -815,12 +825,19 @@ export default class GroupMilestones extends Component {
             </div>
           )}
         {!!two_levels.length &&
+          gantt_board_id != '0' &&
           this.renderDragWrapper(
             two_levels,
             <div
               data-targetclassname="specific_example_milestone"
               className={indexStyles.milestone_wrapper}
-              style={{ top, left: left + ceilWidth / 2 - 7 }} //移动一半的距离，并且中心位于中间
+              style={{
+                top,
+                left: left + ceilWidth / 2 - 7,
+                display: this.setMilestoneFlagShow(two_levels)
+                  ? 'block'
+                  : 'none'
+              }} //移动一半的距离，并且中心位于中间
             >
               <Dropdown overlay={this.renderLCBList(two_levels, timestamp)}>
                 <div>
@@ -1126,12 +1143,13 @@ export default class GroupMilestones extends Component {
 
   //hover的时候更新携带的关联任务id
   milestoneMouseEnter = debounce(item => {
-    const { rela_ids = [] } = item
+    const { rela_ids = [], id } = item
     const { dispatch } = this.props
     dispatch({
       type: 'gantt/updateDatas',
       payload: {
-        cardids_with_milestone: rela_ids
+        cardids_with_milestone: rela_ids,
+        hover_milestone_id: id
       }
     })
   }, 500)
@@ -1140,19 +1158,21 @@ export default class GroupMilestones extends Component {
     dispatch({
       type: 'gantt/updateDatas',
       payload: {
-        cardids_with_milestone: []
+        cardids_with_milestone: [],
+        hover_milestone_id: ''
       }
     })
   }, 500)
   singleMilestoneMouseEnter = debounce(arr => {
     if (arr.length != 1) return
-    const { rela_ids = [] } = arr[0]
+    const { rela_ids = [], id } = arr[0]
     const { dispatch } = this.props
-    // console.log('ssssssssssadd_0')
+    console.log('ssssssssssadd_0', arr[0])
     dispatch({
       type: 'gantt/updateDatas',
       payload: {
-        cardids_with_milestone: rela_ids
+        cardids_with_milestone: rela_ids,
+        hover_milestone_id: id
       }
     })
   }, 500)
@@ -1161,10 +1181,19 @@ export default class GroupMilestones extends Component {
     dispatch({
       type: 'gantt/updateDatas',
       payload: {
-        cardids_with_milestone: []
+        cardids_with_milestone: [],
+        hover_milestone_id: ''
       }
     })
   }, 500)
+
+  // 设置里程碑棋子显示不显示
+  setMilestoneFlagShow = arr => {
+    const { hover_milestone_id } = this.props
+    if (!hover_milestone_id || !arr.length) return true
+    const bool = arr.findIndex(item => item.id == hover_milestone_id) != -1 //表示该列表有当前hover的里程碑
+    return bool
+  }
   render() {
     const { render_milestones_data = [], dragg_milestone_err } = this.state
     const {
@@ -1228,7 +1257,8 @@ function mapStateToProps({
       list_group,
       group_list_area,
       get_milestone_loading,
-      cardids_with_milestone
+      cardids_with_milestone,
+      hover_milestone_id
     }
   }
 }) {
@@ -1249,6 +1279,7 @@ function mapStateToProps({
     list_group,
     group_list_area,
     get_milestone_loading,
-    cardids_with_milestone
+    cardids_with_milestone,
+    hover_milestone_id
   }
 }
