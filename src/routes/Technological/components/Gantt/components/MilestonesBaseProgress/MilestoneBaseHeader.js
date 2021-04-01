@@ -166,7 +166,8 @@ export default class MilestoneBaseHeader extends Component {
       outline_columns,
       outline_default_columns,
       group_view_type,
-      gantt_board_id
+      gantt_board_id,
+      board_progress
     } = this.props
     const is_outline_view = ganttIsOutlineView({ group_view_type })
     return (
@@ -223,7 +224,7 @@ export default class MilestoneBaseHeader extends Component {
                   })}
               </>
             ) : (
-              <div style={{ paddingRight: 20 }}>56%</div>
+              <div style={{ paddingRight: 20 }}>{board_progress}%</div>
             )}
           </div>
         </div>
@@ -241,6 +242,11 @@ function mapStateToProps({
       group_view_type,
       gantt_board_id
     }
+  },
+  projectDetail: {
+    datas: {
+      projectDetailInfoData: { board_progress }
+    }
   }
 }) {
   return {
@@ -248,6 +254,7 @@ function mapStateToProps({
     outline_default_columns,
     outline_is_show_order,
     group_view_type,
-    gantt_board_id
+    gantt_board_id,
+    board_progress
   }
 }

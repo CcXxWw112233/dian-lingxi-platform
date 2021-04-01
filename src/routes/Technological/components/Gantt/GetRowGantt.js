@@ -1276,7 +1276,7 @@ export default class GetRowGantt extends Component {
                 )
               )
             })}
-          {['1', '4'].includes(group_view_type) && gantt_board_id != '0' && (
+          {['1', '4'].includes(group_view_type) && (
             <GetRowGanttVirtual
               ganttPanelDashedDrag={this.state.drag_creating}
               setDragCreating={this.setDragCreating}

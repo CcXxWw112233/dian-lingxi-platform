@@ -98,7 +98,8 @@ export default {
       }
     ], //大纲显示项
     outline_default_columns: ['item_users_avatar', 'item_times'], ////大纲默认显示项
-    outline_is_show_order: true //大纲显示编号
+    outline_is_show_order: true, //大纲显示编号
+    cardids_with_milestone: [] //hover未分组的里程碑，带出来子集的任务id列表
   },
   effects: {
     *addCardRely({ payload = {} }, { select, call, put }) {
