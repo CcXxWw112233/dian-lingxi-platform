@@ -555,10 +555,10 @@ export default class BeginningStepOne extends Component {
   // 编辑点击事件
   handleEnterConfigureProcess = e => {
     e && e.stopPropagation()
-    if (!this.whetherIsHasPermission()) {
-      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      return
-    }
+    // if (!this.whetherIsHasPermission()) {
+    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    //   return
+    // }
     this.setState({
       isAccomplishNodesIng: true // 表示正在完成中
     })

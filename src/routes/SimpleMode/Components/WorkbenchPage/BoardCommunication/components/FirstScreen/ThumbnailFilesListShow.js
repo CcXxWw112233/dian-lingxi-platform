@@ -472,7 +472,6 @@ class ThumbnailFilesListShow extends Component {
             // scroll={{ y: tableHeight}}
             dataSource={thumbnailFilesList}
             columns={columns}
-            pagination={{ pageSize: 10 }}
             loading={onlyFileTableLoading}
             // pagination={{
             //     pageSize: 6

@@ -469,10 +469,10 @@ export default class BeginningStepThree extends Component {
   // 通过的点击事件
   handlePassProcess = e => {
     e && e.stopPropagation()
-    if (!this.whetherIsHasPermission()) {
-      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      return
-    }
+    // if (!this.whetherIsHasPermission()) {
+    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    //   return
+    // }
     this.setState({
       isPassNodesIng: true // 表示正在通过审批中
     })
