@@ -1779,7 +1779,8 @@ export default class CardItem extends Component {
       ceiHeight,
       list_id,
       projectDetailInfoData: { board_set = {} },
-      cardids_with_milestone
+      cardids_with_milestone,
+      hover_milestone_id
     } = this.props
     const { date_mode } = board_set
     const {
@@ -1974,8 +1975,7 @@ export default class CardItem extends Component {
             : 'none',
           //当hover里程碑的时候，如果不属于当前hover里程碑的任务灰掉
           opacity:
-            cardids_with_milestone.length &&
-            !cardids_with_milestone.includes(id)
+            !!hover_milestone_id && !cardids_with_milestone.includes(id)
               ? '0.2'
               : '1'
         }}
@@ -2471,7 +2471,8 @@ function mapStateToProps({
       notification_todos,
       card_name_outside,
       milestoneMap = {},
-      cardids_with_milestone
+      cardids_with_milestone,
+      hover_milestone_id
     }
   },
   imCooperation: { im_all_latest_unread_messages = [] },
@@ -2499,6 +2500,7 @@ function mapStateToProps({
     card_name_outside,
     milestoneMap,
     projectDetailInfoData,
-    cardids_with_milestone
+    cardids_with_milestone,
+    hover_milestone_id
   }
 }
