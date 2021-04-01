@@ -5,9 +5,20 @@ import {
   timestampToTimeNormal
 } from '@/utils/util'
 import globalStyles from '@/globalset/css/globalClassName.less'
-import { Button, Table, Tooltip, Popconfirm, message } from 'antd'
+import {
+  Button,
+  Table,
+  Tooltip,
+  Popconfirm,
+  message,
+  Dropdown,
+  Menu,
+  Input
+} from 'antd'
 import styles from './CommunicationThumbnailFiles.less'
 import { getSubfixName } from '@/utils/businessFunction.js'
+import { fileReName } from '@/services/technological/file'
+
 import { isApiResponseOk } from '../../../../../../../utils/handleResponseData'
 import { fileRemove } from '../../../../../../../services/technological/file'
 import CustormBadgeDot from '@/components/CustormBadgeDot'
@@ -26,6 +37,7 @@ class ThumbnailFilesListShow extends Component {
     this.state = {
       // currentFileschoiceType: 0, // "0 搜索全部文件 1 搜索子集文件
       // thumbnailFilesList: thumbnailFilesList, // 缩略图数据
+      editting_file_id: ''
     }
     // this.setColumns()
   }
@@ -43,6 +55,15 @@ class ThumbnailFilesListShow extends Component {
     })
   previewFile = data => {
     const { id } = data
+    const { isBatchOperation } = this.props
+    const { input_folder_Id } = this.state
+    if (input_folder_Id) {
+      return
+    }
+    if (isBatchOperation) {
+      this.props.addBatchOperationList(data)
+      return
+    }
     this.props.previewFile(data)
     // 设置已读
     const { im_all_latest_unread_messages, dispatch } = this.props
@@ -58,7 +79,14 @@ class ThumbnailFilesListShow extends Component {
     }
   }
   setColumns = props => {
-    const { im_all_latest_unread_messages, wil_handle_types } = props
+    const {
+      im_all_latest_unread_messages,
+      wil_handle_types,
+      isBatchOperation,
+      fileSelectList
+    } = props
+    const { input_folder_Id } = this.state
+
     this.setState({
       columns: [
         {
@@ -67,6 +95,12 @@ class ThumbnailFilesListShow extends Component {
           key: 'file_name',
           render: (text, record, index) => {
             const { type, id } = record
+
+            const isSelected = fileSelectList.some(function(currentValue) {
+              return
+              record.id == currentValue.id && record.type == currentValue.type
+            })
+
             const getEllipsisFileName = name => {
               let str = name
               if (!name) return
@@ -84,7 +118,7 @@ class ThumbnailFilesListShow extends Component {
               id
             })
             // console.log('sssssssaaasd__', un_read_count)
-
+            // &#xe66a;
             return (
               <div
                 className={styles.fileNameRow}
@@ -107,18 +141,33 @@ class ThumbnailFilesListShow extends Component {
                     }}
                   ></div>
                 )}
-                <span style={{ display: 'flex', position: 'relative' }}>
-                  <span
-                    style={{
-                      maxWidth: '500px',
-                      overflow: 'hidden',
-                      whiteSpace: 'nowrap',
-                      textOverflow: 'ellipsis'
-                    }}
-                  >
-                    {getEllipsisFileName(text)}
-                  </span>
+                <span className={styles.folder_item}>
+                  {input_folder_Id && input_folder_Id == id ? (
+                    <span style={{ height: 25 }}>
+                      <Input
+                        style={{ height: 25 }}
+                        className={styles.folder_input}
+                        autoFocus
+                        defaultValue={getEllipsisFileName(text)}
+                        onChange={this.inputOnchange}
+                        onPressEnter={e => this.inputOnPressEnter(record, e)}
+                        onBlur={e => this.inputOnPressEnter(record, e)}
+                      />
+                    </span>
+                  ) : (
+                    <span
+                      style={{
+                        maxWidth: '500px',
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap',
+                        textOverflow: 'ellipsis'
+                      }}
+                    >
+                      {getEllipsisFileName(text)}
+                    </span>
+                  )}
                   &nbsp;{getSubfixName(text)}
+                  {input_folder_Id}
                   <CustormBadgeDot
                     show_dot={un_read_count > 0}
                     type={'showCount'}
@@ -238,6 +287,48 @@ class ThumbnailFilesListShow extends Component {
     }
     obj[action]()
   }
+  // 渲染菜单
+  renderOperateItemDropMenu = item => {
+    const { itemValue = {} } = this.props
+    const { type } = itemValue
+    return (
+      <Menu onClick={e => this.menuItemClick(item, e)}>
+        <Menu.Item key={1} style={{ width: 248 }}>
+          <span style={{ fontSize: 14, color: `rgba(0,0,0,0.65)`, width: 150 }}>
+            <i className={`${globalStyles.authTheme}`} style={{ fontSize: 16 }}>
+              &#xe86d;
+            </i>{' '}
+            重命名
+          </span>
+        </Menu.Item>
+        <Menu.Item key={3}>
+          <span style={{ fontSize: 14, color: `rgba(0,0,0,0.65)`, width: 150 }}>
+            <i className={`${globalStyles.authTheme}`} style={{ fontSize: 16 }}>
+              &#xe86a;
+            </i>{' '}
+            访问控制
+          </span>
+        </Menu.Item>
+      </Menu>
+    )
+  }
+  menuItemClick = (a, e) => {
+    const { key } = e
+    switch (key) {
+      case '1':
+        this.setIsShowChange(true, a)
+        break
+      case '3':
+        // setBoardIdStorage(this.props.itemValue.board_id)
+        this.toggleVisitControlModal(true, a)
+        break
+      default:
+        break
+    }
+  }
+  toggleVisitControlModal = (flag, item) => {
+    this.props.toggleVisitControlModal(true, item)
+  }
   // 列表操作
   renderKeyOperate = item => {
     return (
@@ -257,6 +348,19 @@ class ThumbnailFilesListShow extends Component {
             &#xe7f1;
           </div>
         </Tooltip>
+        <Dropdown
+          getPopupContainer={triggerNode => triggerNode.parentNode}
+          overlay={this.renderOperateItemDropMenu(item)}
+          trigger={['click']}
+        >
+          <div
+            className={`${globalStyles.authTheme}  ${styles.table_operate}`}
+            style={{ marginRight: 16 }}
+            onClick={e => e.stopPropagation()}
+          >
+            &#xe7fd;
+          </div>
+        </Dropdown>
         <Popconfirm
           title={`确认删除吗？`}
           onConfirm={e => this.actionsManager('delete', item, e)}
@@ -276,20 +380,91 @@ class ThumbnailFilesListShow extends Component {
       </div>
     )
   }
+
+  // 更改名称
+  inputOnPressEnter = (item, e) => {
+    this.requestUpdateFolder(item)
+    this.setIsShowChange(false)
+  }
+  requestUpdateFolder(item) {
+    const { input_folder_value } = this.state
+    const { dispatch } = this.props
+    if (input_folder_value == '' || input_folder_value == item.file_name) {
+      return false
+    }
+    const params = {
+      id: item.id,
+      name: input_folder_value,
+      board_id: item.board_id
+    }
+    // fileReName
+    dispatch({
+      type: 'projectCommunication/getFolderList',
+      payload: params
+    })
+  }
+
+  inputOnchange = e => {
+    const { value } = e.target
+    // if (value.trimLR() == '') {
+    // 	message.warn('文件夹名称不能为空')
+    // 	return false
+    // }
+    this.setState({
+      input_folder_value: value
+    })
+  }
+  setIsShowChange = (flag, item) => {
+    this.setState({
+      input_folder_Id: item ? item.file_id : ''
+    })
+    this.setColumns(this.props)
+  }
+  onSelectChange = selectedRowKeys => {
+    const { dispatch, thumbnailFilesList } = this.props
+    let result = []
+    console.log('selectedRowKeys changed: ', selectedRowKeys)
+    for (let i = 0; i < selectedRowKeys.length; i++) {
+      for (let j = 0; j < thumbnailFilesList.length; j++) {
+        if (selectedRowKeys[i] === thumbnailFilesList[j].id) {
+          let item = {
+            type: thumbnailFilesList[j].type,
+            id: thumbnailFilesList[j].id
+          }
+          result.push(item)
+        }
+      }
+    }
+    dispatch({
+      type: 'projectCommunication/updateDatas',
+      payload: {
+        selectedRowKeys: selectedRowKeys,
+        fileSelectList: result
+      }
+    })
+  }
   render() {
     const {
       thumbnailFilesList = [],
       onlyFileTableLoading,
-      isSearchDetailOnfocusOrOnblur
+      isSearchDetailOnfocusOrOnblur,
+      isBatchOperation,
+      fileSelectList,
+      selectedRowKeys
     } = this.props
+    const rowSelection = {
+      selectedRowKeys,
+      onChange: this.onSelectChange
+    }
+
     const { columns } = this.state
     // console.log('isSearchDetailOnfocusOrOnblur',isSearchDetailOnfocusOrOnblur);
     const isShow = isSearchDetailOnfocusOrOnblur
     return (
       <div
-        className={`${styles.thumbnailFilesList} ${
-          globalStyles.global_vertical_scrollbar
-        } ${isShow ? styles.changeHeight : ''}`}
+        className={`${styles.thumbnailFilesList}
+        ${globalStyles.global_vertical_scrollbar} 
+        ${isShow ? styles.changeHeight : ''}`}
       >
         {thumbnailFilesList.length ? <Table
           // style={{height:500}}
@@ -303,11 +478,16 @@ class ThumbnailFilesListShow extends Component {
           // }}
           pagination={false}
           rowKey={record => record.file_id}
+<<<<<<< HEAD
         /> :
           <div className={styles.dropText}>
             <span>拖拽到此处或文件夹，完成上传，同样支持按钮点击上传</span>
           </div>}
 
+=======
+          rowSelection={isBatchOperation ? rowSelection : ''}
+        />
+>>>>>>> feature/llq
       </div>
     )
   }
@@ -318,9 +498,16 @@ ThumbnailFilesListShow.defaultProps = {
 }
 
 function mapStateToProps({
-  imCooperation: { im_all_latest_unread_messages, wil_handle_types = [] }
+  imCooperation: { im_all_latest_unread_messages, wil_handle_types = [] },
+  projectCommunication: { isBatchOperation, fileSelectList, selectedRowKeys }
 }) {
-  return { im_all_latest_unread_messages, wil_handle_types }
+  return {
+    im_all_latest_unread_messages,
+    wil_handle_types,
+    isBatchOperation,
+    fileSelectList,
+    selectedRowKeys
+  }
 }
 
 export default DragProvider(ThumbnailFilesListShow)

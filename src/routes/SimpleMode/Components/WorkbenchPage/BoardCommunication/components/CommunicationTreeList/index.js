@@ -1,9 +1,19 @@
 import React, { Component } from 'react'
 import { connect } from 'dva'
-import { Collapse, Icon, message, Tree, Button } from 'antd'
+import {
+  Collapse,
+  Icon,
+  message,
+  Tree,
+  Button,
+  Dropdown,
+  Menu,
+  Input
+} from 'antd'
 import {
   getOrgNameWithOrgIdFilter,
-  isPaymentOrgUser
+  isPaymentOrgUser,
+  checkRoleAndMemberVisitControlPermissions
 } from '@/utils/businessFunction'
 import { getFileList } from '@/services/technological/file.js'
 import { isApiResponseOk } from '@/utils/handleResponseData'
@@ -14,6 +24,18 @@ import {
   folderItemHasUnReadNo
 } from '../../../../../../Technological/components/Gantt/ganttBusiness'
 import globalStyles from '@/globalset/css/globalClassName.less'
+import {
+  fileRemove,
+  updateFolder
+} from '../../../../../../../services/technological/file'
+import {
+  PROJECT_FILES_FILE_INTERVIEW,
+  NOT_HAS_PERMISION_COMFIRN,
+  MESSAGE_DURATION_TIME,
+  PROJECT_FILES_FILE_UPDATE,
+  PROJECT_FILES_FOLDER
+} from '../../../../../../../globalset/js/constant'
+import Item from 'antd/lib/list/Item'
 import DragProvider from '../../../../../../../components/DragProvider'
 
 const { Panel } = Collapse
@@ -23,7 +45,9 @@ const { TreeNode, DirectoryTree } = Tree
 class ShowHeader extends Component {
   constructor(props) {
     super(props)
-    this.state = {}
+    this.state = {
+      actionList: ['重命名', '访问控制', '删除']
+    }
   }
 
   render() {
@@ -76,7 +100,44 @@ class TreeTitle extends Component {
   }
 
   render() {
-    const { folder_name, un_read_count } = this.props
+    const {
+      folder_name,
+      un_read_count,
+      item,
+      input_folder_id,
+      renderMoreMenu
+    } = this.props
+    return (
+      <span>
+        <span style={{ position: 'relative' }}>
+          {input_folder_id == item.folder_id ? (
+            <Input
+              className={styles.folder_input}
+              style={{ height: 25 }}
+              autoFocus
+              defaultValue={item.folder_name}
+              onChange={this.inputOnchange}
+              onPressEnter={e => this.inputOnPressEnter(item, e)}
+              onBlur={e => this.inputOnPressEnter(item, e)}
+            />
+          ) : (
+            item.folder_name
+          )}
+          <CustormBadgeDot
+            show_dot={un_read_count > 0}
+            type={'showCount'}
+            count={un_read_count}
+            right={-6}
+            top={-4}
+          />
+        </span>
+        <span className={styles.dropDown_icon}>
+          <Dropdown trigger={['click']} overlay={renderMoreMenu(item)}>
+            <span className={`${globalStyles.authTheme}`}>&#xe7fd;</span>
+          </Dropdown>
+        </span>
+      </span>
+    )
     return (
       <span style={{ position: 'relative' }}>
         {folder_name}
@@ -110,6 +171,122 @@ export default class CommunicationTreeList extends Component {
       // is_show_board_file_area,
       boards_flies = []
     } = this.props
+  }
+
+  // 重命名
+  handleRename = folder_id => {
+    this.setState({
+      folder_id: folder_id,
+      current_action: 'rename'
+    })
+  }
+  menuItemClick = (e, item) => {
+    e.domEvent.stopPropagation()
+    const { key } = e
+    switch (key) {
+      case '1':
+        debugger
+
+        const { projectDetailInfoData } = this.props
+        const privileges = item.privileges
+        const board_id = item.board_id
+        const is_privilege = item.is_privilege
+        // /**
+        //  * 个人信息
+        //  */
+        const userInfo = JSON.parse(localStorage.getItem('userInfo'))
+        /**
+         * 角色信息
+         */
+        const role =
+          projectDetailInfoData.data &&
+          projectDetailInfoData.data.find(item => item.user_id === userInfo.id)
+        if (
+          !checkRoleAndMemberVisitControlPermissions({
+            privileges,
+            board_id,
+            board_permissions_code: [
+              PROJECT_FILES_FOLDER,
+              PROJECT_FILES_FILE_UPDATE
+            ],
+            role_id: role ? role.role_id : '',
+            is_privilege: is_privilege
+          })
+        ) {
+          setTimeout(() => {
+            message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          }, 50)
+          return
+        }
+
+        this.setIsShowChange(true, item)
+        break
+      case '2':
+        this.requestRemoveItem(item)
+        break
+      case '3':
+        // setBoardIdStorage(this.props.itemValue.board_id)
+        this.toggleVisitControlModal(true, item)
+        break
+      default:
+        break
+    }
+  }
+  // 删除文件
+  requestRemoveItem = async item => {
+    const { dispatch } = this.props
+    const {
+      // itemValue: { board_id, privileges = [], is_privilege },
+      projectDetailInfoData
+    } = this.props
+    const board_id = item.board_id
+    const current_folder_id = item.folder_id
+
+    // const {
+    // getFolderFileList,
+    // } = this.props
+    const { id, type } = item
+    const params = {
+      board_id,
+      arrays: JSON.stringify([{ type, id }])
+    }
+    const res = await fileRemove(params)
+    if (isApiResponseOk(res)) {
+      // getFolderFileList({ id: current_folder_id })
+      this.props.queryCommunicationFileData()
+      this.props.getCommunicationFolderList(board_id)
+    } else {
+      message.error(res.message)
+    }
+  }
+  // 修改文件夹名
+  requestUpdateFolder = async Item => {
+    const { input_folder_value } = this.state
+    const { dispatch } = this.props
+    if (input_folder_value == '' || input_folder_value == Item.folder_name) {
+      return false
+    }
+    const params = {
+      board_id: Item.board_id,
+      folder_id: Item.folder_id,
+      folder_name: input_folder_value
+    }
+    const res = await updateFolder(params)
+    if (isApiResponseOk(res)) {
+      this.setState({
+        local_name: input_folder_value
+      })
+      this.props.queryCommunicationFileData()
+      this.props.getCommunicationFolderList(Item.board_id)
+    } else {
+      message.warn(res.message)
+    }
+  }
+  setIsShowChange = (flag, item) => {
+    console.log(item)
+    this.setState({
+      input_folder_id: item ? item.folder_id : ''
+    })
   }
 
   // // 显示项目目录名（一级）
@@ -151,14 +328,66 @@ export default class CommunicationTreeList extends Component {
   //   )
   // }
 
+  // 更改名称
+  inputOnPressEnter = (item, e) => {
+    this.requestUpdateFolder(item)
+    this.setIsShowChange(false)
+  }
+  inputOnBlur = e => {
+    this.setIsShowChange(false)
+  }
+  inputOnchange = e => {
+    const { value } = e.target
+    this.setState({
+      input_folder_value: value
+    })
+  }
+  toggleVisitControlModal = (flag, item) => {
+    this.props.toggleVisitControlModal(true, item)
+  }
+  renderMoreMenu = item => {
+    const { type } = item
+    return (
+      <Menu onClick={e => this.menuItemClick(e, item)}>
+        <Menu.Item key={1} style={{ width: 248 }}>
+          <span style={{ fontSize: 14, color: `rgba(0,0,0,0.65)`, width: 248 }}>
+            <i className={`${globalStyles.authTheme}`} style={{ fontSize: 16 }}>
+              &#xe86d;
+            </i>{' '}
+            重命名
+          </span>
+        </Menu.Item>
+        <Menu.Item key={3}>
+          <span style={{ fontSize: 14, color: `rgba(0,0,0,0.65)`, width: 248 }}>
+            <i className={`${globalStyles.authTheme}`} style={{ fontSize: 16 }}>
+              &#xe86a;
+            </i>{' '}
+            访问控制
+          </span>
+        </Menu.Item>
+        <Menu.Item key={2}>
+          <span style={{ fontSize: 14, color: `rgba(0,0,0,0.65)`, width: 248 }}>
+            <i className={`${globalStyles.authTheme}`} style={{ fontSize: 16 }}>
+              &#xe68d;
+            </i>{' '}
+            删除
+          </span>
+        </Menu.Item>
+      </Menu>
+    )
+  }
+  getNewFolderName = e => {
+    console.log(e.target.value)
+  }
   // 渲染当前项目子节点树
   renderTreeNodes = (communicationSubFolderData, board_id) =>
     communicationSubFolderData.map(item => {
-      const { type = '1', folder_id, id } = item
+      const { type = '1', folder_name, id } = item
+      const { folder_id, input_folder_value, input_folder_id } = this.state
       const { im_all_latest_unread_messages, wil_handle_types } = this.props
       const un_read_count = folderItemHasUnReadNo({
         type,
-        relaDataId: folder_id,
+        relaDataId: item.folder_id,
         im_all_latest_unread_messages,
         wil_handle_types
       })
@@ -174,8 +403,11 @@ export default class CommunicationTreeList extends Component {
                 }}
                 un_read_count={un_read_count}
                 board_id={board_id}
-                folder_id={folder_id}
+                folder_id={item.folder_id}
                 folder_name={item.folder_name}
+                item={item}
+                input_folder_id={input_folder_id}
+                renderMoreMenu={() => this.renderMoreMenu(item)}
               />
             }
             key={item.folder_id}
@@ -198,6 +430,9 @@ export default class CommunicationTreeList extends Component {
               board_id={board_id}
               folder_id={folder_id}
               folder_name={item.folder_name}
+              item={item}
+              input_folder_id={input_folder_id}
+              renderMoreMenu={() => this.renderMoreMenu(item)}
             />
           }
           key={item.folder_id}
@@ -338,6 +573,9 @@ function mapStateToProps({
   technological: {
     datas: { currentUserOrganizes = [], is_show_org_name, is_all_org }
   },
+  projectDetail: {
+    datas: { projectDetailInfoData = {} }
+  },
   imCooperation: { im_all_latest_unread_messages, wil_handle_types = [] },
   // projectCommunication:{
   //     count,
@@ -359,6 +597,7 @@ function mapStateToProps({
     communicationSubFolderData,
     expandedKeys,
     im_all_latest_unread_messages,
-    wil_handle_types
+    wil_handle_types,
+    projectDetailInfoData
   }
 }

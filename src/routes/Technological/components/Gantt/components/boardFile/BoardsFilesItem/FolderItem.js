@@ -845,6 +845,7 @@ class FolderItem extends Component {
       fileOrFolderName,
       visitControlOtherPersonOperatorMenuItem
     } = this.genVisitContorlData(itemValue)
+
     const new_projectParticipant =
       privileges_extend && privileges_extend.length
         ? arrayNonRepeatfy([].concat(...privileges_extend))

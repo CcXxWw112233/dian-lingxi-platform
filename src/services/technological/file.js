@@ -4,7 +4,8 @@ import {
   CONTENT_DATA_TYPE_FILE,
   CONTENT_DATA_TYPE_FOLDER,
   CONTENT_DATA_TYPE_CARD,
-  REQUEST_INTERGFACE_VERSIONN
+  REQUEST_INTERGFACE_VERSIONN,
+  REQUEST_DOMAIN_BOARD
 } from '../../globalset/js/constant'
 import request from '../../utils/requestAxios'
 import { getGlobalData } from '../../utils/businessFunction'
@@ -387,6 +388,35 @@ export async function getArchiveBoardFileList(params) {
 export async function searchArchives(data) {
   return request({
     url: `${REQUEST_DOMAIN_FILE}/archived/search`,
+    method: 'POST',
+    data
+  })
+}
+
+/**
+ * 文件重命名
+ * @param {*} params
+ * @returns
+ */
+export async function fileReName(params) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/file`,
+    method: 'PUT',
+    headers: params.folder_id
+      ? createHeaderContentData(CONTENT_DATA_TYPE_FILE, params.folder_id)
+      : {},
+    data: params
+  })
+}
+/**
+ * 批量删除
+ * @param
+ * @returns
+ */
+
+export async function batchOperationFileDelete(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_FILE}/file/remove`,
     method: 'POST',
     data
   })
