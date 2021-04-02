@@ -599,9 +599,7 @@ export default class GetRowStrip extends PureComponent {
             //     ? ceilWidth / 2
             //     : ceilWidth * 2)
             opacity:
-              !!hover_milestone_id && !cardids_with_milestone.includes(id)
-                ? '0.2'
-                : '1'
+              !!hover_milestone_id && hover_milestone_id != id ? '0.2' : '1'
           }}
         >
           <div className={styles.left_triangle}></div>
@@ -708,9 +706,7 @@ export default class GetRowStrip extends PureComponent {
           left: marginLeft,
           paddingLeft,
           opacity:
-            !!hover_milestone_id && !cardids_with_milestone.includes(id)
-              ? '0.2'
-              : '1'
+            !!hover_milestone_id && hover_milestone_id != id ? '0.2' : '1'
         }}
       >
         <Tooltip
