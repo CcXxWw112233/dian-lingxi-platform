@@ -125,9 +125,9 @@ export default class GroupMilestones extends Component {
 
     for (let key in milestoneMap) {
       const sameday_milestones_no_group = milestoneMap[key].filter(
-        item =>
-          (!item.parent_id || item.parent_id == '0') &&
-          (!item.list_id || item.list_id == '0')
+        item => !item.parent_id || item.parent_id == '0'
+        // &&
+        // (!item.list_id || item.list_id == '0')
       ) //得到同一天的没有归属分组的一级里程碑
 
       finally_milestones.push({
@@ -177,11 +177,17 @@ export default class GroupMilestones extends Component {
           (!item.parent_id || item.parent_id == '0') &&
           (!item.list_id || item.list_id == '0')
       ) //一级里程碑(没有分组归属)
-
+      // 全部一级里程碑
+      const one_levels_all = val.milestones.filter(
+        item => !item.parent_id || item.parent_id == '0'
+      ) //一级里程碑(具有分组)
       const one_levels_no_group_completed =
         one_levels_no_group.findIndex(item => item.is_all_realized == '0') ==
         '-1' //一级里程碑是否全部完成
-
+      const one_levels_all_completed =
+        one_levels_all.findIndex(item => item.is_all_realized == '0') == -1 //全部一级里程碑是否全部完成
+      val.one_levels_all = one_levels_all
+      val.one_levels_all_completed = one_levels_all_completed
       val.one_levels = one_levels
       val.two_levels = two_levels
       val.one_levels_no_group = one_levels_no_group
@@ -280,6 +286,8 @@ export default class GroupMilestones extends Component {
   ) => {
     // return
     for (let val of milestones) {
+      const is_over_duetime =
+        transformTimestamp(val.timestamp) < new Date().getTime() //超过时间
       const one_levels_no_group = val.milestones.filter(
         item =>
           (!item.parent_id || item.parent_id == '0') &&
@@ -289,8 +297,18 @@ export default class GroupMilestones extends Component {
       const one_levels_no_group_completed =
         one_levels_no_group.findIndex(item => item.is_all_realized == '0') ==
         '-1' //一级里程碑是否全部完成
+
+      // 全部一级里程碑
+      const one_levels_all = val.milestones.filter(
+        item => !item.parent_id || item.parent_id == '0'
+      ) //一级里程碑(具有分组)
+      const one_levels_all_completed =
+        one_levels_all.findIndex(item => item.is_all_realized == '0') == -1 //全部一级里程碑是否全部完成
+      val.one_levels_all = one_levels_all
+      val.one_levels_all_completed = one_levels_all_completed
       val.one_levels_no_group = one_levels_no_group
       val.one_levels_no_group_completed = one_levels_no_group_completed
+      // val.is_over_duetime = is_over_duetime
       let left_index
       // 各个视图做位置的索引
       if (['month', 'relative_time'].includes(gantt_view_mode)) {
@@ -363,6 +381,7 @@ export default class GroupMilestones extends Component {
       })
       val.top = group_list_area_section_height[top_index - 1] || 0 //在所属分组的顶层
     }
+    console.log('ssssssssss_milestones', milestones)
     this.setState({
       render_milestones_data: milestones
     })
@@ -587,13 +606,17 @@ export default class GroupMilestones extends Component {
     const { group_view_type } = this.props
     const {
       left,
-      one_levels_no_group_completed,
+      one_levels_all_completed,
       is_over_duetime,
       timestamp,
       belong_group_id,
-      one_levels_no_group
+      one_levels_all
     } = value
-    const { ceilWidth, gantt_board_id } = this.props
+    const {
+      ceilWidth,
+      gantt_board_id,
+      group_list_area_section_height
+    } = this.props
     return (
       <div
         data-targetclassname="specific_example_milestone"
@@ -602,21 +625,21 @@ export default class GroupMilestones extends Component {
           top: -milestone_base_height,
           left: left + ceilWidth,
           height: 20,
-          opacity: this.setMilestoneFlagShow(one_levels_no_group) ? '1' : '0.2'
+          opacity: this.setMilestoneFlagShow(one_levels_all) ? '1' : '0.2'
         }}
       >
         <div>
           {this.renderDropDown(
-            one_levels_no_group,
-            this.renderLCBList(one_levels_no_group, timestamp, {
+            one_levels_all,
+            this.renderLCBList(one_levels_all, timestamp, {
               marginTop: -10
             }),
             <div
               onMouseEnter={() =>
-                this.singleMilestoneMouseEnter(one_levels_no_group)
+                this.singleMilestoneMouseEnter(one_levels_all)
               }
               onMouseLeave={() =>
-                this.singleMilestoneMouseLeave(one_levels_no_group)
+                this.singleMilestoneMouseLeave(one_levels_all)
               }
             >
               {/* 旗帜 */}
@@ -626,7 +649,7 @@ export default class GroupMilestones extends Component {
                 style={{
                   color: this.setMiletonesColor({
                     is_over_duetime,
-                    is_all_realized: one_levels_no_group_completed
+                    is_all_realized: one_levels_all_completed
                   })
                 }}
               >
@@ -647,11 +670,11 @@ export default class GroupMilestones extends Component {
                   ),
                   color: this.setMiletonesColor({
                     is_over_duetime,
-                    is_all_realized: one_levels_no_group_completed
+                    is_all_realized: one_levels_all_completed
                   })
                 }}
               >
-                {this.renderMiletonesNames(one_levels_no_group)}
+                {this.renderMiletonesNames(one_levels_all)}
               </div>
               {/* 旗杆 */}
               <div
@@ -660,7 +683,7 @@ export default class GroupMilestones extends Component {
                 style={{
                   background: this.setMiletonesColor({
                     is_over_duetime,
-                    is_all_realized: one_levels_no_group_completed
+                    is_all_realized: one_levels_all_completed
                   })
                 }}
                 onMouseDown={e => e.stopPropagation()}
@@ -675,14 +698,18 @@ export default class GroupMilestones extends Component {
               data-targetclassname="specific_example_milestone"
               className={`${indexStyles.board_miletiones_flagpole}`}
               style={{
-                height: this.setThroughLineHeight({
-                  belong_group_id,
-                  one_levels: one_levels_no_group
-                }),
+                // height: this.setThroughLineHeight({
+                //   belong_group_id,
+                //   one_levels: one_levels_all
+                // }),
+                height:
+                  group_list_area_section_height[
+                    group_list_area_section_height.length - 1
+                  ],
                 display: gantt_board_id == '0' ? 'none' : 'block',
                 background: this.setMiletonesColor({
                   is_over_duetime,
-                  is_all_realized: one_levels_no_group_completed
+                  is_all_realized: one_levels_all_completed
                 })
               }}
               onMouseDown={e => e.stopPropagation()}
@@ -726,13 +753,13 @@ export default class GroupMilestones extends Component {
       two_levels,
       timestamp,
       belong_group_id,
-      one_levels_no_group
+      one_levels_all
     } = value
     return (
       <>
-        {!!one_levels_no_group.length &&
+        {!!one_levels_all.length &&
           this.renderDragWrapper(
-            one_levels_no_group,
+            one_levels_all,
             this.renderNoGroupOneLevelMilestone(value)
           )}
         {!!one_levels.length &&
@@ -1223,12 +1250,12 @@ export default class GroupMilestones extends Component {
           })}
         {group_view_type == '4' &&
           render_milestones_data.map(item => {
-            const { one_levels_no_group } = item
+            const { one_levels_all } = item
             return (
               <React.Fragment key={`${item.timestamp} ${dragg_milestone_err}`}>
-                {!!one_levels_no_group.length &&
+                {!!one_levels_all.length &&
                   this.renderDragWrapper(
-                    one_levels_no_group,
+                    one_levels_all,
                     this.renderNoGroupOneLevelMilestone(item)
                   )}
               </React.Fragment>
