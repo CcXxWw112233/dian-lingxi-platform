@@ -132,6 +132,13 @@ class ThumbnailFilesListShow extends Component {
                       width="100px"
                       alt=""
                     />
+                    <CustormBadgeDot
+                      show_dot={un_read_count > 0}
+                      type={'showCount'}
+                      count={un_read_count}
+                      top={-4}
+                      right={-6}
+                    />
                   </div>
                 ) : (
                   <div
@@ -167,13 +174,6 @@ class ThumbnailFilesListShow extends Component {
                     </span>
                   )}
                   &nbsp;{getSubfixName(text)}
-                  <CustormBadgeDot
-                    show_dot={un_read_count > 0}
-                    type={'showCount'}
-                    count={un_read_count}
-                    top={-4}
-                    right={-6}
-                  />
                 </span>
                 {/* <span>{text}</span> */}
               </div>
