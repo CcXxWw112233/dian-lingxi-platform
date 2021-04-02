@@ -220,11 +220,11 @@ export default class CommunicationTreeList extends Component {
         this.setIsShowChange(true, item)
         break
       case '2':
-        this.requestRemoveItem(item)
+        this.requestRemoveItem(item) //删除文件
         break
       case '3':
         // setBoardIdStorage(this.props.itemValue.board_id)
-        this.toggleVisitControlModal(true, item)
+        this.toggleVisitControlModal(true, item) //访问权限
         break
       default:
         break
@@ -374,13 +374,28 @@ export default class CommunicationTreeList extends Component {
   inputOnBlur = e => {
     this.setIsShowChange(false)
   }
+  // 获取输入的修改文件夹名称
   inputOnchange = e => {
-    console.log(e)
     const { value } = e.target
     this.setState({
       input_folder_value: value
     })
   }
+  // 点击底部新增文件夹 显示输入框
+  addNewFloderInputShow = () => {
+    const { dispatch, currentSelectBoardId } = this.props
+    if (currentSelectBoardId) {
+      dispatch({
+        type: 'projectCommunication/updateDatas',
+        payload: {
+          isAddNewFolder: true
+        }
+      })
+    } else {
+      message.error(`请选择相应的项目新增文件夹`)
+    }
+  }
+
   // 新增文件夹
   newFloderInputOnchange = e => {
     const { value } = e.target
@@ -664,6 +679,14 @@ export default class CommunicationTreeList extends Component {
                       )
                     )
                   })}
+                <span className={styles.addNewFolder}>
+                  <Button
+                    className={styles.addNewFolder_button}
+                    onClick={this.addNewFloderInputShow}
+                  >
+                    + 新增文件夹
+                  </Button>
+                </span>
               </Collapse>
             </div>
           </div>

@@ -321,6 +321,8 @@ export default class CommunicationThumbnailFiles extends Component {
   //   debugger
   //   this.props.toggleVisitControlModal(flag, item)
   // }
+
+  // 选中的文件
   addBatchOperationList = value => {
     var { fileSelectList, dispatch } = this.props
     if (fileSelectList && fileSelectList.length > 0) {
@@ -499,9 +501,9 @@ export default class CommunicationThumbnailFiles extends Component {
             <dev className={styles.markString}>
               拖拽文件至文件夹或文件夹内，完成上传，同拖拽文件至文件夹或文件夹内，完成上传，同样支持点击上传
             </dev>
-            <dev className={styles.fileOperation} onClick={this.addNewFolder}>
+            {/* <dev className={styles.fileOperation} onClick={this.addNewFolder}>
               新建文件夹
-            </dev>
+            </dev> */}
             {bread_paths && bread_paths.length ? (
               <dev className={styles.fileOperation}>{this.renderUpload()} </dev>
             ) : (
