@@ -270,7 +270,7 @@ export default class CommunicationTreeList extends Component {
     }
 
     const params = {
-      board_id: Item.board_id,
+      board_id: board_id,
       folder_id: Item.folder_id,
       folder_name: input_folder_value
     }
@@ -280,16 +280,7 @@ export default class CommunicationTreeList extends Component {
         local_name: input_folder_value
       })
       let folderList = communicationSubFolderData.child_data
-      // let communicationSubFolderList = communicationSubFolderData
 
-      // folderList.forEach((elem, index) => {
-      // if (elem.folder_id === Item.folder_id) {
-      // let item = Item
-      // item.folder_name = input_folder_value
-      // folderList[index] = item
-      // communicationSubFolderList.child_data = folderList
-      // }
-      // })
       let communicationSubFolderList = this.updateFolderList(
         communicationSubFolderData,
         Item.folder_id,

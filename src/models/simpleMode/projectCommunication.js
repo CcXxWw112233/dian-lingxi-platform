@@ -167,8 +167,8 @@ export default {
     // 文件删除
     *fileRemove({ payload }, { select, call, put }) {
       const res = yield call(fileRemove, payload)
+      const {folder_id,board_id} = payload
       if (isApiResponseOk(res)) {
-        message.success('删除成功')
       } else {
         message.error(res.message)
       }
@@ -195,7 +195,6 @@ export default {
     *batchOperationFileDelete({ payload }, { select, call, put }) {
       const res = yield call(batchOperationFileDelete, payload)
       const { board_id, folder_id } = payload
-      debugger
       if (isApiResponseOk(res)) {
         // yield put({
         // type: 'projectCommunication/getOnlyFileList',
