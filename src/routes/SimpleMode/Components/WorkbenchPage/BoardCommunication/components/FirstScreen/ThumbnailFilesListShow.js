@@ -325,6 +325,7 @@ class ThumbnailFilesListShow extends Component {
         break
     }
   }
+  // 访问权限
   toggleVisitControlModal = (flag, item) => {
     this.props.toggleVisitControlModal(true, item)
   }
