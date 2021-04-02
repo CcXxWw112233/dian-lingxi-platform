@@ -348,7 +348,7 @@ export async function deleteTaskFile(data) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/card/attachment/${data.attachment_id}`,
     method: 'DELETE',
-    headers: createHeaderContentDataByCardId(data.card_id),
+    headers: {}, // createHeaderContentDataByCardId(data.card_id),
     data
   })
 }

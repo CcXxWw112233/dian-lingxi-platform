@@ -391,7 +391,7 @@ export default class GroupMilestones extends Component {
   }
 
   // 根据下一个里程碑日期，来获取当前里程碑日期的‘name1,name2,name3...’应该有的宽度
-  setMiletonesNamesWidth = ({ timestamp, top, belong_group_id }) => {
+  setMiletonesNamesWidth = ({ timestamp, top, belong_group_id }, no_group) => {
     const {
       milestoneMap = {},
       ceilWidth,
@@ -414,28 +414,32 @@ export default class GroupMilestones extends Component {
           ) != -1
       )
     } else {
-      times_arr = times_arr.filter(time => {
-        return (
-          milestoneMap[time].findIndex(
-            item =>
-              (item.list_id || list_group[0].lane_id) ==
-              (!!belong_group_id && belong_group_id != '0'
-                ? belong_group_id
-                : '0')
-          ) != -1
-        )
-      })
+      if (!no_group) {
+        times_arr = times_arr.filter(time => {
+          return (
+            milestoneMap[time].findIndex(
+              item =>
+                (item.list_id || list_group[0].lane_id) ==
+                (!!belong_group_id && belong_group_id != '0'
+                  ? belong_group_id
+                  : '0')
+            ) != -1
+          )
+        })
+      }
     }
     times_arr = times_arr.sort((a, b) => Number(a) - Number(b))
     const index = times_arr.findIndex(item => isSamDay(item, timestamp)) //对应上当前日期所属的下标
     const next_miletones_time = times_arr[index + 1] //当前里程碑日期的对应下一个里程碑日期所在时间
     // 除了最后一个里程碑宽度为auto 还有就是不在同一个分组或者项目的里程碑 最后一个为auto
     // 18 是里程碑旗子宽度
-    if (
-      !next_miletones_time ||
-      (top == top_arr.top && miletones_position == top_arr.list.length - 1)
-    ) {
-      return 'none'
+    if (!next_miletones_time) {
+      return 200
+    }
+    if (!no_group) {
+      if (top == top_arr.top && miletones_position == top_arr.list.length - 1) {
+        return 'none'
+      }
     }
     if (gantt_view_mode == 'month') {
       if (caldiffDays(timestamp, next_miletones_time) <= 1) {
@@ -598,9 +602,7 @@ export default class GroupMilestones extends Component {
           top: -milestone_base_height,
           left: left + ceilWidth,
           height: 20,
-          display: this.setMilestoneFlagShow(one_levels_no_group)
-            ? 'block'
-            : 'none'
+          opacity: this.setMilestoneFlagShow(one_levels_no_group) ? '1' : '0.2'
         }}
       >
         <div>
@@ -635,11 +637,14 @@ export default class GroupMilestones extends Component {
                 className={`${indexStyles.board_miletiones_names} ${globalStyles.global_ellipsis}`}
                 data-targetclassname="specific_example_milestone"
                 style={{
-                  // maxWidth: this.setMiletonesNamesWidth({
-                  //   timestamp,
-                  //   top: -milestone_base_height,
-                  //   belong_group_id
-                  // }),
+                  maxWidth: this.setMiletonesNamesWidth(
+                    {
+                      timestamp,
+                      top: -milestone_base_height,
+                      belong_group_id
+                    },
+                    true
+                  ),
                   color: this.setMiletonesColor({
                     is_over_duetime,
                     is_all_realized: one_levels_no_group_completed
@@ -740,9 +745,7 @@ export default class GroupMilestones extends Component {
                 top,
                 left: left + ceilWidth,
                 height: 20,
-                display: this.setMilestoneFlagShow(one_levels)
-                  ? 'block'
-                  : 'none'
+                opacity: this.setMilestoneFlagShow(one_levels) ? '1' : '0.2'
               }}
             >
               {this.renderDropDown(
@@ -834,9 +837,7 @@ export default class GroupMilestones extends Component {
               style={{
                 top,
                 left: left + ceilWidth / 2 - 7,
-                display: this.setMilestoneFlagShow(two_levels)
-                  ? 'block'
-                  : 'none'
+                opacity: this.setMilestoneFlagShow(two_levels) ? '1' : '0.2'
               }} //移动一半的距离，并且中心位于中间
             >
               <Dropdown overlay={this.renderLCBList(two_levels, timestamp)}>
