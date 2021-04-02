@@ -54,7 +54,7 @@ const DefineIcon = Icon.createFromIconfontCN({
 fabric.Object.prototype.transparentCorners = false
 fabric.Object.prototype.cornerColor = 'blue'
 fabric.Object.prototype.cornerStyle = 'circle'
-@connect(() => ({}))
+@connect(mapStateToProps)
 export default class PdfComment extends React.Component {
   constructor(props) {
     super(props)
@@ -2813,19 +2813,35 @@ export default class PdfComment extends React.Component {
   }
   // 确认删除
   confirmFileOperationDelete = () => {
-    const { dispatch, thumbnailFilesList = [], board_id, file_id } = this.props
+    const { dispatch, onlyFileList = [], board_id, file_id,folder_id } = this.props
     const params = {
       board_id,
+      folder_id,
       arrays: JSON.stringify([{ type: '2', id: file_id }])
     }
-    dispatch({
+    Promise.resolve(
+      dispatch({
       type: 'projectCommunication/fileRemove',
       payload: params
     })
-    console.log(DEvent, FILEDELETE)
-    DEvent.firEvent(FILEDELETE, 'delete') //文件删除监听
-
-    this.cancelFileOperationDelete()
+    )
+    .then(() => {
+      DEvent.firEvent(FILEDELETE, 'delete') //文件删除监听
+          this.cancelFileOperationDelete()
+          // 删除本地文件夹数据
+          const new_onlyFileList = onlyFileList.filter(
+            item => item.id != file_id
+          )
+            dispatch({
+              type: 'projectCommunication/updateDatas',
+              payload: {
+                onlyFileList: new_onlyFileList
+              }
+            })
+          })
+    .catch(e => console.log('error in boardDetail: ' + e))
+   
+    
   }
   render() {
     let {
@@ -3271,4 +3287,12 @@ PdfComment.prototype.resize = function() {
       item.calcOffset()
     }
   })()
+}
+
+function mapStateToProps({
+  projectCommunication: { onlyFileList }
+}) {
+  return {
+    onlyFileList
+  }
 }
