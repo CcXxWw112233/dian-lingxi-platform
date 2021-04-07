@@ -436,18 +436,18 @@ export default class GetRowGantt extends Component {
         drag_holiday_count: 0
       },
       () => {
-        if (gantt_view_mode == 'year') {
-          this.handleCreateTask({
-            start_end: '1',
-            top: property.y,
-            not_create: true
-          })
-          this.handleCreateTask({
-            start_end: '2',
-            top: property.y,
-            not_create: true
-          })
-        }
+        // if (gantt_view_mode == 'year') {
+        this.handleCreateTask({
+          start_end: '1',
+          top: property.y,
+          not_create: true
+        })
+        this.handleCreateTask({
+          start_end: '2',
+          top: property.y,
+          not_create: true
+        })
+        // }
       }
     )
   }
@@ -980,80 +980,97 @@ export default class GetRowGantt extends Component {
       !card_rely_draging &&
       !task_is_dragging &&
       !ganttIsOutlineView({ group_view_type }) && (
-        <div
-          title={'点击或向右拖拽创建任务'}
-          className={indexStyles.dasheRect}
-          style={{
-            left: currentRect.x + 1,
-            top: currentRect.y,
-            minWidth: gantt_view_mode == 'year' ? 6 : 0,
-            width: currentRect.width,
-            height: ganttIsFold({
-              gantt_board_id,
-              group_view_type,
-              show_board_fold,
-              gantt_view_mode
-            })
-              ? task_item_height_fold
-              : task_item_height, //currentRect.height,
-            boxSizing: 'border-box',
-            marginTop: !ganttIsFold({
-              gantt_board_id,
-              group_view_type,
-              show_board_fold,
-              gantt_view_mode
-            })
-              ? task_item_margin_top
-              : (ceil_height_fold * group_rows_fold - task_item_height_fold) /
-                2, //task_item_margin_top,//
-            color: 'rgba(0,0,0,0.45)',
-            textAlign: 'right',
-            lineHeight: ganttIsFold({
-              gantt_board_id,
-              group_view_type,
-              show_board_fold,
-              gantt_view_mode
-            })
-              ? `${task_item_height_fold}px`
-              : `${ceiHeight - task_item_margin_top}px`,
-            paddingRight: Math.ceil(currentRect.width / ceilWidth) > 1 ? 8 : 0,
-            zIndex: this.state.drag_creating ? 2 : 0
-          }}
-        >
-          {Math.ceil(currentRect.width / ceilWidth) > 1
-            ? Math.ceil(currentRect.width / ceilWidth)
-            : ''}
-          {gantt_view_mode == 'year' && gantt_board_id != '0' && (
-            <Tooltip
-              visible
-              title={title}
-              getPopupContainer={() =>
-                document.getElementById('gantt_card_out_middle')
-              }
-            >
-              <div
-                style={{
-                  left: 0,
-                  top: 0,
-                  zIndex: 3,
-                  position: 'absolute',
-                  width: currentRect.width,
-                  height: ganttIsFold({
-                    gantt_board_id,
-                    group_view_type,
-                    show_board_fold,
-                    gantt_view_mode
-                  })
-                    ? task_item_height_fold
-                    : task_item_height //currentRect.height,
-                }}
-              ></div>
-            </Tooltip>
-          )}
+        <>
+          <div
+            className={indexStyles.dasheRectName}
+            style={{
+              left: currentRect.x + 1 - 200,
+              top: currentRect.y,
+              width: 200,
+              height: task_item_height,
+              marginTop: task_item_margin_top,
+              display: !!create_start_time ? 'block' : 'none'
+            }}
+          >
+            {timestampToTimeNormal(create_start_time, '/', false)} -{' '}
+            {timestampToTimeNormal(create_end_time, '/', false)}
+          </div>
+          <div
+            title={'点击或向右拖拽创建任务'}
+            className={indexStyles.dasheRect}
+            style={{
+              left: currentRect.x + 1,
+              top: currentRect.y,
+              minWidth: gantt_view_mode == 'year' ? 6 : 0,
+              width: currentRect.width,
+              height: ganttIsFold({
+                gantt_board_id,
+                group_view_type,
+                show_board_fold,
+                gantt_view_mode
+              })
+                ? task_item_height_fold
+                : task_item_height, //currentRect.height,
+              boxSizing: 'border-box',
+              marginTop: !ganttIsFold({
+                gantt_board_id,
+                group_view_type,
+                show_board_fold,
+                gantt_view_mode
+              })
+                ? task_item_margin_top
+                : (ceil_height_fold * group_rows_fold - task_item_height_fold) /
+                  2, //task_item_margin_top,//
+              color: 'rgba(0,0,0,0.45)',
+              textAlign: 'right',
+              lineHeight: ganttIsFold({
+                gantt_board_id,
+                group_view_type,
+                show_board_fold,
+                gantt_view_mode
+              })
+                ? `${task_item_height_fold}px`
+                : `${ceiHeight - task_item_margin_top}px`,
+              paddingRight:
+                Math.ceil(currentRect.width / ceilWidth) > 1 ? 8 : 0,
+              zIndex: this.state.drag_creating ? 2 : 0
+            }}
+          >
+            {Math.ceil(currentRect.width / ceilWidth) > 1
+              ? Math.ceil(currentRect.width / ceilWidth)
+              : ''}
+            {gantt_view_mode == 'year' && gantt_board_id != '0' && (
+              <Tooltip
+                visible
+                title={title}
+                getPopupContainer={() =>
+                  document.getElementById('gantt_card_out_middle')
+                }
+              >
+                <div
+                  style={{
+                    left: 0,
+                    top: 0,
+                    zIndex: 3,
+                    position: 'absolute',
+                    width: currentRect.width,
+                    height: ganttIsFold({
+                      gantt_board_id,
+                      group_view_type,
+                      show_board_fold,
+                      gantt_view_mode
+                    })
+                      ? task_item_height_fold
+                      : task_item_height //currentRect.height,
+                  }}
+                ></div>
+              </Tooltip>
+            )}
 
-          {/* {Math.ceil(currentRect.width / ceilWidth) != 1 && Math.ceil(currentRect.width / ceilWidth) - drag_holiday_count}
+            {/* {Math.ceil(currentRect.width / ceilWidth) != 1 && Math.ceil(currentRect.width / ceilWidth) - drag_holiday_count}
             {Math.ceil(currentRect.width / ceilWidth) != 1 && (drag_holiday_count > 0 ? `+${drag_holiday_count}` : '')} */}
-        </div>
+          </div>
+        </>
       )
     return contain
   }
