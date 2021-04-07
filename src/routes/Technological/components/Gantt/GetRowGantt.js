@@ -49,7 +49,7 @@ import {
 import SvgArea from './components/SvgArea'
 import GroupCanvas from './components/GroupCanvas'
 import MilestonesBaseBody from './components/MilestonesBaseProgress/MilestonesBaseBody'
-
+import CeateCardInput from './components/CeateCardInput'
 import BaseLineItem from './components/CardItem/BaseLineItem'
 const clientWidth = document.documentElement.clientWidth //获取页面可见高度
 const dateAreaHeight = date_area_height //日期区域高度，作为修正
@@ -76,7 +76,8 @@ export default class GetRowGantt extends Component {
       task_is_drag_moving: false,
       isMouseDown: false,
       drag_creating: false, //拖拽生成任务中
-      card_rely_draging: false //任务卡片相关拖拽中
+      card_rely_draging: false, //任务卡片相关拖拽中
+      adding_card: false //当前是否在添加任务
     }
     this.x1 = 0 //用于做拖拽生成一条任务
     this.y1 = 0
@@ -213,7 +214,8 @@ export default class GetRowGantt extends Component {
     ) {
       return
     }
-    const { currentRect = {} } = this.state
+    const { currentRect = {}, adding_card } = this.state
+    if (adding_card) return
     this.setDragCreating(false)
     this.setState({ isMouseDown: true })
     this.handleCreateTask({ start_end: '1', top: currentRect.y })
@@ -325,7 +327,8 @@ export default class GetRowGantt extends Component {
       gantt_view_mode,
       gantt_head_width
     } = this.props
-    const { drag_creating } = this.state
+    const { drag_creating, adding_card } = this.state
+    if (adding_card) return
     if (e.target.offsetTop >= dataAreaRealHeight) return //在全部分组外的其他区域（在创建项目那一栏）
     if (
       e.target.dataset.targetclassname == 'specific_example' //不能滑动到某一个任务实例上
@@ -779,8 +782,11 @@ export default class GetRowGantt extends Component {
             }
           }
         }
-        this.props.addTaskModalVisibleChange &&
-          this.props.addTaskModalVisibleChange(true)
+        // this.props.addTaskModalVisibleChange &&
+        //   this.props.addTaskModalVisibleChange(true)
+        this.setState({
+          adding_card: true
+        })
       }
     })
   }
@@ -1090,7 +1096,20 @@ export default class GetRowGantt extends Component {
             />
           )}
 
-          {this.renderDashedRect()}
+          {/* 渲染任务添加 */}
+          {this.state.adding_card ? (
+            <CeateCardInput
+              currentRect={currentRect}
+              setAddingCardVisible={bool =>
+                this.setState({ adding_card: bool })
+              }
+              handleGetNewTaskParams={this.props.handleGetNewTaskParams}
+            />
+          ) : (
+            this.renderDashedRect()
+          )}
+
+          {/* 创建任务 */}
           {/* 非大纲视图下渲染任务和或者进度 */}
           {!ganttIsOutlineView({ group_view_type }) &&
             list_group.map((value, key) => {

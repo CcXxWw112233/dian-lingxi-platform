@@ -905,6 +905,7 @@ export default class GanttFace extends Component {
                     setProcessDetailModalVisible={
                       this.props.setProcessDetailModalVisible
                     }
+                    handleGetNewTaskParams={this.props.handleGetNewTaskParams}
                   />
                   <div
                     style={{
