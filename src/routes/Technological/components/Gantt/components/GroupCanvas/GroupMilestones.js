@@ -5,6 +5,7 @@ import {
   caldiffHours,
   isSamDay,
   isSamHour,
+  timestampToTimeNormal,
   transformTimestamp
 } from '../../../../../../utils/util'
 import {
@@ -15,7 +16,7 @@ import {
 } from '../../constants'
 import indexStyles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
-import { Menu, Dropdown, message } from 'antd'
+import { Menu, Dropdown, message, Tooltip } from 'antd'
 import { setBoardIdStorage } from '../../../../../../utils/businessFunction'
 import Draggable from 'react-draggable'
 import {
@@ -630,6 +631,7 @@ export default class GroupMilestones extends Component {
       >
         <div>
           {this.renderDropDown(
+            timestamp,
             one_levels_all,
             this.renderLCBList(one_levels_all, timestamp, {
               marginTop: -10
@@ -722,22 +724,28 @@ export default class GroupMilestones extends Component {
   }
 
   // 是否要渲染下拉列表,长度大于1则下拉，否则不下拉
-  renderDropDown = (arr, overlay, InnerNode) => {
+  renderDropDown = (timestamp, arr, overlay, InnerNode) => {
     if (arr.length > 1) {
-      return <Dropdown overlay={overlay}>{InnerNode}</Dropdown>
+      return (
+        <Tooltip title={timestampToTimeNormal(timestamp, '/')}>
+          <Dropdown overlay={overlay}>{InnerNode}</Dropdown>{' '}
+        </Tooltip>
+      )
     }
 
     const value = arr[0]
     const { board_id, id } = value
     return (
-      <div
-        onClick={() => {
-          if (this.milestone_dragging == true) return
-          this.seeMilestoneInfo({ board_id, id })
-        }}
-      >
-        {InnerNode}
-      </div>
+      <Tooltip title={timestampToTimeNormal(timestamp, '/')}>
+        <div
+          onClick={() => {
+            if (this.milestone_dragging == true) return
+            this.seeMilestoneInfo({ board_id, id })
+          }}
+        >
+          {InnerNode}
+        </div>
+      </Tooltip>
     )
   }
 
@@ -776,6 +784,7 @@ export default class GroupMilestones extends Component {
               }}
             >
               {this.renderDropDown(
+                timestamp,
                 one_levels,
                 this.renderLCBList(one_levels, timestamp, {
                   marginTop: -10
@@ -1001,7 +1010,10 @@ export default class GroupMilestones extends Component {
     const { pageX } = getPageXY(e)
     if (!pageX) return
     this.milestone_drag_ele = e
-    this.milestone_dragging = true
+    // this.milestone_dragging = true
+    setTimeout(() => {
+      this.milestone_dragging = true
+    }, 100)
     this.setState({
       dragg_milestone_err: false
     })
@@ -1029,7 +1041,8 @@ export default class GroupMilestones extends Component {
     } = this.props
     setTimeout(() => {
       this.milestone_dragging = false
-    }, 200)
+    }, 300)
+    if (!this.milestone_dragging) return
     let { x } =
       getXYDropPosition(this.milestone_drag_ele, {
         gantt_head_width
