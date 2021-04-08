@@ -13,7 +13,14 @@ export default class DragCard extends Component {
     // this.left = -(this.padding_diff / 2)
   }
   render() {
-    const { width, id, drag_else_over_in, is_outline_view } = this.props
+    const {
+      width,
+      id,
+      drag_else_over_in,
+      is_outline_view,
+      operationChild = [],
+      children
+    } = this.props
     return (
       <>
         <div
@@ -21,13 +28,31 @@ export default class DragCard extends Component {
           data-rely_top={id}
           className={styles.drag_out}
           style={{
-            width: width + this.padding_diff,
-            height: this.height,
+            width: width + this.padding_diff - 10 + operationChild.length * 22,
+            height: this.height - 2,
             top: this.top - 2,
-            left: this.left,
+            left: this.left + 5,
             opacity: drag_else_over_in ? '0.6' : '1'
           }}
-        ></div>
+        >
+          <div
+            className={styles.opration}
+            onMouseDown={e => {
+              e.preventDefault()
+              e.stopPropagation()
+            }}
+            onClick={e => {
+              e.preventDefault()
+              e.stopPropagation()
+            }}
+            onMouseUp={e => {
+              e.preventDefault()
+              e.stopPropagation()
+            }}
+          >
+            {children}
+          </div>
+        </div>
         {/* <div className={`${styles.drag_area} ${styles.drag_left} ${globalStyles.authTheme}`}>
                     &#xe7ec;
                 </div> */}
@@ -42,9 +67,9 @@ export default class DragCard extends Component {
           data-rely_right={id}
           data-rely_top={id}
           className={`${styles.drag_area} ${styles.drag_right} ${globalStyles.authTheme}`}
-          style={{ top: '-1px' }}
+          // style={{ top: '-1px' }}
         >
-          &#xe7eb;
+          &#xe61f;
         </div>
       </>
     )

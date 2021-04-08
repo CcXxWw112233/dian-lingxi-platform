@@ -30,6 +30,7 @@ import {
   diffClientDefaultViewMode,
   onChangeCardHandleCardDetail
 } from './ganttBusiness'
+import DEvent, { CARDREMOVE } from '../../../../utils/event'
 
 const ProcessDetailModal = lazy(() => import('@/components/ProcessDetailModal'))
 
@@ -41,6 +42,7 @@ class Gantt extends Component {
       previewFileModalVisibile: false
     }
     this.card_time_type = undefined //card_time_type为是否排期卡片
+    DEvent.addEventListener(CARDREMOVE, this.handleDeleteCard)
   }
 
   componentDidMount() {
@@ -53,6 +55,7 @@ class Gantt extends Component {
 
   componentWillUnmount() {
     const { dispatch, page_load_type } = this.props
+    DEvent.removeEventListener(CARDREMOVE, this.handleDeleteCard)
     dispatch({
       type: 'gantt/updateDatas',
       payload: {

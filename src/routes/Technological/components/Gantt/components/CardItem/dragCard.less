@@ -5,20 +5,29 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 2px solid #5087ff;
-  border-radius: 36px;
+  background-color: #e2edff;
+  // border: 2px solid #5087ff;
+  border-radius: 5px;
+  pointer-events: all;
 }
-
-.drag_area {
-  background: rgba(167, 176, 192, 0.5);
-  color: #ffffff;
-  width: 24px;
-  height: 24px;
+.opration{
   position: absolute;
-  // top          : 6px;
-  border-radius: 24px;
+  right: 0;
+  top: 0;
+  font-family: 'iconfont';
+}
+.drag_area {
+  background-color: #86b3ff;
+  color: #ffffff;
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  font-size: 0.6rem;
   text-align: center;
-  line-height: 24px;
+  line-height: 22px;
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px;
+  z-index: 0;
 }
 
 .drag_left {
@@ -26,7 +35,7 @@
 }
 
 .drag_right {
-  right: -27px;
+  right: -18px;
 }
 
 .drag_area:hover {
@@ -36,11 +45,11 @@
 .backMask {
   height: 32px;
   width: 32px;
-  background: #ffffff;
+  // background: #ffffff;
   position: absolute;
   right: -32px;
   top: -3px;
-  border-radius: 0 24px 24px 0;
+  // border-radius: 0 24px 24px 0;
   // z-index   : 1;
 }
 .backMask_1 {

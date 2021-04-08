@@ -1,0 +1,99 @@
+.select_item {
+  display: flex;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  padding: 8px 0;
+  &:hover > span {
+    color: rgb(71, 166, 255);
+  }
+  &:hover {
+    .edit {
+      display: block;
+    }
+  }
+  &.active {
+    color: rgb(71, 166, 255);
+  }
+  .edit {
+    display: none;
+  }
+  .label_none {
+    display: none;
+  }
+  .operation {
+    display: flex;
+    position: absolute;
+    height: 100%;
+    right: 0px;
+    // top: 5px;
+    align-items: center;
+    font-family: 'iconfont';
+    & > span {
+      margin-left: 5px;
+      &:hover {
+        color: rgb(71, 166, 255);
+      }
+    }
+    .active {
+      color: rgb(71, 166, 255);
+    }
+  }
+}
+.search {
+  margin-bottom: 8px;
+}
+.title{
+  margin-bottom: 8px;
+  color: #000;
+}
+.label_box{
+  padding-right: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+  &:hover&::-webkit-scrollbar{
+    opacity: 1;
+  }
+  &::-webkit-scrollbar{
+    width: 3px;
+    background-color: transparent;
+    opacity: 0;
+  }
+  &::-webkit-scrollbar-thumb{
+    width: 3px;
+    border-radius: 5px;
+    background-color: rgba(0,0,0,0.1);
+  }
+}
+.btn_group{
+  margin-top: 10px;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+}
+
+.colors_container{
+  width: 100%;
+  .input_name{
+    margin-bottom: 15px;
+  }
+  .bar_colors{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    & > div{
+      margin-bottom: 10px;
+      width: 18%;
+      .active{
+        font-family: 'iconfont';
+        &::before{
+          content: "\2714";
+          color: #fff;
+          text-shadow: 1px 0px 0px rgba(0, 0, 0,0.5), -1px  0px 0px rgba(0, 0, 0,0.5), 0px 1px 0px rgba(0, 0, 0,0.5), 0px -1px 0px rgba(0, 0, 0,0.5);
+        }
+        border: 2px solid #4170E8;
+      }
+    }
+  }
+}

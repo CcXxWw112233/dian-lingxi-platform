@@ -61,6 +61,16 @@ import QueryString from 'querystring'
 let board_id = null
 let appsSelectKey = null
 let card_id = null
+
+/** 项目详情redux管理 */
+export const PROJECTDETAILMODEL = {
+  /** 命名空间 */
+  namespace: 'projectDetailTask',
+  /** 删除任务
+   * @param {string} id 需要删除的任务id
+   */
+  deleteTask: 'deleteTask'
+}
 export default modelExtend(projectDetail, {
   namespace: 'projectDetailTask',
   state: {
