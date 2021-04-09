@@ -1,5 +1,6 @@
 import { Dropdown, Menu, message, Popconfirm } from 'antd'
 import React from 'react'
+import { MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN } from '../../../../../../../globalset/js/constant'
 import { PROJECTDETAILMODEL } from '../../../../../../../models/technological/projectDetail/projectDetailTask'
 import { deleteTask } from '../../../../../../../services/technological/task'
 import DEvent, { CARDREMOVE } from '../../../../../../../utils/event'
@@ -36,8 +37,26 @@ export default class MoreOperation extends React.Component {
     })
   }
 
+  /** 检测禁用是方法还是bool */
+  checkDisabled = () => {
+    const { disabled } = this.props
+    if (disabled instanceof Function) {
+      return disabled.call(this, this.props.valueKey)
+    }
+    return disabled
+  }
+
   /** 菜单点击事件 */
   menuclick = ({ key }) => {
+    if (key === 'remove') {
+      if (this.checkDisabled()) {
+        this.setState({
+          visible: false
+        })
+        message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+        return
+      }
+    }
     this.setState({
       visible: true
     })

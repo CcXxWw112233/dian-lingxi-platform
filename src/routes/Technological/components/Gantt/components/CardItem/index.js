@@ -52,6 +52,7 @@ export default class CardItem extends Component {
     this.out_ref = React.createRef()
     this.is_down = false
     this.state = {
+      rely_down: false,
       local_width: 0,
       local_top: 0,
       local_left: 0,
@@ -81,6 +82,7 @@ export default class CardItem extends Component {
     this.notify = null
     /** 需要显示的更多按钮组 */
     this.cardbarOperation = [
+      CardBarOperations.RelyKey,
       CardBarOperations.EditName,
       CardBarOperations.BarColor,
       CardBarOperations.MemberChange,
@@ -2458,7 +2460,7 @@ export default class CardItem extends Component {
             </>
           )}
         {/* //hover出现的耳朵效果 */}
-        {drag_lock &&
+        {/* {drag_lock &&
           !parent_card_id &&
           // gantt_view_mode != 'year' &&
           gantt_board_id != '0' &&
@@ -2471,7 +2473,7 @@ export default class CardItem extends Component {
               rely_down={rely_down}
               is_outline_view={ganttIsOutlineView({ group_view_type })}
             />
-          )}
+          )} */}
         {(drag_lock || drag_else_over_in) && (
           <DragCard
             drag_else_over_in={drag_else_over_in}
@@ -2484,9 +2486,14 @@ export default class CardItem extends Component {
             is_outline_view={ganttIsOutlineView({ group_view_type })}
           >
             <CardOperation
+              setRelyLineDrawing={this.setRelyDown}
               operations={this.cardbarOperation}
               data={itemValue}
+              getX={this.getX}
+              rely_down={this.state.rely_down}
+              group_view_type={group_view_type}
               board_id={gantt_board_id}
+              parent_card_id={parent_card_id}
               updateTags={this.updateLabeldata}
               updateCardBarDatas={this.updateCardBarData}
               dispatch={this.props.dispatch}

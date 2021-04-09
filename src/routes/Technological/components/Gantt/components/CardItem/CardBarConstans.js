@@ -1,3 +1,4 @@
+import DragLine from './components/DragLine'
 import LabelSelect from './components/LabelSelect'
 import MemberUpdate from './components/MemberUpdate'
 import MoreOperation from './components/MoreOperation'
@@ -12,6 +13,8 @@ import UpdateCardBarName from './components/UpdateCardBarName'
  * @member tools 任务条工具列表
  */
 export const CardBarOperations = {
+  /** 依赖连线的常量 */
+  RelyKey: 'rely',
   /** 修改任务名称的常量key */
   EditName: 'editname',
   /** 任务条颜色的常量key */
@@ -26,6 +29,12 @@ export const CardBarOperations = {
 
 /** 任务条工具列表 */
 CardBarOperations.tools = [
+  {
+    key: CardBarOperations.RelyKey,
+    name: '依赖',
+    icon: '&#xe856;',
+    component: DragLine
+  },
   {
     key: CardBarOperations.EditName,
     name: '修改名称',

@@ -35,23 +35,7 @@ export default class DragCard extends Component {
             opacity: drag_else_over_in ? '0.6' : '1'
           }}
         >
-          <div
-            className={styles.opration}
-            onMouseDown={e => {
-              e.preventDefault()
-              e.stopPropagation()
-            }}
-            onClick={e => {
-              e.preventDefault()
-              e.stopPropagation()
-            }}
-            onMouseUp={e => {
-              e.preventDefault()
-              e.stopPropagation()
-            }}
-          >
-            {children}
-          </div>
+          <div className={styles.opration}>{children}</div>
         </div>
         {/* <div className={`${styles.drag_area} ${styles.drag_left} ${globalStyles.authTheme}`}>
                     &#xe7ec;

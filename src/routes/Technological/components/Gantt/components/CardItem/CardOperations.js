@@ -1,6 +1,17 @@
-import { Tooltip } from 'antd'
+import { message, Tooltip } from 'antd'
 import React from 'react'
 import ReactDOM from 'react-dom'
+import {
+  MESSAGE_DURATION_TIME,
+  NOT_HAS_PERMISION_COMFIRN,
+  PROJECT_TEAM_CARD_DELETE,
+  PROJECT_TEAM_CARD_EDIT
+} from '../../../../../../globalset/js/constant'
+import { fetchVisitControlInfo } from '../../../../../../services/technological/task'
+import {
+  checkIsHasPermissionInBoard,
+  checkRoleAndMemberVisitControlPermissions
+} from '../../../../../../utils/businessFunction'
 import { CardBarOperations } from './CardBarConstans'
 import styles from './CardOperations.less'
 
@@ -12,11 +23,29 @@ export default class CardOperation extends React.Component {
     super(props)
     this.state = {
       /** 是否打开了编辑名称弹窗 */
-      isOpenEditName: false
+      isOpenEditName: false,
+      /** 是否没有访问权限 */
+      notVisitPermission: false
     }
   }
   componentDidMount() {
     this.node = this.getParent()
+    /** 如果是拖拽依赖显示的，就不加载访问控制 */
+    if (this.props.rely_down) return
+    /** 获取访问控制信息 */
+    this.getVisitControlInfo().then(res => {
+      const { is_privilege, privileges, card_id } = res.data || {}
+      /** 检查有没有访问控制权限 */
+      const flag = checkRoleAndMemberVisitControlPermissions({
+        privileges,
+        board_id: this.props.board_id,
+        board_permissions_code: PROJECT_TEAM_CARD_EDIT,
+        is_privilege
+      })
+      this.setState({
+        notVisitPermission: !flag
+      })
+    })
   }
 
   /**
@@ -56,6 +85,13 @@ export default class CardOperation extends React.Component {
 
   /** 点击了工具 */
   handleTools = val => {
+    if (
+      this.state.notVisitPermission &&
+      val.key !== CardBarOperations.MoreOperation &&
+      val.key !== CardBarOperations.RelyKey
+    ) {
+      return message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    }
     switch (val.key) {
       /** 编辑名称 */
       case CardBarOperations.EditName:
@@ -81,6 +117,19 @@ export default class CardOperation extends React.Component {
     updateCardBarDatas && updateCardBarDatas(val)
   }
 
+  /**
+   * 获取访问控制详情
+   */
+  getVisitControlInfo = () => {
+    return fetchVisitControlInfo({ id: this.props.data.id }).then(res => {
+      // console.log(res)
+      if (res.code === '0') {
+        return res
+      }
+      return Promise.reject(res)
+    })
+  }
+
   /** 获取父级节点 */
   getParent = () => {
     /** 顶父级节点 */
@@ -89,7 +138,17 @@ export default class CardOperation extends React.Component {
     return parentNode
   }
 
+  /** 是否有删除任务的权限 */
+  checkRemoveCard = () => {
+    return !checkIsHasPermissionInBoard(
+      PROJECT_TEAM_CARD_DELETE,
+      this.props.board_id
+    )
+  }
+
   render() {
+    /** 没有访问控制权限的判断 */
+    const notVisitPermission = this.state.notVisitPermission
     /** 过滤之后的操作列表 */
     const tools = this.fetchOperations()
     /** 空的自定义标签，Fragment会报错 */
@@ -97,14 +156,7 @@ export default class CardOperation extends React.Component {
       return <span>{children}</span>
     }
     return (
-      <div
-        className={styles.container}
-        onMouseUp={e => e.stopPropagation()}
-        onClick={e => {
-          e.stopPropagation()
-          e.preventDefault()
-        }}
-      >
+      <div className={styles.container} onMouseUp={e => e.stopPropagation()}>
         {tools.map(item => {
           /** 属于设置项的组件 */
           const Ele = item.component ? item.component : fragmentDiv
@@ -113,8 +165,25 @@ export default class CardOperation extends React.Component {
           return (
             <Ele
               key={item.key}
+              valueKey={item.key}
               data={this.props.data}
-              disabled={disabled}
+              disabled={key => {
+                /** 删除任务需要单独的权限控制 */
+                if (key === CardBarOperations.MoreOperation) {
+                  return this.checkRemoveCard()
+                }
+                if (key === CardBarOperations.RelyKey) {
+                  return (
+                    /** 视图类型 */
+                    ['2', '5'].includes(this.props.group_view_type) ||
+                    /** 全项目 */
+                    this.props.board_id === '0' ||
+                    /** 有父级 */
+                    this.props.parent_card_id
+                  )
+                }
+                return disabled || notVisitPermission
+              }}
               {...this.props}
               isOpenEditName={this.state.isOpenEditName}
               parentNode={this.node}
@@ -126,6 +195,7 @@ export default class CardOperation extends React.Component {
                   tabIndex={-1}
                   onClick={e => {
                     e.stopPropagation()
+                    e.preventDefault()
                     this.handleTools(item)
                   }}
                   key={item.key}

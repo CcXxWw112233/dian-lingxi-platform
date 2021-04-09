@@ -67,6 +67,15 @@ export default class MemberUpdate extends React.Component {
     }
   }
 
+  /** 检测禁用是方法还是bool */
+  checkDisabled = () => {
+    const { disabled } = this.props
+    if (disabled instanceof Function) {
+      return disabled.call(this, this.props.valueKey)
+    }
+    return disabled
+  }
+
   inviteOthersToBoardCalback = () => {}
 
   render() {
@@ -81,6 +90,7 @@ export default class MemberUpdate extends React.Component {
 
     return (
       <Dropdown
+        disabled={this.checkDisabled()}
         trigger={['click']}
         overlay={
           <MenuSearchPartner

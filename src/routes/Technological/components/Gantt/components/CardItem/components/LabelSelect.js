@@ -305,6 +305,16 @@ function LabelSelect(props) {
     setVisibleKey(ADDLABELKEY)
   }
 
+
+  /** 检测禁用是方法还是bool */
+  const checkDisabled = () => {
+    const { disabled } = props
+    if (disabled instanceof Function) {
+      return disabled.call(this, props.valueKey)
+    }
+    return disabled
+  }
+
   /** 保存选中的标签 */
   // const saveLabels = () => {
   //   const { label_data } = props.data
@@ -396,7 +406,7 @@ function LabelSelect(props) {
       visible={labelVisible}
       content={getPopoverContent()}
       trigger="click"
-      onVisibleChange={val => setLabelVisible(props.disabled ? false : val)}
+      onVisibleChange={val => setLabelVisible(checkDisabled() ? false : val)}
       placement="bottom"
       getPopupContainer={targetElement => targetElement.parentElement}
     >

@@ -1,15 +1,16 @@
-.container{
+.container {
   display: flex;
   pointer-events: all;
-  & > span{
+  & > span,
+  & > div {
     width: 22px;
     font-size: 1.2rem;
     cursor: pointer;
     &:not(.disabled):hover {
-      color: #86B3FF;
+      color: #86b3ff;
     }
   }
-  .disabled{
+  .disabled {
     cursor: not-allowed;
     color: #999;
   }

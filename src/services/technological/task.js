@@ -738,3 +738,14 @@ export async function updateTaskFinishTimeVTwo(data) {
     data
   })
 }
+
+/** 获取任务条的访问控制详情
+ * @param {{id: string}} data 任务条的id
+ */
+export const fetchVisitControlInfo = data => {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/content_privilege/${data.id}`,
+    method: 'GET',
+    data
+  })
+}
