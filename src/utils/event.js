@@ -55,3 +55,9 @@ export const DRAGFILESUPLOADSUCCESS = 'dragUploadSuccess'
  * 文件删除触发事件
  */
 export const FILEDELETE = 'confirmFileOperationDelete'
+
+/** 更新任务条的标签事件 */
+export const CARDBARTAGSUPDATE = 'cardbartagsupdate'
+
+/** 删除一个任务的事件 */
+export const CARDREMOVE = 'cardremove'

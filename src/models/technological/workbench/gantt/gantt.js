@@ -99,6 +99,21 @@ const getDigit = timestamp => {
   }
   return new_timestamp
 }
+
+/** 甘特图redux统一管理枚举 */
+export const GANTTMODEL = {
+  /** 命名空间 'gantt' */
+  namespace: 'gantt',
+  /**
+   * 更新多个分组视图下的任务条列表
+   * @param {{id: String, label_data: object[], name: String}[]} datas 需要更新的任务条数据列表
+   * @param {String} id 更新的id，必填
+   * @param {{label_id: String, label_name: String, label_color: String}[]} label_data 标签列表
+   * @params ...
+   */
+  updateListGroup: 'updateListGroup'
+}
+
 export default {
   namespace: 'gantt',
   state: {

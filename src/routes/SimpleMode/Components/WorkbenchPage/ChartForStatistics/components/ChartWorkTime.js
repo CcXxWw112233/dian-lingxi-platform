@@ -37,8 +37,12 @@ export default class ChartWorkTime extends React.Component {
     this.chart && this.chart.resize()
   }
 
-  componentDidUpdate() {
-    this.updateChart()
+  componentDidUpdate(prevProps) {
+    if (
+      prevProps.data !== this.props.data ||
+      prevProps.selectedParam?.user_id !== this.props.selectedParam?.user_id
+    )
+      this.updateChart()
   }
 
   /**
@@ -173,7 +177,7 @@ export default class ChartWorkTime extends React.Component {
     this.chart.on('click', this.handleEchartClick)
   }
 
-  handleEchartClick = (val) => {
+  handleEchartClick = val => {
     const { onHandleClick } = this.props
 
     const { data } = val

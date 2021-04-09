@@ -37,8 +37,12 @@ export default class ChartTaskNumber extends React.Component {
     this.chart && this.chart.resize()
   }
 
-  componentDidUpdate() {
-    this.updateChart()
+  componentDidUpdate(prevProps) {
+    if (
+      prevProps.data !== this.props.data ||
+      prevProps.selectedParam?.user_id !== this.props.selectedParam?.user_id
+    )
+      this.updateChart()
   }
 
   /**
