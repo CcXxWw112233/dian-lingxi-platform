@@ -107,6 +107,15 @@ export default class CardItem extends Component {
     })
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.itemValue !== this.props.itemValue)
+      this.updateCardBarData({
+        label_data: this.props.itemValue.label_data,
+        name: this.props.itemValue.name,
+        executors: this.props.itemValue.executors
+      })
+  }
+
   componentWillReceiveProps(nextProps) {
     this.handleEffectParentCard('getParentCard') //大纲模式下获取父级任务实例
   }
