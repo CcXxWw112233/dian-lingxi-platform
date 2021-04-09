@@ -42,6 +42,7 @@ import {
   onChangeCardHandleCardDetail
 } from '../../ganttBusiness'
 import Draggable from 'react-draggable'
+import { rebackCreateNotify } from '../../../../../../components/NotificationTodos'
 // import { debounce } from 'lodash'
 
 const dateAreaHeight = date_area_height //日期区域高度，作为修正
@@ -772,12 +773,25 @@ export default class GetRowStrip extends PureComponent {
   milestoneSetClick = param_date => {
     const date = param_date || this.calHoverDate()
     const { timestamp, timestampEnd } = date
-    const { itemValue = {}, dispatch } = this.props
+    const {
+      itemValue = {},
+      dispatch,
+      gantt_board_id,
+      group_view_type
+    } = this.props
     let { id } = itemValue
     return new Promise((resolve, reject) => {
       updateMilestone({ id, deadline: timestampEnd }, { isNotLoading: false })
         .then(res => {
           if (isApiResponseOk(res)) {
+            rebackCreateNotify.call(this, {
+              res,
+              id: id,
+              board_id: gantt_board_id,
+              group_view_type,
+              dispatch,
+              targt_type: 'milestone'
+            })
             this.changeOutLineTreeNodeProto(id, {
               start_time: timestamp,
               due_time: timestampEnd

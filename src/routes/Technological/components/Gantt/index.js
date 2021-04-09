@@ -313,7 +313,7 @@ class Gantt extends Component {
       param.row = belong_group_row
     }
     this.addNewTask(param)
-    this.setAddTaskModalVisible(false)
+    // this.setAddTaskModalVisible(false)
   }
   // 添加任务 -----------end
 
@@ -1081,6 +1081,7 @@ class Gantt extends Component {
             handleRelyUploading: this.handleRelyUploading
           }}
           setProcessDetailModalVisible={this.setProcessDetailModalVisible}
+          handleGetNewTaskParams={this.handleGetNewTaskParams}
         />
         {/* <TaskDetailModal
           task_detail_modal_visible={drawerVisible}

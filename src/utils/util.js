@@ -34,7 +34,14 @@ export const timeToTimestamp = dateString => {
   return date.getTime()
 }
 //时间戳转日期(15000000000, '-', true)
-export const timestampToTimeNormal = (timestamp, split, flag) => {
+/**
+ *@param {string} timestamp 时间戳
+ *@param {String} split 分隔符
+ *@param {boolean} flag 是否显示时分
+ *@param {boolean} withChinese 中文分割
+ *@returns {string} 返回一个时间
+ */
+export const timestampToTimeNormal = (timestamp, split, flag, withChinese) => {
   if (!timestamp) {
     return false
   }
@@ -43,14 +50,20 @@ export const timestampToTimeNormal = (timestamp, split, flag) => {
       ? Number(timestamp) * 1000
       : Number(timestamp)
   const splitNew = split || '/'
+  const y_split = withChinese ? '年' : splitNew
+  const m_split = withChinese ? '月' : splitNew
+  const d_split = withChinese ? '日' : ''
+
   let date = new Date(timestampNew) //时间戳为10位需*1000，时间戳为13位的话不需乘1000
-  let Y = date.getFullYear() + splitNew
+  let Y = date.getFullYear() + y_split
   let M =
     (date.getMonth() + 1 < 10
       ? '0' + (date.getMonth() + 1)
-      : date.getMonth() + 1) + splitNew
+      : date.getMonth() + 1) + m_split
   let D =
-    date.getDate() < 10 ? '0' + date.getDate() + ' ' : date.getDate() + ' '
+    date.getDate() < 10
+      ? '0' + date.getDate() + d_split
+      : date.getDate() + d_split
   let h =
     date.getHours() < 10 ? '0' + date.getHours() + ':' : date.getHours() + ':'
   let m = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()

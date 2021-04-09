@@ -1,30 +1,58 @@
 import { notification, message as antMessage, Button } from 'antd'
-import { revokeCardDo } from '../../services/technological/task'
+import {
+  revokeCardDo,
+  revokeMilestoneDo
+} from '../../services/technological/task'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { ganttIsOutlineView } from '../../routes/Technological/components/Gantt/constants'
 import { onChangeCardHandleCardDetail } from '../../routes/Technological/components/Gantt/ganttBusiness'
+import { timestampToTimeNormal } from '../../utils/util'
 function defer(fn) {
   return Promise.resolve().then(fn)
 }
 
-export function handleReBackNotiParams({ code, data = [], message, id }) {
+const DESCRIPTION_TIME_RANGE = {
+  start: '开始',
+  start_end: '起止',
+  end: '截止'
+}
+
+export function handleReBackNotiParams({
+  code,
+  data = [],
+  message,
+  id,
+  time_range
+}) {
   const {
     scope_content = [],
     undo_id,
     scope_number,
     scope_user,
-    scope_day
+    scope_day,
+    scope_date
   } = data
   const length = scope_content.filter(item => item.id != id).length
   let operate_code = code
   let comfirm_message = `${message}。`
+  let confirm_title = ''
+  if (scope_date) {
+    confirm_title = `已将${
+      DESCRIPTION_TIME_RANGE[time_range]
+    }时间调整至${timestampToTimeNormal(scope_date, '/', false, true)}`
+  } else {
+    confirm_title = `已将${DESCRIPTION_TIME_RANGE[time_range]}时间${
+      Number(scope_day) > 0 ? '延后' : '提前'
+    }${Math.abs(Number(scope_day))}天`
+  }
   if (code == '0') {
     //成功的时候存在依赖影响
-    if (length) {
+    if (length || !!Number(scope_number)) {
       //当存在影响其它任务的时候 需要warn
       operate_code = '1'
-      comfirm_message = `当前操作偏离原计划${scope_day ||
-        '0'}天，将影响${scope_user || '0'}个人，${scope_number || '0'}条任务。`
+
+      comfirm_message = `此操作将影响${scope_user || '0'}个人，${scope_number ||
+        '0'}条任务。`
     }
   } else {
     operate_code = '2'
@@ -32,9 +60,11 @@ export function handleReBackNotiParams({ code, data = [], message, id }) {
   return {
     code: operate_code,
     message: comfirm_message,
-    undo_id
+    undo_id,
+    confirm_title: confirm_title
   }
 }
+const init_notification_duration = 11
 
 const excuteQueue = [] //执行中的队列
 
@@ -43,6 +73,7 @@ class ExcuteTodo {
     const {
       code,
       message,
+      confirm_title,
       id,
       board_id,
       undo_id,
@@ -51,21 +82,24 @@ class ExcuteTodo {
       parent_card_id,
       selected_card_visible,
       card_detail_id,
-      operate_in_card_detail_panel
+      operate_in_card_detail_panel,
+      targt_type
     } = options
     this.id = id //操作对象的id
     this.board_id = board_id
     this.code = code
     this.message = message
+    this.confirm_title = confirm_title
     this.undo_id = undo_id
     this.notification_timer = null
-    this.notification_duration = 6
+    this.notification_duration = init_notification_duration
     this.group_view_type = group_view_type
     this.dispatch = dispatch
     this.parent_card_id = parent_card_id //当是子任务的时候
     this.card_detail_id = card_detail_id
     this.selected_card_visible = selected_card_visible
     this.operate_in_card_detail_panel = operate_in_card_detail_panel
+    this.targt_type = targt_type
     console.log('notify_queue', excuteQueue)
     if (excuteQueue.length) {
       const index = excuteQueue.findIndex(item => item.id === id)
@@ -100,6 +134,7 @@ class ExcuteTodo {
       parent_card_id,
       selected_card_visible,
       card_detail_id,
+      confirm_title,
       dispatch,
       operate_in_card_detail_panel
     } = this
@@ -121,7 +156,7 @@ class ExcuteTodo {
     const operator = type_obj[code] || {}
     const { action = 'config', title = '提示' } = operator
 
-    const reBack = () => {
+    const reBackCard = () => {
       revokeCardDo({ undo_id, board_id }).then(res => {
         if (isApiResponseOk(res)) {
           antMessage.success('撤回成功')
@@ -148,14 +183,35 @@ class ExcuteTodo {
         }
       })
     }
-    const renderBtn = notification_duration => (
+    const reBackMilestone = () => {
+      revokeMilestoneDo({ undo_id }).then(res => {
+        if (isApiResponseOk(res)) {
+          if (this.group_view_type == '1') {
+          } else if (this.group_view_type == '4') {
+            this.updateGanttData(res.data)
+          } else {
+          }
+          dispatch({
+            type: 'gantt/getGttMilestoneList',
+            payload: {}
+          })
+        } else {
+          antMessage.warn(res.message)
+        }
+      })
+    }
+    const renderBtn = () => (
       <Button
         type="primary"
         size="small"
         onClick={() => {
           clearTimer()
           notification.close(id)
-          reBack()
+          if (this.targt_type == 'milestone') {
+            reBackMilestone()
+          } else {
+            reBackCard()
+          }
         }}
       >
         撤销
@@ -168,10 +224,10 @@ class ExcuteTodo {
       notification[action]({
         placement: 'bottomRight',
         bottom: 50,
-        duration: 5,
-        message: title,
-        description: `${message}${countdown_message}`,
-        btn: code == '1' ? renderBtn(notification_duration) : '',
+        duration: this.notification_duration - 1,
+        message: confirm_title,
+        description: `${message}`, //${countdown_message}`,
+        btn: code == '1' ? renderBtn() : '',
         key: id,
         onClose: () => {
           clearTimer()
@@ -189,7 +245,7 @@ class ExcuteTodo {
         this.notification_duration--
         if (this.notification_duration == 0) {
           openNoti(0)
-          this.notification_duration = 6
+          this.notification_duration = init_notification_duration
           clearTimer()
           this.notification_timer = null
           return
@@ -216,7 +272,8 @@ export class EnequeueNotifyTodos {
       dispatch,
       card_detail_id,
       selected_card_visible,
-      operate_in_card_detail_panel
+      operate_in_card_detail_panel,
+      targt_type
     } = options
     // this.data = data
     // this.code = code
@@ -225,6 +282,7 @@ export class EnequeueNotifyTodos {
     this.group_view_type = group_view_type
     this.dispatch = dispatch
     this.id = id //操作对象的id
+    this.targt_type = targt_type
     this.board_id = board_id
     this.card_detail_id = card_detail_id
     this.selected_card_visible = selected_card_visible
@@ -252,13 +310,14 @@ export class EnequeueNotifyTodos {
       board_id,
       selected_card_visible,
       card_detail_id,
-      operate_in_card_detail_panel
+      operate_in_card_detail_panel,
+      targt_type
     } = this
     let item
     let excute
     while ((item = this.todoQueue.shift())) {
       //队列遍历
-      const { code, message, undo_id, parent_card_id } = item
+      const { code, message, undo_id, parent_card_id, confirm_title } = item
       excute = new ExcuteTodo({
         code,
         message,
@@ -270,7 +329,9 @@ export class EnequeueNotifyTodos {
         parent_card_id,
         selected_card_visible,
         card_detail_id,
-        operate_in_card_detail_panel
+        operate_in_card_detail_panel,
+        targt_type,
+        confirm_title
       }) //执行当前一条的弹窗
       const timer = excute.createNotify() //弹出
       excute = null
@@ -283,15 +344,17 @@ export class EnequeueNotifyTodos {
 
 // 创建实例弹窗列表代办
 /**
- *@param  res 后台返回的整串数据{code, message, data:{} }具体见方法调用内解析
- *@param  id 当前id
- *@param  board_id 当前对象id所属的项目id
- *@param  group_view_type 甘特图视图
- *@param  dispatch
- *@param  parent_card_id  当前id的父id(子任务 =》 父任务)
- *@param  card_detail_id  任务详情弹窗的弹窗的任务id ， operate_in_card_detail_panel为ture时不需要
- *@param  selected_card_visible 甘特图是否打开任务弹窗, operate_in_card_detail_panel为ture时不需要
- * @param operate_in_card_detail_panel 是否在任务详情弹窗上操作 为true时不需要 card_detail_id selected_card_visible这两个参数
+ *@param {object} res 后台返回的整串数据{code, message, data:{} }具体见方法调用内解析
+ *@param {string} id 当前id
+ *@param {String} targt_type 处理的类型， 默认是card/任务, milestone/里程碑
+ *@param {string} board_id 当前对象id所属的项目id
+ *@param {string} group_view_type 甘特图视图
+ *@param {fuction} dispatch
+ *@param {string} parent_card_id  当前id的父id(子任务 =》 父任务) ,targt_type = =card必传
+ *@param {string} card_detail_id  任务详情弹窗的弹窗的任务id ， operate_in_card_detail_panel为ture时不需要
+ *@param {boolean} selected_card_visible 甘特图是否打开任务弹窗, operate_in_card_detail_panel为ture时不需要
+ *@param {boolean} operate_in_card_detail_panel 是否在任务详情弹窗上操作 为true时不需要 card_detail_id selected_card_visible这两个参数
+ *@param {string} time_range 时间范围 'start/end/start_end'
  **/
 export function rebackCreateNotify({
   res,
@@ -302,14 +365,22 @@ export function rebackCreateNotify({
   parent_card_id,
   card_detail_id,
   selected_card_visible,
-  operate_in_card_detail_panel
+  operate_in_card_detail_panel,
+  targt_type = 'card',
+  time_range = 'end'
 }) {
-  const { code, message, undo_id } = handleReBackNotiParams({ ...res, id }) //转化所想要的参数 code message undo_id
+  const { code, message, undo_id, confirm_title } = handleReBackNotiParams({
+    ...res,
+    id,
+    targt_type,
+    time_range
+  }) //转化所想要的参数 code message undo_id
   if (code == '0') {
     antMessage.success('变更成功')
   } else {
     console.log('notify_this', this)
     if (!this.notify) {
+      //没有弹窗队列时
       this.notify = new EnequeueNotifyTodos({
         id,
         board_id,
@@ -317,10 +388,20 @@ export function rebackCreateNotify({
         dispatch,
         card_detail_id,
         selected_card_visible,
-        operate_in_card_detail_panel
+        operate_in_card_detail_panel,
+        targt_type
       })
     }
-    this.notify.addTodos({ code, message, undo_id, id, parent_card_id })
+    // 往弹窗队列添加任务
+    this.notify.addTodos({
+      code,
+      message,
+      confirm_title,
+      undo_id,
+      id,
+      parent_card_id,
+      targt_type
+    })
     this.notify = null
   }
 }

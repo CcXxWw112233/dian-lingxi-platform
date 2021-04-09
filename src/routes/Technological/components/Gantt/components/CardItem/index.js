@@ -853,7 +853,8 @@ export default class CardItem extends Component {
             dispatch,
             parent_card_id,
             card_detail_id,
-            selected_card_visible
+            selected_card_visible,
+            time_range: 'start_end'
           })
           this.updateGanttData([
             { id, ...updateData },
