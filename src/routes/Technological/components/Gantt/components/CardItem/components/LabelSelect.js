@@ -9,6 +9,7 @@ import {
   removeTaskTag,
   updateBoardTag
 } from '../../../../../../../services/technological/task'
+import { ganttIsOutlineView } from '../../../constants'
 import { BarColors } from '../CardBarConstans'
 import styles from './LabelSelect.less'
 
@@ -129,13 +130,22 @@ function LabelSelect(props) {
    */
   const fetchAddLabel = data => {
     const { dispatch } = props
+    /** 是否大纲视图 */
+    const isOutlineView = ganttIsOutlineView({
+      group_view_type: props.group_view_type
+    })
     addTaskTag({ card_id: props.data.id, label_id: data.label_id }).then(
       res => {
         const labeldata = (props.data.label_data || []).concat([data])
         /** 触发更新 */
         props.updateTags && props.updateTags({ label_data: labeldata })
         dispatch({
-          type: GANTTMODEL.namespace + '/' + GANTTMODEL.updateListGroup,
+          type:
+            GANTTMODEL.namespace +
+            '/' +
+            (isOutlineView
+              ? GANTTMODEL.updateOutLineTree
+              : GANTTMODEL.updateListGroup),
           payload: {
             datas: [
               {
@@ -155,6 +165,10 @@ function LabelSelect(props) {
    * @param {string} label_color 标签颜色
    */
   const fetchRemoveLabel = data => {
+    /** 是否大纲视图 */
+    const isOutlineView = ganttIsOutlineView({
+      group_view_type: props.group_view_type
+    })
     const { dispatch } = props
     removeTaskTag({ card_id: props.data.id, label_id: data.label_id }).then(
       res => {
@@ -164,7 +178,12 @@ function LabelSelect(props) {
         /** 触发更新 */
         props.updateTags && props.updateTags({ label_data: labeldata })
         dispatch({
-          type: GANTTMODEL.namespace + '/' + GANTTMODEL.updateListGroup,
+          type:
+            GANTTMODEL.namespace +
+            '/' +
+            (isOutlineView
+              ? GANTTMODEL.updateOutLineTree
+              : GANTTMODEL.updateListGroup),
           payload: {
             datas: [
               {
@@ -304,7 +323,6 @@ function LabelSelect(props) {
     /** 转到编辑页面 */
     setVisibleKey(ADDLABELKEY)
   }
-
 
   /** 检测禁用是方法还是bool */
   const checkDisabled = () => {

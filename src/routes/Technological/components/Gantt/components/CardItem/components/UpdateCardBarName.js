@@ -4,6 +4,7 @@ import styles from './UpdateCardBarName.less'
 import ReactDOM from 'react-dom'
 import { updateTaskVTwo } from '../../../../../../../services/technological/task'
 import { GANTTMODEL } from '../../../../../../../models/technological/workbench/gantt/gantt'
+import { ganttIsOutlineView } from '../../../constants'
 
 /** 更新任务条名称的组件 */
 export default class UpdateCardBarName extends React.Component {
@@ -20,7 +21,10 @@ export default class UpdateCardBarName extends React.Component {
 
   /** 保存名称 */
   saveName = () => {
-    console.log(this.state.cardbarname)
+    /** 是否大纲视图 */
+    const isOutlineView = ganttIsOutlineView({
+      group_view_type: this.props.group_view_type
+    })
     const { cardbarname } = this.state
     const { handleOverEdit } = this.props
     if (!cardbarname || cardbarname === this.props.data.name) {
@@ -36,7 +40,12 @@ export default class UpdateCardBarName extends React.Component {
             message.success('更新成功')
             handleOverEdit && handleOverEdit({ name: cardbarname })
             this.props.dispatch({
-              type: GANTTMODEL.namespace + '/' + GANTTMODEL.updateListGroup,
+              type:
+                GANTTMODEL.namespace +
+                '/' +
+                (isOutlineView
+                  ? GANTTMODEL.updateOutLineTree
+                  : GANTTMODEL.updateListGroup),
               payload: {
                 datas: [
                   {
