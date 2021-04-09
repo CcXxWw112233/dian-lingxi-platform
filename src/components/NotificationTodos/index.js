@@ -35,11 +35,16 @@ export function handleReBackNotiParams({
   const length = scope_content.filter(item => item.id != id).length
   let operate_code = code
   let comfirm_message = `${message}。`
-  let confirm_title = scope_date
-    ? `已将${
-        DESCRIPTION_TIME_RANGE[time_range]
-      }时间调整至${timestampToTimeNormal(scope_date, '/', false, true)}`
-    : `当前操作偏离原计划${scope_day || '0'}天，`
+  let confirm_title = ''
+  if (scope_date) {
+    confirm_title = `已将${
+      DESCRIPTION_TIME_RANGE[time_range]
+    }时间调整至${timestampToTimeNormal(scope_date, '/', false, true)}`
+  } else {
+    confirm_title = `已将${DESCRIPTION_TIME_RANGE[time_range]}时间${
+      Number(scope_day) > 0 ? '延后' : '提前'
+    }${Math.abs(Number(scope_day))}天`
+  }
   if (code == '0') {
     //成功的时候存在依赖影响
     if (length || !!Number(scope_number)) {
