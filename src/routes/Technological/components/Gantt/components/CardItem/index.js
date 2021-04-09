@@ -99,8 +99,12 @@ export default class CardItem extends Component {
   componentDidMount() {
     this.initSetPosition(this.props)
     this.handleEffectParentCard('getParentCard') //大纲模式下获取父级任务实例
-    this.setLabelData(this.props.itemValue.label_data)
-    this.updateCardBarData({ name: this.props.itemValue.name })
+    // this.setLabelData(this.props.itemValue.label_data)
+    this.updateCardBarData({
+      label_data: this.props.itemValue.label_data,
+      name: this.props.itemValue.name,
+      executors: this.props.itemValue.executors
+    })
   }
 
   componentWillReceiveProps(nextProps) {
@@ -1839,7 +1843,6 @@ export default class CardItem extends Component {
       board_id,
       is_realize,
       type,
-      executors = [],
       // label_data = [],
       is_has_start_time,
       is_has_end_time,
@@ -1855,7 +1858,7 @@ export default class CardItem extends Component {
       is_expand,
       board_eraly_waring
     } = itemValue
-    const { label_data = [], name } = this.state
+    const { label_data = [], name, executors = [] } = this.state
     const {
       has_child,
       min_start_time: child_min_start_time,
