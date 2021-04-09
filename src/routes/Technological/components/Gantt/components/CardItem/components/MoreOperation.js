@@ -1,8 +1,10 @@
 import { Dropdown, Menu, message, Popconfirm } from 'antd'
 import React from 'react'
-import { MESSAGE_DURATION_TIME, NOT_HAS_PERMISION_COMFIRN } from '../../../../../../../globalset/js/constant'
-import { PROJECTDETAILMODEL } from '../../../../../../../models/technological/projectDetail/projectDetailTask'
-import { deleteTask } from '../../../../../../../services/technological/task'
+import {
+  MESSAGE_DURATION_TIME,
+  NOT_HAS_PERMISION_COMFIRN
+} from '../../../../../../../globalset/js/constant'
+import globalStyles from '../../../../../../../globalset/css/globalClassName.less'
 import DEvent, { CARDREMOVE } from '../../../../../../../utils/event'
 import styles from './MoreOperation.less'
 const lx_utils = undefined
@@ -73,7 +75,11 @@ export default class MoreOperation extends React.Component {
             onCancel={() => this.setState({ visible: false })}
           >
             <div onClick={e => e.stopPropagation()}>
-              <span className={styles.removeItem}>&#xe720;</span>{' '}
+              <span
+                className={`${styles.removeItem} ${globalStyles.authTheme}`}
+              >
+                &#xe720;
+              </span>{' '}
               <span>删除</span>
             </div>
           </Popconfirm>
