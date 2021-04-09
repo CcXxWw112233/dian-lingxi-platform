@@ -28,6 +28,7 @@ import {
 import { updateMilestone } from '../../../../../../services/technological/task'
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
 import { debounce } from 'lodash'
+import { rebackCreateNotify } from '../../../../../../components/NotificationTodos'
 
 const MenuItem = Menu.Item
 @connect(mapStateToProps)
@@ -1020,9 +1021,17 @@ export default class GroupMilestones extends Component {
     // console.log('sssssssss_11a', this.milestone_drag_ele)
   }
   // 甘特图信息变化后，实时触发甘特图渲染在甘特图上变化
-  handleMiletonsChangeMountInGantt = () => {
-    const { dispatch } = this.props
+  handleMiletonsChangeMountInGantt = datas => {
+    const { dispatch, group_view_type } = this.props
     return new Promise(resolve => {
+      if (group_view_type == '4') {
+        dispatch({
+          type: `gantt/updateOutLineTree`,
+          payload: {
+            datas
+          }
+        })
+      }
       dispatch({
         type: 'gantt/getGttMilestoneList',
         payload: {}
@@ -1037,7 +1046,9 @@ export default class GroupMilestones extends Component {
       ceilWidth,
       gantt_head_width,
       gantt_board_id,
-      list_id
+      list_id,
+      group_view_type,
+      dispatch
     } = this.props
     setTimeout(() => {
       this.milestone_dragging = false
@@ -1125,8 +1136,21 @@ export default class GroupMilestones extends Component {
       )
         .then(async res => {
           if (isApiResponseOk(res)) {
-            await this.handleMiletonsChangeMountInGantt()
+            await this.handleMiletonsChangeMountInGantt([
+              {
+                ...params,
+                due_time: params.deadline
+              }
+            ])
             message.success('更新成功')
+            rebackCreateNotify.call(this, {
+              res,
+              id: milestones[0].id,
+              board_id: milestones[0].board_id,
+              group_view_type,
+              dispatch,
+              targt_type: 'milestone'
+            })
             resolve(res)
           } else {
             message.error(res.message)
@@ -1143,6 +1167,7 @@ export default class GroupMilestones extends Component {
         })
         .catch(err => {
           message.error('更新失败')
+          console.log('ssssssssssaaa', err)
           this.setState(
             {
               dragg_milestone_err: true

@@ -691,6 +691,14 @@ export async function revokeCardDo(data) {
     data
   })
 }
+//撤销里程碑操作
+export async function revokeMilestoneDo(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/milestone/undo`,
+    method: 'PUT',
+    data
+  })
+}
 
 //创建多条里程碑
 export async function addMultipleMilestone(data) {
