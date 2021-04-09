@@ -7,6 +7,7 @@ import {
   addTaskExecutor,
   removeTaskExecutor
 } from '../../../../../../../services/technological/task.js'
+import { ganttIsOutlineView } from '../../../constants.js'
 
 @connect(({ projectDetail: { datas: { projectDetailInfoData } } }) => ({
   projectDetailInfoData
@@ -19,6 +20,10 @@ export default class MemberUpdate extends React.Component {
   }
 
   chirldrenTaskChargeChange = val => {
+    /** 是否大纲视图 */
+    const isOutlineView = ganttIsOutlineView({
+      group_view_type: this.props.group_view_type
+    })
     const { type, key } = val
     const {
       projectDetailInfoData: { data: users = [], board_set = {} },
@@ -33,7 +38,12 @@ export default class MemberUpdate extends React.Component {
           const list = data.executors.concat([user])
           updateCardBarDatas && updateCardBarDatas({ executors: list })
           dispatch({
-            type: GANTTMODEL.namespace + '/' + GANTTMODEL.updateListGroup,
+            type:
+              GANTTMODEL.namespace +
+              '/' +
+              (isOutlineView
+                ? GANTTMODEL.updateOutLineTree
+                : GANTTMODEL.updateListGroup),
             payload: {
               datas: [
                 {
@@ -53,7 +63,12 @@ export default class MemberUpdate extends React.Component {
         )
         updateCardBarDatas && updateCardBarDatas({ executors: list })
         dispatch({
-          type: GANTTMODEL.namespace + '/' + GANTTMODEL.updateListGroup,
+          type:
+            GANTTMODEL.namespace +
+            '/' +
+            (isOutlineView
+              ? GANTTMODEL.updateOutLineTree
+              : GANTTMODEL.updateListGroup),
           payload: {
             datas: [
               {

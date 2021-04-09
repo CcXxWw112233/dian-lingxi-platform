@@ -111,7 +111,9 @@ export const GANTTMODEL = {
    * @param {{label_id: String, label_name: String, label_color: String}[]} label_data 标签列表
    * @params ...
    */
-  updateListGroup: 'updateListGroup'
+  updateListGroup: 'updateListGroup',
+  /** 更新大纲视图数据 */
+  updateOutLineTree: 'updateOutLineTree'
 }
 
 export default {
