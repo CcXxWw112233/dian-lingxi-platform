@@ -933,9 +933,9 @@ export default class DateList extends Component {
             // 同月同天
             date_dec = `${dateFormat(e_time, 'dd')}`
           } else {
-            date_dec = `${dateFormat(s_time, 'dd')} - ${dateFormat(
+            date_dec = `${dateFormat(s_time, e_format)} - ${dateFormat(
               e_time,
-              'dd'
+              e_format
             )}`
           }
         } else {
