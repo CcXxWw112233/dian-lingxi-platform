@@ -728,7 +728,7 @@ export default class GroupMilestones extends Component {
   renderDropDown = (timestamp, arr, overlay, InnerNode) => {
     if (arr.length > 1) {
       return (
-        <Tooltip title={timestampToTimeNormal(timestamp, '/')}>
+        <Tooltip title={timestampToTimeNormal(timestamp, '/', false, true)}>
           <Dropdown overlay={overlay}>{InnerNode}</Dropdown>{' '}
         </Tooltip>
       )
@@ -737,7 +737,7 @@ export default class GroupMilestones extends Component {
     const value = arr[0]
     const { board_id, id } = value
     return (
-      <Tooltip title={timestampToTimeNormal(timestamp, '/')}>
+      <Tooltip title={timestampToTimeNormal(timestamp, '/', false, true)}>
         <div
           onClick={() => {
             if (this.milestone_dragging == true) return
