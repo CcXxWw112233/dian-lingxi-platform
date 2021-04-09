@@ -191,6 +191,7 @@ export default class GetRowGantt extends Component {
       show_board_fold,
       gantt_view_mode
     } = this.props
+    if (group_view_type != '1') return //只有在分组视图下才有效
     if (ganttIsOutlineView({ group_view_type })) {
       return
     }
@@ -372,6 +373,7 @@ export default class GetRowGantt extends Component {
     if (ganttIsOutlineView({ group_view_type })) {
       return
     }
+    if (group_view_type != '1') return //只有在分组视图下才有效
     const { ceiHeight, ceilWidth } = this.props
     if (this.state.isMouseDown) {
       //按下的情况不处理
@@ -979,7 +981,10 @@ export default class GetRowGantt extends Component {
     const contain = dasheRectShow &&
       !card_rely_draging &&
       !task_is_dragging &&
-      !ganttIsOutlineView({ group_view_type }) && (
+      ganttIsSingleBoardGroupView({
+        group_view_type,
+        gantt_board_id
+      }) && (
         <>
           <div
             className={indexStyles.dasheRectName}
