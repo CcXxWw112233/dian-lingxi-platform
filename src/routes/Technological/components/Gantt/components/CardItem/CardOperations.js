@@ -66,7 +66,10 @@ export default class CardOperation extends React.Component {
   CheckDisabled = key => {
     const { data } = this.props
     /** 需要单独控制是否禁用的列表 */
-    const toolsDisabled = [CardBarOperations.BarColor]
+    const toolsDisabled = [
+      CardBarOperations.BarColor,
+      CardBarOperations.RelyKey
+    ]
     /** 是否是需要验证禁用的元素 */
     const isDisabledItem = toolsDisabled.includes(key)
     /** 不需要验证，所以不需要禁用 */
@@ -77,6 +80,18 @@ export default class CardOperation extends React.Component {
         /** 任务未选择标签，禁用按钮 */
         if (!data.label_data) return true
         if (!data.label_data.length) return true
+        return false
+      case CardBarOperations.RelyKey:
+        if (
+          /** 视图类型 */
+          ['2', '5'].includes(this.props.group_view_type) ||
+          /** 全项目 */
+          this.props.board_id === '0' ||
+          /** 有父级 */
+          this.props.parent_card_id
+        ) {
+          return true
+        }
         return false
       default:
         return false
@@ -193,6 +208,12 @@ export default class CardOperation extends React.Component {
                 <span
                   className={disabled ? styles.disabled : ''}
                   tabIndex={-1}
+                  onMouseDown={e => {
+                    if (item.key !== CardBarOperations.RelyKey || disabled) {
+                      e.stopPropagation()
+                      e.preventDefault()
+                    }
+                  }}
                   onClick={e => {
                     e.stopPropagation()
                     e.preventDefault()

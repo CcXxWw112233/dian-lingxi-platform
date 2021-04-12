@@ -2506,7 +2506,7 @@ export default class CardItem extends Component {
               getX={this.getX}
               rely_down={this.state.rely_down}
               group_view_type={group_view_type}
-              board_id={gantt_board_id}
+              board_id={itemValue.board_id}
               parent_card_id={parent_card_id}
               updateTags={this.updateLabeldata}
               updateCardBarDatas={this.updateCardBarData}
