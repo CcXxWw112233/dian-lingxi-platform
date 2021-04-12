@@ -68,7 +68,8 @@ export default class CardOperation extends React.Component {
     /** 需要单独控制是否禁用的列表 */
     const toolsDisabled = [
       CardBarOperations.BarColor,
-      CardBarOperations.RelyKey
+      CardBarOperations.RelyKey,
+      CardBarOperations.MemberChange
     ]
     /** 是否是需要验证禁用的元素 */
     const isDisabledItem = toolsDisabled.includes(key)
@@ -79,7 +80,6 @@ export default class CardOperation extends React.Component {
       case CardBarOperations.BarColor:
         /** 任务未选择标签，禁用按钮 */
         if (!data.label_data) return true
-        if (!data.label_data.length) return true
         return false
       case CardBarOperations.RelyKey:
         if (
@@ -89,6 +89,14 @@ export default class CardOperation extends React.Component {
           this.props.board_id === '0' ||
           /** 有父级 */
           this.props.parent_card_id
+        ) {
+          return true
+        }
+        return false
+      case CardBarOperations.MemberChange:
+        if (
+          /** 视图类型 */
+          ['2', '5'].includes(this.props.group_view_type)
         ) {
           return true
         }
