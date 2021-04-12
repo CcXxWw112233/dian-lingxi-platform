@@ -55,6 +55,9 @@ export default class UpdateCardBarName extends React.Component {
                 ]
               }
             })
+            /** 更新详情页的内容 */
+            this.props.onChangeTimeHandleCardDetail &&
+              this.props.onChangeTimeHandleCardDetail()
             return res
           }
           return Promise.reject(res)
