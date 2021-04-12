@@ -599,15 +599,26 @@ export default class index extends Component {
         } else {
           Move_Line = `M ${move_right - left_diff},${move_top + top_diff}
                     L${line_right}, ${move_top + top_diff}
-                    L${line_right}, ${line_top + top_diff + top_diff_30},
+                    L${line_right}, ${line_top +
+            top_diff +
+            top_diff_30 +
+            milestone_base_height +
+            task_item_height / 2},
                     L${line_right - left_diff}, ${line_top +
             top_diff +
-            top_diff_30},`
+            top_diff_30 +
+            milestone_base_height +
+            task_item_height / 2},`
           Arrow = this.calArrow({
             arrow_direction: 'top',
             final_point: {
               x: line_right - left_diff,
-              y: line_top + top_diff + top_diff_30
+              y:
+                line_top +
+                top_diff +
+                top_diff_30 +
+                milestone_base_height +
+                task_item_height / 2
             },
             diff_horizontal: 'right'
           })
