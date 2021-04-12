@@ -80,6 +80,7 @@ export default class CardOperation extends React.Component {
       case CardBarOperations.BarColor:
         /** 任务未选择标签，禁用按钮 */
         if (!data.label_data) return true
+        if (!data.label_data.length) return true
         return false
       case CardBarOperations.RelyKey:
         if (
