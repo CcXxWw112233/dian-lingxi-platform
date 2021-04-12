@@ -19,7 +19,6 @@ import styles from './LabelSelect.less'
 /** 任务条存在的标签列表 */
 // let card_label = []
 function LabelSelect(props) {
-  console.log(props)
   /** 添加标签的标识 */
   const ADDLABELKEY = 'addlabel'
   /** 修改任务标签的标识 */

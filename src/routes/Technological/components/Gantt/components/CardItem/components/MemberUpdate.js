@@ -100,15 +100,11 @@ export default class MemberUpdate extends React.Component {
   inviteOthersToBoardCalback = () => {}
 
   render() {
-    const {
-      children,
-      data: { executors }
-    } = this.props
+    const { children, data = {} } = this.props || {}
+    const { executors = [] } = data || {}
     const org_id = sessionStorage.getItem('aboutBoardOrganizationId')
-    const {
-      projectDetailInfoData: { data: users = [], board_set = {} }
-    } = this.props
-
+    const { projectDetailInfoData = {} } = this.props
+    const { data: users = [], board_set = {} } = projectDetailInfoData
     return (
       <Dropdown
         disabled={this.checkDisabled()}
