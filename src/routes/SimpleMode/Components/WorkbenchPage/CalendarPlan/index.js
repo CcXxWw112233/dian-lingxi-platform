@@ -11,6 +11,10 @@ export default class CalendarPlan extends React.Component {
     this.modeYear = 'year'
     /** 定义的月份mode */
     this.modeMonth = 'month'
+    /** 最小的年份范围 */
+    this.minYearNumber = 10
+    /** 最大的年份范围 */
+    this.maxYearNumber = 9
     this.state = {
       /** 日历模式 */
       mode: this.modeMonth,
@@ -36,9 +40,9 @@ export default class CalendarPlan extends React.Component {
       /** 当前年份 */
       const nowY = moment().year()
       /** 最小的年份 */
-      const minY = nowY - 10
+      const minY = nowY - this.minYearNumber
       /** 最大的年份 */
-      const maxY = nowY + 9
+      const maxY = nowY + this.maxYearNumber
       /** 最小年份合集 */
       const minYears = []
       /** 最大年份合集 */
@@ -141,7 +145,7 @@ export default class CalendarPlan extends React.Component {
               {this.years.map(item => {
                 return (
                   <Select.Option key={item} value={item}>
-                    {item}
+                    {item}年
                   </Select.Option>
                 )
               })}

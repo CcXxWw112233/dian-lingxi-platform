@@ -10,6 +10,7 @@ import {
   updateBoardTag
 } from '../../../../../../../services/technological/task'
 import { ganttIsOutlineView } from '../../../constants'
+import { onChangeCardHandleCardDetail } from '../../../ganttBusiness'
 import { BarColors } from '../CardBarConstans'
 import styles from './LabelSelect.less'
 
@@ -18,6 +19,7 @@ import styles from './LabelSelect.less'
 /** 任务条存在的标签列表 */
 // let card_label = []
 function LabelSelect(props) {
+  console.log(props)
   /** 添加标签的标识 */
   const ADDLABELKEY = 'addlabel'
   /** 修改任务标签的标识 */
@@ -155,6 +157,9 @@ function LabelSelect(props) {
             ]
           }
         })
+        /** 更新详情页的内容 */
+        props.onChangeTimeHandleCardDetail &&
+          props.onChangeTimeHandleCardDetail()
       }
     )
   }
@@ -193,6 +198,9 @@ function LabelSelect(props) {
             ]
           }
         })
+        /** 更新详情页的内容 */
+        props.onChangeTimeHandleCardDetail &&
+          props.onChangeTimeHandleCardDetail()
       }
     )
   }

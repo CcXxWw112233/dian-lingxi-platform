@@ -53,6 +53,9 @@ export default class MemberUpdate extends React.Component {
               ]
             }
           })
+          /** 更新详情页的内容 */
+          this.props.onChangeTimeHandleCardDetail &&
+            this.props.onChangeTimeHandleCardDetail()
         })
       }
     }
@@ -78,6 +81,9 @@ export default class MemberUpdate extends React.Component {
             ]
           }
         })
+        /** 更新详情页的内容 */
+        this.props.onChangeTimeHandleCardDetail &&
+          this.props.onChangeTimeHandleCardDetail()
       })
     }
   }

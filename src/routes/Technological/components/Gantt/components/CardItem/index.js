@@ -2499,6 +2499,7 @@ export default class CardItem extends Component {
             is_outline_view={ganttIsOutlineView({ group_view_type })}
           >
             <CardOperation
+              onChangeTimeHandleCardDetail={this.onChangeTimeHandleCardDetail}
               setRelyLineDrawing={this.setRelyDown}
               operations={this.cardbarOperation}
               data={itemValue}
