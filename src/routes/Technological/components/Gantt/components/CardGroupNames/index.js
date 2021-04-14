@@ -4,7 +4,13 @@ import styles from './index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 
 export default function Index(props) {
-  const { selects = [], list_data = [], show_prefix, wrapper_styles } = props
+  const {
+    selects = [],
+    list_data = [],
+    show_prefix,
+    wrapper_styles,
+    item_styles
+  } = props
   const name = selects.reduce(
     function(total, current, cur_index) {
       const item = list_data.find(item => item.list_id == current) || {} //找到匹配项
@@ -37,9 +43,11 @@ export default function Index(props) {
 Index.propTypes = {
   selects: PropTypes.array, //已选
   list_data: PropTypes.array, //数据源
-  wrapper_styles: PropTypes.object
+  wrapper_styles: PropTypes.object, //外部样式
+  item_styles: PropTypes.object //每个名称的样式
 }
 Index.defaultProps = {
   show_prefix: false, //不强制加前缀@
-  wrapper_styles: {}
+  wrapper_styles: {},
+  item_styles: {}
 }
