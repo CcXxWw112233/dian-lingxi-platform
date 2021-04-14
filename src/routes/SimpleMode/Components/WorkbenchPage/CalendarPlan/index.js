@@ -2,6 +2,7 @@ import { Calendar, Input, Radio, Select } from 'antd'
 import React from 'react'
 import styles from './index.less'
 import moment from 'moment'
+import CalendarTempTree from './components/CalendarTempTree'
 
 /** 日历计划功能组件 */
 export default class CalendarPlan extends React.Component {
@@ -174,7 +175,9 @@ export default class CalendarPlan extends React.Component {
           </div>
         </div>
         <div className={styles.content}>
-          <div className={styles.content_left_tree}></div>
+          <div className={styles.content_left_tree}>
+            <CalendarTempTree />
+          </div>
           <div className={styles.content_calendar}>
             <Calendar
               className={styles.calendar}

@@ -66,6 +66,25 @@ import {
   transformTimestamp
 } from '../../../utils/util'
 
+/** 工作台redux数据管理常量
+ * @readonly 存放所有工作台公共数据的常量
+ */
+export const WorkbenchModel = {
+  /** 命名空间
+   * @default string 'workbench'
+   */
+  namespace: 'workbench',
+  /** 变量 */
+  state: {
+    /** 所选组织的项目列表 */
+    projectList: [],
+    /** 工作台是否显示甘特图卡片，0默认不显示，1显示
+     * @default string '0' 默认不显示 '1' 显示
+     */
+    workbench_show_gantt_card: '0'
+  }
+}
+
 let naviHeadTabIndex //导航栏naviTab选项
 export default modelExtend(technological, {
   namespace: 'workbench',
