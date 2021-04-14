@@ -55,6 +55,11 @@ export default class GanttDetail extends React.Component {
             id: board_id
           }
         })
+        debugger
+        dispatch({
+          type: 'gantt/getAboutGroupBoards',
+          payload: {}
+        })
         this.setState({
           milestone_id_local: milestone_id
         })

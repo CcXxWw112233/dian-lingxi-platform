@@ -67,6 +67,7 @@ import GroupListHeadDragNoTimeDataItem from './GroupListHeadDragNoTimeDataItem'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import { clickDelay } from '../../../../globalset/clientCustorm'
 import { LISTLOCK, NOTLISTLOCKREAD } from '../VisitControl/constans'
+import CardGroupNames from './components/CardGroupNames'
 
 @connect(mapStateToProps)
 export default class GroupListHeadItem extends Component {
@@ -1617,6 +1618,16 @@ export default class GroupListHeadItem extends Component {
     }
     return _obj[tag] || {}
   }
+
+  // 获取项目分组所有
+  getCardGroups = () => {
+    const { gantt_board_id, about_group_boards = [] } = this.props
+    const item =
+      about_group_boards.find(item => item.board_id == gantt_board_id) || {}
+    const { list_data = [] } = item
+    return list_data
+  }
+
   render() {
     const {
       currentUserOrganizes = [],
@@ -1857,7 +1868,23 @@ export default class GroupListHeadItem extends Component {
                         </div>
                       )
                     } */}
-                    {!is_group_folded && (
+                    {this.props.itemKey == 0 && (
+                      <div
+                        className={`${indexStyles.list_head_body_contain} ${indexStyles.list_head_body_contain_2}`}
+                      >
+                        <CardGroupNames
+                          selects={[
+                            '1381783138262454272',
+                            '1379677136675278848',
+                            '1381850733162401792',
+                            '1381783166137798656',
+                            '1382212260310683648'
+                          ]}
+                          list_data={this.getCardGroups()}
+                        />
+                      </div>
+                    )}
+                    {!is_group_folded && this.props.itemKey != 0 && (
                       <div
                         className={`${indexStyles.list_head_body_contain} ${indexStyles.list_head_body_contain_2}`}
                       >
@@ -1896,7 +1923,6 @@ export default class GroupListHeadItem extends Component {
                             })}
                           </div>
                         )}
-                        {/* <div className={`${indexStyles.list_head_body_contain_lt} ${globalStyle.authTheme}`}>&#xe6db;</div> */}
                       </div>
                     )}
                   </div>
@@ -2091,7 +2117,8 @@ function mapStateToProps({
       get_gantt_data_loading,
       list_group,
       show_board_fold,
-      group_list_area_fold_section = []
+      group_list_area_fold_section = [],
+      about_group_boards
     }
   },
   technological: {
@@ -2127,7 +2154,8 @@ function mapStateToProps({
     show_board_fold,
     projectDetailInfoData,
     userBoardPermissions,
-    group_list_area_fold_section
+    group_list_area_fold_section,
+    about_group_boards
   }
 }
 

@@ -18,6 +18,7 @@ import { completeTask } from '../../../../../../../services/technological/task'
 import { ganttIsOutlineView } from '../../../constants'
 import { getTreeNodeValue } from '../../../../../../../models/technological/workbench/gantt/gantt_utils'
 import { onChangeCardHandleCardDetail } from '../../../ganttBusiness'
+import CardGroupNames from '../../CardGroupNames'
 
 @connect(mapStateToProps)
 export default class CommonRelaItem extends React.Component {
@@ -112,7 +113,18 @@ export default class CommonRelaItem extends React.Component {
       }
     })
   }
-
+  // 获取任务分组列表
+  getCardGroups = () => {
+    const {
+      about_group_boards = [],
+      milestone_detail: { board_id }
+    } = this.props
+    const item =
+      about_group_boards.find(item => item.board_id == board_id) || {}
+    const { list_data = [] } = item
+    console.log('ssssssssssaaa', list_data)
+    return list_data
+  }
   render() {
     const {
       itemValue = {},
@@ -164,10 +176,22 @@ export default class CommonRelaItem extends React.Component {
             style={{
               wordWrap: 'break-word',
               paddingTop: 2,
-              marginRight: '6px'
+              marginRight: '6px',
+              display: 'flex'
             }}
           >
-            {name}
+            <div> {name}&nbsp;&nbsp;</div>
+            <CardGroupNames
+              wrapper_styles={{ justifyContent: 'flex-start' }}
+              selects={[
+                '1381783138262454272',
+                '1379677136675278848',
+                '1381850733162401792',
+                '1381783166137798656',
+                '1382212260310683648'
+              ]}
+              list_data={this.getCardGroups()}
+            />
           </div>
           {/*日期*/}
           {deadline && (
@@ -220,7 +244,8 @@ function mapStateToProps({
       group_view_type,
       outline_tree = [],
       selected_card_visible,
-      list_group = []
+      list_group = [],
+      about_group_boards = []
     }
   }
 }) {
@@ -230,7 +255,8 @@ function mapStateToProps({
     group_view_type,
     outline_tree,
     selected_card_visible,
-    list_group
+    list_group,
+    about_group_boards
   }
 }
 

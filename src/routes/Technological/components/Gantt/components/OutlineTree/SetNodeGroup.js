@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Menu, Button, Input, message, Modal, Dropdown } from 'antd'
+import { Menu, Button, Input, message, Modal, Dropdown, Select } from 'antd'
 import styles from './nodeOperate.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { connect } from 'dva'
@@ -11,7 +11,11 @@ import {
   deleteTaskVTwo,
   boardAppRelaMiletones,
   updateTaskVTwo,
-  updateMilestone
+  updateMilestone,
+  deleteCardGroup,
+  addCardGroup,
+  deleteMilestoneGroup,
+  addMilestoneGroup
 } from '../../../../../../services/technological/task'
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
 import OutlineTree from '.'
@@ -22,7 +26,9 @@ import {
 } from '../../../../../../services/technological/workFlow'
 import { currentNounPlanFilterName } from '../../../../../../utils/businessFunction'
 import { TASKS, FLOWS } from '../../../../../../globalset/js/constant'
-
+import { debounce } from 'lodash'
+import CardGroupNames from '../CardGroupNames'
+const { Option } = Select
 @connect(mapStateToProps)
 export default class SetNodeGroup extends Component {
   constructor(props) {
@@ -30,8 +36,12 @@ export default class SetNodeGroup extends Component {
     this.state = {
       group_sub_visible: false, //分组
       create_group_visible: false, //新建分组
-      group_value: ''
+      group_value: '',
+      groups: [] //分组列表
     }
+  }
+  componentDidMount() {
+    this.getCardGroups()
   }
   // 获取任务分组列表
   getCardGroups = () => {
@@ -39,7 +49,9 @@ export default class SetNodeGroup extends Component {
     const item =
       about_group_boards.find(item => item.board_id == gantt_board_id) || {}
     const { list_data = [] } = item
-    return list_data
+    this.setState({
+      groups: list_data
+    })
   }
   // 创建分组的区域
   renderCreateGroup = () => {
@@ -105,9 +117,9 @@ export default class SetNodeGroup extends Component {
   // 分组列表
   renderGroupList = () => {
     const {
-      nodeValue: { list_id: selected_list_id }
+      nodeValue: { list_ids = [] }
     } = this.props
-    const groups = this.getCardGroups()
+    const { groups } = this.state
     return (
       <>
         <div
@@ -116,6 +128,7 @@ export default class SetNodeGroup extends Component {
             e.stopPropagation()
             this.setCreateGroupVisible(true)
           }}
+          style={{ justifyContent: 'flex-start' }}
         >
           <span className={`${globalStyles.authTheme}`}>&#xe782;</span>
           <span>新建分组</span>
@@ -137,7 +150,7 @@ export default class SetNodeGroup extends Component {
               </div>
               <div
                 style={{
-                  display: selected_list_id == list_id ? 'block' : 'none'
+                  display: list_ids.includes(list_id) ? 'block' : 'none'
                 }}
                 className={`${globalStyles.authTheme} ${styles.check}`}
               >
@@ -193,18 +206,18 @@ export default class SetNodeGroup extends Component {
       }
     })
   }
+  // 关联分组
   relationGroup = list_id => {
     const {
       gantt_board_id,
-      nodeValue: { id, list_id: selected_list_id },
-      nodeValue: { tree_type },
+      nodeValue: { id },
+      nodeValue: { tree_type, list_ids },
       dispatch
     } = this.props
     let params = {
       list_id
     }
-    const is_cancle = list_id == selected_list_id
-    if (is_cancle) params.list_id = '0'
+
     if (tree_type == '1') {
       params = { ...params, id }
     } else {
@@ -214,10 +227,29 @@ export default class SetNodeGroup extends Component {
         card_id: id
       }
     }
-    const func = tree_type == '1' ? updateMilestone : updateTaskVTwo
+    let func = () => Promise.resolve({})
+    const origin_has = list_ids.includes(list_id) //原来存在
+    if (tree_type == '2') {
+      //任务类型
+      if (origin_has) {
+        func = deleteCardGroup
+      } else {
+        func = addCardGroup
+      }
+    } else if (tree_type == '1') {
+      // 里程碑类型
+      if (origin_has) {
+        func = deleteMilestoneGroup
+      } else {
+        func = addMilestoneGroup
+      }
+    } else {
+      return
+    }
+    // const func = tree_type == '1' ? updateMilestone : updateTaskVTwo
     func({ ...params }, { isNotLoading: false }).then(res => {
       if (isApiResponseOk(res)) {
-        message.success(!is_cancle ? '关联分组成功' : '已取消关联')
+        message.success(origin_has ? '已取消关联该分组' : '已关联分组')
         if (tree_type == '1') {
           dispatch({
             type: 'gantt/getGttMilestoneList',
@@ -230,6 +262,7 @@ export default class SetNodeGroup extends Component {
       }
     })
   }
+  // 更新节点list_ids
   setRelationGroupId = ({ list_id }) => {
     let {
       nodeValue: { id },
@@ -238,12 +271,24 @@ export default class SetNodeGroup extends Component {
       nodeValue: { tree_type }
     } = this.props
     let node = OutlineTree.getTreeNodeValue(outline_tree, id)
-    node.list_id = list_id
+    const { list_ids = [] } = node
+    if (list_ids.includes(list_id)) {
+      node.list_ids = list_ids.filter(i => i != list_id) //如果发现之前有，那就是删除
+    } else {
+      node.list_ids ? node.list_ids.push(list_id) : (node.list_ids = [list_id]) //如果发现之前没有，那就是添加
+    }
     // 父任务下所有子任务的分组和父任务一致
     if (tree_type == '2') {
       if (node.children) {
         node.children = node.children.map(item => {
-          item.list_id = list_id
+          const { list_ids = [] } = item
+          if (list_ids.includes(list_id)) {
+            item.list_ids = list_ids.filter(i => i != list_id) //如果发现之前有，那就是删除
+          } else {
+            item.list_ids
+              ? item.list_ids.push(list_id)
+              : (item.list_ids = [list_id]) //如果发现之前没有，那就是添加
+          }
           return item
         })
       }
@@ -257,15 +302,11 @@ export default class SetNodeGroup extends Component {
   }
   // ----------分组逻辑--------end+
 
-  renderName = () => {
-    const {
-      nodeValue: { list_id: selected_list_id }
-    } = this.props
-    const groups = this.getCardGroups()
-    return groups.find(item => item.list_id == selected_list_id)?.list_name
-  }
   renderDrop = () => {
-    const { create_group_visible, group_value } = this.state
+    const { create_group_visible } = this.state
+    const {
+      nodeValue: { list_ids = [] }
+    } = this.props
     return (
       <Dropdown
         trigger={['click']}
@@ -277,20 +318,34 @@ export default class SetNodeGroup extends Component {
           </div>
         }
       >
-        <div
-          title={this.renderName()}
-          className={`${globalStyles.global_ellipsis}`}
-        >
-          {this.renderName() || (
-            <span style={{ color: 'rgba(0,0,0,.15)' }}>未选择</span>
-          )}
-        </div>
+        {list_ids.length ? (
+          <div>{this.renderGroupsName()}</div>
+        ) : (
+          <span style={{ color: 'rgba(0,0,0,.25)' }}>未选择</span>
+        )}
       </Dropdown>
     )
   }
+  onSelect = debounce(value => {
+    console.log(`ssssssssss_selected`, value)
+    this.relationGroup(value)
+  }, 0)
+  onDeselect = debounce(value => {
+    console.log(`sssssssssss_unselected`, value)
+    this.relationGroup(value)
+  }, 0)
+
+  renderGroupsName = () => {
+    const {
+      nodeValue: { list_ids = [] }
+    } = this.props
+    const { groups } = this.state
+    return <CardGroupNames selects={list_ids} list_data={groups} />
+  }
+
   renderTarget = () => {
     const {
-      nodeValue: { tree_type, parent_card_id }
+      nodeValue: { tree_type, parent_card_id, list_ids = [] }
     } = this.props
     let vdom = ''
     if (tree_type == '3') {
@@ -302,7 +357,9 @@ export default class SetNodeGroup extends Component {
     } else if (tree_type == '2' && !!parent_card_id) {
       vdom = (
         <div>
-          {this.renderName() || (
+          {list_ids.length ? (
+            this.renderGroupsName()
+          ) : (
             <span style={{ color: 'rgba(0,0,0,.25)' }}>--</span>
           )}
         </div>
@@ -334,3 +391,44 @@ function mapStateToProps({
     outline_tree
   }
 }
+
+// onSelect = debounce(value => {
+//   console.log(`ssssssssss_selected`, value)
+//   this.relationGroup(value)
+// }, 0)
+// onDeselect = debounce(value => {
+//   console.log(`sssssssssss_unselected`, value)
+//   this.relationGroup(value)
+// }, 0)
+// renderSelect = () => {
+//   const {
+//     nodeValue: { list_ids = [] }
+//   } = this.props
+//   return (
+//     <Select
+//       mode="multiple"
+//       style={{ width: '100%', height: 18 }}
+//       size={'small'}
+//       maxTagCount={1}
+//       placeholder="请选择分组"
+//       value={list_ids}
+//       onSelect={this.onSelect}
+//       onDeselect={this.onDeselect}
+//     >
+//       {this.renderOptions()}
+//     </Select>
+//   )
+// }
+
+// renderOptions = () => {
+//   const { groups } = this.state
+//   return groups.map(item => {
+//     const { list_id, list_name } = item
+//     return (
+//       <Option key={list_id}>
+//         {list_name}
+//         {list_id}
+//       </Option>
+//     )
+//   })
+// }
