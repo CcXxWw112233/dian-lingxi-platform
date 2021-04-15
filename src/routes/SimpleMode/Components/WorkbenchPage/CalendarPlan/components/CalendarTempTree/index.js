@@ -4,10 +4,11 @@ import { WorkbenchModel } from '../../../../../../../models/technological/workbe
 import styles from './index.less'
 import globalStyles from '../../../../../../../globalset/css/globalClassName.less'
 import 'animate.css'
-import { message, Spin, Tree } from 'antd'
+import { Dropdown, Menu, message, Spin, Tree } from 'antd'
 import { calendarGetTemplateList } from '../../../../../../../services/organization'
 import PropTypes from 'prop-types'
 import Empty from '../../../../../../../components/Empty'
+import { NodeType, TotalBoardKey } from '../../constans'
 /** 文件夹的图标 */
 const folderIcon = require('../../../../../../../assets/workbench/foldericon.png')
 
@@ -31,7 +32,13 @@ export default class CalendarTempTree extends React.Component {
     /** 项目列表 */
     projectList: PropTypes.array,
     /** 当前选中的项目 */
-    simplemodeCurrentProject: PropTypes.object
+    simplemodeCurrentProject: PropTypes.object,
+    /** 勾选里程碑等树形节点回调 */
+    onChange: PropTypes.func,
+    /** 选中了模板的回调 */
+    onSelect: PropTypes.func,
+    /** 返回列表的回调 */
+    onBack: PropTypes.func
   }
   constructor(props) {
     super(props)
@@ -52,7 +59,7 @@ export default class CalendarTempTree extends React.Component {
     /** 全选了项目的key
      * @default string '0'
      */
-    this.TotalBoardKey = '0'
+    this.TotalBoardKey = TotalBoardKey
     /** 请求数据返回的code正确码 */
     this.SuccessCode = '0'
     /** 模板类型 */
@@ -65,22 +72,19 @@ export default class CalendarTempTree extends React.Component {
       flowType: '3'
     }
     /** 节点类型 */
-    this.NodeType = {
-      /** 里程碑类型 */
-      milestonetype: '1',
-      /** 子里程碑类型 */
-      submilestonetype: '2',
-      /** 任务类型 */
-      cardtype: '3',
-      /** 子任务类型 */
-      subcardtype: '4',
-      /** 未知类型 */
-      unkoneType: '-1'
-    }
+    this.NodeType = NodeType
   }
 
   componentDidMount() {
     this.fetchTempList()
+  }
+
+  componentDidUpdate(prevProps) {
+    if (
+      prevProps.simplemodeCurrentProject !== this.props.simplemodeCurrentProject
+    ) {
+      this.fetchTempList()
+    }
   }
   /** 获取所有项目列表中，存在的模板信息
    * @returns {?String[] | ?string }
@@ -93,7 +97,7 @@ export default class CalendarTempTree extends React.Component {
     const { projectList, simplemodeCurrentProject } = this.props
     /** 当前选中的项目id */
     const currentBoardId = simplemodeCurrentProject
-      ? simplemodeCurrentProject.board_id
+      ? simplemodeCurrentProject.board_id || this.TotalBoardKey
       : this.TotalBoardKey
 
     if (this.TotalBoardKey === currentBoardId) {
@@ -126,6 +130,12 @@ export default class CalendarTempTree extends React.Component {
     this.setLoading(true)
     /** 获取到的模板id列表或模板id */
     let templateIds = this.getBoardTempIds()
+    /** 清空 */
+    this.setState({
+      showInfoTree: false,
+      currentData: {},
+      treeData: []
+    })
     if (templateIds) {
       /** 获取返回的组织列表类型 */
       const idsType = typeof templateIds
@@ -150,10 +160,10 @@ export default class CalendarTempTree extends React.Component {
     }
     calendarGetTemplateList({ ids: templateIds.join(',') })
       .then(res => {
-        // console.log(res)
         if (res.code === this.SuccessCode) {
           this.setState({
-            tempList: res.data
+            tempList: res.data,
+            showNoData: false
           })
         } else {
           message.warn(res.message)
@@ -200,16 +210,18 @@ export default class CalendarTempTree extends React.Component {
           if (isSubCardType) return this.NodeType.subcardtype
           else if (isCardType) return this.NodeType.cardtype
         }
-        return this.NodeType.unkoneType
+        return this.NodeType.unknowType
       })()
 
-      arr.push({
-        ...obj,
-        children: obj.child_content,
-        title: this.treeTitle(obj.name, { ...obj, type }),
-        key: obj.id,
-        type: type
-      })
+      /** 是里程碑和子里程碑就显示 */
+      if (isMilestoneType || isSubMilestoneType)
+        arr.push({
+          ...obj,
+          children: obj.child_content,
+          title: this.treeTitle(obj.name, { ...obj, type }),
+          key: obj.id,
+          type: type
+        })
     })
     return arr
   }
@@ -219,11 +231,13 @@ export default class CalendarTempTree extends React.Component {
    * @param {{id:string, name: string, contents: object[]}} temp 点击的模板
    */
   handleClickTemp = temp => {
+    const { onSelect } = this.props
     this.setState({
       currentData: temp,
       treeData: this.forMateTreeData(temp.contents),
       showInfoTree: true
     })
+    onSelect && onSelect(temp)
   }
 
   /**
@@ -256,16 +270,43 @@ export default class CalendarTempTree extends React.Component {
 
   /** 点击返回列表 */
   handleBackList = () => {
+    const { onBack } = this.props
     this.setState({
       showInfoTree: false,
       currentData: {},
       treeData: []
     })
+
+    onBack && onBack()
   }
 
-  /** 选中复选框的事件 */
+  /** 选中复选框的事件
+   * @param {string[]} selectedKeys 选中的列表
+   */
   handleSelectTemp = selectedKeys => {
-    console.log(selectedKeys)
+    // console.log(selectedKeys)
+    const { onChange } = this.props
+    onChange && onChange(selectedKeys)
+  }
+
+  /**
+   * 模板切换事件
+   * @param {{key: string}} param0 key 点击的key
+   * @returns {null}
+   */
+  handleTempChange = ({ key }) => {
+    const { currentData = {} } = this.state
+    const { onSelect } = this.props
+    if (currentData.id === key) return
+    /** 获取点击的模板数据 */
+    const current = this.state.tempList.find(item => item.id === key)
+    if (current) {
+      this.setState({
+        currentData: current,
+        treeData: this.forMateTreeData(current.contents)
+      })
+      onSelect && onSelect(current)
+    }
   }
 
   render() {
@@ -329,9 +370,35 @@ export default class CalendarTempTree extends React.Component {
                 <div className={styles.templist_item_icon}>
                   <img src={folderIcon} alt="" width="100%" />
                 </div>
-                <div className={styles.templist_item_name}>
-                  {this.state.currentData.name}
-                </div>
+                <Dropdown
+                  trigger={['click']}
+                  overlay={
+                    <Menu
+                      onClick={this.handleTempChange}
+                      defaultSelectedKeys={[this.state.currentData.id]}
+                      selectedKeys={[this.state.currentData.id]}
+                    >
+                      {this.state.tempList.map(item => {
+                        return <Menu.Item key={item.id}>{item.name}</Menu.Item>
+                      })}
+                    </Menu>
+                  }
+                >
+                  <div className={styles.templist_item_name}>
+                    {this.state.currentData.name}
+                    <span
+                      className={globalStyles.authTheme}
+                      style={{
+                        fontSize: 12,
+                        transform: 'rotate(90deg)',
+                        display: 'inline-block',
+                        marginLeft: 8
+                      }}
+                    >
+                      &#xe61f;
+                    </span>
+                  </div>
+                </Dropdown>
               </div>
               <div className={styles.treeable}>
                 <Tree {...treeProps} />

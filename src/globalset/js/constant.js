@@ -5,6 +5,10 @@ export const BOOLEAN_TRUE_CODE = '1' //代表后端返回 '1'
 export const BOOLEAN_FALSE_CODE = '0' //代表后端返回 ‘0’
 
 export const REQUEST_DOMAIN = `${REQUEST_PREFIX}/upms` //用户信息接口域名
+/**
+ * 项目接口域名
+ * @default string '/dian_lingxi/projects'
+ */
 export const REQUEST_DOMAIN_BOARD = `${REQUEST_PREFIX}/projects` //项目接口域名
 export const REQUEST_DOMAIN_FILE = REQUEST_DOMAIN_BOARD //文件接口域名
 export const REQUEST_DOMAIN_FLOWS = REQUEST_DOMAIN_BOARD //流程接口域名
