@@ -8,8 +8,8 @@ export default function Index(props) {
     selects = [],
     list_data = [],
     show_prefix,
-    wrapper_styles,
-    item_styles
+    wrapper_styles = {},
+    item_styles = {}
   } = props
   const name = selects.reduce(
     function(total, current, cur_index) {
@@ -28,6 +28,7 @@ export default function Index(props) {
           <div
             key={item}
             className={`${styles.item_name} ${globalStyles.global_ellipsis}`}
+            style={{ ...item_styles }}
           >
             {(show_prefix || selects.length > 1) && (
               <>{index == 0 ? '@' : '/'}</>

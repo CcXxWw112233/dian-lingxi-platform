@@ -140,7 +140,8 @@ export default class CommonRelaItem extends React.Component {
       is_completed,
       users = [],
       progress_percent,
-      list_id = '0'
+      list_id = '0',
+      list_ids
     } = itemValue
     const result_process = Math.round(progress_percent * 100) / 100
     return (
@@ -183,13 +184,7 @@ export default class CommonRelaItem extends React.Component {
             <div> {name}&nbsp;&nbsp;</div>
             <CardGroupNames
               wrapper_styles={{ justifyContent: 'flex-start' }}
-              selects={[
-                '1381783138262454272',
-                '1379677136675278848',
-                '1381850733162401792',
-                '1381783166137798656',
-                '1382212260310683648'
-              ]}
+              selects={list_ids}
               list_data={this.getCardGroups()}
             />
           </div>

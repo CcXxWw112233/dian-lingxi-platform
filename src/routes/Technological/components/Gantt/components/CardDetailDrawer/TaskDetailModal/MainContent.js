@@ -45,6 +45,7 @@ import {
   REQUEST_DOMAIN_BOARD
 } from '../../../../../../../globalset/js/constant'
 import { caldiffDays, isOverdueTime } from '../../../../../../../utils/util'
+import SetNodeGroup from '../../OutlineTree/SetNodeGroup'
 
 @connect(mapStateToProps)
 export default class MainContent extends Component {
@@ -833,6 +834,18 @@ export default class MainContent extends Component {
     })
   }
 
+  setNodeGroupProps = () => {
+    const { drawContent = {} } = this.props
+    const { card_id: id, list_ids = [] } = drawContent
+    const _obj = {
+      tree_type: '2',
+      id,
+      list_ids
+    }
+    // console.log('ssssssssssasddd', _obj)
+    return _obj
+  }
+
   render() {
     const {
       drawContent = {},
@@ -1250,6 +1263,31 @@ export default class MainContent extends Component {
             {/* 备注区域 S */}
             {this.whetherExistencePriciple('REMARK') && this.renderReMarks()}
             {/* 备注区域 E */}
+
+            {/* 时间区域 */}
+            <div>
+              <div
+                className={mainContentStyles.field_content}
+                style={{ cursor: 'pointer' }}
+              >
+                <div className={mainContentStyles.field_left}>
+                  <div className={mainContentStyles.field_hover}>
+                    {/* <span className={globalStyles.authTheme}>&#xe686;</span> */}
+                    <span>分组</span>
+                  </div>
+                </div>
+                <div
+                  className={`${mainContentStyles.field_right}`}
+                  style={{ paddingLeft: 12 }}
+                >
+                  <SetNodeGroup
+                    nodeValue={this.setNodeGroupProps()}
+                    wrapper_styles={{ justifyContent: 'flex-start' }}
+                    item_styles={{ maxWidth: 100 }}
+                  />
+                </div>
+              </div>
+            </div>
           </div>
           {/* 各种字段的不同状态 E */}
           {/* 不同字段的渲染 S */}
@@ -1277,14 +1315,12 @@ export default class MainContent extends Component {
               {...this.props}
               onlyShowPopoverContent={true}
               disabled={
-                (
-                  this.checkDiffCategoriesAuthoritiesIsVisible &&
-                  this.checkDiffCategoriesAuthoritiesIsVisible()
-                    .visit_control_edit &&
-                  !this.checkDiffCategoriesAuthoritiesIsVisible(
-                    PROJECT_TEAM_CARD_EDIT
-                  ).visit_control_edit()
-                )
+                this.checkDiffCategoriesAuthoritiesIsVisible &&
+                this.checkDiffCategoriesAuthoritiesIsVisible()
+                  .visit_control_edit &&
+                !this.checkDiffCategoriesAuthoritiesIsVisible(
+                  PROJECT_TEAM_CARD_EDIT
+                ).visit_control_edit()
               }
               fields={fields}
               handleUpdateModelDatas={this.handleUpdateModelDatas}

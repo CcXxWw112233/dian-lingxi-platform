@@ -1016,7 +1016,10 @@ export default class CardItem extends Component {
           this.changeCardBelongGroup({
             card_id: id,
             new_list_id: group_row_param.list_id,
-            updateData,
+            updateData: {
+              ...updateData,
+              list_ids: [group_row_param.list_id]
+            },
             rely_datas: [
               { id, ...updateData },
               ...res.data.scope_content.filter(item => item.id != id)

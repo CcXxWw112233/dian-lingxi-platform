@@ -1657,6 +1657,7 @@ export default class GroupListHeadItem extends Component {
       board_id,
       is_privilege = '0',
       privileges,
+      union_list_ids = [],
       create_by = {},
       lane_leader = [],
       lane_overdue_count,
@@ -1873,13 +1874,7 @@ export default class GroupListHeadItem extends Component {
                         className={`${indexStyles.list_head_body_contain} ${indexStyles.list_head_body_contain_2}`}
                       >
                         <CardGroupNames
-                          selects={[
-                            '1381783138262454272',
-                            '1379677136675278848',
-                            '1381850733162401792',
-                            '1381783166137798656',
-                            '1382212260310683648'
-                          ]}
+                          selects={union_list_ids}
                           list_data={this.getCardGroups()}
                         />
                       </div>
