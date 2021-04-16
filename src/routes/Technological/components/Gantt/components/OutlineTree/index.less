@@ -82,12 +82,17 @@
   min-width: 40px;
 }
 .item_group_list {
-  width: 60px;
+  width: 154px;
   margin-left: 5px;
   text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+:global {
+  .ant-select-selection__choice__content {
+    max-width: 32px !important;
+  }
 }
 .item_times {
   min-width: 40px;

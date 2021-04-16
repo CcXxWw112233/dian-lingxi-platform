@@ -757,3 +757,36 @@ export const fetchVisitControlInfo = data => {
     data
   })
 }
+
+// 添加分组
+export const addCardGroup = data => {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/lists/rela`,
+    method: 'POST',
+    data
+  })
+}
+// 删除任务分组
+export const deleteCardGroup = data => {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/lists/rela`,
+    method: 'DELETE',
+    data
+  })
+}
+//添加里程碑分组
+export const addMilestoneGroup = data => {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/milestone/lists/rela`,
+    method: 'POST',
+    data
+  })
+}
+//删除里程碑分组
+export const deleteMilestoneGroup = data => {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/milestone/lists/rela`,
+    method: 'DELETE',
+    data
+  })
+}

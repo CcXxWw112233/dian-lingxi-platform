@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Menu, Button, Input, message, Modal, Dropdown } from 'antd'
+import { Menu, Button, Input, message, Modal, Dropdown, Select } from 'antd'
 import styles from './nodeOperate.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { connect } from 'dva'
@@ -11,18 +11,30 @@ import {
   deleteTaskVTwo,
   boardAppRelaMiletones,
   updateTaskVTwo,
-  updateMilestone
+  updateMilestone,
+  deleteCardGroup,
+  addCardGroup,
+  deleteMilestoneGroup,
+  addMilestoneGroup
 } from '../../../../../../services/technological/task'
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
 import OutlineTree from '.'
-import { visual_add_item } from '../../constants'
+import {
+  ganttIsOutlineView,
+  ganttIsSingleBoardGroupView,
+  GANTT_IDS,
+  visual_add_item
+} from '../../constants'
 import {
   nonAwayTempleteStartPropcess,
   workflowDelete
 } from '../../../../../../services/technological/workFlow'
 import { currentNounPlanFilterName } from '../../../../../../utils/businessFunction'
 import { TASKS, FLOWS } from '../../../../../../globalset/js/constant'
-
+import { debounce } from 'lodash'
+import CardGroupNames from '../CardGroupNames'
+import { onChangeCardHandleCardDetail } from '../../ganttBusiness'
+const { Option } = Select
 @connect(mapStateToProps)
 export default class SetNodeGroup extends Component {
   constructor(props) {
@@ -30,8 +42,15 @@ export default class SetNodeGroup extends Component {
     this.state = {
       group_sub_visible: false, //分组
       create_group_visible: false, //新建分组
-      group_value: ''
+      group_value: '',
+      groups: [] //分组列表
     }
+  }
+  componentDidMount() {
+    this.getCardGroups()
+  }
+  componentWillReceiveProps() {
+    this.getCardGroups()
   }
   // 获取任务分组列表
   getCardGroups = () => {
@@ -39,7 +58,9 @@ export default class SetNodeGroup extends Component {
     const item =
       about_group_boards.find(item => item.board_id == gantt_board_id) || {}
     const { list_data = [] } = item
-    return list_data
+    this.setState({
+      groups: list_data
+    })
   }
   // 创建分组的区域
   renderCreateGroup = () => {
@@ -105,9 +126,9 @@ export default class SetNodeGroup extends Component {
   // 分组列表
   renderGroupList = () => {
     const {
-      nodeValue: { list_id: selected_list_id }
+      nodeValue: { list_ids = [] }
     } = this.props
-    const groups = this.getCardGroups()
+    const { groups } = this.state
     return (
       <>
         <div
@@ -116,6 +137,7 @@ export default class SetNodeGroup extends Component {
             e.stopPropagation()
             this.setCreateGroupVisible(true)
           }}
+          style={{ justifyContent: 'flex-start' }}
         >
           <span className={`${globalStyles.authTheme}`}>&#xe782;</span>
           <span>新建分组</span>
@@ -137,7 +159,7 @@ export default class SetNodeGroup extends Component {
               </div>
               <div
                 style={{
-                  display: selected_list_id == list_id ? 'block' : 'none'
+                  display: list_ids.includes(list_id) ? 'block' : 'none'
                 }}
                 className={`${globalStyles.authTheme} ${styles.check}`}
               >
@@ -193,18 +215,19 @@ export default class SetNodeGroup extends Component {
       }
     })
   }
+  // 关联分组
   relationGroup = list_id => {
     const {
       gantt_board_id,
-      nodeValue: { id, list_id: selected_list_id },
-      nodeValue: { tree_type },
-      dispatch
+      nodeValue: { tree_type, list_ids = [], parent_card_id, id },
+      dispatch,
+      card_detail_id,
+      selected_card_visible
     } = this.props
     let params = {
       list_id
     }
-    const is_cancle = list_id == selected_list_id
-    if (is_cancle) params.list_id = '0'
+
     if (tree_type == '1') {
       params = { ...params, id }
     } else {
@@ -214,23 +237,162 @@ export default class SetNodeGroup extends Component {
         card_id: id
       }
     }
-    const func = tree_type == '1' ? updateMilestone : updateTaskVTwo
+    let func = () => Promise.resolve({})
+    const origin_has = list_ids.includes(list_id) //原来存在
+    if (tree_type == '2') {
+      //任务类型
+      if (origin_has) {
+        func = deleteCardGroup
+      } else {
+        func = addCardGroup
+      }
+    } else if (tree_type == '1') {
+      // 里程碑类型
+      if (origin_has) {
+        func = deleteMilestoneGroup
+      } else {
+        func = addMilestoneGroup
+      }
+    } else {
+      return
+    }
+    // const func = tree_type == '1' ? updateMilestone : updateTaskVTwo
     func({ ...params }, { isNotLoading: false }).then(res => {
       if (isApiResponseOk(res)) {
-        message.success(!is_cancle ? '关联分组成功' : '已取消关联')
+        message.success(origin_has ? '已取消关联该分组' : '已关联分组')
         if (tree_type == '1') {
           dispatch({
             type: 'gantt/getGttMilestoneList',
             payload: {}
           })
         }
+        onChangeCardHandleCardDetail({
+          card_detail_id, //来自任务详情的id
+          selected_card_visible, //任务详情弹窗是否弹开
+          dispatch,
+          operate_id: id, //当前操作的id
+          operate_parent_card_id: parent_card_id //当前操作的任务的父任务id
+        })
         this.setRelationGroupId({ list_id: params.list_id })
       } else {
         message.error(res.message)
       }
     })
   }
+  // 更新节点list_ids
   setRelationGroupId = ({ list_id }) => {
+    const { group_view_type, gantt_board_id } = this.props
+    if (ganttIsOutlineView({ group_view_type })) {
+      this.setOutLineTree({ list_id })
+    } else if (
+      ganttIsSingleBoardGroupView({ gantt_board_id, group_view_type })
+    ) {
+      setTimeout(() => {
+        this.setLaneGroup({ list_id })
+      }, 1000)
+    } else {
+      return
+    }
+  }
+  // 寻找分组节点
+  findOriginNode = () => {
+    let {
+      nodeValue: { id, list_ids },
+      list_group = []
+    } = this.props
+    let list_index, item_index, origin_schedue
+    for (let key in list_group) {
+      for (let key2 in list_group[key].lane_data.cards) {
+        if (id == list_group[key].lane_data.cards[key2].id) {
+          list_index = key
+          item_index = key2
+          origin_schedue = true //代表排期
+          break
+        }
+      }
+      for (let key2 in list_group[key].lane_data.card_no_times) {
+        if (id == list_group[key].lane_data.card_no_times[key2].id) {
+          list_index = key
+          item_index = key2
+          break
+        }
+      }
+      if (list_index) break
+    }
+    return {
+      origin_list_index: list_index,
+      origin_item_index: item_index,
+      origin_schedue
+    }
+  }
+  // 设置分组节点
+  // 若是设置了多分组，则将该条任务移动到交圈
+  // 若是设置成了单个分组，则将该任务移动到
+  setLaneGroup = ({ list_id }) => {
+    let {
+      nodeValue: { id, list_ids },
+      list_group = [],
+      dispatch,
+      nodeValue: { tree_type }
+    } = this.props
+    const list_ids_len = list_ids.length
+    const list_group_new = [...list_group]
+    const {
+      origin_list_index,
+      origin_item_index,
+      origin_schedue
+    } = this.findOriginNode()
+
+    const belong_cards = origin_schedue ? 'cards' : 'card_no_times'
+    const node =
+      list_group_new[origin_list_index].lane_data[belong_cards][
+        origin_item_index
+      ]
+    node.list_ids = list_ids
+
+    let targe_group_index = 0 //分组索引
+    if (list_ids_len == 0) {
+      //代表未分组，放在最后
+      targe_group_index = list_group_new.length - 1
+    } else if (list_ids_len == 1) {
+      //代表只有一个分组，需要索引
+      targe_group_index = list_group_new.findIndex(
+        item => item.lane_id == list_ids[0]
+      )
+    } else {
+      targe_group_index = 0 //多任务，放在第一行
+    }
+
+    list_group_new[targe_group_index].lane_data[belong_cards].push(node) //添加进新分组
+    list_group_new[origin_list_index].lane_data[belong_cards].splice(
+      origin_item_index,
+      1
+    ) //从老分组移除
+    // dispatch({
+    //   type: 'gantt/handleListGroup',
+    //   payload: {
+    //     data: list_group_new
+    //   }
+    // })
+    //对交圈进行查询
+    setTimeout(async () => {
+      const list_group_ = await dispatch({
+        type: 'gantt/getGanttGroupElseInfo',
+        payload: {
+          list_id: GANTT_IDS.OVERLAPPING_GROUP_ID,
+          origin_list_group: list_group_new
+        }
+      })
+      dispatch({
+        type: 'gantt/handleListGroup',
+        payload: {
+          data: list_group_
+        }
+      })
+    }, 0)
+  }
+  // 设置大纲节点
+  setOutLineTree = ({ list_id }) => {
     let {
       nodeValue: { id },
       outline_tree = [],
@@ -238,12 +400,24 @@ export default class SetNodeGroup extends Component {
       nodeValue: { tree_type }
     } = this.props
     let node = OutlineTree.getTreeNodeValue(outline_tree, id)
-    node.list_id = list_id
+    const { list_ids = [] } = node
+    if (list_ids.includes(list_id)) {
+      node.list_ids = list_ids.filter(i => i != list_id) //如果发现之前有，那就是删除
+    } else {
+      node.list_ids ? node.list_ids.push(list_id) : (node.list_ids = [list_id]) //如果发现之前没有，那就是添加
+    }
     // 父任务下所有子任务的分组和父任务一致
     if (tree_type == '2') {
       if (node.children) {
         node.children = node.children.map(item => {
-          item.list_id = list_id
+          const { list_ids = [] } = item
+          if (list_ids.includes(list_id)) {
+            item.list_ids = list_ids.filter(i => i != list_id) //如果发现之前有，那就是删除
+          } else {
+            item.list_ids
+              ? item.list_ids.push(list_id)
+              : (item.list_ids = [list_id]) //如果发现之前没有，那就是添加
+          }
           return item
         })
       }
@@ -257,15 +431,11 @@ export default class SetNodeGroup extends Component {
   }
   // ----------分组逻辑--------end+
 
-  renderName = () => {
-    const {
-      nodeValue: { list_id: selected_list_id }
-    } = this.props
-    const groups = this.getCardGroups()
-    return groups.find(item => item.list_id == selected_list_id)?.list_name
-  }
   renderDrop = () => {
-    const { create_group_visible, group_value } = this.state
+    const { create_group_visible } = this.state
+    const {
+      nodeValue: { list_ids = [] }
+    } = this.props
     return (
       <Dropdown
         trigger={['click']}
@@ -277,21 +447,43 @@ export default class SetNodeGroup extends Component {
           </div>
         }
       >
-        <div
-          title={this.renderName()}
-          className={`${globalStyles.global_ellipsis}`}
-        >
-          {this.renderName() || (
-            <span style={{ color: 'rgba(0,0,0,.15)' }}>未选择</span>
-          )}
-        </div>
+        {list_ids.length ? (
+          <div>{this.renderGroupsName()}</div>
+        ) : (
+          <span style={{ color: 'rgba(0,0,0,.25)' }}>未选择</span>
+        )}
       </Dropdown>
     )
   }
+  onSelect = debounce(value => {
+    console.log(`ssssssssss_selected`, value)
+    this.relationGroup(value)
+  }, 0)
+  onDeselect = debounce(value => {
+    console.log(`sssssssssss_unselected`, value)
+    this.relationGroup(value)
+  }, 0)
+
+  renderGroupsName = () => {
+    const {
+      nodeValue: { list_ids = [] }
+    } = this.props
+    const { groups } = this.state
+    return (
+      <CardGroupNames
+        selects={list_ids}
+        list_data={groups}
+        wrapper_styles={this.props.wrapper_styles || {}}
+        item_styles={this.props.item_styles || {}}
+      />
+    )
+  }
+
   renderTarget = () => {
     const {
-      nodeValue: { tree_type, parent_card_id }
+      nodeValue: { tree_type, parent_card_id, list_ids = [] }
     } = this.props
+
     let vdom = ''
     if (tree_type == '3') {
       vdom = (
@@ -302,7 +494,9 @@ export default class SetNodeGroup extends Component {
     } else if (tree_type == '2' && !!parent_card_id) {
       vdom = (
         <div>
-          {this.renderName() || (
+          {list_ids.length ? (
+            this.renderGroupsName()
+          ) : (
             <span style={{ color: 'rgba(0,0,0,.25)' }}>--</span>
           )}
         </div>
@@ -321,16 +515,31 @@ export default class SetNodeGroup extends Component {
 //  建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系
 function mapStateToProps({
   gantt: {
-    datas: { gantt_board_id, about_group_boards = [], outline_tree = [] }
+    datas: {
+      gantt_board_id,
+      about_group_boards = [],
+      outline_tree = [],
+      selected_card_visible,
+      group_view_type,
+      list_group
+    }
   },
   projectDetail: {
     datas: { projectDetailInfoData = {} }
-  }
+  },
+  publicTaskDetailModal: { card_id: card_detail_id }
 }) {
   return {
     gantt_board_id,
     projectDetailInfoData,
     about_group_boards,
-    outline_tree
+    outline_tree,
+    card_detail_id,
+    selected_card_visible,
+    group_view_type,
+    list_group
   }
+}
+SetNodeGroup.defaultProps = {
+  nodeValue: {} //实例节点的基本信息 {tree_type,list_ids, id}
 }

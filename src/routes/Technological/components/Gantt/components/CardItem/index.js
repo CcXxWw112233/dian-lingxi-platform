@@ -36,7 +36,7 @@ import { rebackCreateNotify } from '../../../../../../components/NotificationTod
 import { getCardsWarningTimeScope } from '../../../../../../models/technological/workbench/gantt/gantt_utils'
 import { CardBarOperations } from './CardBarConstans'
 import CardOperation from './CardOperations'
-import DEvent, { CARDBARTAGSUPDATE } from '../../../../../../utils/event'
+import CardGroupNames from '../CardGroupNames'
 
 const cx = classNames.bind(indexStyles)
 
@@ -1016,7 +1016,10 @@ export default class CardItem extends Component {
           this.changeCardBelongGroup({
             card_id: id,
             new_list_id: group_row_param.list_id,
-            updateData,
+            updateData: {
+              ...updateData,
+              list_ids: [group_row_param.list_id]
+            },
             rely_datas: [
               { id, ...updateData },
               ...res.data.scope_content.filter(item => item.id != id)
@@ -1827,6 +1830,16 @@ export default class CardItem extends Component {
       ...datas
     })
   }
+
+  // 获取任务的分组
+  // 获取任务分组列表
+  getCardGroups = () => {
+    const { gantt_board_id, about_group_boards = [] } = this.props
+    const item =
+      about_group_boards.find(item => item.board_id == gantt_board_id) || {}
+    const { list_data = [] } = item
+    return list_data
+  }
   render() {
     const {
       itemValue = {},
@@ -1850,6 +1863,7 @@ export default class CardItem extends Component {
       height,
       id,
       board_id,
+      list_ids,
       is_realize,
       type,
       // label_data = [],
@@ -2254,8 +2268,25 @@ export default class CardItem extends Component {
               {/* 非大纲视图下一定有，大纲视图下需要开启名称外置才能在任务条内显示名称 */}
               {(!ganttIsOutlineView({ group_view_type }) ||
                 (ganttIsOutlineView({ group_view_type }) &&
-                  !card_name_outside)) &&
-                name}
+                  !card_name_outside)) && (
+                <>
+                  {name}
+                  &nbsp;
+                  {/* //仅在单项目视图下 */}
+                  {(ganttIsOutlineView({ group_view_type }) ||
+                    ganttIsSingleBoardGroupView({
+                      gantt_board_id,
+                      group_view_type
+                    })) && (
+                    <CardGroupNames
+                      selects={list_ids}
+                      list_data={this.getCardGroups()}
+                      show_prefix
+                      targetclassname={'specific_example'}
+                    />
+                  )}
+                </>
+              )}
               {is_privilege == '1' && (
                 <Tooltip title="已开启访问控制" placement="top">
                   <span
@@ -2547,7 +2578,8 @@ function mapStateToProps({
       card_name_outside,
       milestoneMap = {},
       cardids_with_milestone,
-      hover_milestone_id
+      hover_milestone_id,
+      about_group_boards
     }
   },
   imCooperation: { im_all_latest_unread_messages = [] },
@@ -2576,6 +2608,7 @@ function mapStateToProps({
     milestoneMap,
     projectDetailInfoData,
     cardids_with_milestone,
-    hover_milestone_id
+    hover_milestone_id,
+    about_group_boards
   }
 }

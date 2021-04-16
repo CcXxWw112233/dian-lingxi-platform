@@ -36,11 +36,14 @@ export function handleReBackNotiParams({
   let operate_code = code
   let comfirm_message = `${message}。`
   let confirm_title = ''
+  if (!scope_day && !scope_date) {
+    confirm_title = '变更成功'
+  }
   if (scope_date) {
     confirm_title = `已将${
       DESCRIPTION_TIME_RANGE[time_range]
     }时间调整至${timestampToTimeNormal(scope_date, '/', false, true)}`
-  } else {
+  } else if (scope_day) {
     confirm_title = `已将${DESCRIPTION_TIME_RANGE[time_range]}时间${
       Number(scope_day) > 0 ? '延后' : '提前'
     }${Math.abs(Number(scope_day))}天`

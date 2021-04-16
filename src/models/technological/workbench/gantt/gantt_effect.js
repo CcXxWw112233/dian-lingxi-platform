@@ -242,7 +242,7 @@ export default {
     },
     // 获取分组头部的其它信息（百分比进度，人员）
     *getGanttGroupElseInfo({ payload = {} }, { select, call, put }) {
-      const { list_id } = payload
+      const { list_id, origin_list_group } = payload
       const gantt_board_id = yield select(
         getModelSelectDatasState('gantt', 'gantt_board_id')
       )
@@ -252,9 +252,10 @@ export default {
       if (!!list_id) {
         current_list_group_id = list_id
       }
-      const list_group = yield select(
+      let list_group = yield select(
         getModelSelectDatasState('gantt', 'list_group')
       )
+      if (origin_list_group) list_group = origin_list_group
       const index = list_group.findIndex(
         item => item.list_id == current_list_group_id
       )

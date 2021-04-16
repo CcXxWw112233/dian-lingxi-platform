@@ -670,16 +670,16 @@ export default class CommunicationTreeList extends Component {
                       )
                     )
                   })}
-                <span className={styles.addNewFolder}>
-                  <Button
-                    className={styles.addNewFolder_button}
-                    onClick={this.addNewFloderInputShow}
-                  >
-                    + 新增文件夹
-                  </Button>
-                </span>
               </Collapse>
             </div>
+            <span className={styles.addNewFolder}>
+              <Button
+                className={styles.addNewFolder_button}
+                onClick={this.addNewFloderInputShow}
+              >
+                + 新增文件夹
+              </Button>
+            </span>
           </div>
         )}
       </div>
