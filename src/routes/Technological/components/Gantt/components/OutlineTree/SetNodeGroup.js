@@ -22,6 +22,7 @@ import OutlineTree from '.'
 import {
   ganttIsOutlineView,
   ganttIsSingleBoardGroupView,
+  GANTT_IDS,
   visual_add_item
 } from '../../constants'
 import {
@@ -367,12 +368,28 @@ export default class SetNodeGroup extends Component {
       origin_item_index,
       1
     ) //从老分组移除
-    dispatch({
-      type: 'gantt/handleListGroup',
-      payload: {
-        data: list_group_new
-      }
-    })
+    // dispatch({
+    //   type: 'gantt/handleListGroup',
+    //   payload: {
+    //     data: list_group_new
+    //   }
+    // })
+    //对交圈进行查询
+    setTimeout(async () => {
+      const list_group_ = await dispatch({
+        type: 'gantt/getGanttGroupElseInfo',
+        payload: {
+          list_id: GANTT_IDS.OVERLAPPING_GROUP_ID,
+          origin_list_group: list_group_new
+        }
+      })
+      dispatch({
+        type: 'gantt/handleListGroup',
+        payload: {
+          data: list_group_
+        }
+      })
+    }, 0)
   }
   // 设置大纲节点
   setOutLineTree = ({ list_id }) => {
@@ -526,43 +543,3 @@ function mapStateToProps({
 SetNodeGroup.defaultProps = {
   nodeValue: {} //实例节点的基本信息 {tree_type,list_ids, id}
 }
-// onSelect = debounce(value => {
-//   console.log(`ssssssssss_selected`, value)
-//   this.relationGroup(value)
-// }, 0)
-// onDeselect = debounce(value => {
-//   console.log(`sssssssssss_unselected`, value)
-//   this.relationGroup(value)
-// }, 0)
-// renderSelect = () => {
-//   const {
-//     nodeValue: { list_ids = [] }
-//   } = this.props
-//   return (
-//     <Select
-//       mode="multiple"
-//       style={{ width: '100%', height: 18 }}
-//       size={'small'}
-//       maxTagCount={1}
-//       placeholder="请选择分组"
-//       value={list_ids}
-//       onSelect={this.onSelect}
-//       onDeselect={this.onDeselect}
-//     >
-//       {this.renderOptions()}
-//     </Select>
-//   )
-// }
-
-// renderOptions = () => {
-//   const { groups } = this.state
-//   return groups.map(item => {
-//     const { list_id, list_name } = item
-//     return (
-//       <Option key={list_id}>
-//         {list_name}
-//         {list_id}
-//       </Option>
-//     )
-//   })
-// }

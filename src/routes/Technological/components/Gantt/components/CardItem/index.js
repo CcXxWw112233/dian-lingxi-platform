@@ -2282,6 +2282,7 @@ export default class CardItem extends Component {
                       selects={list_ids}
                       list_data={this.getCardGroups()}
                       show_prefix
+                      targetclassname={'specific_example'}
                     />
                   )}
                 </>
