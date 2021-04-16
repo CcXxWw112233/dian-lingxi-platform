@@ -654,6 +654,7 @@ export default class CalendarPlan extends React.Component {
         milestoneList: new_milestoneList
       }
     })
+    this.fetchQueryCalendarData()
   }
 
   /** 渲染图例 */
