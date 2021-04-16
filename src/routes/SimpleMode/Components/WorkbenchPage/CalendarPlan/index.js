@@ -8,7 +8,8 @@ import {
   Popover,
   Radio,
   Select,
-  Spin
+  Spin,
+  Tooltip
 } from 'antd'
 import React from 'react'
 import styles from './index.less'
@@ -831,9 +832,11 @@ export default class CalendarPlan extends React.Component {
               placement="bottom"
               overlayStyle={{ width: 200 }}
             >
-              <span className={`${styles.legend} ${globalStyles.authTheme}`}>
-                &#xe862;
-              </span>
+              <Tooltip title="图例">
+                <span className={`${styles.legend} ${globalStyles.authTheme}`}>
+                  &#xe862;
+                </span>
+              </Tooltip>
             </Popover>
             <Select
               defaultValue={this.state.selectedYear}
