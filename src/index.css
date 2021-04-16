@@ -43,8 +43,8 @@ body,
 
 :global(.g_scrollbar_y::-webkit-scrollbar-thumb){
   border-radius     : 4px;
-  -webkit-box-shadow: inset 0 0 4px rgba(191, 191, 191, 1);
-  box-shadow        : inset 0 0 4px rgba(191, 191, 191, 1);
+  -webkit-box-shadow: inset 0 0 4px rgba(191, 191, 191, 0.3);
+  box-shadow        : inset 0 0 4px rgba(191, 191, 191, 0.3);
   background        : #737372;
 }
 

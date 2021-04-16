@@ -83,9 +83,9 @@ export const WorkbenchPages = {
   /** 日历安排 */
   CalendarPlan: {
     /** 日历安排标识
-     * @default string 'calendar:plan'
+     * @default string 'board:calendar'
      */
-    key: 'calendar:plan',
+    key: 'board:calendar',
     name: '日历安排'
   }
 }

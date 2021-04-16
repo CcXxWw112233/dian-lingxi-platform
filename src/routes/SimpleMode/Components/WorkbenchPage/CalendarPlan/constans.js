@@ -31,6 +31,8 @@ export const NodeType = {
 export const legendList = {
   /** 里程碑样式 */
   milestone: {
+    /** 是否显示 */
+    visible: true,
     /** 标题 */
     title: '里程碑',
     /** 图标 */
@@ -40,6 +42,8 @@ export const legendList = {
   },
   /** 子里程碑样式 */
   submilestone: {
+    /** 是否显示 */
+    visible: true,
     /** 标题 */
     title: '子里程碑',
     /** 图标 */
@@ -47,13 +51,59 @@ export const legendList = {
     /** 颜色 */
     color: '#FF8A00'
   },
-  /** 任务样式 */
+  /** 正常任务样式 */
   card: {
+    /** 是否显示 */
+    visible: true,
     /** 标题 */
     title: '任务',
     /** 图标 */
     icon: '&#xe861;',
     /** 颜色 */
     color: '#6A9AFF'
+  },
+  /** 已完成任务样式 */
+  carddone: {
+    /** 是否显示 */
+    visible: true,
+    /** 标题 */
+    title: '已完成的任务',
+    /** 图标 */
+    icon: '&#xe861;',
+    /** 颜色 */
+    color: '#95DE64'
+  },
+  /** 未完成任务样式 */
+  cardundone: {
+    /** 是否显示 */
+    visible: true,
+    /** 标题 */
+    title: '已完成的任务',
+    /** 图标 */
+    icon: '&#xe861;',
+    /** 颜色 */
+    color: '#CDD1DF'
+  },
+  /** 逾期任务样式 */
+  cardoverdue: {
+    /** 是否显示 */
+    visible: true,
+    /** 标题 */
+    title: '已完成的任务',
+    /** 图标 */
+    icon: '&#xe861;',
+    /** 颜色 */
+    color: '#FF0404'
+  },
+  /** 预警任务样式 */
+  cardwarn: {
+    /** 是否显示 */
+    visible: true,
+    /** 标题 */
+    title: '已完成的任务',
+    /** 图标 */
+    icon: '&#xe861;',
+    /** 颜色 */
+    color: '#FF8A00'
   }
 }

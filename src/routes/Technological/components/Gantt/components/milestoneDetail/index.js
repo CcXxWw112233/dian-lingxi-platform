@@ -4,6 +4,7 @@ import MainContent from './MainContent'
 import { connect } from 'dva'
 import HeaderContent from './HeaderContent'
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
+import 'braft-editor/dist/index.css'
 @connect(mapStateToProps)
 export default class GanttDetail extends React.Component {
   constructor(props) {

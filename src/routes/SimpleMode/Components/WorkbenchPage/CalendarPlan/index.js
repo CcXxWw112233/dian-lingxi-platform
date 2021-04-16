@@ -24,6 +24,8 @@ import PropTypes from 'prop-types'
 import { legendList, NodeType, TotalBoardKey } from './constans'
 import globalStyles from '../../../../../globalset/css/globalClassName.less'
 import { Fragment } from 'react'
+import GanttDetail from '../../../../Technological/components/Gantt/components/milestoneDetail'
+import { projectDetailInfo } from '../../../../../services/technological/prjectDetail'
 
 /** 日历计划功能组件 */
 @connect(
@@ -31,10 +33,15 @@ import { Fragment } from 'react'
     [WorkbenchModel.namespace]: {
       datas: { projectList }
     },
-    simplemode: { simplemodeCurrentProject }
+    simplemode: { simplemodeCurrentProject },
+    projectDetail: {
+      datas: { projectDetailInfoData = {}, milestoneList = [] }
+    }
   }) => ({
     projectList,
-    simplemodeCurrentProject
+    simplemodeCurrentProject,
+    projectDetailInfoData,
+    milestoneList
   })
 )
 export default class CalendarPlan extends React.Component {
@@ -55,9 +62,14 @@ export default class CalendarPlan extends React.Component {
     this.minYearNumber = 10
     /** 最大的年份范围 */
     this.maxYearNumber = 9
+
     this.state = {
       /** 更多事项的弹窗 */
       moreDataVisible: false,
+      /** 里程碑详情弹窗 */
+      milestoneVisible: false,
+      /** 选中的里程碑数据 */
+      currentMilestone: {},
       /** 日历模式 */
       mode: this.modeMonth,
       /** 设定的默认日历日期
@@ -164,8 +176,11 @@ export default class CalendarPlan extends React.Component {
         selectedDay: day
       },
       () => {
-        /** 如果点击的日历跨了月份 */
-        if (prevMonth !== date.month() + 1) {
+        /** 如果点击的日历跨了月份并且不是年份的 */
+        if (
+          prevMonth !== date.month() + 1 &&
+          this.state.mode !== this.modeYear
+        ) {
           this.fetchQueryCalendarData()
         }
       }
@@ -177,9 +192,14 @@ export default class CalendarPlan extends React.Component {
    */
   handleModeChange = e => {
     const value = e.target.value
-    this.setState({
-      mode: value
-    })
+    this.setState(
+      {
+        mode: value
+      },
+      () => {
+        this.fetchQueryCalendarData()
+      }
+    )
   }
 
   /** 月份更新
@@ -196,7 +216,7 @@ export default class CalendarPlan extends React.Component {
         selectedMonth: value
       },
       () => {
-        this.fetchQueryCalendarData()
+        if (this.state.mode !== this.modeYear) this.fetchQueryCalendarData()
       }
     )
   }
@@ -293,10 +313,12 @@ export default class CalendarPlan extends React.Component {
     this.setState({
       searchLoading: true
     })
+    /** 请求参数 */
     const params = {
       board_ids: this.getSelectedBoardIds(),
       year: this.state.selectedYear,
-      month: this.state.selectedMonth,
+      month:
+        this.state.mode === this.modeMonth ? this.state.selectedMonth : null,
       template_content_ids: this.state.template_content_ids
         ? this.state.template_content_ids.length
           ? this.state.template_content_ids
@@ -468,9 +490,29 @@ export default class CalendarPlan extends React.Component {
    * 选中了一个里程碑数据
    * @param {{id: strintg, name: string,board_id: string, list_names: string[], type: string}} data
    */
-  handleDataOfDate = data => {
-    console.log(data)
+  handleDataOfDate = async data => {
+    // console.log(data)
+    const { dispatch } = this.props
     /** 用来打开里程碑详情 */
+    const resp = await projectDetailInfo(data.board_id)
+    // console.log(resp.data)
+    const user = resp.data || []
+    if (resp.code === '0') {
+      dispatch({
+        type: 'milestoneDetail/updateDatas',
+        payload: {
+          milestone_id: data.id
+        }
+      })
+      this.setState({
+        currentMilestone: {
+          user,
+          milestone_id: data.id
+        },
+        milestoneVisible: true,
+        moreDataVisible: false
+      })
+    } else message.warn(resp.message)
   }
 
   /**
@@ -560,10 +602,111 @@ export default class CalendarPlan extends React.Component {
     )
   }
 
+  /** 设置里程碑弹窗显示 */
+  setmilestoneVisible = () => {
+    const { milestoneVisible } = this.state
+    this.setState({
+      milestoneVisible: !milestoneVisible
+    })
+  }
+
+  /** 删除里程碑的回调
+   * @param {{id: string}} val 删除里程碑的数据，id
+   */
+  deleteMiletone = val => {
+    const { id } = val
+    const { milestoneList = [], dispatch } = this.props
+    let new_milestoneList = [...milestoneList].filter(item => item.id !== id)
+    dispatch({
+      type: 'projectDetail/updateDatas',
+      payload: {
+        milestoneList: new_milestoneList
+      }
+    })
+    this.fetchQueryCalendarData()
+  }
+
+  /**
+   * 里程碑的更新回调
+   * @param {string} id 里程碑的id
+   * @param {{}} data 里程碑的更新内容
+   */
+  handleMiletonesChange = (id, data = {}) => {
+    const { milestoneList = [], dispatch } = this.props
+    const new_milestoneList = milestoneList.map(item => {
+      let new_item = { ...item }
+      if (item.id == id) {
+        new_item = { ...item, ...data }
+      }
+      return new_item
+    })
+    dispatch({
+      type: 'projectDetail/updateDatas',
+      payload: {
+        milestoneList: new_milestoneList
+      }
+    })
+  }
+
   /** 渲染图例 */
-  renderLegend = (<div className={styles.legend_box}></div>)
+  renderLegend = () => {
+    /** 图例的列表 */
+    const legendKeys = Object.keys(legendList)
+    /** 过滤visible是true的图例 */
+    const arr = legendKeys.filter(item => {
+      const legend = legendList[item]
+      return legend.visible
+    })
+    return (
+      <div className={styles.legend_box}>
+        {arr.map(key => {
+          const item = legendList[key]
+          return (
+            <div className={styles.legend_content} key={item.title}>
+              <div
+                className={`${globalStyles.authTheme} ${styles.legend_icon}`}
+                dangerouslySetInnerHTML={{ __html: item.icon }}
+                style={{ color: item.color }}
+              ></div>{' '}
+              <div>{item.title}</div>
+            </div>
+          )
+        })}
+      </div>
+    )
+  }
+
+  /** 月份的渲染
+   * @param {moment.Moment} date 时间
+   */
+  monthFullCellRender = date => {
+    /** 格式化之后的月份显示 */
+    const month = date.format('MMM')
+    /** 日期是否匹配 */
+    const isActiveDate = date.isSame(this.state.calendarValue)
+    /** 日期在内的数据 */
+    const sameDateData = []
+    /** 提取数据 */
+    this.state.calendar_data.forEach(item => {
+      const calendar_data_time = moment(+(item.end_time + '000'))
+      if (date.format('YYYY-MM') === calendar_data_time.format('YYYY-MM')) {
+        sameDateData.push(item)
+      }
+    })
+    return (
+      <div
+        className={`${styles.month_date} ${isActiveDate ? styles.active : ''}`}
+      >
+        <div className={`${styles.month_date_content} g_scrollbar_y`}>
+          {sameDateData.map(item => this.renderDataItem(item))}
+        </div>
+        <div className={styles.month_date_number}>{month}</div>
+      </div>
+    )
+  }
 
   render() {
+    /** 视图的整个高度 */
     const { workbenchBoxContent_height } = this.props
     const { Search } = Input
     return (
@@ -663,7 +806,12 @@ export default class CalendarPlan extends React.Component {
             </Button>
           </div>
           <div className={styles.calendarSelection}>
-            <Popover trigger="click" content={<div></div>}>
+            <Popover
+              trigger="click"
+              content={this.renderLegend()}
+              placement="bottom"
+              overlayStyle={{ width: 200 }}
+            >
               <span className={`${styles.legend} ${globalStyles.authTheme}`}>
                 &#xe862;
               </span>
@@ -722,6 +870,7 @@ export default class CalendarPlan extends React.Component {
                 value={this.state.calendarValue}
                 onSelect={this.handleDate}
                 dateCellRender={this.dateCellRender}
+                monthFullCellRender={this.monthFullCellRender}
               />
             ) : (
               <Spin spinning={true}>
@@ -730,6 +879,16 @@ export default class CalendarPlan extends React.Component {
             )}
           </div>
         </div>
+        {this.state.milestoneVisible && (
+          <GanttDetail
+            miletone_detail_modal_visible={true}
+            set_miletone_detail_modal_visible={this.setmilestoneVisible}
+            milestone_id={this.state.currentMilestone.milestone_id}
+            users={this.state.currentMilestone.user}
+            handleMiletonesChange={this.handleMiletonesChange}
+            deleteMiletone={this.deleteMiletone}
+          />
+        )}
       </div>
     )
   }
