@@ -285,12 +285,17 @@ export default class CalendarPlan extends React.Component {
    * @param {string} val 所选的值 select.option.value
    */
   handleChangeQueryParam = (query_key, val) => {
-    this.setState({
-      queryParams: {
-        ...this.state.queryParams,
-        [query_key]: val
+    this.setState(
+      {
+        queryParams: {
+          ...this.state.queryParams,
+          [query_key]: val
+        }
+      },
+      () => {
+        this.fetchQueryCalendarData()
       }
-    })
+    )
   }
 
   /** 全选查询条件的方法
@@ -302,12 +307,17 @@ export default class CalendarPlan extends React.Component {
     const chekced = e.target.checked
     /** 将子集全部选中 */
     const selectedIds = (option.items || []).map(item => item.id)
-    this.setState({
-      queryParams: {
-        ...this.state.queryParams,
-        [option.id]: chekced ? selectedIds : []
+    this.setState(
+      {
+        queryParams: {
+          ...this.state.queryParams,
+          [option.id]: chekced ? selectedIds : []
+        }
+      },
+      () => {
+        this.fetchQueryCalendarData()
       }
-    })
+    )
   }
 
   /** 获取日历的数据 */
@@ -375,9 +385,14 @@ export default class CalendarPlan extends React.Component {
    * @param {string[]} ids 勾选的里程碑id列表
    */
   handleChangeTemplateList = ids => {
-    this.setState({
-      template_content_ids: ids
-    })
+    this.setState(
+      {
+        template_content_ids: ids
+      },
+      () => {
+        this.fetchQueryCalendarData()
+      }
+    )
   }
 
   /**
