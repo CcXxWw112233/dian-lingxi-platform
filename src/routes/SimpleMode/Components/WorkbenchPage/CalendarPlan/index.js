@@ -691,9 +691,11 @@ export default class CalendarPlan extends React.Component {
     /** 格式化之后的月份显示 */
     const month = date.format('MMM')
     /** 日期是否匹配 */
-    const isActiveDate = date.isSame(this.state.calendarValue)
+    const isActiveDate = date.isSame(this.state.calendarValue, 'month')
     /** 日期在内的数据 */
     const sameDateData = []
+    /** 当前月份是否是现实中的月份 */
+    const isSameActiveDate = moment().isSame(date, 'month')
     /** 提取数据 */
     this.state.calendar_data.forEach(item => {
       const calendar_data_time = moment(+(item.end_time + '000'))
@@ -708,7 +710,13 @@ export default class CalendarPlan extends React.Component {
         <div className={`${styles.month_date_content} g_scrollbar_y`}>
           {sameDateData.map(item => this.renderDataItem(item))}
         </div>
-        <div className={styles.month_date_number}>{month}</div>
+        <div
+          className={`${styles.month_date_number} ${
+            isSameActiveDate ? styles.active_month : ''
+          }`}
+        >
+          {month}
+        </div>
       </div>
     )
   }
