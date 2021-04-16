@@ -142,6 +142,7 @@ export default class CalendarPlan extends React.Component {
     if (
       prevProps.simplemodeCurrentProject !== this.props.simplemodeCurrentProject
     ) {
+      this.clearQueryParams()
       this.fetchQueryParams()
       if (!this.state.template_id) this.fetchQueryCalendarData()
       else this.backList()
@@ -345,6 +346,13 @@ export default class CalendarPlan extends React.Component {
       })
   }
 
+  /** 清空搜索项 */
+  clearQueryParams = () => {
+    this.setState({
+      queryParams: {},
+      queryName: ''
+    })
+  }
   /**
    * 重置搜索条件
    */
