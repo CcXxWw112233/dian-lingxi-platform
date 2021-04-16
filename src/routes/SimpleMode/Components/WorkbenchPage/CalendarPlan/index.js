@@ -309,7 +309,7 @@ export default class CalendarPlan extends React.Component {
     })
   }
 
-  /** 获取日历的数据， */
+  /** 获取日历的数据 */
   fetchQueryCalendarData = () => {
     this.setState({
       searchLoading: true
@@ -602,7 +602,9 @@ export default class CalendarPlan extends React.Component {
   selectTemp = temp => {
     this.setState(
       {
-        template_id: temp.id
+        template_id: temp.id,
+        /** 清空上一个选择的甘特图列表 */
+        template_content_ids: null
       },
       () => {
         this.fetchQueryCalendarData()
