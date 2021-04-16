@@ -1,0 +1,65 @@
+.container {
+  position: relative;
+  width: 100%;
+  border-right: 1px solid #d1d5e4;
+  height: 100%;
+  overflow-y: auto;
+  :global {
+    .ant-spin-container {
+      min-height: 500px;
+    }
+  }
+  .treeable {
+    :global {
+      .ant-tree-treenode-switcher-close,
+      .ant-tree-treenode-switcher-open {
+        & > span {
+          vertical-align: bottom !important;
+        }
+      }
+    }
+  }
+  .backList{
+    font-size: 1.2rem;
+    margin-right: 5px;
+  }
+  .templist_item {
+    display: flex;
+    padding: 11px 6px;
+    padding-left: 21px;
+    cursor: pointer;
+    &:hover {
+      background-color: #f5f7fb;
+    }
+  }
+  .templist_item_icon {
+    margin-right: 10px;
+  }
+  .templist_item_name {
+    flex: 1;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .tempInfo {
+    position: absolute;
+    z-index: 2;
+    left: 0;
+    top: 0;
+    width: 100%;
+    background-color: #fff;
+    .title_icon {
+      color: #9ea6c2;
+      margin-right: 6px;
+    }
+  }
+  .treeable {
+    padding-left: 21px;
+  }
+  .tree_name{
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

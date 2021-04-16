@@ -144,14 +144,13 @@ export default class CardOperation extends React.Component {
   /**
    * 获取访问控制详情
    */
-  getVisitControlInfo = () => {
-    return fetchVisitControlInfo({ id: this.props.data.id }).then(res => {
-      // console.log(res)
-      if (res.code === '0') {
-        return res
-      }
-      return Promise.reject(res)
-    })
+  getVisitControlInfo = async () => {
+    const res = await fetchVisitControlInfo({ id: this.props.data.id })
+    // console.log(res)
+    if (res.code === '0') {
+      return res
+    }
+    return Promise.reject(res)
   }
 
   /** 获取父级节点 */
