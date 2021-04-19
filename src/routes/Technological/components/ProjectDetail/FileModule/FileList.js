@@ -825,7 +825,7 @@ export default class FileList extends React.Component {
     new_privileges =
       new_privileges &&
       new_privileges.map(item => {
-        let { id } = item && item.user_info && item.user_info
+        let { id } = (item && item.user_info && item.user_info) || {}
         if (user_id == id) {
           // 从权限列表中找到自己
           if (temp_ids.indexOf(id) != -1) {
@@ -1158,6 +1158,7 @@ export default class FileList extends React.Component {
                     principalInfo="位任务列表负责人"
                     // notShowPrincipal={true}
                     otherPrivilege={privileges}
+                    isPropVisitControlKey={is_privilege}
                     otherPersonOperatorMenuItem={
                       visitControlOtherPersonOperatorMenuItem
                     }

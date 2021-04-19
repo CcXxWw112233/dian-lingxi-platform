@@ -36,9 +36,12 @@ import {
 import { rebackCreateNotify } from '../../NotificationTodos'
 // import { lx_utils } from 'lingxi-im'
 import {
+  checkRoleAndMemberVisitControlPermissions,
   checkIsHasPermissionInVisitControlWithGroup,
   getSubfixName
 } from '../../../utils/businessFunction'
+import { connect } from 'dva'
+import { PROJECT_FILES_FILE_UPLOAD } from '../../../globalset/js/constant'
 const lx_utils = undefined
 
 // 逻辑组件
@@ -184,6 +187,7 @@ const LogicWithMainContent = {
         }
         // 获取分组详情数据
         this.getTaskGroup(res.data.board_id)
+        // 获取里程碑数据
         this.getMilestone(res.data.board_id)
         // 初始化获取字段信息 (需过滤已经存现在的字段)
         // this.filterCurrentExistenceField(res.data)
@@ -227,34 +231,61 @@ const LogicWithMainContent = {
     })
     const { privileges = [], board_id, is_privilege, list_id } = drawContent
     const is_valid_group = true
+    const _that = this
     // 表示先判断分组权限 然后在判断访问控制
     return {
-      visit_control_edit: function() {
-        // 是否是有编辑权限
-        return checkIsHasPermissionInVisitControlWithGroup({
+      visit_control_edit: function(ass) {
+        /** 只需要检测角色权限的权限码，不加入访问控制 */
+        const userCheckBoardPermissions = [
+          PROJECT_TEAM_CARD_COMPLETE,
+          PROJECT_FILES_FILE_UPLOAD
+        ]
+
+        const a = checkIsHasPermissionInVisitControlWithGroup({
           code: 'read',
           list_id: list_id,
           list_group: card_list_group,
           permissionsValue: checkIsHasPermissionInBoard(code, board_id)
         })
-          ? checkIsHasPermissionInVisitControl(
-              'edit',
-              privileges,
-              is_privilege,
-              [],
-              checkIsHasPermissionInBoard(code, board_id),
-              is_valid_group
-            )
-          : checkIsHasPermissionInVisitControl(
-              'edit',
-              privileges,
-              is_privilege,
-              [],
-              checkIsHasPermissionInBoard(code, board_id),
-              is_valid_group
-            )
-          ? false
-          : true
+        const b = checkIsHasPermissionInVisitControl(
+          'edit',
+          privileges,
+          is_privilege,
+          [],
+          checkIsHasPermissionInBoard(code, board_id),
+          is_valid_group
+        )
+
+        /**
+         * 个人信息
+         */
+        const userInfo = JSON.parse(localStorage.getItem('userInfo'))
+        /**
+         * 角色信息
+         */
+        const role =
+          _that.props.projectDetailInfoData.data &&
+          _that.props.projectDetailInfoData.data.find(
+            item => item.user_id === userInfo.id
+          )
+
+        /**
+         * 检测角色和人员是否有访问控制权限
+         */
+        const c = checkRoleAndMemberVisitControlPermissions({
+          privileges,
+          board_id,
+          board_permissions_code: code,
+          role_id: role ? role.role_id : '',
+          is_privilege: is_privilege
+        })
+        /** 如果是不需要经过访问控制的权限码，那就只判定项目是否有权限, 如果访问控制都没有权限了，就没有权限 */
+        if (c && userCheckBoardPermissions.includes(code)) {
+          return checkIsHasPermissionInBoard(code, board_id)
+        }
+        // 是否是有编辑权限
+        return c
+        // return a ? b : b ? false : true
         return checkIsHasPermissionInVisitControl(
           'edit',
           privileges,
@@ -272,6 +303,7 @@ const LogicWithMainContent = {
             })
       },
       visit_control_comment: function() {
+        // 是否有评论的权限
         return checkIsHasPermissionInVisitControl(
           'comment',
           privileges,
@@ -443,7 +475,7 @@ const LogicWithMainContent = {
   },
   // 设置标题文本失去焦点回调 E
 
-  // 设置是否完成状态的下拉回调 S
+  // 设置是否完成状态的下拉回调 S --- 已废弃
   handleFiledIsComplete: function(e) {
     const { dispatch, drawContent = {} } = this.props
     const { board_id, card_id, is_realize } = drawContent
@@ -676,7 +708,7 @@ const LogicWithMainContent = {
     flag = date_mode == '1'
     return flag
   },
-
+  // 设置开始的相对时间 S
   handleStartRelativeChange: function(value) {
     const {
       drawContent = {},
@@ -731,7 +763,9 @@ const LogicWithMainContent = {
     } else {
     }
   },
+  // 设置开始的相对时间 E
 
+  // 设置截止的相对时间 S
   handleDueRelativeChange: function(value) {
     const {
       drawContent = {},
@@ -785,6 +819,7 @@ const LogicWithMainContent = {
       })
     }
   },
+  // 设置截止的相对时间 E
 
   // 开始时间 chg事件 S
   startDatePickerChange: function(timeString) {
@@ -1160,7 +1195,7 @@ const LogicWithMainContent = {
   },
   // 对应字段的删除 E
 
-  // 会议的状态值, 比较当前时间和开始时间结束时间的对比 S
+  // 会议的状态值, 比较当前时间和开始时间结束时间的对比 S --- 已废弃
   getMeetingStatus: function() {
     let meetingField
     meetingField = <span></span>
@@ -2045,16 +2080,16 @@ const LogicWithMainContent = {
       return
     }
     if (type == 'remove') {
-      if (
-        this.checkDiffCategoriesAuthoritiesIsVisible &&
-        this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit &&
-        !this.checkDiffCategoriesAuthoritiesIsVisible(
-          PROJECT_TEAM_CARD_EDIT
-        ).visit_control_edit()
-      ) {
-        message.warn('权限不足,操作未被许可', MESSAGE_DURATION_TIME)
-        return false
-      }
+      // if (
+      //   this.checkDiffCategoriesAuthoritiesIsVisible &&
+      //   this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit &&
+      //   !this.checkDiffCategoriesAuthoritiesIsVisible(
+      //     PROJECT_TEAM_CARD_EDIT
+      //   ).visit_control_edit()
+      // ) {
+      //   message.warn('权限不足,操作未被许可', MESSAGE_DURATION_TIME)
+      //   return false
+      // }
       this.deleteAttachmentFile({ attachment_id, card_id, code })
     } else if (type == 'download') {
       dispatch({
@@ -2070,16 +2105,16 @@ const LogicWithMainContent = {
 
   /**附件删除 */
   deleteAttachmentFile: function(data) {
-    if (
-      this.checkDiffCategoriesAuthoritiesIsVisible &&
-      this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit &&
-      !this.checkDiffCategoriesAuthoritiesIsVisible(
-        PROJECT_TEAM_CARD_EDIT
-      ).visit_control_edit()
-    ) {
-      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      return false
-    }
+    // if (
+    //   this.checkDiffCategoriesAuthoritiesIsVisible &&
+    //   this.checkDiffCategoriesAuthoritiesIsVisible().visit_control_edit &&
+    //   !this.checkDiffCategoriesAuthoritiesIsVisible(
+    //     PROJECT_TEAM_CARD_EDIT
+    //   ).visit_control_edit()
+    // ) {
+    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    //   return false
+    // }
     const { attachment_id, code } = data
     const that = this
     const { drawContent = {}, dispatch } = this.props
@@ -2194,6 +2229,7 @@ const LogicWithMainContent = {
     }
   }
 }
+
 export default class DepositMainComponent extends Component {
   render() {
     const {

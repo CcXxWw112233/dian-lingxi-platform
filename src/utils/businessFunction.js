@@ -64,7 +64,7 @@ export const checkIsHasPermission = (code, param_org_id) => {
 /**
  * 这是检测某个用户的访问控制权限
  * 思路: 先在该用户所在的权限列表中查询找到对应的用户, 如果存在, 那么该用户的权限就是
- * code 类型 { edit > comment > read > permissionsValue } 中的一种,
+ * code 类型 { edit > comment > read > permissionsValue } 中的一种或几种 => ‘edit,read’
  * 如果不存在, 那么就去查看该用户在项目中对应的权限列表
  *
  * 想要达到的效果是,在哪里调用就返回对应的true/false
@@ -138,7 +138,7 @@ export const checkIsHasPermissionInVisitControl = (
         if (!id) return false
         if (user_id == id) {
           // 判断改成员能不能在自己的权限列表中查询到
-          if (item.content_privilege_code == code) {
+          if (code.indexOf(item.content_privilege_code) != -1) {
             // 如果说该职员的权限状态与code匹配, 返回true, 表示有权利
             flag = true
           } else {
@@ -175,7 +175,7 @@ export const checkIsHasPermissionInVisitControl = (
       if (!id) return false
       if (user_id == id) {
         // 判断改成员能不能在自己的权限列表中查询到
-        if (item.content_privilege_code == code) {
+        if (code.indexOf(item.content_privilege_code) != -1) {
           // 如果说该职员的权限状态与code匹配, 返回true, 表示有权利
           flag = true
         } else {
@@ -230,13 +230,15 @@ export const getProjectParticipant = (
  * @param {String} is_privilege 分组对应的开启权限 0 表示开启访问 1 表示禁止外部人员访问 2 表示仅列表成员访问与操作, 外部人员不可操作
  * @param {Array} privileges 分组中的权限列表 (需要包括继承的)
  * @param {Boolean} permissionsValue 用户在项目中的权限
+ * @param {String} role_id 项目角色
  * @returns {Boolean} true 表示有权限
  */
 export const checkIsHasPermissionInVisitControlWithGroup = ({
   code,
   list_id,
   list_group = [],
-  permissionsValue
+  permissionsValue,
+  role_id //= '1365244689736929280'
 }) => {
   const gold_item = list_group.find(item => item.list_id == list_id) || {}
   const {
@@ -287,9 +289,16 @@ export const checkIsHasPermissionInVisitControlWithGroup = ({
         return currentUserArr
       }
     })
+    // 角色列表
+    const roleArr = new_privileges.filter(item => {
+      if (item.role_info && item.role_info?.id == role_id) return true
+      return false
+    })
 
-    if (!(currentUserArr && currentUserArr.length)) {
-      // 表示在权限列表中没有找到该操作人
+    if (
+      !(currentUserArr && currentUserArr.length) && // 表示在权限列表中没有找到该操作人
+      !(roleArr && roleArr.length) // 表示在权限列表中没有找到该角色
+    ) {
       if (is_privilege == '1') {
         // 表示该操作人看不见该分组 那么肯定没有权限
         return (flag = false)
@@ -299,11 +308,238 @@ export const checkIsHasPermissionInVisitControlWithGroup = ({
       }
     }
     // 表示已经存在在权限列表中了 那么判断当前操作人是否具有可编辑权限
-    flag = currentUserArr.find(
-      item => item.content_privilege_code == code || 'edit'
-    )
+    // 或者项目角色具有编辑权限
+    flag =
+      currentUserArr.find(
+        item => item.content_privilege_code == code || 'edit'
+      ) || roleArr.find(item => item.content_privilege_code == code || 'edit')
   }
   return flag
+}
+
+/**
+ * 检测角色和成员在项目中是否有编辑权限
+ * @param {{content_privilege_code: string, role_info: object , id: string, type: string}[]} privileges 需要检查的对象列表
+ * @param {string} board_id 需要检测的项目id
+ * @param {string|string[]} board_permissions_code 需要检测的权限码
+ * @param {string} role_id 需要检测的角色id
+ * @param {string} is_privilege 是否打开了访问控制权限
+ * @param {Boolean} isEvery 是否权限列表都要匹配
+ * @param {string | string []} EditCode 附加判定条件，仅查看或可编辑
+ * @returns {Boolean}
+ */
+export const checkRoleAndMemberVisitControlPermissions = ({
+  privileges = [],
+  board_id,
+  board_permissions_code,
+  role_id,
+  is_privilege,
+  isEvery,
+  EditCode = 'edit'
+}) => {
+  if (!role_id) {
+    /**
+     * 个人信息
+     */
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'))
+    const projectDetailInfoData = JSON.parse(
+      localStorage.getItem('projectDetailInfoData')
+    )
+    /**
+     * 角色信息
+     */
+    const role =
+      projectDetailInfoData.data &&
+      projectDetailInfoData.data.find(item => item.user_id === userInfo.id)
+
+    role_id = role?.role_id
+  }
+  /**
+   * 用户信息
+   */
+  const userInfo = JSON.parse(localStorage.getItem('userInfo'))
+  /**
+   * 没有访问控制
+   */
+  const isOpenCode = '0'
+  /**
+   * 编辑权限标识
+   */
+  // const EditCode = 'edit'
+  /**
+   * 所有的权限列表
+   */
+  const permissions = JSON.parse(localStorage.getItem('userBoardPermissions'))
+
+  /**
+   * 没有必要参数，一律没权限
+   */
+  if (!board_id || !board_permissions_code) return false
+  /**
+   * 当前项目权限列表
+   */
+  const BoardPermissions = permissions[board_id]
+
+  /**
+   * 检测人员是否存在
+   */
+  const hasMember = privileges.some(
+    item => item.user_info && item.user_info.id === userInfo.id
+  )
+  /**
+   * 如果有人，就直接返回权限
+   */
+  if (hasMember) {
+    return privileges.some(
+      item =>
+        item.user_info &&
+        item.user_info.id === userInfo.id &&
+        EditCode.indexOf(item.content_privilege_code) !== -1
+    )
+  }
+
+  // console.log(hasMember, EditCode, role_id)
+  /**
+   * 如果没有人员，发现没有角色id，则直接无权限
+   */
+  if (!role_id) return false
+  /**
+   * 检查是否存在需要检查的角色id 判断权限
+   */
+  const hasRole = privileges.length
+    ? privileges.some(
+        item =>
+          item.role_info &&
+          item.role_info.id === role_id &&
+          EditCode.indexOf(item.content_privilege_code) !== -1
+      )
+    : false
+  /**
+   * 只判定角色在不在，不判断权限
+   */
+  const checkRoleInArray = privileges.some(
+    item => item.role_info && item.role_info.id === role_id
+  )
+  /**
+   * 检查的角色不存在于列表中
+   */
+  if (!hasRole && is_privilege !== isOpenCode) return false
+
+  /**
+   * 匹配权限码
+   */
+  let allRegCode
+  if (isEvery) {
+    let arr = Array.isArray(board_permissions_code)
+      ? board_permissions_code
+      : [board_permissions_code]
+    /**
+     * 匹配所有的权限码是否都符合条件
+     */
+    allRegCode = arr.every(item => {
+      return BoardPermissions.indexOf(item) !== -1
+    })
+  } else {
+    allRegCode = BoardPermissions.some(
+      item => board_permissions_code.indexOf(item) != -1
+    )
+  }
+
+  /**
+   * 判断，无权限，也不存在于参与人列表，等于是无限制的时候，角色不在参与人列表中，是可以查看的
+   */
+  if (
+    !checkRoleInArray &&
+    is_privilege === isOpenCode &&
+    EditCode.includes('read')
+  )
+    return true
+  /**
+   * 判断，无权限，也不存在于参与人列表，等于是无限制的时候，角色不在参与人列表中，是不能编辑的
+   */
+  if (
+    !checkRoleInArray &&
+    is_privilege === isOpenCode &&
+    EditCode.includes('edit')
+  )
+    return allRegCode
+
+  /**
+   * 判断，没有权限，没有人员，但是是无限制，而且是查看，等于是访客可以查看，不可编辑
+   */
+  if (
+    !hasRole &&
+    !hasMember &&
+    is_privilege === isOpenCode &&
+    EditCode.includes('read')
+  )
+    return true
+
+  /**
+   * 判断，没有权限，没有人员，但是是无限制，等于是访客可以查看，不可编辑
+   */
+  if (
+    !hasRole &&
+    !hasMember &&
+    is_privilege === isOpenCode &&
+    EditCode.includes('edit')
+  )
+    return false
+
+  /**
+   * 返回是否有权限
+   */
+  // console.log(hasRole, allRegCode)
+  return hasRole || allRegCode
+}
+
+/**
+ * 检测角色在项目中是否有访问权限
+ * @param {{content_privilege_code: string, role_info: object , id: string, type: string}[]} privileges 需要检查的对象列表
+ * @param {string} board_id 需要检测的项目id
+ * @param {string} permissions_code 需要检测的权限码
+ * @param {string} role_id 需要检测的角色id
+ * @returns {Boolean}
+ */
+export const checkIsRoleHasPermissionsInBoard = (
+  privileges = [],
+  board_id,
+  permissions_code,
+  role_id
+) => {
+  /**
+   * 所有的权限列表
+   */
+  const permissions = JSON.parse(localStorage.getItem('userBoardPermissions'))
+  /**
+   * 没有必要参数，一律没权限
+   */
+  if (
+    !board_id ||
+    !permissions_code ||
+    !role_id ||
+    (privileges && !privileges.length)
+  )
+    return false
+  /**
+   * 当前项目权限列表
+   */
+  const BoardPermissions = permissions[board_id]
+  privileges = privileges.filter(item => item.role_info)
+  /**
+   * 检查是否存在需要检查的角色id
+   */
+  const hasRole = privileges.length
+    ? privileges.some(item => item.role_info.id === role_id)
+    : false
+  /**
+   * 检查的角色不存在于列表中
+   */
+  if (!hasRole) return false
+  /**
+   * 返回是否有权限
+   */
+  return BoardPermissions.some(item => item === permissions_code)
 }
 
 //在当前项目中检查是否有权限操作

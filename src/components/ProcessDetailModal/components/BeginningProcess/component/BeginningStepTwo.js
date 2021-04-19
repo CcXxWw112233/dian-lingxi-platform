@@ -332,10 +332,10 @@ export default class BeginningStepTwo extends Component {
   // 审批通过的点击事件
   handlePassProcess = e => {
     e && e.stopPropagation()
-    if (!this.whetherIsHasPermission()) {
-      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      return
-    }
+    // if (!this.whetherIsHasPermission()) {
+    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    //   return
+    // }
     this.setState({
       isPassNodesIng: true // 表示正在通过审批中
     })
@@ -420,10 +420,10 @@ export default class BeginningStepTwo extends Component {
 
   handleRejectProcess = e => {
     e && e.stopPropagation()
-    if (!this.whetherIsHasPermission()) {
-      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
-      return
-    }
+    // if (!this.whetherIsHasPermission()) {
+    //   message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+    //   return
+    // }
     this.setState({
       isRejectNodesIng: true // 表示正在驳回节点中
     })

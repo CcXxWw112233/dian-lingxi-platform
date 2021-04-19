@@ -59,6 +59,7 @@ export default class NumberFieldContent extends Component {
   }
 
   onChange = value => {
+    if (this.props.disabled) return this.props.handleUpdateModelDatas({})
     this.setState({
       inputValue: value
     })
@@ -67,6 +68,7 @@ export default class NumberFieldContent extends Component {
   onBlur = e => {
     const { inputValue } = this.state
     let value = e.target.value
+    if (this.props.disabled) return this.props.handleUpdateModelDatas({})
     const {
       itemValue: { id },
       local_inputValue
@@ -108,6 +110,7 @@ export default class NumberFieldContent extends Component {
   // 删除关联字段
   handleDeleteRelationField = (e, id) => {
     e && e.stopPropagation()
+    if (this.props.disabled) return this.props.handleUpdateModelDatas({})
     this.props
       .dispatch({
         type: 'organizationManager/deleteRelationCustomField',

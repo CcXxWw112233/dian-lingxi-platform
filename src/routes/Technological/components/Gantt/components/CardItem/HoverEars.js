@@ -27,6 +27,13 @@ class HoverEars extends Component {
     this.left_circle_ref = React.createRef()
     this.right_circle_ref = React.createRef()
     this.getXY = this.getXY.bind(this)
+
+    /** 箭头指针的start点偏移量 */
+    this.offsetX = 46
+    /** 鼠标可以触发事件的偏移量X */
+    this.eventRelaX = 52
+    /** 鼠标以触发事件的偏移量Y */
+    this.eventRelaY = 13
   }
 
   getXY = e => {
@@ -68,13 +75,13 @@ class HoverEars extends Component {
       this.rela_y = y //+ 20
     } else if (target_ref == 'right_circle_ref') {
       this.setState({
-        x1: width + 46,
+        x1: width + this.offsetX,
         y1: 1,
-        transformOrigin: `${width + 46} ${8}`,
+        transformOrigin: `${width + this.offsetX} ${8}`,
         move_to: 'end'
       })
-      this.rela_x = left + width + 52 //x
-      this.rela_y = top + 12 + 1 //y
+      this.rela_x = left + width + this.eventRelaX //x
+      this.rela_y = top + this.eventRelaY //y
     } else {
     }
     setRelyLineDrawing && setRelyLineDrawing(true)
@@ -150,7 +157,7 @@ class HoverEars extends Component {
     } = this.props
     const target = e.target
     const { rely_top, rely_right, rely_left, rely_type } = e.target.dataset
-    // console.log('sssaasdd', e.target)
+    console.log('sssaasdd', e.target.dataset)
     if (!rely_top && !rely_right && !rely_left) return
     let line_to
     const line_id = rely_top || rely_right || rely_left

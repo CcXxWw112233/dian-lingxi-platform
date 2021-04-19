@@ -218,7 +218,7 @@ export default class MainContent extends Component {
       // 设置缓存
       let curr_need_storage_node =
         (processInfo['nodes'] &&
-          processInfo['nodes'].length &&
+          !!processInfo['nodes'].length &&
           processInfo['nodes'].find(
             i =>
               (status == '1' || status == '2') &&
@@ -376,11 +376,11 @@ export default class MainContent extends Component {
       templateInfo: { org_id },
       processPageFlagStep
     } = props
-    if (
-      processPageFlagStep != '3' ||
-      (processPageFlagStep != '4' && status != '0')
-    )
-      return
+    // if (
+    //   processPageFlagStep != '3' ||
+    //   (processPageFlagStep != '4' && status != '0')
+    // )
+    //   return
     const ORG_ID = org_id ? org_id : getOrgIdByBoardId(board_id)
     props.dispatch({
       type: 'publicProcessDetailModal/getDesignatedRoles',
@@ -397,7 +397,8 @@ export default class MainContent extends Component {
       processPageFlagStep
     } = nextProps
     const {
-      processInfo: { curr_node_sort: old_curr_node_sort }
+      processInfo: { curr_node_sort: old_curr_node_sort },
+      processPageFlagStep: old_processPageFlagStep
     } = this.props
     if (old_curr_node_sort && curr_node_sort) {
       if (curr_node_sort != old_curr_node_sort) {
@@ -409,6 +410,11 @@ export default class MainContent extends Component {
     // 更新缓存内容
     if (processPageFlagStep == '4') {
       this.updateUserProcessWithNodesStorage(nextProps)
+    }
+    // 中止流程后进入模板 所以需要更新一下组织成员列表
+    if (old_processPageFlagStep == '4' && processPageFlagStep == '3') {
+      this.whetherUpdateOrgnazationMemberList(nextProps)
+      this.getDesignatedRoles(nextProps)
     }
   }
 
@@ -443,6 +449,7 @@ export default class MainContent extends Component {
     // 根据不同的状态设置画布步骤的颜色
     if (length == '0') {
       circle.beginPath() //开始一个新的路径
+      //用来保存Canvas的状态。save之后，可以调用Canvas的平移、放缩、旋转、错切、裁剪等操作。 restore：用来恢复Canvas之前保存的状态。防止save后对Canvas执行的操作对后续的绘制有影响
       circle.save()
       circle.lineWidth = lineWidth
       let color = 'rgba(0,0,0,0.04)'
@@ -1172,7 +1179,7 @@ export default class MainContent extends Component {
     }
     const { processPageFlagStep } = this.props
     switch (processPageFlagStep) {
-      case '1': // 表示是配置的时候显示的开始流程
+      case '1': // 表示是配置的时候显示的开始流程 （这个好像废弃了--因为配置时只有保存模板了）
         this.handleOperateConfigureConfirmCalbackProcess(start_time)
         break
       case '3': // 表示是启动的时候显示的开始流程
@@ -1250,11 +1257,15 @@ export default class MainContent extends Component {
       not_show_create_node_guide
     } = this.props
     // let { is_edit } = processEditDatas && processEditDatas[processCurrentEditStep] || {}
+    /**
+     * 判断是否存在配置节点
+     */
     let gold_item =
       (processEditDatas &&
-        processEditDatas.length &&
+        !!processEditDatas.length &&
         processEditDatas.find(item => item.is_edit == '0')) ||
       {}
+    // 渲染逻辑：判断是否有节点 无:添加 有:判断是否存在配置节点 如果存在不可添加 需要完成上一步才能添加
     return (
       <div style={{ position: 'relative' }} id="addProcessStep">
         {processEditDatas && processEditDatas.length ? (
@@ -1902,6 +1913,7 @@ export default class MainContent extends Component {
               <>{this.renderDiffContentProcess(value, key)}</>
             )
           })} */}
+          {/* 添加步骤 */}
           {(processPageFlagStep == '1' || processPageFlagStep == '2') &&
             this.renderAddProcessStep()}
           {processEditDatas.length >= 2 && (

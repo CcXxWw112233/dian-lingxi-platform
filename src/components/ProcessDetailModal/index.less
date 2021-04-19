@@ -1,47 +1,43 @@
-
 /* HeaderContent 样式合集 S*/
 .detail_head {
-  line-height    : 20px;
-  display        : flex;
-  align-items    : center;
+  line-height: 20px;
+  display: flex;
+  align-items: center;
   justify-content: space-between;
 
   .detail_head_left {
-    display            : -webkit-flex;
-    display            : -ms-flexbox;
-    display            : flex;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
     -webkit-align-items: center;
-    -ms-flex-align     : center;
-    align-items        : center;
-    overflow           : hidden;
+    -ms-flex-align: center;
+    align-items: center;
+    overflow: hidden;
   }
 
   .detail_head_right {
     -webkit-flex: 0 0 auto;
-    -ms-flex    : 0 0 auto;
-    flex        : 0 0 auto;
-    margin-left : 40px;
+    -ms-flex: 0 0 auto;
+    flex: 0 0 auto;
+    margin-left: 40px;
   }
 
   // 这是头部图标的样式
   .header_icon {
-    display      : flex;
-    padding      : 4px 8px;
-    background   : rgba(230, 247, 255, 1);
+    display: flex;
+    padding: 4px 8px;
+    background: rgba(230, 247, 255, 1);
     border-radius: 4px;
-    align-items  : center;
-    color        : #69C0FF;
-    font-style   : normal;
-    line-height  : 20px;
+    align-items: center;
+    color: #69c0ff;
+    font-style: normal;
+    line-height: 20px;
     flex-shrink: 0;
     .title_icon {
-      margin-right  : 4px;
+      margin-right: 4px;
       vertical-align: middle;
-
     }
   }
-
-
 }
 // 这是面包屑小导航的样式
 .bread_nav {
@@ -51,7 +47,7 @@
   align-items: center;
   .bread_board_name {
     font-size: 16px;
-    color    : rgba(0, 0, 0, 0.65);
+    color: rgba(0, 0, 0, 0.65);
     max-width: 300px;
     overflow: hidden;
     white-space: nowrap;
@@ -62,32 +58,36 @@
 
   .bread_org_name {
     font-size: 14px;
-    color    : rgba(0, 0, 0, 0.45);
+    color: rgba(0, 0, 0, 0.45);
     max-width: 300px;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
     display: inline-block;
+    flex-shrink: 0;
   }
   .arrow_right {
     display: inline-block;
     vertical-align: middle;
-    width:0;
-    height:0;
-    border-top:5px solid transparent;
-    border-bottom:5px solid transparent;
-    border-left:5px solid rgba(0, 0, 0, 0.45);
+    width: 0;
+    height: 0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 5px solid rgba(0, 0, 0, 0.45);
     margin: 0 12px;
+  }
+  .current_name {
+    flex-shrink: 0;
   }
 }
 
 .detail_action_list {
-  display            : -webkit-flex;
-  display            : -ms-flexbox;
-  display            : flex;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
   -webkit-align-items: center;
-  -ms-flex-align     : center;
-  align-items        : center;
+  -ms-flex-align: center;
+  align-items: center;
   margin-right: 10px;
   .action {
     margin-left: 12px;
@@ -96,13 +96,11 @@
   }
 }
 
-
-
 .right_menu {
   display: inline-block;
 
   &:hover {
-    background   : rgba(230, 247, 255, 1);
+    background: rgba(230, 247, 255, 1);
     border-radius: 4px;
   }
 }
@@ -112,15 +110,15 @@
 }
 
 .more_icon {
-  display    : inline-block;
-  width      : 24px;
-  height     : 24px;
-  text-align : center;
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  text-align: center;
   line-height: 24px;
-  cursor     : pointer;
+  cursor: pointer;
 
   &:hover {
-    background   : rgba(230, 247, 255, 1);
+    background: rgba(230, 247, 255, 1);
     border-radius: 4px;
   }
 
@@ -130,19 +128,19 @@
 }
 
 .more_icon:hover .more {
-  color: #1890FF;
+  color: #1890ff;
 }
 
 .dele_icon {
-  display    : inline-block;
-  width      : 24px;
-  height     : 24px;
-  text-align : center;
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  text-align: center;
   line-height: 24px;
-  cursor     : pointer;
+  cursor: pointer;
 
   &:hover {
-    background   : rgba(255, 241, 240, 1);
+    background: rgba(255, 241, 240, 1);
     border-radius: 4px;
   }
 
@@ -152,7 +150,7 @@
 }
 
 .dele_icon:hover .dele {
-  color: #FF7875;
+  color: #ff7875;
 }
 /* HeaderContent 样式合集 E*/
 
@@ -161,9 +159,9 @@
 // 悬浮标题样式
 .suspensionFlowInstansNav {
   // width:1024px;
-  min-height:40px;
-  background:rgba(255,255,255,1);
-  box-shadow:0px 1px 4px 0px rgba(0,0,0,0.15);
+  min-height: 40px;
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.15);
   padding: 8px 24px;
   width: 100%;
   position: absolute;
@@ -186,41 +184,41 @@
     min-height: 204px;
     .flow_name {
       // width:796px;
-      font-size:20px;
-      font-family:PingFangSC-Medium,PingFang SC;
-      font-weight:500;
-      color:rgba(0,0,0,0.85);
-      line-height:28px;
-      min-height:44px;
-      background:rgba(255,255,255,1);
-      border-radius:4px;
-      border:1px solid rgba(0,0,0,0.15);
+      font-size: 20px;
+      font-family: PingFangSC-Medium, PingFang SC;
+      font-weight: 500;
+      color: rgba(0, 0, 0, 0.85);
+      line-height: 28px;
+      min-height: 44px;
+      background: rgba(255, 255, 255, 1);
+      border-radius: 4px;
+      border: 1px solid rgba(0, 0, 0, 0.15);
       padding: 8px 12px;
     }
     .normal_flow_name {
-      font-size:20px;
-      font-family:PingFangSC-Medium,PingFang SC;
-      font-weight:500;
-      color:rgba(0,0,0,0.85);
-      line-height:28px;
-      min-height:44px;
-      background:rgba(255,255,255,1);
-      border-radius:4px;
+      font-size: 20px;
+      font-family: PingFangSC-Medium, PingFang SC;
+      font-weight: 500;
+      color: rgba(0, 0, 0, 0.85);
+      line-height: 28px;
+      min-height: 44px;
+      background: rgba(255, 255, 255, 1);
+      border-radius: 4px;
       // border:1px solid rgba(0,0,0,0.15);
       padding: 8px 12px;
       display: flex;
     }
     .flow_description {
-      min-height:92px;
-      background:rgba(255,255,255,1);
-      border-radius:4px;
-      border:1px solid rgba(0,0,0,0.15);
+      min-height: 92px;
+      background: rgba(255, 255, 255, 1);
+      border-radius: 4px;
+      border: 1px solid rgba(0, 0, 0, 0.15);
       padding: 8px 0 0 12px;
     }
     .normal_flow_description {
-      min-height:92px;
-      background:rgba(255,255,255,1);
-      border-radius:4px;
+      min-height: 92px;
+      background: rgba(255, 255, 255, 1);
+      border-radius: 4px;
       // border:1px solid rgba(0,0,0,0.15);
       padding: 8px 0 0 12px;
     }
@@ -243,10 +241,10 @@
 
 // 添加节点样式
 .add_node {
-  width:48px;
-  height:48px;
-  background:rgba(255,255,255,1);
-  box-shadow:0px 1px 4px 1px rgba(0,0,0,0.15);
+  width: 48px;
+  height: 48px;
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0px 1px 4px 1px rgba(0, 0, 0, 0.15);
   // opacity:0.9;
   line-height: 48px;
   border-radius: 40px;
@@ -255,15 +253,15 @@
   cursor: pointer;
   > span {
     font-size: 22px;
-    color: #1890FF;
+    color: #1890ff;
   }
 }
 // 添加步骤禁用的样式
 .add_normal {
-  width:48px;
-  height:48px;
-  background:rgba(255,255,255,1);
-  box-shadow:0px 1px 4px 1px rgba(0,0,0,0.15);
+  width: 48px;
+  height: 48px;
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0px 1px 4px 1px rgba(0, 0, 0, 0.15);
   // opacity:0.9;
   line-height: 48px;
   border-radius: 40px;
@@ -271,7 +269,7 @@
   position: relative;
   cursor: not-allowed;
   > span {
-    color: rgba(0,0,0,0.25); 
+    color: rgba(0, 0, 0, 0.25);
     font-size: 22px;
   }
 }
@@ -281,40 +279,40 @@
   width: 226px;
   height: 96px;
   // padding: 16px 20px;
-  background:rgba(255,255,255,1);
-  box-shadow:0px 2px 8px 0px rgba(0,0,0,0.15);
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.15);
   position: absolute;
   // z-index: 20;
   font-size: 14px;
-  color: rgba(0, 0, 0, .65);
+  color: rgba(0, 0, 0, 0.65);
   .top {
-      .smile {
-          color: #FAAD14;
-          font-size: 16px;
-          margin-right: 8px;;
-      }
+    .smile {
+      color: #faad14;
+      font-size: 16px;
+      margin-right: 8px;
+    }
   }
-  .bottom{
-      margin-right: 12px;
-      // margin-top: 18px;
-      .bottom_right {
-        width: 100%;
-        text-align: right;
-      }
+  .bottom {
+    margin-right: 12px;
+    // margin-top: 18px;
+    .bottom_right {
+      width: 100%;
+      text-align: right;
+    }
   }
 }
 .guide_position_1 {
   left: 64px;
   top: -25px;
   .triangle {
-      border-top: 6px solid transparent;
-      border-bottom: 6px solid transparent;
-      border-right: 8px solid #ffffff;
-      position: absolute;
-      top: 38px;
-      left: -8px;
-      filter:drop-shadow(0px 0px 0px rgba(0,0,0,.25)),
-    }
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-right: 8px solid #ffffff;
+    position: absolute;
+    top: 38px;
+    left: -8px;
+    filter: drop-shadow(0px 0px 0px rgba(0, 0, 0, 0.25));
+  }
 }
 .guide_position_2 {
   right: 38%;
@@ -330,7 +328,7 @@
     position: absolute;
     top: 96px;
     right: 45%;
-    filter:drop-shadow(0px 0px 0px rgba(0,0,0,.25)),
+    filter: drop-shadow(0px 0px 0px rgba(0, 0, 0, 0.25));
   }
 }
 
@@ -343,10 +341,10 @@
 
 /* 流程评论动态 */
 .dynamic_comment {
-  width:40px;
-  height:40px;
-  background:rgba(255,255,255,1);
-  box-shadow:0px 0px 8px 0px rgba(0,0,0,0.15);
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.15);
   border-radius: 20px;
   position: absolute;
   right: 40px;
@@ -356,22 +354,22 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  >span {
+  > span {
     font-size: 20px;
     color: rgba(0, 0, 0, 0.45);
   }
 }
-.dynamic_comment:hover >span {
-  color: #40A9FF;
+.dynamic_comment:hover > span {
+  color: #40a9ff;
 }
 
 /* 转为模板 */
 .covert_templete {
-  height:24px;
-  background:rgba(255,255,255,1);
-  border-radius:4px;
-  border:1px solid rgba(24,144,255,1);
+  height: 24px;
+  background: rgba(255, 255, 255, 1);
+  border-radius: 4px;
+  border: 1px solid rgba(24, 144, 255, 1);
   text-align: center;
-  color: #1890FF;
+  color: #1890ff;
   padding: 2px 8px;
 }

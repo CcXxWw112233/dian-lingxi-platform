@@ -6,6 +6,10 @@ export const BOOLEAN_FALSE_CODE = '0' //代表后端返回 ‘0’
 
 export const REQUEST_DOMAIN = `${REQUEST_PREFIX}/upms` //用户信息接口域名
 export const REQUEST_AUTH = `${REQUEST_PREFIX}/auth` //认证中心
+/**
+ * 项目接口域名
+ * @default string '/dian_lingxi/projects'
+ */
 export const REQUEST_DOMAIN_BOARD = `${REQUEST_PREFIX}/projects` //项目接口域名
 export const REQUEST_DOMAIN_FILE = REQUEST_DOMAIN_BOARD //文件接口域名
 export const REQUEST_DOMAIN_FLOWS = REQUEST_DOMAIN_BOARD //流程接口域名
@@ -30,8 +34,8 @@ export const REQUEST_KNOW_POLICY = `${REQUEST_DOMAIN_ARTICLE}/api`
 
 export const WEBSOCKET_URL = (function(NODE_ENV, location) {
   if (NODE_ENV == 'development') {
-    return 'wss://lingxi.di-an.com/websocket'
-    // return 'ws://test.lingxi.new-di.com/websocket'
+    // return 'wss://lingxi.di-an.com/websocket'
+    return 'ws://test.lingxi.new-di.com/websocket'
     // return 'ws://prerelease.lingxi.new-di.com/websocket'
     // return 'ws://192.168.1.68/websocket'
     return 'ws://dev.lingxi.new-di.com/websocket' //开发环境
@@ -111,7 +115,7 @@ export const PROJECT_TEAM_CARD_CREATE = 'project:team:card:create' //创建任�
 export const PROJECT_TEAM_CARD_EDIT = 'project:team:card:edit' //编辑任务 permission_type=2
 export const PROJECT_TEAM_CARD_COMPLETE = 'project:team:card:complete' //完成/重做任务 permission_type=2
 export const PROJECT_TEAM_CARD_DELETE = 'project:team:card:delete' //删除任务 permission_type=2
-export const PROJECT_TEAM_CARD_GROUP = 'project:team:card:group' //管理任务分组 permission_type=2
+export const PROJECT_TEAM_CARD_GROUP = 'project:team:content:group' //管理任务分组 permission_type=2
 export const PROJECT_TEAM_CARD_EDIT_FINISH_TIME =
   'project:team:card:edit:finishTime' //修改任务完成时间
 export const PROJECT_TEAM_CARD_COMMENT_PUBLISH =
@@ -123,6 +127,9 @@ export const PROJECT_FILES_FILE_UPLOAD = 'project:files:file:upload' //上传文
 export const PROJECT_FILES_FILE_DOWNLOAD = 'project:files:file:download' //下载文件 permission_type=2
 export const PROJECT_FILES_FILE_UPDATE = 'project:files:file:update' //更新文件 permission_type=2
 export const PROJECT_FILES_FILE_DELETE = 'project:files:file:delete' //删除文件 permission_type=2
+/**
+ * 文件编辑权限 permission_type = 2
+ */
 export const PROJECT_FILES_FILE_EDIT = 'project:files:file:edit' //编辑文件 permission_type=2
 export const PROJECT_FILES_FOLDER = 'project:files:folder' //管理文件夹 permission_type=2
 export const PROJECT_FILES_COMMENT_PUBLISH = 'project:files:comment:publish' //发表评论 permission_type=2

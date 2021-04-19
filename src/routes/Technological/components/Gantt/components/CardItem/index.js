@@ -34,6 +34,9 @@ import DragCard from './DragCard'
 import GroupChildCards from './GroupChildCards.js'
 import { rebackCreateNotify } from '../../../../../../components/NotificationTodos'
 import { getCardsWarningTimeScope } from '../../../../../../models/technological/workbench/gantt/gantt_utils'
+import { CardBarOperations } from './CardBarConstans'
+import CardOperation from './CardOperations'
+import CardGroupNames from '../CardGroupNames'
 
 const cx = classNames.bind(indexStyles)
 
@@ -49,6 +52,7 @@ export default class CardItem extends Component {
     this.out_ref = React.createRef()
     this.is_down = false
     this.state = {
+      rely_down: false,
       local_width: 0,
       local_top: 0,
       local_left: 0,
@@ -72,14 +76,44 @@ export default class CardItem extends Component {
     this.drag_type_map = {
       position: 'pointer',
       left: 'w-resize',
-      right: 'e-resize'
+      // right: 'e-resize'
+      right: `col-resize`
     }
     this.notify = null
+    /** 需要显示的更多按钮组 */
+    this.cardbarOperation = [
+      CardBarOperations.RelyKey,
+      CardBarOperations.EditName,
+      CardBarOperations.BarColor,
+      CardBarOperations.MemberChange,
+      CardBarOperations.MoreOperation
+    ]
+    /** 监听标签更新事件 */
+    // DEvent.addEventListener(CARDBARTAGSUPDATE, this.updateLabeldata)
+  }
+
+  updateLabeldata = ({ label_data }) => {
+    this.setLabelData(label_data || this.props.itemValue.label_data)
   }
 
   componentDidMount() {
     this.initSetPosition(this.props)
     this.handleEffectParentCard('getParentCard') //大纲模式下获取父级任务实例
+    // this.setLabelData(this.props.itemValue.label_data)
+    this.updateCardBarData({
+      label_data: this.props.itemValue.label_data,
+      name: this.props.itemValue.name,
+      executors: this.props.itemValue.executors
+    })
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.itemValue !== this.props.itemValue)
+      this.updateCardBarData({
+        label_data: this.props.itemValue.label_data,
+        name: this.props.itemValue.name,
+        executors: this.props.itemValue.executors
+      })
   }
 
   componentWillReceiveProps(nextProps) {
@@ -832,7 +866,8 @@ export default class CardItem extends Component {
             dispatch,
             parent_card_id,
             card_detail_id,
-            selected_card_visible
+            selected_card_visible,
+            time_range: 'start_end'
           })
           this.updateGanttData([
             { id, ...updateData },
@@ -981,7 +1016,10 @@ export default class CardItem extends Component {
           this.changeCardBelongGroup({
             card_id: id,
             new_list_id: group_row_param.list_id,
-            updateData,
+            updateData: {
+              ...updateData,
+              list_ids: [group_row_param.list_id]
+            },
             rely_datas: [
               { id, ...updateData },
               ...res.data.scope_content.filter(item => item.id != id)
@@ -1468,6 +1506,7 @@ export default class CardItem extends Component {
     } = itemValue
     return {
       onClick: e => {
+        e && e.stopPropagation()
         // console.log('s_event', 'onClick')
         if ('specific_example' != e.target.dataset.targetclassname) return //必须在任务条上点击
         if (!drag_lock) {
@@ -1500,6 +1539,7 @@ export default class CardItem extends Component {
       },
       // 拖拽
       onMouseDown: e => {
+        e && e.stopPropagation()
         // console.log('s_event', 'onMouseDown')
         if (!drag_lock) {
           this.props.setTaskIsDragging && this.props.setTaskIsDragging(true) //当拖动时，有可能会捕获到创建任务的动作，阻断
@@ -1514,12 +1554,14 @@ export default class CardItem extends Component {
         this.onMouseDown(e)
       },
       onMouseMove: e => {
+        e && e.stopPropagation()
         // console.log('s_event', 'onMouseMove')
         if (card_rely_draging || !drag_lock) return
         if (!this.couldChangeCard()) return
         this.onMouseMove(e)
       },
-      onMouseUp: () => {
+      onMouseUp: e => {
+        e && e.stopPropagation()
         // console.log('s_event', 'onMouseUp')
         setTimeout(() => {
           this.setState({
@@ -1531,6 +1573,7 @@ export default class CardItem extends Component {
       }, //查看子任务是查看父任务
 
       onTouchStart: e => {
+        e && e.stopPropagation()
         // console.log('s_event', 'onTouchStart')
         if (!drag_lock) {
           this.props.setTaskIsDragging && this.props.setTaskIsDragging(true) //当拖动时，有可能会捕获到创建任务的动作，阻断
@@ -1545,11 +1588,13 @@ export default class CardItem extends Component {
         this.onTouchStart(e)
       },
       onTouchMove: e => {
+        e && e.stopPropagation()
         // console.log('s_event', 'onTouchMove')
         if (!this.couldChangeCard() || !drag_lock) return
         this.onTouchMove(e)
       },
       onTouchEnd: e => {
+        e && e.stopPropagation()
         // console.log('s_event', 'onTouchEnd')
         // if (!drag_lock) return
         // this.onTouchEnd(e)
@@ -1561,7 +1606,8 @@ export default class CardItem extends Component {
         if ((card_rely_draging || !drag_lock) && !selected_card_visible) return
         this.setSpecilTaskExample({ id: parent_card_id || id, top, board_id })
       }, //查看子任务是查看父任务
-      onMouseEnter: () => {
+      onMouseEnter: e => {
+        e && e.stopPropagation()
         // console.log('s_event', 'onMouseEnter')
         this.onMouseEnter()
         this.set_drag_else_over_in(true)
@@ -1584,21 +1630,27 @@ export default class CardItem extends Component {
           }
         })
       },
-      onBlur: () => {
+      onBlur: e => {
+        e && e.stopPropagation()
         this.props.setTaskIsDragging && this.props.setTaskIsDragging(false) //当拖动时，有可能会捕获到创建任务的动作，阻断
-        this.setState(
-          {
-            drag_lock: false
-          }
-          // () => {
-          //   this.props.dispatch({
-          //     type: 'gantt/updateDatas',
-          //     payload: {
-          //       gantt_card_date_no_section: {}
-          //     }
-          //   })
-          // }
-        )
+        setTimeout(() => {
+          const activeElement =
+            document.activeElement || document.createElement('div')
+          this.setState(
+            {
+              drag_lock:
+                activeElement.tagName !== 'INPUT' ? false : this.state.drag_lock
+            }
+            // () => {
+            //   this.props.dispatch({
+            //     type: 'gantt/updateDatas',
+            //     payload: {
+            //       gantt_card_date_no_section: {}
+            //     }
+            //   })
+            // }
+          )
+        }, 50)
       }
     }
   }
@@ -1767,6 +1819,27 @@ export default class CardItem extends Component {
     return Array.from(new Set(list_ids))
   }
 
+  setLabelData = label_data => {
+    this.setState({
+      label_data
+    })
+  }
+  /** 更新全部可更新的state */
+  updateCardBarData = datas => {
+    this.setState({
+      ...datas
+    })
+  }
+
+  // 获取任务的分组
+  // 获取任务分组列表
+  getCardGroups = () => {
+    const { gantt_board_id, about_group_boards = [] } = this.props
+    const item =
+      about_group_boards.find(item => item.board_id == gantt_board_id) || {}
+    const { list_data = [] } = item
+    return list_data
+  }
   render() {
     const {
       itemValue = {},
@@ -1778,7 +1851,9 @@ export default class CardItem extends Component {
       ceilWidth,
       ceiHeight,
       list_id,
-      projectDetailInfoData: { board_set = {} }
+      projectDetailInfoData: { board_set = {} },
+      cardids_with_milestone,
+      hover_milestone_id
     } = this.props
     const { date_mode } = board_set
     const {
@@ -1786,13 +1861,12 @@ export default class CardItem extends Component {
       top,
       width,
       height,
-      name,
       id,
       board_id,
+      list_ids,
       is_realize,
       type,
-      executors = [],
-      label_data = [],
+      // label_data = [],
       is_has_start_time,
       is_has_end_time,
       start_time,
@@ -1807,6 +1881,7 @@ export default class CardItem extends Component {
       is_expand,
       board_eraly_waring
     } = itemValue
+    const { label_data = [], name, executors = [] } = this.state
     const {
       has_child,
       min_start_time: child_min_start_time,
@@ -1954,7 +2029,7 @@ export default class CardItem extends Component {
         data-targetclassname="specific_example"
         id={id} //大纲视图需要获取该id作为父级id来实现子任务拖拽影响父任务位置
         ref={this.out_ref}
-        tabindex="0"
+        tabIndex="0"
         data-rely_top={id}
         style={{
           left: local_left + (gantt_view_mode == 'year' ? 0 : card_left_diff),
@@ -1970,7 +2045,12 @@ export default class CardItem extends Component {
           borderRadius: '4px',
           boxShadow: is_show_warning_time
             ? '0 0 20px rgba(255,160,0,0.8)'
-            : 'none'
+            : 'none',
+          //当hover里程碑的时候，如果不属于当前hover里程碑的任务灰掉
+          opacity:
+            !!hover_milestone_id && !cardids_with_milestone.includes(id)
+              ? '0.2'
+              : '1'
         }}
         {...this.handleObj()}
       >
@@ -2188,8 +2268,25 @@ export default class CardItem extends Component {
               {/* 非大纲视图下一定有，大纲视图下需要开启名称外置才能在任务条内显示名称 */}
               {(!ganttIsOutlineView({ group_view_type }) ||
                 (ganttIsOutlineView({ group_view_type }) &&
-                  !card_name_outside)) &&
-                name}
+                  !card_name_outside)) && (
+                <>
+                  {name}
+                  &nbsp;
+                  {/* //仅在单项目视图下 */}
+                  {(ganttIsOutlineView({ group_view_type }) ||
+                    ganttIsSingleBoardGroupView({
+                      gantt_board_id,
+                      group_view_type
+                    })) && (
+                    <CardGroupNames
+                      selects={list_ids}
+                      list_data={this.getCardGroups()}
+                      show_prefix
+                      targetclassname={'specific_example'}
+                    />
+                  )}
+                </>
+              )}
               {is_privilege == '1' && (
                 <Tooltip title="已开启访问控制" placement="top">
                   <span
@@ -2197,7 +2294,7 @@ export default class CardItem extends Component {
                     style={{ color: 'rgba(0,0,0,0.50)', marginLeft: '5px' }}
                     data-targetclassname="specific_example"
                   >
-                    &#xe7ca;
+                    &#xe850;
                   </span>
                 </Tooltip>
               )}
@@ -2407,7 +2504,7 @@ export default class CardItem extends Component {
             </>
           )}
         {/* //hover出现的耳朵效果 */}
-        {drag_lock &&
+        {/* {drag_lock &&
           !parent_card_id &&
           // gantt_view_mode != 'year' &&
           gantt_board_id != '0' &&
@@ -2420,17 +2517,33 @@ export default class CardItem extends Component {
               rely_down={rely_down}
               is_outline_view={ganttIsOutlineView({ group_view_type })}
             />
-          )}
+          )} */}
         {(drag_lock || drag_else_over_in) && (
           <DragCard
             drag_else_over_in={drag_else_over_in}
             id={id}
+            operationChild={this.cardbarOperation}
             width={
               (local_width || 6) -
               (gantt_view_mode == 'year' ? 0 : card_width_diff)
             }
             is_outline_view={ganttIsOutlineView({ group_view_type })}
-          />
+          >
+            <CardOperation
+              onChangeTimeHandleCardDetail={this.onChangeTimeHandleCardDetail}
+              setRelyLineDrawing={this.setRelyDown}
+              operations={this.cardbarOperation}
+              data={itemValue}
+              getX={this.getX}
+              rely_down={this.state.rely_down}
+              group_view_type={group_view_type}
+              board_id={itemValue.board_id || gantt_board_id}
+              parent_card_id={parent_card_id}
+              updateTags={this.updateLabeldata}
+              updateCardBarDatas={this.updateCardBarData}
+              dispatch={this.props.dispatch}
+            />
+          </DragCard>
         )}
         {/* 大纲视图下显示任务预警 */}
         {SHOW_WARNING_TRIGGER && (
@@ -2463,7 +2576,10 @@ function mapStateToProps({
       selected_card_visible,
       notification_todos,
       card_name_outside,
-      milestoneMap = {}
+      milestoneMap = {},
+      cardids_with_milestone,
+      hover_milestone_id,
+      about_group_boards
     }
   },
   imCooperation: { im_all_latest_unread_messages = [] },
@@ -2490,6 +2606,9 @@ function mapStateToProps({
     notification_todos,
     card_name_outside,
     milestoneMap,
-    projectDetailInfoData
+    projectDetailInfoData,
+    cardids_with_milestone,
+    hover_milestone_id,
+    about_group_boards
   }
 }

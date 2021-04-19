@@ -30,6 +30,7 @@ import {
   diffClientDefaultViewMode,
   onChangeCardHandleCardDetail
 } from './ganttBusiness'
+import DEvent, { CARDREMOVE } from '../../../../utils/event'
 
 const ProcessDetailModal = lazy(() => import('@/components/ProcessDetailModal'))
 
@@ -41,6 +42,7 @@ class Gantt extends Component {
       previewFileModalVisibile: false
     }
     this.card_time_type = undefined //card_time_type为是否排期卡片
+    DEvent.addEventListener(CARDREMOVE, this.handleDeleteCard)
   }
 
   componentDidMount() {
@@ -53,6 +55,7 @@ class Gantt extends Component {
 
   componentWillUnmount() {
     const { dispatch, page_load_type } = this.props
+    DEvent.removeEventListener(CARDREMOVE, this.handleDeleteCard)
     dispatch({
       type: 'gantt/updateDatas',
       payload: {
@@ -131,6 +134,16 @@ class Gantt extends Component {
   }
   // 添加任务 -----------start
   addTaskModalVisibleChange = flag => {
+    const getCurentUserRoleId = () => {
+      const { user_set = {} } = localStorage.getItem('userInfo')
+        ? JSON.parse(localStorage.getItem('userInfo'))
+        : {}
+      const { user_id } = user_set
+      const {
+        projectDetailInfoData: { data: board_users }
+      } = this.props
+      return board_users.find(item => item.user_id == user_id)?.role_id
+    }
     const {
       list_group = [],
       current_list_group_id,
@@ -145,7 +158,8 @@ class Gantt extends Component {
         code: 'read',
         list_id: current_list_group_id,
         list_group,
-        permissionsValue
+        permissionsValue,
+        role_id: getCurentUserRoleId()
       })
     ) {
       message.warn('权限不足，操作未被许可', MESSAGE_DURATION_TIME)
@@ -299,7 +313,7 @@ class Gantt extends Component {
       param.row = belong_group_row
     }
     this.addNewTask(param)
-    this.setAddTaskModalVisible(false)
+    // this.setAddTaskModalVisible(false)
   }
   // 添加任务 -----------end
 
@@ -1067,6 +1081,7 @@ class Gantt extends Component {
             handleRelyUploading: this.handleRelyUploading
           }}
           setProcessDetailModalVisible={this.setProcessDetailModalVisible}
+          handleGetNewTaskParams={this.handleGetNewTaskParams}
         />
         {/* <TaskDetailModal
           task_detail_modal_visible={drawerVisible}
@@ -1140,6 +1155,9 @@ function mapStateToProps({
       selected_card_visible
     }
   },
+  projectDetail: {
+    datas: { projectDetailInfoData = {} }
+  },
   technological: {
     datas: { page_load_type }
   },
@@ -1167,7 +1185,8 @@ function mapStateToProps({
     gantt_board_list_id,
     gantt_view_mode,
     belong_group_row,
-    process_detail_modal_visible
+    process_detail_modal_visible,
+    projectDetailInfoData
   }
 }
 

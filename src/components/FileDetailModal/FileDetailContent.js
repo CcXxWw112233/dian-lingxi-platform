@@ -29,6 +29,7 @@ let board_id = null
 let appsSelectKey = null
 let file_id = null
 let folder_id = null
+
 @connect(mapStateToProps)
 class FileDetailContent extends Component {
   constructor(props) {
@@ -186,7 +187,9 @@ class FileDetailContent extends Component {
   }
 
   onCancel = () => {
+    console.log('删除')
     const { is_petty_loading, is_large_loading } = this.state
+    // debugger
     if (is_petty_loading || is_large_loading) {
       message.warn('正在进入圈评,请勿退出', MESSAGE_DURATION_TIME)
       return false

@@ -29,7 +29,7 @@ export default class AccomplishStepOne_six extends Component {
   }
 
   render() {
-    const { itemValue } = this.props
+    const { itemValue, expend } = this.props
     const { online_excel_id } = itemValue
     const { data = [] } = this.state
     return (
@@ -43,6 +43,7 @@ export default class AccomplishStepOne_six extends Component {
       >
         <p>在线表格</p>
         <PreviewTable
+          expend={expend}
           leadingOutVisible={true}
           data={data.sheet_data}
           minRows={10}

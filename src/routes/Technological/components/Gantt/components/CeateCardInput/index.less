@@ -1,0 +1,49 @@
+.main {
+  position: absolute;
+  //   border: 1px dashed rgba(0, 0, 0, 0.25);
+  background-color: #ffffff;
+  box-sizing: border-box;
+  border-radius: 4px;
+  overflow: hidden;
+  z-index: 6;
+  display: flex;
+
+  .main_right {
+  }
+}
+.main_name {
+  position: absolute;
+  z-index: 6;
+  text-align: right;
+  padding-right: 8px;
+}
+.editable_div {
+  white-space: nowrap;
+  overflow-x: hidden;
+  display: inline-block;
+  font-size: 14px;
+  background-color: #ffffff;
+  padding: 2px 8px 2px 4px;
+  max-width: 100%;
+  position: absolute;
+  z-index: 6;
+  border: 2px solid #5a86f5;
+  outline: none;
+  width: auto;
+  background: none;
+  cursor: text;
+}
+.editable_div:focus {
+  border: 2px solid #5a86f5;
+  outline: none;
+  border: none;
+  background: none;
+}
+.editable_div::after {
+  width: 200px;
+  height: 20px;
+  border: 2px solid red;
+}
+.editable_div_wrapper {
+  border: 2px solid #5a86f5;
+}

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Menu, Dropdown, Input, Icon, Divider, message } from 'antd'
+import { Menu, Dropdown, Input, Icon, Divider, message, Badge } from 'antd'
 import { connect } from 'dva/index'
 import styles from './index.less'
 import { addMenbersInProject } from '../../../../services/technological/project'
@@ -125,10 +125,12 @@ class DropdownSelect extends Component {
             style={{ flex: 1, maxWidth: '500px' }}
             className={globalStyles.global_ellipsis}
           >
-            {item.name}
-            {item.parentName && (
-              <span className={styles.parentTitle}>#{item.parentName}</span>
-            )}
+            {item.is_new == '1' ? <Badge dot>{item.name}</Badge> : item.name}
+            <span style={{ marginLeft: 4 }}>
+              {item.parentName && (
+                <span className={styles.parentTitle}>#{item.parentName}</span>
+              )}
+            </span>
           </div>
           {item.id != '0' && (
             <div

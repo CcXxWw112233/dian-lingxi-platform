@@ -33,6 +33,7 @@ import {
 import _ from 'lodash'
 import {
   FILE_UPLOAD_ACCEPT_TYPE,
+  PROJECT_FILES_FILE_UPLOAD,
   REQUEST_DOMAIN_BOARD
 } from '../../globalset/js/constant'
 const { TreeNode } = TreeSelect
@@ -255,12 +256,7 @@ export default class UploadAttachment extends Component {
 
   onBeforeUpload = file => {
     const { board_id } = this.props
-    if (
-      !checkIsHasPermissionInBoard(
-        PROJECT_TEAM_CARD_ATTACHMENT_UPLOAD,
-        board_id
-      )
-    ) {
+    if (!checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPLOAD, board_id)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
     }

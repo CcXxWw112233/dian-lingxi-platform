@@ -14,12 +14,14 @@ import { message, Modal, Tooltip } from 'antd'
 import {
   checkIsHasPermissionInBoard,
   getSubfixName,
-  checkIsHasPermissionInVisitControl
+  checkIsHasPermissionInVisitControl,
+  checkRoleAndMemberVisitControlPermissions
 } from '../../utils/businessFunction'
 import {
   MESSAGE_DURATION_TIME,
   NOT_HAS_PERMISION_COMFIRN,
-  PROJECT_FILES_FILE_UPDATE
+  PROJECT_FILES_FILE_UPDATE,
+  PROJECT_FILES_FILE_INTERVIEW
 } from '@/globalset/js/constant'
 import NotSupportImg from '@/assets/projectDetail/fileDetail/not_support.png'
 import { platformNouns } from '../../globalset/clientCustorm'
@@ -412,7 +414,10 @@ class MainContent extends Component {
         file_name,
         fileType: type,
         board_id,
-        folder_id
+        folder_id,
+        privileges,
+        is_privilege,
+        projectDetailInfoData: this.props.projectDetailInfoData
       }
       this.setState({
         pdfCommentData: obj,
@@ -431,8 +436,9 @@ class MainContent extends Component {
 
   // 除pdf外的其他文件进入圈评
   handleEnterCirclePointComment = async () => {
-    const { isZoomPictureFullScreenMode } = this.props
+    const { isZoomPictureFullScreenMode, projectDetailInfoData } = this.props
     const { currentPreviewFileData = {} } = this.props
+    // console.log(currentPreviewFileData)
     const {
       board_id,
       privileges = [],
@@ -441,14 +447,36 @@ class MainContent extends Component {
       file_name,
       folder_id
     } = currentPreviewFileData
+    /**
+     * 个人信息
+     */
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'))
+    /**
+     * 角色信息
+     */
+    const role =
+      projectDetailInfoData.data &&
+      projectDetailInfoData.data.find(item => item.user_id === userInfo.id)
+
     if (
-      !checkIsHasPermissionInVisitControl(
-        'edit',
+      !checkRoleAndMemberVisitControlPermissions({
         privileges,
+        board_id,
         is_privilege,
-        [],
-        checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)
-      )
+        board_permissions_code: [
+          // PROJECT_FILES_FILE_UPDATE,
+          PROJECT_FILES_FILE_INTERVIEW
+        ],
+        role_id: role ? role.role_id : '',
+        EditCode: ['edit', 'read']
+      })
+      // !checkIsHasPermissionInVisitControl(
+      //   'edit,read',
+      //   privileges,
+      //   is_privilege,
+      //   [],
+      //   checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)
+      // )
     ) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       // this.props.updateStateDatas({
@@ -1493,11 +1521,15 @@ function mapStateToProps({
     datas: { userBoardPermissions }
   },
   simplemode: { chatImVisiable = false },
-  publicFileDetailModal: { isOpenAttachmentFile }
+  publicFileDetailModal: { isOpenAttachmentFile },
+  projectDetail: {
+    datas: { projectDetailInfoData }
+  }
 }) {
   return {
     userBoardPermissions,
     chatImVisiable,
-    isOpenAttachmentFile
+    isOpenAttachmentFile,
+    projectDetailInfoData
   }
 }

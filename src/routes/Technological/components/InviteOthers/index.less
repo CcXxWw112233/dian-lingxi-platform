@@ -117,6 +117,22 @@
           }
         }
       }
+      .invite__select_member_item_operator_selected,
+      .invite__select_member_item_operator_unselected {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+      }
+      .invite__select_member_item_operator_selected {
+        background: url(./../../../../assets/invite/check-square-active@2x.png)
+          center center no-repeat;
+        background-size: contain;
+      }
+      .invite__select_member_item_operator_unselected {
+        background: url(./../../../../assets/invite/check-square-default@2x.png)
+          center center no-repeat;
+        background-size: contain;
+      }
       .invite__select_member_wrapper {
         .invite__select_member_All {
           cursor: pointer;
@@ -131,22 +147,6 @@
             font-weight: 400;
             color: rgba(0, 0, 0, 0.65);
             line-height: 20px;
-          }
-          .invite__select_member_item_operator_selected,
-          .invite__select_member_item_operator_unselected {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-          }
-          .invite__select_member_item_operator_selected {
-            background: url(./../../../../assets/invite/check-square-active@2x.png)
-              center center no-repeat;
-            background-size: contain;
-          }
-          .invite__select_member_item_operator_unselected {
-            background: url(./../../../../assets/invite/check-square-default@2x.png)
-              center center no-repeat;
-            background-size: contain;
           }
         }
         .invite__select_member_all {
@@ -245,6 +245,10 @@
           }
         }
       }
+    }
+    .invite__select_member_item_title_role {
+      font-size: 12px;
+      margin-left: 3px;
     }
   }
 

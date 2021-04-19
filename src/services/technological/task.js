@@ -232,7 +232,7 @@ export async function addChirldTaskVTwo(data) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}${REQUEST_INTERGFACE_VERSIONN}/card`,
     method: 'POST',
-    headers: createHeaderContentDataByCardId(data.parent_id),
+    // headers: createHeaderContentDataByCardId(data.parent_id),
     data
   })
 }
@@ -348,7 +348,7 @@ export async function deleteTaskFile(data) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/card/attachment/${data.attachment_id}`,
     method: 'DELETE',
-    headers: createHeaderContentDataByCardId(data.card_id),
+    headers: {}, // createHeaderContentDataByCardId(data.card_id),
     data
   })
 }
@@ -691,6 +691,14 @@ export async function revokeCardDo(data) {
     data
   })
 }
+//撤销里程碑操作
+export async function revokeMilestoneDo(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/milestone/undo`,
+    method: 'PUT',
+    data
+  })
+}
 
 //创建多条里程碑
 export async function addMultipleMilestone(data) {
@@ -735,6 +743,50 @@ export async function updateTaskFinishTimeVTwo(data) {
     url: `${REQUEST_DOMAIN_BOARD}${REQUEST_INTERGFACE_VERSIONN}/card/finish_time`,
     method: 'PUT',
     headers: createHeaderContentDataByCardId(data.card_id),
+    data
+  })
+}
+
+/** 获取任务条的访问控制详情
+ * @param {{id: string}} data 任务条的id
+ */
+export const fetchVisitControlInfo = data => {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/content_privilege/${data.id}`,
+    method: 'GET',
+    data
+  })
+}
+
+// 添加分组
+export const addCardGroup = data => {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/lists/rela`,
+    method: 'POST',
+    data
+  })
+}
+// 删除任务分组
+export const deleteCardGroup = data => {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/card/lists/rela`,
+    method: 'DELETE',
+    data
+  })
+}
+//添加里程碑分组
+export const addMilestoneGroup = data => {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/milestone/lists/rela`,
+    method: 'POST',
+    data
+  })
+}
+//删除里程碑分组
+export const deleteMilestoneGroup = data => {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/milestone/lists/rela`,
+    method: 'DELETE',
     data
   })
 }

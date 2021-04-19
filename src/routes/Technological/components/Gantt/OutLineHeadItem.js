@@ -395,6 +395,10 @@ export default class OutLineHeadItem extends Component {
                 } else {
                   console.error('OutlineTree.getTreeNodeValue:未查询到节点')
                 }
+                dispatch({
+                  type: 'gantt/getGttMilestoneList',
+                  payload: {}
+                })
               } else {
                 if (typeof errCalback == 'function') {
                   errCalback()
@@ -1957,7 +1961,7 @@ export default class OutLineHeadItem extends Component {
     return (
       <div
         className={styles.outline_wrapper}
-        style={{ marginTop: task_item_margin_top }}
+        // style={{ marginTop: task_item_margin_top }}
       >
         <OutlineTree
           // defaultExpandedKeys={['0-0-0']}

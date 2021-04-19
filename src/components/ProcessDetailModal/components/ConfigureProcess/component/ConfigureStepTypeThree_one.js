@@ -603,10 +603,10 @@ export default class ConfigureStepTypeThree_one extends Component {
     this.props.updateConfigureProcess &&
       this.props.updateConfigureProcess({ value: new_data }, 'score_items')
     // 这是因为删除后 需要延时去更新状态
-    let temp_index = index == new_data.length ? new_data.length - 1 : index
-    setTimeout(() => {
-      this.titleResize(temp_index)
-    }, 200)
+    // let temp_index = index == new_data.length ? new_data.length - 1 : index
+    // setTimeout(() => {
+    //   // this.titleResize(temp_index)
+    // }, 200)
   }
 
   onFocus = (e, key, i) => {
@@ -1029,6 +1029,7 @@ export default class ConfigureStepTypeThree_one extends Component {
     const { score_items = [] } = this.state
     let new_data = [...score_items]
     let flag
+    // 1-1000数
     const reg = /^([1-9]\d{0,2}(\.\d{1,2})?|1000)$/
     new_data.find(item => {
       if (!reg.test(item.max_score)) {
@@ -1066,9 +1067,11 @@ export default class ConfigureStepTypeThree_one extends Component {
       local_enable_weight
     } = this.state
     // let disabledFlag = isObjectValueEqual(localScoreList, score_items) || this.whetherIsEmptyContent() || (local_enable_weight == '1' && this.whetherTheAllWeightValueGreaterThanHundred()) || ((local_enable_weight == enable_weight) && this.whetherTheAllWeightValueGreaterThanHundred())
-    let disabledFlag
+    let disabledFlag = false
     if (local_enable_weight == '0') {
+      // 表示未开启权重
       if (local_enable_weight != enable_weight) {
+        //表示本地和modal中是否发生改变
         if (
           isObjectValueEqual(localScoreList, score_items) ||
           this.whetherIsEmptyContent() ||
@@ -1079,6 +1082,7 @@ export default class ConfigureStepTypeThree_one extends Component {
           disabledFlag = false
         }
       } else {
+        // 比较两个评分是否相等 或者 判断是否有空数据、是否每个分数值满足规则
         if (
           isObjectValueEqual(localScoreList, score_items) ||
           this.whetherIsEmptyContent() ||
@@ -1089,6 +1093,7 @@ export default class ConfigureStepTypeThree_one extends Component {
       }
     } else if (local_enable_weight == '1') {
       if (local_enable_weight != enable_weight) {
+        // 判断是否所有权重之和为100、比较两个对象是否相等、判断是否存在空内容、判断分数值是否满足正则规则
         if (
           this.whetherTheAllWeightValueGreaterThanHundred() ||
           isObjectValueEqual(localScoreList, score_items) ||
@@ -1096,9 +1101,10 @@ export default class ConfigureStepTypeThree_one extends Component {
           this.whetherIsScoreValueAccordReg()
         ) {
           disabledFlag = true
-        } else {
-          disabledFlag = false
         }
+        // else {
+        //   disabledFlag = false
+        // }
       } else {
         if (
           this.whetherTheAllWeightValueGreaterThanHundred() ||
@@ -1397,7 +1403,7 @@ export default class ConfigureStepTypeThree_one extends Component {
                                   maxWidth:
                                     clientWidth &&
                                     !(flag && score_items.length > 1)
-                                      ? clientWidth + 'px'
+                                      ? clientWidth - 10 + 'px'
                                       : autoWidth,
                                   minWidth: '50px',
                                   whiteSpace: 'nowrap',

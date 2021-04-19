@@ -1,12 +1,18 @@
 import React, { Component } from 'react'
 import { connect } from 'dva'
-import { Popover, Button, Tree } from 'antd'
+import { Popover, Button, Tree, message } from 'antd'
 import indexStyles from './index.less'
 import globalsetStyles from '@/globalset/css/globalClassName.less'
 import { getCustomFieldList } from '../../services/organization'
 import { isApiResponseOk } from '../../utils/handleResponseData'
 import { removeEmptyArrayEle, isArrayEqual } from '../../utils/util'
 import EmptyImg from '@/assets/projectDetail/process/Empty@2x.png'
+import { checkIsHasPermissionInBoard } from '../../utils/businessFunction'
+import {
+  MESSAGE_DURATION_TIME,
+  NOT_HAS_PERMISION_COMFIRN,
+  PROJECT_TEAM_BOARD_EDIT
+} from '../../globalset/js/constant'
 
 const { TreeNode } = Tree
 
@@ -206,6 +212,10 @@ export default class Index extends Component {
 
   // 添加字段
   handleAddCustomField = e => {
+    if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_EDIT)) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
     e && e.stopPropagation()
     this.setState({
       isOnConfirmAddField: true
@@ -386,5 +396,6 @@ export default class Index extends Component {
 Index.defaultProps = {
   org_id: '', // 需要一个组织ID获取树状列表
   relations_fields: [], // 需要一个关联字段（即引用的字段）
-  handleAddCustomField: function() {} // 添加自定义字段回调，由外部决定
+  handleAddCustomField: function() {}, // 添加自定义字段回调，由外部决定
+  onlyShowPopoverContent: false // 是否直接显示弹窗内容
 }

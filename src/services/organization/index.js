@@ -477,4 +477,16 @@ export async function deleteRelationCustomField(params) {
   })
 }
 
+/** 日历获取模板列表
+ * @param {{ids: string}} params 需要传入每个项目中的模板id
+ */
+
+export async function calendarGetTemplateList(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/org/template/list/detail`,
+    method: 'GET',
+    params
+  })
+}
+
 // ------------------------ 自定义字段接口 E --------------------------

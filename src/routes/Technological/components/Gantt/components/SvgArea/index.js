@@ -6,7 +6,8 @@ import {
   ganttIsOutlineView,
   task_item_height,
   task_item_margin_top,
-  date_area_height
+  date_area_height,
+  milestone_base_height
 } from '../../constants'
 import PathOperateContent from './PathOperateContent'
 
@@ -32,11 +33,13 @@ const dateAreaHeight = date_area_height //日期区域高度，作为修正
 // 60 40 20
 const width_diff = 4 //8 //宽度误差微调
 const left_diff = 6 //12 //位置误差微调
-const top_diff_60 = task_item_height + task_item_margin_top //位置误差微调
-const top_diff_30 = top_diff_60 / 2 + 2 //位置误差微调 ,+2由于任务间距太小，恢复可去掉
-const top_diff_20 = task_item_margin_top //位置误差微调
-const top_diff_10 = task_item_margin_top / 2 - 2 //位置误差微调, -2由于任务间距太小，恢复可去掉
-let top_diff = task_item_height / 2 + task_item_margin_top /// 2 //位置误差微调
+const top_diff_60 =
+  task_item_height + task_item_margin_top - milestone_base_height //位置误差微调
+const top_diff_30 = top_diff_60 / 2 + 2 - milestone_base_height //位置误差微调 ,+2由于任务间距太小，恢复可去掉
+const top_diff_20 = task_item_margin_top - milestone_base_height //位置误差微调
+const top_diff_10 = task_item_margin_top / 2 - 2 - milestone_base_height //位置误差微调, -2由于任务间距太小，恢复可去掉
+let top_diff =
+  task_item_height / 2 + task_item_margin_top - milestone_base_height /// 2 //位置误差微调
 const top_diff_initial = top_diff
 
 @connect(mapStateToProps)
@@ -596,15 +599,26 @@ export default class index extends Component {
         } else {
           Move_Line = `M ${move_right - left_diff},${move_top + top_diff}
                     L${line_right}, ${move_top + top_diff}
-                    L${line_right}, ${line_top + top_diff + top_diff_30},
+                    L${line_right}, ${line_top +
+            top_diff +
+            top_diff_30 +
+            milestone_base_height +
+            task_item_height / 2},
                     L${line_right - left_diff}, ${line_top +
             top_diff +
-            top_diff_30},`
+            top_diff_30 +
+            milestone_base_height +
+            task_item_height / 2},`
           Arrow = this.calArrow({
             arrow_direction: 'top',
             final_point: {
               x: line_right - left_diff,
-              y: line_top + top_diff + top_diff_30
+              y:
+                line_top +
+                top_diff +
+                top_diff_30 +
+                milestone_base_height +
+                task_item_height / 2
             },
             diff_horizontal: 'right'
           })

@@ -81,7 +81,7 @@ export default class CompleteDeadlineContent extends Component {
     })
   }
 
-  // 判断是否有变化
+  // 判断是否有变化 true表示有变化 即不禁用
   whetherIsHasChange = () => {
     const { itemValue } = this.props
     const { deadline_time_type, deadline_value, deadline_type } = itemValue
@@ -90,31 +90,29 @@ export default class CompleteDeadlineContent extends Component {
     if (deadlineType == '1' || deadlineType == '') {
       if (deadlineType != deadline_type) {
         flag = true
-      } else {
-        flag = false
       }
     } else if (deadlineType == '2') {
-      if (deadlineValue && deadlineValue != deadline_value) {
+      // 如果期限值存在 并且有变化
+      if (!!deadlineValue && deadlineValue != deadline_value) {
         flag = true
-      } else {
-        flag = false
       }
       if (flag) {
         return flag
       } else {
-        if (deadlineType && deadlineType != deadline_type) {
+        if (deadlineType && deadlineType != deadline_type && !!deadlineValue) {
           flag = true
-        } else {
-          flag = false
         }
       }
       if (flag) {
         return flag
       } else {
-        if (deadlineTimeType && deadlineTimeType != deadline_time_type) {
+        // 表示期限类型有变化的时候 并且期限值一定要存在
+        if (
+          deadlineTimeType &&
+          deadlineTimeType != deadline_time_type &&
+          !!deadlineValue
+        ) {
           flag = true
-        } else {
-          flag = false
         }
       }
     }

@@ -1,3 +1,6 @@
+/**
+ * 资料收集节点 数据
+ */
 export const processEditDatasItemOneConstant = {
   node_type: '1', //流程节点类型 1=资料收集 2=审批 3=抄送
   name: '', //流程节点名称
@@ -14,7 +17,9 @@ export const processEditDatasItemOneConstant = {
   is_confirm: '0', // 是否确认
   is_edit: '0' // 是否进入编辑
 }
-
+/**
+ * 审批节点数据
+ */
 export const processEditDatasItemTwoConstant = {
   node_type: '2', //流程节点类型 1=资料收集 2=审批 3=抄送
   name: '', //流程节点名称
@@ -32,7 +37,9 @@ export const processEditDatasItemTwoConstant = {
   is_confirm: '0',
   is_edit: '0' // 是否进入编辑
 }
-
+/**
+ * 评分节点数据
+ */
 export const processEditDatasItemThreeConstant = {
   node_type: '3', //流程节点类型 1=资料收集 2=审批 3=抄送
   name: '', //流程节点名称
@@ -64,8 +71,8 @@ export const processEditDatasItemThreeConstant = {
       weight_ratio: '100' //权重占比
     }
   ], // 评分项
-  is_confirm: '0',
-  is_edit: '0' // 是否进入编辑
+  is_confirm: '0', //是否完成 0表示还是在进行中
+  is_edit: '0' // 是否进入编辑 0 表示还是在配置页
 }
 
 // 假数据

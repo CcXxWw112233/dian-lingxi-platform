@@ -2,6 +2,7 @@ import React from 'react'
 import styles from './index.less'
 import { Modal, Button } from 'antd'
 import Sheet from './components/Sheet'
+import DEvent, { PREVIEWTABLE } from '../../utils/event'
 export default class EditSheet extends React.Component {
   constructor() {
     super(...arguments)
@@ -9,6 +10,7 @@ export default class EditSheet extends React.Component {
       visible: false
     }
     this.el = null
+    DEvent.on(PREVIEWTABLE, this.openSheet)
   }
   openSheet = () => {
     let { visible } = this.state
@@ -35,7 +37,10 @@ export default class EditSheet extends React.Component {
     const { visible } = this.state
     return (
       <div style={{ display: 'inline-block' }}>
-        <Button type="link" onClick={this.openSheet}>
+        <Button type="primary" onClick={this.openSheet}>
+          <span className="iconfont" style={{ marginRight: 5 }}>
+            &#xe7e1;
+          </span>
           表格编辑
         </Button>
         {visible && <Sheet ref={el => (this.el = el)} onClose={this.close} />}

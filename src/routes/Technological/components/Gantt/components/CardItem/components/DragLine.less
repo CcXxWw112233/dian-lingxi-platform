@@ -1,0 +1,23 @@
+.container {
+  position: relative;
+  .lines {
+    position: absolute;
+    top: 16px;
+    left: 8px;
+    width: 1px;
+    border-right: 1px dashed #1890ff;
+    z-index: 100;
+    transform-origin: 0 0;
+    &::before {
+      content: "";
+      border: 6px solid transparent;
+      border-top-color: #1890ff;
+      width: 6px;
+      height: 6px;
+      position: absolute;
+      bottom: -12px;
+      left: -6px;
+      pointer-events: none;
+    }
+  }
+}

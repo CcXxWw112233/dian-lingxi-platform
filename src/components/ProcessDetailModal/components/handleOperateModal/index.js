@@ -40,6 +40,27 @@ const arrayNonRepeatfy = arr => {
   return temp_arr
 }
 
+/** 获取流程的参与人 */
+const getNodesMembers = (nodes = []) => {
+  const arr = []
+  if (nodes.length) {
+    const memberObj = {}
+    nodes.forEach(item => {
+      const { assignees = [], recipients = [] } = item
+      const list = [...assignees, ...recipients]
+      list.forEach(member => {
+        /** 去重 */
+        if (!memberObj[member.id]) {
+          arr.push(member)
+          memberObj[member.id] = true
+        }
+      })
+    })
+    return arr
+  }
+  return arr
+}
+
 /**
  * 获取流程执行人列表
  * 因为这个弹窗是共用的, 所以需要从外部接收一个 principalList执行人列表
@@ -614,5 +635,6 @@ export {
   accordingToSortMembersList,
   getRolesName,
   getCurrentDesignatedRolesMembers,
-  whetherIsHasMembersInEveryNodes
+  whetherIsHasMembersInEveryNodes,
+  getNodesMembers
 }

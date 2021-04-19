@@ -6,14 +6,17 @@ import {
   setBoardIdStorage,
   getGlobalData,
   checkIsHasPermissionInVisitControl,
-  checkIsHasPermissionInBoard
+  checkIsHasPermissionInBoard,
+  checkIsRoleHasPermissionsInBoard,
+  checkRoleAndMemberVisitControlPermissions
 } from '../../../../../../../utils/businessFunction'
 import { Input, Menu, Dropdown, message, Tooltip, Modal } from 'antd'
 import {
   PROJECT_FILES_FILE_INTERVIEW,
   NOT_HAS_PERMISION_COMFIRN,
   MESSAGE_DURATION_TIME,
-  PROJECT_FILES_FILE_UPDATE
+  PROJECT_FILES_FILE_UPDATE,
+  PROJECT_FILES_FOLDER
 } from '../../../../../../../globalset/js/constant'
 import { connect } from 'dva'
 import {
@@ -33,9 +36,11 @@ import {
   removeContentPrivilege
 } from '../../../../../../../services/technological/project'
 import { arrayNonRepeatfy } from '../../../../../../../utils/util'
+import { ROLETYPEID } from '../../../../VisitControl/constans'
+import DragProvider from '../../../../../../../components/DragProvider'
 
 @connect(mapStateToProps)
-export default class FolderItem extends Component {
+class FolderItem extends Component {
   constructor(props) {
     super(props)
     const { itemValue = {} } = this.props
@@ -152,22 +157,75 @@ export default class FolderItem extends Component {
     switch (key) {
       case '1':
         const {
-          itemValue: { board_id, privileges = [], is_privilege }
+          itemValue: { board_id, privileges = [], is_privilege },
+          projectDetailInfoData
         } = this.props
+        /**
+         * 个人信息
+         */
+        const userInfo = JSON.parse(localStorage.getItem('userInfo'))
+        /**
+         * 角色信息
+         */
+        const role =
+          projectDetailInfoData.data &&
+          projectDetailInfoData.data.find(item => item.user_id === userInfo.id)
+
         if (
-          !checkIsHasPermissionInVisitControl(
-            'edit',
+          // !checkIsHasPermissionInVisitControl(
+          //   'edit',
+          //   privileges,
+          //   is_privilege,
+          //   [],
+          //   checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)
+          // ) ||
+          !checkRoleAndMemberVisitControlPermissions({
             privileges,
-            is_privilege,
-            [],
-            checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)
-          )
+            board_id,
+            board_permissions_code: [
+              PROJECT_FILES_FOLDER,
+              PROJECT_FILES_FILE_UPDATE
+            ],
+            role_id: role ? role.role_id : '',
+            is_privilege: is_privilege
+          })
         ) {
           setTimeout(() => {
             message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
           }, 50)
           return
         }
+        /**
+         * 访问控制里面有没有自己
+         */
+        // const privilegesInUser = privileges.some(
+        //   item => item.user_info && item.user_info.user_id === userInfo.id
+        // )
+        // if (!privilegesInUser) {
+        //   if (
+        //     !checkIsHasPermissionInVisitControl(
+        //       'edit',
+        //       privileges,
+        //       is_privilege,
+        //       [],
+        //       checkIsHasPermissionInBoard(PROJECT_FILES_FILE_UPDATE, board_id)
+        //     ) &&
+        //     !checkRoleAndMemberVisitControlPermissions({
+        //       privileges,
+        //       board_id,
+        //       board_permissions_code: PROJECT_FILES_FOLDER,
+        //       role_id: role ? role.role_id : '',
+        //       is_privilege: is_privilege
+        //     })
+        //   ) {
+        //     setTimeout(() => {
+        //       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+        //     }, 50)
+        //     return
+        //   }
+        // } else {
+
+        // }
         this.setIsShowChange(true)
         break
       case '2':
@@ -620,7 +678,12 @@ export default class FolderItem extends Component {
    * @param {String} id 设置成员对应的id
    * @param {String} type 设置成员对应的字段
    */
-  handleVisitControlChangeContentPrivilege = (id, type, errorText) => {
+  handleVisitControlChangeContentPrivilege = (
+    id,
+    type,
+    user_type,
+    errorText
+  ) => {
     const { itemValue = {} } = this.props
     const { current_folder_id, getFolderFileList } = this.props
     const { version_id, belong_folder_id, id: folder_id } = itemValue
@@ -628,13 +691,16 @@ export default class FolderItem extends Component {
     const content_id = dataType == 'file' ? version_id : folder_id
     const content_type = dataType == 'file' ? 'file' : 'folder'
     const privilege_code = type
-    let temp_id = []
-    temp_id.push(id)
+    let param = {}
+    if (user_type === ROLETYPEID) {
+      param = { role_ids: [id] }
+    } else param = { user_ids: [id] }
+
     setContentPrivilege({
       content_id,
       content_type,
       privilege_code,
-      user_ids: temp_id
+      ...param
     }).then(res => {
       if (res && res.code == '0') {
         setTimeout(() => {
@@ -653,13 +719,19 @@ export default class FolderItem extends Component {
    * @param {String} type 这是对应的用户字段
    * @param {String} removeId 这是对应移除用户的id
    */
-  handleClickedOtherPersonListOperatorItem = (id, type, removeId) => {
+  handleClickedOtherPersonListOperatorItem = (
+    id,
+    type,
+    removeId,
+    user_type
+  ) => {
     if (type == 'remove') {
       this.handleVisitControlRemoveContentPrivilege(removeId)
     } else {
       this.handleVisitControlChangeContentPrivilege(
         id,
         type,
+        user_type,
         '更新用户控制类型失败'
       )
     }
@@ -669,14 +741,15 @@ export default class FolderItem extends Component {
    * 添加成员的回调
    * @param {Array} users_arr 添加成员的数组
    */
-  handleVisitControlAddNewMember = (users_arr = []) => {
-    if (!users_arr.length) return
-    this.handleSetContentPrivilege(users_arr, 'read')
+  handleVisitControlAddNewMember = (users_arr = [], roles = []) => {
+    if (!users_arr.length && !roles.length) return
+    this.handleSetContentPrivilege(users_arr, roles, 'read')
   }
 
   // 访问控制设置成员
   handleSetContentPrivilege = (
     users_arr = [],
+    roles = [],
     type,
     errorText = '访问控制添加人员失败，请稍后再试'
   ) => {
@@ -714,7 +787,7 @@ export default class FolderItem extends Component {
     new_privileges =
       new_privileges &&
       new_privileges.map(item => {
-        let { id } = item && item.user_info && item.user_info
+        let { id } = (item && item.user_info && item.user_info) || {}
         if (user_id == id) {
           // 从权限列表中找到自己
           if (temp_ids.indexOf(id) != -1) {
@@ -740,10 +813,11 @@ export default class FolderItem extends Component {
           }
         })
     }
-
+    if (!roles.length && !temp_ids.length) return
     setContentPrivilege({
       content_id,
       content_type,
+      role_ids: roles.map(item => item.id),
       privilege_code,
       user_ids: temp_ids
     }).then(res => {
@@ -771,6 +845,7 @@ export default class FolderItem extends Component {
       fileOrFolderName,
       visitControlOtherPersonOperatorMenuItem
     } = this.genVisitContorlData(itemValue)
+
     const new_projectParticipant =
       privileges_extend && privileges_extend.length
         ? arrayNonRepeatfy([].concat(...privileges_extend))
@@ -817,6 +892,11 @@ export default class FolderItem extends Component {
               notShowPrincipal={
                 this.getVisitControlModalDataType() == 'file' ? true : false
               }
+              // 加载角色列表
+              loadRoleData={true}
+              // 隐藏从分组或者项目选择
+              hideSelectFromGroupOrBoard={false}
+              isPropVisitControlKey={is_privilege}
               otherPrivilege={privileges}
               otherPersonOperatorMenuItem={
                 visitControlOtherPersonOperatorMenuItem
@@ -937,7 +1017,16 @@ export default class FolderItem extends Component {
 }
 
 function mapStateToProps({
-  imCooperation: { im_all_latest_unread_messages = [], wil_handle_types = [] }
+  imCooperation: { im_all_latest_unread_messages = [], wil_handle_types = [] },
+  projectDetail: {
+    datas: { projectDetailInfoData = {} }
+  }
 }) {
-  return { im_all_latest_unread_messages, wil_handle_types }
+  return {
+    im_all_latest_unread_messages,
+    wil_handle_types,
+    projectDetailInfoData
+  }
 }
+
+export default DragProvider(FolderItem)

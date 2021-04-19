@@ -466,6 +466,7 @@ export default class MenuSearchPartner extends React.Component {
               style={{ paddingRight: showUserDefinedIconVisible && '38px' }}
               placeholder={Inputlaceholder}
               value={keyWord}
+              onClick={e => e.target?.focus()}
               onChange={this.onChange.bind(this)}
             />
             {showUserDefinedIconVisible && (
@@ -501,7 +502,7 @@ export default class MenuSearchPartner extends React.Component {
                       alignItems: 'center',
                       justifyContent: 'center',
                       borderRadius: 20,
-                      backgroundColor: '&#xe70b;',
+                      // backgroundColor: '&#xe70b;',
                       marginRight: 4,
                       color: 'rgb(73, 155, 230)'
                     }}

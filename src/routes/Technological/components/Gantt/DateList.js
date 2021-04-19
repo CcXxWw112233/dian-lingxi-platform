@@ -919,11 +919,11 @@ export default class DateList extends Component {
     let e_format = '' // 截止日期格式
     s_format =
       new Date(s_time).getFullYear() == new Date().getFullYear()
-        ? 'MM.dd'
+        ? 'MM月dd日'
         : 'yyyy.MM.dd'
     e_format =
       new Date(e_time).getFullYear() == new Date().getFullYear()
-        ? 'MM.dd'
+        ? 'MM月dd日'
         : 'yyyy.MM.dd'
     switch (gantt_view_mode) {
       case 'month':
@@ -933,9 +933,9 @@ export default class DateList extends Component {
             // 同月同天
             date_dec = `${dateFormat(e_time, 'dd')}`
           } else {
-            date_dec = `${dateFormat(s_time, 'dd')} - ${dateFormat(
+            date_dec = `${dateFormat(s_time, e_format)} - ${dateFormat(
               e_time,
-              'dd'
+              e_format
             )}`
           }
         } else {
@@ -978,7 +978,7 @@ export default class DateList extends Component {
           } else {
             date_dec = `${dateFormat(s_time, 'MM.dd')} - ${dateFormat(
               e_time,
-              'MM.dd'
+              'MM月dd日'
             )}`
           }
         } else {
@@ -997,9 +997,9 @@ export default class DateList extends Component {
               'dd'
             )}`
           } else {
-            date_dec = `${dateFormat(s_time, 'MM.dd')} - ${dateFormat(
+            date_dec = `${dateFormat(s_time, 'MM月dd日')} - ${dateFormat(
               e_time,
-              'MM.dd'
+              'MM月dd日'
             )}`
           }
         } else {

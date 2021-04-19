@@ -42,6 +42,7 @@ import {
 import {
   checkIsHasPermissionInBoard,
   checkIsHasPermissionInVisitControl,
+  checkRoleAndMemberVisitControlPermissions,
   currentNounPlanFilterName,
   getSubfixName
 } from '../../../../../utils/businessFunction'
@@ -279,13 +280,12 @@ class DrawContent extends React.Component {
     } = drawContent
     // 这是加上访问控制权限, 判断是否可完成
     if (
-      !checkIsHasPermissionInVisitControl(
-        'edit',
-        privileges,
+      !checkRoleAndMemberVisitControlPermissions({
+        board_id,
         is_privilege,
-        executors,
-        checkIsHasPermissionInBoard(PROJECT_TEAM_CARD_COMPLETE, board_id)
-      )
+        privileges,
+        board_permissions_code: PROJECT_TEAM_CARD_COMPLETE
+      })
     ) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return false
@@ -1292,7 +1292,7 @@ class DrawContent extends React.Component {
     new_privileges =
       new_privileges &&
       new_privileges.map(item => {
-        let { id } = item && item.user_info && item.user_info
+        let { id } = (item && item.user_info && item.user_info) || {}
         if (user_id == id) {
           // 从权限列表中找到自己
           if (temp_ids.indexOf(id) != -1) {

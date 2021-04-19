@@ -11,11 +11,6 @@ import {
 } from '../../services/technological/project'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import {
-  currentNounPlanFilterName,
-  checkIsHasPermissionInBoard,
-  checkIsHasPermissionInVisitControl
-} from '@/utils/businessFunction'
-import {
   MESSAGE_DURATION_TIME,
   PROJECT_FLOWS_FLOW_ABORT,
   PROJECT_FLOWS_FLOW_DELETE,
@@ -27,10 +22,18 @@ import {
   genPrincipalListFromAssignees,
   transformNewAssigneesToString,
   transformNewRecipientsToString,
-  wipeOffSomeDataWithScoreNodes
+  wipeOffSomeDataWithScoreNodes,
+  getNodesMembers
 } from './components/handleOperateModal'
-import { getGlobalData } from '../../utils/businessFunction'
+import {
+  getGlobalData,
+  currentNounPlanFilterName,
+  checkIsHasPermissionInBoard,
+  checkIsHasPermissionInVisitControl,
+  checkRoleAndMemberVisitControlPermissions
+} from '../../utils/businessFunction'
 import { arrayNonRepeatfy } from '../../utils/util'
+import { ROLETYPEID } from '../../routes/Technological/components/VisitControl/constans'
 @connect(mapStateToProps)
 export default class HeaderContentRightMenu extends Component {
   state = {}
@@ -213,8 +216,8 @@ export default class HeaderContentRightMenu extends Component {
    * 添加成员的回调
    * @param {Array} users_arr 添加成员的数组
    */
-  handleVisitControlAddNewMember = (users_arr = []) => {
-    if (!users_arr.length) return
+  handleVisitControlAddNewMember = (users_arr = [], roles = []) => {
+    if (!users_arr.length && !roles.length) return
     const { user_set = {} } = localStorage.getItem('userInfo')
       ? JSON.parse(localStorage.getItem('userInfo'))
       : {}
@@ -237,7 +240,7 @@ export default class HeaderContentRightMenu extends Component {
     new_privileges =
       new_privileges &&
       new_privileges.map(item => {
-        let { id } = item && item.user_info && item.user_info
+        let { id } = (item && item.user_info && item.user_info) || {}
         if (user_id == id) {
           // 从权限列表中找到自己
           if (temp_ids.indexOf(id) != -1) {
@@ -263,11 +266,15 @@ export default class HeaderContentRightMenu extends Component {
           }
         })
     }
+
+    if (!roles.length && !temp_ids.length) return
+
     setContentPrivilege({
       content_id,
       content_type,
       privilege_code: 'read',
-      user_ids: temp_ids
+      user_ids: temp_ids,
+      role_ids: roles.map(item => item.id)
     }).then(res => {
       if (res && res.code === '0') {
         setTimeout(() => {
@@ -310,17 +317,21 @@ export default class HeaderContentRightMenu extends Component {
    * @param {String} id 设置成员对应的id
    * @param {String} type 设置成员对应的字段
    */
-  handleVisitControlChangeContentPrivilege = (id, type) => {
+  handleVisitControlChangeContentPrivilege = (id, type, user_type) => {
     const {
       processInfo: { id: content_id, privileges }
     } = this.props
-    let temp_id = []
-    temp_id.push(id)
+
+    let param = {}
+    if (user_type === ROLETYPEID) {
+      param = { role_ids: [id] }
+    } else param = { user_ids: [id] }
+
     const obj = {
       content_id: content_id,
       content_type: 'flow',
       privilege_code: type,
-      user_ids: temp_id
+      ...param
     }
     setContentPrivilege(obj).then(res => {
       const isResOk = res => res && res.code === '0'
@@ -346,11 +357,16 @@ export default class HeaderContentRightMenu extends Component {
    * @param {String} type 这是对应的用户字段
    * @param {String} removeId 这是对应移除用户的id
    */
-  handleClickedOtherPersonListOperatorItem = (id, type, removeId) => {
+  handleClickedOtherPersonListOperatorItem = (
+    id,
+    type,
+    removeId,
+    user_type
+  ) => {
     if (type === 'remove') {
       this.handleVisitControlRemoveContentPrivilege(removeId)
     } else {
-      this.handleVisitControlChangeContentPrivilege(id, type)
+      this.handleVisitControlChangeContentPrivilege(id, type, user_type)
     }
   }
 
@@ -366,13 +382,12 @@ export default class HeaderContentRightMenu extends Component {
     const principalList = genPrincipalListFromAssignees(nodes)
     let flag = false
     if (
-      checkIsHasPermissionInVisitControl(
-        'edit',
+      checkRoleAndMemberVisitControlPermissions({
+        board_id,
         privileges,
-        is_privilege,
-        principalList,
-        checkIsHasPermissionInBoard(permissionValue, board_id)
-      )
+        board_permissions_code: permissionValue,
+        is_privilege
+      })
     ) {
       flag = true
     }
@@ -425,7 +440,14 @@ export default class HeaderContentRightMenu extends Component {
               name: 'status',
               value: '2'
             })
-          that.props.onCancel && that.props.onCancel()
+          // 中止流程不关闭弹窗
+          that.props.dispatch({
+            type: 'publicProcessDetailModal/getProcessInfo',
+            payload: {
+              id
+            }
+          })
+          // that.props.onCancel && that.props.onCancel()
         }
       }
     })
@@ -522,6 +544,22 @@ export default class HeaderContentRightMenu extends Component {
       },
       onCancel: () => {
         modal.destroy()
+      }
+    })
+  }
+
+  // 重新启动模板发起流程
+  handleLaunchStartProcess = () => {
+    const {
+      processInfo: { flow_template_id },
+      dispatch
+    } = this.props
+    dispatch({
+      type: 'publicProcessDetailModal/getTemplateInfo',
+      payload: {
+        id: flow_template_id,
+        processPageFlagStep: '3',
+        process_detail_modal_visible: true
       }
     })
   }
@@ -636,6 +674,9 @@ export default class HeaderContentRightMenu extends Component {
       case 'restart': // 表示匹配重启
         this.handleReStartProcess()
         break
+      case 'launchStart': // 表示中止后重新启动模板发起流程
+        this.handleLaunchStartProcess()
+        break
       default:
         break
     }
@@ -664,6 +705,20 @@ export default class HeaderContentRightMenu extends Component {
   }
 
   render() {
+    /** 访问控制的单独控制权限 */
+    const OperationSettings = [
+      {
+        key: '可访问',
+        value: 'read'
+      },
+      {
+        key: '移出',
+        value: 'remove',
+        style: {
+          color: '#f73b45'
+        }
+      }
+    ]
     const {
       projectDetailInfoData: { data = [] },
       processInfo = {},
@@ -680,6 +735,8 @@ export default class HeaderContentRightMenu extends Component {
       board_id
     } = processInfo
     const principalList = genPrincipalListFromAssignees(nodes)
+    /** 参与人列表 */
+    const members = getNodesMembers(nodes)
     return (
       <div>
         {processPageFlagStep == '4' ? (
@@ -695,6 +752,22 @@ export default class HeaderContentRightMenu extends Component {
               } */}
             {status == '2' && (
               <Button
+                onClick={this.handleLaunchStartProcess}
+                className={indexStyles.covert_templete}
+                style={{ marginLeft: '20px' }}
+              >
+                <span
+                  style={{ marginRight: '4px' }}
+                  className={globalStyles.authTheme}
+                >
+                  &#xe788;
+                </span>
+                重新发起
+                {/* {currentNounPlanFilterName(FLOWS)} */}
+              </Button>
+            )}
+            {status == '2' && (
+              <Button
                 onClick={this.handleReStartProcess}
                 className={indexStyles.covert_templete}
                 style={{ marginLeft: '20px' }}
@@ -705,7 +778,8 @@ export default class HeaderContentRightMenu extends Component {
                 >
                   &#xe788;
                 </span>
-                重启{currentNounPlanFilterName(FLOWS)}
+                继续执行
+                {/* {currentNounPlanFilterName(FLOWS)} */}
               </Button>
             )}
 
@@ -716,8 +790,14 @@ export default class HeaderContentRightMenu extends Component {
                   board_id={board_id}
                   isPropVisitControl={is_privilege === '0' ? false : true}
                   handleVisitControlChange={this.handleVisitControlChange}
-                  principalList={data}
+                  principalList={members}
                   otherPrivilege={privileges}
+                  otherPersonOperatorMenuItem={OperationSettings}
+                  isPropVisitControlKey={is_privilege}
+                  // 是否需要加载角色数据 Boolean | Promise<RoleItem[]> | Function => RoleItem[]
+                  loadRoleData={true}
+                  // 是否隐藏组织和分组选择人员
+                  hideSelectFromGroupOrBoard={false}
                   handleClickedOtherPersonListOperatorItem={
                     this.handleClickedOtherPersonListOperatorItem
                   }
@@ -726,13 +806,12 @@ export default class HeaderContentRightMenu extends Component {
               )}
             </span>
             {/* 通知提醒 */}
-            {checkIsHasPermissionInVisitControl(
-              'edit',
+            {checkRoleAndMemberVisitControlPermissions({
+              board_id,
               privileges,
               is_privilege,
-              [],
-              checkIsHasPermissionInBoard(PROJECT_FLOW_FLOW_ACCESS, board_id)
-            ) && (
+              board_permissions_code: PROJECT_FLOW_FLOW_ACCESS
+            }) && (
               <div
                 className={indexStyles.margin_right10}
                 style={{ marginTop: '4px' }}

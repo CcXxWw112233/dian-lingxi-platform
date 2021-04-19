@@ -20,7 +20,7 @@ import {
   currentNounPlanFilterName,
   setRequestHeaderBaseInfo
 } from '../../../../../utils/businessFunction'
-import { Checkbox, Dropdown, Menu, message, Modal } from 'antd'
+import { Badge, Checkbox, Dropdown, Menu, message, Modal } from 'antd'
 import { connect } from 'dva'
 import {
   toggleContentPrivilege,
@@ -37,6 +37,7 @@ import { arrayNonRepeatfy } from '../../../../../utils/util'
 import { inviteMembersInWebJoin } from '../../../../../utils/inviteMembersInWebJoin'
 import axios from 'axios'
 import Cookies from 'js-cookie'
+import CustormBadgeDot from '@/components/CustormBadgeDot'
 
 @connect(mapStateToProps)
 export default class BoardItem extends Component {
@@ -280,7 +281,7 @@ export default class BoardItem extends Component {
     new_privileges =
       new_privileges &&
       new_privileges.map(item => {
-        let { id } = item && item.user_info && item.user_info
+        let { id } = (item && item.user_info && item.user_info) || {}
         if (user_id == id) {
           // 从权限列表中找到自己
           if (temp_ids.indexOf(id) != -1) {
@@ -336,7 +337,7 @@ export default class BoardItem extends Component {
     const { data: projectParticipant = [] } = projectDetailInfoData
     const { privileges_extend = [] } = itemValue
     let temp_projectParticipant = [].concat(
-      projectParticipant && [...projectParticipant],
+      // projectParticipant && [...projectParticipant],
       privileges_extend && [...privileges_extend]
     )
     const removeEmptyArrayEle = arr => {
@@ -351,7 +352,7 @@ export default class BoardItem extends Component {
     }
     let new_projectParticipant = arrayNonRepeatfy(
       removeEmptyArrayEle(temp_projectParticipant),
-      'user_id'
+      'id'
     )
     return new_projectParticipant
   }
@@ -370,6 +371,7 @@ export default class BoardItem extends Component {
         principalList={this.getProjectDetailInfoData()}
         // principalInfo='位任务列表负责人'
         otherPrivilege={privileges}
+        isPropVisitControlKey="1"
         otherPersonOperatorMenuItem={
           this.visitControlOtherPersonOperatorMenuItem
         }
@@ -685,7 +687,7 @@ export default class BoardItem extends Component {
   }
   render() {
     const {
-      itemValue: { board_id, board_name, org_id, is_star },
+      itemValue: { board_id, board_name, org_id, is_star, is_new },
       simplemodeCurrentProject,
       currentUserOrganizes = [],
       currentSelectOrganize = {}
@@ -715,12 +717,18 @@ export default class BoardItem extends Component {
             id={`board_area_middle_item_middle_${board_id}`}
             className={`${styles.board_area_middle_item_middle} ${globalStyles.global_ellipsis}`}
           >
-            <p
+            {/* <Badge dot> */}
+            <div
               title={board_name}
               className={`${styles.board_area_middle_item_board_name} ${globalStyles.global_ellipsis}`}
             >
               {board_name}
-            </p>
+              <CustormBadgeDot
+                show_dot={is_new == '1'}
+                top={localStorage.getItem('OrganizationId') == '0' ? 0 : 12}
+              />
+            </div>
+            {/* </Badge> */}
             {isAllOrg && (
               <p
                 title={getOrgNameWithOrgIdFilter(org_id, currentUserOrganizes)}

@@ -247,7 +247,12 @@
     border-radius: 4px;
     overflow: hidden;
   }
-
+  .dasheRectName {
+    position: absolute;
+    z-index: 3;
+    text-align: right;
+    padding-right: 8px;
+  }
   .specific_example {
     // background-image: linear-gradient(to right , #7A88FF, #7AFFAF);
     position: absolute;
@@ -495,6 +500,7 @@
     transform: scale(1);
     position: relative;
     z-index: 2;
+    box-shadow: 1px 0px 4px 0px rgba(0, 0, 0, 0.15);
   }
 
   .board_body {
@@ -535,7 +541,7 @@
   overflow-x: hidden;
   flex: 1;
   background-color: #ffffff;
-  box-shadow: 1px 0px 4px 0px rgba(0, 0, 0, 0.15);
+  // box-shadow: 1px 0px 4px 0px rgba(0, 0, 0, 0.15);
   display: flex;
   flex-direction: column;
 
@@ -601,6 +607,8 @@
             color: #1890ff;
             font-size: 16px;
             font-weight: 600;
+            position: relative;
+            padding-right: 4px;
             // max-width: 130px;
           }
 
@@ -1183,13 +1191,13 @@
   overflow-y: auto;
   overflow-x: hidden;
   flex: 1;
-  box-shadow: 1px 0px 4px 0px rgba(0, 0, 0, 0.15);
+  // box-shadow: 1px 0px 4px 0px rgba(0, 0, 0, 0.15);
 
   background-color: #ffffff;
   height: 100%;
 
   .outline_wrapper {
-    margin-top: 20px;
+    // margin-top: 20px;
     position: relative;
     overflow: hidden;
     padding-right: 3px;
@@ -1327,7 +1335,7 @@
 .gantt_card_date_no_section {
   position: absolute;
   top: 34px;
-  background-color: #d0e2ff;
+  background-color: rgba(208, 226, 255, 0.8);
   height: 22px;
   z-index: 7;
   overflow: hidden;
@@ -1339,7 +1347,7 @@
     height: 22px;
     width: 2px;
     z-index: 7;
-    background-color: #3160d9;
+    background-color: rgb(49, 96, 217);
   }
   .gantt_card_date_no_section_left {
     left: 0;

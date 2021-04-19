@@ -3,9 +3,11 @@ import ReactDOM from 'react-dom'
 import Cookies from 'js-cookie'
 // import { connect } from 'dva';
 import styles from './index.less'
+import { connect } from 'dva'
 import globalStyles from '@/globalset/css/globalClassName.less'
 // import { HandleCanvas } from '../utils/test'
 import { fabric } from 'fabric'
+import DEvent, { FILEDELETE } from '../../utils/event'
 import {
   Input,
   Button,
@@ -24,17 +26,26 @@ import {
   Avatar
 } from 'antd'
 import ColorPicker from 'react-color'
+import { fileRemove } from '@/services/technological/file'
+
 import jsPDF from 'jspdf'
 import Action from './action'
 import { dateFormat } from '@/utils/util'
 import ChooseColor from './component/colorChoose'
 import { NoteIcon } from './component/noteIcon'
 import axios from 'axios'
-import { setRequestHeaderBaseInfo } from '../../utils/businessFunction'
+import {
+  checkIsHasPermissionInBoard,
+  checkRoleAndMemberVisitControlPermissions,
+  setRequestHeaderBaseInfo
+} from '../../utils/businessFunction'
+import { isApiResponseOk } from '../../utils/handleResponseData'
 import { REQUEST_DOMAIN_FILE } from '@/globalset/js/constant'
-import DEvent from '../../utils/event'
 import { ENV_ANDROID_APP } from '../../globalset/clientCustorm'
-import { REQUEST_DOMAIN_BOARD } from '../../globalset/js/constant'
+import {
+  PROJECT_FILES_FILE_EDIT,
+  REQUEST_DOMAIN_BOARD
+} from '../../globalset/js/constant'
 // import scr from './worker'
 const DefineIcon = Icon.createFromIconfontCN({
   scriptUrl: '//at.alicdn.com/t/font_779568_41vfncsv7yu.js'
@@ -43,7 +54,7 @@ const DefineIcon = Icon.createFromIconfontCN({
 fabric.Object.prototype.transparentCorners = false
 fabric.Object.prototype.cornerColor = 'blue'
 fabric.Object.prototype.cornerStyle = 'circle'
-
+@connect(mapStateToProps)
 export default class PdfComment extends React.Component {
   constructor(props) {
     super(props)
@@ -58,6 +69,7 @@ export default class PdfComment extends React.Component {
       allPdfElement: 1,
       loadendElement: 0,
       displayColorPicker: false,
+      isconfirmDeleteModelShow: false, //删除二次确认弹窗
       isHand: false,
       loadend: false,
       version_list: [],
@@ -196,6 +208,28 @@ export default class PdfComment extends React.Component {
     this.pdf = null
     // 是否有批注数据
     this.hasHistory = false
+    /**
+     * 个人信息
+     */
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'))
+    /**
+     * 角色信息
+     */
+    const role =
+      props.projectDetailInfoData.data &&
+      props.projectDetailInfoData.data.find(
+        item => item.user_id === userInfo.id
+      )
+    /**
+     * 是否有编辑权限
+     */
+    this.hasEditPromisions = checkRoleAndMemberVisitControlPermissions({
+      board_id: props.board_id,
+      board_permissions_code: PROJECT_FILES_FILE_EDIT,
+      is_privilege: props.is_privilege,
+      privileges: props.privileges,
+      role_id: role ? role.role_id : ''
+    })
   }
   async componentDidMount() {
     this.mounted = true
@@ -246,6 +280,7 @@ export default class PdfComment extends React.Component {
   }
   // 构建版本数据加载
   InitAllData = isFirst => {
+    console.log(this.props)
     this.mounted = false
     this.drawCanvas = []
     this.isDoing = [] // 绘制的数据缓存
@@ -1179,6 +1214,7 @@ export default class PdfComment extends React.Component {
                 object.left = object.left * scale
                 object.top = object.top * scale
                 object.setCoords()
+                if (!this.hasEditPromisions) this.lockObject(object, true)
               }
             })
 
@@ -1563,6 +1599,7 @@ export default class PdfComment extends React.Component {
   }
   // 删除选中对象
   removeObject = () => {
+    if (!this.hasEditPromisions) return
     let { activeObject } = this.state
     this.drawType = null
     this.changePen(false)
@@ -2059,6 +2096,7 @@ export default class PdfComment extends React.Component {
   }
 
   setActiveDraw = key => {
+    if (!this.hasEditPromisions) return message.warn('暂无编辑权限')
     if (this.state.versionMsg.id === 'main_V') {
       return message.warn('默认批注版本不允许操作，请切换批注版本')
     }
@@ -2332,7 +2370,9 @@ export default class PdfComment extends React.Component {
               {item.name
                 ? item.name
                 : dateFormat(+item.create_time + '000', 'yyyy/MM/dd HH:mm')}
-              {item.id !== 'main_V' && <VersionOperation data={item} />}
+              {item.id !== 'main_V' && this.hasEditPromisions && (
+                <VersionOperation data={item} />
+              )}
             </div>
           )
         })}
@@ -2598,6 +2638,10 @@ export default class PdfComment extends React.Component {
       )
     })
   }
+  /**
+   * 设置选中元素的透明度
+   * @param {*} val
+   */
   setObjectOpacity = val => {
     let { activeObject, drawStyles } = this.state
     // console.log(val)
@@ -2755,14 +2799,60 @@ export default class PdfComment extends React.Component {
       drawStyles: { ...drawStyles, [drawStyles.activeType]: { color: val } }
     })
   }
-
+  // 删除展示二次确认
+  deleteFile = () => {
+    this.setState({
+      isconfirmDeleteModelShow: true
+    })
+  }
+  // 取消删除
+  cancelFileOperationDelete = () => {
+    this.setState({
+      isconfirmDeleteModelShow: false
+    })
+  }
+  // 确认删除
+  confirmFileOperationDelete = () => {
+    const {
+      dispatch,
+      onlyFileList = [],
+      board_id,
+      file_id,
+      folder_id
+    } = this.props
+    const params = {
+      board_id,
+      folder_id,
+      arrays: JSON.stringify([{ type: '2', id: file_id }])
+    }
+    Promise.resolve(
+      dispatch({
+        type: 'projectCommunication/fileRemove',
+        payload: params
+      })
+    )
+      .then(() => {
+        DEvent.firEvent(FILEDELETE, 'delete') //文件删除监听
+        this.cancelFileOperationDelete()
+        // 删除本地文件夹数据
+        const new_onlyFileList = onlyFileList.filter(item => item.id != file_id)
+        dispatch({
+          type: 'projectCommunication/updateDatas',
+          payload: {
+            onlyFileList: new_onlyFileList
+          }
+        })
+      })
+      .catch(e => console.log('error in boardDetail: ' + e))
+  }
   render() {
     let {
       // activeElement,
       // allPdfElement,
       // loadendElement,
       // drawStyles,
-      isHistoryIn
+      isHistoryIn,
+      isconfirmDeleteModelShow
     } = this.state
     const drawT = ['pen', 'text', 'box', 'ellipse', 'arrow']
     const { VersionRender } = this
@@ -2792,93 +2882,94 @@ export default class PdfComment extends React.Component {
             &#xe7b4;
           </span>
           <div className={styles.tools_items}>
-            {this.drawTools.map(item => {
-              if (drawT.includes(item.key)) {
-                return (
-                  <this.renderChooseColor key={item.key}>
-                    <span
-                      className={styles.tools_item}
-                      key={item.key}
-                      style={{
-                        color:
-                          item.key === this.state.drawStyles.activeType
-                            ? this.state.drawStyles[
+            {this.hasEditPromisions &&
+              this.drawTools.map(item => {
+                if (drawT.includes(item.key)) {
+                  return (
+                    <this.renderChooseColor key={item.key}>
+                      <span
+                        className={styles.tools_item}
+                        key={item.key}
+                        style={{
+                          color:
+                            item.key === this.state.drawStyles.activeType
+                              ? this.state.drawStyles[
+                                  this.state.drawStyles.activeType
+                                ]?.color
+                              : ''
+                        }}
+                        onClick={() => {
+                          this.setActiveDraw(item.key)
+                        }}
+                      >
+                        <DefineIcon type={item.icon} />
+                      </span>
+                    </this.renderChooseColor>
+                  )
+                }
+                if (item.key === 'note') {
+                  let hide =
+                    this.state.versionMsg.id === 'main_V'
+                      ? {
+                          visible: false
+                        }
+                      : {}
+                  return (
+                    <Popover
+                      {...hide}
+                      trigger={['click']}
+                      content={
+                        <div>
+                          <div>颜色</div>
+                          <ChooseColor
+                            needHex={true}
+                            onChange={this.setNoteColor}
+                            color={
+                              this.state.drawStyles[
                                 this.state.drawStyles.activeType
                               ]?.color
-                            : ''
-                      }}
-                      onClick={() => {
-                        this.setActiveDraw(item.key)
-                      }}
-                    >
-                      <DefineIcon type={item.icon} />
-                    </span>
-                  </this.renderChooseColor>
-                )
-              }
-              if (item.key === 'note') {
-                let hide =
-                  this.state.versionMsg.id === 'main_V'
-                    ? {
-                        visible: false
+                            }
+                            colors={this.noteColors}
+                          />
+                        </div>
                       }
-                    : {}
+                    >
+                      <span
+                        className={`${styles.tools_item}`}
+                        style={{
+                          color:
+                            this.state.drawStyles.activeType === item.key
+                              ? this.state.drawStyles[
+                                  this.state.drawStyles.activeType
+                                ]?.color
+                              : ''
+                        }}
+                        key={item.key}
+                        onClick={() => this.setHandActive(item.key)}
+                      >
+                        <DefineIcon type={item.icon} />
+                      </span>
+                    </Popover>
+                  )
+                }
                 return (
-                  <Popover
-                    {...hide}
-                    trigger={['click']}
-                    content={
-                      <div>
-                        <div>颜色</div>
-                        <ChooseColor
-                          needHex={true}
-                          onChange={this.setNoteColor}
-                          color={
-                            this.state.drawStyles[
+                  <span
+                    className={`${styles.tools_item}`}
+                    style={{
+                      color:
+                        this.state.drawStyles.activeType === item.key
+                          ? this.state.drawStyles[
                               this.state.drawStyles.activeType
                             ]?.color
-                          }
-                          colors={this.noteColors}
-                        />
-                      </div>
-                    }
+                          : ''
+                    }}
+                    key={item.key}
+                    onClick={() => this.setHandActive(item.key)}
                   >
-                    <span
-                      className={`${styles.tools_item}`}
-                      style={{
-                        color:
-                          this.state.drawStyles.activeType === item.key
-                            ? this.state.drawStyles[
-                                this.state.drawStyles.activeType
-                              ]?.color
-                            : ''
-                      }}
-                      key={item.key}
-                      onClick={() => this.setHandActive(item.key)}
-                    >
-                      <DefineIcon type={item.icon} />
-                    </span>
-                  </Popover>
+                    <DefineIcon type={item.icon} />
+                  </span>
                 )
-              }
-              return (
-                <span
-                  className={`${styles.tools_item}`}
-                  style={{
-                    color:
-                      this.state.drawStyles.activeType === item.key
-                        ? this.state.drawStyles[
-                            this.state.drawStyles.activeType
-                          ]?.color
-                        : ''
-                  }}
-                  key={item.key}
-                  onClick={() => this.setHandActive(item.key)}
-                >
-                  <DefineIcon type={item.icon} />
-                </span>
-              )
-            })}
+              })}
             <div className={styles.version}>
               <span className={styles.version_n}>批注版本：</span>
               <Popover
@@ -2897,17 +2988,25 @@ export default class PdfComment extends React.Component {
                       )}
                 </a>
               </Popover>
-              <Button
-                size="small"
-                className={styles.saveAs}
-                onClick={this.saveVersionAs}
-                ghost
-                type="primary"
-              >
-                新增批注版本
-              </Button>
+              {this.hasEditPromisions && (
+                <Button
+                  size="small"
+                  className={styles.saveAs}
+                  onClick={this.saveVersionAs}
+                  ghost
+                  type="primary"
+                >
+                  新增批注版本
+                </Button>
+              )}
             </div>
             {/* <span onClick={this.fileSaveAs}>另存</span> */}
+            <span
+              className={`${globalStyles.authTheme} ${styles.delete}`}
+              onClick={this.deleteFile}
+            >
+              &#xe720;
+            </span>
           </div>
           {/* <span></span> */}
         </div>
@@ -3113,7 +3212,41 @@ export default class PdfComment extends React.Component {
             )}
           </div>
         </div>
+        {isconfirmDeleteModelShow && (
+          <Modal
+            title="删除确认"
+            visible={true}
+            onOk={this.confirmFileOperationDelete}
+            onCancel={this.cancelFileOperationDelete}
+            // okButtonProps=(<Button type="danger">Danger</Button>)
+            footer={[
+              <Button key="back" onClick={this.cancelFileOperationDelete}>
+                取消
+              </Button>,
+              <Button
+                key="submit"
+                className={styles.confirmDeleteBtn}
+                type="danger"
+                onClick={this.confirmFileOperationDelete}
+              >
+                删除
+              </Button>
+            ]}
+          >
+            <div className={styles.deleteModelContent}>
+              <i
+                className={`${globalStyles.authTheme}`}
+                style={{ marginRight: 5, fontSize: 20, color: '#FF8A00' }}
+              >
+                &#xe814;
+              </i>
+              删除文件后不能恢复，确定要删除吗?
+            </div>
+          </Modal>
+        )}
+
         {this.props.fileType === 'pdf' && <this.renderPageSize />}
+
         <BackTop target={() => document.querySelector('#canvas_container')} />
       </div>
       //   ,document.body
@@ -3156,4 +3289,10 @@ PdfComment.prototype.resize = function() {
       item.calcOffset()
     }
   })()
+}
+
+function mapStateToProps({ projectCommunication: { onlyFileList } }) {
+  return {
+    onlyFileList
+  }
 }

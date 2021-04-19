@@ -34,12 +34,13 @@ export default class ContainerWithIndexUI extends Component {
     super(props)
     this.state = {
       isAddCustomFieldVisible: false, // 是否显示添加字段
-      isAddCustomFieldListVisible: false, // 是否显示添加分组字段
-      isRenameFieldVisible: false, // 是否重命名
+      isAddCustomFieldListVisible: false, // 点击新建字段分组
+      isRenameFieldVisible: false, // 是否重命名 默认为false 不显示
       inputValue: '', // 创建分组名称
       local_rename: '', // 保存一个本地的名称
       re_inputValue: '', // 重命名的名称
-      current_rename_item: '' // 当前操作重命名的元素
+      current_rename_item: '', // 当前操作重命名的元素
+      isCustomFieldQuoteDetailVisible: false // 控制显示引用字段详情
     }
   }
 
@@ -56,6 +57,7 @@ export default class ContainerWithIndexUI extends Component {
   }
 
   componentDidMount() {
+    // 获取自定义字段列表
     this.props.dispatch({
       type: 'organizationManager/getCustomFieldList',
       payload: {}
@@ -77,19 +79,24 @@ export default class ContainerWithIndexUI extends Component {
     this.initState()
   }
 
-  // 点击添加字段
+  /**
+   * 点击添加字段
+   * @param {Object} e 事件对象
+   * @param {Object} item 当前点击对象
+   */
   handleAddCustomFields = (e, item) => {
     e && e.stopPropagation()
     this.setState({
       isAddCustomFieldVisible: true
     })
+    // 如果item存在就更新一个当前操作的对象再model中
     if (item) {
       this.props.dispatch({
         type: 'organizationManager/updateDatas',
         payload: {
           currentOperateFieldItem: {
             ...item,
-            type: 'group'
+            type: 'group' // 表示分组中点击的
           }
         }
       })
@@ -116,13 +123,13 @@ export default class ContainerWithIndexUI extends Component {
       }
     })
   }
-
+  // 新建分组 input change事件
   onChange = e => {
     this.setState({
       inputValue: e.target.value
     })
   }
-
+  // 新建分组 input 失焦事件
   onBlur = e => {
     let value = e.target.value
     if (!value || value.trimLR() == '') {
@@ -156,7 +163,7 @@ export default class ContainerWithIndexUI extends Component {
     }
   }
 
-  // 重命名
+  //点击 重命名
   handleRename = (e, item) => {
     const { domEvent } = e
     const { id, name } = item
@@ -168,7 +175,7 @@ export default class ContainerWithIndexUI extends Component {
       current_rename_item: id
     })
   }
-
+  // 重命名 change事件
   renameChange = e => {
     let value = e.target.value
     if (!value || value.trimLR() == '') {
@@ -181,7 +188,7 @@ export default class ContainerWithIndexUI extends Component {
       re_inputValue: value
     })
   }
-
+  // 重命名失焦事件
   renameBlur = e => {
     // let value = e.target.value
     // if (!value || value.trimLR() == '') {
@@ -190,7 +197,7 @@ export default class ContainerWithIndexUI extends Component {
     //   })
     // }
   }
-
+  // 重命名弹窗确认回调
   onOk = () => {
     const { current_rename_item, re_inputValue } = this.state
     this.props
@@ -208,7 +215,7 @@ export default class ContainerWithIndexUI extends Component {
       })
   }
 
-  // 编辑字段
+  // 点击编辑字段
   handleEditField = (e, item) => {
     const { domEvent } = e
     domEvent && domEvent.stopPropagation()
@@ -225,7 +232,7 @@ export default class ContainerWithIndexUI extends Component {
       }
     })
   }
-
+  //点击停用字段弹窗
   discountConfirm = ({ item }) => {
     const modal = Modal.confirm()
     const that = this
@@ -253,13 +260,13 @@ export default class ContainerWithIndexUI extends Component {
     })
   }
 
-  // 停用字段
+  //点击 停用字段
   handleDiscountField = (e, item) => {
     const { domEvent } = e
     domEvent && domEvent.stopPropagation()
     this.discountConfirm({ item })
   }
-
+  //删除字段弹窗
   deleteConfirm = ({ item, type }) => {
     const modal = Modal.confirm()
     const that = this
@@ -290,7 +297,7 @@ export default class ContainerWithIndexUI extends Component {
     })
   }
 
-  // 删除字段
+  // 点击删除字段
   handleDeleteField = ({ e, item, type }) => {
     const { domEvent } = e
     domEvent && domEvent.stopPropagation()
@@ -308,7 +315,7 @@ export default class ContainerWithIndexUI extends Component {
     }
     this.deleteConfirm({ item, type })
   }
-
+  // 点点点下拉菜单
   customFiledsOverlay = ({ item, type }) => {
     return (
       <Menu>
@@ -649,7 +656,7 @@ export default class ContainerWithIndexUI extends Component {
             />
           </Modal>
         )}
-        {/* 点击详情内容 */}
+        {/* 点击字段引用详情内容 */}
         {
           <CustomFieldQuoteDetail
             visible={isCustomFieldQuoteDetailVisible}

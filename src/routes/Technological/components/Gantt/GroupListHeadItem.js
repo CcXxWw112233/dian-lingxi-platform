@@ -16,6 +16,8 @@ import {
 } from '../../../../services/technological/project'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import AvatarList from '@/components/avatarList'
+import CustormBadgeDot from '@/components/CustormBadgeDot'
+
 import CheckItem from '@/components/CheckItem'
 import {
   updateTaskGroup,
@@ -41,7 +43,8 @@ import {
   PROJECT_TEAM_BOARD_ARCHIVE,
   PROJECTS,
   PROJECT_TEAM_BOARD_DELETE,
-  PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE
+  PROJECT_TEAM_BOARD_CONTENT_PRIVILEGE,
+  PROJECT_TEAM_CARD_CREATE
 } from '../../../../globalset/js/constant'
 import VisitControl from '../VisitControl/index'
 import globalStyle from '@/globalset/css/globalClassName.less'
@@ -63,6 +66,8 @@ import GroupListHeadDragNoTimeDataItem from './GroupListHeadDragNoTimeDataItem'
 // import { lx_utils } from 'lingxi-im'
 import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner.js'
 import { clickDelay } from '../../../../globalset/clientCustorm'
+import { LISTLOCK, NOTLISTLOCKREAD } from '../VisitControl/constans'
+import CardGroupNames from './components/CardGroupNames'
 
 @connect(mapStateToProps)
 export default class GroupListHeadItem extends Component {
@@ -1048,9 +1053,9 @@ export default class GroupListHeadItem extends Component {
     const is_privilege_bool = toBool(is_privilege)
     const is_open = !flag
       ? 0
-      : key == 'clock_edit'
+      : key == LISTLOCK.key
       ? 2
-      : key == 'clock_read'
+      : key == NOTLISTLOCKREAD.key
       ? 1
       : 0
     // if (flag === is_privilege_bool) {
@@ -1133,15 +1138,16 @@ export default class GroupListHeadItem extends Component {
    * 添加成员的回调
    * @param {Array} users_arr 添加成员的数组
    */
-  handleVisitControlAddNewMember = (users_arr = []) => {
-    if (!users_arr.length) return
+  handleVisitControlAddNewMember = (users_arr = [], roles = []) => {
+    if (!users_arr.length && !roles.length) return
 
-    this.handleSetContentPrivilege(users_arr, 'read')
+    this.handleSetContentPrivilege(users_arr, roles, 'read')
   }
 
   // 访问控制添加成员
   handleSetContentPrivilege = (
     users_arr,
+    roles,
     type,
     errorText = '访问控制添加人员失败，请稍后再试'
   ) => {
@@ -1168,7 +1174,7 @@ export default class GroupListHeadItem extends Component {
     new_privileges =
       new_privileges &&
       new_privileges.map(item => {
-        let { id } = item && item.user_info && item.user_info
+        let { id } = (item && item.user_info && item.user_info) || {}
         if (user_id == id) {
           // 从权限列表中找到自己
           if (temp_ids.indexOf(id) != -1) {
@@ -1199,6 +1205,7 @@ export default class GroupListHeadItem extends Component {
       board_id: gantt_board_id == '0' ? list_id : board_id,
       content_id,
       content_type,
+      role_ids: roles.map(item => item.id),
       privilege_code,
       user_ids: temp_ids
     }).then(res => {
@@ -1247,10 +1254,7 @@ export default class GroupListHeadItem extends Component {
       ...projectParticipant,
       extendParticipant
     ) // 用来保存新的负责人列表
-    let new_projectParticipant = arrayNonRepeatfy(
-      temp_projectParticipant,
-      'user_id'
-    )
+    let new_projectParticipant = arrayNonRepeatfy(temp_projectParticipant)
     return new_projectParticipant
   }
 
@@ -1275,7 +1279,7 @@ export default class GroupListHeadItem extends Component {
     }
     let new_projectParticipant = arrayNonRepeatfy(
       removeEmptyArrayEle(temp_projectParticipant),
-      'user_id'
+      'id'
     )
     return new_projectParticipant
   }
@@ -1302,6 +1306,11 @@ export default class GroupListHeadItem extends Component {
             ? this.getProjectDetailInfoData()
             : this.getProjectParticipant()
         }
+        // 是否需要加载角色数据 Boolean | Promise<RoleItem[]> | Function => RoleItem[]
+        loadRoleData={true}
+        _organization_id={getOrgIdByBoardId(board_id)}
+        // 是否隐藏组织和分组选择人员
+        hideSelectFromGroupOrBoard={false}
         isPropVisitControlKey={is_privilege}
         // principalInfo='位任务列表负责人'
         otherPrivilege={privileges}
@@ -1548,6 +1557,77 @@ export default class GroupListHeadItem extends Component {
     })
   }
 
+  // 获取用户角色id
+  getCurentUserRoleId = () => {
+    const { user_set = {} } = localStorage.getItem('userInfo')
+      ? JSON.parse(localStorage.getItem('userInfo'))
+      : {}
+    const { user_id } = user_set
+    const {
+      projectDetailInfoData: { data: board_users }
+    } = this.props
+    return board_users.find(item => item.user_id == user_id)?.role_id
+  }
+
+  // 设置访问控制最终返回信息的ui
+  setVisitControlState = () => {
+    const {
+      list_group,
+      itemValue: { list_id, is_privilege },
+      gantt_board_id
+    } = this.props
+    if (!is_privilege || is_privilege == '0') {
+      return 'all_auth' //具有全部权限
+    }
+    if (
+      !checkIsHasPermissionInVisitControlWithGroup({
+        code: 'read',
+        list_id: list_id,
+        list_group,
+        permissionsValue: checkIsHasPermissionInBoard(
+          PROJECT_TEAM_CARD_CREATE,
+          gantt_board_id
+        ),
+        role_id: this.getCurentUserRoleId()
+      })
+    ) {
+      return 'no_auth' //没有权限
+    }
+    if (is_privilege == '1') {
+      return 'outside_cannot_read' //列表内人员操作
+    } else if (is_privilege == '2') {
+      return 'inside_can_edit' //列表外人员禁止访问
+    }
+  }
+  // 设置访问控制图标
+  setVisitControlIcon = tag => {
+    const _obj = {
+      all_auth: { title: '', node: '' },
+      no_auth: {
+        title: '您无编辑权限',
+        node: <span>&#xe7ca;</span>
+      },
+      inside_can_edit: {
+        title: '指定人可查看',
+        node: <span>&#xe850;</span>
+      },
+      outside_cannot_read: {
+        title: '隐藏项，非指定人不可见',
+        node: <span style={{ opacity: 0.7 }}>&#xe850;</span>
+      }
+    }
+    return _obj[tag] || {}
+  }
+
+  // 获取项目分组所有
+  getCardGroups = () => {
+    const { gantt_board_id, about_group_boards = [] } = this.props
+    const item =
+      about_group_boards.find(item => item.board_id == gantt_board_id) || {}
+    const { list_data = [] } = item
+    return list_data
+  }
+
   render() {
     const {
       currentUserOrganizes = [],
@@ -1577,13 +1657,15 @@ export default class GroupListHeadItem extends Component {
       board_id,
       is_privilege = '0',
       privileges,
+      union_list_ids = [],
       create_by = {},
       lane_leader = [],
       lane_overdue_count,
       lane_progress_percent,
       lane_start_time,
       lane_end_time,
-      lane_member_count
+      lane_member_count,
+      is_new
     } = itemValue
     const {
       isShowBottDetail,
@@ -1599,6 +1681,8 @@ export default class GroupListHeadItem extends Component {
     const is_group_folded = (
       group_list_area_fold_section.find(item => item.list_id == list_id) || {}
     ).is_group_folded
+    // 设置的访问控制类型
+    const visit_control_tag = this.setVisitControlState()
     return (
       <div>
         <div
@@ -1624,6 +1708,10 @@ export default class GroupListHeadItem extends Component {
                         : indexStyles.spin_fold_show
                     }`}
                     onClick={this.handleToggleGroupFolded}
+                    style={{
+                      opacity:
+                        visit_control_tag == 'outside_cannot_read' ? '0.7' : '1'
+                    }}
                   >
                     &#xe61f;
                   </div>
@@ -1702,16 +1790,34 @@ export default class GroupListHeadItem extends Component {
                     className={`${indexStyles.list_name} ${globalStyle.global_ellipsis}`}
                     // onClick={this.listNameClick}
                   >
-                    {local_list_name}
+                    <span
+                      style={{
+                        opacity:
+                          visit_control_tag == 'outside_cannot_read'
+                            ? '0.7'
+                            : '1'
+                      }}
+                    >
+                      {local_list_name}
+                    </span>
+                    <CustormBadgeDot show_dot={is_new == '1'} />
                   </div>
                 )}
                 {(is_privilege == '1' || is_privilege == '2') && (
-                  <Tooltip title="已开启访问控制" placement="top">
+                  <Tooltip
+                    title={this.setVisitControlIcon(visit_control_tag).title}
+                    placement="top"
+                  >
                     <span
                       className={globalStyle.authTheme}
-                      style={{ marginLeft: 10, fontSize: 16, color: '#8c8c8c' }}
+                      style={{
+                        marginLeft: 10,
+                        fontSize: 16,
+                        color: '#8c8c8c'
+                      }}
                     >
-                      &#xe7ca;
+                      {/* 设置图标 */}
+                      {this.setVisitControlIcon(visit_control_tag).node}
                     </span>
                   </Tooltip>
                 )}
@@ -1763,7 +1869,17 @@ export default class GroupListHeadItem extends Component {
                         </div>
                       )
                     } */}
-                    {!is_group_folded && (
+                    {this.props.itemKey == 0 && (
+                      <div
+                        className={`${indexStyles.list_head_body_contain} ${indexStyles.list_head_body_contain_2}`}
+                      >
+                        <CardGroupNames
+                          selects={union_list_ids}
+                          list_data={this.getCardGroups()}
+                        />
+                      </div>
+                    )}
+                    {!is_group_folded && this.props.itemKey != 0 && (
                       <div
                         className={`${indexStyles.list_head_body_contain} ${indexStyles.list_head_body_contain_2}`}
                       >
@@ -1802,7 +1918,6 @@ export default class GroupListHeadItem extends Component {
                             })}
                           </div>
                         )}
-                        {/* <div className={`${indexStyles.list_head_body_contain_lt} ${globalStyle.authTheme}`}>&#xe6db;</div> */}
                       </div>
                     )}
                   </div>
@@ -1997,7 +2112,8 @@ function mapStateToProps({
       get_gantt_data_loading,
       list_group,
       show_board_fold,
-      group_list_area_fold_section = []
+      group_list_area_fold_section = [],
+      about_group_boards
     }
   },
   technological: {
@@ -2033,7 +2149,8 @@ function mapStateToProps({
     show_board_fold,
     projectDetailInfoData,
     userBoardPermissions,
-    group_list_area_fold_section
+    group_list_area_fold_section,
+    about_group_boards
   }
 }
 

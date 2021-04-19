@@ -52,7 +52,9 @@ import {
   hours_view_due_work_oclock,
   ceil_width_hours,
   group_rows_fold_1,
-  hole_movedown_height
+  hole_movedown_height,
+  milestone_base_height,
+  getMilestoneBaseHeight
 } from '../../../../routes/Technological/components/Gantt/constants'
 import { getModelSelectDatasState } from '../../../utils'
 import { getProjectGoupList } from '../../../../services/technological/task'
@@ -97,6 +99,23 @@ const getDigit = timestamp => {
   }
   return new_timestamp
 }
+
+/** 甘特图redux统一管理枚举 */
+export const GANTTMODEL = {
+  /** 命名空间 'gantt' */
+  namespace: 'gantt',
+  /**
+   * 更新多个分组视图下的任务条列表
+   * @param {{id: String, label_data: object[], name: String}[]} datas 需要更新的任务条数据列表
+   * @param {String} id 更新的id，必填
+   * @param {{label_id: String, label_name: String, label_color: String}[]} label_data 标签列表
+   * @params ...
+   */
+  updateListGroup: 'updateListGroup',
+  /** 更新大纲视图数据 */
+  updateOutLineTree: 'updateOutLineTree'
+}
+
 export default {
   namespace: 'gantt',
   state: {
@@ -341,6 +360,12 @@ export default {
         }
 
         if (gantt_board_id != '0' && gantt_board_id) {
+          yield put({
+            type: 'handleReadedBoard',
+            payload: {
+              board_id: gantt_board_id
+            }
+          })
           params.board_id = gantt_board_id
           if (group_view_type == '5') {
             //分组点击
@@ -436,6 +461,10 @@ export default {
               }
             })
           }
+          yield put({
+            type: 'getGttMilestoneList',
+            payload: {}
+          })
           return { code: '0' }
         } else {
           return { code: '1' }
@@ -1193,7 +1222,8 @@ export default {
                 item.top =
                   after_group_height +
                   (item.row - 1) * ceiHeight +
-                  hole_movedown_height
+                  hole_movedown_height +
+                  getMilestoneBaseHeight({ gantt_board_id, group_view_type })
               }
             } else {
               // --------------------时间高度排序start
@@ -1281,11 +1311,8 @@ export default {
             // )
             const fix_row =
               Math.ceil(wapper_height / ceiHeight) - before_group_row //+ 2
-            group_rows[i] = Math.max.apply(null, [
-              length,
-              fix_row,
-              group_rows[i]
-            ]) //group_rows[i] +30
+            group_rows[i] =
+              Math.max.apply(null, [length, fix_row, group_rows[i]]) - 1 //group_rows[i] +30
           }
           group_list_area[i] = group_rows[i] * ceiHeight
           // 设置项目汇总的top和left,width
@@ -1311,7 +1338,9 @@ export default {
               list_group[i].board_fold_data.time_span * ceilWidth
             list_group[i].board_fold_data.top =
               after_group_height +
-              (ceil_height_fold * group_rows_fold - task_item_height_fold) / 2 //上下居中 (96-24)/2
+              (ceil_height_fold * group_rows_fold - task_item_height_fold) / 2 +
+              getMilestoneBaseHeight({ gantt_board_id, group_view_type })
+            //上下居中 (96-24)/2
             for (let k = 0; k < date_arr_one_level.length; k++) {
               // if (isSamDay(list_group[i].board_fold_data['start_time'], date_arr_one_level[k]['timestamp'])) { //是同一天
               //   list_group[i].board_fold_data.left = k * ceilWidth
@@ -1396,7 +1425,12 @@ export default {
         const group_not_allow_drag_area = []
         for (let i = 0; i < group_list_area_section_height.length; i++) {
           let start_area =
-            i == 0 ? 0 : group_list_area_section_height[i - 1] - 0.5 * ceiHeight
+            i == 0
+              ? 0
+              : group_list_area_section_height[i - 1] -
+                0.5 * ceiHeight +
+                getMilestoneBaseHeight({ gantt_board_id, group_view_type }) -
+                3 //3没有实际意义
           let end_area =
             i == 0
               ? ceiHeight
@@ -1405,6 +1439,8 @@ export default {
             // end_area = start_area
             end_area = group_list_area_section_height[i]
           }
+          end_area +=
+            getMilestoneBaseHeight({ gantt_board_id, group_view_type }) - 3 //分组的原本结束高度，加上在头部加上的里程碑进度栏的高度，3没有实际意义
           group_not_allow_drag_area.push({
             start_area,
             end_area
@@ -1422,10 +1458,10 @@ export default {
             group_not_allow_drag_area
           }
         })
-        yield put({
-          type: 'getGttMilestoneList',
-          payload: {}
-        })
+        // yield put({
+        //   type: 'getGttMilestoneList',
+        //   payload: {}
+        // })
         yield put({
           type: 'updateGroupFoldedRelyCard',
           payload: {
@@ -1705,6 +1741,26 @@ export default {
           message.warn(res.message, MESSAGE_DURATION_TIME)
         }
       }
+    },
+    // 代表访问过这个项目
+    *handleReadedBoard({ payload }, { select, call, put }) {
+      const { board_id } = payload
+      const projectList = yield select(
+        getModelSelectDatasState('workbench', 'projectList')
+      )
+      if (!projectList) return
+      const projectList_new = projectList.map(item => {
+        if (board_id == item.board_id) {
+          item.is_new = '0'
+        }
+        return item
+      })
+      yield put({
+        type: 'workbench/updateDatas',
+        payload: {
+          projectList: projectList_new
+        }
+      })
     }
   },
 
@@ -1734,134 +1790,3 @@ export default {
     }
   }
 }
-// list_group: [
-//   {
-//     list_name: '分组一',
-//     list_id: '111',
-//     list_data: [
-//       {
-//         start_time: 1552233600000,
-//         end_time: 1552838400000,
-//         start_time_string: '2019/3/11',
-//         end_time_sting: '2019/3/18',
-//         time_span: 7,
-//         create_time: 1,
-//       }, {
-//         start_time: 1552233600000,
-//         end_time: 1552579200000,
-//         start_time_string: '2019/3/11',
-//         end_time_sting: '2019/3/15',
-//         time_span: 4,
-//         create_time: 1,
-//       }, {
-//         start_time: 1552320000000,
-//         end_time: 1552838400000,
-//         start_time_string: '2019/3/12',
-//         end_time_sting: '2019/3/18',
-//         time_span: 7,
-//         create_time: 3,
-//       }, {
-//         start_time: 1552320000000,
-//         end_time: 1552579200000,
-//         start_time_string: '2019/3/12',
-//         end_time_sting: '2019/3/15',
-//         time_span: 4,
-//         create_time: 1,
-//       }, {
-//         start_time: 1552924800000,
-//         end_time: 1553184000000,
-//         start_time_string: '2019/3/19',
-//         end_time_sting: '2019/3/22',
-//         time_span: 4,
-//         create_time: 1,
-//       }, {
-//         start_time: 1552924800000,
-//         end_time: 1553184000000,
-//         start_time_string: '2019/3/19',
-//         end_time_sting: '2019/3/22',
-//         time_span: 4,
-//         create_time: 1,
-//       }, {
-//         start_time: 1552924800000,
-//         end_time: 1553184000000,
-//         start_time_string: '2019/3/19',
-//         end_time_sting: '2019/3/22',
-//         time_span: 4,
-//         create_time: 1,
-//       }
-//     ],
-//     list_no_time_data: []
-//   },
-//   {
-//     list_name: '分组二',
-//     list_id: '222',
-//     list_data: [
-//       {
-//         start_time: 1552233600000,
-//         end_time: 1552838400000,
-//         start_time_string: '2019/3/11',
-//         end_time_sting: '2019/3/18',
-//         time_span: 7,
-//         create_time: 1,
-//       }, {
-//         start_time: 1552233600000,
-//         end_time: 1552579200000,
-//         start_time_string: '2019/3/11',
-//         end_time_sting: '2019/3/15',
-//         time_span: 4,
-//         create_time: 2,
-//       }, {
-//         start_time: 1552320000000,
-//         end_time: 1552838400000,
-//         start_time_string: '2019/3/12',
-//         end_time_sting: '2019/3/18',
-//         time_span: 7,
-//         create_time: 3,
-//       }, {
-//         start_time: 1552320000000,
-//         end_time: 1552579200000,
-//         start_time_string: '2019/3/12',
-//         end_time_sting: '2019/3/15',
-//         time_span: 4,
-//         create_time: 4,
-//       }
-//     ],
-//     list_no_time_data: []
-//   },
-//   {
-//     list_name: '分组三',
-//     list_id: '333',
-//     list_data: [
-//       {
-//         start_time: 1552233600000,
-//         end_time: 1552838400000,
-//         start_time_string: '2019/3/11',
-//         end_time_sting: '2019/3/18',
-//         time_span: 7,
-//         create_time: 1,
-//       }, {
-//         start_time: 1552233600000,
-//         end_time: 1552579200000,
-//         start_time_string: '2019/3/11',
-//         end_time_sting: '2019/3/15',
-//         time_span: 4,
-//         create_time: 2,
-//       }, {
-//         start_time: 1552320000000,
-//         end_time: 1552838400000,
-//         start_time_string: '2019/3/12',
-//         end_time_sting: '2019/3/18',
-//         time_span: 7,
-//         create_time: 3,
-//       }, {
-//         start_time: 1552320000000,
-//         end_time: 1552579200000,
-//         start_time_string: '2019/3/12',
-//         end_time_sting: '2019/3/15',
-//         time_span: 4,
-//         create_time: 4,
-//       }
-//     ],
-//     list_no_time_data: []
-//   },
-// ],

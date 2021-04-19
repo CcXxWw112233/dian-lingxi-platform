@@ -4,6 +4,7 @@ import indexStyles from './index.less'
 import { isPaymentOrgUser } from '@/utils/businessFunction'
 import { Spin } from 'antd'
 import { platformNouns } from '../../../../globalset/clientCustorm'
+import { WorkbenchPages } from './constans'
 // import MiniBoxNavigations from '../MiniBoxNavigations/index'
 // import BoardCommunication from './BoardCommunication/index'
 // import BoardArchives from './BoardArchives/index'
@@ -21,9 +22,12 @@ const InvestmentMaps = lazy(() => import('./InvestmentMaps/index'))
 const XczNews = lazy(() => import('./XczNews/index'))
 const Zhichengshe = lazy(() => import('./Zhichengshe/index'))
 const Workglows = lazy(() => import('./Workflows'))
-const StatisticalReport = lazy(() => import('./StatisticalReport'))
+// const StatisticalReport = lazy(() => import('./StatisticalReport'))
 const WhiteBoardRooms = lazy(() => import('./WhiteBoard'))
 const MeetingManage = lazy(() => import('./MeetingManage'))
+const ChartForStatistics = lazy(() => import('./ChartForStatistics'))
+/** 日历安排的组件 */
+const CalendarPlan = lazy(() => import('./CalendarPlan'))
 
 class WorkbenchPage extends Component {
   constructor(props) {
@@ -87,35 +91,38 @@ class WorkbenchPage extends Component {
     const { currentSelectedWorkbenchBox = {} } = props
     const { code } = currentSelectedWorkbenchBox
     switch (code) {
-      case 'board:plans':
+      case WorkbenchPages.BoardPlans.key:
         document.title = platformNouns + '-项目计划'
         break
-      case 'board:chat':
+      case WorkbenchPages.BoardChat.key:
         document.title = platformNouns + '-项目交流'
         break
-      case 'board:files':
+      case WorkbenchPages.BoardFiles.key:
         document.title = platformNouns + '-项目档案'
         break
-      case 'cases':
+      case WorkbenchPages.Cases.key:
         document.title = platformNouns + '-优秀案例'
         break
-      case 'regulations':
+      case WorkbenchPages.Regulations.key:
         document.title = platformNouns + '-政策法规'
         break
-      case 'maps':
+      case WorkbenchPages.Maps.key:
         document.title = platformNouns + '-投资地图'
         break
-      case 'mine:flows':
+      case WorkbenchPages.MineFlows.key:
         document.title = platformNouns + '-工作流'
         break
-      case 'report':
+      case WorkbenchPages.Report.key:
         document.title = platformNouns + '-统计报表'
         break
-      case 'whiteboard':
+      case WorkbenchPages.Whiteboard.key:
         document.title = platformNouns + '-白板协作'
         break
-      case 'meetingmanage':
+      case WorkbenchPages.MeetingManage.key:
         document.title = platformNouns + '-会议资源管理'
+        break
+      case WorkbenchPages.CalendarPlan.key:
+        document.title = platformNouns + '-' + WorkbenchPages.CalendarPlan.name
         break
       default:
         break
@@ -142,7 +149,7 @@ class WorkbenchPage extends Component {
   setWorkbenchVisible(currentSelectedWorkbenchBox) {
     const { dispatch, chatImVisiable } = this.props
     if (currentSelectedWorkbenchBox.id && currentSelectedWorkbenchBox.code) {
-      if (currentSelectedWorkbenchBox.code != 'board:chat') {
+      if (currentSelectedWorkbenchBox.code != WorkbenchPages.BoardChat.key) {
         const width = document.body.scrollWidth
         let workbenchBoxContentWapperModalStyle = chatImVisiable
           ? { width: width - 400 + 'px' }
@@ -175,7 +182,10 @@ class WorkbenchPage extends Component {
       isPaymentUser = isPaymentOrgUser()
     }
     const { workbenchBoxContent_height } = this.state
-    const special_backgroud = ['mine:flows', 'board:files']
+    const special_backgroud = [
+      WorkbenchPages.MineFlows.key,
+      WorkbenchPages.BoardFiles.key
+    ]
     // console.log('currentSelectedWorkbenchBox', workbenchBoxContent_height)
     return (
       <div className={indexStyles.workbenchBoxContentModalContainer}>
@@ -218,53 +228,70 @@ class WorkbenchPage extends Component {
                   : ''
               }}
             >
-              {'board:plans' == select_box_code && (
+              {WorkbenchPages.BoardPlans.key == select_box_code && (
                 <BoardPlan
                   workbenchBoxContent_height={workbenchBoxContent_height}
                 />
               )}
 
-              {isPaymentUser && 'board:chat' == select_box_code && (
-                <BoardCommunication />
+              {isPaymentUser &&
+                WorkbenchPages.BoardChat.key == select_box_code && (
+                  <BoardCommunication />
+                )}
+
+              {isPaymentUser &&
+                WorkbenchPages.BoardFiles.key == select_box_code && (
+                  <BoardArchives
+                    workbenchBoxContent_height={workbenchBoxContent_height}
+                  />
+                )}
+
+              {isPaymentUser && WorkbenchPages.Maps.key == select_box_code && (
+                <InvestmentMaps />
               )}
 
-              {isPaymentUser && 'board:files' == select_box_code && (
-                <BoardArchives
-                  workbenchBoxContent_height={workbenchBoxContent_height}
-                />
-              )}
-
-              {isPaymentUser && 'maps' == select_box_code && <InvestmentMaps />}
-
-              {isPaymentUser && 'cases' == select_box_code && (
+              {isPaymentUser && WorkbenchPages.Cases.key == select_box_code && (
                 <XczNews {...this.props} />
               )}
-              {isPaymentUser && 'regulations' == select_box_code && (
-                <Zhichengshe {...this.props} />
-              )}
-              {isPaymentUser && 'mine:flows' == select_box_code && (
-                <Workglows
-                  workbenchBoxContent_height={workbenchBoxContent_height}
-                />
-              )}
-              {isPaymentUser && 'report' == select_box_code && (
-                <StatisticalReport
-                  workbenchBoxContent_height={workbenchBoxContent_height}
-                />
-              )}
-              {isPaymentOrgUser && 'whiteboard' === select_box_code && (
-                <WhiteBoardRooms
-                  org_id={this.props.OrganizationId}
-                  workbenchBoxContent_height={workbenchBoxContent_height}
-                />
-              )}
-              {isPaymentOrgUser && 'meetingmanage' === select_box_code && (
-                <MeetingManage
-                  org_id={this.props.OrganizationId}
-                  currentSelectOrganize={this.props.currentSelectOrganize}
-                  workbenchBoxContent_height={workbenchBoxContent_height}
-                />
-              )}
+              {isPaymentUser &&
+                WorkbenchPages.Regulations.key == select_box_code && (
+                  <Zhichengshe {...this.props} />
+                )}
+              {isPaymentUser &&
+                WorkbenchPages.MineFlows.key == select_box_code && (
+                  <Workglows
+                    workbenchBoxContent_height={workbenchBoxContent_height}
+                  />
+                )}
+              {isPaymentUser &&
+                WorkbenchPages.Report.key == select_box_code && (
+                  <ChartForStatistics
+                    workbenchBoxContent_height={workbenchBoxContent_height}
+                  />
+                )}
+              {isPaymentOrgUser &&
+                WorkbenchPages.Whiteboard.key === select_box_code && (
+                  <WhiteBoardRooms
+                    org_id={this.props.OrganizationId}
+                    workbenchBoxContent_height={workbenchBoxContent_height}
+                  />
+                )}
+              {isPaymentOrgUser &&
+                WorkbenchPages.MeetingManage.key === select_box_code && (
+                  <MeetingManage
+                    org_id={this.props.OrganizationId}
+                    currentSelectOrganize={this.props.currentSelectOrganize}
+                    workbenchBoxContent_height={workbenchBoxContent_height}
+                  />
+                )}
+              {isPaymentOrgUser &&
+                WorkbenchPages.CalendarPlan.key === select_box_code && (
+                  <CalendarPlan
+                    org_id={this.props.OrganizationId}
+                    currentSelectOrganize={this.props.currentSelectOrganize}
+                    workbenchBoxContent_height={workbenchBoxContent_height}
+                  />
+                )}
             </div>
           </div>
         </Suspense>

@@ -9,19 +9,23 @@ export default class WechatInviteToboard extends Component {
   constructor(props) {
     super(props)
     this.state = {
+      code_type: '2', //2二维码一次性有效，1二维码长期有效
       qr_code_src: ''
     }
   }
   onCancel = () => {
+    this.setState({
+      code_type: '1'
+    })
     this.props.setModalVisibile && this.props.setModalVisibile()
   }
   componentWillReceiveProps(nextProps) {
     const { modalVisible } = nextProps
     if (modalVisible) {
-      this.getQRCode()
+      this.getQRCode({ code_type: this.state.code_type })
     }
   }
-  getQRCode = () => {
+  getQRCode = ({ code_type }) => {
     const {
       invitationType,
       invitationId,
@@ -36,7 +40,8 @@ export default class WechatInviteToboard extends Component {
       id: invitationId,
       _organization_id: invitationOrg,
       rela_condition: relaCondition,
-      user_id: userId
+      user_id: userId,
+      code_type
     }).then(res => {
       if (isApiResponseOk(res)) {
         this.setState({
@@ -47,8 +52,16 @@ export default class WechatInviteToboard extends Component {
       }
     })
   }
+  changeCodeType = () => {
+    const { code_type } = this.state
+    const code_type_ = code_type == '1' ? '2' : '1'
+    this.setState({
+      code_type: code_type_
+    })
+    this.getQRCode({ code_type: code_type_ })
+  }
   renderOverInner = () => {
-    const { qr_code_src } = this.state
+    const { qr_code_src, code_type } = this.state
     return (
       <div>
         <div
@@ -101,6 +114,26 @@ export default class WechatInviteToboard extends Component {
           <div
             style={{ width: 48, height: 1, background: 'rgba(0,0,0,0.09)' }}
           ></div>
+        </div>
+        <div
+          style={{
+            textAlign: 'center',
+            marginTop: 14
+          }}
+        >
+          {code_type == '2'
+            ? '为了安全起见，本二维码仅限单次扫码使用，'
+            : '本二维码已切换为长期有效（含转发），'}
+          <br />
+          <span
+            className={globalStyles.link_mouse}
+            style={{ cursor: 'pointer' }}
+            onClick={this.changeCodeType}
+          >
+            点击此处
+          </span>
+          切换为
+          {code_type == '2' ? '长期有效' : '一次性有效'}
         </div>
       </div>
     )
