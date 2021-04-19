@@ -10,6 +10,7 @@ import {
 } from '../../../../../../utils/util'
 import {
   ganttIsFold,
+  GANTT_IDS,
   hours_view_due_work_oclock,
   hours_view_start_work_oclock,
   milestone_base_height
@@ -82,7 +83,19 @@ export default class GroupMilestones extends Component {
       const first_group_id = (list_group[0] || {}).list_id
       //项目内分组视图
       for (let key in milestoneMap) {
-        const sameday_milestones = milestoneMap[key] //得到同一天的里程碑
+        let sameday_milestones = milestoneMap[key] //得到同一天的里程碑
+        sameday_milestones = sameday_milestones.map(item => {
+          let new_item = item
+          const list_ids_length = item.list_ids.length
+          if (list_ids_length == 0) {
+            new_item.list_id = GANTT_IDS.UNGROUPED_ID
+          } else if (list_ids_length == 1) {
+            new_item.list_id = item.list_ids[0]
+          } else {
+            new_item.list_id = GANTT_IDS.OVERLAPPING_GROUP_ID
+          }
+          return new_item
+        })
         let sameday_group_ids = sameday_milestones.map(item => item.list_id) //同一天具备里程碑的所有项目
         // console.log('finally_milestones_1_0', sameday_group_ids)
 
@@ -128,8 +141,6 @@ export default class GroupMilestones extends Component {
     for (let key in milestoneMap) {
       const sameday_milestones_no_group = milestoneMap[key].filter(
         item => !item.parent_id || item.parent_id == '0'
-        // &&
-        // (!item.list_id || item.list_id == '0')
       ) //得到同一天的没有归属分组的一级里程碑
 
       finally_milestones.push({
@@ -420,7 +431,6 @@ export default class GroupMilestones extends Component {
       gantt_view_mode,
       list_group = []
     } = this.props
-    // const { list_id } = this.props //gantt_board_id为0的情况下，分组id就是各个项目的id
     let top_arr = this.getMiletonesWithTopStructure(top)
     const miletones_position = top_arr.list.findIndex(
       t => t.timestamp == timestamp
@@ -1046,7 +1056,6 @@ export default class GroupMilestones extends Component {
       ceilWidth,
       gantt_head_width,
       gantt_board_id,
-      list_id,
       group_view_type,
       dispatch
     } = this.props
