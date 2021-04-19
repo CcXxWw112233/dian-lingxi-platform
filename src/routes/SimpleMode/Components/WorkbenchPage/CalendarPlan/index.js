@@ -11,7 +11,7 @@ import {
   Spin,
   Tooltip
 } from 'antd'
-import React from 'react'
+import React, { useState } from 'react'
 import styles from './index.less'
 import moment from 'moment'
 import CalendarTempTree from './components/CalendarTempTree'
@@ -55,6 +55,8 @@ export default class CalendarPlan extends React.Component {
 
   constructor(props) {
     super(props)
+    /** 更多搜索条件的时候，大于此数值才会自适应宽度 */
+    this.MaxSearchMoreItem = 2
     /** 定义的年份mode */
     this.modeYear = 'year'
     /** 定义的月份mode */
@@ -414,9 +416,10 @@ export default class CalendarPlan extends React.Component {
 
   /** 渲染更多事项的列表
    * @param {object[]} datas 当前单元格的数据列表
+   * @param {function} callback 关闭回调
    * @returns {React.ReactNode}
    */
-  renderMoreDatas = (datas = []) => {
+  renderMoreDatas = (datas = [], callback) => {
     return (
       <div className={styles.popcontent}>
         <div className={styles.popcontent_header}>
@@ -427,11 +430,7 @@ export default class CalendarPlan extends React.Component {
           </span>
           <span
             className={`${globalStyles.authTheme} ${styles.popclose}`}
-            onClick={() =>
-              this.setState({
-                moreDataVisible: false
-              })
-            }
+            onClick={() => callback && callback()}
           >
             &#xe816;
           </span>
@@ -439,7 +438,7 @@ export default class CalendarPlan extends React.Component {
         {datas.map(item => {
           return (
             <div className={styles.popcontent_item} key={item.id}>
-              {this.renderDataItem(item)}
+              {this.renderDataItem(item, callback)}
             </div>
           )
         })}
@@ -453,12 +452,11 @@ export default class CalendarPlan extends React.Component {
    * @returns {?React.ReactNode}
    */
   dateCellRender = date => {
+    const { PopoverMoreDataRender } = this
     const { calendar_data = [] } = this.state
     /** 拥有数据的日期 */
-    const hasDataDate = calendar_data.find(
-      item =>
-        date.format('l') ===
-        moment(+((item.endTime || item.end_time) + '000')).format('l')
+    const hasDataDate = calendar_data.find(item =>
+      date.isSame(moment(+((item.endTime || item.end_time) + '000')), 'day')
     )
     /** 相同时间的数据，用来限制显示 */
     const sameDateTime = {}
@@ -466,9 +464,10 @@ export default class CalendarPlan extends React.Component {
       <Fragment>
         {calendar_data.map(item => {
           /** 此日期是否有合适的数据 */
-          const isSameDate =
-            date.format('l') ===
-            moment(+((item.endTime || item.end_time) + '000')).format('l')
+          const isSameDate = date.isSame(
+            moment(+((item.endTime || item.end_time) + '000')),
+            'day'
+          )
           /** 当前日期无符合的数据 */
           if (!isSameDate) return null
 
@@ -489,32 +488,45 @@ export default class CalendarPlan extends React.Component {
         {hasDataDate &&
           (sameDateTime[hasDataDate.end_time] || []).length >
             this.MaxCellDataLength && (
-            <Popover
-              trigger="click"
-              overlayClassName={styles.moreOverlay}
-              content={this.renderMoreDatas(sameDateTime[hasDataDate.end_time])}
-              visible={this.state.moreDataVisible}
-              onVisibleChange={visible =>
-                this.setState({ moreDataVisible: visible })
-              }
-            >
-              <div className={styles.more_datas}>
-                更多
-                {(sameDateTime[hasDataDate.end_time] || []).length -
-                  this.MaxCellDataLength}
-                个事项
-              </div>
-            </Popover>
+            <PopoverMoreDataRender data={sameDateTime[hasDataDate.end_time]} />
           )}
       </Fragment>
     )
   }
 
+  /** 渲染popover弹窗 */
+  PopoverMoreDataRender = props => {
+    /** 传入进来的数据 */
+    const { data = [] } = props
+    /** 是否显示弹窗 */
+    const [visible, setVisible] = useState(false)
+    /** 关闭的回调 */
+    const closeCallback = () => {
+      setVisible(false)
+    }
+    return (
+      <Popover
+        trigger="click"
+        overlayClassName={styles.moreOverlay}
+        content={this.renderMoreDatas(data, closeCallback)}
+        visible={visible}
+        onVisibleChange={visible => setVisible(visible)}
+      >
+        <div className={styles.more_datas}>
+          更多
+          {(data || []).length - this.MaxCellDataLength}
+          个事项
+        </div>
+      </Popover>
+    )
+  }
+
   /**
    * 选中了一个里程碑数据
-   * @param {{id: strintg, name: string,board_id: string, list_names: string[], type: string}} data
+   * @param {{id: strintg, name: string,board_id: string, list_names: string[], type: string}} data 选中的数据
+   * @param {?Function} callback 回调
    */
-  handleDataOfDate = async data => {
+  handleDataOfDate = async (data, callback) => {
     // console.log(data)
     const { dispatch } = this.props
     /** 用来打开里程碑详情 */
@@ -536,15 +548,17 @@ export default class CalendarPlan extends React.Component {
         milestoneVisible: true,
         moreDataVisible: false
       })
+      callback && callback()
     } else message.warn(resp.message)
   }
 
   /**
    * 渲染单个单元格的数据节点
    * @param {{id: strintg, name: string,board_id: string, list_names: string[], type: string}} item 单个节点的数据
+   * @param {?Function} callback 传入的回调-目前只处理点击详情关闭弹窗的功能
    * @returns {React.ReactNode}
    */
-  renderDataItem = item => {
+  renderDataItem = (item, callback) => {
     /** 是否里程碑 */
     const isMilestoneType =
       item.type === NodeType.milestonetype && item.is_parent
@@ -563,7 +577,9 @@ export default class CalendarPlan extends React.Component {
     return (
       <div
         className={styles.celldate_container}
-        onClick={() => this.handleDataOfDate(item)}
+        onClick={() => {
+          this.handleDataOfDate(item, callback)
+        }}
       >
         <div className={`${globalStyles.authTheme} ${styles.date_celltype}`}>
           {isMilestoneType && (
@@ -750,8 +766,14 @@ export default class CalendarPlan extends React.Component {
         style={{ height: workbenchBoxContent_height }}
       >
         <div className={styles.heander_search}>
-          <div className={styles.serach_forms}>
-            {this.state.queryParamsData.map(item => {
+          <div
+            className={`${styles.serach_forms} ${
+              (this.state.queryParamsData || []).length > this.MaxSearchMoreItem
+                ? styles.hasMoreSearch
+                : ''
+            }`}
+          >
+            {(this.state.queryParamsData || []).map(item => {
               return (
                 <Select
                   mode="multiple"
@@ -834,7 +856,7 @@ export default class CalendarPlan extends React.Component {
             />
             <Button
               type="default"
-              style={{ marginLeft: 10 }}
+              style={{ marginLeft: 10, flex: 'none' }}
               onClick={this.handleResetQueryParams}
             >
               重置
