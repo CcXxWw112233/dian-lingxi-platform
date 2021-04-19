@@ -10,7 +10,9 @@ export default class GanttDetail extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      milestone_id_local: ''
+      milestone_id_local: '',
+      /** 当前详情关联的组织id */
+      currentOrgId: ''
     }
   }
 
@@ -48,23 +50,24 @@ export default class GanttDetail extends React.Component {
         id: milestone_id
       }
     }).then((res = {}) => {
-      if (isApiResponseOk(res)) {
-        const { board_id } = res
-        dispatch({
-          type: 'projectDetail/projectDetailInfo',
-          payload: {
-            id: board_id
-          }
-        })
-        debugger
-        dispatch({
-          type: 'gantt/getAboutGroupBoards',
-          payload: {}
-        })
-        this.setState({
-          milestone_id_local: milestone_id
-        })
-      }
+      // if (isApiResponseOk(res)) {
+      const { board_id, org_id } = res
+      dispatch({
+        type: 'projectDetail/projectDetailInfo',
+        payload: {
+          id: board_id
+        }
+      })
+      // debugger
+      dispatch({
+        type: 'gantt/getAboutGroupBoards',
+        payload: {}
+      })
+      this.setState({
+        milestone_id_local: milestone_id,
+        currentOrgId: org_id
+      })
+      // }
     })
   }
 

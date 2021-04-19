@@ -122,7 +122,7 @@ export default class CommonRelaItem extends React.Component {
     const item =
       about_group_boards.find(item => item.board_id == board_id) || {}
     const { list_data = [] } = item
-    console.log('ssssssssssaaa', list_data)
+    // console.log('ssssssssssaaa', list_data)
     return list_data
   }
   render() {

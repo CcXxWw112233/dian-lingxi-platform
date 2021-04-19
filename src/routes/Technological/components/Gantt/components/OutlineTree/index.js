@@ -44,11 +44,11 @@ class MyOutlineTree extends Component {
       outline_default_columns,
       outline_is_show_order
     } = this.props
-    console.log('sssssssssadasd', {
-      outline_columns,
-      outline_default_columns,
-      outline_is_show_order
-    })
+    // console.log('sssssssssadasd', {
+    //   outline_columns,
+    //   outline_default_columns,
+    //   outline_is_show_order
+    // })
     return (
       <div className={styles.outline_tree}>
         {React.Children.map(this.props.children, (child, i) => {

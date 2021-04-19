@@ -38,6 +38,7 @@ export default modelExtend(technological, {
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
+      return res
     },
     *updateMilestone({ payload = {} }, { select, call, put }) {
       let res = yield call(updateMilestone, payload)

@@ -27,6 +27,7 @@ import globalStyles from '../../../../../globalset/css/globalClassName.less'
 import { Fragment } from 'react'
 import GanttDetail from '../../../../Technological/components/Gantt/components/milestoneDetail'
 import { projectDetailInfo } from '../../../../../services/technological/prjectDetail'
+import { debounce } from '../../../../../utils/util'
 
 /** 日历计划功能组件 */
 @connect(
@@ -46,11 +47,14 @@ import { projectDetailInfo } from '../../../../../services/technological/prjectD
   })
 )
 export default class CalendarPlan extends React.Component {
+  /** props数据统一整理，防止追踪困难 */
   static propTypes = {
     /** 项目列表 */
     projectList: PropTypes.array,
     /** 选中的项目 */
-    simplemodeCurrentProject: PropTypes.object
+    simplemodeCurrentProject: PropTypes.object,
+    /** 页面的高度 */
+    workbenchBoxContent_height: PropTypes.number
   }
 
   constructor(props) {
@@ -134,6 +138,8 @@ export default class CalendarPlan extends React.Component {
 
     /** 单元格的数据最大显示数量 */
     this.MaxCellDataLength = 2
+
+    this.fetchQueryCalendarData = debounce(this.fetchQueryCalendarData, 100)
   }
 
   componentDidMount() {
@@ -329,7 +335,7 @@ export default class CalendarPlan extends React.Component {
     })
 
     /** 过滤搜索条件没有数据的key
-     * @returns {{} | null}
+     * @returns {?{[x: string]: any} | null}
      */
     const filterParamsNull = () => {
       const obj = {}
@@ -553,7 +559,7 @@ export default class CalendarPlan extends React.Component {
       })
       this.setState({
         currentMilestone: {
-          user,
+          user: user.data,
           milestone_id: data.id
         },
         milestoneVisible: true,
@@ -855,7 +861,7 @@ export default class CalendarPlan extends React.Component {
                 })
               }
               placeholder="搜索里程碑、子里程碑名称"
-              style={{ width: 300, marginLeft: 10 }}
+              style={{ width: 300, marginLeft: 10, flex: 'none' }}
               enterButton={
                 <Button
                   type="primary"
