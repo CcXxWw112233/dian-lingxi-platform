@@ -291,7 +291,7 @@ export default class CalendarPlan extends React.Component {
       {
         queryParams: {
           ...this.state.queryParams,
-          [query_key]: val
+          [query_key]: (val || []).length ? val : null
         }
       },
       () => {
@@ -327,6 +327,19 @@ export default class CalendarPlan extends React.Component {
     this.setState({
       searchLoading: true
     })
+
+    /** 过滤搜索条件没有数据的key
+     * @returns {{} | null}
+     */
+    const filterParamsNull = () => {
+      const obj = {}
+      Object.keys(this.state.queryParams).forEach(item => {
+        if (this.state.queryParams[item]) {
+          obj[item] = this.state.queryParams[item]
+        }
+      })
+      return Object.keys(obj).length ? obj : null
+    }
     /** 请求参数 */
     const params = {
       board_ids: this.getSelectedBoardIds(),
@@ -340,9 +353,7 @@ export default class CalendarPlan extends React.Component {
         : null,
       name: this.state.queryName,
       template_id: this.state.template_id,
-      items: Object.keys(this.state.queryParams).length
-        ? this.state.queryParams
-        : null
+      items: filterParamsNull()
     }
     fetchCalendarData(params)
       .then(res => {
