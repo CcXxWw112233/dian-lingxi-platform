@@ -175,18 +175,32 @@ export default class CommonRelaItem extends React.Component {
           {/*名称*/}
           <div
             style={{
-              wordWrap: 'break-word',
               paddingTop: 2,
               marginRight: '6px',
-              display: 'flex'
+              display: 'flex',
+              flex: 1
             }}
+            className={`${globalStyles.global_ellipsis}`}
           >
-            <div> {name}&nbsp;&nbsp;</div>
-            <CardGroupNames
-              wrapper_styles={{ justifyContent: 'flex-start' }}
-              selects={list_ids}
-              list_data={this.getCardGroups()}
-            />
+            {/* '爱丽丝卢卡斯昆德拉喀什角动量喀什离开的ask了角动量喀什觉得撒旦看见啦时刻记得阿斯利康大家案例喀什觉' */}
+            <div
+              title={name}
+              style={{ maxWidth: 300 }}
+              className={`${globalStyles.global_ellipsis}`}
+            >
+              {' '}
+              {name}&nbsp;&nbsp;&nbsp;
+            </div>
+            <div className={`${globalStyles.global_ellipsis}`}>
+              <CardGroupNames
+                wrapper_styles={{
+                  justifyContent: 'flex-start',
+                  color: '#575C75'
+                }}
+                selects={list_ids}
+                list_data={this.getCardGroups()}
+              />
+            </div>
           </div>
           {/*日期*/}
           {deadline && (
