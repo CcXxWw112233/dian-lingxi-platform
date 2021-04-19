@@ -21,12 +21,23 @@ export default function Index(props) {
     show_prefix || selects.length > 1 ? '@' : ''
   )
   return (
-    <div
+    <span
       title={name}
-      className={styles.main}
+      className={`${styles.main} ${globalStyles.global_ellipsis}`}
       style={{ ...wrapper_styles }}
       data-targetclassname={targetclassname}
     >
+      {!!selects.length && name}
+      {/* {!!selects.length && (
+        <div
+          data-targetclassname={targetclassname}
+          className={`${styles.item_name} ${globalStyles.global_ellipsis}`}
+          style={{ ...item_styles }}
+        >
+          @
+        </div>
+      )}
+
       {selects.map((item, index) => {
         const list_name = list_data.find(item2 => item2.list_id == item)
           ?.list_name
@@ -38,13 +49,13 @@ export default function Index(props) {
             style={{ ...item_styles }}
           >
             {(show_prefix || selects.length > 1) && (
-              <>{index == 0 ? '@' : '/'}</>
+              <>{index == 0 ? '' : '/'}</>
             )}
             {list_name}
           </div>
         )
-      })}
-    </div>
+      })} */}
+    </span>
   )
 }
 
