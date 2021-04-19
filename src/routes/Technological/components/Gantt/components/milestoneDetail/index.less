@@ -90,3 +90,41 @@
     padding: 18px;
   }
 }
+.treeable {
+  :global {
+    .ant-tree-treenode-switcher-close,
+    .ant-tree-treenode-switcher-open {
+      & > span {
+        vertical-align: bottom !important;
+      }
+    }
+  }
+}
+.popover_title{
+  font-size: 1.1rem;
+  padding: 5px 5px;
+}
+.tree_fields{
+  min-height: 200px;
+  overflow-y: auto;
+}
+.confirmBtn{
+  margin-top: 15px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  & > *{
+    width: 49%;
+  }
+}
+.addProperty{
+  line-height: normal;
+  cursor: pointer;
+  padding: 5px 15px;
+  border-radius: 5px;
+  display: inline-block;
+  color: #5680FA;
+  text-align: center;
+  border: 1px solid #5680FA;
+  background-color: rgba(138, 180, 248, 0.2);
+}
