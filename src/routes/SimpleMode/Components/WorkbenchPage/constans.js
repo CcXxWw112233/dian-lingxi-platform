@@ -87,5 +87,13 @@ export const WorkbenchPages = {
      */
     key: 'board:calendar',
     name: '日历安排'
+  },
+  /** 运营总图 */
+  BusinessPlan: {
+    /** 运营总图标识
+     * @default string 'business:plan'
+     */
+    key: 'business:plan',
+    name: '运营总图'
   }
 }

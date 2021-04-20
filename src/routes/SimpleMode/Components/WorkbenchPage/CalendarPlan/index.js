@@ -319,7 +319,7 @@ export default class CalendarPlan extends React.Component {
       {
         queryParams: {
           ...this.state.queryParams,
-          [option.id]: chekced ? selectedIds : []
+          [option.id]: chekced ? selectedIds : null
         }
       },
       () => {
