@@ -5,6 +5,7 @@ import { isPaymentOrgUser } from '@/utils/businessFunction'
 import { Spin } from 'antd'
 import { platformNouns } from '../../../../globalset/clientCustorm'
 import { WorkbenchPages } from './constans'
+import OverallControl from './OverallControll'
 // import MiniBoxNavigations from '../MiniBoxNavigations/index'
 // import BoardCommunication from './BoardCommunication/index'
 // import BoardArchives from './BoardArchives/index'
@@ -126,8 +127,8 @@ class WorkbenchPage extends Component {
       case WorkbenchPages.CalendarPlan.key:
         document.title = platformNouns + '-' + WorkbenchPages.CalendarPlan.name
         break
-      case WorkbenchPages.BusinessPlan.key:
-        document.title = platformNouns + '-' + WorkbenchPages.BusinessPlan.name
+      case WorkbenchPages.OverallControl.key:
+        document.title = platformNouns + '-' + WorkbenchPages.OverallControl.name
         break
       default:
         break
@@ -298,8 +299,8 @@ class WorkbenchPage extends Component {
                   />
                 )}
               {isPaymentOrgUser &&
-                WorkbenchPages.BusinessPlan.key === select_box_code && (
-                  <GeneralOperationPlan
+                WorkbenchPages.OverallControl.key === select_box_code && (
+                  <OverallControl
                     org_id={this.props.OrganizationId}
                     currentSelectOrganize={this.props.currentSelectOrganize}
                     workbenchBoxContent_height={workbenchBoxContent_height}

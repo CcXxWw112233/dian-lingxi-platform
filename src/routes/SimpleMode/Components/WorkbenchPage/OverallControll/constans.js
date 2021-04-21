@@ -1,7 +1,7 @@
 /** 固定里程碑之间一天的长度
  * @default number 2 // 2个像素
  */
-export const DaysWidth = 2
+export const DaysWidth = 6
 
 /** 里程碑宽度常量
  * @default number 260

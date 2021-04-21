@@ -548,7 +548,7 @@ const MiniBoxNavigations = props => {
           </svg>
         )
         break
-      case WorkbenchPages.BusinessPlan.key:
+      case WorkbenchPages.OverallControl.key:
         contain = (
           <svg
             t="1618905174345"

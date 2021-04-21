@@ -20,7 +20,7 @@ export const getCalendarQueryParam = async params => {
 
 /**
  * 获取日历数据
- * @param {{board_ids: string[],  year: string | number, month: string | number,template_content_ids: ?string[] ,name: string, items: ?object }} data 查询条件
+ * @param {{board_ids: string[],  year: string | number, month: ?string | number,template_content_ids: ?string[] ,name: ?string, items: ?object }} data 查询条件
  * @params board_ids 选择的项目列表
  * @params year 年份
  * @params month 月份

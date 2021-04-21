@@ -22,7 +22,7 @@ import {
 import { connect } from 'dva'
 import { WorkbenchModel } from '../../../../../models/technological/workbench'
 import PropTypes from 'prop-types'
-import { legendList, NodeType, TotalBoardKey } from './constans'
+import { legendList, NodeType, TempType, TotalBoardKey } from './constans'
 import globalStyles from '../../../../../globalset/css/globalClassName.less'
 import { Fragment } from 'react'
 import GanttDetail from '../../../../Technological/components/Gantt/components/milestoneDetail'
@@ -166,15 +166,19 @@ export default class CalendarPlan extends React.Component {
     console.log(value, mode)
   }
 
-  /** 添加一个0 */
+  /** 添加一个0
+   * @param {string | number} number 需要判定小于10的字符串或者数字
+   * @returns {string | number}
+   */
   addZero = number => {
     return +number < 10 ? '0' + number : number
   }
 
   /** 点击了日期时间，更新选中的日历
-   * @param {moment.Moment} date 选中的日历
+   * @param {moment.Moment} date 选中的日历时间
    */
   handleDate = date => {
+    /** 当前选中的日 */
     const day = date.date()
     /** 保存上一个保存的月份 */
     const prevMonth = this.state.selectedMonth
@@ -201,6 +205,9 @@ export default class CalendarPlan extends React.Component {
    * @param {Event} e
    */
   handleModeChange = e => {
+    /** switch切换的value
+     * @default string 'year' | 'month'
+     */
     const value = e.target.value
     this.setState(
       {
@@ -216,10 +223,13 @@ export default class CalendarPlan extends React.Component {
    * @param {number} value 选择的月份
    */
   handleChangeMonth = value => {
-    const timeString = `${this.state.selectedYear}${this.addZero(
-      value
-    )}${this.addZero(this.state.selectedDay)}`
-    const date = moment(timeString, 'YYYYMMDD')
+    /** 需要更新的新时间 */
+    const updateDate = {
+      year: this.state.selectedYear,
+      month: value - 1,
+      date: this.state.selectedDay
+    }
+    const date = moment().set(updateDate)
     this.setState(
       {
         calendarValue: date,
@@ -235,10 +245,14 @@ export default class CalendarPlan extends React.Component {
    * @param {number} value 选择的年份
    */
   handleChangeYear = value => {
-    const timeString = `${value}${this.addZero(
-      this.state.selectedMonth
-    )}${this.addZero(this.state.selectedDay)}`
-    const date = moment(timeString, 'YYYYMMDD')
+    /** 需要更新的新时间 */
+    const updateDate = {
+      year: value,
+      month: this.state.selectedMonth - 1,
+      date: this.state.selectedDay
+    }
+    /** 更新的日期 */
+    const date = moment().set(updateDate)
     this.setState(
       {
         calendarValue: date,
@@ -544,6 +558,9 @@ export default class CalendarPlan extends React.Component {
    * @param {?Function} callback 回调
    */
   handleDataOfDate = async (data, callback) => {
+    /** 是否里程碑数据类型 */
+    const isMilestoneType = TempType.milestoneType === data.type
+    if (!isMilestoneType) return message.warn('功能正在开发')
     // console.log(data)
     const { dispatch } = this.props
     /** 用来打开里程碑详情 */
@@ -578,12 +595,12 @@ export default class CalendarPlan extends React.Component {
   renderDataItem = (item, callback) => {
     /** 是否里程碑 */
     const isMilestoneType =
-      item.type === NodeType.milestonetype && item.is_parent
+      item.type === TempType.milestoneType && item.is_parent
     /** 是否子里程碑 */
     const isSubMilestoneType =
-      item.type === NodeType.milestonetype && !item.is_parent
+      item.type === TempType.milestoneType && !item.is_parent
     /** 是否任务 */
-    const isCardType = false
+    const isCardType = item.type === TempType.cardType && item.is_parent
 
     /** 是否多项目 */
     const isMultipleBoard =
@@ -652,7 +669,7 @@ export default class CalendarPlan extends React.Component {
     this.setState(
       {
         template_id: temp.id,
-        /** 清空上一个选择的甘特图列表 */
+        /** 清空上一个选择的里程碑列表 */
         template_content_ids: null
       },
       () => {
@@ -746,12 +763,14 @@ export default class CalendarPlan extends React.Component {
     const isActiveDate = date.isSame(this.state.calendarValue, 'month')
     /** 日期在内的数据 */
     const sameDateData = []
-    /** 当前月份是否是现实中的月份 */
+    /** 当前渲染月份是否是本地时间中的月份 */
     const isSameActiveDate = moment().isSame(date, 'month')
     /** 提取数据 */
     this.state.calendar_data.forEach(item => {
+      /** 数据中的时间 */
       const calendar_data_time = moment(+(item.end_time + '000'))
-      if (date.format('YYYY-MM') === calendar_data_time.format('YYYY-MM')) {
+      /** 当前月份满足数据中的月份 */
+      if (date.isSame(calendar_data_time, 'month')) {
         sameDateData.push(item)
       }
     })

@@ -89,11 +89,11 @@ export const WorkbenchPages = {
     name: '日历安排'
   },
   /** 运营总图 */
-  BusinessPlan: {
+  OverallControl: {
     /** 运营总图标识
-     * @default string 'business:plan'
+     * @default string 'overall:control'
      */
-    key: 'business:plan',
-    name: '运营总图'
+    key: 'overall:control',
+    name: '关键控制点'
   }
 }

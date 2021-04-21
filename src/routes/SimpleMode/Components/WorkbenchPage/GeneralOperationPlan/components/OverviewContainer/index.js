@@ -1,13 +1,13 @@
 import React from 'react'
-import { Fragment } from 'react'
 import {
   getStatus,
   MilestoneTotalHeight,
   MilestoneTypes,
   MilestoneWidth
 } from '../../constans'
-import SubMilestone from '../SubMilestone'
+// import SubMilestone from '../SubMilestone'
 import styles from './index.less'
+import moment from 'moment'
 
 /** 运营总图的运营图 */
 export default class OverviewContainer extends React.Component {
@@ -17,80 +17,49 @@ export default class OverviewContainer extends React.Component {
       /** 运营总图的数据 */
       overview_data: [
         {
+          name: '土地公告0',
+          deadline: moment()
+            .subtract(20, 'day')
+            .valueOf(),
+          id: '0'
+        },
+        {
           name: '土地公告',
-          id: '1',
-          child: [
-            {
-              name: '土地公告child1',
-              id: '2'
-            },
-            {
-              name: '土地公告child2',
-              id: '3'
-            },
-            {
-              name: '土地公告child13',
-              id: '4'
-            },
-            {
-              name: '土地公告child4',
-              id: '5'
-            },
-            {
-              name: '土地公告child5',
-              id: '6'
-            }
-          ]
+          deadline: moment().valueOf(),
+          id: '1'
         },
         {
           name: '土地公告2',
           id: '7',
-          child: [
-            {
-              name: '土地公告2child1',
-              id: '8'
-            },
-            {
-              name: '土地公告2child2',
-              id: '9'
-            },
-            {
-              name: '土地公告2child3',
-              id: '10'
-            }
-          ]
+          deadline: moment()
+            .add(1, 'month')
+            .valueOf()
         },
         {
           name: '土地公告3',
           id: '11',
-          child: [
-            {
-              name: '土地公告3child1',
-              id: '12'
-            },
-            {
-              name: '土地公告3child2',
-              id: '13'
-            },
-            {
-              name: '土地公告3child3',
-              id: '14'
-            }
-          ]
+          deadline: moment()
+            .add(3, 'month')
+            .valueOf()
         }
       ]
     }
   }
 
+  /** 计算两个里程碑之间的长度距离 */
+  computedMilestoneBettweenWidth = () => {
+
+  }
+
   /** 渲染一级里程碑的数据
-   * @param {{data: {}, index: number}} props React组件的props
+   * @param {{data: {}, index: number, nextData: ?{}}} props React组件的props
    */
   ParentMilestonRender = props => {
     /** 当前渲染的数据
      * @param {{name: string, id: string}} data 数据
      * @param {number} index 当前序号
      */
-    const { data, index } = props
+    const { data, index, nextData } = props
     return (
       <div className={styles.parent_milestone}>
         <span className={styles.milestone_name}>{data.name}</span>
@@ -102,7 +71,7 @@ export default class OverviewContainer extends React.Component {
   }
 
   /**
-   * 渲染二级节点的线段
+   * 渲染二级节点的线段 (业务变动，暂时废弃)
    * @param {{data: {}}} props 当前组件的ReactProps
    * @returns {React.ReactNode}
    */
@@ -132,28 +101,21 @@ export default class OverviewContainer extends React.Component {
             style={{ marginBottom: MilestoneTotalHeight }}
           >
             {overview_data.map((item, index) => {
-              const children = item.child || []
               return (
                 <div
                   key={item.id}
                   className={styles.milestone_steps}
                   style={{ width: MilestoneWidth }}
                 >
-                  {children.map(child => {
-                    return (
-                      <this.SubMilestoneRender
-                        data={child}
-                        key={child.id}
-                        type={MilestoneTypes.NormalDone.status}
-                      />
-                    )
-                  })}
-                  <this.ParentMilestonRender data={item} index={index + 1} />
+                  <this.ParentMilestonRender
+                    data={item}
+                    nextData={overview_data[index + 1] || null}
+                    index={index + 1}
+                  />
                 </div>
               )
             })}
           </div>
-          <SubMilestone datas={overview_data} />
         </div>
       </div>
     )
