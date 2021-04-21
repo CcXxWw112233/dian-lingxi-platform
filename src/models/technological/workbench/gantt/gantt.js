@@ -54,7 +54,8 @@ import {
   group_rows_fold_1,
   hole_movedown_height,
   milestone_base_height,
-  getMilestoneBaseHeight
+  getMilestoneBaseHeight,
+  GANTT_IDS
 } from '../../../../routes/Technological/components/Gantt/constants'
 import { getModelSelectDatasState } from '../../../utils'
 import { getProjectGoupList } from '../../../../services/technological/task'
@@ -1574,13 +1575,28 @@ export default {
       }
 
       const res = yield call(getGttMilestoneList, params)
-      // debugger
-      // console.log('sssssss', { milestoneMap: res.data })
       if (isApiResponseOk(res)) {
+        let _data = JSON.parse(JSON.stringify(res.data))
+        for (let key in _data) {
+          const milestone_arr = _data[key]
+          milestone_arr.map(item => {
+            let new_item = item
+            const { list_ids = [] } = item
+            const list_ids_length = list_ids.length
+            if (list_ids_length == 0) {
+              // new_item.list_id = GANTT_IDS.UNGROUPED_ID
+            } else if (list_ids_length == 1) {
+              new_item.list_id = item.list_ids[0]
+            } else {
+              new_item.list_id = GANTT_IDS.OVERLAPPING_GROUP_ID
+            }
+            return new_item
+          })
+        }
         yield put({
           type: 'updateDatas',
           payload: {
-            milestoneMap: res.data
+            milestoneMap: _data
           }
         })
       } else {

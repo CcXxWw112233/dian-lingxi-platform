@@ -54,8 +54,8 @@ export default class GroupMilestones extends Component {
       group_view_type,
       list_group = []
     } = props
-    if (group_view_type == '4') {
-      this.setOutlineMilestones(props)
+    this.setSummaryMilestonesData(props)
+    if (group_view_type != '1') {
       return
     }
     if (group_view_type != '1') return
@@ -83,19 +83,7 @@ export default class GroupMilestones extends Component {
       const first_group_id = (list_group[0] || {}).list_id
       //项目内分组视图
       for (let key in milestoneMap) {
-        let sameday_milestones = milestoneMap[key] //得到同一天的里程碑
-        sameday_milestones = sameday_milestones.map(item => {
-          let new_item = item
-          const list_ids_length = item.list_ids.length
-          if (list_ids_length == 0) {
-            new_item.list_id = GANTT_IDS.UNGROUPED_ID
-          } else if (list_ids_length == 1) {
-            new_item.list_id = item.list_ids[0]
-          } else {
-            new_item.list_id = GANTT_IDS.OVERLAPPING_GROUP_ID
-          }
-          return new_item
-        })
+        const sameday_milestones = milestoneMap[key] //得到同一天的里程碑
         let sameday_group_ids = sameday_milestones.map(item => item.list_id) //同一天具备里程碑的所有项目
         // console.log('finally_milestones_1_0', sameday_group_ids)
 
@@ -134,7 +122,8 @@ export default class GroupMilestones extends Component {
     // console.log('sssasdasd', finally_milestones)
     this.handleGroupMilestones(finally_milestones, props)
   }
-  setOutlineMilestones = props => {
+  // 设置头部汇总
+  setSummaryMilestonesData = props => {
     const { milestoneMap = {} } = props
     let finally_milestones = [] //最终要获取的里程碑
 
@@ -155,7 +144,7 @@ export default class GroupMilestones extends Component {
       item => item.milestones?.length
     )
     // console.log('sssasdasd_0', finally_milestones)
-    this.handleOutlineMilestones(finally_milestones, props)
+    this.handleSummaryMilestonesData(finally_milestones, props)
   }
   // 处理分组的里程碑
   handleGroupMilestones = (
@@ -285,8 +274,8 @@ export default class GroupMilestones extends Component {
     })
     // console.log('finally_milestones_2', milestones)
   }
-  // 处理大纲的里程碑
-  handleOutlineMilestones = (
+  // 设置头部汇总
+  handleSummaryMilestonesData = (
     milestones,
     {
       ceilWidth,
@@ -396,7 +385,7 @@ export default class GroupMilestones extends Component {
     }
     console.log('ssssssssss_milestones', milestones)
     this.setState({
-      render_milestones_data: milestones
+      summary_milestones_data: milestones
     })
   }
   // 渲染里程碑的名字列表
@@ -542,11 +531,13 @@ export default class GroupMilestones extends Component {
   }
   // 里程碑是否过期的颜色设置
   setMiletonesColor = ({ is_over_duetime, has_lcb, is_all_realized }) => {
-    // if (!has_lcb) {
-    //   return ''
-    // }
+    if (is_all_realized) {
+      return '#9EA6C2'
+    } else {
+      return ''
+    }
     if (is_over_duetime) {
-      if (is_all_realized == '0') {
+      if (!is_all_realized == '0') {
         //存在未完成任务
         return ''
         // return '#FFA39E'
@@ -613,7 +604,7 @@ export default class GroupMilestones extends Component {
     return height
   }
 
-  // 渲染未分组的一级里程碑
+  // 渲染一级里程碑
   renderNoGroupOneLevelMilestone = value => {
     const { group_view_type } = this.props
     const {
@@ -776,11 +767,11 @@ export default class GroupMilestones extends Component {
     } = value
     return (
       <>
-        {!!one_levels_all.length &&
+        {/* {!!one_levels_all.length &&
           this.renderDragWrapper(
             one_levels_all,
             this.renderNoGroupOneLevelMilestone(value)
-          )}
+          )} */}
         {!!one_levels.length &&
           this.renderDragWrapper(
             one_levels,
@@ -1270,7 +1261,11 @@ export default class GroupMilestones extends Component {
     return bool
   }
   render() {
-    const { render_milestones_data = [], dragg_milestone_err } = this.state
+    const {
+      render_milestones_data = [],
+      dragg_milestone_err,
+      summary_milestones_data = []
+    } = this.state
     const {
       group_view_type,
       list_group = [],
@@ -1295,8 +1290,8 @@ export default class GroupMilestones extends Component {
               </React.Fragment>
             )
           })}
-        {group_view_type == '4' &&
-          render_milestones_data.map(item => {
+        {['4', '1'].includes(group_view_type) &&
+          summary_milestones_data.map(item => {
             const { one_levels_all } = item
             return (
               <React.Fragment key={`${item.timestamp} ${dragg_milestone_err}`}>
