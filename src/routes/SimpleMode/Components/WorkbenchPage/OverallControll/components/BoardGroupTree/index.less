@@ -4,12 +4,26 @@
   display: flex;
   flex-direction: column;
   .container_title_top{
-    height: 36px;
+    height: 96px;
   }
   .container_content{
-    background-color: rgba(1, 3, 31, 0.02);
+    border-top: 2px solid rgba(0,0,0,0.04);
+    // background-color: rgba(1, 3, 31, 0.02);
     // min-height: 100px;
     // height: 100%;
     flex: 1;
+  }
+  .tree_data_tabs{
+    font-weight: bold;
+    // background-color: aqua;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    &.active{
+      background-color: rgba(0, 0, 0, 0.02);
+    }
   }
 }

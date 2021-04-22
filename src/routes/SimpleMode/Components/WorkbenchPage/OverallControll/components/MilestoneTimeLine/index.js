@@ -8,9 +8,21 @@ import {
 // import SubMilestone from '../SubMilestone'
 import styles from './index.less'
 import moment from 'moment'
+import PropTypes from 'prop-types'
 
 /** 关键控制点的一级里程碑列表 */
 export default class MilestoneTimeLine extends React.Component {
+  static propTypes = {
+    /** 控制节点的数据 */
+    listData: PropTypes.array,
+    /** 一级里程碑的数据 */
+    data: PropTypes.array,
+    /** 控制点数据中最小的时间 */
+    minTime: PropTypes.any,
+    /** 控制点数据中最大的时间 */
+    maxTime: PropTypes.any
+  }
+
   constructor(props) {
     super(props)
     this.state = {
@@ -36,20 +48,67 @@ export default class MilestoneTimeLine extends React.Component {
       const bettweenDays = moment(endDeadline).diff(moment(deadline), 'days')
       return Math.floor(Math.abs(bettweenDays) * DaysWidth)
     }
-    return 200
+    return this.getMaxTimeWidth()
+  }
+
+  componentDidUpdate(prev) {
+    if (prev.minTime !== this.props.minTime) {
+      this.getMinTimeWidth()
+    }
+  }
+
+  /** 一级里程碑的结束点距离控制点的最后时间距离多少天 */
+  getMaxTimeWidth = () => {
+    const { maxTime, data = [] } = this.props
+    if (!data.length) return 0
+    /** 一级里程碑的最后一个数据，用来判断最大时间距离它的时间有多长
+     * 里程碑数据的时间用 deadline
+     */
+    const endData = data[data.length - 1]
+    /** 距离几天 */
+    const timeStep = Math.abs(
+      moment(endData.deadline).diff(moment(maxTime), 'day')
+    )
+    return Math.floor(timeStep * DaysWidth)
+  }
+
+  /** 获取最小时间在里程碑中的宽度 */
+  getMinTimeWidth = () => {
+    const { minTime, data = [] } = this.props
+    /** 一级里程碑的第一个数据，用来判断最小时间距离它的时间有多长
+     * 里程碑数据的时间用 deadline
+     */
+    const firstData = data[0]
+    if (!firstData) return
+    /** 距离几天 */
+    const timeStep = Math.abs(
+      moment(firstData.deadline).diff(moment(minTime), 'day')
+    )
+    this.setState({
+      beforeStartMilestoneDays: Math.max(
+        timeStep,
+        this.state.beforeStartMilestoneDays
+      )
+    })
   }
 
   /** 渲染一级里程碑的数据
    * @param {{data: {}, index: number}} props React组件的props
    */
   ParentMilestonRender = props => {
+    const { workbenchBoxContent_height } = this.props
     /** 当前渲染的数据
      * @param {{name: string, id: string}} data 数据
      * @param {number} index 当前序号
      */
     const { data, index } = props
+    /** 线条高度 */
+    const height = document.body.clientHeight - workbenchBoxContent_height + 80
     return (
-      <div className={styles.parent_milestone}>
+      <div
+        className={styles.parent_milestone}
+        style={{ height: `calc(100vh - ${height}px)` }}
+      >
         <span className={styles.milestone_name}>{data.name}</span>
         <span className={styles.milestone_index}>
           <b>{index}</b>
@@ -89,7 +148,7 @@ export default class MilestoneTimeLine extends React.Component {
         <div className={styles.overview_content}>
           <div
             className={styles.milestone_total}
-            style={{ marginBottom: MilestoneTotalHeight }}
+            style={{ marginTop: MilestoneTotalHeight }}
           >
             {/* 如果有比第一个更前的时间 */}
             <div

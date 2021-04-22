@@ -1,7 +1,25 @@
 /** 固定里程碑之间一天的长度
- * @default number 2 // 2个像素
+ * @default number 6 // 6个像素
  */
 export const DaysWidth = 6
+/** 一条列表的高度 */
+export const OverallRowHeight = 68
+/** 单个控制点的边距样式 */
+export const OverallItem = {
+  /** 右侧内边距的距离 */
+  paddingRight: 45,
+  /** 左侧内边距 */
+  paddingLeft: 6,
+  /** 最小高度 */
+  minHeight: 46
+}
+/** 图标宽度 */
+export const IconWidth = 32
+/** 图标的外边距 */
+export const IconMarginRight = 8
+
+/** 默认的最小时间，里程碑不允许小与这个时间 */
+export const beforeStartMilestoneDays = 10
 
 /** 里程碑宽度常量
  * @default number 260
@@ -20,7 +38,7 @@ export const ParentSubMilestoneHeight = 42
 
 /** 里程碑状态和颜色 */
 export const MilestoneTypes = {
-  /** 正常未完成状态 */
+  /** 正常未完成状态(未开始) */
   NormalIncomplete: {
     /** 正常未完成状态字段
      * @default string '0'
