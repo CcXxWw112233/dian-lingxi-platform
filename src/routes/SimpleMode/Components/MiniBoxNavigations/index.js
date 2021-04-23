@@ -658,6 +658,7 @@ const MiniBoxNavigations = props => {
           <div
             style={{ color: '#fff' }}
             className={`${globalStyles.normal_icon_mouse_event}`}
+            id="choose_board"
           >
             <BoardDropdownSelect iconVisible={false} />
           </div>
