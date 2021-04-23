@@ -119,7 +119,7 @@ export default class MilestoneTimeLine extends React.Component {
     return (
       <div
         className={styles.parent_milestone}
-        style={{ height: workbenchBoxContent_height - 110 }}
+        style={{ height: workbenchBoxContent_height - 75 }}
       >
         <span className={styles.milestone_name}>{data.name}</span>
         <span className={styles.milestone_index}>

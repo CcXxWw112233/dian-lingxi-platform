@@ -12,7 +12,8 @@ import {
   IconMarginRight,
   IconWidth,
   OverallItem,
-  OverallRowHeight
+  OverallRowHeight,
+  OverallRowPaddingTB
 } from './constans'
 import { debounce } from '../../../../../utils/util'
 import { connect } from 'dva'
@@ -72,10 +73,9 @@ export default class OverallControl extends React.Component {
     }
     /** 防止文字重叠，多几个像素，避免重叠 */
     this.debounceTextWidth = 5
-    this.MouseLeave = debounce(this.MouseLeave, 50)
-    this.MouseEnter = debounce(this.MouseEnter, 50)
     this.updateRenderData = debounce(this.updateRenderData, 50)
     this.timer = null
+    this.mouseleaveTimer = null
   }
 
   componentDidMount() {
@@ -122,7 +122,7 @@ export default class OverallControl extends React.Component {
       const firstArr = []
       overall_data.forEach(item => {
         const first = getFirstItem(item.content || [], 'end_time')
-        firstArr.push(first)
+        if (first) firstArr.push(first)
       })
       /** 获取最小的时间 */
       const minTime = Math.min.apply(
@@ -156,7 +156,7 @@ export default class OverallControl extends React.Component {
       const endArr = []
       overall_data.forEach(item => {
         const first = getLastItem(item.content || [], 'end_time')
-        endArr.push(first)
+        if (first) endArr.push(first)
       })
       /** 获取最小的时间 */
       const maxTime = Math.max.apply(
@@ -219,7 +219,7 @@ export default class OverallControl extends React.Component {
     /** 转换的矩阵数据 */
     const matrixArr = TransformMatrixArray({
       /** 总时间天数，加上最后一个数据占用长度 */
-      span: timeSpan + Math.floor(lastWidth / DaysWidth),
+      span: timeSpan + Math.floor(lastWidth / DaysWidth) + 10,
       spanStep: DaysWidth,
       data: arr
     })
@@ -326,7 +326,7 @@ export default class OverallControl extends React.Component {
       treeItem.push({
         ...item,
         content: this.forMatMartixArray(data),
-        height: data.length * OverallRowHeight
+        height: data.length * OverallRowHeight + OverallRowPaddingTB * 2
       })
       /** 保存右侧的数据 */
       // arr.push(data)
@@ -358,6 +358,7 @@ export default class OverallControl extends React.Component {
    * @param {{list_id: string}} val 当前鼠标放上去的数据
    */
   MouseEnter = val => {
+    clearTimeout(this.mouseleaveTimer)
     this.setState({
       hoverActiveId: val.list_id
     })
@@ -365,9 +366,12 @@ export default class OverallControl extends React.Component {
 
   /** 鼠标移开 */
   MouseLeave = () => {
-    this.setState({
-      hoverActiveId: ''
-    })
+    clearTimeout(this.mouseleaveTimer)
+    this.mouseleaveTimer = setTimeout(() => {
+      this.setState({
+        hoverActiveId: ''
+      })
+    }, 200)
   }
 
   /**
