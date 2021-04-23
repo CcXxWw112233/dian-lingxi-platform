@@ -7,7 +7,7 @@
  */
 export const getFirstItem = (data, property_key = 'end_time') => {
   if (!data) return null
-  if (!data.length) return []
+  if (!data.length) return null
   const arr = data.sort(
     (a, b) => (a[property_key] || 0) - (b[property_key] || 0)
   )
@@ -23,7 +23,7 @@ export const getFirstItem = (data, property_key = 'end_time') => {
  */
 export const getLastItem = (data, property_key = 'end_time') => {
   if (!data) return null
-  if (!data.length) return []
+  if (!data.length) return null
   const arr = data.sort(
     (a, b) => (a[property_key] || 0) - (b[property_key] || 0)
   )

@@ -3,7 +3,9 @@
  */
 export const DaysWidth = 6
 /** 一条列表的高度 */
-export const OverallRowHeight = 68
+export const OverallRowHeight = 62
+/** 一条列表的上下间距 */
+export const OverallRowPaddingTB = 10
 /** 单个控制点的边距样式 */
 export const OverallItem = {
   /** 右侧内边距的距离 */
@@ -81,9 +83,9 @@ export const MilestoneTypes = {
      */
     status: '2',
     /** 正常完成颜色
-     * @default string '#52C41A'
+     * @default string '#024B00'
      */
-    color: '#52C41A',
+    color: '#024B00',
     /** 透明度 */
     opacity: 0.45
   },

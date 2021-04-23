@@ -13,7 +13,8 @@ import {
   MeetingType,
   MilestoneTypes,
   OverallItem,
-  OverallRowHeight
+  OverallRowHeight,
+  OverallRowPaddingTB
 } from '../../constans'
 import DescriptionRender from '../DescriptionRender'
 
@@ -92,7 +93,7 @@ export default class MilestoneCardContainer extends React.Component {
    * @param {{id: string}} val 点击的内容
    */
   handleOverallControllItem = val => {
-    console.log(val)
+    // console.log(val)
   }
 
   render() {
@@ -114,13 +115,19 @@ export default class MilestoneCardContainer extends React.Component {
         onMouseEnter={() => onMouseEnter && onMouseEnter()}
         onMouseLeave={() => onMouseLeave && onMouseLeave()}
         onMouseOut={() => onMouseOut && onMouseOut()}
+        style={{
+          paddingTop: OverallRowPaddingTB,
+          paddingBottom: OverallRowPaddingTB
+        }}
       >
         {dataForRender.map((array, index) => {
           return (
             <div
               className={styles.overall_row}
               key={`overall_row_${index + 1}`}
-              style={{ height: OverallRowHeight }}
+              style={{
+                height: OverallRowHeight
+              }}
             >
               {array.map((item, i) => {
                 /** 左边距 */

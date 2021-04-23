@@ -207,14 +207,14 @@ export default class CalendarTempTree extends React.Component {
       })()
 
       /** 是里程碑和子里程碑就显示 */
-      if (isMilestoneType || isSubMilestoneType)
-        arr.push({
-          ...obj,
-          children: obj.child_content,
-          title: this.treeTitle(obj.name, { ...obj, type }),
-          key: obj.id,
-          type: type
-        })
+      // if (isMilestoneType || isSubMilestoneType)
+      arr.push({
+        ...obj,
+        children: obj.child_content,
+        title: this.treeTitle(obj.name, { ...obj, type }),
+        key: obj.id,
+        type: type
+      })
     })
     return arr
   }
