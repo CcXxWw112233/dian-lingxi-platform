@@ -40,7 +40,7 @@ import {
   getCustomFieldList
 } from '../../../../../../services/organization'
 import { SourceType } from './constans'
-
+import CompleteCheckStatus from 'src/components/CompleteCheckStatus'
 const getEffectOrReducerByName = name => `milestoneDetail/${name}`
 @connect(mapStateToProps)
 export default class MainContent extends React.Component {
@@ -674,7 +674,17 @@ export default class MainContent extends React.Component {
       }
     })
   }
-
+  setCompleted = () => {
+    const {
+      milestone_detail: { is_finished }
+    } = this.props
+    const _is_finished = is_finished == '1' ? '0' : '1'
+    this.updateMilestone({
+      is_finished: _is_finished
+    }).then(res => {
+      this.handleMiletonesChange({ is_realize: _is_finished })
+    })
+  }
   render() {
     const {
       titleIsEdit,
@@ -701,7 +711,8 @@ export default class MainContent extends React.Component {
       fields = [],
       org_id,
       chird_list = [],
-      progress_percent = '0'
+      progress_percent = '0',
+      is_finished
     } = milestone_detail
     const result_process = Math.round(progress_percent * 100) / 100
     const executors = principals.filter(item => item)
@@ -749,6 +760,10 @@ export default class MainContent extends React.Component {
       <div className={indexStyles.miletone_out}>
         {/*标题*/}
         <div className={indexStyles.contain1}>
+          <CompleteCheckStatus
+            is_realize={is_finished == '1'}
+            setStatus={this.setCompleted}
+          />
           {!titleIsEdit ? (
             <div
               className={`${indexStyles.contain1_title} ${indexStyles.pub_hover}`}
