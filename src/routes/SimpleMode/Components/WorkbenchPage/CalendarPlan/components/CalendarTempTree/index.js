@@ -8,7 +8,7 @@ import { Dropdown, Menu, message, Spin, Tree } from 'antd'
 import { calendarGetTemplateList } from '../../../../../../../services/organization'
 import PropTypes from 'prop-types'
 import Empty from '../../../../../../../components/Empty'
-import { NodeType, TotalBoardKey } from '../../constans'
+import { NodeType, TempType, TotalBoardKey } from '../../constans'
 /** 文件夹的图标 */
 const folderIcon = require('../../../../../../../assets/workbench/foldericon.png')
 
@@ -63,14 +63,7 @@ export default class CalendarTempTree extends React.Component {
     /** 请求数据返回的code正确码 */
     this.SuccessCode = '0'
     /** 模板类型 */
-    this.TempType = {
-      /** 里程碑类型 */
-      milestoneType: '1',
-      /** 任务类型 */
-      cardType: '2',
-      /** 流程类型 */
-      flowType: '3'
-    }
+    this.TempType = TempType
     /** 节点类型 */
     this.NodeType = NodeType
   }

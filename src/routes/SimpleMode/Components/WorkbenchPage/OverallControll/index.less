@@ -1,0 +1,33 @@
+.container{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  .container_header{
+    flex: none;
+    background-color: #fff;
+    padding: 8px 15px;
+    // border-bottom: 1px solid rgba(1, 3, 31, 0.15);
+    // margin-bottom: 12px;
+  }
+  .container_content{
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+  }
+  .content_board_group{
+    flex: none;
+    width: 10vw;
+    border-right: 1px solid rgba(209, 213, 228, 1);
+    position: sticky;
+    left: 0;
+    background: #fff;
+    z-index: 10;
+  }
+  .content_overview{
+    flex: 1;
+    // overflow-x: auto;
+    display: flex;
+    flex-direction: column;
+    // overflow-x: auto;
+  }
+}

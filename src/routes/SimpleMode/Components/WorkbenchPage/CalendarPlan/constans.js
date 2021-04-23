@@ -3,6 +3,15 @@
  */
 export const TotalBoardKey = '0'
 
+/** 模板节点类型 */
+export const TempType = {
+  /** 里程碑类型 */
+  milestoneType: '1',
+  /** 任务类型 */
+  cardType: '2',
+  /** 流程类型 */
+  flowType: '3'
+}
 /** 节点类型 */
 export const NodeType = {
   /** 里程碑类型
@@ -78,7 +87,7 @@ export const legendList = {
     /** 是否显示 */
     visible: true,
     /** 标题 */
-    title: '已完成的任务',
+    title: '未完成的任务',
     /** 图标 */
     icon: '&#xe861;',
     /** 颜色 */
@@ -89,7 +98,7 @@ export const legendList = {
     /** 是否显示 */
     visible: true,
     /** 标题 */
-    title: '已完成的任务',
+    title: '逾期的任务',
     /** 图标 */
     icon: '&#xe861;',
     /** 颜色 */
@@ -100,7 +109,7 @@ export const legendList = {
     /** 是否显示 */
     visible: true,
     /** 标题 */
-    title: '已完成的任务',
+    title: '预警的任务',
     /** 图标 */
     icon: '&#xe861;',
     /** 颜色 */

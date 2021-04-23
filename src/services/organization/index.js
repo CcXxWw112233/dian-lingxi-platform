@@ -449,7 +449,10 @@ export async function getCustomFieldQuoteList(params) {
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}/board/field/quote/list`,
     method: 'get',
-    params
+    params: {
+      ...params,
+      _organization_id: localStorage.getItem('OrganizationId')
+    }
   })
 }
 

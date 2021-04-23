@@ -5,6 +5,7 @@ import { isPaymentOrgUser } from '@/utils/businessFunction'
 import { Spin } from 'antd'
 import { platformNouns } from '../../../../globalset/clientCustorm'
 import { WorkbenchPages } from './constans'
+import OverallControl from './OverallControll'
 // import MiniBoxNavigations from '../MiniBoxNavigations/index'
 // import BoardCommunication from './BoardCommunication/index'
 // import BoardArchives from './BoardArchives/index'
@@ -28,6 +29,8 @@ const MeetingManage = lazy(() => import('./MeetingManage'))
 const ChartForStatistics = lazy(() => import('./ChartForStatistics'))
 /** 日历安排的组件 */
 const CalendarPlan = lazy(() => import('./CalendarPlan'))
+/** 运营总图组件 */
+const GeneralOperationPlan = lazy(() => import('./GeneralOperationPlan'))
 
 class WorkbenchPage extends Component {
   constructor(props) {
@@ -123,6 +126,9 @@ class WorkbenchPage extends Component {
         break
       case WorkbenchPages.CalendarPlan.key:
         document.title = platformNouns + '-' + WorkbenchPages.CalendarPlan.name
+        break
+      case WorkbenchPages.OverallControl.key:
+        document.title = platformNouns + '-' + WorkbenchPages.OverallControl.name
         break
       default:
         break
@@ -287,6 +293,14 @@ class WorkbenchPage extends Component {
               {isPaymentOrgUser &&
                 WorkbenchPages.CalendarPlan.key === select_box_code && (
                   <CalendarPlan
+                    org_id={this.props.OrganizationId}
+                    currentSelectOrganize={this.props.currentSelectOrganize}
+                    workbenchBoxContent_height={workbenchBoxContent_height}
+                  />
+                )}
+              {isPaymentOrgUser &&
+                WorkbenchPages.OverallControl.key === select_box_code && (
+                  <OverallControl
                     org_id={this.props.OrganizationId}
                     currentSelectOrganize={this.props.currentSelectOrganize}
                     workbenchBoxContent_height={workbenchBoxContent_height}

@@ -1,0 +1,96 @@
+.overview_container{
+  // width: 100%;
+  display: flex;
+  flex: none;
+  position: relative;
+  z-index: 0;
+  flex-direction: column;
+  padding-top: 12px;
+  background-color: rgba(148, 148, 148, 0.06);
+  border-bottom: 2px solid #C6CACF;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  .header_top{
+    height: 36px;
+    flex: none;
+  }
+  .overview_content{
+    // background-color: rgba(1, 3, 31, 0.02);
+  }
+  .milestone_total{
+    display: flex;
+    & > div.milestone_steps{
+      height: 0px;
+      position: relative;
+      display: flex;
+      flex: none;
+    }
+    .milestone_step_item{
+      height: 100%;
+      flex: 1;
+      // margin-right: 1px;
+      border-radius: 2px;
+    }
+    .parent_milestone{
+      position: absolute;
+      left: 0px;
+      top: -60px;
+      width: 1px;
+      height: 100vh;
+      background-color: rgba(151, 151, 151, 0.1);
+      border-radius: 50px;
+      cursor: default;
+      &:hover{
+        z-index: 10;
+        font-weight: bold;
+        .milestone_time{
+          border-radius: 2px;
+          background-color: rgba(230, 232, 241, 1);
+          padding: 2px;
+          border: 2px solid white;
+        }
+      }
+      .milestone_name{
+        position: absolute;
+        top: -25px;
+        z-index: 2;
+        white-space: nowrap;
+        padding: 6px 15px;
+        left: 50%;
+        border-radius: 3px;
+        color: rgba(1, 3, 31, 0.85);
+        transform: translateX(-50%);
+        background-color: rgba(219, 223, 241, 1);
+      }
+      .milestone_index{
+        position: absolute;
+        top: 25px;
+        left: -11px;
+        white-space: nowrap;
+        b{
+          background-color: rgba(230, 232, 241, 1);
+          display: inline-block;
+          width: 24px;
+          height: 24px;
+          border-radius: 99px;
+          // border: 2px solid rgba(151, 151, 151, 1);
+          text-align: center;
+          font-weight: normal;
+          line-height: 24px;
+          color: rgba(87, 92, 117, 1);
+        }
+      }
+      .milestone_time{
+        transition: all 0.1s linear;
+        margin-left: 5px;
+        font-size: 12px;
+        color: rgba(0,0,0,0.4);
+        // position: absolute;
+        // bottom: -25px;
+        // left: -30px;
+        // white-space: nowrap;
+      }
+    }
+  }
+}

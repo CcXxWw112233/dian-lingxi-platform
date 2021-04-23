@@ -548,6 +548,62 @@ const MiniBoxNavigations = props => {
           </svg>
         )
         break
+      case WorkbenchPages.OverallControl.key:
+        contain = (
+          <svg
+            t="1618905174345"
+            class="icon"
+            viewBox="0 0 1024 1024"
+            version="1.1"
+            xmlns="http://www.w3.org/2000/svg"
+            p-id="25153"
+            width="24"
+            height="32"
+          >
+            <path
+              d="M864 896H160a64 64 0 0 1-64-64V288h832v544a64 64 0 0 1-64 64z"
+              fill="#FFFFFF"
+              p-id="25154"
+            ></path>
+            <path
+              d="M928 288H96v-96a64 64 0 0 1 64-64h704a64 64 0 0 1 64 64v96z"
+              fill="#D8D8D8"
+              opacity=".65"
+              p-id="25155"
+            ></path>
+            <path
+              d="M192 176a32 32 0 1 1 0 64 32 32 0 0 1 0-64z"
+              fill="#D8D8D8"
+              p-id="25156"
+            ></path>
+            <path
+              d="M352 400m16 0l48 0q16 0 16 16l0 32q0 16-16 16l-48 0q-16 0-16-16l0-32q0-16 16-16Z"
+              fill="#D8D8D8"
+              p-id="25157"
+            ></path>
+            <path
+              d="M768 400m16 0l48 0q16 0 16 16l0 32q0 16-16 16l-48 0q-16 0-16-16l0-32q0-16 16-16Z"
+              fill="#D8D8D8"
+              p-id="25158"
+            ></path>
+            <path
+              d="M368 560h272a16 16 0 0 1 16 16v32a16 16 0 0 1-16 16H368a16 16 0 0 1-16-16v-32a16 16 0 0 1 16-16z"
+              fill="#D8D8D8"
+              p-id="25159"
+            ></path>
+            <path
+              d="M480 400m16 0l208 0q16 0 16 16l0 32q0 16-16 16l-208 0q-16 0-16-16l0-32q0-16 16-16Z"
+              fill="#D8D8D8"
+              p-id="25160"
+            ></path>
+            <path
+              d="M720 560h112a16 16 0 0 1 16 16v32a16 16 0 0 1-16 16h-112a16 16 0 0 1-16-16v-32a16 16 0 0 1 16-16zM512 720h320a16 16 0 0 1 16 16v32a16 16 0 0 1-16 16H512a16 16 0 0 1-16-16v-32a16 16 0 0 1 16-16zM96 288h176v608h-112a64 64 0 0 1-64-64V288z"
+              fill="#D8D8D8"
+              p-id="25161"
+            ></path>
+          </svg>
+        )
+        break
       default:
         break
     }
