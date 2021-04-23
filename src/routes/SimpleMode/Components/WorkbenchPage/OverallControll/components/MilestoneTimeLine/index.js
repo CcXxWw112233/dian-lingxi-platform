@@ -9,6 +9,7 @@ import {
 import styles from './index.less'
 import moment from 'moment'
 import PropTypes from 'prop-types'
+import { debounce } from '../../../../../../../utils/util'
 
 /** 关键控制点的一级里程碑列表 */
 export default class MilestoneTimeLine extends React.Component {
@@ -31,6 +32,8 @@ export default class MilestoneTimeLine extends React.Component {
        */
       beforeStartMilestoneDays: 10
     }
+    this.getMinTimeWidth = debounce(this.getMinTimeWidth, 50)
+    this.getMaxTimeWidth = debounce(this.getMaxTimeWidth, 50)
   }
 
   /** 计算两个里程碑之间的长度距离
@@ -101,20 +104,27 @@ export default class MilestoneTimeLine extends React.Component {
      * @param {{name: string, id: string}} data 数据
      * @param {number} index 当前序号
      */
-    const { data, index } = props
-    /** 线条高度 */
-    const height = document.body.clientHeight - workbenchBoxContent_height + 80
+    const { data, index, prevData } = props
+    /** 渲染的时间 */
+    let milestone_time = ''
+    if (prevData) {
+      if (moment(prevData.deadline).isSame(data.deadline, 'year')) {
+        milestone_time = moment(data.deadline).format('M/D')
+      } else {
+        milestone_time = moment(data.deadline).format('YYYY/M/D')
+      }
+    } else {
+      milestone_time = moment(data.deadline).format('YYYY/M/D')
+    }
     return (
       <div
         className={styles.parent_milestone}
-        style={{ height: `calc(100vh - ${height}px)` }}
+        style={{ height: workbenchBoxContent_height - 110 }}
       >
         <span className={styles.milestone_name}>{data.name}</span>
         <span className={styles.milestone_index}>
           <b>{index}</b>
-          <span className={styles.milestone_time}>
-            {moment(data.deadline).format('DD/MM/YYYY')}
-          </span>
+          <span className={styles.milestone_time}>{milestone_time}</span>
         </span>
       </div>
     )
@@ -148,7 +158,10 @@ export default class MilestoneTimeLine extends React.Component {
         <div className={styles.overview_content}>
           <div
             className={styles.milestone_total}
-            style={{ marginTop: MilestoneTotalHeight }}
+            style={{
+              marginTop: MilestoneTotalHeight
+              // width: currentDom.currentWidth
+            }}
           >
             {/* 如果有比第一个更前的时间 */}
             <div
@@ -183,6 +196,7 @@ export default class MilestoneTimeLine extends React.Component {
                     data={item}
                     nextData={data[index + 1] || null}
                     index={index + 1}
+                    prevData={data[index - 1]}
                   />
                 </div>
               )

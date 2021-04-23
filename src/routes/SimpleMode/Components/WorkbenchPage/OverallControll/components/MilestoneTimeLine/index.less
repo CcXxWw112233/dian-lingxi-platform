@@ -1,5 +1,5 @@
 .overview_container{
-  width: 100%;
+  // width: 100%;
   display: flex;
   flex: none;
   position: relative;
@@ -7,6 +7,10 @@
   flex-direction: column;
   padding-top: 12px;
   background-color: rgba(148, 148, 148, 0.06);
+  border-bottom: 2px solid #C6CACF;
+  position: sticky;
+  top: 0;
+  z-index: 5;
   .header_top{
     height: 36px;
     flex: none;
@@ -17,9 +21,10 @@
   .milestone_total{
     display: flex;
     & > div.milestone_steps{
-      height: 2px;
+      height: 0px;
       position: relative;
       display: flex;
+      flex: none;
     }
     .milestone_step_item{
       height: 100%;
@@ -35,6 +40,17 @@
       height: 100vh;
       background-color: rgba(151, 151, 151, 0.1);
       border-radius: 50px;
+      cursor: default;
+      &:hover{
+        z-index: 10;
+        font-weight: bold;
+        .milestone_time{
+          border-radius: 2px;
+          background-color: rgba(230, 232, 241, 1);
+          padding: 2px;
+          border: 2px solid white;
+        }
+      }
       .milestone_name{
         position: absolute;
         top: -25px;
@@ -66,6 +82,7 @@
         }
       }
       .milestone_time{
+        transition: all 0.1s linear;
         margin-left: 5px;
         font-size: 12px;
         color: rgba(0,0,0,0.4);

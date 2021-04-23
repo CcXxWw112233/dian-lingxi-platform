@@ -18,10 +18,11 @@ import { debounce } from '../../../../../utils/util'
 import { connect } from 'dva'
 import { ProjectDetailModel } from '../../../../../models/technological/projectDetail'
 import {
+  fetchSearchParams,
   milestoneList,
   overallControllData
 } from '../../../../../services/technological/overallControll'
-import { message } from 'antd'
+import { Button, Checkbox, Divider, message, Select } from 'antd'
 
 /** 关键控制点的组件 */
 @connect(
@@ -40,269 +41,137 @@ export default class OverallControl extends React.Component {
     super(props)
     /** 全选项目的id */
     this.TotalBoardValue = '0'
+    /** 总体的包裹元素 */
+    this.containerRef = React.createRef()
     this.state = {
+      /** 包裹元素的框高 */
+      containerDom: {
+        currentHeight: 0,
+        currentWidth: 0
+      },
       /** 当前鼠标放在哪个数据上面 */
       hoverActiveId: '',
       /** 默认的最小时间，不允许小与这个时间 */
-      beforeStartMilestoneDays: beforeStartMilestoneDays,
+      beforeStartMilestoneDays: 10,
       /** 左侧树类型的数据 */
       treeData: [],
       /** 用于显示控制点的data */
       overallRenderData: [],
       /** 关键控制点的模拟数据 */
-      overall_data: [
-        // {
-        //   list_id: '123',
-        //   list_name: '分组名称',
-        //   data: [
-        //     {
-        //       id: '1384780487343607808',
-        //       name: '任务1',
-        //       status: '0',
-        //       type: '2',
-        //       list_names: [],
-        //       end_time: moment()
-        //         .subtract(2, 'day')
-        //         .valueOf(),
-        //       is_parent: true,
-        //       fields: []
-        //     },
-        //     {
-        //       id: '1384780487343607809',
-        //       name: '任务2',
-        //       status: '0',
-        //       type: '2',
-        //       list_names: [],
-        //       end_time: moment()
-        //         .add(3, 'day')
-        //         .valueOf(),
-        //       is_parent: true,
-        //       fields: []
-        //     },
-        //     {
-        //       id: '1384780487343607810',
-        //       name: '任务3777878',
-        //       status: '0',
-        //       type: '2',
-        //       list_names: [],
-        //       end_time: moment()
-        //         .add(25, 'day')
-        //         .valueOf(),
-        //       is_parent: true,
-        //       fields: []
-        //     },
-        //     {
-        //       id: '1384780487343607811',
-        //       name: '任务4',
-        //       status: '0',
-        //       type: '2',
-        //       list_names: [],
-        //       end_time: moment()
-        //         .add(46, 'day')
-        //         .valueOf(),
-        //       is_parent: true,
-        //       fields: []
-        //     },
-        //     {
-        //       id: '1384780487343607812',
-        //       name: '任务5',
-        //       status: '0',
-        //       type: '2',
-        //       list_names: [],
-        //       end_time: moment()
-        //         .add(50, 'day')
-        //         .valueOf(),
-        //       is_parent: true,
-        //       fields: []
-        //     },
-        //     {
-        //       id: '1384780487343607813',
-        //       name: '任务6',
-        //       status: '0',
-        //       type: '2',
-        //       list_names: [],
-        //       end_time: moment()
-        //         .add(10, 'day')
-        //         .valueOf(),
-        //       is_parent: true,
-        //       fields: []
-        //     }
-        //   ]
-        // },
-        // {
-        //   list_id: '1234',
-        //   list_name: '分组名称2',
-        //   data: [
-        //     {
-        //       id: '2384780487343607808',
-        //       name: '任务1',
-        //       status: '0',
-        //       type: '2',
-        //       list_names: [],
-        //       end_time: moment()
-        //         .subtract(2, 'day')
-        //         .valueOf(),
-        //       is_parent: true,
-        //       fields: []
-        //     },
-        //     {
-        //       id: '2384780487343607809',
-        //       name: '任务2',
-        //       status: '0',
-        //       type: '2',
-        //       list_names: [],
-        //       end_time: moment()
-        //         .add(3, 'day')
-        //         .valueOf(),
-        //       is_parent: true,
-        //       fields: []
-        //     },
-        //     {
-        //       id: '2384780487343607810',
-        //       name: '任务3777878',
-        //       status: '0',
-        //       type: '2',
-        //       list_names: [],
-        //       end_time: moment()
-        //         .add(25, 'day')
-        //         .valueOf(),
-        //       is_parent: true,
-        //       fields: []
-        //     },
-        //     {
-        //       id: '2384780487343607811',
-        //       name: '任务4',
-        //       status: '0',
-        //       type: '2',
-        //       list_names: [],
-        //       end_time: moment()
-        //         .add(46, 'day')
-        //         .valueOf(),
-        //       is_parent: true,
-        //       fields: []
-        //     },
-        //     {
-        //       id: '2384780487343607812',
-        //       name: '任务5',
-        //       status: '0',
-        //       type: '2',
-        //       list_names: [],
-        //       end_time: moment()
-        //         .add(50, 'day')
-        //         .valueOf(),
-        //       is_parent: true,
-        //       fields: []
-        //     },
-        //     {
-        //       id: '2384780487343607813',
-        //       name: '任务6',
-        //       status: '0',
-        //       type: '2',
-        //       list_names: [],
-        //       end_time: moment()
-        //         .add(10, 'day')
-        //         .valueOf(),
-        //       is_parent: true,
-        //       fields: []
-        //     }
-        //   ]
-        // }
-      ],
+      overall_data: [],
       /** 一级里程碑的数据 */
-      firstMilestoneData: [
-        // {
-        //   name: '土地公告0',
-        //   deadline: moment()
-        //     .subtract(20, 'day')
-        //     .valueOf(),
-        //   id: '0'
-        // },
-        // {
-        //   name: '土地公告',
-        //   deadline: moment().valueOf(),
-        //   id: '1'
-        // },
-        // {
-        //   name: '土地公告2',
-        //   id: '7',
-        //   deadline: moment()
-        //     .add(1, 'month')
-        //     .valueOf()
-        // },
-        // {
-        //   name: '土地公告3',
-        //   id: '11',
-        //   deadline: moment()
-        //     .add(3, 'month')
-        //     .valueOf()
-        // }
-      ],
+      firstMilestoneData: [],
       /** 最小的时间 */
       minTime: 0,
       /** 最大的时间 */
-      maxTime: 0
+      maxTime: 0,
+      /** 搜索列表 */
+      searchList: [],
+      /** 选择的搜索条件 */
+      queryParams: {}
     }
     /** 防止文字重叠，多几个像素，避免重叠 */
     this.debounceTextWidth = 5
     this.MouseLeave = debounce(this.MouseLeave, 50)
     this.MouseEnter = debounce(this.MouseEnter, 50)
+    this.updateRenderData = debounce(this.updateRenderData, 50)
+    this.timer = null
   }
 
   componentDidMount() {
+    this.updateSearch()
+    this.fetchSearchItems()
+  }
+
+  /** 更新搜索条件 */
+  updateSearch = () => {
+    clearTimeout(this.timer)
     Promise.all([this.fetchMilestoneData(), this.fetchControllData()]).then(
       () => {
-        setTimeout(() => {
-          this.getFirstTime()
-          this.getEndTime()
+        this.timer = setTimeout(() => {
+          this.fetchTimes()
         }, 10)
       }
     )
   }
 
+  /** 获取dom的数据(暂时废弃) */
+  getCurrentDom = () => {
+    const { current } = this.containerRef
+    if (current) {
+      this.setState({
+        containerDom: {
+          currentWidth: current.clientWidth + current.scrollWidth,
+          currentHeight: current.clientHeight + current.scrollHeight
+        }
+      })
+    }
+  }
+
+  /** 更新时间 */
+  fetchTimes = () => {
+    Promise.all([this.getFirstTime(), this.getEndTime()]).then(() => {
+      this.updateRenderData()
+    })
+  }
   /** 获取控制点的数据最早的时间 */
   getFirstTime = () => {
-    const { overall_data = [] } = this.state
-    /** 所有列表中的最早时间合集 */
-    const firstArr = []
-    overall_data.forEach(item => {
-      const first = getFirstItem(item.content || [], 'end_time')
-      firstArr.push(first)
-    })
-    /** 获取最小的时间 */
-    const minTime = Math.min.apply(
-      this,
-      firstArr.map(item => item.end_time)
-    )
-    /** 里程碑最小的时间 */
-    const milestoneMinItem = this.state.firstMilestoneData[0]
-    /** 保存最小的时间 */
-    this.setState({
-      minTime: Math.min.apply(this, [
-        moment(minTime).valueOf(),
-        moment(milestoneMinItem?.deadline || minTime)
-          .subtract(this.state.beforeStartMilestoneDays, 'day')
-          .valueOf()
-      ])
+    return new Promise(resolve => {
+      const { overall_data = [] } = this.state
+      /** 所有列表中的最早时间合集 */
+      const firstArr = []
+      overall_data.forEach(item => {
+        const first = getFirstItem(item.content || [], 'end_time')
+        firstArr.push(first)
+      })
+      /** 获取最小的时间 */
+      const minTime = Math.min.apply(
+        this,
+        firstArr.map(item => item.end_time)
+      )
+      /** 里程碑最小的时间 */
+      const milestoneMinItem = this.state.firstMilestoneData[0]
+      /** 保存最小的时间 */
+      this.setState(
+        {
+          minTime: Math.min.apply(this, [
+            moment(minTime).valueOf(),
+            moment(milestoneMinItem?.deadline || minTime)
+              .subtract(this.state.beforeStartMilestoneDays, 'day')
+              .valueOf()
+          ])
+        },
+        () => {
+          resolve(this.state.minTime)
+        }
+      )
     })
   }
 
   /** 获取时间跨度最小的时间 */
   getEndTime = () => {
-    const { overall_data = [] } = this.state
-    /** 所有列表中的最早时间合集 */
-    const endArr = []
-    overall_data.forEach(item => {
-      const first = getLastItem(item.content || [], 'end_time')
-      endArr.push(first)
-    })
-    /** 获取最小的时间 */
-    const maxTime = Math.max.apply(
-      this,
-      endArr.map(item => item.end_time)
-    )
-    /** 保存最小的时间 */
-    this.setState({
-      maxTime
+    return new Promise(resolve => {
+      const { overall_data = [] } = this.state
+      /** 所有列表中的最早时间合集 */
+      const endArr = []
+      overall_data.forEach(item => {
+        const first = getLastItem(item.content || [], 'end_time')
+        endArr.push(first)
+      })
+      /** 获取最小的时间 */
+      const maxTime = Math.max.apply(
+        this,
+        endArr.map(item => item.end_time)
+      )
+      /** 保存最小的时间 */
+      this.setState(
+        {
+          maxTime
+        },
+        () => {
+          resolve(this.state.maxTime)
+        }
+      )
     })
   }
 
@@ -325,6 +194,7 @@ export default class OverallControl extends React.Component {
     let timeSpan = Math.abs(
       moment(this.state.minTime).diff(moment(this.state.maxTime), 'days')
     )
+    if (!timeSpan) return []
     /** 最后一个数据的dom长度 */
     let lastWidth = 0
     /** 重组后的数据 */
@@ -357,15 +227,6 @@ export default class OverallControl extends React.Component {
     return matrixArr
   }
 
-  componentDidUpdate(prevP, prevS) {
-    if (
-      prevS.minTime !== this.state.minTime ||
-      prevS.maxTime !== this.state.maxTime
-    ) {
-      this.updateRenderData()
-    }
-  }
-
   /** 获取一级里程碑列表 */
   fetchMilestoneData = async () => {
     const { simplemodeCurrentProject } = this.props
@@ -390,15 +251,49 @@ export default class OverallControl extends React.Component {
       .catch(err => message.warn(err))
   }
 
+  /** 获取搜索的条件列表 */
+  fetchSearchItems = () => {
+    const { simplemodeCurrentProject } = this.props
+    /** 当前选择的项目id */
+    const currentBoardId = simplemodeCurrentProject
+      ? simplemodeCurrentProject.board_id
+      : this.TotalBoardValue
+    if (currentBoardId === this.TotalBoardValue) return
+
+    fetchSearchParams({ board_id: currentBoardId }).then(res => {
+      // console.log(res)
+      this.setState({
+        searchList: res.data
+      })
+    })
+  }
+
   /** 获取关键控制点的数据 */
   fetchControllData = async () => {
+    /** 过滤搜索条件没有数据的key
+     * @returns {?{[x: string]: any} | null}
+     */
+    const filterParamsNull = () => {
+      const obj = {}
+      Object.keys(this.state.queryParams).forEach(item => {
+        if (this.state.queryParams[item]) {
+          obj[item] = this.state.queryParams[item]
+        }
+      })
+      return Object.keys(obj).length ? obj : null
+    }
+
     const { simplemodeCurrentProject } = this.props
     const currentBoardId = simplemodeCurrentProject
       ? simplemodeCurrentProject.board_id
       : this.TotalBoardValue
     if (currentBoardId === this.TotalBoardValue)
       return message.warn('请选择单个项目进行查看')
-    return overallControllData({ board_id: currentBoardId, items: null })
+
+    return overallControllData({
+      board_id: currentBoardId,
+      items: filterParamsNull()
+    })
       .then(res => {
         this.setState({
           overall_data: (res.data || [])
@@ -475,6 +370,63 @@ export default class OverallControl extends React.Component {
     })
   }
 
+  /**
+   * 搜索条件更新
+   * @param {string} query_key 搜索的key，select的id
+   * @param {string} val 所选的值 select.option.value
+   */
+  handleChangeQueryParam = (query_key, val) => {
+    // return
+    this.setState(
+      {
+        queryParams: {
+          ...this.state.queryParams,
+          [query_key]: (val || []).length ? val : null
+        }
+      },
+      () => {
+        this.updateSearch()
+      }
+    )
+  }
+
+  /** 全选查询条件的方法
+   * @param {Event} e 事件
+   * @param {{id: string, name: string, items: object[]}} option 选中的整个查询对象
+   */
+  setAllCheck = (e, option) => {
+    /** 是否全选 */
+    const chekced = e.target.checked
+    /** 将子集全部选中 */
+    const selectedIds = (option.items || []).map(item => item.id)
+    this.setState(
+      {
+        queryParams: {
+          ...this.state.queryParams,
+          [option.id]: chekced ? selectedIds : null
+        }
+      },
+      () => {
+        this.updateSearch()
+      }
+    )
+  }
+
+  /**
+   * 重置搜索条件
+   */
+  handleResetQueryParams = () => {
+    this.setState(
+      {
+        queryParams: {}
+      },
+      () => {
+        /** 重新走一遍查询 */
+        this.updateSearch()
+      }
+    )
+  }
+
   render() {
     const { workbenchBoxContent_height } = this.props
     return (
@@ -483,10 +435,78 @@ export default class OverallControl extends React.Component {
         style={{ height: workbenchBoxContent_height }}
       >
         <div className={styles.container_header}>
-          运营总览
-          {/* 预留过滤选项列表 */}
+          {(this.state.searchList || []).map(item => {
+            return (
+              <Select
+                mode="multiple"
+                maxTagCount={2}
+                key={item.id}
+                placeholder={item.name}
+                style={{ width: 230, marginLeft: 10 }}
+                onChange={val => this.handleChangeQueryParam(item.id, val)}
+                value={this.state.queryParams[item.id] || []}
+                optionLabelProp="title"
+                dropdownRender={menu => (
+                  <div>
+                    {menu}
+                    <Divider style={{ margin: '2px 0' }} />
+                    <div
+                      style={{
+                        padding: '4px 8px 8px 8px',
+                        cursor: 'pointer'
+                      }}
+                      onMouseDown={e => e.preventDefault()}
+                    >
+                      <Checkbox
+                        checked={
+                          (this.state.queryParams[item.id] || []).length ===
+                            (item.items || []).length &&
+                          (item.items || []).length > 0
+                        }
+                        onChange={e => this.setAllCheck(e, item)}
+                        indeterminate={
+                          !!(this.state.queryParams[item.id] || []).length &&
+                          (this.state.queryParams[item.id] || []).length <
+                            (item.items || []).length
+                        }
+                      >
+                        全选
+                      </Checkbox>
+                    </div>
+                  </div>
+                )}
+              >
+                {(options =>
+                  options.map(option => {
+                    return (
+                      <Select.Option
+                        value={option.id}
+                        key={option.id}
+                        title={option.value}
+                      >
+                        <div>
+                          {option.value}
+                          {option.board_name && (
+                            <div className={styles.selection_subtitle}>
+                              #{option.board_name}
+                            </div>
+                          )}
+                        </div>
+                      </Select.Option>
+                    )
+                  }))(item.items || [])}
+              </Select>
+            )
+          })}
+          <Button
+            type="default"
+            style={{ marginLeft: 10, flex: 'none' }}
+            onClick={this.handleResetQueryParams}
+          >
+            重置
+          </Button>
         </div>
-        <div className={styles.container_content}>
+        <div className={styles.container_content} ref={this.containerRef}>
           <div className={styles.content_board_group}>
             {/* 左侧项目和分组列表 */}
             <BoardGroupTree
@@ -498,29 +518,32 @@ export default class OverallControl extends React.Component {
               activeId={this.state.hoverActiveId}
             />
           </div>
-          <div className={styles.content_overview}>
-            <MilestoneTimeLine
-              data={this.state.firstMilestoneData}
-              listData={this.state.overall_data}
-              minTime={this.state.minTime}
-              maxTime={this.state.maxTime}
-              workbenchBoxContent_height={workbenchBoxContent_height}
-            />
-            {this.state.treeData.map(item => {
-              return (
-                <MilestoneCardContainer
-                  onMouseOut={() => this.MouseLeave()}
-                  onMouseLeave={() => this.MouseLeave()}
-                  onMouseEnter={() => this.MouseEnter(item)}
-                  onMouseOver={() => this.MouseEnter(item)}
-                  key={item.list_id}
-                  active={this.state.hoverActiveId === item.list_id}
-                  datas={item.content}
-                  minTime={this.state.minTime}
-                  maxTime={this.state.maxTime}
-                />
-              )
-            })}
+          <div className={styles.content_overview} id="content_overview">
+            <div>
+              <MilestoneTimeLine
+                data={this.state.firstMilestoneData}
+                // currentDom={this.state.containerDom}
+                listData={this.state.overall_data}
+                minTime={this.state.minTime}
+                maxTime={this.state.maxTime}
+                workbenchBoxContent_height={workbenchBoxContent_height}
+              />
+              {this.state.treeData.map(item => {
+                return (
+                  <MilestoneCardContainer
+                    onMouseOut={() => this.MouseLeave()}
+                    onMouseLeave={() => this.MouseLeave()}
+                    onMouseEnter={() => this.MouseEnter(item)}
+                    onMouseOver={() => this.MouseEnter(item)}
+                    key={item.list_id}
+                    active={this.state.hoverActiveId === item.list_id}
+                    datas={item.content}
+                    minTime={this.state.minTime}
+                    maxTime={this.state.maxTime}
+                  />
+                )
+              })}
+            </div>
           </div>
         </div>
       </div>

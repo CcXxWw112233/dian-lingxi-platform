@@ -36,6 +36,16 @@ export const SubMilestoneMargin = 10
 /** 二级里程碑合集的外层高度 */
 export const ParentSubMilestoneHeight = 42
 
+/** 会议类型的固定id */
+export const MeetingId = '1384743449475026945'
+/** 动作类型的固定id */
+export const ActionId = '1384743449475026946'
+
+/** 会议类型 */
+export const MeetingType = '1'
+/** 动作类型 */
+export const ActionType = '2'
+
 /** 里程碑状态和颜色 */
 export const MilestoneTypes = {
   /** 正常未完成状态(未开始) */
@@ -45,9 +55,11 @@ export const MilestoneTypes = {
      */
     status: '0',
     /** 正常未完成颜色
-     * @default string '#C6CACF'
+     * @default string '#98A9B9'
      */
-    color: '#C6CACF'
+    color: '#98A9B9',
+    /** 透明度 */
+    opacity: 1
   },
   /** 逾期未完成状态 */
   IncompleteDone: {
@@ -56,9 +68,11 @@ export const MilestoneTypes = {
      */
     status: '1',
     /** 逾期未完成状态颜色
-     * @default string '#F5222D'
+     * @default string '#FD5C45'
      */
-    color: '#F5222D'
+    color: '#FD5C45',
+    /** 透明度 */
+    opacity: 1
   },
   /** 正常完成状态 */
   NormalDone: {
@@ -69,7 +83,9 @@ export const MilestoneTypes = {
     /** 正常完成颜色
      * @default string '#52C41A'
      */
-    color: '#52C41A'
+    color: '#52C41A',
+    /** 透明度 */
+    opacity: 0.45
   },
   /** 逾期完成的状态 */
   beOverdue: {
@@ -78,9 +94,24 @@ export const MilestoneTypes = {
      */
     status: '3',
     /** 逾期完成颜色
-     * @default string '#EFC471'
+     * @default string '#8D1700'
      */
-    color: '#EFC471'
+    color: '#8D1700',
+    /** 透明度 */
+    opacity: 0.45
+  },
+  /** 预警未完成状态 */
+  WarnWillIncomplete: {
+    /** 逾期完成状态字段
+     * @default string '4'
+     */
+    status: '4',
+    /** 逾期完成颜色
+     * @default string '#FEAE02'
+     */
+    color: '#FEAE02',
+    /** 透明度 */
+    opacity: 1
   }
 }
 
@@ -98,7 +129,33 @@ export const getStatus = type => {
       return MilestoneTypes.NormalIncomplete
     case MilestoneTypes.beOverdue.status:
       return MilestoneTypes.beOverdue
+    case MilestoneTypes.WarnWillIncomplete.status:
+      return MilestoneTypes.WarnWillIncomplete
     default:
       return {}
   }
+}
+
+/** 节点类型 */
+export const NodeType = {
+  /** 里程碑类型
+   * @default string '1'
+   */
+  milestonetype: '1',
+  /** 子里程碑类型
+   * @default string '2'
+   */
+  submilestonetype: '2',
+  /** 任务类型
+   * @default string '3'
+   */
+  cardtype: '3',
+  /** 子任务类型
+   * @default string '4'
+   */
+  subcardtype: '4',
+  /** 未知类型
+   * @default string '-1'
+   */
+  unknowType: '-1'
 }

@@ -45,6 +45,5 @@ String.prototype.pxWidth = function(font = 'normal 14px Robot') {
   font && (context.font = font)
   var metrics = context.measureText(this)
 
-  canvas = null
   return metrics.width
 }

@@ -4,10 +4,17 @@
   display: flex;
   flex-direction: column;
   .container_title_top{
-    height: 96px;
+    height: 98px;
+    border-bottom: 2px solid rgba(0,0,0,0.04);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    canvas {
+      background-color: #fff;
+    }
   }
   .container_content{
-    border-top: 2px solid rgba(0,0,0,0.04);
+    // border-top: 2px solid rgba(0,0,0,0.04);
     // background-color: rgba(1, 3, 31, 0.02);
     // min-height: 100px;
     // height: 100%;

@@ -34,3 +34,19 @@ export const overallControllData = async data => {
     return Promise.reject(res)
   })
 }
+
+/** 获取查询条件
+ * @param { {board_id: string} } params 查询条件 board_id项目id
+ */
+export const fetchSearchParams = async params => {
+  return await request({
+    url: `${REQUEST_DOMAIN_BOARD}/board/overall_control/query_condition`,
+    params,
+    method: 'GET'
+  }).then(res => {
+    if (isApiResponseOk(res)) {
+      return res
+    }
+    return Promise.reject(res)
+  })
+}
