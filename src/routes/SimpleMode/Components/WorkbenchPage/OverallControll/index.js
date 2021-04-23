@@ -24,6 +24,7 @@ import {
   overallControllData
 } from '../../../../../services/technological/overallControll'
 import { Button, Checkbox, Divider, message, Select } from 'antd'
+import MustBeChooseBoard from '../../../../../components/MustBeChooseBoard'
 
 /** 关键控制点的组件 */
 @connect(
@@ -45,6 +46,8 @@ export default class OverallControl extends React.Component {
     /** 总体的包裹元素 */
     this.containerRef = React.createRef()
     this.state = {
+      /** 是否显示指引 */
+      isShowGuide: false,
       /** 包裹元素的框高 */
       containerDom: {
         currentHeight: 0,
@@ -82,9 +85,40 @@ export default class OverallControl extends React.Component {
     this.updateSearch()
     this.fetchSearchItems()
   }
+  componentDidUpdate(prevProps) {
+    if (
+      prevProps.simplemodeCurrentProject.board_id !==
+      this.props.simplemodeCurrentProject.board_id
+    ) {
+      this.updateSearch()
+    }
+  }
 
   /** 更新搜索条件 */
   updateSearch = () => {
+    const { simplemodeCurrentProject } = this.props
+    const currentBoardId = simplemodeCurrentProject
+      ? simplemodeCurrentProject.board_id
+      : this.TotalBoardValue
+    if (currentBoardId === this.TotalBoardValue) {
+      setTimeout(() => {
+        this.setState(
+          {
+            isShowGuide: true,
+            overall_data: [],
+            firstMilestoneData: [],
+            searchList: []
+          },
+          () => {
+            this.updateRenderData()
+          }
+        )
+      }, 500)
+    } else {
+      this.setState({
+        isShowGuide: false
+      })
+    }
     clearTimeout(this.timer)
     Promise.all([this.fetchMilestoneData(), this.fetchControllData()]).then(
       () => {
@@ -550,6 +584,17 @@ export default class OverallControl extends React.Component {
             </div>
           </div>
         </div>
+        {this.state.isShowGuide && (
+          <MustBeChooseBoard
+            onClose={() =>
+              this.setState({
+                isShowGuide: false
+              })
+            }
+            element={'#choose_board'}
+            tips="请选择一个项目，查看相应的内容！"
+          />
+        )}
       </div>
     )
   }

@@ -28,6 +28,7 @@ import { Fragment } from 'react'
 import GanttDetail from '../../../../Technological/components/Gantt/components/milestoneDetail'
 import { projectDetailInfo } from '../../../../../services/technological/prjectDetail'
 import { debounce } from '../../../../../utils/util'
+import MustBeChooseBoard from '../../../../../components/MustBeChooseBoard'
 
 /** 日历计划功能组件 */
 @connect(
@@ -71,6 +72,8 @@ export default class CalendarPlan extends React.Component {
     this.maxYearNumber = 9
 
     this.state = {
+      /** 是否显示必须选择的提示 */
+      isShowGuide: false,
       /** 更多事项的弹窗 */
       moreDataVisible: false,
       /** 里程碑详情弹窗 */
@@ -143,6 +146,30 @@ export default class CalendarPlan extends React.Component {
   }
 
   componentDidMount() {
+    this.updateSearch()
+  }
+
+  /** 刷新操作 */
+  updateSearch = () => {
+    const { simplemodeCurrentProject } = this.props
+    /** 选中项目的id */
+    const currentProjectId = simplemodeCurrentProject
+      ? simplemodeCurrentProject.board_id || TotalBoardKey
+      : TotalBoardKey
+    if (currentProjectId === TotalBoardKey) {
+      setTimeout(() => {
+        this.setState({
+          isShowGuide: true,
+          queryParamsData: [],
+          calendar_data: []
+        })
+      }, 500)
+      return
+    } else {
+      this.setState({
+        isShowGuide: false
+      })
+    }
     this.fetchQueryParams()
     this.fetchQueryCalendarData()
   }
@@ -151,10 +178,11 @@ export default class CalendarPlan extends React.Component {
     if (
       prevProps.simplemodeCurrentProject !== this.props.simplemodeCurrentProject
     ) {
-      this.clearQueryParams()
-      this.fetchQueryParams()
-      if (!this.state.template_id) this.fetchQueryCalendarData()
-      else this.backList()
+      this.updateSearch()
+      if (this.props.simplemodeCurrentProject.board_id !== TotalBoardKey) {
+        if (!this.state.template_id) this.fetchQueryCalendarData()
+        else this.backList()
+      }
     }
   }
 
@@ -982,6 +1010,17 @@ export default class CalendarPlan extends React.Component {
             users={this.state.currentMilestone.user}
             handleMiletonesChange={this.handleMiletonesChange}
             deleteMiletone={this.deleteMiletone}
+          />
+        )}
+        {this.state.isShowGuide && (
+          <MustBeChooseBoard
+            onClose={() =>
+              this.setState({
+                isShowGuide: false
+              })
+            }
+            element={'#choose_board'}
+            tips="请选择一个项目，查看相应的内容！"
           />
         )}
       </div>

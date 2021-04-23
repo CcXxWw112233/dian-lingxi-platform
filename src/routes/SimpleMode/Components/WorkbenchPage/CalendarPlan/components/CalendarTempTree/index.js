@@ -127,8 +127,14 @@ export default class CalendarTempTree extends React.Component {
     this.setState({
       showInfoTree: false,
       currentData: {},
-      treeData: []
+      treeData: [],
+      tempList: []
     })
+    if (
+      this.props.simplemodeCurrentProject.board_id === TotalBoardKey ||
+      !this.props.simplemodeCurrentProject.board_id
+    )
+      return this.setLoading(false)
     if (templateIds) {
       /** 获取返回的组织列表类型 */
       const idsType = typeof templateIds
