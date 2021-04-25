@@ -915,7 +915,7 @@ export default class CalendarPlan extends React.Component {
                   queryName: val.target.value
                 })
               }
-              placeholder="搜索里程碑、子里程碑名称"
+              placeholder="搜索里程碑、子里程碑、任务名称"
               style={{ width: 300, marginLeft: 10, flex: 'none' }}
               enterButton={
                 <Button
