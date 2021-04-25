@@ -1,8 +1,8 @@
 import React from 'react'
 import {
   beforeStartMilestoneDays,
-  beforMinTime,
-  DaysWidth,
+  // beforMinTime,
+  // DaysWidth,
   getStatus,
   MilestoneTotalHeight,
   MilestoneTypes
@@ -25,7 +25,9 @@ export default class MilestoneTimeLine extends React.Component {
     /** 控制点数据中最大的时间 */
     maxTime: PropTypes.any,
     /** 最大时间偏移 */
-    maxConstans: PropTypes.number
+    maxConstans: PropTypes.number,
+    /** 一天时间的间隔像素 */
+    dayWidth: PropTypes.number
   }
 
   constructor(props) {
@@ -56,7 +58,7 @@ export default class MilestoneTimeLine extends React.Component {
         'days',
         true
       )
-      return Math.round(Math.abs(bettweenDays) * DaysWidth)
+      return Math.round(Math.abs(bettweenDays) * this.props.dayWidth)
     }
     return this.getMaxTimeWidth()
   }
@@ -80,7 +82,7 @@ export default class MilestoneTimeLine extends React.Component {
     const timeStep = Math.abs(
       moment(endData.deadline).diff(moment(maxTime), 'day')
     )
-    const span = Math.floor(timeStep * DaysWidth)
+    const span = Math.floor(timeStep * this.props.dayWidth)
     return span || 0
   }
 
@@ -179,7 +181,7 @@ export default class MilestoneTimeLine extends React.Component {
               className={styles.milestone_steps}
               style={{
                 width: Math.floor(
-                  this.state.beforeStartMilestoneDays * DaysWidth
+                  this.state.beforeStartMilestoneDays * this.props.dayWidth
                 )
               }}
             >
