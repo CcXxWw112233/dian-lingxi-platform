@@ -129,15 +129,15 @@ export default class MilestoneTimeLine extends React.Component {
         className={styles.parent_milestone}
         style={{ height: workbenchBoxContent_height - 100 }}
       >
-        <span
+        <div
           className={styles.milestone_name}
           style={{ bottom: 'calc(100vh - 195px)' }}
         >
-          {data.name}
-        </span>
+          <span>{data.name}</span>
+        </div>
         <span className={styles.milestone_index}>
           <b>{index}</b>
-          <span className={styles.milestone_time}>{milestone_time}</span>
+          <di className={styles.milestone_time}>{milestone_time}</di>
         </span>
       </div>
     )

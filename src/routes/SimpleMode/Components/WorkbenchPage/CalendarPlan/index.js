@@ -150,8 +150,8 @@ export default class CalendarPlan extends React.Component {
     this.updateSearch()
   }
 
-  /** 刷新操作 */
-  updateSearch = () => {
+  /** 搜索前的判断,判断可不可以搜索 */
+  beforeSearch = () => {
     const { simplemodeCurrentProject } = this.props
     /** 选中项目的id */
     const currentProjectId = simplemodeCurrentProject
@@ -163,6 +163,20 @@ export default class CalendarPlan extends React.Component {
     const { user_set = {} } = userInfo
 
     if (currentProjectId === TotalBoardKey && user_set.current_org === '0') {
+      return false
+    }
+    return true
+  }
+
+  /** 刷新操作 */
+  updateSearch = () => {
+    if (this.beforeSearch()) {
+      this.setState({
+        isShowGuide: false
+      })
+      this.fetchQueryParams()
+      this.fetchQueryCalendarData()
+    } else {
       setTimeout(() => {
         this.setState({
           isShowGuide: true,
@@ -170,14 +184,7 @@ export default class CalendarPlan extends React.Component {
           calendar_data: []
         })
       }, 500)
-      return
-    } else {
-      this.setState({
-        isShowGuide: false
-      })
     }
-    this.fetchQueryParams()
-    this.fetchQueryCalendarData()
   }
 
   componentDidUpdate(prevProps) {
@@ -248,7 +255,7 @@ export default class CalendarPlan extends React.Component {
         mode: value
       },
       () => {
-        this.fetchQueryCalendarData()
+        if (value !== this.modeMonth) this.fetchQueryCalendarData()
       }
     )
   }
@@ -378,6 +385,10 @@ export default class CalendarPlan extends React.Component {
 
   /** 获取日历的数据 */
   fetchQueryCalendarData = () => {
+    if (!this.beforeSearch()) {
+      this.updateSearch()
+      return
+    }
     this.setState({
       searchLoading: true
     })
