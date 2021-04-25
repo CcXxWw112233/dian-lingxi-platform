@@ -21,7 +21,7 @@ export default class DescriptionRender extends React.Component {
       loading: false
     }
     /** 没有数据时，显示的文本 */
-    this.notDataText = '暂无说明信息哦'
+    this.notDataText = '暂无说明信息'
   }
 
   /** 渲染头部样式 */
