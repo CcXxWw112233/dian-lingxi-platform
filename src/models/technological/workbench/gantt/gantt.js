@@ -495,9 +495,10 @@ export default {
       } = yield select(
         getModelSelectDatasState('projectDetail', 'projectDetailInfoData')
       )
-      const min_start_time = date_arr_one_level[0].timestamp //最早时间
+      if (!date_arr_one_level.length) return
+      const min_start_time = date_arr_one_level[0]?.timestamp //最早时间
       const max_due_time =
-        date_arr_one_level[date_arr_one_level.length - 1].timestampEnd
+        date_arr_one_level[date_arr_one_level.length - 1]?.timestampEnd
       let new_outline_tree = [...data]
       // const tree_arr_1 = data.filter(item => item.tree_type == '1')//.sort(jsonArrayCompareSort('due_time', transformTimestamp)) //里程碑截止时间由近及远
       // const tree_arr_2 = data.filter(item => item.tree_type != '1')//.sort(jsonArrayCompareSort('start_time', transformTimestamp))
@@ -852,9 +853,10 @@ export default {
         const show_group_flod = yield select(
           getModelSelectDatasState('gantt', 'group_list_area_fold_section')
         )
-        const min_start_time = date_arr_one_level[0].timestamp //最早时间
+        if (!date_arr_one_level.length) return
+        const min_start_time = date_arr_one_level[0]?.timestamp //最早时间
         const max_due_time =
-          date_arr_one_level[date_arr_one_level.length - 1].timestampEnd //最晚时间
+          date_arr_one_level[date_arr_one_level.length - 1]?.timestampEnd //最晚时间
         for (let val of data) {
           const list_group_item = {
             ...val,

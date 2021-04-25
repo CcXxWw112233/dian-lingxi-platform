@@ -1274,8 +1274,8 @@ export default class GroupMilestones extends Component {
         style={{
           position: 'absolute',
           zIndex: 2,
-          height: '100%',
-          width: '100%',
+          // height: '100%',
+          // width: '100%',
           display: !get_milestone_loading ? 'block' : 'none'
         }}
       >
