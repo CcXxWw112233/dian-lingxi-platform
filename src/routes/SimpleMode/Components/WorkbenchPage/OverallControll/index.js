@@ -8,6 +8,7 @@ import { getFirstItem, getLastItem } from './utils'
 import TransformMatrixArray from '../../../../../utils/MatrixArray'
 import {
   beforeStartMilestoneDays,
+  beforMinTime,
   DaysWidth,
   IconMarginRight,
   IconWidth,
@@ -77,7 +78,7 @@ export default class OverallControl extends React.Component {
       queryParams: {}
     }
     /** 防止文字重叠，多几个像素，避免重叠 */
-    this.debounceTextWidth = 2
+    this.debounceTextWidth = 0
     this.updateRenderData = debounce(this.updateRenderData, 50)
     this.timer = null
     this.mouseleaveTimer = null
@@ -172,7 +173,9 @@ export default class OverallControl extends React.Component {
       this.setState(
         {
           minTime: Math.min.apply(this, [
-            moment(minTime).valueOf(),
+            moment(minTime)
+              .subtract(beforMinTime, 'day')
+              .valueOf(),
             moment(milestoneMinItem?.deadline || minTime)
               .subtract(this.state.beforeStartMilestoneDays, 'day')
               .valueOf()
@@ -266,6 +269,7 @@ export default class OverallControl extends React.Component {
       lastWidth = textWidth + DomWidth
       return {
         ...cell,
+        /** -1 是两个时间有一个是重复的，所以需要减一天 */
         startIndex: timeTransfromToStart,
         width: Math.floor(textWidth + DomWidth)
       }

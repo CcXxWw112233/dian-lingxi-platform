@@ -43,7 +43,7 @@ export default props => {
     /** 长度和占用格子的下标 */
     const numberIndexs = (() => {
       let list = []
-      for (let i = start; i < start + numbers; i++) {
+      for (let i = start; i <= start + numbers; i++) {
         list.push(i)
       }
       return list

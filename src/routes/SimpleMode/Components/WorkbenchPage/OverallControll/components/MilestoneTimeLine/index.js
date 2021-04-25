@@ -1,6 +1,7 @@
 import React from 'react'
 import {
   beforeStartMilestoneDays,
+  beforMinTime,
   DaysWidth,
   getStatus,
   MilestoneTotalHeight,
@@ -50,8 +51,12 @@ export default class MilestoneTimeLine extends React.Component {
       /** end的时间 */
       const endDeadline = end.deadline
       /** 间隔时间 */
-      const bettweenDays = moment(endDeadline).diff(moment(deadline), 'days')
-      return Math.floor(Math.abs(bettweenDays) * DaysWidth)
+      const bettweenDays = moment(endDeadline).diff(
+        moment(deadline),
+        'days',
+        true
+      )
+      return Math.round(Math.abs(bettweenDays) * DaysWidth)
     }
     return this.getMaxTimeWidth()
   }
@@ -59,6 +64,7 @@ export default class MilestoneTimeLine extends React.Component {
   componentDidUpdate(prev) {
     if (prev.minTime !== this.props.minTime) {
       this.getMinTimeWidth()
+      // this.getBeforeSpan()
     }
   }
 
