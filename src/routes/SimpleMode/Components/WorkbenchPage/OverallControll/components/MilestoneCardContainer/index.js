@@ -156,7 +156,7 @@ export default class MilestoneCardContainer extends React.Component {
                       style={{
                         /** 防止第一条之后的数据左边距的位置不对 */
                         position: 'absolute',
-                        marginLeft: Math.floor(left * DaysWidth),
+                        marginLeft: Math.floor(left * this.props.dayWidth),
                         ...OverallItem,
                         opacity: ItemStatus.opacity,
                         top

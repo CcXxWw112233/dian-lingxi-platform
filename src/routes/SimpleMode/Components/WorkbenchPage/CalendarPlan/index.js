@@ -648,6 +648,7 @@ export default class CalendarPlan extends React.Component {
         onClick={() => {
           this.handleDataOfDate(item, callback)
         }}
+        title={item.name}
       >
         <div className={`${globalStyles.authTheme} ${styles.date_celltype}`}>
           {isMilestoneType && (

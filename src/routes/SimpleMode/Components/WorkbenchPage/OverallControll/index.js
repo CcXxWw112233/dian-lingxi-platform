@@ -23,9 +23,19 @@ import {
   milestoneList,
   overallControllData
 } from '../../../../../services/technological/overallControll'
-import { Button, Checkbox, Divider, message, Select } from 'antd'
+import {
+  Button,
+  Checkbox,
+  Divider,
+  Dropdown,
+  Menu,
+  message,
+  Select,
+  Tooltip
+} from 'antd'
 import MustBeChooseBoard from '../../../../../components/MustBeChooseBoard'
 import { debounce } from 'lodash'
+import globalStyles from '../../../../../globalset/css/globalClassName.less'
 
 /** 关键控制点的组件 */
 @connect(
@@ -47,6 +57,23 @@ export default class OverallControl extends React.Component {
     /** 总体的包裹元素 */
     this.containerRef = React.createRef()
     this.state = {
+      /** 一天的时间，可以更新 */
+      dayWidthInPage: DaysWidth,
+      /** 一天的时候列表，暂定小中大三种，后续优化成可输入 */
+      dayWidthOptions: [
+        {
+          label: '小',
+          value: DaysWidth
+        },
+        {
+          label: '中',
+          value: DaysWidth + 2
+        },
+        {
+          label: '大',
+          value: DaysWidth + 4
+        }
+      ],
       /** 是否显示指引 */
       isShowGuide: false,
       /** 包裹元素的框高 */
@@ -277,8 +304,8 @@ export default class OverallControl extends React.Component {
     /** 转换的矩阵数据 */
     const matrixArr = TransformMatrixArray({
       /** 总时间天数，加上最后一个数据占用长度 */
-      span: timeSpan + Math.floor(lastWidth / DaysWidth) + 10,
-      spanStep: DaysWidth,
+      span: timeSpan + Math.floor(lastWidth / this.state.dayWidthInPage) + 10,
+      spanStep: this.state.dayWidthInPage,
       data: arr
     })
 
@@ -492,6 +519,19 @@ export default class OverallControl extends React.Component {
     )
   }
 
+  /** 点击了大小的数据 */
+  handleClickMenu = ({ key }) => {
+    // console.log(key)
+    this.setState(
+      {
+        dayWidthInPage: +key
+      },
+      () => {
+        this.updateRenderData()
+      }
+    )
+  }
+
   render() {
     const { workbenchBoxContent_height } = this.props
     return (
@@ -500,6 +540,29 @@ export default class OverallControl extends React.Component {
         style={{ height: workbenchBoxContent_height }}
       >
         <div className={styles.container_header}>
+          <Dropdown
+            trigger={['click']}
+            overlay={
+              <Menu
+                onClick={this.handleClickMenu}
+                defaultSelectedKeys={[this.state.dayWidthInPage.toString()]}
+                selectedKeys={[this.state.dayWidthInPage.toString()]}
+              >
+                {this.state.dayWidthOptions.map(item => {
+                  return <Menu.Item key={item.value}>{item.label}</Menu.Item>
+                })}
+              </Menu>
+            }
+          >
+            <Tooltip title="大小设置">
+              <span
+                className={`${globalStyles.authTheme} ${styles.size_change}`}
+                style={{ flex: 'none', marginRight: 10 }}
+              >
+                &#xe78e;
+              </span>
+            </Tooltip>
+          </Dropdown>
           {(this.state.searchList || []).map(item => {
             return (
               <Select
@@ -594,6 +657,7 @@ export default class OverallControl extends React.Component {
                 minTime={this.state.minTime}
                 maxTime={this.state.maxTime}
                 workbenchBoxContent_height={workbenchBoxContent_height}
+                dayWidth={this.state.dayWidthInPage}
               />
               {this.state.treeData.map(item => {
                 return (
@@ -603,6 +667,7 @@ export default class OverallControl extends React.Component {
                     onMouseEnter={() => this.MouseEnter(item)}
                     onMouseOver={() => this.MouseEnter(item)}
                     key={item.list_id}
+                    dayWidth={this.state.dayWidthInPage}
                     active={this.state.hoverActiveId === item.list_id}
                     datas={item.content}
                     minTime={this.state.minTime}
