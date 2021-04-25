@@ -86,7 +86,7 @@ export const WorkbenchPages = {
      * @default string 'board:calendar'
      */
     key: 'board:calendar',
-    name: '日程安排'
+    name: '项目日历'
   },
   /** 运营总图 */
   OverallControl: {
