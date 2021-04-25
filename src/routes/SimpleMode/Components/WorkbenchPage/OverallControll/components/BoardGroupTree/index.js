@@ -7,7 +7,9 @@ import styles from './index.less'
 export default class BoardGroupTree extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {}
+    this.state = {
+      top: 0
+    }
   }
   componentDidMount() {}
 

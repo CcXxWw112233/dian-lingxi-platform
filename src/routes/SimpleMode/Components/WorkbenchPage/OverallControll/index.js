@@ -57,7 +57,10 @@ export default class OverallControl extends React.Component {
     this.TotalBoardValue = '0'
     /** 总体的包裹元素 */
     this.containerRef = React.createRef()
+    /** 左侧分组列表的元素 */
+    this.boardGroupRef = React.createRef()
     this.state = {
+      mouseElement: '',
       /** 一天的时间，可以更新 */
       dayWidthInPage: DaysWidth,
       /** 一天的时候列表，暂定小中大三种，后续优化成可输入 */
@@ -75,6 +78,8 @@ export default class OverallControl extends React.Component {
           value: DaysWidth + 4
         }
       ],
+      /** 容器滚动的距离 */
+      containerScrollTop: 0,
       /** 是否显示指引 */
       isShowGuide: false,
       /** 包裹元素的框高 */
@@ -531,163 +536,198 @@ export default class OverallControl extends React.Component {
     )
   }
 
+  /** 当容器滚动的事件
+   * @param {React.MouseEvent} e 事件
+   */
+  containerScroll = e => {
+    e.stopPropagation()
+    const top = e.target.scrollTop
+    const dom = document.querySelector('.' + styles.content)
+    const boardGroup = document.querySelector('.' + styles.content_board_group)
+    if (dom && e.target !== dom && this.state.mouseElement === 'group') {
+      dom.scrollTo(0, top)
+    } else if (
+      boardGroup &&
+      e.target !== boardGroup &&
+      this.state.mouseElement !== 'group'
+    ) {
+      boardGroup.firstChild.scrollTo(0, top)
+    }
+  }
+
   render() {
     const { workbenchBoxContent_height } = this.props
     return (
-      <div
-        className={styles.container}
-        style={{ height: workbenchBoxContent_height }}
-      >
-        <div className={styles.container_header}>
-          <Dropdown
-            trigger={['click']}
-            overlay={
-              <Menu
-                onClick={this.handleClickMenu}
-                defaultSelectedKeys={[this.state.dayWidthInPage.toString()]}
-                selectedKeys={[this.state.dayWidthInPage.toString()]}
-              >
-                {this.state.dayWidthOptions.map(item => {
-                  return <Menu.Item key={item.value}>{item.label}</Menu.Item>
-                })}
-              </Menu>
-            }
-          >
-            <Tooltip title="大小设置">
-              <span
-                className={`${globalStyles.authTheme} ${styles.size_change}`}
-                style={{ flex: 'none', marginRight: 10 }}
-              >
-                &#xe78e;
-              </span>
-            </Tooltip>
-          </Dropdown>
-          {(this.state.searchList || []).map(item => {
-            return (
-              <Select
-                mode="multiple"
-                maxTagCount={2}
-                key={item.id}
-                dropdownMatchSelectWidth={false}
-                placeholder={item.name}
-                style={{ width: 230, marginLeft: 10 }}
-                onChange={val => this.handleChangeQueryParam(item.id, val)}
-                value={this.state.queryParams[item.id] || []}
-                optionLabelProp="title"
-                dropdownRender={menu => (
-                  <div>
-                    {menu}
-                    <Divider style={{ margin: '2px 0' }} />
-                    <div
-                      style={{
-                        padding: '4px 8px 8px 8px',
-                        cursor: 'pointer'
-                      }}
-                      onMouseDown={e => e.preventDefault()}
-                    >
-                      <Checkbox
-                        checked={
-                          (this.state.queryParams[item.id] || []).length ===
-                            (item.items || []).length &&
-                          (item.items || []).length > 0
-                        }
-                        onChange={e => this.setAllCheck(e, item)}
-                        indeterminate={
-                          !!(this.state.queryParams[item.id] || []).length &&
-                          (this.state.queryParams[item.id] || []).length <
-                            (item.items || []).length
-                        }
+      <div className={styles.container} onScroll={this.containerScroll}>
+        <div
+          className={styles.content}
+          style={{ height: workbenchBoxContent_height }}
+        >
+          <div className={styles.container_header}>
+            <Dropdown
+              trigger={['click']}
+              overlay={
+                <Menu
+                  onClick={this.handleClickMenu}
+                  defaultSelectedKeys={[this.state.dayWidthInPage.toString()]}
+                  selectedKeys={[this.state.dayWidthInPage.toString()]}
+                >
+                  {this.state.dayWidthOptions.map(item => {
+                    return <Menu.Item key={item.value}>{item.label}</Menu.Item>
+                  })}
+                </Menu>
+              }
+            >
+              <Tooltip title="大小设置">
+                <span
+                  className={`${globalStyles.authTheme} ${styles.size_change}`}
+                  style={{ flex: 'none', marginRight: 10 }}
+                >
+                  &#xe78e;
+                </span>
+              </Tooltip>
+            </Dropdown>
+            {(this.state.searchList || []).map(item => {
+              return (
+                <Select
+                  mode="multiple"
+                  maxTagCount={2}
+                  key={item.id}
+                  dropdownMatchSelectWidth={false}
+                  placeholder={item.name}
+                  style={{ width: 230, marginLeft: 10 }}
+                  onChange={val => this.handleChangeQueryParam(item.id, val)}
+                  value={this.state.queryParams[item.id] || []}
+                  optionLabelProp="title"
+                  dropdownRender={menu => (
+                    <div>
+                      {menu}
+                      <Divider style={{ margin: '2px 0' }} />
+                      <div
+                        style={{
+                          padding: '4px 8px 8px 8px',
+                          cursor: 'pointer'
+                        }}
+                        onMouseDown={e => e.preventDefault()}
                       >
-                        全选
-                      </Checkbox>
+                        <Checkbox
+                          checked={
+                            (this.state.queryParams[item.id] || []).length ===
+                              (item.items || []).length &&
+                            (item.items || []).length > 0
+                          }
+                          onChange={e => this.setAllCheck(e, item)}
+                          indeterminate={
+                            !!(this.state.queryParams[item.id] || []).length &&
+                            (this.state.queryParams[item.id] || []).length <
+                              (item.items || []).length
+                          }
+                        >
+                          全选
+                        </Checkbox>
+                      </div>
                     </div>
-                  </div>
-                )}
-              >
-                {(options =>
-                  options.map(option => {
-                    return (
-                      <Select.Option
-                        value={option.id}
-                        key={option.id}
-                        title={option.value}
-                      >
-                        <div>
-                          {option.value}
-                          {option.board_name && (
-                            <div className={styles.selection_subtitle}>
-                              #{option.board_name}
-                            </div>
-                          )}
-                        </div>
-                      </Select.Option>
-                    )
-                  }))(item.items || [])}
-              </Select>
-            )
-          })}
-          <Button
-            type="default"
-            style={{ marginLeft: 10, flex: 'none' }}
-            onClick={this.handleResetQueryParams}
-          >
-            重置
-          </Button>
-        </div>
-        <div className={styles.container_content} ref={this.containerRef}>
-          <div className={styles.content_board_group}>
-            {/* 左侧项目和分组列表 */}
-            <BoardGroupTree
-              datas={this.state.treeData}
-              onMouseEnter={this.MouseEnter}
-              onMouseOut={() => this.MouseLeave()}
-              onMouseOver={item => this.MouseEnter(item)}
-              onMouseLeave={() => this.MouseLeave()}
-              activeId={this.state.hoverActiveId}
-            />
+                  )}
+                >
+                  {(options =>
+                    options.map(option => {
+                      return (
+                        <Select.Option
+                          value={option.id}
+                          key={option.id}
+                          title={option.value}
+                        >
+                          <div>
+                            {option.value}
+                            {option.board_name && (
+                              <div className={styles.selection_subtitle}>
+                                #{option.board_name}
+                              </div>
+                            )}
+                          </div>
+                        </Select.Option>
+                      )
+                    }))(item.items || [])}
+                </Select>
+              )
+            })}
+            <Button
+              type="default"
+              style={{ marginLeft: 10, flex: 'none' }}
+              onClick={this.handleResetQueryParams}
+            >
+              重置
+            </Button>
           </div>
-          <div className={styles.content_overview} id="content_overview">
-            <div>
-              <MilestoneTimeLine
-                maxConstans={this.state.afterMilestoneDays}
-                data={this.state.firstMilestoneData}
-                // currentDom={this.state.containerDom}
-                listData={this.state.overall_data}
-                minTime={this.state.minTime}
-                maxTime={this.state.maxTime}
-                workbenchBoxContent_height={workbenchBoxContent_height}
-                dayWidth={this.state.dayWidthInPage}
+          <div className={styles.container_content} ref={this.containerRef}>
+            <div
+              className={styles.content_board_group}
+              ref={this.boardGroupRef}
+              onMouseOver={e => {
+                e.stopPropagation()
+                this.setState({ mouseElement: 'group' })
+                e.preventDefault()
+              }}
+              onMouseLeave={e => {
+                e.stopPropagation()
+                this.setState({ mouseElement: '' })
+                e.preventDefault()
+              }}
+            >
+              {/* 左侧项目和分组列表 */}
+              <BoardGroupTree
+                datas={this.state.treeData}
+                onMouseEnter={this.MouseEnter}
+                onMouseOut={() => this.MouseLeave()}
+                onMouseOver={item => this.MouseEnter(item)}
+                onMouseLeave={() => this.MouseLeave()}
+                activeId={this.state.hoverActiveId}
+                scrollTop={this.state.containerScrollTop}
               />
-              {this.state.treeData.map(item => {
-                return (
-                  <MilestoneCardContainer
-                    onMouseOut={() => this.MouseLeave()}
-                    onMouseLeave={() => this.MouseLeave()}
-                    onMouseEnter={() => this.MouseEnter(item)}
-                    onMouseOver={() => this.MouseEnter(item)}
-                    key={item.list_id}
-                    dayWidth={this.state.dayWidthInPage}
-                    active={this.state.hoverActiveId === item.list_id}
-                    datas={item.content}
-                    minTime={this.state.minTime}
-                    maxTime={this.state.maxTime}
-                  />
-                )
-              })}
+            </div>
+            <div className={styles.content_overview} id="content_overview">
+              <div>
+                <MilestoneTimeLine
+                  maxConstans={this.state.afterMilestoneDays}
+                  data={this.state.firstMilestoneData}
+                  // currentDom={this.state.containerDom}
+                  listData={this.state.overall_data}
+                  minTime={this.state.minTime}
+                  maxTime={this.state.maxTime}
+                  workbenchBoxContent_height={workbenchBoxContent_height}
+                  dayWidth={this.state.dayWidthInPage}
+                />
+                {this.state.treeData.map(item => {
+                  return (
+                    <MilestoneCardContainer
+                      onMouseOut={() => this.MouseLeave()}
+                      onMouseLeave={() => this.MouseLeave()}
+                      onMouseEnter={() => this.MouseEnter(item)}
+                      onMouseOver={() => this.MouseEnter(item)}
+                      key={item.list_id}
+                      dayWidth={this.state.dayWidthInPage}
+                      active={this.state.hoverActiveId === item.list_id}
+                      datas={item.content}
+                      minTime={this.state.minTime}
+                      maxTime={this.state.maxTime}
+                    />
+                  )
+                })}
+              </div>
             </div>
           </div>
+          {this.state.isShowGuide && (
+            <MustBeChooseBoard
+              onClose={() =>
+                this.setState({
+                  isShowGuide: false
+                })
+              }
+              element={'#choose_board'}
+              tips={`请选择一个项目，查看 "${WorkbenchPages.OverallControl.name}" 相应的内容！`}
+            />
+          )}
         </div>
-        {this.state.isShowGuide && (
-          <MustBeChooseBoard
-            onClose={() =>
-              this.setState({
-                isShowGuide: false
-              })
-            }
-            element={'#choose_board'}
-            tips={`请选择一个项目，查看 "${WorkbenchPages.OverallControl.name}" 相应的内容！`}
-          />
-        )}
       </div>
     )
   }
