@@ -5,7 +5,6 @@ import { isPaymentOrgUser } from '@/utils/businessFunction'
 import { Spin } from 'antd'
 import { platformNouns } from '../../../../globalset/clientCustorm'
 import { WorkbenchPages } from './constans'
-import OverallControl from './OverallControll'
 // import MiniBoxNavigations from '../MiniBoxNavigations/index'
 // import BoardCommunication from './BoardCommunication/index'
 // import BoardArchives from './BoardArchives/index'
@@ -29,8 +28,8 @@ const MeetingManage = lazy(() => import('./MeetingManage'))
 const ChartForStatistics = lazy(() => import('./ChartForStatistics'))
 /** 日历安排的组件 */
 const CalendarPlan = lazy(() => import('./CalendarPlan'))
-/** 运营总图组件 */
-const GeneralOperationPlan = lazy(() => import('./GeneralOperationPlan'))
+/** 关键控制点组件 */
+const OverallControl = lazy(() => import('./OverallControll'))
 
 class WorkbenchPage extends Component {
   constructor(props) {

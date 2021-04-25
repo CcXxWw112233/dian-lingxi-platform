@@ -8,6 +8,7 @@ import { getFirstItem, getLastItem } from './utils'
 import TransformMatrixArray from '../../../../../utils/MatrixArray'
 import {
   beforeStartMilestoneDays,
+  beforMinTime,
   DaysWidth,
   IconMarginRight,
   IconWidth,
@@ -15,7 +16,6 @@ import {
   OverallRowHeight,
   OverallRowPaddingTB
 } from './constans'
-import { debounce } from '../../../../../utils/util'
 import { connect } from 'dva'
 import { ProjectDetailModel } from '../../../../../models/technological/projectDetail'
 import {
@@ -23,8 +23,20 @@ import {
   milestoneList,
   overallControllData
 } from '../../../../../services/technological/overallControll'
-import { Button, Checkbox, Divider, message, Select } from 'antd'
+import {
+  Button,
+  Checkbox,
+  Divider,
+  Dropdown,
+  Menu,
+  message,
+  Select,
+  Tooltip
+} from 'antd'
 import MustBeChooseBoard from '../../../../../components/MustBeChooseBoard'
+import { debounce } from 'lodash'
+import globalStyles from '../../../../../globalset/css/globalClassName.less'
+import { WorkbenchPages } from '../constans'
 
 /** 关键控制点的组件 */
 @connect(
@@ -46,6 +58,23 @@ export default class OverallControl extends React.Component {
     /** 总体的包裹元素 */
     this.containerRef = React.createRef()
     this.state = {
+      /** 一天的时间，可以更新 */
+      dayWidthInPage: DaysWidth,
+      /** 一天的时候列表，暂定小中大三种，后续优化成可输入 */
+      dayWidthOptions: [
+        {
+          label: '小',
+          value: DaysWidth
+        },
+        {
+          label: '中',
+          value: DaysWidth + 2
+        },
+        {
+          label: '大',
+          value: DaysWidth + 4
+        }
+      ],
       /** 是否显示指引 */
       isShowGuide: false,
       /** 包裹元素的框高 */
@@ -57,6 +86,8 @@ export default class OverallControl extends React.Component {
       hoverActiveId: '',
       /** 默认的最小时间，不允许小与这个时间 */
       beforeStartMilestoneDays: 10,
+      /** 默认的最大时间偏移 */
+      afterMilestoneDays: 15,
       /** 左侧树类型的数据 */
       treeData: [],
       /** 用于显示控制点的data */
@@ -75,7 +106,7 @@ export default class OverallControl extends React.Component {
       queryParams: {}
     }
     /** 防止文字重叠，多几个像素，避免重叠 */
-    this.debounceTextWidth = 5
+    this.debounceTextWidth = 0
     this.updateRenderData = debounce(this.updateRenderData, 50)
     this.timer = null
     this.mouseleaveTimer = null
@@ -120,11 +151,12 @@ export default class OverallControl extends React.Component {
       })
     }
     clearTimeout(this.timer)
+    this.fetchSearchItems()
     Promise.all([this.fetchMilestoneData(), this.fetchControllData()]).then(
       () => {
         this.timer = setTimeout(() => {
           this.fetchTimes()
-        }, 10)
+        }, 50)
       }
     )
   }
@@ -169,7 +201,9 @@ export default class OverallControl extends React.Component {
       this.setState(
         {
           minTime: Math.min.apply(this, [
-            moment(minTime).valueOf(),
+            moment(minTime)
+              .subtract(beforMinTime, 'day')
+              .valueOf(),
             moment(milestoneMinItem?.deadline || minTime)
               .subtract(this.state.beforeStartMilestoneDays, 'day')
               .valueOf()
@@ -192,15 +226,33 @@ export default class OverallControl extends React.Component {
         const first = getLastItem(item.content || [], 'end_time')
         if (first) endArr.push(first)
       })
-      /** 获取最小的时间 */
+      /** 获数据中取最小的时间 */
       const maxTime = Math.max.apply(
         this,
         endArr.map(item => item.end_time)
       )
+
+      /** 里程碑最小的时间 */
+      const milestoneMaxItem = this.state.firstMilestoneData[
+        this.state.firstMilestoneData.length - 1
+      ]
+      /** 变更的时间 */
+      let time = maxTime
+      /** 取最大的时间 */
+      time = Math.max.apply(this, [
+        moment(maxTime).valueOf(),
+        moment(milestoneMaxItem?.deadline || time)
+          .add(this.state.afterMilestoneDays, 'day')
+          .valueOf()
+      ])
+
+      if (!milestoneMaxItem) {
+        time = maxTime
+      }
       /** 保存最小的时间 */
       this.setState(
         {
-          maxTime
+          maxTime: time
         },
         () => {
           resolve(this.state.maxTime)
@@ -223,7 +275,6 @@ export default class OverallControl extends React.Component {
 
     // const { datas = [] } = this.props
     if (!datas.length) return []
-
     /** 总时间天数 */
     let timeSpan = Math.abs(
       moment(this.state.minTime).diff(moment(this.state.maxTime), 'days')
@@ -237,7 +288,7 @@ export default class OverallControl extends React.Component {
       const name = cell.name.toString()
       /** 文字的像素长度 */
       const textWidth =
-        name.pxWidth('normal bold 14px Robot') + this.debounceTextWidth
+        name.pxWidth('normal normal bold 14px Robot') + this.debounceTextWidth
       /** 时间转换成开始的下标 */
       const timeTransfromToStart = Math.abs(
         moment(this.state.minTime).diff(moment(cell.end_time), 'days')
@@ -246,15 +297,16 @@ export default class OverallControl extends React.Component {
       lastWidth = textWidth + DomWidth
       return {
         ...cell,
+        /** -1 是两个时间有一个是重复的，所以需要减一天 */
         startIndex: timeTransfromToStart,
-        width: textWidth + DomWidth
+        width: Math.floor(textWidth + DomWidth)
       }
     })
     /** 转换的矩阵数据 */
     const matrixArr = TransformMatrixArray({
       /** 总时间天数，加上最后一个数据占用长度 */
-      span: timeSpan + Math.floor(lastWidth / DaysWidth) + 10,
-      spanStep: DaysWidth,
+      span: timeSpan + Math.floor(lastWidth / this.state.dayWidthInPage) + 10,
+      spanStep: this.state.dayWidthInPage,
       data: arr
     })
 
@@ -267,13 +319,13 @@ export default class OverallControl extends React.Component {
     const currentBoardId = simplemodeCurrentProject
       ? simplemodeCurrentProject.board_id
       : this.TotalBoardValue
-    if (currentBoardId === this.TotalBoardValue)
-      return message.warn('请选择单个项目进行查看')
+    if (currentBoardId === this.TotalBoardValue) return
     return milestoneList({ board_id: currentBoardId })
       .then(res => {
         // console.log(res)
         this.setState({
           firstMilestoneData: (res.data || [])
+            .filter(item => item.deadline)
             .map(item => ({
               ...item,
               deadline: +(item.deadline + '000')
@@ -321,8 +373,7 @@ export default class OverallControl extends React.Component {
     const currentBoardId = simplemodeCurrentProject
       ? simplemodeCurrentProject.board_id
       : this.TotalBoardValue
-    if (currentBoardId === this.TotalBoardValue)
-      return message.warn('请选择单个项目进行查看')
+    if (currentBoardId === this.TotalBoardValue) return
 
     return overallControllData({
       board_id: currentBoardId,
@@ -356,10 +407,12 @@ export default class OverallControl extends React.Component {
     overall_data.forEach(item => {
       /** 所有的数据 */
       const data = this.getMatrixArray(item.content || [])
+      /** 执行过格式化之后的数据，用于渲染 */
+      const formatData = this.forMatMartixArray(data)
       /** 保存左侧的数据 */
       treeItem.push({
         ...item,
-        content: this.forMatMartixArray(data),
+        content: formatData,
         height: data.length * OverallRowHeight + OverallRowPaddingTB * 2
       })
       /** 保存右侧的数据 */
@@ -465,6 +518,19 @@ export default class OverallControl extends React.Component {
     )
   }
 
+  /** 点击了大小的数据 */
+  handleClickMenu = ({ key }) => {
+    // console.log(key)
+    this.setState(
+      {
+        dayWidthInPage: +key
+      },
+      () => {
+        this.updateRenderData()
+      }
+    )
+  }
+
   render() {
     const { workbenchBoxContent_height } = this.props
     return (
@@ -473,12 +539,36 @@ export default class OverallControl extends React.Component {
         style={{ height: workbenchBoxContent_height }}
       >
         <div className={styles.container_header}>
+          <Dropdown
+            trigger={['click']}
+            overlay={
+              <Menu
+                onClick={this.handleClickMenu}
+                defaultSelectedKeys={[this.state.dayWidthInPage.toString()]}
+                selectedKeys={[this.state.dayWidthInPage.toString()]}
+              >
+                {this.state.dayWidthOptions.map(item => {
+                  return <Menu.Item key={item.value}>{item.label}</Menu.Item>
+                })}
+              </Menu>
+            }
+          >
+            <Tooltip title="大小设置">
+              <span
+                className={`${globalStyles.authTheme} ${styles.size_change}`}
+                style={{ flex: 'none', marginRight: 10 }}
+              >
+                &#xe78e;
+              </span>
+            </Tooltip>
+          </Dropdown>
           {(this.state.searchList || []).map(item => {
             return (
               <Select
                 mode="multiple"
                 maxTagCount={2}
                 key={item.id}
+                dropdownMatchSelectWidth={false}
                 placeholder={item.name}
                 style={{ width: 230, marginLeft: 10 }}
                 onChange={val => this.handleChangeQueryParam(item.id, val)}
@@ -559,12 +649,14 @@ export default class OverallControl extends React.Component {
           <div className={styles.content_overview} id="content_overview">
             <div>
               <MilestoneTimeLine
+                maxConstans={this.state.afterMilestoneDays}
                 data={this.state.firstMilestoneData}
                 // currentDom={this.state.containerDom}
                 listData={this.state.overall_data}
                 minTime={this.state.minTime}
                 maxTime={this.state.maxTime}
                 workbenchBoxContent_height={workbenchBoxContent_height}
+                dayWidth={this.state.dayWidthInPage}
               />
               {this.state.treeData.map(item => {
                 return (
@@ -574,6 +666,7 @@ export default class OverallControl extends React.Component {
                     onMouseEnter={() => this.MouseEnter(item)}
                     onMouseOver={() => this.MouseEnter(item)}
                     key={item.list_id}
+                    dayWidth={this.state.dayWidthInPage}
                     active={this.state.hoverActiveId === item.list_id}
                     datas={item.content}
                     minTime={this.state.minTime}
@@ -592,7 +685,7 @@ export default class OverallControl extends React.Component {
               })
             }
             element={'#choose_board'}
-            tips="请选择一个项目，查看相应的内容！"
+            tips={`请选择一个项目，查看 "${WorkbenchPages.OverallControl.name}" 相应的内容！`}
           />
         )}
       </div>

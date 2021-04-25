@@ -1,6 +1,8 @@
 import React from 'react'
 import {
-  DaysWidth,
+  beforeStartMilestoneDays,
+  // beforMinTime,
+  // DaysWidth,
   getStatus,
   MilestoneTotalHeight,
   MilestoneTypes
@@ -9,7 +11,7 @@ import {
 import styles from './index.less'
 import moment from 'moment'
 import PropTypes from 'prop-types'
-import { debounce } from '../../../../../../../utils/util'
+import { debounce } from 'lodash'
 
 /** 关键控制点的一级里程碑列表 */
 export default class MilestoneTimeLine extends React.Component {
@@ -21,7 +23,11 @@ export default class MilestoneTimeLine extends React.Component {
     /** 控制点数据中最小的时间 */
     minTime: PropTypes.any,
     /** 控制点数据中最大的时间 */
-    maxTime: PropTypes.any
+    maxTime: PropTypes.any,
+    /** 最大时间偏移 */
+    maxConstans: PropTypes.number,
+    /** 一天时间的间隔像素 */
+    dayWidth: PropTypes.number
   }
 
   constructor(props) {
@@ -39,7 +45,6 @@ export default class MilestoneTimeLine extends React.Component {
   /** 计算两个里程碑之间的长度距离
    * @param {{deadline: string}} start 开始的点
    * @param {{deadline: string}} end 结束的点
-   * @param {number} index 当前的下标
    */
   computedMilestoneBettweenWidth = (start = {}, end) => {
     /** 取时间 */
@@ -48,8 +53,12 @@ export default class MilestoneTimeLine extends React.Component {
       /** end的时间 */
       const endDeadline = end.deadline
       /** 间隔时间 */
-      const bettweenDays = moment(endDeadline).diff(moment(deadline), 'days')
-      return Math.floor(Math.abs(bettweenDays) * DaysWidth)
+      const bettweenDays = moment(endDeadline).diff(
+        moment(deadline),
+        'days',
+        true
+      )
+      return Math.round(Math.abs(bettweenDays) * this.props.dayWidth)
     }
     return this.getMaxTimeWidth()
   }
@@ -57,6 +66,7 @@ export default class MilestoneTimeLine extends React.Component {
   componentDidUpdate(prev) {
     if (prev.minTime !== this.props.minTime) {
       this.getMinTimeWidth()
+      // this.getBeforeSpan()
     }
   }
 
@@ -72,7 +82,8 @@ export default class MilestoneTimeLine extends React.Component {
     const timeStep = Math.abs(
       moment(endData.deadline).diff(moment(maxTime), 'day')
     )
-    return Math.floor(timeStep * DaysWidth)
+    const span = Math.floor(timeStep * this.props.dayWidth)
+    return span || 0
   }
 
   /** 获取最小时间在里程碑中的宽度 */
@@ -88,10 +99,7 @@ export default class MilestoneTimeLine extends React.Component {
       moment(firstData.deadline).diff(moment(minTime), 'day')
     )
     this.setState({
-      beforeStartMilestoneDays: Math.max(
-        timeStep,
-        this.state.beforeStartMilestoneDays
-      )
+      beforeStartMilestoneDays: Math.max(timeStep, beforeStartMilestoneDays)
     })
   }
 
@@ -119,12 +127,17 @@ export default class MilestoneTimeLine extends React.Component {
     return (
       <div
         className={styles.parent_milestone}
-        style={{ height: workbenchBoxContent_height - 75 }}
+        style={{ height: workbenchBoxContent_height - 100 }}
       >
-        <span className={styles.milestone_name}>{data.name}</span>
+        <div
+          className={styles.milestone_name}
+          style={{ bottom: 'calc(100vh - 195px)' }}
+        >
+          <span>{data.name}</span>
+        </div>
         <span className={styles.milestone_index}>
           <b>{index}</b>
-          <span className={styles.milestone_time}>{milestone_time}</span>
+          <di className={styles.milestone_time}>{milestone_time}</di>
         </span>
       </div>
     )
@@ -168,7 +181,7 @@ export default class MilestoneTimeLine extends React.Component {
               className={styles.milestone_steps}
               style={{
                 width: Math.floor(
-                  this.state.beforeStartMilestoneDays * DaysWidth
+                  this.state.beforeStartMilestoneDays * this.props.dayWidth
                 )
               }}
             >
@@ -177,15 +190,17 @@ export default class MilestoneTimeLine extends React.Component {
               />
             </div>
             {data.map((item, index) => {
+              /** 里程碑之间的宽度 */
+              const W = this.computedMilestoneBettweenWidth(
+                item,
+                data[index + 1]
+              )
               return (
                 <div
                   key={item.id}
                   className={styles.milestone_steps}
                   style={{
-                    width: this.computedMilestoneBettweenWidth(
-                      item,
-                      data[index + 1]
-                    )
+                    width: W
                   }}
                 >
                   <this.SubMilestoneRender

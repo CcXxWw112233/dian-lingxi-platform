@@ -120,6 +120,10 @@ export default class CalendarTempTree extends React.Component {
    * 请求模板列表
    */
   fetchTempList = () => {
+    /** 用户信息 */
+    const userInfo = JSON.parse(window.localStorage.getItem('userInfo')) || {}
+    /** 用户数据，组织数据 */
+    const { user_set = {} } = userInfo
     this.setLoading(true)
     /** 获取到的模板id列表或模板id */
     let templateIds = this.getBoardTempIds()
@@ -131,8 +135,9 @@ export default class CalendarTempTree extends React.Component {
       tempList: []
     })
     if (
-      this.props.simplemodeCurrentProject.board_id === TotalBoardKey ||
-      !this.props.simplemodeCurrentProject.board_id
+      (this.props.simplemodeCurrentProject.board_id === TotalBoardKey ||
+        !this.props.simplemodeCurrentProject.board_id) &&
+      user_set.current_org === '0'
     )
       return this.setLoading(false)
     if (templateIds) {
@@ -242,7 +247,7 @@ export default class CalendarTempTree extends React.Component {
   /**
    * 自定义渲染title
    * @param {string} title 名称
-   * @param {{id:string, type: string}} 当前节点
+   * @param {{id:string, type: string}} node 当前节点
    * @returns {React.ReactNode}
    */
   treeTitle = (title, node) => {

@@ -29,6 +29,7 @@ import GanttDetail from '../../../../Technological/components/Gantt/components/m
 import { projectDetailInfo } from '../../../../../services/technological/prjectDetail'
 import { debounce } from '../../../../../utils/util'
 import MustBeChooseBoard from '../../../../../components/MustBeChooseBoard'
+import { WorkbenchPages } from '../constans'
 
 /** 日历计划功能组件 */
 @connect(
@@ -149,14 +150,33 @@ export default class CalendarPlan extends React.Component {
     this.updateSearch()
   }
 
-  /** 刷新操作 */
-  updateSearch = () => {
+  /** 搜索前的判断,判断可不可以搜索 */
+  beforeSearch = () => {
     const { simplemodeCurrentProject } = this.props
     /** 选中项目的id */
     const currentProjectId = simplemodeCurrentProject
       ? simplemodeCurrentProject.board_id || TotalBoardKey
       : TotalBoardKey
-    if (currentProjectId === TotalBoardKey) {
+    /** 用户信息 */
+    const userInfo = JSON.parse(window.localStorage.getItem('userInfo')) || {}
+    /** 用户数据，组织数据 */
+    const { user_set = {} } = userInfo
+
+    if (currentProjectId === TotalBoardKey && user_set.current_org === '0') {
+      return false
+    }
+    return true
+  }
+
+  /** 刷新操作 */
+  updateSearch = () => {
+    if (this.beforeSearch()) {
+      this.setState({
+        isShowGuide: false
+      })
+      this.fetchQueryParams()
+      this.fetchQueryCalendarData()
+    } else {
       setTimeout(() => {
         this.setState({
           isShowGuide: true,
@@ -164,14 +184,7 @@ export default class CalendarPlan extends React.Component {
           calendar_data: []
         })
       }, 500)
-      return
-    } else {
-      this.setState({
-        isShowGuide: false
-      })
     }
-    this.fetchQueryParams()
-    this.fetchQueryCalendarData()
   }
 
   componentDidUpdate(prevProps) {
@@ -242,7 +255,7 @@ export default class CalendarPlan extends React.Component {
         mode: value
       },
       () => {
-        this.fetchQueryCalendarData()
+        if (value !== this.modeMonth) this.fetchQueryCalendarData()
       }
     )
   }
@@ -372,6 +385,10 @@ export default class CalendarPlan extends React.Component {
 
   /** 获取日历的数据 */
   fetchQueryCalendarData = () => {
+    if (!this.beforeSearch()) {
+      this.updateSearch()
+      return
+    }
     this.setState({
       searchLoading: true
     })
@@ -642,6 +659,7 @@ export default class CalendarPlan extends React.Component {
         onClick={() => {
           this.handleDataOfDate(item, callback)
         }}
+        title={item.name}
       >
         <div className={`${globalStyles.authTheme} ${styles.date_celltype}`}>
           {isMilestoneType && (
@@ -667,7 +685,7 @@ export default class CalendarPlan extends React.Component {
           <div className={styles.celldate_title}>{item.name}</div>
           <div className={styles.subcelldate_title}>
             {isMultipleBoard
-              ? `#${Board.board_name}`
+              ? `#${Board?.board_name}`
               : (item.list_names || []).length
               ? `@${(item.list_names || []).join('/')}`
               : ''}
@@ -842,6 +860,7 @@ export default class CalendarPlan extends React.Component {
                 <Select
                   mode="multiple"
                   maxTagCount={2}
+                  dropdownMatchSelectWidth={false}
                   key={item.id}
                   placeholder={item.name}
                   style={{ width: 230, marginLeft: 10 }}
@@ -907,7 +926,7 @@ export default class CalendarPlan extends React.Component {
                   queryName: val.target.value
                 })
               }
-              placeholder="搜索里程碑、子里程碑名称"
+              placeholder="搜索里程碑、子里程碑、任务名称"
               style={{ width: 300, marginLeft: 10, flex: 'none' }}
               enterButton={
                 <Button
@@ -1020,7 +1039,7 @@ export default class CalendarPlan extends React.Component {
               })
             }
             element={'#choose_board'}
-            tips="请选择一个项目，查看相应的内容！"
+            tips={`多选组织情况下，请选择一个项目 查看 "${WorkbenchPages.CalendarPlan.name}" 相应的内容！`}
           />
         )}
       </div>

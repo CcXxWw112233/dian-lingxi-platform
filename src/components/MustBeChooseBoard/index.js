@@ -115,7 +115,6 @@ export default class MustBeChooseBoard extends React.Component {
           <div className={styles.btns}>
             <Button
               type="primary"
-              shape="round"
               style={{ borderRadius: 50 }}
               onClick={() => onClose && onClose()}
             >

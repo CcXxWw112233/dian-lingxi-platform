@@ -542,7 +542,7 @@ export default class MainContent extends React.Component {
         key: item.id,
         disableCheckbox: parentDisabled
       }
-      arr.push(obj)
+      if (item.field_status === '0') arr.push(obj)
     })
     return arr
   }
