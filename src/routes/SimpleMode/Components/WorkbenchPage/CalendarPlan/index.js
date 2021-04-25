@@ -859,7 +859,7 @@ export default class CalendarPlan extends React.Component {
               return (
                 <Select
                   mode="multiple"
-                  maxTagCount={2}
+                  maxTagCount={1}
                   dropdownMatchSelectWidth={false}
                   key={item.id}
                   placeholder={item.name}
