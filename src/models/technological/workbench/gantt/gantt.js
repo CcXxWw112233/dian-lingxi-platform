@@ -55,7 +55,8 @@ import {
   hole_movedown_height,
   milestone_base_height,
   getMilestoneBaseHeight,
-  GANTT_IDS
+  GANTT_IDS,
+  extra_group_row
 } from '../../../../routes/Technological/components/Gantt/constants'
 import { getModelSelectDatasState } from '../../../utils'
 import { getProjectGoupList } from '../../../../services/technological/task'
@@ -1279,7 +1280,7 @@ export default {
           )
           const list_group_item_height =
             Math.max.apply(null, list_height_arr) +
-            one_group_row_total * ceiHeight -
+            extra_group_row * ceiHeight -
             after_group_height
 
           group_rows[i] = Math.max(

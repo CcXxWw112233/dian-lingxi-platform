@@ -420,7 +420,15 @@ export default class ContainerWithIndexUI extends Component {
   }
 
   panelContent = (value, index) => {
-    const { field_status, group_id, quote_num, field_type, id } = value
+    const {
+      field_status,
+      group_id,
+      quote_num,
+      field_type,
+      id,
+      create_by,
+      org_id
+    } = value
     return (
       <>
         {group_id != '0' && (
@@ -449,7 +457,7 @@ export default class ContainerWithIndexUI extends Component {
                     引用详情
                   </em>
                 </span>
-                <span>创建人：{getCreateUser()}</span>
+                <span>创建人：{create_by ? getCreateUser() : '系统默认'}</span>
                 <span>
                   状态:{' '}
                   <span style={{ color: field_status == '1' && '#F5222D' }}>
@@ -458,7 +466,10 @@ export default class ContainerWithIndexUI extends Component {
                 </span>
               </div>
             </div>
-            <div className={indexStyles.panel_content_right}>
+            <div
+              className={indexStyles.panel_content_right}
+              style={{ visibility: !org_id ? 'hidden' : '' }}
+            >
               {this.dropDownContent({ item: value, type: 'no_group' })}
             </div>
           </div>
@@ -495,6 +506,14 @@ export default class ContainerWithIndexUI extends Component {
           </div>
         ) : (
           <div className={`${indexStyles.collapse_content}`}>
+            {!!(fields && fields.length) &&
+              fields.map((item, index) => {
+                return (
+                  <div className={indexStyles.no_collapse_content}>
+                    {this.panelContent(item, index)}
+                  </div>
+                )
+              })}
             <Collapse destroyInactivePanel={true} bordered={false}>
               {!!(groups && groups.length) &&
                 groups.map(item => {
@@ -514,14 +533,6 @@ export default class ContainerWithIndexUI extends Component {
                   )
                 })}
             </Collapse>
-            {!!(fields && fields.length) &&
-              fields.map((item, index) => {
-                return (
-                  <div className={indexStyles.no_collapse_content}>
-                    {this.panelContent(item, index)}
-                  </div>
-                )
-              })}
           </div>
         )}
       </>
