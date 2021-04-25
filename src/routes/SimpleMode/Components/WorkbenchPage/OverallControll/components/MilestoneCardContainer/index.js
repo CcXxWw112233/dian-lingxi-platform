@@ -66,7 +66,7 @@ export default class MilestoneCardContainer extends React.Component {
     if (prev) {
       /** 第二个与第一个的左边距 */
       const step = Math.abs(prev._end - val._left)
-      return step
+      return step - 2
     }
     return val._left
   }
@@ -131,12 +131,11 @@ export default class MilestoneCardContainer extends React.Component {
             >
               {array.map((item, i) => {
                 /** 左边距 */
-                const left = item._left //this.getNextLeft(item, array[i - 1])
+                const left = item._left
                 /** top的值 */
-                const top =
-                  i > 0
-                    ? Math.floor((OverallRowHeight - OverallItem.minHeight) / 2)
-                    : null
+                const top = Math.floor(
+                  (OverallRowHeight - OverallItem.minHeight) / 2
+                )
                 /** 当前数据的状态详情 */
                 const ItemStatus = this.getStatusObject(item)
                 /** 当前数据类型 */
@@ -156,7 +155,7 @@ export default class MilestoneCardContainer extends React.Component {
                       className={`${styles.overall_item}`}
                       style={{
                         /** 防止第一条之后的数据左边距的位置不对 */
-                        position: i > 0 ? 'absolute' : '',
+                        position: 'absolute',
                         marginLeft: Math.floor(left * DaysWidth),
                         ...OverallItem,
                         opacity: ItemStatus.opacity,

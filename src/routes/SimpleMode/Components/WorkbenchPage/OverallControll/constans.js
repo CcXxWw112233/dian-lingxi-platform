@@ -22,6 +22,8 @@ export const IconMarginRight = 8
 
 /** 默认的最小时间，里程碑不允许小与这个时间 */
 export const beforeStartMilestoneDays = 10
+/** 比最小的时间还要小的时间，给左边空出距离 */
+export const beforMinTime = 4
 
 /** 里程碑宽度常量
  * @default number 260
