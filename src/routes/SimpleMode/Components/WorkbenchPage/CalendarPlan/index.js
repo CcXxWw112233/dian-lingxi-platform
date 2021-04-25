@@ -29,6 +29,7 @@ import GanttDetail from '../../../../Technological/components/Gantt/components/m
 import { projectDetailInfo } from '../../../../../services/technological/prjectDetail'
 import { debounce } from '../../../../../utils/util'
 import MustBeChooseBoard from '../../../../../components/MustBeChooseBoard'
+import { WorkbenchPages } from '../constans'
 
 /** 日历计划功能组件 */
 @connect(
@@ -156,7 +157,12 @@ export default class CalendarPlan extends React.Component {
     const currentProjectId = simplemodeCurrentProject
       ? simplemodeCurrentProject.board_id || TotalBoardKey
       : TotalBoardKey
-    if (currentProjectId === TotalBoardKey) {
+    /** 用户信息 */
+    const userInfo = JSON.parse(window.localStorage.getItem('userInfo')) || {}
+    /** 用户数据，组织数据 */
+    const { user_set = {} } = userInfo
+
+    if (currentProjectId === TotalBoardKey && user_set.current_org === '0') {
       setTimeout(() => {
         this.setState({
           isShowGuide: true,
@@ -667,7 +673,7 @@ export default class CalendarPlan extends React.Component {
           <div className={styles.celldate_title}>{item.name}</div>
           <div className={styles.subcelldate_title}>
             {isMultipleBoard
-              ? `#${Board.board_name}`
+              ? `#${Board?.board_name}`
               : (item.list_names || []).length
               ? `@${(item.list_names || []).join('/')}`
               : ''}
@@ -842,6 +848,7 @@ export default class CalendarPlan extends React.Component {
                 <Select
                   mode="multiple"
                   maxTagCount={2}
+                  dropdownMatchSelectWidth={false}
                   key={item.id}
                   placeholder={item.name}
                   style={{ width: 230, marginLeft: 10 }}
@@ -1020,7 +1027,7 @@ export default class CalendarPlan extends React.Component {
               })
             }
             element={'#choose_board'}
-            tips="请选择一个项目，查看相应的内容！"
+            tips={`多选组织情况下，请选择一个项目 查看 "${WorkbenchPages.CalendarPlan.name}" 相应的内容！`}
           />
         )}
       </div>
