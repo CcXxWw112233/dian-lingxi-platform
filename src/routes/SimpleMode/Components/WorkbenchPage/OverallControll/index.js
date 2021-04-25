@@ -36,6 +36,7 @@ import {
 import MustBeChooseBoard from '../../../../../components/MustBeChooseBoard'
 import { debounce } from 'lodash'
 import globalStyles from '../../../../../globalset/css/globalClassName.less'
+import { WorkbenchPages } from '../constans'
 
 /** 关键控制点的组件 */
 @connect(
@@ -318,8 +319,7 @@ export default class OverallControl extends React.Component {
     const currentBoardId = simplemodeCurrentProject
       ? simplemodeCurrentProject.board_id
       : this.TotalBoardValue
-    if (currentBoardId === this.TotalBoardValue)
-      return message.warn('请选择单个项目进行查看')
+    if (currentBoardId === this.TotalBoardValue) return
     return milestoneList({ board_id: currentBoardId })
       .then(res => {
         // console.log(res)
@@ -373,8 +373,7 @@ export default class OverallControl extends React.Component {
     const currentBoardId = simplemodeCurrentProject
       ? simplemodeCurrentProject.board_id
       : this.TotalBoardValue
-    if (currentBoardId === this.TotalBoardValue)
-      return message.warn('请选择单个项目进行查看')
+    if (currentBoardId === this.TotalBoardValue) return
 
     return overallControllData({
       board_id: currentBoardId,
@@ -686,7 +685,7 @@ export default class OverallControl extends React.Component {
               })
             }
             element={'#choose_board'}
-            tips="请选择一个项目，查看相应的内容！"
+            tips={`请选择一个项目，查看 "${WorkbenchPages.OverallControl.name}" 相应的内容！`}
           />
         )}
       </div>
