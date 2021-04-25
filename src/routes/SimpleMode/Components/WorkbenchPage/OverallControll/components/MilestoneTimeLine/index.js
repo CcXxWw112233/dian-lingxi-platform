@@ -137,7 +137,7 @@ export default class MilestoneTimeLine extends React.Component {
         </div>
         <span className={styles.milestone_index}>
           <b>{index}</b>
-          <di className={styles.milestone_time}>{milestone_time}</di>
+          <div className={styles.milestone_time}>{milestone_time}</div>
         </span>
       </div>
     )
