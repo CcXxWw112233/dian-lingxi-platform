@@ -18,6 +18,8 @@ export const ceil_width_week = 12 //周视图单元格宽度
 export const ceil_width_hours = 22 //年试图下的单元格宽度
 
 export const one_group_row_total = 4 //默认分组行数
+export const extra_group_row = 1 //额外添加多一行
+
 export const gantt_panel_left_diff = 20 //80 //鼠标移动和拖拽的修正位置
 export const gantt_head_width_init = 280 //甘特图头部默认宽度
 export const hole_movedown_height = ceil_height //整体下移高度
