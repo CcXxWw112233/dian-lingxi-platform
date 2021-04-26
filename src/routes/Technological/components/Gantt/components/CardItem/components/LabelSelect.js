@@ -374,14 +374,19 @@ function LabelSelect(props) {
               key={item.id}
               onClick={() => handleClickLabel(item)}
             >
-              <Avatar
+              {/* <Avatar
                 style={{
                   backgroundColor: `rgb(${item.color})`,
                   marginRight: 10
                 }}
                 size={20}
-              />
-              <span>{item.name}</span>
+              /> */}
+              <span
+                className={styles.label_name}
+                style={{ backgroundColor: `rgb(${item.color})` }}
+              >
+                {item.name}
+              </span>
               <div className={styles.operation}>
                 <span
                   className={styles.edit}
