@@ -637,7 +637,12 @@ export const setStorage = (key, value) => {
 export const setOrganizationIdStorage = value => {
   localStorage.setItem('OrganizationId', value)
 }
-//设置board_id localstorage缓存, 同时存储board_id对应的org_id
+
+/**
+ * 设置board_id localstorage缓存, 同时存储board_id对应的org_id
+ * @param {string} value 项目id
+ * @param {string} param_org_id 组织id
+ */
 export const setBoardIdStorage = (value, param_org_id) => {
   setGlobalData('storageCurrentOperateBoardId', value)
   // 从缓存中拿到相应的board_id对应上org_id，存储当前项目的org_id => aboutBoardOrganizationId,

@@ -41,7 +41,7 @@ export default class GetRowNotAllowDragArea extends Component {
               style={{
                 display:
                   task_is_drag_moving &&
-                  !group_list_area_fold_section[index].is_group_folded
+                  !group_list_area_fold_section[index]?.is_group_folded
                     ? 'block'
                     : 'none',
                 position: 'absolute',
