@@ -240,8 +240,8 @@ export default class OverallControl extends React.Component {
       /** 所有列表中的最早时间合集 */
       const endArr = []
       overall_data.forEach(item => {
-        const first = getLastItem(item.content || [], 'end_time')
-        if (first) endArr.push(first)
+        const last = getLastItem(item.content || [], 'end_time')
+        if (last) endArr.push(last)
       })
       /** 获数据中取最小的时间 */
       const maxTime = Math.max.apply(
