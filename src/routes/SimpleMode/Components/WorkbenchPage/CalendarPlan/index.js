@@ -30,6 +30,7 @@ import { projectDetailInfo } from '../../../../../services/technological/prjectD
 import { debounce } from '../../../../../utils/util'
 import MustBeChooseBoard from '../../../../../components/MustBeChooseBoard'
 import { WorkbenchPages } from '../constans'
+import { setBoardIdStorage } from '../../../../../utils/businessFunction'
 
 /** 日历计划功能组件 */
 @connect(
@@ -607,6 +608,7 @@ export default class CalendarPlan extends React.Component {
     const isMilestoneType = TempType.milestoneType === data.type
     if (!isMilestoneType) return message.warn('功能正在开发')
     // console.log(data)
+    setBoardIdStorage(data.board_id, '')
     const { dispatch } = this.props
     /** 用来打开里程碑详情 */
     const resp = await projectDetailInfo(data.board_id)

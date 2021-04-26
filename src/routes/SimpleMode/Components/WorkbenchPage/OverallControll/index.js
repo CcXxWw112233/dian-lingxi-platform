@@ -66,16 +66,28 @@ export default class OverallControl extends React.Component {
       /** 一天的时候列表，暂定小中大三种，后续优化成可输入 */
       dayWidthOptions: [
         {
-          label: '小',
+          label: '超小',
           value: DaysWidth
         },
         {
-          label: '中',
+          label: '小',
           value: DaysWidth + 2
         },
         {
-          label: '大',
+          label: '中',
           value: DaysWidth + 4
+        },
+        {
+          label: '大',
+          value: DaysWidth + 6
+        },
+        {
+          label: '超大',
+          value: DaysWidth + 8
+        },
+        {
+          label: '巨无霸',
+          value: DaysWidth + 12
         }
       ],
       /** 容器滚动的距离 */
@@ -111,7 +123,7 @@ export default class OverallControl extends React.Component {
       queryParams: {}
     }
     /** 防止文字重叠，多几个像素，避免重叠 */
-    this.debounceTextWidth = 0
+    this.debounceTextWidth = 5
     this.updateRenderData = debounce(this.updateRenderData, 50)
     this.timer = null
     this.mouseleaveTimer = null
