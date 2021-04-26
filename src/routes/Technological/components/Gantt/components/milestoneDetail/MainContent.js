@@ -542,7 +542,7 @@ export default class MainContent extends React.Component {
         key: item.id,
         disableCheckbox: parentDisabled
       }
-      if (item.field_status === '0') arr.push(obj)
+      if (item.field_status === '0' || item.fields) arr.push(obj)
     })
     return arr
   }
@@ -554,7 +554,7 @@ export default class MainContent extends React.Component {
       const { fields = [] } = milestone_detail
       /** 已经存在详情的字段列表 */
       const disabledIds = fields.map(item => item.field_id)
-      if (isApiResponseOk(res))
+      if (isApiResponseOk(res)) {
         this.setState(
           {
             fieldsData: this.forMatTreeNode(
@@ -574,6 +574,7 @@ export default class MainContent extends React.Component {
             })
           }
         )
+      }
     })
   }
 
