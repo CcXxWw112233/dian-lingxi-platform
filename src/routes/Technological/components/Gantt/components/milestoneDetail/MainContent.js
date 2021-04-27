@@ -540,9 +540,14 @@ export default class MainContent extends React.Component {
         children: item.fields || null,
         title: <span title={item.name}>{item.name}</span>,
         key: item.id,
-        disableCheckbox: parentDisabled
+        disableCheckbox: parentDisabled,
+        field_status: item.field_status
       }
-      if (item.field_status === '0' || item.fields) arr.push(obj)
+      if (
+        obj.field_status === '0' ||
+        (obj.children || []).filter(item => item.field_status === '0').length
+      )
+        arr.push(obj)
     })
     return arr
   }
