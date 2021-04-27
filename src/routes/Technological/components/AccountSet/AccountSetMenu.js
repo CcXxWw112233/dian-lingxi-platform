@@ -4,6 +4,7 @@ import indexStyle from './index.less'
 import PersonalInfoForm from './PersonalInfoForm.js'
 import ChangePasswordForm from './ChangePasswordForm.js'
 import BindAccountForm from './BindAccountForm.js'
+import globalStyles from '../../../../globalset/css/globalClassName.less'
 
 export default class AccountSetMenu extends React.Component {
   constructor(props) {
@@ -53,8 +54,44 @@ export default class AccountSetMenu extends React.Component {
     return (
       <div className={indexStyle.menuOut}>
         {/*左边菜单*/}
-        <div>
-          <Menu
+        <div className={indexStyle.mainMenu}>
+          <div
+            onClick={this.handleMenuClick.bind(this, { key: '1' })}
+            className={`${indexStyle.default_setting} ${
+              SelectedKeys === '1' ? indexStyle.active : ''
+            }`}
+          >
+            <span className={`${globalStyles.authTheme} ${indexStyle.icon}`}>
+              &#xe829;
+            </span>
+            <span>个人信息</span>
+          </div>
+
+          <div
+            onClick={this.handleMenuClick.bind(this, { key: '2' })}
+            className={`${indexStyle.default_setting} ${
+              SelectedKeys === '2' ? indexStyle.active : ''
+            }`}
+          >
+            <span className={`${globalStyles.authTheme} ${indexStyle.icon}`}>
+              &#xe82b;
+            </span>
+            <span>账号绑定</span>
+          </div>
+
+          <div
+            onClick={this.handleMenuClick.bind(this, { key: '3' })}
+            className={`${indexStyle.default_setting} ${
+              SelectedKeys === '3' ? indexStyle.active : ''
+            }`}
+          >
+            <span className={`${globalStyles.authTheme} ${indexStyle.icon}`}>
+              &#xe82a;
+            </span>
+            <span>密码修改</span>
+          </div>
+
+          {/* <Menu
             onClick={this.handleMenuClick}
             style={{ width: 222, height: '100%' }}
             defaultOpenKeys={[SelectedKeys]}
@@ -104,7 +141,7 @@ export default class AccountSetMenu extends React.Component {
                 密码修改
               </div>
             </Menu.Item>
-          </Menu>
+          </Menu> */}
         </div>
         {/*右边表单*/}
         <div>

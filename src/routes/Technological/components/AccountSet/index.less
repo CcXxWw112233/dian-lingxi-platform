@@ -10,6 +10,34 @@
 //菜单项包裹
 .menuOut {
  display: flex;
+ width: 260px;
+}
+.mainMenu{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  flex: none;
+  border-right: 1px solid #D1D5E4;
+}
+.default_setting{
+  transition: all 0.1s linear;
+  width: 80%;
+  cursor: pointer;
+  display: flex;
+  border-radius: 50px;
+  margin-top: 15px;
+  &.active{
+    background-color: #6A9AFF;
+    color: #fff;
+  }
+  border: 1px solid #D1D5E4;
+  padding: 5px 15px;
+  align-items: center;
+  .icon{
+    margin-right: 10px;
+    font-size: 1.1rem;
+  }
 }
 
 .personInfoInput {
