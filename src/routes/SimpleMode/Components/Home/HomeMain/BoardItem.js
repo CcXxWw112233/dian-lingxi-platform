@@ -20,7 +20,7 @@ import {
   currentNounPlanFilterName,
   setRequestHeaderBaseInfo
 } from '../../../../../utils/businessFunction'
-import { Badge, Checkbox, Dropdown, Menu, message, Modal } from 'antd'
+import { Badge, Checkbox, Dropdown, Input, Menu, message, Modal } from 'antd'
 import { connect } from 'dva'
 import {
   toggleContentPrivilege,
@@ -38,6 +38,8 @@ import { inviteMembersInWebJoin } from '../../../../../utils/inviteMembersInWebJ
 import axios from 'axios'
 import Cookies from 'js-cookie'
 import CustormBadgeDot from '@/components/CustormBadgeDot'
+import { updateProject } from '../../../../../services/technological/prjectDetail'
+import { WorkbenchModel } from '../../../../../models/technological/workbench'
 
 @connect(mapStateToProps)
 export default class BoardItem extends Component {
@@ -47,7 +49,10 @@ export default class BoardItem extends Component {
       renderVistorContorlVisible: false,
       board_info_visible: false,
       show_add_menber_visible: false,
-      menu_oprate_visible: false
+      menu_oprate_visible: false,
+      selectedBoardId: '',
+      /** 重命名的名称 */
+      board_rename: ''
     }
     this.visitControlOtherPersonOperatorMenuItem = [
       {
@@ -64,12 +69,14 @@ export default class BoardItem extends Component {
     ]
   }
 
-  onSelectBoard = (board_id, org_id) => {
+  onSelectBoard = (board_id, org_id, e) => {
     const {
       projectList,
       dispatch,
-      simplemodeCurrentProject: { selected_board_term }
+      simplemodeCurrentProject: { selected_board_term },
+      onClick
     } = this.props
+    onClick && onClick(e, this.props.itemValue)
     const selectBoard = projectList.filter(item => item.board_id === board_id)
     const selectOrgId = org_id || getOrgIdByBoardId(board_id)
     if (!selectBoard && selectBoard.length == 0) {
@@ -605,6 +612,73 @@ export default class BoardItem extends Component {
       })
     }
   }
+
+  /** 保存修改的项目 */
+  saveEditBoard = (board_id, data) => {
+    const { dispatch } = this.props
+    if (board_id) {
+      updateProject({ board_id, ...data }).then(res => {
+        // console.log(res)
+        if (res.code === '0') {
+          dispatch({
+            type: [
+              WorkbenchModel.namespace,
+              WorkbenchModel.getProjectList
+            ].join('/'),
+            payload: {}
+          })
+        }
+      })
+    }
+  }
+
+  /** 重命名此项目名称
+   * @param {string} board_id 项目名称
+   * @param {{board_id: string, name:string}} board 项目信息
+   */
+  renameThisBoard = (board_id, board) => {
+    this.setState({
+      board_rename: board.board_name
+    })
+    /** 保存的回调 */
+    const Ok = () => {
+      const param = {
+        name: this.state.board_rename
+      }
+      this.saveEditBoard(board_id, param)
+      this.setState({
+        board_rename: ''
+      })
+    }
+    const confirm = Modal.confirm({
+      centered: true,
+      title: <div className={styles.rename_title}>修改项目名称</div>,
+      content: (
+        <div className={styles.rename_box}>
+          <div className={styles.rename_tip}>项目名称</div>
+          <div className={styles.rename_input}>
+            <Input
+              placeholder="请输入项目名称"
+              defaultValue={board.board_name}
+              onChange={e => this.setState({ board_rename: e.target.value })}
+              onPressEnter={() => {
+                confirm.destroy()
+                Ok()
+              }}
+            />
+          </div>
+        </div>
+      ),
+      onOk: () => {
+        Ok()
+      },
+      onCancel: () => {
+        this.setState({
+          board_rename: ''
+        })
+      }
+    })
+  }
   // 操作项点击
   handleMenuSelect = e => {
     e.domEvent.stopPropagation()
@@ -634,6 +708,9 @@ export default class BoardItem extends Component {
       case 'export_members': // 导出项目成员
         this.handleExportBoardMembers(itemValue)
         // this.setExportBoardMembersVisible()
+        break
+      case 'board_rename':
+        this.renameThisBoard(board_id, itemValue)
         break
       default:
         break
@@ -676,6 +753,9 @@ export default class BoardItem extends Component {
             this.props.currentNounPlan
           )}信息`}</Menu.Item>
         }
+        {checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_EDIT, board_id) && (
+          <Menu.Item key="board_rename">重命名</Menu.Item>
+        )}
         {checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER, board_id) && (
           <Menu.Item key={'export_members'}>
             导出{currentNounPlanFilterName(PROJECTS, board_id)}成员
@@ -702,7 +782,7 @@ export default class BoardItem extends Component {
     return (
       <>
         <div
-          onClick={() => this.onSelectBoard(board_id, org_id)}
+          onClick={e => this.onSelectBoard(board_id, org_id, e)}
           className={`${
             !isAllOrg
               ? styles.board_area_middle_item
