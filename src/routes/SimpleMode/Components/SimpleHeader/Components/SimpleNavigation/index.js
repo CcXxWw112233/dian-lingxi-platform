@@ -565,7 +565,7 @@ export default class SimpleNavigation extends Component {
     if (timeStep > this.expireMaxTimeShow) return null
     return (
       <span>
-        距{text}到期: {timeStep}天
+        距{text}到期: {timeStep > 0 ? timeStep + '天' : '今日到期'}
       </span>
     )
   }
