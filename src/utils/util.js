@@ -69,7 +69,9 @@ export const timestampToTimeNormal = (timestamp, split, flag, withChinese) => {
   let m = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()
 
   const date_ =
-    date.getFullYear() == new Date().getFullYear() ? M + D : Y + M + D
+    date.getFullYear() == new Date().getFullYear()
+      ? M + D + ' '
+      : Y + M + D + ' '
   return flag ? date_ + h + m : date_
 }
 export const timestampToTimeNormal2 = (timestamp, split, flag) => {
