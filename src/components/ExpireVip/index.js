@@ -67,6 +67,7 @@ export default class ExpireVip extends React.Component {
   /** 即将到期的渲染 */
   WillExpireRender = () => {
     const { tips, releaShow = true, expiredTime, children } = this.props
+    console.log(children)
     if (!releaShow) return children || null
     return (
       <div
@@ -179,7 +180,7 @@ export default class ExpireVip extends React.Component {
     return (t => {
       switch (t) {
         case ExpireType.WillExpire:
-          return ReactDOM.createPortal(this.WillExpireRender(), document.body)
+          return this.WillExpireRender()
         case ExpireType.Expired:
           return this.ExpiredRender()
         default:
