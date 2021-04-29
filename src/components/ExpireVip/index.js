@@ -36,6 +36,8 @@ export default class ExpireVip extends React.Component {
   /** 关闭窗口 */
   closeModal = () => {
     const { dispatch } = this.props
+    const org =
+      JSON.parse(window.localStorage.getItem('userInfo'))?.current_org || {}
     /** 关闭弹窗 */
     dispatch({
       type: [ExpireModel.namespace, ExpireModel.reducers.updateDatas].join('/'),
@@ -43,18 +45,29 @@ export default class ExpireVip extends React.Component {
         expireType: false
       }
     })
+    /** 已经存储的所有组织即将过期弹窗时间数据 */
+    const dates = window.localStorage.getItem(
+      LocalStorageKeys.willExpireCloseTime
+    )
+      ? JSON.parse(
+          window.localStorage.getItem(LocalStorageKeys.willExpireCloseTime)
+        )
+      : {}
     window.localStorage.setItem(
       LocalStorageKeys.willExpireCloseTime,
-      moment()
-        .valueOf()
-        .toString()
+      JSON.stringify({
+        ...dates,
+        [org.id]: moment()
+          .valueOf()
+          .toString()
+      })
     )
   }
 
   /** 即将到期的渲染 */
   WillExpireRender = () => {
-    const { tips, releaShow = true, expiredTime } = this.props
-    if (!releaShow) return <span style={{ display: 'none' }}></span>
+    const { tips, releaShow = true, expiredTime, children } = this.props
+    if (!releaShow) return children || null
     return (
       <div
         className={`${styles.willExpireModal} animate__animated animate__fadeIn animate__faster`}
@@ -63,7 +76,11 @@ export default class ExpireVip extends React.Component {
           <div className={styles.iconVip}>VIP</div>
           <div className={styles.vipTitle}>尊贵的会员</div>
           <div className={styles.tipContent}>
-            {tips || `您的VIP特权将于 ${expiredTime || '近期'} 到期`}
+            {tips || (
+              <span>
+                您的VIP特权将于 <b>{expiredTime || '近期'}</b> 到期
+              </span>
+            )}
           </div>
           <div className={styles.btns}>
             <Button

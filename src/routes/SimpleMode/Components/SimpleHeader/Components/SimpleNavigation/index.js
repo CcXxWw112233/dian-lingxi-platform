@@ -558,8 +558,8 @@ export default class SimpleNavigation extends Component {
         ? '会员'
         : ''
     /** 时间跨度 */
-    const timeStep = Math.round(
-      moment(+(payment_end_date + '000')).diff(moment(), 'days', true)
+    const timeStep = Math.ceil(
+      Math.abs(moment(+(payment_end_date + '000')).diff(moment(), 'days', true))
     )
     if (payment_is_expired === 'true') return <span>会员已过期</span>
     if (timeStep > this.expireMaxTimeShow) return null
@@ -981,7 +981,7 @@ export default class SimpleNavigation extends Component {
         <div>
           <Menu
             className={`${globalStyles.global_vertical_scrollbar}`}
-            style={{ maxHeight: 320, overflowY: 'auto' }}
+            style={{ maxHeight: 350, overflowY: 'auto' }}
             selectedKeys={id ? [id] : ['0']}
             onClick={this.handleOrgListMenuClick.bind(this)}
             selectable={true}

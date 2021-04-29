@@ -263,9 +263,10 @@ class SimpleMode extends PureComponent {
       /** 不是管理员，不用弹窗 */
       if (identity_type !== OrgUserType.manager) return
       /** 上次关闭的时间戳 */
-      const prevCloseDate = window.localStorage.getItem(
+      let prevCloseDate = window.localStorage.getItem(
         LocalStorageKeys.willExpireCloseTime
       )
+      prevCloseDate = prevCloseDate ? JSON.parse(prevCloseDate)[org.id] : ''
       /** 上次是否已经关闭过 */
       let hasCloseYestoday = !prevCloseDate
       if (prevCloseDate) {
@@ -285,13 +286,17 @@ class SimpleMode extends PureComponent {
             payload: {
               expireVisible: true,
               expireType: ExpireType.Expired,
-              expiredTime: moment(+(payment_end_date + '000')).calendar()
+              expiredTime: moment(+(payment_end_date + '000')).format(
+                'YYYY/MM/DD'
+              )
             }
           })
       } else {
         /** 距离到期还有几天 */
-        const timeStep = Math.floor(
-          moment().diff(moment(+(payment_end_date + '000')), 'days', true)
+        const timeStep = Math.ceil(
+          Math.abs(
+            moment().diff(moment(+(payment_end_date + '000')), 'days', true)
+          )
         )
 
         if (timeStep <= this.WillExpireDate && hasCloseYestoday) {
@@ -303,7 +308,9 @@ class SimpleMode extends PureComponent {
             payload: {
               expireVisible: true,
               expireType: ExpireType.WillExpire,
-              expiredTime: moment(+(payment_end_date + '000')).calendar()
+              expiredTime: moment(+(payment_end_date + '000')).format(
+                'YYYY/MM/DD'
+              )
             }
           })
         }
