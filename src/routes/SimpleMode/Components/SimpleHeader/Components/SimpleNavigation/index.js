@@ -795,24 +795,26 @@ export default class SimpleNavigation extends Component {
           </div>
 
           {/* 升级续费 */}
-          {identity_type === OrgUserType.normal && isHasManagerBack() && (
-            <div
-              className={indexStyles.default_select_setting}
-              onClick={e => {
-                this.openPayUpgradeModal(e)
-              }}
-            >
-              <div>
+          {(identity_type === OrgUserType.manager ||
+            identity_type === OrgUserType.normal) &&
+            isHasManagerBack() && (
+              <div
+                className={indexStyles.default_select_setting}
+                onClick={e => {
+                  this.openPayUpgradeModal(e)
+                }}
+              >
                 <div>
-                  <img
-                    src={require('../../../../../../assets/workbench/home/icon_vip_big.png')}
-                    alt="team"
-                  />
+                  <div>
+                    <img
+                      src={require('../../../../../../assets/workbench/home/icon_vip_big.png')}
+                      alt="team"
+                    />
+                  </div>
+                  <div className={indexStyles.middle_text}>升级续费</div>
                 </div>
-                <div className={indexStyles.middle_text}>升级续费</div>
               </div>
-            </div>
-          )}
+            )}
 
           {/* 退出登录 */}
           <div
