@@ -82,6 +82,8 @@ export default class SimpleNavigation extends Component {
       payUpgradeModalVisible: false
     }
     this.timer = null
+    /** 超过多少天后不显示试用期或者VIP的剩余时间 */
+    this.expireMaxTimeShow = 30
   }
   componentDidMount() {
     const { dispatch } = this.props
@@ -560,6 +562,7 @@ export default class SimpleNavigation extends Component {
       moment(+(payment_end_date + '000')).diff(moment(), 'days', true)
     )
     if (payment_is_expired === 'true') return <span>会员已过期</span>
+    if (timeStep > this.expireMaxTimeShow) return null
     return (
       <span>
         距{text}到期: {timeStep}天
