@@ -561,7 +561,7 @@ export default class SimpleNavigation extends Component {
     const timeStep = Math.ceil(
       Math.abs(moment(+(payment_end_date + '000')).diff(moment(), 'days', true))
     )
-    if (payment_is_expired === 'true') return <span>会员已过期</span>
+    if (payment_is_expired === 'true') return <span>试用/会员已过期</span>
     if (timeStep > this.expireMaxTimeShow) return null
     return (
       <span>
