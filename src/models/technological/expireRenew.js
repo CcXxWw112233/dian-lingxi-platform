@@ -5,7 +5,7 @@ const Constans = {
    * @default string 'expirerenew'
    * @param {boolean} expireVisible 是否需要显示的变量
    * @param {string} expireType 显示类型，即将过期和已过期
-   * @param {string} tips 过期提示文案
+   * @param {string | React.ReactNode} tips 过期提示文案
    * @param {string} expiredTime 将会过期的时间或者已经过期的时间
    */
   namespace: 'expirerenew',
