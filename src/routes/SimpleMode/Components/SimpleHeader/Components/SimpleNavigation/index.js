@@ -1,6 +1,6 @@
 import React, { Component, lazy, Suspense } from 'react'
 import indexStyles from './index.less'
-import { Tooltip, Modal, Menu, Switch, Icon, Divider } from 'antd'
+import { Tooltip, Modal, Menu, Switch, Icon, Divider, Avatar } from 'antd'
 import linxiLogo from '@/assets/library/lingxi_logo.png'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { connect } from 'dva'
@@ -33,6 +33,12 @@ import { isApiResponseOk } from '@/utils/handleResponseData'
 // import OrganizationMember from '@/routes/Technological/components/OrganizationMember'
 // import Organization from '@/routes/organizationManager'
 import queryString from 'query-string'
+import {
+  OrgPaymentMark,
+  OrgUserType,
+  PAYUPGRADEURL
+} from '../../../../../../globalset/js/constant'
+import moment from 'moment'
 // import PayUpgrade from '@/routes/Technological/components/PayUpgrade/index'
 
 const CreateOrganizationModal = lazy(() =>
@@ -475,7 +481,7 @@ export default class SimpleNavigation extends Component {
   }
   openPayUpgradeModal = e => {
     e.stopPropagation()
-    window.open('https://docs.qq.com/form/edit/DSHRaQ01GSU1qZHlT#/edit')
+    window.open(PAYUPGRADEURL)
     return
     this.setState({
       payUpgradeModalVisible: true
@@ -538,6 +544,72 @@ export default class SimpleNavigation extends Component {
       }
     })
   }
+
+  /** 渲染组织即将到期的文字提醒 */
+  WillexpireRender = value => {
+    const { payment_end_date, payment_is_expired, payment_mark } = value
+    /** 付费状态 */
+    const text =
+      payment_mark === OrgPaymentMark.trial
+        ? '试用'
+        : payment_mark === OrgPaymentMark.pay
+        ? '会员'
+        : ''
+    /** 时间跨度 */
+    const timeStep = Math.round(
+      moment(+(payment_end_date + '000')).diff(moment(), 'days', true)
+    )
+    if (payment_is_expired === 'true') return <span>会员已过期</span>
+    return (
+      <span>
+        距{text}到期: {timeStep}天
+      </span>
+    )
+  }
+
+  /** 渲染Vip图标 */
+  VipIconRender = val => {
+    const { payment_is_expired, payment_mark } = val
+    if (payment_is_expired === 'false' && payment_mark === OrgPaymentMark.pay) {
+      return (
+        <span className={indexStyles.vip} title="尊贵的会员">
+          V
+        </span>
+      )
+    }
+    return null
+  }
+
+  /** 组织中，用户的角色类型 */
+  OrgUserTypeRender = type => {
+    switch (type) {
+      case OrgUserType.visitor:
+        return (
+          <Tooltip title="访客">
+            <span
+              className={`${globalStyles.authTheme} ${indexStyles.user_type}`}
+              onClick={e => e.stopPropagation()}
+            >
+              &#xe854;
+            </span>
+          </Tooltip>
+        )
+      case OrgUserType.manager:
+        return (
+          <Tooltip title="管理员">
+            <span
+              className={`${globalStyles.authTheme} ${indexStyles.user_type}`}
+              onClick={e => e.stopPropagation()}
+            >
+              &#xe8b7;
+            </span>
+          </Tooltip>
+        )
+      default:
+        return null
+    }
+  }
+
   render() {
     //currentUserOrganizes currentSelectOrganize组织列表和当前组织
     const {
@@ -588,7 +660,7 @@ export default class SimpleNavigation extends Component {
       <div className={`${globalStyles.global_card} ${indexStyles.menuWrapper}`}>
         <div className={indexStyles.nav_tabs}>
           {/* 团队成员 */}
-          {identity_type == '1' && isHasMemberView() && (
+          {identity_type == OrgUserType.normal && isHasMemberView() && (
             <div
               className={indexStyles.default_select_setting}
               onClick={this.handleOrgListMenuClick.bind(this, { key: '24' })}
@@ -614,7 +686,7 @@ export default class SimpleNavigation extends Component {
           )}
 
           {/* 后台管理 */}
-          {identity_type == '1' && isHasManagerBack() && (
+          {identity_type == OrgUserType.normal && isHasManagerBack() && (
             <div
               className={indexStyles.default_select_setting}
               onClick={this.handleOrgListMenuClick.bind(this, { key: '23' })}
@@ -634,7 +706,7 @@ export default class SimpleNavigation extends Component {
           )}
 
           {/* 邀请成员 */}
-          {identity_type == '1' &&
+          {identity_type == OrgUserType.normal &&
             checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD) && (
               <div
                 className={indexStyles.default_select_setting}
@@ -668,7 +740,7 @@ export default class SimpleNavigation extends Component {
             <div className={indexStyles.account_setting}>
               {avatar ? (
                 <div className={indexStyles.left_img}>
-                  <img src={avatar} className={indexStyles.avartarImg} />
+                  <Avatar src={avatar} size={40} icon="user" />
                 </div>
               ) : (
                 ''
@@ -718,7 +790,7 @@ export default class SimpleNavigation extends Component {
           </div>
 
           {/* 升级续费 */}
-          {identity_type === '1' && isHasManagerBack() && (
+          {identity_type === OrgUserType.normal && isHasManagerBack() && (
             <div
               className={indexStyles.default_select_setting}
               onClick={e => {
@@ -934,50 +1006,46 @@ export default class SimpleNavigation extends Component {
               </Menu.Item>
             )}
             {currentUserOrganizes.map((value, key) => {
+              /** 是否选中了这个组织 */
+              const checked = currentSelectOrganize.id === value.id
               const { name, id, identity_type, logo } = value
               return (
                 <Menu.Item key={id} className={indexStyles.org_name}>
                   {/* <Tooltip placement="top" title={name}> */}
                   <div
+                    id={checked ? 'org_selected' : ''}
                     title={name}
                     style={{ display: 'flex', alignItems: 'center' }}
                   >
-                    <img
-                      src={logo || linxiLogo}
-                      className={indexStyles.org_img}
-                    />
+                    <div className={indexStyles.org_avatar}>
+                      <img
+                        src={logo || linxiLogo}
+                        className={indexStyles.org_img}
+                      />
+                      {this.VipIconRender(value)}
+                    </div>
                     <div
                       style={{
-                        maxWidth: '50%',
-                        overflow: 'hidden',
-                        whiteSpace: 'nowrap',
-                        textOverflow: 'ellipsis'
+                        maxWidth: '70%'
                       }}
                     >
-                      <div>{name}</div>
-                      <div className={indexStyles.subTitle}></div>
+                      <div
+                        style={{
+                          width: '100%',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                          textOverflow: 'ellipsis'
+                        }}
+                      >
+                        {name}
+                      </div>
+                      <div className={indexStyles.subTitle}>
+                        {this.WillexpireRender(value)}
+                      </div>
                     </div>
                   </div>
                   {/* </Tooltip> */}
-                  {identity_type == '0' ? (
-                    <span
-                      className={indexStyles.middle_bott}
-                      style={{
-                        display: 'inline-block',
-                        backgroundColor: '#e5e5e5',
-                        padding: '0 4px',
-                        borderRadius: 40,
-                        marginLeft: 6,
-                        position: 'absolute',
-                        right: 10,
-                        top: 12
-                      }}
-                    >
-                      访客
-                    </span>
-                  ) : (
-                    ''
-                  )}
+                  {this.OrgUserTypeRender(value.identity_type)}
                 </Menu.Item>
               )
             })}

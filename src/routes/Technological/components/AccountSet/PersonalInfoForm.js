@@ -251,7 +251,8 @@ class PersonalInfoForm extends React.Component {
                   accept={'image/jpg, image/jpeg,  image/png'}
                 >
                   <Button>
-                    <Icon type="upload" /> Click to Upload
+                    <Icon type="upload" />
+                    点击上传头像
                   </Button>
                 </Upload>
                 <div style={{ width: 120 }}>
