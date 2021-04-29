@@ -504,9 +504,8 @@ export default class MainBoard extends Component {
     onClick && onClick(e, data)
   }
 
-  /** 更新项目列表 */
-  updateProjectList = (board_id) => {
-
+  onUpdate = () => {
+    this.initGetTodoList()
   }
 
   // 项目列表操作项
@@ -521,7 +520,7 @@ export default class MainBoard extends Component {
           itemValue={value}
           setLocalSelectedBoard={this.setLocalSelectedBoard}
           onClick={this.handleBoardClick}
-          onUpdate={this.updateProjectList}
+          onUpdate={this.onUpdate}
         />
       )
     })
