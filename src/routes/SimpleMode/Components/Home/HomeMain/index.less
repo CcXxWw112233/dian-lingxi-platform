@@ -17,6 +17,7 @@
         height    : 100%;
         max-height: 552px;
         overflow  : auto;
+        overflow-x: hidden;
     }
 
     .main_lf_wapper {
@@ -278,13 +279,44 @@
     background-attachment      : fixed;
 }
 
+.animateLine{
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 500px;
+  opacity: 0;
+  background: linear-gradient(to right, rgba(255,255,255,0.02), rgba(255,255,255,0.15),rgba(255,255,255,0.02));
+  box-shadow: -8px 0px 16px rgba(255,255,255,0.02),8px 0px 16px rgba(255,255,255,0.02);
+}
 
 .main_rt_Wapper {
     flex         : 1;
     background   : rgba(0, 0, 0, 0.35);
     border-radius: 0 6px 6px 0;
+    position: relative;
 }
 
+.rename_title{
+  font-size: 1rem;
+  font-weight: bold;
+}
+.rename_box{
+  margin-top: 10px;
+}
+.rename_tip{
+  color: rgba(0, 0, 0, 0.45);
+  margin-bottom: 10px;
+}
+.rename_input{
+  width: 100%;
+  input{
+    width: 100%;
+  }
+}
+.animateToRight {
+  animation: LightToRight 0.5s ease-in-out forwards;
+}
 /*滚动条样式*/
 // .main_rt_Wapper:hover::-webkit-scrollbar-thumb {
 //     border-radius        : 8px;
@@ -326,4 +358,15 @@
         height: 450px;
         top   : 100px;
     }
+}
+
+@keyframes LightToRight {
+  0% {
+    opacity: 1;
+    transform: translateX(-10vw);
+  }
+  100%{
+    opacity: 0.5;
+    transform: translateX(60vw);
+  }
 }

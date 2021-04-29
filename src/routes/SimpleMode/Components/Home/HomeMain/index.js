@@ -10,6 +10,7 @@ import { isColor } from '../../../../../utils/util'
 import { connect } from 'dva'
 import { ENV_BROWSER_APP } from '../../../../../globalset/clientCustorm'
 import bgStylels from '../../../index.less'
+import { debounce } from 'lodash'
 
 const defaultWallpaperSrc = ''
 @connect(mapStateToProps)
@@ -17,8 +18,11 @@ export default class index extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      bgStyle: {}
+      bgStyle: {},
+      /** 动画的class类名 */
+      animateClassList: []
     }
+    this.addAnimateClass = debounce(this.addAnimateClass, 100)
   }
   static propTypes = {
     prop: PropTypes
@@ -80,14 +84,56 @@ export default class index extends Component {
     // debugger
     return bgStyle
   }
+
+  /** 动画结束的事件 */
+  animateEnd = e => {
+    // let { animateClassList } = this.state
+    // animateClassList.shift()
+    // this.setState({
+    //   animateClassList
+    // })
+  }
+
+  /**
+   * 点击事件添加动画
+   * @param {React.MouseEvent} e 点击事件
+   * @param {*} val 点击的数据
+   */
+  addAnimateClass = (e, val) => {
+    const { animateClassList = [] } = this.state
+    const arr = animateClassList.concat(styles.animateToRight)
+    this.setState(
+      {
+        animateClassList: arr
+      },
+      () => {
+        setTimeout(() => {
+          arr.shift()
+          this.setState({
+            animateClassList: arr
+          })
+        }, 500)
+      }
+    )
+  }
   render() {
     return (
       <div className={`${styles.main_wapper}`}>
         <div className={styles.main_lf_wapper}>
-          <MainBoard></MainBoard>
+          <MainBoard onClick={() => this.addAnimateClass()}></MainBoard>
         </div>
 
         <div className={styles.main_rt_Wapper}>
+          {this.state.animateClassList.map((item, i) => {
+            return (
+              <div
+                className={`${styles.animateLine} ${item}`}
+                key={`item_${i + 1}`}
+                onAnimationEnd={this.animateEnd}
+              ></div>
+            )
+          })}
+
           <FeatureBox setHomeVisible={this.props.setHomeVisible} />
           <BoardFeatures />
         </div>

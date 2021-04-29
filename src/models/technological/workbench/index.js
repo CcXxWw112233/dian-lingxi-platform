@@ -82,7 +82,12 @@ export const WorkbenchModel = {
      * @default string '0' 默认不显示 '1' 显示
      */
     workbench_show_gantt_card: '0'
-  }
+  },
+  /** 获取项目列表
+   * 获取到的列表更新到 [projectList] 变量中
+   * @param 无需参数
+   */
+  getProjectList: 'getProjectList'
 }
 
 let naviHeadTabIndex //导航栏naviTab选项

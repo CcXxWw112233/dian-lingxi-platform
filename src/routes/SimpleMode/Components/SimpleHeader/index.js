@@ -21,6 +21,10 @@ import { NODE_ENV, PROJECTS } from '../../../../globalset/js/constant'
 import LingxiIm, { lx_utils, Im } from 'lingxi-im'
 import small_routine_code from '../../../../assets/sider_right/small_routine_code.png'
 import official_accounts_code from '../../../../assets/sider_right/official_accounts_code.png'
+import ExpireVip from '../../../../components/ExpireVip'
+import { ExpireType } from '../../../../components/ExpireVip/constans'
+import { ExpireModel } from '../../../../models/technological/expireRenew'
+import { debounce } from 'lodash'
 
 const VideoMeeting = lazy(() =>
   import(
@@ -42,16 +46,20 @@ const ProcessDetailModal = lazy(() => import('@/components/ProcessDetailModal'))
 const Guide = lazy(() => import('../Guide/index'))
 
 class SimpleHeader extends Component {
-  state = {
-    leftNavigationVisible: false,
-    simpleDrawerVisible: false,
-    // simpleDrawerContent: null,
-    simpleDrawerTitle: '',
-    whetherShowTaskDetailModalVisible: false, // 控制引用的任务弹窗多次渲染
-    whetherShowFileDetailModalVisible: false,
-    whetherShowProcessDetailModalVisible: false, // 控制引用的流程弹窗多次渲染
-    guideImageMoadlVisible: false, //协作引导图片全屏预览
-    guideImgSrc: '' //协作引导图片全屏预览资源
+  constructor(props) {
+    super(props)
+    this.state = {
+      leftNavigationVisible: false,
+      simpleDrawerVisible: false,
+      // simpleDrawerContent: null,
+      simpleDrawerTitle: '',
+      whetherShowTaskDetailModalVisible: false, // 控制引用的任务弹窗多次渲染
+      whetherShowFileDetailModalVisible: false,
+      whetherShowProcessDetailModalVisible: false, // 控制引用的流程弹窗多次渲染
+      guideImageMoadlVisible: false, //协作引导图片全屏预览
+      guideImgSrc: '' //协作引导图片全屏预览资源
+    }
+    this.scrollToTop = debounce(this.scrollToTop, 100)
   }
 
   openGuideModal = () => {
@@ -87,6 +95,20 @@ class SimpleHeader extends Component {
 
   handleVisibleChange = flag => {
     this.setState({ leftNavigationVisible: flag })
+    if (flag) {
+      this.scrollToTop()
+    }
+  }
+
+  /** 滚动到指定位置 */
+  scrollToTop = () => {
+    const dom = document.querySelector('#org_selected')
+    if (dom && dom.parentElement) {
+      dom.parentElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      })
+    }
   }
 
   openOrCloseMainNav = e => {
@@ -747,7 +769,11 @@ class SimpleHeader extends Component {
                 <div
                   className={`${indexStyles.current_org} text_showdow_alpha_black`}
                 >
-                  {current_org?.name}
+                  <ExpireVip
+                    releaShow={ExpireType.Expired === this.props.expireType}
+                  >
+                    <span>{current_org?.name}</span>
+                  </ExpireVip>
                 </div>
               </div>
             </div>
@@ -927,7 +953,8 @@ function mapStateToProps({
   },
   organizationManager: {
     datas: { currentNounPlan }
-  }
+  },
+  [ExpireModel.namespace]: { expireType }
 }) {
   return {
     currentNounPlan,
@@ -944,7 +971,8 @@ function mapStateToProps({
     fileType,
     processInfo,
     process_detail_modal_visible,
-    im_alarm_no_reads_total
+    im_alarm_no_reads_total,
+    expireType
   }
 }
 export default connect(mapStateToProps)(SimpleHeader)

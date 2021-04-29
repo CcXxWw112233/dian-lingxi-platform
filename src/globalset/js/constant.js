@@ -150,6 +150,11 @@ export const NORMAL_NOUN_PLAN = {
   Catch_Up: '动态',
   Map_Admin: '地图管理'
 }
+
+/** 付费升级打开的表格申请网页 */
+export const PAYUPGRADEURL =
+  'https://docs.qq.com/form/edit/DSHRaQ01GSU1qZHlT#/edit'
+
 export const ORGANIZATION = 'Organization'
 export const TASKS = 'Tasks'
 export const FLOWS = 'Flows'
@@ -199,3 +204,37 @@ export const CUSTOMIZATION_ORGNIZATIONS = [
 
 export const FILE_UPLOAD_ACCEPT_TYPE =
   '.3dm, .iges, .obj, .ma, .mb, .skp, .dwg, .psd, .pdf, .doc, .xls, .ppt, .docx, .xlsx, .pptx, .key, .jpg,.jpeg, .png, .gif, .mp4, .mp3, .txt, .rar, .zip, .7z, .gz, .bmp'
+
+/** 本地缓存保存的key数据 */
+export const LocalStorageKeys = {
+  /** 即将过期的弹窗关闭时间 */
+  willExpireCloseTime: 'willExpireCloseTime'
+}
+
+/** 组织中，用户的类型 */
+export const OrgUserType = {
+  /** 访客
+   * @default string '0'
+   */
+  visitor: '0',
+  /** 普通成员
+   * @default string '1'
+   */
+  normal: '1',
+  /** 管理员
+   * @default string '3'
+   */
+  manager: '3'
+}
+
+/** 付费状态 */
+export const OrgPaymentMark = {
+  /** 试用
+   * @default string 'trial'
+   */
+  trial: 'trial',
+  /** 付费
+   * @default string 'pay'
+   */
+  pay: 'pay'
+}
