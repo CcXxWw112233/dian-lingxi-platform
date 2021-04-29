@@ -663,7 +663,7 @@ export default class SimpleNavigation extends Component {
       <div className={`${globalStyles.global_card} ${indexStyles.menuWrapper}`}>
         <div className={indexStyles.nav_tabs}>
           {/* 团队成员 */}
-          {identity_type == OrgUserType.normal && isHasMemberView() && (
+          {identity_type === OrgUserType.normal && isHasMemberView() && (
             <div
               className={indexStyles.default_select_setting}
               onClick={this.handleOrgListMenuClick.bind(this, { key: '24' })}
@@ -689,24 +689,26 @@ export default class SimpleNavigation extends Component {
           )}
 
           {/* 后台管理 */}
-          {identity_type == OrgUserType.normal && isHasManagerBack() && (
-            <div
-              className={indexStyles.default_select_setting}
-              onClick={this.handleOrgListMenuClick.bind(this, { key: '23' })}
-            >
-              <div className={indexStyles.bank}>
-                <div
-                  className={`${globalStyles.authTheme} ${indexStyles.bank_icon}`}
-                >
-                  <img
-                    src={require('../../../../../../assets/workbench/home/icon_manage.png')}
-                    alt="team"
-                  />
+          {(identity_type === OrgUserType.manager ||
+            identity_type === OrgUserType.normal) &&
+            isHasManagerBack() && (
+              <div
+                className={indexStyles.default_select_setting}
+                onClick={this.handleOrgListMenuClick.bind(this, { key: '23' })}
+              >
+                <div className={indexStyles.bank}>
+                  <div
+                    className={`${globalStyles.authTheme} ${indexStyles.bank_icon}`}
+                  >
+                    <img
+                      src={require('../../../../../../assets/workbench/home/icon_manage.png')}
+                      alt="team"
+                    />
+                  </div>
+                  <span className={indexStyles.middle_text}>后台管理</span>
                 </div>
-                <span className={indexStyles.middle_text}>后台管理</span>
               </div>
-            </div>
-          )}
+            )}
 
           {/* 邀请成员 */}
           {identity_type == OrgUserType.normal &&
@@ -793,24 +795,26 @@ export default class SimpleNavigation extends Component {
           </div>
 
           {/* 升级续费 */}
-          {identity_type === OrgUserType.normal && isHasManagerBack() && (
-            <div
-              className={indexStyles.default_select_setting}
-              onClick={e => {
-                this.openPayUpgradeModal(e)
-              }}
-            >
-              <div>
+          {(identity_type === OrgUserType.manager ||
+            identity_type === OrgUserType.normal) &&
+            isHasManagerBack() && (
+              <div
+                className={indexStyles.default_select_setting}
+                onClick={e => {
+                  this.openPayUpgradeModal(e)
+                }}
+              >
                 <div>
-                  <img
-                    src={require('../../../../../../assets/workbench/home/icon_vip_big.png')}
-                    alt="team"
-                  />
+                  <div>
+                    <img
+                      src={require('../../../../../../assets/workbench/home/icon_vip_big.png')}
+                      alt="team"
+                    />
+                  </div>
+                  <div className={indexStyles.middle_text}>升级续费</div>
                 </div>
-                <div className={indexStyles.middle_text}>升级续费</div>
               </div>
-            </div>
-          )}
+            )}
 
           {/* 退出登录 */}
           <div
