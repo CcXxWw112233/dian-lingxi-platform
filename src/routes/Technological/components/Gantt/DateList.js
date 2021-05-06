@@ -541,25 +541,24 @@ export default class DateList extends Component {
       <div className={indexStyles.dateDetail}>
         {date_inner.map((value2, key2) => {
           const { month, date_no, week_day, timestamp, timestampEnd } = value2
-          // const has_lcb = this.isHasMiletoneList().handleMonthMode(Number(timestampEnd)).flag
-          // const current_date_miletones = this.isHasMiletoneList().handleMonthMode(Number(timestampEnd)).current_date_miletones
-          // const is_over_duetime = this.isHasMiletoneList().handleMonthMode(Number(timestampEnd)).is_over_duetime
-          // const is_all_realized = this.isHasMiletoneList().handleMonthMode(Number(timestampEnd)).is_all_realized
           const {
             flag: has_lcb,
             current_date_miletones = [],
             is_over_duetime,
             is_all_realized
           } = this.isHasMiletoneList().handleMonthMode(Number(timestampEnd))
+          const {
+            holiday,
+            lunar,
+            festival_status
+          } = this.getDateNoHolidaylunar(timestamp)
           // /gantt_board_id == '0' ||
           const isToday = isSamDay(timestamp, new Date().getTime())
           return group_view_type != '1' ? (
             <Tooltip
               trigger={gantt_view_mode == 'month' ? ['hover'] : ['contextMenu']}
               key={`${month}/${date_no}`}
-              title={`${
-                this.getDateNoHolidaylunar(timestamp).lunar
-              } ${this.getDateNoHolidaylunar(timestamp).holiday || ' '}`}
+              title={`${lunar} ${holiday || ' '}`}
             >
               <div key={`${month}/${date_no}`}>
                 <div className={`${indexStyles.dateDetailItem}`} key={key2}>
@@ -567,15 +566,14 @@ export default class DateList extends Component {
                     className={`${indexStyles.dateDetailItem_date_no}
                                     ${(week_day == 0 || week_day == 6) &&
                                       indexStyles.weekly_date_no}
-                                    ${this.getDateNoHolidaylunar(timestamp)
-                                      .festival_status == '1' &&
+                                    ${festival_status == '1' &&
                                       indexStyles.holiday_date_no}`}
                     style={{
                       background:
                         isToday && gantt_view_mode == 'month' ? '#1890FF' : ''
                     }}
                   >
-                    {this.getDateNoHolidaylunar(timestamp).holiday && (
+                    {holiday && (
                       <div
                         style={{
                           position: 'absolute',
@@ -587,7 +585,7 @@ export default class DateList extends Component {
                           backgroundColor: '#fff'
                         }}
                       >
-                        {this.getDateNoHolidaylunar(timestamp).holiday}
+                        {holiday}
                       </div>
                     )}
                     {isToday && gantt_view_mode == 'month' ? (
@@ -629,9 +627,7 @@ export default class DateList extends Component {
                 trigger={
                   gantt_view_mode == 'month' ? ['hover'] : ['contextMenu']
                 }
-                title={`${
-                  this.getDateNoHolidaylunar(timestamp).lunar
-                } ${this.getDateNoHolidaylunar(timestamp).holiday || ' '}`}
+                title={`${lunar} ${holiday || ' '}`}
               >
                 <div>
                   <div className={`${indexStyles.dateDetailItem}`} key={key2}>
@@ -640,8 +636,7 @@ export default class DateList extends Component {
                                     ${indexStyles.nomal_date_no}
                                     ${(week_day == 0 || week_day == 6) &&
                                       indexStyles.weekly_date_no}
-                                    ${this.getDateNoHolidaylunar(timestamp)
-                                      .festival_status == '1' &&
+                                    ${festival_status == '1' &&
                                       indexStyles.holiday_date_no}
                                     ${has_lcb &&
                                       indexStyles.has_moletones_date_no}`}
@@ -657,7 +652,7 @@ export default class DateList extends Component {
                       }}
                       // style={{ background: is_over_duetime && has_lcb ? '#FF7875' : '' }}
                     >
-                      {this.getDateNoHolidaylunar(timestamp).holiday && (
+                      {holiday && (
                         <div
                           style={{
                             position: 'absolute',
@@ -669,7 +664,7 @@ export default class DateList extends Component {
                             backgroundColor: '#fff'
                           }}
                         >
-                          {this.getDateNoHolidaylunar(timestamp).holiday}
+                          {holiday}
                         </div>
                       )}
                       {isToday && gantt_view_mode == 'month' ? (
@@ -1121,96 +1116,6 @@ export default class DateList extends Component {
           deleteRelationContent={this.deleteRelationContent}
         /> */}
       </div>
-    )
-  }
-}
-
-class DropMilestone extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      menu_oprate_visible: false
-    }
-  }
-  dropdwonVisibleChange = bool => {
-    this.setState({
-      menu_oprate_visible: bool
-    })
-  }
-  render() {
-    const { menu_oprate_visible } = this.state
-    const {
-      renderLCBList,
-      getDateNoHolidaylunar,
-      setMiletonesColor,
-      timestamp,
-      current_date_miletones,
-      timestampEnd,
-      itemKey,
-      key2,
-      week_day,
-      date_no,
-      is_over_duetime,
-      has_lcb,
-      is_all_realized
-    } = this.props
-    return (
-      <Dropdown
-        onVisibleChange={this.dropdwonVisibleChange}
-        overlay={
-          menu_oprate_visible ? (
-            renderLCBList(current_date_miletones, { timestampEnd })
-          ) : (
-            <span />
-          )
-        }
-        key={itemKey}
-        trigger={['click']}
-      >
-        <Tooltip
-          title={`${
-            getDateNoHolidaylunar(timestamp).lunar
-          } ${getDateNoHolidaylunar(timestamp).holiday || ' '}`}
-        >
-          <div>
-            <div className={`${indexStyles.dateDetailItem}`} key={key2}>
-              <div
-                className={`${indexStyles.dateDetailItem_date_no}
-              ${indexStyles.nomal_date_no}
-              ${(week_day == 0 || week_day == 6) && indexStyles.weekly_date_no}
-              ${getDateNoHolidaylunar(timestamp).festival_status == '1' &&
-                indexStyles.holiday_date_no}
-              ${has_lcb && indexStyles.has_moletones_date_no}`}
-                style={{
-                  background: setMiletonesColor({
-                    is_over_duetime,
-                    has_lcb,
-                    is_all_realized
-                  })
-                }}
-                // style={{ background: is_over_duetime && has_lcb ? '#FF7875' : '' }}
-              >
-                {getDateNoHolidaylunar(timestamp).holiday && (
-                  <div
-                    style={{
-                      position: 'absolute',
-                      zIndex: 2,
-                      top: -24,
-                      left: -18,
-                      width: 60,
-                      height: 20,
-                      backgroundColor: '#fff'
-                    }}
-                  >
-                    {getDateNoHolidaylunar(timestamp).holiday}
-                  </div>
-                )}
-                {date_no}
-              </div>
-            </div>
-          </div>
-        </Tooltip>
-      </Dropdown>
     )
   }
 }
