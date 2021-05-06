@@ -1127,7 +1127,6 @@ function mapStateToProps({
       width_area_section = [],
       gold_date_arr = [],
       about_user_boards = [],
-      target_scrollTop = [],
       milestoneMap = [],
       holiday_list = [],
       gantt_board_id,
@@ -1146,7 +1145,6 @@ function mapStateToProps({
   return {
     width_area_section,
     gold_date_arr,
-    target_scrollTop,
     milestoneMap,
     holiday_list,
     gantt_board_id,
