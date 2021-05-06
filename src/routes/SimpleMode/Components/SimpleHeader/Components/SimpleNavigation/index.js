@@ -713,7 +713,9 @@ export default class SimpleNavigation extends Component {
             )}
 
           {/* 邀请成员 */}
-          {identity_type == OrgUserType.normal &&
+          {(identity_type === OrgUserType.manager ||
+            identity_type === OrgUserType.normal) &&
+
             checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD) && (
               <div
                 className={indexStyles.default_select_setting}
