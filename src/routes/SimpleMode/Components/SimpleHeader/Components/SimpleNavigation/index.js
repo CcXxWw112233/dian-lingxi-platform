@@ -663,30 +663,32 @@ export default class SimpleNavigation extends Component {
       <div className={`${globalStyles.global_card} ${indexStyles.menuWrapper}`}>
         <div className={indexStyles.nav_tabs}>
           {/* 团队成员 */}
-          {identity_type === OrgUserType.normal && isHasMemberView() && (
-            <div
-              className={indexStyles.default_select_setting}
-              onClick={this.handleOrgListMenuClick.bind(this, { key: '24' })}
-            >
-              <div className={indexStyles.team}>
-                <div
-                  className={`${globalStyles.authTheme} ${indexStyles.team_icon}`}
-                >
-                  <img
-                    src={require('../../../../../../assets/workbench/home/icon_team.png')}
-                    alt="team"
-                  />
-                </div>
-                <div className={indexStyles.middle_text}>
-                  团队
-                  {currentNounPlanFilterName(
-                    MEMBERS,
-                    this.props.currentNounPlan
-                  )}
+          {(identity_type === OrgUserType.manager ||
+            identity_type === OrgUserType.normal) &&
+            isHasMemberView() && (
+              <div
+                className={indexStyles.default_select_setting}
+                onClick={this.handleOrgListMenuClick.bind(this, { key: '24' })}
+              >
+                <div className={indexStyles.team}>
+                  <div
+                    className={`${globalStyles.authTheme} ${indexStyles.team_icon}`}
+                  >
+                    <img
+                      src={require('../../../../../../assets/workbench/home/icon_team.png')}
+                      alt="team"
+                    />
+                  </div>
+                  <div className={indexStyles.middle_text}>
+                    团队
+                    {currentNounPlanFilterName(
+                      MEMBERS,
+                      this.props.currentNounPlan
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
           {/* 后台管理 */}
           {(identity_type === OrgUserType.manager ||
