@@ -10,6 +10,7 @@ import {
 } from '../../../../../../utils/util'
 import {
   ganttIsFold,
+  GANTT_IDS,
   hours_view_due_work_oclock,
   hours_view_start_work_oclock,
   milestone_base_height
@@ -53,8 +54,8 @@ export default class GroupMilestones extends Component {
       group_view_type,
       list_group = []
     } = props
-    if (group_view_type == '4') {
-      this.setOutlineMilestones(props)
+    this.setSummaryMilestonesData(props)
+    if (group_view_type != '1') {
       return
     }
     if (group_view_type != '1') return
@@ -121,15 +122,14 @@ export default class GroupMilestones extends Component {
     // console.log('sssasdasd', finally_milestones)
     this.handleGroupMilestones(finally_milestones, props)
   }
-  setOutlineMilestones = props => {
+  // 设置头部汇总
+  setSummaryMilestonesData = props => {
     const { milestoneMap = {} } = props
     let finally_milestones = [] //最终要获取的里程碑
 
     for (let key in milestoneMap) {
       const sameday_milestones_no_group = milestoneMap[key].filter(
         item => !item.parent_id || item.parent_id == '0'
-        // &&
-        // (!item.list_id || item.list_id == '0')
       ) //得到同一天的没有归属分组的一级里程碑
 
       finally_milestones.push({
@@ -144,7 +144,7 @@ export default class GroupMilestones extends Component {
       item => item.milestones?.length
     )
     // console.log('sssasdasd_0', finally_milestones)
-    this.handleOutlineMilestones(finally_milestones, props)
+    this.handleSummaryMilestonesData(finally_milestones, props)
   }
   // 处理分组的里程碑
   handleGroupMilestones = (
@@ -170,9 +170,9 @@ export default class GroupMilestones extends Component {
         item => item.parent_id && item.parent_id != '0'
       ) //二级里程碑
       const one_levels_completed =
-        one_levels.findIndex(item => item.is_all_realized == '0') == '-1' //一级里程碑是否全部完成
+        one_levels.findIndex(item => item.is_finished == '0') == '-1' //一级里程碑是否全部完成
       const two_levels_completed =
-        two_levels.findIndex(item => item.is_all_realized == '0') == '-1' //二级里程碑是否全部完成
+        two_levels.findIndex(item => item.is_finished == '0') == '-1' //二级里程碑是否全部完成
 
       const one_levels_no_group = val.milestones.filter(
         item =>
@@ -184,10 +184,9 @@ export default class GroupMilestones extends Component {
         item => !item.parent_id || item.parent_id == '0'
       ) //一级里程碑(具有分组)
       const one_levels_no_group_completed =
-        one_levels_no_group.findIndex(item => item.is_all_realized == '0') ==
-        '-1' //一级里程碑是否全部完成
+        one_levels_no_group.findIndex(item => item.is_finished == '0') == '-1' //一级里程碑是否全部完成
       const one_levels_all_completed =
-        one_levels_all.findIndex(item => item.is_all_realized == '0') == -1 //全部一级里程碑是否全部完成
+        one_levels_all.findIndex(item => item.is_finished == '0') == -1 //全部一级里程碑是否全部完成
       val.one_levels_all = one_levels_all
       val.one_levels_all_completed = one_levels_all_completed
       val.one_levels = one_levels
@@ -274,8 +273,8 @@ export default class GroupMilestones extends Component {
     })
     // console.log('finally_milestones_2', milestones)
   }
-  // 处理大纲的里程碑
-  handleOutlineMilestones = (
+  // 设置头部汇总
+  handleSummaryMilestonesData = (
     milestones,
     {
       ceilWidth,
@@ -297,15 +296,14 @@ export default class GroupMilestones extends Component {
       ) //一级里程碑(没有分组归属)
 
       const one_levels_no_group_completed =
-        one_levels_no_group.findIndex(item => item.is_all_realized == '0') ==
-        '-1' //一级里程碑是否全部完成
+        one_levels_no_group.findIndex(item => item.is_finished == '0') == '-1' //一级里程碑是否全部完成
 
       // 全部一级里程碑
       const one_levels_all = val.milestones.filter(
         item => !item.parent_id || item.parent_id == '0'
       ) //一级里程碑(具有分组)
       const one_levels_all_completed =
-        one_levels_all.findIndex(item => item.is_all_realized == '0') == -1 //全部一级里程碑是否全部完成
+        one_levels_all.findIndex(item => item.is_finished == '0') == -1 //全部一级里程碑是否全部完成
       val.one_levels_all = one_levels_all
       val.one_levels_all_completed = one_levels_all_completed
       val.one_levels_no_group = one_levels_no_group
@@ -385,7 +383,7 @@ export default class GroupMilestones extends Component {
     }
     console.log('ssssssssss_milestones', milestones)
     this.setState({
-      render_milestones_data: milestones
+      summary_milestones_data: milestones
     })
   }
   // 渲染里程碑的名字列表
@@ -420,7 +418,6 @@ export default class GroupMilestones extends Component {
       gantt_view_mode,
       list_group = []
     } = this.props
-    // const { list_id } = this.props //gantt_board_id为0的情况下，分组id就是各个项目的id
     let top_arr = this.getMiletonesWithTopStructure(top)
     const miletones_position = top_arr.list.findIndex(
       t => t.timestamp == timestamp
@@ -531,12 +528,14 @@ export default class GroupMilestones extends Component {
     // return caldiffDays(timestamp, next_miletones_time) * ceilWidth
   }
   // 里程碑是否过期的颜色设置
-  setMiletonesColor = ({ is_over_duetime, has_lcb, is_all_realized }) => {
-    // if (!has_lcb) {
-    //   return ''
-    // }
+  setMiletonesColor = ({ is_over_duetime, has_lcb, is_finished }) => {
+    if (is_finished) {
+      return '#9EA6C2'
+    } else {
+      return ''
+    }
     if (is_over_duetime) {
-      if (is_all_realized == '0') {
+      if (!is_finished == '0') {
         //存在未完成任务
         return ''
         // return '#FFA39E'
@@ -545,7 +544,7 @@ export default class GroupMilestones extends Component {
         return '#9EA6C2'
       }
     }
-    // if (is_all_realized == '0') { //存在未完成任务
+    // if (is_finished == '0') { //存在未完成任务
     //   if (is_over_duetime) {
     //     return '#FFA39E'
     //   }
@@ -603,7 +602,7 @@ export default class GroupMilestones extends Component {
     return height
   }
 
-  // 渲染未分组的一级里程碑
+  // 渲染一级里程碑
   renderNoGroupOneLevelMilestone = value => {
     const { group_view_type } = this.props
     const {
@@ -652,7 +651,7 @@ export default class GroupMilestones extends Component {
                 style={{
                   color: this.setMiletonesColor({
                     is_over_duetime,
-                    is_all_realized: one_levels_all_completed
+                    is_finished: one_levels_all_completed
                   })
                 }}
               >
@@ -673,7 +672,7 @@ export default class GroupMilestones extends Component {
                   ),
                   color: this.setMiletonesColor({
                     is_over_duetime,
-                    is_all_realized: one_levels_all_completed
+                    is_finished: one_levels_all_completed
                   })
                 }}
               >
@@ -686,7 +685,7 @@ export default class GroupMilestones extends Component {
                 style={{
                   background: this.setMiletonesColor({
                     is_over_duetime,
-                    is_all_realized: one_levels_all_completed
+                    is_finished: one_levels_all_completed
                   })
                 }}
                 onMouseDown={e => e.stopPropagation()}
@@ -712,7 +711,7 @@ export default class GroupMilestones extends Component {
                 display: gantt_board_id == '0' ? 'none' : 'block',
                 background: this.setMiletonesColor({
                   is_over_duetime,
-                  is_all_realized: one_levels_all_completed
+                  is_finished: one_levels_all_completed
                 })
               }}
               onMouseDown={e => e.stopPropagation()}
@@ -766,11 +765,11 @@ export default class GroupMilestones extends Component {
     } = value
     return (
       <>
-        {!!one_levels_all.length &&
+        {/* {!!one_levels_all.length &&
           this.renderDragWrapper(
             one_levels_all,
             this.renderNoGroupOneLevelMilestone(value)
-          )}
+          )} */}
         {!!one_levels.length &&
           this.renderDragWrapper(
             one_levels,
@@ -805,7 +804,7 @@ export default class GroupMilestones extends Component {
                     style={{
                       color: this.setMiletonesColor({
                         is_over_duetime,
-                        is_all_realized: one_levels_completed
+                        is_finished: one_levels_completed
                       })
                     }}
                   >
@@ -823,7 +822,7 @@ export default class GroupMilestones extends Component {
                       }),
                       color: this.setMiletonesColor({
                         is_over_duetime,
-                        is_all_realized: one_levels_completed
+                        is_finished: one_levels_completed
                       })
                     }}
                   >
@@ -836,7 +835,7 @@ export default class GroupMilestones extends Component {
                     style={{
                       background: this.setMiletonesColor({
                         is_over_duetime,
-                        is_all_realized: one_levels_completed
+                        is_finished: one_levels_completed
                       })
                     }}
                     onMouseDown={e => e.stopPropagation()}
@@ -856,7 +855,7 @@ export default class GroupMilestones extends Component {
                   display: gantt_board_id == '0' ? 'none' : 'block',
                   background: this.setMiletonesColor({
                     is_over_duetime,
-                    is_all_realized: one_levels_completed
+                    is_finished: one_levels_completed
                   })
                 }}
                 onMouseDown={e => e.stopPropagation()}
@@ -885,7 +884,7 @@ export default class GroupMilestones extends Component {
                     style={{
                       background: this.setMiletonesColor({
                         is_over_duetime,
-                        is_all_realized: two_levels_completed
+                        is_finished: two_levels_completed
                       })
                     }}
                   />
@@ -900,7 +899,7 @@ export default class GroupMilestones extends Component {
                       }),
                       color: this.setMiletonesColor({
                         is_over_duetime,
-                        is_all_realized: two_levels_completed
+                        is_finished: two_levels_completed
                       })
                     }}
                   >
@@ -1046,7 +1045,6 @@ export default class GroupMilestones extends Component {
       ceilWidth,
       gantt_head_width,
       gantt_board_id,
-      list_id,
       group_view_type,
       dispatch
     } = this.props
@@ -1261,7 +1259,11 @@ export default class GroupMilestones extends Component {
     return bool
   }
   render() {
-    const { render_milestones_data = [], dragg_milestone_err } = this.state
+    const {
+      render_milestones_data = [],
+      dragg_milestone_err,
+      summary_milestones_data = []
+    } = this.state
     const {
       group_view_type,
       list_group = [],
@@ -1272,8 +1274,8 @@ export default class GroupMilestones extends Component {
         style={{
           position: 'absolute',
           zIndex: 2,
-          height: '100%',
-          width: '100%',
+          // height: '100%',
+          // width: '100%',
           display: !get_milestone_loading ? 'block' : 'none'
         }}
       >
@@ -1286,8 +1288,8 @@ export default class GroupMilestones extends Component {
               </React.Fragment>
             )
           })}
-        {group_view_type == '4' &&
-          render_milestones_data.map(item => {
+        {['4', '1'].includes(group_view_type) &&
+          summary_milestones_data.map(item => {
             const { one_levels_all } = item
             return (
               <React.Fragment key={`${item.timestamp} ${dragg_milestone_err}`}>

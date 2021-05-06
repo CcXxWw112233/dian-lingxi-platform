@@ -48,7 +48,7 @@ import {
 } from '../../../../globalset/js/constant'
 import VisitControl from '../VisitControl/index'
 import globalStyle from '@/globalset/css/globalClassName.less'
-import { ganttIsFold, ganttIsOutlineView } from './constants'
+import { ganttIsFold, ganttIsOutlineView, GANTT_IDS } from './constants'
 import DetailInfo from '@/routes/Technological/components/ProjectDetail/DetailInfo/index'
 import { deleteBoardFollow } from './ganttBusiness'
 import {
@@ -328,7 +328,13 @@ export default class GroupListHeadItem extends Component {
       } = this.props
       const { list_id, list_name } = itemValue
       const { local_list_name, show_edit_input } = this.state
-      if (list_id == '0') return
+      if (
+        [GANTT_IDS.OVERLAPPING_GROUP_ID, GANTT_IDS.UNGROUPED_ID].includes(
+          list_id
+        )
+      ) {
+        return
+      }
       if (show_edit_input) return
       if (group_view_type == '2') {
         dispatch({
@@ -1376,7 +1382,13 @@ export default class GroupListHeadItem extends Component {
     const roof = () => {
       // 排序甘特图分组
       list_group_new[group_index].is_star = '1'
-      list_group_new.unshift(list_group_new[group_index]) //将该项往第一插入
+      //如果第一个分组是交圈,则将该置顶的分组放在第二个分组
+      if (list_group_new[0].list_id == GANTT_IDS.OVERLAPPING_GROUP_ID) {
+        list_group_new.splice(1, 0, list_group_new[group_index]) //往第二个分组插入
+      } else {
+        // 放在最顶部
+        list_group_new.unshift(list_group_new[group_index]) //将该项往第一插入
+      }
       list_group_new.splice(group_index + 1, 1) //删除掉该项
       dispatch({
         type: 'gantt/handleListGroup',
@@ -1958,7 +1970,10 @@ export default class GroupListHeadItem extends Component {
               <div className={indexStyles.operatorWapper}>
                 {/* 置顶 */}
                 {group_view_type == '1' &&
-                  list_id != '0' &&
+                  ![
+                    GANTT_IDS.OVERLAPPING_GROUP_ID,
+                    GANTT_IDS.UNGROUPED_ID
+                  ].includes(list_id) &&
                   !show_edit_input &&
                   (is_star == '0' ? (
                     <div
@@ -1989,7 +2004,10 @@ export default class GroupListHeadItem extends Component {
                   ))}
                 {// 只有在项目视图下，且如果在分组id == 0（未分组的情况下不能显示）
                 group_view_type == '1' &&
-                  list_id != '0' &&
+                  ![
+                    GANTT_IDS.OVERLAPPING_GROUP_ID,
+                    GANTT_IDS.UNGROUPED_ID
+                  ].includes(list_id) &&
                   (gantt_board_id != '0'
                     ? this.checkIsHasPermissionInGroup(gantt_board_id)
                     : true) && (

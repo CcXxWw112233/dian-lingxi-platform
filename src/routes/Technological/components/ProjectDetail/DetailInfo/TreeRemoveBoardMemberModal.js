@@ -243,15 +243,18 @@ export default class TreeRemoveBoardMemberModal extends Component {
     const { transferSelectedList = [], selectedRowKeys = [] } = this.state
     let arr = transferSelectedList.map(item => {
       if (selectedRowKeys.indexOf(item.content_id) != -1) {
-        if (item.transfer_user_id) {
-          // 如果存在交接人则按已选择的来 不进行覆盖
-          return item
-        } else {
-          // 表示只对选择的数据做处理
-          let new_item = { ...item }
-          new_item.transfer_user_id = selectedKeys.join(',')
-          return new_item
-        }
+        let new_item = { ...item }
+        new_item.transfer_user_id = selectedKeys.join(',')
+        return new_item
+        // if (item.transfer_user_id) {
+        //   // 如果存在交接人则按已选择的来 不进行覆盖
+        //   return item
+        // } else {
+        //   // 表示只对选择的数据做处理
+        //   let new_item = { ...item }
+        //   new_item.transfer_user_id = selectedKeys.join(',')
+        //   return new_item
+        // }
       } else {
         return item
       }

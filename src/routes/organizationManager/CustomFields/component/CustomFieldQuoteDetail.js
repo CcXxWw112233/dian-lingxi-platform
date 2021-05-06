@@ -51,6 +51,10 @@ export default class CustomFieldQuoteDetail extends Component {
         dec = `${currentNounPlanFilterName(TASKS)}`
         icon = <>&#xe66a;</>
         break
+      case 'MILESTONE':
+        dec = `里程碑`
+        icon = <>&#xe85d;</>
+        break
       default:
         break
     }

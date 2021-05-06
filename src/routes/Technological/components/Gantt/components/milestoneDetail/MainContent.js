@@ -8,7 +8,9 @@ import {
   DatePicker,
   Button,
   message,
-  InputNumber
+  InputNumber,
+  Popover,
+  Tree
 } from 'antd'
 import MeusearMutiple from '../../../Workbench/CardContent/Modal/TaskItemComponent/components/MeusearMutiple'
 import ExcutorList from '../../../Workbench/CardContent/Modal/TaskItemComponent/components/ExcutorList'
@@ -32,22 +34,34 @@ import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner
 import { currentNounPlanFilterName } from '../../../../../../utils/businessFunction'
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
 import moment from 'moment'
-
+import CustomCategoriesOperate from '../../../../../../components/CustomFields/CustomCategoriesOperate'
+import {
+  createRelationCustomField,
+  getCustomFieldList
+} from '../../../../../../services/organization'
+import { SourceType } from './constans'
+import CompleteCheckStatus from 'src/components/CompleteCheckStatus'
 const getEffectOrReducerByName = name => `milestoneDetail/${name}`
 @connect(mapStateToProps)
 export default class MainContent extends React.Component {
   state = {
     excutors_out_left_width: 0,
     isInEditBraftEditor: false,
-    selected_excutors: []
+    selected_excutors: [],
+    /** 获取的自定义字段列表 */
+    fieldsData: [],
+    /** 选中的自定义字段列表 */
+    selected_fields: [],
+    /** 自定义字段的显示隐藏 */
+    fields_visible: false,
+    /** 默认勾选的列表 */
+    disabledKeys: []
   }
 
   constructor(prop) {
     super(prop)
     this.excutors_out_left_ref = React.createRef()
   }
-
-  componentDidMount() {}
 
   componentWillReceiveProps(nextProps) {
     const { milestone_detail = {} } = nextProps
@@ -56,6 +70,11 @@ export default class MainContent extends React.Component {
       description: remarks,
       brafitEditHtml: remarks
     })
+  }
+  componentDidUpdate(prev) {
+    if (prev.milestone_detail?.id !== this.props.milestone_detail?.id) {
+      this.fetchCustomFields()
+    }
   }
 
   // 父组件相对对应该里程碑变化的操作
@@ -499,6 +518,179 @@ export default class MainContent extends React.Component {
     )
   }
 
+  /** 格式化自定义字段的树形结构
+   * @param {{name: string, id:string, ?fields: any[]}[]} data 获取的字段元数据
+   * @param {string[]} 禁用的自定义字段合集
+   * @returns {{children: any[], title: string, key: string}[]}
+   */
+  forMatTreeNode = (data = [], disabled_ids = []) => {
+    const arr = []
+    data.forEach(item => {
+      if (item.fields && item.fields.length) {
+        item.fields = this.forMatTreeNode(item.fields, disabled_ids)
+      }
+      /** 子节点是否全部禁用了 */
+      const parentDisabled =
+        disabled_ids.includes(item.id) ||
+        (item.fields &&
+          item.fields.length &&
+          item.fields.filter(child => !child.disableCheckbox).length === 0)
+
+      const obj = {
+        children: item.fields || null,
+        title: <span title={item.name}>{item.name}</span>,
+        key: item.id,
+        disableCheckbox: parentDisabled,
+        field_status: item.field_status
+      }
+      if (
+        obj.field_status === '0' ||
+        (obj.children || []).filter(item => item.field_status === '0').length
+      )
+        arr.push(obj)
+    })
+    return arr
+  }
+
+  /** 获取自定义字段 */
+  fetchCustomFields = () => {
+    getCustomFieldList().then(res => {
+      const { milestone_detail = {} } = this.props
+      const { fields = [] } = milestone_detail
+      /** 已经存在详情的字段列表 */
+      const disabledIds = fields.map(item => item.field_id)
+      if (isApiResponseOk(res)) {
+        this.setState(
+          {
+            fieldsData: this.forMatTreeNode(
+              [
+                ...(res.data.fields || []),
+                ...(res.data.groups || []).filter(
+                  item => item.fields && item.fields.length
+                )
+              ],
+              disabledIds
+            ),
+            selected_fields: []
+          },
+          () => {
+            this.setState({
+              disabledKeys: this.getDisabledArray()
+            })
+          }
+        )
+      }
+    })
+  }
+
+  /** 添加自定义字段请求 */
+  handleAddFields = () => {
+    const { selected_fields = [] } = this.state
+    const { milestone_detail = {}, dispatch } = this.props
+    const { id } = milestone_detail
+    createRelationCustomField({
+      relation_id: id,
+      fields: selected_fields,
+      source_type: SourceType.Milestone
+    }).then(async res => {
+      if (isApiResponseOk(res)) {
+        await this.updateDetail()
+        this.fetchCustomFields()
+        /** 隐藏弹窗 */
+        this.setState({
+          fields_visible: false
+        })
+      } else message.warn(res.message)
+    })
+  }
+
+  /** 获取禁用的列表 */
+  getDisabledArray = () => {
+    const { fieldsData = [] } = this.state
+    /** 取到的禁用列表 */
+    let arr = []
+    fieldsData.forEach(item => {
+      if (item.children) {
+        arr = arr.concat(
+          arr,
+          item.children.filter(child => child.disableCheckbox)
+        )
+      }
+      if (item.disableCheckbox) arr.push(item)
+    })
+    arr = arr.map(item => item.key)
+    return arr
+  }
+
+  /** 重置选中的数据 */
+  handleReset = () => {
+    this.setState({
+      selected_fields: [],
+      disabledKeys: this.getDisabledArray()
+    })
+  }
+
+  /** 选择了字段 */
+  handleSelectField = keys => {
+    this.setState({
+      selected_fields: keys
+    })
+  }
+
+  /** 渲染添加字段的弹窗内容 */
+  PopoverContentRender = () => {
+    return (
+      <div className={indexStyles.treeable}>
+        <div className={indexStyles.tree_fields}>
+          <Tree
+            checkedKeys={[
+              ...this.state.selected_fields,
+              ...this.state.disabledKeys
+            ]}
+            checkable
+            treeData={this.state.fieldsData}
+            onCheck={this.handleSelectField}
+          />
+        </div>
+        <div className={indexStyles.confirmBtn}>
+          <Button type="default" block onClick={this.handleReset}>
+            重置
+          </Button>
+          <Button
+            disabled={!this.state.selected_fields.length}
+            type="primary"
+            block
+            onClick={this.handleAddFields}
+          >
+            确定
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  /** 更新详情 */
+  updateDetail = async () => {
+    const { milestone_detail = {}, dispatch } = this.props
+    const { id } = milestone_detail
+    return await dispatch({
+      type: 'milestoneDetail/getMilestoneDetail',
+      payload: {
+        id: id
+      }
+    })
+  }
+  setCompleted = () => {
+    const {
+      milestone_detail: { is_finished }
+    } = this.props
+    const _is_finished = is_finished == '1' ? '0' : '1'
+    this.updateMilestone({
+      is_finished: _is_finished
+    }).then(res => {
+      this.handleMiletonesChange({ is_realize: _is_finished })
+    })
+  }
   render() {
     const {
       titleIsEdit,
@@ -522,9 +714,11 @@ export default class MainContent extends React.Component {
       principals = [],
       id,
       content_list = [],
+      fields = [],
       org_id,
       chird_list = [],
-      progress_percent = '0'
+      progress_percent = '0',
+      is_finished
     } = milestone_detail
     const result_process = Math.round(progress_percent * 100) / 100
     const executors = principals.filter(item => item)
@@ -572,6 +766,10 @@ export default class MainContent extends React.Component {
       <div className={indexStyles.miletone_out}>
         {/*标题*/}
         <div className={indexStyles.contain1}>
+          <CompleteCheckStatus
+            is_realize={is_finished == '1'}
+            setStatus={this.setCompleted}
+          />
           {!titleIsEdit ? (
             <div
               className={`${indexStyles.contain1_title} ${indexStyles.pub_hover}`}
@@ -795,6 +993,45 @@ export default class MainContent extends React.Component {
             this.renderRelaContent({ content_list: chird_list, type: '4' })}
           {!!(content_list && content_list.length) &&
             this.renderRelaContent({ content_list, type: '0' })}
+
+          {/* 自定义字段显示 */}
+          <CustomCategoriesOperate
+            onlyShowPopoverContent={true}
+            disabled={false}
+            fields={fields}
+            handleUpdateModelDatas={data => {
+              this.updateDetail().then(_ => {
+                this.fetchCustomFields()
+              })
+            }}
+          />
+          {/* 添加字段 */}
+          <div className={indexStyles.contain2_item}>
+            <div className={indexStyles.contain2_item_left}>
+              <span className={globalStyle.authTheme}>&#xe7d1;</span>
+              <span>字段</span>
+            </div>
+            <div className={`${indexStyles.contain2_item_right}`}>
+              <Popover
+                title={
+                  <div className={indexStyles.popover_title}>添加字段</div>
+                }
+                visible={this.state.fields_visible}
+                trigger="click"
+                onVisibleChange={visible =>
+                  this.setState({ fields_visible: visible })
+                }
+                overlayStyle={{ width: 300 }}
+                placement="bottom"
+                content={this.PopoverContentRender()}
+              >
+                <div className={indexStyles.addProperty}>
+                  <span className={globalStyle.authTheme}>&#xe7d1;</span>
+                  添加字段
+                </div>
+              </Popover>
+            </div>
+          </div>
         </div>
       </div>
     )

@@ -495,6 +495,19 @@ export default class MainBoard extends Component {
     )
   }
 
+  /** 点击了一个项目列表
+   * @param {React.MouseEvent} e 点击的事件
+   * @param {*} data 点击的数据
+   */
+  handleBoardClick = (e, data) => {
+    const { onClick } = this.props
+    onClick && onClick(e, data)
+  }
+
+  onUpdate = () => {
+    this.initGetTodoList()
+  }
+
   // 项目列表操作项
   renderBoardList = () => {
     // const { projectList = [], simplemodeCurrentProject = {} } = this.props
@@ -506,6 +519,8 @@ export default class MainBoard extends Component {
           key={board_id}
           itemValue={value}
           setLocalSelectedBoard={this.setLocalSelectedBoard}
+          onClick={this.handleBoardClick}
+          onUpdate={this.onUpdate}
         />
       )
     })

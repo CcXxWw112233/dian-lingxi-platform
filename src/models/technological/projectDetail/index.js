@@ -47,6 +47,14 @@ import QueryString from 'querystring'
 //状态说明：
 //ProjectInfoDisplay ： 是否显示项目信息，第一次进来默认，以后点击显示隐藏
 
+/** 项目详情redux */
+export const ProjectDetailModel = {
+  /** 命名空间
+   * @default string 'projectDetail'
+   */
+  namespace: 'projectDetail'
+}
+
 let board_id = null
 let appsSelectKey = null
 // appsSelectKey 项目详情里面应用的app标志

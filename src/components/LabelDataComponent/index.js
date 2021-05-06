@@ -9,16 +9,14 @@ export default class LabelDataComponent extends React.Component {
     is_add_label: false, // 是否新建标签, 默认为 false, 不显示
     labelColorArr: [
       // 默认的标签颜色列表
-      { label_color: '255,163,158' },
-      { label_color: '255,213,145' },
-      { label_color: '145,213,255' },
-      { label_color: '211,173,247' },
-      { label_color: '183,235,143' },
-      { label_color: '255,65,65' },
-      { label_color: '255,134,55' },
-      { label_color: '62,130,255' },
-      { label_color: '144,95,255' },
-      { label_color: '100,161,108' }
+      { label_color: '33,36,52' },
+      { label_color: '255,153,0' },
+      { label_color: '255,0,0' },
+      { label_color: '255,0,255' },
+      { label_color: '20,153,255' },
+      { label_color: '0,26,255' },
+      { label_color: '35,153,0' },
+      { label_color: '0,100,21' }
     ]
   }
 
@@ -27,6 +25,7 @@ export default class LabelDataComponent extends React.Component {
     const { keyWord } = this.state
     let selectedKeys = []
     const { listData = [], searchName, currentSelect = [] } = props
+    console.log('sssssa_listData', listData)
     if (!Array.isArray(currentSelect)) return false
     for (let val of currentSelect) {
       selectedKeys.push(val['label_id'])
@@ -125,16 +124,14 @@ export default class LabelDataComponent extends React.Component {
       is_add_label: false,
       labelColorArr: [
         // 默认的标签颜色列表
-        { label_color: '255,163,158' },
-        { label_color: '255,213,145' },
-        { label_color: '145,213,255' },
-        { label_color: '211,173,247' },
-        { label_color: '183,235,143' },
-        { label_color: '255,65,65' },
-        { label_color: '255,134,55' },
-        { label_color: '62,130,255' },
-        { label_color: '144,95,255' },
-        { label_color: '100,161,108' }
+        { label_color: '33,36,52' },
+        { label_color: '255,153,0' },
+        { label_color: '255,0,0' },
+        { label_color: '255,0,255' },
+        { label_color: '0,153,255' },
+        { label_color: '0,26,255' },
+        { label_color: '35,153,0' },
+        { label_color: '0,100,21' }
       ],
       inputValue: '',
       is_edit_label: false
@@ -457,14 +454,7 @@ export default class LabelDataComponent extends React.Component {
                 autoFocus={true}
               />
             </div>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                flexWrap: 'wrap',
-                justifyContent: 'space-between'
-              }}
-            >
+            <div className={indexStyles.circle_wrapper}>
               {labelColorArr.map(item => {
                 const { label_color } = item
                 return (

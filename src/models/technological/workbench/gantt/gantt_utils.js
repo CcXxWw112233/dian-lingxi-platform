@@ -319,10 +319,14 @@ export function recusionItem(
       } = getMilestoneLeafWithCompleteCardsTimesPercentage(new_item)
       new_item.start_time = min_leaf_card_time
       new_item.min_leaf_card_time = min_leaf_card_time
-      new_item.percent_card_non =
-        complete_time_diff || all_time_diff
-          ? (parseFloat(complete_time_diff / all_time_diff) * 100).toFixed(2)
-          : new_item.progress_percent || 0
+      if (new_item.is_realize == '1') {
+        new_item.percent_card_non = '100.00'
+      } else {
+        new_item.percent_card_non =
+          complete_time_diff || all_time_diff
+            ? (parseFloat(complete_time_diff / all_time_diff) * 100).toFixed(2)
+            : new_item.progress_percent || 0
+      }
     }
     //一级里程碑展开的包含高度
     if (tree_type == '1' && !parent_id) {

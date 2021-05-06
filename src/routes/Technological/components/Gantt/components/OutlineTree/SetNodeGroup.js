@@ -229,7 +229,7 @@ export default class SetNodeGroup extends Component {
     }
 
     if (tree_type == '1') {
-      params = { ...params, id }
+      params = { ...params, milestone_id: id }
     } else {
       params = {
         ...params,

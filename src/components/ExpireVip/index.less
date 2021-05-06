@@ -1,0 +1,123 @@
+.willExpireModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+  .willExpireContent {
+    position: relative;
+    width: 400px;
+    border-radius: 10px;
+    background-color: #fff;
+    min-height: 375px;
+    background-image: url('../../assets/workbench/home/expireVip.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 30px 0;
+    & > div {
+      width: 80%;
+    }
+    .vipTitle {
+      font-size: 1.4rem;
+      font-weight: bold;
+    }
+    .tipContent {
+      padding-top: 15px;
+      font-size: 1rem;
+      flex: 1;
+    }
+    .btns {
+      width: 50%;
+      text-align: center;
+      button {
+        background: linear-gradient(155deg, #9debff 0%, #436eff 100%);
+        border-color: transparent;
+        border: 0;
+      }
+    }
+    .iconVip {
+      position: absolute;
+      top: -30px;
+      right: 20px;
+      // font-weight: bold;
+      font-size: 1.9rem;
+      color: #fff;
+      width: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 80px;
+      background: linear-gradient(318deg, #ff845c 0%, #ffba67 100%);
+      box-shadow: 0px 4px 32px 0px rgba(90, 134, 245, 0.25);
+      border-radius: 16px;
+    }
+    .close_modal {
+      position: absolute;
+      bottom: -80px;
+      text-align: center;
+      span {
+        display: inline-flex;
+        justify-content: center;
+        cursor: pointer;
+        align-items: center;
+        width: 40px;
+        height: 40px;
+        border: 2px solid #fff;
+        color: #fff;
+        border-radius: 99px;
+        font-size: 1.3rem;
+        background: rgba(158, 166, 194, 0.25);
+      }
+    }
+  }
+}
+.expiredContent {
+  background-color: #fff;
+  min-width: 200px;
+  min-height: 200px;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 20px 10px;
+  & > div {
+    width: 90%;
+  }
+  .expiredContentTitle {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  .close_modal_mini {
+    color: #666;
+    font-size: 1.3rem;
+    position: absolute;
+    right: 10px;
+    top: 5px;
+    width: 20px;
+    cursor: pointer;
+  }
+  .expiredTime {
+    flex: 1;
+    .time {
+      font-weight: bold;
+    }
+  }
+  .expiredBtn {
+    button {
+      background: linear-gradient(155deg, #9debff 0%, #436eff 100%);
+      border-color: transparent;
+      border: 0;
+    }
+  }
+}

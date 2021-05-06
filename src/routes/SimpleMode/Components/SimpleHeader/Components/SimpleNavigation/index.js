@@ -1,6 +1,6 @@
 import React, { Component, lazy, Suspense } from 'react'
 import indexStyles from './index.less'
-import { Tooltip, Modal, Menu, Switch, Icon } from 'antd'
+import { Tooltip, Modal, Menu, Switch, Icon, Divider, Avatar } from 'antd'
 import linxiLogo from '@/assets/library/lingxi_logo.png'
 import globalStyles from '@/globalset/css/globalClassName.less'
 import { connect } from 'dva'
@@ -33,6 +33,12 @@ import { isApiResponseOk } from '@/utils/handleResponseData'
 // import OrganizationMember from '@/routes/Technological/components/OrganizationMember'
 // import Organization from '@/routes/organizationManager'
 import queryString from 'query-string'
+import {
+  OrgPaymentMark,
+  OrgUserType,
+  PAYUPGRADEURL
+} from '../../../../../../globalset/js/constant'
+import moment from 'moment'
 // import PayUpgrade from '@/routes/Technological/components/PayUpgrade/index'
 
 const CreateOrganizationModal = lazy(() =>
@@ -76,6 +82,8 @@ export default class SimpleNavigation extends Component {
       payUpgradeModalVisible: false
     }
     this.timer = null
+    /** 超过多少天后不显示试用期或者VIP的剩余时间 */
+    this.expireMaxTimeShow = 30
   }
   componentDidMount() {
     const { dispatch } = this.props
@@ -475,7 +483,7 @@ export default class SimpleNavigation extends Component {
   }
   openPayUpgradeModal = e => {
     e.stopPropagation()
-    window.open('https://docs.qq.com/form/edit/DSHRaQ01GSU1qZHlT#/edit')
+    window.open(PAYUPGRADEURL)
     return
     this.setState({
       payUpgradeModalVisible: true
@@ -538,6 +546,73 @@ export default class SimpleNavigation extends Component {
       }
     })
   }
+
+  /** 渲染组织即将到期的文字提醒 */
+  WillexpireRender = value => {
+    const { payment_end_date, payment_is_expired, payment_mark } = value
+    /** 付费状态 */
+    const text =
+      payment_mark === OrgPaymentMark.trial
+        ? '试用'
+        : payment_mark === OrgPaymentMark.pay
+        ? '会员'
+        : ''
+    /** 时间跨度 */
+    const timeStep = Math.ceil(
+      Math.abs(moment(+(payment_end_date + '000')).diff(moment(), 'days', true))
+    )
+    if (payment_is_expired === 'true') return <span>{text}已过期</span>
+    if (timeStep > this.expireMaxTimeShow) return null
+    return (
+      <span>
+        距{text}到期: {timeStep > 0 ? timeStep + '天' : '今日到期'}
+      </span>
+    )
+  }
+
+  /** 渲染Vip图标 */
+  VipIconRender = val => {
+    const { payment_is_expired, payment_mark } = val
+    if (payment_is_expired === 'false' && payment_mark === OrgPaymentMark.pay) {
+      return (
+        <span className={indexStyles.vip} title="尊贵的会员">
+          V
+        </span>
+      )
+    }
+    return null
+  }
+
+  /** 组织中，用户的角色类型 */
+  OrgUserTypeRender = type => {
+    switch (type) {
+      case OrgUserType.visitor:
+        return (
+          <Tooltip title="访客">
+            <span
+              className={`${globalStyles.authTheme} ${indexStyles.user_type}`}
+              onClick={e => e.stopPropagation()}
+            >
+              &#xe854;
+            </span>
+          </Tooltip>
+        )
+      case OrgUserType.manager:
+        return (
+          <Tooltip title="管理员">
+            <span
+              className={`${globalStyles.authTheme} ${indexStyles.user_type}`}
+              onClick={e => e.stopPropagation()}
+            >
+              &#xe8b7;
+            </span>
+          </Tooltip>
+        )
+      default:
+        return null
+    }
+  }
+
   render() {
     //currentUserOrganizes currentSelectOrganize组织列表和当前组织
     const {
@@ -586,7 +661,179 @@ export default class SimpleNavigation extends Component {
 
     return (
       <div className={`${globalStyles.global_card} ${indexStyles.menuWrapper}`}>
-        <Menu
+        <div className={indexStyles.nav_tabs}>
+          {/* 团队成员 */}
+          {identity_type === OrgUserType.normal && isHasMemberView() && (
+            <div
+              className={indexStyles.default_select_setting}
+              onClick={this.handleOrgListMenuClick.bind(this, { key: '24' })}
+            >
+              <div className={indexStyles.team}>
+                <div
+                  className={`${globalStyles.authTheme} ${indexStyles.team_icon}`}
+                >
+                  <img
+                    src={require('../../../../../../assets/workbench/home/icon_team.png')}
+                    alt="team"
+                  />
+                </div>
+                <div className={indexStyles.middle_text}>
+                  团队
+                  {currentNounPlanFilterName(
+                    MEMBERS,
+                    this.props.currentNounPlan
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 后台管理 */}
+          {(identity_type === OrgUserType.manager ||
+            identity_type === OrgUserType.normal) &&
+            isHasManagerBack() && (
+              <div
+                className={indexStyles.default_select_setting}
+                onClick={this.handleOrgListMenuClick.bind(this, { key: '23' })}
+              >
+                <div className={indexStyles.bank}>
+                  <div
+                    className={`${globalStyles.authTheme} ${indexStyles.bank_icon}`}
+                  >
+                    <img
+                      src={require('../../../../../../assets/workbench/home/icon_manage.png')}
+                      alt="team"
+                    />
+                  </div>
+                  <span className={indexStyles.middle_text}>后台管理</span>
+                </div>
+              </div>
+            )}
+
+          {/* 邀请成员 */}
+          {identity_type == OrgUserType.normal &&
+            checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD) && (
+              <div
+                className={indexStyles.default_select_setting}
+                onClick={this.handleOrgListMenuClick.bind(this, { key: '22' })}
+              >
+                <div className={indexStyles.addUsers}>
+                  <div
+                    className={`${globalStyles.authTheme} ${indexStyles.add_icon}`}
+                  >
+                    <img
+                      src={require('../../../../../../assets/workbench/home/icon_addtoteam.png')}
+                      alt="team"
+                    />
+                  </div>
+                  <span className={indexStyles.middle_text}>
+                    邀请
+                    {currentNounPlanFilterName(
+                      MEMBERS,
+                      this.props.currentNounPlan
+                    )}
+                  </span>
+                </div>
+              </div>
+            )}
+
+          {/* 账户设置 */}
+          <div
+            className={indexStyles.default_select_setting}
+            onClick={this.handleOrgListMenuClick.bind(this, { key: '20' })}
+          >
+            <div className={indexStyles.account_setting}>
+              {avatar ? (
+                <div className={indexStyles.left_img}>
+                  <Avatar src={avatar} size={40} icon="user" />
+                </div>
+              ) : (
+                ''
+              )}
+              <div className={indexStyles.middle_text}>账户设置</div>
+            </div>
+          </div>
+
+          {/* 通知 */}
+          <div
+            id="default_select_setting"
+            className={indexStyles.default_select_setting}
+            onClick={this.handleOrgListMenuClick.bind(this, {
+              key: 'subInfoSet'
+            })}
+          >
+            <div className={indexStyles.hobby}>
+              <div
+                className={`${globalStyles.authTheme} ${indexStyles.hobby_icon}`}
+              >
+                <img
+                  src={require('../../../../../../assets/workbench/home/icon_notification.png')}
+                  alt="tz"
+                />
+              </div>
+              <div className={indexStyles.middle_text}> 通知</div>
+              {/* <span><Icon type="right" /></span> */}
+            </div>
+          </div>
+
+          {/* 新团队 */}
+          <div className={indexStyles.default_select_setting}>
+            <div
+              className={indexStyles.itemDiv}
+              onClick={this.handleOrgListMenuClick.bind(this, {
+                key: '10'
+              })}
+            >
+              <div>
+                <img
+                  src={require('../../../../../../assets/workbench/home/icon_newteam.png')}
+                  alt="tz"
+                />
+              </div>
+              <div>新团队</div>
+            </div>
+          </div>
+
+          {/* 升级续费 */}
+          {(identity_type === OrgUserType.manager ||
+            identity_type === OrgUserType.normal) &&
+            isHasManagerBack() && (
+              <div
+                className={indexStyles.default_select_setting}
+                onClick={e => {
+                  this.openPayUpgradeModal(e)
+                }}
+              >
+                <div>
+                  <div>
+                    <img
+                      src={require('../../../../../../assets/workbench/home/icon_vip_big.png')}
+                      alt="team"
+                    />
+                  </div>
+                  <div className={indexStyles.middle_text}>升级续费</div>
+                </div>
+              </div>
+            )}
+
+          {/* 退出登录 */}
+          <div
+            className={indexStyles.default_select_setting}
+            onClick={this.handleOrgListMenuClick.bind(this, { key: '-1' })}
+          >
+            <div className={indexStyles.itemDiv}>
+              <div>
+                <img
+                  src={require('../../../../../../assets/workbench/home/icon_exit.png')}
+                  alt="tz"
+                />
+              </div>
+              <div>退出账号</div>
+            </div>
+          </div>
+        </div>
+
+        {/* <Menu
           onClick={this.handleOrgListMenuClick.bind(this)}
           selectable={true}
           style={{ borderRadius: '8px' }}
@@ -697,34 +944,13 @@ export default class SimpleNavigation extends Component {
                     &#xe783;
                   </span>
                   <span className={indexStyles.middle_text}> 偏好设置</span>
-                  {/* <span><Icon type="right" /></span> */}
                 </div>
               </div>
             }
           >
-            {/* <Menu.Item disabled={!is_show_org_name || is_disabled} key="subShowOrgName"> */}
-            {/* <Menu.Item key="subShowOrgName">
-                            <span>显示组织名称
-                      <Switch
-                                    style={{ display: 'inline-block', marginLeft: 8 }}
-                                    onClick={(checked) => { this.handleShowAllOrg(checked) }}
-                                    checked={is_show_org_name}
-                                ></Switch>
-
-                            </span>
-                        </Menu.Item> */}
             <Menu.Item key="subInfoSet">
               <span>通知设置</span>
             </Menu.Item>
-            {/* {isPaymentOrgUser() &&
-              CUSTOMIZATION_ORGNIZATIONS.includes(
-                this.props.currentSelectOrganize.id
-              ) &&
-              true && (
-                <Menu.Item key="subShowSimple">
-                  <span>切换普通模式</span>
-                </Menu.Item>
-              )} */}
           </SubMenu>
 
           <Menu.Item key="10">
@@ -751,65 +977,24 @@ export default class SimpleNavigation extends Component {
               </i>{' '}
               退出登录
             </div>
-            {/* <div className={indexStyles.default_select_setting}>
-
-                            <div className={indexStyles.account_setting}>
-
-                                >&#xe78c;
-                                <span className={indexStyles.middle_text}>退出登录</span>
-                                <Tooltip placement="top" title="退出登录">
-                                    <div
-                                        onClick={(e) => { this.logout(e) }}
-                                        className={`${globalStyles.authTheme} ${indexStyles.layout_icon}`}>&#xe78c;</div>
-                                </Tooltip>
-                            </div>
-                        </div> */}
           </Menu.Item>
           <Menu.Divider />
-        </Menu>
+        </Menu> */}
+        <Divider />
 
-        <Menu
-          className={`${globalStyles.global_vertical_scrollbar}`}
-          style={{ maxHeight: 200, overflowY: 'auto' }}
-          selectedKeys={id ? [id] : ['0']}
-          onClick={this.handleOrgListMenuClick.bind(this)}
-          selectable={true}
-          mode="vertical"
-        >
-          {currentUserOrganizes && currentUserOrganizes.length == 1 ? null : (
-            <Menu.Item key="0" className={indexStyles.org_name}>
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <img src={linxiLogo} className={indexStyles.org_img} />
-                <span
-                  style={{
-                    maxWidth: 100,
-                    overflow: 'hidden',
-                    whiteSpace: 'nowrap',
-                    textOverflow: 'ellipsis'
-                  }}
-                >
-                  全部
-                  {currentNounPlanFilterName(
-                    ORGANIZATION,
-                    this.props.currentNounPlan
-                  )}
-                </span>
-              </div>
-            </Menu.Item>
-          )}
-          {currentUserOrganizes.map((value, key) => {
-            const { name, id, identity_type, logo } = value
-            return (
-              <Menu.Item key={id} className={indexStyles.org_name}>
-                {/* <Tooltip placement="top" title={name}> */}
-                <div
-                  title={name}
-                  style={{ display: 'flex', alignItems: 'center' }}
-                >
-                  <img
-                    src={logo || linxiLogo}
-                    className={indexStyles.org_img}
-                  />
+        <div>
+          <Menu
+            className={`${globalStyles.global_vertical_scrollbar}`}
+            style={{ maxHeight: 350, overflowY: 'auto' }}
+            selectedKeys={id ? [id] : ['0']}
+            onClick={this.handleOrgListMenuClick.bind(this)}
+            selectable={true}
+            mode="vertical"
+          >
+            {currentUserOrganizes && currentUserOrganizes.length == 1 ? null : (
+              <Menu.Item key="0" className={indexStyles.org_name}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <img src={linxiLogo} className={indexStyles.org_img} />
                   <span
                     style={{
                       maxWidth: 100,
@@ -818,33 +1003,61 @@ export default class SimpleNavigation extends Component {
                       textOverflow: 'ellipsis'
                     }}
                   >
-                    {name}
+                    全部
+                    {currentNounPlanFilterName(
+                      ORGANIZATION,
+                      this.props.currentNounPlan
+                    )}
                   </span>
                 </div>
-                {/* </Tooltip> */}
-                {identity_type == '0' ? (
-                  <span
-                    className={indexStyles.middle_bott}
-                    style={{
-                      display: 'inline-block',
-                      backgroundColor: '#e5e5e5',
-                      padding: '0 4px',
-                      borderRadius: 40,
-                      marginLeft: 6,
-                      position: 'absolute',
-                      right: 34,
-                      top: 12
-                    }}
-                  >
-                    访客
-                  </span>
-                ) : (
-                  ''
-                )}
               </Menu.Item>
-            )
-          })}
-        </Menu>
+            )}
+            {currentUserOrganizes.map((value, key) => {
+              /** 是否选中了这个组织 */
+              const checked = currentSelectOrganize.id === value.id
+              const { name, id, identity_type, logo } = value
+              return (
+                <Menu.Item key={id} className={indexStyles.org_name}>
+                  {/* <Tooltip placement="top" title={name}> */}
+                  <div
+                    id={checked ? 'org_selected' : ''}
+                    title={name}
+                    style={{ display: 'flex', alignItems: 'center' }}
+                  >
+                    <div className={indexStyles.org_avatar}>
+                      <img
+                        src={logo || linxiLogo}
+                        className={indexStyles.org_img}
+                      />
+                      {this.VipIconRender(value)}
+                    </div>
+                    <div
+                      style={{
+                        maxWidth: '70%'
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: '100%',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                          textOverflow: 'ellipsis'
+                        }}
+                      >
+                        {name}
+                      </div>
+                      <div className={indexStyles.subTitle}>
+                        {this.WillexpireRender(value)}
+                      </div>
+                    </div>
+                  </div>
+                  {/* </Tooltip> */}
+                  {this.OrgUserTypeRender(value.identity_type)}
+                </Menu.Item>
+              )
+            })}
+          </Menu>
+        </div>
         <Suspense fallback={''}>
           {/** 功能组件引入 */}
           <CreateOrganizationModal

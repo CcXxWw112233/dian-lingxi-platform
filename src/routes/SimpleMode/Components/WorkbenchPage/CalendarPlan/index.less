@@ -6,6 +6,43 @@
     justify-content: space-between;
     border-bottom: 1px solid rgba(0, 0, 0, 0.2);
     padding: 10px 15px;
+    height: 53px;
+    .serach_forms{
+      &.hasMoreSearch{
+        & > *{
+          flex: 1;
+        }
+      }
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      white-space: nowrap;
+      &::-webkit-scrollbar {
+        /*滚动条整体样式*/
+        width        : 4px;
+        /*高宽分别对应横竖滚动条的尺寸*/
+        height       : 8px;
+        border-radius: 4px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        /*滚动条里面小方块*/
+        border-radius     : 5px;
+        -webkit-box-shadow: inset 0 0 5px #bfbfbf;
+        background        : #bfbfbf;
+      }
+
+      &::-webkit-scrollbar-track {
+        /*滚动条里面轨道*/
+        -webkit-box-shadow: inset 0 0 5px #E8E8E8;
+        border-radius     : 8px;
+        background        : #E8E8E8;
+      }
+    }
+    .calendarSelection{
+      text-align: right;
+      min-width: 400px;
+    }
   }
   .calendar {
     :global {
@@ -120,9 +157,10 @@
   display: flex;
   width: 100%;
   .date_content {
-    padding-right: 28px;
+    padding-right: 30px;
     margin-left: 2px;
     padding-left: 5px;
+    width: 88%;
     border-left: 1px solid transparent;
     // min-height: 39px;
     flex: 1;

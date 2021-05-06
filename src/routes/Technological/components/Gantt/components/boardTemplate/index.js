@@ -868,6 +868,10 @@ export default class BoardTemplate extends Component {
             payload: {}
           })
           dispatch({
+            type: 'gantt/getAboutGroupBoards',
+            payload: {}
+          })
+          dispatch({
             type: 'projectDetail/projectDetailInfo',
             payload: {
               id: gantt_board_id

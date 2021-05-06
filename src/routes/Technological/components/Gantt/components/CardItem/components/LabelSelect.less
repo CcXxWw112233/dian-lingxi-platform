@@ -5,7 +5,7 @@
   cursor: pointer;
   padding: 8px 0;
   &:hover > span {
-    color: rgb(71, 166, 255);
+    // color: rgb(71, 166, 255);
   }
   &:hover {
     .edit {
@@ -17,6 +17,22 @@
   }
   .edit {
     display: none;
+  }
+  .label_name {
+    min-width: 48px;
+    max-width: 154px;
+    height: 24px;
+    background: rgba(255, 163, 158, 1);
+    border-radius: 4px;
+    text-align: center;
+    line-height: 18px;
+    font-size: 12px;
+    padding: 2px 12px;
+    box-sizing: border-box;
+    color: rgba(0, 0, 0, 0.65);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .label_none {
     display: none;
@@ -43,56 +59,60 @@
 .search {
   margin-bottom: 8px;
 }
-.title{
+.title {
   margin-bottom: 8px;
   color: #000;
 }
-.label_box{
+.label_box {
   padding-right: 10px;
   max-height: 300px;
   overflow-y: auto;
-  &:hover&::-webkit-scrollbar{
+  &:hover&::-webkit-scrollbar {
     opacity: 1;
   }
-  &::-webkit-scrollbar{
+  &::-webkit-scrollbar {
     width: 3px;
     background-color: transparent;
     opacity: 0;
   }
-  &::-webkit-scrollbar-thumb{
+  &::-webkit-scrollbar-thumb {
     width: 3px;
     border-radius: 5px;
-    background-color: rgba(0,0,0,0.1);
+    background-color: rgba(0, 0, 0, 0.1);
   }
 }
-.btn_group{
+.btn_group {
   margin-top: 10px;
   width: 100%;
   display: flex;
   justify-content: space-around;
 }
 
-.colors_container{
+.colors_container {
   width: 100%;
-  .input_name{
+  .input_name {
     margin-bottom: 15px;
   }
-  .bar_colors{
+  .bar_colors {
     width: 100%;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    & > div{
+    & > div {
       margin-bottom: 10px;
-      width: 18%;
-      .active{
+      width: 32px;
+      height: 32px;
+      margin-right: 20px;
+      .active {
         font-family: 'iconfont';
-        &::before{
-          content: "\2714";
+        &::before {
+          content: '\2714';
           color: #fff;
-          text-shadow: 1px 0px 0px rgba(0, 0, 0,0.5), -1px  0px 0px rgba(0, 0, 0,0.5), 0px 1px 0px rgba(0, 0, 0,0.5), 0px -1px 0px rgba(0, 0, 0,0.5);
+          text-shadow: 1px 0px 0px rgba(0, 0, 0, 0.5),
+            -1px 0px 0px rgba(0, 0, 0, 0.5), 0px 1px 0px rgba(0, 0, 0, 0.5),
+            0px -1px 0px rgba(0, 0, 0, 0.5);
         }
-        border: 2px solid #4170E8;
+        border: 2px solid #4170e8;
       }
     }
   }

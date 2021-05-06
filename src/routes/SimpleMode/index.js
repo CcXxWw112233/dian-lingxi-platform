@@ -8,10 +8,19 @@ import {
   setBoardIdStorage,
   currentNounPlanFilterName
 } from '../../utils/businessFunction'
-import { PROJECTS } from '../../globalset/js/constant'
+import {
+  LocalStorageKeys,
+  OrgUserType,
+  PROJECTS
+} from '../../globalset/js/constant'
 import SimpleHeader from './Components/SimpleHeader/index'
 import { ENV_BROWSER_APP } from '../../globalset/clientCustorm'
 import { ceil_width_week } from '../Technological/components/Gantt/constants'
+import ExpireVip from '../../components/ExpireVip'
+import { ExpireModel } from '../../models/technological/expireRenew'
+import { ExpireType } from '../../components/ExpireVip/constans'
+import moment from 'moment'
+
 const defaultWallpaperSrc = ''
 // import WorkbenchPage from './Components/WorkbenchPage'
 // import Home from './Components/Home'
@@ -29,6 +38,10 @@ class SimpleMode extends PureComponent {
       show: false,
       bgStyle: {}
     }
+    /** 还有几天到期的时候可以弹出提示 */
+    this.WillExpireDate = 3
+    /** 距离上次关闭时间大于此时间可以显示弹窗 */
+    this.closeBetweenHours = 24
   }
 
   // 用户信息请求完成后才显示
@@ -135,9 +148,11 @@ class SimpleMode extends PureComponent {
     window.addEventListener('resize', this.handleResize, false) //监听窗口大小改变
     this.setShowByUserInfo(this.props)
     this.lazyLoadBgImg(this.props)
+    this.checkOrgExpire()
   }
 
   componentWillReceiveProps(nextProps) {
+    if (this.props.expireVisible !== nextProps.expireVisible) return
     this.setShowByUserInfo(nextProps)
     this.lazyLoadBgImg(nextProps)
   }
@@ -237,8 +252,73 @@ class SimpleMode extends PureComponent {
       temp.onload = loaded()
     }
   }
+
+  /** 检测所选组织是否到期 */
+  checkOrgExpire = () => {
+    const { dispatch } = this.props
+    /** 当前选择的组织 */
+    const org = this.props.userInfo?.current_org
+    if (org) {
+      const { identity_type, payment_end_date, payment_is_expired } = org
+      /** 不是管理员，不用弹窗 */
+      if (identity_type !== OrgUserType.manager) return
+      /** 上次关闭的时间戳 */
+      let prevCloseDate = window.localStorage.getItem(
+        LocalStorageKeys.willExpireCloseTime
+      )
+      prevCloseDate = prevCloseDate ? JSON.parse(prevCloseDate)[org.id] : ''
+      /** 上次是否已经关闭过 */
+      let hasCloseYestoday = !prevCloseDate
+      if (prevCloseDate) {
+        /** 距离上次关闭，差多久时间，并且关闭之后过了24小时了 */
+        const hours = moment(+prevCloseDate).diff(moment(), 'hours')
+        if (hours >= this.closeBetweenHours) {
+          hasCloseYestoday = true
+        } else hasCloseYestoday = false
+      }
+      if (payment_is_expired === 'true') {
+        if (hasCloseYestoday)
+          dispatch({
+            type: [
+              ExpireModel.namespace,
+              ExpireModel.reducers.updateDatas
+            ].join('/'),
+            payload: {
+              expireVisible: true,
+              expireType: ExpireType.Expired,
+              expiredTime: moment(+(payment_end_date + '000')).format(
+                'YYYY/MM/DD'
+              )
+            }
+          })
+      } else {
+        /** 距离到期还有几天 */
+        const timeStep = Math.ceil(
+          Math.abs(
+            moment().diff(moment(+(payment_end_date + '000')), 'days', true)
+          )
+        )
+
+        if (timeStep <= this.WillExpireDate && hasCloseYestoday) {
+          dispatch({
+            type: [
+              ExpireModel.namespace,
+              ExpireModel.reducers.updateDatas
+            ].join('/'),
+            payload: {
+              expireVisible: true,
+              expireType: ExpireType.WillExpire,
+              expiredTime: moment(+(payment_end_date + '000')).format(
+                'YYYY/MM/DD'
+              )
+            }
+          })
+        }
+      }
+    }
+  }
   render() {
-    const { setWapperCenter } = this.props
+    const { setWapperCenter, expireVisible } = this.props
     const { show } = this.state
     return (
       <div
@@ -252,6 +332,11 @@ class SimpleMode extends PureComponent {
         {show && this.renderRoutes()} */}
         <SimpleHeader />
         {show && this.renderRoutes()}
+        {expireVisible && (
+          <ExpireVip
+            releaShow={ExpireType.WillExpire === this.props.expireType}
+          />
+        )}
       </div>
     )
   }
@@ -270,7 +355,8 @@ export default connect(
     },
     organizationManager: {
       datas: { currentNounPlan }
-    }
+    },
+    [ExpireModel.namespace]: { expireVisible, expireType }
   }) => ({
     simpleHeaderVisiable,
     setWapperCenter,
@@ -278,6 +364,8 @@ export default connect(
     currentUserWallpaperContent,
     userInfo,
     currentNounPlan,
-    currentSelectedProjectOrgIdByBoardId
+    currentSelectedProjectOrgIdByBoardId,
+    expireVisible,
+    expireType
   })
 )(SimpleMode)

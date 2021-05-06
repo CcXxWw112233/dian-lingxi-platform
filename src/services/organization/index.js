@@ -345,7 +345,10 @@ export async function sortTempleteContainer(data) {
 
 // ------------------------ 自定义字段接口 S --------------------------
 
-// 获取自定义字段列表
+/** 获取自定义字段列表
+ * @param {{?_organization_id: string}} params 参数需要传组织id
+ *
+ */
 export async function getCustomFieldList(params = {}) {
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}/board/field/group/list`,
@@ -446,7 +449,10 @@ export async function getCustomFieldQuoteList(params) {
   return request({
     url: `${REQUEST_DOMAIN_FLOWS}/board/field/quote/list`,
     method: 'get',
-    params
+    params: {
+      ...params,
+      _organization_id: localStorage.getItem('OrganizationId')
+    }
   })
 }
 

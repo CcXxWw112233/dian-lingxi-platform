@@ -8,7 +8,7 @@ import { Dropdown, Menu, message, Spin, Tree } from 'antd'
 import { calendarGetTemplateList } from '../../../../../../../services/organization'
 import PropTypes from 'prop-types'
 import Empty from '../../../../../../../components/Empty'
-import { NodeType, TotalBoardKey } from '../../constans'
+import { NodeType, TempType, TotalBoardKey } from '../../constans'
 /** 文件夹的图标 */
 const folderIcon = require('../../../../../../../assets/workbench/foldericon.png')
 
@@ -63,14 +63,7 @@ export default class CalendarTempTree extends React.Component {
     /** 请求数据返回的code正确码 */
     this.SuccessCode = '0'
     /** 模板类型 */
-    this.TempType = {
-      /** 里程碑类型 */
-      milestoneType: '1',
-      /** 任务类型 */
-      cardType: '2',
-      /** 流程类型 */
-      flowType: '3'
-    }
+    this.TempType = TempType
     /** 节点类型 */
     this.NodeType = NodeType
   }
@@ -127,6 +120,10 @@ export default class CalendarTempTree extends React.Component {
    * 请求模板列表
    */
   fetchTempList = () => {
+    /** 用户信息 */
+    const userInfo = JSON.parse(window.localStorage.getItem('userInfo')) || {}
+    /** 用户数据，组织数据 */
+    const { user_set = {} } = userInfo
     this.setLoading(true)
     /** 获取到的模板id列表或模板id */
     let templateIds = this.getBoardTempIds()
@@ -134,8 +131,15 @@ export default class CalendarTempTree extends React.Component {
     this.setState({
       showInfoTree: false,
       currentData: {},
-      treeData: []
+      treeData: [],
+      tempList: []
     })
+    if (
+      (this.props.simplemodeCurrentProject.board_id === TotalBoardKey ||
+        !this.props.simplemodeCurrentProject.board_id) &&
+      user_set.current_org === '0'
+    )
+      return this.setLoading(false)
     if (templateIds) {
       /** 获取返回的组织列表类型 */
       const idsType = typeof templateIds
@@ -214,14 +218,14 @@ export default class CalendarTempTree extends React.Component {
       })()
 
       /** 是里程碑和子里程碑就显示 */
-      if (isMilestoneType || isSubMilestoneType)
-        arr.push({
-          ...obj,
-          children: obj.child_content,
-          title: this.treeTitle(obj.name, { ...obj, type }),
-          key: obj.id,
-          type: type
-        })
+      // if (isMilestoneType || isSubMilestoneType)
+      arr.push({
+        ...obj,
+        children: obj.child_content,
+        title: this.treeTitle(obj.name, { ...obj, type }),
+        key: obj.id,
+        type: type
+      })
     })
     return arr
   }
@@ -243,7 +247,7 @@ export default class CalendarTempTree extends React.Component {
   /**
    * 自定义渲染title
    * @param {string} title 名称
-   * @param {{id:string, type: string}} 当前节点
+   * @param {{id:string, type: string}} node 当前节点
    * @returns {React.ReactNode}
    */
   treeTitle = (title, node) => {

@@ -17,11 +17,11 @@ export default class GanttMilestonePublicInput extends Component {
     if (ganttIsOutlineView({ group_view_type })) {
       this.handleMiletonsChangeOutlineView(...arg)
     } else {
-      dispatch({
-        type: 'gantt/getGttMilestoneList',
-        payload: {}
-      })
     }
+    dispatch({
+      type: 'gantt/getGttMilestoneList',
+      payload: {}
+    })
   }
   deleteMiletone = ({ id }) => {
     const { milestoneMap = {}, dispatch } = this.props

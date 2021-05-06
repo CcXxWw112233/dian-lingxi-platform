@@ -11,7 +11,7 @@ import {
   Spin,
   Tooltip
 } from 'antd'
-import React from 'react'
+import React, { useState } from 'react'
 import styles from './index.less'
 import moment from 'moment'
 import CalendarTempTree from './components/CalendarTempTree'
@@ -22,11 +22,15 @@ import {
 import { connect } from 'dva'
 import { WorkbenchModel } from '../../../../../models/technological/workbench'
 import PropTypes from 'prop-types'
-import { legendList, NodeType, TotalBoardKey } from './constans'
+import { legendList, NodeType, TempType, TotalBoardKey } from './constans'
 import globalStyles from '../../../../../globalset/css/globalClassName.less'
 import { Fragment } from 'react'
 import GanttDetail from '../../../../Technological/components/Gantt/components/milestoneDetail'
 import { projectDetailInfo } from '../../../../../services/technological/prjectDetail'
+import { debounce } from '../../../../../utils/util'
+import MustBeChooseBoard from '../../../../../components/MustBeChooseBoard'
+import { WorkbenchPages } from '../constans'
+import { setBoardIdStorage } from '../../../../../utils/businessFunction'
 
 /** 日历计划功能组件 */
 @connect(
@@ -46,15 +50,20 @@ import { projectDetailInfo } from '../../../../../services/technological/prjectD
   })
 )
 export default class CalendarPlan extends React.Component {
+  /** props数据统一整理，防止追踪困难 */
   static propTypes = {
     /** 项目列表 */
     projectList: PropTypes.array,
     /** 选中的项目 */
-    simplemodeCurrentProject: PropTypes.object
+    simplemodeCurrentProject: PropTypes.object,
+    /** 页面的高度 */
+    workbenchBoxContent_height: PropTypes.number
   }
 
   constructor(props) {
     super(props)
+    /** 更多搜索条件的时候，大于此数值才会自适应宽度 */
+    this.MaxSearchMoreItem = 2
     /** 定义的年份mode */
     this.modeYear = 'year'
     /** 定义的月份mode */
@@ -65,6 +74,8 @@ export default class CalendarPlan extends React.Component {
     this.maxYearNumber = 9
 
     this.state = {
+      /** 是否显示必须选择的提示 */
+      isShowGuide: false,
       /** 更多事项的弹窗 */
       moreDataVisible: false,
       /** 里程碑详情弹窗 */
@@ -132,21 +143,60 @@ export default class CalendarPlan extends React.Component {
 
     /** 单元格的数据最大显示数量 */
     this.MaxCellDataLength = 2
+
+    this.fetchQueryCalendarData = debounce(this.fetchQueryCalendarData, 100)
   }
 
   componentDidMount() {
-    this.fetchQueryParams()
-    this.fetchQueryCalendarData()
+    this.updateSearch()
+  }
+
+  /** 搜索前的判断,判断可不可以搜索 */
+  beforeSearch = () => {
+    const { simplemodeCurrentProject } = this.props
+    /** 选中项目的id */
+    const currentProjectId = simplemodeCurrentProject
+      ? simplemodeCurrentProject.board_id || TotalBoardKey
+      : TotalBoardKey
+    /** 用户信息 */
+    const userInfo = JSON.parse(window.localStorage.getItem('userInfo')) || {}
+    /** 用户数据，组织数据 */
+    const { user_set = {} } = userInfo
+
+    if (currentProjectId === TotalBoardKey && user_set.current_org === '0') {
+      return false
+    }
+    return true
+  }
+
+  /** 刷新操作 */
+  updateSearch = () => {
+    if (this.beforeSearch()) {
+      this.setState({
+        isShowGuide: false
+      })
+      this.fetchQueryParams()
+      this.fetchQueryCalendarData()
+    } else {
+      setTimeout(() => {
+        this.setState({
+          isShowGuide: true,
+          queryParamsData: [],
+          calendar_data: []
+        })
+      }, 500)
+    }
   }
 
   componentDidUpdate(prevProps) {
     if (
       prevProps.simplemodeCurrentProject !== this.props.simplemodeCurrentProject
     ) {
-      this.clearQueryParams()
-      this.fetchQueryParams()
-      if (!this.state.template_id) this.fetchQueryCalendarData()
-      else this.backList()
+      this.updateSearch()
+      if (this.props.simplemodeCurrentProject.board_id !== TotalBoardKey) {
+        if (!this.state.template_id) this.fetchQueryCalendarData()
+        else this.backList()
+      }
     }
   }
 
@@ -158,15 +208,19 @@ export default class CalendarPlan extends React.Component {
     console.log(value, mode)
   }
 
-  /** 添加一个0 */
+  /** 添加一个0
+   * @param {string | number} number 需要判定小于10的字符串或者数字
+   * @returns {string | number}
+   */
   addZero = number => {
     return +number < 10 ? '0' + number : number
   }
 
   /** 点击了日期时间，更新选中的日历
-   * @param {moment.Moment} date 选中的日历
+   * @param {moment.Moment} date 选中的日历时间
    */
   handleDate = date => {
+    /** 当前选中的日 */
     const day = date.date()
     /** 保存上一个保存的月份 */
     const prevMonth = this.state.selectedMonth
@@ -193,13 +247,16 @@ export default class CalendarPlan extends React.Component {
    * @param {Event} e
    */
   handleModeChange = e => {
+    /** switch切换的value
+     * @default string 'year' | 'month'
+     */
     const value = e.target.value
     this.setState(
       {
         mode: value
       },
       () => {
-        this.fetchQueryCalendarData()
+        if (value !== this.modeMonth) this.fetchQueryCalendarData()
       }
     )
   }
@@ -208,10 +265,13 @@ export default class CalendarPlan extends React.Component {
    * @param {number} value 选择的月份
    */
   handleChangeMonth = value => {
-    const timeString = `${this.state.selectedYear}${this.addZero(
-      value
-    )}${this.addZero(this.state.selectedDay)}`
-    const date = moment(timeString, 'YYYYMMDD')
+    /** 需要更新的新时间 */
+    const updateDate = {
+      year: this.state.selectedYear,
+      month: value - 1,
+      date: this.state.selectedDay
+    }
+    const date = moment().set(updateDate)
     this.setState(
       {
         calendarValue: date,
@@ -227,10 +287,14 @@ export default class CalendarPlan extends React.Component {
    * @param {number} value 选择的年份
    */
   handleChangeYear = value => {
-    const timeString = `${value}${this.addZero(
-      this.state.selectedMonth
-    )}${this.addZero(this.state.selectedDay)}`
-    const date = moment(timeString, 'YYYYMMDD')
+    /** 需要更新的新时间 */
+    const updateDate = {
+      year: value,
+      month: this.state.selectedMonth - 1,
+      date: this.state.selectedDay
+    }
+    /** 更新的日期 */
+    const date = moment().set(updateDate)
     this.setState(
       {
         calendarValue: date,
@@ -289,7 +353,7 @@ export default class CalendarPlan extends React.Component {
       {
         queryParams: {
           ...this.state.queryParams,
-          [query_key]: val
+          [query_key]: (val || []).length ? val : null
         }
       },
       () => {
@@ -311,7 +375,7 @@ export default class CalendarPlan extends React.Component {
       {
         queryParams: {
           ...this.state.queryParams,
-          [option.id]: chekced ? selectedIds : []
+          [option.id]: chekced ? selectedIds : null
         }
       },
       () => {
@@ -322,9 +386,26 @@ export default class CalendarPlan extends React.Component {
 
   /** 获取日历的数据 */
   fetchQueryCalendarData = () => {
+    if (!this.beforeSearch()) {
+      this.updateSearch()
+      return
+    }
     this.setState({
       searchLoading: true
     })
+
+    /** 过滤搜索条件没有数据的key
+     * @returns {?{[x: string]: any} | null}
+     */
+    const filterParamsNull = () => {
+      const obj = {}
+      Object.keys(this.state.queryParams).forEach(item => {
+        if (this.state.queryParams[item]) {
+          obj[item] = this.state.queryParams[item]
+        }
+      })
+      return Object.keys(obj).length ? obj : null
+    }
     /** 请求参数 */
     const params = {
       board_ids: this.getSelectedBoardIds(),
@@ -338,9 +419,7 @@ export default class CalendarPlan extends React.Component {
         : null,
       name: this.state.queryName,
       template_id: this.state.template_id,
-      items: Object.keys(this.state.queryParams).length
-        ? this.state.queryParams
-        : null
+      items: filterParamsNull()
     }
     fetchCalendarData(params)
       .then(res => {
@@ -414,9 +493,10 @@ export default class CalendarPlan extends React.Component {
 
   /** 渲染更多事项的列表
    * @param {object[]} datas 当前单元格的数据列表
+   * @param {function} callback 关闭回调
    * @returns {React.ReactNode}
    */
-  renderMoreDatas = (datas = []) => {
+  renderMoreDatas = (datas = [], callback) => {
     return (
       <div className={styles.popcontent}>
         <div className={styles.popcontent_header}>
@@ -427,11 +507,7 @@ export default class CalendarPlan extends React.Component {
           </span>
           <span
             className={`${globalStyles.authTheme} ${styles.popclose}`}
-            onClick={() =>
-              this.setState({
-                moreDataVisible: false
-              })
-            }
+            onClick={() => callback && callback()}
           >
             &#xe816;
           </span>
@@ -439,7 +515,7 @@ export default class CalendarPlan extends React.Component {
         {datas.map(item => {
           return (
             <div className={styles.popcontent_item} key={item.id}>
-              {this.renderDataItem(item)}
+              {this.renderDataItem(item, callback)}
             </div>
           )
         })}
@@ -453,12 +529,11 @@ export default class CalendarPlan extends React.Component {
    * @returns {?React.ReactNode}
    */
   dateCellRender = date => {
+    const { PopoverMoreDataRender } = this
     const { calendar_data = [] } = this.state
     /** 拥有数据的日期 */
-    const hasDataDate = calendar_data.find(
-      item =>
-        date.format('l') ===
-        moment(+((item.endTime || item.end_time) + '000')).format('l')
+    const hasDataDate = calendar_data.find(item =>
+      date.isSame(moment(+((item.endTime || item.end_time) + '000')), 'day')
     )
     /** 相同时间的数据，用来限制显示 */
     const sameDateTime = {}
@@ -466,9 +541,10 @@ export default class CalendarPlan extends React.Component {
       <Fragment>
         {calendar_data.map(item => {
           /** 此日期是否有合适的数据 */
-          const isSameDate =
-            date.format('l') ===
-            moment(+((item.endTime || item.end_time) + '000')).format('l')
+          const isSameDate = date.isSame(
+            moment(+((item.endTime || item.end_time) + '000')),
+            'day'
+          )
           /** 当前日期无符合的数据 */
           if (!isSameDate) return null
 
@@ -489,33 +565,50 @@ export default class CalendarPlan extends React.Component {
         {hasDataDate &&
           (sameDateTime[hasDataDate.end_time] || []).length >
             this.MaxCellDataLength && (
-            <Popover
-              trigger="click"
-              overlayClassName={styles.moreOverlay}
-              content={this.renderMoreDatas(sameDateTime[hasDataDate.end_time])}
-              visible={this.state.moreDataVisible}
-              onVisibleChange={visible =>
-                this.setState({ moreDataVisible: visible })
-              }
-            >
-              <div className={styles.more_datas}>
-                更多
-                {(sameDateTime[hasDataDate.end_time] || []).length -
-                  this.MaxCellDataLength}
-                个事项
-              </div>
-            </Popover>
+            <PopoverMoreDataRender data={sameDateTime[hasDataDate.end_time]} />
           )}
       </Fragment>
     )
   }
 
+  /** 渲染popover弹窗 */
+  PopoverMoreDataRender = props => {
+    /** 传入进来的数据 */
+    const { data = [] } = props
+    /** 是否显示弹窗 */
+    const [visible, setVisible] = useState(false)
+    /** 关闭的回调 */
+    const closeCallback = () => {
+      setVisible(false)
+    }
+    return (
+      <Popover
+        trigger="click"
+        overlayClassName={styles.moreOverlay}
+        content={this.renderMoreDatas(data, closeCallback)}
+        visible={visible}
+        onVisibleChange={visible => setVisible(visible)}
+      >
+        <div className={styles.more_datas}>
+          更多
+          {(data || []).length - this.MaxCellDataLength}
+          个事项
+        </div>
+      </Popover>
+    )
+  }
+
   /**
    * 选中了一个里程碑数据
-   * @param {{id: strintg, name: string,board_id: string, list_names: string[], type: string}} data
+   * @param {{id: strintg, name: string,board_id: string, list_names: string[], type: string}} data 选中的数据
+   * @param {?Function} callback 回调
    */
-  handleDataOfDate = async data => {
+  handleDataOfDate = async (data, callback) => {
+    /** 是否里程碑数据类型 */
+    const isMilestoneType = TempType.milestoneType === data.type
+    if (!isMilestoneType) return message.warn('功能正在开发')
     // console.log(data)
+    setBoardIdStorage(data.board_id, '')
     const { dispatch } = this.props
     /** 用来打开里程碑详情 */
     const resp = await projectDetailInfo(data.board_id)
@@ -530,29 +623,31 @@ export default class CalendarPlan extends React.Component {
       })
       this.setState({
         currentMilestone: {
-          user,
+          user: user.data,
           milestone_id: data.id
         },
         milestoneVisible: true,
         moreDataVisible: false
       })
+      callback && callback()
     } else message.warn(resp.message)
   }
 
   /**
    * 渲染单个单元格的数据节点
    * @param {{id: strintg, name: string,board_id: string, list_names: string[], type: string}} item 单个节点的数据
+   * @param {?Function} callback 传入的回调-目前只处理点击详情关闭弹窗的功能
    * @returns {React.ReactNode}
    */
-  renderDataItem = item => {
+  renderDataItem = (item, callback) => {
     /** 是否里程碑 */
     const isMilestoneType =
-      item.type === NodeType.milestonetype && item.is_parent
+      item.type === TempType.milestoneType && item.is_parent
     /** 是否子里程碑 */
     const isSubMilestoneType =
-      item.type === NodeType.milestonetype && !item.is_parent
+      item.type === TempType.milestoneType && !item.is_parent
     /** 是否任务 */
-    const isCardType = false
+    const isCardType = item.type === TempType.cardType && item.is_parent
 
     /** 是否多项目 */
     const isMultipleBoard =
@@ -563,7 +658,10 @@ export default class CalendarPlan extends React.Component {
     return (
       <div
         className={styles.celldate_container}
-        onClick={() => this.handleDataOfDate(item)}
+        onClick={() => {
+          this.handleDataOfDate(item, callback)
+        }}
+        title={item.name}
       >
         <div className={`${globalStyles.authTheme} ${styles.date_celltype}`}>
           {isMilestoneType && (
@@ -589,7 +687,7 @@ export default class CalendarPlan extends React.Component {
           <div className={styles.celldate_title}>{item.name}</div>
           <div className={styles.subcelldate_title}>
             {isMultipleBoard
-              ? `#${Board.board_name}`
+              ? `#${Board?.board_name}`
               : (item.list_names || []).length
               ? `@${(item.list_names || []).join('/')}`
               : ''}
@@ -619,7 +717,7 @@ export default class CalendarPlan extends React.Component {
     this.setState(
       {
         template_id: temp.id,
-        /** 清空上一个选择的甘特图列表 */
+        /** 清空上一个选择的里程碑列表 */
         template_content_ids: null
       },
       () => {
@@ -713,12 +811,14 @@ export default class CalendarPlan extends React.Component {
     const isActiveDate = date.isSame(this.state.calendarValue, 'month')
     /** 日期在内的数据 */
     const sameDateData = []
-    /** 当前月份是否是现实中的月份 */
+    /** 当前渲染月份是否是本地时间中的月份 */
     const isSameActiveDate = moment().isSame(date, 'month')
     /** 提取数据 */
     this.state.calendar_data.forEach(item => {
+      /** 数据中的时间 */
       const calendar_data_time = moment(+(item.end_time + '000'))
-      if (date.format('YYYY-MM') === calendar_data_time.format('YYYY-MM')) {
+      /** 当前月份满足数据中的月份 */
+      if (date.isSame(calendar_data_time, 'month')) {
         sameDateData.push(item)
       }
     })
@@ -750,12 +850,19 @@ export default class CalendarPlan extends React.Component {
         style={{ height: workbenchBoxContent_height }}
       >
         <div className={styles.heander_search}>
-          <div className={styles.serach_forms}>
-            {this.state.queryParamsData.map(item => {
+          <div
+            className={`${styles.serach_forms} ${
+              (this.state.queryParamsData || []).length > this.MaxSearchMoreItem
+                ? styles.hasMoreSearch
+                : ''
+            }`}
+          >
+            {(this.state.queryParamsData || []).map(item => {
               return (
                 <Select
                   mode="multiple"
-                  maxTagCount={2}
+                  maxTagCount={1}
+                  dropdownMatchSelectWidth={false}
                   key={item.id}
                   placeholder={item.name}
                   style={{ width: 230, marginLeft: 10 }}
@@ -821,8 +928,8 @@ export default class CalendarPlan extends React.Component {
                   queryName: val.target.value
                 })
               }
-              placeholder="搜索里程碑、子里程碑名称"
-              style={{ width: 300, marginLeft: 10 }}
+              placeholder="搜索里程碑、子里程碑、任务名称"
+              style={{ width: 300, marginLeft: 10, flex: 'none' }}
               enterButton={
                 <Button
                   type="primary"
@@ -834,7 +941,7 @@ export default class CalendarPlan extends React.Component {
             />
             <Button
               type="default"
-              style={{ marginLeft: 10 }}
+              style={{ marginLeft: 10, flex: 'none' }}
               onClick={this.handleResetQueryParams}
             >
               重置
@@ -924,6 +1031,17 @@ export default class CalendarPlan extends React.Component {
             users={this.state.currentMilestone.user}
             handleMiletonesChange={this.handleMiletonesChange}
             deleteMiletone={this.deleteMiletone}
+          />
+        )}
+        {this.state.isShowGuide && (
+          <MustBeChooseBoard
+            onClose={() =>
+              this.setState({
+                isShowGuide: false
+              })
+            }
+            element={'#choose_board'}
+            tips={`多选组织情况下，请选择一个项目 查看 "${WorkbenchPages.CalendarPlan.name}" 相应的内容！`}
           />
         )}
       </div>

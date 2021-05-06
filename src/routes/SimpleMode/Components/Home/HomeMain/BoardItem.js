@@ -6,7 +6,9 @@ import {
   MESSAGE_DURATION_TIME,
   NOT_HAS_PERMISION_COMFIRN,
   PROJECTS,
-  REQUEST_DOMAIN_BOARD
+  REQUEST_DOMAIN_BOARD,
+  PROJECT_TEAM_BOARD_ARCHIVE,
+  PROJECT_TEAM_BOARD_DELETE
 } from '../../../../../globalset/js/constant'
 import VisitControl from '../../../../Technological/components/VisitControl'
 import globalStyles from '@/globalset/css/globalClassName.less'
@@ -20,7 +22,7 @@ import {
   currentNounPlanFilterName,
   setRequestHeaderBaseInfo
 } from '../../../../../utils/businessFunction'
-import { Badge, Checkbox, Dropdown, Menu, message, Modal } from 'antd'
+import { Badge, Checkbox, Dropdown, Input, Menu, message, Modal } from 'antd'
 import { connect } from 'dva'
 import {
   toggleContentPrivilege,
@@ -28,7 +30,9 @@ import {
   setContentPrivilege,
   addMenbersInProject,
   cancelCollection,
-  collectionProject
+  collectionProject,
+  archivedProject,
+  deleteProject
 } from '../../../../../services/technological/project'
 import DetailInfo from '@/routes/Technological/components/ProjectDetail/DetailInfo/index'
 import ShowAddMenberModal from '@/routes/Technological/components/Project/ShowAddMenberModal'
@@ -38,6 +42,9 @@ import { inviteMembersInWebJoin } from '../../../../../utils/inviteMembersInWebJ
 import axios from 'axios'
 import Cookies from 'js-cookie'
 import CustormBadgeDot from '@/components/CustormBadgeDot'
+import { updateProject } from '../../../../../services/technological/prjectDetail'
+import { WorkbenchModel } from '../../../../../models/technological/workbench'
+import ArchiveSelect from '../../../../Technological/components/Gantt/components/ArchiveSelect'
 
 @connect(mapStateToProps)
 export default class BoardItem extends Component {
@@ -47,7 +54,12 @@ export default class BoardItem extends Component {
       renderVistorContorlVisible: false,
       board_info_visible: false,
       show_add_menber_visible: false,
-      menu_oprate_visible: false
+      menu_oprate_visible: false,
+      selectedBoardId: '',
+      /** 重命名的名称 */
+      board_rename: '',
+      /** 归档弹窗 */
+      arhcived_modal_visible: false
     }
     this.visitControlOtherPersonOperatorMenuItem = [
       {
@@ -64,12 +76,14 @@ export default class BoardItem extends Component {
     ]
   }
 
-  onSelectBoard = (board_id, org_id) => {
+  onSelectBoard = (board_id, org_id, e) => {
     const {
       projectList,
       dispatch,
-      simplemodeCurrentProject: { selected_board_term }
+      simplemodeCurrentProject: { selected_board_term },
+      onClick
     } = this.props
+    onClick && onClick(e, this.props.itemValue)
     const selectBoard = projectList.filter(item => item.board_id === board_id)
     const selectOrgId = org_id || getOrgIdByBoardId(board_id)
     if (!selectBoard && selectBoard.length == 0) {
@@ -606,6 +620,73 @@ export default class BoardItem extends Component {
       })
     }
   }
+
+  /** 保存修改的项目 */
+  saveEditBoard = (board_id, data) => {
+    const { dispatch } = this.props
+    if (board_id) {
+      updateProject({ board_id, ...data }).then(res => {
+        // console.log(res)
+        if (res.code === '0') {
+          dispatch({
+            type: [
+              WorkbenchModel.namespace,
+              WorkbenchModel.getProjectList
+            ].join('/'),
+            payload: {}
+          })
+        }
+      })
+    }
+  }
+
+  /** 重命名此项目名称
+   * @param {string} board_id 项目名称
+   * @param {{board_id: string, name:string}} board 项目信息
+   */
+  renameThisBoard = (board_id, board) => {
+    this.setState({
+      board_rename: board.board_name
+    })
+    /** 保存的回调 */
+    const Ok = () => {
+      const param = {
+        name: this.state.board_rename
+      }
+      this.saveEditBoard(board_id, param)
+      this.setState({
+        board_rename: ''
+      })
+    }
+    const confirm = Modal.confirm({
+      centered: true,
+      title: <div className={styles.rename_title}>修改项目名称</div>,
+      content: (
+        <div className={styles.rename_box}>
+          <div className={styles.rename_tip}>项目名称</div>
+          <div className={styles.rename_input}>
+            <Input
+              placeholder="请输入项目名称"
+              defaultValue={board.board_name}
+              onChange={e => this.setState({ board_rename: e.target.value })}
+              onPressEnter={() => {
+                confirm.destroy()
+                Ok()
+              }}
+            />
+          </div>
+        </div>
+      ),
+      onOk: () => {
+        Ok()
+      },
+      onCancel: () => {
+        this.setState({
+          board_rename: ''
+        })
+      }
+    })
+  }
   // 操作项点击
   handleMenuSelect = e => {
     e.domEvent.stopPropagation()
@@ -636,10 +717,70 @@ export default class BoardItem extends Component {
         this.handleExportBoardMembers(itemValue)
         // this.setExportBoardMembersVisible()
         break
+      case 'board_rename':
+        this.renameThisBoard(board_id, itemValue)
+        break
+      case 'archived':
+        this.set_arhcived_modal_visible(true)
+        break
+      case 'deleteBoard':
+        if (!checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_DELETE, board_id)) {
+          message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+          return false
+        }
+        this.deleteProject({ board_id: board_id })
+        break
       default:
         break
     }
   }
+
+  /** 项目删除 --- S */
+  deleteProject = ({ board_id }) => {
+    const that = this
+    const { dispatch, onUpdate } = this.props
+    // const modal = Modal.confirm();
+    Modal.confirm({
+      title: `确认要删除该${currentNounPlanFilterName(PROJECTS)}吗？`,
+      content: (
+        <div style={{ color: 'rgba(0,0,0, .8)', fontSize: 14 }}>
+          <span>
+            删除后将无法获取该{currentNounPlanFilterName(PROJECTS)}的相关动态
+          </span>
+        </div>
+      ),
+      okText: '确认',
+      cancelText: '取消',
+      onOk: () => {
+        deleteProject(board_id).then(res => {
+          if (isApiResponseOk(res)) {
+            setTimeout(
+              () =>
+                message.success(
+                  `已成功删除该${currentNounPlanFilterName(PROJECTS)}`
+                ),
+              200
+            )
+            dispatch({
+              type: [
+                WorkbenchModel.namespace,
+                WorkbenchModel.getProjectList
+              ].join('/'),
+              payload: {}
+            })
+            onUpdate && onUpdate()
+            // modal.destroy();
+          } else {
+            message.warn(res.message)
+          }
+        })
+      },
+      onCancel: () => {
+        // modal.destroy();
+      }
+    })
+  }
+
   renderMenuOperateListName = ({ board_id, is_star }) => {
     const { renderVistorContorlVisible } = this.state
     return (
@@ -677,13 +818,51 @@ export default class BoardItem extends Component {
             this.props.currentNounPlan
           )}信息`}</Menu.Item>
         }
+        {checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_ARCHIVE, board_id) && (
+          <Menu.Item key={'archived'}>归档</Menu.Item>
+        )}
+        {checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_EDIT, board_id) && (
+          <Menu.Item key="board_rename">重命名</Menu.Item>
+        )}
         {checkIsHasPermissionInBoard(PROJECT_TEAM_BOARD_MEMBER, board_id) && (
           <Menu.Item key={'export_members'}>
             导出{currentNounPlanFilterName(PROJECTS, board_id)}成员
           </Menu.Item>
         )}
+        <Menu.Item key={'deleteBoard'}>
+          <div style={{ color: 'red' }}>
+            退出/删除{currentNounPlanFilterName(PROJECTS, board_id)}
+          </div>
+        </Menu.Item>
       </Menu>
     )
+  }
+
+  /** 弹窗更新 */
+  set_arhcived_modal_visible = val => {
+    this.setState({
+      arhcived_modal_visible: val
+    })
+  }
+
+  /** 归档回调 */
+  archivedProjectCalback = data => {
+    const { board_id } = data
+    const { dispatch, onUpdate } = this.props
+    archivedProject({ is_archived: '1', board_id }).then(res => {
+      if (isApiResponseOk(res)) {
+        message.success('已成功归档该项目')
+        dispatch({
+          type: [WorkbenchModel.namespace, WorkbenchModel.getProjectList].join(
+            '/'
+          ),
+          payload: {}
+        })
+        onUpdate && onUpdate()
+      } else {
+        message.error(res.message)
+      }
+    })
   }
   render() {
     const {
@@ -703,7 +882,7 @@ export default class BoardItem extends Component {
     return (
       <>
         <div
-          onClick={() => this.onSelectBoard(board_id, org_id)}
+          onClick={e => this.onSelectBoard(board_id, org_id, e)}
           className={`${
             !isAllOrg
               ? styles.board_area_middle_item
@@ -790,6 +969,13 @@ export default class BoardItem extends Component {
             setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile}
           />
         )}
+        <ArchiveSelect
+          board_id={board_id}
+          board_name={board_name}
+          visible={this.state.arhcived_modal_visible}
+          setVisible={this.set_arhcived_modal_visible}
+          onOk={this.archivedProjectCalback}
+        />
         {/* {board_members_visible && (
           <Modal
             title={`导出${currentNounPlanFilterName(PROJECTS, board_id)}成员`}
