@@ -1232,10 +1232,11 @@ export default class GroupMilestones extends Component {
     })
   }, 500)
   singleMilestoneMouseEnter = debounce(arr => {
+    if (this.milestone_dragging) return
     if (arr.length != 1) return
     const { rela_ids = [], id } = arr[0]
     const { dispatch } = this.props
-    console.log('ssssssssssadd_0', arr[0])
+    // console.log('ssssssssssadd_0', arr[0])
     dispatch({
       type: 'gantt/updateDatas',
       payload: {
@@ -1245,6 +1246,7 @@ export default class GroupMilestones extends Component {
     })
   }, 500)
   singleMilestoneMouseLeave = debounce(item => {
+    if (this.milestone_dragging) return
     const { dispatch } = this.props
     dispatch({
       type: 'gantt/updateDatas',
