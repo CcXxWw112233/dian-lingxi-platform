@@ -23,6 +23,17 @@ export async function getGanttData(data) {
     }
   })
 }
+// 向左向右滚动时获取新增加的日期的数据
+export async function getGroupScrollAdditionalData(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt_chart/primary`,
+    method: 'POST',
+    data: {
+      _organization_id: localStorage.getItem('OrganizationId'),
+      ...data
+    }
+  })
+}
 
 //获取节假日
 export async function getHoliday(params) {

@@ -5,7 +5,8 @@ import {
   getContentFiterBoardTree,
   getContentFiterUserTree,
   getHoliday,
-  getGanttUserCustorm
+  getGanttUserCustorm,
+  getGroupScrollAdditionalData
 } from '../../../../services/technological/gantt'
 import {
   getProjectList,
@@ -474,6 +475,33 @@ export default {
       } catch (err) {
         console.log('ssss_err_0', err)
       }
+    },
+    // 向左向右滚动时获取新增加的日期的数据
+    *getGroupScrollAdditionalData({ payload }, { select, call, put }) {
+      const { start_time, end_time } = payload
+      const group_view_type = yield select(
+        getModelSelectDatasState('gantt', 'group_view_type')
+      )
+
+      const res = yield call(getGroupScrollAdditionalData, {
+        start_time,
+        end_time,
+        chart_type: group_view_type
+      })
+      const list_group = yield select(
+        getModelSelectDatasState('gantt', 'list_group')
+      )
+      yield put({
+        type: 'handleListGroup',
+        payload: {
+          data: list_group
+        }
+      })
+      yield put({
+        type: 'getGttMilestoneList',
+        payload: {}
+      })
+      return { code: '0' }
     },
     // 转化处理大纲视图数据
     *handleOutLineTreeData({ payload }, { select, call, put }) {

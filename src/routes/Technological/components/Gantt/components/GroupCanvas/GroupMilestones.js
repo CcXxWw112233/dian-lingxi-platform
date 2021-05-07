@@ -381,7 +381,7 @@ export default class GroupMilestones extends Component {
       })
       val.top = group_list_area_section_height[top_index - 1] || 0 //在所属分组的顶层
     }
-    console.log('ssssssssss_milestones', milestones)
+    // console.log('ssssssssss_milestones', milestones)
     this.setState({
       summary_milestones_data: milestones
     })
@@ -1231,7 +1231,7 @@ export default class GroupMilestones extends Component {
     if (arr.length != 1) return
     const { rela_ids = [], id } = arr[0]
     const { dispatch } = this.props
-    console.log('ssssssssssadd_0', arr[0])
+    // console.log('ssssssssssadd_0', arr[0])
     dispatch({
       type: 'gantt/updateDatas',
       payload: {
