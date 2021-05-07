@@ -629,7 +629,7 @@ export default class GroupMilestones extends Component {
           opacity: this.setMilestoneFlagShow(one_levels_all) ? '1' : '0.2'
         }}
       >
-        <div>
+        <div style={{ width: 0 }}>
           {this.renderDropDown(
             timestamp,
             one_levels_all,
@@ -662,14 +662,15 @@ export default class GroupMilestones extends Component {
                 className={`${indexStyles.board_miletiones_names} ${globalStyles.global_ellipsis}`}
                 data-targetclassname="specific_example_milestone"
                 style={{
-                  maxWidth: this.setMiletonesNamesWidth(
-                    {
-                      timestamp,
-                      top: -milestone_base_height,
-                      belong_group_id
-                    },
-                    true
-                  ),
+                  // maxWidth: this.setMiletonesNamesWidth(
+                  //   {
+                  //     timestamp,
+                  //     top: -milestone_base_height,
+                  //     belong_group_id
+                  //   },
+                  //   true
+                  // ),
+                  backgroundColor: '#f5f7fb',
                   color: this.setMiletonesColor({
                     is_over_duetime,
                     is_finished: one_levels_all_completed
@@ -708,6 +709,7 @@ export default class GroupMilestones extends Component {
                   group_list_area_section_height[
                     group_list_area_section_height.length - 1
                   ],
+                width: 1,
                 display: gantt_board_id == '0' ? 'none' : 'block',
                 background: this.setMiletonesColor({
                   is_over_duetime,
@@ -815,11 +817,12 @@ export default class GroupMilestones extends Component {
                     className={`${indexStyles.board_miletiones_names} ${globalStyles.global_ellipsis}`}
                     data-targetclassname="specific_example_milestone"
                     style={{
-                      maxWidth: this.setMiletonesNamesWidth({
-                        timestamp,
-                        top,
-                        belong_group_id
-                      }),
+                      // maxWidth: this.setMiletonesNamesWidth({
+                      //   timestamp,
+                      //   top,
+                      //   belong_group_id
+                      // }),
+                      backgroundColor: '#ffffff',
                       color: this.setMiletonesColor({
                         is_over_duetime,
                         is_finished: one_levels_completed
@@ -892,11 +895,12 @@ export default class GroupMilestones extends Component {
                     className={`${indexStyles.board_miletiones_names} ${globalStyles.global_ellipsis}`}
                     data-targetclassname="specific_example_milestone"
                     style={{
-                      maxWidth: this.setMiletonesNamesWidth({
-                        timestamp,
-                        top,
-                        belong_group_id
-                      }),
+                      // maxWidth: this.setMiletonesNamesWidth({
+                      //   timestamp,
+                      //   top,
+                      //   belong_group_id
+                      // }),
+                      backgroundColor: '#ffffff',
                       color: this.setMiletonesColor({
                         is_over_duetime,
                         is_finished: two_levels_completed
