@@ -32,7 +32,7 @@ export default class CalendarTempTree extends React.Component {
     /** 项目列表 */
     projectList: PropTypes.array,
     /** 当前选中的项目 */
-    simplemodeCurrentProject: PropTypes.object,
+    simplemodeCurrentProject: PropTypes.any,
     /** 勾选里程碑等树形节点回调 */
     onChange: PropTypes.func,
     /** 选中了模板的回调 */
@@ -135,8 +135,8 @@ export default class CalendarTempTree extends React.Component {
       tempList: []
     })
     if (
-      (this.props.simplemodeCurrentProject.board_id === TotalBoardKey ||
-        !this.props.simplemodeCurrentProject.board_id) &&
+      (this.props.simplemodeCurrentProject?.board_id === TotalBoardKey ||
+        !this.props.simplemodeCurrentProject?.board_id) &&
       user_set.current_org === '0'
     )
       return this.setLoading(false)
