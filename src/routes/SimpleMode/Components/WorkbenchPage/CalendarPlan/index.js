@@ -55,7 +55,7 @@ export default class CalendarPlan extends React.Component {
     /** 项目列表 */
     projectList: PropTypes.array,
     /** 选中的项目 */
-    simplemodeCurrentProject: PropTypes.object,
+    simplemodeCurrentProject: PropTypes.any,
     /** 页面的高度 */
     workbenchBoxContent_height: PropTypes.number
   }
@@ -193,7 +193,7 @@ export default class CalendarPlan extends React.Component {
       prevProps.simplemodeCurrentProject !== this.props.simplemodeCurrentProject
     ) {
       this.updateSearch()
-      if (this.props.simplemodeCurrentProject.board_id !== TotalBoardKey) {
+      if (this.props.simplemodeCurrentProject?.board_id !== TotalBoardKey) {
         if (!this.state.template_id) this.fetchQueryCalendarData()
         else this.backList()
       }
@@ -652,7 +652,8 @@ export default class CalendarPlan extends React.Component {
     /** 是否多项目 */
     const isMultipleBoard =
       (this.getBoardByBoardId() || []).length > 1 ||
-      this.props.simplemodeCurrentProject.board_id === TotalBoardKey
+      this.props.simplemodeCurrentProject.board_id === TotalBoardKey ||
+      !this.props.simplemodeCurrentProject
     /** 获取到项目名称 */
     const Board = this.getBoardByBoardId(item.board_id)
     return (

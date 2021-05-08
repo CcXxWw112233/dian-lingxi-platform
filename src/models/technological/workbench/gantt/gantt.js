@@ -349,7 +349,16 @@ export default {
         //   group_view_filter_users,
         //   ...setContentFilterParams()
         // })
-
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            folder_seeing_board_id: '0',
+            // 清空关于大纲视图显示隐藏数据
+            selected_hide_term: false,
+            outline_tree_original: [],
+            milestoneMap: {}
+          }
+        })
         let params = {
           chart_type: group_view_type
         }
@@ -403,15 +412,6 @@ export default {
           payload: {
             query_board_ids: content_filter_params.query_board_ids,
             board_id: gantt_board_id == '0' ? '' : gantt_board_id
-          }
-        })
-        yield put({
-          type: 'updateDatas',
-          payload: {
-            folder_seeing_board_id: '0',
-            // 清空关于大纲视图显示隐藏数据
-            selected_hide_term: false,
-            outline_tree_original: []
           }
         })
         // console.log('sssss', {res})
