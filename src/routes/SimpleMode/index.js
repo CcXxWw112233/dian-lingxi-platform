@@ -270,9 +270,9 @@ class SimpleMode extends PureComponent {
       /** 上次是否已经关闭过 */
       let hasCloseYestoday = !prevCloseDate
       if (prevCloseDate) {
-        /** 距离上次关闭，差多久时间，并且关闭之后过了24小时了 */
-        const hours = moment(+prevCloseDate).diff(moment(), 'hours')
-        if (hours >= this.closeBetweenHours) {
+        /** 今天是否关闭过了 */
+        const isDayTime = moment(+prevCloseDate).isSame(moment(), 'day')
+        if (!isDayTime) {
           hasCloseYestoday = true
         } else hasCloseYestoday = false
       }
