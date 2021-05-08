@@ -744,7 +744,7 @@ export default class BoardItem extends Component {
       content: (
         <div style={{ color: 'rgba(0,0,0, .8)', fontSize: 14 }}>
           <span>
-            删除后将无法获取该{currentNounPlanFilterName(PROJECTS)}的相关动态
+            退出后将无法获取该{currentNounPlanFilterName(PROJECTS)}的相关动态
           </span>
         </div>
       ),
