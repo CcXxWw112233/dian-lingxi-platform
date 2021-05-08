@@ -242,7 +242,9 @@ export async function addMenbersInProject(data) {
   })
 }
 
-// 退出项目
+/** 退出项目
+ * @param {{board_id: string}} data 退出项目需要的项目id
+ */
 export async function quitProject(data) {
   return request({
     url: `${REQUEST_DOMAIN_BOARD}/board/quit`,
