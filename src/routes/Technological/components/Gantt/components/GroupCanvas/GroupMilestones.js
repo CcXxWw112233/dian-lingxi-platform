@@ -1245,6 +1245,7 @@ export default class GroupMilestones extends Component {
 
   //hover的时候更新携带的关联任务id
   milestoneMouseEnter = debounce(item => {
+    if (this.cantNotMouseEnterLeave()) return
     const { rela_ids = [], id } = item
     const { dispatch } = this.props
     dispatch({
@@ -1256,6 +1257,7 @@ export default class GroupMilestones extends Component {
     })
   }, 500)
   milestoneMouseLeave = debounce(() => {
+    if (this.cantNotMouseEnterLeave()) return
     const { dispatch } = this.props
     dispatch({
       type: 'gantt/updateDatas',
@@ -1266,7 +1268,7 @@ export default class GroupMilestones extends Component {
     })
   }, 500)
   singleMilestoneMouseEnter = debounce(arr => {
-    if (this.milestone_dragging) return
+    if (this.cantNotMouseEnterLeave()) return
     if (arr.length != 1) return
     const { rela_ids = [], id } = arr[0]
     const { dispatch } = this.props
@@ -1280,7 +1282,7 @@ export default class GroupMilestones extends Component {
     })
   }, 500)
   singleMilestoneMouseLeave = debounce(item => {
-    if (this.milestone_dragging) return
+    if (this.cantNotMouseEnterLeave()) return
     const { dispatch } = this.props
     dispatch({
       type: 'gantt/updateDatas',
@@ -1290,6 +1292,26 @@ export default class GroupMilestones extends Component {
       }
     })
   }, 500)
+  cantNotMouseEnterLeave = () => {
+    const {
+      gantt_board_id,
+      group_view_type,
+      show_board_fold,
+      gantt_view_mode
+    } = this.props
+    if (
+      this.milestone_dragging ||
+      ganttIsFold({
+        gantt_board_id,
+        group_view_type,
+        show_board_fold,
+        gantt_view_mode
+      })
+    ) {
+      return true
+    }
+    return false
+  }
 
   // 设置里程碑棋子显示不显示
   setMilestoneFlagShow = arr => {
