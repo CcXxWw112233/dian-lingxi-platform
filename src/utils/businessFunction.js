@@ -803,7 +803,7 @@ export const isPaymentOrgUser = _org_id => {
   if (OrganizationId == '0') {
     //全组织
     for (let org of currentUserOrganizes) {
-      if (org.payment_status == 1) {
+      if (org.payment_is_expired == 'false') {
         return true
       }
     }
@@ -815,16 +815,7 @@ export const isPaymentOrgUser = _org_id => {
     // console.log("curentOrgs", curentOrgs);
     if (curentOrgs && curentOrgs.length > 0) {
       let curentOrg = curentOrgs[0] || {}
-      if (
-        curentOrg.payment_status == 1 &&
-        moment(
-          parseInt(
-            curentOrg.payment_end_date.length == 10
-              ? curentOrg.payment_end_date + '000'
-              : curentOrg.payment_end_date
-          )
-        ).isAfter(new Date())
-      ) {
+      if (curentOrg.payment_is_expired == 'false') {
         return true
       } else {
         return false
