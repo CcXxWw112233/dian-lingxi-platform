@@ -788,7 +788,14 @@ export default class GroupMilestones extends Component {
                   marginTop: -10
                 }),
                 // <Dropdown overlay={this.renderLCBList(two_levels, timestamp)}>
-                <div>
+                <div
+                  onMouseEnter={() =>
+                    this.singleMilestoneMouseEnter(two_levels)
+                  }
+                  onMouseLeave={() =>
+                    this.singleMilestoneMouseLeave(two_levels)
+                  }
+                >
                   <div
                     data-targetclassname="specific_example_milestone"
                     className={indexStyles.board_miletiones_flag2}
@@ -814,12 +821,12 @@ export default class GroupMilestones extends Component {
                         is_finished: two_levels_completed
                       })
                     }}
-                    onMouseEnter={() =>
-                      this.singleMilestoneMouseEnter(two_levels)
-                    }
-                    onMouseLeave={() =>
-                      this.singleMilestoneMouseLeave(two_levels)
-                    }
+                    // onMouseEnter={() =>
+                    //   this.singleMilestoneMouseEnter(two_levels)
+                    // }
+                    // onMouseLeave={() =>
+                    //   this.singleMilestoneMouseLeave(two_levels)
+                    // }
                   >
                     {this.renderMiletonesNames(two_levels)}
                   </div>
