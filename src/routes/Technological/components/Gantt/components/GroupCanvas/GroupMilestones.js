@@ -778,7 +778,8 @@ export default class GroupMilestones extends Component {
               style={{
                 top,
                 left: left + ceilWidth / 2 - 7,
-                opacity: this.setMilestoneFlagShow(two_levels) ? '1' : '0.2'
+                opacity: this.setMilestoneFlagShow(two_levels) ? '1' : '0.2',
+                marginTop: 4
               }} //移动一半的距离，并且中心位于中间
             >
               {this.renderDropDown(
@@ -845,7 +846,8 @@ export default class GroupMilestones extends Component {
                 top,
                 left: left + ceilWidth,
                 height: 20,
-                opacity: this.setMilestoneFlagShow(one_levels) ? '1' : '0.2'
+                opacity: this.setMilestoneFlagShow(one_levels) ? '1' : '0.2',
+                marginTop: 4
               }}
             >
               {this.renderDropDown(
