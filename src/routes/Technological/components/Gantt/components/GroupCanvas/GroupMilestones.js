@@ -434,17 +434,25 @@ export default class GroupMilestones extends Component {
           ) != -1
       )
     } else {
-      // 顶部汇总区域
+      // 非顶部汇总区域
       if (!no_group) {
         times_arr = times_arr.filter(time => {
           return (
             milestoneMap[time].findIndex(
               item =>
                 (item.list_id || list_group[0].lane_id) ==
-                  (!!belong_group_id && belong_group_id != '0'
-                    ? belong_group_id //所属分组等于传递进来的分组id
-                    : '0') &&
-                (!item.parent_id || item.parent_id == '0') //只考虑一级里程碑
+                (!!belong_group_id && belong_group_id != '0'
+                  ? belong_group_id //所属分组等于传递进来的分组id
+                  : '0')
+            ) != -1
+          )
+        })
+      } else {
+        // 顶部汇总区域
+        times_arr = times_arr.filter(time => {
+          return (
+            milestoneMap[time].findIndex(
+              item => !item.parent_id || item.parent_id == '0' //只考虑一级里程碑
             ) != -1
           )
         })
