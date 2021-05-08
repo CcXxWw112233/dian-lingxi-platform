@@ -565,7 +565,8 @@ export default class SimpleNavigation extends Component {
     if (timeStep > this.expireMaxTimeShow) return null
     /** 是不是今天 */
     const isSameToday = moment().isSame(
-      moment(+(payment_end_date + '000'), 'day')
+      moment(+(payment_end_date + '000')),
+      'day'
     )
     return (
       <span>
