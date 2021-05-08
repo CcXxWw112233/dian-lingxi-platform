@@ -381,7 +381,7 @@ export default class GroupMilestones extends Component {
       })
       val.top = group_list_area_section_height[top_index - 1] || 0 //在所属分组的顶层
     }
-    console.log('ssssssssss_milestones', milestones)
+    // console.log('ssssssssss_milestones', milestones)
     this.setState({
       summary_milestones_data: milestones
     })
@@ -649,6 +649,7 @@ export default class GroupMilestones extends Component {
                 className={`${indexStyles.board_miletiones_flag} ${globalStyles.authTheme}`}
                 data-targetclassname="specific_example_milestone"
                 style={{
+                  backgroundColor: '#f5f7fb',
                   color: this.setMiletonesColor({
                     is_over_duetime,
                     is_finished: one_levels_all_completed
@@ -767,11 +768,66 @@ export default class GroupMilestones extends Component {
     } = value
     return (
       <>
-        {/* {!!one_levels_all.length &&
+        {!!two_levels.length &&
+          gantt_board_id != '0' &&
           this.renderDragWrapper(
-            one_levels_all,
-            this.renderNoGroupOneLevelMilestone(value)
-          )} */}
+            two_levels,
+            <div
+              data-targetclassname="specific_example_milestone"
+              className={indexStyles.milestone_wrapper}
+              style={{
+                top,
+                left: left + ceilWidth / 2 - 7,
+                opacity: this.setMilestoneFlagShow(two_levels) ? '1' : '0.2'
+              }} //移动一半的距离，并且中心位于中间
+            >
+              {this.renderDropDown(
+                timestamp,
+                two_levels,
+                this.renderLCBList(two_levels, timestamp, {
+                  marginTop: -10
+                }),
+                // <Dropdown overlay={this.renderLCBList(two_levels, timestamp)}>
+                <div>
+                  <div
+                    data-targetclassname="specific_example_milestone"
+                    className={indexStyles.board_miletiones_flag2}
+                    style={{
+                      background: this.setMiletonesColor({
+                        is_over_duetime,
+                        is_finished: two_levels_completed
+                      })
+                    }}
+                  />
+                  <div
+                    className={`${indexStyles.board_miletiones_names} ${globalStyles.global_ellipsis}`}
+                    data-targetclassname="specific_example_milestone"
+                    style={{
+                      // maxWidth: this.setMiletonesNamesWidth({
+                      //   timestamp,
+                      //   top,
+                      //   belong_group_id
+                      // }),
+                      backgroundColor: '#ffffff',
+                      color: this.setMiletonesColor({
+                        is_over_duetime,
+                        is_finished: two_levels_completed
+                      })
+                    }}
+                    onMouseEnter={() =>
+                      this.singleMilestoneMouseEnter(two_levels)
+                    }
+                    onMouseLeave={() =>
+                      this.singleMilestoneMouseLeave(two_levels)
+                    }
+                  >
+                    {this.renderMiletonesNames(two_levels)}
+                  </div>
+                </div>
+                // </Dropdown>
+              )}
+            </div>
+          )}
         {!!one_levels.length &&
           this.renderDragWrapper(
             one_levels,
@@ -866,53 +922,6 @@ export default class GroupMilestones extends Component {
               />
             </div>
           )}
-        {!!two_levels.length &&
-          gantt_board_id != '0' &&
-          this.renderDragWrapper(
-            two_levels,
-            <div
-              data-targetclassname="specific_example_milestone"
-              className={indexStyles.milestone_wrapper}
-              style={{
-                top,
-                left: left + ceilWidth / 2 - 7,
-                opacity: this.setMilestoneFlagShow(two_levels) ? '1' : '0.2'
-              }} //移动一半的距离，并且中心位于中间
-            >
-              <Dropdown overlay={this.renderLCBList(two_levels, timestamp)}>
-                <div>
-                  <div
-                    data-targetclassname="specific_example_milestone"
-                    className={indexStyles.board_miletiones_flag2}
-                    style={{
-                      background: this.setMiletonesColor({
-                        is_over_duetime,
-                        is_finished: two_levels_completed
-                      })
-                    }}
-                  />
-                  <div
-                    className={`${indexStyles.board_miletiones_names} ${globalStyles.global_ellipsis}`}
-                    data-targetclassname="specific_example_milestone"
-                    style={{
-                      // maxWidth: this.setMiletonesNamesWidth({
-                      //   timestamp,
-                      //   top,
-                      //   belong_group_id
-                      // }),
-                      backgroundColor: '#ffffff',
-                      color: this.setMiletonesColor({
-                        is_over_duetime,
-                        is_finished: two_levels_completed
-                      })
-                    }}
-                  >
-                    {this.renderMiletonesNames(two_levels)}
-                  </div>
-                </div>
-              </Dropdown>
-            </div>
-          )}
       </>
     )
   }
@@ -995,6 +1004,7 @@ export default class GroupMilestones extends Component {
     }
   }
   milestoneDragStart = e => {
+    // console.log('ssssssssssaaaa_0', e.target.className)
     this.milestone_drag_ele = e //缓存拖拽的里程碑节点
     this.milestone_initial_left = e.target.style.left
     const { x } = getXYDropPosition(e, {
@@ -1011,6 +1021,7 @@ export default class GroupMilestones extends Component {
     // })
   }
   milestoneDraging = e => {
+    // console.log('ssssssssssaaaa_2', e.target.className)
     const { pageX } = getPageXY(e)
     if (!pageX) return
     this.milestone_drag_ele = e
@@ -1042,6 +1053,7 @@ export default class GroupMilestones extends Component {
     })
   }
   milestoneDragStop = async (e, { milestones = [] }) => {
+    // console.log('ssssssssssaaaa_3', e.target.className)
     if (!milestones.length) return
     const {
       gantt_view_mode,
