@@ -320,10 +320,14 @@ export default {
     },
     *getGanttData({ payload }, { select, call, put }) {
       try {
-        const { not_set_loading } = payload //not_set_loading是否需要设置loading状态
+        let { not_set_loading, start_date, end_date } = payload //not_set_loading是否需要设置loading状态
         // 参数处理
-        const start_date = yield select(workbench_start_date)
-        const end_date = yield select(workbench_end_date)
+        if (!start_date) {
+          start_date = yield select(workbench_start_date)
+        }
+        if (!end_date) {
+          end_date = yield select(workbench_end_date)
+        }
         const group_view_type = yield select(
           getModelSelectDatasState('gantt', 'group_view_type')
         )
@@ -496,7 +500,6 @@ export default {
       if (board_id != '0' && board_id) {
         params.board_id = board_id
       }
-
       const res = yield call(getGroupScrollAdditionalData, params)
       //需要将新获取的数据和原数据整合
       if (isApiResponseOk(res)) {
