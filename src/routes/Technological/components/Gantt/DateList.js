@@ -485,9 +485,9 @@ export default class DateList extends Component {
             current_date_miletones = [],
             is_over_duetime,
             is_all_realized
-          } = this.isHasMiletoneList().handleMonthMode(Number(timestampEnd))
+          } = {} //this.isHasMiletoneList().handleMonthMode(Number(timestampEnd))
           // /gantt_board_id == '0' ||
-          const isToday = isSamDay(timestamp, new Date().getTime())
+          // const isToday = isSamDay(timestamp, new Date().getTime())
           return group_view_type != '1' ? (
             <div key={`${month}/${date_no}`}>
               <div
@@ -546,32 +546,106 @@ export default class DateList extends Component {
             current_date_miletones = [],
             is_over_duetime,
             is_all_realized
-          } = this.isHasMiletoneList().handleMonthMode(Number(timestampEnd))
-          const {
-            holiday,
-            lunar,
-            festival_status
-          } = this.getDateNoHolidaylunar(timestamp)
+          } = {} // this.isHasMiletoneList().handleMonthMode(Number(timestampEnd))
+          const { holiday, lunar, festival_status } = {} //this.getDateNoHolidaylunar(timestamp)
           // /gantt_board_id == '0' ||
           const isToday = isSamDay(timestamp, new Date().getTime())
           return group_view_type != '1' ? (
-            <Tooltip
-              trigger={gantt_view_mode == 'month' ? ['hover'] : ['contextMenu']}
-              key={`${month}/${date_no}`}
-              title={`${lunar} ${holiday || ' '}`}
-            >
-              <div key={`${month}/${date_no}`}>
-                <div className={`${indexStyles.dateDetailItem}`} key={key2}>
-                  <div
-                    className={`${indexStyles.dateDetailItem_date_no}
+            // <Tooltip
+            //   trigger={gantt_view_mode == 'month' ? ['hover'] : ['contextMenu']}
+            //   key={`${month}/${date_no}`}
+            //   title={`${lunar} ${holiday || ' '}`}
+            // >
+            <div key={`${month}/${date_no}`}>
+              <div className={`${indexStyles.dateDetailItem}`} key={key2}>
+                <div
+                  className={`${indexStyles.dateDetailItem_date_no}
                                     ${(week_day == 0 || week_day == 6) &&
                                       indexStyles.weekly_date_no}
                                     ${festival_status == '1' &&
                                       indexStyles.holiday_date_no}`}
+                  style={{
+                    background:
+                      isToday && gantt_view_mode == 'month' ? '#1890FF' : ''
+                  }}
+                >
+                  {holiday && (
+                    <div
+                      style={{
+                        position: 'absolute',
+                        zIndex: 2,
+                        top: -24,
+                        left: -18,
+                        width: 60,
+                        height: 20,
+                        backgroundColor: '#fff'
+                      }}
+                    >
+                      {holiday}
+                    </div>
+                  )}
+                  {isToday && gantt_view_mode == 'month' ? (
+                    <span
+                      style={{
+                        color: '#ffffff',
+                        fontSize: 10,
+                        transform: 'scale(0.8)'
+                      }}
+                    >
+                      今天
+                    </span>
+                  ) : (
+                    <span
+                      style={{
+                        fontSize: 10,
+                        transform:
+                          gantt_view_mode == 'month'
+                            ? 'scale(0.8)'
+                            : 'scale(0.5)'
+                      }}
+                    >
+                      {date_no}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div> // </Tooltip>
+          ) : (
+            <Dropdown
+              overlay={this.renderLCBList(current_date_miletones, {
+                timestampEnd
+              })}
+              key={`${month}/${date_no}`}
+              trigger={['click']}
+            >
+              {/* <Tooltip
+                trigger={
+                  gantt_view_mode == 'month' ? ['hover'] : ['contextMenu']
+                }
+                title={`${lunar} ${holiday || ' '}`}
+              > */}
+              <div>
+                <div className={`${indexStyles.dateDetailItem}`} key={key2}>
+                  <div
+                    className={`${indexStyles.dateDetailItem_date_no}
+                                    ${indexStyles.nomal_date_no}
+                                    ${(week_day == 0 || week_day == 6) &&
+                                      indexStyles.weekly_date_no}
+                                    ${festival_status == '1' &&
+                                      indexStyles.holiday_date_no}
+                                    ${has_lcb &&
+                                      indexStyles.has_moletones_date_no}`}
                     style={{
                       background:
-                        isToday && gantt_view_mode == 'month' ? '#1890FF' : ''
+                        isToday && gantt_view_mode == 'month'
+                          ? '#1890FF'
+                          : this.setMiletonesColor({
+                              is_over_duetime,
+                              has_lcb,
+                              is_all_realized
+                            })
                     }}
+                    // style={{ background: is_over_duetime && has_lcb ? '#FF7875' : '' }}
                   >
                     {holiday && (
                       <div
@@ -592,6 +666,7 @@ export default class DateList extends Component {
                       <span
                         style={{
                           color: '#ffffff',
+                          display: 'block',
                           fontSize: 10,
                           transform: 'scale(0.8)'
                         }}
@@ -614,87 +689,7 @@ export default class DateList extends Component {
                   </div>
                 </div>
               </div>
-            </Tooltip>
-          ) : (
-            <Dropdown
-              overlay={this.renderLCBList(current_date_miletones, {
-                timestampEnd
-              })}
-              key={`${month}/${date_no}`}
-              trigger={['click']}
-            >
-              <Tooltip
-                trigger={
-                  gantt_view_mode == 'month' ? ['hover'] : ['contextMenu']
-                }
-                title={`${lunar} ${holiday || ' '}`}
-              >
-                <div>
-                  <div className={`${indexStyles.dateDetailItem}`} key={key2}>
-                    <div
-                      className={`${indexStyles.dateDetailItem_date_no}
-                                    ${indexStyles.nomal_date_no}
-                                    ${(week_day == 0 || week_day == 6) &&
-                                      indexStyles.weekly_date_no}
-                                    ${festival_status == '1' &&
-                                      indexStyles.holiday_date_no}
-                                    ${has_lcb &&
-                                      indexStyles.has_moletones_date_no}`}
-                      style={{
-                        background:
-                          isToday && gantt_view_mode == 'month'
-                            ? '#1890FF'
-                            : this.setMiletonesColor({
-                                is_over_duetime,
-                                has_lcb,
-                                is_all_realized
-                              })
-                      }}
-                      // style={{ background: is_over_duetime && has_lcb ? '#FF7875' : '' }}
-                    >
-                      {holiday && (
-                        <div
-                          style={{
-                            position: 'absolute',
-                            zIndex: 2,
-                            top: -24,
-                            left: -18,
-                            width: 60,
-                            height: 20,
-                            backgroundColor: '#fff'
-                          }}
-                        >
-                          {holiday}
-                        </div>
-                      )}
-                      {isToday && gantt_view_mode == 'month' ? (
-                        <span
-                          style={{
-                            color: '#ffffff',
-                            display: 'block',
-                            fontSize: 10,
-                            transform: 'scale(0.8)'
-                          }}
-                        >
-                          今天
-                        </span>
-                      ) : (
-                        <span
-                          style={{
-                            fontSize: 10,
-                            transform:
-                              gantt_view_mode == 'month'
-                                ? 'scale(0.8)'
-                                : 'scale(0.5)'
-                          }}
-                        >
-                          {date_no}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </Tooltip>
+              {/* </Tooltip> */}
             </Dropdown>
           )
         })}
@@ -722,13 +717,14 @@ export default class DateList extends Component {
             current_date_miletones,
             is_over_duetime,
             is_all_realized
-          } = this.isHasMiletoneList().handleYearMode({
-            year,
-            month,
-            last_date,
-            timestamp,
-            timestampEnd
-          })
+          } = {}
+          //   this.isHasMiletoneList().handleYearMode({
+          //   year,
+          //   month,
+          //   last_date,
+          //   timestamp,
+          //   timestampEnd
+          // })
           return group_view_type != '1' ? (
             <div key={`${month}/${timestamp}`}>
               <div
@@ -810,13 +806,14 @@ export default class DateList extends Component {
             current_date_miletones,
             is_over_duetime,
             is_all_realized
-          } = this.isHasMiletoneList().handleYearMode({
-            year,
-            month,
-            last_date,
-            timestamp,
-            timestampEnd
-          })
+          } = {}
+          // this.isHasMiletoneList().handleYearMode({
+          //   year,
+          //   month,
+          //   last_date,
+          //   timestamp,
+          //   timestampEnd
+          // })
           return group_view_type != '1' ? (
             <div key={`${month}/${timestamp}`}>
               <div

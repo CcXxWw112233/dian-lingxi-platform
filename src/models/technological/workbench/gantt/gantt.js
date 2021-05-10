@@ -483,24 +483,62 @@ export default {
         getModelSelectDatasState('gantt', 'group_view_type')
       )
 
-      const res = yield call(getGroupScrollAdditionalData, {
+      const board_id = yield select(
+        getModelSelectDatasState('gantt', 'gantt_board_id')
+      )
+
+      const params = {
         start_time,
         end_time,
         chart_type: group_view_type
-      })
-      const list_group = yield select(
-        getModelSelectDatasState('gantt', 'list_group')
-      )
-      yield put({
-        type: 'handleListGroup',
-        payload: {
-          data: list_group
+      }
+
+      if (board_id != '0' && board_id) {
+        params.board_id = board_id
+      }
+
+      const res = yield call(getGroupScrollAdditionalData, params)
+      //需要将新获取的数据和原数据整合
+      if (isApiResponseOk(res)) {
+        const list_group = yield select(
+          getModelSelectDatasState('gantt', 'list_group')
+        )
+        const res_data = res.data || []
+        if (!res_data.length) {
+          return {}
         }
-      })
-      yield put({
-        type: 'getGttMilestoneList',
-        payload: {}
-      })
+
+        for (let val of list_group) {
+          // 找到和当前原数据匹配的最新增加的数据
+          const _data_item = res_data.find(item => item.lane_id == val.lane_id)
+          if (!_data_item) {
+            break
+          }
+          const { cards: _data_item_cards = [] } = _data_item.lane_data //当前分组新增的排期任务列表
+          for (let cards_val of _data_item_cards) {
+            //新加载出来的任务和原来的任务是否有重叠
+            const aredy_has =
+              val.lane_data.cards.findIndex(item => item.id == cards_val.id) !=
+              -1
+            // 如果原来没有存在
+            if (!aredy_has) {
+              val.lane_data.cards.unshift(cards_val)
+            }
+          }
+        }
+
+        yield put({
+          type: 'handleListGroup',
+          payload: {
+            data: list_group
+          }
+        })
+        yield put({
+          type: 'getGttMilestoneList',
+          payload: {}
+        })
+      }
+
       return { code: '0' }
     },
     // 转化处理大纲视图数据
