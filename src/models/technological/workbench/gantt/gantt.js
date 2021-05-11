@@ -537,6 +537,12 @@ export default {
           }
         })
         yield put({
+          type: 'updateDatas',
+          payload: {
+            milestoneMap: {}
+          }
+        })
+        yield put({
           type: 'getGttMilestoneList',
           payload: {}
         })
