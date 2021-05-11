@@ -19,6 +19,9 @@ import {
   hours_view_start_work_oclock
 } from './constants'
 import FixedDateTop from './components/FixedDateTop'
+import { Fragment } from 'react'
+import AutoSize from 'react-virtualized-auto-sizer'
+import { VariableSizeList as List } from 'react-window'
 
 const MenuItem = Menu.Item
 
@@ -1034,6 +1037,34 @@ export default class DateList extends Component {
       </div>
     )
   }
+
+  getTopDateSize = (data, index) => {
+    const item = data[index]
+  }
+
+  /** 日期年份等渲染 */
+  TopDateRow = ({ style, index }) => {
+    return null
+  }
+
+  TopDateRender = (topdata_date = []) => {
+    return (
+      <AutoSize>
+        {({ height, width }) => (
+          <List
+            direction="rtl"
+            itemCount={topdata_date.length}
+            itemSize={this.getTopDateSize.bind(this, topdata_date)}
+            height={height}
+            width={width}
+          >
+            {this.TopDateRow}
+          </List>
+        )}
+      </AutoSize>
+    )
+  }
+
   render() {
     const {
       gold_date_arr = [],
@@ -1052,6 +1083,17 @@ export default class DateList extends Component {
       currentSelectedProjectMembersList = []
     } = this.state
 
+    /** 上层日期的数据 */
+    const TopData = gold_date_arr.map(item => {
+      return { ...item.date_top, _size: item.date_inner?.length }
+    })
+    /** 日期数据 */
+    let Dates = []
+    gold_date_arr.forEach(item => {
+      Dates = Dates.concat(item.date_inner)
+    })
+
+    // console.log(Dates, gantt_view_mode)
     return (
       <div>
         <div

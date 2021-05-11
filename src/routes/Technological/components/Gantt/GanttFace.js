@@ -344,7 +344,7 @@ export default class GanttFace extends Component {
   }
   //左右拖动,日期会更新
   ganttScroll = e => {
-    e.stopPropagation()
+    // e.stopPropagation()
     if (this.state.scroll_area == 'gantt_head') {
       return
     }
@@ -786,7 +786,7 @@ export default class GanttFace extends Component {
         )}
         {group_view_type == '1' && <MiletoneGuide />}
 
-        <div className={indexStyles.cardDetail_left}></div>
+        {/* <div className={indexStyles.cardDetail_left}></div> */}
         {/* 甘特图主区域 */}
         <div
           className={indexStyles.cardDetail_middle}

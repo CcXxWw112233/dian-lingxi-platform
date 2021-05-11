@@ -238,3 +238,15 @@ export const OrgPaymentMark = {
    */
   pay: 'pay'
 }
+
+/** 甘特图的视图类型 */
+export const GanttViewMode = {
+  /** 日视图 */
+  Day: 'month',
+  /** 周视图 */
+  Week: 'week',
+  /** 年视图 */
+  Month: 'year',
+  /** 时视图 */
+  Hours: 'hours'
+}
