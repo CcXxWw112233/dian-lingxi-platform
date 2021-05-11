@@ -186,7 +186,8 @@ export default class FaceRightButton extends Component {
       payload: {
         ceilWidth,
         gantt_view_mode: type,
-        get_gantt_data_loading_other: true
+        get_gantt_data_loading_other: true,
+        milestoneMap: {}
       }
     })
     if (ganttIsOutlineView({ group_view_type })) {

@@ -601,7 +601,6 @@ export default class GanttFace extends Component {
               loadedCb()
             }
           })
-          that.getHoliday()
         }, 0)
       } else {
         //默认获取初始化数据
@@ -618,7 +617,6 @@ export default class GanttFace extends Component {
               loadedCb()
             }
           })
-          that.getHoliday()
         }, 0)
       }
     } else {
@@ -653,9 +651,7 @@ export default class GanttFace extends Component {
           }
         })
       }
-      that.getHoliday()
     }
-    this.setWidthArea({ date_arr })
 
     let date_arr_one_level = []
     let date_total = 0
@@ -685,11 +681,12 @@ export default class GanttFace extends Component {
       })
     }
     updateDateArr()
+    this.getHoliday()
+    this.setWidthArea({ date_arr })
     // window.requestAnimationFrame(updateDateArr)
   }
   //设置月份日期宽度区间
   setWidthArea = ({ date_arr }) => {
-    return
     const { ceilWidth, gantt_view_mode, dispatch } = this.props
     if (gantt_view_mode != 'month') return
     const width_area = date_arr.map(item => item.date_inner.length * ceilWidth)
@@ -736,7 +733,6 @@ export default class GanttFace extends Component {
 
   // 获取节假日
   getHoliday = () => {
-    return
     const { dispatch } = this.props
     dispatch({
       type: 'gantt/getHoliday',

@@ -547,7 +547,11 @@ export default class DateList extends Component {
             is_over_duetime,
             is_all_realized
           } = {} // this.isHasMiletoneList().handleMonthMode(Number(timestampEnd))
-          const { holiday, lunar, festival_status } = {} //this.getDateNoHolidaylunar(timestamp)
+          const {
+            holiday,
+            lunar,
+            festival_status
+          } = this.getDateNoHolidaylunar(timestamp)
           // /gantt_board_id == '0' ||
           const isToday = isSamDay(timestamp, new Date().getTime())
           return group_view_type != '1' ? (
@@ -576,9 +580,9 @@ export default class DateList extends Component {
                         zIndex: 2,
                         top: -24,
                         left: -18,
-                        width: 60,
-                        height: 20,
-                        backgroundColor: '#fff'
+                        width: 48,
+                        height: 20
+                        // backgroundColor: '#fff'
                       }}
                     >
                       {holiday}
