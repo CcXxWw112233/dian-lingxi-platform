@@ -668,7 +668,8 @@ export default class GetRowStrip extends PureComponent {
       left,
       expand_length,
       parent_id,
-      percent_card_non
+      percent_card_non,
+      is_realize
     } = itemValue
     const { is_item_has_time, currentRect = {} } = this.state
     let display = 'none'
@@ -722,8 +723,7 @@ export default class GetRowStrip extends PureComponent {
               <div
                 className={`${styles.board_miletiones_flag2}`}
                 style={{
-                  backgroundColor:
-                    parseInt(percent_card_non) >= 100 && '#9EA6C2'
+                  backgroundColor: is_realize == '1' && '#9EA6C2'
                 }}
               ></div>
             ) : (
@@ -731,15 +731,14 @@ export default class GetRowStrip extends PureComponent {
                 <div
                   style={{
                     height: (expand_length - 0.5) * ceil_height,
-                    backgroundColor:
-                      parseInt(percent_card_non) >= 100 && '#9EA6C2'
+                    backgroundColor: is_realize == '1' && '#9EA6C2'
                   }}
                   className={styles.board_miletiones_flagpole}
                 ></div>
                 <div
                   className={`${styles.board_miletiones_flag} ${globalStyles.authTheme}`}
                   style={{
-                    color: parseInt(percent_card_non) >= 100 && '#9EA6C2'
+                    color: is_realize == '1' && '#9EA6C2'
                   }}
                 >
                   &#xe6a0;
