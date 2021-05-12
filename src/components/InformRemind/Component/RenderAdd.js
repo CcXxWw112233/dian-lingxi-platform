@@ -248,17 +248,17 @@ export default class RenderAdd extends Component {
       return new_item
     })
     let params = {}
-    if (is_show_date_picker) {
-      params = { ...new_info_list[0] }
-    } else {
-      new_info_list[0].remind_time_value
-        ? delete new_info_list[0].remind_time_value
-        : ''
-      new_info_list[0].remind_time_type
-        ? delete new_info_list[0].remind_time_type
-        : ''
-      params = { ...new_info_list[0] }
-    }
+    // if (is_show_date_picker) {
+    params = { ...new_info_list[0] }
+    // } else {
+    //   new_info_list[0].remind_time_value
+    //     ? delete new_info_list[0].remind_time_value
+    //     : ''
+    //   new_info_list[0].remind_time_type
+    //     ? delete new_info_list[0].remind_time_type
+    //     : ''
+    //   params = { ...new_info_list[0] }
+    // }
     // 将添加事件置为false
     dispatch({
       type: 'informRemind/updateDatas',
@@ -271,6 +271,7 @@ export default class RenderAdd extends Component {
         remind_edit_type: triggerList[0].remind_edit_type
       }
     })
+    debugger
     dispatch({
       type: 'informRemind/setRemindInformation',
       payload: { ...params }
