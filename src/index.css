@@ -57,6 +57,9 @@ body,
 :global(.animate__faster){
   animation-duration: 300ms !important;
 }
+:global(.windowListHideScrollBar > div> div::-webkit-scrollbar){
+  display: none;
+}
 body {
   /* background-color: rgba(245, 245, 245, 1); */
   overflow: auto !important;

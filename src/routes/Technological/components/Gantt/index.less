@@ -105,10 +105,21 @@
   z-index: 6;
   left: 0;
   top: 0;
-  width: auto;
+  width: 100%;
   height: @date_area_height;
   background-color: #ffffff;
   align-items: center;
+  flex-direction: column;
+  & > div {
+    height: 24px !important;
+    line-height: 24px;
+    // top: 0;
+    position: absolute;
+    top: 0;
+    &:nth-child(2){
+      top: 24px;
+    }
+  }
 
   .dateAreaItem {
     width: auto;
@@ -1360,10 +1371,10 @@
   }
 }
 
-.scroll_view{
-  & > div{
+.scroll_view {
+  & > div {
     width: auto !important;
-     & > div::-webkit-scrollbar{
+    & > div::-webkit-scrollbar {
       display: none;
     }
   }

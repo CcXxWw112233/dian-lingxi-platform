@@ -156,10 +156,10 @@ export default class GanttFace extends Component {
           })
           this.initSetScrollPosition()
         }, 100)
-        const gantt_date_area = document.getElementById('gantt_date_area')
-        if (gantt_date_area) {
-          gantt_date_area.style.left = `0px`
-        }
+        // const gantt_date_area = document.getElementById('gantt_date_area')
+        // if (gantt_date_area) {
+        //   gantt_date_area.style.left = `0px`
+        // }
       } else {
         if (gantt_view_mode != 'relative_time') return //如果原来不是相对视图就算了
         this.props.dispatch({
@@ -173,15 +173,15 @@ export default class GanttFace extends Component {
           this.setGoldDateArr({ init: true })
           this.initSetScrollPosition()
         }, 100)
-        const gantt_date_area = document.getElementById('gantt_date_area')
-        if (gantt_date_area) {
-          // gantt_date_area.style.left = `-${ceilWidth *
-          //   (60 - 4 - 4 + new Date().getDate() - 1) -
-          //   16}px`
-          setTimeout(() => {
-            gantt_date_area.style.left = `${-this.setInitScrollLeft()}px`
-          }, 300)
-        }
+        // const gantt_date_area = document.getElementById('gantt_date_area')
+        // if (gantt_date_area) {
+        //   // gantt_date_area.style.left = `-${ceilWidth *
+        //   //   (60 - 4 - 4 + new Date().getDate() - 1) -
+        //   //   16}px`
+        //   setTimeout(() => {
+        //     gantt_date_area.style.left = `${-this.setInitScrollLeft()}px`
+        //   }, 300)
+        // }
       }
     }
   }
@@ -205,14 +205,14 @@ export default class GanttFace extends Component {
           const wapper_width = document.getElementById('gantt_body_wapper')
             .clientWidth
           const current_index = 49
-          const gantt_date_area = document.getElementById('gantt_date_area')
-          const set_left =
-            current_index * 7 * ceil_width_week -
-            wapper_width / 2 +
-            (7 / 2) * ceil_width_week
-          if (gantt_date_area) {
-            gantt_date_area.style.left = `${-set_left}px`
-          }
+          // const gantt_date_area = document.getElementById('gantt_date_area')
+          // const set_left =
+          //   current_index * 7 * ceil_width_week -
+          //   wapper_width / 2 +
+          //   (7 / 2) * ceil_width_week
+          // if (gantt_date_area) {
+          //   gantt_date_area.style.left = `${-set_left}px`
+          // }
         }, 100)
       })
     }
@@ -357,10 +357,10 @@ export default class GanttFace extends Component {
       gantt_group_head.scrollTop = scrollTop
     }
     this.handleScrollVertical({ scrollTop })
-    const gantt_date_area = document.getElementById('gantt_date_area')
-    if (gantt_date_area) {
-      gantt_date_area.style.left = `-${scrollLeft}px`
-    }
+    // const gantt_date_area = document.getElementById('gantt_date_area')
+    // if (gantt_date_area) {
+    //   gantt_date_area.style.left = `-${scrollLeft}px`
+    // }
     // const gantt_date_buoy = document.getElementById('gantt_date_buoy')
     // if (gantt_date_area) {
     //   gantt_date_buoy.style.left = `${scrollLeft}px`
