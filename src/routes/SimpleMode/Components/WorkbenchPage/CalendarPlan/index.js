@@ -649,11 +649,16 @@ export default class CalendarPlan extends React.Component {
     /** 是否任务 */
     const isCardType = item.type === TempType.cardType && item.is_parent
 
+    /** 当前选则的项目id */
+    const currentProjectId = this.props.simplemodeCurrentProject
+      ? this.props.simplemodeCurrentProject.board_id
+        ? this.props.simplemodeCurrentProject.board_id
+        : TotalBoardKey
+      : TotalBoardKey
     /** 是否多项目 */
     const isMultipleBoard =
       (this.getBoardByBoardId() || []).length > 1 ||
-      this.props.simplemodeCurrentProject.board_id === TotalBoardKey ||
-      !this.props.simplemodeCurrentProject
+      currentProjectId === TotalBoardKey
     /** 获取到项目名称 */
     const Board = this.getBoardByBoardId(item.board_id)
     return (
