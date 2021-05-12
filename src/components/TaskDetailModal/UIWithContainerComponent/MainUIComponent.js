@@ -6,7 +6,7 @@ import {
   Dropdown,
   Menu,
   DatePicker,
-  Tooltip,
+  Progress,
   Button,
   Breadcrumb,
   InputNumber
@@ -879,7 +879,8 @@ export default class MainUIComponent extends Component {
       start_time,
       due_time,
       dependencies = [],
-      fields = []
+      fields = [],
+      progress_percent
     } = drawContent
     const { properties = [] } = drawContent
     const { data = [] } = getCurrentDrawerContentPropsModelFieldData({
@@ -1002,6 +1003,41 @@ export default class MainUIComponent extends Component {
 
           {/* 各种字段的不同状态 S */}
           <div>
+            {/* 进度区域 */}
+            <div>
+              <div
+                className={mainContentStyles.field_content}
+                style={{ cursor: 'pointer' }}
+              >
+                <div className={mainContentStyles.field_item}>
+                  <div className={mainContentStyles.field_left}>
+                    <div className={mainContentStyles.field_hover}>
+                      <span
+                        style={{ fontWeight: 500, color: '#000' }}
+                        className={globalStyles.authTheme}
+                      >
+                        &#xe686;
+                      </span>
+                      <span>进度</span>
+                    </div>
+                  </div>
+                  <div
+                    className={`${mainContentStyles.field_right}`}
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center'
+                    }}
+                  >
+                    <Progress
+                      percent={progress_percent}
+                      strokeColor={'#95DE64'}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* 负责人区域 S */}
             {this.whetherExistencePriciple('EXECUTOR') && this.renderPriciple()}
             {/* 负责人区域 E */}

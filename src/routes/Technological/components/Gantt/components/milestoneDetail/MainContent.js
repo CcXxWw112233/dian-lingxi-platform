@@ -682,8 +682,12 @@ export default class MainContent extends React.Component {
   }
   setCompleted = () => {
     const {
-      milestone_detail: { is_finished }
+      milestone_detail: { is_finished, content_list = [] }
     } = this.props
+    if (content_list.length) {
+      message.warn('存在子任务，完成状态由子任务控制')
+      return
+    }
     const _is_finished = is_finished == '1' ? '0' : '1'
     this.updateMilestone({
       is_finished: _is_finished
@@ -802,10 +806,7 @@ export default class MainContent extends React.Component {
               className={`${indexStyles.contain2_item_right}`}
               style={{ lineHeight: '28px' }}
             >
-              <Progress
-                percent={result_process}
-                strokeColor={result_process == 100 ? '#52c41a' : '#FAAD14'}
-              />
+              <Progress percent={result_process} strokeColor={'#95DE64'} />
             </div>
           </div>
           {/*负责人*/}

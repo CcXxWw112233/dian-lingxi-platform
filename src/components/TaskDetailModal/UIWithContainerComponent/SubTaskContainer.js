@@ -403,7 +403,7 @@ const SubTaskItemLogic = {
     const {
       childTaskItemValue,
       dispatch,
-      drawContent: { board_id }
+      drawContent: { board_id, card_id: parent_card_id }
     } = this.props
     const { card_id, is_realize = '0' } = childTaskItemValue
     const obj = {
@@ -424,14 +424,24 @@ const SubTaskItemLogic = {
         message.warn(res.message, MESSAGE_DURATION_TIME)
         return
       }
-      this.setChildTaskIndrawContent(
-        {
-          name: 'is_realize',
-          value: is_realize === '1' ? '0' : '1',
-          finish_time: res.data && res.data.finish_time
-        },
-        card_id
-      )
+
+      dispatch({
+        type: 'publicTaskDetailModal/getCardWithAttributesDetail',
+        payload: {
+          id: parent_card_id
+        }
+      }).then(() => {
+        setTimeout(() => {
+          this.setChildTaskIndrawContent(
+            {
+              name: 'is_realize',
+              value: is_realize === '1' ? '0' : '1',
+              finish_time: res.data && res.data.finish_time
+            },
+            card_id
+          )
+        }, 200)
+      })
     })
   },
 
