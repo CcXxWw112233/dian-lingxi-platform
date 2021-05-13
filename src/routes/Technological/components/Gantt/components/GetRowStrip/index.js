@@ -694,8 +694,7 @@ export default class GetRowStrip extends PureComponent {
       paddingLeft = ceilWidth / 2 - 6
     }
     // console.log('marginLeft', marginLeft)
-    const timestamp =
-      gantt_view_mode == 'year' ? this.calHoverDate().timestampEnd : ''
+    const timestamp = this.calHoverDate().timestampEnd
     return (
       <div
         onMouseUpCapture={() => this.miletonesClick(due_time)}
@@ -711,10 +710,7 @@ export default class GetRowStrip extends PureComponent {
             !!hover_milestone_id && hover_milestone_id != id ? '0.2' : '1'
         }}
       >
-        <Tooltip
-          visible={!due_time && gantt_view_mode == 'year'}
-          title={timestampToTime(timestamp)}
-        >
+        <Tooltip visible={!due_time} title={timestampToTime(timestamp)}>
           <>
             {gantt_view_mode == 'year' && !due_time && (
               <div style={{ width: 10, height: '100%', marginLeft: -6 }}></div>
