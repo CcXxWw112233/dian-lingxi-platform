@@ -4,7 +4,12 @@ import indexStyles from './index.less'
 import GroupListHeadItem from './GroupListHeadItem'
 import GroupListHeadElse from './GroupListHeadElse'
 import OutLineHeadItem from './OutLineHeadItem'
-import { date_area_height, ganttIsOutlineView } from './constants'
+import {
+  date_area_height,
+  ganttIsOutlineView,
+  milestone_base_height,
+  showMilestoneBase
+} from './constants'
 import emptyBoxImageUrl from '@/assets/gantt/empty-box.png'
 import { Button } from 'antd'
 import OutlineGuideModal from './components/OutlineGuideModal'
@@ -14,14 +19,20 @@ import MilestoneBaseHeader from './components/MilestonesBaseProgress/MilestoneBa
 import AutoSize from 'react-virtualized-auto-sizer'
 import { VariableSizeList as List } from 'react-window'
 import { Fragment } from 'react'
+import DEvent, { GANTTSCROLLY } from '../../../../utils/event'
 
 @connect(mapStateToProps)
 export default class GroupListHead extends Component {
   /** 虚拟滚动的实例 */
   listRef = React.createRef()
+  /** 鼠标存在的类型 */
+  scrollEle = ''
+  /** 滚动在视图内的下标 */
+  scrollActiveIndexs = []
 
   /** 甘特图视图页面id */
   ganttScrollElementId = 'gantt_card_out_middle'
+  gantt_card_out_middle = null
 
   constructor(props) {
     super(props)
@@ -37,6 +48,7 @@ export default class GroupListHead extends Component {
     this.setHeaderPostion()
     setTimeout(() => {
       const dom = document.querySelector('#' + this.ganttScrollElementId)
+      this.gantt_card_out_middle = dom
       if (dom) {
         dom.addEventListener('scroll', this.ganttScroll, false)
       }
@@ -62,12 +74,13 @@ export default class GroupListHead extends Component {
   /** 监听甘特图滚动 */
   ganttScroll = e => {
     const { scrollTop } = e.target
+    if (this.scrollEle === 'main_box') return
     this.listRef.current?.scrollTo(scrollTop)
   }
 
   // 头部鼠标滚动设置位置
   onWheel = e => {
-    const { target_scrollTop, dispatch, target_scrollLeft } = this.props
+    const { dispatch, target_scrollLeft } = this.props
     const ele = document.getElementById('gantt_card_out_middle')
     const panel_scroll_top = ele.scrollTop
     let new_target_scrollTop = panel_scroll_top
@@ -155,11 +168,16 @@ export default class GroupListHead extends Component {
   }
   /** 虚拟滚动列表的滚动事件 */
   listScroll = ({ scrollOffset }) => {
-    const gantt_card_out_middle = document.getElementById(
-      'gantt_card_out_middle'
-    )
-    if (gantt_card_out_middle) {
-      gantt_card_out_middle.scrollTop = scrollOffset
+    // const gantt_card_out_middle = document.getElementById(
+    //   'gantt_card_out_middle'
+    // )
+    DEvent.firEvent(GANTTSCROLLY, this.scrollActiveIndexs)
+    this.scrollActiveIndexs = []
+    // console.log(this.scrollActiveIndexs)
+    this.scrollActiveIndexs = []
+    if (this.scrollEle !== 'main_box') return
+    if (this.gantt_card_out_middle) {
+      this.gantt_card_out_middle.scrollTop = scrollOffset
     }
     this.handleScrollVertical({ scrollOffset })
   }
@@ -173,11 +191,11 @@ export default class GroupListHead extends Component {
     }
     if ('gantt_group_head' != e.target.getAttribute('id')) return
     const { scrollTop } = e.target
-    const gantt_card_out_middle = document.getElementById(
-      'gantt_card_out_middle'
-    )
-    if (gantt_card_out_middle) {
-      gantt_card_out_middle.scrollTop = scrollTop
+    // const gantt_card_out_middle = document.getElementById(
+    //   'gantt_card_out_middle'
+    // )
+    if (this.gantt_card_out_middle) {
+      this.gantt_card_out_middle.scrollTop = scrollTop
     }
     this.handleScrollVertical({ scrollTop })
   }
@@ -186,32 +204,28 @@ export default class GroupListHead extends Component {
     const {
       group_view_type,
       gantt_board_id,
-      target_scrollTop,
+      // target_scrollTop,
       dispatch
     } = this.props
-    if (target_scrollTop == scrollTop) return
+    if (this.target_scrollTop == scrollTop) return
     if (group_view_type == '1' && gantt_board_id == '0') {
-      const { set_scroll_top_timer } = this.state
-      if (set_scroll_top_timer) {
-        clearTimeout(set_scroll_top_timer)
-      }
-      this.setState({
-        set_scroll_top_timer: setTimeout(() => {
-          dispatch({
-            type: 'gantt/updateDatas',
-            payload: {
-              target_scrollTop_board_storage: scrollTop,
-              target_scrollTop: scrollTop
-            }
-          })
-        }, 500)
-      })
+      clearTimeout(this.set_scroll_top_timer)
+      this.set_scroll_top_timer = setTimeout(() => {
+        // dispatch({
+        //   type: getEffectOrReducerByName('updateDatas'),
+        //   payload: {
+        //     // target_scrollTop_board_storage: scrollTop,
+        //     // target_scrollTop: scrollTop
+        //   }
+        // })
+        this.target_scrollTop = scrollTop
+      }, 500)
     }
   }
 
   /** 更新滚动视图 */
   updateList = () => {
-    this.listRef.current?.resetAfterIndex(0, false)
+    this.listRef.current?.resetAfterIndex(0, true)
   }
 
   componentDidUpdate(prevProps) {
@@ -222,7 +236,7 @@ export default class GroupListHead extends Component {
     ) {
       setTimeout(() => {
         this.updateList()
-      }, 10)
+      }, 50)
     }
   }
 
@@ -238,13 +252,30 @@ export default class GroupListHead extends Component {
     if (scroll_area == 'gantt_head') return
     this.props.setScrollArea('gantt_head')
   }
+
+  setPointerInCapture = type => {
+    this.scrollEle = type
+  }
+
+  onPointerEnter = type => {
+    clearTimeout(this.pointerTimer)
+    this.setPointerInCapture(type)
+  }
+
+  onPointerLeave = type => {
+    clearTimeout(this.pointerTimer)
+    this.pointerTimer = setTimeout(() => {
+      this.setPointerInCapture('')
+    }, 20)
+  }
+
   render() {
     const {
       list_group = [],
       group_rows = [],
       ceiHeight,
       target_scrollLeft,
-      target_scrollTop,
+      // target_scrollTop,
       group_view_type,
       outline_tree = [],
       get_gantt_data_loaded,
@@ -254,8 +285,14 @@ export default class GroupListHead extends Component {
     const isNewProject =
       !outline_tree || outline_tree.length == 0 ? true : false
 
+    /** 是否显示最上面的base栏 */
+    const showBase = showMilestoneBase({ group_view_type, gantt_board_id })
+
     /** 单个数据 */
     const Row = ({ style, index }) => {
+      this.scrollActiveIndexs = [
+        ...new Set(this.scrollActiveIndexs.concat([index]))
+      ]
       const value = list_group[index] || {}
       const { list_id } = value
       return (
@@ -324,6 +361,11 @@ export default class GroupListHead extends Component {
           <div
             style={{ height: '100%', width: '100%' }}
             className={indexStyles.scroll_view}
+            onPointerEnter={() => this.onPointerEnter('main_box')}
+            onPointerDown={() => this.onPointerEnter('main_box')}
+            onPointerOver={() => this.onPointerEnter('main_box')}
+            onPointerLeave={() => this.onPointerLeave()}
+            onPointerOut={() => this.onPointerLeave()}
           >
             {IsOutline ? <MilestoneBaseHeader /> : <MilestoneBaseHeader />}
             <AutoSize>
@@ -369,7 +411,10 @@ export default class GroupListHead extends Component {
                           scrollTo={this.state.listViewScrollTo}
                           id="scroll_ver"
                           ref={this.listRef}
-                          height={height}
+                          /** 减去header的高度 */
+                          height={
+                            height - (showBase ? milestone_base_height : 0)
+                          }
                           width={'auto'}
                           itemCount={list_group.length}
                           itemSize={this.getItemHeight}
@@ -401,7 +446,7 @@ function mapStateToProps({
       group_rows = [],
       ceiHeight,
       target_scrollLeft,
-      target_scrollTop,
+      // target_scrollTop,
       group_list_area,
       group_list_area_section_height,
       group_view_type,
@@ -417,7 +462,7 @@ function mapStateToProps({
     group_rows,
     ceiHeight,
     target_scrollLeft,
-    target_scrollTop,
+    // target_scrollTop,
     group_list_area,
     group_list_area_section_height,
     group_view_type,

@@ -34,6 +34,10 @@ import { rebackCreateNotify } from '../../../../../../components/NotificationTod
 const MenuItem = Menu.Item
 @connect(mapStateToProps)
 export default class GroupMilestones extends Component {
+  /** 鼠标移入的计时器 */
+  mouseHoverTimer = null
+  /** menu的鼠标移入移出 */
+  MenuMouseHoverTimer = null
   constructor(props) {
     super(props)
     this.state = {
@@ -778,7 +782,8 @@ export default class GroupMilestones extends Component {
       belong_group_id,
       one_levels_all
     } = value
-    return (
+    return null
+    return  (
       <>
         {!!two_levels.length &&
           gantt_board_id != '0' &&
@@ -1244,44 +1249,23 @@ export default class GroupMilestones extends Component {
   }
 
   //hover的时候更新携带的关联任务id
-  milestoneMouseEnter = debounce(item => {
-    if (this.cantNotMouseEnterLeave()) return
-    const { rela_ids = [], id } = item
-    const { dispatch } = this.props
-    dispatch({
-      type: 'gantt/updateDatas',
-      payload: {
-        cardids_with_milestone: rela_ids,
-        hover_milestone_id: id
-      }
-    })
-  }, 500)
-  milestoneMouseLeave = debounce(() => {
-    if (this.cantNotMouseEnterLeave()) return
-    const { dispatch } = this.props
-    dispatch({
-      type: 'gantt/updateDatas',
-      payload: {
-        cardids_with_milestone: [],
-        hover_milestone_id: ''
-      }
-    })
-  }, 500)
-  singleMilestoneMouseEnter = debounce(arr => {
-    if (this.cantNotMouseEnterLeave()) return
-    if (arr.length != 1) return
-    const { rela_ids = [], id } = arr[0]
-    const { dispatch } = this.props
-    // console.log('ssssssssssadd_0', arr[0])
-    dispatch({
-      type: 'gantt/updateDatas',
-      payload: {
-        cardids_with_milestone: rela_ids,
-        hover_milestone_id: id
-      }
-    })
-  }, 500)
-  singleMilestoneMouseLeave = debounce(item => {
+  milestoneMouseEnter = item => {
+    clearTimeout(this.MenuMouseHoverTimer)
+    this.MenuMouseHoverTimer = setTimeout(() => {
+      if (this.cantNotMouseEnterLeave()) return
+      const { rela_ids = [], id } = item
+      const { dispatch } = this.props
+      dispatch({
+        type: 'gantt/updateDatas',
+        payload: {
+          cardids_with_milestone: rela_ids,
+          hover_milestone_id: id
+        }
+      })
+    }, 300)
+  }
+  milestoneMouseLeave = () => {
+    clearTimeout(this.MenuMouseHoverTimer)
     if (this.cantNotMouseEnterLeave()) return
     const { dispatch } = this.props
     dispatch({
@@ -1291,7 +1275,36 @@ export default class GroupMilestones extends Component {
         hover_milestone_id: ''
       }
     })
-  }, 500)
+  }
+  singleMilestoneMouseEnter = arr => {
+    clearTimeout(this.mouseHoverTimer)
+    this.mouseHoverTimer = setTimeout(() => {
+      if (this.cantNotMouseEnterLeave()) return
+      if (arr.length != 1) return
+      const { rela_ids = [], id } = arr[0]
+      const { dispatch } = this.props
+      // console.log('ssssssssssadd_0', arr[0])
+      dispatch({
+        type: 'gantt/updateDatas',
+        payload: {
+          cardids_with_milestone: rela_ids,
+          hover_milestone_id: id
+        }
+      })
+    }, 300)
+  }
+  singleMilestoneMouseLeave = item => {
+    clearTimeout(this.mouseHoverTimer)
+    if (this.cantNotMouseEnterLeave()) return
+    const { dispatch } = this.props
+    dispatch({
+      type: 'gantt/updateDatas',
+      payload: {
+        cardids_with_milestone: [],
+        hover_milestone_id: ''
+      }
+    })
+  }
   cantNotMouseEnterLeave = () => {
     const {
       gantt_board_id,
@@ -1343,9 +1356,11 @@ export default class GroupMilestones extends Component {
       >
         {group_view_type == '1' &&
           !!list_group.length &&
-          render_milestones_data.map(item => {
+          render_milestones_data.map((item, index) => {
             return (
-              <React.Fragment key={`${item.timestamp} ${dragg_milestone_err}`}>
+              <React.Fragment
+                key={`${item.timestamp}${index} ${dragg_milestone_err}`}
+              >
                 {this.renderView(item)}
               </React.Fragment>
             )

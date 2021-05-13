@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'dva'
+import { unstable_batchedUpdates } from 'react-dom'
 import indexStyles from './index.less'
 import GetRowGantt from './GetRowGantt'
 import DateList from './DateList'
@@ -50,11 +51,16 @@ import {
   diffClientDefaultViewMode
 } from './ganttBusiness'
 import { ENV_ANDROID_APP } from '../../../../globalset/clientCustorm'
-import { isSamDay } from '../../../../utils/util'
+import { dateFormat, isSamDay } from '../../../../utils/util'
+import {
+  GanttViewDateWidth,
+  GanttViewMode
+} from '../../../../globalset/js/constant'
 
 const getEffectOrReducerByName = name => `gantt/${name}`
 @connect(mapStateToProps)
 export default class GanttFace extends Component {
+  set_scroll_top_timer = null
   constructor(props) {
     super(props)
     this.state = {
@@ -63,7 +69,9 @@ export default class GanttFace extends Component {
       gantt_card_out_middle_max_height: 600,
       init_get_outline_tree: false, //大纲视图下初始化是否获取了大纲树
       scroll_area: 'gantt_body', // gantt_head/gantt_body 头部或右边 滚动事件触发的区域
-      set_scroll_top_timer: null
+      set_scroll_top_timer: null,
+      /** 选中的日期，往左滚动的距离 */
+      ganttSelectedBarLeft: 0
     }
     this.setGanTTCardHeight = this.setGanTTCardHeight.bind(this)
     this.target_scrollLeft = 0
@@ -202,9 +210,9 @@ export default class GanttFace extends Component {
         this.setGoldDateArr({ init: true })
         setTimeout(() => {
           this.initSetScrollPosition()
-          const wapper_width = document.getElementById('gantt_body_wapper')
-            .clientWidth
-          const current_index = 49
+          // const wapper_width = document.getElementById('gantt_body_wapper')
+          //   .clientWidth
+          // const current_index = 49
           // const gantt_date_area = document.getElementById('gantt_date_area')
           // const set_left =
           //   current_index * 7 * ceil_width_week -
@@ -228,11 +236,13 @@ export default class GanttFace extends Component {
   }
   // 获取项目列表的users apps groups
   getBoardListFeature = () => {
-    setTimeout(() => {
-      this.getProjectGoupLists()
-      this.getProjectAppsLists()
-      this.getAboutUsersBoards()
-    }, 300)
+    unstable_batchedUpdates(() => {
+      setTimeout(() => {
+        this.getProjectGoupLists()
+        this.getProjectAppsLists()
+        this.getAboutUsersBoards()
+      }, 300)
+    })
   }
 
   // 获取带app的项目列表
@@ -372,28 +382,25 @@ export default class GanttFace extends Component {
     const {
       group_view_type,
       gantt_board_id,
-      target_scrollTop,
+      // target_scrollTop,
       dispatch
     } = this.props
-    if (target_scrollTop == scrollTop) return
+    if (this.target_scrollTop == scrollTop) return
     if (group_view_type == '1' && gantt_board_id == '0') {
-      const { set_scroll_top_timer } = this.state
-      if (set_scroll_top_timer) {
-        clearTimeout(set_scroll_top_timer)
-      }
-      this.setState({
-        set_scroll_top_timer: setTimeout(() => {
-          dispatch({
-            type: getEffectOrReducerByName('updateDatas'),
-            payload: {
-              target_scrollTop_board_storage: scrollTop,
-              target_scrollTop: scrollTop
-            }
-          })
-        }, 500)
-      })
+      clearTimeout(this.set_scroll_top_timer)
+      this.set_scroll_top_timer = setTimeout(() => {
+        // dispatch({
+        //   type: getEffectOrReducerByName('updateDatas'),
+        //   payload: {
+        //     // target_scrollTop_board_storage: scrollTop,
+        //     // target_scrollTop: scrollTop
+        //   }
+        // })
+        this.target_scrollTop = scrollTop
+      }, 500)
     }
   }
+
   // 处理水平滚动
   handelScrollHorizontal = ({ scrollLeft, scrollWidth, clientWidth }) => {
     const { target_scrollLeft } = this
@@ -411,10 +418,10 @@ export default class GanttFace extends Component {
     }
     const rescroll_leng_to_left = gantt_view_mode == 'month' ? 30 : 60 //滚动条回复位置
     const rescroll_leng_to_right = gantt_view_mode == 'month' ? 60 : 90 //滚动条回复位置
-    if (this.searchTimer) {
-      clearTimeout(this.searchTimer)
-      this.searchTimer = null
-    }
+    // if (this.searchTimer) {
+    clearTimeout(this.searchTimer)
+    //   this.searchTimer = null
+    // }
     // 向左滚动到最左
     if (scrollLeft < scroll_bound_leng * ceilWidth && delX > 0) {
       //3为分组头部占用三个单元格的长度
@@ -430,9 +437,9 @@ export default class GanttFace extends Component {
         })
         // this.setLoading(true)
         // setTimeout(() => {
-        this.smonthScrollEle(
-          rescroll_leng_to_left_wrapper[gantt_view_mode] * ceilWidth
-        )
+        // this.smonthScrollEle(
+        //   rescroll_leng_to_left_wrapper[gantt_view_mode] * ceilWidth
+        // )
         this.setGoldDateArr({
           timestamp,
           active_trigger: 'to_left',
@@ -440,7 +447,7 @@ export default class GanttFace extends Component {
           loadedCb: () => this.replySvgPosition()
         }) //取左边界日期来做日期更新的基准
         // })
-      })
+      }, 100)
     } else if (
       scrollWidth - scrollLeft - clientWidth < scroll_bound_leng * ceilWidth &&
       delX < 0
@@ -460,7 +467,7 @@ export default class GanttFace extends Component {
           not_set_loading: false
         }) //取有边界日期来做更新日期的基准
         // })
-      })
+      }, 100)
     }
     this.target_scrollLeft = scrollLeft
     // this.setScrollLeft(scrollLeft)
@@ -516,15 +523,15 @@ export default class GanttFace extends Component {
     } = this.props
     let date_arr = []
     if (active_trigger == 'to_right') {
-      if (gantt_view_mode == 'month') {
+      if (gantt_view_mode == GanttViewMode.Day) {
         date_arr = [].concat(gold_date_arr, getNextMonthDatePush(timestamp))
-      } else if (gantt_view_mode == 'week') {
+      } else if (gantt_view_mode == GanttViewMode.Week) {
         date_arr = [].concat(gold_date_arr, getNextWeeksDate(timestamp))
-      } else if (gantt_view_mode == 'year') {
+      } else if (gantt_view_mode == GanttViewMode.Month) {
         date_arr = [].concat(gold_date_arr, getNextYearDate(timestamp))
-      } else if (gantt_view_mode == 'hours') {
+      } else if (gantt_view_mode == GanttViewMode.Hours) {
         date_arr = [].concat(gold_date_arr, getNextHourDate(timestamp))
-      } else if (gantt_view_mode == 'relative_time') {
+      } else if (gantt_view_mode == GanttViewMode.Relative) {
         gold_date_arr[0]['date_inner'] = [].concat(
           gold_date_arr[0]['date_inner'],
           getNextRelativeTime(
@@ -640,15 +647,17 @@ export default class GanttFace extends Component {
         }, 0)
       } else {
         this.setLoading(false)
-        dispatch({
-          type: 'gantt/getBaseLineInfo',
-          payload: active_baseline
-        })
-        dispatch({
-          type: 'gantt/handleOutLineTreeData',
-          payload: {
-            data: outline_tree
-          }
+        unstable_batchedUpdates(() => {
+          dispatch({
+            type: 'gantt/getBaseLineInfo',
+            payload: active_baseline
+          })
+          dispatch({
+            type: 'gantt/handleOutLineTreeData',
+            payload: {
+              data: outline_tree
+            }
+          })
         })
       }
     }
@@ -659,7 +668,8 @@ export default class GanttFace extends Component {
       for (let val of date_arr) {
         const { date_inner = [] } = val
         for (let val2 of date_inner) {
-          date_total += gantt_view_mode == 'year' ? val2.last_date : 1
+          date_total +=
+            gantt_view_mode == GanttViewMode.Month ? val2.last_date : 1
           date_arr_one_level.push(val2)
         }
       }
@@ -681,6 +691,7 @@ export default class GanttFace extends Component {
       })
     }
     updateDateArr()
+
     this.getHoliday()
     this.setWidthArea({ date_arr })
     // window.requestAnimationFrame(updateDateArr)
@@ -753,6 +764,180 @@ export default class GanttFace extends Component {
     if (scroll_area == 'gantt_body') return
     this.setScrollArea('gantt_body')
   }
+
+  /** 获取日期宽度 */
+  getDateWidth = () => {
+    const { gantt_view_mode } = this.props
+    switch (gantt_view_mode) {
+      case GanttViewMode.Day:
+        return GanttViewDateWidth.Day
+      case GanttViewMode.Hours:
+        return GanttViewDateWidth.Hours
+      case GanttViewMode.Month:
+        return GanttViewDateWidth.Month
+      case GanttViewMode.Week:
+        return GanttViewDateWidth.Week
+      default:
+        return 0
+    }
+  }
+  /** 更新div的长度 */
+  updateLongDivWidth = () => {
+    const { gold_date_arr = [] } = this.props
+    let dates = []
+    gold_date_arr.forEach(item => {
+      dates = dates.concat(item.date_inner)
+    })
+
+    const width = this.getDateWidth()
+    return dates.length * width
+  }
+
+  // 渲染不同视图下日期显示内容
+  renderDateNoContent = (s_time, e_time) => {
+    const { gantt_view_mode } = this.props
+    // 是否同年
+    const is_year =
+      new Date(s_time).getFullYear() == new Date(e_time).getFullYear()
+    // 是否同月
+    const is_month =
+      new Date(s_time).getMonth() + 1 == new Date(e_time).getMonth() + 1
+    let date_dec = ''
+    let s_format = '' // 开始日期格式
+    let e_format = '' // 截止日期格式
+    s_format =
+      new Date(s_time).getFullYear() == new Date().getFullYear()
+        ? 'MM月dd日'
+        : 'yyyy.MM.dd'
+    e_format =
+      new Date(e_time).getFullYear() == new Date().getFullYear()
+        ? 'MM月dd日'
+        : 'yyyy.MM.dd'
+    switch (gantt_view_mode) {
+      case 'month':
+        // 如果同年同月 就显示日期就好
+        if (is_year && is_month) {
+          if (isSamDay(s_time, e_time)) {
+            // 同月同天
+            date_dec = `${dateFormat(e_time, 'dd')}`
+          } else {
+            date_dec = `${dateFormat(s_time, e_format)} - ${dateFormat(
+              e_time,
+              e_format
+            )}`
+          }
+        } else {
+          date_dec = `${dateFormat(s_time, s_format)} - ${dateFormat(
+            e_time,
+            e_format
+          )}`
+        }
+        break
+      case 'hours':
+        if (is_year && is_month && isSamDay(s_time, e_time)) {
+          date_dec = `${dateFormat(s_time, 'HH:mm')} - ${dateFormat(
+            e_time,
+            'HH:mm'
+          )}`
+        } else {
+          s_format =
+            new Date(s_time).getFullYear() == new Date().getFullYear()
+              ? 'MM.dd HH:mm'
+              : 'yyyy.MM.dd HH:mm'
+          e_format =
+            new Date(e_time).getFullYear() == new Date().getFullYear()
+              ? 'MM.dd HH:mm'
+              : 'yyyy.MM.dd HH:mm'
+          date_dec = `${dateFormat(s_time, s_format)} - ${dateFormat(
+            e_time,
+            e_format
+          )}`
+        }
+        break
+      case 'week':
+        // 同年
+        if (is_year) {
+          // 同月
+          if (is_month) {
+            date_dec = `${dateFormat(s_time, 'dd')} - ${dateFormat(
+              e_time,
+              'dd'
+            )}`
+          } else {
+            date_dec = `${dateFormat(s_time, 'MM.dd')} - ${dateFormat(
+              e_time,
+              'MM月dd日'
+            )}`
+          }
+        } else {
+          date_dec = `${dateFormat(s_time, s_format)} - ${dateFormat(
+            e_time,
+            e_format
+          )}`
+        }
+
+        break
+      case 'year':
+        if (is_year) {
+          if (is_month) {
+            date_dec = `${dateFormat(s_time, 'dd')} - ${dateFormat(
+              e_time,
+              'dd'
+            )}`
+          } else {
+            date_dec = `${dateFormat(s_time, 'MM月dd日')} - ${dateFormat(
+              e_time,
+              'MM月dd日'
+            )}`
+          }
+        } else {
+          date_dec = `${dateFormat(s_time, s_format)} - ${dateFormat(
+            e_time,
+            e_format
+          )}`
+        }
+
+        break
+
+      default:
+        break
+    }
+    return date_dec
+  }
+  // 渲染选中任务后日期内容
+  renderGanttCardDateNoSection = () => {
+    const { gantt_card_date_no_section = {} } = this.props
+    const {
+      width,
+      start_time,
+      end_time,
+      id,
+      parent_card_id,
+      left
+    } = gantt_card_date_no_section
+    return (
+      <div
+        key={parent_card_id || id}
+        className={indexStyles.gantt_card_date_no_section}
+        style={{ left: left, width: width }}
+        title={this.renderDateNoContent(start_time, end_time)}
+      >
+        <div className={indexStyles.gantt_card_date_no_section_left}></div>
+        <div className={indexStyles.gantt_card_date_no_section_right}></div>
+        <div style={{ color: '#113696' }}>
+          {this.renderDateNoContent(start_time, end_time)}
+        </div>
+      </div>
+    )
+  }
+
+  /** 更新往左滚动的距离 */
+  updateDivScrollLeft = scrollLeft => {
+    this.setState({
+      ganttSelectedBarLeft: scrollLeft
+    })
+  }
+
   render() {
     const { gantt_card_out_middle_max_height } = this.state
     const {
@@ -765,7 +950,8 @@ export default class GanttFace extends Component {
       get_gantt_data_loading_other,
       currentUserOrganizes = [],
       show_base_line_mode,
-      active_baseline
+      active_baseline,
+      gantt_card_date_no_section
     } = this.props
     const dataAreaRealHeight = this.getDataAreaRealHeight()
 
@@ -846,7 +1032,20 @@ export default class GanttFace extends Component {
               style={{ height: gantt_card_height - 20 }}
             >
               {/* 日期栏 */}
-              <DateList />
+              <DateList onScroll={this.updateDivScrollLeft} />
+              <div
+                style={{
+                  width: this.updateLongDivWidth(),
+                  position: 'absolute',
+                  top: 28,
+                  zIndex: 10,
+                  left: this.state.ganttSelectedBarLeft * -1
+                }}
+              >
+                {gantt_card_date_no_section &&
+                  !!Object.keys(gantt_card_date_no_section).length &&
+                  this.renderGanttCardDateNoSection()}
+              </div>
               <div
                 style={{ height: date_area_height }} //撑住DateList相同高度的底部
               />
@@ -950,7 +1149,7 @@ function mapStateToProps({
   gantt: {
     datas: {
       ceilWidth,
-      target_scrollTop,
+      // target_scrollTop,
       gold_date_arr = [],
       isDragging,
       list_group = [],
@@ -965,7 +1164,8 @@ function mapStateToProps({
       get_gantt_data_loading_other,
       show_base_line_mode,
       active_baseline,
-      date_arr_one_level = []
+      date_arr_one_level = [],
+      gantt_card_date_no_section = {}
     }
   },
   technological: {
@@ -977,7 +1177,7 @@ function mapStateToProps({
 }) {
   return {
     ceilWidth,
-    target_scrollTop,
+    // target_scrollTop,
     gold_date_arr,
     isDragging,
     list_group,
@@ -994,7 +1194,8 @@ function mapStateToProps({
     show_base_line_mode,
     active_baseline,
     projectDetailInfoData,
-    date_arr_one_level
+    date_arr_one_level,
+    gantt_card_date_no_section
   }
 }
 GanttFace.defaultProps = {

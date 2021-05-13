@@ -1201,7 +1201,7 @@ export default class GetRowGantt extends Component {
               }
               if (tree_type == '2') {
                 return (
-                  <Fragment>
+                  <Fragment key={id}>
                     {active_baseline_data[id] && (
                       <BaseLineItem
                         data={active_baseline_data[id]}
@@ -1209,6 +1209,7 @@ export default class GetRowGantt extends Component {
                         gantt_view_mode={gantt_view_mode}
                         type={tree_type}
                         ganttData={value}
+                        key={id}
                       />
                     )}
                     <GetRowTaskItem
@@ -1238,7 +1239,7 @@ export default class GetRowGantt extends Component {
                 )
               } else if (tree_type == '3') {
                 return (
-                  <Fragment>
+                  <Fragment key={id}>
                     {active_baseline_data[id] && (
                       <BaseLineItem
                         data={active_baseline_data[id]}
@@ -1246,6 +1247,7 @@ export default class GetRowGantt extends Component {
                         gantt_view_mode={gantt_view_mode}
                         type={tree_type}
                         ganttData={value}
+                        key={id}
                       />
                     )}
                     <WorkFlow
@@ -1300,6 +1302,7 @@ export default class GetRowGantt extends Component {
                         data={active_baseline_data[id]}
                         top={top}
                         type={tree_type}
+                        key={id}
                         gantt_view_mode={gantt_view_mode}
                         ganttData={value}
                       />

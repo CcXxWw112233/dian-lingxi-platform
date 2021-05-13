@@ -256,7 +256,11 @@ export const GanttViewMode = {
   /** 时视图
    * @default string 'hours'
    */
-  Hours: 'hours'
+  Hours: 'hours',
+  /** 相对时间
+   * @default string 'relative_time'
+   */
+  Relative: 'relative_time'
 }
 
 /** 甘特图视图类型的日期宽度 */

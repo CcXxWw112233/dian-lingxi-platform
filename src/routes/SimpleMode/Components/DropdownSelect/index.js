@@ -160,7 +160,7 @@ class DropdownSelect extends Component {
         key={item.id}
         style={style}
         disabled={item.disabled || false}
-        onClick={menuItemClick.bind(this, { key: item.id })}
+        onClick={() => !item.disabled && menuItemClick({ key: item.id })}
         className={`${
           item.disabled === true
             ? styles.menuItemDisabled
@@ -214,11 +214,19 @@ class DropdownSelect extends Component {
       ...itemList
     ]
 
+    /** 最高的高度 */
+    const maxHeight = 500
+    /** 单个高度 */
+    const itemSize = 40
+    /** 盒子高度 */
+    const boxHeight = grouplist.length * itemSize
+
     return (
       <div
         className={styles.dropdownMenu}
         // onClick={menuItemClick}
         // selectedKeys={selectedKeys}
+        style={{ height: Math.min(maxHeight, boxHeight) }}
       >
         {/* {this.renderFunctionMenuItem(fuctionMenuItemList)} */}
         <AutoSize>
@@ -227,7 +235,7 @@ class DropdownSelect extends Component {
               width={width}
               height={height}
               itemCount={grouplist.length}
-              itemSize={40}
+              itemSize={itemSize}
             >
               {this.MenuItemRow.bind(this, grouplist)}
             </List>

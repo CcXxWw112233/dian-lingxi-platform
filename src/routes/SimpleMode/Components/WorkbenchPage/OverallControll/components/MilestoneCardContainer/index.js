@@ -108,13 +108,17 @@ export default class MilestoneCardContainer extends React.Component {
     } = this.props
     return (
       <div
+        {...this.props}
         className={`${styles.milestone_card_container} ${
           active ? styles.active : ''
         }`}
-        onMouseOver={() => onMouseEnter && onMouseEnter()}
-        onMouseEnter={() => onMouseEnter && onMouseEnter()}
-        onMouseLeave={() => onMouseLeave && onMouseLeave()}
-        onMouseOut={() => onMouseOut && onMouseOut()}
+        // onMouseOver={() => onMouseEnter && onMouseEnter()}
+        // onMouseEnter={() => onMouseEnter && onMouseEnter()}
+        // onMouseLeave={() => onMouseLeave && onMouseLeave()}
+        // onMouseOut={() => onMouseOut && onMouseOut()}
+        onPointerEnter={() => onMouseEnter && onMouseEnter()}
+        onPointerLeave={() => onMouseLeave && onMouseLeave()}
+        onPointerDown={() => onMouseEnter && onMouseEnter()}
         style={{
           paddingTop: OverallRowPaddingTB,
           paddingBottom: OverallRowPaddingTB

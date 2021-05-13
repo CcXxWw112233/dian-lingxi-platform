@@ -34,10 +34,12 @@ export default class BoardGroupTree extends React.Component {
           {datas.map(item => {
             return (
               <div
-                onMouseEnter={() => onMouseEnter && onMouseEnter(item)}
-                onMouseLeave={() => onMouseLeave && onMouseLeave()}
-                onMouseOut={() => onMouseOut && onMouseOut()}
-                onMouseOver={() => onMouseOver && onMouseOver(item)}
+                onPointerEnter={() => onMouseEnter && onMouseEnter(item)}
+                onPointerLeave={() => onMouseLeave && onMouseLeave()}
+                // onMouseEnter={() => onMouseEnter && onMouseEnter(item)}
+                // onMouseLeave={() => onMouseLeave && onMouseLeave()}
+                // onMouseOut={() => onMouseOut && onMouseOut()}
+                // onMouseOver={() => onMouseOver && onMouseOver(item)}
                 className={`${styles.tree_data_tabs} ${
                   activeId === item.list_id ? styles.active : ''
                 }`}
