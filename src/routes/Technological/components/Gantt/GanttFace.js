@@ -574,51 +574,51 @@ export default class GanttFace extends Component {
 
     //非大纲视图
     if (!ganttIsOutlineView({ group_view_type })) {
-      // if (['to_right', 'to_left'].includes(active_trigger)) {
-      //   //表示主动向左向右触发
-      //   let scroll_params = {}
-      //   if (active_trigger == 'to_right') {
-      //     //向右则取传递进来的时间戳作为起止时间，更新后的日期的后一天作为结束时间
-      //     scroll_params = {
-      //       start_time: timestamp,
-      //       end_time: _end_date.timestamp
-      //       // end_time:date_arr_one_level[date_arr_one_level.length - 1].timestamp
-      //     }
-      //   } else {
-      //     //向左则取传递进来的时间戳作为结束时间，更新后的日期的第一一天作为结束时间
-      //     scroll_params = {
-      //       // start_time: date_arr_one_level[0].timestamp,
-      //       start_time: _start_date.timestamp,
-      //       end_time: timestamp
-      //     }
-      //   }
-      //   setTimeout(function() {
-      //     dispatch({
-      //       type: getEffectOrReducerByName('getGroupScrollAdditionalData'),
-      //       payload: { ...scroll_params }
-      //     }).then(res => {
-      //       if (isApiResponseOk(res) && typeof loadedCb === 'function') {
-      //         loadedCb()
-      //       }
-      //     })
-      //   }, 0)
-      // } else {
-      //默认获取初始化数据
-      setTimeout(function() {
-        dispatch({
-          type: getEffectOrReducerByName('getGanttData'),
-          payload: {
-            start_date: _start_date,
-            end_date: _end_date,
-            not_set_loading
+      if (['to_right', 'to_left'].includes(active_trigger)) {
+        //表示主动向左向右触发
+        let scroll_params = {}
+        if (active_trigger == 'to_right') {
+          //向右则取传递进来的时间戳作为起止时间，更新后的日期的后一天作为结束时间
+          scroll_params = {
+            start_time: timestamp,
+            end_time: _end_date.timestamp
+            // end_time:date_arr_one_level[date_arr_one_level.length - 1].timestamp
           }
-        }).then(res => {
-          if (isApiResponseOk(res) && typeof loadedCb === 'function') {
-            loadedCb()
+        } else {
+          //向左则取传递进来的时间戳作为结束时间，更新后的日期的第一一天作为结束时间
+          scroll_params = {
+            // start_time: date_arr_one_level[0].timestamp,
+            start_time: _start_date.timestamp,
+            end_time: timestamp
           }
-        })
-      }, 0)
-      // }
+        }
+        setTimeout(function() {
+          dispatch({
+            type: getEffectOrReducerByName('getGroupScrollAdditionalData'),
+            payload: { ...scroll_params }
+          }).then(res => {
+            if (isApiResponseOk(res) && typeof loadedCb === 'function') {
+              loadedCb()
+            }
+          })
+        }, 0)
+      } else {
+        //默认获取初始化数据
+        setTimeout(function() {
+          dispatch({
+            type: getEffectOrReducerByName('getGanttData'),
+            payload: {
+              start_date: _start_date,
+              end_date: _end_date,
+              not_set_loading
+            }
+          }).then(res => {
+            if (isApiResponseOk(res) && typeof loadedCb === 'function') {
+              loadedCb()
+            }
+          })
+        }, 0)
+      }
     } else {
       if (typeof loadedCb === 'function') {
         loadedCb()
