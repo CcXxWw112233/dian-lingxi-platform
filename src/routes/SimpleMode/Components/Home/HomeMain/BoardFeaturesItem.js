@@ -17,7 +17,7 @@ import {
 import { TASKS, FLOWS } from '../../../../../globalset/js/constant'
 // 引入 ECharts 主模块
 import echarts from 'echarts'
-// 引入柱状图
+// 引入饼状图
 import 'echarts/lib/chart/pie'
 
 import { ECHARTSTHEME } from '../../WorkbenchPage/ChartForStatistics/constans'
@@ -42,9 +42,9 @@ export default class BoardFeaturesItem extends Component {
 
   initEchart = () => {
     const {
-      itemValue: { rela_type, parent_id, progress_percent = 100 }
+      itemValue: { rela_type, parent_id, progress_percent }
     } = this.props
-    if (rela_type != '1' || parent_id) return //必须是父任务
+    if (rela_type != '1' || parent_id || progress_percent === undefined) return //必须是父任务
     echarts.registerTheme(ECHARTSTHEME, theme)
     this.chart = echarts.init(this.chartRef.current, ECHARTSTHEME)
     const option = {
@@ -361,7 +361,7 @@ export default class BoardFeaturesItem extends Component {
 
         <div style={{ display: 'flex', alignItems: 'center' }}>
           {//一级任务
-          rela_type == '1' && !parent_id && (
+          rela_type == '1' && !parent_id && progress_percent !== undefined && (
             <div
               style={{ display: 'flex', alignItems: 'center', marginRight: 16 }}
             >

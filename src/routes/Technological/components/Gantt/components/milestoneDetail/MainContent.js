@@ -55,7 +55,8 @@ export default class MainContent extends React.Component {
     /** 自定义字段的显示隐藏 */
     fields_visible: false,
     /** 默认勾选的列表 */
-    disabledKeys: []
+    disabledKeys: [],
+    completeStatus: '' //完成状态
   }
 
   constructor(prop) {
@@ -74,6 +75,7 @@ export default class MainContent extends React.Component {
   componentDidUpdate(prev) {
     if (prev.milestone_detail?.id !== this.props.milestone_detail?.id) {
       this.fetchCustomFields()
+      this.setStatusProperty()
     }
   }
 
@@ -417,6 +419,7 @@ export default class MainContent extends React.Component {
                   board_set={board_set}
                   base_relative_time={base_relative_time}
                   deleteRelationContent={this.props.deleteRelationContent}
+                  setStatusProperty={this.setStatusProperty}
                 />
               )
             })}
@@ -682,10 +685,10 @@ export default class MainContent extends React.Component {
   }
   setCompleted = () => {
     const {
-      milestone_detail: { is_finished, content_list = [] }
+      milestone_detail: { is_finished, content_list = [], deadline }
     } = this.props
     if (content_list.length) {
-      message.warn('存在子任务，完成状态由子任务控制')
+      message.warn('存在关联子节点，完成状态由子节点控制')
       return
     }
     const _is_finished = is_finished == '1' ? '0' : '1'
@@ -693,6 +696,60 @@ export default class MainContent extends React.Component {
       is_finished: _is_finished
     }).then(res => {
       this.handleMiletonesChange({ is_realize: _is_finished })
+    })
+  }
+  // 设置状态属性
+  setStatusProperty = () => {
+    const {
+      milestone_detail: {
+        is_finished,
+        content_list = [],
+        finish_time,
+        deadline,
+        chird_list = []
+      }
+    } = this.props
+
+    let completeStatus = ''
+    const is_overdue = !!deadline
+      ? Number(finish_time || 0) > Number(deadline || 0)
+      : false //没有截止时间意味着随便什么时候完成都是没有超过
+    const children = [].concat(content_list, chird_list)
+    const isHasSubFinish = children.some(item => {
+      //存在子任务处于完成
+      return item.is_completed == '1'
+    })
+    const isHasNoFinish = children.some(item => {
+      //存在子任务处于未完成
+      return item.is_completed == '0'
+    })
+    const ishasChildCard = children.length
+    if (ishasChildCard) {
+      if ((!isHasNoFinish && is_finished === '0') || !isHasSubFinish) {
+        completeStatus = '未到期'
+      } else if (!isHasNoFinish) {
+        completeStatus = '已完成'
+        if (is_overdue && is_finished === '1') {
+          completeStatus = '逾期完成'
+        } else if (is_finished === '1' && !is_overdue) {
+          completeStatus = '按时完成'
+        }
+      } else if (isHasSubFinish && isHasNoFinish) {
+        completeStatus = '进行中'
+      }
+    } else {
+      if (is_finished === '0') {
+        completeStatus = '未到期'
+      } else if (is_finished === '1') {
+        if (is_overdue) {
+          completeStatus = '逾期完成'
+        } else {
+          completeStatus = '按时完成'
+        }
+      }
+    }
+    this.setState({
+      completeStatus
     })
   }
   render() {
@@ -796,6 +853,22 @@ export default class MainContent extends React.Component {
           )}
         </div>
         <div className={indexStyles.contain2}>
+          {/* 标题 E */}
+          <div
+            style={{
+              padding: '0 12px',
+              height: 28,
+              textAlign: 'center',
+              lineHeight: '28px',
+              border: '1px solid #D1D5E4',
+              borderRadius: 4,
+              color: '#212434',
+              width: 'max-content',
+              marginBottom: 12
+            }}
+          >
+            {this.state.completeStatus}
+          </div>
           {/*进度*/}
           <div className={indexStyles.contain2_item}>
             <div className={indexStyles.contain2_item_left}>

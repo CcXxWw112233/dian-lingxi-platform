@@ -55,7 +55,8 @@ export default class MainContent extends Component {
       propertiesList: [],
       is_change_parent_time: false,
       is_edit_title: false, // 是否修改名称
-      inputValue: ''
+      inputValue: '',
+      taskStatus: '' //进行状态
     }
     for (let val in props.LogicWithMainContent) {
       if (typeof props.LogicWithMainContent[val] == 'function') {
@@ -131,6 +132,7 @@ export default class MainContent extends Component {
         }
       })
     }
+    this.setStatusProperty && this.setStatusProperty()
   }
 
   // 获取添加属性中的不同字段
@@ -981,13 +983,23 @@ export default class MainContent extends Component {
             </div>
           </div>
           {/* 标题 E */}
-
+          <div
+            style={{
+              padding: '0 12px',
+              height: 28,
+              textAlign: 'center',
+              lineHeight: '28px',
+              border: '1px solid #D1D5E4',
+              borderRadius: 4,
+              color: '#212434',
+              width: 'max-content',
+              marginBottom: 12
+            }}
+          >
+            {this.state.taskStatus}
+          </div>
           {/* 各种字段的不同状态 S */}
           <div>
-            {/* 负责人区域 S */}
-            {this.whetherExistencePriciple('EXECUTOR') && this.renderPriciple()}
-            {/* 负责人区域 E */}
-
             {/* 进度区域 */}
             <div>
               <div
@@ -1011,6 +1023,10 @@ export default class MainContent extends Component {
                 </div>
               </div>
             </div>
+
+            {/* 负责人区域 S */}
+            {this.whetherExistencePriciple('EXECUTOR') && this.renderPriciple()}
+            {/* 负责人区域 E */}
 
             {/* 状态区域 */}
             <div>

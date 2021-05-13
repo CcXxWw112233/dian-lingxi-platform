@@ -113,6 +113,7 @@ export default class MainUIComponent extends Component {
         this.getInitCardDetailDatas(nextProps)
       }, 200)
     }
+    this.setStatusProperty && this.setStatusProperty()
   }
 
   // 卸载时清空私有数据
@@ -1000,7 +1001,21 @@ export default class MainUIComponent extends Component {
             </div>
           </div>
           {/* 标题 E */}
-
+          <div
+            style={{
+              padding: '0 12px',
+              height: 28,
+              textAlign: 'center',
+              lineHeight: '28px',
+              border: '1px solid #D1D5E4',
+              borderRadius: 4,
+              color: '#212434',
+              width: 'max-content',
+              marginBottom: 12
+            }}
+          >
+            {this.state.taskStatus}
+          </div>
           {/* 各种字段的不同状态 S */}
           <div>
             {/* 进度区域 */}
