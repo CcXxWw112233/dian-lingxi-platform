@@ -6,7 +6,7 @@ import {
   Dropdown,
   Menu,
   DatePicker,
-  Tooltip,
+  Progress,
   Button,
   Breadcrumb,
   InputNumber
@@ -861,7 +861,8 @@ export default class MainContent extends Component {
       type = '0',
       is_realize = '0',
       start_time,
-      due_time
+      due_time,
+      progress_percent
     } = drawContent
     const { properties = [], fields = [] } = drawContent
     const executors = getCurrentDrawerContentPropsModelFieldData({
@@ -986,6 +987,31 @@ export default class MainContent extends Component {
             {/* 负责人区域 S */}
             {this.whetherExistencePriciple('EXECUTOR') && this.renderPriciple()}
             {/* 负责人区域 E */}
+
+            {/* 进度区域 */}
+            <div>
+              <div
+                className={mainContentStyles.field_content}
+                style={{ cursor: 'pointer' }}
+              >
+                <div className={mainContentStyles.field_left}>
+                  <div className={mainContentStyles.field_hover}>
+                    {/* <span className={globalStyles.authTheme}>&#xe686;</span> */}
+                    <span>进度</span>
+                  </div>
+                </div>
+                <div
+                  className={`${mainContentStyles.field_right}`}
+                  style={{ paddingLeft: 12 }}
+                >
+                  <Progress
+                    percent={progress_percent}
+                    strokeColor={'#95DE64'}
+                  />
+                </div>
+              </div>
+            </div>
+
             {/* 状态区域 */}
             <div>
               {/* <div style={{ position: 'relative' }} className={mainContentStyles.field_content} style={{ cursor: 'pointer' }}>

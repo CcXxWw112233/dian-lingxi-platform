@@ -344,8 +344,22 @@ const LogicWithMainContent = {
     }
   },
 
+  // 获取子任务
+  checkChildCards: function(params) {
+    const { drawContent = {} } = this.props
+    const sub_task = getCurrentPropertiesData(
+      drawContent['properties'],
+      'SUBTASK'
+    )
+    return sub_task
+  },
+
   // 设置卡片是否完成 S
   setIsCheck: function() {
+    if (this.checkChildCards().length) {
+      message.warn('存在子任务，完成状态由子任务控制')
+      return
+    }
     const { drawContent = {} } = this.props
     const { is_realize = '0', card_id, board_id } = drawContent
     if (
