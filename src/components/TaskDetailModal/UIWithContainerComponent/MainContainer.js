@@ -351,7 +351,7 @@ const LogicWithMainContent = {
       drawContent['properties'],
       'SUBTASK'
     )
-    return sub_task
+    return sub_task || []
   },
 
   // 设置卡片是否完成 S
