@@ -620,6 +620,7 @@ export default class DateList extends Component {
                      : ''
                  }
                  ${festival_status == '1' ? indexStyles.holiday_date_no : ''}
+                 ${holiday ? indexStyles.hasholiday_number : ''}
                 `}
                 style={{
                   background:
@@ -628,22 +629,23 @@ export default class DateList extends Component {
                       : ''
                 }}
               >
-                {holiday && (
+                {holiday ? (
                   <div
                     style={{
                       position: 'absolute',
                       zIndex: 2,
-                      top: -24,
-                      left: -18,
-                      width: 48,
-                      height: 20
+                      top: 0,
+                      // left: -12,
+                      width: holiday.length === 2 ? 40 : 48,
+                      height: 20,
+                      left: '50%',
+                      transform: 'translateX(-50%)'
                       // backgroundColor: '#fff'
                     }}
                   >
                     {holiday}
                   </div>
-                )}
-                {isToday && gantt_view_mode == 'month' ? (
+                ) : isToday && gantt_view_mode == GanttViewMode.Day ? (
                   <span
                     style={{
                       color: '#ffffff',
@@ -692,8 +694,12 @@ export default class DateList extends Component {
                                       indexStyles.weekly_date_no}
                                     ${festival_status == '1' &&
                                       indexStyles.holiday_date_no}
-                                    ${has_lcb &&
-                                      indexStyles.has_moletones_date_no}`}
+                                    ${
+                                      has_lcb
+                                        ? indexStyles.has_moletones_date_no
+                                        : ''
+                                    }
+                        ${holiday ? indexStyles.hasholiday_number : ''}`}
                   style={{
                     background:
                       isToday && gantt_view_mode == GanttViewMode.Day
@@ -706,22 +712,23 @@ export default class DateList extends Component {
                   }}
                   // style={{ background: is_over_duetime && has_lcb ? '#FF7875' : '' }}
                 >
-                  {holiday && (
+                  {holiday ? (
                     <div
                       style={{
                         position: 'absolute',
                         zIndex: 2,
-                        top: -24,
-                        left: -18,
-                        width: 60,
+                        top: 0,
+                        // left: -12,
+                        width: holiday.length === 2 ? 40 : 48,
                         height: 20,
-                        backgroundColor: '#fff'
+                        backgroundColor: '#fff',
+                        left: '50%',
+                        transform: 'translateX(-50%)'
                       }}
                     >
                       {holiday}
                     </div>
-                  )}
-                  {isToday && gantt_view_mode == 'month' ? (
+                  ) : isToday && gantt_view_mode == GanttViewMode.Day ? (
                     <span
                       style={{
                         color: '#ffffff',

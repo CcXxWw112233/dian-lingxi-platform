@@ -51,6 +51,11 @@ export default class GroupListHead extends Component {
       this.gantt_card_out_middle = dom
       if (dom) {
         dom.addEventListener('scroll', this.ganttScroll, false)
+        dom.addEventListener(
+          'mouseenter',
+          this.onPointerEnter.bind(this, 'gantt')
+        )
+        dom.addEventListener('mouseleave', this.onPointerLeave.bind(this, ''))
       }
     }, 10)
   }
@@ -69,6 +74,11 @@ export default class GroupListHead extends Component {
   componentWillUnmount() {
     const dom = document.querySelector('#' + this.ganttScrollElementId)
     dom?.removeEventListener('scroll', this.ganttScroll, false)
+    dom?.removeEventListener(
+      'mouseenter',
+      this.onPointerEnter.bind(this, 'gantt')
+    )
+    dom?.removeEventListener('mouseleave', this.onPointerLeave.bind(this, ''))
   }
 
   /** 监听甘特图滚动 */

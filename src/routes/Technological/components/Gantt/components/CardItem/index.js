@@ -47,6 +47,8 @@ const card_width_diff = 8 //宽度误差微调
 const card_left_diff = 4 //位置误差微调
 @connect(mapStateToProps)
 export default class CardItem extends Component {
+  mouseEnterTimer = null
+  mousein = false
   constructor(props) {
     super(props)
     this.out_ref = React.createRef()
@@ -1476,6 +1478,7 @@ export default class CardItem extends Component {
     return true
   }
   set_drag_else_over_in = bool => {
+    this.mousein = bool
     const { card_rely_draging } = this.props
     const { rely_down } = this.state
     if (card_rely_draging && !rely_down) {
@@ -1608,11 +1611,17 @@ export default class CardItem extends Component {
       }, //查看子任务是查看父任务
       onMouseEnter: e => {
         e && e.stopPropagation()
+        clearTimeout(this.mouseEnterTimer)
         // console.log('s_event', 'onMouseEnter')
-        this.onMouseEnter()
-        this.set_drag_else_over_in(true)
+        this.mouseEnterTimer = setTimeout(() => {
+          this.onMouseEnter()
+          this.set_drag_else_over_in(true)
+        }, 100)
       },
       onMouseLeave: () => {
+        clearTimeout(this.mouseEnterTimer)
+        if (!this.mousein) return
+        this.mousein = false
         // console.log('s_event', 'onMouseLeave')
         this.set_drag_else_over_in(false)
         // 清除显示日期选中

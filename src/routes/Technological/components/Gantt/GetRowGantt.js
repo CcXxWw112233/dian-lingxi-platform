@@ -51,6 +51,7 @@ import GroupCanvas from './components/GroupCanvas'
 import MilestonesBaseBody from './components/MilestonesBaseProgress/MilestonesBaseBody'
 import CeateCardInput from './components/CeateCardInput'
 import BaseLineItem from './components/CardItem/BaseLineItem'
+import { debounce } from 'lodash'
 const clientWidth = document.documentElement.clientWidth //获取页面可见高度
 const dateAreaHeight = date_area_height //日期区域高度，作为修正
 const getEffectOrReducerByName = name => `gantt/${name}`
@@ -945,7 +946,7 @@ export default class GetRowGantt extends Component {
     } else {
       return {
         onMouseDown: this.dashedMousedown,
-        onMouseMove: this.dashedMouseMove,
+        onMouseMove: e => this.dashedMouseMove(e),
         onMouseLeave: this.dashedMouseLeave
       }
     }

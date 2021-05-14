@@ -38,6 +38,9 @@ export default class GroupMilestones extends Component {
   mouseHoverTimer = null
   /** menu的鼠标移入移出 */
   MenuMouseHoverTimer = null
+
+  /** 是否已经进入了鼠标移入事件 */
+  mousein = false
   constructor(props) {
     super(props)
     this.state = {
@@ -782,8 +785,7 @@ export default class GroupMilestones extends Component {
       belong_group_id,
       one_levels_all
     } = value
-    return null
-    return  (
+    return (
       <>
         {!!two_levels.length &&
           gantt_board_id != '0' &&
@@ -1279,6 +1281,7 @@ export default class GroupMilestones extends Component {
   singleMilestoneMouseEnter = arr => {
     clearTimeout(this.mouseHoverTimer)
     this.mouseHoverTimer = setTimeout(() => {
+      this.mousein = true
       if (this.cantNotMouseEnterLeave()) return
       if (arr.length != 1) return
       const { rela_ids = [], id } = arr[0]
@@ -1295,6 +1298,8 @@ export default class GroupMilestones extends Component {
   }
   singleMilestoneMouseLeave = item => {
     clearTimeout(this.mouseHoverTimer)
+    if (!this.mousein) return
+    this.mousein = false
     if (this.cantNotMouseEnterLeave()) return
     const { dispatch } = this.props
     dispatch({
