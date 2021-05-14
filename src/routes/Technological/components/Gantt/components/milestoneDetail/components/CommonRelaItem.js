@@ -93,7 +93,7 @@ export default class CommonRelaItem extends React.Component {
       milestone_detail: { id },
       dispatch
     } = this.props
-    dispatch({
+    return dispatch({
       type: 'milestoneDetail/getMilestoneDetail',
       payload: {
         id
@@ -149,7 +149,7 @@ export default class CommonRelaItem extends React.Component {
       setTimeout(() => {
         message.success('更新成功', MESSAGE_DURATION_TIME)
       }, 200)
-      this.updateMilestoneDetailDatas()
+      await this.updateMilestoneDetailDatas()
       if (window.location.href.indexOf('home') != -1) return
       this.updateGanttDatas({ ...obj, list_id })
       onChangeCardHandleCardDetail({
@@ -158,7 +158,7 @@ export default class CommonRelaItem extends React.Component {
         dispatch,
         operate_id: id //当前操作的id
       })
-      this.props.setStatusProperty && this.props.setStatusProperty()
+      this.props.setStatusProperty && this.props.setStatusProperty(true)
     } else {
       message.warn(res.message, MESSAGE_DURATION_TIME)
     }
