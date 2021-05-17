@@ -11,7 +11,7 @@ import OutlineGuideModal from './components/OutlineGuideModal'
 import { milestoneInit } from '@/services/technological/task.js'
 import ExcelRead from '../../../../components/Excel'
 import MilestoneBaseHeader from './components/MilestonesBaseProgress/MilestoneBaseHeader'
-
+import BatchOperateCheckbox from './components/MilestonesBaseProgress/BatchOperateCheckbox'
 @connect(mapStateToProps)
 export default class GroupListHead extends Component {
   constructor(props) {
@@ -185,7 +185,8 @@ export default class GroupListHead extends Component {
       group_view_type,
       outline_tree = [],
       get_gantt_data_loaded,
-      gantt_board_id
+      gantt_board_id,
+      batch_operating
     } = this.props
     const { startPlanType } = this.props
     const isNewProject =
@@ -250,16 +251,22 @@ export default class GroupListHead extends Component {
                 }}
               >
                 <MilestoneBaseHeader />
-                <OutLineHeadItem
-                  setScrollPosition={this.props.setScrollPosition}
-                  setGoldDateArr={this.props.setGoldDateArr}
-                  gantt_card_height={this.props.gantt_card_height}
-                  dataAreaRealHeight={this.props.dataAreaRealHeight}
-                  changeOutLineTreeNodeProto={
-                    this.props.changeOutLineTreeNodeProto
-                  }
-                  deleteOutLineTreeNode={this.props.deleteOutLineTreeNode}
-                />
+                <div>
+                  <BatchOperateCheckbox />
+                  <div style={{ marginLeft: batch_operating ? 20 : '' }}>
+                    <OutLineHeadItem
+                      setScrollPosition={this.props.setScrollPosition}
+                      setGoldDateArr={this.props.setGoldDateArr}
+                      gantt_card_height={this.props.gantt_card_height}
+                      dataAreaRealHeight={this.props.dataAreaRealHeight}
+                      changeOutLineTreeNodeProto={
+                        this.props.changeOutLineTreeNodeProto
+                      }
+                      deleteOutLineTreeNode={this.props.deleteOutLineTreeNode}
+                    />
+                  </div>
+                </div>
+
                 {/* <GroupListHeadElse
                   gantt_card_height={this.props.gantt_card_height}
                   dataAreaRealHeight={this.props.dataAreaRealHeight}
@@ -317,7 +324,8 @@ function mapStateToProps({
       outline_tree,
       startPlanType,
       get_gantt_data_loaded,
-      gantt_board_id
+      gantt_board_id,
+      batch_operating
     }
   }
 }) {
@@ -333,6 +341,7 @@ function mapStateToProps({
     outline_tree,
     startPlanType,
     get_gantt_data_loaded,
-    gantt_board_id
+    gantt_board_id,
+    batch_operating
   }
 }

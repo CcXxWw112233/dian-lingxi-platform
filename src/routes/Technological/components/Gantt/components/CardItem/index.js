@@ -2109,7 +2109,7 @@ export default class CardItem extends Component {
                     left: '100%',
                     paddingLeft: 8,
                     marginTop: -3,
-                    width: name.length * 20,
+                    width: name ? name.length * 20 : 20,
                     fontSize: 14,
                     height: 16,
                     lineHeight: '16px'
@@ -2344,7 +2344,7 @@ export default class CardItem extends Component {
                 left: '100%',
                 paddingLeft: 8,
                 marginTop: -3,
-                width: name.length * 20,
+                width: name ? name.length * 20 : 20,
                 fontSize: 14,
                 height: 16,
                 lineHeight: '16px'

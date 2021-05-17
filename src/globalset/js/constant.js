@@ -238,3 +238,10 @@ export const OrgPaymentMark = {
    */
   pay: 'pay'
 }
+
+/** 功能的code type 类型 */
+export const FEATURE_INSTANCE_CODE_TYPE = {
+  MILESTONE: '1', //里程碑
+  CARD: '2', //任务
+  FLOW: '3' //流程
+}
