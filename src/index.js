@@ -130,6 +130,7 @@ app.model(require('./models/registerSuccess').default)
 app.model(require('./models/resetPassword').default)
 app.model(require('./models/retrievePassword').default)
 app.model(require('./models/technological/expireRenew').default)
+app.model(require('./models/technological/orgStructure').default)
 
 // 4. Router
 app.router(require('./router').default)
