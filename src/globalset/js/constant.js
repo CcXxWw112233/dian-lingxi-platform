@@ -285,3 +285,6 @@ export const GanttViewDateWidth = {
 
 /** 甘特图滚动元素的id */
 export const ganttScrollElementId = 'gantt_card_out_middle'
+
+/** 最高的层级数值 */
+export const MaxZIndex = 1100

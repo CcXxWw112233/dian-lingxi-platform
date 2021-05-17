@@ -39,6 +39,7 @@ import {
   PAYUPGRADEURL
 } from '../../../../../../globalset/js/constant'
 import moment from 'moment'
+import { OrgStructureModel } from '../../../../../../models/technological/orgStructure'
 // import PayUpgrade from '@/routes/Technological/components/PayUpgrade/index'
 
 const CreateOrganizationModal = lazy(() =>
@@ -61,9 +62,11 @@ const NotificationSettingsModal = lazy(() =>
 //   import('@/routes/Technological/components/OrganizationMember')
 // )
 // const Organization = lazy(() => import('@/routes/organizationManager'))
-const PayUpgrade = lazy(() =>
-  import('@/routes/Technological/components/PayUpgrade/index')
-)
+// const PayUpgrade = lazy(() =>
+//   import('@/routes/Technological/components/PayUpgrade/index')
+// )
+/** 组织架构 */
+const OrgStructure = lazy(() => import('../OrganizationalStructure'))
 
 const { SubMenu } = Menu
 // let timer;
@@ -425,6 +428,18 @@ export default class SimpleNavigation extends Component {
         this.logout(e)
         this.props.dropdownHandleVisibleChange(false)
         break
+      /** 打开组织架构 */
+      case 'orgstructure':
+        dispatch({
+          type: [
+            OrgStructureModel.namespace,
+            OrgStructureModel.reducers.updateDatas
+          ].join('/'),
+          payload: {
+            showStructure: true
+          }
+        })
+        break
 
       default:
         // 其他组织的切换
@@ -673,7 +688,9 @@ export default class SimpleNavigation extends Component {
             isHasMemberView() && (
               <div
                 className={indexStyles.default_select_setting}
-                onClick={this.handleOrgListMenuClick.bind(this, { key: '24' })}
+                onClick={this.handleOrgListMenuClick.bind(this, {
+                  key: 'orgstructure'
+                })}
               >
                 <div className={indexStyles.team}>
                   <div
@@ -681,16 +698,10 @@ export default class SimpleNavigation extends Component {
                   >
                     <img
                       src={require('../../../../../../assets/workbench/home/icon_team.png')}
-                      alt="team"
+                      alt="orgstructure"
                     />
                   </div>
-                  <div className={indexStyles.middle_text}>
-                    团队
-                    {currentNounPlanFilterName(
-                      MEMBERS,
-                      this.props.currentNounPlan
-                    )}
-                  </div>
+                  <div className={indexStyles.middle_text}>组织架构</div>
                 </div>
               </div>
             )}
@@ -1095,6 +1106,7 @@ export default class SimpleNavigation extends Component {
             />
           )}
 
+          {this.props.showStructure && <OrgStructure />}
           {/* {this.state.payUpgradeModalVisible && (
             <PayUpgrade
               setPayUpgradeModalVisible={this.setPayUpgradeModalVisible}
@@ -1120,7 +1132,8 @@ function mapStateToProps({
   },
   organizationManager: {
     datas: { currentNounPlan }
-  }
+  },
+  [OrgStructureModel.namespace]: { showStructure }
 }) {
   return {
     currentNounPlan,
@@ -1131,6 +1144,7 @@ function mapStateToProps({
     is_show_org_name,
     is_all_org,
     is_show_simple,
-    userOrgPermissions
+    userOrgPermissions,
+    showStructure
   }
 }
