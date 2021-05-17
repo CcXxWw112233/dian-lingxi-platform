@@ -10,6 +10,7 @@ const getEffectOrReducerByName = name => `gantt/${name}`
 export default class DateListLCBItem extends Component {
   constructor(props) {
     super(props)
+    this.state = {}
   }
 
   checkLCB = ({ has_lcb }) => {}

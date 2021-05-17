@@ -11,6 +11,8 @@ import {
 import ShowAddMenberModal from '../../../../routes/Technological/components/Project/ShowAddMenberModal'
 import { isApiResponseOk } from '../../../../utils/handleResponseData'
 import { PROJECTS } from '../../../../globalset/js/constant'
+import AutoSize from 'react-virtualized-auto-sizer'
+import { FixedSizeList as List } from 'react-window'
 
 class DropdownSelect extends Component {
   constructor(props) {
@@ -28,9 +30,10 @@ class DropdownSelect extends Component {
 
   handleSeletedMenuItem = item => {}
 
+  /** 渲染方法类的item 废弃 */
   renderFunctionMenuItem = itemList => {
     return itemList.map((item, index) => (
-      <Menu.Item
+      <div
         key={item.id}
         style={{
           lineHeight: '30px',
@@ -47,7 +50,7 @@ class DropdownSelect extends Component {
           <Icon type={item.icon} style={{ fontSize: '17px' }} />
           <span style={{ paddingLeft: '10px' }}>{item.name}</span>
         </span>
-      </Menu.Item>
+      </div>
     ))
   }
   //添加项目成员操作-------
@@ -109,16 +112,63 @@ class DropdownSelect extends Component {
   }
   //添加项目成员操作-------end
 
-  renderMenuItem = itemList => {
-    return itemList.map((item, index) => (
-      <Menu.Item
+  // renderMenuItem = itemList => {
+  //   return itemList.map((item, index) => (
+
+  //   ))
+  // }
+
+  componentWillReceiveProps() {
+    const { itemList, fuctionMenuItemList } = this.props
+    this.setState({
+      itemList: itemList,
+      fuctionMenuItemList: fuctionMenuItemList
+    })
+  }
+
+  /** 单个菜单渲染 */
+  MenuItemRow = (goruplist, { style, index }) => {
+    const { selectedKeys = [], menuItemClick } = this.props
+    const item = goruplist[index] || {}
+    /** 渲染类型是func的数据 */
+    if (item._type === 'func')
+      return (
+        <div
+          key={item.id}
+          style={{
+            lineHeight: '30px',
+            fontSize: '14px',
+            fontWeight: '500',
+            color: '#000000',
+            boxShadow: 'none',
+            borderRadius: '0',
+            border: '0',
+            borderRight: '0px!important',
+            ...style
+          }}
+          className={styles.funcItem}
+        >
+          <span style={{ color: '#1890FF' }}>
+            <Icon type={item.icon} style={{ fontSize: '17px' }} />
+            <span style={{ paddingLeft: '10px' }}>{item.name}</span>
+          </span>
+        </div>
+      )
+    /** 渲染普通菜单 */
+    return (
+      <div
         key={item.id}
+        style={style}
         disabled={item.disabled || false}
-        className={
+        onClick={() => !item.disabled && menuItemClick({ key: item.id })}
+        className={`${
           item.disabled === true
             ? styles.menuItemDisabled
             : styles.menuItemNormal
-        }
+        } ${selectedKeys.includes(item.id) ? styles.active : ''}`}
+        title={`${item.name ? item.name : ''} ${
+          item.parentName ? '#' + item.parentName : ''
+        }`}
       >
         <div style={{ display: 'flex' }}>
           <div
@@ -149,30 +199,50 @@ class DropdownSelect extends Component {
             </div>
           )}
         </div>
-      </Menu.Item>
-    ))
+      </div>
+    )
   }
 
-  componentWillReceiveProps() {
-    const { itemList, fuctionMenuItemList } = this.props
-    this.setState({
-      itemList: itemList,
-      fuctionMenuItemList: fuctionMenuItemList
-    })
-  }
-
+  /** 渲染overlay */
   renderContent() {
     const { fuctionMenuItemList = [], menuItemClick = () => {} } = this.state
     const { itemList = [], selectedKeys = [] } = this.props
+
+    /** 合并了func类型的数据 */
+    const grouplist = [
+      ...fuctionMenuItemList.map(item => ({ ...item, _type: 'func' })),
+      ...itemList
+    ]
+
+    /** 最高的高度 */
+    const maxHeight = 500
+    /** 单个高度 */
+    const itemSize = 40
+    /** 盒子高度 */
+    const boxHeight = grouplist.length * itemSize
+
     return (
-      <Menu
+      <div
         className={styles.dropdownMenu}
-        onClick={menuItemClick}
-        selectedKeys={selectedKeys}
+        // onClick={menuItemClick}
+        // selectedKeys={selectedKeys}
+        style={{ height: Math.min(maxHeight, boxHeight) }}
       >
-        {this.renderFunctionMenuItem(fuctionMenuItemList)}
-        {this.renderMenuItem(itemList)}
-      </Menu>
+        {/* {this.renderFunctionMenuItem(fuctionMenuItemList)} */}
+        <AutoSize>
+          {({ height, width }) => (
+            <List
+              width={width}
+              height={height}
+              itemCount={grouplist.length}
+              itemSize={itemSize}
+            >
+              {this.MenuItemRow.bind(this, grouplist)}
+            </List>
+          )}
+        </AutoSize>
+        {/* {this.renderMenuItem(itemList)} */}
+      </div>
     )
   }
   render() {

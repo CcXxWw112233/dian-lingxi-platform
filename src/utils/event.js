@@ -61,3 +61,9 @@ export const CARDBARTAGSUPDATE = 'cardbartagsupdate'
 
 /** 删除一个任务的事件 */
 export const CARDREMOVE = 'cardremove'
+
+/** 当甘特图视图Y轴滚动的时候 */
+export const GANTTSCROLLY = 'ganttscorlly'
+
+/** 当甘特图视图X轴滚动的时候 */
+export const GANTTSCROLLX = 'ganttscrollx'

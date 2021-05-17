@@ -51,6 +51,7 @@ import GroupCanvas from './components/GroupCanvas'
 import MilestonesBaseBody from './components/MilestonesBaseProgress/MilestonesBaseBody'
 import CeateCardInput from './components/CeateCardInput'
 import BaseLineItem from './components/CardItem/BaseLineItem'
+import { debounce } from 'lodash'
 const clientWidth = document.documentElement.clientWidth //获取页面可见高度
 const dateAreaHeight = date_area_height //日期区域高度，作为修正
 const getEffectOrReducerByName = name => `gantt/${name}`
@@ -945,7 +946,7 @@ export default class GetRowGantt extends Component {
     } else {
       return {
         onMouseDown: this.dashedMousedown,
-        onMouseMove: this.dashedMouseMove,
+        onMouseMove: e => this.dashedMouseMove(e),
         onMouseLeave: this.dashedMouseLeave
       }
     }
@@ -1201,7 +1202,7 @@ export default class GetRowGantt extends Component {
               }
               if (tree_type == '2') {
                 return (
-                  <Fragment>
+                  <Fragment key={id}>
                     {active_baseline_data[id] && (
                       <BaseLineItem
                         data={active_baseline_data[id]}
@@ -1209,6 +1210,7 @@ export default class GetRowGantt extends Component {
                         gantt_view_mode={gantt_view_mode}
                         type={tree_type}
                         ganttData={value}
+                        key={id}
                       />
                     )}
                     <GetRowTaskItem
@@ -1238,7 +1240,7 @@ export default class GetRowGantt extends Component {
                 )
               } else if (tree_type == '3') {
                 return (
-                  <Fragment>
+                  <Fragment key={id}>
                     {active_baseline_data[id] && (
                       <BaseLineItem
                         data={active_baseline_data[id]}
@@ -1246,6 +1248,7 @@ export default class GetRowGantt extends Component {
                         gantt_view_mode={gantt_view_mode}
                         type={tree_type}
                         ganttData={value}
+                        key={id}
                       />
                     )}
                     <WorkFlow
@@ -1300,6 +1303,7 @@ export default class GetRowGantt extends Component {
                         data={active_baseline_data[id]}
                         top={top}
                         type={tree_type}
+                        key={id}
                         gantt_view_mode={gantt_view_mode}
                         ganttData={value}
                       />
