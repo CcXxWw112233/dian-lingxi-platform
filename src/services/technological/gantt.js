@@ -313,3 +313,28 @@ export async function setGanttUserCustorm(data) {
     data
   })
 }
+
+// 批量删除节点
+export async function batchDeleteNode(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/board/content/multiple`,
+    method: 'DELETE',
+    data
+  })
+}
+// 批量设置字段
+export async function batchSetFileds(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/board/field/relation/multiple`,
+    method: 'POST',
+    data
+  })
+}
+// 批量删除字段
+export async function batchDeleteFileds(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/board/field/relation/multiple`,
+    method: 'DELETE',
+    data
+  })
+}

@@ -7,18 +7,22 @@ import {
 import styles from './index.less'
 import outlineStyles from '../OutlineTree/index.less'
 import globalStyles from '@/globalset/css/globalClassName.less'
-import { Menu, Switch, Dropdown, Modal, Checkbox } from 'antd'
+import { Menu, Switch, Dropdown, Modal, Checkbox, message } from 'antd'
 import { connect } from 'dva'
 import OperateMenu from './OperateMenu'
 import { getTreeNodeValue } from '../../../../../../models/technological/workbench/gantt/gantt_utils'
 import { FEATURE_INSTANCE_CODE_TYPE } from '../../../../../../globalset/js/constant'
+import FiledModal from './FiledModal'
+import { batchDeleteNode } from '../../../../../../services/technological/gantt'
+import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
 // 分组和大纲视图最顶部的里程碑那一栏
 @connect(mapStateToProps)
 export default class MilestoneBaseHeader extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      realy_outline_tree_round_ids: [] //大纲树下所有的id(包含隐藏)
+      realy_outline_tree_round_ids: [], //大纲树下所有的id(包含隐藏)
+      filed_modal_visible: false
     }
   }
   componentDidMount() {
@@ -208,17 +212,23 @@ export default class MilestoneBaseHeader extends Component {
       } else {
       }
     }
-    dispatch({
-      type: 'gantt/getGanttData',
-      payload: {}
-    }).then(() => {
-      dispatch({
-        type: 'gantt/updateDatas',
-        payload: {
-          batch_opetate_ids: [],
-          batch_operating: false
-        }
-      })
+    batchDeleteNode({ card_ids, flow_ids, milestone_ids }).then(res => {
+      if (isApiResponseOk(res)) {
+        dispatch({
+          type: 'gantt/getGanttData',
+          payload: {}
+        }).then(() => {
+          dispatch({
+            type: 'gantt/updateDatas',
+            payload: {
+              batch_opetate_ids: [],
+              batch_operating: false
+            }
+          })
+        })
+      } else {
+        message.error(res.message)
+      }
     })
   }
 
@@ -261,6 +271,13 @@ export default class MilestoneBaseHeader extends Component {
       payload: {
         batch_opetate_ids: _batch_opetate_ids
       }
+    })
+  }
+
+  // 设置字段弹框显示隐藏
+  setFiledModalVisible = bool => {
+    this.setState({
+      filed_modal_visible: bool
     })
   }
 
@@ -385,6 +402,7 @@ export default class MilestoneBaseHeader extends Component {
               className={`${outlineStyles.flex2} ${styles.batching_operate_area}`}
             >
               <div
+                onClick={() => this.setFiledModalVisible(true)}
                 className={`${globalStyles.authTheme} ${styles.operate_icon}`}
               >
                 &#xe7bd;
@@ -398,6 +416,10 @@ export default class MilestoneBaseHeader extends Component {
             </div>
           )}
         </div>
+        <FiledModal
+          visible={this.state.filed_modal_visible}
+          setFiledModalVisible={this.setFiledModalVisible}
+        />
       </div>
     )
   }
