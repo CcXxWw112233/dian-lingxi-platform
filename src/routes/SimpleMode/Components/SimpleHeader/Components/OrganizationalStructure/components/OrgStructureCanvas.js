@@ -189,12 +189,11 @@ export default class OrgStructureCanvas extends React.Component {
     let prevWidth = 0
     /** 上一个渲染元素的X坐标 */
     // let prevX = 0
-    /** 渲染的上一个总和 */
+    /** 渲染的上一个数据的结尾x */
     let prevTotalX = 0
     let prevRect = null
     let totalH = 0
     let childH = 0
-    const childHs = []
     let heightArr = []
     /** 从中间分隔 */
     // const splitCenter = Math.floor(roles.length / 2)
@@ -319,20 +318,21 @@ export default class OrgStructureCanvas extends React.Component {
       totalLine.cache()
       this.Layer.add(totalLine)
 
-      const totalRect = new Konva.Rect({
-        x: start.x() - 20,
-        y: start.y() - 20,
-        width: end.x() + end.width() - start.x() + 20 * 2,
-        height: maxHeight,
-        stroke: 'red',
-        strokeWidth: 2,
-        dash: [10, 1, 0, 2],
-        cornerRadius: 10,
-        levels: 0
-      })
-      totalRect.listening(false)
-      totalRect.cache()
-      this.Layer.add(totalRect)
+      // /** 外围虚线框 */
+      // const totalRect = new Konva.Rect({
+      //   x: start.x() - 20,
+      //   y: start.y() - 20,
+      //   width: end.x() + end.width() - start.x() + 20 * 2,
+      //   height: maxHeight,
+      //   stroke: 'red',
+      //   strokeWidth: 2,
+      //   dash: [10, 1, 0, 2],
+      //   cornerRadius: 10,
+      //   levels: 0
+      // })
+      // totalRect.listening(false)
+      // totalRect.cache()
+      // this.Layer.add(totalRect)
       this.Layer.draw()
     }
     // }
@@ -484,6 +484,7 @@ export default class OrgStructureCanvas extends React.Component {
         yH = yH - LineHeight
       }
 
+      /** 防止数据刷新之后，无法显示选中状态 */
       if (activeItem && activeItem.id === item.id) {
         this.setRectActive(rect, item)
       }
@@ -494,13 +495,7 @@ export default class OrgStructureCanvas extends React.Component {
         topLine.destroy()
       }
       if (roles.length) {
-        // const width = this.getChildWidthTotal(roles)
         const CWidth = this.getChildWidthNotSplit(roles)
-        /** 往左偏的位置计算
-         * @description 初始X + 子集总长的一半 得出 子集一半的位置
-         * 然后用一半的位置减去开始的位置得出偏移X
-         * line.x() - (line.x() - (line.x() - width / 2)) - strokeWidth * 2 - 2
-         */
         childH = this.rolesChildRender(
           this.forMathChild(roles),
           !!StructureData[index + 1],
