@@ -1,0 +1,128 @@
+[
+  {
+    "role_group_name": "力高集团1",
+    "id": "1",
+    "role_type": "1",
+    "roles": [
+      {
+        "id": "2",
+        "role_group_name": "财务融资中心",
+        "role_type": "2",
+        "roles": []
+      },
+      {
+        "id": "3",
+        "role_group_name": "财务融资中心",
+        "role_type": "2",
+        "roles": []
+      },
+      {
+        "id": "4",
+        "role_group_name": "战略企划中心",
+        "role_type": "2",
+        "roles": []
+      },
+      {
+        "id": "5",
+        "role_group_name": "品牌管理中心",
+        "role_type": "2",
+        "roles": []
+      }
+    ]
+  },
+  {
+    "role_group_name": "力高集团2",
+    "id": "20",
+    "role_type": "1",
+    "roles": [
+      {
+        "id": "21",
+        "role_group_name": "财务融资中心",
+        "role_type": "2",
+        "roles": [
+          { "id": "26", "role_group_name": "财务融资中心", "role_type": "2" }
+        ]
+      },
+      {
+        "id": "23",
+        "role_group_name": "财务融资中心",
+        "role_type": "2",
+        "roles": []
+      },
+      {
+        "id": "24",
+        "role_group_name": "战略企划中心",
+        "role_type": "2",
+        "roles": []
+      },
+      {
+        "id": "25",
+        "role_group_name": "品牌管理中心132313211321321",
+        "role_type": "2",
+        "roles": []
+      }
+    ]
+  },
+  {
+    "role_group_name": "力高集团3",
+    "id": "30",
+    "role_type": "1",
+    "roles": [
+      {
+        "id": "31",
+        "role_group_name": "财务融资中心",
+        "role_type": "2",
+        "roles": []
+      },
+      {
+        "id": "33",
+        "role_group_name": "财务融资中心",
+        "role_type": "2",
+        "roles": []
+      },
+      {
+        "id": "34",
+        "role_group_name": "战略企划中心",
+        "role_type": "2",
+        "roles": []
+      },
+      {
+        "id": "35",
+        "role_group_name": "品牌管理中心132313211321321",
+        "role_type": "2",
+        "roles": []
+      }
+    ]
+  },
+  {
+    "role_group_name": "力高集团4",
+    "id": "40",
+    "role_type": "1",
+    "roles": [
+      {
+        "id": "41",
+        "role_group_name": "财务融资中心",
+        "role_type": "2",
+        "roles": []
+      },
+      {
+        "id": "43",
+        "role_group_name": "财务融资中心",
+        "role_type": "2",
+        "roles": []
+      },
+      {
+        "id": "44",
+        "role_group_name": "战略企划中心",
+        "role_type": "2",
+        "roles": []
+      },
+      {
+        "id": "45",
+        "role_group_name": "品牌管理中心132313211321321",
+        "role_type": "2",
+        "roles": []
+      }
+    ]
+  }
+]
