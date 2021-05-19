@@ -6,6 +6,7 @@ import { setGanttUserCustorm } from '../../../../../../services/technological/ga
 import { BOOLEAN_FALSE_CODE } from '../../../../../../globalset/js/constant'
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
 import { connect } from 'dva'
+import { ganttIsOutlineView } from '../../constants'
 const SubMenu = Menu.SubMenu
 
 @connect(mapStateToProps)
@@ -98,10 +99,15 @@ export default class OperateMenu extends Component {
     }
   }
   render() {
-    const { card_name_outside } = this.props
+    const { card_name_outside, group_view_type } = this.props
     return (
       <Menu onClick={this.handleOnSelect}>
-        <Menu.Item key="set_name_outside">
+        <Menu.Item
+          key="set_name_outside"
+          style={{
+            display: ganttIsOutlineView({ group_view_type }) ? 'block' : 'none'
+          }}
+        >
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <div style={{ marginRight: 14 }}>名称外置</div>
             <div onClick={e => this.setCardNameOutsideBuddle(e)}>
@@ -112,8 +118,12 @@ export default class OperateMenu extends Component {
             </div>
           </div>
         </Menu.Item>
-        <Menu.Item>基线对照</Menu.Item>
-        <SubMenu title={'选择隐藏项'}>
+        <SubMenu
+          title={'选择隐藏项'}
+          style={{
+            display: ganttIsOutlineView({ group_view_type }) ? 'block' : 'none'
+          }}
+        >
           <Menu.Item>
             <div className={styles.hide_sub_menu}>
               <div>逾期的任务</div>
@@ -197,6 +207,7 @@ function mapStateToProps({
       card_name_outside,
       outline_tree_filter_type,
       gantt_board_id,
+      group_view_type,
       batch_operating
     }
   }
@@ -207,6 +218,7 @@ function mapStateToProps({
     outline_tree_original,
     outline_tree_filter_type,
     gantt_board_id,
-    batch_operating
+    batch_operating,
+    group_view_type
   }
 }

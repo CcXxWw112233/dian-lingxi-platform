@@ -22,9 +22,9 @@ export default class FileldsTypeWrapper extends Component {
           <div className={commonStyles.c_left}>
             <div className={`${commonStyles.check_box}`}>
               <Checkbox
-                value={field_id}
+                value={id}
                 onChange={this.props.singleChange}
-                checked={remove_select_ids.includes(field_id)}
+                checked={remove_select_ids.includes(id)}
               />
             </div>
             <div

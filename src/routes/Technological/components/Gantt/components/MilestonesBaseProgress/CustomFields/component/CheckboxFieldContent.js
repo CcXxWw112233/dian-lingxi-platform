@@ -119,9 +119,9 @@ export default class CheckboxFieldContent extends Component {
           <div className={commonStyles.c_left}>
             <div className={`${commonStyles.check_box}`}>
               <Checkbox
-                value={field_id}
+                value={id}
                 onChange={this.props.singleChange}
-                checked={add_select_ids.includes(field_id)}
+                checked={add_select_ids.includes(id)}
               />
             </div>
             <div

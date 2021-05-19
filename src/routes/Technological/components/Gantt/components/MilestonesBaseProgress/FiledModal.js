@@ -14,11 +14,12 @@ import {
 } from '../../../../../../services/technological/gantt'
 import { isApiResponseOk } from '../../../../../../utils/handleResponseData'
 import { getCustomFieldList } from '../../../../../../services/organization'
+import { ganttIsOutlineView } from '../../constants'
 
 @connect(mapStateToProps)
 export default class FiledModal extends Component {
   state = {
-    operate_type: 'add',
+    operate_type: 'add', // add || remove
     add_select_ids: [], //添加字段已选项
     remove_select_ids: [], //移除字段选项
     fields: [] //字段列表
@@ -26,8 +27,11 @@ export default class FiledModal extends Component {
   componentDidMount() {
     this.fetchCustomFields()
   }
-  componentWillReceiveProps() {
-    this.fetchCustomFields()
+  componentWillReceiveProps(nextProps) {
+    // 弹出的时候做请求
+    if (nextProps.visible && !this.props.visible) {
+      this.fetchCustomFields()
+    }
   }
   // 过滤出需要渲染的条
   filterEffectFields = (fields = []) => {
@@ -35,9 +39,6 @@ export default class FiledModal extends Component {
       const { field_type } = item
       return ['1', '2'].includes(field_type)
     })
-    console.log('ssssssssssadad', fields)
-    console.log('ssssssssssadad——1', _fields)
-
     this.setState({
       fields: _fields
     })
@@ -117,7 +118,7 @@ export default class FiledModal extends Component {
       //如果原来为全选，就变为空
     } else {
       //其它情况下，没有已选或者选了一部分，都变为全选
-      _add_select_ids = fields.map(item => item.field_id)
+      _add_select_ids = fields.map(item => item.id)
     }
     this.setState({
       add_select_ids: _add_select_ids
@@ -144,6 +145,11 @@ export default class FiledModal extends Component {
 
   onCancel = () => {
     this.props.setFiledModalVisible(false)
+    this.setState({
+      operate_type: 'add',
+      add_select_ids: [],
+      remove_select_ids: []
+    })
   }
   //子项影响父级
   handleUpdateModelDatas = ({ data, type }) => {
@@ -196,32 +202,44 @@ export default class FiledModal extends Component {
     if ('add' == operate_type) {
       this.setFields()
     } else if ('remove' == operate_type) {
-      this.removeFields()
+      this.removeFieldsConfirm()
     } else {
     }
   }
 
   //获取参数
   getRequestParams = () => {
-    const { batch_opetate_ids = [], outline_tree = [] } = this.props
+    const {
+      batch_opetate_ids = [],
+      outline_tree = [],
+      group_view_type,
+      gantt_board_id
+    } = this.props
     let card_ids = [],
       milestone_ids = [],
-      flow_ids = []
-    for (let val of batch_opetate_ids) {
-      const { tree_type, id } = getTreeNodeValue(outline_tree, val) || {}
-      if (tree_type == FEATURE_INSTANCE_CODE_TYPE.MILESTONE) {
-        milestone_ids.push(id)
-      } else if (tree_type == FEATURE_INSTANCE_CODE_TYPE.CARD) {
-        card_ids.push(id)
-      } else if (tree_type == FEATURE_INSTANCE_CODE_TYPE.FLOW) {
-        flow_ids.push(id)
-      } else {
+      flow_ids = [],
+      list_ids
+    if (ganttIsOutlineView({ group_view_type })) {
+      for (let val of batch_opetate_ids) {
+        const { tree_type, id } = getTreeNodeValue(outline_tree, val) || {}
+        if (tree_type == FEATURE_INSTANCE_CODE_TYPE.MILESTONE) {
+          milestone_ids.push(id)
+        } else if (tree_type == FEATURE_INSTANCE_CODE_TYPE.CARD) {
+          card_ids.push(id)
+        } else if (tree_type == FEATURE_INSTANCE_CODE_TYPE.FLOW) {
+          flow_ids.push(id)
+        } else {
+        }
       }
+    } else {
+      list_ids = batch_opetate_ids
     }
     return {
       card_ids,
       milestone_ids,
-      flow_ids
+      list_ids,
+      board_id: gantt_board_id
+      // flow_ids
     }
   }
 
@@ -230,8 +248,8 @@ export default class FiledModal extends Component {
     const { fields = [], add_select_ids } = this.state
     let field_values = {}
     for (let val of fields) {
-      if (add_select_ids.includes(val.field_id)) {
-        field_values[val.field_id] = val.field_value || ''
+      if (add_select_ids.includes(val.id)) {
+        field_values[val.id] = val.field_value || ''
       }
     }
     const param = { ...this.getRequestParams(), field_values }
@@ -243,10 +261,19 @@ export default class FiledModal extends Component {
       }
     })
   }
-
+  // 移除字段
+  removeFieldsConfirm = () => {
+    const _self = this
+    Modal.confirm({
+      title: '确认移除字段？',
+      onOk() {
+        _self.removeFields()
+      }
+    })
+  }
   removeFields = () => {
     const { remove_select_ids } = this.state
-    const param = { ...this.getRequestParams(), fields: remove_select_ids }
+    const param = { ...this.getRequestParams(), field_ids: remove_select_ids }
     batchDeleteFileds(param).then(res => {
       if (isApiResponseOk(res)) {
         message.success('成功移除字段')
@@ -254,6 +281,22 @@ export default class FiledModal extends Component {
         message.error(res.message)
       }
     })
+  }
+
+  //设置确认按钮disabled
+  setButtonDisabled = () => {
+    const {
+      operate_type,
+      remove_select_ids = [],
+      add_select_ids = []
+    } = this.state
+    if (operate_type == 'add') {
+      return !add_select_ids.length
+    } else if (operate_type == 'remove') {
+      return !remove_select_ids.length
+    } else {
+      return false
+    }
   }
 
   render() {
@@ -272,6 +315,7 @@ export default class FiledModal extends Component {
         okText={operate_type == 'add' ? '添加' : '移除'}
         onCancel={this.onCancel}
         onOk={this.onOk}
+        okButtonProps={{ disabled: this.setButtonDisabled() }}
         destroyOnClose
       >
         <div style={{ display: operate_type == 'add' ? 'block' : 'none' }}>

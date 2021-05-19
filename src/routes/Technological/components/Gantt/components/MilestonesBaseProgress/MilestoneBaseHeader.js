@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import {
   ganttIsOutlineView,
+  ganttIsSingleBoardGroupView,
   milestone_base_height,
   showMilestoneBase
 } from '../../constants'
@@ -22,17 +23,46 @@ export default class MilestoneBaseHeader extends Component {
     super(props)
     this.state = {
       realy_outline_tree_round_ids: [], //大纲树下所有的id(包含隐藏)
+      list_group_ids: [], //分组视图节点id
       filed_modal_visible: false
     }
   }
   componentDidMount() {
+    this.resetState()
     this.fetchSetting()
-    this.recusionCheckOutlineIds()
+    this.recusionCheckOutlineIds(this.props)
+    this.getGroupListId(this.props)
   }
   componentWillReceiveProps(nextProps) {
     if (this.props.outline_tree.length !== nextProps.outline_tree.length) {
-      this.recusionCheckOutlineIds()
+      this.recusionCheckOutlineIds(nextProps)
     }
+    if (
+      this.props.list_group.length != nextProps.list_group.length ||
+      this.props.gantt_board_id != nextProps.gantt_board_id
+    ) {
+      this.getGroupListId(nextProps)
+    }
+    // 检测到切换视图退出批量设置重置
+    if (
+      this.props.group_view_type != nextProps.group_view_type ||
+      this.props.gantt_board_id != nextProps.gantt_board_id
+    ) {
+      this.resetState()
+    }
+  }
+  resetState = () => {
+    this.setState({
+      realy_outline_tree_round_ids: [],
+      list_group_ids: []
+    })
+    this.props.dispatch({
+      type: 'gantt/updateDatas',
+      payload: {
+        batch_operating: false,
+        batch_opetate_ids: []
+      }
+    })
   }
   // 获取设置项
   fetchSetting = async () => {
@@ -181,13 +211,19 @@ export default class MilestoneBaseHeader extends Component {
     dispatch({
       type: 'gantt/updateDatas',
       payload: {
-        batch_operating: false
+        batch_operating: false,
+        batch_opetate_ids: []
       }
     })
   }
 
   // 批量删除任务里程碑等等
   batchDeleteInstanceConfirm = () => {
+    const { batch_opetate_ids = [] } = this.props
+    if (!batch_opetate_ids.length) {
+      message.warn('请选择需要删除的节点')
+      return
+    }
     const _self = this
     Modal.confirm({
       title: '确认删除所选字段吗？',
@@ -232,8 +268,9 @@ export default class MilestoneBaseHeader extends Component {
     })
   }
 
-  recusionCheckOutlineIds = flag => {
-    const { outline_tree = [] } = this.props
+  // 获取大纲树状结构所有节点id
+  recusionCheckOutlineIds = props => {
+    const { outline_tree = [] } = props
     let realy_outline_tree_round_ids = [] //大纲树递归获取数据成为一维数组
     const recusion = arr => {
       for (let val of arr) {
@@ -250,21 +287,32 @@ export default class MilestoneBaseHeader extends Component {
       realy_outline_tree_round_ids
     })
   }
+  // 获取分组所有分组id
+  getGroupListId = props => {
+    const { list_group = [] } = props
+    const list_group_ids = []
+    for (let val of list_group) {
+      list_group_ids.push(val.list_id)
+    }
+    this.setState({
+      list_group_ids
+    })
+  }
   // 全选
   onCheckAllChange = () => {
-    const { batch_opetate_ids = [], dispatch } = this.props
-    const { realy_outline_tree_round_ids = [] } = this.state
-    let checked = false
+    const { batch_opetate_ids = [], dispatch, group_view_type } = this.props
     let _batch_opetate_ids = []
+    const code = ganttIsOutlineView({ group_view_type })
+      ? 'realy_outline_tree_round_ids'
+      : 'list_group_ids'
     if (
       batch_opetate_ids.length &&
-      batch_opetate_ids.length === realy_outline_tree_round_ids.length
+      batch_opetate_ids.length === this.state[code].length
     ) {
       //如果原来为全选，就变为空
     } else {
       //其它情况下，没有已选或者选了一部分，都变为全选
-      _batch_opetate_ids = realy_outline_tree_round_ids
-      checked = true
+      _batch_opetate_ids = this.state[code]
     }
     dispatch({
       type: 'gantt/updateDatas',
@@ -272,6 +320,34 @@ export default class MilestoneBaseHeader extends Component {
         batch_opetate_ids: _batch_opetate_ids
       }
     })
+  }
+  //全选框的状态
+  setAllCheckStatus = () => {
+    const { group_view_type, gantt_board_id, batch_opetate_ids } = this.props
+    const { realy_outline_tree_round_ids = [], list_group_ids } = this.state
+    let indeterminate, all_checked
+    if (ganttIsOutlineView({ group_view_type })) {
+      indeterminate =
+        batch_opetate_ids.length &&
+        realy_outline_tree_round_ids.length > batch_opetate_ids.length
+      all_checked =
+        batch_opetate_ids.length &&
+        realy_outline_tree_round_ids.length == batch_opetate_ids.length
+    } else if (
+      ganttIsSingleBoardGroupView({ gantt_board_id, group_view_type })
+    ) {
+      indeterminate =
+        batch_opetate_ids.length &&
+        list_group_ids.length > batch_opetate_ids.length
+      all_checked =
+        batch_opetate_ids.length &&
+        list_group_ids.length == batch_opetate_ids.length
+    } else {
+    }
+    return {
+      indeterminate: !!indeterminate,
+      all_checked: !!all_checked
+    }
   }
 
   // 设置字段弹框显示隐藏
@@ -294,10 +370,7 @@ export default class MilestoneBaseHeader extends Component {
     const { realy_outline_tree_round_ids = [] } = this.state
     const { board_progress } = projectDetailInfoData
     const is_outline_view = ganttIsOutlineView({ group_view_type })
-    const indeterminate =
-      batch_opetate_ids.length &&
-      realy_outline_tree_round_ids.length > batch_opetate_ids.length
-
+    const { indeterminate, all_checked } = this.setAllCheckStatus()
     return (
       <div
         className={`${styles.base}`}
@@ -358,10 +431,7 @@ export default class MilestoneBaseHeader extends Component {
                   <Checkbox
                     indeterminate={indeterminate}
                     onChange={this.onCheckAllChange}
-                    checked={
-                      realy_outline_tree_round_ids.length ==
-                      batch_opetate_ids.length
-                    }
+                    checked={all_checked}
                   ></Checkbox>
                   <div
                     onClick={this.quitBatchOperating}
@@ -408,6 +478,11 @@ export default class MilestoneBaseHeader extends Component {
                 &#xe7bd;
               </div>
               <div
+                style={{
+                  display: ganttIsOutlineView({ group_view_type })
+                    ? 'block'
+                    : 'none'
+                }}
                 onClick={this.batchDeleteInstanceConfirm}
                 className={`${globalStyles.authTheme} ${styles.operate_icon}`}
               >
@@ -435,7 +510,8 @@ function mapStateToProps({
       gantt_board_id,
       batch_operating,
       batch_opetate_ids,
-      outline_tree
+      outline_tree,
+      list_group
     }
   },
   projectDetail: {
@@ -451,6 +527,7 @@ function mapStateToProps({
     projectDetailInfoData,
     batch_operating,
     batch_opetate_ids,
-    outline_tree
+    outline_tree,
+    list_group
   }
 }
