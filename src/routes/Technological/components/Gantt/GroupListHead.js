@@ -12,6 +12,7 @@ import { milestoneInit } from '@/services/technological/task.js'
 import ExcelRead from '../../../../components/Excel'
 import MilestoneBaseHeader from './components/MilestonesBaseProgress/MilestoneBaseHeader'
 import BatchOperateCheckbox from './components/MilestonesBaseProgress/BatchOperateCheckbox'
+import AlreadyBatchSetFlag from './components/MilestonesBaseProgress/AlreadyBatchSetFlag'
 @connect(mapStateToProps)
 export default class GroupListHead extends Component {
   constructor(props) {
@@ -265,6 +266,8 @@ export default class GroupListHead extends Component {
                       deleteOutLineTreeNode={this.props.deleteOutLineTreeNode}
                     />
                   </div>
+                  {/* 已经批量操作的标签 */}
+                  <AlreadyBatchSetFlag />
                 </div>
 
                 {/* <GroupListHeadElse
@@ -297,6 +300,8 @@ export default class GroupListHead extends Component {
                     </div>
                   )
                 })}
+                {/* 已经批量操作的标签 */}
+                <AlreadyBatchSetFlag />
                 {/* <GroupListHeadElse
                   gantt_card_height={this.props.gantt_card_height}
                   dataAreaRealHeight={this.props.dataAreaRealHeight}

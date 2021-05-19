@@ -256,6 +256,7 @@ export default class FiledModal extends Component {
     batchSetFileds(param).then(res => {
       if (isApiResponseOk(res)) {
         message.success('设置成功')
+        this.batchSetCalback()
       } else {
         message.error(res.message)
       }
@@ -277,8 +278,31 @@ export default class FiledModal extends Component {
     batchDeleteFileds(param).then(res => {
       if (isApiResponseOk(res)) {
         message.success('成功移除字段')
+        this.batchSetCalback()
       } else {
         message.error(res.message)
+      }
+    })
+  }
+
+  // 批量设置后回调，将已经设置的节点缓存
+  batchSetCalback = () => {
+    this.onCancel()
+    const {
+      dispatch,
+      already_batch_operate_ids,
+      batch_opetate_ids
+    } = this.props
+    let _already_batch_operate_ids = [].concat(
+      already_batch_operate_ids,
+      batch_opetate_ids
+    )
+    _already_batch_operate_ids = Array.from(new Set(_already_batch_operate_ids))
+    dispatch({
+      type: 'gantt/updateDatas',
+      payload: {
+        batch_opetate_ids: [],
+        already_batch_operate_ids: _already_batch_operate_ids
       }
     })
   }
@@ -350,11 +374,9 @@ function mapStateToProps({
       gantt_board_id,
       batch_operating,
       batch_opetate_ids,
-      outline_tree
+      outline_tree,
+      already_batch_operate_ids = []
     }
-  },
-  projectDetail: {
-    datas: { projectDetailInfoData }
   }
 }) {
   return {
@@ -363,9 +385,9 @@ function mapStateToProps({
     outline_is_show_order,
     group_view_type,
     gantt_board_id,
-    projectDetailInfoData,
     batch_operating,
     batch_opetate_ids,
-    outline_tree
+    outline_tree,
+    already_batch_operate_ids
   }
 }

@@ -60,7 +60,8 @@ export default class MilestoneBaseHeader extends Component {
       type: 'gantt/updateDatas',
       payload: {
         batch_operating: false,
-        batch_opetate_ids: []
+        batch_opetate_ids: [],
+        _already_batch_operate_ids: []
       }
     })
   }
@@ -212,7 +213,8 @@ export default class MilestoneBaseHeader extends Component {
       type: 'gantt/updateDatas',
       payload: {
         batch_operating: false,
-        batch_opetate_ids: []
+        batch_opetate_ids: [],
+        already_batch_operate_ids: []
       }
     })
   }

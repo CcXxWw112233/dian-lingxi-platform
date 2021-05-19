@@ -101,8 +101,9 @@ export default {
     outline_is_show_order: true, //大纲显示编号
     cardids_with_milestone: [], //hover未分组的里程碑，带出来子集的任务id列表
     hover_milestone_id: '', //hover未分组的里程碑id
-    batch_operating: true, //进行批量操作
-    batch_opetate_ids: []
+    batch_operating: false, //进行批量操作
+    batch_opetate_ids: [], //进行批量操作的id
+    already_batch_operate_ids: [] //已进行批量操作的id
   },
   effects: {
     *addCardRely({ payload = {} }, { select, call, put }) {
