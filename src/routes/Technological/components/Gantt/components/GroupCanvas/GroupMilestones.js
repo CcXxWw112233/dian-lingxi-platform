@@ -765,7 +765,13 @@ export default class GroupMilestones extends Component {
   }
 
   renderView = (value = {}) => {
-    const { ceilWidth, gantt_board_id } = this.props
+    const {
+      ceilWidth,
+      gantt_board_id,
+      group_view_type,
+      show_board_fold,
+      gantt_view_mode
+    } = this.props
     const {
       left,
       top,
@@ -855,7 +861,14 @@ export default class GroupMilestones extends Component {
               data-targetclassname="specific_example_milestone"
               className={indexStyles.milestone_wrapper}
               style={{
-                top,
+                top: !ganttIsFold({
+                  gantt_board_id,
+                  group_view_type,
+                  show_board_fold,
+                  gantt_view_mode
+                })
+                  ? top
+                  : top + 16,
                 left: left + ceilWidth,
                 height: 20,
                 opacity: this.setMilestoneFlagShow(one_levels) ? '1' : '0.2'
