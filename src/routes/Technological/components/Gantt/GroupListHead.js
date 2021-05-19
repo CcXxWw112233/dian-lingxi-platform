@@ -393,6 +393,7 @@ export default class GroupListHead extends Component {
                           boxShadow: '1px 0px 4px 0px rgba(0,0,0,0.15);'
                         }}
                       >
+                        <BatchOperateCheckbox />
                         <OutLineHeadItem
                           setScrollPosition={this.props.setScrollPosition}
                           setGoldDateArr={this.props.setGoldDateArr}
@@ -405,7 +406,7 @@ export default class GroupListHead extends Component {
                             this.props.deleteOutLineTreeNode
                           }
                         />
-                        <BatchOperateCheckbox />
+                        <AlreadyBatchSetFlag />
                         {/* <GroupListHeadElse
                   gantt_card_height={this.props.gantt_card_height}
                   dataAreaRealHeight={this.props.dataAreaRealHeight}
@@ -437,6 +438,8 @@ export default class GroupListHead extends Component {
                         >
                           {Row}
                         </List>
+                        <AlreadyBatchSetFlag />
+
                         {/* <GroupListHeadElse
                   gantt_card_height={this.props.gantt_card_height}
                   dataAreaRealHeight={this.props.dataAreaRealHeight}
