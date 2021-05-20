@@ -28,7 +28,40 @@ export default class OrganizationalStructure extends React.Component {
     super(props)
     this.state = {}
   }
-  componentDidMount() {}
+  componentDidMount() {
+    this.getOrgPermissions()
+    this.getRolePermissionsAndMenber()
+  }
+
+  /**
+   * 组织菜单、功能权限列表
+   */
+   getOrgPermissions () {
+    const {dispatch} = this.props;
+    dispatch({
+      type: [
+        OrgStructureModel.namespace,
+        'getOrgPermissions'
+      ].join('/'),
+      payload: {
+      }
+    })
+   }
+   /** 角色信息（包括权限，成员）*/
+   getRolePermissionsAndMenber() {
+    const {dispatch} = this.props;
+    dispatch({
+      type: [
+        OrgStructureModel.namespace,
+        'getRolePermissionsAndMenber'
+      ].join('/'),
+      payload: {
+        org_id:localStorage.getItem('OrganizationId'),
+        role_id:'1367020999064817664'
+      }
+    })
+   }
+
   componentWillUnmount() {}
 
   backHome = () => {
@@ -61,7 +94,7 @@ export default class OrganizationalStructure extends React.Component {
         </div>
 
         <OrgStructureCanvas />
-        {openPanel && <RoleMemberPanel />}
+        {openPanel && <RoleMemberPanel getRolePermissionsAndMenber={()=>this.getRolePermissionsAndMenber()}></RoleMemberPanel>}
       </div>,
       document.body
     )

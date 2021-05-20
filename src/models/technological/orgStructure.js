@@ -1,3 +1,13 @@
+
+import {getOrgPermissions,savePermission,orgAaccessInviteWeb,getRolePermissionsAndMenber,addNewMemberTag,updateMemberTag,deleteMemberTag,getMemberTagList,addRoleMenberTag,deleteRelaMemberTag} from '../../services/organization'
+import { isApiResponseOk } from '../../utils/handleResponseData'
+import { message } from 'antd'
+import {
+  MESSAGE_DURATION_TIME,
+  NOT_HAS_PERMISION_COMFIRN,
+  ORG_UPMS_ORGANIZATION_ROLE_EDIT
+} from '../../globalset/js/constant'
+
 /** 组织架构统一redux管理 */
 export const OrgStructureModel = {
   /** 命名空间
@@ -11,22 +21,177 @@ export const OrgStructureModel = {
     /** 是否打开右侧权限的弹窗
      * @default boolean false
      */
-    openPanel: false,
+    openPanel: true,
     /** 是否显示组织架构图 */
-    showStructure: false
+    showStructure: false,
+    /**组织权限列表 */
+    orgPermissionsList:[],
+    /**当前组织标签列表 */
+    currentOrgTagList:[]
   },
+  /** 添加成员标签 
+   * @param {string} member_id 成员ID
+   * @param {string} label_id 标签id
+  */
+  addNewMemberTag: 'addNewMemberTag',
   /** 更新的方法 */
   reducers: {
     /** 更新state里的所有变量 */
     updateDatas: 'updateDatas'
   }
+  
 }
 
 /** 组织架构的redux */
 export default {
   namespace: OrgStructureModel.namespace,
   state: { ...OrgStructureModel.state },
-  effects: {},
+  effects: {
+
+    /**组织菜单、功能权限列表 */
+    *getOrgPermissions({ payload }, { select, call, put }) {
+      let res = yield call(getOrgPermissions, payload)
+      if (isApiResponseOk(res)) {
+        // message.success('已保存', MESSAGE_DURATION_TIME)
+        // const result = JSON.stringify(res.data || [])
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            orgPermissionsList: res.data
+          }
+        })
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+    /**保存权限 */
+    *savePermission({ payload }, { select, call, put }) {
+      let res = yield call(savePermission, payload)
+      const {function_data} = payload
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            currentPermissionList:function_data
+          }
+        })
+      } else {
+        message.warn('保存失败', MESSAGE_DURATION_TIME)
+      }
+    },
+    /** web端各种入口邀请人员加入组织逻辑处理*/
+    *orgAaccessInviteWeb({ payload }, { select, call, put }) {
+      let res = yield call(getRolePermissionsAndMenber, payload)
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'getRolePermissionsAndMenber',
+          payload: {
+            org_id:payload.org_id,
+            role_id:payload.role_id
+          }
+        })
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+    /** 角色信息（包括权限，成员） */
+    *getRolePermissionsAndMenber({ payload }, { select, call, put }) {
+      let res = yield call(getRolePermissionsAndMenber, payload)
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            orgMembersList: res.data.members,
+            currentPermissionList:res.data.permissions
+          }
+        })
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+    /** 添加成员标签 */
+    *[OrgStructureModel.addNewMemberTag]({ payload }, { select, call, put }) {
+      let res = yield call(addNewMemberTag, payload)
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'getMemberTagList',
+          payload: {
+          
+          }
+        })
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+      return res.data;
+    },
+    /** 修改成员标签 */
+    *updateMemberTag({ payload }, { select, call, put }) {
+      let res = yield call(updateMemberTag, payload)
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'getMemberTagList',
+          payload: {
+          
+          }
+        })
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+
+    /** 删除成员标签 */
+    *deleteMemberTag({ payload }, { select, call, put }) {
+      let res = yield call(deleteMemberTag, payload)
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'getMemberTagList',
+          payload: {
+          
+          }
+        })
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+
+    /** 获取成员标签 */
+    *getMemberTagList({ payload }, { select, call, put }) {
+      let res = yield call(getMemberTagList, payload)
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            currentOrgTagList: res.data,
+          }
+        })
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+    /**  为成员打标签 */
+    *addRoleMenberTag({ payload }, { select, call, put }) {
+      let res = yield call(addRoleMenberTag, payload)
+      if (isApiResponseOk(res)) {
+        yield put({
+          type: 'getMemberTagList',
+          payload: {
+          
+          }
+        })
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+     /**  移除成员标签 */
+     *deleteRelaMemberTag({ payload }, { select, call, put }) {
+      let res = yield call(deleteRelaMemberTag, payload)
+      if (isApiResponseOk(res)) {
+        
+      } else {
+        message.warn(res.message, MESSAGE_DURATION_TIME)
+      }
+    },
+  },
   reducers: {
     [OrgStructureModel.reducers.updateDatas](state, { payload }) {
       return { ...state, ...payload }

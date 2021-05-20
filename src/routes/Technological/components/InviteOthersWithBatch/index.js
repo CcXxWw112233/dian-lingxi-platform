@@ -26,7 +26,7 @@ class InviteOtherWithBatch extends Component {
     }
   }
   isValidMobileOrValidEmail = user => {
-    return validateEmail(user) || validateTel(user)
+    return validateTel(user)
   }
   isAvatarValid = avatar => {
     return avatar && typeof avatar === 'string' && avatar.startsWith('http')
@@ -484,7 +484,7 @@ class InviteOtherWithBatch extends Component {
                 value={inputValue}
                 labelInValue
                 maxTagCount={1}
-                placeholder="请输入被邀请人的手机号或邮箱"
+                placeholder="请输入被邀请人的手机号"
                 notFoundContent={fetching ? <Spin size="small" /> : null}
                 filterOption={false}
                 onSearch={this.handleSearchUser}

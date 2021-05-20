@@ -40,7 +40,32 @@ export async function updateOrganization(data) {
     }
   })
 }
+//组织权限列表
+export async function getOrgPermissions(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/org/permissions`,
+    method: 'GET',
+    params
+  })
+}
 
+// 角色信息（包括权限，成员）
+export async function getRolePermissionsAndMenber(params) {
+  return request({
+    url: `${REQUEST_DOMAIN}/org/member/role`,
+    method: 'GET',
+    params
+  })
+}
+
+// web端各种入口邀请人员加入组织逻辑处理
+export async function orgAaccessInviteWeb(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/org/access/invite/web`,
+    method: 'POST',
+    data
+  })
+}
 //上传组织logo
 export async function uploadOrganizationLogo(data) {
   return request({
@@ -49,6 +74,7 @@ export async function uploadOrganizationLogo(data) {
     data
   })
 }
+
 
 //角色权限列表
 export async function getRolePermissions(params) {
@@ -342,7 +368,59 @@ export async function sortTempleteContainer(data) {
     data
   })
 }
+// ------------------------ 自定义字段接口 成员标签 --------------------------
+// 新增成员标签
+export async function addNewMemberTag(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/org/member/label`,
+    method: 'POST',
+    data
+  })
+}
+// 修改成员标签
+export async function updateMemberTag(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/org/member/label`,
+    method: 'PUT',
+    data
+  })
+}
 
+// 删除成员标签
+export async function deleteMemberTag(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/org/member/label`,
+    method: 'DELETE',
+    data
+  })
+}
+// 获取成员标签
+export async function getMemberTagList(data) {
+  
+  return request({
+    url: `${REQUEST_DOMAIN}/org/member/label/list`,
+    method: 'GET',
+    params: {
+      org_id: localStorage.getItem('OrganizationId')
+    }
+  })
+}
+// 为成员打标签
+export async function addRoleMenberTag(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/org/member/label/rela`,
+    method: 'POST',
+    data
+  })
+}
+// 为成员打标签
+export async function deleteRelaMemberTag(data) {
+  return request({
+    url: `${REQUEST_DOMAIN}/org/member/label/rela/${data.id}`,
+    method: 'DELETE',
+    data
+  })
+}
 // ------------------------ 自定义字段接口 S --------------------------
 
 /** 获取自定义字段列表

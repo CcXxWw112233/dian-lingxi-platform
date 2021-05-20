@@ -593,7 +593,7 @@ export default class TreeRemoveBoardMemberModal extends Component {
   // 渲染内容
   renderContent = () => {
     return (
-      <div className={DrawDetailInfoStyle.removeMemberContent}>
+      <div className={DrawDetailInfoStyle.removeMemberContent} zIndex='0'>
         <div className={DrawDetailInfoStyle.rev_top}>
           <div style={{ color: 'rgba(0,0,0,0.85)' }}>⚠️ 注意事项：</div>
           <div>1、成员被移除后，其在本项目所参与的所有事务将自动退出。</div>
@@ -610,6 +610,7 @@ export default class TreeRemoveBoardMemberModal extends Component {
   render() {
     const { visible } = this.props
     const { transferSelectedList = [] } = this.state
+    console.log('sssssssssssssssss',visible)
     return (
       <div>
         {transferSelectedList && !!transferSelectedList.length && (
