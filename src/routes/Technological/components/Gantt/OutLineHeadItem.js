@@ -1997,7 +1997,10 @@ export default class OutLineHeadItem extends Component {
             !selected_hide_term
           ) ||
             this.isHasFilterHide()) && (
-            <div onClick={this.handleShowHideTerm} style={{ color: '#6294FF' }}>
+            <div
+              onClick={this.handleShowHideTerm}
+              style={{ color: '#6294FF', marginLeft: 20 }}
+            >
               显示全部
             </div>
           )}

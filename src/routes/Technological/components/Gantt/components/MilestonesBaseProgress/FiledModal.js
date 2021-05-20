@@ -46,12 +46,16 @@ export default class FiledModal extends Component {
 
   /** 获取自定义字段 */
   fetchCustomFields = () => {
-    getCustomFieldList().then(res => {
+    let org_id = localStorage.getItem('OrganizationId')
+    if (org_id == '0') {
+      org_id = window.sessionStorage.getItem('aboutBoardOrganizationId')
+    }
+    getCustomFieldList({ _organization_id: org_id }).then(res => {
       if (isApiResponseOk(res)) {
         const { fields = [], groups = [] } = res.data
-        const _group_fileds = []
+        let _group_fileds = []
         for (let val of groups) {
-          _group_fileds.concat(val.fields || [])
+          _group_fileds = _group_fileds.concat(val.fields || [])
         }
         const _new_data = [].concat(fields, _group_fileds)
         this.filterEffectFields(_new_data)

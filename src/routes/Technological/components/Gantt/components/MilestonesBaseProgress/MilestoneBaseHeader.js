@@ -228,7 +228,7 @@ export default class MilestoneBaseHeader extends Component {
     }
     const _self = this
     Modal.confirm({
-      title: '确认删除所选字段吗？',
+      title: '确认删除所选节点吗？',
       onOk() {
         _self.batchDeleteInstance()
       }
