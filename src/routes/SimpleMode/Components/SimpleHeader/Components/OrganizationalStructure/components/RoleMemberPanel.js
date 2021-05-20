@@ -8,9 +8,13 @@ import RoleMemberJurisdiction from './RoleMemberJurisdiction'
 import RoleMemberTable from './RoleMemberTable'
 import InviteOthers from '../../../../../../../routes/Technological/components/InviteOthers/index'
 import { checkIsHasPermission } from '@/utils/businessFunction'
-import { ORG_UPMS_ORGANIZATION_MEMBER_ADD } from '@/globalset/js/constant'
-
-
+import {
+  ORG_UPMS_ORGANIZATION_MEMBER_ADD,
+  MESSAGE_DURATION_TIME,
+  NOT_HAS_PERMISION_COMFIRN
+}
+  from '@/globalset/js/constant'
+import { message } from 'antd/lib/index'
 
 const ShowAddMenberModal = lazy(() =>
   import(
@@ -19,14 +23,15 @@ const ShowAddMenberModal = lazy(() =>
 )
 
 
+
 /** 组织架构的右侧角色权限和成员列表
  * @description 用于展示组织架构的成员和权限列表
  */
- @connect(({ organizationManager: {
-  datas: { orgnization_role_data }
-  }, }) => ({
-    orgnization_role_data
-  }))
+@connect(({ organizationManager: {
+  datas: { orgnization_role_data },
+}, [OrgStructureModel.namespace]: { canHandle } }) => ({
+  orgnization_role_data, canHandle
+}))
 export default class RoleMemberPanel extends React.Component {
   constructor(props) {
     super(props)
@@ -55,7 +60,15 @@ export default class RoleMemberPanel extends React.Component {
    * 关闭组织架构左侧列表
    */
   closeRoleMemberPanel() {
-
+    const { dispatch } = this.props;
+    dispatch({
+      type: [OrgStructureModel.namespace, OrgStructureModel.reducers.updateDatas].join(
+        '/'
+      ),
+      payload: {
+        openPanel: false
+      }
+    })
   }
   /**
    * 选择权限列表或者成员列表
@@ -72,6 +85,12 @@ export default class RoleMemberPanel extends React.Component {
    * 添加成员
    */
   addRoleMember() {
+    const { canHandle } = this.props;
+    console.log('sssssssssssssssssssssss123121', canHandle)
+    if (!canHandle) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return
+    }
     this.setState({
       ShowAddMenberModalVisibile: true
     })
@@ -79,6 +98,7 @@ export default class RoleMemberPanel extends React.Component {
 
   //添加组织职员操作
   setShowAddMenberModalVisibile() {
+
     if (!checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
     }
@@ -98,9 +118,9 @@ export default class RoleMemberPanel extends React.Component {
       ].join('/'),
       payload: {
         users: users,
-        org_id:localStorage.getItem('OrganizationId'),
-        role_id:'1367020999064817664',
-        type:'11'
+        org_id: localStorage.getItem('OrganizationId'),
+        role_id: '1367020999064817664',
+        type: '11'
       }
     })
   }
@@ -109,12 +129,13 @@ export default class RoleMemberPanel extends React.Component {
   }
   render() {
     const { tabs, currentTab, modalVisible } = this.state;
-    console.log('sssssadd', modalVisible)
+    const { canHandle ,title} = this.props
+    console.log('sssssssssssssssssss', canHandle)
     return (
       <div className={styles.role_panel} >
         <div className={styles.role_panel_top}>
           <div className={styles.role_panel_title}>
-            品牌管理中心
+            {title}
               <span
               className={`${styles.close} ${globalStyles.authTheme}`}
               onClick={() => this.closeRoleMemberPanel()}
@@ -143,22 +164,22 @@ export default class RoleMemberPanel extends React.Component {
         </div>
 
         {
-          currentTab == 0 ? <RoleMemberJurisdiction ></RoleMemberJurisdiction> : <RoleMemberTable addRoleMember={() => this.addRoleMember()} getRolePermissionsAndMenber={() => this.getRolePermissionsAndMenber()}></RoleMemberTable>
+          currentTab == 0 ? <RoleMemberJurisdiction canHandle={canHandle}></RoleMemberJurisdiction> : <RoleMemberTable canHandle={canHandle} addRoleMember={() => this.addRoleMember()} getRolePermissionsAndMenber={() => this.getRolePermissionsAndMenber()}></RoleMemberTable>
         }
 
- 
-           <ShowAddMenberModal
-            invitationId={localStorage.getItem('OrganizationId')}
-            invitationType="11"
-            invitationOrg={localStorage.getItem('OrganizationId')}
-            dispatch={this.props.dispatch}
-            addMembers={this.addMembers.bind(this)}
-            modalVisible={this.state.ShowAddMenberModalVisibile}
-            setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(
-              this
-            )}
-          />
-          
+
+        <ShowAddMenberModal
+          invitationId={localStorage.getItem('OrganizationId')}
+          invitationType="11"
+          invitationOrg={localStorage.getItem('OrganizationId')}
+          dispatch={this.props.dispatch}
+          addMembers={this.addMembers.bind(this)}
+          modalVisible={this.state.ShowAddMenberModalVisibile}
+          setShowAddMenberModalVisibile={this.setShowAddMenberModalVisibile.bind(
+            this
+          )}
+        />
+
       </div>)
   }
 }

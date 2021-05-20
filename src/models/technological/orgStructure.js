@@ -16,6 +16,9 @@ export const OrgStructureModel = {
    * @param {boolean} openPanel 是否打开右侧权限的弹窗
    * @param {boolean} showStructure 是否显示组织架构图
    * @param {{role_group_id: string, role_group_name: string}} activeRoleData 选中的角色信息
+   * @param {boolean} canHandle 是否可编辑
+   * @param {*} currentOrgTagList   当前组织标签列表
+   * @param {*} orgPermissionsList  组织权限列表
    */
   namespace: 'orgStructure',
   /** 初始变量 */
@@ -23,13 +26,15 @@ export const OrgStructureModel = {
     /** 是否打开右侧权限的弹窗
      * @default boolean false
      */
-    openPanel: true,
+    openPanel: false,
     /** 是否显示组织架构图 */
     showStructure: false,
     /**组织权限列表 */
     orgPermissionsList:[],
     /**当前组织标签列表 */
-    currentOrgTagList:[]
+    currentOrgTagList:[],
+    /**是否可编辑 */
+    canHandle:true
   },
   /** 添加成员标签 
    * @param {string} member_id 成员ID

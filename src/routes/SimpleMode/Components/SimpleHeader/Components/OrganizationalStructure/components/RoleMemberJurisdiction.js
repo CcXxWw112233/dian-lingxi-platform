@@ -49,7 +49,7 @@ export default class RoleMemberJurisdiction extends React.Component {
 
 
   render() {
-    const {orgPermissionsList = [],currentPermissionList} = this.props
+    const {orgPermissionsList = [],currentPermissionList,canHandle} = this.props
     const { TreeNode } = Tree;
     return  <div className={styles.role_Jurisdiction} style={{
       overflowY: 'auto',
@@ -86,7 +86,7 @@ export default class RoleMemberJurisdiction extends React.Component {
             return <TreeNode disableCheckbox title={<span className={`${styles.role_Jurisdiction_title}`}>{item.name}</span>} key={item.id+'_'+key} >
                 {
                   child_data.map((value,key)=>{
-                  return  <TreeNode title={<span className={`${styles.role_Jurisdiction_title}`}>{value.name}</span>} key={value.id}> 
+                  return  <TreeNode disableCheckbox={!canHandle} title={<span className={`${styles.role_Jurisdiction_title}`}>{value.name}</span>} key={value.id}> 
                     </TreeNode>
                   })
                 }

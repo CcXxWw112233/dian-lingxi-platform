@@ -18,7 +18,7 @@ import {
 import { connect } from 'dva'
 import { isApiResponseOk } from '../../../../../utils/handleResponseData'
 import { arrayNonRepeatfy } from '../../../../../utils/util'
-import { MESSAGE_DURATION_TIME } from '../../../../../globalset/js/constant'
+import { MaxZIndex, MESSAGE_DURATION_TIME } from '../../../../../globalset/js/constant'
 
 @connect(mapStateToProps)
 export default class TreeRemoveBoardMemberModal extends Component {
@@ -610,7 +610,7 @@ export default class TreeRemoveBoardMemberModal extends Component {
   render() {
     const { visible } = this.props
     const { transferSelectedList = [] } = this.state
-    console.log('sssssssssssssssss',visible)
+    console.log('sssssssssssssssss',visible,transferSelectedList)
     return (
       <div>
         {transferSelectedList && !!transferSelectedList.length && (
@@ -618,7 +618,7 @@ export default class TreeRemoveBoardMemberModal extends Component {
             title={`移除成员确认`}
             visible={visible} //moveToDirectoryVisiblie
             width={630}
-            zIndex={1009}
+            zIndex={MaxZIndex+ 10}
             destroyOnClose={true}
             maskClosable={false}
             okText="确认"

@@ -62,6 +62,8 @@ export default class OrganizationalStructure extends React.Component {
   componentDidMount() {
     window.addEventListener('keydown', this.KeyboardEvent)
     this.getOrgRoleList()
+    this.getOrgPermissions()
+    this.getRolePermissionsAndMenber()
   }
   componentWillUnmount() {
     window.removeEventListener('keydown', this.KeyboardEvent)
@@ -129,10 +131,6 @@ export default class OrganizationalStructure extends React.Component {
     this.toTree()
     return this
   }
-  componentDidMount() {
-    this.getOrgPermissions()
-    this.getRolePermissionsAndMenber()
-  }
 
   /**
    * 组织菜单、功能权限列表
@@ -162,8 +160,6 @@ export default class OrganizationalStructure extends React.Component {
       }
     })
    }
-
-  componentWillUnmount() {}
 
   /** 格式化数据 */
   forMatData = (data = []) => {
@@ -239,6 +235,23 @@ export default class OrganizationalStructure extends React.Component {
    */
   mapTreeHandleClick = (data, type) => {
     const { dispatch } = this.props
+    /** 是否分组节点 */
+    const isGroup = this.isGroupNode(data)
+      /** 不允许编辑,可以查看 */
+      console.log(data)
+      this.setState({
+        title:data['name'] || data['role_group_name']
+      })
+      dispatch({
+        type: [OrgStructureModel.namespace, OrgStructureModel.reducers.updateDatas].join(
+          '/'
+        ),
+        payload: {
+          openPanel:isGroup ? false : true,
+          canHandle:type === MarkDefaultType && data.is_visitor === '1' ? false : true,
+        }
+      })
+    
     dispatch({
       type: [OrgStructureModel.namespace, OrgStructureModel.getRoleInfo].join(
         '/'
@@ -421,8 +434,8 @@ export default class OrganizationalStructure extends React.Component {
 
   /** 是否是分组的节点 */
   isGroupNode = node => {
-    const { activeRoleData } = this.props
-    if (node || activeRoleData) {
+    const activeRoleData = node || this.props.activeRoleData
+    if (activeRoleData) {
       if (activeRoleData.mark) return true
       return false
     }
@@ -593,7 +606,8 @@ export default class OrganizationalStructure extends React.Component {
   render() {
     /** 是否显示右侧角色窗口 */
     const { openPanel, activeRoleData } = this.props
-    const { defaultRoles } = this.state
+    const { defaultRoles,title } = this.state
+    // const title = currentItem.name || currentItem.role_group_name;
     return ReactDOM.createPortal(
       <div
         className={`${styles.container} animate_animated animate__fadeInRight animate__faster`}
@@ -646,7 +660,7 @@ export default class OrganizationalStructure extends React.Component {
           onUpdateText={val => this.updateText(val)}
           activeItem={this.props.activeRoleData}
         />
-        {openPanel && <RoleMemberPanel getRolePermissionsAndMenber={()=>this.getRolePermissionsAndMenber()}></RoleMemberPanel>}
+        {openPanel && <RoleMemberPanel title={title} getRolePermissionsAndMenber={()=>this.getRolePermissionsAndMenber()}></RoleMemberPanel>}
       </div>,
       document.body
     )

@@ -8,9 +8,9 @@ import {
   AppstoreOutlined,
 } from '@ant-design/icons';
 
-const TreeRemoveBoardMemberModal = lazy(() =>
+const TreeRemoveOrgMemberModal = lazy(() =>
   import(
-    '@/routes/Technological/components/ProjectDetail/DetailInfo/TreeRemoveBoardMemberModal'
+    '@/routes/Technological/components/OrganizationMember/TreeRemoveOrgMemberModal'
   )
 )
 const { Option } = Select;
@@ -76,6 +76,7 @@ export default class RoleMemberTable extends React.Component {
    * @returns 
    */
   deleteMember() {
+
     console.log('删除成员')
   }
 
@@ -188,8 +189,6 @@ export default class RoleMemberTable extends React.Component {
           color: ''
         }
       }).then(res => {
-        console.log('sssssss',res)
-        debugger
         this.addRoleMenberTag(res)
       })
     }
@@ -440,7 +439,7 @@ export default class RoleMemberTable extends React.Component {
     const { orglist } = this.state;
     return <div className={styles.roleMenberMore}>
       <div className={`${styles.roleMenberMore_item} ${styles.roleMenber_moveOut}`} onClick={this.moveUserOut.bind(this)}>移出组织</div>
-      <Dropdown trigger={['hover']}
+      {/* <Dropdown trigger={['hover']}
         getPopupContainer={triggerNode => triggerNode.parentNode}
         overlay={
           this.overlayMoveOrg(orglist)
@@ -450,7 +449,8 @@ export default class RoleMemberTable extends React.Component {
             &#xe7d6;
             </span>
         </div>
-      </Dropdown>
+      </Dropdown> */}
+      
     </div>
   }
 
@@ -519,8 +519,10 @@ export default class RoleMemberTable extends React.Component {
     })
   }
   render() {
-    const { orgMembersList = [], currentOrgTagList = [] } = this.props
+    const { orgMembersList = [], currentOrgTagList = [],canHandle} = this.props
     const { currentUserId } = this.state;
+    
+    console.log('sssssssssssssss',currentUserId)
     return <div className={`${styles.role_member}`}
       style={{
         overflowY: 'auto',
@@ -528,6 +530,7 @@ export default class RoleMemberTable extends React.Component {
       }}
       id={'RoleMemberTable_wrapper'}
     >
+      
       {
         orgMembersList.map((item, key) => {
           const { member_id, user_id, label_id = [] } = item;
@@ -537,6 +540,7 @@ export default class RoleMemberTable extends React.Component {
           return <div className={styles.role_member_item} onClick={this.selectMember.bind(this, item)}>
             <div className={styles.role_member_contant}>
               <Dropdown trigger={['click']}
+              disabled={!canHandle}
                 getPopupContainer={triggerNode => triggerNode.parentNode}
                 overlay={
                   this.overlayRoleMenberMore()
@@ -555,6 +559,7 @@ export default class RoleMemberTable extends React.Component {
               <span className={`${styles.role_member_title}`}>{item.name}</span>
             </div>
             <Dropdown trigger={['click']}
+              disabled={!canHandle}
               getPopupContainer={triggerNode => document.getElementById('RoleMemberTable_wrapper')}
               onVisibleChange={(visible, user_id) => this.handleVisibleChange(visible, user_id)}
               visible={this.state.moreVisible && user_id == currentUserId}
@@ -571,13 +576,9 @@ export default class RoleMemberTable extends React.Component {
           </div>
         })
       }
-      <TreeRemoveBoardMemberModal
-          visible={true}
-          setTreeRemoveBoardMemberVisible={
-            this.setTreeRemoveBoardMemberVisible
-          }
-          removerUserId={'21212121'}
-      />
+      <TreeRemoveOrgMemberModal groupList={[]} TreeRemoveOrgMemberModalVisible={true}/>
+
+    
       {/* <Button className={styles.add_role_member}  type='primary' onClick={()=>this.addRoleMenber()}>添加成员</Button> */}
     </div>
   }
