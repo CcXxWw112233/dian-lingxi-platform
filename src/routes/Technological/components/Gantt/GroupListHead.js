@@ -21,6 +21,8 @@ import { VariableSizeList as List } from 'react-window'
 import { Fragment } from 'react'
 import DEvent, { GANTTSCROLLY } from '../../../../utils/event'
 
+import BatchOperateCheckbox from './components/MilestonesBaseProgress/BatchOperateCheckbox'
+import AlreadyBatchSetFlag from './components/MilestonesBaseProgress/AlreadyBatchSetFlag'
 @connect(mapStateToProps)
 export default class GroupListHead extends Component {
   /** 虚拟滚动的实例 */
@@ -289,7 +291,8 @@ export default class GroupListHead extends Component {
       group_view_type,
       outline_tree = [],
       get_gantt_data_loaded,
-      gantt_board_id
+      gantt_board_id,
+      batch_operating
     } = this.props
     const { startPlanType } = this.props
     const isNewProject =
@@ -465,7 +468,8 @@ function mapStateToProps({
       outline_tree,
       startPlanType,
       get_gantt_data_loaded,
-      gantt_board_id
+      gantt_board_id,
+      batch_operating
     }
   }
 }) {
@@ -481,6 +485,7 @@ function mapStateToProps({
     outline_tree,
     startPlanType,
     get_gantt_data_loaded,
-    gantt_board_id
+    gantt_board_id,
+    batch_operating
   }
 }

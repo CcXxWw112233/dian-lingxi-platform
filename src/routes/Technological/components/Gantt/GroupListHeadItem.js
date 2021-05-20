@@ -68,7 +68,8 @@ import MenuSearchPartner from '@/components/MenuSearchMultiple/MenuSearchPartner
 import { clickDelay } from '../../../../globalset/clientCustorm'
 import { LISTLOCK, NOTLISTLOCKREAD } from '../VisitControl/constans'
 import CardGroupNames from './components/CardGroupNames'
-
+import BatchOperateCheckBoxItem from './components/MilestonesBaseProgress/BatchOperateCheckBoxItem'
+import AlreadyBatchSetFlagGroupItem from './components/MilestonesBaseProgress/AlreadyBatchSetFlagGroupItem'
 @connect(mapStateToProps)
 export default class GroupListHeadItem extends Component {
   constructor(props) {
@@ -1707,6 +1708,7 @@ export default class GroupListHeadItem extends Component {
         >
           <div className={`${indexStyles.list_head_top}`}>
             <div className={`${indexStyles.list_head_top_top}`}>
+              <BatchOperateCheckBoxItem itemValue={itemValue} />
               {group_view_type == '1' &&
                 gantt_view_mode != 'hours' &&
                 gantt_board_id != '0' &&
@@ -1858,6 +1860,7 @@ export default class GroupListHeadItem extends Component {
                 </span>
                 <span>%</span>
               </div>
+              <AlreadyBatchSetFlagGroupItem list_id={list_id} />
             </div>
             <div className={`${indexStyles.list_head_top_bott}`}>
               <div

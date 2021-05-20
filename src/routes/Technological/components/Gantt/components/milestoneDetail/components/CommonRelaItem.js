@@ -14,15 +14,36 @@ import {
   TASKS
 } from '../../../../../../../globalset/js/constant'
 import { isApiResponseOk } from '../../../../../../../utils/handleResponseData'
-import { completeTask } from '../../../../../../../services/technological/task'
+import {
+  completeTask,
+  updateMilestone
+} from '../../../../../../../services/technological/task'
 import { ganttIsOutlineView } from '../../../constants'
 import { getTreeNodeValue } from '../../../../../../../models/technological/workbench/gantt/gantt_utils'
 import { onChangeCardHandleCardDetail } from '../../../ganttBusiness'
 import CardGroupNames from '../../CardGroupNames'
+// 引入 ECharts 主模块
+import echarts from 'echarts'
+// 引入饼状图
+import 'echarts/lib/chart/pie'
 
+import { ECHARTSTHEME } from '../../../../../../SimpleMode/Components/WorkbenchPage/ChartForStatistics/constans'
+import theme from '../../../../../../SimpleMode/Components/WorkbenchPage/StatisticalReport/echartTheme.json'
 @connect(mapStateToProps)
 export default class CommonRelaItem extends React.Component {
+  constructor(props) {
+    super(props)
+    this.chartRef = React.createRef()
+  }
   state = {}
+  componentDidMount() {
+    this.initEchart()
+  }
+
+  componentWillReceiveProps() {
+    this.initEchart()
+  }
+
   deleteConfirm = ({ id }) => {
     const {
       milestone_id,
@@ -72,7 +93,7 @@ export default class CommonRelaItem extends React.Component {
       milestone_detail: { id },
       dispatch
     } = this.props
-    dispatch({
+    return dispatch({
       type: 'milestoneDetail/getMilestoneDetail',
       payload: {
         id
@@ -80,38 +101,67 @@ export default class CommonRelaItem extends React.Component {
     })
   }
 
+  // 更新里程碑信息
+  updateMilestone = params => {
+    const { dispatch, milestone_detail = {} } = this.props
+    return new Promise((resolve, reject) => {
+      dispatch({
+        type: 'milestoneDetail/updateMilestone',
+        payload: {
+          ...params
+        }
+      }).then(res => {
+        if (res) {
+          resolve(res)
+        } else {
+          reject()
+        }
+      })
+    })
+  }
+
   // 点击完成任务
-  setIsCheck = ({ is_completed, id, list_id }) => {
+  setIsCheck = async ({ is_completed, id, list_id }) => {
     const {
       milestone_detail: { board_id },
       dispatch,
       card_id,
-      selected_card_visible
+      selected_card_visible,
+      type
     } = this.props
     const obj = {
       card_id: id,
       is_realize: is_completed === '1' ? '0' : '1',
       board_id
     }
-
-    completeTask({ ...obj }).then(res => {
-      if (isApiResponseOk(res)) {
-        setTimeout(() => {
-          message.success('更新成功', MESSAGE_DURATION_TIME)
-        }, 200)
-        this.updateMilestoneDetailDatas()
-        if (window.location.href.indexOf('home') != -1) return
-        this.updateGanttDatas({ ...obj, list_id })
-        onChangeCardHandleCardDetail({
-          card_detail_id: card_id, //来自任务详情的id
-          selected_card_visible, //任务详情弹窗是否弹开
-          dispatch,
-          operate_id: id //当前操作的id
-        })
-      } else {
-        message.warn(res.message, MESSAGE_DURATION_TIME)
-      }
-    })
+    let res = {}
+    if (type == '0') {
+      //任务
+      res = await completeTask({ ...obj })
+    } else {
+      // 里程碑
+      res = await updateMilestone({
+        id,
+        is_finished: is_completed === '1' ? '0' : '1'
+      })
+    }
+    if (isApiResponseOk(res)) {
+      setTimeout(() => {
+        message.success('更新成功', MESSAGE_DURATION_TIME)
+      }, 200)
+      await this.updateMilestoneDetailDatas()
+      if (window.location.href.indexOf('home') != -1) return
+      this.updateGanttDatas({ ...obj, list_id })
+      onChangeCardHandleCardDetail({
+        card_detail_id: card_id, //来自任务详情的id
+        selected_card_visible, //任务详情弹窗是否弹开
+        dispatch,
+        operate_id: id //当前操作的id
+      })
+      this.props.setStatusProperty && this.props.setStatusProperty(true)
+    } else {
+      message.warn(res.message, MESSAGE_DURATION_TIME)
+    }
   }
   // 获取任务分组列表
   getCardGroups = () => {
@@ -124,6 +174,52 @@ export default class CommonRelaItem extends React.Component {
     const { list_data = [] } = item
     // console.log('ssssssssssaaa', list_data)
     return list_data
+  }
+
+  initEchart = () => {
+    const {
+      itemValue: { rela_type, parent_id, progress_percent }
+    } = this.props
+    if (progress_percent === undefined) return //必须是父任务
+    echarts.registerTheme(ECHARTSTHEME, theme)
+    this.chart = echarts.init(this.chartRef.current, ECHARTSTHEME)
+    const option = {
+      color: ['#E6E8F1', '#95DE64'],
+      tooltip: {
+        show: false
+      },
+      series: [
+        {
+          name: '访问来源',
+          type: 'pie',
+          radius: '70%',
+          center: ['50%', '50%'],
+          data: [
+            { value: 100 - progress_percent },
+            { value: progress_percent }
+          ],
+          animation: false,
+          itemStyle: {
+            normal: {
+              label: {
+                show: false
+              },
+              labelLine: {
+                show: false
+              }
+            }
+          },
+          emphasis: {
+            itemStyle: {
+              shadowBlur: 0,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)'
+            }
+          }
+        }
+      ]
+    }
+    this.chart.setOption(option)
   }
   render() {
     const {
@@ -143,34 +239,27 @@ export default class CommonRelaItem extends React.Component {
       list_id = '0',
       list_ids
     } = itemValue
-    const result_process = Math.round(progress_percent * 100) / 100
     return (
       <div className={`${taskItemStyles.taskItem}`}>
         <div className={`${taskItemStyles.item_1} ${taskItemStyles.pub_hover}`}>
           {/*完成*/}
-          {type == '0' && (
-            <div
-              className={
-                is_completed == '1'
-                  ? taskItemStyles.nomalCheckBoxActive
-                  : taskItemStyles.nomalCheckBox
-              }
-              onClick={() => {
-                this.setIsCheck({ is_completed, id, list_id })
-              }}
-            >
-              <Icon
-                type="check"
-                style={{ color: '#FFFFFF', fontSize: 12, fontWeight: 'bold' }}
-              />
-            </div>
-          )}
-
-          {type == '4' && !!result_process && (
-            <div style={{ marginRight: '6px', color: 'rgba(0,0,0,0.45)' }}>
-              {result_process || '0'} %
-            </div>
-          )}
+          {/* {type == '0' && ( */}
+          <div
+            className={
+              is_completed == '1'
+                ? taskItemStyles.nomalCheckBoxActive
+                : taskItemStyles.nomalCheckBox
+            }
+            onClick={() => {
+              this.setIsCheck({ is_completed, id, list_id })
+            }}
+          >
+            <Icon
+              type="check"
+              style={{ color: '#FFFFFF', fontSize: 12, fontWeight: 'bold' }}
+            />
+          </div>
+          {/* )} */}
 
           {/*名称*/}
           <div
@@ -202,6 +291,16 @@ export default class CommonRelaItem extends React.Component {
               />
             </div>
           </div>
+          {/* 饼图 */}
+          {//
+          progress_percent !== undefined && (
+            <div
+              style={{ display: 'flex', alignItems: 'center', marginRight: 16 }}
+            >
+              <div ref={this.chartRef} style={{ height: 30, width: 30 }}></div>
+              <div>{progress_percent}%</div>
+            </div>
+          )}
           {/*日期*/}
           {deadline && (
             <>

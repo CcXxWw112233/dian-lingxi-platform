@@ -15,11 +15,75 @@ import {
   currentNounPlanFilterName
 } from '../../../../../utils/businessFunction'
 import { TASKS, FLOWS } from '../../../../../globalset/js/constant'
+// 引入 ECharts 主模块
+import echarts from 'echarts'
+// 引入饼状图
+import 'echarts/lib/chart/pie'
+
+import { ECHARTSTHEME } from '../../WorkbenchPage/ChartForStatistics/constans'
+import theme from '../../WorkbenchPage/StatisticalReport/echartTheme.json'
 
 @connect(mapStateToProps)
 export default class BoardFeaturesItem extends Component {
+  constructor(props) {
+    super(props)
+    this.chartRef = React.createRef()
+  }
   static propTypes = {
     prop: PropTypes
+  }
+  componentDidMount() {
+    this.initEchart()
+  }
+
+  componentWillReceiveProps() {
+    this.initEchart()
+  }
+
+  initEchart = () => {
+    const {
+      itemValue: { rela_type, parent_id, progress_percent }
+    } = this.props
+    if (rela_type != '1' || parent_id || progress_percent === undefined) return //必须是父任务
+    echarts.registerTheme(ECHARTSTHEME, theme)
+    this.chart = echarts.init(this.chartRef.current, ECHARTSTHEME)
+    const option = {
+      color: ['rgba(255,255,255,0.25)', '#95DE64'],
+      tooltip: {
+        show: false
+      },
+      series: [
+        {
+          name: '访问来源',
+          type: 'pie',
+          radius: '70%',
+          center: ['50%', '50%'],
+          data: [
+            { value: 100 - progress_percent },
+            { value: progress_percent }
+          ],
+          animation: false,
+          itemStyle: {
+            normal: {
+              label: {
+                show: false
+              },
+              labelLine: {
+                show: false
+              }
+            }
+          },
+          emphasis: {
+            itemStyle: {
+              shadowBlur: 0,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)'
+            }
+          }
+        }
+      ]
+    }
+    this.chart.setOption(option)
   }
 
   itemClick = () => {
@@ -218,7 +282,8 @@ export default class BoardFeaturesItem extends Component {
         board_name,
         topic,
         join_url,
-        end_time
+        end_time,
+        progress_percent
       }
     } = this.props
     const use_time = rela_type == 'meeting' ? end_time : due_time
@@ -293,12 +358,25 @@ export default class BoardFeaturesItem extends Component {
             </div>
           )}
         </div>
-        <div
-          className={`${styles.feature_item_rt}`}
-          style={{ color: timeColor(use_time) }}
-        >
-          {' '}
-          {this.renderTime().time} {this.renderTime().dec}
+
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          {//一级任务
+          rela_type == '1' && !parent_id && progress_percent !== undefined && (
+            <div
+              style={{ display: 'flex', alignItems: 'center', marginRight: 16 }}
+            >
+              <div ref={this.chartRef} style={{ height: 30, width: 30 }}></div>
+              <div>{progress_percent}%</div>
+            </div>
+          )}
+
+          <div
+            className={`${styles.feature_item_rt}`}
+            style={{ color: timeColor(use_time) }}
+          >
+            {' '}
+            {this.renderTime().time} {this.renderTime().dec}
+          </div>
         </div>
       </div>
     )

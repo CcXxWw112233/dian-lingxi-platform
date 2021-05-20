@@ -772,7 +772,13 @@ export default class GroupMilestones extends Component {
   }
 
   renderView = (value = {}) => {
-    const { ceilWidth, gantt_board_id } = this.props
+    const {
+      ceilWidth,
+      gantt_board_id,
+      group_view_type,
+      show_board_fold,
+      gantt_view_mode
+    } = this.props
     const {
       left,
       top,
@@ -862,7 +868,14 @@ export default class GroupMilestones extends Component {
               data-targetclassname="specific_example_milestone"
               className={indexStyles.milestone_wrapper}
               style={{
-                top,
+                top: !ganttIsFold({
+                  gantt_board_id,
+                  group_view_type,
+                  show_board_fold,
+                  gantt_view_mode
+                })
+                  ? top
+                  : top + 16,
                 left: left + ceilWidth,
                 height: 20,
                 opacity: this.setMilestoneFlagShow(one_levels) ? '1' : '0.2'
@@ -1392,18 +1405,15 @@ function mapStateToProps({
   gantt: {
     datas: {
       gantt_view_mode,
-      gold_date_arr = [],
       group_list_area_section_height,
       ceiHeight,
       gantt_board_id,
-      about_user_boards,
       milestoneMap,
       group_view_type,
       show_board_fold,
       ceilWidth,
       date_arr_one_level,
       gantt_head_width,
-      date_total,
       list_group,
       group_list_area,
       get_milestone_loading,
@@ -1414,10 +1424,8 @@ function mapStateToProps({
 }) {
   return {
     gantt_view_mode,
-    gold_date_arr,
     ceiHeight,
     gantt_board_id,
-    about_user_boards,
     milestoneMap,
     group_view_type,
     show_board_fold,
@@ -1425,7 +1433,6 @@ function mapStateToProps({
     ceilWidth,
     date_arr_one_level,
     gantt_head_width,
-    date_total,
     list_group,
     group_list_area,
     get_milestone_loading,

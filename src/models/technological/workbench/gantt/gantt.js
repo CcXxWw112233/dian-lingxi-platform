@@ -1621,7 +1621,8 @@ export default {
       yield put({
         type: 'updateDatas',
         payload: {
-          get_milestone_loading: true
+          get_milestone_loading: true,
+          milestoneMap: {}
         }
       })
       const Aa = yield put({
@@ -1654,6 +1655,10 @@ export default {
 
       const res = yield call(getGttMilestoneList, params)
       if (isApiResponseOk(res)) {
+        const gantt_board_id_next_ = yield select(
+          getModelSelectDatasState('gantt', 'gantt_board_id')
+        )
+        if (gantt_board_id_next_ !== gantt_board_id) return //当请求接口反复快速调用，时间旅行后，如果两次请求的board_id对应不上，就阻止，防止重复调用
         let _data = JSON.parse(JSON.stringify(res.data))
         for (let key in _data) {
           const milestone_arr = _data[key]
