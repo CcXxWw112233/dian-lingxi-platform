@@ -116,7 +116,7 @@ export default class DetailContent extends React.Component {
           {/*主要内容放置区*/}
           {mainContent}
         </div>
-        {!isNotShowFileDetailContentRightVisible && (
+        {!isNotShowFileDetailContentRightVisible && false && (
           <div
             className={`${
               indexStyles.fileDetailContentRight

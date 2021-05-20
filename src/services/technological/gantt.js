@@ -23,6 +23,17 @@ export async function getGanttData(data) {
     }
   })
 }
+// 向左向右滚动时获取新增加的日期的数据
+export async function getGroupScrollAdditionalData(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt_chart/primary`,
+    method: 'POST',
+    data: {
+      _organization_id: localStorage.getItem('OrganizationId'),
+      ...data
+    }
+  })
+}
 
 //获取节假日
 export async function getHoliday(params) {
@@ -299,6 +310,31 @@ export async function setGanttUserCustorm(data) {
   return request({
     url: `${REQUEST_DOMAIN_WORK_BENCH}/gantt_chart/user/set`,
     method: 'PUT',
+    data
+  })
+}
+
+// 批量删除节点
+export async function batchDeleteNode(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/board/content/multiple`,
+    method: 'DELETE',
+    data
+  })
+}
+// 批量设置字段
+export async function batchSetFileds(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/board/field/relation/multiple`,
+    method: 'POST',
+    data
+  })
+}
+// 批量删除字段
+export async function batchDeleteFileds(data) {
+  return request({
+    url: `${REQUEST_DOMAIN_BOARD}/board/field/relation/multiple`,
+    method: 'DELETE',
     data
   })
 }

@@ -563,9 +563,14 @@ export default class SimpleNavigation extends Component {
     )
     if (payment_is_expired === 'true') return <span>{text}已过期</span>
     if (timeStep > this.expireMaxTimeShow) return null
+    /** 是不是今天 */
+    const isSameToday = moment().isSame(
+      moment(+(payment_end_date + '000')),
+      'day'
+    )
     return (
       <span>
-        距{text}到期: {timeStep > 0 ? timeStep + '天' : '今日到期'}
+        距{text}到期: {!isSameToday ? timeStep + '天' : '今日到期'}
       </span>
     )
   }
@@ -663,30 +668,32 @@ export default class SimpleNavigation extends Component {
       <div className={`${globalStyles.global_card} ${indexStyles.menuWrapper}`}>
         <div className={indexStyles.nav_tabs}>
           {/* 团队成员 */}
-          {identity_type === OrgUserType.normal && isHasMemberView() && (
-            <div
-              className={indexStyles.default_select_setting}
-              onClick={this.handleOrgListMenuClick.bind(this, { key: '24' })}
-            >
-              <div className={indexStyles.team}>
-                <div
-                  className={`${globalStyles.authTheme} ${indexStyles.team_icon}`}
-                >
-                  <img
-                    src={require('../../../../../../assets/workbench/home/icon_team.png')}
-                    alt="team"
-                  />
-                </div>
-                <div className={indexStyles.middle_text}>
-                  团队
-                  {currentNounPlanFilterName(
-                    MEMBERS,
-                    this.props.currentNounPlan
-                  )}
+          {(identity_type === OrgUserType.manager ||
+            identity_type === OrgUserType.normal) &&
+            isHasMemberView() && (
+              <div
+                className={indexStyles.default_select_setting}
+                onClick={this.handleOrgListMenuClick.bind(this, { key: '24' })}
+              >
+                <div className={indexStyles.team}>
+                  <div
+                    className={`${globalStyles.authTheme} ${indexStyles.team_icon}`}
+                  >
+                    <img
+                      src={require('../../../../../../assets/workbench/home/icon_team.png')}
+                      alt="team"
+                    />
+                  </div>
+                  <div className={indexStyles.middle_text}>
+                    团队
+                    {currentNounPlanFilterName(
+                      MEMBERS,
+                      this.props.currentNounPlan
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
           {/* 后台管理 */}
           {(identity_type === OrgUserType.manager ||
@@ -711,7 +718,8 @@ export default class SimpleNavigation extends Component {
             )}
 
           {/* 邀请成员 */}
-          {identity_type == OrgUserType.normal &&
+          {(identity_type === OrgUserType.manager ||
+            identity_type === OrgUserType.normal) &&
             checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD) && (
               <div
                 className={indexStyles.default_select_setting}
@@ -743,13 +751,9 @@ export default class SimpleNavigation extends Component {
             onClick={this.handleOrgListMenuClick.bind(this, { key: '20' })}
           >
             <div className={indexStyles.account_setting}>
-              {avatar ? (
-                <div className={indexStyles.left_img}>
-                  <Avatar src={avatar} size={40} icon="user" />
-                </div>
-              ) : (
-                ''
-              )}
+              <div className={indexStyles.left_img}>
+                <Avatar src={avatar} size={40} icon="user" />
+              </div>
               <div className={indexStyles.middle_text}>账户设置</div>
             </div>
           </div>

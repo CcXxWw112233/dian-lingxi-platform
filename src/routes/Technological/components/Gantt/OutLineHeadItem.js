@@ -1349,7 +1349,7 @@ export default class OutLineHeadItem extends Component {
   // 导出文件的样式处理
   toExport = (type = 'svg', pix = 2) => {
     return new Promise((resolve, reject) => {
-      let header = document.querySelector('#gantt_date_area')
+      // let header = document.querySelector('#gantt_date_area')
       let parent = document.querySelector('.' + styles.cardDetail_middle)
       let wapper = parent.querySelector('#gantt_group_head')
       let listHead = parent.querySelector('#gantt_header_wapper')
@@ -1366,8 +1366,8 @@ export default class OutLineHeadItem extends Component {
       }
       wapper.style.overflowY = 'inherit'
       parent.style.overflowY = 'inherit'
-      let left = header.style.left
-      header.style.left = 0
+      // let left = header.style.left
+      // header.style.left = 0
       let dom = parent.querySelector('#gantt_card_out_middle')
       dom.style.overflow = 'inherit'
       dom.parentNode.style.overflow = 'inherit'
@@ -1430,7 +1430,7 @@ export default class OutLineHeadItem extends Component {
           operate_action: type
         })
         dom.style.overflow = 'scroll'
-        header.style.left = left
+        // header.style.left = left
         dom.parentNode.style.overflow = 'hidden'
         parent.style.overflowY = 'auto'
         wapper.style.overflowY = 'auto'
@@ -1838,7 +1838,7 @@ export default class OutLineHeadItem extends Component {
         <Menu.Item key="boardInfo">
           {`${currentNounPlanFilterName(PROJECTS)}`}信息
         </Menu.Item>
-        <Menu.Item key="set_name_outside">
+        {/* <Menu.Item key="set_name_outside">
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <div style={{ marginRight: 14 }}>名称外置</div>
             <div onClick={e => this.setCardNameOutsideBuddle(e)}>
@@ -1918,7 +1918,7 @@ export default class OutLineHeadItem extends Component {
           </Menu.Item>
           <Menu.Divider />
           <Menu.Item key="select_hide_term">自定义</Menu.Item>
-        </SubMenu>
+        </SubMenu> */}
         <SubMenu title="导出">
           <Menu.Item key="export_pdf">导出PDF</Menu.Item>
           <Menu.Item key="export_img">导出图片</Menu.Item>
@@ -1997,7 +1997,10 @@ export default class OutLineHeadItem extends Component {
             !selected_hide_term
           ) ||
             this.isHasFilterHide()) && (
-            <div onClick={this.handleShowHideTerm} style={{ color: '#6294FF' }}>
+            <div
+              onClick={this.handleShowHideTerm}
+              style={{ color: '#6294FF', marginLeft: 20 }}
+            >
               显示全部
             </div>
           )}

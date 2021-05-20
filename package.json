@@ -46,6 +46,8 @@
     "react-dom": "^16.10.2",
     "react-draggable": "^4.4.3",
     "react-virtualized": "^9.21.2",
+    "react-virtualized-auto-sizer": "^1.0.5",
+    "react-window": "^1.8.6",
     "spark-md5": "^3.0.0",
     "whiteboard-lingxi": "^1.0.36",
     "xlsx": "^0.16.8"

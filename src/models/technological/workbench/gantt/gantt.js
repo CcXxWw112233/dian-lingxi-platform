@@ -5,7 +5,8 @@ import {
   getContentFiterBoardTree,
   getContentFiterUserTree,
   getHoliday,
-  getGanttUserCustorm
+  getGanttUserCustorm,
+  getGroupScrollAdditionalData
 } from '../../../../services/technological/gantt'
 import {
   getProjectList,
@@ -319,10 +320,14 @@ export default {
     },
     *getGanttData({ payload }, { select, call, put }) {
       try {
-        const { not_set_loading } = payload //not_set_loading是否需要设置loading状态
+        let { not_set_loading, start_date, end_date } = payload //not_set_loading是否需要设置loading状态
         // 参数处理
-        const start_date = yield select(workbench_start_date)
-        const end_date = yield select(workbench_end_date)
+        if (!start_date) {
+          start_date = yield select(workbench_start_date)
+        }
+        if (!end_date) {
+          end_date = yield select(workbench_end_date)
+        }
         const group_view_type = yield select(
           getModelSelectDatasState('gantt', 'group_view_type')
         )
@@ -348,7 +353,16 @@ export default {
         //   group_view_filter_users,
         //   ...setContentFilterParams()
         // })
-
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            folder_seeing_board_id: '0',
+            // 清空关于大纲视图显示隐藏数据
+            selected_hide_term: false,
+            outline_tree_original: [],
+            milestoneMap: {}
+          }
+        })
         let params = {
           chart_type: group_view_type
         }
@@ -402,15 +416,6 @@ export default {
           payload: {
             query_board_ids: content_filter_params.query_board_ids,
             board_id: gantt_board_id == '0' ? '' : gantt_board_id
-          }
-        })
-        yield put({
-          type: 'updateDatas',
-          payload: {
-            folder_seeing_board_id: '0',
-            // 清空关于大纲视图显示隐藏数据
-            selected_hide_term: false,
-            outline_tree_original: []
           }
         })
         // console.log('sssss', {res})
@@ -474,6 +479,76 @@ export default {
       } catch (err) {
         console.log('ssss_err_0', err)
       }
+    },
+    // 向左向右滚动时获取新增加的日期的数据
+    *getGroupScrollAdditionalData({ payload }, { select, call, put }) {
+      const { start_time, end_time } = payload
+      const group_view_type = yield select(
+        getModelSelectDatasState('gantt', 'group_view_type')
+      )
+
+      const board_id = yield select(
+        getModelSelectDatasState('gantt', 'gantt_board_id')
+      )
+
+      const params = {
+        start_time,
+        end_time,
+        chart_type: group_view_type
+      }
+
+      if (board_id != '0' && board_id) {
+        params.board_id = board_id
+      }
+      const res = yield call(getGroupScrollAdditionalData, params)
+      //需要将新获取的数据和原数据整合
+      if (isApiResponseOk(res)) {
+        const list_group = yield select(
+          getModelSelectDatasState('gantt', 'list_group')
+        )
+        const res_data = res.data || []
+        if (!res_data.length) {
+          return {}
+        }
+
+        for (let val of list_group) {
+          // 找到和当前原数据匹配的最新增加的数据
+          const _data_item = res_data.find(item => item.lane_id == val.lane_id)
+          if (!_data_item) {
+            break
+          }
+          const { cards: _data_item_cards = [] } = _data_item.lane_data //当前分组新增的排期任务列表
+          for (let cards_val of _data_item_cards) {
+            //新加载出来的任务和原来的任务是否有重叠
+            const aredy_has =
+              val.lane_data.cards.findIndex(item => item.id == cards_val.id) !=
+              -1
+            // 如果原来没有存在
+            if (!aredy_has) {
+              val.lane_data.cards.unshift(cards_val)
+            }
+          }
+        }
+
+        yield put({
+          type: 'handleListGroup',
+          payload: {
+            data: list_group
+          }
+        })
+        yield put({
+          type: 'updateDatas',
+          payload: {
+            milestoneMap: {}
+          }
+        })
+        yield put({
+          type: 'getGttMilestoneList',
+          payload: {}
+        })
+      }
+
+      return { code: '0' }
     },
     // 转化处理大纲视图数据
     *handleOutLineTreeData({ payload }, { select, call, put }) {
@@ -1546,7 +1621,8 @@ export default {
       yield put({
         type: 'updateDatas',
         payload: {
-          get_milestone_loading: true
+          get_milestone_loading: true,
+          milestoneMap: {}
         }
       })
       const Aa = yield put({
@@ -1579,6 +1655,10 @@ export default {
 
       const res = yield call(getGttMilestoneList, params)
       if (isApiResponseOk(res)) {
+        const gantt_board_id_next_ = yield select(
+          getModelSelectDatasState('gantt', 'gantt_board_id')
+        )
+        if (gantt_board_id_next_ !== gantt_board_id) return //当请求接口反复快速调用，时间旅行后，如果两次请求的board_id对应不上，就阻止，防止重复调用
         let _data = JSON.parse(JSON.stringify(res.data))
         for (let key in _data) {
           const milestone_arr = _data[key]
@@ -1787,21 +1867,21 @@ export default {
     updateDatas(state, action) {
       const { payload = {} } = action
       const { group_view_type } = payload
-      if (group_view_type) {
-        //视图切换时，做滚动条位置
-        const { datas = {} } = state
-        const {
-          gantt_board_id: old_gantt_board_id,
-          target_scrollTop_board_storage
-        } = datas
-        const { gantt_board_id: new_gantt_board_id } = payload
-        const params = {
-          group_view_type,
-          gantt_board_id: new_gantt_board_id || old_gantt_board_id,
-          target_scrollTop_board_storage
-        }
-        handleChangeBoardViewScrollTop(params)
-      }
+      // if (group_view_type) {
+      //   //视图切换时，做滚动条位置
+      //   const { datas = {} } = state
+      //   const {
+      //     gantt_board_id: old_gantt_board_id,
+      //     target_scrollTop_board_storage
+      //   } = datas
+      //   const { gantt_board_id: new_gantt_board_id } = payload
+      //   const params = {
+      //     group_view_type,
+      //     gantt_board_id: new_gantt_board_id || old_gantt_board_id,
+      //     target_scrollTop_board_storage
+      //   }
+      //   handleChangeBoardViewScrollTop(params)
+      // }
       return {
         ...state,
         datas: { ...state.datas, ...action.payload }

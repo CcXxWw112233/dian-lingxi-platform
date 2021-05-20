@@ -22,17 +22,17 @@ import {
   currentNounPlanFilterName,
   setRequestHeaderBaseInfo
 } from '../../../../../utils/businessFunction'
-import { Badge, Checkbox, Dropdown, Input, Menu, message, Modal } from 'antd'
+import { Dropdown, Input, Menu, message, Modal } from 'antd'
 import { connect } from 'dva'
 import {
-  toggleContentPrivilege,
   removeContentPrivilege,
   setContentPrivilege,
   addMenbersInProject,
   cancelCollection,
   collectionProject,
   archivedProject,
-  deleteProject
+  deleteProject,
+  quitProject
 } from '../../../../../services/technological/project'
 import DetailInfo from '@/routes/Technological/components/ProjectDetail/DetailInfo/index'
 import ShowAddMenberModal from '@/routes/Technological/components/Project/ShowAddMenberModal'
@@ -730,15 +730,44 @@ export default class BoardItem extends Component {
         }
         this.deleteProject({ board_id: board_id })
         break
+      case 'quitBoard':
+        this.quitProject(board_id)
+        break
       default:
         break
     }
   }
 
+  /** 退出项目二次确认 */
+  quitProject = id => {
+    Modal.confirm({
+      title: `确认要退出此${currentNounPlanFilterName(PROJECTS)}吗？`,
+      content: (
+        <div style={{ color: 'rgba(0,0,0, .8)', fontSize: 14 }}>
+          <span>
+            退出后将无法获取该{currentNounPlanFilterName(PROJECTS)}的相关动态
+          </span>
+        </div>
+      ),
+      okText: '确认',
+      cancelText: '取消',
+      onOk: () => {
+        quitProject({ board_id: id })
+          .then(res => {
+            if (isApiResponseOk(res)) {
+              message.success('操作成功')
+              this.updateBoardList()
+            } else message.warn(res.message)
+          })
+          .catch(err => {
+            console.error(err)
+          })
+      }
+    })
+  }
+
   /** 项目删除 --- S */
   deleteProject = ({ board_id }) => {
-    const that = this
-    const { dispatch, onUpdate } = this.props
     // const modal = Modal.confirm();
     Modal.confirm({
       title: `确认要删除该${currentNounPlanFilterName(PROJECTS)}吗？`,
@@ -761,14 +790,7 @@ export default class BoardItem extends Component {
                 ),
               200
             )
-            dispatch({
-              type: [
-                WorkbenchModel.namespace,
-                WorkbenchModel.getProjectList
-              ].join('/'),
-              payload: {}
-            })
-            onUpdate && onUpdate()
+            this.updateBoardList()
             // modal.destroy();
           } else {
             message.warn(res.message)
@@ -779,6 +801,16 @@ export default class BoardItem extends Component {
         // modal.destroy();
       }
     })
+  }
+
+  /** 更新项目列表 */
+  updateBoardList = () => {
+    const { dispatch, onUpdate } = this.props
+    dispatch({
+      type: [WorkbenchModel.namespace, WorkbenchModel.getProjectList].join('/'),
+      payload: {}
+    })
+    onUpdate && onUpdate()
   }
 
   renderMenuOperateListName = ({ board_id, is_star }) => {
@@ -829,9 +861,12 @@ export default class BoardItem extends Component {
             导出{currentNounPlanFilterName(PROJECTS, board_id)}成员
           </Menu.Item>
         )}
+        <Menu.Item key="quitBoard">
+          <div style={{ color: 'rgba(255,0,0,1)' }}>退出项目</div>
+        </Menu.Item>
         <Menu.Item key={'deleteBoard'}>
           <div style={{ color: 'red' }}>
-            退出/删除{currentNounPlanFilterName(PROJECTS, board_id)}
+            删除{currentNounPlanFilterName(PROJECTS, board_id)}
           </div>
         </Menu.Item>
       </Menu>

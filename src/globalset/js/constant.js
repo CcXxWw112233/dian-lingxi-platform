@@ -239,3 +239,56 @@ export const OrgPaymentMark = {
    */
   pay: 'pay'
 }
+
+/** 甘特图的视图类型 */
+export const GanttViewMode = {
+  /** 日视图
+   * @default string 'month'
+   */
+  Day: 'month',
+  /** 周视图
+   * @default string 'week'
+   */
+  Week: 'week',
+  /** 年视图
+   * @default string 'year'
+   */
+  Month: 'year',
+  /** 时视图
+   * @default string 'hours'
+   */
+  Hours: 'hours',
+  /** 相对时间
+   * @default string 'relative_time'
+   */
+  Relative: 'relative_time'
+}
+
+/** 甘特图视图类型的日期宽度 */
+export const GanttViewDateWidth = {
+  /** 周视图
+   * @default number 84
+   */
+  Week: 84,
+  /** 时视图
+   * @default number 22
+   */
+  Hours: 22,
+  /** 日视图
+   * @default number 34
+   */
+  Day: 34,
+  /** 月视图
+   * @default number 90
+   */
+  Month: 90
+}
+
+/** 甘特图滚动元素的id */
+export const ganttScrollElementId = 'gantt_card_out_middle'
+/** 功能的code type 类型 */
+export const FEATURE_INSTANCE_CODE_TYPE = {
+  MILESTONE: '1', //里程碑
+  CARD: '2', //任务
+  FLOW: '3' //流程
+}

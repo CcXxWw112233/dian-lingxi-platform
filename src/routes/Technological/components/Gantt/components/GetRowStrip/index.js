@@ -668,7 +668,8 @@ export default class GetRowStrip extends PureComponent {
       left,
       expand_length,
       parent_id,
-      percent_card_non
+      percent_card_non,
+      is_realize
     } = itemValue
     const { is_item_has_time, currentRect = {} } = this.state
     let display = 'none'
@@ -693,8 +694,7 @@ export default class GetRowStrip extends PureComponent {
       paddingLeft = ceilWidth / 2 - 6
     }
     // console.log('marginLeft', marginLeft)
-    const timestamp =
-      gantt_view_mode == 'year' ? this.calHoverDate().timestampEnd : ''
+    const timestamp = this.calHoverDate().timestampEnd
     return (
       <div
         onMouseUpCapture={() => this.miletonesClick(due_time)}
@@ -710,10 +710,7 @@ export default class GetRowStrip extends PureComponent {
             !!hover_milestone_id && hover_milestone_id != id ? '0.2' : '1'
         }}
       >
-        <Tooltip
-          visible={!due_time && gantt_view_mode == 'year'}
-          title={timestampToTime(timestamp)}
-        >
+        <Tooltip visible={!due_time} title={timestampToTime(timestamp)}>
           <>
             {gantt_view_mode == 'year' && !due_time && (
               <div style={{ width: 10, height: '100%', marginLeft: -6 }}></div>
@@ -722,8 +719,7 @@ export default class GetRowStrip extends PureComponent {
               <div
                 className={`${styles.board_miletiones_flag2}`}
                 style={{
-                  backgroundColor:
-                    parseInt(percent_card_non) >= 100 && '#9EA6C2'
+                  backgroundColor: is_realize == '1' && '#9EA6C2'
                 }}
               ></div>
             ) : (
@@ -731,15 +727,14 @@ export default class GetRowStrip extends PureComponent {
                 <div
                   style={{
                     height: (expand_length - 0.5) * ceil_height,
-                    backgroundColor:
-                      parseInt(percent_card_non) >= 100 && '#9EA6C2'
+                    backgroundColor: is_realize == '1' && '#9EA6C2'
                   }}
                   className={styles.board_miletiones_flagpole}
                 ></div>
                 <div
                   className={`${styles.board_miletiones_flag} ${globalStyles.authTheme}`}
                   style={{
-                    color: parseInt(percent_card_non) >= 100 && '#9EA6C2'
+                    color: is_realize == '1' && '#9EA6C2'
                   }}
                 >
                   &#xe6a0;

@@ -344,8 +344,22 @@ const LogicWithMainContent = {
     }
   },
 
+  // 获取子任务
+  checkChildCards: function(params) {
+    const { drawContent = {} } = this.props
+    const sub_task = getCurrentPropertiesData(
+      drawContent['properties'],
+      'SUBTASK'
+    )
+    return sub_task || []
+  },
+
   // 设置卡片是否完成 S
   setIsCheck: function() {
+    if (this.checkChildCards().length) {
+      message.warn('存在子任务，完成状态由子任务控制')
+      return
+    }
     const { drawContent = {} } = this.props
     const { is_realize = '0', card_id, board_id } = drawContent
     if (
@@ -2227,6 +2241,60 @@ const LogicWithMainContent = {
       default:
         break
     }
+  },
+
+  // 设置状态属性
+  setStatusProperty: function(params) {
+    const {
+      drawContent: { properties = [], is_realize, finish_time, due_time },
+      card_list_group = []
+    } = this.props
+    const subTask =
+      properties.find(item => {
+        return item.code == 'SUBTASK'
+      })?.data || []
+
+    const ishasChildCard = subTask?.length
+
+    const isHasSubFinish = subTask.some(item => {
+      //存在子任务处于完成
+      return item.is_realize == '1'
+    })
+    const isHasNoFinish = subTask.some(item => {
+      //存在子任务处于未完成
+      return item.is_realize == '0'
+    })
+    let taskStatus = ''
+    const is_overdue = !!due_time
+      ? Number(finish_time || 0) > Number(due_time || 0)
+      : false //没有截止时间意味着随便什么时候完成都是没有超过
+    if (ishasChildCard) {
+      if ((!isHasNoFinish && is_realize === '0') || !isHasSubFinish) {
+        taskStatus = '未到期'
+      } else if (!isHasNoFinish) {
+        taskStatus = '已完成'
+        if (is_overdue && is_realize === '1') {
+          taskStatus = '逾期完成'
+        } else if (is_realize === '1' && !is_overdue) {
+          taskStatus = '按时完成'
+        }
+      } else if (isHasSubFinish && isHasNoFinish) {
+        taskStatus = '进行中'
+      }
+    } else {
+      if (is_realize === '0') {
+        taskStatus = '未到期'
+      } else if (is_realize === '1') {
+        if (is_overdue) {
+          taskStatus = '逾期完成'
+        } else {
+          taskStatus = '按时完成'
+        }
+      }
+    }
+    this.setState({
+      taskStatus
+    })
   }
 }
 
