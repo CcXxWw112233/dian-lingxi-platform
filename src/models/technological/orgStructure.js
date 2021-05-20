@@ -16,7 +16,7 @@ export const OrgStructureModel = {
      */
     openPanel: false,
     /** 是否显示组织架构图 */
-    showStructure: true,
+    showStructure: false,
     /** 选中的角色信息 */
     activeRoleData: null
   },
