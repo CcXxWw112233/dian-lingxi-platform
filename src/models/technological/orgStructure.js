@@ -1,3 +1,5 @@
+import { MarkDefaultType } from '../../routes/SimpleMode/Components/SimpleHeader/Components/OrganizationalStructure/constans'
+
 /** 组织架构统一redux管理 */
 export const OrgStructureModel = {
   /** 组织架构命名空间
@@ -20,6 +22,7 @@ export const OrgStructureModel = {
   },
   /** 获取角色详情，展开权限面板
    * @example {role_group_id: '0', role_group_name: ''} role_info '角色信息'
+   * @param {string} markType 角色是否是默认类型
    */
   getRoleInfo: 'getRoleInfo',
   /** 更新的方法 */
@@ -34,14 +37,15 @@ export default {
   namespace: OrgStructureModel.namespace,
   state: { ...OrgStructureModel.state },
   effects: {
-    *[OrgStructureModel.getRoleInfo] ({ payload }, { put, call }) {
+    *[OrgStructureModel.getRoleInfo]({ payload }, { put, call }) {
       /** 先显示右侧弹框数据 */
-      yield put({
-        type: OrgStructureModel.reducers.updateDatas,
-        payload: {
-          activeRoleData: payload.role_info
-        }
-      })
+      if (payload.markType !== MarkDefaultType)
+        yield put({
+          type: OrgStructureModel.reducers.updateDatas,
+          payload: {
+            activeRoleData: payload.role_info
+          }
+        })
       /** 请求详情代码 */
     }
   },

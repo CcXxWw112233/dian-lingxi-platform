@@ -6,3 +6,11 @@ export const ClickRectColor = '#3667FF'
 export const OtherRectColor = '#575C75'
 /** 第一节点颜色 */
 export const FirstRectColor = '#FF7E44'
+
+/** 默认角色分组KEY */
+export const MarkDefaultType = 'DEFAULT'
+
+/** 主要组织分组KEY */
+export const MainOrgType = 'T_ORG'
+/** 正常分组KEY */
+export const NormalOrgType = 'NORMAL'

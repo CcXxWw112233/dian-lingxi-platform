@@ -1,128 +1,169 @@
-[
-  {
-    "role_group_name": "力高集团1",
-    "id": "1",
-    "role_type": "1",
-    "roles": [
-      {
-        "id": "2",
-        "role_group_name": "财务融资中心",
-        "role_type": "2",
-        "roles": []
-      },
-      {
-        "id": "3",
-        "role_group_name": "财务融资中心",
-        "role_type": "2",
-        "roles": []
-      },
-      {
-        "id": "4",
-        "role_group_name": "战略企划中心",
-        "role_type": "2",
-        "roles": []
-      },
-      {
-        "id": "5",
-        "role_group_name": "品牌管理中心",
-        "role_type": "2",
-        "roles": []
-      }
-    ]
-  },
-  {
-    "role_group_name": "力高集团2",
-    "id": "20",
-    "role_type": "1",
-    "roles": [
-      {
-        "id": "21",
-        "role_group_name": "财务融资中心",
-        "role_type": "2",
-        "roles": [
-          { "id": "26", "role_group_name": "财务融资中心", "role_type": "2" }
-        ]
-      },
-      {
-        "id": "23",
-        "role_group_name": "财务融资中心",
-        "role_type": "2",
-        "roles": []
-      },
-      {
-        "id": "24",
-        "role_group_name": "战略企划中心",
-        "role_type": "2",
-        "roles": []
-      },
-      {
-        "id": "25",
-        "role_group_name": "品牌管理中心132313211321321",
-        "role_type": "2",
-        "roles": []
-      }
-    ]
-  },
-  {
-    "role_group_name": "力高集团3",
-    "id": "30",
-    "role_type": "1",
-    "roles": [
-      {
-        "id": "31",
-        "role_group_name": "财务融资中心",
-        "role_type": "2",
-        "roles": []
-      },
-      {
-        "id": "33",
-        "role_group_name": "财务融资中心",
-        "role_type": "2",
-        "roles": []
-      },
-      {
-        "id": "34",
-        "role_group_name": "战略企划中心",
-        "role_type": "2",
-        "roles": []
-      },
-      {
-        "id": "35",
-        "role_group_name": "品牌管理中心132313211321321",
-        "role_type": "2",
-        "roles": []
-      }
-    ]
-  },
-  {
-    "role_group_name": "力高集团4",
-    "id": "40",
-    "role_type": "1",
-    "roles": [
-      {
-        "id": "41",
-        "role_group_name": "财务融资中心",
-        "role_type": "2",
-        "roles": []
-      },
-      {
-        "id": "43",
-        "role_group_name": "财务融资中心",
-        "role_type": "2",
-        "roles": []
-      },
-      {
-        "id": "44",
-        "role_group_name": "战略企划中心",
-        "role_type": "2",
-        "roles": []
-      },
-      {
-        "id": "45",
-        "role_group_name": "品牌管理中心132313211321321",
-        "role_type": "2",
-        "roles": []
-      }
-    ]
-  }
-]
+[{
+  "role_group_name": "力高集团",
+  "id": "1",
+  "role_type": "1",
+  "roles": [
+    {
+      "id": "2",
+      "role_group_name": "品牌管理中心",
+      "role_type": "2",
+      "roles": []
+    },
+    {
+      "id": "3",
+      "role_group_name": "战略企划中心",
+      "role_type": "2",
+      "roles": []
+    },
+    {
+      "id": "4",
+      "role_group_name": "财务融资中心",
+      "role_type": "2",
+      "roles": []
+    },
+    {
+      "id": "5",
+      "role_group_name": "人力资源中心",
+      "role_type": "2",
+      "roles": []
+    },
+    {
+      "id": "6",
+      "role_group_name": "审计监察中心",
+      "role_type": "2",
+      "roles": []
+    },
+    {
+      "id": "7",
+      "role_group_name": "香港公司",
+      "role_type": "2",
+      "roles": []
+    }
+  ]
+},{
+  "role_group_name": "地产控股集团",
+  "id": "8",
+  "role_type": "1",
+  "roles": [
+    {
+      "id": "9",
+      "role_group_name": "长三角投融资中心",
+      "role_type": "2",
+      "roles": []
+    },
+    {
+      "id": "10",
+      "role_group_name": "投资发展中心",
+      "role_type": "2",
+      "roles": []
+    },
+    {
+      "id": "11",
+      "role_group_name": "运营管理中心",
+      "role_type": "2",
+      "roles": []
+    },
+    {
+      "id": "12",
+      "role_group_name": "产品研发中心",
+      "role_type": "2",
+      "roles": []
+    },
+    {
+      "id": "13",
+      "role_group_name": "成本管理中心",
+      "role_type": "2",
+      "roles": []
+    },
+    {
+      "id": "14",
+      "role_group_name": "工程管理中心",
+      "role_type": "2",
+      "roles": []
+    },
+    {
+      "id": "15",
+      "role_group_name": "招采管理中心",
+      "role_type": "2",
+      "roles": []
+    },
+    {
+      "id": "16",
+      "role_group_name": "营销客关中心",
+      "role_type": "2",
+      "roles": []
+    },
+    {
+      "id": "17",
+      "role_group_name": "融资管理中心",
+      "role_type": "2",
+      "roles": []
+    },
+    {
+      "id": "18",
+      "role_group_name": "财务管理中心",
+      "role_type": "2",
+      "roles": []
+    },
+    {
+      "id": "19",
+      "role_group_name": "人力行政中心",
+      "role_type": "2",
+      "roles": []
+    },
+    {
+      "id": "20",
+      "role_group_name": "内控合规中心",
+      "role_type": "2",
+      "roles": []
+    }
+  ]
+},{
+  "role_group_name": "城市地产公司",
+  "id": "21",
+  "role_type": "1",
+  "roles": [
+    {
+      "id": "22",
+      "role_group_name": "设计部",
+      "role_type": "2",
+      "roles": []
+    },
+    {
+      "id": "23",
+      "role_group_name": "投资拓展部",
+      "role_type": "2",
+      "roles": []
+    },
+    {
+      "id": "24",
+      "role_group_name": "成本部",
+      "role_type": "2",
+      "roles": []
+    },
+    {
+      "id": "25",
+      "role_group_name": "招采部",
+      "role_type": "2",
+      "roles": []
+    },
+    {
+      "id": "26",
+      "role_group_name": "营销客服部",
+      "role_type": "2",
+      "roles": []
+    },
+    {
+      "id": "27",
+      "role_group_name": "财务部",
+      "role_type": "2",
+      "roles": []
+    },
+    {
+      "id": "28",
+      "role_group_name": "人力行政部",
+      "role_type": "2",
+      "roles": []
+    }
+  ]
+}]

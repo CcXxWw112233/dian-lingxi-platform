@@ -13,7 +13,7 @@ import {
   FirstRectColor,
   HoverRectColor,
   OtherRectColor
-} from './constans'
+} from '../constans'
 import { MaxZIndex } from '../../../../../../../globalset/js/constant'
 
 /** 组织架构的组织架构图
@@ -181,12 +181,16 @@ export default class OrgStructureCanvas extends React.Component {
    * @param {number} x 初始位置的X
    * @param {number} y 初始Y
    */
-  rolesChildRender = (roles = [], nextData, x, y, sourceX) => {
+  rolesChildRender = (roles = [], nextData, x, y) => {
     const { activeItem } = this.props
     /** 子集列表 */
     const arr = roles
     /** 上一个渲染的元素宽度 */
-    let prevWidth = 0
+    // let prevWidth = 0
+    /** 左侧X的数组 */
+    let leftXArr = []
+    /** 右侧X的数组 */
+    let rightXArr = []
     /** 上一个渲染元素的X坐标 */
     // let prevX = 0
     /** 渲染的上一个数据的结尾x */
@@ -274,7 +278,7 @@ export default class OrgStructureCanvas extends React.Component {
 
       this.AddTextEvent(text, rect, item)
       /** 保存上一个宽度 */
-      prevWidth = itemWidth
+      // prevWidth = itemWidth
       /** 保存上一个x的坐标 */
       // prevX = itemX
 
@@ -289,7 +293,7 @@ export default class OrgStructureCanvas extends React.Component {
          * 子集往左偏移的计算
          * @description
          */
-        childH = this.rolesChildRender(
+        const childObj = this.rolesChildRender(
           item.roles,
           false,
           /** 后面需改进 */
@@ -297,12 +301,17 @@ export default class OrgStructureCanvas extends React.Component {
             (topLine.x() - (topLine.x() - childTotalWidth / 2)) +
             siblingBetweenSize / 2,
           y + yH,
-          rect,
-          x
+          rect
         )
+        childH = childObj.height
+        leftXArr = leftXArr.concat(childObj.leftX)
+        rightXArr = rightXArr.concat(childObj.rightX)
       }
       totalH = yH + childH
       heightArr.push(totalH)
+
+      leftXArr.push(rect.x())
+      rightXArr.push(rect.x() + rect.width())
     })
 
     const maxHeight = Math.max.apply(this, [...heightArr, 1])
@@ -317,26 +326,10 @@ export default class OrgStructureCanvas extends React.Component {
       )
       totalLine.cache()
       this.Layer.add(totalLine)
-
-      // /** 外围虚线框 */
-      // const totalRect = new Konva.Rect({
-      //   x: start.x() - 20,
-      //   y: start.y() - 20,
-      //   width: end.x() + end.width() - start.x() + 20 * 2,
-      //   height: maxHeight,
-      //   stroke: 'red',
-      //   strokeWidth: 2,
-      //   dash: [10, 1, 0, 2],
-      //   cornerRadius: 10,
-      //   levels: 0
-      // })
-      // totalRect.listening(false)
-      // totalRect.cache()
-      // this.Layer.add(totalRect)
       this.Layer.draw()
     }
     // }
-    return maxHeight
+    return { height: maxHeight, leftX: leftXArr, rightX: rightXArr }
   }
 
   /** 添加编辑框 */
@@ -461,11 +454,13 @@ export default class OrgStructureCanvas extends React.Component {
     /** 子节点的y轴 */
     let yH = 0
     data.forEach((item, index) => {
+      /** 是否拥有下一个数据 */
+      const hasNextData = !!data[index + 1]
       const roles = item.roles || []
       const { role_group_name, id } = item
       const { text, rect, line, topLine, nodeHeight } = addRectText({
         text: role_group_name,
-        x: this.Center.x,
+        x: this.Center.x - item._width / 2,
         y: height + 20,
         textStyle: {
           fill: '#ffffff'
@@ -496,16 +491,65 @@ export default class OrgStructureCanvas extends React.Component {
       }
       if (roles.length) {
         const CWidth = this.getChildWidthNotSplit(roles)
-        childH = this.rolesChildRender(
+        const childObj = this.rolesChildRender(
           this.forMathChild(roles),
           !!StructureData[index + 1],
           /** 用rect的x，减去需要偏移的x，减去一个间隙，再减去线条宽度 */
           line.x() -
             (line.x() - (line.x() - CWidth / 2)) +
             siblingBetweenSize / 2,
-          rect.y() + yH + line.height() / 2 + 2,
-          line.x()
+          rect.y() + yH + line.height() / 2 + 2
         )
+        childH = childObj.height
+        // console.log(childObj)
+        const minX = Math.min.apply(this, childObj.leftX)
+        const maxX = Math.max.apply(this, childObj.rightX)
+        const w = maxX - minX
+        if (hasNextData && roles.length > 1) {
+          /** 外围虚线框 */
+          const totalRect = new Konva.Rect({
+            x: minX - 20,
+            y: rect.y() + yH - 20,
+            width: w + 20 * 2,
+            height: childH + 20 * 2,
+            stroke: 'rgba(255, 0, 0, 0.3)',
+            strokeWidth: 1,
+            dash: [10, 1, 0, 2],
+            cornerRadius: 10,
+            levels: 0,
+            listening: false
+          })
+          /** 虚线框连接到下一个同级 */
+          const lineBottom = new Konva.Line({
+            x: line.x(),
+            points: [
+              0,
+              totalRect.y() + totalRect.height(),
+              0,
+              totalRect.y() + totalRect.height() + yH - 10
+            ],
+            stroke: 'rgba(255, 0, 0, 0.3)',
+            dash: [10, 1, 0, 2],
+            strokeWidth: 1
+          })
+          /** 虚线下的三角 */
+          const triangle = new Konva.RegularPolygon({
+            x: line.x(),
+            y: totalRect.y() + totalRect.height() + yH - 6,
+            sides: 3,
+            radius: 6,
+            fill: 'rgba(255, 0, 0, 0.3)',
+            name: 'triangle',
+            rotation: 180
+          })
+          triangle.cache()
+          lineBottom.cache()
+          totalRect.cache()
+          this.Layer.add(lineBottom)
+          this.Layer.add(totalRect)
+          this.Layer.add(triangle)
+          this.Layer.draw()
+        }
       }
       height += yH + childH + 100
     })
