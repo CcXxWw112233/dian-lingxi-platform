@@ -63,7 +63,7 @@ export default class OrganizationalStructure extends React.Component {
     window.addEventListener('keydown', this.KeyboardEvent)
     this.getOrgRoleList()
     this.getOrgPermissions()
-    this.getRolePermissionsAndMenber()
+    // this.getRolePermissionsAndMenber()
   }
   componentWillUnmount() {
     window.removeEventListener('keydown', this.KeyboardEvent)
@@ -136,27 +136,29 @@ export default class OrganizationalStructure extends React.Component {
    * 组织菜单、功能权限列表
    */
    getOrgPermissions () {
-    const {dispatch} = this.props;
+    const {dispatch,org_id} = this.props;
     dispatch({
       type: [
         OrgStructureModel.namespace,
         'getOrgPermissions'
       ].join('/'),
       payload: {
+        
       }
     })
    }
    /** 角色信息（包括权限，成员）*/
    getRolePermissionsAndMenber() {
-    const {dispatch} = this.props;
+    const {dispatch,} = this.props;
+    const {org_id,role_id} = this.state;
     dispatch({
       type: [
         OrgStructureModel.namespace,
         'getRolePermissionsAndMenber'
       ].join('/'),
       payload: {
-        org_id:localStorage.getItem('OrganizationId'),
-        role_id:'1367020999064817664'
+        org_id:org_id,
+        role_id:role_id
       }
     })
    }
@@ -240,7 +242,9 @@ export default class OrganizationalStructure extends React.Component {
       /** 不允许编辑,可以查看 */
       console.log(data)
       this.setState({
-        title:data['name'] || data['role_group_name']
+        title:data && (data['name'] || data['role_group_name']),
+        role_id:data['id'],
+        org_id:data['org_id']
       })
       dispatch({
         type: [OrgStructureModel.namespace, OrgStructureModel.reducers.updateDatas].join(
@@ -260,6 +264,16 @@ export default class OrganizationalStructure extends React.Component {
         role_info: data,
         /** 判断是不是默认角色，默认角色不需要更新到activeRole */
         markType: type
+      }
+    })
+    dispatch({
+      type: [
+        OrgStructureModel.namespace,
+        'getRolePermissionsAndMenber'
+      ].join('/'),
+      payload: {
+        org_id:data['org_id'],
+        role_id:data['id']
       }
     })
   }
@@ -606,9 +620,8 @@ export default class OrganizationalStructure extends React.Component {
   render() {
     /** 是否显示右侧角色窗口 */
     const { openPanel, activeRoleData } = this.props
-    const { defaultRoles,title } = this.state
-    // const title = currentItem.name || currentItem.role_group_name;
-    return ReactDOM.createPortal(
+    const { defaultRoles,title ,role_id,org_id} = this.state
+     return ReactDOM.createPortal(
       <div
         className={`${styles.container} animate_animated animate__fadeInRight animate__faster`}
       >
@@ -660,7 +673,7 @@ export default class OrganizationalStructure extends React.Component {
           onUpdateText={val => this.updateText(val)}
           activeItem={this.props.activeRoleData}
         />
-        {openPanel && <RoleMemberPanel title={title} getRolePermissionsAndMenber={()=>this.getRolePermissionsAndMenber()}></RoleMemberPanel>}
+        {openPanel && <RoleMemberPanel role_id={role_id} org_id={org_id} title={title} getRolePermissionsAndMenber={()=>this.getRolePermissionsAndMenber()}></RoleMemberPanel>}
       </div>,
       document.body
     )

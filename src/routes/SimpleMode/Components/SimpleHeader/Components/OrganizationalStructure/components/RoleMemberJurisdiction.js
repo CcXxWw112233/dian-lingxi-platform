@@ -32,11 +32,11 @@ export default class RoleMemberJurisdiction extends React.Component {
   onCheck(checkedKeys,e) {
     console.log(checkedKeys.checked)
     
-    const {dispatch} = this.props;
+    const {dispatch,role_id} = this.props;
     var data = {
       box_type_ids: "",
       function_data: checkedKeys.checked,
-      role_id: "1367020999064817664"
+      role_id: role_id
     }
     dispatch({
         type: [

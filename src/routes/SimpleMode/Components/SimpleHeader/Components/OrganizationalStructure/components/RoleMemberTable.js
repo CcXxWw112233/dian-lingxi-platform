@@ -7,6 +7,8 @@ import { Avatar, Dropdown, Select } from 'antd'
 import {
   AppstoreOutlined,
 } from '@ant-design/icons';
+import { discontinueMember,getTransferSelectedList } from '../../../../../../../services/technological/organizationMember'
+import { isApiResponseOk } from '../../../../../../../utils/handleResponseData'
 
 const TreeRemoveOrgMemberModal = lazy(() =>
   import(
@@ -102,14 +104,14 @@ export default class RoleMemberTable extends React.Component {
    * @param {*} e 
    */
   getMemberTagList() {
-    const { dispatch } = this.props
+    const { dispatch,org_id} = this.props
     dispatch({
       type: [
         OrgStructureModel.namespace,
         'getMemberTagList'
       ].join('/'),
       payload: {
-        org_id: localStorage.getItem('OrganizationId'),
+        org_id: org_id,
       }
     })
   }
@@ -134,7 +136,7 @@ export default class RoleMemberTable extends React.Component {
       this.setState({
         isconfirmCurrentTag: true,
         // moreVisible:false,
-        currentLableID:item.id,
+        currentLableID: item.id,
         currentTag: item.name,
         isShowSearch: false
       })
@@ -145,7 +147,7 @@ export default class RoleMemberTable extends React.Component {
    */
   deleteRelaMemberTag() {
     const { dispatch } = this.props
-    const { currentMemberId,currentLableID } = this.state;
+    const { currentMemberId, currentLableID } = this.state;
     dispatch({
       type: [
         OrgStructureModel.namespace,
@@ -174,9 +176,9 @@ export default class RoleMemberTable extends React.Component {
    * 添加标签
    */
   addMenberTag() {
-    const {currentSelectValue} = this.state;
+    const { currentSelectValue } = this.state;
 
-    const { dispatch } = this.props
+    const { dispatch,role_id,org_id } = this.props
     if (currentSelectValue) {
       dispatch({
         type: [
@@ -184,7 +186,7 @@ export default class RoleMemberTable extends React.Component {
           'addNewMemberTag'
         ].join('/'),
         payload: {
-          org_id: localStorage.getItem('OrganizationId'),
+          org_id: org_id,
           name: currentSelectValue,
           color: ''
         }
@@ -233,11 +235,11 @@ export default class RoleMemberTable extends React.Component {
     //     currentTag:value[1]
     //   })
     // }
-   
-  
+
+
 
   }
-  onSearch (value) {
+  onSearch(value) {
     var { currentOrgTagList } = this.props;
     var searchList = currentOrgTagList && currentOrgTagList.filter(item => {
       return item.name.search(value) != -1
@@ -250,7 +252,7 @@ export default class RoleMemberTable extends React.Component {
   }
   onBlur(value) {
     console.log(`selected onBlur${value}`);
-    if(value == '' || !value) {
+    if (value == '' || !value) {
       this.deleteRelaMemberTag()
     }
   }
@@ -266,22 +268,22 @@ export default class RoleMemberTable extends React.Component {
         <Select placeholder="输入创建新标签"
           showSearch
           allowClear
-          style={{color:"#212434"}}
+          style={{ color: "#212434" }}
           open={true}
           onBlur={this.onBlur.bind(this)}
           onChange={this.handleonChange.bind(this)}
           onSearch={this.onSearch.bind(this)}
           getPopupContainer={triggerNode => triggerNode.parentNode}
-          dropdownStyle={{ border: 'none'}}
+          dropdownStyle={{ border: 'none' }}
           defaultValue={currentTag}
-        
+
           dropdownRender={(menu) => {
             return (
-              <div className={styles.add_member_tagList} 
-              style={{
-                overflowY: 'auto',
-                position: 'relative',
-              }}>
+              <div className={styles.add_member_tagList}
+                style={{
+                  overflowY: 'auto',
+                  position: 'relative',
+                }}>
 
                 {
                   currentOrgTagList && currentOrgTagList.map((item, key) => {
@@ -314,52 +316,7 @@ export default class RoleMemberTable extends React.Component {
           }
           }
         >
-          {/* {
-            currentOrgTagList.map(item=>{
-             return <Option value={item.name} title={item.name}>{item.name}</Option>
-            })
-          } */}
         </Select>
-
-        {/* <Input
-          onChange={this.getPrintTagKey}
-          // value={this.state.currentTag}
-          //  onInput={this.getPrintTagKey} 
-          value={isconfirmCurrentTag ? currentTag + ' ':currentTag} 
-          onPressEnter={e => this.enterPrintTagKey()}
-          placeholder='输入创建新标签' className={styles.add_member_tag_input}>
-        </Input>
-        <div className={styles.add_member_tag_input_area}>
-          {
-            currentTag && isconfirmCurrentTag && <div className={styles.add_member_tag_input_textbg}>{currentTag}</div>
-          }
-        </div>
-        <div
-          className={styles.add_member_tagList}
-          style={{
-            overflowY: 'auto',
-            position: 'relative',
-          }}>
-          {
-            currentOrgTagList && currentOrgTagList.map((item, key) => {
-              return (
-                <div className={styles.add_member_tag_item} onClick={this.addRoleMenberTag.bind(this, item)}>
-                  {item.name}
-                  <div className={`${styles.role_member_tag_delete_icon}`}>
-                    <span
-                      className={`${styles.role_member_delete_icon} ${globalStyles.authTheme}`}
-                      onClick={this.deleteTag.bind(this, item)}
-                    >
-                      &#xe661;
-                          </span>
-                  </div>
-                </div>
-              )
-            })
-          }
-        </div> */}
-
-
       </div>
     )
   }
@@ -421,14 +378,17 @@ export default class RoleMemberTable extends React.Component {
       currentName: item.name,
       currentUserId: item.user_id,
       currentMemberId: item.member_id,
-      currentLableID:item.label_id[0]
+      currentOrgID:item.org_id,
+      currentLableID: item.label_id[0]
     })
   }
-
+  /**
+   * 移除成员
+   */
   moveUserOut() {
-    this.setState({
-      TreeRemoveBoardMemberModalVisible:true
-    })
+    const {org_id} = this.props
+    const {currentUserId,currentOrgID} = this.state;
+    this.getTransferSelectedList(currentUserId,org_id)
   }
 
   /**
@@ -450,7 +410,7 @@ export default class RoleMemberTable extends React.Component {
             </span>
         </div>
       </Dropdown> */}
-      
+
     </div>
   }
 
@@ -518,11 +478,69 @@ export default class RoleMemberTable extends React.Component {
         .TreeRemoveBoardMemberModalVisible
     })
   }
+
+  // 获取移出成员后的交接列表
+  getTransferSelectedList = (remove_id, member_id ) => {
+    getTransferSelectedList({ user_id: remove_id }).then(res => {
+      if (isApiResponseOk(res)) {
+        if (res.data && res.data.length) {
+          this.props.dispatch({
+            type: 'organizationMember/updateDatas',
+            payload: {
+              transferSelectedList: res.data,
+              TreeRemoveOrgMemberModalVisible: true,
+              removeMemberUserId: remove_id
+            }
+          })
+        } else {
+          this.discontinueConfirm(member_id)
+        }
+      }
+    })
+  }
+  discontinueMember = (member_id) => {
+    var that = this;
+    discontinueMember({ member_id }).then(res => {
+      that.props.getRolePermissionsAndMenber()
+    })
+  }
+  //停用
+  discontinueConfirm(member_id) {
+    if (!checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_REMOVE)) {
+      message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
+      return false
+    }
+    const that = this
+    const modal = Modal.confirm()
+    // 这里的 `update` 相当于是对 Modal进行配置
+    modal.update({
+      title: `确认停用该${currentNounPlanFilterName(MEMBERS)}？`,
+      okText: '确认',
+      cancelText: '取消',
+      onOk() {
+        that.discontinueMember(member_id)
+      },
+      getContainer: () =>
+        document.getElementById('organizationMemberContainer'),
+      zIndex: 1010,
+      onCancel: () => {
+        modal.destroy()
+      }
+    })
+    // Modal.confirm({
+    //   title: `确认停用该${currentNounPlanFilterName(MEMBERS)}？`,
+    //   okText: '确认',
+    //   cancelText: '取消',
+    //   onOk() {
+    //     that.discontinueMember(member_id)
+    //   }
+    // });
+  }
   render() {
-    const { orgMembersList = [], currentOrgTagList = [],canHandle} = this.props
+    const { orgMembersList = [], currentOrgTagList = [], canHandle } = this.props
     const { currentUserId } = this.state;
-    
-    console.log('sssssssssssssss',currentUserId)
+
+    console.log('sssssssssssssss', currentUserId)
     return <div className={`${styles.role_member}`}
       style={{
         overflowY: 'auto',
@@ -530,7 +548,7 @@ export default class RoleMemberTable extends React.Component {
       }}
       id={'RoleMemberTable_wrapper'}
     >
-      
+
       {
         orgMembersList.map((item, key) => {
           const { member_id, user_id, label_id = [] } = item;
@@ -540,7 +558,7 @@ export default class RoleMemberTable extends React.Component {
           return <div className={styles.role_member_item} onClick={this.selectMember.bind(this, item)}>
             <div className={styles.role_member_contant}>
               <Dropdown trigger={['click']}
-              disabled={!canHandle}
+                disabled={!canHandle}
                 getPopupContainer={triggerNode => triggerNode.parentNode}
                 overlay={
                   this.overlayRoleMenberMore()
@@ -576,9 +594,9 @@ export default class RoleMemberTable extends React.Component {
           </div>
         })
       }
-      <TreeRemoveOrgMemberModal groupList={[]} TreeRemoveOrgMemberModalVisible={true}/>
+      <TreeRemoveOrgMemberModal groupList={[]} />
 
-    
+
       {/* <Button className={styles.add_role_member}  type='primary' onClick={()=>this.addRoleMenber()}>添加成员</Button> */}
     </div>
   }

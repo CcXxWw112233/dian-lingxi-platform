@@ -75,7 +75,6 @@ export default class RoleMemberPanel extends React.Component {
    * @returns 
    */
   selectTab = (key) => {
-    console.log('ssssssss', key)
     this.setState({
       currentTab: key
     })
@@ -86,7 +85,6 @@ export default class RoleMemberPanel extends React.Component {
    */
   addRoleMember() {
     const { canHandle } = this.props;
-    console.log('sssssssssssssssssssssss123121', canHandle)
     if (!canHandle) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return
@@ -109,7 +107,7 @@ export default class RoleMemberPanel extends React.Component {
 
   addMembers(data) {
     const { users } = data
-    const { currentSelectOrganize = {}, dispatch } = this.props
+    const { currentSelectOrganize = {}, dispatch,org_id ,role_id} = this.props
     const { id } = currentSelectOrganize
     dispatch({
       type: [
@@ -118,8 +116,8 @@ export default class RoleMemberPanel extends React.Component {
       ].join('/'),
       payload: {
         users: users,
-        org_id: localStorage.getItem('OrganizationId'),
-        role_id: '1367020999064817664',
+        org_id: org_id,
+        role_id: role_id,
         type: '11'
       }
     })
@@ -129,8 +127,7 @@ export default class RoleMemberPanel extends React.Component {
   }
   render() {
     const { tabs, currentTab, modalVisible } = this.state;
-    const { canHandle ,title} = this.props
-    console.log('sssssssssssssssssss', canHandle)
+    const { canHandle ,title,org_id ,role_id} = this.props
     return (
       <div className={styles.role_panel} >
         <div className={styles.role_panel_top}>
@@ -164,7 +161,7 @@ export default class RoleMemberPanel extends React.Component {
         </div>
 
         {
-          currentTab == 0 ? <RoleMemberJurisdiction canHandle={canHandle}></RoleMemberJurisdiction> : <RoleMemberTable canHandle={canHandle} addRoleMember={() => this.addRoleMember()} getRolePermissionsAndMenber={() => this.getRolePermissionsAndMenber()}></RoleMemberTable>
+          currentTab == 0 ? <RoleMemberJurisdiction role_id={role_id} org_id={org_id} canHandle={canHandle}></RoleMemberJurisdiction> : <RoleMemberTable canHandle={canHandle} role_id={role_id} org_id={org_id} addRoleMember={() => this.addRoleMember()} getRolePermissionsAndMenber={() => this.getRolePermissionsAndMenber()}></RoleMemberTable>
         }
 
 
