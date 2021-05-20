@@ -61,7 +61,7 @@ export default class MilestoneBaseHeader extends Component {
       payload: {
         batch_operating: false,
         batch_opetate_ids: [],
-        _already_batch_operate_ids: []
+        already_batch_operate_ids: []
       }
     })
   }
