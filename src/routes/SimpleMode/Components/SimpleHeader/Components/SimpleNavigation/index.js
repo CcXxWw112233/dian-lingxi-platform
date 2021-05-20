@@ -1105,8 +1105,6 @@ export default class SimpleNavigation extends Component {
               )}
             />
           )}
-
-          {this.props.showStructure && <OrgStructure />}
           {/* {this.state.payUpgradeModalVisible && (
             <PayUpgrade
               setPayUpgradeModalVisible={this.setPayUpgradeModalVisible}

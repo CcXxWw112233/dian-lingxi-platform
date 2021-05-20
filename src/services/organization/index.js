@@ -4,6 +4,7 @@ import {
   REQUEST_DOMAIN_FLOWS
 } from '../../globalset/js/constant'
 import Cookies from 'js-cookie'
+import { isApiResponseOk } from '../../utils/handleResponseData'
 
 // 获取对应组织下的组织成员列表（仅列表）
 export async function getCorrespondingOrganizationMmembers(params) {
@@ -92,7 +93,11 @@ export async function saveRolePermission(data) {
     data
   })
 }
-//创建角色
+/**
+ * 创建角色
+ * @param {{_organization_id: string , name: string, group_id:string, parent_id: string}} data 新建的角色数据
+ * @returns {Promise<{data:any, code: string,message:string}>}
+ */
 export async function createRole(data) {
   return request({
     url: `${REQUEST_DOMAIN}/role`,
@@ -102,6 +107,13 @@ export async function createRole(data) {
       _organization_id: localStorage.getItem('OrganizationId')
     }
   })
+    .then(resp => {
+      if (isApiResponseOk(resp)) {
+        return resp
+      }
+      return Promise.reject(resp)
+    })
+    .catch(err => Promise.reject(err))
 }
 //更新角色
 export async function updateRole(data) {
@@ -110,6 +122,13 @@ export async function updateRole(data) {
     method: 'PUT',
     data
   })
+    .then(resp => {
+      if (isApiResponseOk(resp)) {
+        return resp
+      }
+      return Promise.reject(resp)
+    })
+    .catch(err => Promise.reject(err))
 }
 //删除角色
 export async function deleteRole(data) {
@@ -118,6 +137,13 @@ export async function deleteRole(data) {
     method: 'DELETE',
     data
   })
+    .then(resp => {
+      if (isApiResponseOk(resp)) {
+        return resp
+      }
+      return Promise.reject(resp)
+    })
+    .catch(err => Promise.reject(err))
 }
 //复制角色
 export async function copyRole(data) {
@@ -126,6 +152,13 @@ export async function copyRole(data) {
     method: 'PUT',
     data
   })
+    .then(resp => {
+      if (isApiResponseOk(resp)) {
+        return resp
+      }
+      return Promise.reject(resp)
+    })
+    .catch(err => Promise.reject(err))
 }
 //创建角色
 export async function setDefaultRole(data) {
@@ -137,6 +170,13 @@ export async function setDefaultRole(data) {
       _organization_id: localStorage.getItem('OrganizationId')
     }
   })
+    .then(resp => {
+      if (isApiResponseOk(resp)) {
+        return resp
+      }
+      return Promise.reject(resp)
+    })
+    .catch(err => Promise.reject(err))
 }
 
 //获取权限列表
@@ -571,6 +611,127 @@ export async function calendarGetTemplateList(params) {
     method: 'GET',
     params
   })
+}
+
+/** 获取角色分组列表 */
+export const OrgRoleGroupList = params => {
+  return request({
+    url: `${REQUEST_DOMAIN}/org/role/group/list`,
+    method: 'GET',
+    params
+  })
+    .then(resp => {
+      if (isApiResponseOk(resp)) {
+        return resp
+      }
+      return Promise.reject(resp)
+    })
+    .catch(err => Promise.reject(err))
+}
+
+/** 新增组织角色分组
+ * @param {{org_id:string, name: string}} data 添加分组的信息
+ * @returns {Promise<{data: {role_group_name: string, id: string}}>}
+ */
+export const OrgAddRoleGroup = data => {
+  return request({
+    url: `${REQUEST_DOMAIN}/org/role/group`,
+    method: 'POST',
+    data
+  })
+    .then(resp => {
+      if (isApiResponseOk(resp)) {
+        return resp
+      }
+      return Promise.reject(resp)
+    })
+    .catch(err => Promise.reject(err))
+}
+
+/** 修改组织角色分组
+ * @param {{id: string, name: string}} data 组织角色详情
+ */
+export const OrgPutRoleGroup = data => {
+  return request({
+    url: `${REQUEST_DOMAIN}/org/role/group`,
+    method: 'PUT',
+    data
+  })
+    .then(resp => {
+      if (isApiResponseOk(resp)) {
+        return resp
+      }
+      return Promise.reject(resp)
+    })
+    .catch(err => Promise.reject(err))
+}
+
+/** 删除组织角色分组
+ * @param {{id: string}} data 需要删除的分组信息
+ */
+export const OrgRoleRemoveGroup = data => {
+  return request({
+    url: `${REQUEST_DOMAIN}/org/role/group?group_id=${data.group_id}`,
+    method: 'DELETE',
+    data
+  })
+    .then(resp => {
+      if (isApiResponseOk(resp)) {
+        return resp
+      }
+      return Promise.reject(resp)
+    })
+    .catch(err => Promise.reject(err))
+}
+
+/** 添加组织角色 */
+export const OrgRoleAdd = data => {
+  return request({
+    url: `${REQUEST_DOMAIN}/org/member/role`,
+    method: 'POST',
+    data
+  })
+    .then(resp => {
+      if (isApiResponseOk(resp)) {
+        return resp
+      }
+      return Promise.reject(resp)
+    })
+    .catch(err => Promise.reject(err))
+}
+/** 删除组织角色
+ * @param {{id: string, org_id: string}} data 需要删除的分组信息
+ */
+export const OrgRoleRemove = data => {
+  return request({
+    url: `${REQUEST_DOMAIN}/org/member/role?org_id=${data.org_id}&role_id=${data.id}`,
+    method: 'DELETE',
+    data
+  })
+    .then(resp => {
+      if (isApiResponseOk(resp)) {
+        return resp
+      }
+      return Promise.reject(resp)
+    })
+    .catch(err => Promise.reject(err))
+}
+/** 修改组织角色
+ * @param {{id: string, name: string}} data 组织角色详情
+ */
+export const OrgPutRole = data => {
+  return request({
+    url: `${REQUEST_DOMAIN}/org/member/role`,
+    method: 'PUT',
+    data
+  })
+    .then(resp => {
+      if (isApiResponseOk(resp)) {
+        return resp
+      }
+      return Promise.reject(resp)
+    })
+    .catch(err => Promise.reject(err))
 }
 
 // ------------------------ 自定义字段接口 E --------------------------

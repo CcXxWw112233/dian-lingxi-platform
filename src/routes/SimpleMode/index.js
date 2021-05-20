@@ -20,6 +20,8 @@ import ExpireVip from '../../components/ExpireVip'
 import { ExpireModel } from '../../models/technological/expireRenew'
 import { ExpireType } from '../../components/ExpireVip/constans'
 import moment from 'moment'
+import OrganizationalStructure from './Components/SimpleHeader/Components/OrganizationalStructure'
+import { OrgStructureModel } from '../../models/technological/orgStructure'
 
 const defaultWallpaperSrc = ''
 // import WorkbenchPage from './Components/WorkbenchPage'
@@ -337,6 +339,7 @@ class SimpleMode extends PureComponent {
             releaShow={ExpireType.WillExpire === this.props.expireType}
           />
         )}
+        {this.props.showStructure && <OrganizationalStructure />}
       </div>
     )
   }
@@ -356,7 +359,8 @@ export default connect(
     organizationManager: {
       datas: { currentNounPlan }
     },
-    [ExpireModel.namespace]: { expireVisible, expireType }
+    [ExpireModel.namespace]: { expireVisible, expireType },
+    [OrgStructureModel.namespace]: { showStructure }
   }) => ({
     simpleHeaderVisiable,
     setWapperCenter,
@@ -366,6 +370,7 @@ export default connect(
     currentNounPlan,
     currentSelectedProjectOrgIdByBoardId,
     expireVisible,
-    expireType
+    expireType,
+    showStructure
   })
 )(SimpleMode)
