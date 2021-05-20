@@ -69,7 +69,7 @@ import { clickDelay } from '../../../../globalset/clientCustorm'
 import { LISTLOCK, NOTLISTLOCKREAD } from '../VisitControl/constans'
 import CardGroupNames from './components/CardGroupNames'
 import BatchOperateCheckBoxItem from './components/MilestonesBaseProgress/BatchOperateCheckBoxItem'
-
+import AlreadyBatchSetFlagGroupItem from './components/MilestonesBaseProgress/AlreadyBatchSetFlagGroupItem'
 @connect(mapStateToProps)
 export default class GroupListHeadItem extends Component {
   constructor(props) {
@@ -1860,6 +1860,7 @@ export default class GroupListHeadItem extends Component {
                 </span>
                 <span>%</span>
               </div>
+              <AlreadyBatchSetFlagGroupItem list_id={list_id} />
             </div>
             <div className={`${indexStyles.list_head_top_bott}`}>
               <div
