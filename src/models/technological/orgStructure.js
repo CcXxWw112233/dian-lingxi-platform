@@ -103,7 +103,6 @@ export default {
     },
     /** web端各种入口邀请人员加入组织逻辑处理*/
     *orgAaccessInviteWeb({ payload }, { select, call, put }) {
-      debugger
       let res = yield call(orgAaccessInviteWeb, payload)
       if (isApiResponseOk(res)) {
         yield put({
