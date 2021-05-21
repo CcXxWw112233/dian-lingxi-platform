@@ -34,12 +34,10 @@ export default class RoleMemberJurisdiction extends React.Component {
    * @param {*} e
    */
   onCheck(checkedKeys, e) {
-    console.log(checkedKeys.checked)
-
     const { dispatch, role_id } = this.props
     var data = {
       box_type_ids: '',
-      function_data: checkedKeys.checked,
+      function_data: checkedKeys,
       role_id: role_id
     }
     dispatch({
@@ -79,8 +77,7 @@ export default class RoleMemberJurisdiction extends React.Component {
             })
         } */}
         <Tree
-          checkable
-          checkStrictly={true}
+          checkable={true}
           // defaultExpandedKeys={[]}
           defaultSelectedKeys={currentPermissionList}
           defaultCheckedKeys={currentPermissionList}
@@ -91,17 +88,19 @@ export default class RoleMemberJurisdiction extends React.Component {
             const child_data = item['child_data'] || []
             return (
               <TreeNode
-                disableCheckbox
+                disableCheckbox={!canHandle}
+                selectable={false}
                 title={
                   <span className={`${styles.role_Jurisdiction_title}`}>
                     {item.name}
                   </span>
                 }
-                key={item.id + '_' + key}
+                key={item.id}
               >
                 {child_data.map((value, key) => {
                   return (
                     <TreeNode
+                      selectable={false}
                       disableCheckbox={!canHandle}
                       title={
                         <span className={`${styles.role_Jurisdiction_title}`}>
