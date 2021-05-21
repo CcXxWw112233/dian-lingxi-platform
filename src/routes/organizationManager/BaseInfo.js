@@ -471,7 +471,7 @@ export default class BaseInfo extends React.Component {
           )}
         </div>
 
-        <div className={indexStyles.baseInfo_title_2}>
+        {/* <div className={indexStyles.baseInfo_title_2}>
           {currentNounPlanFilterName(MEMBERS)}加入模式
         </div>
         <div className={indexStyles.baseInfo_des}>
@@ -510,7 +510,7 @@ export default class BaseInfo extends React.Component {
           >
             保存
           </Button>
-        </div>
+        </div> */}
 
         {this.state.payUpgradeModalVisible && (
           <PayUpgrade
