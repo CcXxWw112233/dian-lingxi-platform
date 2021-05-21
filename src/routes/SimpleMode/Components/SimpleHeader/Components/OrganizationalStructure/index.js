@@ -56,7 +56,9 @@ export default class OrganizationalStructure extends React.Component {
     this.state = {
       data: [],
       /** 默认的角色 */
-      defaultRoles: {}
+      defaultRoles: {},
+      /** 选中的数据 */
+      isActiveItem: null
     }
   }
   componentDidMount() {
@@ -203,6 +205,15 @@ export default class OrganizationalStructure extends React.Component {
    * @param {string} 点击的角色类型
    */
   mapTreeHandleClick = (data, type) => {
+    if (!this.isGroupNode(data)) {
+      this.setState({
+        isActiveItem: data
+      })
+    } else {
+      this.setState({
+        isActiveItem: null
+      })
+    }
     const { dispatch } = this.props
     dispatch({
       type: [OrgStructureModel.namespace, OrgStructureModel.getRoleInfo].join(
@@ -286,20 +297,28 @@ export default class OrganizationalStructure extends React.Component {
   }
 
   /** 角色上添加普通角色 */
-  addSubChildRole = (parent, data) => {
+  addSubChildRole = async (parent, data) => {
     if (parent) {
       if (this.isGroupNode(parent))
-        return this.addRole({
-          parent_id: parent.id,
-          group_id: parent.id,
-          ...data
-        }).catch(err => false)
+        try {
+          return this.addRole({
+            parent_id: parent.id,
+            group_id: parent.id,
+            ...data
+          })
+        } catch (err) {
+          return false
+        }
       else
-        return this.addRole({
-          parent_id: parent.id,
-          group_id: parent.group_id,
-          ...data
-        }).catch(err => false)
+        try {
+          return this.addRole({
+            parent_id: parent.id,
+            group_id: parent.group_id,
+            ...data
+          })
+        } catch (err_1) {
+          return false
+        }
     }
     return null
   }
@@ -386,9 +405,9 @@ export default class OrganizationalStructure extends React.Component {
 
   /** 是否是分组的节点 */
   isGroupNode = node => {
-    const { activeRoleData } = this.props
-    if (node || activeRoleData) {
-      if (activeRoleData.mark) return true
+    const activeRoleData = node || this.props.activeRoleData
+    if (activeRoleData) {
+      if (activeRoleData?.mark) return true
       return false
     }
     return false
@@ -481,7 +500,7 @@ export default class OrganizationalStructure extends React.Component {
         }
         OrgAddRoleGroup(param).then(res => {
           /** 分组角色id */
-          const roleGroupData = res.data
+          const roleGroupData = { ...res.data, mark: NormalOrgType }
           const arr = Array.from(this.state.data)
           arr.splice(index + 1, 0, roleGroupData)
           this.setState({
@@ -497,11 +516,7 @@ export default class OrganizationalStructure extends React.Component {
     const { activeRoleData } = this.props
     if (activeRoleData) {
       /** 说明点击的是顶级分组 */
-      if (
-        activeRoleData.mark &&
-        (activeRoleData.mark === NormalOrgType ||
-          activeRoleData.mark === MainOrgType)
-      ) {
+      if (this.isGroupNode(activeRoleData)) {
         return this.addOrgGroupRoleNode()
       }
       const nodes = this.findNode(activeRoleData.id, this.state.data)
@@ -555,10 +570,26 @@ export default class OrganizationalStructure extends React.Component {
     })
   }
 
+  /** 点击打开详情 */
+  handleOpenPanel = () => {
+    if (!this.state.isActiveItem) return
+    /** 点击打开右侧弹窗 */
+    const { dispatch } = this.props
+    dispatch({
+      type: [
+        OrgStructureModel.namespace,
+        OrgStructureModel.reducers.updateDatas
+      ].join('/'),
+      payload: {
+        openPanel: true
+      }
+    })
+  }
+
   render() {
     /** 是否显示右侧角色窗口 */
     const { openPanel, activeRoleData } = this.props
-    const { defaultRoles } = this.state
+    const { defaultRoles, isActiveItem } = this.state
     return ReactDOM.createPortal(
       <div
         className={`${styles.container} animate_animated animate__fadeInRight animate__faster`}
@@ -587,6 +618,14 @@ export default class OrganizationalStructure extends React.Component {
               }`}
             >
               <span onClick={this.deleteTreeNode}>&#xe8c8;</span>
+            </div>
+            <div
+              className={`${styles.maptree_default_settings} ${
+                !isActiveItem ? styles.disabled : ''
+              } ${styles.openPanelSetting}`}
+              onClick={this.handleOpenPanel}
+            >
+              <span>&#xe8bc; 设置权限</span>
             </div>
           </div>
         </div>
