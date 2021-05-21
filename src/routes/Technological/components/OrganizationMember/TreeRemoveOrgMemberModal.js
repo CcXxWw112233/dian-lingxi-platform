@@ -510,6 +510,7 @@ export default class TreeRemoveOrgMemberModal extends Component {
   renderDefaultTableContent = () => {
     const { columns = [], data = [] } = this.getTableProps()
     const { hand_over_visible, currentBoardName } = this.state
+    console.log('ssssssssssss',data)
     return (
       <div>
         {hand_over_visible && (
