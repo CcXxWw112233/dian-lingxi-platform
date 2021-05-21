@@ -259,7 +259,6 @@ export default class OrganizationalStructure extends React.Component {
         OrgStructureModel.reducers.updateDatas
       ].join('/'),
       payload: {
-        openPanel: isGroup ? false : true,
         canHandle:
           type === MarkDefaultType && data.is_visitor === '1' ? false : true
       }
