@@ -417,7 +417,6 @@ export default class GroupListHead extends Component {
                 <>
                   <AutoSize>
                     {({ height, width }) => {
-                      console.log(height)
                       return (
                         <List
                           scrollTo={this.state.listViewScrollTo}
