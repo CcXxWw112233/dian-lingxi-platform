@@ -491,6 +491,12 @@ export default class TreeRemoveOrgMemberModal extends Component {
         })
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
+        this.props.dispatch({
+          type: 'organizationMember/updateDatas',
+          payload: {
+            TreeRemoveOrgMemberModalVisible: false
+          }
+        })
       }
     })
   }
