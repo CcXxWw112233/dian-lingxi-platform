@@ -22,6 +22,7 @@ import {
 import { MainOrgType, MarkDefaultType, NormalOrgType } from './constans'
 import { message, Modal } from 'antd'
 import { MaxZIndex } from '../../../../../../globalset/js/constant'
+import { defaultCellDataGetter } from 'react-virtualized/dist/es/Table'
 
 /** 组织架构组件
  * @description 用于展示组织架构成员和权限列表，组织架构图
@@ -63,10 +64,11 @@ export default class OrganizationalStructure extends React.Component {
     window.addEventListener('keydown', this.KeyboardEvent)
     this.getOrgRoleList()
     this.getOrgPermissions()
-  
+
     // this.getRolePermissionsAndMenber()
   }
   componentWillUnmount() {
+    this.isopenPanel(false)
     window.removeEventListener('keydown', this.KeyboardEvent)
   }
 
@@ -136,33 +138,27 @@ export default class OrganizationalStructure extends React.Component {
   /**
    * 组织菜单、功能权限列表
    */
-   getOrgPermissions () {
-    const {dispatch,org_id} = this.props;
+  getOrgPermissions() {
+    const { dispatch, org_id } = this.props
     dispatch({
-      type: [
-        OrgStructureModel.namespace,
-        'getOrgPermissions'
-      ].join('/'),
+      type: [OrgStructureModel.namespace, 'getOrgPermissions'].join('/'),
+      payload: {}
+    })
+  }
+  /** 角色信息（包括权限，成员）*/
+  getRolePermissionsAndMenber() {
+    const { dispatch } = this.props
+    const { org_id, role_id } = this.state
+    dispatch({
+      type: [OrgStructureModel.namespace, 'getRolePermissionsAndMenber'].join(
+        '/'
+      ),
       payload: {
-        
+        org_id: org_id,
+        role_id: role_id
       }
     })
-   }
-   /** 角色信息（包括权限，成员）*/
-   getRolePermissionsAndMenber() {
-    const {dispatch,} = this.props;
-    const {org_id,role_id} = this.state;
-    dispatch({
-      type: [
-        OrgStructureModel.namespace,
-        'getRolePermissionsAndMenber'
-      ].join('/'),
-      payload: {
-        org_id:org_id,
-        role_id:role_id
-      }
-    })
-   }
+  }
 
   /** 格式化数据 */
   forMatData = (data = []) => {
@@ -240,23 +236,24 @@ export default class OrganizationalStructure extends React.Component {
     const { dispatch } = this.props
     /** 是否分组节点 */
     const isGroup = this.isGroupNode(data)
-      /** 不允许编辑,可以查看 */
-      console.log(data)
-      this.setState({
-        title:data && (data['name'] || data['role_group_name']),
-        role_id:data && data['id'] || '',
-        org_id:data && data['org_id']|| ''
-      })
-      dispatch({
-        type: [OrgStructureModel.namespace, OrgStructureModel.reducers.updateDatas].join(
-          '/'
-        ),
-        payload: {
-          openPanel:isGroup ? false : true,
-          canHandle:type === MarkDefaultType && data.is_visitor === '1' ? false : true,
-        }
-      })
-    
+    /** 不允许编辑,可以查看 */
+    this.setState({
+      title: data && (data['name'] || data['role_group_name']),
+      role_id: (data && data['id']) || '',
+      org_id: (data && data['org_id']) || ''
+    })
+    dispatch({
+      type: [
+        OrgStructureModel.namespace,
+        OrgStructureModel.reducers.updateDatas
+      ].join('/'),
+      payload: {
+        openPanel: isGroup ? false : true,
+        canHandle:
+          type === MarkDefaultType && data.is_visitor === '1' ? false : true
+      }
+    })
+
     dispatch({
       type: [OrgStructureModel.namespace, OrgStructureModel.getRoleInfo].join(
         '/'
@@ -267,18 +264,34 @@ export default class OrganizationalStructure extends React.Component {
         markType: type
       }
     })
+    if (data === undefined || data === null || !data) {
+      this.isopenPanel(data)
+    }
+    if (data && data['org_id'] && data['id'] && !this.isGroupNode(data)) {
+      dispatch({
+        type: [OrgStructureModel.namespace, 'getRolePermissionsAndMenber'].join(
+          '/'
+        ),
+        payload: {
+          org_id: data['org_id'],
+          role_id: data['id']
+        }
+      })
+    }
+  }
+  /**是否展示右侧弹窗 */
+  isopenPanel = openPanel => {
+    const { dispatch } = this.props
     dispatch({
       type: [
         OrgStructureModel.namespace,
-        'getRolePermissionsAndMenber'
+        OrgStructureModel.reducers.updateDatas
       ].join('/'),
       payload: {
-        org_id:data['org_id'],
-        role_id:data['id']
+        openPanel: openPanel
       }
     })
   }
-
   /** 更新树的数据
    * @param {{id: string}} data 树中的一个数据
    * @param {{}[]} tree 原始节点
@@ -380,7 +393,6 @@ export default class OrganizationalStructure extends React.Component {
       let addSubObj = this.createEmptyObj(
         activeRoleData.role_group_name + '_' + (objChildLength + 1)
       )
-
       if (this.isGroupNode(activeRoleData)) {
         const res = await this.addGroupRoleChild(activeRoleData, addSubObj)
         const d = res.data
@@ -621,8 +633,8 @@ export default class OrganizationalStructure extends React.Component {
   render() {
     /** 是否显示右侧角色窗口 */
     const { openPanel, activeRoleData } = this.props
-    const { defaultRoles,title ,role_id,org_id,data} = this.state
-     return ReactDOM.createPortal(
+    const { defaultRoles, title, role_id, org_id, data } = this.state
+    return ReactDOM.createPortal(
       <div
         className={`${styles.container} animate_animated animate__fadeInRight animate__faster`}
       >
@@ -651,6 +663,12 @@ export default class OrganizationalStructure extends React.Component {
             >
               <span onClick={this.deleteTreeNode}>&#xe8c8;</span>
             </div>
+            <div
+              className={`${styles.maptree_default_settings} ${
+                !activeRoleData ? styles.disabled : ''
+              }`}
+            >
+            </div>
           </div>
         </div>
 
@@ -674,7 +692,17 @@ export default class OrganizationalStructure extends React.Component {
           onUpdateText={val => this.updateText(val)}
           activeItem={this.props.activeRoleData}
         />
-        {openPanel && <RoleMemberPanel  data={data} role_id={role_id} org_id={org_id} title={title} getRolePermissionsAndMenber={()=>this.getRolePermissionsAndMenber()}></RoleMemberPanel>}
+        {openPanel && (
+          <RoleMemberPanel
+            data={data}
+            role_id={role_id}
+            org_id={org_id}
+            title={title}
+            getRolePermissionsAndMenber={() =>
+              this.getRolePermissionsAndMenber()
+            }
+          ></RoleMemberPanel>
+        )}
       </div>,
       document.body
     )

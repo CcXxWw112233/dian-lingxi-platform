@@ -1,32 +1,46 @@
-import React, { Component, lazy, Suspense } from 'react'
+import React, { Component, lazy, Suspense, useState } from 'react'
 import styles from './rolemembertable.less'
 import globalStyles from '../../../../../../../globalset/css/globalClassName.less'
 import dva, { connect } from 'dva'
 import { OrgStructureModel } from '../../../../../../../models/technological/orgStructure'
-import { Avatar, Dropdown, Select, Cascader } from 'antd'
+import { Avatar, Dropdown, Select, Cascader, message, Modal } from 'antd'
+import { AppstoreOutlined } from '@ant-design/icons'
 import {
-  AppstoreOutlined,
-} from '@ant-design/icons';
-import { discontinueMember, getTransferSelectedList } from '../../../../../../../services/technological/organizationMember'
+  discontinueMember,
+  getTransferSelectedList
+} from '../../../../../../../services/technological/organizationMember'
 import { isApiResponseOk } from '../../../../../../../utils/handleResponseData'
+import {
+  checkIsHasPermission,
+  currentNounPlanFilterName
+} from '../../../../../../../utils/businessFunction'
+import {
+  MEMBERS,
+  MESSAGE_DURATION_TIME,
+  NOT_HAS_PERMISION_COMFIRN,
+  ORG_UPMS_ORGANIZATION_MEMBER_REMOVE
+} from '../../../../../../../globalset/js/constant'
 const TreeRemoveOrgMemberModal = lazy(() =>
   import(
     '@/routes/Technological/components/OrganizationMember/TreeRemoveOrgMemberModal'
   )
 )
 const TreeGroupModal = lazy(() =>
-  import(
-    '@/routes/Technological/components/OrganizationMember/TreeGroupModal'
-  )
+  import('@/routes/Technological/components/OrganizationMember/TreeGroupModal')
 )
 
 const getEffectOrReducerByName = name => `organizationMember/${name}`
 
-const { Option } = Select;
+const { Option } = Select
 
-@connect(({ [OrgStructureModel.namespace]: { orgMembersList, currentOrgTagList }, }) => ({
-  orgMembersList, currentOrgTagList
-}))
+@connect(
+  ({
+    [OrgStructureModel.namespace]: { orgMembersList, currentOrgTagList }
+  }) => ({
+    orgMembersList,
+    currentOrgTagList
+  })
+)
 /** 组织架构的右侧成员列表
  * @description 用于展示组织架构成员列表
  */
@@ -36,29 +50,34 @@ export default class RoleMemberTable extends React.Component {
     this.state = {
       member: ['王力宏'],
       list: ['北京', '上海', '广州', '深圳'],
-      orglist: [{
-        title: '一线',
-        list: [
-          {
-            title: '北京',
-            list: []
-          }, {
-            title: '上海',
-            list: []
-          }, {
-            title: '深圳',
-            list: [
-              {
-                title: '',
-                list: ['南山', '罗湖']
-              }
-            ]
-          }, {
-            title: '广州',
-            list: []
-          },
-        ]
-      }],
+      orglist: [
+        {
+          title: '一线',
+          list: [
+            {
+              title: '北京',
+              list: []
+            },
+            {
+              title: '上海',
+              list: []
+            },
+            {
+              title: '深圳',
+              list: [
+                {
+                  title: '',
+                  list: ['南山', '罗湖']
+                }
+              ]
+            },
+            {
+              title: '广州',
+              list: []
+            }
+          ]
+        }
+      ],
       searchList: [],
       /**
        * 是否展示检索匹配标签列表
@@ -70,11 +89,11 @@ export default class RoleMemberTable extends React.Component {
     }
   }
   componentDidMount() {
-    this.getMemberTagList();
+    this.getMemberTagList()
   }
   /**
    * 添加成员
-   * @returns 
+   * @returns
    */
   addRoleMenber() {
     console.log('添加成员')
@@ -82,63 +101,58 @@ export default class RoleMemberTable extends React.Component {
   }
   /**
    * 删除成员
-   * @returns 
+   * @returns
    */
   deleteMember() {
-
     console.log('删除成员')
   }
 
   /**
    * 获取输入框的内容 根据输入的内容检索列表
-   * @param {*} e 
+   * @param {*} e
    */
   getPrintTagKey = e => {
-    var { currentOrgTagList } = this.props;
-    var searchList = currentOrgTagList && currentOrgTagList.filter(item => {
-      return item.name.search(e.target.value) != -1
-    })
+    var { currentOrgTagList } = this.props
+    var searchList =
+      currentOrgTagList &&
+      currentOrgTagList.filter(item => {
+        return item.name.search(e.target.value) != -1
+      })
 
     this.setState({
       searchList: searchList,
       isShowSearch: true,
       isconfirmCurrentTag: false,
-      currentTag: e.target.value,
+      currentTag: e.target.value
     })
   }
   /**
    * 获取组织标签列表
-   * @param {*} e 
+   * @param {*} e
    */
   getMemberTagList() {
     const { dispatch, org_id } = this.props
     dispatch({
-      type: [
-        OrgStructureModel.namespace,
-        'getMemberTagList'
-      ].join('/'),
+      type: [OrgStructureModel.namespace, 'getMemberTagList'].join('/'),
       payload: {
-        org_id: org_id,
+        org_id: org_id
       }
     })
   }
   /**
    * 为成员打标签
-   * @param {*} e 
+   * @param {*} e
    */
   addRoleMenberTag(item) {
     const { dispatch } = this.props
-    const { currentMemberId } = this.state;
+    const { currentMemberId } = this.state
     dispatch({
-      type: [
-        OrgStructureModel.namespace,
-        'addRoleMenberTag'
-      ].join('/'),
+      type: [OrgStructureModel.namespace, 'addRoleMenberTag'].join('/'),
       payload: {
         label_id: item.id,
         member_id: currentMemberId
       }
-    }).then((res) => {
+    }).then(res => {
       this.props.getRolePermissionsAndMenber()
       this.setState({
         isconfirmCurrentTag: true,
@@ -154,12 +168,9 @@ export default class RoleMemberTable extends React.Component {
    */
   deleteRelaMemberTag() {
     const { dispatch } = this.props
-    const { currentMemberId, currentLableID } = this.state;
+    const { currentMemberId, currentLableID } = this.state
     dispatch({
-      type: [
-        OrgStructureModel.namespace,
-        'deleteRelaMemberTag'
-      ].join('/'),
+      type: [OrgStructureModel.namespace, 'deleteRelaMemberTag'].join('/'),
       payload: {
         label_id: currentLableID,
         member_id: currentMemberId
@@ -174,7 +185,7 @@ export default class RoleMemberTable extends React.Component {
 
   /**
    * 获取输入框的内容 回车键
-   * @param {*} e 
+   * @param {*} e
    */
   enterPrintTagKey = e => {
     this.addMenberTag()
@@ -183,15 +194,12 @@ export default class RoleMemberTable extends React.Component {
    * 添加标签
    */
   addMenberTag() {
-    const { currentSelectValue } = this.state;
+    const { currentSelectValue } = this.state
 
     const { dispatch, role_id, org_id } = this.props
     if (currentSelectValue) {
       dispatch({
-        type: [
-          OrgStructureModel.namespace,
-          'addNewMemberTag'
-        ].join('/'),
+        type: [OrgStructureModel.namespace, 'addNewMemberTag'].join('/'),
         payload: {
           org_id: org_id,
           name: currentSelectValue,
@@ -203,7 +211,7 @@ export default class RoleMemberTable extends React.Component {
     }
     this.setState({
       isconfirmCurrentTag: true,
-      isShowSearch: false,
+      isShowSearch: false
       // currentTag: '',
     })
   }
@@ -221,10 +229,7 @@ export default class RoleMemberTable extends React.Component {
     console.log('删除标签', item)
     const { dispatch } = this.props
     dispatch({
-      type: [
-        OrgStructureModel.namespace,
-        'deleteMemberTag'
-      ].join('/'),
+      type: [OrgStructureModel.namespace, 'deleteMemberTag'].join('/'),
       payload: {
         id: item.id
       }
@@ -236,29 +241,27 @@ export default class RoleMemberTable extends React.Component {
     // var searchList = currentOrgTagList && currentOrgTagList.filter(item => {
     //   return item.name.search(e.target.value) != -1
     // })
-
     // if(value) {
     //   this.setState({
     //     currentTag:value[1]
     //   })
     // }
-
-
-
   }
   onSearch(value) {
-    var { currentOrgTagList } = this.props;
-    var searchList = currentOrgTagList && currentOrgTagList.filter(item => {
-      return item.name.search(value) != -1
-    })
+    var { currentOrgTagList } = this.props
+    var searchList =
+      currentOrgTagList &&
+      currentOrgTagList.filter(item => {
+        return item.name.search(value) != -1
+      })
     this.setState({
       searchList: searchList,
       isShowSearch: true,
-      currentSelectValue: value,
+      currentSelectValue: value
     })
   }
   onBlur(value) {
-    console.log(`selected onBlur${value}`);
+    console.log(`selected onBlur${value}`)
     if (value == '' || !value) {
       this.deleteRelaMemberTag()
     }
@@ -267,15 +270,25 @@ export default class RoleMemberTable extends React.Component {
    * 渲染添加标签弹窗
    */
   overlayAddMember(currentOrgTagList) {
-    const { list, searchList, isShowSearch, currentTag, currentSelectValue, currentName } = this.state;
+    const {
+      list,
+      searchList,
+      isShowSearch,
+      currentTag,
+      currentSelectValue,
+      currentName
+    } = this.state
     console.log(currentOrgTagList)
     return (
       <div className={styles.add_member_tag}>
-        <span className={styles.add_member_title}>给“{currentName}”添加标签</span>
-        <Select placeholder="输入创建新标签"
+        <span className={styles.add_member_title}>
+          给“{currentName}”添加标签
+        </span>
+        <Select
+          placeholder="输入创建新标签"
           showSearch
           allowClear
-          style={{ color: "#212434" }}
+          style={{ color: '#212434' }}
           open={true}
           onBlur={this.onBlur.bind(this)}
           onChange={this.handleonChange.bind(this)}
@@ -283,87 +296,90 @@ export default class RoleMemberTable extends React.Component {
           getPopupContainer={triggerNode => triggerNode.parentNode}
           dropdownStyle={{ border: 'none' }}
           defaultValue={currentTag}
-
-          dropdownRender={(menu) => {
+          dropdownRender={menu => {
             return (
-              <div className={styles.add_member_tagList}
+              <div
+                className={styles.add_member_tagList}
                 style={{
                   overflowY: 'auto',
-                  position: 'relative',
-                }}>
-
-                {
-                  currentOrgTagList && currentOrgTagList.map((item, key) => {
+                  position: 'relative'
+                }}
+              >
+                {currentOrgTagList &&
+                  currentOrgTagList.map((item, key) => {
                     return (
                       <>
                         {/* {menu} */}
-                        <div className={styles.add_member_tag_item} onClick={this.addRoleMenberTag.bind(this, item)}>
+                        <div
+                          className={styles.add_member_tag_item}
+                          onClick={this.addRoleMenberTag.bind(this, item)}
+                        >
                           {item.name}
-                          <div className={`${styles.role_member_tag_delete_icon}`}>
+                          <div
+                            className={`${styles.role_member_tag_delete_icon}`}
+                          >
                             <span
                               className={`${styles.role_member_delete_icon} ${globalStyles.authTheme}`}
                               onClick={this.deleteTag.bind(this, item)}
                             >
                               &#xe661;
-                              </span>
+                            </span>
                           </div>
                         </div>
                       </>
                     )
-
-
-                  })
-                }
-                {
-                  isShowSearch && this.overlaySearchTag(searchList)
-                }
+                  })}
+                {isShowSearch && this.overlaySearchTag(searchList)}
               </div>
             )
-
-          }
-          }
-        >
-        </Select>
+          }}
+        ></Select>
       </div>
     )
   }
   /**
    * 输入关键字检索出来的标签列表
    * @param {*} searchList  检索出来的标签数组
-   * @returns 
+   * @returns
    */
   overlaySearchTag(searchList) {
-    const { currentSelectValue } = this.state;
-    return <div className={styles.add_member_tag_search}>
-      {
-        searchList && searchList.length > 0 ? (
+    const { currentSelectValue } = this.state
+    return (
+      <div className={styles.add_member_tag_search}>
+        {searchList && searchList.length > 0 ? (
           <div
             className={styles.add_member_tagList}
             style={{
               overflowY: 'auto',
-              position: 'relative',
-            }}>
-            {
-              searchList.map((item, key) => {
-                return (
-                  <div className={styles.add_member_tag_item} onClick={this.addRoleMenberTag.bind(this, item)}>
-                    {item.name}
-                  </div>
-                )
-              })
-            }
+              position: 'relative'
+            }}
+          >
+            {searchList.map((item, key) => {
+              return (
+                <div
+                  className={styles.add_member_tag_item}
+                  onClick={this.addRoleMenberTag.bind(this, item)}
+                >
+                  {item.name}
+                </div>
+              )
+            })}
           </div>
         ) : (
-          <div className={styles.add_member_tag_creat} onClick={this.addMenberTag()}>{"创建新标签“" + currentSelectValue + "”"}</div>
-        )
-      }
-    </div>
+          <div
+            className={styles.add_member_tag_creat}
+            onClick={this.addMenberTag()}
+          >
+            {'创建新标签“' + currentSelectValue + '”'}
+          </div>
+        )}
+      </div>
+    )
   }
-
 
   /**
    * 是否展示标签下拉弹窗
-   * @param {*} visible 
+   * @param {*} visible
    */
   handleVisibleChange = (visible, user_id) => {
     this.setState({
@@ -372,11 +388,11 @@ export default class RoleMemberTable extends React.Component {
   }
   /**
    * 点击标签 确认选择哪一条数据
-   * @param {*} item 
+   * @param {*} item
    */
-  selectMember = (item) => {
+  selectMember = item => {
     console.log(item)
-    const { currentOrgTagList } = this.props;
+    const { currentOrgTagList } = this.props
     var item_Tag = []
     if (item.label_id) {
       item_Tag = currentOrgTagList.filter(value => {
@@ -392,126 +408,160 @@ export default class RoleMemberTable extends React.Component {
       currentOrgID: item.org_id,
       currentLableID: item.label_id ? item.label_id[0] : ''
     })
-    const {dispatch} = this.props
-    dispatch({
-      type: 'organizationMember/getGroupTreeList',
-      payload: {
-        _organization_id:item.org_id
-      }
-    })
   }
   /**
    * 移除成员
    */
   moveUserOut() {
     const { org_id } = this.props
-    const { currentUserId, currentOrgID } = this.state;
+    const { currentUserId, currentOrgID } = this.state
     this.getTransferSelectedList(currentUserId, org_id)
   }
 
   onCascaderChange = value => {
     const { dispatch } = this.props
-    dispatch({
-      type: 'organizationMember/updateDatas',
-      payload: {
-        TreeGroupModalVisiblie: value,
-        batch_setting_ids: [value]
-      }
-    })
+    const { currentMemberId } = this.state
+    if (value.length > 1) {
+      dispatch({
+        type: 'organizationMember/setMemberRole',
+        payload: {
+          group_id: value[0],
+          member_id: currentMemberId,
+          role_id: value[value.length - 1]
+        }
+      }).then(() => {
+        this.props.getRolePermissionsAndMenber()
+      })
+    }
   }
   cancelCascaderChange = value => {
     const { dispatch } = this.props
     dispatch({
       type: 'organizationMember/updateDatas',
       payload: {
-        TreeGroupModalVisiblie: value.TreeGroupModalVisiblie,
+        TreeGroupModalVisiblie: value.TreeGroupModalVisiblie
       }
     })
     this.props.getRolePermissionsAndMenber()
   }
   /**
    * 移动至 下拉框
-   * @returns 
+   * @returns
    */
   overlayRoleMenberMore() {
-    const { orglist } = this.state;
+    const { orglist } = this.state
     const { data } = this.props
-    return <div className={styles.roleMenberMore} id='roleMenberMore'>
-      <div className={`${styles.roleMenberMore_item} ${styles.roleMenber_moveOut}`} onClick={this.moveUserOut.bind(this)}>移出组织</div>
-      <div className={`${styles.roleMenberMore_item} ${styles.roleMenber_moveTo}`}>
-        <Cascader
-          options={data}
-          className={styles.roleMenberMore_item_cascader}
-          // onChange={onChange}
-          expandTrigger='hover'
-          onChange={this.onCascaderChange}
-          getPopupContainer={triggerNode => document.getElementById('roleMenberMore')}
-          fieldNames={{ children: 'roles', label: 'role_group_name', value: 'id' }}
+    console.log(data)
+    return (
+      <div className={styles.roleMenberMore} id="roleMenberMore">
+        <div
+          className={`${styles.roleMenberMore_item} ${styles.roleMenber_moveOut}`}
+          onClick={this.moveUserOut.bind(this)}
         >
-          <div className={`${styles.roleMenberMore_item} ${styles.roleMenber_moveTo}`}>
-            移动至
-          <span className={`${styles.role_member_detail_icon} ${globalStyles.authTheme}`}>
-              &#xe7d6;
-          </span>
-          </div>
-        </Cascader>
+          移出组织
+        </div>
+        <div
+          className={`${styles.roleMenberMore_item} ${styles.roleMenber_moveTo}`}
+        >
+          <Cascader
+            options={data}
+            className={styles.roleMenberMore_item_cascader}
+            popupClassName={styles.roleMenberMore_item_popupClassName}
+            // onChange={thi}
+            expandTrigger="hover"
+            onChange={this.onCascaderChange}
+            getPopupContainer={triggerNode =>
+              document.getElementById('roleMenberMore')
+            }
+            fieldNames={{
+              children: 'roles',
+              label: 'role_group_name',
+              value: 'id'
+            }}
+          >
+            <div
+              className={`${styles.roleMenberMore_item} ${styles.roleMenber_moveTo}`}
+            >
+              移动至
+              <span
+                className={`${styles.role_member_detail_icon} ${globalStyles.authTheme}`}
+              >
+                &#xe7d6;
+              </span>
+            </div>
+          </Cascader>
+        </div>
       </div>
-    </div>
+    )
   }
 
   overlayMoveOrg(orglist) {
     return (
       <div className={styles.roleMenberMove}>
-        {
-          orglist.map(item => {
-            const list = item['list'] || [];
-            return <div >
-              {
-                item['title'] && <div className={styles.roleMenberMove_title}>{item['title']}</div>
-              }
+        {orglist.map(item => {
+          const list = item['list'] || []
+          return (
+            <div>
+              {item['title'] && (
+                <div className={styles.roleMenberMove_title}>
+                  {item['title']}
+                </div>
+              )}
 
-              {
-                list.map(value => {
-                  const data = value['list'] || [];
-                  const title = (typeof value == 'string') && value.constructor == String ? value : value['title'];
-                  return <div
-                  >
-                    {
-                      data && data.length > 0 ? (
-                        <Dropdown trigger={['hover']}
-                          getPopupContainer={triggerNode => triggerNode.parentNode}
-                          overlay={
-                            this.overlayMoveOrg(data)
-                          }>
-                          <div className={styles.roleMenberMove_detail}>
-                            <div className={styles.roleMenberMove_detail_left}>
-                              <span className={`${styles.role_member_current_icon} ${globalStyles.authTheme}`}>
-                                &#xe7fc;
-                          </span>
-                              <div className={styles.roleMenberMove_name}>{title}</div>
-                            </div>
-                            <span className={`${styles.role_member_detail_icon} ${globalStyles.authTheme}`}>
-                              &#xe7d6;
-                        </span>
-                          </div>
-                        </Dropdown>
-                      ) : (
+              {list.map(value => {
+                const data = value['list'] || []
+                const title =
+                  typeof value == 'string' && value.constructor == String
+                    ? value
+                    : value['title']
+                return (
+                  <div>
+                    {data && data.length > 0 ? (
+                      <Dropdown
+                        trigger={['hover']}
+                        getPopupContainer={triggerNode =>
+                          triggerNode.parentNode
+                        }
+                        overlay={this.overlayMoveOrg(data)}
+                      >
                         <div className={styles.roleMenberMove_detail}>
                           <div className={styles.roleMenberMove_detail_left}>
-                            <span className={`${styles.role_member_detail_icon} ${globalStyles.authTheme}`}>
+                            <span
+                              className={`${styles.role_member_current_icon} ${globalStyles.authTheme}`}
+                            >
                               &#xe7fc;
+                            </span>
+                            <div className={styles.roleMenberMove_name}>
+                              {title}
+                            </div>
+                          </div>
+                          <span
+                            className={`${styles.role_member_detail_icon} ${globalStyles.authTheme}`}
+                          >
+                            &#xe7d6;
                           </span>
-                            <div className={styles.roleMenberMove_name}>{title}</div>
+                        </div>
+                      </Dropdown>
+                    ) : (
+                      <div className={styles.roleMenberMove_detail}>
+                        <div className={styles.roleMenberMove_detail_left}>
+                          <span
+                            className={`${styles.role_member_detail_icon} ${globalStyles.authTheme}`}
+                          >
+                            &#xe7fc;
+                          </span>
+                          <div className={styles.roleMenberMove_name}>
+                            {title}
                           </div>
                         </div>
-                      )
-                    }
+                      </div>
+                    )}
                   </div>
-                })
-              }
+                )
+              })}
             </div>
-          })
-        }
+          )
+        })}
       </div>
     )
   }
@@ -543,8 +593,8 @@ export default class RoleMemberTable extends React.Component {
       }
     })
   }
-  discontinueMember = (member_id) => {
-    var that = this;
+  discontinueMember = member_id => {
+    var that = this
     discontinueMember({ member_id }).then(res => {
       that.props.getRolePermissionsAndMenber()
     })
@@ -587,77 +637,116 @@ export default class RoleMemberTable extends React.Component {
     })
   }
 
+  renderMoreHandle = ({ member, tags, canHandle }) => {
+    const [visible, setVisible] = useState(false)
+    const [tagsVisible, setTagsVisible] = useState(false)
+    const { currentOrgTagList = [] } = this.props
+    return (
+      <div
+        className={styles.role_member_item}
+        onClick={this.selectMember.bind(this, member)}
+      >
+        <div className={styles.role_member_contant}>
+          <Dropdown
+            trigger={['hover']}
+            disabled={!canHandle}
+            getPopupContainer={triggerNode => triggerNode.parentNode}
+            onVisibleChange={visible => {
+              setVisible(visible)
+              setTagsVisible(false)
+            }}
+            visible={visible}
+            overlay={this.overlayRoleMenberMore()}
+          >
+            <div className={`${styles.role_member_icon}`}>
+              <span
+                className={`${styles.role_member_delete_icon} ${globalStyles.authTheme}`}
+              >
+                &#xe855;
+              </span>
+            </div>
+          </Dropdown>
+          {member.avatar ? (
+            <Avatar
+              className={`${styles.role_member_avatar}`}
+              src={member.avatar}
+              size={25}
+            />
+          ) : (
+            <Avatar
+              className={`${styles.role_member_avatar}`}
+              size={25}
+              icon="user"
+            />
+          )}
+          <span className={`${styles.role_member_title}`}>{member.name}</span>
+        </div>
+        <Dropdown
+          trigger={['click']}
+          disabled={!canHandle}
+          getPopupContainer={triggerNode =>
+            document.getElementById('RoleMemberTable_wrapper')
+          }
+          onVisibleChange={visible => {
+            setTagsVisible(visible)
+          }}
+          visible={tagsVisible}
+          // overlayClassName={styles.add_member_tag}
+          overlay={this.overlayAddMember(currentOrgTagList)}
+        >
+          <div className={styles.role_member_tag}>
+            {tags.length > 0 ? tags[0].name : '标签'}
+          </div>
+        </Dropdown>
+      </div>
+    )
+  }
 
   render() {
-    const { orgMembersList = [], currentOrgTagList = [], canHandle } = this.props
-    const { currentUserId } = this.state;
-    const updateDatas = payload => {
-      dispatch({
-        type: getEffectOrReducerByName('updateDatas'),
-        payload: payload
-      })
-    }
-   
-    return <div className={`${styles.role_member}`}
-      style={{
-        overflowY: 'auto',
-        position: 'relative',
-      }}
-      id={'RoleMemberTable_wrapper'}
-    >
+    const {
+      orgMembersList = [],
+      currentOrgTagList = [],
+      canHandle
+    } = this.props
+    const { currentUserId } = this.state
+    // const updateDatas = payload => {
+    //   dispatch({
+    //     type: getEffectOrReducerByName('updateDatas'),
+    //     payload: payload
+    //   })
+    // }
 
-      {
-        orgMembersList.map((item, key) => {
-          const { member_id, user_id, label_id = [] } = item;
+    return (
+      <div
+        className={`${styles.role_member}`}
+        style={{
+          overflowY: 'auto',
+          position: 'relative'
+        }}
+        id={'RoleMemberTable_wrapper'}
+      >
+        {orgMembersList.map((item, key) => {
+          const { label_id = [] } = item
           const item_Tag = currentOrgTagList.filter(value => {
             return value.id == label_id[0]
           })
-          return <div className={styles.role_member_item} onClick={this.selectMember.bind(this, item)}>
-            <div className={styles.role_member_contant}>
-              <Dropdown trigger={['hover']}
-                disabled={!canHandle}
-                getPopupContainer={triggerNode => triggerNode.parentNode}
-                onVisibleChange={(visible) => this.handleMoreVisibleChange(visible)}
-                visible={this.state.handleMoreVisible && user_id == currentUserId}
-                overlay={
-                  this.overlayRoleMenberMore()
-                }>
-                <div className={`${styles.role_member_icon}`}>
-                  <span
-                    className={`${styles.role_member_delete_icon} ${globalStyles.authTheme}`}
-                  >
-                    &#xe855;
-                          </span>
-                </div>
-              </Dropdown>
-              {
-                item.avatar ? (<Avatar className={`${styles.role_member_avatar}`} src={item.avatar} size={25} />) : (<Avatar className={`${styles.role_member_avatar}`} size={25} icon="user" />)
-              }
-              <span className={`${styles.role_member_title}`}>{item.name}</span>
-            </div>
-            <Dropdown trigger={['click']}
-              disabled={!canHandle}
-              getPopupContainer={triggerNode => document.getElementById('RoleMemberTable_wrapper')}
-              onVisibleChange={(visible, user_id) => this.handleVisibleChange(visible, user_id)}
-              visible={this.state.moreVisible && user_id == currentUserId}
-              // overlayClassName={styles.add_member_tag}
-              overlay={
-                this.overlayAddMember(currentOrgTagList)
-              }>
-              <dev className={styles.role_member_tag} >
-                {
-                  item_Tag.length > 0 ? item_Tag[0].name : '标签'
-                }
-              </dev>
-            </Dropdown>
-          </div>
-        })
-      }
-      <TreeRemoveOrgMemberModal />
-      <TreeGroupModal updateDatas={(value)=>this.cancelCascaderChange(value)}></TreeGroupModal>
+          return (
+            <this.renderMoreHandle
+              key={item.user_id}
+              member={item}
+              tags={item_Tag}
+              canHandle={canHandle}
+            />
+          )
+        })}
+        <TreeRemoveOrgMemberModal />
+        {/* <TreeGroupModal
+          updateDatas={value => this.cancelCascaderChange(value)}
+        ></TreeGroupModal> */}
 
-      {/* <Button className={styles.add_role_member}  type='primary' onClick={()=>this.addRoleMenber()}>添加成员</Button> */}
-    </div>
+        {/* <Button className={styles.add_role_member}  type='primary' onClick={()=>this.addRoleMenber()}>添加成员</Button> */}
+      </div>
+    )
   }
 }
 function mapStateToProps({

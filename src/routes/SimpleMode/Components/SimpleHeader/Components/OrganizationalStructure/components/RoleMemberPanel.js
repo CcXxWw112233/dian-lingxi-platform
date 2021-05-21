@@ -12,8 +12,7 @@ import {
   ORG_UPMS_ORGANIZATION_MEMBER_ADD,
   MESSAGE_DURATION_TIME,
   NOT_HAS_PERMISION_COMFIRN
-}
-  from '@/globalset/js/constant'
+} from '@/globalset/js/constant'
 import { message } from 'antd/lib/index'
 
 const ShowAddMenberModal = lazy(() =>
@@ -22,16 +21,20 @@ const ShowAddMenberModal = lazy(() =>
   )
 )
 
-
-
 /** 组织架构的右侧角色权限和成员列表
  * @description 用于展示组织架构的成员和权限列表
  */
-@connect(({ organizationManager: {
-  datas: { orgnization_role_data },
-}, [OrgStructureModel.namespace]: { canHandle } }) => ({
-  orgnization_role_data, canHandle
-}))
+@connect(
+  ({
+    organizationManager: {
+      datas: { orgnization_role_data }
+    },
+    [OrgStructureModel.namespace]: { canHandle }
+  }) => ({
+    orgnization_role_data,
+    canHandle
+  })
+)
 export default class RoleMemberPanel extends React.Component {
   constructor(props) {
     super(props)
@@ -43,7 +46,7 @@ export default class RoleMemberPanel extends React.Component {
       /**
        * 0:权限  1: 成员
        */
-      currentTab: 1,
+      currentTab: 0
     }
   }
 
@@ -54,17 +57,17 @@ export default class RoleMemberPanel extends React.Component {
         modalVisible: true
       })
     }, 2000)
-
   }
   /**
    * 关闭组织架构左侧列表
    */
   closeRoleMemberPanel() {
-    const { dispatch } = this.props;
+    const { dispatch } = this.props
     dispatch({
-      type: [OrgStructureModel.namespace, OrgStructureModel.reducers.updateDatas].join(
-        '/'
-      ),
+      type: [
+        OrgStructureModel.namespace,
+        OrgStructureModel.reducers.updateDatas
+      ].join('/'),
       payload: {
         openPanel: false
       }
@@ -72,9 +75,9 @@ export default class RoleMemberPanel extends React.Component {
   }
   /**
    * 选择权限列表或者成员列表
-   * @returns 
+   * @returns
    */
-  selectTab = (key) => {
+  selectTab = key => {
     this.setState({
       currentTab: key
     })
@@ -84,7 +87,7 @@ export default class RoleMemberPanel extends React.Component {
    * 添加成员
    */
   addRoleMember() {
-    const { canHandle } = this.props;
+    const { canHandle } = this.props
     if (!canHandle) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
       return
@@ -96,7 +99,6 @@ export default class RoleMemberPanel extends React.Component {
 
   //添加组织职员操作
   setShowAddMenberModalVisibile() {
-
     if (!checkIsHasPermission(ORG_UPMS_ORGANIZATION_MEMBER_ADD)) {
       message.warn(NOT_HAS_PERMISION_COMFIRN, MESSAGE_DURATION_TIME)
     }
@@ -107,13 +109,10 @@ export default class RoleMemberPanel extends React.Component {
 
   addMembers(data) {
     const { users } = data
-    const { currentSelectOrganize = {}, dispatch,org_id ,role_id} = this.props
+    const { currentSelectOrganize = {}, dispatch, org_id, role_id } = this.props
     const { id } = currentSelectOrganize
     dispatch({
-      type: [
-        OrgStructureModel.namespace,
-        'orgAaccessInviteWeb'
-      ].join('/'),
+      type: [OrgStructureModel.namespace, 'orgAaccessInviteWeb'].join('/'),
       payload: {
         users: users,
         org_id: org_id,
@@ -126,45 +125,68 @@ export default class RoleMemberPanel extends React.Component {
     this.props.getRolePermissionsAndMenber()
   }
   render() {
-    const { tabs, currentTab, modalVisible } = this.state;
-    const { canHandle ,title,org_id ,role_id,data} = this.props
- 
+    const { tabs, currentTab, modalVisible } = this.state
+    const { canHandle, title, org_id, role_id, data } = this.props
+
     return (
-      <div className={styles.role_panel} >
+      <div className={styles.role_panel}>
         <div className={styles.role_panel_top}>
           <div className={styles.role_panel_title}>
             {title}
-              <span
+            <span
               className={`${styles.close} ${globalStyles.authTheme}`}
               onClick={() => this.closeRoleMemberPanel()}
             >
               &#xe7fe;
-              </span>
+            </span>
           </div>
           <div className={`${styles.role_panel_top_tabs}`}>
             <div className={`${styles.role_panel_tabs}`}>
-              {
-                tabs.map((item, key) => {
-                  return <span key={key} className={`${styles.role_panel_tab} ${currentTab == key && styles.role_panel_current_tab}`} onClick={this.selectTab.bind(this, key)}>{item}</span>
-                })
-              }
+              {tabs.map((item, key) => {
+                return (
+                  <span
+                    key={key}
+                    className={`${styles.role_panel_tab} ${currentTab == key &&
+                      styles.role_panel_current_tab}`}
+                    onClick={this.selectTab.bind(this, key)}
+                  >
+                    {item}
+                  </span>
+                )
+              })}
             </div>
-            {
-              currentTab == 1 && <div
+            {currentTab == 1 && canHandle && (
+              <div
                 className={`${styles.addMember} ${globalStyles.authTheme}`}
                 onClick={() => this.addRoleMember()}
               >
                 &#xe7db;
-               </div>
-            }
+              </div>
+            )}
           </div>
-          <div className={styles.role_panel_tips}>在此面板设置团队成员的权限</div>
+          <div className={styles.role_panel_tips}>
+            在此面板设置团队成员的权限
+          </div>
         </div>
 
-        {
-          currentTab == 0 ? <RoleMemberJurisdiction role_id={role_id} org_id={org_id} canHandle={canHandle}></RoleMemberJurisdiction> : <RoleMemberTable data={data} canHandle={canHandle} role_id={role_id} org_id={org_id} addRoleMember={() => this.addRoleMember()} getRolePermissionsAndMenber={() => this.getRolePermissionsAndMenber()}></RoleMemberTable>
-        }
-
+        {currentTab == 0 ? (
+          <RoleMemberJurisdiction
+            role_id={role_id}
+            org_id={org_id}
+            canHandle={canHandle}
+          ></RoleMemberJurisdiction>
+        ) : (
+          <RoleMemberTable
+            data={data}
+            canHandle={canHandle}
+            role_id={role_id}
+            org_id={org_id}
+            addRoleMember={() => this.addRoleMember()}
+            getRolePermissionsAndMenber={() =>
+              this.getRolePermissionsAndMenber()
+            }
+          ></RoleMemberTable>
+        )}
 
         <ShowAddMenberModal
           invitationId={localStorage.getItem('OrganizationId')}
@@ -177,7 +199,7 @@ export default class RoleMemberPanel extends React.Component {
             this
           )}
         />
-
-      </div>)
+      </div>
+    )
   }
 }

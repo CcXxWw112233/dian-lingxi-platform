@@ -20,12 +20,13 @@ export async function CreateGroup(data) {
 
 //获取分组树状列表
 export async function getGroupTreeList(params) {
+
   return request({
     url: `${REQUEST_DOMAIN}/group/tree`,
     method: 'GET',
     params: {
       ...params,
-      _organization_id: localStorage.getItem('OrganizationId')
+      _organization_id:params &&  params._organization_id ? params._organization_id : localStorage.getItem('OrganizationId')
     }
   })
 }
