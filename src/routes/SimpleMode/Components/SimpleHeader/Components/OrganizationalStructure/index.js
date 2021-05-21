@@ -186,6 +186,7 @@ export default class OrganizationalStructure extends React.Component {
   /** 获取数据列表 */
   getOrgRoleList = () => {
     const { currentSelectOrganize } = this.props
+    
     OrgRoleGroupList({ org_id: currentSelectOrganize.id }).then(res => {
       // console.log(res)
       /** 过滤不需要默认分组的数据 */
@@ -289,7 +290,7 @@ export default class OrganizationalStructure extends React.Component {
     if (data === undefined || data === null || !data) {
       this.isopenPanel(data)
     }
-    if (data && data['id'] && !this.isGroupNode(data)) {
+    if (data && currentSelectOrganize.id && data['id'] && !this.isGroupNode(data)) {
       dispatch({
         type: [OrgStructureModel.namespace, 'getRolePermissionsAndMenber'].join(
           '/'
