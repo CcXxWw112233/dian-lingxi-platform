@@ -295,7 +295,7 @@ export default class TreeRemoveOrgMemberModal extends Component {
                   onChange={e => {
                     this.handleOnSelectValue(e, item)
                   }}
-                  dropdownStyle={{ zIndex: MaxZIndex + 11 }}
+                  dropdownStyle={{ zIndex: MaxZIndex + 25 }}
                   style={{ minWidth: '150px' }}
                 >
                   {users.map(value => {

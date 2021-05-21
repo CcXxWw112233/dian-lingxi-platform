@@ -658,7 +658,7 @@ export default class RoleMemberTable extends React.Component {
       },
       getContainer: () =>
         document.getElementById('organizationMemberContainer'),
-      zIndex: 1010,
+      zIndex:MaxZIndex + 16,
       onCancel: () => {
         modal.destroy()
       }
