@@ -322,7 +322,7 @@ export default class RoleMemberTable extends React.Component {
                               className={`${styles.role_member_delete_icon} ${globalStyles.authTheme}`}
                               onClick={this.deleteTag.bind(this, item)}
                             >
-                              &#xe661;
+                              &#xe8c5;
                             </span>
                           </div>
                         </div>
@@ -451,7 +451,7 @@ export default class RoleMemberTable extends React.Component {
   overlayRoleMenberMore() {
     const { orglist } = this.state
     const { data } = this.props
-    console.log(data)
+    const [visible, setCascaderVisible] = useState(false)
     return (
       <div className={styles.roleMenberMore} id="roleMenberMore">
         <div
@@ -460,19 +460,17 @@ export default class RoleMemberTable extends React.Component {
         >
           移出组织
         </div>
-        <div
-          className={`${styles.roleMenberMore_item} ${styles.roleMenber_moveTo}`}
-        >
+        <div>
           <Cascader
             options={data}
             className={styles.roleMenberMore_item_cascader}
             popupClassName={styles.roleMenberMore_item_popupClassName}
-            // onChange={thi}
             expandTrigger="hover"
             onChange={this.onCascaderChange}
             getPopupContainer={triggerNode =>
               document.getElementById('roleMenberMore')
             }
+            style={{ zIndex: 99999 }}
             fieldNames={{
               children: 'roles',
               label: 'role_group_name',
