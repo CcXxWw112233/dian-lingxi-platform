@@ -226,17 +226,26 @@ export default class RoleMemberTable extends React.Component {
   }
 
   onSearch(value) {
-    var { currentOrgTagList } = this.props
-    var searchList =
-      currentOrgTagList &&
-      currentOrgTagList.filter(item => {
-        return item.name.search(value) != -1
+    if(value && value.length > 0) {
+      var { currentOrgTagList } = this.props
+      var searchList =
+        currentOrgTagList &&
+        currentOrgTagList.filter(item => {
+          return item.name.search(value) != -1
+        })
+      this.setState({
+        searchList: searchList,
+        isShowSearch: true,
+        currentSelectValue: value
       })
-    this.setState({
-      searchList: searchList,
-      isShowSearch: true,
-      currentSelectValue: value
-    })
+    } else {
+      this.setState({
+        searchList: [],
+        isShowSearch: false,
+        currentSelectValue: value
+      })
+    }
+   
   }
   onBlur(value) {
     console.log(`selected onBlur${value}`)
