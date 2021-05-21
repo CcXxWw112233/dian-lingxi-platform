@@ -513,7 +513,8 @@ export default class OrganizationalStructure extends React.Component {
           'remove'
         )
         this.setState({
-          data: treeData
+          data: treeData,
+          isActiveItem: null
         })
         dispatch({
           type: [
@@ -557,7 +558,8 @@ export default class OrganizationalStructure extends React.Component {
       OrgRoleRemoveGroup({ group_id: activeRoleData.id }).then(() => {
         const arr = [...this.state.data]
         this.setState({
-          data: arr.filter(item => item.id !== activeRoleData.id)
+          data: arr.filter(item => item.id !== activeRoleData.id),
+          isActiveItem: null
         })
         dispatch({
           type: [
