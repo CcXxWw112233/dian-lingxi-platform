@@ -240,6 +240,7 @@ export default class OrganizationalStructure extends React.Component {
    * @param {string} 点击的角色类型
    */
   mapTreeHandleClick = (data, type) => {
+    const { currentSelectOrganize } = this.props
     if (!this.isGroupNode(data)) {
       this.setState({
         isActiveItem: data
@@ -288,13 +289,13 @@ export default class OrganizationalStructure extends React.Component {
     if (data === undefined || data === null || !data) {
       this.isopenPanel(data)
     }
-    if (data && data['org_id'] && data['id'] && !this.isGroupNode(data)) {
+    if (data && data['id'] && !this.isGroupNode(data)) {
       dispatch({
         type: [OrgStructureModel.namespace, 'getRolePermissionsAndMenber'].join(
           '/'
         ),
         payload: {
-          org_id: data['org_id'],
+          org_id: currentSelectOrganize.id,
           role_id: data['id']
         }
       })
@@ -527,6 +528,7 @@ export default class OrganizationalStructure extends React.Component {
         })
       })
     }
+    this.isopenPanel(false)
   }
 
   /** 删除选中的节点 */
