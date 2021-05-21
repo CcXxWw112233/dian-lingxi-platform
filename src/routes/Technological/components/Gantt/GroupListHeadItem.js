@@ -70,6 +70,7 @@ import { LISTLOCK, NOTLISTLOCKREAD } from '../VisitControl/constans'
 import CardGroupNames from './components/CardGroupNames'
 import BatchOperateCheckBoxItem from './components/MilestonesBaseProgress/BatchOperateCheckBoxItem'
 import AlreadyBatchSetFlagGroupItem from './components/MilestonesBaseProgress/AlreadyBatchSetFlagGroupItem'
+
 @connect(mapStateToProps)
 export default class GroupListHeadItem extends Component {
   constructor(props) {
@@ -101,7 +102,8 @@ export default class GroupListHeadItem extends Component {
   noTimeAreaScroll(e) {
     e.stopPropagation()
   }
-  componentDidMount() {
+  componentDidMount () {
+    console.log('1213')
     const { itemValue = {} } = this.props
     const { list_name } = itemValue
     this.setState({
