@@ -71,7 +71,7 @@ export default {
   state: { ...OrgStructureModel.state },
   effects: {
     /**组织菜单、功能权限列表 */
-    *getOrgPermissions({ payload }, { select, call, put }) {
+    *getOrgPermissions({ payload = {} }, { select, call, put }) {
       let res = yield call(getOrgPermissions, payload)
       if (isApiResponseOk(res)) {
         // message.success('已保存', MESSAGE_DURATION_TIME)
@@ -206,13 +206,13 @@ export default {
     },
     *[OrgStructureModel.getRoleInfo]({ payload }, { put, call }) {
       /** 先显示右侧弹框数据 */
-      if (payload.markType !== MarkDefaultType)
-        yield put({
-          type: OrgStructureModel.reducers.updateDatas,
-          payload: {
-            activeRoleData: payload.role_info
-          }
-        })
+      yield put({
+        type: OrgStructureModel.reducers.updateDatas,
+        payload: {
+          activeRoleData:
+            payload.markType !== MarkDefaultType ? payload.role_info : null
+        }
+      })
       /** 请求详情代码 */
     }
   },
