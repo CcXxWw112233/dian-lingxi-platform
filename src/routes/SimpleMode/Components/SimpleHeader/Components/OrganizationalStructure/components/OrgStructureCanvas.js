@@ -184,7 +184,9 @@ export default class OrgStructureCanvas extends React.Component {
         let child = this.getChildWidthTotal(item.roles)
         /** 如果子集的宽度不大于父级的宽度，则不累加,否则累加子集超出的部分 */
         child_width +=
-          child > item._width + siblingBetweenSize ? child - item._width : 0
+          child > item._width + siblingBetweenSize
+            ? child - item._width + siblingBetweenSize * (item.roles.length + 1)
+            : 0
       }
       child_width += siblingBetweenSize
     })
@@ -240,7 +242,7 @@ export default class OrgStructureCanvas extends React.Component {
     arr.forEach((item, index) => {
       /** 单个元素的总宽度，包含了子集，子子集，递归获取 */
       let itemWidth = item._width + siblingBetweenSize
-      let childTotalWidth = this.getChildWidthNotSplit(item.roles)
+      let childTotalWidth = this.getChildWidthTotal(item.roles)
       if (item.roles && item.roles.length) {
         itemWidth = Math.max(item._width + siblingBetweenSize, childTotalWidth)
       }
@@ -564,7 +566,7 @@ export default class OrgStructureCanvas extends React.Component {
         topLine.destroy()
       }
       if (roles.length) {
-        const CWidth = this.getChildWidthNotSplit(roles)
+        const CWidth = this.getChildWidthTotal(roles)
         const childObj = this.rolesChildRender(
           this.forMathChild(roles),
           !!StructureData[index + 1],
