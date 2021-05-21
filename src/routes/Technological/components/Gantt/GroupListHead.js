@@ -371,7 +371,7 @@ export default class GroupListHead extends Component {
           }}
           id={'gantt_group_head'}
         >
-          {(list_group || []).length ? (
+          {
             <div
               style={{ height: '100%', width: '100%' }}
               className={indexStyles.scroll_view}
@@ -382,72 +382,68 @@ export default class GroupListHead extends Component {
               onPointerOut={() => this.onPointerLeave()}
             >
               {IsOutline ? <MilestoneBaseHeader /> : <MilestoneBaseHeader />}
-              <AutoSize>
-                {({ height, width }) => {
-                  return (
-                    <Fragment>
-                      {IsOutline && (
-                        <div
-                          style={{
-                            // width: '280px',
-                            boxShadow: '1px 0px 4px 0px rgba(0,0,0,0.15);'
-                          }}
-                        >
-                          <OutLineHeadItem
-                            setScrollPosition={this.props.setScrollPosition}
-                            setGoldDateArr={this.props.setGoldDateArr}
-                            gantt_card_height={this.props.gantt_card_height}
-                            dataAreaRealHeight={this.props.dataAreaRealHeight}
-                            changeOutLineTreeNodeProto={
-                              this.props.changeOutLineTreeNodeProto
-                            }
-                            deleteOutLineTreeNode={
-                              this.props.deleteOutLineTreeNode
-                            }
-                          />
-                          {/* <GroupListHeadElse
+              {IsOutline && (
+                <div
+                  style={{
+                    // width: '280px',
+                    boxShadow: '1px 0px 4px 0px rgba(0,0,0,0.15);'
+                  }}
+                >
+                  <OutLineHeadItem
+                    setScrollPosition={this.props.setScrollPosition}
+                    setGoldDateArr={this.props.setGoldDateArr}
+                    gantt_card_height={this.props.gantt_card_height}
+                    dataAreaRealHeight={this.props.dataAreaRealHeight}
+                    changeOutLineTreeNodeProto={
+                      this.props.changeOutLineTreeNodeProto
+                    }
+                    deleteOutLineTreeNode={this.props.deleteOutLineTreeNode}
+                  />
+                  {/* <GroupListHeadElse
                   gantt_card_height={this.props.gantt_card_height}
                   dataAreaRealHeight={this.props.dataAreaRealHeight}
                 /> */}
-                          <div style={{ height: date_area_height }}></div>
-                          {
-                            // startPlanType == 1 &&
-                            <OutlineGuideModal
-                              handleClose={this.guideModalHandleClose}
-                            />
+                  <div style={{ height: date_area_height }}></div>
+                  {
+                    // startPlanType == 1 &&
+                    <OutlineGuideModal
+                      handleClose={this.guideModalHandleClose}
+                    />
+                  }
+                </div>
+              )}
+              {!IsOutline && list_group?.length ? (
+                <>
+                  <AutoSize>
+                    {({ height, width }) => {
+                      return (
+                        <List
+                          scrollTo={this.state.listViewScrollTo}
+                          id="scroll_ver"
+                          ref={this.listRef}
+                          /** 减去header的高度 */
+                          height={
+                            height - (showBase ? milestone_base_height : 0)
                           }
-                        </div>
-                      )}
-                      {!IsOutline && (
-                        <>
-                          {/* 虚拟滚动 */}
-                          <List
-                            scrollTo={this.state.listViewScrollTo}
-                            id="scroll_ver"
-                            ref={this.listRef}
-                            /** 减去header的高度 */
-                            height={
-                              height - (showBase ? milestone_base_height : 0)
-                            }
-                            width={'auto'}
-                            itemCount={list_group.length}
-                            itemSize={this.getItemHeight}
-                            onScroll={this.listScroll}
-                          >
-                            {Row}
-                          </List>
-                          {/* <GroupListHeadElse
+                          width={'auto'}
+                          itemCount={list_group.length}
+                          itemSize={this.getItemHeight}
+                          onScroll={this.listScroll}
+                        >
+                          {Row}
+                        </List>
+                      )
+                    }}
+                  </AutoSize>
+
+                  {/* <GroupListHeadElse
                   gantt_card_height={this.props.gantt_card_height}
                   dataAreaRealHeight={this.props.dataAreaRealHeight}
                 /> */}
-                        </>
-                      )}
-                    </Fragment>
-                  )
-                }}
-              </AutoSize>
+                </>
+              ) : null}
             </div>
-          ) : null}
+          }
         </div>
       )
     }
