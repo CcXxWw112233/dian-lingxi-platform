@@ -350,7 +350,7 @@ export default class RoleMemberTable extends React.Component {
     })
     return (
       <div className={styles.add_member_tag_search}>
-        {!isExist && (
+        {!isExist && currentSelectValue && (
           <div
             className={styles.add_member_tag_creat}
             onClick={e => this.addMenberTag(e)}
@@ -749,6 +749,9 @@ export default class RoleMemberTable extends React.Component {
           }
           onVisibleChange={visible => {
             setTagsVisible(visible)
+            this.setState({
+              currentSelectValue: ''
+            })
           }}
           visible={tagsVisible}
           // overlayClassName={styles.add_member_tag}
