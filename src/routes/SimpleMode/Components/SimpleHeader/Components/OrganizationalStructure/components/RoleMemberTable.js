@@ -151,7 +151,7 @@ export default class RoleMemberTable extends React.Component {
             member_id: currentMemberId
           }
         }).then(res => {
-          this.props.getRolePermissionsAndMenber()
+          this.props.getRolePermissionsAndMenber('1')
           this.setState({
             isconfirmCurrentTag: true,
             // moreVisible:false,
@@ -177,7 +177,7 @@ export default class RoleMemberTable extends React.Component {
         member_id: currentMemberId
       }
     }).then(() => {
-      this.props.getRolePermissionsAndMenber()
+      this.props.getRolePermissionsAndMenber('2')
       this.setState({
         isconfirmCurrentTag: true,
         currentLableID: '',
@@ -436,7 +436,7 @@ export default class RoleMemberTable extends React.Component {
           role_id: value[value.length - 1]
         }
       }).then(() => {
-        this.props.getRolePermissionsAndMenber()
+        this.props.getRolePermissionsAndMenber('3')
       })
     }
   }
@@ -448,7 +448,7 @@ export default class RoleMemberTable extends React.Component {
         TreeGroupModalVisiblie: value.TreeGroupModalVisiblie
       }
     })
-    this.props.getRolePermissionsAndMenber()
+    this.props.getRolePermissionsAndMenber(4)
   }
   /**
    * 移动至 下拉框
@@ -656,7 +656,7 @@ export default class RoleMemberTable extends React.Component {
   discontinueMember = member_id => {
     var that = this
     discontinueMember({ member_id }).then(res => {
-      that.props.getRolePermissionsAndMenber()
+      that.props.getRolePermissionsAndMenber(5)
     })
   }
   //停用
@@ -761,7 +761,9 @@ export default class RoleMemberTable extends React.Component {
       </div>
     )
   }
-
+  getRolePermissionsAndMenber = ()=> {
+    this.props.getRolePermissionsAndMenber()
+  }
   render() {
     const {
       orgMembersList = [],
@@ -792,7 +794,7 @@ export default class RoleMemberTable extends React.Component {
             />
           )
         })}
-        <TreeRemoveOrgMemberModal groupList={orgMembersData} getRolePermissionsAndMenber={this.props.getRolePermissionsAndMenber()}/>
+        <TreeRemoveOrgMemberModal groupList={orgMembersData} getRolePermissionsAndMenber={()=>this.getRolePermissionsAndMenber()}/>
         {/* <TreeGroupModal
           updateDatas={value => this.cancelCascaderChange(value)}
         ></TreeGroupModal> */}

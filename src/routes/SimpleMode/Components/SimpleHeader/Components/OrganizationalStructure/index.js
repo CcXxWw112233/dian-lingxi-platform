@@ -153,9 +153,10 @@ export default class OrganizationalStructure extends React.Component {
     })
   }
   /** 角色信息（包括权限，成员）*/
-  getRolePermissionsAndMenber() {
+  getRolePermissionsAndMenber(tag) {
     const { dispatch } = this.props
     const { org_id, role_id } = this.state
+    console.log(tag)
     dispatch({
       type: [OrgStructureModel.namespace, 'getRolePermissionsAndMenber'].join(
         '/'
@@ -291,6 +292,7 @@ export default class OrganizationalStructure extends React.Component {
       this.isopenPanel(data)
     }
     if (data && currentSelectOrganize.id && data['id'] && !this.isGroupNode(data)) {
+      console.log('sssss')
       dispatch({
         type: [OrgStructureModel.namespace, 'getRolePermissionsAndMenber'].join(
           '/'
