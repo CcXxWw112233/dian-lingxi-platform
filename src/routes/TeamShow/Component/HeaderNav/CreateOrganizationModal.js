@@ -84,7 +84,7 @@ class CreateOrganizationModal extends React.Component {
     this.setState({
       name: '',
       stepContinueDisabled: true,
-      operateType: '0',
+      operateType: '1',
       createButtonVisible: false,
       seachAreaVisible: false,
       searchTimer: null,
