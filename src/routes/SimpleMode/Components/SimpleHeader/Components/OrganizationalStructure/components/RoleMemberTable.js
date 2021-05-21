@@ -140,7 +140,7 @@ export default class RoleMemberTable extends React.Component {
   addRoleMenberTag(item) {
     const { dispatch } = this.props
     const { currentMemberId, currentLableID } = this.state
-    if (!item) {
+    if (item) {
       if (currentLableID == item.id) {
         this.deleteRelaMemberTag()
       } else {
@@ -296,55 +296,53 @@ export default class RoleMemberTable extends React.Component {
           dropdownRender={menu => {
             return (
               <div
-                className={styles.add_member_tagList}
-                style={{
-                  overflowY:
-                    !currentOrgTagList || currentOrgTagList.length == 0
-                      ? ''
-                      : 'auto',
-                  position: 'relative'
-                }}
+                style={{ height: 245, overflowY: 'auto', position: 'relative' }}
               >
-                {currentOrgTagList && currentOrgTagList.length > 0
-                  ? currentOrgTagList.map((item, key) => {
-                      return (
-                        <>
-                          <div
-                            className={`${styles.add_member_tag_item} ${
-                              item.name == currentTag
-                                ? styles.role_member_currentTag
-                                : ''
-                            }`}
-                            onClick={this.addRoleMenberTag.bind(this, item)}
-                          >
-                            <div className={`${styles.role_member_tag_name}`}>
-                              {item.name}
-                            </div>
+                <div className={styles.add_member_tagList}>
+                  {currentOrgTagList && currentOrgTagList.length > 0
+                    ? currentOrgTagList.map((item, key) => {
+                        return (
+                          <>
                             <div
-                              className={`${styles.role_member_tag_delete_icon}`}
-                              onClick={e => this.deleteTag(e, item)}
+                              className={`${styles.add_member_tag_item} ${
+                                item.name == currentTag
+                                  ? styles.role_member_currentTag
+                                  : ''
+                              }`}
+                              onClick={this.addRoleMenberTag.bind(this, item)}
                             >
+                              <div className={`${styles.role_member_tag_name}`}>
+                                {item.name}
+                              </div>
                               <div
-                                className={`${styles.role_member_delete_icon} ${globalStyles.authTheme}`}
+                                className={`${styles.role_member_tag_delete_icon}`}
+                                onClick={e => this.deleteTag(e, item)}
                               >
-                                &#xe816;
+                                <div
+                                  className={`${styles.role_member_delete_icon} ${globalStyles.authTheme}`}
+                                >
+                                  &#xe816;
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </>
-                      )
-                    })
-                  : currentSelectValue && (
-                      <div
-                        className={styles.add_member_tag_creat}
-                        onClick={e => this.addMenberTag(e)}
-                        zIndex={MaxZIndex + 20}
-                      >
-                        {'创建新标签“' + currentSelectValue + '”'}
-                      </div>
-                    )}
+                          </>
+                        )
+                      })
+                    : currentSelectValue && (
+                        <div
+                          className={styles.add_member_tag_creat}
+                          onClick={e => this.addMenberTag(e)}
+                          zIndex={MaxZIndex + 20}
+                        >
+                          {'创建新标签“' + currentSelectValue + '”'}
+                        </div>
+                      )}
 
-                {isShowSearch && this.overlaySearchTag(searchList)}
+                  {currentOrgTagList &&
+                    currentOrgTagList.length > 0 &&
+                    isShowSearch &&
+                    this.overlaySearchTag(searchList)}
+                </div>
               </div>
             )
           }}
