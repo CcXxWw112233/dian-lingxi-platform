@@ -79,9 +79,10 @@ export default class RoleMemberJurisdiction extends React.Component {
         <Tree
           checkable={true}
           // defaultExpandedKeys={[]}
-          defaultSelectedKeys={currentPermissionList}
+          // defaultSelectedKeys={currentPermissionList}
           defaultCheckedKeys={currentPermissionList}
           onSelect={this.onSelect}
+          selectable={false}
           onCheck={this.onCheck.bind(this)}
         >
           {orgPermissionsList.map((item, key) => {
