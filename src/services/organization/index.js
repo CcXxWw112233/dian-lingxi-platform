@@ -76,7 +76,6 @@ export async function uploadOrganizationLogo(data) {
   })
 }
 
-
 //角色权限列表
 export async function getRolePermissions(params) {
   return request({
@@ -436,7 +435,6 @@ export async function deleteMemberTag(data) {
 }
 // 获取成员标签
 export async function getMemberTagList(data) {
-  
   return request({
     url: `${REQUEST_DOMAIN}/org/member/label/list`,
     method: 'GET',

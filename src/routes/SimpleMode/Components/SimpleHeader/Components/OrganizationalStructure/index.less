@@ -2,6 +2,7 @@
   background: #e9ecf4;
   width: 100%;
   height: 100%;
+  overflow: hidden;
   position: absolute;
   top: 0;
   left: 0;
@@ -13,15 +14,15 @@
     z-index: 10;
     width: 100%;
   }
-  .defatultRoles{
+  .defatultRoles {
     position: absolute;
     left: 15px;
     bottom: 20px;
     z-index: 10;
-    .roles_item{
+    .roles_item {
       background-color: #fff;
       border-radius: 8px;
-      color: #3F445D;
+      color: #3f445d;
       margin-bottom: 15px;
       display: flex;
       justify-content: center;
@@ -30,8 +31,11 @@
       min-width: 70px;
       cursor: pointer;
       border: 1px solid transparent;
-      &:hover{
-        border-color: #9EA6C2;
+      &:hover {
+        border-color: #9ea6c2;
+      }
+      &.active {
+        border-color: #3667ff;
       }
     }
   }
@@ -40,7 +44,7 @@
     right: 10px;
     top: 0;
     display: flex;
-    & > div{
+    & > div {
       margin-right: 15px;
     }
   }
@@ -59,14 +63,14 @@
       border-right: 1px solid #3f445d;
       cursor: pointer;
       user-select: none;
-      &:last-child{
+      &:last-child {
         border-right: 0;
       }
     }
-    &.openPanelSetting{
+    &.openPanelSetting {
       cursor: pointer;
       background-color: #fff;
-      & > span{
+      & > span {
         color: #212434;
       }
       width: 120px;
@@ -74,14 +78,14 @@
       align-items: center;
       &.disabled {
         & > span {
-          cursor:not-allowed;
+          cursor: not-allowed;
           color: rgba(0, 0, 0, 0.4);
         }
       }
     }
     &.disabled {
       & > span {
-        cursor:not-allowed;
+        cursor: not-allowed;
         color: rgba(255, 255, 255, 0.2);
       }
     }

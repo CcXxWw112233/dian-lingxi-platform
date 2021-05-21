@@ -52,6 +52,9 @@ export default class OrganizationalStructure extends React.Component {
     currentSelectOrganize: PropTypes.object
   }
 
+  /** 组织架构图示例 */
+  canvasRef = React.createRef()
+
   constructor(props) {
     super(props)
     this.state = {
@@ -59,7 +62,9 @@ export default class OrganizationalStructure extends React.Component {
       /** 默认的角色 */
       defaultRoles: {},
       /** 选中的数据 */
-      isActiveItem: null
+      isActiveItem: null,
+      /** 缩放比例 */
+      zoomSize: 1
     }
   }
   componentDidMount() {
@@ -247,6 +252,12 @@ export default class OrganizationalStructure extends React.Component {
     const { dispatch } = this.props
     /** 是否分组节点 */
     const isGroup = this.isGroupNode(data)
+
+    /** 是否默认角色 */
+    if (type === MarkDefaultType) {
+      this.canvasRef.current && this.canvasRef.current.clearSelect()
+    }
+
     /** 不允许编辑,可以查看 */
     this.setState({
       title: data && (data['name'] || data['role_group_name']),
@@ -661,15 +672,37 @@ export default class OrganizationalStructure extends React.Component {
     })
   }
 
+  /** 放大 */
+  zoomIn = zoomNumber => {
+    const { current } = this.canvasRef
+    current && current?.zoomIn(zoomNumber)
+  }
+
+  /** 缩小 */
+  zoomOut = zoomNumber => {
+    const { current } = this.canvasRef
+    current && current?.zoomOut(zoomNumber)
+  }
+
   render() {
     /** 是否显示右侧角色窗口 */
     const { openPanel, activeRoleData } = this.props
-    const { defaultRoles, isActiveItem, title, role_id, org_id, data } = this.state
+    const {
+      defaultRoles,
+      isActiveItem,
+      title,
+      role_id,
+      org_id,
+      data
+    } = this.state
     return ReactDOM.createPortal(
       <div
         className={`${styles.container} animate_animated animate__fadeInRight animate__faster`}
       >
-        <div className={styles.top_operations}>
+        <div
+          className={styles.top_operations}
+          style={{ width: openPanel ? 'calc(100vw - 22vw)' : '100%' }}
+        >
           <span
             className={`${styles.backBtn} ${globalStyles.authTheme}`}
             onClick={() => this.backHome()}
@@ -694,14 +727,31 @@ export default class OrganizationalStructure extends React.Component {
             >
               <span onClick={this.deleteTreeNode}>&#xe8c8;</span>
             </div>
+
             <div
-              className={`${styles.maptree_default_settings} ${
-                !isActiveItem ? styles.disabled : ''
-              } ${styles.openPanelSetting}`}
-              onClick={this.handleOpenPanel}
+              className={`${styles.maptree_default_settings} ${styles.zoom_button}`}
             >
-              <span>&#xe8bc; 设置权限</span>
+              <span onClick={() => this.zoomOut()}>&#xe7d2;</span>
+              <span onClick={() => this.zoomIn()}>&#xe7d1;</span>
             </div>
+
+            <div
+              className={`${styles.maptree_default_settings}`}
+              onClick={() => this.zoomIn(1)}
+            >
+              <span>{Math.floor((this.state.zoomSize / 1) * 100)}%</span>
+            </div>
+
+            {!openPanel && (
+              <div
+                className={`${styles.maptree_default_settings} ${
+                  !isActiveItem ? styles.disabled : ''
+                } ${styles.openPanelSetting}`}
+                onClick={this.handleOpenPanel}
+              >
+                <span>&#xe8bc; 设置权限</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -710,7 +760,9 @@ export default class OrganizationalStructure extends React.Component {
             return (
               <div
                 key={item.id}
-                className={styles.roles_item}
+                className={`${styles.roles_item} ${
+                  isActiveItem?.id === item.id ? styles.active : ''
+                }`}
                 onClick={() => this.mapTreeHandleClick(item, MarkDefaultType)}
               >
                 {item.name}
@@ -722,8 +774,10 @@ export default class OrganizationalStructure extends React.Component {
         <OrgStructureCanvas
           onChange={this.mapTreeHandleClick}
           StructureData={this.state.data}
+          ref={this.canvasRef}
           onUpdateText={val => this.updateText(val)}
           activeItem={this.props.activeRoleData}
+          onZoom={zoom => this.setState({ zoomSize: zoom })}
         />
         {openPanel && (
           <RoleMemberPanel
