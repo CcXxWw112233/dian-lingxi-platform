@@ -143,7 +143,7 @@ export default class RoleMemberTable extends React.Component {
           // moreVisible:false,
           currentLableID: item.id,
           currentTag: item.name,
-          
+
           isShowSearch: false
         })
       })
@@ -172,17 +172,18 @@ export default class RoleMemberTable extends React.Component {
     })
   }
 
-  /**
-   * 获取输入框的内容 回车键
-   * @param {*} e
-   */
-  enterPrintTagKey = e => {
-    this.addMenberTag()
-  }
+  // /**
+  //  * 获取输入框的内容 回车键
+  //  * @param {*} e
+  //  */
+  // enterPrintTagKey = e => {
+  //   this.addMenberTag()
+  // }
   /**
    * 添加标签
    */
-  addMenberTag() {
+  addMenberTag = e => {
+    e.stopPropagation()
     const { currentSelectValue } = this.state
 
     const { dispatch, role_id, org_id } = this.props
@@ -226,7 +227,7 @@ export default class RoleMemberTable extends React.Component {
   }
 
   onSearch(value) {
-    if(value && value.length > 0) {
+    if (value && value.length > 0) {
       var { currentOrgTagList } = this.props
       var searchList =
         currentOrgTagList &&
@@ -245,7 +246,6 @@ export default class RoleMemberTable extends React.Component {
         currentSelectValue: value
       })
     }
-   
   }
   onBlur(value) {
     console.log(`selected onBlur${value}`)
@@ -356,7 +356,8 @@ export default class RoleMemberTable extends React.Component {
         ) : (
           <div
             className={styles.add_member_tag_creat}
-            onClick={this.addMenberTag()}
+            onClick={e => this.addMenberTag(e)}
+            zIndex={MaxZIndex + 20}
           >
             {'创建新标签“' + currentSelectValue + '”'}
           </div>
@@ -455,11 +456,12 @@ export default class RoleMemberTable extends React.Component {
             options={data}
             className={styles.roleMenberMore_item_cascader}
             popupClassName={styles.roleMenberMore_item_popupClassName}
-            expandTrigger="click"
+            expandTrigger="hover"
             onChange={this.onCascaderChange}
             // getPopupContainer={triggerNode =>
             //   document.getElementById('roleMenberMore')
             // }
+            changeOnSelect
             fieldNames={{
               children: 'roles',
               label: 'role_group_name',
@@ -570,19 +572,20 @@ export default class RoleMemberTable extends React.Component {
             data.push(...item.members)
           }
         })
-
         this.setState({
-          orgMembersData: data
+          orgMembersData: res.data.data
         })
       }
     })
   }
   // 根据不同的类型获取不同的成员列表
-  getMembersList = (props, orgData = []) => {
+  getMembersList = (orgData = []) => {
     const {
       projectDetailInfoData: { board_id, org_id, data: boardData },
       correspondingOrganizationMmembersList = []
     } = this.props
+    console.log(orgData)
+    debugger
     const {
       itemValue: {
         field_content: {
@@ -658,7 +661,7 @@ export default class RoleMemberTable extends React.Component {
       },
       getContainer: () =>
         document.getElementById('organizationMemberContainer'),
-      zIndex:MaxZIndex + 16,
+      zIndex: MaxZIndex + 16,
       onCancel: () => {
         modal.destroy()
       }
@@ -750,7 +753,6 @@ export default class RoleMemberTable extends React.Component {
       canHandle
     } = this.props
     const { currentUserId, orgMembersData } = this.state
-    console.log('sssssssssssss', orgMembersData)
     return (
       <div
         className={`${styles.role_member}`}
@@ -774,7 +776,7 @@ export default class RoleMemberTable extends React.Component {
             />
           )
         })}
-        <TreeRemoveOrgMemberModal />
+        <TreeRemoveOrgMemberModal groupList={orgMembersData} />
         {/* <TreeGroupModal
           updateDatas={value => this.cancelCascaderChange(value)}
         ></TreeGroupModal> */}
