@@ -513,7 +513,8 @@ export default class OrganizationalStructure extends React.Component {
           'remove'
         )
         this.setState({
-          data: treeData
+          data: treeData,
+          isActiveItem: null
         })
         dispatch({
           type: [
