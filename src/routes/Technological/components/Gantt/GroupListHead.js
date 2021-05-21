@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, memo } from 'react'
 import { connect } from 'dva'
 import indexStyles from './index.less'
 import GroupListHeadItem from './GroupListHeadItem'
@@ -17,7 +17,7 @@ import { milestoneInit } from '@/services/technological/task.js'
 import ExcelRead from '../../../../components/Excel'
 import MilestoneBaseHeader from './components/MilestonesBaseProgress/MilestoneBaseHeader'
 import AutoSize from 'react-virtualized-auto-sizer'
-import { VariableSizeList as List } from 'react-window'
+import { areEqual, VariableSizeList as List } from 'react-window'
 import { Fragment } from 'react'
 import DEvent, { GANTTSCROLLY } from '../../../../utils/event'
 
@@ -281,6 +281,24 @@ export default class GroupListHead extends Component {
     }, 20)
   }
 
+  /** 单个数据 */
+  Row = memo(prop => {
+    const { style, index } = prop
+    const value = this.props.list_group[index] || {}
+    const { list_id } = value
+    return (
+      <div style={style}>
+        <GroupListHeadItem
+          list_id={list_id}
+          setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
+          itemValue={value}
+          itemKey={index}
+          rows={this.props.group_rows[index]}
+        />
+      </div>
+    )
+  }, areEqual)
+
   render() {
     const {
       list_group = [],
@@ -300,26 +318,6 @@ export default class GroupListHead extends Component {
 
     /** 是否显示最上面的base栏 */
     const showBase = showMilestoneBase({ group_view_type, gantt_board_id })
-
-    /** 单个数据 */
-    const Row = ({ style, index }) => {
-      this.scrollActiveIndexs = [
-        ...new Set(this.scrollActiveIndexs.concat([index]))
-      ]
-      const value = list_group[index] || {}
-      const { list_id } = value
-      return (
-        <div style={style} key={list_id}>
-          <GroupListHeadItem
-            list_id={list_id}
-            setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
-            itemValue={value}
-            itemKey={index}
-            rows={group_rows[index]}
-          />
-        </div>
-      )
-    }
 
     /** 是否大纲视图 */
     const IsOutline = ganttIsOutlineView({ group_view_type })
@@ -386,9 +384,11 @@ export default class GroupListHead extends Component {
                 <div
                   style={{
                     // width: '280px',
+                    marginLeft: batch_operating ? 20 : 0,
                     boxShadow: '1px 0px 4px 0px rgba(0,0,0,0.15);'
                   }}
                 >
+                  <BatchOperateCheckbox />
                   <OutLineHeadItem
                     setScrollPosition={this.props.setScrollPosition}
                     setGoldDateArr={this.props.setGoldDateArr}
@@ -399,6 +399,7 @@ export default class GroupListHead extends Component {
                     }
                     deleteOutLineTreeNode={this.props.deleteOutLineTreeNode}
                   />
+                  <AlreadyBatchSetFlag />
                   {/* <GroupListHeadElse
                   gantt_card_height={this.props.gantt_card_height}
                   dataAreaRealHeight={this.props.dataAreaRealHeight}
@@ -430,7 +431,7 @@ export default class GroupListHead extends Component {
                           itemSize={this.getItemHeight}
                           onScroll={this.listScroll}
                         >
-                          {Row}
+                          {this.Row}
                         </List>
                       )
                     }}

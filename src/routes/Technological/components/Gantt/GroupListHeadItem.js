@@ -70,6 +70,7 @@ import { LISTLOCK, NOTLISTLOCKREAD } from '../VisitControl/constans'
 import CardGroupNames from './components/CardGroupNames'
 import BatchOperateCheckBoxItem from './components/MilestonesBaseProgress/BatchOperateCheckBoxItem'
 import AlreadyBatchSetFlagGroupItem from './components/MilestonesBaseProgress/AlreadyBatchSetFlagGroupItem'
+
 @connect(mapStateToProps)
 export default class GroupListHeadItem extends Component {
   constructor(props) {
