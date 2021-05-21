@@ -216,6 +216,7 @@ export default class TreeRemoveOrgMemberModal extends Component {
     } = this.state
     
     const { groupList = [], removeMemberUserId } = this.props
+    console.log('ssssssssssssssssssssssssss12123123123',groupList)
     let temMemberList = arrayNonRepeatfy(
       this.getOrgMemberWithRemoveVisitors(groupList)
     )
@@ -326,6 +327,7 @@ export default class TreeRemoveOrgMemberModal extends Component {
 
   // 获取模板组织成员---因项目会返回成员列表, 而模板需要自己从组织成员中获取, 去除访客
   getOrgMemberWithRemoveVisitors = (groupList = []) => {
+    console.log('sssssssssssssssssss',groupList)
     let curr = groupList.filter(n => n.is_default != '2')
     let temMemberList = []
     curr.map(item => {
