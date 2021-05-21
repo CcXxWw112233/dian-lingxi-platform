@@ -16,7 +16,7 @@ class CreateOrganizationModal extends React.Component {
   state = {
     name: '', //名称
     stepContinueDisabled: true, //确认按钮
-    operateType: '0', //0默认申请加入 ‘1’创建组织
+    operateType: '1', //0默认申请加入 ‘1’创建组织
     createButtonVisible: false, //输入框里面的按钮
     seachAreaVisible: false, //查询所得到的结果是否显示
     searchTimer: null,
@@ -106,7 +106,7 @@ class CreateOrganizationModal extends React.Component {
     this.setState({
       name: '',
       stepContinueDisabled: true,
-      operateType: '0',
+      operateType: '1',
       createButtonVisible: false,
       seachAreaVisible: false,
       searchTimer: null,
@@ -204,7 +204,7 @@ class CreateOrganizationModal extends React.Component {
             marginBottom: 28
           }}
         >
-          创建或加入组织
+          创建组织
         </div>
         <FormItem style={{ width: 336 }}>
           {getFieldDecorator('name', {
