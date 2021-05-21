@@ -598,7 +598,7 @@ export default class TreeRemoveOrgMemberModal extends Component {
           title={`移除成员确认`}
           visible={TreeRemoveOrgMemberModalVisible} //moveToDirectoryVisiblie
           width={640}
-          // zIndex={1020}
+          zIndex={9999}
           destroyOnClose={true}
           maskClosable={false}
           okText="确认"

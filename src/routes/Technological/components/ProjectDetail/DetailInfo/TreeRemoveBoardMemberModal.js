@@ -18,7 +18,7 @@ import {
 import { connect } from 'dva'
 import { isApiResponseOk } from '../../../../../utils/handleResponseData'
 import { arrayNonRepeatfy } from '../../../../../utils/util'
-import { MESSAGE_DURATION_TIME } from '../../../../../globalset/js/constant'
+import { MaxZIndex, MESSAGE_DURATION_TIME } from '../../../../../globalset/js/constant'
 
 @connect(mapStateToProps)
 export default class TreeRemoveBoardMemberModal extends Component {
@@ -593,7 +593,7 @@ export default class TreeRemoveBoardMemberModal extends Component {
   // 渲染内容
   renderContent = () => {
     return (
-      <div className={DrawDetailInfoStyle.removeMemberContent}>
+      <div className={DrawDetailInfoStyle.removeMemberContent} zIndex='0'>
         <div className={DrawDetailInfoStyle.rev_top}>
           <div style={{ color: 'rgba(0,0,0,0.85)' }}>⚠️ 注意事项：</div>
           <div>1、成员被移除后，其在本项目所参与的所有事务将自动退出。</div>
@@ -610,6 +610,7 @@ export default class TreeRemoveBoardMemberModal extends Component {
   render() {
     const { visible } = this.props
     const { transferSelectedList = [] } = this.state
+    console.log('sssssssssssssssss',visible,transferSelectedList)
     return (
       <div>
         {transferSelectedList && !!transferSelectedList.length && (
@@ -617,7 +618,7 @@ export default class TreeRemoveBoardMemberModal extends Component {
             title={`移除成员确认`}
             visible={visible} //moveToDirectoryVisiblie
             width={630}
-            zIndex={1009}
+            zIndex={MaxZIndex+ 10}
             destroyOnClose={true}
             maskClosable={false}
             okText="确认"
