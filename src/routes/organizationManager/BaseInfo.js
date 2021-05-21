@@ -321,6 +321,7 @@ export default class BaseInfo extends React.Component {
           placeholder={`输入${currentNounPlanFilterName(ORGANIZATION)}名称`}
           value={name}
           style={{ marginTop: 8 }}
+          maxLength={18}
           onChange={this.nameChange.bind(this)}
         />
         <div className={indexStyles.baseInfo_title_2}>
