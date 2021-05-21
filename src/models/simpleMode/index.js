@@ -355,8 +355,10 @@ export default {
           /** 更新userinfo字段，因为里面有选中项目的数据 */
           userInfo.user_set = {
             ...userInfo.user_set,
-            current_board_id: project.board_id,
-            current_board_name: project.board_name
+            current_board_id:
+              project.board_id || userInfo.user_set.current_board_id,
+            current_board_name:
+              project.board_name || userInfo.user_set.current_board_name
           }
           window.localStorage.setItem(
             'userInfo',
