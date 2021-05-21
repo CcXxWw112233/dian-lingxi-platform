@@ -454,7 +454,7 @@ export async function addRoleMenberTag(data) {
 // 为成员打标签
 export async function deleteRelaMemberTag(data) {
   return request({
-    url: `${REQUEST_DOMAIN}/org/member/label/rela/${data.id}`,
+    url: `${REQUEST_DOMAIN}/org/member/label/rela`,
     method: 'DELETE',
     data
   })

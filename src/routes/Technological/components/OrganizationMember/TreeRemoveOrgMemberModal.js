@@ -15,7 +15,8 @@ import {
   PROJECTS,
   TASKS,
   FLOWS,
-  MESSAGE_DURATION_TIME
+  MESSAGE_DURATION_TIME,
+  MaxZIndex
 } from '../../../../globalset/js/constant'
 import { removeEmptyArrayEle, arrayNonRepeatfy } from '../../../../utils/util'
 
@@ -292,6 +293,7 @@ export default class TreeRemoveOrgMemberModal extends Component {
                   onChange={e => {
                     this.handleOnSelectValue(e, item)
                   }}
+                  dropdownStyle={{ zIndex: MaxZIndex + 11 }}
                   style={{ minWidth: '150px' }}
                 >
                   {users.map(value => {
@@ -598,7 +600,7 @@ export default class TreeRemoveOrgMemberModal extends Component {
           title={`移除成员确认`}
           visible={TreeRemoveOrgMemberModalVisible} //moveToDirectoryVisiblie
           width={640}
-          zIndex={9999}
+          zIndex={MaxZIndex + 10}
           destroyOnClose={true}
           maskClosable={false}
           okText="确认"

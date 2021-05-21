@@ -24,6 +24,7 @@ import {
   currentNounPlanFilterName
 } from '../../../../../../../utils/businessFunction'
 import {
+  MaxZIndex,
   MEMBERS,
   MESSAGE_DURATION_TIME,
   NOT_HAS_PERMISION_COMFIRN,
@@ -86,13 +87,6 @@ export default class RoleMemberTable extends React.Component {
     console.log('添加成员')
     this.props.addRoleMember()
   }
-  /**
-   * 删除成员
-   * @returns
-   */
-  deleteMember() {
-    console.log('删除成员')
-  }
 
   /**
    * 获取输入框的内容 根据输入的内容检索列表
@@ -132,23 +126,28 @@ export default class RoleMemberTable extends React.Component {
    */
   addRoleMenberTag(item) {
     const { dispatch } = this.props
-    const { currentMemberId } = this.state
-    dispatch({
-      type: [OrgStructureModel.namespace, 'addRoleMenberTag'].join('/'),
-      payload: {
-        label_id: item.id,
-        member_id: currentMemberId
-      }
-    }).then(res => {
-      this.props.getRolePermissionsAndMenber()
-      this.setState({
-        isconfirmCurrentTag: true,
-        // moreVisible:false,
-        currentLableID: item.id,
-        currentTag: item.name,
-        isShowSearch: false
+    const { currentMemberId, currentLableID } = this.state
+    if (currentLableID == item.id) {
+      this.deleteRelaMemberTag()
+    } else {
+      dispatch({
+        type: [OrgStructureModel.namespace, 'addRoleMenberTag'].join('/'),
+        payload: {
+          label_id: item.id,
+          member_id: currentMemberId
+        }
+      }).then(res => {
+        this.props.getRolePermissionsAndMenber()
+        this.setState({
+          isconfirmCurrentTag: true,
+          // moreVisible:false,
+          currentLableID: item.id,
+          currentTag: item.name,
+          
+          isShowSearch: false
+        })
       })
-    })
+    }
   }
   /**
    * 移除成员标签
@@ -165,7 +164,10 @@ export default class RoleMemberTable extends React.Component {
     }).then(() => {
       this.props.getRolePermissionsAndMenber()
       this.setState({
-        moreVisible: false
+        isconfirmCurrentTag: true,
+        currentLableID: '',
+        currentTag: '',
+        isShowSearch: false
       })
     })
   }
@@ -270,7 +272,6 @@ export default class RoleMemberTable extends React.Component {
           onSearch={this.onSearch.bind(this)}
           getPopupContainer={triggerNode => triggerNode.parentNode}
           dropdownStyle={{ border: 'none' }}
-          defaultValue={currentTag}
           dropdownRender={menu => {
             return (
               <div
@@ -285,7 +286,11 @@ export default class RoleMemberTable extends React.Component {
                     return (
                       <>
                         <div
-                          className={styles.add_member_tag_item}
+                          className={`${styles.add_member_tag_item} ${
+                            item.name == currentTag
+                              ? styles.role_member_currentTag
+                              : ''
+                          }`}
                           onClick={this.addRoleMenberTag.bind(this, item)}
                         >
                           {item.name}
@@ -445,7 +450,8 @@ export default class RoleMemberTable extends React.Component {
             // getPopupContainer={triggerNode =>
             //   document.getElementById('roleMenberMore')
             // }
-            style={{ zIndex: 99999 }}
+            dropdownStyle={{ zIndex: MaxZIndex + 11 }}
+            style={{ zIndex: MaxZIndex + 10 }}
             fieldNames={{
               children: 'roles',
               label: 'role_group_name',
@@ -548,7 +554,6 @@ export default class RoleMemberTable extends React.Component {
   }
   // 获取组织成员列表
   getGroupList = currentOrgID => {
-    debugger
     getGroupList({ _organization_id: currentOrgID }).then(res => {
       if (isApiResponseOk(res)) {
         let data = []
@@ -737,13 +742,7 @@ export default class RoleMemberTable extends React.Component {
       canHandle
     } = this.props
     const { currentUserId, orgMembersData } = this.state
-    // const updateDatas = payload => {
-    //   dispatch({
-    //     type: getEffectOrReducerByName('updateDatas'),
-    //     payload: payload
-    //   })
-    // }
-
+    console.log('sssssssssssss', orgMembersData)
     return (
       <div
         className={`${styles.role_member}`}
@@ -772,7 +771,7 @@ export default class RoleMemberTable extends React.Component {
           updateDatas={value => this.cancelCascaderChange(value)}
         ></TreeGroupModal> */}
 
-        {(!orgMembersList || orgMembersList.length == 0) && (
+        {(!orgMembersList || orgMembersList.length == 0) && canHandle && (
           <Button
             className={styles.add_role_member}
             type="primary"
