@@ -193,13 +193,13 @@ class ShowAddMenberModal extends React.Component {
       invitationOrg
     } = this.props
     const { wechat_invite_visible } = this.state
-
+    console.log('ssssssssssssss12',modalVisible)
     return (
       <div>
         <CustormModal
           visible={modalVisible}
           width={400}
-          zIndex={1100}
+          zIndex={2000}
           maskClosable={false}
           footer={null}
           destroyOnClose
