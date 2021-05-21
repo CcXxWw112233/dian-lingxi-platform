@@ -425,12 +425,13 @@ export default class RoleMemberTable extends React.Component {
       dispatch({
         type: 'organizationMember/setMemberRole',
         payload: {
-          group_id: value[value.length - 2],
+          group_id: value[0],
           member_id: currentMemberId,
           role_id: value[value.length - 1]
         }
+      }).then(() => {
+        this.props.getRolePermissionsAndMenber()
       })
-      this.props.getRolePermissionsAndMenber()
     }
   }
   cancelCascaderChange = value => {
