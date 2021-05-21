@@ -214,6 +214,7 @@ export default class TreeRemoveOrgMemberModal extends Component {
       hand_over_visible,
       currentOperateBoardId
     } = this.state
+    
     const { groupList = [], removeMemberUserId } = this.props
     let temMemberList = arrayNonRepeatfy(
       this.getOrgMemberWithRemoveVisitors(groupList)
@@ -240,6 +241,7 @@ export default class TreeRemoveOrgMemberModal extends Component {
           }
           return new_item
         })
+        
     const columns = [
       {
         title: '类型',
@@ -510,6 +512,7 @@ export default class TreeRemoveOrgMemberModal extends Component {
   renderDefaultTableContent = () => {
     const { columns = [], data = [] } = this.getTableProps()
     const { hand_over_visible, currentBoardName } = this.state
+    console.log('ssssssssssss',data)
     return (
       <div>
         {hand_over_visible && (

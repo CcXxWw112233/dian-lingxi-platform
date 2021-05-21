@@ -402,9 +402,10 @@ export default class RoleMemberTable extends React.Component {
    */
   moveUserOut() {
     const { org_id } = this.props
-    const { currentUserId, currentOrgID } = this.state
+    const { currentUserId, currentOrgID, currentMemberId } = this.state
     this.getGroupList(org_id)
-    this.getTransferSelectedList(currentUserId, org_id)
+    // debugger
+    this.getTransferSelectedList(currentUserId, currentMemberId)
   }
 
   onCascaderChange = value => {
