@@ -129,7 +129,9 @@ export default class RoleMemberPanel extends React.Component {
     const { canHandle, title, org_id, role_id, data } = this.props
 
     return (
-      <div className={styles.role_panel}>
+      <div
+        className={`${styles.role_panel} animate_animated animate__fadeInRight animate__faster`}
+      >
         <div className={styles.role_panel_top}>
           <div className={styles.role_panel_title}>
             {title}

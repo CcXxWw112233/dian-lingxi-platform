@@ -44,6 +44,18 @@ export default class OrgStructureCanvas extends React.Component {
   /** 是否在编辑 */
   isEdit = false
 
+  /** 动画 */
+  tween = null
+
+  /** 放大约数 */
+  scaleBy = 1.05
+
+  /** 最大放大比例 */
+  maxZoom = 4
+
+  /** 最小缩小比例 */
+  minZoom = 0.2
+
   constructor(props) {
     super(props)
     this.state = {}
@@ -59,6 +71,8 @@ export default class OrgStructureCanvas extends React.Component {
   /** 构建整个canvas和架构图 */
   initCanvas = () => {
     const { onChange, onZoom } = this.props
+    const maxZoom = this.props.maxZoom || this.maxZoom
+    const minZoom = this.props.minZoom || this.minZoom
     /** 视图宽度 */
     const width = window.innerWidth
     /** 视图高度 */
@@ -77,7 +91,7 @@ export default class OrgStructureCanvas extends React.Component {
     this.Stage.add(this.Layer)
     /** 此方法用于获取到数据之后渲染 */
     this.MainGroupRender()
-    var scaleBy = 1.05
+    var scaleBy = this.scaleBy
     this.Stage.on('wheel', e => {
       e.evt.preventDefault()
       if (this.isEdit) return
@@ -93,6 +107,12 @@ export default class OrgStructureCanvas extends React.Component {
       }
 
       var newScale = e.evt.deltaY < 0 ? oldScale * scaleBy : oldScale / scaleBy
+      if (newScale <= minZoom) {
+        newScale = minZoom
+      }
+      if (newScale >= maxZoom) {
+        newScale = maxZoom
+      }
       this.Layer.scale({ x: newScale, y: newScale })
 
       var newPos = {
@@ -122,6 +142,17 @@ export default class OrgStructureCanvas extends React.Component {
         }
       }
     })
+  }
+
+  /** 清除选中 */
+  clearSelect = () => {
+    if (this.prevAvtiveRect) {
+      this.prevAvtiveRect.clearCache()
+      this.prevAvtiveRect.stroke('transparent')
+      this.prevAvtiveRect.strokeWidth(0)
+      this.Layer.draw()
+      this.prevAvtiveRect = null
+    }
   }
 
   /** 格式化roles列表 */
@@ -330,6 +361,49 @@ export default class OrgStructureCanvas extends React.Component {
     }
     // }
     return { height: maxHeight, leftX: leftXArr, rightX: rightXArr }
+  }
+
+  reset = () => {}
+
+  /** 放大
+   * @param {number} val 放大数值
+   */
+  zoomIn = val => {
+    const oldScale = this.Layer.scaleX()
+    this.scale = val || oldScale * this.scaleBy
+    this.zoom()
+    return this.scale
+  }
+  /** 缩小
+   * @param {number} val 缩小数值
+   */
+  zoomOut = val => {
+    const oldScale = this.Layer.scaleX()
+    this.scale = val || oldScale / this.scaleBy
+    this.zoom()
+    return this.scale
+  }
+  /** 缩放操作 */
+  zoom = () => {
+    const { onZoom } = this.props
+    const oldScale = this.Layer.scaleX()
+    this.Layer.scale({ x: this.scale, y: this.scale })
+    this.stageMoveCenter(oldScale)
+    onZoom && onZoom(this.scale)
+  }
+
+  stageMoveCenter = oldScale => {
+    var mousePointTo = {
+      x: this.Stage.width() / 2 / oldScale - this.Stage.x() / oldScale,
+      y: this.Stage.height() / 2 / oldScale - this.Stage.y() / oldScale
+    }
+
+    var newPos = {
+      x: -(mousePointTo.x - this.Stage.width() / 2 / this.scale) * this.scale,
+      y: -(mousePointTo.y - this.Stage.height() / 2 / this.scale) * this.scale
+    }
+    this.Stage.position(newPos)
+    this.Stage.batchDraw()
   }
 
   /** 添加编辑框 */
