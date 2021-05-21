@@ -327,6 +327,51 @@ export default {
       } else {
         message.warn(res.message, MESSAGE_DURATION_TIME)
       }
+    },
+    *updateCurrentBoard({ payload }, { put, select }) {
+      const { data = {}, board_id } = payload
+      const { projectList } = yield select(
+        getModelSelectState('workbench', 'datas')
+      ) || {}
+
+      let { userInfo } = yield select(
+        getModelSelectState('technological', 'datas')
+      ) || {}
+      if (projectList && projectList.length) {
+        /** 当前最新的数据 */
+        const current = projectList.find(item => item.board_id === board_id)
+        if (current) {
+          const project = {
+            ...current,
+            /** 需要更新的字段 */
+            ...data
+          }
+          yield put({
+            type: 'updateDatas',
+            payload: {
+              simplemodeCurrentProject: project
+            }
+          })
+          /** 更新userinfo字段，因为里面有选中项目的数据 */
+          userInfo.user_set = {
+            ...userInfo.user_set,
+            current_board_id: project.board_id,
+            current_board_name: project.board_name
+          }
+          window.localStorage.setItem(
+            'userInfo',
+            JSON.stringify({ ...userInfo })
+          )
+          yield put({
+            type: 'technological/updateDatas',
+            payload: {
+              userInfo: {
+                ...userInfo
+              }
+            }
+          })
+        }
+      }
     }
   },
   reducers: {

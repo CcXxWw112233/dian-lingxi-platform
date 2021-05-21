@@ -222,6 +222,12 @@ export default class FaceRightButton extends Component {
       })
     }, 2000)
   }
+  // 日期精度为天的时候去掉时视图
+  setHourViewVisible = () => {
+    const { projectDetailInfoData } = this.props
+    const date_format = projectDetailInfoData?.board_set?.date_format
+    return date_format !== '1'
+  }
   render() {
     const {
       gantt_board_id,
@@ -231,49 +237,6 @@ export default class FaceRightButton extends Component {
     } = this.props
     return (
       <div className={styles.sections}>
-        {/* {
-                    gantt_board_id == '0' && group_view_type == '1' && (
-                        <div className={styles.card_button} onClick={this.setShowBoardFold} >
-                            {show_board_fold ? '计划明细' : '进度汇总'}
-                        </div>
-                    )
-                } */}
-        {/* {
-                    !this.filterIsInViewArea() && (
-                        <div className={styles.card_button} onClick={this.checkToday}>
-                            今天
-                        </div>
-                    )
-                } */}
-
-        {/* <div
-          style={{ color: gantt_view_mode == 'hours' ? '#1890FF' : '' }}
-          className={styles.card_button}
-          onClick={() => this.changeGanttViewMode('hours')}
-        >
-          时
-        </div>
-        <div
-          style={{ color: gantt_view_mode == 'month' ? '#1890FF' : '' }}
-          className={styles.card_button}
-          onClick={() => this.changeGanttViewMode('month')}
-        >
-          日
-        </div>
-        <div
-          style={{ color: gantt_view_mode == 'week' ? '#1890FF' : '' }}
-          className={styles.card_button}
-          onClick={() => this.changeGanttViewMode('week')}
-        >
-          周
-        </div>
-        <div
-          style={{ color: gantt_view_mode == 'year' ? '#1890FF' : '' }}
-          className={styles.card_button}
-          onClick={() => this.changeGanttViewMode('year')}
-        >
-          月
-        </div> */}
         {gantt_view_mode != 'relative_time' && (
           <>
             <div className={styles.card_button} onClick={this.checkToday}>
@@ -281,6 +244,9 @@ export default class FaceRightButton extends Component {
             </div>
             <div className={`${styles.time_mode_wrapper} `}>
               <div
+                style={{
+                  display: this.setHourViewVisible() ? 'block' : 'none'
+                }}
                 className={`${styles.time_mode_selector} ${gantt_view_mode ==
                   'hours' && styles.time_mode_selected}`}
                 onClick={() => this.changeGanttViewMode('hours')}
@@ -328,6 +294,9 @@ function mapStateToProps({
       list_group = [],
       gantt_view_mode
     }
+  },
+  projectDetail: {
+    datas: { projectDetailInfoData = {} }
   }
 }) {
   return {
@@ -338,6 +307,7 @@ function mapStateToProps({
     gantt_board_id,
     group_view_type,
     list_group,
-    gantt_view_mode
+    gantt_view_mode,
+    projectDetailInfoData
   }
 }

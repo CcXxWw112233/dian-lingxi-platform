@@ -34,7 +34,9 @@ export const OrgStructureModel = {
     /**当前组织标签列表 */
     currentOrgTagList:[],
     /**是否可编辑 */
-    canHandle:true
+    canHandle:true,
+    /** 选中的角色信息 */
+    activeRoleData: null
   },
   /** 添加成员标签 
    * @param {string} member_id 成员ID

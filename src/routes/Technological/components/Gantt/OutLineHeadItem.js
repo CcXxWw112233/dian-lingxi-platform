@@ -1838,7 +1838,7 @@ export default class OutLineHeadItem extends Component {
         <Menu.Item key="boardInfo">
           {`${currentNounPlanFilterName(PROJECTS)}`}信息
         </Menu.Item>
-        <Menu.Item key="set_name_outside">
+        {/* <Menu.Item key="set_name_outside">
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <div style={{ marginRight: 14 }}>名称外置</div>
             <div onClick={e => this.setCardNameOutsideBuddle(e)}>
@@ -1918,7 +1918,7 @@ export default class OutLineHeadItem extends Component {
           </Menu.Item>
           <Menu.Divider />
           <Menu.Item key="select_hide_term">自定义</Menu.Item>
-        </SubMenu>
+        </SubMenu> */}
         <SubMenu title="导出">
           <Menu.Item key="export_pdf">导出PDF</Menu.Item>
           <Menu.Item key="export_img">导出图片</Menu.Item>
@@ -1997,7 +1997,10 @@ export default class OutLineHeadItem extends Component {
             !selected_hide_term
           ) ||
             this.isHasFilterHide()) && (
-            <div onClick={this.handleShowHideTerm} style={{ color: '#6294FF' }}>
+            <div
+              onClick={this.handleShowHideTerm}
+              style={{ color: '#6294FF', marginLeft: 20 }}
+            >
               显示全部
             </div>
           )}
