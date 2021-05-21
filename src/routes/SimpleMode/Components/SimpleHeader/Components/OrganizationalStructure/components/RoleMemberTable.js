@@ -344,7 +344,10 @@ export default class RoleMemberTable extends React.Component {
                       </div>
                     )}
 
-                {isShowSearch && this.overlaySearchTag(searchList)}
+                {currentOrgTagList &&
+                  currentOrgTagList.length > 0 &&
+                  isShowSearch &&
+                  this.overlaySearchTag(searchList)}
               </div>
             )
           }}
