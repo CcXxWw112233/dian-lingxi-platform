@@ -23,6 +23,8 @@ import {
   checkIsHasPermission,
   currentNounPlanFilterName
 } from '../../../../../../../utils/businessFunction'
+import PropTypes from 'prop-types'
+
 import {
   MaxZIndex,
   MEMBERS,
@@ -63,6 +65,17 @@ const { Option } = Select
  * @description 用于展示组织架构成员列表
  */
 export default class RoleMemberTable extends React.Component {
+   /** props状态的管理，说明来源 */
+   static propTypes = {
+    /** 是否显示组织架构页面的成员和权限窗口
+     * @description 来源是redux
+     */
+    openPanel: PropTypes.bool,
+    /** 选中的架构图单个详情 */
+    activeRoleData: PropTypes.any,
+    /** 选择的组织 */
+    currentSelectOrganize: PropTypes.object
+  }
   constructor(props) {
     super(props)
     this.state = {

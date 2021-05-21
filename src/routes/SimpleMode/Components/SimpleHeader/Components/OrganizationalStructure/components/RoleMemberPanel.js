@@ -14,6 +14,7 @@ import {
   NOT_HAS_PERMISION_COMFIRN
 } from '@/globalset/js/constant'
 import { message } from 'antd/lib/index'
+import PropTypes from 'prop-types'
 
 const ShowAddMenberModal = lazy(() =>
   import(
@@ -27,15 +28,32 @@ const ShowAddMenberModal = lazy(() =>
 @connect(
   ({
     organizationManager: {
+      
       datas: { orgnization_role_data }
+    },
+    technological: {
+      datas: { currentSelectOrganize = {}, userInfo = {} }
     },
     [OrgStructureModel.namespace]: { canHandle }
   }) => ({
     orgnization_role_data,
-    canHandle
+    canHandle,
+    currentSelectOrganize,
+    userInfo
   })
 )
 export default class RoleMemberPanel extends React.Component {
+  /** props状态的管理，说明来源 */
+  static propTypes = {
+    /** 是否显示组织架构页面的成员和权限窗口
+     * @description 来源是redux
+     */
+    openPanel: PropTypes.bool,
+    /** 选中的架构图单个详情 */
+    activeRoleData: PropTypes.any,
+    /** 选择的组织 */
+    currentSelectOrganize: PropTypes.object
+  }
   constructor(props) {
     super(props)
     this.state = {
@@ -115,7 +133,7 @@ export default class RoleMemberPanel extends React.Component {
       type: [OrgStructureModel.namespace, 'orgAaccessInviteWeb'].join('/'),
       payload: {
         users: users.split(','),
-        _organization_id: org_id,
+        _organization_id: id,
         role_id: role_id,
         type: '11'
       }
