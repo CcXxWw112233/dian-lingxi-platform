@@ -102,8 +102,7 @@ export default class GroupListHeadItem extends Component {
   noTimeAreaScroll(e) {
     e.stopPropagation()
   }
-  componentDidMount () {
-    console.log('1213')
+  componentDidMount() {
     const { itemValue = {} } = this.props
     const { list_name } = itemValue
     this.setState({
