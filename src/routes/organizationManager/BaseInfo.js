@@ -501,7 +501,7 @@ export default class BaseInfo extends React.Component {
         />
         <div className={indexStyles.baseInfo_des} style={{ color: '#BFBFBF' }}>
           请使用空格符号分隔多个后缀名
-        </div>
+        </div> */}
         <div style={{ margin: '0 auto', marginTop: 20, textAlign: 'center' }}>
           <Button
             type={'primary'}
@@ -510,7 +510,7 @@ export default class BaseInfo extends React.Component {
           >
             保存
           </Button>
-        </div> */}
+        </div>
 
         {this.state.payUpgradeModalVisible && (
           <PayUpgrade
