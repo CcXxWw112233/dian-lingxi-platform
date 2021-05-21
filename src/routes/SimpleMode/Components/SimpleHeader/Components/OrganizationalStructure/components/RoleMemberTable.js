@@ -3,11 +3,20 @@ import styles from './rolemembertable.less'
 import globalStyles from '../../../../../../../globalset/css/globalClassName.less'
 import dva, { connect } from 'dva'
 import { OrgStructureModel } from '../../../../../../../models/technological/orgStructure'
-import { Avatar, Dropdown, Select, Cascader, message, Modal } from 'antd'
+import {
+  Avatar,
+  Dropdown,
+  Select,
+  Cascader,
+  message,
+  Modal,
+  Button
+} from 'antd'
 import { AppstoreOutlined } from '@ant-design/icons'
 import {
   discontinueMember,
-  getTransferSelectedList
+  getTransferSelectedList,
+  getGroupList
 } from '../../../../../../../services/technological/organizationMember'
 import { isApiResponseOk } from '../../../../../../../utils/handleResponseData'
 import {
@@ -35,10 +44,18 @@ const { Option } = Select
 
 @connect(
   ({
-    [OrgStructureModel.namespace]: { orgMembersList, currentOrgTagList }
+    [OrgStructureModel.namespace]: { orgMembersList, currentOrgTagList },
+    projectDetail: {
+      datas: { projectDetailInfoData = {} }
+    },
+    technological: {
+      datas: { correspondingOrganizationMmembersList = [] }
+    }
   }) => ({
     orgMembersList,
-    currentOrgTagList
+    currentOrgTagList,
+    projectDetailInfoData,
+    correspondingOrganizationMmembersList
   })
 )
 /** 组织架构的右侧成员列表
@@ -48,36 +65,6 @@ export default class RoleMemberTable extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      member: ['王力宏'],
-      list: ['北京', '上海', '广州', '深圳'],
-      orglist: [
-        {
-          title: '一线',
-          list: [
-            {
-              title: '北京',
-              list: []
-            },
-            {
-              title: '上海',
-              list: []
-            },
-            {
-              title: '深圳',
-              list: [
-                {
-                  title: '',
-                  list: ['南山', '罗湖']
-                }
-              ]
-            },
-            {
-              title: '广州',
-              list: []
-            }
-          ]
-        }
-      ],
       searchList: [],
       /**
        * 是否展示检索匹配标签列表
@@ -225,8 +212,8 @@ export default class RoleMemberTable extends React.Component {
     })
   }
   /**删除标签 */
-  deleteTag = item => {
-    console.log('删除标签', item)
+  deleteTag = (e, item) => {
+    e.stopPropagation()
     const { dispatch } = this.props
     dispatch({
       type: [OrgStructureModel.namespace, 'deleteMemberTag'].join('/'),
@@ -235,18 +222,7 @@ export default class RoleMemberTable extends React.Component {
       }
     })
   }
-  handleonChange(value) {
-    //  this.addMenberTag(value)
-    // var { currentOrgTagList } = this.props;
-    // var searchList = currentOrgTagList && currentOrgTagList.filter(item => {
-    //   return item.name.search(e.target.value) != -1
-    // })
-    // if(value) {
-    //   this.setState({
-    //     currentTag:value[1]
-    //   })
-    // }
-  }
+
   onSearch(value) {
     var { currentOrgTagList } = this.props
     var searchList =
@@ -288,10 +264,9 @@ export default class RoleMemberTable extends React.Component {
           placeholder="输入创建新标签"
           showSearch
           allowClear
-          style={{ color: '#212434' }}
+          style={{ color: '#212434', width: '100%' }}
           open={true}
           onBlur={this.onBlur.bind(this)}
-          onChange={this.handleonChange.bind(this)}
           onSearch={this.onSearch.bind(this)}
           getPopupContainer={triggerNode => triggerNode.parentNode}
           dropdownStyle={{ border: 'none' }}
@@ -309,7 +284,6 @@ export default class RoleMemberTable extends React.Component {
                   currentOrgTagList.map((item, key) => {
                     return (
                       <>
-                        {/* {menu} */}
                         <div
                           className={styles.add_member_tag_item}
                           onClick={this.addRoleMenberTag.bind(this, item)}
@@ -317,13 +291,13 @@ export default class RoleMemberTable extends React.Component {
                           {item.name}
                           <div
                             className={`${styles.role_member_tag_delete_icon}`}
+                            onClick={e => this.deleteTag(e, item)}
                           >
-                            <span
+                            <div
                               className={`${styles.role_member_delete_icon} ${globalStyles.authTheme}`}
-                              onClick={this.deleteTag.bind(this, item)}
                             >
-                              &#xe661;
-                            </span>
+                              &#xe816;
+                            </div>
                           </div>
                         </div>
                       </>
@@ -415,6 +389,7 @@ export default class RoleMemberTable extends React.Component {
   moveUserOut() {
     const { org_id } = this.props
     const { currentUserId, currentOrgID } = this.state
+    this.getGroupList(org_id)
     this.getTransferSelectedList(currentUserId, org_id)
   }
 
@@ -451,7 +426,7 @@ export default class RoleMemberTable extends React.Component {
   overlayRoleMenberMore() {
     const { orglist } = this.state
     const { data } = this.props
-    console.log(data)
+    const [visible, setCascaderVisible] = useState(false)
     return (
       <div className={styles.roleMenberMore} id="roleMenberMore">
         <div
@@ -460,19 +435,17 @@ export default class RoleMemberTable extends React.Component {
         >
           移出组织
         </div>
-        <div
-          className={`${styles.roleMenberMore_item} ${styles.roleMenber_moveTo}`}
-        >
+        <div>
           <Cascader
             options={data}
             className={styles.roleMenberMore_item_cascader}
             popupClassName={styles.roleMenberMore_item_popupClassName}
-            // onChange={thi}
-            expandTrigger="hover"
+            expandTrigger="click"
             onChange={this.onCascaderChange}
-            getPopupContainer={triggerNode =>
-              document.getElementById('roleMenberMore')
-            }
+            // getPopupContainer={triggerNode =>
+            //   document.getElementById('roleMenberMore')
+            // }
+            style={{ zIndex: 99999 }}
             fieldNames={{
               children: 'roles',
               label: 'role_group_name',
@@ -573,6 +546,61 @@ export default class RoleMemberTable extends React.Component {
         .TreeRemoveBoardMemberModalVisible
     })
   }
+  // 获取组织成员列表
+  getGroupList = currentOrgID => {
+    debugger
+    getGroupList({ _organization_id: currentOrgID }).then(res => {
+      if (isApiResponseOk(res)) {
+        let data = []
+        res.data.data.forEach(item => {
+          if (item.members && item.members.length) {
+            data.push(...item.members)
+          }
+        })
+
+        this.setState({
+          orgMembersData: data
+        })
+      }
+    })
+  }
+  // 根据不同的类型获取不同的成员列表
+  getMembersList = (props, orgData = []) => {
+    const {
+      projectDetailInfoData: { board_id, org_id, data: boardData },
+      correspondingOrganizationMmembersList = []
+    } = this.props
+    const {
+      itemValue: {
+        field_content: {
+          field_set: { member_selected_range }
+        }
+      }
+    } = this.state
+    switch (member_selected_range) {
+      case '1': // 表示当前组织
+        // membersData = [...orgData]
+        this.setState({
+          orgMembersData: correspondingOrganizationMmembersList.map(item => {
+            let new_item = { ...item }
+            new_item = {
+              ...item,
+              user_id: item.id
+            }
+            return new_item
+          })
+        })
+        break
+      case '2': // 表示项目
+        // membersData = [...boardData]
+        this.setState({
+          boardMembersData: boardData
+        })
+        break
+      default:
+        break
+    }
+  }
 
   // 获取移出成员后的交接列表
   getTransferSelectedList = (remove_id, member_id) => {
@@ -648,7 +676,7 @@ export default class RoleMemberTable extends React.Component {
       >
         <div className={styles.role_member_contant}>
           <Dropdown
-            trigger={['hover']}
+            trigger={['click']}
             disabled={!canHandle}
             getPopupContainer={triggerNode => triggerNode.parentNode}
             onVisibleChange={visible => {
@@ -708,7 +736,7 @@ export default class RoleMemberTable extends React.Component {
       currentOrgTagList = [],
       canHandle
     } = this.props
-    const { currentUserId } = this.state
+    const { currentUserId, orgMembersData } = this.state
     // const updateDatas = payload => {
     //   dispatch({
     //     type: getEffectOrReducerByName('updateDatas'),
@@ -739,12 +767,20 @@ export default class RoleMemberTable extends React.Component {
             />
           )
         })}
-        <TreeRemoveOrgMemberModal />
+        <TreeRemoveOrgMemberModal groupList={orgMembersData} />
         {/* <TreeGroupModal
           updateDatas={value => this.cancelCascaderChange(value)}
         ></TreeGroupModal> */}
 
-        {/* <Button className={styles.add_role_member}  type='primary' onClick={()=>this.addRoleMenber()}>添加成员</Button> */}
+        {(!orgMembersList || orgMembersList.length == 0) && (
+          <Button
+            className={styles.add_role_member}
+            type="primary"
+            onClick={() => this.addRoleMenber()}
+          >
+            添加成员
+          </Button>
+        )}
       </div>
     )
   }

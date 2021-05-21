@@ -94,9 +94,6 @@
             z-index: 9999 !important;
         }
     }
-    .add_member_title {
-        // padding:0 10px;
-    }
 
     .add_member_select {
        border: none;
@@ -195,10 +192,10 @@
             width: 60px;
             z-index: 9999;
         }
-        .roleMenberMore_item_popupClassName {
-            z-index: 9999;
-        }
     }
+    .roleMenber_moveOut:hover{
+        cursor : pointer;
+    }  
     .roleMenber_moveOut {
         color: #FF5050 !important;
     }
@@ -207,7 +204,10 @@
         display: flex;
         flex-direction: row;
         justify-content: space-between;
-    }   
+    }
+    roleMenber_moveTo:hover{
+        cursor : pointer;
+    }  
 }
 .roleMenberMove{
     background: #FFFFFF;
@@ -244,4 +244,7 @@
         }
     }
    
+}
+.roleMenberMore_item_popupClassName {
+    z-index: 1105;
 }

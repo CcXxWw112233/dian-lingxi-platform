@@ -103,12 +103,12 @@ export default {
     },
     /** web端各种入口邀请人员加入组织逻辑处理*/
     *orgAaccessInviteWeb({ payload }, { select, call, put }) {
-      let res = yield call(getRolePermissionsAndMenber, payload)
+      let res = yield call(orgAaccessInviteWeb, payload)
       if (isApiResponseOk(res)) {
         yield put({
           type: 'getRolePermissionsAndMenber',
           payload: {
-            org_id: payload.org_id,
+            org_id: payload._organization_id,
             role_id: payload.role_id
           }
         })

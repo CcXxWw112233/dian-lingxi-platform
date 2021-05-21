@@ -114,8 +114,8 @@ export default class RoleMemberPanel extends React.Component {
     dispatch({
       type: [OrgStructureModel.namespace, 'orgAaccessInviteWeb'].join('/'),
       payload: {
-        users: users,
-        org_id: org_id,
+        users: users.split(','),
+        _organization_id: org_id,
         role_id: role_id,
         type: '11'
       }
@@ -167,7 +167,9 @@ export default class RoleMemberPanel extends React.Component {
             )}
           </div>
           <div className={styles.role_panel_tips}>
-            在此面板设置团队成员的权限
+            {currentTab == 0
+              ? '在此面板设置团队成员的权限'
+              : '在此面板添加或删除您想要授权的成员'}
           </div>
         </div>
 

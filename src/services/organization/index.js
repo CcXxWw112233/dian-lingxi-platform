@@ -428,7 +428,7 @@ export async function updateMemberTag(data) {
 // 删除成员标签
 export async function deleteMemberTag(data) {
   return request({
-    url: `${REQUEST_DOMAIN}/org/member/label`,
+    url: `${REQUEST_DOMAIN}/org/member/label/${data.id}`,
     method: 'DELETE',
     data
   })
