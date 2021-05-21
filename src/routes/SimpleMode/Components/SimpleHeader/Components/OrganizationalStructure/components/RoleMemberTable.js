@@ -459,8 +459,6 @@ export default class RoleMemberTable extends React.Component {
             // getPopupContainer={triggerNode =>
             //   document.getElementById('roleMenberMore')
             // }
-            dropdownStyle={{ zIndex: MaxZIndex + 11 }}
-            style={{ zIndex: MaxZIndex + 10 }}
             fieldNames={{
               children: 'roles',
               label: 'role_group_name',
@@ -775,7 +773,7 @@ export default class RoleMemberTable extends React.Component {
             />
           )
         })}
-        <TreeRemoveOrgMemberModal groupList={orgMembersData} />
+        <TreeRemoveOrgMemberModal />
         {/* <TreeGroupModal
           updateDatas={value => this.cancelCascaderChange(value)}
         ></TreeGroupModal> */}

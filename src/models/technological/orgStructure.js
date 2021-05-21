@@ -98,7 +98,7 @@ export default {
           }
         })
       } else {
-        message.warn('保存失败', MESSAGE_DURATION_TIME)
+        message.warn(res.message, MESSAGE_DURATION_TIME)
       }
     },
     /** web端各种入口邀请人员加入组织逻辑处理*/
