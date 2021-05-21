@@ -28,7 +28,6 @@ const ShowAddMenberModal = lazy(() =>
 @connect(
   ({
     organizationManager: {
-      
       datas: { orgnization_role_data }
     },
     technological: {

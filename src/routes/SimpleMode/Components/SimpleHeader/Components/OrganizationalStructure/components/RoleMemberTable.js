@@ -140,26 +140,28 @@ export default class RoleMemberTable extends React.Component {
   addRoleMenberTag(item) {
     const { dispatch } = this.props
     const { currentMemberId, currentLableID } = this.state
-    if (currentLableID == item.id) {
-      this.deleteRelaMemberTag()
-    } else {
-      dispatch({
-        type: [OrgStructureModel.namespace, 'addRoleMenberTag'].join('/'),
-        payload: {
-          label_id: item.id,
-          member_id: currentMemberId
-        }
-      }).then(res => {
-        this.props.getRolePermissionsAndMenber()
-        this.setState({
-          isconfirmCurrentTag: true,
-          // moreVisible:false,
-          currentLableID: item.id,
-          currentTag: item.name,
+    if (!item) {
+      if (currentLableID == item.id) {
+        this.deleteRelaMemberTag()
+      } else {
+        dispatch({
+          type: [OrgStructureModel.namespace, 'addRoleMenberTag'].join('/'),
+          payload: {
+            label_id: item.id,
+            member_id: currentMemberId
+          }
+        }).then(res => {
+          this.props.getRolePermissionsAndMenber('1')
+          this.setState({
+            isconfirmCurrentTag: true,
+            // moreVisible:false,
+            currentLableID: item.id,
+            currentTag: item.name,
 
-          isShowSearch: false
+            isShowSearch: false
+          })
         })
-      })
+      }
     }
   }
   /**
@@ -175,7 +177,7 @@ export default class RoleMemberTable extends React.Component {
         member_id: currentMemberId
       }
     }).then(() => {
-      this.props.getRolePermissionsAndMenber()
+      this.props.getRolePermissionsAndMenber('2')
       this.setState({
         isconfirmCurrentTag: true,
         currentLableID: '',
@@ -260,12 +262,7 @@ export default class RoleMemberTable extends React.Component {
       })
     }
   }
-  onBlur(value) {
-    console.log(`selected onBlur${value}`)
-    if (value == '' || !value) {
-      this.deleteRelaMemberTag()
-    }
-  }
+
   /**
    * 渲染添加标签弹窗
    */
@@ -290,7 +287,6 @@ export default class RoleMemberTable extends React.Component {
           allowClear
           style={{ color: '#212434', width: '100%' }}
           open={true}
-          onBlur={this.onBlur.bind(this)}
           onSearch={this.onSearch.bind(this)}
           getPopupContainer={triggerNode => triggerNode.parentNode}
           dropdownStyle={{ border: 'none' }}
@@ -347,28 +343,14 @@ export default class RoleMemberTable extends React.Component {
    */
   overlaySearchTag(searchList) {
     const { currentSelectValue } = this.state
+
+    const isExist = searchList.some(item => {
+      console.log(currentSelectValue, item)
+      return item.name == currentSelectValue
+    })
     return (
       <div className={styles.add_member_tag_search}>
-        {searchList && searchList.length > 0 ? (
-          <div
-            className={styles.add_member_tagList}
-            style={{
-              overflowY: 'auto',
-              position: 'relative'
-            }}
-          >
-            {searchList.map((item, key) => {
-              return (
-                <div
-                  className={styles.add_member_tag_item}
-                  onClick={this.addRoleMenberTag.bind(this, item)}
-                >
-                  {item.name}
-                </div>
-              )
-            })}
-          </div>
-        ) : (
+        {!isExist && (
           <div
             className={styles.add_member_tag_creat}
             onClick={e => this.addMenberTag(e)}
@@ -377,6 +359,24 @@ export default class RoleMemberTable extends React.Component {
             {'创建新标签“' + currentSelectValue + '”'}
           </div>
         )}
+        <div
+          className={styles.add_member_tagList}
+          style={{
+            overflowY: 'auto',
+            position: 'relative'
+          }}
+        >
+          {searchList.map((item, key) => {
+            return (
+              <div
+                className={styles.add_member_tag_item}
+                onClick={this.addRoleMenberTag.bind(this, item)}
+              >
+                {item.name}
+              </div>
+            )
+          })}
+        </div>
       </div>
     )
   }
@@ -436,7 +436,7 @@ export default class RoleMemberTable extends React.Component {
           role_id: value[value.length - 1]
         }
       }).then(() => {
-        this.props.getRolePermissionsAndMenber()
+        this.props.getRolePermissionsAndMenber('3')
       })
     }
   }
@@ -448,7 +448,7 @@ export default class RoleMemberTable extends React.Component {
         TreeGroupModalVisiblie: value.TreeGroupModalVisiblie
       }
     })
-    this.props.getRolePermissionsAndMenber()
+    this.props.getRolePermissionsAndMenber(4)
   }
   /**
    * 移动至 下拉框
@@ -643,7 +643,8 @@ export default class RoleMemberTable extends React.Component {
             payload: {
               transferSelectedList: res.data,
               TreeRemoveOrgMemberModalVisible: true,
-              removeMemberUserId: remove_id
+              removeMemberUserId: remove_id,
+              currentBeOperateMemberId: member_id
             }
           })
         } else {
@@ -655,7 +656,7 @@ export default class RoleMemberTable extends React.Component {
   discontinueMember = member_id => {
     var that = this
     discontinueMember({ member_id }).then(res => {
-      that.props.getRolePermissionsAndMenber()
+      that.props.getRolePermissionsAndMenber(5)
     })
   }
   //停用
@@ -760,7 +761,9 @@ export default class RoleMemberTable extends React.Component {
       </div>
     )
   }
-
+  getRolePermissionsAndMenber = () => {
+    this.props.getRolePermissionsAndMenber()
+  }
   render() {
     const {
       orgMembersList = [],
@@ -791,7 +794,10 @@ export default class RoleMemberTable extends React.Component {
             />
           )
         })}
-        <TreeRemoveOrgMemberModal groupList={orgMembersData} />
+        <TreeRemoveOrgMemberModal
+          groupList={orgMembersData}
+          getRolePermissionsAndMenber={() => this.getRolePermissionsAndMenber()}
+        />
         {/* <TreeGroupModal
           updateDatas={value => this.cancelCascaderChange(value)}
         ></TreeGroupModal> */}

@@ -216,7 +216,6 @@ export default class TreeRemoveOrgMemberModal extends Component {
     } = this.state
     
     const { groupList = [], removeMemberUserId } = this.props
-    console.log('ssssssssssssssssssssssssss12123123123',groupList)
     let temMemberList = arrayNonRepeatfy(
       this.getOrgMemberWithRemoveVisitors(groupList)
     )
@@ -486,6 +485,7 @@ export default class TreeRemoveOrgMemberModal extends Component {
               type: 'organizationMember/getGroupList',
               payload: {}
             })
+            typeof this.props.getRolePermissionsAndMenber == 'function' && this.props.getRolePermissionsAndMenber()
           }
         })
       } else {
