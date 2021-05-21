@@ -282,12 +282,12 @@ export default class GroupListHead extends Component {
   }
 
   /** 单个数据 */
-  Row = memo(prop => {
+  Row = prop => {
     const { style, index } = prop
     const value = this.props.list_group[index] || {}
     const { list_id } = value
     return (
-      <div style={style}>
+      <div style={style} key={list_id}>
         <GroupListHeadItem
           list_id={list_id}
           setTaskDetailModalVisibile={this.props.setTaskDetailModalVisibile}
@@ -297,7 +297,7 @@ export default class GroupListHead extends Component {
         />
       </div>
     )
-  }, areEqual)
+  }
 
   render() {
     const {
