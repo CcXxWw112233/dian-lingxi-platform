@@ -404,7 +404,7 @@ export default class RoleMemberTable extends React.Component {
     const { org_id } = this.props
     const { currentUserId, currentOrgID, currentMemberId } = this.state
     this.getGroupList(org_id)
-    debugger
+    // debugger
     this.getTransferSelectedList(currentUserId, currentMemberId)
   }
 
