@@ -262,7 +262,7 @@ export default class RoleMemberTable extends React.Component {
       })
     }
   }
-  
+
   /**
    * 渲染添加标签弹窗
    */
@@ -345,7 +345,7 @@ export default class RoleMemberTable extends React.Component {
     const { currentSelectValue } = this.state
 
     const isExist = searchList.some(item => {
-      console.log(currentSelectValue,item)
+      console.log(currentSelectValue, item)
       return item.name == currentSelectValue
     })
     return (
@@ -644,7 +644,7 @@ export default class RoleMemberTable extends React.Component {
               transferSelectedList: res.data,
               TreeRemoveOrgMemberModalVisible: true,
               removeMemberUserId: remove_id,
-              currentBeOperateMemberId:member_id
+              currentBeOperateMemberId: member_id
             }
           })
         } else {
@@ -761,7 +761,7 @@ export default class RoleMemberTable extends React.Component {
       </div>
     )
   }
-  getRolePermissionsAndMenber = ()=> {
+  getRolePermissionsAndMenber = () => {
     this.props.getRolePermissionsAndMenber()
   }
   render() {
@@ -794,7 +794,10 @@ export default class RoleMemberTable extends React.Component {
             />
           )
         })}
-        <TreeRemoveOrgMemberModal groupList={orgMembersData} getRolePermissionsAndMenber={()=>this.getRolePermissionsAndMenber()}/>
+        <TreeRemoveOrgMemberModal
+          groupList={orgMembersData}
+          getRolePermissionsAndMenber={() => this.getRolePermissionsAndMenber()}
+        />
         {/* <TreeGroupModal
           updateDatas={value => this.cancelCascaderChange(value)}
         ></TreeGroupModal> */}
