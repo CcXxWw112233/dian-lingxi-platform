@@ -226,10 +226,13 @@ export default class RoleMemberTable extends React.Component {
   componentWillUnmount() {
     this.setState({
       searchList: [],
-      isShowSearch: false
+      isShowSearch: false,
+      currentSelectValue: ''
     })
   }
-  /**删除标签 */
+  /**删除标签
+   * @param item 当前标签
+   */
   deleteTag = (e, item) => {
     e.stopPropagation()
     const { dispatch } = this.props
@@ -265,6 +268,7 @@ export default class RoleMemberTable extends React.Component {
 
   /**
    * 渲染添加标签弹窗
+   * @param currentOrgTagList 标签列表数据
    */
   overlayAddMember(currentOrgTagList) {
     const {
@@ -275,7 +279,6 @@ export default class RoleMemberTable extends React.Component {
       currentSelectValue,
       currentName
     } = this.state
-    console.log(currentOrgTagList)
     return (
       <div className={styles.add_member_tag}>
         <span className={styles.add_member_title}>
@@ -295,39 +298,52 @@ export default class RoleMemberTable extends React.Component {
               <div
                 className={styles.add_member_tagList}
                 style={{
-                  overflowY: 'auto',
+                  overflowY:
+                    !currentOrgTagList || currentOrgTagList.length == 0
+                      ? ''
+                      : 'auto',
                   position: 'relative'
                 }}
               >
-                {currentOrgTagList &&
-                  currentOrgTagList.map((item, key) => {
-                    return (
-                      <>
-                        <div
-                          className={`${styles.add_member_tag_item} ${
-                            item.name == currentTag
-                              ? styles.role_member_currentTag
-                              : ''
-                          }`}
-                          onClick={this.addRoleMenberTag.bind(this, item)}
-                        >
-                          <div className={`${styles.role_member_tag_name}`}>
-                            {item.name}
-                          </div>
+                {currentOrgTagList && currentOrgTagList.length > 0
+                  ? currentOrgTagList.map((item, key) => {
+                      return (
+                        <>
                           <div
-                            className={`${styles.role_member_tag_delete_icon}`}
-                            onClick={e => this.deleteTag(e, item)}
+                            className={`${styles.add_member_tag_item} ${
+                              item.name == currentTag
+                                ? styles.role_member_currentTag
+                                : ''
+                            }`}
+                            onClick={this.addRoleMenberTag.bind(this, item)}
                           >
+                            <div className={`${styles.role_member_tag_name}`}>
+                              {item.name}
+                            </div>
                             <div
-                              className={`${styles.role_member_delete_icon} ${globalStyles.authTheme}`}
+                              className={`${styles.role_member_tag_delete_icon}`}
+                              onClick={e => this.deleteTag(e, item)}
                             >
-                              &#xe816;
+                              <div
+                                className={`${styles.role_member_delete_icon} ${globalStyles.authTheme}`}
+                              >
+                                &#xe816;
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </>
-                    )
-                  })}
+                        </>
+                      )
+                    })
+                  : currentSelectValue && (
+                      <div
+                        className={styles.add_member_tag_creat}
+                        onClick={e => this.addMenberTag(e)}
+                        zIndex={MaxZIndex + 20}
+                      >
+                        {'创建新标签“' + currentSelectValue + '”'}
+                      </div>
+                    )}
+
                 {isShowSearch && this.overlaySearchTag(searchList)}
               </div>
             )
@@ -345,9 +361,9 @@ export default class RoleMemberTable extends React.Component {
     const { currentSelectValue } = this.state
 
     const isExist = searchList.some(item => {
-      console.log(currentSelectValue, item)
       return item.name == currentSelectValue
     })
+
     return (
       <div className={styles.add_member_tag_search}>
         {!isExist && currentSelectValue && (
