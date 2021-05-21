@@ -111,11 +111,12 @@ export default class RoleMemberPanel extends React.Component {
     const { users } = data
     const { currentSelectOrganize = {}, dispatch, org_id, role_id } = this.props
     const { id } = currentSelectOrganize
+    debugger
     dispatch({
       type: [OrgStructureModel.namespace, 'orgAaccessInviteWeb'].join('/'),
       payload: {
-        users: users,
-        org_id: org_id,
+        users: users.split(','),
+        _organization_id: org_id,
         role_id: role_id,
         type: '11'
       }
