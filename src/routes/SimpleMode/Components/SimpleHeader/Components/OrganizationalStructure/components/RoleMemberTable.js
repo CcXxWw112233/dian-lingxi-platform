@@ -65,8 +65,8 @@ const { Option } = Select
  * @description 用于展示组织架构成员列表
  */
 export default class RoleMemberTable extends React.Component {
-   /** props状态的管理，说明来源 */
-   static propTypes = {
+  /** props状态的管理，说明来源 */
+  static propTypes = {
     /** 是否显示组织架构页面的成员和权限窗口
      * @description 来源是redux
      */
@@ -315,7 +315,9 @@ export default class RoleMemberTable extends React.Component {
                           }`}
                           onClick={this.addRoleMenberTag.bind(this, item)}
                         >
-                          {item.name}
+                          <div className={`${styles.role_member_tag_name}`}>
+                            {item.name}
+                          </div>
                           <div
                             className={`${styles.role_member_tag_delete_icon}`}
                             onClick={e => this.deleteTag(e, item)}
