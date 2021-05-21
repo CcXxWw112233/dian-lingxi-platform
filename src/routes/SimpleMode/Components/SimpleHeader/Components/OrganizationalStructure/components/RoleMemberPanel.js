@@ -127,7 +127,8 @@ export default class RoleMemberPanel extends React.Component {
   }
   render() {
     const { tabs, currentTab, modalVisible } = this.state;
-    const { canHandle ,title,org_id ,role_id} = this.props
+    const { canHandle ,title,org_id ,role_id,data} = this.props
+ 
     return (
       <div className={styles.role_panel} >
         <div className={styles.role_panel_top}>
@@ -161,7 +162,7 @@ export default class RoleMemberPanel extends React.Component {
         </div>
 
         {
-          currentTab == 0 ? <RoleMemberJurisdiction role_id={role_id} org_id={org_id} canHandle={canHandle}></RoleMemberJurisdiction> : <RoleMemberTable canHandle={canHandle} role_id={role_id} org_id={org_id} addRoleMember={() => this.addRoleMember()} getRolePermissionsAndMenber={() => this.getRolePermissionsAndMenber()}></RoleMemberTable>
+          currentTab == 0 ? <RoleMemberJurisdiction role_id={role_id} org_id={org_id} canHandle={canHandle}></RoleMemberJurisdiction> : <RoleMemberTable data={data} canHandle={canHandle} role_id={role_id} org_id={org_id} addRoleMember={() => this.addRoleMember()} getRolePermissionsAndMenber={() => this.getRolePermissionsAndMenber()}></RoleMemberTable>
         }
 
 

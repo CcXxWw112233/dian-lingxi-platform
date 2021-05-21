@@ -63,6 +63,7 @@ export default class OrganizationalStructure extends React.Component {
     window.addEventListener('keydown', this.KeyboardEvent)
     this.getOrgRoleList()
     this.getOrgPermissions()
+  
     // this.getRolePermissionsAndMenber()
   }
   componentWillUnmount() {
@@ -243,8 +244,8 @@ export default class OrganizationalStructure extends React.Component {
       console.log(data)
       this.setState({
         title:data && (data['name'] || data['role_group_name']),
-        role_id:data['id'],
-        org_id:data['org_id']
+        role_id:data && data['id'] || '',
+        org_id:data && data['org_id']|| ''
       })
       dispatch({
         type: [OrgStructureModel.namespace, OrgStructureModel.reducers.updateDatas].join(
@@ -620,7 +621,7 @@ export default class OrganizationalStructure extends React.Component {
   render() {
     /** 是否显示右侧角色窗口 */
     const { openPanel, activeRoleData } = this.props
-    const { defaultRoles,title ,role_id,org_id} = this.state
+    const { defaultRoles,title ,role_id,org_id,data} = this.state
      return ReactDOM.createPortal(
       <div
         className={`${styles.container} animate_animated animate__fadeInRight animate__faster`}
@@ -673,7 +674,7 @@ export default class OrganizationalStructure extends React.Component {
           onUpdateText={val => this.updateText(val)}
           activeItem={this.props.activeRoleData}
         />
-        {openPanel && <RoleMemberPanel role_id={role_id} org_id={org_id} title={title} getRolePermissionsAndMenber={()=>this.getRolePermissionsAndMenber()}></RoleMemberPanel>}
+        {openPanel && <RoleMemberPanel  data={data} role_id={role_id} org_id={org_id} title={title} getRolePermissionsAndMenber={()=>this.getRolePermissionsAndMenber()}></RoleMemberPanel>}
       </div>,
       document.body
     )

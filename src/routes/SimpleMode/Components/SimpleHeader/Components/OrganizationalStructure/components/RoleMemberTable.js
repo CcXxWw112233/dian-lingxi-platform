@@ -3,21 +3,28 @@ import styles from './rolemembertable.less'
 import globalStyles from '../../../../../../../globalset/css/globalClassName.less'
 import dva, { connect } from 'dva'
 import { OrgStructureModel } from '../../../../../../../models/technological/orgStructure'
-import { Avatar, Dropdown, Select } from 'antd'
+import { Avatar, Dropdown, Select, Cascader } from 'antd'
 import {
   AppstoreOutlined,
 } from '@ant-design/icons';
-import { discontinueMember,getTransferSelectedList } from '../../../../../../../services/technological/organizationMember'
+import { discontinueMember, getTransferSelectedList } from '../../../../../../../services/technological/organizationMember'
 import { isApiResponseOk } from '../../../../../../../utils/handleResponseData'
-
 const TreeRemoveOrgMemberModal = lazy(() =>
   import(
     '@/routes/Technological/components/OrganizationMember/TreeRemoveOrgMemberModal'
   )
 )
+const TreeGroupModal = lazy(() =>
+  import(
+    '@/routes/Technological/components/OrganizationMember/TreeGroupModal'
+  )
+)
+
+const getEffectOrReducerByName = name => `organizationMember/${name}`
+
 const { Option } = Select;
 
-@connect(({ [OrgStructureModel.namespace]: { orgMembersList, currentOrgTagList } }) => ({
+@connect(({ [OrgStructureModel.namespace]: { orgMembersList, currentOrgTagList }, }) => ({
   orgMembersList, currentOrgTagList
 }))
 /** 组织架构的右侧成员列表
@@ -104,7 +111,7 @@ export default class RoleMemberTable extends React.Component {
    * @param {*} e 
    */
   getMemberTagList() {
-    const { dispatch,org_id} = this.props
+    const { dispatch, org_id } = this.props
     dispatch({
       type: [
         OrgStructureModel.namespace,
@@ -178,7 +185,7 @@ export default class RoleMemberTable extends React.Component {
   addMenberTag() {
     const { currentSelectValue } = this.state;
 
-    const { dispatch,role_id,org_id } = this.props
+    const { dispatch, role_id, org_id } = this.props
     if (currentSelectValue) {
       dispatch({
         type: [
@@ -370,47 +377,85 @@ export default class RoleMemberTable extends React.Component {
   selectMember = (item) => {
     console.log(item)
     const { currentOrgTagList } = this.props;
-    const item_Tag = currentOrgTagList.filter(value => {
-      return value.id == item.label_id[0]
-    })
+    var item_Tag = []
+    if (item.label_id) {
+      item_Tag = currentOrgTagList.filter(value => {
+        return value.id == item.label_id[0]
+      })
+    }
+
     this.setState({
       currentTag: item_Tag.length > 0 ? item_Tag[0].name : '',
       currentName: item.name,
       currentUserId: item.user_id,
       currentMemberId: item.member_id,
-      currentOrgID:item.org_id,
-      currentLableID: item.label_id[0]
+      currentOrgID: item.org_id,
+      currentLableID: item.label_id ? item.label_id[0] : ''
+    })
+    const {dispatch} = this.props
+    dispatch({
+      type: 'organizationMember/getGroupTreeList',
+      payload: {
+        _organization_id:item.org_id
+      }
     })
   }
   /**
    * 移除成员
    */
   moveUserOut() {
-    const {org_id} = this.props
-    const {currentUserId,currentOrgID} = this.state;
-    this.getTransferSelectedList(currentUserId,org_id)
+    const { org_id } = this.props
+    const { currentUserId, currentOrgID } = this.state;
+    this.getTransferSelectedList(currentUserId, org_id)
   }
 
+  onCascaderChange = value => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'organizationMember/updateDatas',
+      payload: {
+        TreeGroupModalVisiblie: value,
+        batch_setting_ids: [value]
+      }
+    })
+  }
+  cancelCascaderChange = value => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'organizationMember/updateDatas',
+      payload: {
+        TreeGroupModalVisiblie: value.TreeGroupModalVisiblie,
+      }
+    })
+    this.props.getRolePermissionsAndMenber()
+  }
   /**
    * 移动至 下拉框
    * @returns 
    */
   overlayRoleMenberMore() {
     const { orglist } = this.state;
-    return <div className={styles.roleMenberMore}>
+    const { data } = this.props
+    return <div className={styles.roleMenberMore} id='roleMenberMore'>
       <div className={`${styles.roleMenberMore_item} ${styles.roleMenber_moveOut}`} onClick={this.moveUserOut.bind(this)}>移出组织</div>
-      {/* <Dropdown trigger={['hover']}
-        getPopupContainer={triggerNode => triggerNode.parentNode}
-        overlay={
-          this.overlayMoveOrg(orglist)
-        }>
-        <div className={`${styles.roleMenberMore_item} ${styles.roleMenber_moveTo}`}>移动至
-                <span className={`${styles.role_member_detail_icon} ${globalStyles.authTheme}`}>
-            &#xe7d6;
-            </span>
-        </div>
-      </Dropdown> */}
-
+      <div className={`${styles.roleMenberMore_item} ${styles.roleMenber_moveTo}`}>
+        <Cascader
+          options={data}
+          className={styles.roleMenberMore_item_cascader}
+          // onChange={onChange}
+          expandTrigger='hover'
+          onChange={this.onCascaderChange}
+          getPopupContainer={triggerNode => document.getElementById('roleMenberMore')}
+          fieldNames={{ children: 'roles', label: 'role_group_name', value: 'id' }}
+        >
+          <div className={`${styles.roleMenberMore_item} ${styles.roleMenber_moveTo}`}>
+            移动至
+          <span className={`${styles.role_member_detail_icon} ${globalStyles.authTheme}`}>
+              &#xe7d6;
+          </span>
+          </div>
+        </Cascader>
+      </div>
     </div>
   }
 
@@ -480,7 +525,7 @@ export default class RoleMemberTable extends React.Component {
   }
 
   // 获取移出成员后的交接列表
-  getTransferSelectedList = (remove_id, member_id ) => {
+  getTransferSelectedList = (remove_id, member_id) => {
     getTransferSelectedList({ user_id: remove_id }).then(res => {
       if (isApiResponseOk(res)) {
         if (res.data && res.data.length) {
@@ -536,11 +581,23 @@ export default class RoleMemberTable extends React.Component {
     //   }
     // });
   }
+  handleMoreVisibleChange = value => {
+    this.setState({
+      handleMoreVisible: value
+    })
+  }
+
+
   render() {
     const { orgMembersList = [], currentOrgTagList = [], canHandle } = this.props
     const { currentUserId } = this.state;
-
-    console.log('sssssssssssssss', currentUserId)
+    const updateDatas = payload => {
+      dispatch({
+        type: getEffectOrReducerByName('updateDatas'),
+        payload: payload
+      })
+    }
+   
     return <div className={`${styles.role_member}`}
       style={{
         overflowY: 'auto',
@@ -557,9 +614,11 @@ export default class RoleMemberTable extends React.Component {
           })
           return <div className={styles.role_member_item} onClick={this.selectMember.bind(this, item)}>
             <div className={styles.role_member_contant}>
-              <Dropdown trigger={['click']}
+              <Dropdown trigger={['hover']}
                 disabled={!canHandle}
                 getPopupContainer={triggerNode => triggerNode.parentNode}
+                onVisibleChange={(visible) => this.handleMoreVisibleChange(visible)}
+                visible={this.state.handleMoreVisible && user_id == currentUserId}
                 overlay={
                   this.overlayRoleMenberMore()
                 }>
@@ -594,10 +653,20 @@ export default class RoleMemberTable extends React.Component {
           </div>
         })
       }
-      <TreeRemoveOrgMemberModal groupList={[]} />
-
+      <TreeRemoveOrgMemberModal />
+      <TreeGroupModal updateDatas={(value)=>this.cancelCascaderChange(value)}></TreeGroupModal>
 
       {/* <Button className={styles.add_role_member}  type='primary' onClick={()=>this.addRoleMenber()}>添加成员</Button> */}
     </div>
   }
+}
+function mapStateToProps({
+  modal,
+  organizationMember,
+  loading,
+  technological: {
+    datas: { userOrgPermissions }
+  }
+}) {
+  return { modal, model: organizationMember, loading, userOrgPermissions }
 }
