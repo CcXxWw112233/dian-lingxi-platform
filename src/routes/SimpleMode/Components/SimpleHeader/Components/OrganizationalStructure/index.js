@@ -20,9 +20,8 @@ import {
   OrgRoleRemoveGroup
 } from '../../../../../../services/organization'
 import { MainOrgType, MarkDefaultType, NormalOrgType } from './constans'
-import { message, Modal } from 'antd'
+import { Avatar, message, Modal, Tooltip } from 'antd'
 import { MaxZIndex } from '../../../../../../globalset/js/constant'
-import { defaultCellDataGetter } from 'react-virtualized/dist/es/Table'
 
 /** 组织架构组件
  * @description 用于展示组织架构成员和权限列表，组织架构图
@@ -31,12 +30,13 @@ import { defaultCellDataGetter } from 'react-virtualized/dist/es/Table'
   ({
     [OrgStructureModel.namespace]: { openPanel, activeRoleData },
     technological: {
-      datas: { currentSelectOrganize = {} }
+      datas: { currentSelectOrganize = {}, userInfo = {} }
     }
   }) => ({
     openPanel,
     activeRoleData,
-    currentSelectOrganize
+    currentSelectOrganize,
+    userInfo
   })
 )
 export default class OrganizationalStructure extends React.Component {
@@ -685,7 +685,8 @@ export default class OrganizationalStructure extends React.Component {
 
   render() {
     /** 是否显示右侧角色窗口 */
-    const { openPanel, activeRoleData } = this.props
+    const { openPanel, activeRoleData, userInfo = {} } = this.props
+    const { member_role = {} } = userInfo.current_org || {}
     const {
       defaultRoles,
       isActiveItem,
@@ -702,12 +703,21 @@ export default class OrganizationalStructure extends React.Component {
           className={styles.top_operations}
           style={{ width: openPanel ? 'calc(100vw - 22vw)' : '100%' }}
         >
-          <span
-            className={`${styles.backBtn} ${globalStyles.authTheme}`}
-            onClick={() => this.backHome()}
-          >
-            &#xe7d7;
-          </span>
+          <div style={{ display: 'flex', paddingLeft: 20 }}>
+            <Tooltip title="返回">
+              <span
+                className={`${styles.backBtn} ${globalStyles.authTheme}`}
+                onClick={() => this.backHome()}
+              >
+                &#xe7d7;
+              </span>
+            </Tooltip>
+            <Tooltip title={member_role.name}>
+              <span className={styles.role_avatar}>
+                <Avatar type="user" size={40} src={userInfo.avatar} />
+              </span>
+            </Tooltip>
+          </div>
           <div
             className={`${styles.maptree_settings} ${globalStyles.authTheme}`}
           >
