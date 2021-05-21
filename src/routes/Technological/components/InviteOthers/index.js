@@ -915,7 +915,7 @@ class InviteOthers extends Component {
     const { groupList = [] } = this.state
     const selectHome = () => (
       <>
-        <div
+        {/* <div
           key="group"
           className={styles.invite__select_list_item}
           onClick={this.handleClickedInviteFromGroup}
@@ -924,7 +924,7 @@ class InviteOthers extends Component {
             从分组邀请
           </span>
           <span className={styles.invite__select_list_item_icon} />
-        </div>
+        </div> */}
         <div
           key="project"
           className={styles.invite__select_list_item}
