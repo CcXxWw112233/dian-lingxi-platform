@@ -1,0 +1,76 @@
+.role_panel {
+  position: absolute;
+  right: 25px;
+  top: 15px;
+  height: calc(~'100vh - 30px');
+  background-color: #fff;
+  width: 20vw;
+  box-shadow: 0px -16px 64px 0px rgba(33, 36, 52, 0.1);
+  border-radius: 24px;
+  z-index: 11;
+}
+.role_panel_top {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+
+  .role_panel_title {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    color: #212434;
+    font-size: 16px;
+    font-weight: 500;
+  }
+  .close {
+    cursor : pointer;
+  }
+  .role_panel_top_tabs {
+    display: flex;
+    justify-content: space-between;
+
+    .role_panel_tabs {
+      margin-top: 30px;
+      height: 40px;
+      width: 208px;
+      background: #9EA6C2;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: row;
+    
+      .role_panel_tab {
+        width: 104px;
+        height: 40px;
+        line-height: 40px;
+        color: rgba(255, 255, 255, 0.25);
+        text-align: center;
+        font-weight: 500;
+        cursor : pointer;
+      }
+    
+      .role_panel_current_tab {
+        background: #FFFFFF;
+        border-radius: 12px;
+        border: 2px solid #9EA6C2;
+        line-height: 36px;
+        color: #212434;
+      }
+    }
+    .addMember {
+      margin-top: 35px;
+      font-size: 25px;
+      color: #9EA6C2;
+      cursor : pointer;
+    }
+  }
+  
+  .role_panel_tips {
+    margin-top: 10px;
+    height: 12px;
+    font-size: 12px;
+    font-weight: 400;
+    color: #7C83A1;
+    line-height: 12px;
+    // margin-bottom: 30px;
+  }  
+}

@@ -25,7 +25,10 @@ export async function getGroupTreeList(params) {
     method: 'GET',
     params: {
       ...params,
-      _organization_id: localStorage.getItem('OrganizationId')
+      _organization_id:
+        params && params._organization_id
+          ? params._organization_id
+          : localStorage.getItem('OrganizationId')
     }
   })
 }

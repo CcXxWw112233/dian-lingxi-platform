@@ -106,10 +106,10 @@ export default class BatchOperateCheckbox extends Component {
             </div>
             <div style={{ marginTop: 12 }}>
               {outline_tree_round.map(item => {
-                const { id } = item
+                const { id, add_id } = item
                 return (
                   <div
-                    key={id}
+                    key={id || add_id}
                     style={{
                       height: task_item_height,
                       marginBottom: task_item_margin_top

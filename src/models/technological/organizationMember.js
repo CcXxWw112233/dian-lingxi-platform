@@ -147,7 +147,7 @@ export default modelExtend(technological, {
       }
     },
     *getGroupTreeList({ payload }, { select, call, put }) {
-      let res = yield call(getGroupTreeList, {})
+      let res = yield call(getGroupTreeList, payload)
       if (isApiResponseOk(res)) {
         yield put({
           type: 'updateDatas',

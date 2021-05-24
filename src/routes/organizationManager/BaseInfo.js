@@ -321,6 +321,7 @@ export default class BaseInfo extends React.Component {
           placeholder={`输入${currentNounPlanFilterName(ORGANIZATION)}名称`}
           value={name}
           style={{ marginTop: 8 }}
+          maxLength={18}
           onChange={this.nameChange.bind(this)}
         />
         <div className={indexStyles.baseInfo_title_2}>
@@ -471,7 +472,7 @@ export default class BaseInfo extends React.Component {
           )}
         </div>
 
-        <div className={indexStyles.baseInfo_title_2}>
+        {/* <div className={indexStyles.baseInfo_title_2}>
           {currentNounPlanFilterName(MEMBERS)}加入模式
         </div>
         <div className={indexStyles.baseInfo_des}>
@@ -501,7 +502,7 @@ export default class BaseInfo extends React.Component {
         />
         <div className={indexStyles.baseInfo_des} style={{ color: '#BFBFBF' }}>
           请使用空格符号分隔多个后缀名
-        </div>
+        </div> */}
         <div style={{ margin: '0 auto', marginTop: 20, textAlign: 'center' }}>
           <Button
             type={'primary'}

@@ -61,7 +61,7 @@ export default class MilestoneBaseHeader extends Component {
       payload: {
         batch_operating: false,
         batch_opetate_ids: [],
-        _already_batch_operate_ids: []
+        already_batch_operate_ids: []
       }
     })
   }
@@ -358,6 +358,14 @@ export default class MilestoneBaseHeader extends Component {
       filed_modal_visible: bool
     })
   }
+  setFiledModalVisibleConfirm = () => {
+    const { batch_opetate_ids = [] } = this.props
+    if (!batch_opetate_ids.length) {
+      message.warn('请选择需要操作的节点')
+      return
+    }
+    this.setFiledModalVisible(true)
+  }
 
   render() {
     const {
@@ -474,7 +482,7 @@ export default class MilestoneBaseHeader extends Component {
               className={`${outlineStyles.flex2} ${styles.batching_operate_area}`}
             >
               <div
-                onClick={() => this.setFiledModalVisible(true)}
+                onClick={() => this.setFiledModalVisibleConfirm()}
                 className={`${globalStyles.authTheme} ${styles.operate_icon}`}
               >
                 &#xe7bd;

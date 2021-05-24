@@ -63,7 +63,9 @@ export const MilestoneTypes = {
      */
     color: '#98A9B9',
     /** 透明度 */
-    opacity: 1
+    opacity: 1,
+    /** 类型备注 */
+    name: '未完成'
   },
   /** 逾期未完成状态 */
   IncompleteDone: {
@@ -76,7 +78,9 @@ export const MilestoneTypes = {
      */
     color: '#FD5C45',
     /** 透明度 */
-    opacity: 1
+    opacity: 1,
+    /** 类型备注 */
+    name: '逾期未完成'
   },
   /** 正常完成状态 */
   NormalDone: {
@@ -89,7 +93,9 @@ export const MilestoneTypes = {
      */
     color: '#024B00',
     /** 透明度 */
-    opacity: 0.45
+    opacity: 0.45,
+    /** 类型备注 */
+    name: '已完成'
   },
   /** 逾期完成的状态 */
   beOverdue: {
@@ -102,20 +108,24 @@ export const MilestoneTypes = {
      */
     color: '#8D1700',
     /** 透明度 */
-    opacity: 0.45
+    opacity: 0.45,
+    /** 类型备注 */
+    name: '逾期完成'
   },
   /** 预警未完成状态 */
   WarnWillIncomplete: {
-    /** 逾期完成状态字段
+    /** 预警未完成状态字段
      * @default string '4'
      */
     status: '4',
-    /** 逾期完成颜色
+    /** 预警未完成颜色
      * @default string '#FEAE02'
      */
     color: '#FEAE02',
     /** 透明度 */
-    opacity: 1
+    opacity: 1,
+    /** 类型备注 */
+    name: '预警'
   }
 }
 

@@ -286,6 +286,9 @@ export const GanttViewDateWidth = {
 
 /** 甘特图滚动元素的id */
 export const ganttScrollElementId = 'gantt_card_out_middle'
+
+/** 最高的层级数值 */
+export const MaxZIndex = 1100
 /** 功能的code type 类型 */
 export const FEATURE_INSTANCE_CODE_TYPE = {
   MILESTONE: '1', //里程碑

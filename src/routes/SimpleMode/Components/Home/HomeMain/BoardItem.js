@@ -623,7 +623,7 @@ export default class BoardItem extends Component {
 
   /** 保存修改的项目 */
   saveEditBoard = (board_id, data) => {
-    const { dispatch } = this.props
+    const { dispatch, simplemodeCurrentProject } = this.props
     if (board_id) {
       updateProject({ board_id, ...data }).then(res => {
         // console.log(res)
@@ -635,6 +635,15 @@ export default class BoardItem extends Component {
             ].join('/'),
             payload: {}
           })
+          /** 更新修改的此数据名称 */
+          if (board_id === simplemodeCurrentProject.board_id)
+            dispatch({
+              type: 'simplemode/updateCurrentBoard',
+              payload: {
+                board_id,
+                data: { board_name: data.name }
+              }
+            })
         }
       })
     }

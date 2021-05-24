@@ -24,20 +24,24 @@ export default class AlreadyBatchSetFlag extends Component {
         className={styles.batch_flag_wrapper}
         style={{
           height: outline_tree_round.length * ceiHeight,
-          left: gantt_head_width - 52
+          left: gantt_head_width - 52,
+          top: milestone_base_height
         }}
       >
-        <div style={{ marginTop: 8 }}>
+        {/* <div style={{ marginTop: 8 }}>
           <div style={{ height: 22, width: 20 }}></div>
-        </div>
-        <div style={{ marginTop: 12 }}>
+        </div> */}
+        <div
+        // style={{ marginTop: 12 }}
+        >
           {outline_tree_round.map(item => {
-            const { id } = item
+            const { id, add_id } = item
             return (
               <div
-                key={id}
+                key={id || add_id}
                 style={{
                   height: task_item_height,
+                  marginTop: 3,
                   marginBottom: task_item_margin_top,
                   visibility: already_batch_operate_ids.includes(id)
                     ? 'visible'
@@ -115,8 +119,8 @@ export default class AlreadyBatchSetFlag extends Component {
           <>
             {ganttIsOutlineView({ group_view_type }) &&
               this.renderOutLineFlag()}
-            {ganttIsSingleBoardGroupView({ group_view_type, gantt_board_id }) &&
-              this.renderGroupFlag()}
+            {/* {ganttIsSingleBoardGroupView({ group_view_type, gantt_board_id }) &&
+              this.renderGroupFlag()} */}
           </>
         )}
       </>

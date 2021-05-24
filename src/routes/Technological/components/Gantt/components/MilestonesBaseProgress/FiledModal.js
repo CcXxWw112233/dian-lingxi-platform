@@ -36,8 +36,8 @@ export default class FiledModal extends Component {
   // 过滤出需要渲染的条
   filterEffectFields = (fields = []) => {
     const _fields = fields.filter(item => {
-      const { field_type } = item
-      return ['1', '2'].includes(field_type)
+      const { field_type, field_status } = item
+      return ['1', '2'].includes(field_type) && field_status != '1'
     })
     this.setState({
       fields: _fields
@@ -345,6 +345,7 @@ export default class FiledModal extends Component {
         onOk={this.onOk}
         okButtonProps={{ disabled: this.setButtonDisabled() }}
         destroyOnClose
+        bodyStyle={{ maxHeight: 500, overflow: 'auto' }}
       >
         <div style={{ display: operate_type == 'add' ? 'block' : 'none' }}>
           {this.renderAllSelect()}

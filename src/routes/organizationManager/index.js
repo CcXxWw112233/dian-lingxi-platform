@@ -292,9 +292,9 @@ class Organization extends Component {
         style={{ minWidth: '228px', textAlign: 'center' }}
       >
         <Menu.Item key="1">基本信息</Menu.Item>
-        <Menu.Item key="2">{`${currentNounPlanFilterName(
+        {/* <Menu.Item key="2">{`${currentNounPlanFilterName(
           ORGANIZATION
-        )}角色`}</Menu.Item>
+        )}角色`}</Menu.Item> */}
         <Menu.Item key="3">{`${currentNounPlanFilterName(
           PROJECTS
         )}角色`}</Menu.Item>

@@ -271,7 +271,6 @@ export default class RenderAdd extends Component {
         remind_edit_type: triggerList[0].remind_edit_type
       }
     })
-    debugger
     dispatch({
       type: 'informRemind/setRemindInformation',
       payload: { ...params }

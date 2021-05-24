@@ -79,7 +79,7 @@ export default class TreeGroupModal extends React.Component {
           title={`选择分组`}
           visible={TreeGroupModalVisiblie} //moveToDirectoryVisiblie
           width={472}
-          zIndex={1020}
+          zIndex={9999}
           destroyOnClose
           maskClosable={false}
           okText="确认"
