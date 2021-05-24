@@ -318,6 +318,7 @@ export default {
         console.log('ssss_err_-1', err)
       }
     },
+    // 获取甘特图数据
     *getGanttData({ payload }, { select, call, put }) {
       try {
         let { not_set_loading, start_date, end_date } = payload //not_set_loading是否需要设置loading状态
@@ -904,6 +905,7 @@ export default {
         payload: { ...active_baseline }
       })
     },
+    // 分组视图数据处理（处理任务条横向起止位置，长度）
     *handleListGroup({ payload }, { select, call, put }) {
       try {
         const { data, not_set_scroll_top } = payload
@@ -1131,6 +1133,7 @@ export default {
         console.log('ssss_err_1', err)
       }
     },
+    //处理任务条的高度
     *setListGroup({ payload }, { select, call, put }) {
       try {
         let { not_set_scroll_top, list_group = [] } = payload
